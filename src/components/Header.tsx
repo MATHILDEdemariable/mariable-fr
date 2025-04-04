@@ -35,12 +35,8 @@ const Header = () => {
     <header className="py-4 bg-wedding-cream/95 backdrop-blur-sm border-b sticky top-0 z-10">
       <div className="container">
         <div className="flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-3">
-            <img src="/lovable-uploads/d212cd91-6c48-4581-b66d-302d10e17ad9.png" alt="Mariable Logo" className="h-14 w-auto" />
-            <div>
-              <h1 className="text-2xl font-serif text-wedding-black">Mariable</h1>
-              <p className="text-sm text-wedding-black/70 font-light">La révolution de l'organisation de mariage</p>
-            </div>
+          <Link to="/" className="flex items-center">
+            <img src="/lovable-uploads/d212cd91-6c48-4581-b66d-302d10e17ad9.png" alt="Mariable Logo" className="h-20 w-auto" />
           </Link>
           
           <NavigationMenu>
