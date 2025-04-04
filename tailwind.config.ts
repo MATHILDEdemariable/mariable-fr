@@ -56,7 +56,7 @@ export default {
 				wedding: {
 					green: '#1a5d40',
 					light: '#f1f7f3',
-					cream: '#fcfcf7',
+					cream: '#f8f6f0',
 					black: '#000000',
 					white: '#ffffff',
 					gold: '#d4af37'
