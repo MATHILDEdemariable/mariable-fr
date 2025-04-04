@@ -54,11 +54,12 @@ export default {
 					foreground: 'hsl(var(--card-foreground))'
 				},
 				wedding: {
-					blush: '#f7caca',
-					sage: '#d1e2c4',
-					cream: '#f9f3e3',
-					mauve: '#d7b8cb',
-					gold: '#e2c992'
+					green: '#1a5d40',
+					light: '#f1f7f3',
+					cream: '#fcfcf7',
+					black: '#000000',
+					white: '#ffffff',
+					gold: '#d4af37'
 				},
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',

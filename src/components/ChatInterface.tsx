@@ -15,7 +15,7 @@ const ChatInterface: React.FC = () => {
     {
       id: 'welcome',
       role: 'assistant',
-      content: "Bonjour ! Comment puis-je vous aider à organiser votre mariage de rêve aujourd'hui ?",
+      content: "Décrivez nous le mariage parfait pour vous. On recherche les meilleurs prestataires en fonction.",
       timestamp: new Date()
     }
   ]);
@@ -93,8 +93,8 @@ const ChatInterface: React.FC = () => {
 
   return (
     <div className="w-full h-[500px] flex flex-col bg-white">
-      <div className="p-4 bg-wedding-cream/20 border-b flex items-center justify-center">
-        <p className="text-center text-lg font-serif text-wedding-mauve">Demandez-nous n'importe quoi</p>
+      <div className="p-4 bg-wedding-green/10 border-b flex items-center justify-center">
+        <p className="text-center text-lg font-serif text-wedding-green">Demandez-nous n'importe quoi</p>
       </div>
       <div className="flex-grow p-0 relative overflow-hidden">
         <ScrollArea className="h-[400px] p-4">
@@ -131,7 +131,7 @@ const ChatInterface: React.FC = () => {
             disabled={isLoading}
             className="flex-grow"
           />
-          <Button type="submit" disabled={isLoading || !inputValue.trim()} className="bg-wedding-mauve hover:bg-wedding-mauve/90">
+          <Button type="submit" disabled={isLoading || !inputValue.trim()} className="bg-wedding-green hover:bg-wedding-green/90">
             <SendHorizontal className="h-4 w-4" />
           </Button>
         </form>
