@@ -1,7 +1,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { SendHorizontal } from 'lucide-react';
@@ -15,7 +15,7 @@ const ChatInterface: React.FC = () => {
     {
       id: 'welcome',
       role: 'assistant',
-      content: "Bonjour ! Je suis votre assistant de mariage virtuel. Comment puis-je vous aider dans la préparation de votre mariage ?",
+      content: "Bonjour ! Comment puis-je vous aider à organiser votre mariage de rêve aujourd'hui ?",
       timestamp: new Date()
     }
   ]);
@@ -92,12 +92,12 @@ const ChatInterface: React.FC = () => {
   };
 
   return (
-    <Card className="w-full max-w-3xl mx-auto h-[80vh] flex flex-col">
-      <CardHeader className="pb-3 border-b">
-        <CardTitle className="text-xl text-center">Assistant Mariage</CardTitle>
-      </CardHeader>
-      <CardContent className="flex-grow p-0 relative">
-        <ScrollArea className="h-full max-h-[calc(80vh-130px)] p-4">
+    <div className="w-full h-[500px] flex flex-col bg-white">
+      <div className="p-4 bg-wedding-cream/20 border-b flex items-center justify-center">
+        <p className="text-center text-lg font-serif text-wedding-mauve">Demandez-nous n'importe quoi</p>
+      </div>
+      <div className="flex-grow p-0 relative overflow-hidden">
+        <ScrollArea className="h-[400px] p-4">
           <div className="space-y-4">
             {messages.map((message) => (
               <Message 
@@ -120,23 +120,23 @@ const ChatInterface: React.FC = () => {
             <div ref={messagesEndRef} />
           </div>
         </ScrollArea>
-      </CardContent>
-      <CardFooter className="p-3 border-t">
+      </div>
+      <div className="p-3 border-t bg-white">
         <form onSubmit={handleSubmit} className="flex w-full gap-2">
           <Input
             ref={inputRef}
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
-            placeholder="Posez votre question ici..."
+            placeholder="Ex: Je cherche un photographe champêtre en Provence..."
             disabled={isLoading}
             className="flex-grow"
           />
-          <Button type="submit" disabled={isLoading || !inputValue.trim()}>
+          <Button type="submit" disabled={isLoading || !inputValue.trim()} className="bg-wedding-mauve hover:bg-wedding-mauve/90">
             <SendHorizontal className="h-4 w-4" />
           </Button>
         </form>
-      </CardFooter>
-    </Card>
+      </div>
+    </div>
   );
 };
 
