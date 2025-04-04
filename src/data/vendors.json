@@ -1,0 +1,123 @@
+
+[
+  {
+    "nom": "Domaine de la Forêt",
+    "type": "Lieu",
+    "lieu": "Bourgogne",
+    "style": ["champêtre", "nature"],
+    "budget": 4500,
+    "lien": "http://domainedelaforet.fr"
+  },
+  {
+    "nom": "Château de Varennes",
+    "type": "Lieu",
+    "lieu": "Bourgogne",
+    "style": ["élégant", "luxe"],
+    "budget": 7500,
+    "lien": "http://chateaudevarennes.fr"
+  },
+  {
+    "nom": "Domaine des Cépages",
+    "type": "Lieu",
+    "lieu": "Bourgogne",
+    "style": ["viticole", "rustique"],
+    "budget": 3200,
+    "lien": "http://domainedescepoages.fr"
+  },
+  {
+    "nom": "Manoir du Lac",
+    "type": "Lieu",
+    "lieu": "Normandie",
+    "style": ["historique", "bord de lac"],
+    "budget": 5000,
+    "lien": "http://manoirdulac.fr"
+  },
+  {
+    "nom": "Fleurs de Provence",
+    "type": "Fleuriste",
+    "lieu": "Provence",
+    "style": ["romantique", "provence"],
+    "budget": 1200,
+    "lien": "http://fleursdeprovence.fr"
+  },
+  {
+    "nom": "Bouquets & Cie",
+    "type": "Fleuriste",
+    "lieu": "Île-de-France",
+    "style": ["moderne", "minimaliste"],
+    "budget": 1500,
+    "lien": "http://bouquetsetcie.fr"
+  },
+  {
+    "nom": "Fleurs de Saison",
+    "type": "Fleuriste",
+    "lieu": "Bourgogne",
+    "style": ["champêtre", "rustique"],
+    "budget": 800,
+    "lien": "http://fleursdesaison.fr"
+  },
+  {
+    "nom": "Chef Antoine",
+    "type": "Traiteur",
+    "lieu": "Bourgogne",
+    "style": ["gastronomique", "traditionnel"],
+    "budget": 120,
+    "lien": "http://chef-antoine.fr"
+  },
+  {
+    "nom": "Le Festin",
+    "type": "Traiteur",
+    "lieu": "Bourgogne",
+    "style": ["buffet", "convivial"],
+    "budget": 75,
+    "lien": "http://lefestin.fr"
+  },
+  {
+    "nom": "Saveurs du Terroir",
+    "type": "Traiteur",
+    "lieu": "Alsace",
+    "style": ["local", "terroir"],
+    "budget": 90,
+    "lien": "http://saveursduterroir.fr"
+  },
+  {
+    "nom": "InstaPhoto",
+    "type": "Photographe",
+    "lieu": "Bourgogne",
+    "style": ["reportage", "naturel"],
+    "budget": 1800,
+    "lien": "http://instaphoto.fr"
+  },
+  {
+    "nom": "Pixel Perfect",
+    "type": "Photographe",
+    "lieu": "Paris",
+    "style": ["artistique", "mode"],
+    "budget": 2500,
+    "lien": "http://pixelperfect.fr"
+  },
+  {
+    "nom": "Lumière Douce",
+    "type": "Photographe",
+    "lieu": "Bretagne",
+    "style": ["romantique", "poétique"],
+    "budget": 1600,
+    "lien": "http://lumièredouce.fr"
+  },
+  {
+    "nom": "Wedding Cake Studio",
+    "type": "Pâtissier",
+    "lieu": "Bourgogne",
+    "style": ["moderne", "design"],
+    "budget": 600,
+    "lien": "http://weddingcakestudio.fr"
+  },
+  {
+    "nom": "Douceurs & Merveilles",
+    "type": "Pâtissier",
+    "lieu": "Lyon",
+    "style": ["gourmand", "traditionnel"],
+    "budget": 450,
+    "lien": "http://douceursetmerveilles.fr"
+  }
+]
