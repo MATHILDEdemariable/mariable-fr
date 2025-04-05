@@ -18,6 +18,7 @@ import Conseils from "./pages/services/Conseils";
 import Histoire from "./pages/about/Histoire";
 import Charte from "./pages/about/Charte";
 import Temoignages from "./pages/about/Temoignages";
+import Approche from "./pages/about/Approche";
 
 // Contact pages
 import NousContacter from "./pages/contact/NousContacter";
@@ -47,6 +48,7 @@ const App = () => (
           <Route path="/about/histoire" element={<Histoire />} />
           <Route path="/about/charte" element={<Charte />} />
           <Route path="/about/temoignages" element={<Temoignages />} />
+          <Route path="/about/approche" element={<Approche />} />
           
           {/* Contact pages */}
           <Route path="/contact/nous-contacter" element={<NousContacter />} />
