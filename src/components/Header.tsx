@@ -38,7 +38,7 @@ const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="py-4 bg-wedding-black border-b border-white/10 sticky top-0 z-10">
+    <header className="py-4 bg-white border-b border-wedding-black/10 sticky top-0 z-10">
       <div className="container">
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center">
@@ -49,21 +49,21 @@ const Header = () => {
             <div>
               <button 
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="text-white p-2"
+                className="text-wedding-black p-2"
               >
                 <Menu size={24} />
               </button>
               
               {mobileMenuOpen && (
-                <div className="absolute top-full left-0 right-0 bg-wedding-black p-4 border-b border-white/10">
+                <div className="absolute top-full left-0 right-0 bg-white p-4 border-b border-wedding-black/10">
                   <nav className="flex flex-col space-y-4">
-                    <Link to="/services/prestataires" className="text-white hover:text-wedding-cream p-2" onClick={() => setMobileMenuOpen(false)}>
+                    <Link to="/services/prestataires" className="text-wedding-black hover:text-wedding-black/70 p-2" onClick={() => setMobileMenuOpen(false)}>
                       Nos Services
                     </Link>
-                    <Link to="/about/histoire" className="text-white hover:text-wedding-cream p-2" onClick={() => setMobileMenuOpen(false)}>
+                    <Link to="/about/histoire" className="text-wedding-black hover:text-wedding-black/70 p-2" onClick={() => setMobileMenuOpen(false)}>
                       À propos
                     </Link>
-                    <Link to="/contact/nous-contacter" className="text-white hover:text-wedding-cream p-2" onClick={() => setMobileMenuOpen(false)}>
+                    <Link to="/contact/nous-contacter" className="text-wedding-black hover:text-wedding-black/70 p-2" onClick={() => setMobileMenuOpen(false)}>
                       Contact
                     </Link>
                   </nav>
@@ -74,7 +74,7 @@ const Header = () => {
             <NavigationMenu>
               <NavigationMenuList>
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger className="bg-transparent hover:bg-wedding-black/80 text-white">Nos Services</NavigationMenuTrigger>
+                  <NavigationMenuTrigger className="bg-transparent hover:bg-wedding-cream text-wedding-black">Nos Services</NavigationMenuTrigger>
                   <NavigationMenuContent>
                     <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
                       <ListItem href="/services/prestataires" title="Recherche de prestataires">
@@ -94,7 +94,7 @@ const Header = () => {
                 </NavigationMenuItem>
                 
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger className="bg-transparent hover:bg-wedding-black/80 text-white">À propos</NavigationMenuTrigger>
+                  <NavigationMenuTrigger className="bg-transparent hover:bg-wedding-cream text-wedding-black">À propos</NavigationMenuTrigger>
                   <NavigationMenuContent>
                     <ul className="grid w-[400px] gap-3 p-4">
                       <ListItem href="/about/histoire" title="Notre histoire">
@@ -111,7 +111,7 @@ const Header = () => {
                 </NavigationMenuItem>
                 
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger className="bg-transparent hover:bg-wedding-black/80 text-white">Contact</NavigationMenuTrigger>
+                  <NavigationMenuTrigger className="bg-transparent hover:bg-wedding-cream text-wedding-black">Contact</NavigationMenuTrigger>
                   <NavigationMenuContent>
                     <ul className="grid w-[400px] gap-3 p-4">
                       <ListItem href="/contact/nous-contacter" title="Nous contacter">
