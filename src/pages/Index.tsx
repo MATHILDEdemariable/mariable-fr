@@ -13,28 +13,24 @@ const Index = () => {
       
       <main className="flex-grow">
         {/* Hero Section with Wedding Background */}
-        <section className="relative py-16 md:py-24">
-          <div className="absolute inset-0 bg-cover bg-center z-0" style={{ backgroundImage: 'url(/lovable-uploads/3908f969-5bdb-4f34-8b0a-c4ec6e9b0533.png)' }}>
-            <div className="absolute inset-0 bg-black/30"></div>
-          </div>
-          
+        <section className="relative py-16 md:py-24 bg-white">
           <div className="container relative z-10">
             <div className="grid md:grid-cols-2 gap-12 items-center max-w-6xl mx-auto">
-              <div className="space-y-6 text-white">
-                <div className="inline-flex items-center px-3 py-1 rounded-full bg-white/20 text-sm text-white mb-4">
+              <div className="space-y-6 text-wedding-black">
+                <div className="inline-flex items-center px-3 py-1 rounded-full bg-wedding-light text-sm text-wedding-black mb-4">
                   <Sparkles size={14} className="mr-2" />
                   <span>Nouveau en 2025</span>
                 </div>
                 <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif leading-tight">
-                  Organisez le mariage <span className="text-white">dont vous rêvez</span>
+                  Organisez le mariage <span className="text-wedding-black">dont vous rêvez</span>
                 </h2>
-                <p className="text-white/90 text-lg md:pr-12">
+                <p className="text-wedding-black/90 text-lg md:pr-12">
                   Mariable révolutionne l'organisation de votre mariage en vous connectant instantanément avec les meilleurs prestataires adaptés à vos envies et votre budget.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 pt-4">
                   <Button 
                     size="lg" 
-                    className="gap-2 bg-wedding-gold hover:bg-wedding-gold/90 text-wedding-black"
+                    className="gap-2 bg-wedding-olive hover:bg-wedding-olive/90 text-white"
                     asChild
                   >
                     <Link to="/commencer">
@@ -44,7 +40,7 @@ const Index = () => {
                   <Button 
                     size="lg" 
                     variant="outline" 
-                    className="border-white text-white hover:bg-white/10"
+                    className="border-wedding-olive text-wedding-olive hover:bg-wedding-olive/10"
                     asChild
                   >
                     <Link to="/about/histoire">
@@ -53,7 +49,7 @@ const Index = () => {
                   </Button>
                 </div>
               </div>
-              <div className="rounded-2xl overflow-hidden shadow-lg border border-white/20 backdrop-blur-sm bg-white/10">
+              <div className="rounded-2xl overflow-hidden shadow-lg border border-gray-200 bg-white">
                 <ChatInterface />
               </div>
             </div>
@@ -105,15 +101,15 @@ const Index = () => {
         </section>
         
         {/* Call to Action */}
-        <section id="contact" className="py-16 md:py-24 bg-wedding-black text-white">
+        <section id="contact" className="py-16 md:py-24 bg-white text-wedding-black">
           <div className="container text-center">
             <h2 className="text-3xl md:text-4xl font-serif mb-6">Prêt à révolutionner l'organisation de votre mariage ?</h2>
-            <p className="text-lg text-white/80 mb-8 max-w-2xl mx-auto">
+            <p className="text-lg text-wedding-black/80 mb-8 max-w-2xl mx-auto">
               Posez-nous vos questions sur les prestataires, lieux, et tout ce qui concerne votre grand jour. Mariable est là pour vous guider.
             </p>
             <Button 
               size="lg" 
-              className="bg-wedding-gold hover:bg-wedding-gold/90 text-wedding-black"
+              className="bg-wedding-olive hover:bg-wedding-olive/90 text-white"
               asChild
             >
               <Link to="/commencer">
@@ -135,7 +131,7 @@ const Index = () => {
                 Mariable est votre partenaire privilégié pour créer le mariage de vos rêves, en simplifiant chaque étape de l'organisation.
               </p>
               <div className="flex gap-4">
-                <a href="https://www.instagram.com/mariable.fr/" aria-label="Instagram" className="text-wedding-black hover:text-wedding-black/70">
+                <a href="https://www.instagram.com/mariable.fr/" aria-label="Instagram" target="_blank" rel="noopener noreferrer" className="text-wedding-black hover:text-wedding-black/70">
                   <Instagram size={20} />
                 </a>
               </div>

@@ -59,7 +59,8 @@ export default {
 					cream: '#f8f6f0',
 					black: '#000000',
 					white: '#ffffff',
-					gold: '#d4af37'
+					gold: '#d4af37',
+					olive: '#7F9474'
 				},
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
