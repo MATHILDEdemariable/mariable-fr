@@ -2,7 +2,7 @@
 import React from 'react';
 import Header from '@/components/Header';
 import { Link } from 'react-router-dom';
-import { Facebook, Instagram, Twitter, Mail, Phone, MapPin } from 'lucide-react';
+import { Instagram, Mail, Phone, MapPin } from 'lucide-react';
 
 interface ServiceTemplateProps {
   title: string;
@@ -12,10 +12,10 @@ interface ServiceTemplateProps {
 
 const ServiceTemplate: React.FC<ServiceTemplateProps> = ({ title, description, content }) => {
   return (
-    <div className="min-h-screen flex flex-col bg-wedding-cream">
+    <div className="min-h-screen flex flex-col bg-white">
       <Header />
       
-      <main className="flex-grow py-16 container">
+      <main className="flex-grow py-16 container bg-white">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-4xl md:text-5xl font-serif mb-4">{title}</h1>
           <p className="text-xl text-muted-foreground mb-8">{description}</p>
@@ -37,14 +37,8 @@ const ServiceTemplate: React.FC<ServiceTemplateProps> = ({ title, description, c
                 Mariable est votre partenaire privilégié pour créer le mariage de vos rêves, en simplifiant chaque étape de l'organisation.
               </p>
               <div className="flex gap-4">
-                <a href="https://facebook.com" aria-label="Facebook" className="text-wedding-black hover:text-wedding-black/70">
-                  <Facebook size={20} />
-                </a>
-                <a href="https://instagram.com" aria-label="Instagram" className="text-wedding-black hover:text-wedding-black/70">
+                <a href="https://www.instagram.com/mariable.fr/" aria-label="Instagram" className="text-wedding-black hover:text-wedding-black/70">
                   <Instagram size={20} />
-                </a>
-                <a href="https://twitter.com" aria-label="Twitter" className="text-wedding-black hover:text-wedding-black/70">
-                  <Twitter size={20} />
                 </a>
               </div>
             </div>
@@ -83,7 +77,7 @@ const ServiceTemplate: React.FC<ServiceTemplateProps> = ({ title, description, c
                 </li>
                 <li className="flex items-center">
                   <Mail className="mr-2 h-5 w-5 text-wedding-black shrink-0" />
-                  <span className="text-wedding-black/70">contact@mariable.com</span>
+                  <span className="text-wedding-black/70">contact@mariable.fr</span>
                 </li>
               </ul>
             </div>

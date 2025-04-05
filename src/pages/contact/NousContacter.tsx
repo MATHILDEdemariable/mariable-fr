@@ -19,7 +19,7 @@ const NousContacter = () => {
   };
   
   return (
-    <div className="min-h-screen flex flex-col bg-wedding-cream">
+    <div className="min-h-screen flex flex-col bg-white">
       <Header />
       
       <main className="flex-grow py-16 container">
@@ -36,7 +36,7 @@ const NousContacter = () => {
               <div className="space-y-4">
                 <div>
                   <p className="font-medium">Email</p>
-                  <p className="text-muted-foreground">contact@mariable.com</p>
+                  <p className="text-muted-foreground">contact@mariable.fr</p>
                 </div>
                 
                 <div>
@@ -88,7 +88,7 @@ const NousContacter = () => {
                   />
                 </div>
                 
-                <Button type="submit" className="w-full bg-wedding-black hover:bg-wedding-black/90 text-white">
+                <Button type="submit" className="w-full bg-wedding-gold hover:bg-wedding-gold/90 text-wedding-black">
                   Envoyer
                 </Button>
               </form>
@@ -97,14 +97,14 @@ const NousContacter = () => {
         </div>
       </main>
       
-      <footer className="py-8 border-t bg-wedding-black text-white">
+      <footer className="py-8 border-t bg-white text-wedding-black">
         <div className="container">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center gap-2 mb-4 md:mb-0">
               <img src="/lovable-uploads/3768f435-13c3-49a1-bbb3-87acf3b26cda.png" alt="Mariable Logo" className="h-10 w-auto" />
               <p className="font-serif text-xl">Mariable</p>
             </div>
-            <p className="text-sm text-white/70">
+            <p className="text-sm text-wedding-black/70">
               © 2025 Mariable
             </p>
           </div>

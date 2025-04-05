@@ -3,12 +3,12 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import ChatInterface from '@/components/ChatInterface';
 import Header from '@/components/Header';
-import { ArrowRight, Sparkles, Calendar, MapPin, Heart, Facebook, Instagram, Twitter, Mail, Phone } from 'lucide-react';
+import { ArrowRight, Sparkles, Calendar, MapPin, Heart, Instagram, Mail, Phone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const Index = () => {
   return (
-    <div className="min-h-screen flex flex-col bg-wedding-cream">
+    <div className="min-h-screen flex flex-col bg-white">
       <Header />
       
       <main className="flex-grow">
@@ -34,7 +34,7 @@ const Index = () => {
                 <div className="flex flex-col sm:flex-row gap-4 pt-4">
                   <Button 
                     size="lg" 
-                    className="gap-2 bg-white hover:bg-white/90 text-wedding-black"
+                    className="gap-2 bg-wedding-gold hover:bg-wedding-gold/90 text-wedding-black"
                     asChild
                   >
                     <Link to="/commencer">
@@ -71,7 +71,7 @@ const Index = () => {
             </div>
             
             <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-              <div className="bg-wedding-cream p-6 rounded-xl shadow-sm border border-wedding-black/10 hover:shadow-md transition-shadow">
+              <div className="bg-white p-6 rounded-xl shadow-sm border border-wedding-black/10 hover:shadow-md transition-shadow">
                 <div className="w-12 h-12 bg-wedding-black/10 rounded-full flex items-center justify-center mb-4">
                   <Calendar className="text-wedding-black" />
                 </div>
@@ -81,7 +81,7 @@ const Index = () => {
                 </p>
               </div>
               
-              <div className="bg-wedding-cream p-6 rounded-xl shadow-sm border border-wedding-black/10 hover:shadow-md transition-shadow">
+              <div className="bg-white p-6 rounded-xl shadow-sm border border-wedding-black/10 hover:shadow-md transition-shadow">
                 <div className="w-12 h-12 bg-wedding-black/10 rounded-full flex items-center justify-center mb-4">
                   <MapPin className="text-wedding-black" />
                 </div>
@@ -91,7 +91,7 @@ const Index = () => {
                 </p>
               </div>
               
-              <div className="bg-wedding-cream p-6 rounded-xl shadow-sm border border-wedding-black/10 hover:shadow-md transition-shadow">
+              <div className="bg-white p-6 rounded-xl shadow-sm border border-wedding-black/10 hover:shadow-md transition-shadow">
                 <div className="w-12 h-12 bg-wedding-black/10 rounded-full flex items-center justify-center mb-4">
                   <Heart className="text-wedding-black" />
                 </div>
@@ -113,7 +113,7 @@ const Index = () => {
             </p>
             <Button 
               size="lg" 
-              className="bg-white hover:bg-white/90 text-wedding-black"
+              className="bg-wedding-gold hover:bg-wedding-gold/90 text-wedding-black"
               asChild
             >
               <Link to="/commencer">
@@ -135,14 +135,8 @@ const Index = () => {
                 Mariable est votre partenaire privilégié pour créer le mariage de vos rêves, en simplifiant chaque étape de l'organisation.
               </p>
               <div className="flex gap-4">
-                <a href="https://facebook.com" aria-label="Facebook" className="text-wedding-black hover:text-wedding-black/70">
-                  <Facebook size={20} />
-                </a>
-                <a href="https://instagram.com" aria-label="Instagram" className="text-wedding-black hover:text-wedding-black/70">
+                <a href="https://www.instagram.com/mariable.fr/" aria-label="Instagram" className="text-wedding-black hover:text-wedding-black/70">
                   <Instagram size={20} />
-                </a>
-                <a href="https://twitter.com" aria-label="Twitter" className="text-wedding-black hover:text-wedding-black/70">
-                  <Twitter size={20} />
                 </a>
               </div>
             </div>
@@ -181,7 +175,7 @@ const Index = () => {
                 </li>
                 <li className="flex items-center">
                   <Mail className="mr-2 h-5 w-5 text-wedding-black shrink-0" />
-                  <span className="text-wedding-black/70">contact@mariable.com</span>
+                  <span className="text-wedding-black/70">contact@mariable.fr</span>
                 </li>
               </ul>
             </div>
