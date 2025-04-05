@@ -32,29 +32,29 @@ ListItem.displayName = "ListItem";
 
 const Header = () => {
   return (
-    <header className="py-4 bg-wedding-cream/95 backdrop-blur-sm border-b sticky top-0 z-10">
+    <header className="py-4 bg-wedding-black backdrop-blur-sm border-b border-white/10 sticky top-0 z-10">
       <div className="container">
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center">
-            <img src="/lovable-uploads/d212cd91-6c48-4581-b66d-302d10e17ad9.png" alt="Mariable Logo" className="h-20 w-auto" />
+            <img src="/lovable-uploads/3768f435-13c3-49a1-bbb3-87acf3b26cda.png" alt="Mariable Logo" className="h-20 w-auto" />
           </Link>
           
           <NavigationMenu>
             <NavigationMenuList>
               <NavigationMenuItem>
-                <NavigationMenuTrigger className="bg-transparent hover:bg-wedding-cream/80 text-wedding-black">Nos Services</NavigationMenuTrigger>
+                <NavigationMenuTrigger className="bg-transparent hover:bg-wedding-black/80 text-white">Nos Services</NavigationMenuTrigger>
                 <NavigationMenuContent>
                   <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
-                    <ListItem href="#features" title="Recherche de prestataires">
+                    <ListItem href="/services/prestataires" title="Recherche de prestataires">
                       Trouvez les meilleurs prestataires adaptés à vos besoins
                     </ListItem>
-                    <ListItem href="#features" title="Planification">
+                    <ListItem href="/services/planification" title="Planification">
                       Organisez chaque étape de votre mariage sans stress
                     </ListItem>
-                    <ListItem href="#features" title="Budgétisation">
+                    <ListItem href="/services/budget" title="Budgétisation">
                       Gérez votre budget et suivez vos dépenses facilement
                     </ListItem>
-                    <ListItem href="#features" title="Conseils personnalisés">
+                    <ListItem href="/services/conseils" title="Conseils personnalisés">
                       Obtenez des recommandations adaptées à votre style et vos envies
                     </ListItem>
                   </ul>
@@ -62,16 +62,16 @@ const Header = () => {
               </NavigationMenuItem>
               
               <NavigationMenuItem>
-                <NavigationMenuTrigger className="bg-transparent hover:bg-wedding-cream/80 text-wedding-black">À propos</NavigationMenuTrigger>
+                <NavigationMenuTrigger className="bg-transparent hover:bg-wedding-black/80 text-white">À propos</NavigationMenuTrigger>
                 <NavigationMenuContent>
                   <ul className="grid w-[400px] gap-3 p-4">
-                    <ListItem href="#about" title="Notre histoire">
+                    <ListItem href="/about/histoire" title="Notre histoire">
                       Découvrez comment Mariable est né d'une passion
                     </ListItem>
-                    <ListItem href="#about" title="Notre approche">
+                    <ListItem href="/about/approche" title="Notre approche">
                       Une méthode innovante et personnalisée pour organiser votre mariage
                     </ListItem>
-                    <ListItem href="#about" title="Témoignages">
+                    <ListItem href="/about/temoignages" title="Témoignages">
                       Ce que nos clients disent de nous
                     </ListItem>
                   </ul>
@@ -79,16 +79,16 @@ const Header = () => {
               </NavigationMenuItem>
               
               <NavigationMenuItem>
-                <NavigationMenuTrigger className="bg-transparent hover:bg-wedding-cream/80 text-wedding-black">Contact</NavigationMenuTrigger>
+                <NavigationMenuTrigger className="bg-transparent hover:bg-wedding-black/80 text-white">Contact</NavigationMenuTrigger>
                 <NavigationMenuContent>
                   <ul className="grid w-[400px] gap-3 p-4">
-                    <ListItem href="#contact" title="Nous contacter">
+                    <ListItem href="/contact/nous-contacter" title="Nous contacter">
                       Discutez avec notre équipe pour toutes vos questions
                     </ListItem>
-                    <ListItem href="#contact" title="Prendre rendez-vous">
+                    <ListItem href="/contact/rendez-vous" title="Prendre rendez-vous">
                       Réservez une consultation personnalisée
                     </ListItem>
-                    <ListItem href="#contact" title="FAQ">
+                    <ListItem href="/contact/faq" title="FAQ">
                       Réponses aux questions fréquemment posées
                     </ListItem>
                   </ul>

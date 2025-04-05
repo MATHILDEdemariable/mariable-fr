@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { Link } from 'react-router-dom';
 import ChatInterface from '@/components/ChatInterface';
 import Header from '@/components/Header';
 import { ArrowRight, Sparkles, Calendar, MapPin, Heart } from 'lucide-react';
@@ -26,11 +27,24 @@ const Index = () => {
                 Mariable révolutionne l'organisation de votre mariage en vous connectant instantanément avec les meilleurs prestataires adaptés à vos envies et votre budget.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                <Button size="lg" className="gap-2 bg-wedding-black hover:bg-wedding-black/90 text-white">
-                  Commencer <ArrowRight size={16} />
+                <Button 
+                  size="lg" 
+                  className="gap-2 bg-wedding-black hover:bg-wedding-black/90 text-white"
+                  asChild
+                >
+                  <Link to="/commencer">
+                    Commencer <ArrowRight size={16} />
+                  </Link>
                 </Button>
-                <Button size="lg" variant="outline" className="border-wedding-black text-wedding-black hover:bg-wedding-black/10">
-                  En savoir plus
+                <Button 
+                  size="lg" 
+                  variant="outline" 
+                  className="border-wedding-black text-wedding-black hover:bg-wedding-black/10"
+                  asChild
+                >
+                  <Link to="/about/histoire">
+                    En savoir plus
+                  </Link>
                 </Button>
               </div>
             </div>
@@ -91,8 +105,14 @@ const Index = () => {
             <p className="text-lg text-white/80 mb-8 max-w-2xl mx-auto">
               Posez-nous vos questions sur les prestataires, lieux, et tout ce qui concerne votre grand jour. Mariable est là pour vous guider.
             </p>
-            <Button size="lg" className="bg-white hover:bg-white/90 text-wedding-black">
-              Essayer Mariable maintenant
+            <Button 
+              size="lg" 
+              className="bg-white hover:bg-white/90 text-wedding-black"
+              asChild
+            >
+              <Link to="/commencer">
+                Essayer Mariable maintenant
+              </Link>
             </Button>
           </div>
         </section>
@@ -102,11 +122,11 @@ const Index = () => {
         <div className="container">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center gap-2 mb-4 md:mb-0">
-              <img src="/lovable-uploads/d212cd91-6c48-4581-b66d-302d10e17ad9.png" alt="Mariable Logo" className="h-10 w-auto" />
+              <img src="/lovable-uploads/3768f435-13c3-49a1-bbb3-87acf3b26cda.png" alt="Mariable Logo" className="h-10 w-auto" />
               <p className="font-serif text-xl">Mariable</p>
             </div>
             <p className="text-sm text-white/70">
-              © 2025 Mariable - La révolution de l'organisation de mariage
+              © 2025 Mariable
             </p>
           </div>
         </div>

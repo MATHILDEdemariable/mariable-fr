@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -5,6 +6,19 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import EmailCapture from "./pages/EmailCapture";
+
+// Services pages
+import Prestataires from "./pages/services/Prestataires";
+import Planification from "./pages/services/Planification";
+import Budget from "./pages/services/Budget";
+import Conseils from "./pages/services/Conseils";
+
+// About pages
+import Histoire from "./pages/about/Histoire";
+
+// Contact pages
+import NousContacter from "./pages/contact/NousContacter";
 
 const queryClient = new QueryClient();
 
@@ -16,7 +30,23 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          
+          {/* Email capture page */}
+          <Route path="/commencer" element={<EmailCapture />} />
+          
+          {/* Services pages */}
+          <Route path="/services/prestataires" element={<Prestataires />} />
+          <Route path="/services/planification" element={<Planification />} />
+          <Route path="/services/budget" element={<Budget />} />
+          <Route path="/services/conseils" element={<Conseils />} />
+          
+          {/* About pages */}
+          <Route path="/about/histoire" element={<Histoire />} />
+          
+          {/* Contact pages */}
+          <Route path="/contact/nous-contacter" element={<NousContacter />} />
+          
+          {/* Catch-all route */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

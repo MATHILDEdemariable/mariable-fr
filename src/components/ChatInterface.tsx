@@ -93,8 +93,8 @@ const ChatInterface: React.FC = () => {
 
   return (
     <div className="w-full h-[500px] flex flex-col bg-white">
-      <div className="p-4 bg-wedding-green/10 border-b flex items-center justify-center">
-        <p className="text-center text-lg font-serif text-wedding-green">Demandez-nous n'importe quoi</p>
+      <div className="p-4 bg-wedding-cream/30 border-b flex items-center justify-center">
+        <p className="text-center text-lg font-serif text-wedding-black">Dites oui à la simplicité</p>
       </div>
       <div className="flex-grow p-0 relative overflow-hidden">
         <ScrollArea className="h-[400px] p-4">
@@ -131,7 +131,7 @@ const ChatInterface: React.FC = () => {
             disabled={isLoading}
             className="flex-grow"
           />
-          <Button type="submit" disabled={isLoading || !inputValue.trim()} className="bg-wedding-green hover:bg-wedding-green/90">
+          <Button type="submit" disabled={isLoading || !inputValue.trim()} className="bg-wedding-black hover:bg-wedding-black/90 text-white">
             <SendHorizontal className="h-4 w-4" />
           </Button>
         </form>
