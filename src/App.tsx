@@ -16,9 +16,12 @@ import Conseils from "./pages/services/Conseils";
 
 // About pages
 import Histoire from "./pages/about/Histoire";
+import Charte from "./pages/about/Charte";
+import Temoignages from "./pages/about/Temoignages";
 
 // Contact pages
 import NousContacter from "./pages/contact/NousContacter";
+import FAQ from "./pages/contact/FAQ";
 
 const queryClient = new QueryClient();
 
@@ -42,9 +45,12 @@ const App = () => (
           
           {/* About pages */}
           <Route path="/about/histoire" element={<Histoire />} />
+          <Route path="/about/charte" element={<Charte />} />
+          <Route path="/about/temoignages" element={<Temoignages />} />
           
           {/* Contact pages */}
           <Route path="/contact/nous-contacter" element={<NousContacter />} />
+          <Route path="/contact/faq" element={<FAQ />} />
           
           {/* Catch-all route */}
           <Route path="*" element={<NotFound />} />

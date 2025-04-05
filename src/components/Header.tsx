@@ -100,7 +100,7 @@ const Header = () => {
                       <ListItem href="/about/histoire" title="Notre histoire">
                         Découvrez comment Mariable est né d'une passion
                       </ListItem>
-                      <ListItem href="/about/approche" title="Notre approche">
+                      <ListItem href="/about/charte" title="Notre charte">
                         Une méthode innovante et personnalisée pour organiser votre mariage
                       </ListItem>
                       <ListItem href="/about/temoignages" title="Témoignages">
