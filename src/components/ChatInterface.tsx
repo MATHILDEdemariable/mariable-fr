@@ -1,7 +1,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { SendHorizontal } from 'lucide-react';
@@ -9,6 +9,7 @@ import { Message as MessageType, VendorRecommendation } from '@/types';
 import Message from './Message';
 import { sendMessage } from '@/services/chatService';
 import { v4 as uuidv4 } from 'uuid';
+import { useToast } from "@/hooks/use-toast";
 
 const ChatInterface: React.FC = () => {
   const [messages, setMessages] = useState<MessageType[]>([
@@ -24,6 +25,7 @@ const ChatInterface: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
 
   useEffect(() => {
     // Focus the input field when the component mounts
@@ -78,6 +80,12 @@ const ChatInterface: React.FC = () => {
     } catch (error) {
       console.error('Error sending message:', error);
       
+      toast({
+        title: "Erreur",
+        description: "Impossible de communiquer avec le service de chat. Veuillez réessayer.",
+        variant: "destructive"
+      });
+      
       const errorMessage: MessageType = {
         id: uuidv4(),
         role: 'assistant',
@@ -93,7 +101,7 @@ const ChatInterface: React.FC = () => {
 
   return (
     <div className="w-full h-[500px] flex flex-col bg-white">
-      <div className="p-4 bg-wedding-cream/30 border-b flex items-center justify-center">
+      <div className="p-4 bg-white border-b flex items-center justify-center">
         <p className="text-center text-lg font-serif text-wedding-black">Dites oui à la simplicité</p>
       </div>
       <div className="flex-grow p-0 relative overflow-hidden">
@@ -131,7 +139,7 @@ const ChatInterface: React.FC = () => {
             disabled={isLoading}
             className="flex-grow"
           />
-          <Button type="submit" disabled={isLoading || !inputValue.trim()} className="bg-wedding-black hover:bg-wedding-black/90 text-white">
+          <Button type="submit" disabled={isLoading || !inputValue.trim()} className="bg-wedding-olive hover:bg-wedding-olive/90 text-white">
             <SendHorizontal className="h-4 w-4" />
           </Button>
         </form>
