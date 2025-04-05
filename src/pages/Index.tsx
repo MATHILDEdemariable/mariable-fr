@@ -3,7 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import ChatInterface from '@/components/ChatInterface';
 import Header from '@/components/Header';
-import { ArrowRight, Sparkles, Calendar, MapPin, Heart } from 'lucide-react';
+import { ArrowRight, Sparkles, Calendar, MapPin, Heart, Facebook, Instagram, Twitter, Mail, Phone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const Index = () => {
@@ -118,16 +118,78 @@ const Index = () => {
         </section>
       </main>
       
-      <footer id="about" className="py-8 border-t bg-wedding-black text-white">
+      <footer className="py-12 bg-wedding-black text-white">
         <div className="container">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="flex items-center gap-2 mb-4 md:mb-0">
-              <img src="/lovable-uploads/3768f435-13c3-49a1-bbb3-87acf3b26cda.png" alt="Mariable Logo" className="h-10 w-auto" />
-              <p className="font-serif text-xl">Mariable</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div>
+              <div className="flex items-center gap-2 mb-4">
+                <img src="/lovable-uploads/3768f435-13c3-49a1-bbb3-87acf3b26cda.png" alt="Mariable Logo" className="h-12 w-auto" />
+              </div>
+              <p className="mb-4 text-white/70">
+                Mariable est votre partenaire privilégié pour créer le mariage de vos rêves, en simplifiant chaque étape de l'organisation.
+              </p>
+              <div className="flex gap-4">
+                <a href="https://facebook.com" aria-label="Facebook" className="text-white hover:text-wedding-cream">
+                  <Facebook size={20} />
+                </a>
+                <a href="https://instagram.com" aria-label="Instagram" className="text-white hover:text-wedding-cream">
+                  <Instagram size={20} />
+                </a>
+                <a href="https://twitter.com" aria-label="Twitter" className="text-white hover:text-wedding-cream">
+                  <Twitter size={20} />
+                </a>
+              </div>
             </div>
-            <p className="text-sm text-white/70">
-              © 2025 Mariable
+            
+            <div>
+              <h3 className="font-serif text-lg mb-4">Liens Rapides</h3>
+              <ul className="space-y-2">
+                <li><Link to="/" className="text-white/70 hover:text-white">Accueil</Link></li>
+                <li><Link to="/services/prestataires" className="text-white/70 hover:text-white">Prestataires</Link></li>
+                <li><Link to="/services/planification" className="text-white/70 hover:text-white">Planification</Link></li>
+                <li><Link to="/services/budget" className="text-white/70 hover:text-white">Budget</Link></li>
+                <li><Link to="/services/conseils" className="text-white/70 hover:text-white">Conseils</Link></li>
+              </ul>
+            </div>
+            
+            <div>
+              <h3 className="font-serif text-lg mb-4">À Propos</h3>
+              <ul className="space-y-2">
+                <li><Link to="/about/histoire" className="text-white/70 hover:text-white">Notre Histoire</Link></li>
+                <li><Link to="/about/approche" className="text-white/70 hover:text-white">Notre Approche</Link></li>
+                <li><Link to="/about/temoignages" className="text-white/70 hover:text-white">Témoignages</Link></li>
+                <li><Link to="/contact/nous-contacter" className="text-white/70 hover:text-white">Nous Contacter</Link></li>
+              </ul>
+            </div>
+            
+            <div>
+              <h3 className="font-serif text-lg mb-4">Contact</h3>
+              <ul className="space-y-3">
+                <li className="flex items-start">
+                  <MapPin className="mr-2 h-5 w-5 text-wedding-cream shrink-0 mt-0.5" />
+                  <span className="text-white/70">123 Rue du Mariage, 75001 Paris, France</span>
+                </li>
+                <li className="flex items-center">
+                  <Phone className="mr-2 h-5 w-5 text-wedding-cream shrink-0" />
+                  <span className="text-white/70">+33 1 23 45 67 89</span>
+                </li>
+                <li className="flex items-center">
+                  <Mail className="mr-2 h-5 w-5 text-wedding-cream shrink-0" />
+                  <span className="text-white/70">contact@mariable.com</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+          
+          <div className="mt-12 pt-6 border-t border-white/10 flex flex-col md:flex-row justify-between items-center">
+            <p className="text-sm text-white/70 mb-4 md:mb-0">
+              © 2025 Mariable - Tous droits réservés
             </p>
+            <div className="flex gap-6">
+              <Link to="/mentions-legales" className="text-sm text-white/70 hover:text-white">Mentions Légales</Link>
+              <Link to="/politique-confidentialite" className="text-sm text-white/70 hover:text-white">Politique de Confidentialité</Link>
+              <Link to="/cgv" className="text-sm text-white/70 hover:text-white">CGV</Link>
+            </div>
           </div>
         </div>
       </footer>
