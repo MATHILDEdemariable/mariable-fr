@@ -82,7 +82,7 @@ const ChatInterface: React.FC = () => {
       
       toast({
         title: "Erreur",
-        description: "Impossible de communiquer avec le service de chat. Veuillez réessayer.",
+        description: "Impossible de communiquer avec le service de chat ou de récupérer les données Airtable. Veuillez réessayer.",
         variant: "destructive"
       });
       

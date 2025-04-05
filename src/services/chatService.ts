@@ -1,9 +1,43 @@
 
 import { ChatResponse, Message, Vendor } from '@/types';
-import vendorsData from '@/data/vendors.json';
+import Airtable from 'airtable';
 
 // OpenAI API key
 const OPENAI_API_KEY = "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";
+
+// Airtable configuration
+const AIRTABLE_API_KEY = "patKRPehVjsVYx5hN.4afd30d3b43ca4badd8fdaeda35303d6a1775aaa2f968e6d2bc0d25651de4aca";
+const AIRTABLE_BASE_ID = "appGkKwY7kUppwC9k";
+const AIRTABLE_TABLE_NAME = "Vendors";
+
+// Configure Airtable
+Airtable.configure({
+  apiKey: AIRTABLE_API_KEY
+});
+const base = Airtable.base(AIRTABLE_BASE_ID);
+const vendorsTable = base(AIRTABLE_TABLE_NAME);
+
+// Function to fetch vendors from Airtable
+const fetchVendorsFromAirtable = async (): Promise<Vendor[]> => {
+  try {
+    const records = await vendorsTable.select().all();
+    
+    return records.map(record => {
+      const fields = record.fields;
+      return {
+        nom: fields.nom as string,
+        type: fields.type as string,
+        lieu: fields.lieu as string,
+        style: fields.style ? (Array.isArray(fields.style) ? fields.style as string[] : [fields.style as string]) : [],
+        budget: Number(fields.budget),
+        lien: fields.lien as string
+      };
+    });
+  } catch (error) {
+    console.error("Error fetching vendors from Airtable:", error);
+    return [];
+  }
+};
 
 // Function to process messages through OpenAI
 const processWithOpenAI = async (messages: Message[]): Promise<string> => {
@@ -52,6 +86,9 @@ export const sendMessage = async (messages: Message[]): Promise<ChatResponse> =>
   try {
     // Process the conversation with OpenAI
     const aiResponse = await processWithOpenAI(messages);
+    
+    // Fetch vendors from Airtable
+    const vendors = await fetchVendorsFromAirtable();
     
     // Process the user message and find relevant vendors
     const userQuery = latestUserMessage.content.toLowerCase();
@@ -118,7 +155,7 @@ export const sendMessage = async (messages: Message[]): Promise<ChatResponse> =>
     }
     
     // Filter vendors based on extracted criteria
-    let filteredVendors: Vendor[] = JSON.parse(JSON.stringify(vendorsData));
+    let filteredVendors = [...vendors];
     
     if (location) {
       filteredVendors = filteredVendors.filter(vendor => 
@@ -148,19 +185,19 @@ export const sendMessage = async (messages: Message[]): Promise<ChatResponse> =>
     if (filteredVendors.length === 0) {
       // If they mentioned a location, show all vendors in that location
       if (location) {
-        filteredVendors = (vendorsData as Vendor[]).filter(vendor => 
+        filteredVendors = vendors.filter(vendor => 
           vendor.lieu.toLowerCase() === location
         );
       }
       // If they mentioned a type, show all vendors of that type
       else if (vendorType) {
-        filteredVendors = (vendorsData as Vendor[]).filter(vendor => 
+        filteredVendors = vendors.filter(vendor => 
           vendor.type.toLowerCase() === vendorType.toLowerCase()
         );
       }
       // Default to showing venues if no other criteria matched
       else if (userQuery.includes('mariage') || userQuery.includes('marié')) {
-        filteredVendors = (vendorsData as Vendor[]).filter(vendor => 
+        filteredVendors = vendors.filter(vendor => 
           vendor.type === 'Lieu'
         );
       }
