@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { VendorRecommendation } from '@/types';
-import { FileText } from 'lucide-react';
+import { FileText, Image } from 'lucide-react';
 import VendorInfoModal from './VendorInfoModal';
 
 interface VendorCardProps {
@@ -18,6 +18,19 @@ export const VendorCard: React.FC<VendorCardProps> = ({ recommendation }) => {
   return (
     <>
       <Card className="vendor-card overflow-hidden border-wedding-olive/30 hover:shadow-md transition-all">
+        {vendor.image ? (
+          <div className="relative w-full h-32 overflow-hidden">
+            <img 
+              src={vendor.image} 
+              alt={vendor.nom} 
+              className="w-full h-full object-cover"
+            />
+          </div>
+        ) : (
+          <div className="w-full h-32 bg-gray-200 flex items-center justify-center">
+            <Image className="w-8 h-8 text-gray-400" />
+          </div>
+        )}
         <CardHeader className="pb-2">
           <div className="flex justify-between items-start">
             <div>
@@ -30,7 +43,7 @@ export const VendorCard: React.FC<VendorCardProps> = ({ recommendation }) => {
               </CardDescription>
             </div>
             <Badge variant="secondary" className="ml-2">
-              {vendor.budget}€
+              {vendor.budget}€{vendor.type === 'Traiteur' ? '/pers' : ''}
             </Badge>
           </div>
         </CardHeader>

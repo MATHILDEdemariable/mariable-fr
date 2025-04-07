@@ -1,11 +1,52 @@
 
 [
   {
+    "id": 1,
+    "nom": "Lumière & Émotion",
+    "type": "Photographe",
+    "lieu": "Lyon",
+    "style": ["romantique", "fine art"],
+    "budget": 1800,
+    "image": "/lovable-uploads/c1b39e22-fe32-4dc7-8f94-fbb929ae43fa.png",
+    "lien": "http://lumiereemotion.fr"
+  },
+  {
+    "id": 2,
+    "nom": "Chef Passion",
+    "type": "Traiteur",
+    "lieu": "Marseille",
+    "style": ["méditerranéen", "raffiné"],
+    "budget": 65,
+    "image": "/lovable-uploads/c1b39e22-fe32-4dc7-8f94-fbb929ae43fa.png",
+    "lien": "http://chefpassion.fr"
+  },
+  {
+    "id": 3,
+    "nom": "DJ Sunrise",
+    "type": "DJ",
+    "lieu": "Bordeaux",
+    "style": ["moderne", "mix international"],
+    "budget": 1200,
+    "image": "/lovable-uploads/c1b39e22-fe32-4dc7-8f94-fbb929ae43fa.png",
+    "lien": "http://djsunrise.fr"
+  },
+  {
+    "id": 4,
+    "nom": "La Tente Bohème",
+    "type": "Décoration",
+    "lieu": "Paris",
+    "style": ["bohème chic"],
+    "budget": 2500,
+    "image": "/lovable-uploads/c1b39e22-fe32-4dc7-8f94-fbb929ae43fa.png",
+    "lien": "http://latenteboheme.fr"
+  },
+  {
     "nom": "Domaine de la Forêt",
     "type": "Lieu",
     "lieu": "Bourgogne",
     "style": ["champêtre", "nature"],
     "budget": 4500,
+    "image": "/lovable-uploads/c1b39e22-fe32-4dc7-8f94-fbb929ae43fa.png",
     "lien": "http://domainedelaforet.fr"
   },
   {
@@ -14,23 +55,8 @@
     "lieu": "Bourgogne",
     "style": ["élégant", "luxe"],
     "budget": 7500,
+    "image": "/lovable-uploads/c1b39e22-fe32-4dc7-8f94-fbb929ae43fa.png",
     "lien": "http://chateaudevarennes.fr"
-  },
-  {
-    "nom": "Domaine des Cépages",
-    "type": "Lieu",
-    "lieu": "Bourgogne",
-    "style": ["viticole", "rustique"],
-    "budget": 3200,
-    "lien": "http://domainedescepoages.fr"
-  },
-  {
-    "nom": "Manoir du Lac",
-    "type": "Lieu",
-    "lieu": "Normandie",
-    "style": ["historique", "bord de lac"],
-    "budget": 5000,
-    "lien": "http://manoirdulac.fr"
   },
   {
     "nom": "Fleurs de Provence",
@@ -38,6 +64,7 @@
     "lieu": "Provence",
     "style": ["romantique", "provence"],
     "budget": 1200,
+    "image": "/lovable-uploads/c1b39e22-fe32-4dc7-8f94-fbb929ae43fa.png",
     "lien": "http://fleursdeprovence.fr"
   },
   {
@@ -46,78 +73,7 @@
     "lieu": "Île-de-France",
     "style": ["moderne", "minimaliste"],
     "budget": 1500,
+    "image": "/lovable-uploads/c1b39e22-fe32-4dc7-8f94-fbb929ae43fa.png",
     "lien": "http://bouquetsetcie.fr"
-  },
-  {
-    "nom": "Fleurs de Saison",
-    "type": "Fleuriste",
-    "lieu": "Bourgogne",
-    "style": ["champêtre", "rustique"],
-    "budget": 800,
-    "lien": "http://fleursdesaison.fr"
-  },
-  {
-    "nom": "Chef Antoine",
-    "type": "Traiteur",
-    "lieu": "Bourgogne",
-    "style": ["gastronomique", "traditionnel"],
-    "budget": 120,
-    "lien": "http://chef-antoine.fr"
-  },
-  {
-    "nom": "Le Festin",
-    "type": "Traiteur",
-    "lieu": "Bourgogne",
-    "style": ["buffet", "convivial"],
-    "budget": 75,
-    "lien": "http://lefestin.fr"
-  },
-  {
-    "nom": "Saveurs du Terroir",
-    "type": "Traiteur",
-    "lieu": "Alsace",
-    "style": ["local", "terroir"],
-    "budget": 90,
-    "lien": "http://saveursduterroir.fr"
-  },
-  {
-    "nom": "InstaPhoto",
-    "type": "Photographe",
-    "lieu": "Bourgogne",
-    "style": ["reportage", "naturel"],
-    "budget": 1800,
-    "lien": "http://instaphoto.fr"
-  },
-  {
-    "nom": "Pixel Perfect",
-    "type": "Photographe",
-    "lieu": "Paris",
-    "style": ["artistique", "mode"],
-    "budget": 2500,
-    "lien": "http://pixelperfect.fr"
-  },
-  {
-    "nom": "Lumière Douce",
-    "type": "Photographe",
-    "lieu": "Bretagne",
-    "style": ["romantique", "poétique"],
-    "budget": 1600,
-    "lien": "http://lumièredouce.fr"
-  },
-  {
-    "nom": "Wedding Cake Studio",
-    "type": "Pâtissier",
-    "lieu": "Bourgogne",
-    "style": ["moderne", "design"],
-    "budget": 600,
-    "lien": "http://weddingcakestudio.fr"
-  },
-  {
-    "nom": "Douceurs & Merveilles",
-    "type": "Pâtissier",
-    "lieu": "Lyon",
-    "style": ["gourmand", "traditionnel"],
-    "budget": 450,
-    "lien": "http://douceursetmerveilles.fr"
   }
 ]

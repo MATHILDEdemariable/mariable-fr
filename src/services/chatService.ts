@@ -1,43 +1,9 @@
 
-import { ChatResponse, Message, Vendor } from '@/types';
-import Airtable from 'airtable';
+import { ChatResponse, Message, Vendor, VendorRecommendation } from '@/types';
+import vendorsData from '@/data/vendors.json';
 
 // OpenAI API key
 const OPENAI_API_KEY = "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";
-
-// Airtable configuration
-const AIRTABLE_API_KEY = "patKRPehVjsVYx5hN.4afd30d3b43ca4badd8fdaeda35303d6a1775aaa2f968e6d2bc0d25651de4aca";
-const AIRTABLE_BASE_ID = "appGkKwY7kUppwC9k";
-const AIRTABLE_TABLE_NAME = "Vendors";
-
-// Configure Airtable
-Airtable.configure({
-  apiKey: AIRTABLE_API_KEY
-});
-const base = Airtable.base(AIRTABLE_BASE_ID);
-const vendorsTable = base(AIRTABLE_TABLE_NAME);
-
-// Function to fetch vendors from Airtable
-const fetchVendorsFromAirtable = async (): Promise<Vendor[]> => {
-  try {
-    const records = await vendorsTable.select().all();
-    
-    return records.map(record => {
-      const fields = record.fields;
-      return {
-        nom: fields.nom as string,
-        type: fields.type as string,
-        lieu: fields.lieu as string,
-        style: fields.style ? (Array.isArray(fields.style) ? fields.style as string[] : [fields.style as string]) : [],
-        budget: Number(fields.budget),
-        lien: fields.lien as string
-      };
-    });
-  } catch (error) {
-    console.error("Error fetching vendors from Airtable:", error);
-    return [];
-  }
-};
 
 // Function to process messages through OpenAI
 const processWithOpenAI = async (messages: Message[]): Promise<string> => {
@@ -74,7 +40,7 @@ const processWithOpenAI = async (messages: Message[]): Promise<string> => {
   }
 };
 
-// This would normally call the backend API, but for now we'll simulate it
+// This would normally call the backend API, but for now we'll use our local database
 export const sendMessage = async (messages: Message[]): Promise<ChatResponse> => {
   // Get the latest user message
   const latestUserMessage = messages.filter(m => m.role === 'user').pop();
@@ -87,34 +53,34 @@ export const sendMessage = async (messages: Message[]): Promise<ChatResponse> =>
     // Process the conversation with OpenAI
     const aiResponse = await processWithOpenAI(messages);
     
-    // Fetch vendors from Airtable
-    const vendors = await fetchVendorsFromAirtable();
+    // Load vendors from local JSON
+    const vendors = vendorsData as Vendor[];
     
     // Process the user message and find relevant vendors
     const userQuery = latestUserMessage.content.toLowerCase();
     
     // Extract potential information from the user query
-    const locationMatches = userQuery.match(/en ([a-zÀ-ÿ]+)/i);
+    const locationMatches = userQuery.match(/(?:à|en) ([a-zÀ-ÿ]+)/i);
     const locationKeywords = [
       'bourgogne', 'normandie', 'provence', 'alsace', 'bretagne', 
-      'paris', 'lyon', 'île-de-france'
+      'paris', 'lyon', 'marseille', 'bordeaux', 'île-de-france'
     ];
     
     const budgetMatches = userQuery.match(/budget(?:\s+de)?\s+(\d+)(?:\s*[€k])/i);
     
     const typeKeywords: Record<string, string[]> = {
-      'lieu': ['lieu', 'salle', 'domaine', 'château', 'endroit', 'emplacement'],
-      'fleuriste': ['fleur', 'fleuriste', 'bouquet', 'décoration florale'],
-      'traiteur': ['traiteur', 'repas', 'nourriture', 'cuisine', 'menu', 'chef'],
       'photographe': ['photo', 'photographe', 'reportage', 'album'],
-      'pâtissier': ['gâteau', 'pâtissier', 'dessert', 'wedding cake', 'pièce montée']
+      'traiteur': ['traiteur', 'repas', 'nourriture', 'cuisine', 'menu', 'chef'],
+      'dj': ['dj', 'musique', 'soirée', 'ambiance'],
+      'décoration': ['décoration', 'déco', 'tente', 'bohème'],
+      'lieu': ['lieu', 'salle', 'domaine', 'château', 'endroit', 'emplacement'],
+      'fleuriste': ['fleur', 'fleuriste', 'bouquet', 'décoration florale']
     };
     
     const styleKeywords = [
-      'champêtre', 'nature', 'élégant', 'luxe', 'viticole', 'rustique', 
-      'historique', 'romantique', 'moderne', 'minimaliste', 'gastronomique', 
-      'traditionnel', 'buffet', 'convivial', 'local', 'terroir', 'reportage', 
-      'naturel', 'artistique', 'poétique', 'design', 'gourmand'
+      'romantique', 'fine art', 'méditerranéen', 'raffiné', 'moderne', 
+      'mix international', 'bohème chic', 'champêtre', 'nature', 'élégant', 
+      'luxe', 'provence', 'minimaliste'
     ];
     
     // Gather filter criteria
@@ -177,7 +143,7 @@ export const sendMessage = async (messages: Message[]): Promise<ChatResponse> =>
     
     if (styles.length > 0) {
       filteredVendors = filteredVendors.filter(vendor => 
-        vendor.style.some(s => styles.includes(s))
+        vendor.style.some(s => styles.includes(s.toLowerCase()))
       );
     }
     
@@ -195,11 +161,19 @@ export const sendMessage = async (messages: Message[]): Promise<ChatResponse> =>
           vendor.type.toLowerCase() === vendorType.toLowerCase()
         );
       }
-      // Default to showing venues if no other criteria matched
+      // Default to showing a mix of vendors if no other criteria matched
       else if (userQuery.includes('mariage') || userQuery.includes('marié')) {
-        filteredVendors = vendors.filter(vendor => 
-          vendor.type === 'Lieu'
-        );
+        // Get 3 random vendors of different types
+        const types = Array.from(new Set(vendors.map(v => v.type)));
+        filteredVendors = [];
+        
+        for (const type of types.slice(0, 3)) {
+          const vendorsOfType = vendors.filter(v => v.type === type);
+          if (vendorsOfType.length > 0) {
+            const randomIndex = Math.floor(Math.random() * vendorsOfType.length);
+            filteredVendors.push(vendorsOfType[randomIndex]);
+          }
+        }
       }
     }
     
@@ -207,16 +181,14 @@ export const sendMessage = async (messages: Message[]): Promise<ChatResponse> =>
     filteredVendors = filteredVendors.slice(0, 3);
     
     // Generate recommendations with reasons
-    const recommendations = filteredVendors.map(vendor => {
-      let reason = `Ce ${vendor.type.toLowerCase()} en ${vendor.lieu}`;
+    const recommendations: VendorRecommendation[] = filteredVendors.map(vendor => {
+      let reason = `Ce ${vendor.type.toLowerCase()} à ${vendor.lieu}`;
       
       if (vendor.style && vendor.style.length > 0) {
         reason += ` offre un style ${vendor.style.join(' et ')}`;
       }
       
-      if (vendor.type === 'Lieu') {
-        reason += ` pour un budget de ${vendor.budget}€`;
-      } else if (vendor.type === 'Traiteur') {
+      if (vendor.type === 'Traiteur') {
         reason += ` à partir de ${vendor.budget}€ par personne`;
       } else {
         reason += ` à partir de ${vendor.budget}€`;

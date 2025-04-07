@@ -7,11 +7,13 @@ export interface Message {
 }
 
 export interface Vendor {
+  id?: number;
   nom: string;
   type: string;
   lieu: string;
   style: string[];
   budget: number;
+  image?: string;
   lien: string;
 }
 
