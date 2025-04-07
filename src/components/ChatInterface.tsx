@@ -23,7 +23,6 @@ const ChatInterface: React.FC = () => {
   const [recommendations, setRecommendations] = useState<Record<string, VendorRecommendation[]>>({});
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [conversationState, setConversationState] = useState('start');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
@@ -59,42 +58,20 @@ const ChatInterface: React.FC = () => {
     setIsLoading(true);
     
     try {
-      let nextQuestion = "";
-      let nextState = conversationState;
-      
-      if (conversationState === 'start') {
-        nextQuestion = "Merci de partager cela ! Où souhaiteriez-vous célébrer votre mariage ? (une région, ville ou un lieu spécifique)";
-        nextState = 'location';
-      } else if (conversationState === 'location') {
-        nextQuestion = "Super ! Avez-vous déjà fixé une date ou avez-vous une période idéale pour votre mariage ?";
-        nextState = 'date';
-      } else if (conversationState === 'date') {
-        nextQuestion = "Parfait ! Quel type de prestataires recherchez-vous en priorité ? (photographe, traiteur, DJ, lieu de réception...)";
-        nextState = 'vendorType';
-      } else if (conversationState === 'vendorType') {
-        nextQuestion = "Excellent choix ! Quel est votre budget approximatif pour ce prestataire ?";
-        nextState = 'budget';
-      } else if (conversationState === 'budget') {
-        nextQuestion = "Merci pour toutes ces informations ! Voici quelques prestataires qui pourraient correspondre à vos critères. Cliquez sur 'En savoir plus' pour accéder aux coordonnées complètes.";
-        nextState = 'recommendations';
-      } else {
-        nextState = 'follow-up';
-      }
-      
-      setConversationState(nextState);
-      
+      // Directly get recommendations based on the user's first message
       const response = await sendMessage([...messages, userMessage]);
       
       const assistantMessage: MessageType = {
         id: uuidv4(),
         role: 'assistant',
-        content: nextState === 'recommendations' || nextState === 'follow-up' ? response.message : nextQuestion,
+        content: response.message,
         timestamp: new Date()
       };
       
       setMessages(prev => [...prev, assistantMessage]);
       
-      if (response.recommendations && (nextState === 'recommendations' || nextState === 'follow-up')) {
+      // Add recommendations if they exist
+      if (response.recommendations && response.recommendations.length > 0) {
         setRecommendations(prev => ({
           ...prev,
           [assistantMessage.id]: response.recommendations || []
@@ -158,12 +135,7 @@ const ChatInterface: React.FC = () => {
             ref={inputRef}
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
-            placeholder={conversationState === 'start' ? "Décrivez votre mariage idéal..." : 
-                         conversationState === 'location' ? "Ex: Bordeaux, Provence..." : 
-                         conversationState === 'date' ? "Ex: Juin 2026, été prochain..." :
-                         conversationState === 'vendorType' ? "Ex: Photographe, lieu..." :
-                         conversationState === 'budget' ? "Ex: 2000€, budget standard..." :
-                         "Posez-moi d'autres questions..."}
+            placeholder="Décrivez votre mariage idéal ou ce que vous recherchez..."
             disabled={isLoading}
             className="flex-grow"
           />
