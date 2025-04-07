@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -16,7 +15,7 @@ const ChatInterface: React.FC = () => {
     {
       id: 'welcome',
       role: 'assistant',
-      content: "Bonjour ! Je suis Nuptia, ta wedding planner virtuelle 💍 Je suis là pour t'aider à organiser le mariage de tes rêves. Commençons par quelques questions pour mieux comprendre tes besoins. Tu veux te marier où ? (une région, ville ou un lieu spécifique)",
+      content: "Bonjour ! Je suis Mathilde de Mariable 💍 En tant que wedding planner virtuelle, je suis là pour vous aider à organiser le mariage de vos rêves. N'hésitez pas à me dire ce dont vous avez besoin ! Commençons par quelques questions pour mieux vous connaître. Où souhaitez-vous vous marier ? (une région, ville ou un lieu spécifique)",
       timestamp: new Date()
     }
   ]);
@@ -29,14 +28,12 @@ const ChatInterface: React.FC = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Focus the input field when the component mounts
     if (inputRef.current) {
       inputRef.current.focus();
     }
   }, []);
 
   useEffect(() => {
-    // Scroll to the bottom when messages change
     scrollToBottom();
   }, [messages, recommendations]);
 
@@ -61,28 +58,25 @@ const ChatInterface: React.FC = () => {
     setIsLoading(true);
     
     try {
-      // Get the next question based on conversation state
       let nextQuestion = "";
       let nextState = conversationState;
       
       if (conversationState === 'location') {
-        nextQuestion = "Merci ! 📅 As-tu une date déjà fixée ou une période idéale pour ton mariage ?";
+        nextQuestion = "Merci ! 📅 Avez-vous déjà fixé une date ou avez-vous une période idéale pour votre mariage ?";
         nextState = 'date';
       } else if (conversationState === 'date') {
-        nextQuestion = "Super ! Maintenant, dis-moi quel type de prestataires tu cherches en priorité ? (photographe, traiteur, DJ, lieu de réception...)";
+        nextQuestion = "Super ! Maintenant, dites-moi quel type de prestataires vous cherchez en priorité ? (photographe, traiteur, DJ, lieu de réception...)";
         nextState = 'vendorType';
       } else if (conversationState === 'vendorType') {
-        nextQuestion = "Parfait ! Dernière question : as-tu une idée de budget pour ce prestataire, ou préfères-tu qu'on s'adapte aux standards du marché ?";
+        nextQuestion = "Parfait ! Dernière question : avez-vous une idée de budget pour ce prestataire, ou préférez-vous qu'on s'adapte aux standards du marché ?";
         nextState = 'budget';
       } else if (conversationState === 'budget') {
-        nextQuestion = "Génial ! J'ai toutes les informations dont j'ai besoin. Voici quelques prestataires qui pourraient correspondre à tes critères. Tu peux cliquer sur 'Voir plus d'infos' pour accéder à leurs coordonnées complètes.";
+        nextQuestion = "Génial ! J'ai toutes les informations dont j'ai besoin. Voici quelques prestataires qui pourraient correspondre à vos critères. Cliquez sur 'Voir plus d'infos' pour accéder à leurs coordonnées complètes et créer votre compte.";
         nextState = 'recommendations';
       }
       
-      // Save the next state
       setConversationState(nextState);
       
-      // Process with API and get recommendations if needed
       const response = await sendMessage([...messages, userMessage]);
       
       const assistantMessage: MessageType = {
@@ -125,7 +119,7 @@ const ChatInterface: React.FC = () => {
   return (
     <div className="w-full h-[500px] flex flex-col bg-white">
       <div className="p-4 bg-white border-b flex items-center justify-center">
-        <p className="text-center text-lg font-serif text-wedding-black">Nuptia, ta wedding planner personnelle</p>
+        <p className="text-center text-lg font-serif text-wedding-black">Mathilde de Mariable, votre wedding planner personnelle</p>
       </div>
       <div className="flex-grow p-0 relative overflow-hidden">
         <ScrollArea className="h-[400px] p-4">

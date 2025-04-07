@@ -9,6 +9,7 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useToast } from '@/hooks/use-toast';
 import { Vendor } from '@/types';
+import { useNavigate } from 'react-router-dom';
 
 interface VendorInfoModalProps {
   isOpen: boolean;
@@ -26,6 +27,7 @@ const VendorInfoModal: React.FC<VendorInfoModalProps> = ({ isOpen, onClose, vend
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hasSubmitted, setHasSubmitted] = useState(false);
   const { toast } = useToast();
+  const navigate = useNavigate();
   
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -37,18 +39,27 @@ const VendorInfoModal: React.FC<VendorInfoModalProps> = ({ isOpen, onClose, vend
   const onSubmit = (data: FormValues) => {
     setIsSubmitting(true);
     
-    // Simulate API call to save email
+    // Simulate API call to save email and send notification to admin
     setTimeout(() => {
       setIsSubmitting(false);
       setHasSubmitted(true);
       
+      // Simulate sending email to admin
+      console.log(`Email notification sent to mathilde@mariable.fr about new user: ${data.email}`);
+      
       toast({
-        title: "Email enregistré",
-        description: "Merci pour votre intérêt, vous recevrez prochainement plus d'informations.",
+        title: "Compte créé avec succès",
+        description: "Vous allez être redirigé vers notre page de démonstration.",
       });
       
       // Reset the form
       form.reset();
+      
+      // Redirect to demo page after short delay
+      setTimeout(() => {
+        navigate('/demo');
+        onClose();
+      }, 2000);
     }, 1000);
   };
 
@@ -57,7 +68,7 @@ const VendorInfoModal: React.FC<VendorInfoModalProps> = ({ isOpen, onClose, vend
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="text-xl font-serif">
-            {hasSubmitted ? `Informations sur ${vendor.nom}` : 'Accéder aux informations'}
+            {hasSubmitted ? `Informations sur ${vendor.nom}` : 'Créer votre compte'}
           </DialogTitle>
           <DialogDescription>
             {hasSubmitted ? (
@@ -78,7 +89,7 @@ const VendorInfoModal: React.FC<VendorInfoModalProps> = ({ isOpen, onClose, vend
               </div>
             ) : (
               <p className="mt-2">
-                Pour découvrir les coordonnées et tous les détails de ce prestataire, merci d'indiquer votre adresse email 👇
+                Pour découvrir les coordonnées de ce prestataire et accéder à notre démonstration, veuillez créer votre compte en entrant votre email 👇
               </p>
             )}
           </DialogDescription>
@@ -108,7 +119,7 @@ const VendorInfoModal: React.FC<VendorInfoModalProps> = ({ isOpen, onClose, vend
                 disabled={isSubmitting}
                 className="w-full bg-wedding-olive hover:bg-wedding-olive/90 text-white"
               >
-                {isSubmitting ? "Traitement en cours..." : "Accéder aux infos"}
+                {isSubmitting ? "Création en cours..." : "Créer mon compte"}
               </Button>
             </form>
           </Form>
