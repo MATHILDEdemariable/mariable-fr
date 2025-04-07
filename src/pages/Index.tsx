@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import ChatInterface from '@/components/ChatInterface';
@@ -16,8 +17,8 @@ const Index = () => {
           {/* Image Background */}
           <div className="absolute inset-0 w-full h-full overflow-hidden z-0">
             <img
-              src="/lovable-uploads/3d59e058-b318-46af-a10b-9a239cc218e5.png"
-              alt="Couple de mariés regardant l'horizon"
+              src="/lovable-uploads/e5ba755e-f57f-420f-8885-014226913bc8.png"
+              alt="Couple de mariés marchant sous une pluie de pétales"
               className="absolute min-w-full min-h-full object-cover"
             />
             <div className="absolute inset-0 bg-wedding-black/40"></div>
@@ -33,7 +34,7 @@ const Index = () => {
                 Organisez le mariage <span className="text-wedding-cream">dont vous rêvez</span>
               </h2>
               <p className="text-white/90 text-lg mb-8 max-w-2xl mx-auto">
-                Mariable révolutionne l'organisation de votre mariage en vous connectant instantanément avec les meilleurs prestataires adaptés à vos envies et votre budget.
+                Avec Mariable, organiser un mariage devient simple, rapide & agréable. Nous vous connectons instantanément avec les meilleurs prestataires adaptés à vos envies et votre budget.
               </p>
               <div className="flex flex-col sm:flex-row justify-center gap-4 pt-4">
                 <Button 
@@ -48,7 +49,7 @@ const Index = () => {
                 <Button 
                   size="lg" 
                   variant="outline" 
-                  className="border-white text-white hover:bg-white/10"
+                  className="border-white text-black hover:bg-white/10"
                   asChild
                 >
                   <Link to="/about/histoire">
