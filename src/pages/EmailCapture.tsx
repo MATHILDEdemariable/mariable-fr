@@ -8,10 +8,11 @@ import { Link } from 'react-router-dom';
 import { Facebook, Instagram, Twitter, Mail, Phone, MapPin } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { FormField, FormItem, FormLabel, FormControl, Form } from "@/components/ui/form";
+import { FormField, FormItem, FormLabel, FormControl, Form, FormMessage } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { saveInscription, sendConfirmationEmail } from '@/services/inscriptionService';
 
 const formSchema = z.object({
   firstName: z.string().min(2, { message: "Le prénom doit contenir au moins 2 caractères" }),
@@ -43,25 +44,38 @@ const EmailCapture = () => {
     },
   });
 
-  const onSubmit = (data: FormValues) => {
+  const onSubmit = async (data: FormValues) => {
     setIsSubmitting(true);
     
-    setTimeout(() => {
-      console.log(`Email notification sent to mathilde@mariable.fr:
-      Nouvel utilisateur inscrit:
-      Prénom: ${data.firstName}
-      Nom: ${data.lastName}
-      Email: ${data.email}
-      Type: ${data.userType === "couple" ? "Futurs mariés" : "Professionnel"}`);
+    try {
+      const inscriptionSaved = await saveInscription(data);
       
+      const emailSent = await sendConfirmationEmail(data);
+      
+      if (inscriptionSaved && emailSent) {
+        toast({
+          title: "Inscription réussie",
+          description: "Merci pour votre inscription ! Nous vous contacterons bientôt.",
+        });
+        navigate('/demo');
+      } else {
+        toast({
+          title: "Inscription partielle",
+          description: "Votre inscription a été enregistrée mais nous avons rencontré un problème lors de l'envoi de la notification.",
+          variant: "warning",
+        });
+        navigate('/demo');
+      }
+    } catch (error) {
+      console.error('Erreur lors de l\'inscription:', error);
       toast({
-        title: "Inscription réussie",
-        description: "Merci pour votre inscription ! Nous vous contacterons bientôt.",
+        title: "Erreur",
+        description: "Une erreur est survenue lors de votre inscription. Veuillez réessayer ultérieurement.",
+        variant: "destructive",
       });
-      
+    } finally {
       setIsSubmitting(false);
-      navigate('/demo');
-    }, 1500);
+    }
   };
 
   return (
@@ -94,6 +108,7 @@ const EmailCapture = () => {
                       <FormControl>
                         <Input placeholder="Votre prénom" {...field} />
                       </FormControl>
+                      <FormMessage />
                     </FormItem>
                   )}
                 />
@@ -107,6 +122,7 @@ const EmailCapture = () => {
                       <FormControl>
                         <Input placeholder="Votre nom" {...field} />
                       </FormControl>
+                      <FormMessage />
                     </FormItem>
                   )}
                 />
@@ -125,6 +141,7 @@ const EmailCapture = () => {
                         {...field} 
                       />
                     </FormControl>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -151,6 +168,7 @@ const EmailCapture = () => {
                         </div>
                       </RadioGroup>
                     </FormControl>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
