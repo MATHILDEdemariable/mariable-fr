@@ -24,6 +24,9 @@ import Approche from "./pages/about/Approche";
 import NousContacter from "./pages/contact/NousContacter";
 import FAQ from "./pages/contact/FAQ";
 
+// Demo page
+import Demo from "./pages/Demo";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -53,6 +56,9 @@ const App = () => (
           {/* Contact pages */}
           <Route path="/contact/nous-contacter" element={<NousContacter />} />
           <Route path="/contact/faq" element={<FAQ />} />
+          
+          {/* Demo page */}
+          <Route path="/demo" element={<Demo />} />
           
           {/* Catch-all route */}
           <Route path="*" element={<NotFound />} />

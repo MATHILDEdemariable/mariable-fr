@@ -17,11 +17,11 @@ export const VendorCard: React.FC<VendorCardProps> = ({ recommendation }) => {
   
   return (
     <>
-      <Card className="vendor-card overflow-hidden">
+      <Card className="vendor-card overflow-hidden border-wedding-olive/30 hover:shadow-md transition-all">
         <CardHeader className="pb-2">
           <div className="flex justify-between items-start">
             <div>
-              <CardTitle className="text-lg">{vendor.nom}</CardTitle>
+              <CardTitle className="text-lg">💍 {vendor.nom}</CardTitle>
               <CardDescription className="flex items-center gap-2">
                 <Badge variant="outline" className="bg-secondary/30">
                   {vendor.type}
