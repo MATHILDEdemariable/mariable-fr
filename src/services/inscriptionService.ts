@@ -8,7 +8,7 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-interface InscriptionData {
+export interface InscriptionData {
   firstName: string;
   lastName: string;
   email: string;

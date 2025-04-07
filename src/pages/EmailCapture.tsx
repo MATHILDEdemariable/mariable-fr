@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
@@ -12,7 +13,7 @@ import { FormField, FormItem, FormLabel, FormControl, Form, FormMessage } from "
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { saveInscription, sendConfirmationEmail } from '@/services/inscriptionService';
+import { saveInscription, sendConfirmationEmail, InscriptionData } from '@/services/inscriptionService';
 
 const formSchema = z.object({
   firstName: z.string().min(2, { message: "Le prénom doit contenir au moins 2 caractères" }),
@@ -48,9 +49,16 @@ const EmailCapture = () => {
     setIsSubmitting(true);
     
     try {
-      const inscriptionSaved = await saveInscription(data);
+      // Convertir les données du formulaire au format attendu par saveInscription
+      const inscriptionData: InscriptionData = {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        userType: data.userType
+      };
       
-      const emailSent = await sendConfirmationEmail(data);
+      const inscriptionSaved = await saveInscription(inscriptionData);
+      const emailSent = await sendConfirmationEmail(inscriptionData);
       
       if (inscriptionSaved && emailSent) {
         toast({
@@ -62,7 +70,7 @@ const EmailCapture = () => {
         toast({
           title: "Inscription partielle",
           description: "Votre inscription a été enregistrée mais nous avons rencontré un problème lors de l'envoi de la notification.",
-          variant: "warning",
+          variant: "destructive", // Changé de "warning" à "destructive" car "warning" n'est pas un type valide
         });
         navigate('/demo');
       }
