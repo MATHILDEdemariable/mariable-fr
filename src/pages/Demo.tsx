@@ -4,7 +4,7 @@ import Header from '@/components/Header';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Calendar, Search, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, Calendar, Search, CheckCircle2, Mail } from 'lucide-react';
 
 const Demo = () => {
   return (
@@ -18,11 +18,25 @@ const Demo = () => {
             Retour à l'accueil
           </Link>
           
-          <h1 className="text-3xl md:text-4xl font-serif mt-4 mb-2">Démonstration de Mariable</h1>
+          <h1 className="text-3xl md:text-4xl font-serif mt-4 mb-2">Merci pour votre intérêt !</h1>
           <p className="text-muted-foreground max-w-3xl">
-            Découvrez comment Mariable va vous aider à organiser le mariage de vos rêves
+            Nous vous remercions de votre confiance. L'application définitive est actuellement en cours de développement, 
+            mais nous sommes ravis de vous présenter cette démonstration.
           </p>
         </div>
+        
+        <Card className="mb-12 border-wedding-olive/20 bg-wedding-olive/5">
+          <CardHeader>
+            <CardTitle className="text-wedding-olive">Votre demande a bien été enregistrée</CardTitle>
+            <CardDescription>
+              Notre équipe vous contactera très prochainement avec plus d'informations sur les prestataires qui correspondent à vos critères.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex items-center space-x-2">
+            <Mail className="h-5 w-5 text-wedding-olive" />
+            <p className="text-sm">Un email de confirmation a été envoyé à l'adresse que vous avez fournie.</p>
+          </CardContent>
+        </Card>
         
         <div className="aspect-w-16 aspect-h-9 mb-12 rounded-xl overflow-hidden shadow-lg">
           <iframe 
@@ -101,9 +115,9 @@ const Demo = () => {
         
         <Card className="mt-12 bg-wedding-olive/5 border-wedding-olive/20">
           <CardHeader>
-            <CardTitle className="text-wedding-olive">Envie d'aller plus loin ?</CardTitle>
+            <CardTitle className="text-wedding-olive">Nous vous recontacterons bientôt</CardTitle>
             <CardDescription>
-              Contactez-nous pour bénéficier d'un accompagnement personnalisé
+              Notre équipe est en train d'analyser votre demande pour vous proposer les meilleurs prestataires
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col sm:flex-row gap-4">

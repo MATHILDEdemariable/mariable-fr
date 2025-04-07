@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -15,14 +16,14 @@ const ChatInterface: React.FC = () => {
     {
       id: 'welcome',
       role: 'assistant',
-      content: "Bonjour ! Je suis Mathilde de Mariable 💍 En tant que wedding planner virtuelle, je suis là pour vous aider à organiser le mariage de vos rêves. N'hésitez pas à me dire ce dont vous avez besoin ! Commençons par quelques questions pour mieux vous connaître. Où souhaitez-vous vous marier ? (une région, ville ou un lieu spécifique)",
+      content: "Bonjour ! Je suis Mathilde de Mariable 💍 Décrivez-nous le mariage parfait pour vous et nous rechercherons les meilleurs prestataires en fonction de vos souhaits. N'hésitez pas à me dire ce dont vous avez besoin !",
       timestamp: new Date()
     }
   ]);
   const [recommendations, setRecommendations] = useState<Record<string, VendorRecommendation[]>>({});
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [conversationState, setConversationState] = useState('location');
+  const [conversationState, setConversationState] = useState('start');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
@@ -61,18 +62,23 @@ const ChatInterface: React.FC = () => {
       let nextQuestion = "";
       let nextState = conversationState;
       
-      if (conversationState === 'location') {
-        nextQuestion = "Merci ! 📅 Avez-vous déjà fixé une date ou avez-vous une période idéale pour votre mariage ?";
+      if (conversationState === 'start') {
+        nextQuestion = "Merci de partager cela ! Où souhaiteriez-vous célébrer votre mariage ? (une région, ville ou un lieu spécifique)";
+        nextState = 'location';
+      } else if (conversationState === 'location') {
+        nextQuestion = "Super ! Avez-vous déjà fixé une date ou avez-vous une période idéale pour votre mariage ?";
         nextState = 'date';
       } else if (conversationState === 'date') {
-        nextQuestion = "Super ! Maintenant, dites-moi quel type de prestataires vous cherchez en priorité ? (photographe, traiteur, DJ, lieu de réception...)";
+        nextQuestion = "Parfait ! Quel type de prestataires recherchez-vous en priorité ? (photographe, traiteur, DJ, lieu de réception...)";
         nextState = 'vendorType';
       } else if (conversationState === 'vendorType') {
-        nextQuestion = "Parfait ! Dernière question : avez-vous une idée de budget pour ce prestataire, ou préférez-vous qu'on s'adapte aux standards du marché ?";
+        nextQuestion = "Excellent choix ! Quel est votre budget approximatif pour ce prestataire ?";
         nextState = 'budget';
       } else if (conversationState === 'budget') {
-        nextQuestion = "Génial ! J'ai toutes les informations dont j'ai besoin. Voici quelques prestataires qui pourraient correspondre à vos critères. Cliquez sur 'Voir plus d'infos' pour accéder à leurs coordonnées complètes et créer votre compte.";
+        nextQuestion = "Merci pour toutes ces informations ! Voici quelques prestataires qui pourraient correspondre à vos critères. Cliquez sur 'En savoir plus' pour accéder aux coordonnées complètes.";
         nextState = 'recommendations';
+      } else {
+        nextState = 'follow-up';
       }
       
       setConversationState(nextState);
@@ -82,7 +88,7 @@ const ChatInterface: React.FC = () => {
       const assistantMessage: MessageType = {
         id: uuidv4(),
         role: 'assistant',
-        content: nextState === 'recommendations' ? response.message : nextQuestion,
+        content: nextState === 'recommendations' || nextState === 'follow-up' ? response.message : nextQuestion,
         timestamp: new Date()
       };
       
@@ -136,7 +142,7 @@ const ChatInterface: React.FC = () => {
               <div className="flex w-full justify-start mb-4">
                 <Card className="chat-bubble-assistant p-3">
                   <CardContent className="p-0">
-                    <p className="typing-dots">Nuptia réfléchit...</p>
+                    <p className="typing-dots">Mathilde réfléchit...</p>
                   </CardContent>
                 </Card>
               </div>
@@ -152,11 +158,12 @@ const ChatInterface: React.FC = () => {
             ref={inputRef}
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
-            placeholder={conversationState === 'location' ? "Ex: Bordeaux, Provence..." : 
+            placeholder={conversationState === 'start' ? "Décrivez votre mariage idéal..." : 
+                         conversationState === 'location' ? "Ex: Bordeaux, Provence..." : 
                          conversationState === 'date' ? "Ex: Juin 2026, été prochain..." :
                          conversationState === 'vendorType' ? "Ex: Photographe, lieu..." :
                          conversationState === 'budget' ? "Ex: 2000€, budget standard..." :
-                         "Pose-moi d'autres questions..."}
+                         "Posez-moi d'autres questions..."}
             disabled={isLoading}
             className="flex-grow"
           />

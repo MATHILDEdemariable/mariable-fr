@@ -46,12 +46,11 @@ export const VendorCard: React.FC<VendorCardProps> = ({ recommendation }) => {
         </CardContent>
         <CardFooter className="pt-2">
           <Button 
-            variant="outline" 
             size="sm" 
-            className="w-full text-sm" 
+            className="w-full text-sm bg-wedding-olive hover:bg-wedding-olive/90 text-white" 
             onClick={() => setShowModal(true)}
           >
-            <FileText className="h-3 w-3 mr-1" /> 📄 Voir plus d'infos
+            <FileText className="h-3 w-3 mr-1" /> En savoir plus
           </Button>
         </CardFooter>
       </Card>

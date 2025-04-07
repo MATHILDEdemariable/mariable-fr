@@ -73,18 +73,14 @@ const VendorInfoModal: React.FC<VendorInfoModalProps> = ({ isOpen, onClose, vend
           <DialogDescription>
             {hasSubmitted ? (
               <div className="mt-2 space-y-4">
-                <p className="font-medium">Coordonnées du prestataire:</p>
-                <div className="space-y-2 text-sm">
-                  <p><span className="font-medium">Nom:</span> {vendor.nom}</p>
-                  <p><span className="font-medium">Type:</span> {vendor.type}</p>
-                  <p><span className="font-medium">Lieu:</span> {vendor.lieu}</p>
-                  <p><span className="font-medium">Style:</span> {vendor.style.join(', ')}</p>
-                  <p><span className="font-medium">Budget:</span> {vendor.budget}€</p>
-                  <p><span className="font-medium">Contact:</span> contact@mariable.com</p>
-                  <p><span className="font-medium">Téléphone:</span> 01 23 45 67 89</p>
-                </div>
-                <p className="text-sm mt-4">
-                  Nous vous contacterons prochainement avec plus de détails et un dossier complet sur ce prestataire.
+                <p className="font-medium">Merci pour votre inscription !</p>
+                <p className="text-sm">
+                  Nous avons bien reçu votre demande concernant {vendor.nom}.
+                  Nous vous recontacterons très prochainement avec les coordonnées complètes
+                  et toutes les informations sur ce prestataire.
+                </p>
+                <p className="text-sm">
+                  Vous êtes maintenant redirigé vers notre page de démonstration.
                 </p>
               </div>
             ) : (
