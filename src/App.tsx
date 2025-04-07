@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import EmailCapture from "./pages/EmailCapture";
@@ -62,6 +62,9 @@ const App = () => (
           {/* Legal pages */}
           <Route path="/mentions-legales" element={<MentionsLegales />} />
           <Route path="/cgv" element={<CGV />} />
+          
+          {/* Redirect for old privacy policy route */}
+          <Route path="/politique-confidentialite" element={<Navigate to="/mentions-legales" replace />} />
           
           {/* Demo page */}
           <Route path="/demo" element={<Demo />} />

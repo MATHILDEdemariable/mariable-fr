@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import ChatInterface from '@/components/ChatInterface';
 import Header from '@/components/Header';
@@ -6,6 +6,10 @@ import { ArrowRight, Sparkles, Calendar, MapPin, Heart, Instagram, Mail, Phone }
 import { Button } from '@/components/ui/button';
 
 const Index = () => {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <Header />
@@ -19,12 +23,12 @@ const Index = () => {
               src="/lovable-uploads/9f8c319a-9a98-4d4c-a886-79f9986a7dcd.png"
               alt="Couple de mariés marchant sous une pluie de pétales"
               className="absolute min-w-full min-h-full object-cover"
-              style={{ objectPosition: "center 40%" }}
+              style={{ objectPosition: "center 25%" }}
             />
             <div className="absolute inset-0 bg-wedding-black/30"></div>
           </div>
           
-          <div className="container relative z-10 h-full flex items-end pb-16">
+          <div className="container relative z-10 h-full flex items-end pb-20">
             <div className="max-w-3xl mx-auto text-center">
               <div className="inline-flex items-center px-3 py-1 rounded-full bg-wedding-light text-sm text-wedding-black mb-4">
                 <Sparkles size={14} className="mr-2" />

@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
 import { Button } from '@/components/ui/button';
@@ -30,6 +29,10 @@ const EmailCapture = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -43,9 +46,7 @@ const EmailCapture = () => {
   const onSubmit = (data: FormValues) => {
     setIsSubmitting(true);
     
-    // Simulate API call to register user and send notification email
     setTimeout(() => {
-      // Log the email notification that would be sent to mathilde@mariable.fr
       console.log(`Email notification sent to mathilde@mariable.fr:
       Nouvel utilisateur inscrit:
       Prénom: ${data.firstName}
@@ -59,7 +60,7 @@ const EmailCapture = () => {
       });
       
       setIsSubmitting(false);
-      navigate('/demo'); // Redirect to demo page
+      navigate('/demo');
     }, 1500);
   };
 
@@ -67,7 +68,7 @@ const EmailCapture = () => {
     <div className="min-h-screen flex flex-col bg-wedding-cream">
       <Header />
       
-      <main className="flex-grow flex items-center justify-center py-16">
+      <main className="flex-grow flex items-start justify-center py-16">
         <div className="max-w-md w-full mx-auto p-8 bg-white rounded-xl shadow-lg">
           <div className="text-center mb-8">
             <img 
