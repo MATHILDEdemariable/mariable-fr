@@ -3,10 +3,19 @@ import { createClient } from '@supabase/supabase-js';
 import { toast } from '@/components/ui/use-toast';
 
 // Initialisation du client Supabase avec les données d'environnement
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+// Vérification de l'existence des variables d'environnement
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
 
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
+// Création d'une fonction qui vérifie si Supabase est configuré
+const isSupabaseConfigured = () => {
+  return supabaseUrl !== '' && supabaseAnonKey !== '';
+};
+
+// Initialisation conditionnelle du client Supabase
+const supabase = isSupabaseConfigured() 
+  ? createClient(supabaseUrl, supabaseAnonKey)
+  : null;
 
 export interface InscriptionData {
   firstName: string;
@@ -17,6 +26,17 @@ export interface InscriptionData {
 
 export async function saveInscription(data: InscriptionData) {
   try {
+    // Vérification de la configuration Supabase
+    if (!supabase) {
+      console.error('Erreur: Supabase n\'est pas configuré. Variables d\'environnement manquantes.');
+      toast({
+        title: "Erreur de configuration",
+        description: "La connexion à la base de données n'est pas configurée. Veuillez contacter l'administrateur.",
+        variant: "destructive"
+      });
+      return false;
+    }
+    
     // Enregistrement de l'inscription dans la base de données
     const { error } = await supabase
       .from('inscriptions')
@@ -49,6 +69,12 @@ export async function saveInscription(data: InscriptionData) {
 
 export async function sendConfirmationEmail(data: InscriptionData) {
   try {
+    // Vérification de la configuration Supabase
+    if (!supabase) {
+      console.error('Erreur: Supabase n\'est pas configuré. Variables d\'environnement manquantes.');
+      return false;
+    }
+    
     // Envoi d'un email via l'API Supabase Edge Function
     const { error } = await supabase.functions.invoke('send-inscription-email', {
       body: {
