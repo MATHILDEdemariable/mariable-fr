@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import ChatInterface from '@/components/ChatInterface';
@@ -12,19 +13,19 @@ const Index = () => {
       
       <main className="flex-grow">
         {/* Hero Section with Wedding Image Background */}
-        <section className="relative py-24 md:py-32">
+        <section className="relative h-screen">
           {/* Image Background */}
           <div className="absolute inset-0 w-full h-full overflow-hidden z-0">
             <img
-              src="/lovable-uploads/e5ba755e-f57f-420f-8885-014226913bc8.png"
+              src="/lovable-uploads/9f8c319a-9a98-4d4c-a886-79f9986a7dcd.png"
               alt="Couple de mariés marchant sous une pluie de pétales"
               className="absolute min-w-full min-h-full object-cover object-center"
-              style={{ objectPosition: "center 40%" }}
+              style={{ objectPosition: "center center" }}
             />
-            <div className="absolute inset-0 bg-wedding-black/40"></div>
+            <div className="absolute inset-0 bg-wedding-black/30"></div>
           </div>
           
-          <div className="container relative z-10">
+          <div className="container relative z-10 h-full flex items-center">
             <div className="max-w-3xl mx-auto text-center">
               <div className="inline-flex items-center px-3 py-1 rounded-full bg-wedding-light text-sm text-wedding-black mb-4">
                 <Sparkles size={14} className="mr-2" />
