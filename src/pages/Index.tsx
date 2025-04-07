@@ -56,6 +56,21 @@ const Index = () => {
           </div>
         </section>
         
+        {/* Chatbot Section - Deuxième partie de la landing page */}
+        <section className="py-20 bg-wedding-cream/30">
+          <div className="container mx-auto text-center mb-12">
+            <h2 className="text-4xl md:text-5xl font-serif mb-6">Prêt à révolutionner l'organisation de votre mariage ?</h2>
+            <p className="text-lg text-wedding-black/80 max-w-3xl mx-auto">
+              Posez-nous vos questions sur les prestataires, lieux, et tout ce qui concerne votre grand jour. Mariable est là pour vous guider.
+            </p>
+          </div>
+          <div className="max-w-3xl mx-auto">
+            <div className="rounded-2xl overflow-hidden shadow-lg border border-gray-200 bg-white">
+              <ChatInterface />
+            </div>
+          </div>
+        </section>
+        
         {/* Features Section */}
         <section id="features" className="py-16 bg-white">
           <div className="container">
