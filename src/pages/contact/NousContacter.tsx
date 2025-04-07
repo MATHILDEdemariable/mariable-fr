@@ -88,7 +88,7 @@ const NousContacter = () => {
                   />
                 </div>
                 
-                <Button type="submit" className="w-full bg-wedding-gold hover:bg-wedding-gold/90 text-wedding-black">
+                <Button type="submit" className="w-full bg-wedding-olive hover:bg-wedding-olive/90 text-white">
                   Envoyer
                 </Button>
               </form>

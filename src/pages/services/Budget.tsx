@@ -5,28 +5,28 @@ import ServiceTemplate from '../ServiceTemplate';
 const BudgetContent = () => (
   <>
     <p>
-      La gestion du budget est souvent l'aspect le plus délicat de l'organisation d'un mariage. 
-      Notre outil de budgétisation vous aide à garder le contrôle de vos dépenses et à éviter 
-      les mauvaises surprises.
+      La transparence des prix est au cœur de notre approche. Notre plateforme vous permet 
+      d'accéder aux tarifs réels des prestataires sans mauvaises surprises.
     </p>
     
     <h2 className="text-2xl font-serif mt-8 mb-4">Fonctionnalités</h2>
     
     <ul className="list-disc pl-6 space-y-2">
-      <li>Modèles de budget adaptés à différents styles de mariage</li>
-      <li>Répartition automatique des fonds selon les priorités</li>
-      <li>Suivi des dépenses en temps réel</li>
-      <li>Alertes en cas de dépassement de budget</li>
-      <li>Conseils pour économiser sur certains postes</li>
-      <li>Comparaison des offres de prestataires</li>
+      <li>Accès aux tarifs directs communiqués par les prestataires</li>
+      <li>Calculatrice de budget générant un devis instantané et personnalisé</li>
+      <li>Comparaison claire des différentes options selon votre budget</li>
+      <li>Simulation des coûts en fonction du nombre d'invités</li>
+      <li>Détection des économies potentielles</li>
+      <li>Adaptation automatique en fonction de vos priorités</li>
     </ul>
     
-    <h2 className="text-2xl font-serif mt-8 mb-4">Notre approche</h2>
+    <h2 className="text-2xl font-serif mt-8 mb-4">Notre engagement</h2>
     
     <p>
-      Nous croyons qu'un mariage mémorable ne rime pas nécessairement avec dépenses excessives. 
-      Notre objectif est de vous aider à créer le mariage de vos rêves tout en respectant vos 
-      contraintes financières, en vous guidant vers des choix judicieux et des solutions créatives.
+      Fini les surprises de dernière minute et les coûts cachés. Notre outil vous 
+      permet de planifier sereinement votre budget avec une vision claire et réaliste 
+      des dépenses à prévoir, vous permettant de prendre des décisions éclairées tout 
+      au long de l'organisation de votre mariage.
     </p>
   </>
 );
@@ -35,7 +35,7 @@ const Budget = () => {
   return (
     <ServiceTemplate 
       title="Gestion de budget"
-      description="Maîtrisez vos dépenses et optimisez votre budget de mariage"
+      description="Transparence des prix et devis instantanés personnalisés"
       content={<BudgetContent />}
     />
   );
