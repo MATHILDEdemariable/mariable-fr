@@ -102,11 +102,11 @@
 }
 
 .chat-bubble-user {
-  @apply bg-primary text-primary-foreground rounded-tl-none;
+  @apply bg-wedding-olive text-white rounded-tl-none;
 }
 
 .chat-bubble-assistant {
-  @apply bg-secondary text-secondary-foreground rounded-tr-none;
+  @apply bg-wedding-cream text-secondary-foreground rounded-tr-none;
 }
 
 .vendor-card {

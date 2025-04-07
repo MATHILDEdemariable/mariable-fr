@@ -105,14 +105,15 @@ const ChatInterface: React.FC = () => {
     const styleEl = document.createElement('style');
     styleEl.innerHTML = `
       .chat-bubble-user {
-        background-color: #E1F5FE;
+        background-color: #7F9474;
+        color: white;
         border-radius: 18px 18px 0 18px;
         border: none;
         box-shadow: 0 1px 2px rgba(0,0,0,0.1);
       }
       
       .chat-bubble-assistant {
-        background-color: #F9F9F9;
+        background-color: #f8f6f0;
         border-radius: 18px 18px 18px 0;
         border: none;
         box-shadow: 0 1px 2px rgba(0,0,0,0.1);
