@@ -7,36 +7,59 @@ import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { Link } from 'react-router-dom';
 import { Facebook, Instagram, Twitter, Mail, Phone, MapPin } from 'lucide-react';
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
+import { FormField, FormItem, FormLabel, FormControl, Form } from "@/components/ui/form";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const formSchema = z.object({
+  firstName: z.string().min(2, { message: "Le prénom doit contenir au moins 2 caractères" }),
+  lastName: z.string().min(2, { message: "Le nom doit contenir au moins 2 caractères" }),
+  email: z.string().email({ message: "Veuillez entrer une adresse email valide" }),
+  userType: z.enum(["couple", "professional"], {
+    required_error: "Veuillez sélectionner une option",
+  }),
+});
+
+type FormValues = z.infer<typeof formSchema>;
 
 const EmailCapture = () => {
-  const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!email || !email.includes('@')) {
-      toast({
-        title: "Erreur",
-        description: "Veuillez entrer une adresse email valide",
-        variant: "destructive"
-      });
-      return;
-    }
-    
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      userType: "couple",
+    },
+  });
+
+  const onSubmit = (data: FormValues) => {
     setIsSubmitting(true);
     
-    // Simulate API call
+    // Simulate API call to register user and send notification email
     setTimeout(() => {
+      // Log the email notification that would be sent to mathilde@mariable.fr
+      console.log(`Email notification sent to mathilde@mariable.fr:
+      Nouvel utilisateur inscrit:
+      Prénom: ${data.firstName}
+      Nom: ${data.lastName}
+      Email: ${data.email}
+      Type: ${data.userType === "couple" ? "Futurs mariés" : "Professionnel"}`);
+      
       toast({
-        title: "Succès",
+        title: "Inscription réussie",
         description: "Merci pour votre inscription ! Nous vous contacterons bientôt.",
       });
       
       setIsSubmitting(false);
-      navigate('/'); // Redirect to home page
+      navigate('/demo'); // Redirect to demo page
     }, 1500);
   };
 
@@ -54,34 +77,96 @@ const EmailCapture = () => {
             />
             <h2 className="text-3xl font-serif">Commencez votre aventure</h2>
             <p className="text-muted-foreground mt-2">
-              Laissez-nous votre email pour être informé des dernières nouveautés et recevoir des conseils exclusifs pour votre mariage.
+              Créez votre compte pour accéder à toutes les fonctionnalités de Mariable et recevoir des conseils exclusifs pour votre mariage.
             </p>
           </div>
           
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <Input
-                type="email"
-                placeholder="Votre adresse email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full"
-                required
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="firstName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Prénom</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Votre prénom" {...field} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="lastName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Nom</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Votre nom" {...field} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+              </div>
+              
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input 
+                        type="email" 
+                        placeholder="Votre adresse email" 
+                        {...field} 
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
               />
-            </div>
-            
-            <Button 
-              type="submit" 
-              className="w-full bg-wedding-black hover:bg-wedding-black/90 text-white"
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? "Inscription en cours..." : "S'inscrire"}
-            </Button>
-            
-            <p className="text-xs text-center text-muted-foreground mt-4">
-              En vous inscrivant, vous acceptez notre politique de confidentialité et nos conditions d'utilisation.
-            </p>
-          </form>
+              
+              <FormField
+                control={form.control}
+                name="userType"
+                render={({ field }) => (
+                  <FormItem className="space-y-1">
+                    <FormLabel>Vous êtes</FormLabel>
+                    <FormControl>
+                      <RadioGroup
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        className="flex flex-col space-y-1"
+                      >
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="couple" id="couple" />
+                          <Label htmlFor="couple">Futurs mariés</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="professional" id="professional" />
+                          <Label htmlFor="professional">Professionnel du mariage</Label>
+                        </div>
+                      </RadioGroup>
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              
+              <Button 
+                type="submit" 
+                className="w-full bg-wedding-black hover:bg-wedding-black/90 text-white"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? "Inscription en cours..." : "Créer mon compte"}
+              </Button>
+              
+              <p className="text-xs text-center text-muted-foreground mt-4">
+                En vous inscrivant, vous acceptez notre politique de confidentialité et nos conditions d'utilisation.
+              </p>
+            </form>
+          </Form>
         </div>
       </main>
       
