@@ -2,212 +2,162 @@
 import { ChatResponse, Message, Vendor, VendorRecommendation } from '@/types';
 import vendorsData from '@/data/vendors.json';
 
-// OpenAI API key
-const OPENAI_API_KEY = "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";
-
-// Function to process messages through OpenAI
-const processWithOpenAI = async (messages: Message[]): Promise<string> => {
-  try {
-    const formattedMessages = messages.map(msg => ({
-      role: msg.role,
-      content: msg.content
-    }));
-
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${OPENAI_API_KEY}`
-      },
-      body: JSON.stringify({
-        model: "gpt-4o",
-        messages: formattedMessages,
-        max_tokens: 1000
-      })
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.error("OpenAI API Error:", errorData);
-      throw new Error("Failed to get response from OpenAI");
-    }
-
-    const data = await response.json();
-    return data.choices[0].message.content;
-  } catch (error) {
-    console.error("Error calling OpenAI:", error);
-    throw error;
-  }
-};
-
-// This would normally call the backend API, but for now we'll use our local database
+// Cette fonction simule l'envoi d'un message à un service de chat
 export const sendMessage = async (messages: Message[]): Promise<ChatResponse> => {
-  // Get the latest user message
+  // Récupérer le dernier message utilisateur
   const latestUserMessage = messages.filter(m => m.role === 'user').pop();
   
   if (!latestUserMessage) {
     return { message: "Je n'ai pas compris votre demande. Pourriez-vous reformuler s'il vous plaît?" };
   }
   
-  try {
-    // Process the conversation with OpenAI
-    const aiResponse = await processWithOpenAI(messages);
-    
-    // Load vendors from local JSON
-    const vendors = vendorsData as Vendor[];
-    
-    // Process the user message and find relevant vendors
-    const userQuery = latestUserMessage.content.toLowerCase();
-    
-    // Extract potential information from the user query
-    const locationMatches = userQuery.match(/(?:à|en) ([a-zÀ-ÿ]+)/i);
-    const locationKeywords = [
-      'bourgogne', 'normandie', 'provence', 'alsace', 'bretagne', 
-      'paris', 'lyon', 'marseille', 'bordeaux', 'île-de-france'
-    ];
-    
-    const budgetMatches = userQuery.match(/budget(?:\s+de)?\s+(\d+)(?:\s*[€k])/i);
-    
-    const typeKeywords: Record<string, string[]> = {
-      'photographe': ['photo', 'photographe', 'reportage', 'album'],
-      'traiteur': ['traiteur', 'repas', 'nourriture', 'cuisine', 'menu', 'chef'],
-      'dj': ['dj', 'musique', 'soirée', 'ambiance'],
-      'décoration': ['décoration', 'déco', 'tente', 'bohème'],
-      'lieu': ['lieu', 'salle', 'domaine', 'château', 'endroit', 'emplacement'],
-      'fleuriste': ['fleur', 'fleuriste', 'bouquet', 'décoration florale']
-    };
-    
-    const styleKeywords = [
-      'romantique', 'fine art', 'méditerranéen', 'raffiné', 'moderne', 
-      'mix international', 'bohème chic', 'champêtre', 'nature', 'élégant', 
-      'luxe', 'provence', 'minimaliste'
-    ];
-    
-    // Gather filter criteria
-    let location: string | null = null;
-    if (locationMatches && locationMatches[1]) {
-      location = locationMatches[1].toLowerCase();
-    } else {
-      // Look for location keywords
-      for (const loc of locationKeywords) {
-        if (userQuery.includes(loc.toLowerCase())) {
-          location = loc.toLowerCase();
-          break;
-        }
+  // Analyser le message pour déterminer les besoins de l'utilisateur
+  const userQuery = latestUserMessage.content.toLowerCase();
+  
+  // Extraire les informations potentielles du message utilisateur
+  const locationKeywords = ['paris', 'bordeaux', 'lyon', 'nice', 'marseille', 'lille', 'annecy', 'aix', 'reims', 'strasbourg'];
+  const typeKeywords = {
+    'photographe': ['photo', 'photographe', 'reportage', 'album'],
+    'lieu': ['lieu', 'salle', 'domaine', 'château', 'domaine', 'propriété'],
+    'traiteur': ['traiteur', 'nourriture', 'repas', 'cuisine', 'menu'],
+    'fleuriste': ['fleur', 'fleuriste', 'décoration florale'],
+    'dj': ['dj', 'musique', 'animation', 'soirée']
+  };
+  const styleKeywords = ['champêtre', 'élégant', 'bohème', 'traditionnel', 'moderne', 'vintage', 'rustique', 'minimaliste'];
+  const budgetKeywords = userQuery.match(/budget[^\d]*(\d+)/i);
+  
+  // Identifier le lieu potentiel
+  let location: string | null = null;
+  for (const loc of locationKeywords) {
+    if (userQuery.includes(loc)) {
+      location = loc;
+      break;
+    }
+  }
+  
+  // Identifier le type de prestataire
+  let vendorType: string | null = null;
+  for (const [type, keywords] of Object.entries(typeKeywords)) {
+    for (const keyword of keywords) {
+      if (userQuery.includes(keyword)) {
+        vendorType = type;
+        break;
       }
     }
-    
-    let budget: number | null = null;
-    if (budgetMatches && budgetMatches[1]) {
-      budget = parseInt(budgetMatches[1], 10);
+    if (vendorType) break;
+  }
+  
+  // Identifier le style potentiel
+  let style: string | null = null;
+  for (const s of styleKeywords) {
+    if (userQuery.includes(s)) {
+      style = s;
+      break;
     }
-    
-    let vendorType: string | null = null;
-    for (const [type, keywords] of Object.entries(typeKeywords)) {
-      for (const keyword of keywords) {
-        if (userQuery.includes(keyword.toLowerCase())) {
-          vendorType = type;
-          break;
-        }
-      }
-      if (vendorType) break;
-    }
-    
-    let styles: string[] = [];
-    for (const style of styleKeywords) {
-      if (userQuery.includes(style.toLowerCase())) {
-        styles.push(style);
-      }
-    }
-    
-    // Filter vendors based on extracted criteria
-    let filteredVendors = [...vendors];
-    
+  }
+  
+  // Identifier le budget potentiel
+  let budget: number | null = null;
+  if (budgetKeywords && budgetKeywords[1]) {
+    budget = parseInt(budgetKeywords[1], 10);
+  }
+  
+  // Charger les prestataires depuis le JSON
+  const vendors = vendorsData as Vendor[];
+  
+  // Filtrer les prestataires selon les critères identifiés
+  let filteredVendors = [...vendors];
+  
+  if (location) {
+    filteredVendors = filteredVendors.filter(vendor => 
+      vendor.lieu.toLowerCase().includes(location!)
+    );
+  }
+  
+  if (vendorType) {
+    filteredVendors = filteredVendors.filter(vendor => 
+      vendor.type.toLowerCase() === vendorType!.toLowerCase()
+    );
+  }
+  
+  if (style) {
+    filteredVendors = filteredVendors.filter(vendor => 
+      vendor.style.some(s => s.toLowerCase().includes(style!.toLowerCase()))
+    );
+  }
+  
+  if (budget) {
+    filteredVendors = filteredVendors.filter(vendor => vendor.budget <= budget!);
+  }
+  
+  // Si aucun filtre spécifique n'a fonctionné, essayer d'inférer ce qu'ils recherchent
+  if (filteredVendors.length === 0) {
+    // Si un lieu est mentionné, montrer tous les prestataires de ce lieu
     if (location) {
-      filteredVendors = filteredVendors.filter(vendor => 
-        vendor.lieu.toLowerCase() === location
+      filteredVendors = vendors.filter(vendor => 
+        vendor.lieu.toLowerCase().includes(location!)
       );
     }
-    
-    if (budget) {
-      filteredVendors = filteredVendors.filter(vendor => 
-        vendor.budget <= budget
+    // Si un type est mentionné, montrer tous les prestataires de ce type
+    else if (vendorType) {
+      filteredVendors = vendors.filter(vendor => 
+        vendor.type.toLowerCase() === vendorType!.toLowerCase()
       );
     }
-    
-    if (vendorType) {
-      filteredVendors = filteredVendors.filter(vendor => 
-        vendor.type.toLowerCase() === vendorType.toLowerCase()
-      );
-    }
-    
-    if (styles.length > 0) {
-      filteredVendors = filteredVendors.filter(vendor => 
-        vendor.style.some(s => styles.includes(s.toLowerCase()))
-      );
-    }
-    
-    // If no specific filters matched, try to infer what they're looking for
-    if (filteredVendors.length === 0) {
-      // If they mentioned a location, show all vendors in that location
-      if (location) {
-        filteredVendors = vendors.filter(vendor => 
-          vendor.lieu.toLowerCase() === location
-        );
-      }
-      // If they mentioned a type, show all vendors of that type
-      else if (vendorType) {
-        filteredVendors = vendors.filter(vendor => 
-          vendor.type.toLowerCase() === vendorType.toLowerCase()
-        );
-      }
-      // Default to showing a mix of vendors if no other criteria matched
-      else if (userQuery.includes('mariage') || userQuery.includes('marié')) {
-        // Get 3 random vendors of different types
-        const types = Array.from(new Set(vendors.map(v => v.type)));
-        filteredVendors = [];
-        
-        for (const type of types.slice(0, 3)) {
-          const vendorsOfType = vendors.filter(v => v.type === type);
-          if (vendorsOfType.length > 0) {
-            const randomIndex = Math.floor(Math.random() * vendorsOfType.length);
-            filteredVendors.push(vendorsOfType[randomIndex]);
-          }
+    // Par défaut, montrer un mélange de prestataires si aucun autre critère n'a été identifié
+    else {
+      // Obtenir 3 prestataires aléatoires de types différents
+      const types = Array.from(new Set(vendors.map(v => v.type)));
+      filteredVendors = [];
+      
+      for (const type of types.slice(0, 3)) {
+        const vendorsOfType = vendors.filter(v => v.type === type);
+        if (vendorsOfType.length > 0) {
+          const randomIndex = Math.floor(Math.random() * vendorsOfType.length);
+          filteredVendors.push(vendorsOfType[randomIndex]);
         }
       }
     }
+  }
+  
+  // Limiter à 3 recommandations maximum
+  filteredVendors = filteredVendors.slice(0, 3);
+  
+  // Générer une réponse basée sur le message et les prestataires filtrés
+  let responseMessage = "";
+  
+  if (filteredVendors.length > 0) {
+    responseMessage = "Au vu de votre demande, voici une sélection de prestataires qui pourraient vous intéresser :";
+  } else {
+    responseMessage = "Je n'ai pas trouvé de prestataires correspondant exactement à vos critères. Pourriez-vous me donner plus de détails sur ce que vous recherchez ? Par exemple, le type de prestataire (photographe, lieu, traiteur), la région, votre budget ou le style que vous préférez.";
     
-    // Limit to 3 recommendations
-    filteredVendors = filteredVendors.slice(0, 3);
+    // Ajouter quelques suggestions aléatoires
+    filteredVendors = vendors.sort(() => 0.5 - Math.random()).slice(0, 3);
+    responseMessage += "\n\nEn attendant, voici quelques prestataires qui pourraient vous inspirer :";
+  }
+  
+  // Créer les recommandations avec des raisons
+  const recommendations: VendorRecommendation[] = filteredVendors.map(vendor => {
+    let reason = `${vendor.nom} est un${vendor.type === 'Photographe' || vendor.type === 'Traiteur' || vendor.type === 'Fleuriste' ? '' : 'e'} ${vendor.type.toLowerCase()} à ${vendor.lieu}`;
     
-    // Generate recommendations with reasons
-    const recommendations: VendorRecommendation[] = filteredVendors.map(vendor => {
-      let reason = `Ce ${vendor.type.toLowerCase()} à ${vendor.lieu}`;
-      
-      if (vendor.style && vendor.style.length > 0) {
-        reason += ` offre un style ${vendor.style.join(' et ')}`;
-      }
-      
-      if (vendor.type === 'Traiteur') {
-        reason += ` à partir de ${vendor.budget}€ par personne`;
-      } else {
-        reason += ` à partir de ${vendor.budget}€`;
-      }
-      
-      return {
-        vendor,
-        reason
-      };
-    });
+    if (vendor.style && vendor.style.length > 0) {
+      reason += ` proposant un style ${vendor.style.join(' et ')}`;
+    }
+    
+    if (vendor.type === 'Traiteur') {
+      reason += ` à partir de ${vendor.budget}€ par personne`;
+    } else {
+      reason += ` à partir de ${vendor.budget}€`;
+    }
     
     return {
-      message: aiResponse,
-      recommendations: recommendations.length > 0 ? recommendations : undefined
+      vendor,
+      reason
     };
-  } catch (error) {
-    console.error("Error processing message:", error);
-    return { 
-      message: "Désolé, j'ai rencontré un problème avec le service de chat. Veuillez réessayer." 
-    };
-  }
+  });
+  
+  return {
+    message: responseMessage,
+    recommendations
+  };
 };
