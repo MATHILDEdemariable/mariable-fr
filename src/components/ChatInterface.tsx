@@ -16,7 +16,7 @@ const ChatInterface: React.FC = () => {
     {
       id: 'welcome',
       role: 'assistant',
-      content: "Bonjour ! Je suis Mathilde de Mariable 💍 Décrivez-nous le mariage parfait pour vous et nous rechercherons les meilleurs prestataires en fonction de vos souhaits. N'hésitez pas à me dire ce dont vous avez besoin !",
+      content: "Bonjour ! Je suis Mathilde de Mariable, votre wedding planner. Dites oui à la simplicité et dites-nous ce dont vous avez besoin ou quel est le mariage parfait pour vous ! 💍",
       timestamp: new Date()
     }
   ]);
