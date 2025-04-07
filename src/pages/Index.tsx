@@ -19,8 +19,8 @@ const Index = () => {
             <img
               src="/lovable-uploads/9f8c319a-9a98-4d4c-a886-79f9986a7dcd.png"
               alt="Couple de mariés marchant sous une pluie de pétales"
-              className="absolute min-w-full min-h-full object-cover object-center"
-              style={{ objectPosition: "center center" }}
+              className="absolute min-w-full min-h-full object-cover"
+              style={{ objectPosition: "center 30%" }}
             />
             <div className="absolute inset-0 bg-wedding-black/30"></div>
           </div>
@@ -50,7 +50,7 @@ const Index = () => {
                 <Button 
                   size="lg" 
                   variant="outline" 
-                  className="border-white text-black hover:bg-white/10"
+                  className="border-white text-black bg-white hover:bg-white/90"
                   asChild
                 >
                   <Link to="/about/histoire">
