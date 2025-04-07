@@ -38,15 +38,18 @@ const Demo = () => {
           </CardContent>
         </Card>
         
-        <div className="aspect-w-16 aspect-h-9 mb-12 rounded-xl overflow-hidden shadow-lg">
-          <iframe 
-            src="https://www.youtube.com/embed/dQw4w9WgXcQ" 
-            title="Mariable Démonstration" 
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-            allowFullScreen
-            className="w-full h-full rounded-xl"
-          ></iframe>
-        </div>
+        <Card className="mb-12 border-wedding-olive/20 bg-wedding-olive/5">
+          <CardHeader>
+            <CardTitle className="text-wedding-olive">En attendant le lancement officiel...</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground mb-4">
+              En attendant le lancement de l'application complète, voici un aperçu en démo. Si vous avez des questions ou besoin d'aide, 
+              n'hésitez pas à nous contacter par email à <a href="mailto:mathilde@mariable.fr" className="text-wedding-olive hover:underline">mathilde@mariable.fr</a> ou 
+              via notre <Link to="/contact/nous-contacter" className="text-wedding-olive hover:underline">formulaire de contact</Link>.
+            </p>
+          </CardContent>
+        </Card>
         
         <div className="grid md:grid-cols-3 gap-8 mt-12">
           <Card>
