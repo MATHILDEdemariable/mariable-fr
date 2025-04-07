@@ -52,7 +52,7 @@ serve(async (req) => {
 
     // Envoi de l'email
     await client.send({
-      from: Deno.env.get('EMAIL_FROM') || 'notifications@mariable.fr',
+      from: Deno.env.get('EMAIL_FROM') || 'mathilde@mariable.fr',
       to: to,
       subject: subject,
       html: content,
