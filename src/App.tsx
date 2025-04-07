@@ -7,6 +7,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import EmailCapture from "./pages/EmailCapture";
+import MentionsLegales from "./pages/MentionsLegales";
+import CGV from "./pages/CGV";
 
 // Services pages
 import Prestataires from "./pages/services/Prestataires";
@@ -56,6 +58,10 @@ const App = () => (
           {/* Contact pages */}
           <Route path="/contact/nous-contacter" element={<NousContacter />} />
           <Route path="/contact/faq" element={<FAQ />} />
+          
+          {/* Legal pages */}
+          <Route path="/mentions-legales" element={<MentionsLegales />} />
+          <Route path="/cgv" element={<CGV />} />
           
           {/* Demo page */}
           <Route path="/demo" element={<Demo />} />

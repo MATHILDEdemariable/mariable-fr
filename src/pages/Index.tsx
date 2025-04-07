@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import ChatInterface from '@/components/ChatInterface';
@@ -20,12 +19,12 @@ const Index = () => {
               src="/lovable-uploads/9f8c319a-9a98-4d4c-a886-79f9986a7dcd.png"
               alt="Couple de mariés marchant sous une pluie de pétales"
               className="absolute min-w-full min-h-full object-cover"
-              style={{ objectPosition: "center 30%" }}
+              style={{ objectPosition: "center 40%" }}
             />
             <div className="absolute inset-0 bg-wedding-black/30"></div>
           </div>
           
-          <div className="container relative z-10 h-full flex items-center">
+          <div className="container relative z-10 h-full flex items-end pb-16">
             <div className="max-w-3xl mx-auto text-center">
               <div className="inline-flex items-center px-3 py-1 rounded-full bg-wedding-light text-sm text-wedding-black mb-4">
                 <Sparkles size={14} className="mr-2" />
@@ -197,7 +196,6 @@ const Index = () => {
             </p>
             <div className="flex gap-6">
               <Link to="/mentions-legales" className="text-sm text-wedding-black/70 hover:text-wedding-black">Mentions Légales</Link>
-              <Link to="/politique-confidentialite" className="text-sm text-wedding-black/70 hover:text-wedding-black">Politique de Confidentialité</Link>
               <Link to="/cgv" className="text-sm text-wedding-black/70 hover:text-wedding-black">CGV</Link>
             </div>
           </div>
