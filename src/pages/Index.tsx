@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import ChatInterface from '@/components/ChatInterface';
@@ -12,45 +11,55 @@ const Index = () => {
       <Header />
       
       <main className="flex-grow">
-        {/* Hero Section with Wedding Background */}
-        <section className="relative py-16 md:py-24 bg-white">
+        {/* Hero Section with Wedding Video Background */}
+        <section className="relative py-24 md:py-32">
+          {/* Video Background */}
+          <div className="absolute inset-0 w-full h-full overflow-hidden z-0">
+            <video
+              autoPlay
+              muted
+              loop
+              className="absolute min-w-full min-h-full object-cover"
+              poster="/lovable-uploads/c1b39e22-fe32-4dc7-8f94-fbb929ae43fa.png"
+            >
+              <source src="https://assets.mixkit.co/videos/preview/mixkit-bride-and-groom-walking-down-the-aisle-25487-large.mp4" type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+            <div className="absolute inset-0 bg-wedding-black/50"></div>
+          </div>
+          
           <div className="container relative z-10">
-            <div className="grid md:grid-cols-2 gap-12 items-center max-w-6xl mx-auto">
-              <div className="space-y-6 text-wedding-black">
-                <div className="inline-flex items-center px-3 py-1 rounded-full bg-wedding-light text-sm text-wedding-black mb-4">
-                  <Sparkles size={14} className="mr-2" />
-                  <span>Nouveau en 2025</span>
-                </div>
-                <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif leading-tight">
-                  Organisez le mariage <span className="text-wedding-black">dont vous rêvez</span>
-                </h2>
-                <p className="text-wedding-black/90 text-lg md:pr-12">
-                  Mariable révolutionne l'organisation de votre mariage en vous connectant instantanément avec les meilleurs prestataires adaptés à vos envies et votre budget.
-                </p>
-                <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                  <Button 
-                    size="lg" 
-                    className="gap-2 bg-wedding-olive hover:bg-wedding-olive/90 text-white"
-                    asChild
-                  >
-                    <Link to="/commencer">
-                      Commencer <ArrowRight size={16} />
-                    </Link>
-                  </Button>
-                  <Button 
-                    size="lg" 
-                    variant="outline" 
-                    className="border-wedding-olive text-wedding-olive hover:bg-wedding-olive/10"
-                    asChild
-                  >
-                    <Link to="/about/histoire">
-                      En savoir plus
-                    </Link>
-                  </Button>
-                </div>
+            <div className="max-w-3xl mx-auto text-center">
+              <div className="inline-flex items-center px-3 py-1 rounded-full bg-wedding-light text-sm text-wedding-black mb-4">
+                <Sparkles size={14} className="mr-2" />
+                <span>Nouveau en 2025</span>
               </div>
-              <div className="rounded-2xl overflow-hidden shadow-lg border border-gray-200 bg-white">
-                <ChatInterface />
+              <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif leading-tight text-white mb-6">
+                Organisez le mariage <span className="text-wedding-cream">dont vous rêvez</span>
+              </h2>
+              <p className="text-white/90 text-lg mb-8 max-w-2xl mx-auto">
+                Mariable révolutionne l'organisation de votre mariage en vous connectant instantanément avec les meilleurs prestataires adaptés à vos envies et votre budget.
+              </p>
+              <div className="flex flex-col sm:flex-row justify-center gap-4 pt-4">
+                <Button 
+                  size="lg" 
+                  className="gap-2 bg-wedding-olive hover:bg-wedding-olive/90 text-white"
+                  asChild
+                >
+                  <Link to="/commencer">
+                    Commencer <ArrowRight size={16} />
+                  </Link>
+                </Button>
+                <Button 
+                  size="lg" 
+                  variant="outline" 
+                  className="border-white text-white hover:bg-white/10"
+                  asChild
+                >
+                  <Link to="/about/histoire">
+                    En savoir plus
+                  </Link>
+                </Button>
               </div>
             </div>
           </div>

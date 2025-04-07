@@ -133,3 +133,16 @@
   33% { content: '..'; }
   66% { content: '...'; }
 }
+
+/* Video background styles */
+.video-background {
+  @apply absolute inset-0 w-full h-full overflow-hidden;
+}
+
+.video-background video {
+  @apply absolute min-w-full min-h-full object-cover;
+}
+
+.video-overlay {
+  @apply absolute inset-0 bg-black/50;
+}
