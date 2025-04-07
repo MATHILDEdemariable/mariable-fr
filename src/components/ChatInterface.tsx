@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -39,7 +38,6 @@ const ChatInterface: React.FC = () => {
   }, [messages, recommendations]);
 
   const scrollToBottom = () => {
-    // Use setTimeout to ensure the DOM has updated before scrolling
     setTimeout(() => {
       if (messagesEndRef.current) {
         messagesEndRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
@@ -63,11 +61,9 @@ const ChatInterface: React.FC = () => {
     setInputValue('');
     setIsLoading(true);
     
-    // Scroll to bottom immediately after sending to prevent scrolling issues
     scrollToBottom();
     
     try {
-      // Directly get recommendations based on the user's first message
       const response = await sendMessage([...messages, userMessage]);
       
       const assistantMessage: MessageType = {
@@ -79,7 +75,6 @@ const ChatInterface: React.FC = () => {
       
       setMessages(prev => [...prev, assistantMessage]);
       
-      // Add recommendations if they exist
       if (response.recommendations && response.recommendations.length > 0) {
         setRecommendations(prev => ({
           ...prev,
@@ -111,7 +106,7 @@ const ChatInterface: React.FC = () => {
   return (
     <div className="w-full h-[500px] flex flex-col bg-white">
       <div className="p-4 bg-white border-b flex items-center justify-center">
-        <p className="text-center text-lg font-serif text-wedding-black">Mathilde de Mariable, votre wedding planner personnelle</p>
+        <p className="text-center text-lg font-serif text-wedding-black">Mathilde de Mariable, votre wedding planner</p>
       </div>
       
       <div className="flex-grow p-0 relative overflow-hidden">
