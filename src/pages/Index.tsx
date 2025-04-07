@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import ChatInterface from '@/components/ChatInterface';
@@ -11,21 +12,16 @@ const Index = () => {
       <Header />
       
       <main className="flex-grow">
-        {/* Hero Section with Wedding Video Background */}
+        {/* Hero Section with Wedding Image Background */}
         <section className="relative py-24 md:py-32">
-          {/* Video Background */}
+          {/* Image Background */}
           <div className="absolute inset-0 w-full h-full overflow-hidden z-0">
-            <video
-              autoPlay
-              muted
-              loop
+            <img
+              src="/lovable-uploads/3d59e058-b318-46af-a10b-9a239cc218e5.png"
+              alt="Couple de mariés regardant l'horizon"
               className="absolute min-w-full min-h-full object-cover"
-              poster="/lovable-uploads/c1b39e22-fe32-4dc7-8f94-fbb929ae43fa.png"
-            >
-              <source src="https://assets.mixkit.co/videos/preview/mixkit-bride-and-groom-walking-down-the-aisle-25487-large.mp4" type="video/mp4" />
-              Your browser does not support the video tag.
-            </video>
-            <div className="absolute inset-0 bg-wedding-black/50"></div>
+            />
+            <div className="absolute inset-0 bg-wedding-black/40"></div>
           </div>
           
           <div className="container relative z-10">
@@ -124,13 +120,9 @@ const Index = () => {
           </div>
         </section>
         
-        {/* Call to Action */}
+        {/* Call to Action - Simplified */}
         <section id="contact" className="py-16 md:py-24 bg-white text-wedding-black">
           <div className="container text-center">
-            <h2 className="text-3xl md:text-4xl font-serif mb-6">Prêt à révolutionner l'organisation de votre mariage ?</h2>
-            <p className="text-lg text-wedding-black/80 mb-8 max-w-2xl mx-auto">
-              Posez-nous vos questions sur les prestataires, lieux, et tout ce qui concerne votre grand jour. Mariable est là pour vous guider.
-            </p>
             <Button 
               size="lg" 
               className="bg-wedding-olive hover:bg-wedding-olive/90 text-white"

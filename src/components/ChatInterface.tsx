@@ -24,6 +24,7 @@ const ChatInterface: React.FC = () => {
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
@@ -38,7 +39,12 @@ const ChatInterface: React.FC = () => {
   }, [messages, recommendations]);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    // Use setTimeout to ensure the DOM has updated before scrolling
+    setTimeout(() => {
+      if (messagesEndRef.current) {
+        messagesEndRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      }
+    }, 100);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -56,6 +62,9 @@ const ChatInterface: React.FC = () => {
     setMessages(prev => [...prev, userMessage]);
     setInputValue('');
     setIsLoading(true);
+    
+    // Scroll to bottom immediately after sending to prevent scrolling issues
+    scrollToBottom();
     
     try {
       // Directly get recommendations based on the user's first message
@@ -99,65 +108,6 @@ const ChatInterface: React.FC = () => {
     }
   };
 
-  // Insert global styles directly in the component
-  useEffect(() => {
-    // Create style element
-    const styleEl = document.createElement('style');
-    styleEl.innerHTML = `
-      .chat-bubble-user {
-        background-color: #7F9474;
-        color: white;
-        border-radius: 18px 18px 0 18px;
-        border: none;
-        box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-      }
-      
-      .chat-bubble-assistant {
-        background-color: #f8f6f0;
-        border-radius: 18px 18px 18px 0;
-        border: none;
-        box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-      }
-      
-      .typing-dots:after {
-        content: '.';
-        animation: dots 1.5s steps(5, end) infinite;
-      }
-      
-      @keyframes dots {
-        0%, 20% { content: '.'; }
-        40% { content: '..'; }
-        60% { content: '...'; }
-        80%, 100% { content: ''; }
-      }
-      
-      .animate-fade-in {
-        animation: fadeIn 0.3s ease-in;
-      }
-      
-      @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(10px); }
-        to { opacity: 1; transform: translateY(0); }
-      }
-      
-      .vendor-card {
-        transition: transform 0.2s ease-in-out;
-      }
-      
-      .vendor-card:hover {
-        transform: translateY(-2px);
-      }
-    `;
-    
-    // Append to head
-    document.head.appendChild(styleEl);
-    
-    // Cleanup
-    return () => {
-      document.head.removeChild(styleEl);
-    };
-  }, []);
-
   return (
     <div className="w-full h-[500px] flex flex-col bg-white">
       <div className="p-4 bg-white border-b flex items-center justify-center">
@@ -165,7 +115,7 @@ const ChatInterface: React.FC = () => {
       </div>
       
       <div className="flex-grow p-0 relative overflow-hidden">
-        <ScrollArea className="h-[400px] p-4">
+        <ScrollArea ref={scrollAreaRef} className="h-[400px] p-4">
           <div className="space-y-4">
             {messages.map((message) => (
               <Message 
