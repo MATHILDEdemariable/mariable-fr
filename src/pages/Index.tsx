@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import ChatInterface from '@/components/ChatInterface';
@@ -19,7 +18,8 @@ const Index = () => {
             <img
               src="/lovable-uploads/e5ba755e-f57f-420f-8885-014226913bc8.png"
               alt="Couple de mariés marchant sous une pluie de pétales"
-              className="absolute min-w-full min-h-full object-cover"
+              className="absolute min-w-full min-h-full object-cover object-center"
+              style={{ objectPosition: "center 40%" }}
             />
             <div className="absolute inset-0 bg-wedding-black/40"></div>
           </div>
