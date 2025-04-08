@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import ChatInterface from '@/components/ChatInterface';
 import Header from '@/components/Header';
@@ -9,10 +9,23 @@ import { Card } from '@/components/ui/card';
 
 const Index = () => {
   const navigate = useNavigate();
+  const [showFullChat, setShowFullChat] = useState(false);
+  const fullChatRef = useRef<HTMLDivElement>(null);
   
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  const handleFirstMessage = () => {
+    setShowFullChat(true);
+    
+    // Wait for state update and DOM rendering before scrolling
+    setTimeout(() => {
+      if (fullChatRef.current) {
+        fullChatRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 100);
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
@@ -46,9 +59,9 @@ const Index = () => {
               </p>
             </div>
 
-            {/* Updated Chat Interface - Simple Input Field */}
+            {/* Simple Input Field - Initial Entry Point */}
             <div className="max-w-3xl mx-auto">
-              <ChatInterface />
+              <ChatInterface isSimpleInput={true} onFirstMessage={handleFirstMessage} />
               
               <div className="mt-6 flex justify-center gap-2 items-center">
                 <button 
@@ -62,6 +75,26 @@ const Index = () => {
             </div>
           </div>
         </section>
+        
+        {/* Full Chatbot Section - Appears after first message */}
+        {showFullChat && (
+          <section ref={fullChatRef} id="chat" className="py-16 bg-white">
+            <div className="container mx-auto px-4">
+              <div className="text-center mb-8">
+                <h2 className="text-3xl font-serif mb-4">Poursuivez la conversation avec Mathilde</h2>
+                <p className="text-muted-foreground max-w-2xl mx-auto">
+                  Obtenez des recommendations de prestataires adaptées à vos besoins
+                </p>
+              </div>
+              
+              <div className="max-w-3xl mx-auto">
+                <Card className="bg-white shadow-xl rounded-xl overflow-hidden border">
+                  <ChatInterface />
+                </Card>
+              </div>
+            </div>
+          </section>
+        )}
         
         {/* Features Section */}
         <section id="features" className="py-16 bg-white">
