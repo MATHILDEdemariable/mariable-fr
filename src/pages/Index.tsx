@@ -1,11 +1,32 @@
-import React, { useEffect } from 'react';
-import { Link } from 'react-router-dom';
+
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import ChatInterface from '@/components/ChatInterface';
 import Header from '@/components/Header';
-import { ArrowRight, Sparkles, Calendar, MapPin, Heart, Instagram, Mail, Phone } from 'lucide-react';
+import { ArrowRight, Sparkles, Calendar, MapPin, Heart, Instagram, Mail, Phone, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
+import { Textarea } from '@/components/ui/textarea';
+import { useForm } from 'react-hook-form';
+import { Card } from '@/components/ui/card';
 
 const Index = () => {
+  const navigate = useNavigate();
+  const [formVisible, setFormVisible] = useState(false);
+  
+  const form = useForm({
+    defaultValues: {
+      weddingDescription: ''
+    }
+  });
+
+  const onSubmit = (data: { weddingDescription: string }) => {
+    // Store the wedding description in localStorage to use it in the ChatInterface
+    localStorage.setItem('weddingDescription', data.weddingDescription);
+    navigate('/commencer');
+  };
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -16,7 +37,7 @@ const Index = () => {
       
       <main className="flex-grow">
         {/* Hero Section with Wedding Image Background */}
-        <section className="relative h-screen">
+        <section className="relative min-h-screen flex items-center">
           {/* Image Background */}
           <div className="absolute inset-0 w-full h-full overflow-hidden z-0">
             <img
@@ -25,11 +46,11 @@ const Index = () => {
               className="absolute min-w-full min-h-full object-cover"
               style={{ objectPosition: "center 25%" }}
             />
-            <div className="absolute inset-0 bg-wedding-black/30"></div>
+            <div className="absolute inset-0 bg-wedding-black/40 backdrop-blur-[2px]"></div>
           </div>
           
-          <div className="container relative z-10 h-full flex items-end pb-20">
-            <div className="max-w-3xl mx-auto text-center">
+          <div className="container relative z-10 mx-auto px-4 py-16">
+            <div className="max-w-3xl mx-auto text-center mb-8">
               <div className="inline-flex items-center px-3 py-1 rounded-full bg-wedding-light text-sm text-wedding-black mb-4">
                 <Sparkles size={14} className="mr-2" />
                 <span>Nouveau en 2025</span>
@@ -38,41 +59,55 @@ const Index = () => {
                 Organisez le mariage <span className="text-wedding-cream">dont vous rêvez</span>
               </h2>
               <p className="text-white/90 text-lg mb-8 max-w-2xl mx-auto">
-                Avec Mariable, organiser un mariage devient simple, rapide & agréable. Nous vous connectons instantanément avec les meilleurs prestataires adaptés à vos envies et votre budget.
+                Dites-nous ce dont vous avez besoin ou quel est le mariage parfait pour vous ! 💍
               </p>
-              <div className="flex flex-col sm:flex-row justify-center gap-4 pt-4">
-                <Button 
-                  size="lg" 
-                  className="gap-2 bg-wedding-olive hover:bg-wedding-olive/90 text-white"
-                  asChild
-                >
-                  <Link to="/commencer">
-                    Commencer <ArrowRight size={16} />
-                  </Link>
-                </Button>
-                <Button 
-                  size="lg" 
-                  variant="outline" 
-                  className="border-white text-black bg-white hover:bg-white/90"
-                  asChild
-                >
-                  <Link to="/about/histoire">
-                    En savoir plus
-                  </Link>
-                </Button>
-              </div>
             </div>
-          </div>
-        </section>
-        
-        {/* Chatbot Section - Deuxième partie de la landing page */}
-        <section className="py-20 bg-wedding-cream/30">
-          <div className="container mx-auto text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-serif mb-6">Prêt à révolutionner l'organisation de votre mariage ?</h2>
-          </div>
-          <div className="max-w-3xl mx-auto">
-            <div className="rounded-2xl overflow-hidden shadow-lg border border-gray-200 bg-white">
-              <ChatInterface />
+
+            {/* Search Form inspired by Le Collectionist */}
+            <div className="max-w-4xl mx-auto">
+              <Card className="bg-white/95 backdrop-blur-md shadow-xl rounded-xl overflow-hidden border-0">
+                <div className="p-6 md:p-8">
+                  <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                      <FormField
+                        control={form.control}
+                        name="weddingDescription"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Textarea
+                                placeholder="Décrivez votre mariage idéal ou ce dont vous avez besoin pour l'organiser..."
+                                className="resize-none min-h-[120px] text-lg focus:ring-wedding-olive p-4"
+                                {...field}
+                              />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <div className="flex justify-center">
+                        <Button 
+                          type="submit"
+                          size="lg" 
+                          className="gap-2 bg-wedding-olive hover:bg-wedding-olive/90 text-white rounded-full px-8 py-6 text-lg transform transition-transform hover:scale-105"
+                        >
+                          Parler à votre assistant mariage <ArrowRight size={18} />
+                        </Button>
+                      </div>
+                    </form>
+                  </Form>
+                </div>
+              </Card>
+              
+              <div className="mt-6 flex justify-center gap-2 items-center">
+                <button 
+                  onClick={() => navigate('/demo')}
+                  className="text-white/80 hover:text-white text-sm flex items-center gap-1 transition-colors"
+                >
+                  <span>Vous ne savez pas par où commencer ?</span>
+                  <span className="underline font-medium">Voir une démo</span>
+                </button>
+              </div>
             </div>
           </div>
         </section>
@@ -117,6 +152,18 @@ const Index = () => {
                   Une approche intuitive et conversationnelle pour organiser chaque aspect de votre mariage.
                 </p>
               </div>
+            </div>
+          </div>
+        </section>
+        
+        {/* Chatbot Section - Deuxième partie de la landing page */}
+        <section className="py-20 bg-wedding-cream/30">
+          <div className="container mx-auto text-center mb-12">
+            <h2 className="text-4xl md:text-5xl font-serif mb-6">Prêt à révolutionner l'organisation de votre mariage ?</h2>
+          </div>
+          <div className="max-w-3xl mx-auto">
+            <div className="rounded-2xl overflow-hidden shadow-lg border border-gray-200 bg-white">
+              <ChatInterface />
             </div>
           </div>
         </section>
