@@ -14,9 +14,14 @@ import { useToast } from "@/hooks/use-toast";
 interface ChatInterfaceProps {
   isSimpleInput?: boolean;
   onFirstMessage?: () => void;
+  initialMessage?: string;
 }
 
-const ChatInterface: React.FC<ChatInterfaceProps> = ({ isSimpleInput = false, onFirstMessage }) => {
+const ChatInterface: React.FC<ChatInterfaceProps> = ({ 
+  isSimpleInput = false, 
+  onFirstMessage,
+  initialMessage
+}) => {
   const [messages, setMessages] = useState<MessageType[]>([
     {
       id: 'welcome',
@@ -26,8 +31,9 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ isSimpleInput = false, on
     }
   ]);
   const [recommendations, setRecommendations] = useState<Record<string, VendorRecommendation[]>>({});
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState(initialMessage || '');
   const [isLoading, setIsLoading] = useState(false);
+  const [hasProcessedInitialMessage, setHasProcessedInitialMessage] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -43,6 +49,14 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ isSimpleInput = false, on
     scrollToBottom();
   }, [messages, recommendations]);
 
+  // Process initial message if provided
+  useEffect(() => {
+    if (initialMessage && !isSimpleInput && !hasProcessedInitialMessage) {
+      setHasProcessedInitialMessage(true);
+      handleSubmitWithMessage(initialMessage);
+    }
+  }, [initialMessage, isSimpleInput]);
+
   const scrollToBottom = () => {
     setTimeout(() => {
       if (messagesEndRef.current) {
@@ -51,15 +65,13 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ isSimpleInput = false, on
     }, 100);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!inputValue.trim() || isLoading) return;
+  const handleSubmitWithMessage = async (message: string) => {
+    if (!message.trim() || isLoading) return;
     
     const userMessage: MessageType = {
       id: uuidv4(),
       role: 'user',
-      content: inputValue,
+      content: message,
       timestamp: new Date()
     };
     
@@ -112,6 +124,11 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ isSimpleInput = false, on
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await handleSubmitWithMessage(inputValue);
   };
 
   // Return different UI based on isSimpleInput prop

@@ -10,13 +10,15 @@ import { Card } from '@/components/ui/card';
 const Index = () => {
   const navigate = useNavigate();
   const [showFullChat, setShowFullChat] = useState(false);
+  const [userInitialMessage, setUserInitialMessage] = useState('');
   const fullChatRef = useRef<HTMLDivElement>(null);
   
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  const handleFirstMessage = () => {
+  const handleFirstMessage = (message: string) => {
+    setUserInitialMessage(message);
     setShowFullChat(true);
     
     // Wait for state update and DOM rendering before scrolling
@@ -61,7 +63,16 @@ const Index = () => {
 
             {/* Simple Input Field - Initial Entry Point */}
             <div className="max-w-3xl mx-auto">
-              <ChatInterface isSimpleInput={true} onFirstMessage={handleFirstMessage} />
+              <ChatInterface 
+                isSimpleInput={true} 
+                onFirstMessage={() => {
+                  // Capture the input value from the event
+                  const inputElement = document.querySelector('input') as HTMLInputElement;
+                  if (inputElement) {
+                    handleFirstMessage(inputElement.value);
+                  }
+                }}
+              />
               
               <div className="mt-6 flex justify-center gap-2 items-center">
                 <button 
@@ -89,7 +100,7 @@ const Index = () => {
               
               <div className="max-w-3xl mx-auto">
                 <Card className="bg-white shadow-xl rounded-xl overflow-hidden border">
-                  <ChatInterface />
+                  <ChatInterface initialMessage={userInitialMessage} />
                 </Card>
               </div>
             </div>
