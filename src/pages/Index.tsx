@@ -3,30 +3,14 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import ChatInterface from '@/components/ChatInterface';
 import Header from '@/components/Header';
-import { ArrowRight, Sparkles, Calendar, MapPin, Heart, Instagram, Mail, Phone, Search } from 'lucide-react';
+import { ArrowRight, Sparkles, Calendar, MapPin, Heart, Instagram, Mail, Phone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
-import { Textarea } from '@/components/ui/textarea';
-import { useForm } from 'react-hook-form';
+import { Form } from '@/components/ui/form';
 import { Card } from '@/components/ui/card';
 
 const Index = () => {
   const navigate = useNavigate();
-  const [formVisible, setFormVisible] = useState(false);
   
-  const form = useForm({
-    defaultValues: {
-      weddingDescription: ''
-    }
-  });
-
-  const onSubmit = (data: { weddingDescription: string }) => {
-    // Store the wedding description in localStorage to use it in the ChatInterface
-    localStorage.setItem('weddingDescription', data.weddingDescription);
-    navigate('/commencer');
-  };
-
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -63,40 +47,10 @@ const Index = () => {
               </p>
             </div>
 
-            {/* Search Form inspired by Le Collectionist */}
-            <div className="max-w-4xl mx-auto">
+            {/* Chat Interface */}
+            <div className="max-w-3xl mx-auto">
               <Card className="bg-white/95 backdrop-blur-md shadow-xl rounded-xl overflow-hidden border-0">
-                <div className="p-6 md:p-8">
-                  <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                      <FormField
-                        control={form.control}
-                        name="weddingDescription"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormControl>
-                              <Textarea
-                                placeholder="Décrivez votre mariage idéal ou ce dont vous avez besoin pour l'organiser..."
-                                className="resize-none min-h-[120px] text-lg focus:ring-wedding-olive p-4"
-                                {...field}
-                              />
-                            </FormControl>
-                          </FormItem>
-                        )}
-                      />
-                      
-                      <div className="flex justify-center">
-                        <Button 
-                          type="submit"
-                          size="lg" 
-                          className="gap-2 bg-wedding-olive hover:bg-wedding-olive/90 text-white rounded-full px-8 py-6 text-lg transform transition-transform hover:scale-105"
-                        >
-                          Parler à votre assistant mariage <ArrowRight size={18} />
-                        </Button>
-                      </div>
-                    </form>
-                  </Form>
-                </div>
+                <ChatInterface />
               </Card>
               
               <div className="mt-6 flex justify-center gap-2 items-center">
@@ -152,18 +106,6 @@ const Index = () => {
                   Une approche intuitive et conversationnelle pour organiser chaque aspect de votre mariage.
                 </p>
               </div>
-            </div>
-          </div>
-        </section>
-        
-        {/* Chatbot Section - Deuxième partie de la landing page */}
-        <section className="py-20 bg-wedding-cream/30">
-          <div className="container mx-auto text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-serif mb-6">Prêt à révolutionner l'organisation de votre mariage ?</h2>
-          </div>
-          <div className="max-w-3xl mx-auto">
-            <div className="rounded-2xl overflow-hidden shadow-lg border border-gray-200 bg-white">
-              <ChatInterface />
             </div>
           </div>
         </section>
