@@ -113,12 +113,15 @@ const Index = () => {
         {/* Call to Action - Simplified */}
         <section id="contact" className="py-16 md:py-24 bg-white text-wedding-black">
           <div className="container text-center">
+            <h2 className="text-3xl font-serif mb-6">
+              Prêt à révolutionner l'organisation de votre mariage ?
+            </h2>
             <Button 
               size="lg" 
               className="bg-wedding-olive hover:bg-wedding-olive/90 text-white"
               asChild
             >
-              <Link to="/commencer">
+              <Link to="/services/planification">
                 Essayer Mariable maintenant
               </Link>
             </Button>

@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import ServiceTemplate from '../ServiceTemplate';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -261,6 +262,26 @@ const PlanningChecklist = () => {
           </Card>
         </>
       )}
+
+      <div className="mt-8 text-center">
+        <Card className="bg-wedding-cream/20 border-wedding-olive/20">
+          <CardContent className="pt-6 pb-6">
+            <h3 className="text-2xl font-serif mb-4">Prêt à aller plus loin ?</h3>
+            <p className="mb-6">
+              Créez votre compte pour sauvegarder votre planning et accéder à toutes nos fonctionnalités.
+            </p>
+            <Button 
+              size="lg"
+              className="bg-wedding-olive hover:bg-wedding-olive/90 text-white"
+              asChild
+            >
+              <Link to="/commencer">
+                S'inscrire <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };
