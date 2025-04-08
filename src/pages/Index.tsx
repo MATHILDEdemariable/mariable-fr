@@ -1,11 +1,10 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import ChatInterface from '@/components/ChatInterface';
 import Header from '@/components/Header';
 import { ArrowRight, Sparkles, Calendar, MapPin, Heart, Instagram, Mail, Phone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Form } from '@/components/ui/form';
 import { Card } from '@/components/ui/card';
 
 const Index = () => {
@@ -47,11 +46,9 @@ const Index = () => {
               </p>
             </div>
 
-            {/* Chat Interface */}
+            {/* Updated Chat Interface - Simple Input Field */}
             <div className="max-w-3xl mx-auto">
-              <Card className="bg-white/95 backdrop-blur-md shadow-xl rounded-xl overflow-hidden border-0">
-                <ChatInterface />
-              </Card>
+              <ChatInterface />
               
               <div className="mt-6 flex justify-center gap-2 items-center">
                 <button 

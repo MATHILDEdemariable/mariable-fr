@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -103,52 +104,26 @@ const ChatInterface: React.FC = () => {
     }
   };
 
+  // Nouveau composant simplifié sans l'en-tête
   return (
-    <div className="w-full h-[500px] flex flex-col bg-white">
-      <div className="p-4 bg-white border-b flex items-center justify-center">
-        <p className="text-center text-lg font-serif text-wedding-black">Mathilde de Mariable, votre wedding planner</p>
-      </div>
-      
-      <div className="flex-grow p-0 relative overflow-hidden">
-        <ScrollArea ref={scrollAreaRef} className="h-[400px] p-4">
-          <div className="space-y-4">
-            {messages.map((message) => (
-              <Message 
-                key={message.id} 
-                message={message}
-                recommendations={recommendations[message.id]} 
-              />
-            ))}
-            
-            {isLoading && (
-              <div className="flex w-full justify-start mb-4">
-                <Card className="chat-bubble-assistant p-3">
-                  <CardContent className="p-0">
-                    <p className="typing-dots">Mathilde réfléchit</p>
-                  </CardContent>
-                </Card>
-              </div>
-            )}
-            
-            <div ref={messagesEndRef} />
-          </div>
-        </ScrollArea>
-      </div>
-      <div className="p-3 border-t bg-white">
-        <form onSubmit={handleSubmit} className="flex w-full gap-2">
-          <Input
-            ref={inputRef}
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            placeholder="Décrivez votre mariage idéal ou ce que vous recherchez..."
-            disabled={isLoading}
-            className="flex-grow"
-          />
-          <Button type="submit" disabled={isLoading || !inputValue.trim()} className="bg-wedding-olive hover:bg-wedding-olive/90 text-white">
-            <SendHorizontal className="h-4 w-4" />
-          </Button>
-        </form>
-      </div>
+    <div className="w-full rounded-full overflow-hidden shadow-md bg-white">
+      <form onSubmit={handleSubmit} className="flex w-full items-center">
+        <Input
+          ref={inputRef}
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          placeholder="Décrivez votre mariage idéal ou ce que vous recherchez..."
+          disabled={isLoading}
+          className="flex-grow border-0 focus-visible:ring-0 focus-visible:ring-offset-0 rounded-full py-6 pl-6"
+        />
+        <Button 
+          type="submit" 
+          disabled={isLoading || !inputValue.trim()} 
+          className="bg-wedding-olive hover:bg-wedding-olive/90 text-white h-auto rounded-full py-2 px-4 mx-2"
+        >
+          <SendHorizontal className="h-5 w-5" />
+        </Button>
+      </form>
     </div>
   );
 };
