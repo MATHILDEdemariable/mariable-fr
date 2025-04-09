@@ -67,6 +67,33 @@ export async function saveInscription(data: InscriptionData) {
   }
 }
 
+export async function sendToMakeWebhook(data: InscriptionData) {
+  try {
+    const webhookUrl = 'https://hook.eu2.make.com/c7jvw1pvlv8hxn3lv4bv8ue0hse5w324';
+
+    const response = await fetch(webhookUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        userType: data.userType === 'couple' ? 'Futurs mariés' : 'Professionnel'
+      }),
+      mode: 'no-cors', // Pour éviter les problèmes CORS avec le webhook
+    });
+
+    // Puisque nous utilisons 'no-cors', nous ne pourrons pas vérifier le statut de la réponse
+    // Nous supposons que l'envoi a réussi
+    return true;
+  } catch (error) {
+    console.error('Erreur lors de l\'envoi des données au webhook Make:', error);
+    return false;
+  }
+}
+
 export async function sendConfirmationEmail(data: InscriptionData) {
   try {
     // Vérification de la configuration Supabase

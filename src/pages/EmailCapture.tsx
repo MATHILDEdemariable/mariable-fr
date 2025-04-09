@@ -12,7 +12,7 @@ import { FormField, FormItem, FormLabel, FormControl, Form, FormMessage } from "
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { saveInscription, sendConfirmationEmail, InscriptionData } from '@/services/inscriptionService';
+import { saveInscription, sendConfirmationEmail, sendToMakeWebhook, InscriptionData } from '@/services/inscriptionService';
 
 const formSchema = z.object({
   firstName: z.string().min(2, { message: "Le prénom doit contenir au moins 2 caractères" }),
@@ -54,6 +54,8 @@ const EmailCapture = () => {
         email: data.email,
         userType: data.userType
       };
+      
+      await sendToMakeWebhook(inscriptionData);
       
       const inscriptionSaved = await saveInscription(inscriptionData);
       const emailSent = await sendConfirmationEmail(inscriptionData);
