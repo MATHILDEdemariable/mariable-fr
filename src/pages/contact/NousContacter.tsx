@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
+import { Linkedin, Mail } from 'lucide-react';
 
 const NousContacter = () => {
   const { toast } = useToast();
@@ -34,23 +35,29 @@ const NousContacter = () => {
               <h2 className="text-2xl font-serif mb-4">Coordonnées</h2>
               
               <div className="space-y-4">
-                <div>
-                  <p className="font-medium">Email</p>
-                  <p className="text-muted-foreground">contact@mariable.fr</p>
+                <div className="flex items-center">
+                  <Mail className="mr-3 h-5 w-5 text-wedding-black" />
+                  <div>
+                    <p className="font-medium">Email</p>
+                    <a href="mailto:mathilde@mariable.fr" className="text-wedding-olive hover:underline">
+                      mathilde@mariable.fr
+                    </a>
+                  </div>
                 </div>
                 
-                <div>
-                  <p className="font-medium">Téléphone</p>
-                  <p className="text-muted-foreground">+33 (0)1 23 45 67 89</p>
-                </div>
-                
-                <div>
-                  <p className="font-medium">Adresse</p>
-                  <p className="text-muted-foreground">
-                    42 Avenue des Mariés<br />
-                    75008 Paris<br />
-                    France
-                  </p>
+                <div className="flex items-center">
+                  <Linkedin className="mr-3 h-5 w-5 text-wedding-black" />
+                  <div>
+                    <p className="font-medium">Contact professionnel</p>
+                    <a 
+                      href="https://www.linkedin.com/in/lambertmathilde/" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-wedding-olive hover:underline"
+                    >
+                      LinkedIn
+                    </a>
+                  </div>
                 </div>
                 
                 <div>

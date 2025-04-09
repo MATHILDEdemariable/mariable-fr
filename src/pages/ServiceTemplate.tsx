@@ -2,7 +2,7 @@
 import React from 'react';
 import Header from '@/components/Header';
 import { Link } from 'react-router-dom';
-import { Instagram, Mail, Phone, MapPin } from 'lucide-react';
+import { Instagram, Mail, Linkedin } from 'lucide-react';
 
 interface ServiceTemplateProps {
   title: string;
@@ -67,17 +67,17 @@ const ServiceTemplate: React.FC<ServiceTemplateProps> = ({ title, description, c
             <div>
               <h3 className="font-serif text-lg mb-4">Contact</h3>
               <ul className="space-y-3">
-                <li className="flex items-start">
-                  <MapPin className="mr-2 h-5 w-5 text-wedding-black shrink-0 mt-0.5" />
-                  <span className="text-wedding-black/70">123 Rue du Mariage, 75001 Paris, France</span>
-                </li>
-                <li className="flex items-center">
-                  <Phone className="mr-2 h-5 w-5 text-wedding-black shrink-0" />
-                  <span className="text-wedding-black/70">+33 1 23 45 67 89</span>
-                </li>
                 <li className="flex items-center">
                   <Mail className="mr-2 h-5 w-5 text-wedding-black shrink-0" />
-                  <span className="text-wedding-black/70">contact@mariable.fr</span>
+                  <a href="mailto:mathilde@mariable.fr" className="text-wedding-black/70 hover:text-wedding-black">
+                    mathilde@mariable.fr
+                  </a>
+                </li>
+                <li className="flex items-center">
+                  <Linkedin className="mr-2 h-5 w-5 text-wedding-black shrink-0" />
+                  <a href="https://www.linkedin.com/in/lambertmathilde/" target="_blank" rel="noopener noreferrer" className="text-wedding-black/70 hover:text-wedding-black">
+                    LinkedIn Professionnel
+                  </a>
                 </li>
               </ul>
             </div>

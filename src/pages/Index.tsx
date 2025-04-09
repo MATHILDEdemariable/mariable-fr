@@ -1,9 +1,8 @@
-
 import React, { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import ChatInterface from '@/components/ChatInterface';
 import Header from '@/components/Header';
-import { ArrowRight, Sparkles, Calendar, MapPin, Heart, Instagram, Mail, Phone } from 'lucide-react';
+import { ArrowRight, Sparkles, Calendar, MapPin, Heart, Instagram, Mail, Phone, Linkedin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 
@@ -21,7 +20,6 @@ const Index = () => {
     setUserInitialMessage(message);
     setShowFullChat(true);
     
-    // Wait for state update and DOM rendering before scrolling
     setTimeout(() => {
       if (fullChatRef.current) {
         fullChatRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -34,9 +32,7 @@ const Index = () => {
       <Header />
       
       <main className="flex-grow">
-        {/* Hero Section with Wedding Image Background */}
         <section className="relative min-h-[80vh] flex items-center">
-          {/* Image Background */}
           <div className="absolute inset-0 w-full h-full overflow-hidden z-0">
             <img
               src="/lovable-uploads/9f8c319a-9a98-4d4c-a886-79f9986a7dcd.png"
@@ -61,12 +57,10 @@ const Index = () => {
               </p>
             </div>
 
-            {/* Simple Input Field - Initial Entry Point */}
             <div className="max-w-3xl mx-auto px-4 sm:px-0">
               <ChatInterface 
                 isSimpleInput={true} 
                 onFirstMessage={() => {
-                  // Capture the input value from the event
                   const inputElement = document.querySelector('input') as HTMLInputElement;
                   if (inputElement) {
                     handleFirstMessage(inputElement.value);
@@ -87,7 +81,6 @@ const Index = () => {
           </div>
         </section>
         
-        {/* Full Chatbot Section - Appears after first message */}
         {showFullChat && (
           <section ref={fullChatRef} id="chat" className="py-8 md:py-16 bg-white">
             <div className="container mx-auto px-4">
@@ -107,7 +100,6 @@ const Index = () => {
           </section>
         )}
         
-        {/* Features Section - Updated for better responsiveness */}
         <section id="features" className="py-8 md:py-16 bg-white">
           <div className="container px-4">
             <div className="text-center mb-8 md:mb-12">
@@ -151,7 +143,6 @@ const Index = () => {
           </div>
         </section>
         
-        {/* Call to Action - Simplified */}
         <section id="contact" className="py-10 md:py-16 lg:py-24 bg-white text-wedding-black">
           <div className="container text-center px-4">
             <h2 className="text-2xl md:text-3xl font-serif mb-4 md:mb-6">
@@ -211,17 +202,17 @@ const Index = () => {
             <div className="mt-6 lg:mt-0">
               <h3 className="font-serif text-base md:text-lg mb-3 md:mb-4">Contact</h3>
               <ul className="space-y-3 text-sm">
-                <li className="flex items-start">
-                  <MapPin className="mr-2 h-4 w-4 md:h-5 md:w-5 text-wedding-black shrink-0 mt-0.5" />
-                  <span className="text-wedding-black/70">123 Rue du Mariage, 75001 Paris, France</span>
-                </li>
-                <li className="flex items-center">
-                  <Phone className="mr-2 h-4 w-4 md:h-5 md:w-5 text-wedding-black shrink-0" />
-                  <span className="text-wedding-black/70">+33 1 23 45 67 89</span>
-                </li>
                 <li className="flex items-center">
                   <Mail className="mr-2 h-4 w-4 md:h-5 md:w-5 text-wedding-black shrink-0" />
-                  <span className="text-wedding-black/70">contact@mariable.fr</span>
+                  <a href="mailto:mathilde@mariable.fr" className="text-wedding-black/70 hover:text-wedding-black transition-colors">
+                    mathilde@mariable.fr
+                  </a>
+                </li>
+                <li className="flex items-center">
+                  <Linkedin className="mr-2 h-4 w-4 md:h-5 md:w-5 text-wedding-black shrink-0" />
+                  <a href="https://www.linkedin.com/in/lambertmathilde/" target="_blank" rel="noopener noreferrer" className="text-wedding-black/70 hover:text-wedding-black transition-colors">
+                    LinkedIn Professionnel
+                  </a>
                 </li>
               </ul>
             </div>

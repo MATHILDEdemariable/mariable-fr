@@ -4,7 +4,7 @@ import Header from '@/components/Header';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Calendar, Search, CheckCircle2, Mail } from 'lucide-react';
+import { ArrowLeft, Calendar, Search, CheckCircle2, Mail, Linkedin } from 'lucide-react';
 
 const Demo = () => {
   return (
