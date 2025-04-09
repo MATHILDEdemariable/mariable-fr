@@ -22,6 +22,8 @@ export interface InscriptionData {
   lastName: string;
   email: string;
   userType: string;
+  phone?: string;
+  comment?: string;
 }
 
 export async function saveInscription(data: InscriptionData) {
@@ -45,6 +47,8 @@ export async function saveInscription(data: InscriptionData) {
           prenom: data.firstName,
           nom: data.lastName,
           email: data.email,
+          telephone: data.phone || null,
+          commentaire: data.comment || null,
           date_inscription: new Date().toISOString(),
           type_utilisateur: data.userType === 'couple' ? 'Futurs mariés' : 'Professionnel'
         }
@@ -80,6 +84,8 @@ export async function sendToMakeWebhook(data: InscriptionData) {
         firstName: data.firstName,
         lastName: data.lastName,
         email: data.email,
+        phone: data.phone || '',
+        comment: data.comment || '',
         userType: data.userType === 'couple' ? 'Futurs mariés' : 'Professionnel'
       }),
       mode: 'no-cors', // Pour éviter les problèmes CORS avec le webhook
@@ -110,6 +116,8 @@ export async function sendConfirmationEmail(data: InscriptionData) {
         firstName: data.firstName,
         lastName: data.lastName,
         email: data.email,
+        phone: data.phone || 'Non renseigné',
+        comment: data.comment || 'Aucun commentaire',
         userType: data.userType === 'couple' ? 'Futurs mariés' : 'Professionnel',
         date: new Date().toLocaleDateString('fr-FR')
       }

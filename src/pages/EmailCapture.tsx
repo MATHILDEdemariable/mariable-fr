@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
@@ -13,11 +14,14 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { saveInscription, sendConfirmationEmail, sendToMakeWebhook, InscriptionData } from '@/services/inscriptionService';
+import { Textarea } from "@/components/ui/textarea";
 
 const formSchema = z.object({
   firstName: z.string().min(2, { message: "Le prénom doit contenir au moins 2 caractères" }),
   lastName: z.string().min(2, { message: "Le nom doit contenir au moins 2 caractères" }),
   email: z.string().email({ message: "Veuillez entrer une adresse email valide" }),
+  phone: z.string().optional(),
+  comment: z.string().optional(),
   userType: z.enum(["couple", "professional"], {
     required_error: "Veuillez sélectionner une option",
   }),
@@ -40,6 +44,8 @@ const EmailCapture = () => {
       firstName: "",
       lastName: "",
       email: "",
+      phone: "",
+      comment: "",
       userType: "couple",
     },
   });
@@ -52,6 +58,8 @@ const EmailCapture = () => {
         firstName: data.firstName,
         lastName: data.lastName,
         email: data.email,
+        phone: data.phone,
+        comment: data.comment,
         userType: data.userType
       };
       
@@ -163,6 +171,24 @@ const EmailCapture = () => {
               
               <FormField
                 control={form.control}
+                name="phone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Téléphone</FormLabel>
+                    <FormControl>
+                      <Input 
+                        type="tel" 
+                        placeholder="Votre numéro de téléphone" 
+                        {...field} 
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
                 name="userType"
                 render={({ field }) => (
                   <FormItem className="space-y-1">
@@ -182,6 +208,24 @@ const EmailCapture = () => {
                           <Label htmlFor="professional">Professionnel du mariage</Label>
                         </div>
                       </RadioGroup>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="comment"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Commentaire (optionnel)</FormLabel>
+                    <FormControl>
+                      <Textarea 
+                        placeholder="Partagez vos attentes ou vos besoins particuliers..." 
+                        className="resize-none" 
+                        {...field} 
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
