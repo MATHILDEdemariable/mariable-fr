@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import ChatInterface from '@/components/ChatInterface';
 import Header from '@/components/Header';
-import { ArrowRight, Sparkles, Calendar, MapPin, Heart, Instagram, Mail, Phone, Linkedin } from 'lucide-react';
+import { ArrowRight, Sparkles, Calendar, MapPin, Heart, Instagram, Mail, Phone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 
@@ -35,10 +35,10 @@ const Index = () => {
         <section className="relative min-h-[80vh] flex items-center">
           <div className="absolute inset-0 w-full h-full overflow-hidden z-0">
             <img
-              src="/lovable-uploads/9f8c319a-9a98-4d4c-a886-79f9986a7dcd.png"
-              alt="Couple de mariés marchant sous une pluie de pétales"
+              src="/lovable-uploads/adcdc8b9-07ae-46bb-9f46-42244c2b4749.png"
+              alt="Couple de mariés célébrant avec les invités"
               className="absolute min-w-full min-h-full object-cover"
-              style={{ objectPosition: "center 25%" }}
+              style={{ objectPosition: "center center" }}
             />
             <div className="absolute inset-0 bg-wedding-black/40 backdrop-blur-[2px]"></div>
           </div>
@@ -206,12 +206,6 @@ const Index = () => {
                   <Mail className="mr-2 h-4 w-4 md:h-5 md:w-5 text-wedding-black shrink-0" />
                   <a href="mailto:mathilde@mariable.fr" className="text-wedding-black/70 hover:text-wedding-black transition-colors">
                     mathilde@mariable.fr
-                  </a>
-                </li>
-                <li className="flex items-center">
-                  <Linkedin className="mr-2 h-4 w-4 md:h-5 md:w-5 text-wedding-black shrink-0" />
-                  <a href="https://www.linkedin.com/in/lambertmathilde/" target="_blank" rel="noopener noreferrer" className="text-wedding-black/70 hover:text-wedding-black transition-colors">
-                    LinkedIn Professionnel
                   </a>
                 </li>
               </ul>

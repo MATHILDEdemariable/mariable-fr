@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { Linkedin, Mail } from 'lucide-react';
+import { Mail } from 'lucide-react';
 
 const NousContacter = () => {
   const { toast } = useToast();
@@ -43,30 +43,6 @@ const NousContacter = () => {
                       mathilde@mariable.fr
                     </a>
                   </div>
-                </div>
-                
-                <div className="flex items-center">
-                  <Linkedin className="mr-3 h-5 w-5 text-wedding-black" />
-                  <div>
-                    <p className="font-medium">Contact professionnel</p>
-                    <a 
-                      href="https://www.linkedin.com/in/lambertmathilde/" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="text-wedding-olive hover:underline"
-                    >
-                      LinkedIn
-                    </a>
-                  </div>
-                </div>
-                
-                <div>
-                  <p className="font-medium">Horaires</p>
-                  <p className="text-muted-foreground">
-                    Du lundi au vendredi : 9h00 - 18h00<br />
-                    Samedi : 10h00 - 16h00<br />
-                    Dimanche : Fermé
-                  </p>
                 </div>
               </div>
             </div>
