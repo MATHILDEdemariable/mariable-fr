@@ -266,7 +266,7 @@ const PlanningChecklist = () => {
       <div className="mt-8 text-center">
         <Card className="bg-wedding-cream/20 border-wedding-olive/20">
           <CardContent className="pt-6 pb-6">
-            <h3 className="text-2xl font-serif mb-4">Prêt à aller plus loin ?</h3>
+            <h3 className="text-2xl font-serif mb-4">Prêt à dire oui à la simplicité ?</h3>
             <p className="mb-6">
               Créez votre compte pour sauvegarder votre planning et accéder à toutes nos fonctionnalités.
             </p>
