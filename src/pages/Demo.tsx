@@ -27,20 +27,10 @@ const Demo = () => {
         
         <Card className="mb-12 border-wedding-olive/20 bg-wedding-olive/5">
           <CardHeader>
-            <CardTitle className="text-wedding-olive">Votre demande a bien été enregistrée</CardTitle>
+            <CardTitle className="text-wedding-olive">Nous vous recontactons pour le lancement officiel</CardTitle>
             <CardDescription>
-              Notre équipe vous contactera très prochainement avec plus d'informations sur les prestataires qui correspondent à vos critères.
+              Vous pouvez toujours nous contacter ou consulter notre guide de prestataires à l'adresse suivante : <a href="https://www.mariable.fr/selectionmariable" className="text-wedding-olive hover:underline" target="_blank" rel="noopener noreferrer">www.mariable.fr/selectionmariable</a>
             </CardDescription>
-          </CardHeader>
-          <CardContent className="flex items-center space-x-2">
-            <Mail className="h-5 w-5 text-wedding-olive" />
-            <p className="text-sm">Un email de confirmation a été envoyé à l'adresse que vous avez fournie.</p>
-          </CardContent>
-        </Card>
-        
-        <Card className="mb-12 border-wedding-olive/20 bg-wedding-olive/5">
-          <CardHeader>
-            <CardTitle className="text-wedding-olive">En attendant le lancement officiel...</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-muted-foreground mb-4">

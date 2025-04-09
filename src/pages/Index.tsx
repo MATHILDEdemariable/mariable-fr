@@ -76,7 +76,7 @@ const Index = () => {
               
               <div className="mt-4 md:mt-6 flex flex-col sm:flex-row justify-center gap-2 items-center">
                 <button 
-                  onClick={() => navigate('/demo')}
+                  onClick={() => navigate('/services/planification')}
                   className="text-white/80 hover:text-white text-sm flex items-center gap-1 transition-colors py-2"
                 >
                   <span>Vous ne savez pas par où commencer ?</span>
@@ -107,7 +107,7 @@ const Index = () => {
           </section>
         )}
         
-        {/* Features Section */}
+        {/* Features Section - Updated for better responsiveness */}
         <section id="features" className="py-8 md:py-16 bg-white">
           <div className="container px-4">
             <div className="text-center mb-8 md:mb-12">
@@ -117,7 +117,7 @@ const Index = () => {
               </p>
             </div>
             
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8 max-w-5xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 max-w-5xl mx-auto">
               <div className="feature-card">
                 <div className="w-10 h-10 md:w-12 md:h-12 bg-wedding-black/10 rounded-full flex items-center justify-center mb-4">
                   <Calendar className="text-wedding-black h-5 w-5 md:h-6 md:w-6" />
@@ -138,7 +138,7 @@ const Index = () => {
                 </p>
               </div>
               
-              <div className="feature-card sm:col-span-2 md:col-span-1">
+              <div className="feature-card">
                 <div className="w-10 h-10 md:w-12 md:h-12 bg-wedding-black/10 rounded-full flex items-center justify-center mb-4">
                   <Heart className="text-wedding-black h-5 w-5 md:h-6 md:w-6" />
                 </div>

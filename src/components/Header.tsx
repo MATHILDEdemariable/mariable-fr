@@ -65,7 +65,7 @@ const Header = () => {
             <img 
               src="/lovable-uploads/3768f435-13c3-49a1-bbb3-87acf3b26cda.png" 
               alt="Mariable Logo" 
-              className="h-16 md:h-20 lg:h-24 w-auto" 
+              className="h-14 md:h-16 lg:h-20 w-auto" 
             />
           </Link>
           
@@ -143,7 +143,7 @@ const Header = () => {
                 <NavigationMenuItem>
                   <NavigationMenuTrigger className="bg-transparent hover:bg-wedding-cream text-wedding-black">Nos Services</NavigationMenuTrigger>
                   <NavigationMenuContent>
-                    <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
+                    <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-1 lg:w-[600px]">
                       <ListItem href="/services/prestataires" title="Recherche de prestataires">
                         Trouvez les meilleurs prestataires adaptés à vos besoins
                       </ListItem>
