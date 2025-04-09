@@ -1,9 +1,26 @@
 
 import React from 'react';
 import ServiceTemplate from '../ServiceTemplate';
+import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
+import { FileText } from 'lucide-react';
 
 const PrestataireContent = () => (
   <>
+    <div className="bg-wedding-cream/30 p-6 rounded-lg mb-8 border border-wedding-olive/20">
+      <h2 className="text-2xl font-serif mb-3">Guide Mariable des prestataires</h2>
+      <p className="mb-4">
+        Nous fournissons un guide de référence des meilleurs prestataires sélectionnés avec soin pour votre mariage.
+        Notre "Guide Mariable" regroupe des professionnels de qualité que nous avons personnellement validés.
+      </p>
+      <Button asChild className="bg-wedding-olive hover:bg-wedding-olive/90">
+        <Link to="/guide-mariable">
+          <FileText className="mr-2 h-4 w-4" />
+          Accéder au Guide Mariable
+        </Link>
+      </Button>
+    </div>
+  
     <p>
       Trouver les meilleurs prestataires pour votre mariage peut être une tâche ardue. 
       Chez Mariable, nous simplifions ce processus en vous mettant en relation avec des prestataires 

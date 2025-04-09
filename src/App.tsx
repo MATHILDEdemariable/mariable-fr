@@ -9,6 +9,7 @@ import NotFound from "./pages/NotFound";
 import EmailCapture from "./pages/EmailCapture";
 import MentionsLegales from "./pages/MentionsLegales";
 import CGV from "./pages/CGV";
+import GuideMariable from "./pages/GuideMariable";
 
 // Services pages
 import Prestataires from "./pages/services/Prestataires";
@@ -48,6 +49,9 @@ const App = () => (
           <Route path="/services/planification" element={<Planification />} />
           <Route path="/services/budget" element={<Budget />} />
           <Route path="/services/conseils" element={<Conseils />} />
+          
+          {/* Guide Mariable */}
+          <Route path="/guide-mariable" element={<GuideMariable />} />
           
           {/* About pages */}
           <Route path="/about/histoire" element={<Histoire />} />

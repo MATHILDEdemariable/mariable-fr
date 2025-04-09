@@ -4,7 +4,7 @@ import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMe
 import { cn } from "@/lib/utils";
 import { Link } from 'react-router-dom';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Users } from 'lucide-react';
 
 const ListItem = React.forwardRef<
   React.ElementRef<"a">,
@@ -119,7 +119,7 @@ const Header = () => {
                       </div>
                     </div>
                     
-                    <div>
+                    <div className="border-b pb-2 mb-2">
                       <h3 className="font-serif text-lg mb-2">Contact</h3>
                       <div className="pl-2 space-y-2">
                         <Link to="/contact/nous-contacter" className="block text-wedding-black hover:text-wedding-olive transition-colors py-1" onClick={closeMobileMenu}>
@@ -127,6 +127,15 @@ const Header = () => {
                         </Link>
                         <Link to="/contact/faq" className="block text-wedding-black hover:text-wedding-olive transition-colors py-1" onClick={closeMobileMenu}>
                           FAQ
+                        </Link>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <h3 className="font-serif text-lg mb-2">Professionnels</h3>
+                      <div className="pl-2 space-y-2">
+                        <Link to="/commencer" className="block text-wedding-black hover:text-wedding-olive transition-colors py-1" onClick={closeMobileMenu}>
+                          Devenir partenaire
                         </Link>
                       </div>
                     </div>
@@ -183,6 +192,20 @@ const Header = () => {
                       </ListItem>
                       <ListItem href="/contact/faq" title="FAQ">
                         Réponses aux questions fréquemment posées
+                      </ListItem>
+                    </ul>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger className="bg-transparent hover:bg-wedding-cream text-wedding-black">
+                    <Users size={16} className="mr-1" />
+                    Professionnels
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <ul className="grid w-[400px] gap-3 p-4">
+                      <ListItem href="/commencer" title="Devenir partenaire">
+                        Rejoignez notre réseau de prestataires de qualité
                       </ListItem>
                     </ul>
                   </NavigationMenuContent>
