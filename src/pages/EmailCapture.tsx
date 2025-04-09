@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { Link } from 'react-router-dom';
-import { Facebook, Instagram, Twitter, Mail, Phone, MapPin } from 'lucide-react';
+import { Instagram, Mail, Linkedin } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { FormField, FormItem, FormLabel, FormControl, Form, FormMessage } from "@/components/ui/form";
@@ -202,77 +202,71 @@ const EmailCapture = () => {
         </div>
       </main>
       
-      <footer className="py-12 bg-wedding-black text-white">
-        <div className="container">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      <footer className="py-8 md:py-12 bg-white text-wedding-black">
+        <div className="container px-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <img src="/lovable-uploads/3768f435-13c3-49a1-bbb3-87acf3b26cda.png" alt="Mariable Logo" className="h-12 w-auto" />
+                <img src="/lovable-uploads/3768f435-13c3-49a1-bbb3-87acf3b26cda.png" alt="Mariable Logo" className="h-10 md:h-12 w-auto" />
               </div>
-              <p className="mb-4 text-white/70">
+              <p className="mb-4 text-wedding-black/70 text-sm">
                 Mariable est votre partenaire privilégié pour créer le mariage de vos rêves, en simplifiant chaque étape de l'organisation.
               </p>
               <div className="flex gap-4">
-                <a href="https://facebook.com" aria-label="Facebook" className="text-white hover:text-wedding-cream">
-                  <Facebook size={20} />
-                </a>
-                <a href="https://instagram.com" aria-label="Instagram" className="text-white hover:text-wedding-cream">
+                <a href="https://www.instagram.com/mariable.fr/" aria-label="Instagram" target="_blank" rel="noopener noreferrer" className="text-wedding-black hover:text-wedding-black/70 transition-colors">
                   <Instagram size={20} />
-                </a>
-                <a href="https://twitter.com" aria-label="Twitter" className="text-white hover:text-wedding-cream">
-                  <Twitter size={20} />
                 </a>
               </div>
             </div>
             
-            <div>
-              <h3 className="font-serif text-lg mb-4">Liens Rapides</h3>
-              <ul className="space-y-2">
-                <li><Link to="/" className="text-white/70 hover:text-white">Accueil</Link></li>
-                <li><Link to="/services/prestataires" className="text-white/70 hover:text-white">Prestataires</Link></li>
-                <li><Link to="/services/planification" className="text-white/70 hover:text-white">Planification</Link></li>
-                <li><Link to="/services/budget" className="text-white/70 hover:text-white">Budget</Link></li>
-                <li><Link to="/services/conseils" className="text-white/70 hover:text-white">Conseils</Link></li>
+            <div className="mt-6 sm:mt-0">
+              <h3 className="font-serif text-base md:text-lg mb-3 md:mb-4">Liens Rapides</h3>
+              <ul className="space-y-2 text-sm">
+                <li><Link to="/" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Accueil</Link></li>
+                <li><Link to="/services/prestataires" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Prestataires</Link></li>
+                <li><Link to="/services/planification" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Planification</Link></li>
+                <li><Link to="/services/budget" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Budget</Link></li>
+                <li><Link to="/services/conseils" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Conseils</Link></li>
               </ul>
             </div>
             
-            <div>
-              <h3 className="font-serif text-lg mb-4">À Propos</h3>
-              <ul className="space-y-2">
-                <li><Link to="/about/histoire" className="text-white/70 hover:text-white">Notre Histoire</Link></li>
-                <li><Link to="/about/approche" className="text-white/70 hover:text-white">Notre Approche</Link></li>
-                <li><Link to="/about/temoignages" className="text-white/70 hover:text-white">Témoignages</Link></li>
-                <li><Link to="/contact/nous-contacter" className="text-white/70 hover:text-white">Nous Contacter</Link></li>
+            <div className="mt-6 sm:mt-0">
+              <h3 className="font-serif text-base md:text-lg mb-3 md:mb-4">À Propos</h3>
+              <ul className="space-y-2 text-sm">
+                <li><Link to="/about/histoire" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Notre Histoire</Link></li>
+                <li><Link to="/about/approche" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Notre Approche</Link></li>
+                <li><Link to="/about/temoignages" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Témoignages</Link></li>
+                <li><Link to="/contact/nous-contacter" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Nous Contacter</Link></li>
               </ul>
             </div>
             
-            <div>
-              <h3 className="font-serif text-lg mb-4">Contact</h3>
-              <ul className="space-y-3">
-                <li className="flex items-start">
-                  <MapPin className="mr-2 h-5 w-5 text-wedding-cream shrink-0 mt-0.5" />
-                  <span className="text-white/70">123 Rue du Mariage, 75001 Paris, France</span>
+            <div className="mt-6 lg:mt-0">
+              <h3 className="font-serif text-base md:text-lg mb-3 md:mb-4">Contact</h3>
+              <ul className="space-y-3 text-sm">
+                <li className="flex items-center">
+                  <Mail className="mr-2 h-4 w-4 md:h-5 md:w-5 text-wedding-black shrink-0" />
+                  <a href="mailto:mathilde@mariable.fr" className="text-wedding-black/70 hover:text-wedding-black transition-colors">
+                    mathilde@mariable.fr
+                  </a>
                 </li>
                 <li className="flex items-center">
-                  <Phone className="mr-2 h-5 w-5 text-wedding-cream shrink-0" />
-                  <span className="text-white/70">+33 1 23 45 67 89</span>
-                </li>
-                <li className="flex items-center">
-                  <Mail className="mr-2 h-5 w-5 text-wedding-cream shrink-0" />
-                  <span className="text-white/70">contact@mariable.com</span>
+                  <Linkedin className="mr-2 h-4 w-4 md:h-5 md:w-5 text-wedding-black shrink-0" />
+                  <a href="https://www.linkedin.com/in/lambertmathilde/" target="_blank" rel="noopener noreferrer" className="text-wedding-black/70 hover:text-wedding-black transition-colors">
+                    LinkedIn Professionnel
+                  </a>
                 </li>
               </ul>
             </div>
           </div>
           
-          <div className="mt-12 pt-6 border-t border-white/10 flex flex-col md:flex-row justify-between items-center">
-            <p className="text-sm text-white/70 mb-4 md:mb-0">
+          <div className="mt-8 md:mt-12 pt-6 border-t border-wedding-black/10 flex flex-col md:flex-row justify-between items-center">
+            <p className="text-xs md:text-sm text-wedding-black/70 mb-4 md:mb-0 text-center md:text-left">
               © 2025 Mariable - Tous droits réservés
             </p>
-            <div className="flex gap-6">
-              <Link to="/mentions-legales" className="text-sm text-white/70 hover:text-white">Mentions Légales</Link>
-              <Link to="/politique-confidentialite" className="text-sm text-white/70 hover:text-white">Politique de Confidentialité</Link>
-              <Link to="/cgv" className="text-sm text-white/70 hover:text-white">CGV</Link>
+            <div className="flex gap-4 md:gap-6 text-xs md:text-sm">
+              <Link to="/mentions-legales" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Mentions Légales</Link>
+              <Link to="/politique-confidentialite" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Politique de Confidentialité</Link>
+              <Link to="/cgv" className="text-wedding-black/70 hover:text-wedding-black transition-colors">CGV</Link>
             </div>
           </div>
         </div>
