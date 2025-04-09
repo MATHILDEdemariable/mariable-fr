@@ -1,7 +1,7 @@
 
 import React, { useEffect } from 'react';
 import Header from '@/components/Header';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Instagram, Mail, Linkedin } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const GuideMariable = () => {
@@ -42,11 +42,73 @@ const GuideMariable = () => {
         </div>
       </main>
       
-      <footer className="py-8 border-t border-gray-200">
-        <div className="container text-center">
-          <p className="text-muted-foreground">
-            © {new Date().getFullYear()} Mariable - Guide des prestataires recommandés
-          </p>
+      <footer className="py-12 bg-white text-wedding-black">
+        <div className="container">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div>
+              <div className="flex items-center gap-2 mb-4">
+                <img src="/lovable-uploads/3768f435-13c3-49a1-bbb3-87acf3b26cda.png" alt="Mariable Logo" className="h-12 w-auto" />
+              </div>
+              <p className="mb-4 text-wedding-black/70">
+                Mariable est votre partenaire privilégié pour créer le mariage de vos rêves, en simplifiant chaque étape de l'organisation.
+              </p>
+              <div className="flex gap-4">
+                <a href="https://www.instagram.com/mariable.fr/" aria-label="Instagram" className="text-wedding-black hover:text-wedding-black/70">
+                  <Instagram size={20} />
+                </a>
+              </div>
+            </div>
+            
+            <div>
+              <h3 className="font-serif text-lg mb-4">Liens Rapides</h3>
+              <ul className="space-y-2">
+                <li><Link to="/" className="text-wedding-black/70 hover:text-wedding-black">Accueil</Link></li>
+                <li><Link to="/services/prestataires" className="text-wedding-black/70 hover:text-wedding-black">Prestataires</Link></li>
+                <li><Link to="/services/planification" className="text-wedding-black/70 hover:text-wedding-black">Planification</Link></li>
+                <li><Link to="/services/budget" className="text-wedding-black/70 hover:text-wedding-black">Budget</Link></li>
+                <li><Link to="/services/conseils" className="text-wedding-black/70 hover:text-wedding-black">Conseils</Link></li>
+              </ul>
+            </div>
+            
+            <div>
+              <h3 className="font-serif text-lg mb-4">À Propos</h3>
+              <ul className="space-y-2">
+                <li><Link to="/about/histoire" className="text-wedding-black/70 hover:text-wedding-black">Notre Histoire</Link></li>
+                <li><Link to="/about/approche" className="text-wedding-black/70 hover:text-wedding-black">Notre Approche</Link></li>
+                <li><Link to="/about/temoignages" className="text-wedding-black/70 hover:text-wedding-black">Témoignages</Link></li>
+                <li><Link to="/contact/nous-contacter" className="text-wedding-black/70 hover:text-wedding-black">Nous Contacter</Link></li>
+              </ul>
+            </div>
+            
+            <div>
+              <h3 className="font-serif text-lg mb-4">Contact</h3>
+              <ul className="space-y-3">
+                <li className="flex items-center">
+                  <Mail className="mr-2 h-5 w-5 text-wedding-black shrink-0" />
+                  <a href="mailto:mathilde@mariable.fr" className="text-wedding-black/70 hover:text-wedding-black">
+                    mathilde@mariable.fr
+                  </a>
+                </li>
+                <li className="flex items-center">
+                  <Linkedin className="mr-2 h-5 w-5 text-wedding-black shrink-0" />
+                  <a href="https://www.linkedin.com/in/lambertmathilde/" target="_blank" rel="noopener noreferrer" className="text-wedding-black/70 hover:text-wedding-black">
+                    LinkedIn Professionnel
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          
+          <div className="mt-12 pt-6 border-t border-wedding-black/10 flex flex-col md:flex-row justify-between items-center">
+            <p className="text-sm text-wedding-black/70 mb-4 md:mb-0">
+              © 2025 Mariable - Tous droits réservés
+            </p>
+            <div className="flex gap-6">
+              <Link to="/mentions-legales" className="text-sm text-wedding-black/70 hover:text-wedding-black">Mentions Légales</Link>
+              <Link to="/politique-confidentialite" className="text-sm text-wedding-black/70 hover:text-wedding-black">Politique de Confidentialité</Link>
+              <Link to="/cgv" className="text-sm text-wedding-black/70 hover:text-wedding-black">CGV</Link>
+            </div>
+          </div>
         </div>
       </footer>
     </div>
