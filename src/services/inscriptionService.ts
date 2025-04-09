@@ -86,7 +86,9 @@ export async function sendToMakeWebhook(data: InscriptionData) {
         email: data.email,
         phone: data.phone || '',
         comment: data.comment || '',
-        userType: data.userType === 'couple' ? 'Futurs mariés' : 'Professionnel'
+        userType: data.userType === 'couple' ? 'Futurs mariés' : 'Professionnel',
+        fullName: `${data.firstName} ${data.lastName}`,
+        message: data.comment || ''
       }),
       mode: 'no-cors', // Pour éviter les problèmes CORS avec le webhook
     });
