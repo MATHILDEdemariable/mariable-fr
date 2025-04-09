@@ -1,4 +1,3 @@
-
 import { ChatResponse, Message, Vendor, VendorRecommendation } from '@/types';
 import vendorsData from '@/data/vendors.json';
 
@@ -74,27 +73,27 @@ export const sendMessage = async (messages: Message[]): Promise<ChatResponse> =>
   // Only vendor type is found
   if (foundVendorType && !foundLocation) {
     return { 
-      message: `Je vois que vous recherchez un${foundVendorType === 'photographe' || foundVendorType === 'traiteur' || foundVendorType === 'fleuriste' ? ' ' : 'e '}${foundVendorType}. Dans quelle région ou ville se déroulera votre mariage ? J'ai besoin de cette information pour vous recommander les meilleurs prestataires adaptés à votre localisation.`
+      message: `Pour quel lieu ou région recherchez-vous un${foundVendorType === 'photographe' || foundVendorType === 'traiteur' || foundVendorType === 'fleuriste' ? ' ' : 'e '}${foundVendorType} ?`
     };
   }
   
   // Only location is found
   if (!foundVendorType && foundLocation) {
     return { 
-      message: `Super, votre mariage se déroulera à ${capitalizeFirstLetter(foundLocation)}. Quel type de prestataire recherchez-vous en priorité ? Par exemple, un lieu, un photographe, un traiteur, un DJ, un fleuriste ou un wedding planner ?`
+      message: `Quel type de prestataire recherchez-vous à ${capitalizeFirstLetter(foundLocation)} ? (lieu, photographe, traiteur...)`
     };
   }
   
   // If this is the first or second message from user and no keywords are detected
   if (messages.filter(m => m.role === 'user').length <= 2) {
     return { 
-      message: "Bonjour et félicitations pour votre mariage ! Je suis Mathilde de Mariable, votre wedding planner digital. Pour que je puisse vous recommander les bons prestataires, pourriez-vous me dire dans quelle région ou ville se déroulera votre mariage, et quel type de prestataire vous recherchez en priorité (lieu, photographe, traiteur, DJ, fleuriste...) ?"
+      message: "Bonjour et félicitations pour votre mariage ! Je suis Mathilde de Mariable, votre wedding planner digital. Dites-moi simplement la région et le type de prestataire recherché (lieu, photographe, traiteur...)."
     };
   }
   
   // Default response when no specific keywords are detected
   return {
-    message: "Pour que je puisse vous recommander les meilleurs prestataires, j'aurais besoin de connaître deux informations essentielles : la région ou la ville de votre mariage, et le type de prestataire que vous recherchez (lieu, photographe, traiteur, DJ, fleuriste, wedding planner...). Pourriez-vous me préciser ces éléments ?"
+    message: "Pour vous aider, j'ai besoin de connaître : la région/ville de votre mariage et le type de prestataire recherché (lieu, photographe, traiteur...)."
   };
 };
 
@@ -143,7 +142,7 @@ function getRecommendations(vendorType: string, location: string): ChatResponse 
     const formattedVendorType = vendorType === 'wedding planner' ? 'wedding planners' : 
                                 (vendorType === 'lieu' ? 'lieux' : `${vendorType}s`);
     
-    responseMessage = `J'ai trouvé d'excellents ${formattedVendorType} dans la région de ${capitalizeFirstLetter(location)} qui pourraient correspondre à vos attentes.\n\nVoici une sélection de prestataires que je vous recommande :`;
+    responseMessage = `Voici mes recommandations de ${formattedVendorType} à ${capitalizeFirstLetter(location)} :`;
     
     // Add follow-up question to keep the conversation going
     const otherVendorTypes = Object.keys(vendorsData.reduce((acc: Record<string, boolean>, vendor) => {
@@ -167,49 +166,49 @@ function getRecommendations(vendorType: string, location: string): ChatResponse 
                             otherVendorTypes[1] === 'fleuriste' ? 'un fleuriste' : 
                             otherVendorTypes[1] === 'traiteur' ? 'un traiteur' : 'un lieu') : '';
       
-      responseMessage += `\n\nSouhaitez-vous que je vous propose également ${suggestionType1}${suggestionType2 ? ` ou ${suggestionType2}` : ''} dans la même région ?`;
+      responseMessage += `\n\nBesoin ${suggestionType1}${suggestionType2 ? ` ou ${suggestionType2}` : ''} dans la même région ?`;
     } else {
-      responseMessage += "\n\nY a-t-il un autre type de prestataire que je peux vous aider à trouver pour votre mariage ?";
+      responseMessage += "\n\nUn autre prestataire vous intéresse ?";
     }
   } else {
-    responseMessage = `Je n'ai pas encore de ${vendorType} répertorié dans la région de ${capitalizeFirstLetter(location)}. Souhaiteriez-vous que je vous suggère d'autres types de prestataires disponibles dans cette région, ou le même type de prestataire dans une autre région proche ?`;
+    responseMessage = `Je n'ai pas de ${vendorType} à ${capitalizeFirstLetter(location)}. Souhaitez-vous explorer d'autres régions ou un autre type de prestataire ?`;
   }
   
   // Create recommendations with personalized reasons
   const recommendations: VendorRecommendation[] = filteredVendors.map(vendor => {
-    let reason = `${vendor.nom} est un${vendor.type === 'Photographe' || vendor.type === 'Traiteur' || vendor.type === 'Fleuriste' ? '' : 'e'} ${vendor.type.toLowerCase()} basé à ${vendor.lieu}`;
+    let reason = `${vendor.nom} est un${vendor.type === 'Photographe' || vendor.type === 'Traiteur' || vendor.type === 'Fleuriste' ? '' : 'e'} ${vendor.type.toLowerCase()} à ${vendor.lieu}`;
     
     // Add personalized touch based on vendor type
     switch(vendor.type) {
       case 'Photographe':
-        reason += " qui propose un style ";
+        reason += " au style ";
         break;
       case 'Lieu':
-        reason += " qui offre un cadre ";
+        reason += " au cadre ";
         break;
       case 'Traiteur':
-        reason += " qui propose une cuisine ";
+        reason += " proposant une cuisine ";
         break;
       case 'Fleuriste':
-        reason += " qui crée des arrangements floraux ";
+        reason += " créant des arrangements ";
         break;
       case 'DJ':
-        reason += " qui anime vos soirées avec un style ";
+        reason += " avec un style ";
         break;
       default:
-        reason += " qui propose des services ";
+        reason += " offrant des services ";
     }
     
     if (vendor.style && vendor.style.length > 0) {
-      reason += `${vendor.style.join(' et ')}.`;
+      reason += `${vendor.style.join(' et ')}. `;
     } else {
-      reason += "de qualité.";
+      reason += "de qualité. ";
     }
     
     if (vendor.type === 'Traiteur') {
-      reason += ` Le tarif commence à ${vendor.budget}€ par personne.`;
+      reason += `Tarif: ${vendor.budget}€/personne.`;
     } else {
-      reason += ` Le tarif commence à ${vendor.budget}€.`;
+      reason += `Tarif: ${vendor.budget}€.`;
     }
     
     return {

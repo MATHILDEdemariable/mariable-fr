@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -32,6 +33,9 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const [recommendations, setRecommendations] = useState<Record<string, VendorRecommendation[]>>({});
   const [inputValue, setInputValue] = useState(initialMessage || '');
   const [isLoading, setIsLoading] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
+  const [typingText, setTypingText] = useState('');
+  const [typingMessageId, setTypingMessageId] = useState<string | null>(null);
   const [hasProcessedInitialMessage, setHasProcessedInitialMessage] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
@@ -46,7 +50,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages, recommendations]);
+  }, [messages, recommendations, typingText]);
 
   useEffect(() => {
     if (initialMessage && !isSimpleInput && !hasProcessedInitialMessage) {
@@ -61,6 +65,32 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         messagesEndRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
       }
     }, 100);
+  };
+
+  const simulateTyping = (text: string, callback: (finalText: string) => void) => {
+    setIsTyping(true);
+    setTypingText('');
+    
+    let index = 0;
+    const typingId = uuidv4();
+    setTypingMessageId(typingId);
+    
+    const typeNextChar = () => {
+      if (index < text.length && typingId === typingMessageId) {
+        setTypingText(prev => prev + text.charAt(index));
+        index++;
+        
+        // Random delay between 20ms and 50ms for more natural typing
+        const randomDelay = Math.floor(Math.random() * 30) + 20;
+        setTimeout(typeNextChar, randomDelay);
+      } else if (typingId === typingMessageId) {
+        setIsTyping(false);
+        setTypingMessageId(null);
+        callback(text);
+      }
+    };
+    
+    setTimeout(typeNextChar, 500); // Initial delay before typing starts
   };
 
   const handleSubmitWithMessage = async (message: string) => {
@@ -86,21 +116,25 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     try {
       const response = await sendMessage([...messages, userMessage]);
       
-      const assistantMessage: MessageType = {
-        id: uuidv4(),
-        role: 'assistant',
-        content: response.message,
-        timestamp: new Date()
-      };
+      // Start typing animation
+      simulateTyping(response.message, (finalText) => {
+        const assistantMessage: MessageType = {
+          id: uuidv4(),
+          role: 'assistant',
+          content: finalText,
+          timestamp: new Date()
+        };
+        
+        setMessages(prev => [...prev, assistantMessage]);
+        
+        if (response.recommendations && response.recommendations.length > 0) {
+          setRecommendations(prev => ({
+            ...prev,
+            [assistantMessage.id]: response.recommendations || []
+          }));
+        }
+      });
       
-      setMessages(prev => [...prev, assistantMessage]);
-      
-      if (response.recommendations && response.recommendations.length > 0) {
-        setRecommendations(prev => ({
-          ...prev,
-          [assistantMessage.id]: response.recommendations || []
-        }));
-      }
     } catch (error) {
       console.error('Error sending message:', error);
       
@@ -110,14 +144,16 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         variant: "destructive"
       });
       
-      const errorMessage: MessageType = {
-        id: uuidv4(),
-        role: 'assistant',
-        content: "Désolée, j'ai rencontré un petit problème technique. Pourriez-vous me rappeler quelle région vous intéresse et quel type de prestataire vous recherchez ?",
-        timestamp: new Date()
-      };
-      
-      setMessages(prev => [...prev, errorMessage]);
+      simulateTyping("Désolée, j'ai rencontré un problème technique. Pourriez-vous réessayer ?", (finalText) => {
+        const errorMessage: MessageType = {
+          id: uuidv4(),
+          role: 'assistant',
+          content: finalText,
+          timestamp: new Date()
+        };
+        
+        setMessages(prev => [...prev, errorMessage]);
+      });
     } finally {
       setIsLoading(false);
     }
@@ -170,11 +206,15 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
               />
             ))}
             
-            {isLoading && (
+            {(isLoading || isTyping) && (
               <div className="flex w-full justify-start mb-3 md:mb-4">
                 <Card className="chat-bubble-assistant p-2 md:p-3">
                   <CardContent className="p-0">
-                    <p className="typing-dots text-sm md:text-base">Mathilde réfléchit</p>
+                    {isTyping ? (
+                      <p className="text-sm md:text-base">{typingText}<span className="typing-dots"></span></p>
+                    ) : (
+                      <p className="typing-dots text-sm md:text-base">Mathilde réfléchit</p>
+                    )}
                   </CardContent>
                 </Card>
               </div>
@@ -191,12 +231,12 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             placeholder="Continuez la conversation..."
-            disabled={isLoading}
+            disabled={isLoading || isTyping}
             className="flex-grow text-sm md:text-base"
           />
           <Button 
             type="submit" 
-            disabled={isLoading || !inputValue.trim()} 
+            disabled={isLoading || isTyping || !inputValue.trim()} 
             className="bg-wedding-olive hover:bg-wedding-olive/90 text-white"
             aria-label="Envoyer"
           >
