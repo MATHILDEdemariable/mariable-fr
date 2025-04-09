@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import ChatInterface from '@/components/ChatInterface';
@@ -116,7 +117,7 @@ const Index = () => {
                 </div>
                 <h3 className="text-lg md:text-xl font-serif mb-2">Gain de temps</h3>
                 <p className="text-muted-foreground">
-                  Trouvez tous vos prestataires en quelques minutes au lieu de plusieurs semaines de recherche.
+                  Une transparence totale sur les prix - Découvrez immédiatement les formules et tarifs personnalisés en fonction de vos besoins, pour comparer en toute simplicité.
                 </p>
               </div>
               
@@ -126,7 +127,7 @@ const Index = () => {
                 </div>
                 <h3 className="text-lg md:text-xl font-serif mb-2">Recommandations personnalisées</h3>
                 <p className="text-muted-foreground">
-                  Des suggestions qui correspondent parfaitement à votre style, votre région et votre budget.
+                  Accédez à un référencement de prestataires parfaitement adapté et reconnus pour leur excellence.
                 </p>
               </div>
               
@@ -136,7 +137,7 @@ const Index = () => {
                 </div>
                 <h3 className="text-lg md:text-xl font-serif mb-2">Sans stress</h3>
                 <p className="text-muted-foreground">
-                  Une approche intuitive et conversationnelle pour organiser chaque aspect de votre mariage.
+                  Une solution clé en main qui combine approche intuitive et simplifiée.
                 </p>
               </div>
             </div>
