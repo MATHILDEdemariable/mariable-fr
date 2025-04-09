@@ -1,11 +1,10 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
 import { Link } from 'react-router-dom';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { Menu } from 'lucide-react';
-import { useState } from 'react';
+import { Menu, X } from 'lucide-react';
 
 const ListItem = React.forwardRef<
   React.ElementRef<"a">,
@@ -36,36 +35,104 @@ ListItem.displayName = "ListItem";
 const Header = () => {
   const isMobile = useIsMobile();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 10) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const closeMobileMenu = () => {
+    setMobileMenuOpen(false);
+  };
 
   return (
-    <header className="py-4 bg-white border-b border-wedding-black/10 sticky top-0 z-10">
+    <header className={cn(
+      "py-2 md:py-4 bg-white/95 backdrop-blur-sm border-b border-wedding-black/10 sticky top-0 z-20 transition-all duration-300",
+      isScrolled ? "shadow-md" : ""
+    )}>
       <div className="container">
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center">
-            <img src="/lovable-uploads/3768f435-13c3-49a1-bbb3-87acf3b26cda.png" alt="Mariable Logo" className="h-24 w-auto" />
+            <img 
+              src="/lovable-uploads/3768f435-13c3-49a1-bbb3-87acf3b26cda.png" 
+              alt="Mariable Logo" 
+              className="h-16 md:h-20 lg:h-24 w-auto" 
+            />
           </Link>
           
           {isMobile ? (
-            <div>
+            <div className="relative">
               <button 
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="text-wedding-black p-2"
+                className="text-wedding-black p-2 rounded-md hover:bg-wedding-cream/50 transition-colors"
+                aria-label={mobileMenuOpen ? "Fermer le menu" : "Ouvrir le menu"}
               >
-                <Menu size={24} />
+                {mobileMenuOpen ? (
+                  <X size={24} />
+                ) : (
+                  <Menu size={24} />
+                )}
               </button>
               
               {mobileMenuOpen && (
-                <div className="absolute top-full left-0 right-0 bg-white p-4 border-b border-wedding-black/10">
-                  <nav className="flex flex-col space-y-4">
-                    <Link to="/services/prestataires" className="text-wedding-black hover:text-wedding-black/70 p-2" onClick={() => setMobileMenuOpen(false)}>
-                      Nos Services
-                    </Link>
-                    <Link to="/about/histoire" className="text-wedding-black hover:text-wedding-black/70 p-2" onClick={() => setMobileMenuOpen(false)}>
-                      À propos
-                    </Link>
-                    <Link to="/contact/nous-contacter" className="text-wedding-black hover:text-wedding-black/70 p-2" onClick={() => setMobileMenuOpen(false)}>
-                      Contact
-                    </Link>
+                <div className="absolute top-full right-0 mt-2 w-screen max-w-xs bg-white p-4 rounded-lg shadow-lg border border-wedding-black/10 animate-fade-in">
+                  <nav className="flex flex-col space-y-3">
+                    <div className="border-b pb-2 mb-2">
+                      <h3 className="font-serif text-lg mb-2">Nos Services</h3>
+                      <div className="pl-2 space-y-2">
+                        <Link to="/services/prestataires" className="block text-wedding-black hover:text-wedding-olive transition-colors py-1" onClick={closeMobileMenu}>
+                          Recherche de prestataires
+                        </Link>
+                        <Link to="/services/planification" className="block text-wedding-black hover:text-wedding-olive transition-colors py-1" onClick={closeMobileMenu}>
+                          Planification
+                        </Link>
+                        <Link to="/services/budget" className="block text-wedding-black hover:text-wedding-olive transition-colors py-1" onClick={closeMobileMenu}>
+                          Budgétisation
+                        </Link>
+                        <Link to="/services/conseils" className="block text-wedding-black hover:text-wedding-olive transition-colors py-1" onClick={closeMobileMenu}>
+                          Conseils personnalisés
+                        </Link>
+                      </div>
+                    </div>
+                    
+                    <div className="border-b pb-2 mb-2">
+                      <h3 className="font-serif text-lg mb-2">À propos</h3>
+                      <div className="pl-2 space-y-2">
+                        <Link to="/about/histoire" className="block text-wedding-black hover:text-wedding-olive transition-colors py-1" onClick={closeMobileMenu}>
+                          Notre histoire
+                        </Link>
+                        <Link to="/about/charte" className="block text-wedding-black hover:text-wedding-olive transition-colors py-1" onClick={closeMobileMenu}>
+                          Notre charte
+                        </Link>
+                        <Link to="/about/temoignages" className="block text-wedding-black hover:text-wedding-olive transition-colors py-1" onClick={closeMobileMenu}>
+                          Témoignages
+                        </Link>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <h3 className="font-serif text-lg mb-2">Contact</h3>
+                      <div className="pl-2 space-y-2">
+                        <Link to="/contact/nous-contacter" className="block text-wedding-black hover:text-wedding-olive transition-colors py-1" onClick={closeMobileMenu}>
+                          Nous contacter
+                        </Link>
+                        <Link to="/contact/rendez-vous" className="block text-wedding-black hover:text-wedding-olive transition-colors py-1" onClick={closeMobileMenu}>
+                          Prendre rendez-vous
+                        </Link>
+                        <Link to="/contact/faq" className="block text-wedding-black hover:text-wedding-olive transition-colors py-1" onClick={closeMobileMenu}>
+                          FAQ
+                        </Link>
+                      </div>
+                    </div>
                   </nav>
                 </div>
               )}

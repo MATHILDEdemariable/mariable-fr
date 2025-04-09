@@ -142,12 +142,13 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
             onChange={(e) => setInputValue(e.target.value)}
             placeholder="Décrivez votre mariage idéal ou ce que vous recherchez..."
             disabled={isLoading}
-            className="flex-grow border-0 focus-visible:ring-0 focus-visible:ring-offset-0 rounded-full py-6 pl-6"
+            className="flex-grow border-0 focus-visible:ring-0 focus-visible:ring-offset-0 rounded-full py-4 md:py-6 pl-4 md:pl-6 text-sm md:text-base"
           />
           <Button 
             type="submit" 
             disabled={isLoading || !inputValue.trim()} 
-            className="bg-wedding-olive hover:bg-wedding-olive/90 text-white h-auto rounded-full py-2 px-4 mx-2"
+            className="bg-wedding-olive hover:bg-wedding-olive/90 text-white h-auto rounded-full p-2 md:py-2 md:px-4 mx-2"
+            aria-label="Envoyer"
           >
             <SendHorizontal className="h-5 w-5" />
           </Button>
@@ -158,14 +159,14 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
   // Full chatbot interface
   return (
-    <div className="w-full h-[500px] flex flex-col bg-white rounded-xl overflow-hidden">
-      <div className="p-4 bg-white border-b flex items-center justify-center">
-        <p className="text-center text-lg font-serif text-wedding-black">Mathilde de Mariable, votre wedding planner</p>
+    <div className="w-full h-[calc(100vh-12rem)] sm:h-[500px] flex flex-col bg-white rounded-xl overflow-hidden">
+      <div className="p-3 md:p-4 bg-white border-b flex items-center justify-center">
+        <p className="text-center text-base md:text-lg font-serif text-wedding-black">Mathilde de Mariable, votre wedding planner</p>
       </div>
       
       <div className="flex-grow p-0 relative overflow-hidden">
-        <ScrollArea ref={scrollAreaRef} className="h-[400px] p-4">
-          <div className="space-y-4">
+        <ScrollArea ref={scrollAreaRef} className="h-full md:h-[400px] p-2 md:p-4">
+          <div className="space-y-3 md:space-y-4">
             {messages.map((message) => (
               <Message 
                 key={message.id} 
@@ -175,10 +176,10 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
             ))}
             
             {isLoading && (
-              <div className="flex w-full justify-start mb-4">
-                <Card className="chat-bubble-assistant p-3">
+              <div className="flex w-full justify-start mb-3 md:mb-4">
+                <Card className="chat-bubble-assistant p-2 md:p-3">
                   <CardContent className="p-0">
-                    <p className="typing-dots">Mathilde réfléchit</p>
+                    <p className="typing-dots text-sm md:text-base">Mathilde réfléchit</p>
                   </CardContent>
                 </Card>
               </div>
@@ -188,7 +189,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
           </div>
         </ScrollArea>
       </div>
-      <div className="p-3 border-t bg-white">
+      <div className="p-2 md:p-3 border-t bg-white">
         <form onSubmit={handleSubmit} className="flex w-full gap-2">
           <Input
             ref={inputRef}
@@ -196,9 +197,14 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
             onChange={(e) => setInputValue(e.target.value)}
             placeholder="Continuez la conversation..."
             disabled={isLoading}
-            className="flex-grow"
+            className="flex-grow text-sm md:text-base"
           />
-          <Button type="submit" disabled={isLoading || !inputValue.trim()} className="bg-wedding-olive hover:bg-wedding-olive/90 text-white">
+          <Button 
+            type="submit" 
+            disabled={isLoading || !inputValue.trim()} 
+            className="bg-wedding-olive hover:bg-wedding-olive/90 text-white"
+            aria-label="Envoyer"
+          >
             <SendHorizontal className="h-4 w-4" />
           </Button>
         </form>

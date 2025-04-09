@@ -103,20 +103,32 @@
   }
 
   body {
-    @apply bg-background text-foreground font-sans;
+    @apply bg-background text-foreground font-sans overflow-x-hidden;
   }
 
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-serif;
+  h1 {
+    @apply text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-serif font-medium leading-tight;
+  }
+
+  h2 {
+    @apply text-2xl sm:text-3xl md:text-4xl font-serif leading-tight;
+  }
+
+  h3 {
+    @apply text-xl sm:text-2xl font-serif;
+  }
+
+  p {
+    @apply text-sm md:text-base;
   }
 }
 
 .chat-bubble-user {
-  @apply bg-wedding-olive text-white rounded-tl-none;
+  @apply bg-wedding-olive text-white rounded-tl-none max-w-[85%] md:max-w-[75%] break-words;
 }
 
 .chat-bubble-assistant {
-  @apply bg-wedding-cream text-secondary-foreground rounded-tr-none;
+  @apply bg-wedding-cream text-secondary-foreground rounded-tr-none max-w-[85%] md:max-w-[75%] break-words;
 }
 
 .vendor-card {
@@ -155,4 +167,61 @@
 
 .video-overlay {
   @apply absolute inset-0 bg-black/50;
+}
+
+/* Responsive container sizes */
+.container {
+  @apply px-4 sm:px-6 md:px-8 mx-auto w-full;
+  max-width: 100%;
+}
+
+@media (min-width: 640px) {
+  .container {
+    max-width: 640px;
+  }
+}
+
+@media (min-width: 768px) {
+  .container {
+    max-width: 768px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    max-width: 1024px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .container {
+    max-width: 1280px;
+  }
+}
+
+/* Touch-friendly buttons */
+button, 
+.button,
+[type="button"],
+[type="submit"] {
+  @apply min-h-[2.5rem] min-w-[2.5rem] md:min-h-[2.75rem];
+}
+
+/* Responsive image handling */
+img {
+  @apply max-w-full h-auto object-cover;
+}
+
+/* Spacing utilities */
+.section-y-spacing {
+  @apply py-8 md:py-12 lg:py-16;
+}
+
+.section-x-spacing {
+  @apply px-4 sm:px-6 md:px-8;
+}
+
+/* Feature card styles */
+.feature-card {
+  @apply bg-white p-4 sm:p-5 md:p-6 rounded-xl shadow-sm border border-wedding-black/10 hover:shadow-md transition-shadow;
 }
