@@ -35,8 +35,8 @@ const Index = () => {
         <section className="relative min-h-[80vh] flex items-center">
           <div className="absolute inset-0 w-full h-full overflow-hidden z-0">
             <img
-              src="/lovable-uploads/adcdc8b9-07ae-46bb-9f46-42244c2b4749.png"
-              alt="Couple de mariés célébrant avec les invités"
+              src="/lovable-uploads/977ff726-5f78-4cbc-bf10-dbf0bbd10ab7.png"
+              alt="Couple de mariés célébrant leur union"
               className="absolute min-w-full min-h-full object-cover"
               style={{ objectPosition: "center center" }}
             />
