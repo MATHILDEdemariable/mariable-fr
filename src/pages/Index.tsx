@@ -106,7 +106,7 @@ const Index = () => {
             <div className="text-center mb-8 md:mb-12">
               <h2 className="text-2xl md:text-3xl font-serif mb-3 md:mb-4">Comment Mariable transforme votre expérience</h2>
               <p className="text-muted-foreground text-sm md:text-base max-w-2xl mx-auto">
-                Dites adieu au stress et aux heures interminables de recherche de prestataires
+                Organiser un mariage devient simple, rapide & agréable
               </p>
             </div>
             
@@ -117,7 +117,7 @@ const Index = () => {
                 </div>
                 <h3 className="text-lg md:text-xl font-serif mb-2">Gain de temps</h3>
                 <p className="text-muted-foreground">
-                  Une transparence totale sur les prix - Découvrez immédiatement les formules et tarifs personnalisés en fonction de vos besoins, pour comparer en toute simplicité.
+                  Une solution qui centralise les démarches pour trouver, comparer, réserver et coordonner les meilleurs prestataires.
                 </p>
               </div>
               
@@ -127,7 +127,7 @@ const Index = () => {
                 </div>
                 <h3 className="text-lg md:text-xl font-serif mb-2">Recommandations personnalisées</h3>
                 <p className="text-muted-foreground">
-                  Accédez à un référencement de prestataires parfaitement adapté et reconnus pour leur excellence.
+                  Accédez à un référencement de professionnels adaptés et reconnus pour leur expertise.
                 </p>
               </div>
               
@@ -137,7 +137,7 @@ const Index = () => {
                 </div>
                 <h3 className="text-lg md:text-xl font-serif mb-2">Sans stress</h3>
                 <p className="text-muted-foreground">
-                  Une solution clé en main qui combine approche intuitive et simplifiée.
+                  Faites nous confiance et utilisez notre outil de planification pour ne rien oublier.
                 </p>
               </div>
             </div>
