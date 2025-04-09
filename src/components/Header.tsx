@@ -125,9 +125,6 @@ const Header = () => {
                         <Link to="/contact/nous-contacter" className="block text-wedding-black hover:text-wedding-olive transition-colors py-1" onClick={closeMobileMenu}>
                           Nous contacter
                         </Link>
-                        <Link to="/contact/rendez-vous" className="block text-wedding-black hover:text-wedding-olive transition-colors py-1" onClick={closeMobileMenu}>
-                          Prendre rendez-vous
-                        </Link>
                         <Link to="/contact/faq" className="block text-wedding-black hover:text-wedding-olive transition-colors py-1" onClick={closeMobileMenu}>
                           FAQ
                         </Link>
@@ -183,9 +180,6 @@ const Header = () => {
                     <ul className="grid w-[400px] gap-3 p-4">
                       <ListItem href="/contact/nous-contacter" title="Nous contacter">
                         Discutez avec notre équipe pour toutes vos questions
-                      </ListItem>
-                      <ListItem href="/contact/rendez-vous" title="Prendre rendez-vous">
-                        Réservez une consultation personnalisée
                       </ListItem>
                       <ListItem href="/contact/faq" title="FAQ">
                         Réponses aux questions fréquemment posées

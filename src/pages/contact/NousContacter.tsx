@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { Mail } from 'lucide-react';
+import { Mail, Linkedin, Calendar } from 'lucide-react';
 
 const NousContacter = () => {
   const { toast } = useToast();
@@ -34,13 +34,43 @@ const NousContacter = () => {
             <div>
               <h2 className="text-2xl font-serif mb-4">Coordonnées</h2>
               
-              <div className="space-y-4">
+              <div className="space-y-6">
                 <div className="flex items-center">
                   <Mail className="mr-3 h-5 w-5 text-wedding-black" />
                   <div>
                     <p className="font-medium">Email</p>
                     <a href="mailto:mathilde@mariable.fr" className="text-wedding-olive hover:underline">
                       mathilde@mariable.fr
+                    </a>
+                  </div>
+                </div>
+
+                <div className="flex items-center">
+                  <Linkedin className="mr-3 h-5 w-5 text-wedding-black" />
+                  <div>
+                    <p className="font-medium">Contact professionnel</p>
+                    <a 
+                      href="https://www.linkedin.com/in/lambertmathilde/" 
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-wedding-olive hover:underline"
+                    >
+                      LinkedIn
+                    </a>
+                  </div>
+                </div>
+
+                <div className="flex items-center">
+                  <Calendar className="mr-3 h-5 w-5 text-wedding-black" />
+                  <div>
+                    <p className="font-medium">Prendre rendez-vous</p>
+                    <a 
+                      href="https://cal.com/mariablebymathilde" 
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-wedding-olive hover:underline"
+                    >
+                      Réserver un créneau
                     </a>
                   </div>
                 </div>
