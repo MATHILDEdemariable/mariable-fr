@@ -1,3 +1,4 @@
+
 import { ChatResponse, Message, Vendor, VendorRecommendation } from '@/types';
 import vendorsData from '@/data/vendors.json';
 
@@ -7,7 +8,7 @@ export const sendMessage = async (messages: Message[]): Promise<ChatResponse> =>
   const latestUserMessage = messages.filter(m => m.role === 'user').pop();
   
   if (!latestUserMessage) {
-    return { message: "Je n'ai pas compris votre demande. Pourriez-vous reformuler s'il vous plaît?" };
+    return { message: "Bonjour et félicitations pour votre mariage ! Je suis Mathilde de Mariable, votre wedding planner digital. Comment puis-je vous aider aujourd'hui ?" };
   }
   
   // Analyze the message to determine user needs
@@ -87,7 +88,7 @@ export const sendMessage = async (messages: Message[]): Promise<ChatResponse> =>
   // If this is the first or second message from user and no keywords are detected
   if (messages.filter(m => m.role === 'user').length <= 2) {
     return { 
-      message: "Bonjour et félicitations pour votre mariage ! Je suis Mathilde de Mariable, votre wedding planner virtuelle. Pour que je puisse vous recommander les bons prestataires, pourriez-vous me dire dans quelle région ou ville se déroulera votre mariage, et quel type de prestataire vous recherchez en priorité (lieu, photographe, traiteur, DJ, fleuriste...) ?"
+      message: "Bonjour et félicitations pour votre mariage ! Je suis Mathilde de Mariable, votre wedding planner digital. Pour que je puisse vous recommander les bons prestataires, pourriez-vous me dire dans quelle région ou ville se déroulera votre mariage, et quel type de prestataire vous recherchez en priorité (lieu, photographe, traiteur, DJ, fleuriste...) ?"
     };
   }
   

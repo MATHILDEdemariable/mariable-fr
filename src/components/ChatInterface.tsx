@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -26,7 +25,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     {
       id: 'welcome',
       role: 'assistant',
-      content: "Bonjour et félicitations pour votre mariage ! Je suis Mathilde de Mariable, votre wedding planner virtuelle. Pour vous recommander les meilleurs prestataires, dites-moi simplement dans quelle région se déroulera votre mariage et quel type de prestataire vous recherchez (lieu, photographe, traiteur...) 💍",
+      content: "Bonjour et félicitations pour votre mariage ! Je suis Mathilde de Mariable, votre wedding planner digital. Pour vous recommander les meilleurs prestataires, dites-moi simplement dans quelle région se déroulera votre mariage et quel type de prestataire vous recherchez (lieu, photographe, traiteur...) 💍",
       timestamp: new Date()
     }
   ]);
@@ -49,7 +48,6 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     scrollToBottom();
   }, [messages, recommendations]);
 
-  // Process initial message if provided
   useEffect(() => {
     if (initialMessage && !isSimpleInput && !hasProcessedInitialMessage) {
       setHasProcessedInitialMessage(true);
@@ -81,7 +79,6 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     
     scrollToBottom();
     
-    // If this is the first message and we're in simple input mode, call the onFirstMessage callback
     if (isSimpleInput && messages.length === 1 && onFirstMessage) {
       onFirstMessage();
     }
@@ -131,7 +128,6 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     await handleSubmitWithMessage(inputValue);
   };
 
-  // Return different UI based on isSimpleInput prop
   if (isSimpleInput) {
     return (
       <div className="w-full rounded-full overflow-hidden shadow-md bg-white">
@@ -157,7 +153,6 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     );
   }
 
-  // Full chatbot interface
   return (
     <div className="w-full h-[calc(100vh-12rem)] sm:h-[500px] flex flex-col bg-white rounded-xl overflow-hidden">
       <div className="p-3 md:p-4 bg-white border-b flex items-center justify-center">
