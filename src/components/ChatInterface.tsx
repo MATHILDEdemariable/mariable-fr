@@ -26,7 +26,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     {
       id: 'welcome',
       role: 'assistant',
-      content: "Bonjour et félicitations pour votre mariage ! Je suis Mathilde de Mariable, votre wedding planner virtuelle, et je suis là pour vous simplifier la vie. Comment puis-je vous aider à créer le mariage de vos rêves ? 💍",
+      content: "Bonjour et félicitations pour votre mariage ! Je suis Mathilde de Mariable, votre wedding planner virtuelle. Pour vous recommander les meilleurs prestataires, dites-moi simplement dans quelle région se déroulera votre mariage et quel type de prestataire vous recherchez (lieu, photographe, traiteur...) 💍",
       timestamp: new Date()
     }
   ]);
@@ -116,7 +116,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       const errorMessage: MessageType = {
         id: uuidv4(),
         role: 'assistant',
-        content: "Oh, il semble que j'aie eu un petit souci technique ! Pourriez-vous me reposer votre question ? Je suis impatiente de vous aider avec votre mariage !",
+        content: "Désolée, j'ai rencontré un petit problème technique. Pourriez-vous me rappeler quelle région vous intéresse et quel type de prestataire vous recherchez ?",
         timestamp: new Date()
       };
       
