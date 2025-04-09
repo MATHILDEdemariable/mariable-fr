@@ -4,7 +4,7 @@ import Header from '@/components/Header';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Calendar, Search, CheckCircle2, Mail, Linkedin } from 'lucide-react';
+import { ArrowLeft, Calendar, Search, CheckCircle2 } from 'lucide-react';
 
 const Demo = () => {
   return (
@@ -25,21 +25,17 @@ const Demo = () => {
           </p>
         </div>
         
-        <Card className="mb-12 border-wedding-olive/20 bg-wedding-olive/5">
-          <CardHeader>
-            <CardTitle className="text-wedding-olive">Nous vous recontactons pour le lancement officiel</CardTitle>
-            <CardDescription>
-              Vous pouvez toujours nous contacter ou consulter notre guide de prestataires à l'adresse suivante : <a href="https://www.mariable.fr/selectionmariable" className="text-wedding-olive hover:underline" target="_blank" rel="noopener noreferrer">www.mariable.fr/selectionmariable</a>
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground mb-4">
-              En attendant le lancement de l'application complète, voici un aperçu en démo. Si vous avez des questions ou besoin d'aide, 
-              n'hésitez pas à nous contacter par email à <a href="mailto:mathilde@mariable.fr" className="text-wedding-olive hover:underline">mathilde@mariable.fr</a> ou 
-              via notre <Link to="/contact/nous-contacter" className="text-wedding-olive hover:underline">formulaire de contact</Link>.
-            </p>
-          </CardContent>
-        </Card>
+        <div className="flex justify-center mb-10">
+          <Button 
+            className="bg-wedding-olive hover:bg-wedding-olive/90 text-white" 
+            size="lg" 
+            asChild
+          >
+            <a href="https://www.mariable.fr/selectionmariable" target="_blank" rel="noopener noreferrer">
+              Voir la sélection Mariable
+            </a>
+          </Button>
+        </div>
         
         <div className="grid md:grid-cols-3 gap-8 mt-12">
           <Card>
