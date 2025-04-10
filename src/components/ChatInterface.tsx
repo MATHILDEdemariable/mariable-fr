@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -91,7 +90,6 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
           { 
             text: "Aide à la planification", 
             value: "planification", 
-            // Create icons correctly with correct types
             icon: <Calendar className="h-4 w-4" />,
             link: "/services/planification"
           },

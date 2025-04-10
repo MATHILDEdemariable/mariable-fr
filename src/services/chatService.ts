@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { VendorRecommendation, Message as MessageType } from '@/types';
 import { v4 as uuidv4 } from 'uuid';
@@ -207,7 +208,7 @@ export const handleOptionSelected = async (
     else if (selectedOption === "aide") {
       return {
         response: {
-          message: "Voici quelques ressources pour vous aider à démarrer l'organisation de votre mariage:",
+          message: "Je vous invite à consulter les ressources dans la page 'nos services' pour démarrer l'organisation de votre mariage ou nous contacter spécifiquement si besoin",
           actionButtons: [
             { 
               text: "Aide à la planification", 
