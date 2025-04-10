@@ -76,14 +76,14 @@ export const sendMessage = async (messages: Message[]): Promise<ChatResponse> =>
   // Only vendor type is found
   if (foundVendorType && !foundLocation) {
     return { 
-      message: `Pour quel lieu ou région recherchez-vous un${foundVendorType === 'photographe' || foundVendorType === 'traiteur' || foundVendorType === 'fleuriste' ? ' ' : 'e '}${foundVendorType} ?`
+      message: `Pour quel lieu ou région recherchez-vous un${foundVendorType === 'photographe' || foundVendorType === 'traiteur' || foundVendorType === 'fleuriste' ? ' ' : 'e '}${foundVendorType} ? Une fois que je connaîtrai la région, je pourrai vous proposer les meilleurs prestataires.`
     };
   }
   
   // Only location is found
   if (!foundVendorType && foundLocation) {
     return { 
-      message: `Quel type de prestataire recherchez-vous à ${capitalizeFirstLetter(foundLocation)} ? (lieu, photographe, traiteur...)`
+      message: `Quel type de prestataire recherchez-vous à ${capitalizeFirstLetter(foundLocation)} ? Je suis spécialisée pour vous aider à trouver le meilleur photographe, lieu, traiteur, DJ ou fleuriste pour votre mariage.`
     };
   }
   
@@ -100,13 +100,13 @@ export const sendMessage = async (messages: Message[]): Promise<ChatResponse> =>
   // If this is the first or second message from user and no keywords are detected
   if (messages.filter(m => m.role === 'user').length <= 2) {
     return { 
-      message: "Quel type de prestataire recherchez-vous pour votre mariage ? (lieu, photographe, traiteur, DJ, fleuriste...)"
+      message: "Je suis spécialisée pour trouver les meilleurs prestataires pour votre mariage. De quoi avez-vous besoin exactement ? Par exemple, recherchez-vous un lieu de réception à Paris, un photographe à Lyon, ou un traiteur à Bordeaux ? Plus vous me donnez de détails, plus mes recommandations seront pertinentes."
     };
   }
   
-  // Default response when no specific keywords are detected
+  // Default response when no specific keywords are detected - more specific now
   return {
-    message: "Pour vous aider efficacement, dites-moi quel type de prestataire vous intéresse (lieu, photographe, traiteur...) et dans quelle région se déroulera votre mariage."
+    message: "Je suis spécialisée pour trouver les meilleurs prestataires pour votre mariage. Pour vous aider efficacement, pourriez-vous me préciser quel type de prestataire vous intéresse (lieu, photographe, traiteur, DJ, fleuriste...) et dans quelle région se déroulera votre mariage ? Avec ces informations, je pourrai vous proposer les meilleures options."
   };
 };
 
@@ -156,17 +156,15 @@ function getRecommendations(vendorType: string, location: string): ChatResponse 
     const formattedVendorType = vendorType === 'wedding planner' ? 'wedding planners' : 
                                 (vendorType === 'lieu' ? 'lieux' : `${vendorType}s`);
     
-    responseMessage = `Voici mes recommandations de ${formattedVendorType} à ${capitalizeFirstLetter(location)} :`;
+    responseMessage = `Voici mes recommandations de ${formattedVendorType} à ${capitalizeFirstLetter(location)} qui pourraient parfaitement correspondre à vos besoins :`;
     
-    // Add follow-up question to suggest subscription for more options
-    responseMessage += `\n\nSouhaitez-vous voir plus d'options ou avoir des informations détaillées sur ces prestataires ?`;
+    // Add clear call-to-action for more information
+    responseMessage += `\n\nVous aimeriez voir plus d'options ou obtenir des informations détaillées sur ces prestataires ? Inscrivez-vous pour accéder à notre guide complet de prestataires sélectionnés.`;
     
-    // Set flag to potentially redirect after a few more exchanges
-    if (Math.random() > 0.5) {
-      shouldRedirect = true;
-    }
+    // Always set redirect flag to encourage sign up
+    shouldRedirect = true;
   } else {
-    responseMessage = `Je n'ai pas de ${vendorType} à ${capitalizeFirstLetter(location)} dans ma base actuellement. Souhaitez-vous explorer d'autres régions ou un autre type de prestataire ?`;
+    responseMessage = `Je n'ai pas de ${vendorType} à ${capitalizeFirstLetter(location)} dans ma base actuellement. Souhaitez-vous explorer d'autres régions comme Paris, Lyon ou Bordeaux où nous avons d'excellents ${vendorType === 'lieu' ? 'lieux' : vendorType + 's'} à vous proposer ? Ou préférez-vous un autre type de prestataire dans la région ${capitalizeFirstLetter(location)} ?`;
   }
   
   // Create recommendations with personalized reasons
