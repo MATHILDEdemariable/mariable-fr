@@ -1,6 +1,17 @@
 
 import React from 'react';
 import ServiceTemplate from '../ServiceTemplate';
+import { Button } from '@/components/ui/button';
+import { WhatsappIcon } from 'lucide-react';
+
+const WhatsappIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21" />
+    <path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1Z" />
+    <path d="M14 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1Z" />
+    <path d="M9.5 13.5c.5 1.5 2.5 2 3.5 0" />
+  </svg>
+);
 
 const ConseilsContent = () => (
   <>
@@ -31,6 +42,33 @@ const ConseilsContent = () => (
       partagerez une véritable alchimie, créant ainsi les conditions idéales pour un mariage 
       parfait qui restera gravé dans vos mémoires.
     </p>
+    
+    <div className="mt-10 p-6 bg-wedding-cream/40 rounded-lg border border-wedding-olive/20">
+      <h2 className="text-2xl font-serif mb-4">Rejoignez notre communauté WhatsApp</h2>
+      
+      <p className="mb-4">
+        Vous souhaitez des conseils personnalisés gratuits pour l'organisation de votre mariage ? 
+        Il vous suffit de rejoindre notre communauté WhatsApp pour échanger avec d'autres futurs 
+        mariés et bénéficier des conseils de nos experts.
+      </p>
+      
+      <div className="flex justify-center mt-6">
+        <Button 
+          size="lg" 
+          className="bg-[#25D366] hover:bg-[#22c35e] text-white gap-2"
+          asChild
+        >
+          <a 
+            href="https://chat.whatsapp.com/In5xf3ZMJNvJkhy4F9g5C5" 
+            target="_blank" 
+            rel="noopener noreferrer"
+          >
+            <WhatsappIcon />
+            <span>Rejoindre la communauté</span>
+          </a>
+        </Button>
+      </div>
+    </div>
   </>
 );
 

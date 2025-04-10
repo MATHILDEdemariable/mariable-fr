@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import ChatInterface from '@/components/ChatInterface';
 import Header from '@/components/Header';
-import { ArrowRight, Sparkles, Calendar, MapPin, Heart, Instagram, Mail, Phone } from 'lucide-react';
+import { ArrowRight, Sparkles, Calendar, MapPin, Heart, Instagram, Mail, Phone, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 
@@ -99,6 +99,65 @@ const Index = () => {
             </div>
           </section>
         )}
+        
+        <section className="py-10 md:py-16 bg-wedding-cream/40">
+          <div className="container px-4">
+            <div className="text-center mb-8 md:mb-12">
+              <h2 className="text-2xl md:text-3xl font-serif mb-3 md:mb-4">🛠️ Ce que vous pouvez faire avec Mariable</h2>
+              <p className="text-muted-foreground text-sm md:text-base max-w-2xl mx-auto">
+                Le premier wedding planner digital qui centralise et simplifie les démarches tout en vous laissant la liberté de garder la main sur votre grand jour.
+              </p>
+            </div>
+            
+            <div className="max-w-4xl mx-auto">
+              <ul className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                <li className="flex items-start gap-3 p-4 bg-white rounded-lg shadow-sm">
+                  <CheckCircle className="text-wedding-olive shrink-0 mt-1" size={20} />
+                  <div>
+                    <h3 className="font-medium text-wedding-black">Trouver les meilleurs prestataires</h3>
+                    <p className="text-sm text-muted-foreground">Grâce à notre guide de référence soigneusement sélectionné</p>
+                  </div>
+                </li>
+                
+                <li className="flex items-start gap-3 p-4 bg-white rounded-lg shadow-sm">
+                  <CheckCircle className="text-wedding-olive shrink-0 mt-1" size={20} />
+                  <div>
+                    <h3 className="font-medium text-wedding-black">Planifier votre mariage avec clarté</h3>
+                    <p className="text-sm text-muted-foreground">Organisez chaque étape de votre mariage simplement</p>
+                  </div>
+                </li>
+                
+                <li className="flex items-start gap-3 p-4 bg-white rounded-lg shadow-sm">
+                  <CheckCircle className="text-wedding-olive shrink-0 mt-1" size={20} />
+                  <div>
+                    <h3 className="font-medium text-wedding-black">Gérer facilement votre budget</h3>
+                    <p className="text-sm text-muted-foreground">Avec une transparence totale des prix et des prestations</p>
+                  </div>
+                </li>
+                
+                <li className="flex items-start gap-3 p-4 bg-white rounded-lg shadow-sm">
+                  <CheckCircle className="text-wedding-olive shrink-0 mt-1" size={20} />
+                  <div>
+                    <h3 className="font-medium text-wedding-black">Bientôt disponible</h3>
+                    <p className="text-sm text-muted-foreground">Réservez et gérez vos prestataires directement en ligne</p>
+                  </div>
+                </li>
+              </ul>
+              
+              <div className="text-center mt-8">
+                <Button 
+                  size="lg" 
+                  className="bg-wedding-olive hover:bg-wedding-olive/90 text-white"
+                  asChild
+                >
+                  <Link to="/services/planification">
+                    Commencer maintenant
+                  </Link>
+                </Button>
+              </div>
+            </div>
+          </div>
+        </section>
         
         <section id="features" className="py-8 md:py-16 bg-white">
           <div className="container px-4">
