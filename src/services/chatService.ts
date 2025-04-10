@@ -2,7 +2,7 @@
 import React from 'react';
 import { VendorRecommendation, Message as MessageType } from '@/types';
 import { v4 as uuidv4 } from 'uuid';
-import { Briefcase, Calendar, Building, HelpCircle, MapPin, Home } from 'lucide-react';
+import { Briefcase, Calendar, Building, HelpCircle, MapPin, Home, Users, ExternalLink, BookOpen } from 'lucide-react';
 
 export const getInitialOptions = () => {
   return [
@@ -26,6 +26,7 @@ export const sendMessage = async (messages: MessageType[]): Promise<{
   message: string;
   recommendations?: VendorRecommendation[];
   noRecommendationsFound?: boolean;
+  actionButtons?: { text: string; action: string; link?: string; newTab?: boolean }[];
 }> => {
   // Simuler un délai de réponse
   await new Promise(resolve => setTimeout(resolve, 1000));
@@ -41,14 +42,33 @@ export const sendMessage = async (messages: MessageType[]): Promise<{
   // Si c'est le premier message de l'utilisateur, donner directement des recommandations ou options
   if (messages.filter(m => m.role === 'user').length === 1) {
     return {
-      message: "Bonjour et félicitations pour votre mariage ! Je suis Mathilde de Mariable, votre wedding planner digital. Dites-moi tout, je vais vous aider à trouver les meilleurs prestataires selon vos envies.",
+      message: "Bonjour et félicitations pour votre mariage! Je suis Mathilde de Mariable, votre wedding planner digital. Dites-moi tout, je vais vous aider à trouver les meilleurs prestataires selon vos envies.",
+    };
+  }
+  
+  // Si l'utilisateur demande de l'aide ou des conseils
+  if (lastUserMessage.toLowerCase().includes("aide") || lastUserMessage.toLowerCase().includes("conseil")) {
+    return {
+      message: "Comment puis-je vous aider aujourd'hui?",
+      actionButtons: [
+        {
+          text: "Je veux de l'aide pour la planification",
+          action: "link",
+          link: "/services/planification"
+        },
+        {
+          text: "Je veux des conseils",
+          action: "link",
+          link: "/services/conseils"
+        }
+      ]
     };
   }
   
   // Simuler une réponse du service de chat
   if (lastUserMessage.toLowerCase().includes("photographe")) {
     return {
-      message: "Super ! Je connais d'excellents photographes. Voici quelques recommandations :",
+      message: "Super! Je connais d'excellents photographes. Voici quelques recommandations:",
       recommendations: [
         {
           name: "Studio Photo Mariage",
@@ -72,7 +92,7 @@ export const sendMessage = async (messages: MessageType[]): Promise<{
     };
   } else if (lastUserMessage.toLowerCase().includes("traiteur")) {
     return {
-      message: "Parfait, voici quelques traiteurs que je recommande :",
+      message: "Parfait, voici quelques traiteurs que je recommande:",
       recommendations: [
         {
           name: "Saveurs Exquises",
@@ -96,7 +116,7 @@ export const sendMessage = async (messages: MessageType[]): Promise<{
     };
   } else if (lastUserMessage.toLowerCase().includes("dj")) {
     return {
-      message: "Voici quelques DJ populaires :",
+      message: "Voici quelques DJ populaires:",
       recommendations: [
         {
           name: "DJ MagicMix",
@@ -120,7 +140,7 @@ export const sendMessage = async (messages: MessageType[]): Promise<{
     };
   } else if (lastUserMessage.toLowerCase().includes("lieu") || lastUserMessage.toLowerCase().includes("salle")) {
     return {
-      message: "Voici quelques lieux de réception que je recommande :",
+      message: "Voici quelques lieux de réception que je recommande:",
       recommendations: [
         {
           name: "Château Élégance",
@@ -144,7 +164,7 @@ export const sendMessage = async (messages: MessageType[]): Promise<{
     };
   } else {
     return {
-      message: "Je comprends. Pourrais-tu me donner plus de détails sur ce que tu recherches ?",
+      message: "Je comprends. Pourrais-tu me donner plus de détails sur ce que tu recherches?",
     };
   }
 };
@@ -157,6 +177,7 @@ export const handleOptionSelected = async (
   response: {
     message: string;
     recommendations?: VendorRecommendation[];
+    actionButtons?: { text: string; action: string; link?: string; newTab?: boolean }[];
   };
   updatedContext: any;
   nextStep: number;
@@ -177,7 +198,7 @@ export const handleOptionSelected = async (
     if (selectedOption === "lieu" || selectedOption === "prestataire") {
       return {
         response: {
-          message: "Dans quelle ville ou région se déroulera votre mariage ?",
+          message: "Dans quelle ville ou région se déroulera votre mariage?",
         },
         updatedContext,
         nextStep
@@ -187,7 +208,25 @@ export const handleOptionSelected = async (
     else if (selectedOption === "aide") {
       return {
         response: {
-          message: "Voici quelques ressources pour vous aider à démarrer l'organisation de votre mariage :",
+          message: "Voici quelques ressources pour vous aider à démarrer l'organisation de votre mariage:",
+          actionButtons: [
+            { 
+              text: "Accéder au Guide Mariable", 
+              action: "link", 
+              link: "https://leguidemariable.softr.app/",
+              newTab: true
+            },
+            { 
+              text: "Je veux de l'aide pour la planification", 
+              action: "link", 
+              link: "/services/planification"
+            },
+            { 
+              text: "Je veux des conseils", 
+              action: "link", 
+              link: "/services/conseils"
+            }
+          ]
         },
         updatedContext,
         nextStep: 3 // Passer directement à l'étape des boutons d'aide
@@ -201,8 +240,8 @@ export const handleOptionSelected = async (
     // Simuler une recherche de prestataires
     if (selectedOption === "paris") {
       const responseMessage = updatedContext.needType === "lieu" 
-        ? "Voici quelques lieux à Paris :" 
-        : "Voici quelques prestataires à Paris :";
+        ? "Voici quelques lieux à Paris:" 
+        : "Voici quelques prestataires à Paris:";
       
       const recommendations = updatedContext.needType === "lieu" 
         ? [
@@ -258,7 +297,20 @@ export const handleOptionSelected = async (
       noRecommendationsFound = true;
       return {
         response: {
-          message: "Je n'ai pas trouvé de prestataires dans cette région.",
+          message: "Le plus simple serait de consulter le guide ou nous contacter directement. Partagez nous votre brief complet pour que l'on puisse vous aider (c'est gratuit & rapide)",
+          actionButtons: [
+            { 
+              text: "Nous contacter directement", 
+              action: "link", 
+              link: "/contact/nous-contacter"
+            },
+            { 
+              text: "Consulter le guide Mariable", 
+              action: "link", 
+              link: "https://leguidemariable.softr.app/",
+              newTab: true
+            }
+          ]
         },
         updatedContext,
         nextStep,
