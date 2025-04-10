@@ -1,4 +1,3 @@
-
 import { ChatResponse, Message, Vendor, VendorRecommendation } from '@/types';
 import vendorsData from '@/data/vendors.json';
 
@@ -67,22 +66,37 @@ export const sendMessage = async (messages: Message[]): Promise<ChatResponse> =>
     }
     if (foundLocation) break;
   }
+
+  // Check if this is the first message from the user
+  const userMessageCount = messages.filter(m => m.role === 'user').length;
   
-  // Only location is found - provide some recommendations for that location
-  if (!foundVendorType && foundLocation) {
-    return getLocationRecommendations(foundLocation);
+  // If this is the first user message, always ask for both prestataire type and location
+  if (userMessageCount === 1) {
+    return {
+      message: "Merci pour ces informations ! Pour mieux vous aider, pourriez-vous me préciser deux éléments essentiels :\n\n1. Quel type de prestataire recherchez-vous ? (lieu, traiteur, photographe, DJ, fleuriste...)\n\n2. Dans quelle ville ou région se déroulera votre mariage ?"
+    };
   }
   
-  // Both vendor type and location are found
+  // After the first message, if we're still missing one or both pieces of info, ask specifically for what's missing
+  if (userMessageCount > 1) {
+    if (!foundVendorType && !foundLocation) {
+      return {
+        message: "Pour vous proposer les meilleurs prestataires, j'ai besoin de savoir :\n\n1. Quel type de prestataire recherchez-vous ? (lieu, traiteur, photographe...)\n\n2. Dans quelle ville ou région se déroulera votre mariage ?"
+      };
+    } else if (!foundVendorType) {
+      return {
+        message: `Merci pour cette information sur ${capitalizeFirstLetter(foundLocation!)}. Pourriez-vous me préciser quel type de prestataire vous recherchez ? (lieu, traiteur, photographe, DJ, fleuriste...)`
+      };
+    } else if (!foundLocation) {
+      return {
+        message: `Je vois que vous cherchez un${foundVendorType === 'photographe' || foundVendorType === 'traiteur' || foundVendorType === 'fleuriste' ? ' ' : 'e '}${foundVendorType}. Dans quelle ville ou région se déroulera votre mariage ?`
+      };
+    }
+  }
+  
+  // Both vendor type and location are found, provide recommendations
   if (foundVendorType && foundLocation) {
     return getRecommendations(foundVendorType, foundLocation);
-  }
-  
-  // Only vendor type is found
-  if (foundVendorType && !foundLocation) {
-    return { 
-      message: `Pour quel lieu recherchez-vous un${foundVendorType === 'photographe' || foundVendorType === 'traiteur' || foundVendorType === 'fleuriste' ? ' ' : 'e '}${foundVendorType} ?`
-    };
   }
   
   // If the message contains "plus" or "détails" or "information" - suggest sign up
@@ -95,16 +109,9 @@ export const sendMessage = async (messages: Message[]): Promise<ChatResponse> =>
     };
   }
   
-  // If this is the first or second message from user and no keywords are detected
-  if (messages.filter(m => m.role === 'user').length <= 2) {
-    return { 
-      message: "Quel type de prestataire cherchez-vous et dans quelle région ? Par exemple, un photographe à Paris ou un lieu à Bordeaux ?"
-    };
-  }
-  
   // Default response when no specific keywords are detected
   return {
-    message: "Précisez-moi quel prestataire vous intéresse (lieu, photographe, traiteur...) et dans quelle région pour que je puisse vous aider."
+    message: "Pour vous proposer des recommandations personnalisées, j'ai besoin de savoir quel type de prestataire vous intéresse (lieu, photographe, traiteur...) et dans quelle région se déroulera votre mariage."
   };
 };
 
@@ -124,7 +131,7 @@ function getLocationRecommendations(location: string): ChatResponse {
   }
   
   if (filteredVendors.length > 0) {
-    const responseMessage = `Voici quelques prestataires à ${capitalizeFirstLetter(location)} qui pourraient vous intéresser :`;
+    const responseMessage = `Voici quelques prestataires à ${capitalizeFirstLetter(location)} qui pourraient vous intéresser. Pour des recommandations plus précises, merci de me préciser quel type de prestataire vous recherchez spécifiquement.`;
     
     // Create recommendations
     const recommendations: VendorRecommendation[] = filteredVendors.map(vendor => ({
@@ -139,7 +146,7 @@ function getLocationRecommendations(location: string): ChatResponse {
     };
   } else {
     return {
-      message: `Je n'ai pas encore de prestataires à ${capitalizeFirstLetter(location)}. Essayez Paris, Lyon ou Bordeaux où nous avons d'excellents prestataires.`
+      message: `Je n'ai pas encore de prestataires à ${capitalizeFirstLetter(location)}. Pourriez-vous me préciser un autre lieu comme Paris, Lyon ou Bordeaux où nous avons d'excellents prestataires ?`
     };
   }
 }
@@ -190,12 +197,12 @@ function getRecommendations(vendorType: string, location: string): ChatResponse 
     const formattedVendorType = vendorType === 'wedding planner' ? 'wedding planners' : 
                                 (vendorType === 'lieu' ? 'lieux' : `${vendorType}s`);
     
-    responseMessage = `Voici mes recommandations de ${formattedVendorType} à ${capitalizeFirstLetter(location)} :`;
+    responseMessage = `Parfait ! Voici mes recommandations de ${formattedVendorType} à ${capitalizeFirstLetter(location)} :`;
     
     // Always set redirect flag to encourage sign up
     shouldRedirect = true;
   } else {
-    responseMessage = `Je n'ai pas de ${vendorType} à ${capitalizeFirstLetter(location)}. Essayez Paris, Lyon ou Bordeaux.`;
+    responseMessage = `Je n'ai pas de ${vendorType} à ${capitalizeFirstLetter(location)} dans ma base de données. Pourriez-vous essayer un autre lieu comme Paris, Lyon ou Bordeaux où nous avons une plus grande sélection ?`;
   }
   
   // Create recommendations with personalized reasons
