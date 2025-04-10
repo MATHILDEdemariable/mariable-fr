@@ -2,6 +2,7 @@
 import React from 'react';
 import ServiceTemplate from '../ServiceTemplate';
 import { Button } from '@/components/ui/button';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 // Custom WhatsApp icon component
 const CustomWhatsappIcon = () => (
@@ -13,64 +14,68 @@ const CustomWhatsappIcon = () => (
   </svg>
 );
 
-const ConseilsContent = () => (
-  <>
-    <div className="mb-10 p-6 bg-wedding-cream/40 rounded-lg border border-wedding-olive/20">
-      <h2 className="text-2xl font-serif mb-4">Rejoignez notre communauté WhatsApp</h2>
+const ConseilsContent = () => {
+  const isMobile = useIsMobile();
+  
+  return (
+    <>
+      <div className="mb-8 p-4 sm:p-6 bg-wedding-cream/40 rounded-lg border border-wedding-olive/20">
+        <h2 className="text-xl sm:text-2xl font-serif mb-3 sm:mb-4">Rejoignez notre communauté WhatsApp</h2>
+        
+        <p className="mb-4 text-sm">
+          Vous souhaitez des conseils personnalisés gratuits pour l'organisation de votre mariage ? 
+          Il vous suffit de rejoindre notre communauté WhatsApp pour échanger avec d'autres futurs 
+          mariés et bénéficier des conseils de nos experts.
+        </p>
+        
+        <div className="flex justify-center mt-4 sm:mt-6">
+          <Button 
+            size={isMobile ? "default" : "lg"} 
+            className="bg-[#25D366] hover:bg-[#22c35e] text-white gap-2"
+            asChild
+          >
+            <a 
+              href="https://chat.whatsapp.com/In5xf3ZMJNvJkhy4F9g5C5" 
+              target="_blank" 
+              rel="noopener noreferrer"
+            >
+              <CustomWhatsappIcon />
+              <span>Rejoindre la communauté</span>
+            </a>
+          </Button>
+        </div>
+      </div>
       
-      <p className="mb-4">
-        Vous souhaitez des conseils personnalisés gratuits pour l'organisation de votre mariage ? 
-        Il vous suffit de rejoindre notre communauté WhatsApp pour échanger avec d'autres futurs 
-        mariés et bénéficier des conseils de nos experts.
+      <p className="text-sm">
+        Chaque mariage est unique, tout comme les futurs mariés. Nos conseils personnalisés 
+        s'adaptent à votre style, vos préférences et votre vision du mariage idéal.
       </p>
       
-      <div className="flex justify-center mt-6">
-        <Button 
-          size="lg" 
-          className="bg-[#25D366] hover:bg-[#22c35e] text-white gap-2"
-          asChild
-        >
-          <a 
-            href="https://chat.whatsapp.com/In5xf3ZMJNvJkhy4F9g5C5" 
-            target="_blank" 
-            rel="noopener noreferrer"
-          >
-            <CustomWhatsappIcon />
-            <span>Rejoindre la communauté</span>
-          </a>
-        </Button>
-      </div>
-    </div>
-    
-    <p>
-      Chaque mariage est unique, tout comme les futurs mariés. Nos conseils personnalisés 
-      s'adaptent à votre style, vos préférences et votre vision du mariage idéal.
-    </p>
-    
-    <h2 className="text-2xl font-serif mt-8 mb-4">Un référentiel de prestataires d'exception</h2>
-    
-    <p>
-      Nous avons rigoureusement sélectionné chaque prestataire de notre plateforme selon des 
-      critères stricts de qualité, de fiabilité et de professionnalisme. Notre processus de 
-      vérification approfondi vous garantit de collaborer uniquement avec les meilleurs talents 
-      du secteur.
-    </p>
-    
-    <h2 className="text-2xl font-serif mt-8 mb-4">La connexion humaine avant tout</h2>
-    
-    <p>
-      Au-delà des compétences techniques, nous valorisons particulièrement le feeling et la 
-      connexion humaine entre vous et vos prestataires. Cette dimension relationnelle est selon 
-      nous essentielle pour créer un mariage authentique qui vous ressemble.
-    </p>
-    
-    <p className="mt-6">
-      Notre approche personnalisée vous aide à identifier les prestataires avec lesquels vous 
-      partagerez une véritable alchimie, créant ainsi les conditions idéales pour un mariage 
-      parfait qui restera gravé dans vos mémoires.
-    </p>
-  </>
-);
+      <h2 className="text-xl sm:text-2xl font-serif mt-6 sm:mt-8 mb-3 sm:mb-4">Un référentiel de prestataires d'exception</h2>
+      
+      <p className="text-sm">
+        Nous avons rigoureusement sélectionné chaque prestataire de notre plateforme selon des 
+        critères stricts de qualité, de fiabilité et de professionnalisme. Notre processus de 
+        vérification approfondi vous garantit de collaborer uniquement avec les meilleurs talents 
+        du secteur.
+      </p>
+      
+      <h2 className="text-xl sm:text-2xl font-serif mt-6 sm:mt-8 mb-3 sm:mb-4">La connexion humaine avant tout</h2>
+      
+      <p className="text-sm">
+        Au-delà des compétences techniques, nous valorisons particulièrement le feeling et la 
+        connexion humaine entre vous et vos prestataires. Cette dimension relationnelle est selon 
+        nous essentielle pour créer un mariage authentique qui vous ressemble.
+      </p>
+      
+      <p className="mt-4 text-sm">
+        Notre approche personnalisée vous aide à identifier les prestataires avec lesquels vous 
+        partagerez une véritable alchimie, créant ainsi les conditions idéales pour un mariage 
+        parfait qui restera gravé dans vos mémoires.
+      </p>
+    </>
+  );
+};
 
 const Conseils = () => {
   return (

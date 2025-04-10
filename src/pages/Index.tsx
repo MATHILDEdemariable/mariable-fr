@@ -6,12 +6,14 @@ import Header from '@/components/Header';
 import { ArrowRight, Sparkles, Calendar, MapPin, Heart, Instagram, Mail, Phone, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const Index = () => {
   const navigate = useNavigate();
   const [showFullChat, setShowFullChat] = useState(false);
   const [userInitialMessage, setUserInitialMessage] = useState('');
   const fullChatRef = useRef<HTMLDivElement>(null);
+  const isMobile = useIsMobile();
   
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -33,7 +35,7 @@ const Index = () => {
       <Header />
       
       <main className="flex-grow">
-        <section className="relative min-h-[80vh] flex items-center">
+        <section className="relative min-h-[70vh] sm:min-h-[80vh] flex items-center">
           <div className="absolute inset-0 w-full h-full overflow-hidden z-0">
             <img
               src="/lovable-uploads/977ff726-5f78-4cbc-bf10-dbf0bbd10ab7.png"
@@ -44,21 +46,21 @@ const Index = () => {
             <div className="absolute inset-0 bg-wedding-black/40 backdrop-blur-[2px]"></div>
           </div>
           
-          <div className="container relative z-10 mx-auto px-4 py-8 md:py-16">
-            <div className="max-w-3xl mx-auto text-center mb-6 md:mb-8">
-              <div className="inline-flex items-center px-3 py-1 rounded-full bg-wedding-light text-xs sm:text-sm text-wedding-black mb-3 md:mb-4">
+          <div className="container relative z-10 mx-auto px-4 py-6 md:py-16">
+            <div className="max-w-3xl mx-auto text-center mb-4 md:mb-8">
+              <div className="inline-flex items-center px-3 py-1 rounded-full bg-wedding-light text-xs text-wedding-black mb-3">
                 <Sparkles size={14} className="mr-2" />
                 <span>Nouveau en 2025</span>
               </div>
-              <h1 className="text-white mb-4 md:mb-6">
+              <h1 className="text-white text-2xl sm:text-3xl md:text-4xl lg:text-5xl mb-3 md:mb-4">
                 Organisez le mariage <span className="text-wedding-cream">dont vous rêvez</span>
               </h1>
-              <p className="text-white/90 text-sm md:text-lg mb-6 md:mb-8 max-w-2xl mx-auto">
+              <p className="text-white/90 text-sm md:text-base mb-4 md:mb-6 max-w-2xl mx-auto">
                 Dites-nous ce dont vous avez besoin ou quel est le mariage parfait pour vous ! 💍
               </p>
             </div>
 
-            <div className="max-w-3xl mx-auto px-4 sm:px-0">
+            <div className="max-w-3xl mx-auto px-3 sm:px-0">
               <ChatInterface 
                 isSimpleInput={true} 
                 onFirstMessage={() => {
@@ -69,10 +71,10 @@ const Index = () => {
                 }}
               />
               
-              <div className="mt-4 md:mt-6 flex flex-col sm:flex-row justify-center gap-2 items-center">
+              <div className="mt-3 md:mt-4 flex flex-col sm:flex-row justify-center gap-2 items-center">
                 <button 
                   onClick={() => navigate('/services/planification')}
-                  className="text-white/80 hover:text-white text-sm flex items-center gap-1 transition-colors py-2"
+                  className="text-white/80 hover:text-white text-xs sm:text-sm flex items-center gap-1 transition-colors py-1"
                 >
                   <span>Vous ne savez pas par où commencer ?</span>
                   <span className="underline font-medium">Voir une démo</span>
@@ -83,11 +85,11 @@ const Index = () => {
         </section>
         
         {showFullChat && (
-          <section ref={fullChatRef} id="chat" className="py-8 md:py-16 bg-white">
+          <section ref={fullChatRef} id="chat" className="py-6 md:py-12 bg-white">
             <div className="container mx-auto px-4">
-              <div className="text-center mb-6 md:mb-8">
-                <h2 className="text-2xl md:text-3xl font-serif mb-3 md:mb-4">Poursuivez la conversation avec Mathilde</h2>
-                <p className="text-muted-foreground text-sm md:text-base max-w-2xl mx-auto">
+              <div className="text-center mb-4 md:mb-6">
+                <h2 className="text-xl md:text-2xl font-serif mb-2">Poursuivez la conversation avec Mathilde</h2>
+                <p className="text-muted-foreground text-xs md:text-sm max-w-2xl mx-auto">
                   Obtenez des recommendations de prestataires adaptées à vos besoins
                 </p>
               </div>
@@ -101,52 +103,52 @@ const Index = () => {
           </section>
         )}
         
-        <section className="py-10 md:py-16 bg-wedding-cream/40">
+        <section className="py-8 md:py-12 bg-wedding-cream/40">
           <div className="container px-4">
-            <div className="text-center mb-8 md:mb-12">
-              <p className="text-muted-foreground text-sm md:text-base max-w-2xl mx-auto">
+            <div className="text-center mb-6 md:mb-8">
+              <p className="text-muted-foreground text-xs md:text-sm max-w-2xl mx-auto">
                 Le premier wedding planner digital qui centralise et simplifie les démarches tout en vous laissant la liberté de garder la main sur votre grand jour.
               </p>
             </div>
             
             <div className="max-w-4xl mx-auto">
-              <ul className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-                <li className="flex items-start gap-3 p-4 bg-white rounded-lg shadow-sm">
-                  <CheckCircle className="text-wedding-olive shrink-0 mt-1" size={20} />
+              <ul className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+                <li className="flex items-start gap-3 p-3 md:p-4 bg-white rounded-lg shadow-sm">
+                  <CheckCircle className="text-wedding-olive shrink-0 mt-1" size={18} />
                   <div>
-                    <h3 className="font-serif text-wedding-black">Trouver les meilleurs prestataires</h3>
-                    <p className="text-sm text-muted-foreground">Grâce à notre guide de référence soigneusement sélectionné</p>
+                    <h3 className="font-serif text-wedding-black">Gain de temps</h3>
+                    <p className="text-xs sm:text-sm text-muted-foreground">Grâce à notre guide de référence soigneusement sélectionné</p>
                   </div>
                 </li>
                 
-                <li className="flex items-start gap-3 p-4 bg-white rounded-lg shadow-sm">
-                  <CheckCircle className="text-wedding-olive shrink-0 mt-1" size={20} />
+                <li className="flex items-start gap-3 p-3 md:p-4 bg-white rounded-lg shadow-sm">
+                  <CheckCircle className="text-wedding-olive shrink-0 mt-1" size={18} />
                   <div>
-                    <h3 className="font-serif text-wedding-black">Planifier votre mariage</h3>
-                    <p className="text-sm text-muted-foreground">Organisez chaque étape de votre mariage simplement</p>
+                    <h3 className="font-serif text-wedding-black">Recommandations personnalisées</h3>
+                    <p className="text-xs sm:text-sm text-muted-foreground">Organisez chaque étape de votre mariage simplement</p>
                   </div>
                 </li>
                 
-                <li className="flex items-start gap-3 p-4 bg-white rounded-lg shadow-sm">
-                  <CheckCircle className="text-wedding-olive shrink-0 mt-1" size={20} />
+                <li className="flex items-start gap-3 p-3 md:p-4 bg-white rounded-lg shadow-sm">
+                  <CheckCircle className="text-wedding-olive shrink-0 mt-1" size={18} />
                   <div>
-                    <h3 className="font-serif text-wedding-black">Gérer facilement votre budget</h3>
-                    <p className="text-sm text-muted-foreground">Avec une transparence totale des prix et des prestations</p>
+                    <h3 className="font-serif text-wedding-black">Sans stress</h3>
+                    <p className="text-xs sm:text-sm text-muted-foreground">Avec une transparence totale des prix et des prestations</p>
                   </div>
                 </li>
                 
-                <li className="flex items-start gap-3 p-4 bg-white rounded-lg shadow-sm">
-                  <CheckCircle className="text-wedding-olive shrink-0 mt-1" size={20} />
+                <li className="flex items-start gap-3 p-3 md:p-4 bg-white rounded-lg shadow-sm">
+                  <CheckCircle className="text-wedding-olive shrink-0 mt-1" size={18} />
                   <div>
                     <h3 className="font-serif text-wedding-black">Réserver & payer en ligne</h3>
-                    <p className="text-sm text-muted-foreground">Bientôt disponible</p>
+                    <p className="text-xs sm:text-sm text-muted-foreground">Bientôt disponible</p>
                   </div>
                 </li>
               </ul>
               
-              <div className="text-center mt-8">
+              <div className="text-center mt-6">
                 <Button 
-                  size="lg" 
+                  size={isMobile ? "sm" : "default"} 
                   className="bg-wedding-olive hover:bg-wedding-olive/90 text-white"
                   asChild
                 >
@@ -159,42 +161,42 @@ const Index = () => {
           </div>
         </section>
         
-        <section id="features" className="py-8 md:py-16 bg-white">
+        <section id="features" className="py-8 md:py-12 bg-white">
           <div className="container px-4">
-            <div className="text-center mb-8 md:mb-12">
-              <h2 className="text-2xl md:text-3xl font-serif mb-3 md:mb-4">Comment Mariable transforme votre expérience</h2>
-              <p className="text-muted-foreground text-sm md:text-base max-w-2xl mx-auto">
+            <div className="text-center mb-6 md:mb-8">
+              <h2 className="text-xl md:text-2xl font-serif mb-2 md:mb-3">Comment Mariable transforme votre expérience</h2>
+              <p className="text-muted-foreground text-xs md:text-sm max-w-2xl mx-auto">
                 Organiser un mariage devient simple, rapide & agréable
               </p>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 max-w-5xl mx-auto">
-              <div className="feature-card">
-                <div className="w-10 h-10 md:w-12 md:h-12 bg-wedding-black/10 rounded-full flex items-center justify-center mb-4">
-                  <Calendar className="text-wedding-black h-5 w-5 md:h-6 md:w-6" />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 max-w-5xl mx-auto">
+              <div className="feature-card p-4">
+                <div className="w-10 h-10 bg-wedding-black/10 rounded-full flex items-center justify-center mb-3">
+                  <Calendar className="text-wedding-black h-5 w-5" />
                 </div>
-                <h3 className="text-lg md:text-xl font-serif mb-2">Gain de temps</h3>
-                <p className="text-muted-foreground">
+                <h3 className="text-base md:text-lg font-serif mb-2">Gain de temps</h3>
+                <p className="text-xs md:text-sm text-muted-foreground">
                   Une solution qui centralise les démarches pour trouver, comparer, réserver et coordonner les meilleurs prestataires.
                 </p>
               </div>
               
-              <div className="feature-card">
-                <div className="w-10 h-10 md:w-12 md:h-12 bg-wedding-black/10 rounded-full flex items-center justify-center mb-4">
-                  <MapPin className="text-wedding-black h-5 w-5 md:h-6 md:w-6" />
+              <div className="feature-card p-4">
+                <div className="w-10 h-10 bg-wedding-black/10 rounded-full flex items-center justify-center mb-3">
+                  <MapPin className="text-wedding-black h-5 w-5" />
                 </div>
-                <h3 className="text-lg md:text-xl font-serif mb-2">Recommandations personnalisées</h3>
-                <p className="text-muted-foreground">
+                <h3 className="text-base md:text-lg font-serif mb-2">Recommandations personnalisées</h3>
+                <p className="text-xs md:text-sm text-muted-foreground">
                   Accédez à un référencement de professionnels adaptés et reconnus pour leur expertise.
                 </p>
               </div>
               
-              <div className="feature-card">
-                <div className="w-10 h-10 md:w-12 md:h-12 bg-wedding-black/10 rounded-full flex items-center justify-center mb-4">
-                  <Heart className="text-wedding-black h-5 w-5 md:h-6 md:w-6" />
+              <div className="feature-card p-4">
+                <div className="w-10 h-10 bg-wedding-black/10 rounded-full flex items-center justify-center mb-3">
+                  <Heart className="text-wedding-black h-5 w-5" />
                 </div>
-                <h3 className="text-lg md:text-xl font-serif mb-2">Sans stress</h3>
-                <p className="text-muted-foreground">
+                <h3 className="text-base md:text-lg font-serif mb-2">Sans stress</h3>
+                <p className="text-xs md:text-sm text-muted-foreground">
                   Faites nous confiance et utilisez notre outil de planification pour ne rien oublier.
                 </p>
               </div>
@@ -202,14 +204,14 @@ const Index = () => {
           </div>
         </section>
         
-        <section id="contact" className="py-10 md:py-16 lg:py-24 bg-white text-wedding-black">
+        <section id="contact" className="py-8 md:py-12 bg-white text-wedding-black">
           <div className="container text-center px-4">
-            <h2 className="text-2xl md:text-3xl font-serif mb-4 md:mb-6">
+            <h2 className="text-xl md:text-2xl font-serif mb-3 md:mb-4">
               Prêt à révolutionner l'organisation de votre mariage ?
             </h2>
             <Button 
-              size="lg" 
-              className="bg-wedding-olive hover:bg-wedding-olive/90 text-white px-4 py-2 md:px-6 md:py-3 text-sm md:text-base"
+              size={isMobile ? "sm" : "default"} 
+              className="bg-wedding-olive hover:bg-wedding-olive/90 text-white"
               asChild
             >
               <Link to="/services/planification">
@@ -220,26 +222,26 @@ const Index = () => {
         </section>
       </main>
       
-      <footer className="py-8 md:py-12 bg-white text-wedding-black">
+      <footer className="py-8 bg-white text-wedding-black">
         <div className="container px-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <img src="/lovable-uploads/c5ca128d-6c6f-4f09-a990-f6f16d47e231.png" alt="Mariable Logo" className="h-12 md:h-14 w-auto" />
+                <img src="/lovable-uploads/c5ca128d-6c6f-4f09-a990-f6f16d47e231.png" alt="Mariable Logo" className="h-10 md:h-12 w-auto" />
               </div>
-              <p className="mb-4 text-wedding-black/70 text-sm">
+              <p className="mb-3 text-wedding-black/70 text-xs md:text-sm">
                 Mariable est votre partenaire privilégié pour créer le mariage de vos rêves, en simplifiant chaque étape de l'organisation.
               </p>
               <div className="flex gap-4">
                 <a href="https://www.instagram.com/mariable.fr/" aria-label="Instagram" target="_blank" rel="noopener noreferrer" className="text-wedding-black hover:text-wedding-black/70 transition-colors">
-                  <Instagram size={20} />
+                  <Instagram size={18} />
                 </a>
               </div>
             </div>
             
-            <div className="mt-6 sm:mt-0">
-              <h3 className="font-serif text-base md:text-lg mb-3 md:mb-4">Liens Rapides</h3>
-              <ul className="space-y-2 text-sm">
+            <div className="mt-4 sm:mt-0">
+              <h3 className="font-serif text-base mb-2 md:mb-3">Liens Rapides</h3>
+              <ul className="space-y-1 text-xs md:text-sm">
                 <li><Link to="/" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Accueil</Link></li>
                 <li><Link to="/services/prestataires" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Prestataires</Link></li>
                 <li><Link to="/services/planification" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Planification</Link></li>
@@ -248,9 +250,9 @@ const Index = () => {
               </ul>
             </div>
             
-            <div className="mt-6 sm:mt-0">
-              <h3 className="font-serif text-base md:text-lg mb-3 md:mb-4">À Propos</h3>
-              <ul className="space-y-2 text-sm">
+            <div className="mt-4 sm:mt-0">
+              <h3 className="font-serif text-base mb-2 md:mb-3">À Propos</h3>
+              <ul className="space-y-1 text-xs md:text-sm">
                 <li><Link to="/about/histoire" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Notre Histoire</Link></li>
                 <li><Link to="/about/approche" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Notre Approche</Link></li>
                 <li><Link to="/about/temoignages" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Témoignages</Link></li>
@@ -258,11 +260,11 @@ const Index = () => {
               </ul>
             </div>
             
-            <div className="mt-6 lg:mt-0">
-              <h3 className="font-serif text-base md:text-lg mb-3 md:mb-4">Contact</h3>
-              <ul className="space-y-3 text-sm">
+            <div className="mt-4 lg:mt-0">
+              <h3 className="font-serif text-base mb-2 md:mb-3">Contact</h3>
+              <ul className="space-y-2 text-xs md:text-sm">
                 <li className="flex items-center">
-                  <Mail className="mr-2 h-4 w-4 md:h-5 md:w-5 text-wedding-black shrink-0" />
+                  <Mail className="mr-2 h-4 w-4 text-wedding-black shrink-0" />
                   <a href="mailto:mathilde@mariable.fr" className="text-wedding-black/70 hover:text-wedding-black transition-colors">
                     mathilde@mariable.fr
                   </a>
@@ -271,11 +273,11 @@ const Index = () => {
             </div>
           </div>
           
-          <div className="mt-8 md:mt-12 pt-6 border-t border-wedding-black/10 flex flex-col md:flex-row justify-between items-center">
-            <p className="text-xs md:text-sm text-wedding-black/70 mb-4 md:mb-0 text-center md:text-left">
+          <div className="mt-6 md:mt-8 pt-4 border-t border-wedding-black/10 flex flex-col md:flex-row justify-between items-center">
+            <p className="text-xs text-wedding-black/70 mb-3 md:mb-0 text-center md:text-left">
               © 2025 Mariable - Tous droits réservés
             </p>
-            <div className="flex gap-4 md:gap-6 text-xs md:text-sm">
+            <div className="flex gap-4 text-xs">
               <Link to="/mentions-legales" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Mentions Légales</Link>
               <Link to="/cgv" className="text-wedding-black/70 hover:text-wedding-black transition-colors">CGV</Link>
             </div>

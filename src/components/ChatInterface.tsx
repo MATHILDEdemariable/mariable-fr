@@ -11,6 +11,7 @@ import { sendMessage, getInitialOptions, getLocationOptions, handleOptionSelecte
 import { v4 as uuidv4 } from 'uuid';
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate, Link } from 'react-router-dom';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface ChatInterfaceProps {
   isSimpleInput?: boolean;
@@ -49,6 +50,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     if (inputRef.current) {
@@ -354,14 +356,14 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
             ref={inputRef}
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
-            placeholder="Décrivez votre mariage idéal ou ce que vous recherchez..."
+            placeholder={isMobile ? "Décrivez votre mariage idéal..." : "Décrivez votre mariage idéal ou ce que vous recherchez..."}
             disabled={isLoading}
-            className="flex-grow border-0 focus-visible:ring-0 focus-visible:ring-offset-0 rounded-full py-4 md:py-6 pl-4 md:pl-6 text-sm md:text-base"
+            className="flex-grow border-0 focus-visible:ring-0 focus-visible:ring-offset-0 rounded-full py-3 md:py-4 pl-4 md:pl-6 text-sm"
           />
           <Button 
             type="submit" 
             disabled={isLoading || !inputValue.trim()} 
-            className="bg-wedding-olive hover:bg-wedding-olive/90 text-white h-auto rounded-full p-2 md:py-2 md:px-4 mx-2"
+            className="bg-wedding-olive hover:bg-wedding-olive/90 text-white h-auto rounded-full p-2 mx-2"
             aria-label="Envoyer"
           >
             <SendHorizontal className="h-5 w-5" />
@@ -372,14 +374,14 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   }
 
   return (
-    <div className="w-full h-[calc(100vh-12rem)] sm:h-[500px] flex flex-col bg-white rounded-xl overflow-hidden">
-      <div className="p-3 md:p-4 bg-white border-b flex items-center justify-center">
-        <p className="text-center text-base md:text-lg font-serif text-wedding-black">Mathilde de Mariable, votre wedding planner</p>
+    <div className="w-full h-[450px] sm:h-[500px] flex flex-col bg-white rounded-xl overflow-hidden">
+      <div className="p-2 md:p-4 bg-white border-b flex items-center justify-center">
+        <p className="text-center text-base font-serif text-wedding-black">Mathilde de Mariable, votre wedding planner</p>
       </div>
       
       <div className="flex-grow p-0 relative overflow-hidden">
-        <ScrollArea ref={scrollAreaRef} className="h-full md:h-[400px] p-2 md:p-4">
-          <div className="space-y-3 md:space-y-4">
+        <ScrollArea ref={scrollAreaRef} className="h-full p-2 md:p-4">
+          <div className="space-y-3">
             {messages.map((message) => (
               <Message 
                 key={message.id} 
@@ -391,25 +393,26 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
             ))}
             
             {isLoading && (
-              <div className="flex w-full justify-start mb-3 md:mb-4">
+              <div className="flex w-full justify-start mb-3">
                 <Card className="chat-bubble-assistant p-2 md:p-3">
                   <CardContent className="p-0">
-                    <p className="typing-dots text-sm md:text-base">Mathilde réfléchit</p>
+                    <p className="typing-dots text-sm">Mathilde réfléchit</p>
                   </CardContent>
                 </Card>
               </div>
             )}
             
             {optionButtons.length > 0 && (
-              <div className="flex flex-col items-center justify-center gap-2 mb-4">
-                <Card className="chat-bubble-assistant p-3 w-full">
+              <div className="flex flex-col items-center justify-center gap-2 mb-3">
+                <Card className="chat-bubble-assistant p-2 w-full">
                   <CardContent className="p-0">
-                    <div className="flex flex-col sm:flex-row flex-wrap gap-2 justify-center">
+                    <div className="flex flex-wrap gap-2 justify-center">
                       {optionButtons.map((option, index) => (
                         <Button
                           key={index}
                           onClick={() => handleOptionClick(option)}
-                          className="bg-wedding-cream text-wedding-black hover:bg-wedding-cream/80 border border-wedding-olive/20 flex items-center gap-2 whitespace-nowrap"
+                          className="bg-wedding-cream text-wedding-black hover:bg-wedding-cream/80 border border-wedding-olive/20 flex items-center gap-2 text-xs sm:text-sm py-1 h-auto"
+                          size="sm"
                         >
                           {option.icon}
                           {option.text}
@@ -422,15 +425,16 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
             )}
             
             {actionButtons.length > 0 && (
-              <div className="flex flex-col items-center justify-center gap-2 mb-4">
-                <Card className="chat-bubble-assistant p-3 w-full">
+              <div className="flex flex-col items-center justify-center gap-2 mb-3">
+                <Card className="chat-bubble-assistant p-2 w-full">
                   <CardContent className="p-0">
-                    <div className="flex flex-col sm:flex-row flex-wrap gap-2 justify-center">
+                    <div className="flex flex-wrap gap-2 justify-center">
                       {actionButtons.map((button, index) => (
                         <Button
                           key={index}
                           onClick={() => handleActionButtonClick(button)}
-                          className="bg-wedding-olive text-white hover:bg-wedding-olive/90 flex items-center gap-2 whitespace-nowrap"
+                          className="bg-wedding-olive text-white hover:bg-wedding-olive/90 flex items-center gap-2 text-xs sm:text-sm py-1 h-auto"
+                          size="sm"
                         >
                           {button.icon}
                           {button.text}
@@ -443,16 +447,17 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
             )}
             
             {showResetButton && (
-              <div className="flex flex-col items-center justify-center gap-2 mb-4">
-                <Card className="chat-bubble-assistant p-3 w-full">
+              <div className="flex flex-col items-center justify-center gap-2 mb-3">
+                <Card className="chat-bubble-assistant p-2 w-full">
                   <CardContent className="p-0">
                     <div className="flex justify-center">
                       <Button
                         onClick={handleReset}
-                        className="bg-wedding-cream text-wedding-black hover:bg-wedding-cream/80 border border-wedding-olive/20 flex items-center gap-2"
+                        className="bg-wedding-cream text-wedding-black hover:bg-wedding-cream/80 border border-wedding-olive/20 flex items-center gap-2 text-xs sm:text-sm py-1 h-auto"
+                        size="sm"
                       >
                         <RefreshCw className="h-4 w-4" />
-                        🔁 Recommencer avec une nouvelle demande
+                        🔁 Recommencer
                       </Button>
                     </div>
                   </CardContent>
@@ -472,12 +477,13 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
             onChange={(e) => setInputValue(e.target.value)}
             placeholder="Continuez la conversation..."
             disabled={isLoading}
-            className="flex-grow text-sm md:text-base"
+            className="flex-grow text-sm"
           />
           <Button 
             type="submit" 
             disabled={isLoading || !inputValue.trim()} 
             className="bg-wedding-olive hover:bg-wedding-olive/90 text-white"
+            size="sm"
             aria-label="Envoyer"
           >
             <SendHorizontal className="h-4 w-4" />
