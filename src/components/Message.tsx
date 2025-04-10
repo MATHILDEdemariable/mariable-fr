@@ -4,6 +4,7 @@ import { Message as MessageType } from '@/types';
 import { VendorCard } from './VendorCard';
 import { Card, CardContent } from '@/components/ui/card';
 import { VendorRecommendation } from '@/types';
+import { Link } from 'react-router-dom';
 
 interface MessageProps {
   message: MessageType;
@@ -14,11 +15,55 @@ export const Message: React.FC<MessageProps> = ({ message, recommendations }) =>
   const isUser = message.role === 'user';
   
   const renderContent = () => {
+    // Process content with links
+    const contentWithLinks = processContentLinks(message.content);
+    return contentWithLinks;
+  };
+
+  // Helper function to process content and turn markdown-style links into actual links
+  const processContentLinks = (content: string) => {
     // Split content by new lines and render them properly
-    const contentLines = message.content.split('\n');
-    return contentLines.map((line, i) => (
-      <p key={i} className={i > 0 ? 'mt-2' : ''}>{line || '\u00A0'}</p>
-    ));
+    const contentLines = content.split('\n');
+    
+    return contentLines.map((line, i) => {
+      // Check if line contains markdown link pattern [text](/path)
+      if (line.includes('[') && line.includes('](')) {
+        const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
+        const parts = [];
+        let lastIndex = 0;
+        let match;
+        
+        // Replace markdown links with actual Link components
+        while ((match = linkRegex.exec(line)) !== null) {
+          const linkText = match[1];
+          const linkUrl = match[2];
+          
+          // Add text before the link
+          if (match.index > lastIndex) {
+            parts.push(line.slice(lastIndex, match.index));
+          }
+          
+          // Add the link
+          parts.push(
+            <Link key={`link-${i}-${match.index}`} to={linkUrl} className="text-wedding-olive hover:underline">
+              {linkText}
+            </Link>
+          );
+          
+          lastIndex = match.index + match[0].length;
+        }
+        
+        // Add remaining text after the last link
+        if (lastIndex < line.length) {
+          parts.push(line.slice(lastIndex));
+        }
+        
+        return <p key={i} className={i > 0 ? 'mt-2' : ''}>{parts}</p>;
+      }
+      
+      // Return normal line if no links are present
+      return <p key={i} className={i > 0 ? 'mt-2' : ''}>{line || '\u00A0'}</p>;
+    });
   };
 
   return (

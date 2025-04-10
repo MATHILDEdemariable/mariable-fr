@@ -28,5 +28,4 @@ export interface VendorRecommendation {
 export interface ChatResponse {
   message: string;
   recommendations?: VendorRecommendation[];
-  shouldRedirect?: boolean;
 }
