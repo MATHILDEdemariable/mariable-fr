@@ -64,7 +64,7 @@ const Header = () => {
           <Link to="/" className="flex items-center">
             <div className="px-2">
               <img 
-                src="/lovable-uploads/50002546-1593-48bc-8148-40fbea3cdab6.png" 
+                src="/lovable-uploads/c5ca128d-6c6f-4f09-a990-f6f16d47e231.png" 
                 alt="Mariable Logo" 
                 className="h-16 md:h-20 lg:h-24 w-auto object-contain" 
               />

@@ -166,7 +166,7 @@ const Index = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <img src="/lovable-uploads/50002546-1593-48bc-8148-40fbea3cdab6.png" alt="Mariable Logo" className="h-12 md:h-14 w-auto" />
+                <img src="/lovable-uploads/c5ca128d-6c6f-4f09-a990-f6f16d47e231.png" alt="Mariable Logo" className="h-12 md:h-14 w-auto" />
               </div>
               <p className="mb-4 text-wedding-black/70 text-sm">
                 Mariable est votre partenaire privilégié pour créer le mariage de vos rêves, en simplifiant chaque étape de l'organisation.
