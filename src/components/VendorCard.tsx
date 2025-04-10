@@ -13,30 +13,29 @@ interface VendorCardProps {
 }
 
 export const VendorCard: React.FC<VendorCardProps> = ({ recommendation }) => {
-  const { vendor, reason } = recommendation;
-  
   return (
     <Card className="vendor-card overflow-hidden border-wedding-olive/30 hover:shadow-md transition-all p-3">
       <div className="flex items-center gap-2 mb-1">
-        <h3 className="text-lg font-serif">{vendor.nom}</h3>
+        <h3 className="text-lg font-serif">{recommendation.name}</h3>
         <span className="ml-auto text-base flex items-center">
           <Euro className="h-4 w-4 mr-1" />
-          {vendor.budget}{vendor.type === 'Traiteur' ? '/pers' : ''}
+          {/* Budget information is not provided in VendorRecommendation type */}
         </span>
       </div>
       
       <div className="flex items-center gap-2 mb-2">
         <Badge variant="outline" className="rounded-full text-xs">
-          {vendor.type}
+          {/* Type information is not provided in VendorRecommendation type */}
+          Prestataire
         </Badge>
         <span className="text-xs flex items-center text-muted-foreground">
-          <MapPin className="h-3 w-3 mr-1" /> {vendor.lieu}
+          <MapPin className="h-3 w-3 mr-1" /> {/* Location information is not provided */}
         </span>
       </div>
       
       <CardContent className="p-0 mb-3">
         <p className="text-sm text-gray-600">
-          {reason}
+          {recommendation.description}
         </p>
       </CardContent>
       
