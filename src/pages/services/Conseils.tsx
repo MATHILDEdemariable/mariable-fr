@@ -15,6 +15,33 @@ const CustomWhatsappIcon = () => (
 
 const ConseilsContent = () => (
   <>
+    <div className="mb-10 p-6 bg-wedding-cream/40 rounded-lg border border-wedding-olive/20">
+      <h2 className="text-2xl font-serif mb-4">Rejoignez notre communauté WhatsApp</h2>
+      
+      <p className="mb-4">
+        Vous souhaitez des conseils personnalisés gratuits pour l'organisation de votre mariage ? 
+        Il vous suffit de rejoindre notre communauté WhatsApp pour échanger avec d'autres futurs 
+        mariés et bénéficier des conseils de nos experts.
+      </p>
+      
+      <div className="flex justify-center mt-6">
+        <Button 
+          size="lg" 
+          className="bg-[#25D366] hover:bg-[#22c35e] text-white gap-2"
+          asChild
+        >
+          <a 
+            href="https://chat.whatsapp.com/In5xf3ZMJNvJkhy4F9g5C5" 
+            target="_blank" 
+            rel="noopener noreferrer"
+          >
+            <CustomWhatsappIcon />
+            <span>Rejoindre la communauté</span>
+          </a>
+        </Button>
+      </div>
+    </div>
+    
     <p>
       Chaque mariage est unique, tout comme les futurs mariés. Nos conseils personnalisés 
       s'adaptent à votre style, vos préférences et votre vision du mariage idéal.
@@ -42,33 +69,6 @@ const ConseilsContent = () => (
       partagerez une véritable alchimie, créant ainsi les conditions idéales pour un mariage 
       parfait qui restera gravé dans vos mémoires.
     </p>
-    
-    <div className="mt-10 p-6 bg-wedding-cream/40 rounded-lg border border-wedding-olive/20">
-      <h2 className="text-2xl font-serif mb-4">Rejoignez notre communauté WhatsApp</h2>
-      
-      <p className="mb-4">
-        Vous souhaitez des conseils personnalisés gratuits pour l'organisation de votre mariage ? 
-        Il vous suffit de rejoindre notre communauté WhatsApp pour échanger avec d'autres futurs 
-        mariés et bénéficier des conseils de nos experts.
-      </p>
-      
-      <div className="flex justify-center mt-6">
-        <Button 
-          size="lg" 
-          className="bg-[#25D366] hover:bg-[#22c35e] text-white gap-2"
-          asChild
-        >
-          <a 
-            href="https://chat.whatsapp.com/In5xf3ZMJNvJkhy4F9g5C5" 
-            target="_blank" 
-            rel="noopener noreferrer"
-          >
-            <CustomWhatsappIcon />
-            <span>Rejoindre la communauté</span>
-          </a>
-        </Button>
-      </div>
-    </div>
   </>
 );
 

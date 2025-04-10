@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import ChatInterface from '@/components/ChatInterface';
@@ -103,7 +104,6 @@ const Index = () => {
         <section className="py-10 md:py-16 bg-wedding-cream/40">
           <div className="container px-4">
             <div className="text-center mb-8 md:mb-12">
-              <h2 className="text-2xl md:text-3xl font-serif mb-3 md:mb-4">🛠️ Ce que vous pouvez faire avec Mariable</h2>
               <p className="text-muted-foreground text-sm md:text-base max-w-2xl mx-auto">
                 Le premier wedding planner digital qui centralise et simplifie les démarches tout en vous laissant la liberté de garder la main sur votre grand jour.
               </p>
@@ -114,7 +114,7 @@ const Index = () => {
                 <li className="flex items-start gap-3 p-4 bg-white rounded-lg shadow-sm">
                   <CheckCircle className="text-wedding-olive shrink-0 mt-1" size={20} />
                   <div>
-                    <h3 className="font-medium text-wedding-black">Trouver les meilleurs prestataires</h3>
+                    <h3 className="font-serif text-wedding-black">Trouver les meilleurs prestataires</h3>
                     <p className="text-sm text-muted-foreground">Grâce à notre guide de référence soigneusement sélectionné</p>
                   </div>
                 </li>
@@ -122,7 +122,7 @@ const Index = () => {
                 <li className="flex items-start gap-3 p-4 bg-white rounded-lg shadow-sm">
                   <CheckCircle className="text-wedding-olive shrink-0 mt-1" size={20} />
                   <div>
-                    <h3 className="font-medium text-wedding-black">Planifier votre mariage avec clarté</h3>
+                    <h3 className="font-serif text-wedding-black">Planifier votre mariage</h3>
                     <p className="text-sm text-muted-foreground">Organisez chaque étape de votre mariage simplement</p>
                   </div>
                 </li>
@@ -130,7 +130,7 @@ const Index = () => {
                 <li className="flex items-start gap-3 p-4 bg-white rounded-lg shadow-sm">
                   <CheckCircle className="text-wedding-olive shrink-0 mt-1" size={20} />
                   <div>
-                    <h3 className="font-medium text-wedding-black">Gérer facilement votre budget</h3>
+                    <h3 className="font-serif text-wedding-black">Gérer facilement votre budget</h3>
                     <p className="text-sm text-muted-foreground">Avec une transparence totale des prix et des prestations</p>
                   </div>
                 </li>
@@ -138,8 +138,8 @@ const Index = () => {
                 <li className="flex items-start gap-3 p-4 bg-white rounded-lg shadow-sm">
                   <CheckCircle className="text-wedding-olive shrink-0 mt-1" size={20} />
                   <div>
-                    <h3 className="font-medium text-wedding-black">Bientôt disponible</h3>
-                    <p className="text-sm text-muted-foreground">Réservez et gérez vos prestataires directement en ligne</p>
+                    <h3 className="font-serif text-wedding-black">Réserver & payer en ligne</h3>
+                    <p className="text-sm text-muted-foreground">Bientôt disponible</p>
                   </div>
                 </li>
               </ul>
