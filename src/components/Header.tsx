@@ -134,7 +134,7 @@ const Header = () => {
                     <div>
                       <h3 className="font-serif text-lg mb-2">Professionnels</h3>
                       <div className="pl-2 space-y-2">
-                        <Link to="/commencer" className="block text-wedding-black hover:text-wedding-olive transition-colors py-1" onClick={closeMobileMenu}>
+                        <Link to="/professionnels" className="block text-wedding-black hover:text-wedding-olive transition-colors py-1" onClick={closeMobileMenu}>
                           Devenir partenaire
                         </Link>
                       </div>
@@ -198,17 +198,10 @@ const Header = () => {
                 </NavigationMenuItem>
 
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger className="bg-transparent hover:bg-wedding-cream text-wedding-black">
+                  <Link to="/professionnels" className="inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium transition-colors hover:bg-wedding-cream text-wedding-black">
                     <Users size={16} className="mr-1" />
                     Professionnels
-                  </NavigationMenuTrigger>
-                  <NavigationMenuContent>
-                    <ul className="grid w-[400px] gap-3 p-4">
-                      <ListItem href="/commencer" title="Devenir partenaire">
-                        Rejoignez notre réseau de prestataires de qualité
-                      </ListItem>
-                    </ul>
-                  </NavigationMenuContent>
+                  </Link>
                 </NavigationMenuItem>
               </NavigationMenuList>
             </NavigationMenu>

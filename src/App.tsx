@@ -10,6 +10,7 @@ import EmailCapture from "./pages/EmailCapture";
 import MentionsLegales from "./pages/MentionsLegales";
 import CGV from "./pages/CGV";
 import GuideMariable from "./pages/GuideMariable";
+import Professionnels from "./pages/Professionnels";
 
 // Services pages
 import Prestataires from "./pages/services/Prestataires";
@@ -43,6 +44,9 @@ const App = () => (
           
           {/* Email capture page */}
           <Route path="/commencer" element={<EmailCapture />} />
+          
+          {/* Professionals page */}
+          <Route path="/professionnels" element={<Professionnels />} />
           
           {/* Services pages */}
           <Route path="/services/prestataires" element={<Prestataires />} />
