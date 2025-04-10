@@ -62,11 +62,11 @@ const Header = () => {
       <div className="container">
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center">
-            <div className="px-1">
+            <div className="px-2">
               <img 
-                src="/lovable-uploads/3768f435-13c3-49a1-bbb3-87acf3b26cda.png" 
+                src="/lovable-uploads/50002546-1593-48bc-8148-40fbea3cdab6.png" 
                 alt="Mariable Logo" 
-                className="h-14 md:h-16 lg:h-18 w-auto object-contain" 
+                className="h-16 md:h-20 lg:h-24 w-auto object-contain" 
               />
             </div>
           </Link>
