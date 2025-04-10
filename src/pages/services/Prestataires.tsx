@@ -2,7 +2,7 @@
 import React from 'react';
 import ServiceTemplate from '../ServiceTemplate';
 import { Button } from '@/components/ui/button';
-import { FileText } from 'lucide-react';
+import { BookOpen } from 'lucide-react';
 
 const PrestataireContent = () => (
   <>
@@ -16,7 +16,7 @@ const PrestataireContent = () => (
         className="bg-wedding-olive hover:bg-wedding-olive/90"
         onClick={() => window.open('https://leguidemariable.softr.app/', '_blank', 'noopener,noreferrer')}
       >
-        <FileText className="mr-2 h-4 w-4" />
+        <BookOpen className="mr-2 h-4 w-4" />
         Accéder au Guide Mariable
       </Button>
     </div>

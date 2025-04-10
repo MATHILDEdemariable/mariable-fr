@@ -31,4 +31,10 @@ export interface ChatResponse {
   message: string;
   recommendations?: VendorRecommendation[];
   noRecommendationsFound?: boolean;
+  actionButtons?: {
+    text: string;
+    action: string;
+    link?: string;
+    newTab?: boolean;
+  }[];
 }

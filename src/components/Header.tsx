@@ -62,11 +62,13 @@ const Header = () => {
       <div className="container">
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center">
-            <img 
-              src="/lovable-uploads/3768f435-13c3-49a1-bbb3-87acf3b26cda.png" 
-              alt="Mariable Logo" 
-              className="h-14 md:h-16 lg:h-20 w-auto" 
-            />
+            <div className="px-1">
+              <img 
+                src="/lovable-uploads/3768f435-13c3-49a1-bbb3-87acf3b26cda.png" 
+                alt="Mariable Logo" 
+                className="h-14 md:h-16 lg:h-18 w-auto object-contain" 
+              />
+            </div>
           </Link>
           
           {isMobile ? (
