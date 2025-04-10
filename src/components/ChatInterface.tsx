@@ -4,12 +4,13 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { SendHorizontal } from 'lucide-react';
+import { SendHorizontal, MapPin, Calendar, Briefcase, Building, HelpCircle } from 'lucide-react';
 import { Message as MessageType, VendorRecommendation } from '@/types';
 import Message from './Message';
-import { sendMessage } from '@/services/chatService';
+import { sendMessage, getInitialOptions, getLocationOptions, handleOptionSelected } from '@/services/chatService';
 import { v4 as uuidv4 } from 'uuid';
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from 'react-router-dom';
 
 interface ChatInterfaceProps {
   isSimpleInput?: boolean;
@@ -34,10 +35,18 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const [inputValue, setInputValue] = useState(initialMessage || '');
   const [isLoading, setIsLoading] = useState(false);
   const [hasProcessedInitialMessage, setHasProcessedInitialMessage] = useState(false);
+  const [currentStep, setCurrentStep] = useState(0);
+  const [optionButtons, setOptionButtons] = useState<{text: string, value: string, icon?: React.ReactNode}[]>([]);
+  const [conversationContext, setConversationContext] = useState<{
+    needType?: string;
+    location?: string;
+    vendorType?: string;
+  }>({});
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (inputRef.current) {
@@ -47,7 +56,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages, recommendations]);
+  }, [messages, recommendations, optionButtons]);
 
   useEffect(() => {
     if (initialMessage && !isSimpleInput && !hasProcessedInitialMessage) {
@@ -56,12 +65,99 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     }
   }, [initialMessage, isSimpleInput]);
 
+  useEffect(() => {
+    // Afficher les boutons d'options initiales après le premier message utilisateur
+    if (currentStep === 1) {
+      const initialOptions = getInitialOptions();
+      setOptionButtons(initialOptions);
+    }
+    // Une fois que le type de besoin est défini, demander la localisation
+    else if (currentStep === 2 && conversationContext.needType) {
+      if (conversationContext.needType === "orientation") {
+        // Rediriger vers le rétroplanning si l'utilisateur a besoin d'orientation globale
+        navigate('/services/planification');
+      } else {
+        const locationOptions = getLocationOptions();
+        setOptionButtons(locationOptions);
+      }
+    }
+    // Une fois que la localisation est définie, ne plus afficher de boutons
+    else if (currentStep > 2) {
+      setOptionButtons([]);
+    }
+  }, [currentStep, conversationContext]);
+
   const scrollToBottom = () => {
     setTimeout(() => {
       if (messagesEndRef.current) {
         messagesEndRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
       }
     }, 100);
+  };
+
+  const handleOptionClick = async (option: {text: string, value: string}) => {
+    // Ajouter l'option sélectionnée comme message utilisateur
+    const userMessage: MessageType = {
+      id: uuidv4(),
+      role: 'user',
+      content: option.text,
+      timestamp: new Date()
+    };
+    
+    setMessages(prev => [...prev, userMessage]);
+    
+    setIsLoading(true);
+    
+    try {
+      // Traiter l'option sélectionnée et obtenir une réponse
+      const { response, updatedContext, nextStep } = await handleOptionSelected(
+        option.value, 
+        currentStep, 
+        conversationContext
+      );
+      
+      // Mettre à jour le contexte de la conversation
+      setConversationContext(updatedContext);
+      
+      // Passer à l'étape suivante
+      setCurrentStep(nextStep);
+      
+      const assistantMessage: MessageType = {
+        id: uuidv4(),
+        role: 'assistant',
+        content: response.message,
+        timestamp: new Date()
+      };
+      
+      setMessages(prev => [...prev, assistantMessage]);
+      
+      if (response.recommendations && response.recommendations.length > 0) {
+        setRecommendations(prev => ({
+          ...prev,
+          [assistantMessage.id]: response.recommendations || []
+        }));
+      }
+      
+    } catch (error) {
+      console.error('Error processing option:', error);
+      
+      toast({
+        title: "Erreur",
+        description: "Impossible de traiter votre sélection. Veuillez réessayer.",
+        variant: "destructive"
+      });
+      
+      const errorMessage: MessageType = {
+        id: uuidv4(),
+        role: 'assistant',
+        content: "Désolée, j'ai rencontré un problème technique. Pourriez-vous réessayer ?",
+        timestamp: new Date()
+      };
+      
+      setMessages(prev => [...prev, errorMessage]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleSubmitWithMessage = async (message: string) => {
@@ -86,6 +182,11 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     
     try {
       const response = await sendMessage([...messages, userMessage]);
+      
+      // Si c'est le premier message utilisateur, passer à l'étape 1
+      if (messages.length === 1) {
+        setCurrentStep(1);
+      }
       
       const assistantMessage: MessageType = {
         id: uuidv4(),
@@ -177,6 +278,27 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                 <Card className="chat-bubble-assistant p-2 md:p-3">
                   <CardContent className="p-0">
                     <p className="typing-dots text-sm md:text-base">Mathilde réfléchit</p>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
+            
+            {optionButtons.length > 0 && (
+              <div className="flex flex-col items-center justify-center gap-2 mb-4">
+                <Card className="chat-bubble-assistant p-3 w-full">
+                  <CardContent className="p-0">
+                    <div className="flex flex-col sm:flex-row flex-wrap gap-2 justify-center">
+                      {optionButtons.map((option, index) => (
+                        <Button
+                          key={index}
+                          onClick={() => handleOptionClick(option)}
+                          className="bg-wedding-cream text-wedding-black hover:bg-wedding-cream/80 border border-wedding-olive/20 flex items-center gap-2 whitespace-nowrap"
+                        >
+                          {option.icon}
+                          {option.text}
+                        </Button>
+                      ))}
+                    </div>
                   </CardContent>
                 </Card>
               </div>

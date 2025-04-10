@@ -1,6 +1,144 @@
 
 import { ChatResponse, Message, Vendor, VendorRecommendation } from '@/types';
 import vendorsData from '@/data/vendors.json';
+import { Building, Briefcase, HelpCircle, Calendar, MapPin } from 'lucide-react';
+import React from 'react';
+
+// Options pour chaque étape de la conversation
+export const getInitialOptions = () => [
+  { 
+    text: "J'ai besoin d'un wedding planner", 
+    value: "wedding-planner",
+    icon: React.createElement(Briefcase, { className: "h-4 w-4" })
+  },
+  { 
+    text: "Je cherche un lieu de réception", 
+    value: "lieu",
+    icon: React.createElement(Building, { className: "h-4 w-4" })
+  },
+  { 
+    text: "Je cherche un prestataire", 
+    value: "prestataire",
+    icon: React.createElement(Calendar, { className: "h-4 w-4" })
+  },
+  { 
+    text: "Je ne sais pas par où commencer", 
+    value: "orientation",
+    icon: React.createElement(HelpCircle, { className: "h-4 w-4" })
+  }
+];
+
+export const getLocationOptions = () => [
+  { text: "Paris", value: "paris", icon: React.createElement(MapPin, { className: "h-4 w-4" }) },
+  { text: "Lyon", value: "lyon", icon: React.createElement(MapPin, { className: "h-4 w-4" }) },
+  { text: "Marseille", value: "marseille", icon: React.createElement(MapPin, { className: "h-4 w-4" }) },
+  { text: "Bordeaux", value: "bordeaux", icon: React.createElement(MapPin, { className: "h-4 w-4" }) },
+  { text: "Nice", value: "nice", icon: React.createElement(MapPin, { className: "h-4 w-4" }) },
+  { text: "Toulouse", value: "toulouse", icon: React.createElement(MapPin, { className: "h-4 w-4" }) },
+  { text: "Lille", value: "lille", icon: React.createElement(MapPin, { className: "h-4 w-4" }) },
+  { text: "Strasbourg", value: "strasbourg", icon: React.createElement(MapPin, { className: "h-4 w-4" }) },
+  { text: "Je ne sais pas encore", value: "unknown", icon: React.createElement(HelpCircle, { className: "h-4 w-4" }) }
+];
+
+export const getVendorTypeOptions = () => [
+  { text: "Wedding planner", value: "wedding planner" },
+  { text: "Lieu de réception", value: "lieu" },
+  { text: "Traiteur", value: "traiteur" },
+  { text: "Photographe", value: "photographe" },
+  { text: "DJ", value: "dj" },
+  { text: "Fleuriste", value: "fleuriste" }
+];
+
+// Traiter la sélection d'option et renvoyer une réponse appropriée
+export const handleOptionSelected = async (
+  optionValue: string,
+  currentStep: number,
+  conversationContext: {needType?: string; location?: string; vendorType?: string}
+) => {
+  let response: ChatResponse = { message: "" };
+  let updatedContext = { ...conversationContext };
+  let nextStep = currentStep + 1;
+
+  // Étape 1: Traitement du besoin initial
+  if (currentStep === 1) {
+    updatedContext.needType = optionValue;
+    
+    if (optionValue === "orientation") {
+      response = {
+        message: "Pour bien commencer l'organisation de votre mariage, je vous recommande notre service de rétroplanning personnalisé. Je vais vous rediriger vers notre page dédiée où vous trouverez un guide étape par étape."
+      };
+    } 
+    else if (optionValue === "wedding-planner") {
+      updatedContext.vendorType = "wedding planner";
+      response = {
+        message: "Excellent choix ! Un wedding planner pourra vous accompagner tout au long de votre organisation. Dans quelle ville ou région recherchez-vous ce service ?"
+      };
+    }
+    else if (optionValue === "lieu") {
+      updatedContext.vendorType = "lieu";
+      response = {
+        message: "Trouver le lieu parfait est une étape cruciale ! Dans quelle ville ou région souhaitez-vous organiser votre réception ?"
+      };
+    }
+    else if (optionValue === "prestataire") {
+      response = {
+        message: "Je peux vous aider à trouver différents types de prestataires. Dans quelle ville ou région se déroulera votre mariage ?"
+      };
+    }
+  }
+  // Étape 2: Traitement de la localisation
+  else if (currentStep === 2) {
+    updatedContext.location = optionValue;
+
+    if (optionValue === "unknown") {
+      response = {
+        message: "Ce n'est pas un problème si vous n'avez pas encore choisi votre lieu. Je vous conseille de consulter notre Guide Mariable qui regroupe des prestataires dans toute la France. Voulez-vous que je vous montre quelques-uns de nos prestataires les plus appréciés ?"
+      };
+    } 
+    else if (updatedContext.vendorType) {
+      // Si le type de prestataire est déjà défini, envoyer des recommandations
+      const recommendationsData = getRecommendations(updatedContext.vendorType, optionValue);
+      response = recommendationsData;
+      nextStep = 3; // Passer à l'étape suivante
+    } 
+    else {
+      response = {
+        message: `Parfait ! Je vais vous aider à trouver des prestataires à ${capitalizeFirstLetter(optionValue)}. Voici quelques-uns de nos prestataires les mieux notés dans cette région.`
+      };
+
+      // Fournir une sélection de prestataires variés pour cette localisation
+      const vendors = vendorsData as Vendor[];
+      const locationVendors = vendors.filter(vendor => 
+        vendor.lieu.toLowerCase() === optionValue.toLowerCase()
+      );
+
+      if (locationVendors.length > 0) {
+        // Prendre un échantillon aléatoire de différents types de prestataires
+        const uniqueTypes = [...new Set(locationVendors.map(v => v.type))];
+        const recommendations: VendorRecommendation[] = [];
+
+        for (const type of uniqueTypes.slice(0, 3)) {
+          const vendorsOfType = locationVendors.filter(v => v.type === type);
+          if (vendorsOfType.length > 0) {
+            const randomVendor = vendorsOfType[Math.floor(Math.random() * vendorsOfType.length)];
+            recommendations.push({
+              vendor: randomVendor,
+              reason: generatePersonalizedReason(randomVendor, randomVendor.type.toLowerCase(), optionValue)
+            });
+          }
+        }
+
+        if (recommendations.length > 0) {
+          response.recommendations = recommendations;
+        }
+      }
+
+      nextStep = 3; // Passer à l'étape suivante
+    }
+  }
+
+  return { response, updatedContext, nextStep };
+};
 
 // This function simulates sending a message to a chat service
 export const sendMessage = async (messages: Message[]): Promise<ChatResponse> => {
@@ -82,6 +220,13 @@ export const sendMessage = async (messages: Message[]): Promise<ChatResponse> =>
   if (hasPlanningKeywords) {
     return {
       message: "Je serais ravie de vous aider avec votre retroplanning de mariage ! Avoir un calendrier bien organisé est essentiel pour préparer sereinement votre grand jour. Nous proposons un service de retroplanning personnalisé qui s'adapte à vos dates et besoins spécifiques. Souhaitez-vous en savoir plus sur ce service ?\n\nVous pouvez consulter notre page dédiée à la planification pour obtenir plus d'informations : [Retroplanning personnalisé](/services/planification)"
+    };
+  }
+
+  // Si nous sommes au premier message de l'utilisateur, proposer les options initiales
+  if (messages.length === 2) {  // Le premier message est le message de bienvenue, le deuxième est le message de l'utilisateur
+    return {
+      message: "Pour mieux vous aider, pourriez-vous me préciser ce que vous recherchez ? Vous pouvez sélectionner une option ci-dessous ou me décrire votre besoin."
     };
   }
 
