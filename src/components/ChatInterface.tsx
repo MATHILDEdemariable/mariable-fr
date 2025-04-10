@@ -88,23 +88,23 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         setOptionButtons([]);
         setActionButtons([
           { 
-            text: "Accéder au Guide Mariable", 
-            value: "guide", 
-            icon: React.createElement(BookOpen, { className: "h-4 w-4" }),
-            link: "https://leguidemariable.softr.app/",
-            newTab: true
-          },
-          { 
-            text: "Je veux de l'aide pour la planification", 
+            text: "Aide à la planification", 
             value: "planification", 
             icon: React.createElement(Calendar, { className: "h-4 w-4" }),
             link: "/services/planification"
           },
           { 
-            text: "Je veux des conseils personnalisés", 
+            text: "Conseils personnalisés", 
             value: "conseils", 
             icon: React.createElement(HelpCircle, { className: "h-4 w-4" }),
             link: "/services/conseils"
+          },
+          { 
+            text: "Accéder au Guide Mariable", 
+            value: "guide", 
+            icon: React.createElement(BookOpen, { className: "h-4 w-4" }),
+            link: "https://leguidemariable.softr.app/",
+            newTab: true
           }
         ]);
         setShowResetButton(true);

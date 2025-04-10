@@ -1,7 +1,8 @@
+
 import React from 'react';
 import { VendorRecommendation, Message as MessageType } from '@/types';
 import { v4 as uuidv4 } from 'uuid';
-import { Briefcase, Calendar, Building, HelpCircle, MapPin, Home, Users, ExternalLink, BookOpen } from 'lucide-react';
+import { Briefcase, Calendar, Building, HelpCircle, Home, Users, ExternalLink, BookOpen } from 'lucide-react';
 
 export const getInitialOptions = () => {
   return [
@@ -51,12 +52,12 @@ export const sendMessage = async (messages: MessageType[]): Promise<{
       message: "Comment puis-je vous aider aujourd'hui?",
       actionButtons: [
         {
-          text: "Je veux de l'aide pour la planification",
+          text: "Aide à la planification",
           action: "link",
           link: "/services/planification"
         },
         {
-          text: "Je veux des conseils",
+          text: "Conseils personnalisés",
           action: "link",
           link: "/services/conseils"
         }
