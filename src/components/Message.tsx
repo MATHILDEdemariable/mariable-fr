@@ -28,11 +28,11 @@ export const Message: React.FC<MessageProps> = ({ message, recommendations }) =>
   const [showSignupPrompt, setShowSignupPrompt] = useState(false);
   
   useEffect(() => {
-    // Show the signup prompt after a short delay when recommendations are displayed
+    // Show the signup prompt after 45 seconds when recommendations are displayed
     if (!isUser && recommendations && recommendations.length > 0) {
       const timer = setTimeout(() => {
         setShowSignupPrompt(true);
-      }, 3000);
+      }, 45000); // Changed from 3000 to 45000 milliseconds (45 seconds)
       
       return () => clearTimeout(timer);
     }
