@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import ChatInterface from '@/components/ChatInterface';
@@ -105,8 +106,11 @@ const Index = () => {
         <section className="py-8 md:py-12 bg-wedding-cream/40">
           <div className="container px-4">
             <div className="text-center mb-6 md:mb-8">
+              <h2 className="text-xl md:text-2xl font-serif mb-2 md:mb-3">
+                Le premier wedding planner digital qui centralise et simplifie les démarches
+              </h2>
               <p className="text-muted-foreground text-xs md:text-sm max-w-2xl mx-auto">
-                Le premier wedding planner digital qui centralise et simplifie les démarches tout en vous laissant la liberté de garder la main sur votre grand jour.
+                Tout en vous laissant la liberté de garder la main sur votre grand jour.
               </p>
             </div>
             
@@ -139,7 +143,7 @@ const Index = () => {
                 <li className="flex items-start gap-3 p-3 md:p-4 bg-white rounded-lg shadow-sm">
                   <CheckCircle className="text-wedding-olive shrink-0 mt-1" size={18} />
                   <div>
-                    <h3 className="font-serif text-wedding-black">Réserver et gérer vos prestataires</h3>
+                    <h3 className="font-serif text-wedding-black">Réserver et gérer en ligne</h3>
                     <p className="text-xs sm:text-sm text-muted-foreground">Directement en ligne - prochainement disponible</p>
                   </div>
                 </li>
