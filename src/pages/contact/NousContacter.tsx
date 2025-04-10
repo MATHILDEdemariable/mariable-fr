@@ -1,24 +1,9 @@
 
 import React from 'react';
 import Header from '@/components/Header';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { useToast } from '@/hooks/use-toast';
 import { Mail, Linkedin, Calendar } from 'lucide-react';
 
 const NousContacter = () => {
-  const { toast } = useToast();
-  
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    toast({
-      title: "Message envoyé",
-      description: "Nous vous répondrons dans les plus brefs délais.",
-    });
-  };
-  
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <Header />
@@ -80,31 +65,17 @@ const NousContacter = () => {
             <div>
               <h2 className="text-2xl font-serif mb-4">Formulaire de contact</h2>
               
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <Input placeholder="Votre nom" required />
-                </div>
-                
-                <div>
-                  <Input type="email" placeholder="Votre email" required />
-                </div>
-                
-                <div>
-                  <Input placeholder="Sujet" required />
-                </div>
-                
-                <div>
-                  <Textarea 
-                    placeholder="Votre message" 
-                    className="min-h-[150px]" 
-                    required 
-                  />
-                </div>
-                
-                <Button type="submit" className="w-full bg-wedding-olive hover:bg-wedding-olive/90 text-white">
-                  Envoyer
-                </Button>
-              </form>
+              <div className="w-full">
+                <iframe 
+                  className="airtable-embed" 
+                  src="https://airtable.com/embed/app6YR8d1UIVu4KQG/pagye8Gazhcm5SEtW/form" 
+                  frameBorder="0" 
+                  width="100%" 
+                  height="533" 
+                  style={{ background: 'transparent', border: '1px solid #ccc' }}
+                  title="Formulaire de contact Mariable"
+                ></iframe>
+              </div>
             </div>
           </div>
         </div>
