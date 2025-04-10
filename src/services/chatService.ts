@@ -1,5 +1,8 @@
+
+import React from 'react';
 import { VendorRecommendation, Message as MessageType } from '@/types';
 import { v4 as uuidv4 } from 'uuid';
+import { Briefcase, Calendar, Building, HelpCircle, MapPin } from 'lucide-react';
 
 export const getInitialOptions = () => {
   return [
@@ -49,21 +52,18 @@ export const sendMessage = async (messages: MessageType[]): Promise<{
       message: "Super ! Je connais d'excellents photographes. Voici quelques recommandations :",
       recommendations: [
         {
-          id: uuidv4(),
           name: "Studio Photo Mariage",
           description: "Photographe spécialisé dans les mariages de luxe.",
           imageUrl: "/placeholder-image.jpg",
           link: "https://www.google.com"
         },
         {
-          id: uuidv4(),
           name: "Instants Précieux",
           description: "Capture les moments uniques de votre mariage avec créativité.",
           imageUrl: "/placeholder-image.jpg",
           link: "https://www.google.com"
         },
         {
-          id: uuidv4(),
           name: "Éclats de Rire",
           description: "Des photos naturelles et spontanées pour un souvenir inoubliable.",
           imageUrl: "/placeholder-image.jpg",
@@ -76,21 +76,18 @@ export const sendMessage = async (messages: MessageType[]): Promise<{
       message: "Parfait, voici quelques traiteurs que je recommande :",
       recommendations: [
         {
-          id: uuidv4(),
           name: "Saveurs Exquises",
           description: "Traiteur gastronomique pour mariages élégants.",
           imageUrl: "/placeholder-image.jpg",
           link: "https://www.google.com"
         },
         {
-          id: uuidv4(),
           name: "Festin Royal",
           description: "Des menus personnalisés pour un mariage inoubliable.",
           imageUrl: "/placeholder-image.jpg",
           link: "https://www.google.com"
         },
         {
-          id: uuidv4(),
           name: "Délice & Création",
           description: "Cuisine créative et raffinée pour votre mariage.",
           imageUrl: "/placeholder-image.jpg",
@@ -103,21 +100,18 @@ export const sendMessage = async (messages: MessageType[]): Promise<{
       message: "Voici quelques DJ populaires :",
       recommendations: [
         {
-          id: uuidv4(),
           name: "DJ MagicMix",
           description: "Ambiance garantie pour votre soirée de mariage.",
           imageUrl: "/placeholder-image.jpg",
           link: "https://www.google.com"
         },
         {
-          id: uuidv4(),
           name: "Sonorisation Événement",
           description: "Des professionnels de la musique pour votre mariage.",
           imageUrl: "/placeholder-image.jpg",
           link: "https://www.google.com"
         },
         {
-          id: uuidv4(),
           name: "Rythme & Harmonie",
           description: "DJ expérimenté pour une soirée de mariage réussie.",
           imageUrl: "/placeholder-image.jpg",
@@ -208,21 +202,18 @@ export const handleOptionSelected = async (
           message: "Voici quelques photographes à Paris :",
           recommendations: [
             {
-              id: uuidv4(),
               name: "Studio Photo Paris",
               description: "Photographe spécialisé dans les mariages à Paris.",
               imageUrl: "/placeholder-image.jpg",
               link: "https://www.google.com"
             },
             {
-              id: uuidv4(),
               name: "Instants Parisiens",
               description: "Capture les moments uniques de votre mariage à Paris avec créativité.",
               imageUrl: "/placeholder-image.jpg",
               link: "https://www.google.com"
             },
             {
-              id: uuidv4(),
               name: "Éclats de Rire Paris",
               description: "Des photos naturelles et spontanées pour un souvenir inoubliable à Paris.",
               imageUrl: "/placeholder-image.jpg",
