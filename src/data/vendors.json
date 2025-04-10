@@ -30,10 +30,10 @@
     "id": 3,
     "nom": "Saveurs & Traditions",
     "type": "Traiteur",
-    "lieu": "Lyon",
-    "description": "Cuisine raffinée mettant en valeur les produits locaux et les saveurs régionales.",
+    "lieu": "Paris",
+    "description": "Cuisine raffinée mettant en valeur les produits locaux et les saveurs de saison.",
     "prestations": ["Cocktail", "Dîner gastronomique", "Pièce montée artisanale", "Service à l'assiette"],
-    "style": ["gastronomique", "traditionnel", "créatif"],
+    "style": ["gastronomique", "traditionnel", "français"],
     "budget": 120,
     "image": "/lovable-uploads/c1b39e22-fe32-4dc7-8f94-fbb929ae43fa.png",
     "contact": "contact@saveurs-traditions.fr",
@@ -129,5 +129,31 @@
     "image": "/lovable-uploads/c1b39e22-fe32-4dc7-8f94-fbb929ae43fa.png",
     "contact": "contact@gourmandises-creations.fr",
     "lien": "http://www.gourmandises-creations.fr"
+  },
+  {
+    "id": 11,
+    "nom": "Le Palais Gourmand",
+    "type": "Traiteur",
+    "lieu": "Paris",
+    "description": "Traiteur d'exception proposant une cuisine française raffinée et créative au cœur de Paris.",
+    "prestations": ["Menus personnalisés", "Cocktail dînatoire", "Service d'exception", "Chef à domicile"],
+    "style": ["gastronomique", "élégant", "créatif"],
+    "budget": 140,
+    "image": "/lovable-uploads/c1b39e22-fe32-4dc7-8f94-fbb929ae43fa.png",
+    "contact": "contact@palaisgourmand.fr",
+    "lien": "http://www.palaisgourmand.fr"
+  },
+  {
+    "id": 12,
+    "nom": "Délices & Saveurs Parisiennes",
+    "type": "Traiteur",
+    "lieu": "Paris",
+    "description": "Traiteur parisien spécialisé dans la cuisine française contemporaine avec des influences internationales.",
+    "prestations": ["Buffet élégant", "Cuisine de saison", "Desserts signature", "Vins sélectionnés"],
+    "style": ["contemporain", "fusion", "élégant"],
+    "budget": 125,
+    "image": "/lovable-uploads/c1b39e22-fe32-4dc7-8f94-fbb929ae43fa.png",
+    "contact": "contact@delices-saveurs-paris.fr",
+    "lien": "http://www.delices-saveurs-paris.fr"
   }
 ]

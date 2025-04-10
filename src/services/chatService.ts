@@ -123,41 +123,6 @@ export const sendMessage = async (messages: Message[]): Promise<ChatResponse> =>
   };
 };
 
-// Helper function to get location-based recommendations
-function getLocationRecommendations(location: string): ChatResponse {
-  // Load vendors from JSON
-  const vendors = vendorsData as Vendor[];
-  
-  // Filter vendors by location
-  let filteredVendors = vendors.filter(vendor => 
-    vendor.lieu.toLowerCase().includes(location.toLowerCase())
-  );
-  
-  // Take up to 2 random vendors if we have more than 2
-  if (filteredVendors.length > 2) {
-    filteredVendors = filteredVendors.sort(() => 0.5 - Math.random()).slice(0, 2);
-  }
-  
-  if (filteredVendors.length > 0) {
-    const responseMessage = `Voici quelques prestataires à ${capitalizeFirstLetter(location)} qui pourraient vous intéresser. Pour des recommandations plus précises, merci de me préciser quel type de prestataire vous recherchez spécifiquement.`;
-    
-    // Create recommendations
-    const recommendations: VendorRecommendation[] = filteredVendors.map(vendor => ({
-      vendor,
-      reason: `${vendor.nom} est un${vendor.type === 'Photographe' || vendor.type === 'Traiteur' || vendor.type === 'Fleuriste' ? '' : 'e'} ${vendor.type.toLowerCase()} à ${vendor.lieu} (${vendor.budget}€${vendor.type === 'Traiteur' ? '/personne' : ''}).`
-    }));
-    
-    return {
-      message: responseMessage,
-      recommendations
-    };
-  } else {
-    return {
-      message: `Je n'ai pas encore de prestataires à ${capitalizeFirstLetter(location)}. Pourriez-vous me préciser un autre lieu comme Paris, Lyon ou Bordeaux où nous avons d'excellents prestataires ?`
-    };
-  }
-}
-
 // Helper function to get recommendations based on vendor type and location
 function getRecommendations(vendorType: string, location: string): ChatResponse {
   // Load vendors from JSON
@@ -166,51 +131,48 @@ function getRecommendations(vendorType: string, location: string): ChatResponse 
   // Filter vendors according to identified criteria
   let filteredVendors = [...vendors];
   
-  // Filter by location
+  // Filter by location - exact match to ensure accuracy
   filteredVendors = filteredVendors.filter(vendor => 
-    vendor.lieu.toLowerCase().includes(location.toLowerCase())
+    vendor.lieu.toLowerCase() === location.toLowerCase()
   );
   
-  // Filter by vendor type
-  if (vendorType) {
-    filteredVendors = filteredVendors.filter(vendor => 
-      vendor.type.toLowerCase() === capitalizeFirstLetter(vendorType).toLowerCase() ||
-      (vendorType === 'photographe' && vendor.type.toLowerCase() === 'photographe') ||
-      (vendorType === 'dj' && vendor.type.toLowerCase() === 'dj')
-    );
-  }
+  // Filter by vendor type - exact match to ensure accuracy
+  filteredVendors = filteredVendors.filter(vendor => 
+    vendor.type.toLowerCase() === capitalizeFirstLetter(vendorType).toLowerCase() ||
+    (vendorType === 'photographe' && vendor.type.toLowerCase() === 'photographe') ||
+    (vendorType === 'dj' && vendor.type.toLowerCase() === 'dj')
+  );
   
-  // If no results, widen the filter to just type
+  // If no results with exact location match, try a more flexible approach
   if (filteredVendors.length === 0) {
     filteredVendors = vendors.filter(vendor => 
-      vendor.type.toLowerCase() === capitalizeFirstLetter(vendorType).toLowerCase() ||
-      (vendorType === 'photographe' && vendor.type.toLowerCase() === 'photographe') ||
-      (vendorType === 'dj' && vendor.type.toLowerCase() === 'dj')
+      vendor.lieu.toLowerCase().includes(location.toLowerCase()) &&
+      (
+        vendor.type.toLowerCase() === capitalizeFirstLetter(vendorType).toLowerCase() ||
+        (vendorType === 'photographe' && vendor.type.toLowerCase() === 'photographe') ||
+        (vendorType === 'dj' && vendor.type.toLowerCase() === 'dj')
+      )
     );
-    
-    // Take up to 2 random vendors if we have more than 2
-    if (filteredVendors.length > 2) {
-      filteredVendors = filteredVendors.sort(() => 0.5 - Math.random()).slice(0, 2);
-    }
-  } else {
-    // Limit to 2 recommendations for a cleaner interface
-    if (filteredVendors.length > 2) {
-      filteredVendors = filteredVendors.sort(() => 0.5 - Math.random()).slice(0, 2);
-    }
   }
   
   let responseMessage = "";
   
   if (filteredVendors.length > 0) {
+    // Use appropriate plural forms based on the vendor type
     const formattedVendorType = vendorType === 'wedding planner' ? 'wedding planners' : 
-                                (vendorType === 'lieu' ? 'lieux' : `${vendorType}s`);
+                                (vendorType === 'lieu' ? 'lieux' : 
+                                vendorType === 'traiteur' ? 'traiteurs' :
+                                vendorType === 'photographe' ? 'photographes' :
+                                vendorType === 'fleuriste' ? 'fleuristes' :
+                                vendorType === 'dj' ? 'DJs' : `${vendorType}s`);
     
+    // Make sure we use the same language in the response as in the request
     responseMessage = `Parfait ! Voici mes recommandations de ${formattedVendorType} à ${capitalizeFirstLetter(location)} :`;
   } else {
     responseMessage = `Je n'ai pas de ${vendorType} à ${capitalizeFirstLetter(location)} dans ma base de données. Pourriez-vous essayer un autre lieu comme Paris, Lyon ou Bordeaux où nous avons une plus grande sélection ?`;
   }
   
-  // Create recommendations with personalized reasons
+  // Create recommendations with personalized reasons that match the exact location and vendor type
   const recommendations: VendorRecommendation[] = filteredVendors.map(vendor => {
     let reason = generatePersonalizedReason(vendor, vendorType, location);
     return {
@@ -227,33 +189,13 @@ function getRecommendations(vendorType: string, location: string): ChatResponse 
 
 // Helper function to generate more personalized recommendation reasons
 function generatePersonalizedReason(vendor: Vendor, vendorType: string, location: string): string {
+  // Start with clear identification that matches the location and type
   let reason = `${vendor.nom} est un${vendor.type === 'Photographe' || vendor.type === 'Traiteur' || vendor.type === 'Fleuriste' ? '' : 'e'} ${vendor.type.toLowerCase()} `;
   
-  // Add location context
-  switch(location) {
-    case 'paris':
-      reason += `au cœur de Paris`;
-      break;
-    case 'bordeaux':
-      reason += `dans la région bordelaise`;
-      break;
-    case 'lyon':
-      reason += `dans la région lyonnaise`;
-      break;
-    case 'nice':
-      reason += `sur la Côte d'Azur`;
-      break;
-    case 'marseille':
-      reason += `en Provence`;
-      break;
-    case 'annecy':
-      reason += `près du lac d'Annecy`;
-      break;
-    default:
-      reason += `à ${vendor.lieu}`;
-  }
+  // Add location context that exactly matches the queried location
+  reason += `à ${capitalizeFirstLetter(location)}`;
   
-  // Add personalized touch based on vendor type
+  // Add personalized description based on vendor type
   switch(vendor.type) {
     case 'Photographe':
       reason += `, spécialisé dans le style `;
