@@ -2,7 +2,6 @@
 import React from 'react';
 import ServiceTemplate from '../ServiceTemplate';
 import { Button } from '@/components/ui/button';
-import { Link } from 'react-router-dom';
 import { FileText } from 'lucide-react';
 
 const PrestataireContent = () => (
@@ -13,11 +12,12 @@ const PrestataireContent = () => (
         Nous fournissons un guide de référence des meilleurs prestataires sélectionnés avec soin pour votre mariage.
         Notre "Guide Mariable" regroupe des professionnels de qualité que nous avons personnellement validés.
       </p>
-      <Button asChild className="bg-wedding-olive hover:bg-wedding-olive/90">
-        <Link to="/guide-mariable">
-          <FileText className="mr-2 h-4 w-4" />
-          Accéder au Guide Mariable
-        </Link>
+      <Button 
+        className="bg-wedding-olive hover:bg-wedding-olive/90"
+        onClick={() => window.open('https://leguidemariable.softr.app/', '_blank', 'noopener,noreferrer')}
+      >
+        <FileText className="mr-2 h-4 w-4" />
+        Accéder au Guide Mariable
       </Button>
     </div>
   
