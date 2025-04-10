@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { SendHorizontal, MapPin, Calendar, Briefcase, Building, HelpCircle, Users, Search, ExternalLink } from 'lucide-react';
+import { SendHorizontal, MapPin, Calendar, Briefcase, Building, HelpCircle, Users, Search, ExternalLink, RefreshCw } from 'lucide-react';
 import { Message as MessageType, VendorRecommendation } from '@/types';
 import Message from './Message';
 import { sendMessage, getInitialOptions, getLocationOptions, handleOptionSelected } from '@/services/chatService';
@@ -38,6 +38,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const [currentStep, setCurrentStep] = useState(0);
   const [optionButtons, setOptionButtons] = useState<{text: string, value: string, icon?: React.ReactNode, action?: string}[]>([]);
   const [actionButtons, setActionButtons] = useState<{text: string, value: string, icon?: React.ReactNode, link?: string, newTab?: boolean}[]>([]);
+  const [showResetButton, setShowResetButton] = useState(false);
   const [conversationContext, setConversationContext] = useState<{
     needType?: string;
     location?: string;
@@ -57,7 +58,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages, recommendations, optionButtons, actionButtons]);
+  }, [messages, recommendations, optionButtons, actionButtons, showResetButton]);
 
   useEffect(() => {
     if (initialMessage && !isSimpleInput && !hasProcessedInitialMessage) {
@@ -72,6 +73,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       const initialOptions = getInitialOptions();
       setOptionButtons(initialOptions);
       setActionButtons([]);
+      setShowResetButton(false);
     }
     // Une fois que le type de besoin est défini, demander la localisation
     else if (currentStep === 2 && conversationContext.needType) {
@@ -93,6 +95,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
             link: "/services/planification"
           }
         ]);
+        setShowResetButton(true);
       } else {
         const locationOptions = getLocationOptions();
         // Ajouter l'option "Autre" aux options de localisation
@@ -103,19 +106,13 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         });
         setOptionButtons(locationOptions);
         setActionButtons([]);
+        setShowResetButton(true);
       }
     }
-    // Une fois que la localisation est définie, proposer les boutons de services
+    // Une fois que la localisation est définie, afficher le bouton de réinitialisation
     else if (currentStep > 2) {
       setOptionButtons([]);
-      setActionButtons([
-        { 
-          text: "Nos services", 
-          value: "services", 
-          icon: React.createElement(Users, { className: "h-4 w-4" }),
-          link: "/services/prestataires"
-        }
-      ]);
+      setShowResetButton(true);
     }
   }, [currentStep, conversationContext]);
 
@@ -125,6 +122,38 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         messagesEndRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
       }
     }, 100);
+  };
+
+  const handleReset = () => {
+    // Réinitialiser la conversation
+    setMessages([
+      {
+        id: 'welcome',
+        role: 'assistant',
+        content: "Bonjour et félicitations pour votre mariage ! Je suis Mathilde de Mariable, votre wedding planner digital ✨ Dites-moi tout, je vais vous aider à trouver les meilleurs prestataires selon vos envies.",
+        timestamp: new Date()
+      }
+    ]);
+    setRecommendations({});
+    setCurrentStep(1);
+    setConversationContext({});
+    setInputValue('');
+    
+    // Afficher les options initiales
+    const initialOptions = getInitialOptions();
+    setOptionButtons(initialOptions);
+    setActionButtons([]);
+    setShowResetButton(false);
+    
+    // Ajouter un message pour indiquer que la conversation recommence
+    const resetMessage: MessageType = {
+      id: uuidv4(),
+      role: 'assistant',
+      content: "Je vous écoute, quel est votre besoin ?",
+      timestamp: new Date()
+    };
+    
+    setMessages(prev => [...prev, resetMessage]);
   };
 
   const handleNoRecommendationsFound = () => {
@@ -140,9 +169,11 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         text: "Consulter le guide Mariable", 
         value: "guide", 
         icon: React.createElement(ExternalLink, { className: "h-4 w-4" }),
-        link: "/services/prestataires"
+        link: "https://leguidemariable.softr.app/",
+        newTab: true
       }
     ]);
+    setShowResetButton(true);
     
     // Ajouter un message pour informer l'utilisateur
     const noRecommendationsMessage: MessageType = {
@@ -202,6 +233,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
           ...prev,
           [assistantMessage.id]: response.recommendations || []
         }));
+        setShowResetButton(true);
       } else if (noRecommendationsFound) {
         handleNoRecommendationsFound();
       }
@@ -280,8 +312,11 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
           ...prev,
           [assistantMessage.id]: response.recommendations || []
         }));
+        setShowResetButton(true);
       } else if (response.noRecommendationsFound) {
         handleNoRecommendationsFound();
+      } else {
+        setShowResetButton(true);
       }
       
     } catch (error) {
@@ -350,7 +385,6 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                 key={message.id} 
                 message={message}
                 recommendations={recommendations[message.id] ? 
-                  // Limiter à 3 recommandations maximum
                   recommendations[message.id].slice(0, 3) 
                   : undefined} 
               />
@@ -402,6 +436,24 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                           {button.text}
                         </Button>
                       ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
+            
+            {showResetButton && (
+              <div className="flex flex-col items-center justify-center gap-2 mb-4">
+                <Card className="chat-bubble-assistant p-3 w-full">
+                  <CardContent className="p-0">
+                    <div className="flex justify-center">
+                      <Button
+                        onClick={handleReset}
+                        className="bg-wedding-cream text-wedding-black hover:bg-wedding-cream/80 border border-wedding-olive/20 flex items-center gap-2"
+                      >
+                        <RefreshCw className="h-4 w-4" />
+                        🔁 Recommencer avec une nouvelle demande
+                      </Button>
                     </div>
                   </CardContent>
                 </Card>
