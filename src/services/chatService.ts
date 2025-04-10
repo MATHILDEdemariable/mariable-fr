@@ -1,3 +1,4 @@
+
 import { ChatResponse, Message, Vendor, VendorRecommendation } from '@/types';
 import vendorsData from '@/data/vendors.json';
 
@@ -99,13 +100,12 @@ export const sendMessage = async (messages: Message[]): Promise<ChatResponse> =>
     return getRecommendations(foundVendorType, foundLocation);
   }
   
-  // If the message contains "plus" or "détails" or "information" - suggest sign up
+  // If the message contains "plus" or "détails" or "information" - suggest signup but don't force it
   if (userQuery.includes('plus') || userQuery.includes('détail') || 
       userQuery.includes('information') || userQuery.includes('contact') ||
       userQuery.includes('complet') || userQuery.includes('guide')) {
     return {
-      message: "Pour accéder à notre sélection complète, inscrivez-vous à notre Guide Mariable !",
-      shouldRedirect: true
+      message: "Pour accéder à notre sélection complète, vous pouvez consulter le Guide Mariable. Souhaitez-vous continuer la conversation ou avez-vous d'autres questions sur nos prestataires ?"
     };
   }
   
@@ -141,8 +141,7 @@ function getLocationRecommendations(location: string): ChatResponse {
     
     return {
       message: responseMessage,
-      recommendations,
-      shouldRedirect: true
+      recommendations
     };
   } else {
     return {
@@ -191,16 +190,12 @@ function getRecommendations(vendorType: string, location: string): ChatResponse 
   }
   
   let responseMessage = "";
-  let shouldRedirect = false;
   
   if (filteredVendors.length > 0) {
     const formattedVendorType = vendorType === 'wedding planner' ? 'wedding planners' : 
                                 (vendorType === 'lieu' ? 'lieux' : `${vendorType}s`);
     
     responseMessage = `Parfait ! Voici mes recommandations de ${formattedVendorType} à ${capitalizeFirstLetter(location)} :`;
-    
-    // Always set redirect flag to encourage sign up
-    shouldRedirect = true;
   } else {
     responseMessage = `Je n'ai pas de ${vendorType} à ${capitalizeFirstLetter(location)} dans ma base de données. Pourriez-vous essayer un autre lieu comme Paris, Lyon ou Bordeaux où nous avons une plus grande sélection ?`;
   }
@@ -250,8 +245,7 @@ function getRecommendations(vendorType: string, location: string): ChatResponse 
   
   return {
     message: responseMessage,
-    recommendations,
-    shouldRedirect
+    recommendations
   };
 }
 
