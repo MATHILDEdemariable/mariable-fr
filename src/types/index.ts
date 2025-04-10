@@ -23,8 +23,10 @@ export interface Vendor {
 }
 
 export interface VendorRecommendation {
-  vendor: Vendor;
-  reason: string;
+  name: string;
+  description: string;
+  imageUrl: string;
+  link: string;
 }
 
 export interface ChatResponse {

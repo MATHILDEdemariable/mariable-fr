@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { SendHorizontal, MapPin, Calendar, Briefcase, Building, HelpCircle, Users, Search, ExternalLink, RefreshCw } from 'lucide-react';
+import { SendHorizontal, MapPin, Calendar, Briefcase, Building, HelpCircle, Users, Search, ExternalLink, RefreshCw, BookOpen } from 'lucide-react';
 import { Message as MessageType, VendorRecommendation } from '@/types';
 import Message from './Message';
 import { sendMessage, getInitialOptions, getLocationOptions, handleOptionSelected } from '@/services/chatService';
@@ -54,7 +54,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         {
           id: 'welcome',
           role: 'assistant',
-          content: "Bonjour et félicitations pour votre mariage ! Je suis Mathilde de Mariable, votre wedding planner digital ✨ Dites-moi tout, je vais vous aider à trouver les meilleurs prestataires selon vos envies.",
+          content: "Bonjour et félicitations pour votre mariage ! Je suis Mathilde de Mariable, votre wedding planner digital. Dites-moi tout, je vais vous aider à trouver les meilleurs prestataires selon vos envies.",
           timestamp: new Date()
         }
       ]);
@@ -88,22 +88,28 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     }
     // Une fois que le type de besoin est défini, demander la localisation
     else if (currentStep === 2 && conversationContext.needType) {
-      if (conversationContext.needType === "orientation" || conversationContext.needType === "conseil") {
-        // Proposer les deux boutons d'orientation
+      if (conversationContext.needType === "aide") {
+        // Proposer les trois boutons d'aide
         setOptionButtons([]);
         setActionButtons([
           { 
-            text: "📖 Accéder au guide Mariable", 
+            text: "Accéder au Guide Mariable", 
             value: "guide", 
-            icon: React.createElement(ExternalLink, { className: "h-4 w-4" }),
+            icon: React.createElement(BookOpen, { className: "h-4 w-4" }),
             link: "https://leguidemariable.softr.app/",
             newTab: true
           },
           { 
-            text: "📅 Lancer une planification personnalisée", 
+            text: "Lancer une planification personnalisée", 
             value: "planification", 
             icon: React.createElement(Calendar, { className: "h-4 w-4" }),
             link: "/services/planification"
+          },
+          { 
+            text: "Obtenir des conseils personnalisés", 
+            value: "conseils", 
+            icon: React.createElement(HelpCircle, { className: "h-4 w-4" }),
+            link: "/services/conseils"
           }
         ]);
         setShowResetButton(true);
@@ -183,7 +189,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     const noRecommendationsMessage: MessageType = {
       id: uuidv4(),
       role: 'assistant',
-      content: "Oups, je n'ai pas encore de prestataire enregistré dans cette catégorie pour cette région 😕\nMais vous pouvez :",
+      content: "Oups, je n'ai pas encore de prestataire enregistré dans cette catégorie pour cette région. Mais vous pouvez :",
       timestamp: new Date()
     };
     

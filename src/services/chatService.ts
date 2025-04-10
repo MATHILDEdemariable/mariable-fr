@@ -2,14 +2,13 @@
 import React from 'react';
 import { VendorRecommendation, Message as MessageType } from '@/types';
 import { v4 as uuidv4 } from 'uuid';
-import { Briefcase, Calendar, Building, HelpCircle, MapPin } from 'lucide-react';
+import { Briefcase, Calendar, Building, HelpCircle, MapPin, Home } from 'lucide-react';
 
 export const getInitialOptions = () => {
   return [
+    { text: "Je cherche un lieu", value: "lieu", icon: React.createElement(Home, { className: "h-4 w-4" }) },
     { text: "Je cherche un prestataire", value: "prestataire", icon: React.createElement(Briefcase, { className: "h-4 w-4" }) },
-    { text: "J'ai besoin d'aide pour la planification", value: "planification", icon: React.createElement(Calendar, { className: "h-4 w-4" }) },
-    { text: "J'ai une question sur le budget", value: "budget", icon: React.createElement(Building, { className: "h-4 w-4" }) },
-    { text: "J'ai besoin d'aide ou de conseils", value: "conseil", icon: React.createElement(HelpCircle, { className: "h-4 w-4" }) }
+    { text: "Je ne sais pas par où commencer", value: "aide", icon: React.createElement(HelpCircle, { className: "h-4 w-4" }) }
   ];
 };
 
@@ -42,7 +41,7 @@ export const sendMessage = async (messages: MessageType[]): Promise<{
   // Si c'est le premier message de l'utilisateur, donner directement des recommandations ou options
   if (messages.filter(m => m.role === 'user').length === 1) {
     return {
-      message: "Bonjour et félicitations pour votre mariage ! Je suis Mathilde de Mariable, votre wedding planner digital ✨ Dites-moi tout, je vais vous aider à trouver les meilleurs prestataires selon vos envies.",
+      message: "Bonjour et félicitations pour votre mariage ! Je suis Mathilde de Mariable, votre wedding planner digital. Dites-moi tout, je vais vous aider à trouver les meilleurs prestataires selon vos envies.",
     };
   }
   
@@ -119,6 +118,30 @@ export const sendMessage = async (messages: MessageType[]): Promise<{
         }
       ]
     };
+  } else if (lastUserMessage.toLowerCase().includes("lieu") || lastUserMessage.toLowerCase().includes("salle")) {
+    return {
+      message: "Voici quelques lieux de réception que je recommande :",
+      recommendations: [
+        {
+          name: "Château Élégance",
+          description: "Un cadre historique et raffiné pour votre mariage.",
+          imageUrl: "/placeholder-image.jpg",
+          link: "https://www.google.com"
+        },
+        {
+          name: "Domaine des Roses",
+          description: "Un lieu champêtre entouré de nature pour une ambiance bucolique.",
+          imageUrl: "/placeholder-image.jpg",
+          link: "https://www.google.com"
+        },
+        {
+          name: "Espace Contemporain",
+          description: "Lieu moderne et modulable pour un mariage tendance.",
+          imageUrl: "/placeholder-image.jpg",
+          link: "https://www.google.com"
+        }
+      ]
+    };
   } else {
     return {
       message: "Je comprends. Pourrais-tu me donner plus de détails sur ce que tu recherches ?",
@@ -150,8 +173,8 @@ export const handleOptionSelected = async (
   if (currentStep === 1) {
     updatedContext.needType = selectedOption;
     
-    // Si c'est une recherche de prestataire
-    if (selectedOption === "prestataire") {
+    // Si c'est une recherche de lieu ou de prestataire
+    if (selectedOption === "lieu" || selectedOption === "prestataire") {
       return {
         response: {
           message: "Dans quelle ville ou région se déroulera votre mariage ?",
@@ -160,34 +183,14 @@ export const handleOptionSelected = async (
         nextStep
       };
     } 
-    // Si c'est une question sur la planification
-    else if (selectedOption === "planification") {
+    // Si l'utilisateur ne sait pas par où commencer
+    else if (selectedOption === "aide") {
       return {
         response: {
-          message: "Je peux vous aider à planifier votre mariage. Avez-vous déjà une date en tête ?",
+          message: "Voici quelques ressources pour vous aider à démarrer l'organisation de votre mariage :",
         },
         updatedContext,
-        nextStep
-      };
-    }
-    // Si c'est une question sur le budget
-    else if (selectedOption === "budget") {
-      return {
-        response: {
-          message: "Je peux vous aider à gérer votre budget de mariage. Avez-vous déjà un budget global en tête ?",
-        },
-        updatedContext,
-        nextStep
-      };
-    }
-    // Si c'est une demande d'orientation ou de conseil
-    else if (selectedOption === "orientation" || selectedOption === "conseil") {
-      return {
-        response: {
-          message: "Vous souhaitez des conseils généraux pour votre mariage. Voici quelques ressources qui pourraient vous aider :",
-        },
-        updatedContext,
-        nextStep
+        nextStep: 3 // Passer directement à l'étape des boutons d'aide
       };
     }
   }
@@ -197,10 +200,32 @@ export const handleOptionSelected = async (
     
     // Simuler une recherche de prestataires
     if (selectedOption === "paris") {
-      return {
-        response: {
-          message: "Voici quelques photographes à Paris :",
-          recommendations: [
+      const responseMessage = updatedContext.needType === "lieu" 
+        ? "Voici quelques lieux à Paris :" 
+        : "Voici quelques prestataires à Paris :";
+      
+      const recommendations = updatedContext.needType === "lieu" 
+        ? [
+            {
+              name: "Château Paris",
+              description: "Un lieu élégant et historique pour votre mariage à Paris.",
+              imageUrl: "/placeholder-image.jpg",
+              link: "https://www.google.com"
+            },
+            {
+              name: "Domaine Parisien",
+              description: "Un cadre exceptionnel au cœur de Paris.",
+              imageUrl: "/placeholder-image.jpg",
+              link: "https://www.google.com"
+            },
+            {
+              name: "Espace City",
+              description: "Un lieu moderne et urbain pour un mariage tendance à Paris.",
+              imageUrl: "/placeholder-image.jpg",
+              link: "https://www.google.com"
+            }
+          ]
+        : [
             {
               name: "Studio Photo Paris",
               description: "Photographe spécialisé dans les mariages à Paris.",
@@ -219,7 +244,12 @@ export const handleOptionSelected = async (
               imageUrl: "/placeholder-image.jpg",
               link: "https://www.google.com"
             }
-          ]
+          ];
+          
+      return {
+        response: {
+          message: responseMessage,
+          recommendations
         },
         updatedContext,
         nextStep
