@@ -4,13 +4,13 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { SendHorizontal, MapPin, Calendar, Briefcase, Building, HelpCircle } from 'lucide-react';
+import { SendHorizontal, MapPin, Calendar, Briefcase, Building, HelpCircle, Users, Search, ExternalLink } from 'lucide-react';
 import { Message as MessageType, VendorRecommendation } from '@/types';
 import Message from './Message';
 import { sendMessage, getInitialOptions, getLocationOptions, handleOptionSelected } from '@/services/chatService';
 import { v4 as uuidv4 } from 'uuid';
 import { useToast } from "@/hooks/use-toast";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 interface ChatInterfaceProps {
   isSimpleInput?: boolean;
@@ -36,7 +36,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [hasProcessedInitialMessage, setHasProcessedInitialMessage] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
-  const [optionButtons, setOptionButtons] = useState<{text: string, value: string, icon?: React.ReactNode}[]>([]);
+  const [optionButtons, setOptionButtons] = useState<{text: string, value: string, icon?: React.ReactNode, action?: string}[]>([]);
+  const [actionButtons, setActionButtons] = useState<{text: string, value: string, icon?: React.ReactNode, link?: string, newTab?: boolean}[]>([]);
   const [conversationContext, setConversationContext] = useState<{
     needType?: string;
     location?: string;
@@ -56,7 +57,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages, recommendations, optionButtons]);
+  }, [messages, recommendations, optionButtons, actionButtons]);
 
   useEffect(() => {
     if (initialMessage && !isSimpleInput && !hasProcessedInitialMessage) {
@@ -70,20 +71,51 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     if (currentStep === 1) {
       const initialOptions = getInitialOptions();
       setOptionButtons(initialOptions);
+      setActionButtons([]);
     }
     // Une fois que le type de besoin est défini, demander la localisation
     else if (currentStep === 2 && conversationContext.needType) {
-      if (conversationContext.needType === "orientation") {
-        // Rediriger vers le rétroplanning si l'utilisateur a besoin d'orientation globale
-        navigate('/services/planification');
+      if (conversationContext.needType === "orientation" || conversationContext.needType === "conseil") {
+        // Proposer les deux boutons d'orientation
+        setOptionButtons([]);
+        setActionButtons([
+          { 
+            text: "📖 Accéder au guide Mariable", 
+            value: "guide", 
+            icon: React.createElement(ExternalLink, { className: "h-4 w-4" }),
+            link: "https://leguidemariable.softr.app/",
+            newTab: true
+          },
+          { 
+            text: "📅 Lancer une planification personnalisée", 
+            value: "planification", 
+            icon: React.createElement(Calendar, { className: "h-4 w-4" }),
+            link: "/services/planification"
+          }
+        ]);
       } else {
         const locationOptions = getLocationOptions();
+        // Ajouter l'option "Autre" aux options de localisation
+        locationOptions.push({ 
+          text: "Autre", 
+          value: "autre", 
+          icon: React.createElement(Search, { className: "h-4 w-4" }) 
+        });
         setOptionButtons(locationOptions);
+        setActionButtons([]);
       }
     }
-    // Une fois que la localisation est définie, ne plus afficher de boutons
+    // Une fois que la localisation est définie, proposer les boutons de services
     else if (currentStep > 2) {
       setOptionButtons([]);
+      setActionButtons([
+        { 
+          text: "Nos services", 
+          value: "services", 
+          icon: React.createElement(Users, { className: "h-4 w-4" }),
+          link: "/services/prestataires"
+        }
+      ]);
     }
   }, [currentStep, conversationContext]);
 
@@ -95,7 +127,35 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     }, 100);
   };
 
-  const handleOptionClick = async (option: {text: string, value: string}) => {
+  const handleNoRecommendationsFound = () => {
+    // Afficher les boutons d'action en cas d'absence de recommandations
+    setActionButtons([
+      { 
+        text: "Nous contacter directement", 
+        value: "contact", 
+        icon: React.createElement(Users, { className: "h-4 w-4" }),
+        link: "/contact/nous-contacter"
+      },
+      { 
+        text: "Consulter le guide Mariable", 
+        value: "guide", 
+        icon: React.createElement(ExternalLink, { className: "h-4 w-4" }),
+        link: "/services/prestataires"
+      }
+    ]);
+    
+    // Ajouter un message pour informer l'utilisateur
+    const noRecommendationsMessage: MessageType = {
+      id: uuidv4(),
+      role: 'assistant',
+      content: "Oups, je n'ai pas encore de prestataire enregistré dans cette catégorie pour cette région 😕\nMais vous pouvez :",
+      timestamp: new Date()
+    };
+    
+    setMessages(prev => [...prev, noRecommendationsMessage]);
+  };
+
+  const handleOptionClick = async (option: {text: string, value: string, action?: string}) => {
     // Ajouter l'option sélectionnée comme message utilisateur
     const userMessage: MessageType = {
       id: uuidv4(),
@@ -109,8 +169,14 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     setIsLoading(true);
     
     try {
+      // Si c'est une action spéciale
+      if (option.action === "redirect") {
+        navigate(option.value);
+        return;
+      }
+      
       // Traiter l'option sélectionnée et obtenir une réponse
-      const { response, updatedContext, nextStep } = await handleOptionSelected(
+      const { response, updatedContext, nextStep, noRecommendationsFound } = await handleOptionSelected(
         option.value, 
         currentStep, 
         conversationContext
@@ -136,6 +202,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
           ...prev,
           [assistantMessage.id]: response.recommendations || []
         }));
+      } else if (noRecommendationsFound) {
+        handleNoRecommendationsFound();
       }
       
     } catch (error) {
@@ -157,6 +225,16 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       setMessages(prev => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleActionButtonClick = (button: {text: string, value: string, link?: string, newTab?: boolean}) => {
+    if (button.link) {
+      if (button.newTab) {
+        window.open(button.link, '_blank');
+      } else {
+        navigate(button.link);
+      }
     }
   };
 
@@ -202,6 +280,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
           ...prev,
           [assistantMessage.id]: response.recommendations || []
         }));
+      } else if (response.noRecommendationsFound) {
+        handleNoRecommendationsFound();
       }
       
     } catch (error) {
@@ -269,7 +349,10 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
               <Message 
                 key={message.id} 
                 message={message}
-                recommendations={recommendations[message.id]} 
+                recommendations={recommendations[message.id] ? 
+                  // Limiter à 3 recommandations maximum
+                  recommendations[message.id].slice(0, 3) 
+                  : undefined} 
               />
             ))}
             
@@ -296,6 +379,27 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                         >
                           {option.icon}
                           {option.text}
+                        </Button>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
+            
+            {actionButtons.length > 0 && (
+              <div className="flex flex-col items-center justify-center gap-2 mb-4">
+                <Card className="chat-bubble-assistant p-3 w-full">
+                  <CardContent className="p-0">
+                    <div className="flex flex-col sm:flex-row flex-wrap gap-2 justify-center">
+                      {actionButtons.map((button, index) => (
+                        <Button
+                          key={index}
+                          onClick={() => handleActionButtonClick(button)}
+                          className="bg-wedding-olive text-white hover:bg-wedding-olive/90 flex items-center gap-2 whitespace-nowrap"
+                        >
+                          {button.icon}
+                          {button.text}
                         </Button>
                       ))}
                     </div>

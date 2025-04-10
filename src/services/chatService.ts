@@ -1,7 +1,7 @@
 
 import { ChatResponse, Message, Vendor, VendorRecommendation } from '@/types';
 import vendorsData from '@/data/vendors.json';
-import { Building, Briefcase, HelpCircle, Calendar, MapPin } from 'lucide-react';
+import { Building, Briefcase, HelpCircle, Calendar, MapPin, BookOpen } from 'lucide-react';
 import React from 'react';
 
 // Options pour chaque étape de la conversation
@@ -25,6 +25,11 @@ export const getInitialOptions = () => [
     text: "Je ne sais pas par où commencer", 
     value: "orientation",
     icon: React.createElement(HelpCircle, { className: "h-4 w-4" })
+  },
+  { 
+    text: "Des conseils pour organiser mon mariage", 
+    value: "conseil",
+    icon: React.createElement(BookOpen, { className: "h-4 w-4" })
   }
 ];
 
@@ -58,14 +63,15 @@ export const handleOptionSelected = async (
   let response: ChatResponse = { message: "" };
   let updatedContext = { ...conversationContext };
   let nextStep = currentStep + 1;
+  let noRecommendationsFound = false;
 
   // Étape 1: Traitement du besoin initial
   if (currentStep === 1) {
     updatedContext.needType = optionValue;
     
-    if (optionValue === "orientation") {
+    if (optionValue === "orientation" || optionValue === "conseil") {
       response = {
-        message: "Pour bien commencer l'organisation de votre mariage, je vous recommande notre service de rétroplanning personnalisé. Je vais vous rediriger vers notre page dédiée où vous trouverez un guide étape par étape."
+        message: "Parfait, vous avez deux options pour bien commencer 👇\nChoisissez ce qui vous correspond le mieux :"
       };
     } 
     else if (optionValue === "wedding-planner") {
@@ -92,13 +98,33 @@ export const handleOptionSelected = async (
 
     if (optionValue === "unknown") {
       response = {
-        message: "Ce n'est pas un problème si vous n'avez pas encore choisi votre lieu. Je vous conseille de consulter notre Guide Mariable qui regroupe des prestataires dans toute la France. Voulez-vous que je vous montre quelques-uns de nos prestataires les plus appréciés ?"
+        message: "Ce n'est pas un problème si vous n'avez pas encore choisi votre lieu. Je vous conseille de consulter notre Guide Mariable qui regroupe des prestataires dans toute la France. Voici quelques-uns de nos prestataires les plus appréciés à Paris que je peux vous montrer en exemple."
       };
+      
+      // Fournir quelques prestataires à Paris comme exemple
+      updatedContext.location = "paris";
+      const recommendationsData = getRecommendations(updatedContext.vendorType || "lieu", "paris");
+      response = recommendationsData;
     } 
+    else if (optionValue === "autre") {
+      response = {
+        message: "Bien sûr, vous cherchez un prestataire dans une autre ville. Pour vous aider efficacement, je vous invite à consulter notre Guide Mariable qui regroupe des prestataires dans plus de 30 villes en France."
+      };
+    }
     else if (updatedContext.vendorType) {
       // Si le type de prestataire est déjà défini, envoyer des recommandations
       const recommendationsData = getRecommendations(updatedContext.vendorType, optionValue);
-      response = recommendationsData;
+      
+      // Vérifier si des recommandations ont été trouvées
+      if (recommendationsData.recommendations && recommendationsData.recommendations.length > 0) {
+        response = recommendationsData;
+      } else {
+        response = {
+          message: `Je suis désolée, je n'ai pas encore de ${updatedContext.vendorType} à ${capitalizeFirstLetter(optionValue)} dans ma base de données.`
+        };
+        noRecommendationsFound = true;
+      }
+      
       nextStep = 3; // Passer à l'étape suivante
     } 
     else {
@@ -109,7 +135,8 @@ export const handleOptionSelected = async (
       // Fournir une sélection de prestataires variés pour cette localisation
       const vendors = vendorsData as Vendor[];
       const locationVendors = vendors.filter(vendor => 
-        vendor.lieu.toLowerCase() === optionValue.toLowerCase()
+        vendor.lieu.toLowerCase() === optionValue.toLowerCase() ||
+        vendor.ville?.toLowerCase() === optionValue.toLowerCase()
       );
 
       if (locationVendors.length > 0) {
@@ -129,15 +156,19 @@ export const handleOptionSelected = async (
         }
 
         if (recommendations.length > 0) {
-          response.recommendations = recommendations;
+          response.recommendations = recommendations.slice(0, 3); // Limiter à 3 recommandations
+        } else {
+          noRecommendationsFound = true;
         }
+      } else {
+        noRecommendationsFound = true;
       }
 
       nextStep = 3; // Passer à l'étape suivante
     }
   }
 
-  return { response, updatedContext, nextStep };
+  return { response, updatedContext, nextStep, noRecommendationsFound };
 };
 
 // This function simulates sending a message to a chat service
@@ -216,26 +247,38 @@ export const sendMessage = async (messages: Message[]): Promise<ChatResponse> =>
                               userQuery.includes('étapes') ||
                               userQuery.includes('préparation');
 
-  // If user is asking about planning or retroplanning
-  if (hasPlanningKeywords) {
-    return {
-      message: "Je serais ravie de vous aider avec votre retroplanning de mariage ! Avoir un calendrier bien organisé est essentiel pour préparer sereinement votre grand jour. Nous proposons un service de retroplanning personnalisé qui s'adapte à vos dates et besoins spécifiques. Souhaitez-vous en savoir plus sur ce service ?\n\nVous pouvez consulter notre page dédiée à la planification pour obtenir plus d'informations : [Retroplanning personnalisé](/services/planification)"
-    };
-  }
-
-  // Si nous sommes au premier message de l'utilisateur, proposer les options initiales
+  // Si c'est le premier message de l'utilisateur, nous proposons toujours les options initiales
   if (messages.length === 2) {  // Le premier message est le message de bienvenue, le deuxième est le message de l'utilisateur
     return {
       message: "Pour mieux vous aider, pourriez-vous me préciser ce que vous recherchez ? Vous pouvez sélectionner une option ci-dessous ou me décrire votre besoin."
     };
   }
 
+  // If user is asking about planning or retroplanning
+  if (hasPlanningKeywords) {
+    return {
+      message: "Je serais ravie de vous aider avec votre retroplanning de mariage ! Avoir un calendrier bien organisé est essentiel pour préparer sereinement votre grand jour. Nous proposons un service de retroplanning personnalisé qui s'adapte à vos dates et besoins spécifiques. Souhaitez-vous en savoir plus sur ce service ?\n\nVous pouvez consulter notre page dédiée à la planification pour obtenir plus d'informations."
+    };
+  }
+
   // Both vendor type and location are found, provide recommendations
   if (foundVendorType && foundLocation) {
     const recommendations = getRecommendations(foundVendorType, foundLocation);
-    // Add a follow-up question about other suggestions or help with planning
-    recommendations.message += "\n\nSouhaitez-vous d'autres suggestions de prestataires ou bien de l'aide pour organiser votre retroplanning de mariage ? Je peux vous orienter vers notre service de retroplanning personnalisé.";
-    return recommendations;
+    
+    if (recommendations.recommendations && recommendations.recommendations.length > 0) {
+      // Limiter à 3 recommandations
+      recommendations.recommendations = recommendations.recommendations.slice(0, 3);
+      // Add a follow-up question about other suggestions or help with planning
+      recommendations.message += "\n\nSouhaitez-vous d'autres suggestions de prestataires ou bien de l'aide pour organiser votre retroplanning de mariage ?";
+      return recommendations;
+    } else {
+      // Pas de recommandations trouvées
+      const response: ChatResponse = {
+        message: `Je suis désolée, je n'ai pas encore de ${foundVendorType} à ${capitalizeFirstLetter(foundLocation)} dans ma base de données.`,
+        noRecommendationsFound: true
+      };
+      return response;
+    }
   }
   
   // If we're missing vendor type, location, or both, ask for the missing information
@@ -250,15 +293,6 @@ export const sendMessage = async (messages: Message[]): Promise<ChatResponse> =>
   } else if (!foundLocation) {
     return {
       message: `Je vois que vous cherchez un${foundVendorType === 'photographe' || foundVendorType === 'traiteur' || foundVendorType === 'fleuriste' ? ' ' : 'e '}${foundVendorType}. Pour vous proposer les meilleures options, dans quelle ville ou région se déroulera votre mariage ?`
-    };
-  }
-  
-  // If the message contains keywords related to more information
-  if (userQuery.includes('plus') || userQuery.includes('détail') || 
-      userQuery.includes('information') || userQuery.includes('contact') ||
-      userQuery.includes('complet') || userQuery.includes('guide')) {
-    return {
-      message: "Pour accéder à notre sélection complète, vous pouvez consulter le Guide Mariable. Souhaitez-vous continuer la conversation ou avez-vous d'autres questions sur nos prestataires ? Peut-être avez-vous besoin d'aide pour organiser votre retroplanning de mariage ?"
     };
   }
   
@@ -278,7 +312,8 @@ function getRecommendations(vendorType: string, location: string): ChatResponse 
   
   // Filter by location - exact match to ensure accuracy
   filteredVendors = filteredVendors.filter(vendor => 
-    vendor.lieu.toLowerCase() === location.toLowerCase()
+    vendor.lieu.toLowerCase() === location.toLowerCase() ||
+    (vendor.ville && vendor.ville.toLowerCase() === location.toLowerCase())
   );
   
   // Filter by vendor type - exact match to ensure accuracy
@@ -291,7 +326,8 @@ function getRecommendations(vendorType: string, location: string): ChatResponse 
   // If no results with exact location match, try a more flexible approach
   if (filteredVendors.length === 0) {
     filteredVendors = vendors.filter(vendor => 
-      vendor.lieu.toLowerCase().includes(location.toLowerCase()) &&
+      (vendor.lieu.toLowerCase().includes(location.toLowerCase()) || 
+      (vendor.ville && vendor.ville.toLowerCase().includes(location.toLowerCase()))) &&
       (
         vendor.type.toLowerCase() === capitalizeFirstLetter(vendorType).toLowerCase() ||
         (vendorType === 'photographe' && vendor.type.toLowerCase() === 'photographe') ||
@@ -314,11 +350,11 @@ function getRecommendations(vendorType: string, location: string): ChatResponse 
     // Make sure we use the same language in the response as in the request
     responseMessage = `Parfait ! Voici mes recommandations de ${formattedVendorType} à ${capitalizeFirstLetter(location)} :`;
   } else {
-    responseMessage = `Je n'ai pas de ${vendorType} à ${capitalizeFirstLetter(location)} dans ma base de données. Pourriez-vous essayer un autre lieu comme Paris, Lyon ou Bordeaux où nous avons une plus grande sélection ?`;
+    responseMessage = `Je n'ai pas de ${vendorType} à ${capitalizeFirstLetter(location)} dans ma base de données.`;
   }
   
   // Create recommendations with personalized reasons that match the exact location and vendor type
-  const recommendations: VendorRecommendation[] = filteredVendors.map(vendor => {
+  const recommendations: VendorRecommendation[] = filteredVendors.slice(0, 3).map(vendor => {  // Limiter à 3 recommandations
     let reason = generatePersonalizedReason(vendor, vendorType, location);
     return {
       vendor,
@@ -328,7 +364,8 @@ function getRecommendations(vendorType: string, location: string): ChatResponse 
   
   return {
     message: responseMessage,
-    recommendations
+    recommendations,
+    noRecommendationsFound: recommendations.length === 0
   };
 }
 
@@ -368,14 +405,18 @@ function generatePersonalizedReason(vendor: Vendor, vendorType: string, location
   }
   
   // Add price information
-  if (vendor.type === 'Traiteur') {
-    reason += `Tarif: à partir de ${vendor.budget}€/personne.`;
-  } else if (vendor.type === 'Lieu') {
-    reason += `Location à partir de ${vendor.budget}€ pour votre réception.`;
-  } else if (vendor.type === 'Photographe') {
-    reason += `Forfait mariage complet à partir de ${vendor.budget}€.`;
-  } else {
-    reason += `Budget: à partir de ${vendor.budget}€.`;
+  if (vendor.budget_estime) {
+    reason += `Tarif: ${vendor.budget_estime}.`;
+  } else if (vendor.budget) {
+    if (vendor.type === 'Traiteur') {
+      reason += `Tarif: à partir de ${vendor.budget}€/personne.`;
+    } else if (vendor.type === 'Lieu') {
+      reason += `Location à partir de ${vendor.budget}€ pour votre réception.`;
+    } else if (vendor.type === 'Photographe') {
+      reason += `Forfait mariage complet à partir de ${vendor.budget}€.`;
+    } else {
+      reason += `Budget: à partir de ${vendor.budget}€.`;
+    }
   }
   
   return reason;

@@ -11,12 +11,14 @@ export interface Vendor {
   nom: string;
   type: string;
   lieu: string;
+  ville?: string;
   description: string;
-  prestations: string[];
+  prestations?: string[];
   style: string[];
-  budget: number;
-  image: string;
-  contact: string;
+  budget?: number;
+  budget_estime?: string;
+  image?: string;
+  contact?: string;
   lien: string;
 }
 
@@ -28,4 +30,5 @@ export interface VendorRecommendation {
 export interface ChatResponse {
   message: string;
   recommendations?: VendorRecommendation[];
+  noRecommendationsFound?: boolean;
 }
