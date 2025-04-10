@@ -1,8 +1,7 @@
-
 import React from 'react';
 import { VendorRecommendation, Message as MessageType } from '@/types';
 import { v4 as uuidv4 } from 'uuid';
-import { Briefcase, Calendar, Building, HelpCircle, Home, Users, ExternalLink, BookOpen } from 'lucide-react';
+import { Briefcase, Calendar, Building, HelpCircle, Home, Users, ExternalLink, BookOpen, MapPin } from 'lucide-react';
 
 export const getInitialOptions = () => {
   return [
@@ -233,6 +232,7 @@ export const handleOptionSelected = async (
       };
     }
   }
+  
   // Si on est à l'étape 2 (sélection de la localisation)
   else if (currentStep === 2) {
     updatedContext.location = selectedOption;

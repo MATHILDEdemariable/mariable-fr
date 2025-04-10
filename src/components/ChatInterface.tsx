@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -90,19 +91,20 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
           { 
             text: "Aide à la planification", 
             value: "planification", 
-            icon: React.createElement(Calendar, { className: "h-4 w-4" }),
+            // Create icons correctly with correct types
+            icon: <Calendar className="h-4 w-4" />,
             link: "/services/planification"
           },
           { 
             text: "Conseils personnalisés", 
             value: "conseils", 
-            icon: React.createElement(HelpCircle, { className: "h-4 w-4" }),
+            icon: <HelpCircle className="h-4 w-4" />,
             link: "/services/conseils"
           },
           { 
             text: "Accéder au Guide Mariable", 
             value: "guide", 
-            icon: React.createElement(BookOpen, { className: "h-4 w-4" }),
+            icon: <BookOpen className="h-4 w-4" />,
             link: "https://leguidemariable.softr.app/",
             newTab: true
           }
@@ -113,7 +115,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         locationOptions.push({ 
           text: "Autre", 
           value: "autre", 
-          icon: React.createElement(Search, { className: "h-4 w-4" }) 
+          icon: <Search className="h-4 w-4" /> 
         });
         setOptionButtons(locationOptions);
         setActionButtons([]);
@@ -161,13 +163,13 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       { 
         text: "Nous contacter directement", 
         value: "contact", 
-        icon: React.createElement(Users, { className: "h-4 w-4" }),
+        icon: <Users className="h-4 w-4" />,
         link: "/contact/nous-contacter"
       },
       { 
         text: "Consulter le guide Mariable", 
         value: "guide", 
-        icon: React.createElement(ExternalLink, { className: "h-4 w-4" }),
+        icon: <ExternalLink className="h-4 w-4" />,
         link: "https://leguidemariable.softr.app/",
         newTab: true
       }
