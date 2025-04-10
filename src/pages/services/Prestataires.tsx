@@ -3,7 +3,6 @@ import React from 'react';
 import ServiceTemplate from '../ServiceTemplate';
 import { Button } from '@/components/ui/button';
 import { FileText } from 'lucide-react';
-import ChatInterface from '@/components/ChatInterface';
 
 const PrestataireContent = () => (
   <>
@@ -35,13 +34,6 @@ const PrestataireContent = () => (
       des prestataires qui correspondent à vos critères. Plus besoin de passer des heures 
       à faire des recherches, nous le faisons pour vous !
     </p>
-    
-    <div className="mt-8 mb-8">
-      <h3 className="text-xl font-serif mb-4">Parlez à notre wedding planner virtuelle</h3>
-      <div className="bg-white rounded-xl shadow-md overflow-hidden">
-        <ChatInterface />
-      </div>
-    </div>
     
     <h2 className="text-2xl font-serif mt-8 mb-4">Nos catégories de prestataires</h2>
     
