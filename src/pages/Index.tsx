@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import ChatInterface from '@/components/ChatInterface';
@@ -96,7 +95,7 @@ const Index = () => {
               
               <div className="max-w-3xl mx-auto">
                 <Card className="bg-white shadow-xl rounded-xl overflow-hidden border">
-                  <ChatInterface initialMessage={userInitialMessage} />
+                  <ChatInterface initialMessage={userInitialMessage} guidedModeOnly={true} />
                 </Card>
               </div>
             </div>
@@ -116,7 +115,7 @@ const Index = () => {
                 <li className="flex items-start gap-3 p-3 md:p-4 bg-white rounded-lg shadow-sm">
                   <CheckCircle className="text-wedding-olive shrink-0 mt-1" size={18} />
                   <div>
-                    <h3 className="font-serif text-wedding-black">Gain de temps</h3>
+                    <h3 className="font-serif text-wedding-black">Trouver les meilleurs prestataires</h3>
                     <p className="text-xs sm:text-sm text-muted-foreground">Grâce à notre guide de référence soigneusement sélectionné</p>
                   </div>
                 </li>
@@ -124,15 +123,15 @@ const Index = () => {
                 <li className="flex items-start gap-3 p-3 md:p-4 bg-white rounded-lg shadow-sm">
                   <CheckCircle className="text-wedding-olive shrink-0 mt-1" size={18} />
                   <div>
-                    <h3 className="font-serif text-wedding-black">Recommandations personnalisées</h3>
-                    <p className="text-xs sm:text-sm text-muted-foreground">Organisez chaque étape de votre mariage simplement</p>
+                    <h3 className="font-serif text-wedding-black">Planifier chaque étape</h3>
+                    <p className="text-xs sm:text-sm text-muted-foreground">Organisez votre mariage avec clarté</p>
                   </div>
                 </li>
                 
                 <li className="flex items-start gap-3 p-3 md:p-4 bg-white rounded-lg shadow-sm">
                   <CheckCircle className="text-wedding-olive shrink-0 mt-1" size={18} />
                   <div>
-                    <h3 className="font-serif text-wedding-black">Sans stress</h3>
+                    <h3 className="font-serif text-wedding-black">Gérer facilement votre budget</h3>
                     <p className="text-xs sm:text-sm text-muted-foreground">Avec une transparence totale des prix et des prestations</p>
                   </div>
                 </li>
@@ -140,8 +139,8 @@ const Index = () => {
                 <li className="flex items-start gap-3 p-3 md:p-4 bg-white rounded-lg shadow-sm">
                   <CheckCircle className="text-wedding-olive shrink-0 mt-1" size={18} />
                   <div>
-                    <h3 className="font-serif text-wedding-black">Réserver & payer en ligne</h3>
-                    <p className="text-xs sm:text-sm text-muted-foreground">Bientôt disponible</p>
+                    <h3 className="font-serif text-wedding-black">Réserver et gérer vos prestataires</h3>
+                    <p className="text-xs sm:text-sm text-muted-foreground">Directement en ligne - prochainement disponible</p>
                   </div>
                 </li>
               </ul>

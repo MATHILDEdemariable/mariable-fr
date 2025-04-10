@@ -17,21 +17,16 @@ interface ChatInterfaceProps {
   isSimpleInput?: boolean;
   onFirstMessage?: () => void;
   initialMessage?: string;
+  guidedModeOnly?: boolean;
 }
 
 const ChatInterface: React.FC<ChatInterfaceProps> = ({ 
   isSimpleInput = false, 
   onFirstMessage,
-  initialMessage
+  initialMessage,
+  guidedModeOnly = false
 }) => {
-  const [messages, setMessages] = useState<MessageType[]>([
-    {
-      id: 'welcome',
-      role: 'assistant',
-      content: "Bonjour et félicitations pour votre mariage ! Je suis Mathilde de Mariable, votre wedding planner digital ✨ Dites-moi tout, je vais vous aider à trouver les meilleurs prestataires selon vos envies.",
-      timestamp: new Date()
-    }
-  ]);
+  const [messages, setMessages] = useState<MessageType[]>([]);
   const [recommendations, setRecommendations] = useState<Record<string, VendorRecommendation[]>>({});
   const [inputValue, setInputValue] = useState(initialMessage || '');
   const [isLoading, setIsLoading] = useState(false);
@@ -51,6 +46,20 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const { toast } = useToast();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+
+  // Initialize with welcome message only for the simple input
+  useEffect(() => {
+    if (isSimpleInput) {
+      setMessages([
+        {
+          id: 'welcome',
+          role: 'assistant',
+          content: "Bonjour et félicitations pour votre mariage ! Je suis Mathilde de Mariable, votre wedding planner digital ✨ Dites-moi tout, je vais vous aider à trouver les meilleurs prestataires selon vos envies.",
+          timestamp: new Date()
+        }
+      ]);
+    }
+  }, [isSimpleInput]);
 
   useEffect(() => {
     if (inputRef.current) {
@@ -128,14 +137,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
   const handleReset = () => {
     // Réinitialiser la conversation
-    setMessages([
-      {
-        id: 'welcome',
-        role: 'assistant',
-        content: "Bonjour et félicitations pour votre mariage ! Je suis Mathilde de Mariable, votre wedding planner digital ✨ Dites-moi tout, je vais vous aider à trouver les meilleurs prestataires selon vos envies.",
-        timestamp: new Date()
-      }
-    ]);
+    setMessages([]);
     setRecommendations({});
     setCurrentStep(1);
     setConversationContext({});
@@ -288,15 +290,26 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     
     scrollToBottom();
     
-    if (isSimpleInput && messages.length === 1 && onFirstMessage) {
+    if (isSimpleInput && onFirstMessage) {
       onFirstMessage();
     }
     
     try {
+      // Après la première requête, afficher le message de bienvenue en premier
+      if (!isSimpleInput && messages.length === 0) {
+        const welcomeMessage: MessageType = {
+          id: 'welcome',
+          role: 'assistant',
+          content: "Bonjour et félicitations pour votre mariage ! Je suis Mathilde de Mariable, votre wedding planner digital ✨ Dites-moi tout, je vais vous aider à trouver les meilleurs prestataires selon vos envies.",
+          timestamp: new Date()
+        };
+        setMessages(prev => [...prev, welcomeMessage]);
+      }
+      
       const response = await sendMessage([...messages, userMessage]);
       
       // Si c'est le premier message utilisateur, passer à l'étape 1
-      if (messages.length === 1) {
+      if (messages.length === 0 || (isSimpleInput && messages.length === 1)) {
         setCurrentStep(1);
       }
       
@@ -469,27 +482,30 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
           </div>
         </ScrollArea>
       </div>
-      <div className="p-2 md:p-3 border-t bg-white">
-        <form onSubmit={handleSubmit} className="flex w-full gap-2">
-          <Input
-            ref={inputRef}
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            placeholder="Continuez la conversation..."
-            disabled={isLoading}
-            className="flex-grow text-sm"
-          />
-          <Button 
-            type="submit" 
-            disabled={isLoading || !inputValue.trim()} 
-            className="bg-wedding-olive hover:bg-wedding-olive/90 text-white"
-            size="sm"
-            aria-label="Envoyer"
-          >
-            <SendHorizontal className="h-4 w-4" />
-          </Button>
-        </form>
-      </div>
+      
+      {!guidedModeOnly && (
+        <div className="p-2 md:p-3 border-t bg-white">
+          <form onSubmit={handleSubmit} className="flex w-full gap-2">
+            <Input
+              ref={inputRef}
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              placeholder="Continuez la conversation..."
+              disabled={isLoading}
+              className="flex-grow text-sm"
+            />
+            <Button 
+              type="submit" 
+              disabled={isLoading || !inputValue.trim()} 
+              className="bg-wedding-olive hover:bg-wedding-olive/90 text-white"
+              size="sm"
+              aria-label="Envoyer"
+            >
+              <SendHorizontal className="h-4 w-4" />
+            </Button>
+          </form>
+        </div>
+      )}
     </div>
   );
 };
