@@ -1,8 +1,7 @@
-
 import React from 'react';
 import Header from '@/components/Header';
 import { Link } from 'react-router-dom';
-import { Instagram, Mail, Linkedin, FileDown, Send } from 'lucide-react';
+import { Instagram, Mail, Linkedin, FileDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const Professionnels = () => {
@@ -27,18 +26,16 @@ const Professionnels = () => {
             <div className="space-y-4">
               <h2 className="text-2xl font-serif">Pourquoi rejoindre Mariable ?</h2>
               <ul className="list-disc pl-5 space-y-2">
-                <li>Visibilité accrue auprès de couples en recherche active</li>
-                <li>Sélection de prestataires d'excellence uniquement</li>
-                <li>Référencement gratuit pour tous les professionnels</li>
-                <li>Options de mise en avant disponibles en services premium</li>
-                <li>Communauté de professionnels partageant les mêmes valeurs</li>
+                <li>Un référencement focalisé sur l'humain et la qualité</li>
+                <li>Un gage de qualité pour vos clients</li>
+                <li>L'accès à des fonctionnalités innovantes</li>
               </ul>
               
               <div className="pt-4">
                 <Button className="flex items-center gap-2 bg-wedding-olive hover:bg-wedding-olive/80">
                   <FileDown size={18} />
                   <a 
-                    href="https://gamma.app/docs/Rejoignez-la-reference-des-prestataires-dexcellence-3y3w6gbb1cowg2zdexcellence%20(6).pdf" 
+                    href="https://gamma.app/docs/Rejoignez-la-reference-des-prestataires-dexcellence-3y3w6gbb1cowg2z" 
                     target="_blank" 
                     rel="noopener noreferrer"
                     className="text-white"
@@ -57,7 +54,7 @@ const Professionnels = () => {
                 <div className="flex items-start gap-3">
                   <div className="bg-wedding-cream rounded-full h-8 w-8 flex items-center justify-center text-wedding-black font-medium shrink-0">1</div>
                   <div>
-                    <h3 className="font-medium">Complétez le formulaire ci-dessous</h3>
+                    <h3 className="text-base font-medium">Complétez le formulaire ci-dessous</h3>
                     <p className="text-sm text-muted-foreground">Remplissez tous les champs pour nous permettre d'évaluer votre candidature.</p>
                   </div>
                 </div>
@@ -65,7 +62,7 @@ const Professionnels = () => {
                 <div className="flex items-start gap-3">
                   <div className="bg-wedding-cream rounded-full h-8 w-8 flex items-center justify-center text-wedding-black font-medium shrink-0">2</div>
                   <div>
-                    <h3 className="font-medium">Envoyez-nous un email</h3>
+                    <h3 className="text-base font-medium">Envoyez-nous un email</h3>
                     <p className="text-sm text-muted-foreground">
                       Contactez-nous directement à{' '}
                       <a 
@@ -77,18 +74,6 @@ const Professionnels = () => {
                     </p>
                   </div>
                 </div>
-              </div>
-              
-              <div className="pt-4">
-                <Button className="flex items-center gap-2" variant="outline">
-                  <Send size={18} />
-                  <a 
-                    href="mailto:mathilde@mariable.fr" 
-                    className="text-wedding-black"
-                  >
-                    Nous contacter directement
-                  </a>
-                </Button>
               </div>
             </div>
           </div>
