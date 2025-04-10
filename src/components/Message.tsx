@@ -1,9 +1,21 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Message as MessageType } from '@/types';
 import { VendorCard } from './VendorCard';
 import { Card, CardContent } from '@/components/ui/card';
 import { VendorRecommendation } from '@/types';
+import { 
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle
+} from '@/components/ui/alert-dialog';
+import { useNavigate } from 'react-router-dom';
+import { UserPlus } from 'lucide-react';
 
 interface MessageProps {
   message: MessageType;
@@ -12,6 +24,19 @@ interface MessageProps {
 
 export const Message: React.FC<MessageProps> = ({ message, recommendations }) => {
   const isUser = message.role === 'user';
+  const navigate = useNavigate();
+  const [showSignupPrompt, setShowSignupPrompt] = useState(false);
+  
+  useEffect(() => {
+    // Show the signup prompt after a short delay when recommendations are displayed
+    if (!isUser && recommendations && recommendations.length > 0) {
+      const timer = setTimeout(() => {
+        setShowSignupPrompt(true);
+      }, 3000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [recommendations, isUser]);
   
   const renderContent = () => {
     // Split content by new lines and render them properly
@@ -42,6 +67,30 @@ export const Message: React.FC<MessageProps> = ({ message, recommendations }) =>
           {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
         </div>
       </div>
+      
+      {/* Signup Dialog */}
+      <AlertDialog open={showSignupPrompt} onOpenChange={setShowSignupPrompt}>
+        <AlertDialogContent className="max-w-md">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-wedding-olive font-serif text-xl">
+              Découvrez plus de prestataires
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              Vous aimez ces recommandations ? Inscrivez-vous pour accéder à notre sélection complète de prestataires de mariage et à des recommandations personnalisées.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex-col sm:flex-row gap-2">
+            <AlertDialogCancel>Plus tard</AlertDialogCancel>
+            <AlertDialogAction 
+              className="bg-wedding-olive hover:bg-wedding-olive/90 gap-2"
+              onClick={() => navigate('/commencer')}
+            >
+              <UserPlus className="h-4 w-4" />
+              S'inscrire maintenant
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
