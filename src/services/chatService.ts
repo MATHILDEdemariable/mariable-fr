@@ -1,3 +1,4 @@
+
 import { ChatResponse, Message, Vendor, VendorRecommendation } from '@/types';
 import vendorsData from '@/data/vendors.json';
 
@@ -7,7 +8,9 @@ export const sendMessage = async (messages: Message[]): Promise<ChatResponse> =>
   const latestUserMessage = messages.filter(m => m.role === 'user').pop();
   
   if (!latestUserMessage) {
-    return { message: "Bonjour et félicitations pour votre mariage ! Je suis Mathilde de Mariable, votre wedding planner digital. Comment puis-je vous aider aujourd'hui ?" };
+    return { 
+      message: "Bonjour et félicitations pour votre mariage ! Je suis Mathilde de Mariable, votre wedding planner digital ✨ Dites-moi tout, je vais vous aider à trouver les meilleurs prestataires selon vos envies."
+    };
   }
   
   // Analyze the message to determine user needs
@@ -84,16 +87,26 @@ export const sendMessage = async (messages: Message[]): Promise<ChatResponse> =>
     };
   }
   
+  // If the message contains "plus" or "détails" or "information" - suggest sign up
+  if (userQuery.includes('plus') || userQuery.includes('détail') || 
+      userQuery.includes('information') || userQuery.includes('contact') ||
+      userQuery.includes('complet') || userQuery.includes('guide')) {
+    return {
+      message: "Pour accéder à notre sélection complète de prestataires et recevoir des recommandations personnalisées, je vous invite à vous inscrire. Notre Guide Mariable contient tous les détails sur nos prestataires partenaires !",
+      shouldRedirect: true
+    };
+  }
+  
   // If this is the first or second message from user and no keywords are detected
   if (messages.filter(m => m.role === 'user').length <= 2) {
     return { 
-      message: "Bonjour et félicitations pour votre mariage ! Je suis Mathilde de Mariable, votre wedding planner digital. Dites-moi simplement la région et le type de prestataire recherché (lieu, photographe, traiteur...)."
+      message: "Quel type de prestataire recherchez-vous pour votre mariage ? (lieu, photographe, traiteur, DJ, fleuriste...)"
     };
   }
   
   // Default response when no specific keywords are detected
   return {
-    message: "Pour vous aider, j'ai besoin de connaître : la région/ville de votre mariage et le type de prestataire recherché (lieu, photographe, traiteur...)."
+    message: "Pour vous aider efficacement, dites-moi quel type de prestataire vous intéresse (lieu, photographe, traiteur...) et dans quelle région se déroulera votre mariage."
   };
 };
 
@@ -127,16 +140,17 @@ function getRecommendations(vendorType: string, location: string): ChatResponse 
       (vendorType === 'dj' && vendor.type.toLowerCase() === 'dj')
     );
     
-    // Take up to 3 random vendors if we have more than 3
-    if (filteredVendors.length > 3) {
-      filteredVendors = filteredVendors.sort(() => 0.5 - Math.random()).slice(0, 3);
+    // Take up to 2 random vendors if we have more than 2
+    if (filteredVendors.length > 2) {
+      filteredVendors = filteredVendors.sort(() => 0.5 - Math.random()).slice(0, 2);
     }
   } else {
-    // Limit to 3 recommendations 
-    filteredVendors = filteredVendors.slice(0, 3);
+    // Limit to 2 recommendations for a cleaner interface
+    filteredVendors = filteredVendors.slice(0, 2);
   }
   
   let responseMessage = "";
+  let shouldRedirect = false;
   
   if (filteredVendors.length > 0) {
     const formattedVendorType = vendorType === 'wedding planner' ? 'wedding planners' : 
@@ -144,34 +158,15 @@ function getRecommendations(vendorType: string, location: string): ChatResponse 
     
     responseMessage = `Voici mes recommandations de ${formattedVendorType} à ${capitalizeFirstLetter(location)} :`;
     
-    // Add follow-up question to keep the conversation going
-    const otherVendorTypes = Object.keys(vendorsData.reduce((acc: Record<string, boolean>, vendor) => {
-      if (vendor.type.toLowerCase() !== vendorType.toLowerCase()) {
-        acc[vendor.type.toLowerCase()] = true;
-      }
-      return acc;
-    }, {})).slice(0, 2);
+    // Add follow-up question to suggest subscription for more options
+    responseMessage += `\n\nSouhaitez-vous voir plus d'options ou avoir des informations détaillées sur ces prestataires ?`;
     
-    if (otherVendorTypes.length > 0) {
-      const suggestionType1 = otherVendorTypes[0] === 'dj' ? 'un DJ' : 
-                            (otherVendorTypes[0] === 'wedding planner' ? 'un wedding planner' : 
-                            otherVendorTypes[0] === 'photographe' ? 'un photographe' : 
-                            otherVendorTypes[0] === 'fleuriste' ? 'un fleuriste' : 
-                            otherVendorTypes[0] === 'traiteur' ? 'un traiteur' : 'un lieu');
-      
-      const suggestionType2 = otherVendorTypes.length > 1 ? 
-                            (otherVendorTypes[1] === 'dj' ? 'un DJ' : 
-                            otherVendorTypes[1] === 'wedding planner' ? 'un wedding planner' : 
-                            otherVendorTypes[1] === 'photographe' ? 'un photographe' : 
-                            otherVendorTypes[1] === 'fleuriste' ? 'un fleuriste' : 
-                            otherVendorTypes[1] === 'traiteur' ? 'un traiteur' : 'un lieu') : '';
-      
-      responseMessage += `\n\nBesoin ${suggestionType1}${suggestionType2 ? ` ou ${suggestionType2}` : ''} dans la même région ?`;
-    } else {
-      responseMessage += "\n\nUn autre prestataire vous intéresse ?";
+    // Set flag to potentially redirect after a few more exchanges
+    if (Math.random() > 0.5) {
+      shouldRedirect = true;
     }
   } else {
-    responseMessage = `Je n'ai pas de ${vendorType} à ${capitalizeFirstLetter(location)}. Souhaitez-vous explorer d'autres régions ou un autre type de prestataire ?`;
+    responseMessage = `Je n'ai pas de ${vendorType} à ${capitalizeFirstLetter(location)} dans ma base actuellement. Souhaitez-vous explorer d'autres régions ou un autre type de prestataire ?`;
   }
   
   // Create recommendations with personalized reasons
@@ -219,7 +214,8 @@ function getRecommendations(vendorType: string, location: string): ChatResponse 
   
   return {
     message: responseMessage,
-    recommendations
+    recommendations,
+    shouldRedirect
   };
 }
 

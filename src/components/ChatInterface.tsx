@@ -10,6 +10,7 @@ import Message from './Message';
 import { sendMessage } from '@/services/chatService';
 import { v4 as uuidv4 } from 'uuid';
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from 'react-router-dom';
 
 interface ChatInterfaceProps {
   isSimpleInput?: boolean;
@@ -26,7 +27,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     {
       id: 'welcome',
       role: 'assistant',
-      content: "Bonjour et félicitations pour votre mariage ! Je suis Mathilde de Mariable, votre wedding planner digital. Pour vous recommander les meilleurs prestataires, dites-moi simplement dans quelle région se déroulera votre mariage et quel type de prestataire vous recherchez (lieu, photographe, traiteur...) 💍",
+      content: "Bonjour et félicitations pour votre mariage ! Je suis Mathilde de Mariable, votre wedding planner digital ✨ Dites-moi tout, je vais vous aider à trouver les meilleurs prestataires selon vos envies.",
       timestamp: new Date()
     }
   ]);
@@ -38,6 +39,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (inputRef.current) {
@@ -101,6 +103,17 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
           ...prev,
           [assistantMessage.id]: response.recommendations || []
         }));
+      }
+      
+      // Redirect to signup form if the message suggests more information
+      if (response.shouldRedirect) {
+        setTimeout(() => {
+          toast({
+            title: "Découvrez plus de prestataires",
+            description: "Je vous invite à vous inscrire pour découvrir notre sélection complète de prestataires de qualité.",
+          });
+          navigate('/commencer');
+        }, 2000);
       }
       
     } catch (error) {
