@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -47,7 +46,6 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const navigate = useNavigate();
   const isMobile = useIsMobile();
 
-  // Initialize with welcome message only for the simple input
   useEffect(() => {
     if (isSimpleInput) {
       setMessages([
@@ -79,17 +77,14 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   }, [initialMessage, isSimpleInput]);
 
   useEffect(() => {
-    // Afficher les boutons d'options initiales après le premier message utilisateur
     if (currentStep === 1) {
       const initialOptions = getInitialOptions();
       setOptionButtons(initialOptions);
       setActionButtons([]);
       setShowResetButton(false);
     }
-    // Une fois que le type de besoin est défini, demander la localisation
     else if (currentStep === 2 && conversationContext.needType) {
       if (conversationContext.needType === "aide") {
-        // Proposer les trois boutons d'aide
         setOptionButtons([]);
         setActionButtons([
           { 
@@ -100,13 +95,13 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
             newTab: true
           },
           { 
-            text: "Lancer une planification personnalisée", 
+            text: "Je veux de l'aide pour la planification", 
             value: "planification", 
             icon: React.createElement(Calendar, { className: "h-4 w-4" }),
             link: "/services/planification"
           },
           { 
-            text: "Obtenir des conseils personnalisés", 
+            text: "Je veux des conseils personnalisés", 
             value: "conseils", 
             icon: React.createElement(HelpCircle, { className: "h-4 w-4" }),
             link: "/services/conseils"
@@ -115,7 +110,6 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         setShowResetButton(true);
       } else {
         const locationOptions = getLocationOptions();
-        // Ajouter l'option "Autre" aux options de localisation
         locationOptions.push({ 
           text: "Autre", 
           value: "autre", 
@@ -126,7 +120,6 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         setShowResetButton(true);
       }
     }
-    // Une fois que la localisation est définie, afficher le bouton de réinitialisation
     else if (currentStep > 2) {
       setOptionButtons([]);
       setShowResetButton(true);
@@ -142,20 +135,17 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   };
 
   const handleReset = () => {
-    // Réinitialiser la conversation
     setMessages([]);
     setRecommendations({});
     setCurrentStep(1);
     setConversationContext({});
     setInputValue('');
     
-    // Afficher les options initiales
     const initialOptions = getInitialOptions();
     setOptionButtons(initialOptions);
     setActionButtons([]);
     setShowResetButton(false);
     
-    // Ajouter un message pour indiquer que la conversation recommence
     const resetMessage: MessageType = {
       id: uuidv4(),
       role: 'assistant',
@@ -167,7 +157,6 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   };
 
   const handleNoRecommendationsFound = () => {
-    // Afficher les boutons d'action en cas d'absence de recommandations
     setActionButtons([
       { 
         text: "Nous contacter directement", 
@@ -184,20 +173,9 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       }
     ]);
     setShowResetButton(true);
-    
-    // Ajouter un message pour informer l'utilisateur
-    const noRecommendationsMessage: MessageType = {
-      id: uuidv4(),
-      role: 'assistant',
-      content: "Oups, je n'ai pas encore de prestataire enregistré dans cette catégorie pour cette région. Mais vous pouvez :",
-      timestamp: new Date()
-    };
-    
-    setMessages(prev => [...prev, noRecommendationsMessage]);
   };
 
   const handleOptionClick = async (option: {text: string, value: string, action?: string}) => {
-    // Ajouter l'option sélectionnée comme message utilisateur
     const userMessage: MessageType = {
       id: uuidv4(),
       role: 'user',
@@ -210,23 +188,19 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     setIsLoading(true);
     
     try {
-      // Si c'est une action spéciale
       if (option.action === "redirect") {
         navigate(option.value);
         return;
       }
       
-      // Traiter l'option sélectionnée et obtenir une réponse
       const { response, updatedContext, nextStep, noRecommendationsFound } = await handleOptionSelected(
         option.value, 
         currentStep, 
         conversationContext
       );
       
-      // Mettre à jour le contexte de la conversation
       setConversationContext(updatedContext);
       
-      // Passer à l'étape suivante
       setCurrentStep(nextStep);
       
       const assistantMessage: MessageType = {
@@ -301,7 +275,6 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     }
     
     try {
-      // Après la première requête, afficher le message de bienvenue en premier
       if (!isSimpleInput && messages.length === 0) {
         const welcomeMessage: MessageType = {
           id: 'welcome',
@@ -314,7 +287,6 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       
       const response = await sendMessage([...messages, userMessage]);
       
-      // Si c'est le premier message utilisateur, passer à l'étape 1
       if (messages.length === 0 || (isSimpleInput && messages.length === 1)) {
         setCurrentStep(1);
       }
