@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { VendorRecommendation, Message as MessageType } from '@/types';
 import { v4 as uuidv4 } from 'uuid';
@@ -211,20 +210,20 @@ export const handleOptionSelected = async (
           message: "Voici quelques ressources pour vous aider à démarrer l'organisation de votre mariage:",
           actionButtons: [
             { 
-              text: "Accéder au Guide Mariable", 
-              action: "link", 
-              link: "https://leguidemariable.softr.app/",
-              newTab: true
-            },
-            { 
-              text: "Je veux de l'aide pour la planification", 
+              text: "Aide à la planification", 
               action: "link", 
               link: "/services/planification"
             },
             { 
-              text: "Je veux des conseils", 
+              text: "Conseils personnalisés", 
               action: "link", 
               link: "/services/conseils"
+            },
+            { 
+              text: "Accéder au Guide Mariable", 
+              action: "link", 
+              link: "https://leguidemariable.softr.app/",
+              newTab: true
             }
           ]
         },
