@@ -15,47 +15,38 @@ export const VendorCard: React.FC<VendorCardProps> = ({ recommendation }) => {
   const { vendor, reason } = recommendation;
   
   return (
-    <Card className="vendor-card overflow-hidden border-wedding-olive/30 hover:shadow-md transition-all p-4">
-      <div className="flex items-center gap-2 mb-2">
-        <span className="text-wedding-olive text-2xl">💍</span>
-        <h3 className="text-xl font-serif">{vendor.nom}</h3>
-        <span className="ml-auto text-lg font-semibold flex items-center">
+    <Card className="vendor-card overflow-hidden border-wedding-olive/30 hover:shadow-md transition-all p-3">
+      <div className="flex items-center gap-2 mb-1">
+        <h3 className="text-lg font-serif">{vendor.nom}</h3>
+        <span className="ml-auto text-base flex items-center">
           <Euro className="h-4 w-4 mr-1" />
           {vendor.budget}{vendor.type === 'Traiteur' ? '/pers' : ''}
         </span>
       </div>
       
-      <div className="flex items-center gap-2 mb-3">
-        <Badge variant="outline" className="rounded-full">
+      <div className="flex items-center gap-2 mb-2">
+        <Badge variant="outline" className="rounded-full text-xs">
           {vendor.type}
         </Badge>
-        <span className="text-sm flex items-center text-muted-foreground">
+        <span className="text-xs flex items-center text-muted-foreground">
           <MapPin className="h-3 w-3 mr-1" /> {vendor.lieu}
         </span>
       </div>
       
-      <CardContent className="p-0 mb-4">
-        <p className="text-gray-600">
+      <CardContent className="p-0 mb-3">
+        <p className="text-sm text-gray-600">
           {reason}
         </p>
-        
-        <div className="flex flex-wrap gap-2 mt-3">
-          {vendor.style.map((style) => (
-            <Badge key={style} variant="outline" className="rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 border-0">
-              {style}
-            </Badge>
-          ))}
-        </div>
       </CardContent>
       
       <CardFooter className="p-0">
         <Button 
-          size="lg" 
+          size="sm" 
           className="w-full bg-wedding-olive hover:bg-wedding-olive/90 text-white flex items-center justify-center"
           asChild
         >
           <Link to="/commencer">
-            <ExternalLink className="h-4 w-4 mr-2" /> Découvrir
+            <ExternalLink className="h-3 w-3 mr-1" /> Découvrir
           </Link>
         </Button>
       </CardFooter>

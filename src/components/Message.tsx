@@ -22,9 +22,9 @@ export const Message: React.FC<MessageProps> = ({ message, recommendations }) =>
   };
 
   return (
-    <div className={`flex w-full ${isUser ? 'justify-end' : 'justify-start'} mb-4 animate-fade-in`}>
-      <div className={`max-w-[80%] ${isUser ? 'order-2' : 'order-1'}`}>
-        <Card className={`p-3 ${isUser ? 'chat-bubble-user' : 'chat-bubble-assistant'}`}>
+    <div className={`flex w-full ${isUser ? 'justify-end' : 'justify-start'} mb-3 animate-fade-in`}>
+      <div className={`max-w-[85%] ${isUser ? 'order-2' : 'order-1'}`}>
+        <Card className={`p-2 ${isUser ? 'chat-bubble-user' : 'chat-bubble-assistant'}`}>
           <CardContent className="p-0">
             {renderContent()}
           </CardContent>
