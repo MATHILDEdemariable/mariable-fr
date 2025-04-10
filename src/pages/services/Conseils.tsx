@@ -2,9 +2,9 @@
 import React from 'react';
 import ServiceTemplate from '../ServiceTemplate';
 import { Button } from '@/components/ui/button';
-import { WhatsappIcon } from 'lucide-react';
 
-const WhatsappIcon = () => (
+// Custom WhatsApp icon component
+const CustomWhatsappIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21" />
     <path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1Z" />
@@ -63,7 +63,7 @@ const ConseilsContent = () => (
             target="_blank" 
             rel="noopener noreferrer"
           >
-            <WhatsappIcon />
+            <CustomWhatsappIcon />
             <span>Rejoindre la communauté</span>
           </a>
         </Button>
