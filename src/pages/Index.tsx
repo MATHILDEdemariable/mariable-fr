@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import ChatInterface from '@/components/ChatInterface';
@@ -107,10 +106,10 @@ const Index = () => {
           <div className="container px-4">
             <div className="text-center mb-6 md:mb-8">
               <h2 className="text-xl md:text-2xl font-serif mb-2 md:mb-3">
-                Le premier wedding planner digital qui centralise et simplifie les démarches
+                Mariable facilite l'organisation de votre mariage
               </h2>
               <p className="text-muted-foreground text-xs md:text-sm max-w-2xl mx-auto">
-                Tout en vous laissant la liberté de garder la main sur votre grand jour.
+                Transformez l'organisation du mariage en une expérience simple, rapide & agréable
               </p>
             </div>
             
@@ -167,9 +166,11 @@ const Index = () => {
         <section id="features" className="py-8 md:py-12 bg-white">
           <div className="container px-4">
             <div className="text-center mb-6 md:mb-8">
-              <h2 className="text-xl md:text-2xl font-serif mb-2 md:mb-3">Comment Mariable transforme votre expérience</h2>
+              <h2 className="text-xl md:text-2xl font-serif mb-2 md:mb-3">
+                Le premier wedding planner digital qui centralise et simplifie les démarches
+              </h2>
               <p className="text-muted-foreground text-xs md:text-sm max-w-2xl mx-auto">
-                Organiser un mariage devient simple, rapide & agréable
+                Tout en vous laissant la liberté de garder la main sur votre grand jour
               </p>
             </div>
             
