@@ -118,7 +118,7 @@ const Index = () => {
                 <li className="flex items-start gap-3 p-3 md:p-4 bg-white rounded-lg shadow-sm">
                   <CheckCircle className="text-wedding-olive shrink-0 mt-1" size={18} />
                   <div>
-                    <h3 className="font-serif text-wedding-black">Trouver les meilleurs prestataires</h3>
+                    <h3 className="font-serif text-base md:text-lg text-wedding-black">Trouver les meilleurs prestataires</h3>
                     <p className="text-xs sm:text-sm text-muted-foreground">Grâce à notre guide de référence soigneusement sélectionné</p>
                   </div>
                 </li>
@@ -126,7 +126,7 @@ const Index = () => {
                 <li className="flex items-start gap-3 p-3 md:p-4 bg-white rounded-lg shadow-sm">
                   <CheckCircle className="text-wedding-olive shrink-0 mt-1" size={18} />
                   <div>
-                    <h3 className="font-serif text-wedding-black">Planifier chaque étape</h3>
+                    <h3 className="font-serif text-base md:text-lg text-wedding-black">Planifier chaque étape</h3>
                     <p className="text-xs sm:text-sm text-muted-foreground">Organisez votre mariage avec clarté</p>
                   </div>
                 </li>
@@ -134,7 +134,7 @@ const Index = () => {
                 <li className="flex items-start gap-3 p-3 md:p-4 bg-white rounded-lg shadow-sm">
                   <CheckCircle className="text-wedding-olive shrink-0 mt-1" size={18} />
                   <div>
-                    <h3 className="font-serif text-wedding-black">Gérer facilement votre budget</h3>
+                    <h3 className="font-serif text-base md:text-lg text-wedding-black">Gérer facilement votre budget</h3>
                     <p className="text-xs sm:text-sm text-muted-foreground">Avec une transparence totale des prix et des prestations</p>
                   </div>
                 </li>
@@ -142,7 +142,7 @@ const Index = () => {
                 <li className="flex items-start gap-3 p-3 md:p-4 bg-white rounded-lg shadow-sm">
                   <CheckCircle className="text-wedding-olive shrink-0 mt-1" size={18} />
                   <div>
-                    <h3 className="font-serif text-wedding-black">Réserver et gérer en ligne</h3>
+                    <h3 className="font-serif text-base md:text-lg text-wedding-black">Réserver et gérer en ligne</h3>
                     <p className="text-xs sm:text-sm text-muted-foreground">Directement en ligne - prochainement disponible</p>
                   </div>
                 </li>
