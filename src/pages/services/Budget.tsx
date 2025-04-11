@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import ServiceTemplate from '../ServiceTemplate';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -8,10 +7,12 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { ArrowRight, ArrowLeft, Mail, RefreshCcw, Sun, Snowflake, MapPin, Euro } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Download, RefreshCcw, Sun, Snowflake, MapPin, Euro } from 'lucide-react';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { toast } from "@/hooks/use-toast";
+import jsPDF from 'jspdf';
 
-// Données de base pour les calculs
 const PRICE_PER_GUEST = {
   "economique": 100,
   "abordable": 150,
@@ -58,6 +59,9 @@ const BudgetCalculator = () => {
   const [serviceLevel, setServiceLevel] = useState<string>("");
   const [finalBudget, setFinalBudget] = useState<number | null>(null);
   const [showResults, setShowResults] = useState(false);
+  const [showDownloadDialog, setShowDownloadDialog] = useState(false);
+  const [airtableSubmitted, setAirtableSubmitted] = useState(false);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
 
   const handleServiceToggle = (value: string) => {
     if (services.includes(value)) {
@@ -68,21 +72,17 @@ const BudgetCalculator = () => {
   };
 
   const calculateBudget = () => {
-    // Vérifier que tous les champs sont remplis
     if (!region || !season || !guestCount || !serviceLevel || services.length === 0) {
       return;
     }
 
-    // Calculer le budget de base
     const guests = Number(guestCount);
     const basePrice = PRICE_PER_GUEST[serviceLevel as keyof typeof PRICE_PER_GUEST];
     const baseBudget = guests * basePrice;
 
-    // Appliquer les coefficients
     const regionCoef = REGION_COEFFICIENTS[region as keyof typeof REGION_COEFFICIENTS];
     const seasonCoef = SEASON_COEFFICIENTS[season as keyof typeof SEASON_COEFFICIENTS];
     
-    // Calculer le budget final
     const calculatedBudget = Math.round(baseBudget * regionCoef * seasonCoef);
     setFinalBudget(calculatedBudget);
     setShowResults(true);
@@ -113,7 +113,6 @@ const BudgetCalculator = () => {
     }
   };
 
-  // Calculer la répartition du budget
   const getBudgetDistribution = () => {
     if (!finalBudget) return {};
 
@@ -139,10 +138,101 @@ const BudgetCalculator = () => {
       distribution["Décoration & Fleurs"] = Math.round(finalBudget * BUDGET_DISTRIBUTION["deco-fleurs"] / 100);
     }
     
-    // Toujours inclure les divers/imprévus
     distribution["Divers & Imprévus"] = Math.round(finalBudget * BUDGET_DISTRIBUTION["divers"] / 100);
     
     return distribution;
+  };
+
+  const handleDownloadClick = () => {
+    setShowDownloadDialog(true);
+  };
+
+  const handleAirtableLoad = () => {
+    window.addEventListener('message', (event) => {
+      if (event.data && event.data.type === 'airtableSubmission') {
+        setAirtableSubmitted(true);
+        toast({
+          title: "Formulaire soumis !",
+          description: "Vous pouvez maintenant télécharger votre estimation",
+        });
+      }
+    });
+  };
+
+  const generatePDF = () => {
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const margin = 20;
+    
+    doc.setFontSize(22);
+    doc.setTextColor(95, 103, 74);
+    doc.text("Estimation Mariage – Personnalisée", pageWidth/2, 30, { align: 'center' });
+    
+    const regionName = {
+      "ile-de-france": "Île-de-France",
+      "paca": "PACA",
+      "bretagne": "Bretagne",
+      "centre": "Centre-Val de Loire",
+      "bourgogne": "Bourgogne-Franche-Comté",
+      "occitanie": "Occitanie",
+      "normandie": "Normandie",
+      "hauts-de-france": "Hauts-de-France",
+      "grand-est": "Grand Est",
+      "pays-de-la-loire": "Pays de la Loire",
+      "auvergne-rhone-alpes": "Auvergne-Rhône-Alpes",
+      "nouvelle-aquitaine": "Nouvelle-Aquitaine",
+      "corse": "Corse"
+    }[region as keyof typeof REGION_COEFFICIENTS] || "";
+
+    const guestCountText = {
+      "30": "Moins de 50",
+      "75": "50 à 100",
+      "125": "100 à 150",
+      "175": "Plus de 150"
+    }[guestCount] || "";
+
+    const seasonText = season === "haute" ? "Haute saison (avril-sept)" : "Basse saison (oct-mars)";
+    
+    const paramText = `${regionName} - ${seasonText} - ${guestCountText} invités - ${serviceLevel.charAt(0).toUpperCase() + serviceLevel.slice(1)}`;
+    doc.text(paramText, pageWidth/2, 50, { align: 'center' });
+    
+    doc.setFontSize(18);
+    doc.setTextColor(95, 103, 74);
+    doc.text("Budget Total Estimé", margin, 70);
+    
+    doc.setFontSize(22);
+    doc.setTextColor(0, 0, 0);
+    doc.text(`${finalBudget?.toLocaleString('fr-FR')} €`, margin, 85);
+    
+    doc.setFontSize(16);
+    doc.setTextColor(95, 103, 74);
+    doc.text("Répartition Budgétaire", margin, 105);
+    
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+    
+    const distribution = getBudgetDistribution();
+    let yPosition = 120;
+    
+    Object.entries(distribution).forEach(([service, amount], index) => {
+      doc.text(`${service}`, margin, yPosition);
+      doc.text(`${amount.toLocaleString('fr-FR')} €`, pageWidth - margin - 40, yPosition, { align: 'right' });
+      yPosition += 10;
+    });
+    
+    doc.setFontSize(10);
+    doc.setTextColor(128, 128, 128);
+    doc.text("Estimation indicative générée par Mariable.fr", pageWidth/2, 280, { align: 'center' });
+    
+    doc.save("estimation-mariage-mariable.pdf");
+    
+    setShowDownloadDialog(false);
+    setAirtableSubmitted(false);
+    
+    toast({
+      title: "Estimation téléchargée !",
+      description: "Votre fichier PDF a été téléchargé avec succès.",
+    });
   };
 
   const renderStepContent = () => {
@@ -439,12 +529,48 @@ const BudgetCalculator = () => {
             </Button>
             <Button 
               className="w-full sm:w-auto bg-wedding-olive hover:bg-wedding-olive/90 text-white"
+              onClick={handleDownloadClick}
             >
-              <Mail className="mr-2 h-4 w-4" /> Recevoir par email
+              <Download className="mr-2 h-4 w-4" /> 📥 Télécharger mon estimation
             </Button>
           </CardFooter>
         </Card>
       )}
+
+      <Dialog open={showDownloadDialog} onOpenChange={setShowDownloadDialog}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Télécharger votre estimation</DialogTitle>
+            <DialogDescription>
+              Entrez votre adresse email pour recevoir ou télécharger votre estimation personnalisée.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="py-4">
+            {!airtableSubmitted ? (
+              <iframe 
+                ref={iframeRef}
+                className="airtable-embed w-full border border-gray-200 rounded-md"
+                src="https://airtable.com/embed/app6YR8d1UIVu4KQG/pagdkAeOPWMiQUIVU/form"
+                frameBorder="0"
+                width="100%" 
+                height="400"
+                style={{ background: "transparent" }}
+                onLoad={handleAirtableLoad}
+              ></iframe>
+            ) : (
+              <div className="text-center py-4">
+                <Button
+                  onClick={generatePDF}
+                  className="bg-wedding-olive hover:bg-wedding-olive/90 text-white"
+                >
+                  ✅ Télécharger mon estimation
+                </Button>
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
