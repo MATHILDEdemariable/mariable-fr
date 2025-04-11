@@ -13,26 +13,18 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { CalendarIcon, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-// Wedding planning tasks with timeline (months before wedding)
+// Wedding planning tasks
 const weddingTasks = [
-  { id: 1, title: "Choisir le lieu de réception", months: 12, priority: "haute", category: "essentiel" },
-  { id: 2, title: "Réserver le traiteur", months: 10, priority: "haute", category: "essentiel" },
-  { id: 3, title: "Trouver votre photographe", months: 9, priority: "haute", category: "essentiel" },
-  { id: 4, title: "Choisir la robe de mariée", months: 8, priority: "haute", category: "essentiel" },
-  { id: 5, title: "Réserver l'animation musicale (DJ/groupe)", months: 8, priority: "moyenne", category: "essentiel" },
-  { id: 6, title: "Organiser la cérémonie", months: 7, priority: "haute", category: "essentiel" },
-  { id: 7, title: "Choisir les témoins et demoiselles d'honneur", months: 7, priority: "moyenne", category: "organisation" },
-  { id: 8, title: "Envoyer les faire-parts", months: 6, priority: "haute", category: "communication" },
-  { id: 9, title: "Réserver l'hébergement pour les invités", months: 6, priority: "moyenne", category: "organisation" },
-  { id: 10, title: "Choisir les alliances", months: 5, priority: "moyenne", category: "essentiel" },
-  { id: 11, title: "Organiser le transport", months: 5, priority: "basse", category: "organisation" },
-  { id: 12, title: "Commander le gâteau", months: 4, priority: "moyenne", category: "essentiel" },
-  { id: 13, title: "Prévoir la décoration florale", months: 4, priority: "moyenne", category: "déco" },
-  { id: 14, title: "Planifier la liste des cadeaux", months: 3, priority: "basse", category: "organisation" },
-  { id: 15, title: "Organiser le plan de table", months: 2, priority: "haute", category: "organisation" },
-  { id: 16, title: "Derniers essayages", months: 1, priority: "haute", category: "essentiel" },
-  { id: 17, title: "Confirmer avec tous les prestataires", months: 1, priority: "haute", category: "organisation" },
-  { id: 18, title: "Préparer la valise pour la lune de miel", months: 0.5, priority: "basse", category: "personnel" }
+  { id: 1, title: "Posez les bases", description: "Définissez la vision de votre mariage : style, ambiance, type de cérémonie.", priority: "haute", category: "essentiel" },
+  { id: 2, title: "Estimez le nombre d'invités", description: "Même approximatif, cela guidera vos choix logistiques et budgétaires.", priority: "haute", category: "organisation" },
+  { id: 3, title: "Calibrez votre budget", description: "Évaluez vos moyens et priorisez les postes les plus importants selon vos envies.", priority: "haute", category: "essentiel" },
+  { id: 4, title: "Choisissez une période ou une date cible", description: "Cela conditionne les disponibilités des lieux et prestataires.", priority: "haute", category: "essentiel" },
+  { id: 5, title: "Réservez les prestataires clés", description: "Lieu, traiteur, photographe en priorité. Puis DJ, déco, animation, etc.", priority: "haute", category: "essentiel" },
+  { id: 6, title: "Gérez les démarches officielles", description: "Mairie, cérémonies religieuses ou laïques, contrats, assurances, etc.", priority: "moyenne", category: "essentiel" },
+  { id: 7, title: "Anticipez la coordination du jour J", description: "Prévoyez une coordinatrice (recommandée), les préparatifs beauté, la logistique (transport, hébergements) et les temps forts.", priority: "moyenne", category: "organisation" },
+  { id: 8, title: "Préparez vos éléments personnels", description: "Tenues, alliances, accessoires, papeterie, DIY ou détails personnalisés.", priority: "moyenne", category: "personnel" },
+  { id: 9, title: "Consolidez votre organisation", description: "Revoyez chaque point avec vos prestataires : timing, livraisons, besoins techniques, derniers ajustements.", priority: "haute", category: "organisation" },
+  { id: 10, title: "Vivez pleinement votre journée", description: "Vous avez tout prévu : il ne reste plus qu'à profiter à 100% !", priority: "haute", category: "personnel" }
 ];
 
 const PlanningChecklist = () => {
@@ -45,25 +37,6 @@ const PlanningChecklist = () => {
   const handleDateSelect = (date: Date | undefined) => {
     setWeddingDate(date);
     setShowCalendar(false);
-  };
-
-  const getTasksByMonth = () => {
-    if (!weddingDate) return {};
-    
-    const timeline: Record<string, typeof tasksWithStatus> = {};
-    
-    tasksWithStatus.forEach(task => {
-      const taskDate = addMonths(weddingDate, -task.months);
-      const monthYear = format(taskDate, 'MMMM yyyy', { locale: fr });
-      
-      if (!timeline[monthYear]) {
-        timeline[monthYear] = [];
-      }
-      
-      timeline[monthYear].push(task);
-    });
-    
-    return timeline;
   };
   
   const toggleTaskCompletion = (taskId: number) => {
@@ -85,9 +58,9 @@ const PlanningChecklist = () => {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle className="text-xl">Créez votre rétroplanning personnalisé</CardTitle>
+          <CardTitle className="text-xl">Créez votre checklist personnalisée</CardTitle>
           <CardDescription>
-            Entrez votre date de mariage pour obtenir un planning sur mesure
+            Organisez votre mariage en 10 étapes clés (même sans rien y connaître)
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -124,58 +97,48 @@ const PlanningChecklist = () => {
         </CardContent>
       </Card>
 
-      {weddingDate && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-xl flex items-center">
-              <span>Votre progression</span>
-              <div className="ml-auto text-wedding-olive">{getProgressPercentage()}%</div>
-            </CardTitle>
-            <div className="w-full h-2 bg-gray-200 rounded-full mt-2">
-              <div 
-                className="h-full bg-wedding-olive rounded-full" 
-                style={{ width: `${getProgressPercentage()}%` }} 
-              />
-            </div>
-          </CardHeader>
-          <CardContent>
-            <h3 className="font-medium text-lg mb-4">Votre rétroplanning complet</h3>
-            <div className="space-y-6">
-              {Object.entries(getTasksByMonth()).map(([month, tasks]) => (
-                <div key={month} className="border-l-2 border-wedding-olive/30 pl-4 ml-2">
-                  <h3 className="font-medium text-lg mb-2">{month}</h3>
-                  <div className="space-y-2">
-                    {tasks.map((task) => (
-                      <div key={task.id} className="flex items-start space-x-2">
-                        <Checkbox 
-                          id={`timeline-task-${task.id}`} 
-                          checked={task.completed}
-                          onCheckedChange={() => toggleTaskCompletion(task.id)}
-                          className="mt-0.5"
-                        />
-                        <label 
-                          htmlFor={`timeline-task-${task.id}`} 
-                          className={`cursor-pointer ${task.completed ? 'line-through text-muted-foreground' : ''}`}
-                        >
-                          {task.title}
-                          <div className="flex items-center text-xs text-muted-foreground space-x-2 mt-1">
-                            <span className={`px-2 py-0.5 rounded-full ${
-                              task.priority === 'haute' ? 'bg-red-100 text-red-800' : 
-                              task.priority === 'moyenne' ? 'bg-amber-100 text-amber-800' : 'bg-gray-100'
-                            }`}>
-                              Priorité {task.priority}
-                            </span>
-                          </div>
-                        </label>
-                      </div>
-                    ))}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-xl flex items-center">
+            <span>Votre progression</span>
+            <div className="ml-auto text-wedding-olive">{getProgressPercentage()}%</div>
+          </CardTitle>
+          <div className="w-full h-2 bg-gray-200 rounded-full mt-2">
+            <div 
+              className="h-full bg-wedding-olive rounded-full" 
+              style={{ width: `${getProgressPercentage()}%` }} 
+            />
+          </div>
+        </CardHeader>
+        <CardContent>
+          <h3 className="font-medium text-lg mb-4">Organiser son mariage en 10 étapes clés</h3>
+          <div className="space-y-4">
+            {tasksWithStatus.map((task) => (
+              <div key={task.id} className="border-l-2 border-wedding-olive/30 pl-4 ml-2">
+                <div className="flex items-start space-x-2">
+                  <Checkbox 
+                    id={`task-${task.id}`} 
+                    checked={task.completed}
+                    onCheckedChange={() => toggleTaskCompletion(task.id)}
+                    className="mt-0.5"
+                  />
+                  <div>
+                    <label 
+                      htmlFor={`task-${task.id}`} 
+                      className={`cursor-pointer font-medium ${task.completed ? 'line-through text-muted-foreground' : ''}`}
+                    >
+                      {task.id}. {task.title}
+                    </label>
+                    <p className={`mt-1 text-sm ${task.completed ? 'line-through text-muted-foreground' : 'text-muted-foreground'}`}>
+                      {task.description}
+                    </p>
                   </div>
                 </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
 
       <div className="mt-8 text-center">
         <Card className="bg-wedding-cream/20 border-wedding-olive/20">
@@ -208,7 +171,7 @@ const PlanificationContent = () => (
       simplicité et efficacité.
     </p>
     
-    <h2 className="text-2xl font-serif mt-8 mb-4">Votre rétroplanning personnalisé</h2>
+    <h2 className="text-2xl font-serif mt-8 mb-4">Votre checklist de mariage simplifiée</h2>
     
     <PlanningChecklist />
     
