@@ -4,14 +4,13 @@ import { Link } from 'react-router-dom';
 import ServiceTemplate from '../ServiceTemplate';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Calendar } from '@/components/ui/calendar';
 import { Checkbox } from '@/components/ui/checkbox';
 import { format, addMonths, differenceInMonths, isBefore } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { CalendarIcon, CheckCircle, ArrowRight } from 'lucide-react';
+import { CalendarIcon, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 // Wedding planning tasks with timeline (months before wedding)
@@ -38,7 +37,6 @@ const weddingTasks = [
 
 const PlanningChecklist = () => {
   const [weddingDate, setWeddingDate] = useState<Date | undefined>(undefined);
-  const [dateInputValue, setDateInputValue] = useState("");
   const [showCalendar, setShowCalendar] = useState(false);
   const [tasksWithStatus, setTasksWithStatus] = useState(
     weddingTasks.map(task => ({ ...task, completed: false }))
@@ -47,40 +45,8 @@ const PlanningChecklist = () => {
   const handleDateSelect = (date: Date | undefined) => {
     setWeddingDate(date);
     setShowCalendar(false);
-    setDateInputValue(date ? format(date, 'dd MMMM yyyy', { locale: fr }) : '');
   };
 
-  const getCurrentTasks = () => {
-    if (!weddingDate) return [];
-    
-    const today = new Date();
-    const monthsToWedding = differenceInMonths(weddingDate, today);
-    
-    return tasksWithStatus
-      .filter(task => {
-        // Show tasks that should be done in this time period
-        // (tasks due in the next 3 months or overdue tasks)
-        return task.months <= monthsToWedding + 3 && !task.completed;
-      })
-      .sort((a, b) => {
-        // Sort by overdue status first, then by priority and months
-        const aOverdue = a.months > monthsToWedding;
-        const bOverdue = b.months > monthsToWedding;
-        
-        if (aOverdue && !bOverdue) return -1;
-        if (!aOverdue && bOverdue) return 1;
-        
-        // Same overdue status, sort by priority
-        const priorityOrder = { haute: 0, moyenne: 1, basse: 2 };
-        return priorityOrder[a.priority as keyof typeof priorityOrder] - 
-               priorityOrder[b.priority as keyof typeof priorityOrder];
-      });
-  };
-  
-  const getCompletedTasks = () => {
-    return tasksWithStatus.filter(task => task.completed);
-  };
-  
   const getTasksByMonth = () => {
     if (!weddingDate) return {};
     
@@ -113,10 +79,6 @@ const PlanningChecklist = () => {
   const getProgressPercentage = () => {
     const completed = tasksWithStatus.filter(t => t.completed).length;
     return Math.round((completed / tasksWithStatus.length) * 100);
-  };
-
-  const formatDateToMonthYear = (date: Date) => {
-    return format(date, 'MMMM yyyy', { locale: fr });
   };
 
   return (
@@ -163,104 +125,56 @@ const PlanningChecklist = () => {
       </Card>
 
       {weddingDate && (
-        <>
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-xl flex items-center">
-                <span>Votre progression</span>
-                <div className="ml-auto text-wedding-olive">{getProgressPercentage()}%</div>
-              </CardTitle>
-              <div className="w-full h-2 bg-gray-200 rounded-full mt-2">
-                <div 
-                  className="h-full bg-wedding-olive rounded-full" 
-                  style={{ width: `${getProgressPercentage()}%` }} 
-                />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <h3 className="font-medium text-lg mb-4">À faire maintenant</h3>
-              <div className="space-y-2">
-                {getCurrentTasks().length > 0 ? (
-                  getCurrentTasks().map((task) => (
-                    <div 
-                      key={task.id} 
-                      className={`flex items-start space-x-2 p-3 rounded-md ${
-                        task.priority === 'haute' ? 'bg-red-50' : 
-                        task.priority === 'moyenne' ? 'bg-amber-50' : 'bg-gray-50'
-                      }`}
-                    >
-                      <Checkbox 
-                        id={`task-${task.id}`} 
-                        checked={task.completed}
-                        onCheckedChange={() => toggleTaskCompletion(task.id)}
-                        className="mt-0.5"
-                      />
-                      <div className="space-y-1">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-xl flex items-center">
+              <span>Votre progression</span>
+              <div className="ml-auto text-wedding-olive">{getProgressPercentage()}%</div>
+            </CardTitle>
+            <div className="w-full h-2 bg-gray-200 rounded-full mt-2">
+              <div 
+                className="h-full bg-wedding-olive rounded-full" 
+                style={{ width: `${getProgressPercentage()}%` }} 
+              />
+            </div>
+          </CardHeader>
+          <CardContent>
+            <h3 className="font-medium text-lg mb-4">Votre rétroplanning complet</h3>
+            <div className="space-y-6">
+              {Object.entries(getTasksByMonth()).map(([month, tasks]) => (
+                <div key={month} className="border-l-2 border-wedding-olive/30 pl-4 ml-2">
+                  <h3 className="font-medium text-lg mb-2">{month}</h3>
+                  <div className="space-y-2">
+                    {tasks.map((task) => (
+                      <div key={task.id} className="flex items-start space-x-2">
+                        <Checkbox 
+                          id={`timeline-task-${task.id}`} 
+                          checked={task.completed}
+                          onCheckedChange={() => toggleTaskCompletion(task.id)}
+                          className="mt-0.5"
+                        />
                         <label 
-                          htmlFor={`task-${task.id}`} 
-                          className="font-medium cursor-pointer"
+                          htmlFor={`timeline-task-${task.id}`} 
+                          className={`cursor-pointer ${task.completed ? 'line-through text-muted-foreground' : ''}`}
                         >
                           {task.title}
+                          <div className="flex items-center text-xs text-muted-foreground space-x-2 mt-1">
+                            <span className={`px-2 py-0.5 rounded-full ${
+                              task.priority === 'haute' ? 'bg-red-100 text-red-800' : 
+                              task.priority === 'moyenne' ? 'bg-amber-100 text-amber-800' : 'bg-gray-100'
+                            }`}>
+                              Priorité {task.priority}
+                            </span>
+                          </div>
                         </label>
-                        <div className="flex items-center text-xs text-muted-foreground space-x-2">
-                          <span className={`px-2 py-0.5 rounded-full ${
-                            task.priority === 'haute' ? 'bg-red-100 text-red-800' : 
-                            task.priority === 'moyenne' ? 'bg-amber-100 text-amber-800' : 'bg-gray-100'
-                          }`}>
-                            Priorité {task.priority}
-                          </span>
-                          <span>
-                            À faire {format(addMonths(weddingDate, -task.months), 'MMMM yyyy', { locale: fr })}
-                          </span>
-                        </div>
                       </div>
-                    </div>
-                  ))
-                ) : (
-                  <div className="text-center p-4 bg-gray-50 rounded-md">
-                    <p>Toutes les tâches sont terminées ! 🎉</p>
+                    ))}
                   </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-xl">Votre rétroplanning complet</CardTitle>
-              <CardDescription>
-                De maintenant jusqu'au jour J - {format(weddingDate, 'dd MMMM yyyy', { locale: fr })}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-6">
-                {Object.entries(getTasksByMonth()).map(([month, tasks]) => (
-                  <div key={month} className="border-l-2 border-wedding-olive/30 pl-4 ml-2">
-                    <h3 className="font-medium text-lg mb-2">{month}</h3>
-                    <div className="space-y-2">
-                      {tasks.map((task) => (
-                        <div key={task.id} className="flex items-start space-x-2">
-                          <Checkbox 
-                            id={`timeline-task-${task.id}`} 
-                            checked={task.completed}
-                            onCheckedChange={() => toggleTaskCompletion(task.id)}
-                            className="mt-0.5"
-                          />
-                          <label 
-                            htmlFor={`timeline-task-${task.id}`} 
-                            className={`cursor-pointer ${task.completed ? 'line-through text-muted-foreground' : ''}`}
-                          >
-                            {task.title}
-                          </label>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
       )}
 
       <div className="mt-8 text-center">
