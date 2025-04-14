@@ -1,8 +1,9 @@
+
 import React, { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import ChatInterface from '@/components/ChatInterface';
 import Header from '@/components/Header';
-import { ArrowRight, Sparkles, Calendar, MapPin, Heart, Instagram, Mail, Phone, CheckCircle } from 'lucide-react';
+import { ArrowRight, Sparkles, Calendar, MapPin, Heart, Instagram, Mail, Phone, CheckCircle, BookOpen, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -70,14 +71,55 @@ const Index = () => {
                 }}
               />
               
-              <div className="mt-3 md:mt-4 flex flex-col sm:flex-row justify-center gap-2 items-center">
-                <button 
-                  onClick={() => navigate('/services/planification')}
-                  className="text-white/80 hover:text-white text-xs sm:text-sm flex items-center gap-1 transition-colors py-1"
-                >
-                  <span>Vous ne savez pas par où commencer ?</span>
-                  <span className="underline font-medium">Voir une démo</span>
-                </button>
+              <div className="mt-6 md:mt-8">
+                <div className="text-center mb-4">
+                  <p className="text-white/90 text-sm md:text-base font-medium">Ou accédez directement à nos ressources</p>
+                </div>
+                
+                <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                  <Button 
+                    size={isMobile ? "default" : "lg"} 
+                    className="bg-wedding-cream hover:bg-wedding-cream/90 text-wedding-black font-medium"
+                    asChild
+                  >
+                    <Link to="/guide-mariable">
+                      <BookOpen className="mr-2 h-5 w-5" />
+                      Guide Mariable
+                    </Link>
+                  </Button>
+                  
+                  <Button 
+                    size={isMobile ? "default" : "lg"} 
+                    className="bg-wedding-olive hover:bg-wedding-olive/90 text-white font-medium"
+                    asChild
+                  >
+                    <Link to="/services/planification">
+                      <Calendar className="mr-2 h-5 w-5" />
+                      Planification
+                    </Link>
+                  </Button>
+                  
+                  <Button 
+                    size={isMobile ? "default" : "lg"} 
+                    className="bg-white hover:bg-white/90 text-wedding-black font-medium"
+                    asChild
+                  >
+                    <Link to="/services/prestataires">
+                      <CheckCircle className="mr-2 h-5 w-5" />
+                      Prestataires
+                    </Link>
+                  </Button>
+                </div>
+                
+                <div className="mt-5 text-center">
+                  <button 
+                    onClick={() => navigate('/services/planification')}
+                    className="text-white/80 hover:text-white text-xs sm:text-sm flex items-center justify-center gap-1 transition-colors py-1 mx-auto"
+                  >
+                    <span>Vous ne savez pas par où commencer ?</span>
+                    <span className="underline font-medium">Voir une démo</span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -213,15 +255,41 @@ const Index = () => {
             <h2 className="text-xl md:text-2xl font-serif mb-3 md:mb-4">
               Prêt à révolutionner l'organisation de votre mariage ?
             </h2>
-            <Button 
-              size={isMobile ? "sm" : "default"} 
-              className="bg-wedding-olive hover:bg-wedding-olive/90 text-white"
-              asChild
-            >
-              <Link to="/services/planification">
-                Essayer Mariable maintenant
-              </Link>
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Button 
+                size={isMobile ? "default" : "lg"} 
+                className="bg-wedding-olive hover:bg-wedding-olive/90 text-white"
+                asChild
+              >
+                <Link to="/services/planification">
+                  <Calendar className="mr-2 h-5 w-5" />
+                  Planification
+                </Link>
+              </Button>
+              
+              <Button 
+                size={isMobile ? "default" : "lg"} 
+                className="bg-wedding-cream hover:bg-wedding-cream/90 text-wedding-black"
+                asChild
+              >
+                <Link to="/guide-mariable">
+                  <BookOpen className="mr-2 h-5 w-5" />
+                  Guide Mariable
+                </Link>
+              </Button>
+              
+              <Button 
+                size={isMobile ? "default" : "lg"} 
+                variant="outline"
+                className="border-wedding-olive text-wedding-olive hover:bg-wedding-olive/10"
+                asChild
+              >
+                <Link to="/contact/nous-contacter">
+                  <MessageCircle className="mr-2 h-5 w-5" />
+                  Nous contacter
+                </Link>
+              </Button>
+            </div>
           </div>
         </section>
       </main>
