@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
@@ -41,7 +40,6 @@ const Index = () => {
                 Trouvez le prestataire idéal pour créer le jour le plus spécial de votre vie
               </p>
               
-              {/* Nouvelle barre de recherche style Airbnb */}
               <div className="max-w-4xl mx-auto">
                 <SearchBar />
               </div>
@@ -160,41 +158,13 @@ const Index = () => {
             <h2 className="text-base md:text-lg font-serif mb-3 md:mb-4">
               Prêt à révolutionner l'organisation de votre mariage ?
             </h2>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <Button 
-                size={isMobile ? "default" : "lg"} 
-                className="bg-wedding-olive hover:bg-wedding-olive/90 text-white"
-                asChild
-              >
-                <Link to="/services/planification">
-                  <Calendar className="mr-2 h-5 w-5" />
-                  Planification
-                </Link>
-              </Button>
-              
-              <Button 
-                size={isMobile ? "default" : "lg"} 
-                className="bg-wedding-cream hover:bg-wedding-cream/90 text-wedding-black"
-                asChild
-              >
-                <Link to="/guide-mariable">
-                  <BookOpen className="mr-2 h-5 w-5" />
-                  Guide Mariable
-                </Link>
-              </Button>
-              
-              <Button 
-                size={isMobile ? "default" : "lg"} 
-                variant="outline"
-                className="border-wedding-olive text-wedding-olive hover:bg-wedding-olive/10"
-                asChild
-              >
-                <Link to="/contact/nous-contacter">
-                  <MessageCircle className="mr-2 h-5 w-5" />
-                  Nous contacter
-                </Link>
-              </Button>
-            </div>
+            <Button 
+              size={isMobile ? "default" : "lg"} 
+              className="bg-wedding-olive hover:bg-wedding-olive/90 text-white"
+              onClick={() => window.open('https://leguidemariable.softr.app/connexion', '_blank')}
+            >
+              Oui je le veux
+            </Button>
           </div>
         </section>
       </main>
@@ -207,7 +177,7 @@ const Index = () => {
                 <img src="/lovable-uploads/c5ca128d-6c6f-4f09-a990-f6f16d47e231.png" alt="Mariable Logo" className="h-10 md:h-12 w-auto" />
               </div>
               <p className="mb-3 text-wedding-black/70 text-xs md:text-sm">
-                Mariable est votre partenaire privilégié pour créer le mariage de vos rêves, en simplifiant chaque étape de l'organisation.
+                Mariable est votre partenaire privilégi�� pour créer le mariage de vos rêves, en simplifiant chaque étape de l'organisation.
               </p>
               <div className="flex gap-4">
                 <a href="https://www.instagram.com/mariable.fr/" aria-label="Instagram" target="_blank" rel="noopener noreferrer" className="text-wedding-black hover:text-wedding-black/70 transition-colors">
@@ -262,7 +232,6 @@ const Index = () => {
         </div>
       </footer>
       
-      {/* Chatbot flottant */}
       <ChatbotButton />
     </div>
   );
