@@ -1,0 +1,59 @@
+
+import React, { useState } from 'react';
+import { MessageCircle, X } from 'lucide-react';
+import ChatInterface from '@/components/ChatInterface';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { useIsMobile } from '@/hooks/use-mobile';
+
+const ChatbotButton = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const isMobile = useIsMobile();
+  
+  const toggleChat = () => {
+    setIsOpen(!isOpen);
+  };
+
+  return (
+    <div className="fixed bottom-6 right-6 z-50">
+      {isOpen ? (
+        <div className="relative">
+          <Card className="absolute bottom-0 right-0 w-[350px] md:w-[400px] h-[500px] shadow-2xl rounded-xl overflow-hidden border">
+            <div className="h-full flex flex-col">
+              <div className="bg-wedding-olive p-3 flex justify-between items-center text-white">
+                <div className="flex items-center gap-2">
+                  <MessageCircle size={20} />
+                  <h3 className="text-sm font-medium">Chat avec Mathilde</h3>
+                </div>
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="text-white hover:bg-wedding-olive/80"
+                  onClick={toggleChat}
+                >
+                  <X size={18} />
+                </Button>
+              </div>
+              <div className="flex-grow overflow-hidden">
+                <ChatInterface 
+                  isSimpleInput={false}
+                  initialMessage="Comment puis-je vous aider à organiser votre mariage ?"
+                  guidedModeOnly={true}
+                />
+              </div>
+            </div>
+          </Card>
+        </div>
+      ) : (
+        <Button 
+          onClick={toggleChat} 
+          className="rounded-full w-14 h-14 bg-wedding-olive hover:bg-wedding-olive/90 shadow-md transition-transform hover:scale-105"
+        >
+          <MessageCircle size={24} className="text-white" />
+        </Button>
+      )}
+    </div>
+  );
+};
+
+export default ChatbotButton;

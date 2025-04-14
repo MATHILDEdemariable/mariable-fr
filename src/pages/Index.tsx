@@ -1,34 +1,20 @@
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import ChatInterface from '@/components/ChatInterface';
 import Header from '@/components/Header';
-import { ArrowRight, Sparkles, Calendar, MapPin, Heart, Instagram, Mail, Phone, CheckCircle, BookOpen, MessageCircle } from 'lucide-react';
+import { ArrowRight, Calendar, MapPin, Heart, Instagram, Mail, BookOpen, MessageCircle, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
 import { useIsMobile } from '@/hooks/use-mobile';
+import SearchBar from '@/components/search/SearchBar';
+import ChatbotButton from '@/components/ChatbotButton';
 
 const Index = () => {
   const navigate = useNavigate();
-  const [showFullChat, setShowFullChat] = useState(false);
-  const [userInitialMessage, setUserInitialMessage] = useState('');
-  const fullChatRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
   
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
-
-  const handleFirstMessage = (message: string) => {
-    setUserInitialMessage(message);
-    setShowFullChat(true);
-    
-    setTimeout(() => {
-      if (fullChatRef.current) {
-        fullChatRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    }, 100);
-  };
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
@@ -47,107 +33,26 @@ const Index = () => {
           </div>
           
           <div className="container relative z-10 mx-auto px-4 py-6 md:py-16">
-            <div className="max-w-3xl mx-auto text-center mb-4 md:mb-8">
-              <div className="inline-flex items-center px-3 py-1 rounded-full bg-wedding-light text-xs text-wedding-black mb-3">
-                <Sparkles size={14} className="mr-2" />
-                <span>Nouveau en 2025</span>
-              </div>
+            <div className="max-w-3xl mx-auto text-center mb-8 md:mb-12">
               <h1 className="text-white text-2xl sm:text-3xl md:text-4xl lg:text-5xl mb-3 md:mb-4">
                 Organisez le mariage <span className="text-wedding-cream">dont vous rêvez</span>
               </h1>
-              <p className="text-white/90 text-sm md:text-base mb-4 md:mb-6 max-w-2xl mx-auto">
-                Dites-nous ce dont vous avez besoin ou quel est le mariage parfait pour vous ! 💍
+              <p className="text-white/90 text-sm md:text-base mb-6 md:mb-8 max-w-2xl mx-auto">
+                Trouvez le prestataire idéal pour créer le jour le plus spécial de votre vie
               </p>
-            </div>
-
-            <div className="max-w-3xl mx-auto px-3 sm:px-0">
-              <ChatInterface 
-                isSimpleInput={true} 
-                onFirstMessage={() => {
-                  const inputElement = document.querySelector('input') as HTMLInputElement;
-                  if (inputElement) {
-                    handleFirstMessage(inputElement.value);
-                  }
-                }}
-              />
               
-              <div className="mt-6 md:mt-8">
-                <div className="text-center mb-4">
-                  <p className="text-white/90 text-sm md:text-base font-medium">Ou accédez directement à nos ressources</p>
-                </div>
-                
-                <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                  <Button 
-                    size={isMobile ? "default" : "lg"} 
-                    className="bg-wedding-cream hover:bg-wedding-cream/90 text-wedding-black font-medium"
-                    asChild
-                  >
-                    <Link to="/guide-mariable">
-                      <BookOpen className="mr-2 h-5 w-5" />
-                      Guide Mariable
-                    </Link>
-                  </Button>
-                  
-                  <Button 
-                    size={isMobile ? "default" : "lg"} 
-                    className="bg-wedding-olive hover:bg-wedding-olive/90 text-white font-medium"
-                    asChild
-                  >
-                    <Link to="/services/planification">
-                      <Calendar className="mr-2 h-5 w-5" />
-                      Planification
-                    </Link>
-                  </Button>
-                  
-                  <Button 
-                    size={isMobile ? "default" : "lg"} 
-                    className="bg-white hover:bg-white/90 text-wedding-black font-medium"
-                    asChild
-                  >
-                    <Link to="/services/prestataires">
-                      <CheckCircle className="mr-2 h-5 w-5" />
-                      Prestataires
-                    </Link>
-                  </Button>
-                </div>
-                
-                <div className="mt-5 text-center">
-                  <button 
-                    onClick={() => navigate('/services/planification')}
-                    className="text-white/80 hover:text-white text-xs sm:text-sm flex items-center justify-center gap-1 transition-colors py-1 mx-auto"
-                  >
-                    <span>Vous ne savez pas par où commencer ?</span>
-                    <span className="underline font-medium">Voir une démo</span>
-                  </button>
-                </div>
+              {/* Nouvelle barre de recherche style Airbnb */}
+              <div className="max-w-4xl mx-auto">
+                <SearchBar />
               </div>
             </div>
           </div>
         </section>
         
-        {showFullChat && (
-          <section ref={fullChatRef} id="chat" className="py-6 md:py-12 bg-white">
-            <div className="container mx-auto px-4">
-              <div className="text-center mb-4 md:mb-6">
-                <h2 className="text-xl md:text-2xl font-serif mb-2">Poursuivez la conversation avec Mathilde</h2>
-                <p className="text-muted-foreground text-xs md:text-sm max-w-2xl mx-auto">
-                  Obtenez des recommendations de prestataires adaptées à vos besoins
-                </p>
-              </div>
-              
-              <div className="max-w-3xl mx-auto">
-                <Card className="bg-white shadow-xl rounded-xl overflow-hidden border">
-                  <ChatInterface initialMessage={userInitialMessage} guidedModeOnly={true} />
-                </Card>
-              </div>
-            </div>
-          </section>
-        )}
-        
         <section className="py-8 md:py-12 bg-wedding-cream/40">
           <div className="container px-4">
             <div className="text-center mb-6 md:mb-8">
-              <h2 className="text-xl md:text-2xl font-serif mb-2 md:mb-3">
+              <h2 className="text-base md:text-lg font-serif mb-2 md:mb-3">
                 Mariable facilite l'organisation de votre mariage
               </h2>
               <p className="text-muted-foreground text-xs md:text-sm max-w-2xl mx-auto">
@@ -208,7 +113,7 @@ const Index = () => {
         <section id="features" className="py-8 md:py-12 bg-white">
           <div className="container px-4">
             <div className="text-center mb-6 md:mb-8">
-              <h2 className="text-xl md:text-2xl font-serif mb-2 md:mb-3">
+              <h2 className="text-base md:text-lg font-serif mb-2 md:mb-3">
                 Le premier wedding planner digital qui centralise et simplifie les démarches
               </h2>
               <p className="text-muted-foreground text-xs md:text-sm max-w-2xl mx-auto">
@@ -252,7 +157,7 @@ const Index = () => {
         
         <section id="contact" className="py-8 md:py-12 bg-white text-wedding-black">
           <div className="container text-center px-4">
-            <h2 className="text-xl md:text-2xl font-serif mb-3 md:mb-4">
+            <h2 className="text-base md:text-lg font-serif mb-3 md:mb-4">
               Prêt à révolutionner l'organisation de votre mariage ?
             </h2>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
@@ -356,6 +261,9 @@ const Index = () => {
           </div>
         </div>
       </footer>
+      
+      {/* Chatbot flottant */}
+      <ChatbotButton />
     </div>
   );
 };
