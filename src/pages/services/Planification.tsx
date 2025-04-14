@@ -4,13 +4,8 @@ import { Link } from 'react-router-dom';
 import ServiceTemplate from '../ServiceTemplate';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { Calendar } from '@/components/ui/calendar';
 import { Checkbox } from '@/components/ui/checkbox';
-import { format, addMonths, differenceInMonths, isBefore } from 'date-fns';
-import { fr } from 'date-fns/locale';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { CalendarIcon, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 // Wedding planning tasks
@@ -28,16 +23,9 @@ const weddingTasks = [
 ];
 
 const PlanningChecklist = () => {
-  const [weddingDate, setWeddingDate] = useState<Date | undefined>(undefined);
-  const [showCalendar, setShowCalendar] = useState(false);
   const [tasksWithStatus, setTasksWithStatus] = useState(
     weddingTasks.map(task => ({ ...task, completed: false }))
   );
-
-  const handleDateSelect = (date: Date | undefined) => {
-    setWeddingDate(date);
-    setShowCalendar(false);
-  };
   
   const toggleTaskCompletion = (taskId: number) => {
     setTasksWithStatus(prev => 
@@ -58,43 +46,11 @@ const PlanningChecklist = () => {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle className="text-xl">Créez votre checklist personnalisée</CardTitle>
+          <CardTitle className="text-xl">Félicitations et bienvenue dans l'univers du mariage</CardTitle>
           <CardDescription>
             Organisez votre mariage en 10 étapes clés (même sans rien y connaître)
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="flex flex-col space-y-4">
-            <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="wedding-date">Date de votre mariage</Label>
-              <div className="flex space-x-2">
-                <Popover open={showCalendar} onOpenChange={setShowCalendar}>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className={cn(
-                        "w-full justify-start text-left font-normal",
-                        !weddingDate && "text-muted-foreground"
-                      )}
-                    >
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {weddingDate ? format(weddingDate, 'dd MMMM yyyy', { locale: fr }) : "Sélectionner la date"}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={weddingDate}
-                      onSelect={handleDateSelect}
-                      initialFocus
-                      disabled={(date) => isBefore(date, new Date())}
-                    />
-                  </PopoverContent>
-                </Popover>
-              </div>
-            </div>
-          </div>
-        </CardContent>
       </Card>
 
       <Card>
@@ -150,11 +106,9 @@ const PlanningChecklist = () => {
             <Button 
               size="lg"
               className="bg-wedding-olive hover:bg-wedding-olive/90 text-white"
-              asChild
+              onClick={() => window.open('https://leguidemariable.softr.app/connexion', '_blank')}
             >
-              <Link to="/commencer">
-                S'inscrire <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
+              S'inscrire <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </CardContent>
         </Card>

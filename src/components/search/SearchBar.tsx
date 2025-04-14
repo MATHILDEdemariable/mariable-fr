@@ -51,13 +51,13 @@ const SearchBar = () => {
             <TabsList className="w-full h-auto bg-wedding-cream/50 p-1 gap-1">
               <TabsTrigger 
                 value="lieu" 
-                className="flex-1 py-3 data-[state=active]:bg-white data-[state=active]:shadow-sm"
+                className="flex-1 py-3 data-[state=active]:bg-white data-[state=active]:shadow-sm text-sm"
               >
                 Lieu
               </TabsTrigger>
               <TabsTrigger 
                 value="prestataires" 
-                className="flex-1 py-3 data-[state=active]:bg-white data-[state=active]:shadow-sm"
+                className="flex-1 py-3 data-[state=active]:bg-white data-[state=active]:shadow-sm text-sm"
               >
                 Prestataires
               </TabsTrigger>
@@ -84,7 +84,7 @@ const SearchBar = () => {
               <Button 
                 onClick={handleSearch}
                 size={isMobile ? "default" : "lg"} 
-                className="bg-wedding-olive hover:bg-wedding-olive/90 text-white rounded-xl flex items-center gap-2 h-12"
+                className="bg-wedding-olive hover:bg-wedding-olive/90 text-white rounded-xl flex items-center gap-2 h-12 text-sm"
               >
                 <Search size={18} />
                 <span>Rechercher</span>

@@ -53,7 +53,7 @@ const DateSelector: React.FC<DateSelectorProps> = ({ className, onDateChange }) 
         <Button
           variant="outline"
           className={cn(
-            "flex-1 justify-start border border-wedding-black/10 bg-white font-normal shadow-sm hover:bg-white/80",
+            "flex-1 justify-start border border-wedding-black/10 bg-white font-normal shadow-sm hover:bg-white/80 text-sm",
             className
           )}
         >
@@ -61,7 +61,7 @@ const DateSelector: React.FC<DateSelectorProps> = ({ className, onDateChange }) 
           <span>{displayText}</span>
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-4" align="center" sideOffset={5}>
+      <PopoverContent className="w-auto p-4 fixed" align="center" sideOffset={5}>
         <div className="space-y-4">
           <Calendar
             mode="single"
@@ -75,7 +75,7 @@ const DateSelector: React.FC<DateSelectorProps> = ({ className, onDateChange }) 
             <Button 
               variant="outline" 
               onClick={handleClearDate}
-              className="flex-1"
+              className="flex-1 text-sm"
             >
               Effacer la date
             </Button>
@@ -83,7 +83,7 @@ const DateSelector: React.FC<DateSelectorProps> = ({ className, onDateChange }) 
               variant={isFlexible ? "default" : "outline"}
               onClick={handleFlexibleToggle}
               className={cn(
-                "flex-1",
+                "flex-1 text-sm",
                 isFlexible && "bg-wedding-olive hover:bg-wedding-olive/90"
               )}
             >
@@ -91,7 +91,7 @@ const DateSelector: React.FC<DateSelectorProps> = ({ className, onDateChange }) 
             </Button>
             <Button 
               onClick={() => setOpen(false)}
-              className="flex-1"
+              className="flex-1 text-sm"
             >
               Appliquer
             </Button>

@@ -87,7 +87,7 @@ const RegionSelector: React.FC<RegionSelectorProps> = ({ className, onRegionsCha
         <Button
           variant="outline"
           className={cn(
-            "flex-1 justify-start border border-wedding-black/10 bg-white font-normal shadow-sm hover:bg-white/80",
+            "flex-1 justify-start border border-wedding-black/10 bg-white font-normal shadow-sm hover:bg-white/80 text-sm",
             className
           )}
         >
@@ -95,7 +95,7 @@ const RegionSelector: React.FC<RegionSelectorProps> = ({ className, onRegionsCha
           <span className="truncate">{displayText}</span>
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-96 p-4" align="center" sideOffset={5}>
+      <PopoverContent className="w-96 p-4 fixed" align="center" sideOffset={5}>
         <div className="space-y-4">
           <Input
             ref={inputRef}
@@ -107,7 +107,7 @@ const RegionSelector: React.FC<RegionSelectorProps> = ({ className, onRegionsCha
 
           <div className="grid grid-cols-1 gap-3">
             <div>
-              <h3 className="font-medium mb-2">Destinations populaires</h3>
+              <h3 className="font-medium text-base mb-2">Destinations populaires</h3>
               <div className="grid grid-cols-1 gap-2">
                 {popularDestinations.map((region) => (
                   <div 
@@ -124,14 +124,14 @@ const RegionSelector: React.FC<RegionSelectorProps> = ({ className, onRegionsCha
                     )}>
                       {selectedRegions.includes(region) && <X className="h-3 w-3 text-white" />}
                     </div>
-                    <span>{region}</span>
+                    <span className="text-sm">{region}</span>
                   </div>
                 ))}
               </div>
             </div>
             
             <div>
-              <h3 className="font-medium mb-2">Toutes les régions</h3>
+              <h3 className="font-medium text-base mb-2">Toutes les régions</h3>
               <ScrollArea className="h-48 pr-4">
                 <div className="space-y-2">
                   {filteredRegions.map((region) => (
@@ -149,7 +149,7 @@ const RegionSelector: React.FC<RegionSelectorProps> = ({ className, onRegionsCha
                       )}>
                         {selectedRegions.includes(region) && <X className="h-3 w-3 text-white" />}
                       </div>
-                      <span>{region}</span>
+                      <span className="text-sm">{region}</span>
                     </div>
                   ))}
                 </div>
@@ -161,10 +161,11 @@ const RegionSelector: React.FC<RegionSelectorProps> = ({ className, onRegionsCha
             <Button 
               variant="outline" 
               onClick={handleClearAll}
+              className="text-sm"
             >
               Effacer
             </Button>
-            <Button onClick={handleApply}>
+            <Button onClick={handleApply} className="text-sm">
               Appliquer
             </Button>
           </div>

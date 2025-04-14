@@ -43,7 +43,7 @@ const GuestSelector: React.FC<GuestSelectorProps> = ({ className, onGuestCountCh
         <Button
           variant="outline"
           className={cn(
-            "flex-1 justify-start border border-wedding-black/10 bg-white font-normal shadow-sm hover:bg-white/80",
+            "flex-1 justify-start border border-wedding-black/10 bg-white font-normal shadow-sm hover:bg-white/80 text-sm",
             className
           )}
         >
@@ -51,7 +51,7 @@ const GuestSelector: React.FC<GuestSelectorProps> = ({ className, onGuestCountCh
           <span>{displayText}</span>
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-72 p-4" align="center" sideOffset={5}>
+      <PopoverContent className="w-72 p-4 fixed" align="center" sideOffset={5}>
         <div className="space-y-4">
           <div>
             <Label className="text-base">Nombre d'invités</Label>
@@ -100,10 +100,11 @@ const GuestSelector: React.FC<GuestSelectorProps> = ({ className, onGuestCountCh
                 setGuestCount(0);
                 onGuestCountChange?.(0);
               }}
+              className="text-sm"
             >
               Réinitialiser
             </Button>
-            <Button onClick={() => setOpen(false)}>
+            <Button onClick={() => setOpen(false)} className="text-sm">
               Appliquer
             </Button>
           </div>
