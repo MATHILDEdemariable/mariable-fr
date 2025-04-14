@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
@@ -71,18 +72,21 @@ const Header = () => {
           </Link>
           
           <div className="flex items-center gap-4">
-            <a 
-              href="https://leguidemariable.softr.app/connexion" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 px-4 py-2 bg-white rounded-full border border-wedding-black/20 shadow-sm hover:shadow transition-all"
-            >
-              <UserRound size={20} className="text-wedding-black" />
-              <span className="hidden md:inline text-sm font-medium">Connexion</span>
-            </a>
-            
             {isMobile ? (
-              <div className="relative">
+              <div className="relative flex items-center gap-2">
+                <Link to="/professionnels" className="flex items-center gap-1 text-wedding-black">
+                  <Users size={20} />
+                </Link>
+                
+                <a 
+                  href="https://leguidemariable.softr.app/connexion" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-3 py-1.5 bg-white rounded-full border border-wedding-black/20 shadow-sm hover:shadow transition-all"
+                >
+                  <UserRound size={20} className="text-wedding-black" />
+                </a>
+                
                 <button 
                   onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                   className="text-wedding-black p-2 rounded-md hover:bg-wedding-cream/50 transition-colors"
@@ -142,81 +146,84 @@ const Header = () => {
                           </Link>
                         </div>
                       </div>
-                      
-                      <div>
-                        <h3 className="font-serif text-lg mb-2">Professionnels</h3>
-                        <div className="pl-2 space-y-2">
-                          <Link to="/professionnels" className="block text-wedding-black hover:text-wedding-olive transition-colors py-1" onClick={closeMobileMenu}>
-                            Devenir partenaire
-                          </Link>
-                        </div>
-                      </div>
                     </nav>
                   </div>
                 )}
               </div>
             ) : (
-              <NavigationMenu>
-                <NavigationMenuList>
-                  <NavigationMenuItem>
-                    <NavigationMenuTrigger className="bg-transparent hover:bg-wedding-cream text-wedding-black">Nos Services</NavigationMenuTrigger>
-                    <NavigationMenuContent>
-                      <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-1 lg:w-[600px]">
-                        <ListItem href="/services/prestataires" title="Recherche de prestataires">
-                          Trouvez les meilleurs prestataires adaptés à vos besoins
-                        </ListItem>
-                        <ListItem href="/services/planification" title="Planification">
-                          Organisez chaque étape de votre mariage sans stress
-                        </ListItem>
-                        <ListItem href="/services/budget" title="Budgétisation">
-                          Gérez votre budget et suivez vos dépenses facilement
-                        </ListItem>
-                        <ListItem href="/services/conseils" title="Conseils personnalisés">
-                          Obtenez des recommandations adaptées à votre style et vos envies
-                        </ListItem>
-                      </ul>
-                    </NavigationMenuContent>
-                  </NavigationMenuItem>
-                  
-                  <NavigationMenuItem>
-                    <NavigationMenuTrigger className="bg-transparent hover:bg-wedding-cream text-wedding-black">À propos</NavigationMenuTrigger>
-                    <NavigationMenuContent>
-                      <ul className="grid w-[400px] gap-3 p-4">
-                        <ListItem href="/about/histoire" title="Notre histoire">
-                          Découvrez comment Mariable est né d'une passion
-                        </ListItem>
-                        <ListItem href="/about/charte" title="Notre charte">
-                          Une méthode innovante et personnalisée pour organiser votre mariage
-                        </ListItem>
-                        <ListItem href="/about/temoignages" title="Témoignages">
-                          Ce que nos clients disent de nous
-                        </ListItem>
-                      </ul>
-                    </NavigationMenuContent>
-                  </NavigationMenuItem>
-                  
-                  <NavigationMenuItem>
-                    <NavigationMenuTrigger className="bg-transparent hover:bg-wedding-cream text-wedding-black">Contact</NavigationMenuTrigger>
-                    <NavigationMenuContent>
-                      <ul className="grid w-[400px] gap-3 p-4">
-                        <ListItem href="/contact/nous-contacter" title="Nous contacter">
-                          Discutez avec notre équipe pour toutes vos questions
-                        </ListItem>
-                        <ListItem href="/contact/faq" title="FAQ">
-                          Réponses aux questions fréquemment posées
-                        </ListItem>
-                      </ul>
-                    </NavigationMenuContent>
-                  </NavigationMenuItem>
+              <>
+                <NavigationMenu>
+                  <NavigationMenuList>
+                    <NavigationMenuItem>
+                      <NavigationMenuTrigger className="bg-transparent hover:bg-wedding-cream text-wedding-black">Nos Services</NavigationMenuTrigger>
+                      <NavigationMenuContent>
+                        <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-1 lg:w-[600px]">
+                          <ListItem href="/services/prestataires" title="Recherche de prestataires">
+                            Trouvez les meilleurs prestataires adaptés à vos besoins
+                          </ListItem>
+                          <ListItem href="/services/planification" title="Planification">
+                            Organisez chaque étape de votre mariage sans stress
+                          </ListItem>
+                          <ListItem href="/services/budget" title="Budgétisation">
+                            Gérez votre budget et suivez vos dépenses facilement
+                          </ListItem>
+                          <ListItem href="/services/conseils" title="Conseils personnalisés">
+                            Obtenez des recommandations adaptées à votre style et vos envies
+                          </ListItem>
+                        </ul>
+                      </NavigationMenuContent>
+                    </NavigationMenuItem>
+                    
+                    <NavigationMenuItem>
+                      <NavigationMenuTrigger className="bg-transparent hover:bg-wedding-cream text-wedding-black">À propos</NavigationMenuTrigger>
+                      <NavigationMenuContent>
+                        <ul className="grid w-[400px] gap-3 p-4">
+                          <ListItem href="/about/histoire" title="Notre histoire">
+                            Découvrez comment Mariable est né d'une passion
+                          </ListItem>
+                          <ListItem href="/about/charte" title="Notre charte">
+                            Une méthode innovante et personnalisée pour organiser votre mariage
+                          </ListItem>
+                          <ListItem href="/about/temoignages" title="Témoignages">
+                            Ce que nos clients disent de nous
+                          </ListItem>
+                        </ul>
+                      </NavigationMenuContent>
+                    </NavigationMenuItem>
+                    
+                    <NavigationMenuItem>
+                      <NavigationMenuTrigger className="bg-transparent hover:bg-wedding-cream text-wedding-black">Contact</NavigationMenuTrigger>
+                      <NavigationMenuContent>
+                        <ul className="grid w-[400px] gap-3 p-4">
+                          <ListItem href="/contact/nous-contacter" title="Nous contacter">
+                            Discutez avec notre équipe pour toutes vos questions
+                          </ListItem>
+                          <ListItem href="/contact/faq" title="FAQ">
+                            Réponses aux questions fréquemment posées
+                          </ListItem>
+                        </ul>
+                      </NavigationMenuContent>
+                    </NavigationMenuItem>
 
-                  <NavigationMenuItem>
-                    <Link to="/professionnels" className="inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium transition-colors hover:bg-wedding-cream text-wedding-black">
-                      <Users size={16} className="mr-1" />
-                      Professionnels
-                    </Link>
-                  </NavigationMenuItem>
-                </NavigationMenuList>
-              </NavigationMenu>
+                    <NavigationMenuItem>
+                      <Link to="/professionnels" className="inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium transition-colors hover:bg-wedding-cream text-wedding-black">
+                        <Users size={16} className="mr-1" />
+                        Professionnels
+                      </Link>
+                    </NavigationMenuItem>
+                  </NavigationMenuList>
+                </NavigationMenu>
+                
+                <a 
+                  href="https://leguidemariable.softr.app/connexion" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-4 py-2 bg-white rounded-full border border-wedding-black/20 shadow-sm hover:shadow transition-all"
+                >
+                  <UserRound size={20} className="text-wedding-black" />
+                  <span className="text-sm font-medium">Connexion</span>
+                </a>
+              </>
             )}
           </div>
         </div>
