@@ -13,7 +13,7 @@ const SearchBar = () => {
   const [activeTab, setActiveTab] = useState('lieu');
   const [selectedRegions, setSelectedRegions] = useState<string[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date | null>();
-  const [dateSelectionType, setDateSelectionType] = useState<'exact' | 'month' | 'flexible'>('exact');
+  const [dateSelectionType, setDateSelectionType] = useState<'exact' | 'flexible'>('exact');
   const [guestCount, setGuestCount] = useState(0);
   const isMobile = useIsMobile();
 
@@ -29,7 +29,7 @@ const SearchBar = () => {
     setSelectedRegions(regions);
   };
 
-  const handleDateChange = (date: Date | null | undefined, type: 'exact' | 'month' | 'flexible') => {
+  const handleDateChange = (date: Date | null | undefined, type: 'exact' | 'flexible') => {
     setSelectedDate(date);
     setDateSelectionType(type);
   };

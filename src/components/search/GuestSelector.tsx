@@ -51,7 +51,7 @@ const GuestSelector: React.FC<GuestSelectorProps> = ({ className, onGuestCountCh
           <span>{displayText}</span>
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-72 p-4" align="center">
+      <PopoverContent className="w-72 p-4" align="center" sideOffset={5}>
         <div className="space-y-4">
           <div>
             <Label className="text-base">Nombre d'invités</Label>

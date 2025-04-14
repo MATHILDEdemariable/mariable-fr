@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Calendar as CalendarIcon, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Calendar as CalendarIcon } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { Button } from '@/components/ui/button';
@@ -11,40 +11,39 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 type DateSelectorProps = {
   className?: string;
-  onDateChange?: (date: Date | null | undefined, type: 'exact' | 'month' | 'flexible') => void;
+  onDateChange?: (date: Date | null | undefined, type: 'exact' | 'flexible') => void;
 };
 
 const DateSelector: React.FC<DateSelectorProps> = ({ className, onDateChange }) => {
   const [date, setDate] = useState<Date | undefined>();
-  const [selectionType, setSelectionType] = useState<'exact' | 'month' | 'flexible'>('exact');
+  const [isFlexible, setIsFlexible] = useState(false);
   const [open, setOpen] = useState(false);
 
   const handleDateSelect = (selected: Date | undefined) => {
     setDate(selected);
-    onDateChange?.(selected, selectionType);
+    onDateChange?.(selected, isFlexible ? 'flexible' : 'exact');
   };
 
-  const handleTypeChange = (value: 'exact' | 'month' | 'flexible') => {
-    setSelectionType(value);
-    onDateChange?.(date, value);
+  const handleFlexibleToggle = () => {
+    setIsFlexible(!isFlexible);
+    onDateChange?.(date, !isFlexible ? 'flexible' : 'exact');
   };
 
   const handleClearDate = () => {
     setDate(undefined);
-    onDateChange?.(undefined, selectionType);
-    setOpen(false);
+    onDateChange?.(undefined, isFlexible ? 'flexible' : 'exact');
   };
 
   let displayText = "Date";
-  if (date && selectionType === 'exact') {
+  if (date) {
     displayText = format(date, 'PPP', { locale: fr });
-  } else if (date && selectionType === 'month') {
-    displayText = format(date, 'MMMM yyyy', { locale: fr });
-  } else if (selectionType === 'flexible') {
+    if (isFlexible) {
+      displayText += " (flexible)";
+    }
+  } else if (isFlexible) {
     displayText = "Date flexible";
   }
 
@@ -62,67 +61,38 @@ const DateSelector: React.FC<DateSelectorProps> = ({ className, onDateChange }) 
           <span>{displayText}</span>
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-4" align="center">
+      <PopoverContent className="w-auto p-4" align="center" sideOffset={5}>
         <div className="space-y-4">
-          <Tabs 
-            defaultValue="exact" 
-            value={selectionType}
-            onValueChange={(value) => handleTypeChange(value as 'exact' | 'month' | 'flexible')}
-            className="w-full"
-          >
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="exact">Date précise</TabsTrigger>
-              <TabsTrigger value="month">Mois</TabsTrigger>
-              <TabsTrigger value="flexible">Flexible</TabsTrigger>
-            </TabsList>
-          </Tabs>
+          <Calendar
+            mode="single"
+            selected={date}
+            onSelect={handleDateSelect}
+            initialFocus
+            className={cn("p-3 pointer-events-auto")}
+          />
 
-          {selectionType !== 'flexible' && (
-            <Calendar
-              mode="single"
-              selected={date}
-              onSelect={handleDateSelect}
-              initialFocus
-              className={cn("p-3 pointer-events-auto")}
-              classNames={{
-                months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
-                month: "space-y-4",
-                caption: "flex justify-center pt-1 relative items-center",
-                caption_label: "text-sm font-medium",
-                nav: "space-x-1 flex items-center",
-                table: "w-full border-collapse space-y-1",
-                head_row: "flex",
-                head_cell: "text-muted-foreground rounded-md w-8 font-normal text-[0.8rem]",
-                row: "flex w-full mt-2",
-                cell: "text-center text-sm p-0 relative [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md",
-                day: cn(
-                  "h-9 w-9 p-0 font-normal aria-selected:opacity-100"
-                ),
-                day_selected: "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground",
-                day_today: "bg-accent text-accent-foreground",
-                day_outside: "text-muted-foreground opacity-50",
-                day_disabled: "text-muted-foreground opacity-50",
-                day_range_middle: "aria-selected:bg-accent aria-selected:text-accent-foreground",
-                day_hidden: "invisible",
-              }}
-              components={{
-                IconLeft: () => <ChevronLeft className="h-4 w-4" />,
-                IconRight: () => <ChevronRight className="h-4 w-4" />,
-              }}
-            />
-          )}
-
-          {selectionType === 'flexible' && (
-            <div className="py-4 text-center">
-              <p>Nous vous montrerons les disponibilités pour tout 2025</p>
-            </div>
-          )}
-
-          <div className="flex justify-between">
-            <Button variant="outline" onClick={handleClearDate}>
+          <div className="flex flex-wrap justify-between gap-2">
+            <Button 
+              variant="outline" 
+              onClick={handleClearDate}
+              className="flex-1"
+            >
               Effacer la date
             </Button>
-            <Button onClick={() => setOpen(false)}>
+            <Button 
+              variant={isFlexible ? "default" : "outline"}
+              onClick={handleFlexibleToggle}
+              className={cn(
+                "flex-1",
+                isFlexible && "bg-wedding-olive hover:bg-wedding-olive/90"
+              )}
+            >
+              Date flexible
+            </Button>
+            <Button 
+              onClick={() => setOpen(false)}
+              className="flex-1"
+            >
               Appliquer
             </Button>
           </div>
