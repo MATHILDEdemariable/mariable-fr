@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
@@ -141,16 +140,14 @@ const Header = () => {
                           <span className="text-base font-medium">Professionnels</span>
                         </Link>
                         
-                        <a 
-                          href="https://leguidemariable.softr.app/connexion" 
-                          target="_blank" 
-                          rel="noopener noreferrer"
+                        <Link 
+                          to="/login-frame" 
                           className="flex items-center gap-2 m-2 px-4 py-2 bg-wedding-olive text-white rounded-md hover:bg-wedding-olive/90 transition-all"
                           onClick={() => setSheetOpen(false)}
                         >
                           <UserRound size={20} />
                           <span className="text-base font-medium">Connexion</span>
-                        </a>
+                        </Link>
                       </div>
                     </div>
                   </SheetContent>
@@ -220,15 +217,13 @@ const Header = () => {
                   </NavigationMenuList>
                 </NavigationMenu>
                 
-                <a 
-                  href="https://leguidemariable.softr.app/connexion" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
+                <Link 
+                  to="/login-frame" 
                   className="flex items-center gap-2 px-4 py-2 bg-white rounded-full border border-wedding-black/20 shadow-sm hover:shadow transition-all"
                 >
                   <UserRound size={20} className="text-wedding-black" />
                   <span className="text-sm font-medium">Connexion</span>
-                </a>
+                </Link>
               </>
             )}
           </div>
