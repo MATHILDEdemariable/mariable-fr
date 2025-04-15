@@ -62,29 +62,12 @@ const CharteContent = () => (
       </div>
     </div>
     
-    <h2 className="text-2xl font-serif text-center mb-8">Critère d'audit</h2>
+    <h2 className="text-2xl font-serif text-center mb-8">La connexion humaine avant tout</h2>
     
     <p className="mb-8 text-center">
-      À l'image du Guide Michelin, chaque prestataire est évalué sur trois grandes catégories de performance pour être référencé sur le Guide Mariable.
+      Au-delà des compétences techniques, nous valorisons particulièrement la dimension relationnelle 
+      & l'importance du feeling qui est selon nous essentielle pour les couples.
     </p>
-    
-    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-      <div className="space-y-3">
-        <h3 className="text-xl font-serif font-medium">Qualité de la prestation ou du produit</h3>
-      </div>
-      
-      <div className="space-y-3">
-        <h3 className="text-xl font-serif font-medium">Qualité du service client</h3>
-      </div>
-      
-      <div className="space-y-3">
-        <h3 className="text-xl font-serif font-medium">Engagement écologique</h3>
-      </div>
-      
-      <div className="space-y-3">
-        <h3 className="text-xl font-serif font-medium">Qualité spécifique livrable</h3>
-      </div>
-    </div>
   </>
 );
 

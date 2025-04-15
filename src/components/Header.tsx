@@ -70,20 +70,7 @@ const Header = () => {
           
           <div className="flex items-center gap-4">
             {isMobile ? (
-              <div className="relative flex items-center gap-2">
-                <Link to="/professionnels" className="flex items-center gap-1 text-wedding-black">
-                  <Users size={20} />
-                </Link>
-                
-                <a 
-                  href="https://leguidemariable.softr.app/connexion" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-3 py-1.5 bg-white rounded-full border border-wedding-black/20 shadow-sm hover:shadow transition-all"
-                >
-                  <UserRound size={20} className="text-wedding-black" />
-                </a>
-                
+              <div className="relative flex items-center">
                 <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
                   <SheetTrigger asChild>
                     <button 

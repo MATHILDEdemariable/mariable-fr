@@ -31,7 +31,7 @@ const faqItems = [
   },
   {
     question: "Comment contacter l'équipe Mariable en cas de besoin ?",
-    answer: "Vous pouvez nous contacter par email à contact@mariable.fr ou par téléphone au +33 1 23 45 67 89. Notre équipe est disponible du lundi au vendredi de 9h à 18h pour répondre à toutes vos questions."
+    answer: "Vous pouvez nous contacter par email à mathilde@mariable, Whatsapp via la communauté Mariable ou par téléphone en prenant rdv directement. Toutes ces infos sont disponbiles dans la rubrique 'nous contacter'."
   },
   {
     question: "Proposez-vous des services pour d'autres types d'événements ?",
