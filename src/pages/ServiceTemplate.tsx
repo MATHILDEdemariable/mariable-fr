@@ -34,7 +34,7 @@ const ServiceTemplate: React.FC<ServiceTemplateProps> = ({ title, description, c
                 <img src="/lovable-uploads/3768f435-13c3-49a1-bbb3-87acf3b26cda.png" alt="Mariable Logo" className="h-10 md:h-12 w-auto" />
               </div>
               <p className="mb-4 text-wedding-black/70 text-sm">
-                Mariable est votre partenaire privilégié pour créer le mariage de vos rêves, en simplifiant chaque étape de l'organisation.
+                Mariable est la référence des mariages modernes & élégants.
               </p>
               <div className="flex gap-4">
                 <a href="https://www.instagram.com/mariable.fr/" aria-label="Instagram" target="_blank" rel="noopener noreferrer" className="text-wedding-black hover:text-wedding-black/70 transition-colors">

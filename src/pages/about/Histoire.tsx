@@ -27,6 +27,32 @@ const HistoireContent = () => (
     <p className="mb-4">
       Digitaliser et moderniser les méthodes d'organisation de mariage pour les rendre plus accessibles et moins stressantes.
     </p>
+
+    <div className="mt-16 mb-8">
+      <h2 className="text-3xl font-serif text-center mb-12">Avec le soutien de</h2>
+      
+      <div className="grid md:grid-cols-2 gap-12 items-center">
+        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 flex flex-col items-center text-center">
+          <img 
+            src="/lovable-uploads/6e557abe-b336-4f24-909d-56927c0c47e3.png" 
+            alt="Schoolab" 
+            className="h-16 mb-4 object-contain" 
+          />
+          <h3 className="text-xl font-medium mb-1">SCHOOLAB, Paris</h3>
+          <p className="text-sm text-muted-foreground">Incubateur de start-up</p>
+        </div>
+
+        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 flex flex-col items-center text-center">
+          <img 
+            src="/lovable-uploads/bea0740d-427b-4f1b-95e3-2468f199ec77.png" 
+            alt="ECE" 
+            className="h-16 mb-4 object-contain" 
+          />
+          <h3 className="text-xl font-medium mb-1">ECE Paris</h3>
+          <p className="text-sm text-muted-foreground">École d'ingénieurs</p>
+        </div>
+      </div>
+    </div>
   </>
 );
 
