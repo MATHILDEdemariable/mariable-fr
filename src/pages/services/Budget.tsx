@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { ArrowRight, ArrowLeft, Download, RefreshCcw, Sun, Snowflake, MapPin, Euro, Info } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Download, RefreshCcw, Sun, Snowflake, MapPin, Euro, Info, Users } from 'lucide-react';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { toast } from "@/hooks/use-toast";
@@ -64,19 +64,11 @@ const STANDARD_PERCENTAGES = {
   "divers": 8        // % du budget hors traiteur et lieu
 };
 
-// Conversion du nombre d'invités entre sélection et valeur réelle
-const GUEST_COUNT_MAPPING = {
-  "30": 30,
-  "75": 75, 
-  "125": 125,
-  "175": 175
-};
-
 const BudgetCalculator = () => {
   const [step, setStep] = useState(1);
   const [region, setRegion] = useState<string>("");
   const [season, setSeason] = useState<string>("");
-  const [guestCount, setGuestCount] = useState<string>("");
+  const [guestCount, setGuestCount] = useState<number>(0);
   const [services, setServices] = useState<string[]>([]);
   const [serviceLevel, setServiceLevel] = useState<string>("");
   const [finalBudget, setFinalBudget] = useState<number | null>(null);
@@ -99,122 +91,85 @@ const BudgetCalculator = () => {
   };
 
   const calculateBudget = () => {
-    if (!region || !season || !guestCount || !serviceLevel || services.length === 0) {
+    if (!region || !season || guestCount <= 0 || !serviceLevel || services.length === 0) {
       return;
     }
 
-    // Récupérer le nombre réel d'invités
-    const guests = GUEST_COUNT_MAPPING[guestCount as keyof typeof GUEST_COUNT_MAPPING];
-    
-    // Calculer le coût du traiteur en fonction du nombre d'invités
+    // Calculer le coût du traiteur en fonction du nombre d'invités (si sélectionné)
     const costPerGuest = COST_PER_GUEST[serviceLevel as keyof typeof COST_PER_GUEST];
-    const cateringCost = guests * costPerGuest;
+    const cateringCost = services.includes('traiteur') ? roundToNearest10(guestCount * costPerGuest) : 0;
     
-    // Calculer le coût du lieu en fonction du niveau de service
+    // Calculer le coût du lieu en fonction du niveau de service (si sélectionné)
     const baseLieuCost = BASE_VENUE_COST[serviceLevel as keyof typeof BASE_VENUE_COST];
-    
-    // Appliquer les coefficients régionaux et saisonniers
     const regionCoef = REGION_COEFFICIENTS[region as keyof typeof REGION_COEFFICIENTS];
     const seasonCoef = SEASON_COEFFICIENTS[season as keyof typeof SEASON_COEFFICIENTS];
+    const lieuCost = services.includes('lieu') ? roundToNearest10(baseLieuCost * regionCoef * seasonCoef) : 0;
     
     // Créer la répartition du budget
     let breakdown: Record<string, number> = {};
-    const selectedServicesWithoutTraiteur = services.filter(s => s !== 'traiteur');
     
-    // Initialiser avec le coût du traiteur si sélectionné
-    let remainingBudgetPercentage = 100;
+    // Ajouter les coûts de lieu et traiteur s'ils sont sélectionnés
+    if (services.includes('lieu')) {
+      breakdown["Lieu"] = lieuCost;
+    }
     
-    if (services.includes('lieu-traiteur')) {
-      // Le lieu et le traiteur sont sélectionnés
-      const adjustedLieuCost = roundToNearest10(baseLieuCost * regionCoef * seasonCoef);
-      breakdown["Lieu"] = adjustedLieuCost;
-      breakdown["Traiteur"] = roundToNearest10(cateringCost);
-      
-      // Calculer le budget restant pour les autres services
-      const baseOtherServices = (adjustedLieuCost + cateringCost) * 0.5; // 50% du budget lieu + traiteur
-      let restBudget = baseOtherServices;
-      
-      // Calculer les pourcentages pour les autres services sélectionnés
-      let totalPercentage = 0;
-      const otherServicesPercentages: Record<string, number> = {};
-      
-      if (services.includes("photo-video")) {
-        totalPercentage += STANDARD_PERCENTAGES["photo-video"];
-        otherServicesPercentages["Photographie & Vidéo"] = STANDARD_PERCENTAGES["photo-video"];
-      }
-      
-      if (services.includes("musique")) {
-        totalPercentage += STANDARD_PERCENTAGES["musique"];
-        otherServicesPercentages["Musique (DJ/Groupe)"] = STANDARD_PERCENTAGES["musique"];
-      }
-      
-      if (services.includes("wedding-planner")) {
-        totalPercentage += STANDARD_PERCENTAGES["wedding-planner"];
-        otherServicesPercentages["Wedding Planner"] = STANDARD_PERCENTAGES["wedding-planner"];
-      }
-      
-      if (services.includes("deco-fleurs")) {
-        totalPercentage += STANDARD_PERCENTAGES["deco-fleurs"];
-        otherServicesPercentages["Décoration & Fleurs"] = STANDARD_PERCENTAGES["deco-fleurs"];
-      }
-      
-      // Ajouter toujours les divers
-      totalPercentage += STANDARD_PERCENTAGES["divers"];
-      otherServicesPercentages["Divers & Imprévus"] = STANDARD_PERCENTAGES["divers"];
-      
-      // Normaliser les pourcentages pour qu'ils totalisent 100%
-      if (totalPercentage > 0) {
-        const normalizationFactor = 100 / totalPercentage;
-        
-        // Distribuer le budget restant selon les pourcentages normalisés
-        for (const [service, percentage] of Object.entries(otherServicesPercentages)) {
-          const normalizedPercentage = percentage * normalizationFactor;
-          breakdown[service] = roundToNearest10((restBudget * normalizedPercentage) / 100);
-        }
-      }
+    if (services.includes('traiteur')) {
+      breakdown["Traiteur"] = cateringCost;
+    }
+    
+    // Calculer le budget de base pour les autres services
+    // Si lieu et traiteur sont sélectionnés, on utilise une base proportionnelle à leurs coûts
+    // Sinon, on estime un budget global en fonction du nombre d'invités et du niveau de service
+    let baseOtherServicesTotal = 0;
+    
+    if (services.includes('lieu') && services.includes('traiteur')) {
+      baseOtherServicesTotal = roundToNearest10((lieuCost + cateringCost) * 0.5); // 50% du budget lieu + traiteur
+    } else if (services.includes('lieu')) {
+      baseOtherServicesTotal = roundToNearest10(lieuCost * 1.0); // 100% du budget lieu pour les autres services
+    } else if (services.includes('traiteur')) {
+      baseOtherServicesTotal = roundToNearest10(cateringCost * 1.0); // 100% du budget traiteur pour les autres services
     } else {
-      // Cas où ni lieu ni traiteur ne sont sélectionnés ou seulement certains services
-      // Créer une estimation de base en fonction du niveau, de la région et du nombre d'invités
-      const baseBudget = guests * (COST_PER_GUEST[serviceLevel as keyof typeof COST_PER_GUEST] * 2); // Estimation globale
-      const adjustedBaseBudget = baseBudget * regionCoef * seasonCoef;
+      // Cas où ni lieu ni traiteur ne sont sélectionnés
+      baseOtherServicesTotal = roundToNearest10(guestCount * costPerGuest * 2 * regionCoef * seasonCoef);
+    }
+    
+    // Calculer les pourcentages pour les autres services sélectionnés
+    let totalOtherServicesPercentage = 0;
+    const otherServicesPercentages: Record<string, number> = {};
+    
+    if (services.includes("photo-video")) {
+      totalOtherServicesPercentage += STANDARD_PERCENTAGES["photo-video"];
+      otherServicesPercentages["Photographie & Vidéo"] = STANDARD_PERCENTAGES["photo-video"];
+    }
+    
+    if (services.includes("musique")) {
+      totalOtherServicesPercentage += STANDARD_PERCENTAGES["musique"];
+      otherServicesPercentages["Musique (DJ/Groupe)"] = STANDARD_PERCENTAGES["musique"];
+    }
+    
+    if (services.includes("wedding-planner")) {
+      totalOtherServicesPercentage += STANDARD_PERCENTAGES["wedding-planner"];
+      otherServicesPercentages["Wedding Planner"] = STANDARD_PERCENTAGES["wedding-planner"];
+    }
+    
+    if (services.includes("deco-fleurs")) {
+      totalOtherServicesPercentage += STANDARD_PERCENTAGES["deco-fleurs"];
+      otherServicesPercentages["Décoration & Fleurs"] = STANDARD_PERCENTAGES["deco-fleurs"];
+    }
+    
+    // Ajouter toujours les divers si au moins un autre service est sélectionné
+    if (totalOtherServicesPercentage > 0) {
+      totalOtherServicesPercentage += STANDARD_PERCENTAGES["divers"];
+      otherServicesPercentages["Divers & Imprévus"] = STANDARD_PERCENTAGES["divers"];
+    }
+    
+    // Normaliser les pourcentages et répartir le budget des autres services
+    if (totalOtherServicesPercentage > 0) {
+      const normalizationFactor = 100 / totalOtherServicesPercentage;
       
-      // Déterminer les pourcentages pour les services sélectionnés
-      let totalPercentage = 0;
-      const selectedServicesPercentages: Record<string, number> = {};
-      
-      if (services.includes("photo-video")) {
-        totalPercentage += STANDARD_PERCENTAGES["photo-video"];
-        selectedServicesPercentages["Photographie & Vidéo"] = STANDARD_PERCENTAGES["photo-video"];
-      }
-      
-      if (services.includes("musique")) {
-        totalPercentage += STANDARD_PERCENTAGES["musique"];
-        selectedServicesPercentages["Musique (DJ/Groupe)"] = STANDARD_PERCENTAGES["musique"];
-      }
-      
-      if (services.includes("wedding-planner")) {
-        totalPercentage += STANDARD_PERCENTAGES["wedding-planner"];
-        selectedServicesPercentages["Wedding Planner"] = STANDARD_PERCENTAGES["wedding-planner"];
-      }
-      
-      if (services.includes("deco-fleurs")) {
-        totalPercentage += STANDARD_PERCENTAGES["deco-fleurs"];
-        selectedServicesPercentages["Décoration & Fleurs"] = STANDARD_PERCENTAGES["deco-fleurs"];
-      }
-      
-      // Ajouter toujours les divers
-      totalPercentage += STANDARD_PERCENTAGES["divers"];
-      selectedServicesPercentages["Divers & Imprévus"] = STANDARD_PERCENTAGES["divers"];
-      
-      // Normaliser les pourcentages pour qu'ils totalisent 100%
-      if (totalPercentage > 0) {
-        const normalizationFactor = 100 / totalPercentage;
-        
-        // Distribuer le budget selon les pourcentages normalisés
-        for (const [service, percentage] of Object.entries(selectedServicesPercentages)) {
-          const normalizedPercentage = percentage * normalizationFactor;
-          breakdown[service] = roundToNearest10((adjustedBaseBudget * normalizedPercentage) / 100);
-        }
+      for (const [service, percentage] of Object.entries(otherServicesPercentages)) {
+        const normalizedPercentage = percentage * normalizationFactor;
+        breakdown[service] = roundToNearest10((baseOtherServicesTotal * normalizedPercentage) / 100);
       }
     }
     
@@ -230,7 +185,7 @@ const BudgetCalculator = () => {
   const resetCalculator = () => {
     setRegion("");
     setSeason("");
-    setGuestCount("");
+    setGuestCount(0);
     setServices([]);
     setServiceLevel("");
     setFinalBudget(null);
@@ -269,6 +224,11 @@ const BudgetCalculator = () => {
     });
   };
 
+  const handleGuestCountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseInt(e.target.value, 10);
+    setGuestCount(isNaN(value) ? 0 : value);
+  };
+
   const generatePDF = () => {
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
@@ -294,16 +254,9 @@ const BudgetCalculator = () => {
       "corse": "Corse"
     }[region as keyof typeof REGION_COEFFICIENTS] || "";
 
-    const guestCountText = {
-      "30": "Moins de 50 (30 invités)",
-      "75": "50 à 100 (75 invités)",
-      "125": "100 à 150 (125 invités)",
-      "175": "Plus de 150 (175 invités)"
-    }[guestCount] || "";
-
     const seasonText = season === "haute" ? "Haute saison (avril-sept)" : "Basse saison (oct-mars)";
     
-    const paramText = `${regionName} - ${seasonText} - ${guestCountText} - ${serviceLevel.charAt(0).toUpperCase() + serviceLevel.slice(1)}`;
+    const paramText = `${regionName} - ${seasonText} - ${guestCount} invités - ${serviceLevel.charAt(0).toUpperCase() + serviceLevel.slice(1)}`;
     doc.text(paramText, pageWidth/2, 50, { align: 'center' });
     
     doc.setFontSize(18);
@@ -402,17 +355,18 @@ const BudgetCalculator = () => {
             
             <div className="space-y-2 mt-4">
               <Label htmlFor="guestCount" className="text-base">Nombre d'invités</Label>
-              <Select value={guestCount} onValueChange={setGuestCount}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Nombre d'invités" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="30">Moins de 50 (30 invités)</SelectItem>
-                  <SelectItem value="75">50 à 100 (75 invités)</SelectItem>
-                  <SelectItem value="125">100 à 150 (125 invités)</SelectItem>
-                  <SelectItem value="175">Plus de 150 (175 invités)</SelectItem>
-                </SelectContent>
-              </Select>
+              <div className="flex items-center">
+                <Users className="mr-2 h-4 w-4 text-muted-foreground" />
+                <Input 
+                  id="guestCount"
+                  type="number"
+                  value={guestCount || ''}
+                  onChange={handleGuestCountChange}
+                  placeholder="Saisissez le nombre exact d'invités"
+                  min="1"
+                  className="w-full"
+                />
+              </div>
             </div>
           </div>
         );
@@ -425,12 +379,22 @@ const BudgetCalculator = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="flex items-start space-x-2">
                   <Checkbox 
-                    id="lieu-traiteur" 
-                    checked={services.includes("lieu-traiteur")} 
-                    onCheckedChange={() => handleServiceToggle("lieu-traiteur")}
+                    id="lieu" 
+                    checked={services.includes("lieu")} 
+                    onCheckedChange={() => handleServiceToggle("lieu")}
                   />
-                  <label htmlFor="lieu-traiteur" className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer">
-                    Lieu & Traiteur
+                  <label htmlFor="lieu" className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer">
+                    Lieu
+                  </label>
+                </div>
+                <div className="flex items-start space-x-2">
+                  <Checkbox 
+                    id="traiteur" 
+                    checked={services.includes("traiteur")} 
+                    onCheckedChange={() => handleServiceToggle("traiteur")}
+                  />
+                  <label htmlFor="traiteur" className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer">
+                    Traiteur
                   </label>
                 </div>
                 <div className="flex items-start space-x-2">
@@ -556,7 +520,7 @@ const BudgetCalculator = () => {
               className="bg-wedding-olive hover:bg-wedding-olive/90 text-white"
               disabled={
                 (step === 1 && !region) || 
-                (step === 2 && (!season || !guestCount)) || 
+                (step === 2 && (!season || guestCount <= 0)) || 
                 (step === 3 && services.length === 0) ||
                 (step === 4 && !serviceLevel)
               }
@@ -627,12 +591,7 @@ const BudgetCalculator = () => {
                   <div>{season === "haute" ? "Haute saison (avril-sept)" : "Basse saison (oct-mars)"}</div>
                   
                   <div className="text-muted-foreground">Invités:</div>
-                  <div>{
-                    guestCount === "30" ? "Moins de 50 (30 invités)" :
-                    guestCount === "75" ? "50 à 100 (75 invités)" :
-                    guestCount === "125" ? "100 à 150 (125 invités)" :
-                    guestCount === "175" ? "Plus de 150 (175 invités)" : ""
-                  }</div>
+                  <div>{guestCount}</div>
                   
                   <div className="text-muted-foreground">Niveau:</div>
                   <div className="capitalize">{serviceLevel}</div>
