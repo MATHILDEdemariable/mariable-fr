@@ -11,6 +11,7 @@ import MentionsLegales from "./pages/MentionsLegales";
 import CGV from "./pages/CGV";
 import GuideMariable from "./pages/GuideMariable";
 import Professionnels from "./pages/Professionnels";
+import GuideMartiableFrame from "./pages/GuideMartiableFrame";
 
 // Services pages
 import Prestataires from "./pages/services/Prestataires";
@@ -56,6 +57,7 @@ const App = () => (
           
           {/* Guide Mariable */}
           <Route path="/guide-mariable" element={<GuideMariable />} />
+          <Route path="/guide-mariable-frame" element={<GuideMartiableFrame />} />
           
           {/* About pages */}
           <Route path="/about/histoire" element={<Histoire />} />

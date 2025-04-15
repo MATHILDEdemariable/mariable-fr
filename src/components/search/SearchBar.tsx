@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Card } from '@/components/ui/card';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useNavigate } from 'react-router-dom';
 import RegionSelector from './RegionSelector';
 import DateSelector from './DateSelector';
 import GuestSelector from './GuestSelector';
@@ -16,13 +17,15 @@ const SearchBar = () => {
   const [dateSelectionType, setDateSelectionType] = useState<'exact' | 'flexible'>('exact');
   const [guestCount, setGuestCount] = useState(0);
   const isMobile = useIsMobile();
+  const navigate = useNavigate();
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);
   };
 
   const handleSearch = () => {
-    window.open('https://leguidemariable.softr.app/', '_blank');
+    // Navigate to the embedded iFrame page instead of opening a new tab
+    navigate('/guide-mariable-frame');
   };
 
   const handleRegionsChange = (regions: string[]) => {
