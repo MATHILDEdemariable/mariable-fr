@@ -1,13 +1,11 @@
-
 import React, { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
-import { ArrowRight, Calendar, MapPin, Heart, Instagram, Mail, BookOpen, MessageCircle, CheckCircle, Sparkles } from 'lucide-react';
+import { Calendar, MapPin, Heart, Instagram, Mail, BookOpen, MessageCircle, CheckCircle, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useIsMobile } from '@/hooks/use-mobile';
 import SearchBar from '@/components/search/SearchBar';
 import ChatbotButton from '@/components/ChatbotButton';
-import { Badge } from '@/components/ui/badge';
 
 const Index = () => {
   const navigate = useNavigate();
@@ -43,36 +41,25 @@ const Index = () => {
                 Organisez le mariage <span className="text-wedding-cream">dont vous rêvez</span>
               </h1>
               <p className="text-white/90 text-sm md:text-base mb-6 md:mb-8 max-w-2xl mx-auto">
-                Une nouvelle façon de trouver les meilleurs prestataires
+                Trouvez les meilleurs prestataires
               </p>
-              
-              <div className="flex justify-center mb-6">
-                <div className="inline-flex items-center gap-2 px-4 py-2 bg-wedding-cream/20 backdrop-blur-sm rounded-full">
-                  <Sparkles size={16} className="text-wedding-cream" />
-                  <span className="text-wedding-cream text-xs md:text-sm">
-                    Nouveauté 2025 – MariableGPT, l'Intelligence amoureuse - <a 
-                      href="https://chatgpt.com/g/g-67b5d482dd208191ae458763db0bb08c-mathilde-de-mariable" 
-                      target="_blank" 
-                      rel="noopener noreferrer" 
-                      className="underline hover:text-white transition-colors"
-                    >
-                      voir une démo
-                    </a>
-                  </span>
-                </div>
-              </div>
               
               <div className="max-w-4xl mx-auto">
                 <SearchBar />
-                <div className="mt-3 text-center">
-                  <a 
-                    href="https://chatgpt.com/g/g-67b5d482dd208191ae458763db0bb08c-mathilde-de-mariable"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-wedding-cream/90 hover:text-wedding-cream text-xs md:text-sm inline-flex items-center transition-colors"
-                  >
-                    Sinon organisez votre mariage avec MariableGPT – notre intelligence amoureuse
-                  </a>
+                <div className="flex justify-center mt-3">
+                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-wedding-cream/20 backdrop-blur-sm rounded-full">
+                    <Sparkles size={16} className="text-wedding-cream" />
+                    <span className="text-wedding-cream text-xs md:text-sm">
+                      Nouveauté 2025 – MariableGPT, l'Intelligence amoureuse - <a 
+                        href="https://chatgpt.com/g/g-67b5d482dd208191ae458763db0bb08c-mathilde-de-mariable" 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        className="underline hover:text-white transition-colors"
+                      >
+                        voir une démo
+                      </a>
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
