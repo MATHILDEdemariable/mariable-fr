@@ -4,7 +4,8 @@ import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMe
 import { cn } from "@/lib/utils";
 import { Link } from 'react-router-dom';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { Menu, X, Users, UserRound } from 'lucide-react';
+import { Menu, X, Users, UserRound, Home, Phone, Info } from 'lucide-react';
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 const ListItem = React.forwardRef<
   React.ElementRef<"a">,
@@ -34,8 +35,8 @@ ListItem.displayName = "ListItem";
 
 const Header = () => {
   const isMobile = useIsMobile();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [sheetOpen, setSheetOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -49,10 +50,6 @@ const Header = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
-  const closeMobileMenu = () => {
-    setMobileMenuOpen(false);
-  };
 
   return (
     <header className={cn(
@@ -87,68 +84,90 @@ const Header = () => {
                   <UserRound size={20} className="text-wedding-black" />
                 </a>
                 
-                <button 
-                  onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                  className="text-wedding-black p-2 rounded-md hover:bg-wedding-cream/50 transition-colors"
-                  aria-label={mobileMenuOpen ? "Fermer le menu" : "Ouvrir le menu"}
-                >
-                  {mobileMenuOpen ? (
-                    <X size={24} />
-                  ) : (
-                    <Menu size={24} />
-                  )}
-                </button>
-                
-                {mobileMenuOpen && (
-                  <div className="absolute top-full right-0 mt-2 w-screen max-w-xs bg-white p-4 rounded-lg shadow-lg border border-wedding-black/10 animate-fade-in">
-                    <nav className="flex flex-col space-y-3">
-                      <div className="border-b pb-2 mb-2">
-                        <h3 className="font-serif text-lg mb-2">Nos Services</h3>
-                        <div className="pl-2 space-y-2">
-                          <Link to="/services/prestataires" className="block text-wedding-black hover:text-wedding-olive transition-colors py-1" onClick={closeMobileMenu}>
+                <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+                  <SheetTrigger asChild>
+                    <button 
+                      className="text-wedding-black p-2 rounded-md hover:bg-wedding-cream/50 transition-colors"
+                      aria-label="Menu principal"
+                    >
+                      <Menu size={24} />
+                    </button>
+                  </SheetTrigger>
+                  <SheetContent side="right" className="overflow-y-auto">
+                    <div className="flex flex-col py-4 space-y-6">
+                      <Link to="/" className="flex items-center gap-2 px-2 py-2 text-wedding-black hover:bg-wedding-cream/50 rounded-md" onClick={() => setSheetOpen(false)}>
+                        <Home size={20} />
+                        <span className="text-base font-medium">Accueil</span>
+                      </Link>
+                      
+                      <div className="space-y-2 border-t pt-4">
+                        <h3 className="px-2 font-serif text-base font-medium">Nos Services</h3>
+                        <div className="pl-2 space-y-1">
+                          <Link to="/services/prestataires" className="block w-full text-sm text-wedding-black hover:text-wedding-olive transition-colors py-2 px-4" onClick={() => setSheetOpen(false)}>
                             Recherche de prestataires
                           </Link>
-                          <Link to="/services/planification" className="block text-wedding-black hover:text-wedding-olive transition-colors py-1" onClick={closeMobileMenu}>
+                          <Link to="/services/planification" className="block w-full text-sm text-wedding-black hover:text-wedding-olive transition-colors py-2 px-4" onClick={() => setSheetOpen(false)}>
                             Planification
                           </Link>
-                          <Link to="/services/budget" className="block text-wedding-black hover:text-wedding-olive transition-colors py-1" onClick={closeMobileMenu}>
+                          <Link to="/services/budget" className="block w-full text-sm text-wedding-black hover:text-wedding-olive transition-colors py-2 px-4" onClick={() => setSheetOpen(false)}>
                             Budgétisation
                           </Link>
-                          <Link to="/services/conseils" className="block text-wedding-black hover:text-wedding-olive transition-colors py-1" onClick={closeMobileMenu}>
+                          <Link to="/services/conseils" className="block w-full text-sm text-wedding-black hover:text-wedding-olive transition-colors py-2 px-4" onClick={() => setSheetOpen(false)}>
                             Conseils personnalisés
                           </Link>
                         </div>
                       </div>
                       
-                      <div className="border-b pb-2 mb-2">
-                        <h3 className="font-serif text-lg mb-2">À propos</h3>
-                        <div className="pl-2 space-y-2">
-                          <Link to="/about/histoire" className="block text-wedding-black hover:text-wedding-olive transition-colors py-1" onClick={closeMobileMenu}>
+                      <div className="space-y-2 border-t pt-4">
+                        <h3 className="px-2 font-serif text-base font-medium">À propos</h3>
+                        <div className="pl-2 space-y-1">
+                          <Link to="/about/histoire" className="block w-full text-sm text-wedding-black hover:text-wedding-olive transition-colors py-2 px-4" onClick={() => setSheetOpen(false)}>
                             Notre histoire
                           </Link>
-                          <Link to="/about/charte" className="block text-wedding-black hover:text-wedding-olive transition-colors py-1" onClick={closeMobileMenu}>
+                          <Link to="/about/charte" className="block w-full text-sm text-wedding-black hover:text-wedding-olive transition-colors py-2 px-4" onClick={() => setSheetOpen(false)}>
                             Notre charte
                           </Link>
-                          <Link to="/about/temoignages" className="block text-wedding-black hover:text-wedding-olive transition-colors py-1" onClick={closeMobileMenu}>
+                          <Link to="/about/temoignages" className="block w-full text-sm text-wedding-black hover:text-wedding-olive transition-colors py-2 px-4" onClick={() => setSheetOpen(false)}>
                             Témoignages
+                          </Link>
+                          <Link to="/about/approche" className="block w-full text-sm text-wedding-black hover:text-wedding-olive transition-colors py-2 px-4" onClick={() => setSheetOpen(false)}>
+                            Notre approche
                           </Link>
                         </div>
                       </div>
                       
-                      <div className="border-b pb-2 mb-2">
-                        <h3 className="font-serif text-lg mb-2">Contact</h3>
-                        <div className="pl-2 space-y-2">
-                          <Link to="/contact/nous-contacter" className="block text-wedding-black hover:text-wedding-olive transition-colors py-1" onClick={closeMobileMenu}>
+                      <div className="space-y-2 border-t pt-4">
+                        <h3 className="px-2 font-serif text-base font-medium">Contact</h3>
+                        <div className="pl-2 space-y-1">
+                          <Link to="/contact/nous-contacter" className="block w-full text-sm text-wedding-black hover:text-wedding-olive transition-colors py-2 px-4" onClick={() => setSheetOpen(false)}>
                             Nous contacter
                           </Link>
-                          <Link to="/contact/faq" className="block text-wedding-black hover:text-wedding-olive transition-colors py-1" onClick={closeMobileMenu}>
+                          <Link to="/contact/faq" className="block w-full text-sm text-wedding-black hover:text-wedding-olive transition-colors py-2 px-4" onClick={() => setSheetOpen(false)}>
                             FAQ
                           </Link>
                         </div>
                       </div>
-                    </nav>
-                  </div>
-                )}
+
+                      <div className="space-y-2 border-t pt-4">
+                        <Link to="/professionnels" className="flex items-center gap-2 px-2 py-2 text-wedding-black hover:bg-wedding-cream/50 rounded-md" onClick={() => setSheetOpen(false)}>
+                          <Users size={20} />
+                          <span className="text-base font-medium">Professionnels</span>
+                        </Link>
+                        
+                        <a 
+                          href="https://leguidemariable.softr.app/connexion" 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 m-2 px-4 py-2 bg-wedding-olive text-white rounded-md hover:bg-wedding-olive/90 transition-all"
+                          onClick={() => setSheetOpen(false)}
+                        >
+                          <UserRound size={20} />
+                          <span className="text-base font-medium">Connexion</span>
+                        </a>
+                      </div>
+                    </div>
+                  </SheetContent>
+                </Sheet>
               </div>
             ) : (
               <>
