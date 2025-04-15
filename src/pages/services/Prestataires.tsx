@@ -3,52 +3,61 @@ import React from 'react';
 import ServiceTemplate from '../ServiceTemplate';
 import { Button } from '@/components/ui/button';
 import { BookOpen } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
-const PrestataireContent = () => (
-  <>
-    <div className="bg-wedding-cream/30 p-6 rounded-lg mb-8 border border-wedding-olive/20">
-      <h2 className="text-2xl font-serif mb-3">Guide Mariable des prestataires</h2>
-      <p className="mb-4">
-        Nous fournissons un guide de référence des meilleurs prestataires sélectionnés avec soin pour votre mariage.
-        Notre "Guide Mariable" regroupe des professionnels de qualité que nous avons personnellement validés.
-      </p>
-      <Button 
-        className="bg-wedding-olive hover:bg-wedding-olive/90"
-        onClick={() => window.open('https://leguidemariable.softr.app/', '_blank', 'noopener,noreferrer')}
-      >
-        <BookOpen className="mr-2 h-4 w-4" />
-        Accéder au Guide Mariable
-      </Button>
-    </div>
+const PrestataireContent = () => {
+  const navigate = useNavigate();
   
-    <p>
-      Trouver les meilleurs prestataires pour votre mariage peut être une tâche ardue. 
-      Chez Mariable, nous simplifions ce processus en vous mettant en relation avec des prestataires 
-      de qualité qui correspondent parfaitement à vos goûts, votre style et votre budget.
-    </p>
+  const handleGuideClick = () => {
+    navigate('/guide-mariable-frame');
+  };
+
+  return (
+    <>
+      <div className="bg-wedding-cream/30 p-6 rounded-lg mb-8 border border-wedding-olive/20">
+        <h2 className="text-2xl font-serif mb-3">Guide Mariable des prestataires</h2>
+        <p className="mb-4">
+          Nous fournissons un guide de référence des meilleurs prestataires sélectionnés avec soin pour votre mariage.
+          Notre "Guide Mariable" regroupe des professionnels de qualité que nous avons personnellement validés.
+        </p>
+        <Button 
+          className="bg-wedding-olive hover:bg-wedding-olive/90"
+          onClick={handleGuideClick}
+        >
+          <BookOpen className="mr-2 h-4 w-4" />
+          Accéder au Guide Mariable
+        </Button>
+      </div>
     
-    <h2 className="text-2xl font-serif mt-8 mb-4">Comment ça marche ?</h2>
-    
-    <p>
-      Notre algorithme intelligent analyse vos préférences et vous propose uniquement 
-      des prestataires qui correspondent à vos critères. Plus besoin de passer des heures 
-      à faire des recherches, nous le faisons pour vous !
-    </p>
-    
-    <h2 className="text-2xl font-serif mt-8 mb-4">Nos catégories de prestataires</h2>
-    
-    <ul className="list-disc pl-6 space-y-2">
-      <li>Photographes et vidéastes</li>
-      <li>Lieux de réception</li>
-      <li>Traiteurs et services de restauration</li>
-      <li>DJ et musiciens</li>
-      <li>Fleuristes et décorateurs</li>
-      <li>Wedding planners</li>
-      <li>Location de mobilier et équipements</li>
-      <li>Et bien plus encore...</li>
-    </ul>
-  </>
-);
+      <p>
+        Trouver les meilleurs prestataires pour votre mariage peut être une tâche ardue. 
+        Chez Mariable, nous simplifions ce processus en vous mettant en relation avec des prestataires 
+        de qualité qui correspondent parfaitement à vos goûts, votre style et votre budget.
+      </p>
+      
+      <h2 className="text-2xl font-serif mt-8 mb-4">Comment ça marche ?</h2>
+      
+      <p>
+        Notre algorithme intelligent analyse vos préférences et vous propose uniquement 
+        des prestataires qui correspondent à vos critères. Plus besoin de passer des heures 
+        à faire des recherches, nous le faisons pour vous !
+      </p>
+      
+      <h2 className="text-2xl font-serif mt-8 mb-4">Nos catégories de prestataires</h2>
+      
+      <ul className="list-disc pl-6 space-y-2">
+        <li>Photographes et vidéastes</li>
+        <li>Lieux de réception</li>
+        <li>Traiteurs et services de restauration</li>
+        <li>DJ et musiciens</li>
+        <li>Fleuristes et décorateurs</li>
+        <li>Wedding planners</li>
+        <li>Location de mobilier et équipements</li>
+        <li>Et bien plus encore...</li>
+      </ul>
+    </>
+  );
+};
 
 const Prestataires = () => {
   return (

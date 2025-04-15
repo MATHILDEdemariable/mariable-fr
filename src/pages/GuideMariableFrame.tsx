@@ -1,12 +1,9 @@
 
 import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
 import ChatbotButton from '@/components/ChatbotButton';
 
-const GuideMartiableFrame = () => {
-  const navigate = useNavigate();
-  
+const GuideMariableFrame = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -32,4 +29,4 @@ const GuideMartiableFrame = () => {
   );
 };
 
-export default GuideMartiableFrame;
+export default GuideMariableFrame;

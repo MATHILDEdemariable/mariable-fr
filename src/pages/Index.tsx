@@ -16,6 +16,10 @@ const Index = () => {
     window.scrollTo(0, 0);
   }, []);
 
+  const handleConnexionClick = () => {
+    navigate('/login-frame');
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <Header />
@@ -172,7 +176,7 @@ const Index = () => {
             <Button 
               size={isMobile ? "default" : "lg"} 
               className="bg-wedding-olive hover:bg-wedding-olive/90 text-white"
-              onClick={() => window.open('https://leguidemariable.softr.app/connexion', '_blank')}
+              onClick={handleConnexionClick}
             >
               Oui je le veux
             </Button>
