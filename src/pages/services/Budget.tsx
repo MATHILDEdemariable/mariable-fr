@@ -1,3 +1,4 @@
+
 import React, { useState, useRef } from 'react';
 import ServiceTemplate from '../ServiceTemplate';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,19 +8,29 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { ArrowRight, ArrowLeft, Download, RefreshCcw, Sun, Snowflake, MapPin, Euro } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Download, RefreshCcw, Sun, Snowflake, MapPin, Euro, Info } from 'lucide-react';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { toast } from "@/hooks/use-toast";
 import jsPDF from 'jspdf';
 
-const PRICE_PER_GUEST = {
-  "economique": 100,
-  "abordable": 150,
-  "premium": 250,
-  "luxe": 400
+// Coût par invité pour le traiteur selon le niveau de service
+const COST_PER_GUEST = {
+  "economique": 70,
+  "abordable": 100,
+  "premium": 150,
+  "luxe": 250
 };
 
+// Coût de base pour un lieu selon le niveau de service
+const BASE_VENUE_COST = {
+  "economique": 2000,
+  "abordable": 4000,
+  "premium": 8000,
+  "luxe": 15000
+};
+
+// Coefficients par région
 const REGION_COEFFICIENTS = {
   "ile-de-france": 1.15,
   "paca": 1.15,
@@ -36,18 +47,29 @@ const REGION_COEFFICIENTS = {
   "corse": 1.20
 };
 
+// Coefficients par saison
 const SEASON_COEFFICIENTS = {
   "haute": 1.15,
   "basse": 0.80
 };
 
-const BUDGET_DISTRIBUTION = {
-  "lieu-traiteur": 47,
-  "photo-video": 20,
-  "musique": 10,
-  "wedding-planner": 8,
-  "deco-fleurs": 10,
-  "divers": 5
+// Pourcentages standard de répartition du budget (ajustables)
+const STANDARD_PERCENTAGES = {
+  "lieu": 25,         // % du budget hors traiteur
+  "traiteur": 0,      // Calculé séparément en fonction du nombre d'invités
+  "photo-video": 20,  // % du budget hors traiteur et lieu
+  "musique": 10,      // % du budget hors traiteur et lieu
+  "wedding-planner": 12, // % du budget hors traiteur et lieu
+  "deco-fleurs": 15,  // % du budget hors traiteur et lieu
+  "divers": 8        // % du budget hors traiteur et lieu
+};
+
+// Conversion du nombre d'invités entre sélection et valeur réelle
+const GUEST_COUNT_MAPPING = {
+  "30": 30,
+  "75": 75, 
+  "125": 125,
+  "175": 175
 };
 
 const BudgetCalculator = () => {
@@ -58,6 +80,7 @@ const BudgetCalculator = () => {
   const [services, setServices] = useState<string[]>([]);
   const [serviceLevel, setServiceLevel] = useState<string>("");
   const [finalBudget, setFinalBudget] = useState<number | null>(null);
+  const [budgetBreakdown, setBudgetBreakdown] = useState<Record<string, number>>({});
   const [showResults, setShowResults] = useState(false);
   const [showDownloadDialog, setShowDownloadDialog] = useState(false);
   const [airtableSubmitted, setAirtableSubmitted] = useState(false);
@@ -71,20 +94,136 @@ const BudgetCalculator = () => {
     }
   };
 
+  const roundToNearest10 = (value: number): number => {
+    return Math.round(value / 10) * 10;
+  };
+
   const calculateBudget = () => {
     if (!region || !season || !guestCount || !serviceLevel || services.length === 0) {
       return;
     }
 
-    const guests = Number(guestCount);
-    const basePrice = PRICE_PER_GUEST[serviceLevel as keyof typeof PRICE_PER_GUEST];
-    const baseBudget = guests * basePrice;
-
+    // Récupérer le nombre réel d'invités
+    const guests = GUEST_COUNT_MAPPING[guestCount as keyof typeof GUEST_COUNT_MAPPING];
+    
+    // Calculer le coût du traiteur en fonction du nombre d'invités
+    const costPerGuest = COST_PER_GUEST[serviceLevel as keyof typeof COST_PER_GUEST];
+    const cateringCost = guests * costPerGuest;
+    
+    // Calculer le coût du lieu en fonction du niveau de service
+    const baseLieuCost = BASE_VENUE_COST[serviceLevel as keyof typeof BASE_VENUE_COST];
+    
+    // Appliquer les coefficients régionaux et saisonniers
     const regionCoef = REGION_COEFFICIENTS[region as keyof typeof REGION_COEFFICIENTS];
     const seasonCoef = SEASON_COEFFICIENTS[season as keyof typeof SEASON_COEFFICIENTS];
     
-    const calculatedBudget = Math.round(baseBudget * regionCoef * seasonCoef);
-    setFinalBudget(calculatedBudget);
+    // Créer la répartition du budget
+    let breakdown: Record<string, number> = {};
+    const selectedServicesWithoutTraiteur = services.filter(s => s !== 'traiteur');
+    
+    // Initialiser avec le coût du traiteur si sélectionné
+    let remainingBudgetPercentage = 100;
+    
+    if (services.includes('lieu-traiteur')) {
+      // Le lieu et le traiteur sont sélectionnés
+      const adjustedLieuCost = roundToNearest10(baseLieuCost * regionCoef * seasonCoef);
+      breakdown["Lieu"] = adjustedLieuCost;
+      breakdown["Traiteur"] = roundToNearest10(cateringCost);
+      
+      // Calculer le budget restant pour les autres services
+      const baseOtherServices = (adjustedLieuCost + cateringCost) * 0.5; // 50% du budget lieu + traiteur
+      let restBudget = baseOtherServices;
+      
+      // Calculer les pourcentages pour les autres services sélectionnés
+      let totalPercentage = 0;
+      const otherServicesPercentages: Record<string, number> = {};
+      
+      if (services.includes("photo-video")) {
+        totalPercentage += STANDARD_PERCENTAGES["photo-video"];
+        otherServicesPercentages["Photographie & Vidéo"] = STANDARD_PERCENTAGES["photo-video"];
+      }
+      
+      if (services.includes("musique")) {
+        totalPercentage += STANDARD_PERCENTAGES["musique"];
+        otherServicesPercentages["Musique (DJ/Groupe)"] = STANDARD_PERCENTAGES["musique"];
+      }
+      
+      if (services.includes("wedding-planner")) {
+        totalPercentage += STANDARD_PERCENTAGES["wedding-planner"];
+        otherServicesPercentages["Wedding Planner"] = STANDARD_PERCENTAGES["wedding-planner"];
+      }
+      
+      if (services.includes("deco-fleurs")) {
+        totalPercentage += STANDARD_PERCENTAGES["deco-fleurs"];
+        otherServicesPercentages["Décoration & Fleurs"] = STANDARD_PERCENTAGES["deco-fleurs"];
+      }
+      
+      // Ajouter toujours les divers
+      totalPercentage += STANDARD_PERCENTAGES["divers"];
+      otherServicesPercentages["Divers & Imprévus"] = STANDARD_PERCENTAGES["divers"];
+      
+      // Normaliser les pourcentages pour qu'ils totalisent 100%
+      if (totalPercentage > 0) {
+        const normalizationFactor = 100 / totalPercentage;
+        
+        // Distribuer le budget restant selon les pourcentages normalisés
+        for (const [service, percentage] of Object.entries(otherServicesPercentages)) {
+          const normalizedPercentage = percentage * normalizationFactor;
+          breakdown[service] = roundToNearest10((restBudget * normalizedPercentage) / 100);
+        }
+      }
+    } else {
+      // Cas où ni lieu ni traiteur ne sont sélectionnés ou seulement certains services
+      // Créer une estimation de base en fonction du niveau, de la région et du nombre d'invités
+      const baseBudget = guests * (COST_PER_GUEST[serviceLevel as keyof typeof COST_PER_GUEST] * 2); // Estimation globale
+      const adjustedBaseBudget = baseBudget * regionCoef * seasonCoef;
+      
+      // Déterminer les pourcentages pour les services sélectionnés
+      let totalPercentage = 0;
+      const selectedServicesPercentages: Record<string, number> = {};
+      
+      if (services.includes("photo-video")) {
+        totalPercentage += STANDARD_PERCENTAGES["photo-video"];
+        selectedServicesPercentages["Photographie & Vidéo"] = STANDARD_PERCENTAGES["photo-video"];
+      }
+      
+      if (services.includes("musique")) {
+        totalPercentage += STANDARD_PERCENTAGES["musique"];
+        selectedServicesPercentages["Musique (DJ/Groupe)"] = STANDARD_PERCENTAGES["musique"];
+      }
+      
+      if (services.includes("wedding-planner")) {
+        totalPercentage += STANDARD_PERCENTAGES["wedding-planner"];
+        selectedServicesPercentages["Wedding Planner"] = STANDARD_PERCENTAGES["wedding-planner"];
+      }
+      
+      if (services.includes("deco-fleurs")) {
+        totalPercentage += STANDARD_PERCENTAGES["deco-fleurs"];
+        selectedServicesPercentages["Décoration & Fleurs"] = STANDARD_PERCENTAGES["deco-fleurs"];
+      }
+      
+      // Ajouter toujours les divers
+      totalPercentage += STANDARD_PERCENTAGES["divers"];
+      selectedServicesPercentages["Divers & Imprévus"] = STANDARD_PERCENTAGES["divers"];
+      
+      // Normaliser les pourcentages pour qu'ils totalisent 100%
+      if (totalPercentage > 0) {
+        const normalizationFactor = 100 / totalPercentage;
+        
+        // Distribuer le budget selon les pourcentages normalisés
+        for (const [service, percentage] of Object.entries(selectedServicesPercentages)) {
+          const normalizedPercentage = percentage * normalizationFactor;
+          breakdown[service] = roundToNearest10((adjustedBaseBudget * normalizedPercentage) / 100);
+        }
+      }
+    }
+    
+    // Calculer le budget total en additionnant tous les postes
+    const totalBudget = Object.values(breakdown).reduce((sum, cost) => sum + cost, 0);
+    
+    // Stocker le budget final et la répartition
+    setFinalBudget(totalBudget);
+    setBudgetBreakdown(breakdown);
     setShowResults(true);
   };
 
@@ -95,6 +234,7 @@ const BudgetCalculator = () => {
     setServices([]);
     setServiceLevel("");
     setFinalBudget(null);
+    setBudgetBreakdown({});
     setShowResults(false);
     setStep(1);
   };
@@ -111,36 +251,6 @@ const BudgetCalculator = () => {
     if (step > 1) {
       setStep(step - 1);
     }
-  };
-
-  const getBudgetDistribution = () => {
-    if (!finalBudget) return {};
-
-    const distribution: Record<string, number> = {};
-    
-    if (services.includes("lieu-traiteur")) {
-      distribution["Lieu & Traiteur"] = Math.round(finalBudget * BUDGET_DISTRIBUTION["lieu-traiteur"] / 100);
-    }
-    
-    if (services.includes("photo-video")) {
-      distribution["Photographie & Vidéo"] = Math.round(finalBudget * BUDGET_DISTRIBUTION["photo-video"] / 100);
-    }
-    
-    if (services.includes("musique")) {
-      distribution["Musique (DJ/Groupe)"] = Math.round(finalBudget * BUDGET_DISTRIBUTION["musique"] / 100);
-    }
-    
-    if (services.includes("wedding-planner")) {
-      distribution["Wedding Planner"] = Math.round(finalBudget * BUDGET_DISTRIBUTION["wedding-planner"] / 100);
-    }
-    
-    if (services.includes("deco-fleurs")) {
-      distribution["Décoration & Fleurs"] = Math.round(finalBudget * BUDGET_DISTRIBUTION["deco-fleurs"] / 100);
-    }
-    
-    distribution["Divers & Imprévus"] = Math.round(finalBudget * BUDGET_DISTRIBUTION["divers"] / 100);
-    
-    return distribution;
   };
 
   const handleDownloadClick = () => {
@@ -185,15 +295,15 @@ const BudgetCalculator = () => {
     }[region as keyof typeof REGION_COEFFICIENTS] || "";
 
     const guestCountText = {
-      "30": "Moins de 50",
-      "75": "50 à 100",
-      "125": "100 à 150",
-      "175": "Plus de 150"
+      "30": "Moins de 50 (30 invités)",
+      "75": "50 à 100 (75 invités)",
+      "125": "100 à 150 (125 invités)",
+      "175": "Plus de 150 (175 invités)"
     }[guestCount] || "";
 
     const seasonText = season === "haute" ? "Haute saison (avril-sept)" : "Basse saison (oct-mars)";
     
-    const paramText = `${regionName} - ${seasonText} - ${guestCountText} invités - ${serviceLevel.charAt(0).toUpperCase() + serviceLevel.slice(1)}`;
+    const paramText = `${regionName} - ${seasonText} - ${guestCountText} - ${serviceLevel.charAt(0).toUpperCase() + serviceLevel.slice(1)}`;
     doc.text(paramText, pageWidth/2, 50, { align: 'center' });
     
     doc.setFontSize(18);
@@ -211,18 +321,22 @@ const BudgetCalculator = () => {
     doc.setFontSize(12);
     doc.setTextColor(0, 0, 0);
     
-    const distribution = getBudgetDistribution();
     let yPosition = 120;
     
-    Object.entries(distribution).forEach(([service, amount], index) => {
+    Object.entries(budgetBreakdown).forEach(([service, amount], index) => {
       doc.text(`${service}`, margin, yPosition);
       doc.text(`${amount.toLocaleString('fr-FR')} €`, pageWidth - margin - 40, yPosition, { align: 'right' });
       yPosition += 10;
     });
+
+    // Ajouter la note en bas de page
+    doc.setFontSize(10);
+    doc.setTextColor(100, 100, 100);
+    doc.text("Estimation indicative basée sur vos choix, ajustable selon vos prestataires réels.", pageWidth/2, 240, { align: 'center' });
     
     doc.setFontSize(10);
     doc.setTextColor(128, 128, 128);
-    doc.text("Estimation indicative générée par Mariable.fr", pageWidth/2, 280, { align: 'center' });
+    doc.text("Estimation générée par Mariable.fr", pageWidth/2, 280, { align: 'center' });
     
     doc.save("estimation-mariage-mariable.pdf");
     
@@ -293,10 +407,10 @@ const BudgetCalculator = () => {
                   <SelectValue placeholder="Nombre d'invités" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="30">Moins de 50</SelectItem>
-                  <SelectItem value="75">50 à 100</SelectItem>
-                  <SelectItem value="125">100 à 150</SelectItem>
-                  <SelectItem value="175">Plus de 150</SelectItem>
+                  <SelectItem value="30">Moins de 50 (30 invités)</SelectItem>
+                  <SelectItem value="75">50 à 100 (75 invités)</SelectItem>
+                  <SelectItem value="125">100 à 150 (125 invités)</SelectItem>
+                  <SelectItem value="175">Plus de 150 (175 invités)</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -474,12 +588,19 @@ const BudgetCalculator = () => {
               
               <h3 className="font-medium text-lg mb-3">Répartition détaillée</h3>
               <div className="space-y-3">
-                {Object.entries(getBudgetDistribution()).map(([service, amount]) => (
+                {Object.entries(budgetBreakdown).map(([service, amount]) => (
                   <div key={service} className="flex justify-between items-center">
                     <span>{service}</span>
                     <span className="font-medium">{amount.toLocaleString('fr-FR')} €</span>
                   </div>
                 ))}
+              </div>
+              
+              <div className="mt-4 p-3 bg-wedding-cream/10 border border-wedding-cream/20 rounded-md flex items-start text-sm">
+                <Info className="h-5 w-5 text-wedding-olive/80 mr-2 mt-0.5 flex-shrink-0" />
+                <p className="text-muted-foreground">
+                  Estimation indicative basée sur vos choix, ajustable selon vos prestataires réels.
+                </p>
               </div>
               
               <div className="border-t border-gray-200 mt-6 pt-6">
@@ -507,10 +628,10 @@ const BudgetCalculator = () => {
                   
                   <div className="text-muted-foreground">Invités:</div>
                   <div>{
-                    guestCount === "30" ? "Moins de 50" :
-                    guestCount === "75" ? "50 à 100" :
-                    guestCount === "125" ? "100 à 150" :
-                    guestCount === "175" ? "Plus de 150" : ""
+                    guestCount === "30" ? "Moins de 50 (30 invités)" :
+                    guestCount === "75" ? "50 à 100 (75 invités)" :
+                    guestCount === "125" ? "100 à 150 (125 invités)" :
+                    guestCount === "175" ? "Plus de 150 (175 invités)" : ""
                   }</div>
                   
                   <div className="text-muted-foreground">Niveau:</div>

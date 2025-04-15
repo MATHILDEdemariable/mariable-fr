@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
@@ -42,6 +43,16 @@ const Index = () => {
               
               <div className="max-w-4xl mx-auto">
                 <SearchBar />
+                <div className="mt-3 text-center">
+                  <a 
+                    href="https://chatgpt.com/g/g-67b5d482dd208191ae458763db0bb08c-mathilde-de-mariable"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-wedding-cream/90 hover:text-wedding-cream text-xs md:text-sm inline-flex items-center transition-colors"
+                  >
+                    Sinon organisez votre mariage avec MariableGPT – notre intelligence amoureuse
+                  </a>
+                </div>
               </div>
             </div>
           </div>
@@ -177,7 +188,7 @@ const Index = () => {
                 <img src="/lovable-uploads/c5ca128d-6c6f-4f09-a990-f6f16d47e231.png" alt="Mariable Logo" className="h-10 md:h-12 w-auto" />
               </div>
               <p className="mb-3 text-wedding-black/70 text-xs md:text-sm">
-                Mariable est votre partenaire privilégi�� pour créer le mariage de vos rêves, en simplifiant chaque étape de l'organisation.
+                Mariable est la référence des mariages modernes & élégants.
               </p>
               <div className="flex gap-4">
                 <a href="https://www.instagram.com/mariable.fr/" aria-label="Instagram" target="_blank" rel="noopener noreferrer" className="text-wedding-black hover:text-wedding-black/70 transition-colors">

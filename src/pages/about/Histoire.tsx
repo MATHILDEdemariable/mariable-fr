@@ -34,7 +34,7 @@ const HistoireContent = () => (
       <div className="grid md:grid-cols-2 gap-12 items-center">
         <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 flex flex-col items-center text-center">
           <img 
-            src="/lovable-uploads/6e557abe-b336-4f24-909d-56927c0c47e3.png" 
+            src="/lovable-uploads/f6b347a1-f299-4731-8b9a-10e21c0f1b08.png" 
             alt="Schoolab" 
             className="h-16 mb-4 object-contain" 
           />
