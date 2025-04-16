@@ -1,13 +1,9 @@
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import Header from '@/components/Header';
 import ChatbotButton from '@/components/ChatbotButton';
 
 const GuideMariableFrame = () => {
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
-
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <Header />
