@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import ServiceTemplate from '../ServiceTemplate';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -27,6 +27,8 @@ const PlanningChecklist = () => {
     weddingTasks.map(task => ({ ...task, completed: false }))
   );
   
+  const navigate = useNavigate();
+  
   const toggleTaskCompletion = (taskId: number) => {
     setTasksWithStatus(prev => 
       prev.map(task => 
@@ -40,6 +42,10 @@ const PlanningChecklist = () => {
   const getProgressPercentage = () => {
     const completed = tasksWithStatus.filter(t => t.completed).length;
     return Math.round((completed / tasksWithStatus.length) * 100);
+  };
+
+  const handleSignUpClick = () => {
+    navigate('/login-frame');
   };
 
   return (
@@ -106,7 +112,7 @@ const PlanningChecklist = () => {
             <Button 
               size="lg"
               className="bg-wedding-olive hover:bg-wedding-olive/90 text-white"
-              onClick={() => window.open('https://leguidemariable.softr.app/connexion', '_blank')}
+              onClick={handleSignUpClick}
             >
               S'inscrire <ArrowRight className="ml-2 h-4 w-4" />
             </Button>

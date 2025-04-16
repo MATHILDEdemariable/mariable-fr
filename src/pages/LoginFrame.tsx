@@ -13,7 +13,7 @@ const LoginFrame = () => {
           <iframe 
             src="https://leguidemariable.softr.app/connexion" 
             width="100%" 
-            height="1200" 
+            className="w-full min-h-[80vh]"
             style={{ border: 'none', background: 'transparent' }}
             title="Connexion Mariable"
           />

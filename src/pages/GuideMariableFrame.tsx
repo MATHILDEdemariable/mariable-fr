@@ -13,7 +13,7 @@ const GuideMariableFrame = () => {
           <iframe 
             src="https://leguidemariable.softr.app/" 
             width="100%" 
-            height="1200" 
+            className="w-full min-h-[80vh]"
             style={{ border: 'none', background: 'transparent' }}
             title="Guide Mariable"
           />
