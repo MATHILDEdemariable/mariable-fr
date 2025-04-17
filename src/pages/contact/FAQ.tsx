@@ -36,10 +36,6 @@ const faqItems = [
   {
     question: "Proposez-vous des services pour d'autres types d'événements ?",
     answer: "Actuellement, Mariable est spécialisé dans l'organisation de mariages. Cependant, certains de nos prestataires peuvent également vous accompagner pour d'autres célébrations comme les fiançailles, les anniversaires de mariage ou les renouvellements de vœux."
-  },
-  {
-    question: "Comment puis-je laisser un avis après mon mariage ?",
-    answer: "Après votre mariage, vous recevrez un email vous invitant à partager votre expérience avec Mariable et les prestataires que vous avez choisis. Vos retours sont précieux pour nous aider à améliorer notre service et à maintenir la qualité de notre réseau de prestataires."
   }
 ];
 
