@@ -1,8 +1,7 @@
-
 import React from 'react';
 import ServiceTemplate from '../ServiceTemplate';
 import { Button } from '@/components/ui/button';
-import { BookOpen, Users } from 'lucide-react';
+import { BookOpen } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const PrestataireContent = () => {
@@ -10,10 +9,6 @@ const PrestataireContent = () => {
   
   const handleGuideClick = () => {
     navigate('/guide-mariable-frame');
-  };
-  
-  const handleSelectionClick = () => {
-    navigate('/services/selection-mariable');
   };
 
   return (
@@ -23,23 +18,13 @@ const PrestataireContent = () => {
         <p className="mb-4">
           Découvrez nos sélections de prestataires de qualité pour votre mariage, soigneusement vérifiés par notre équipe.
         </p>
-        <div className="flex flex-col sm:flex-row gap-3">
-          <Button 
-            className="bg-wedding-olive hover:bg-wedding-olive/90"
-            onClick={handleGuideClick}
-          >
-            <BookOpen className="mr-2 h-4 w-4" />
-            Guide Mariable
-          </Button>
-          
-          <Button 
-            className="bg-wedding-olive hover:bg-wedding-olive/90"
-            onClick={handleSelectionClick}
-          >
-            <Users className="mr-2 h-4 w-4" />
-            La sélection Mariable
-          </Button>
-        </div>
+        <Button 
+          className="bg-wedding-olive hover:bg-wedding-olive/90"
+          onClick={handleGuideClick}
+        >
+          <BookOpen className="mr-2 h-4 w-4" />
+          Guide Mariable
+        </Button>
       </div>
     
       <p>
@@ -76,7 +61,7 @@ const Prestataires = () => {
   return (
     <ServiceTemplate 
       title="Recherche de prestataires"
-      description="Trouvez les meilleurs prestataires adaptés à vos besoins"
+      description="Trouvez les meilleurs prestataires pour votre mariage"
       content={<PrestataireContent />}
     />
   );

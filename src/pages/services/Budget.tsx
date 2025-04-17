@@ -691,8 +691,8 @@ const BudgetContent = () => (
 const Budget = () => {
   return (
     <ServiceTemplate 
-      title="Gestion de budget"
-      description="Transparence des prix et devis instantanés personnalisés"
+      title="Budget mariage"
+      description="Gérez facilement votre budget et suivez vos dépenses"
       content={<BudgetContent />}
     />
   );

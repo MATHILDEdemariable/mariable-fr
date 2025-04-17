@@ -80,8 +80,8 @@ const ConseilsContent = () => {
 const Conseils = () => {
   return (
     <ServiceTemplate 
-      title="Conseils personnalisés"
-      description="Des recommandations adaptées à votre style et vos envies"
+      title="Conseils mariage"
+      description="Des recommandations personnalisées pour votre grand jour"
       content={<ConseilsContent />}
     />
   );

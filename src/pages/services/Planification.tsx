@@ -148,7 +148,7 @@ const PlanificationContent = () => (
 const Planification = () => {
   return (
     <ServiceTemplate 
-      title="Planification de votre mariage"
+      title="Planification de mariage"
       description="Organisez chaque étape de votre mariage sans stress"
       content={<PlanificationContent />}
     />
