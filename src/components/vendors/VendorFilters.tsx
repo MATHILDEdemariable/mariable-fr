@@ -65,14 +65,14 @@ const VendorFilters: React.FC<VendorFiltersProps> = ({ filters, onFilterChange }
         
         <div>
           <Select
-            value={filters.region || ""}
-            onValueChange={(value) => onFilterChange({ region: value })}
+            value={filters.region || "all-regions"}
+            onValueChange={(value) => onFilterChange({ region: value === "all-regions" ? null : value })}
           >
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Région" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Toutes les régions</SelectItem>
+              <SelectItem value="all-regions">Toutes les régions</SelectItem>
               {REGIONS.map((region) => (
                 <SelectItem key={region} value={region}>
                   {region}
