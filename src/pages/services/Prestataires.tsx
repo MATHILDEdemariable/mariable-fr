@@ -2,7 +2,7 @@
 import React from 'react';
 import ServiceTemplate from '../ServiceTemplate';
 import { Button } from '@/components/ui/button';
-import { BookOpen } from 'lucide-react';
+import { BookOpen, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const PrestataireContent = () => {
@@ -11,22 +11,35 @@ const PrestataireContent = () => {
   const handleGuideClick = () => {
     navigate('/guide-mariable-frame');
   };
+  
+  const handleSelectionClick = () => {
+    navigate('/services/selection-mariable');
+  };
 
   return (
     <>
       <div className="bg-wedding-cream/30 p-6 rounded-lg mb-8 border border-wedding-olive/20">
-        <h2 className="text-2xl font-serif mb-3">Guide Mariable des prestataires</h2>
+        <h2 className="text-2xl font-serif mb-3">Nos sélections de prestataires</h2>
         <p className="mb-4">
-          Nous fournissons un guide de référence des meilleurs prestataires sélectionnés avec soin pour votre mariage.
-          Notre "Guide Mariable" regroupe des professionnels de qualité que nous avons personnellement validés.
+          Découvrez nos sélections de prestataires de qualité pour votre mariage, soigneusement vérifiés par notre équipe.
         </p>
-        <Button 
-          className="bg-wedding-olive hover:bg-wedding-olive/90"
-          onClick={handleGuideClick}
-        >
-          <BookOpen className="mr-2 h-4 w-4" />
-          Accéder au Guide Mariable
-        </Button>
+        <div className="flex flex-col sm:flex-row gap-3">
+          <Button 
+            className="bg-wedding-olive hover:bg-wedding-olive/90"
+            onClick={handleGuideClick}
+          >
+            <BookOpen className="mr-2 h-4 w-4" />
+            Guide Mariable
+          </Button>
+          
+          <Button 
+            className="bg-wedding-olive hover:bg-wedding-olive/90"
+            onClick={handleSelectionClick}
+          >
+            <Users className="mr-2 h-4 w-4" />
+            La sélection Mariable
+          </Button>
+        </div>
       </div>
     
       <p>
