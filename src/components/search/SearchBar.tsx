@@ -2,100 +2,55 @@
 import React, { useState } from 'react';
 import { Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { Card } from '@/components/ui/card';
-import { useIsMobile } from '@/hooks/use-mobile';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
 import { useNavigate } from 'react-router-dom';
-import RegionSelector from './RegionSelector';
-import DateSelector from './DateSelector';
-import GuestSelector from './GuestSelector';
 
 const SearchBar = () => {
-  const [activeTab, setActiveTab] = useState('lieu');
-  const [selectedRegions, setSelectedRegions] = useState<string[]>([]);
-  const [selectedDate, setSelectedDate] = useState<Date | null>();
-  const [dateSelectionType, setDateSelectionType] = useState<'exact' | 'flexible'>('exact');
-  const [guestCount, setGuestCount] = useState(0);
-  const isMobile = useIsMobile();
+  const [searchType, setSearchType] = useState('lieu');
+  const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
 
-  const handleTabChange = (value: string) => {
-    setActiveTab(value);
-  };
-
   const handleSearch = () => {
-    // Navigate to the embedded iFrame page instead of opening a new tab
     navigate('/guide-mariable-frame');
   };
 
-  const handleRegionsChange = (regions: string[]) => {
-    setSelectedRegions(regions);
-  };
-
-  const handleDateChange = (date: Date | null | undefined, type: 'exact' | 'flexible') => {
-    setSelectedDate(date);
-    setDateSelectionType(type);
-  };
-
-  const handleGuestCountChange = (count: number) => {
-    setGuestCount(count);
-  };
-
   return (
-    <div className="w-full max-w-6xl mx-auto">
-      <Card className="shadow-lg border border-wedding-black/10 rounded-2xl overflow-hidden">
-        <Tabs 
-          defaultValue="lieu" 
-          value={activeTab} 
-          onValueChange={handleTabChange}
-          className="w-full"
+    <div className="w-full max-w-3xl mx-auto">
+      <div className="flex gap-2 bg-white p-2 rounded-2xl shadow-lg border border-wedding-black/10">
+        <div className="flex-grow">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              type="text"
+              placeholder="Rechercher..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10 w-full"
+            />
+          </div>
+        </div>
+        
+        <Select
+          value={searchType}
+          onValueChange={setSearchType}
         >
-          <div className="p-2 md:p-3 bg-white">
-            <TabsList className="w-full h-auto bg-wedding-cream/50 p-1 gap-1">
-              <TabsTrigger 
-                value="lieu" 
-                className="flex-1 py-3 data-[state=active]:bg-white data-[state=active]:shadow-sm text-sm"
-              >
-                Lieu
-              </TabsTrigger>
-              <TabsTrigger 
-                value="prestataires" 
-                className="flex-1 py-3 data-[state=active]:bg-white data-[state=active]:shadow-sm text-sm"
-              >
-                Prestataires
-              </TabsTrigger>
-            </TabsList>
-          </div>
-
-          <div className="p-3 bg-white">
-            <div className="flex flex-col sm:flex-row gap-2">
-              <RegionSelector 
-                onRegionsChange={handleRegionsChange}
-                className="rounded-xl h-12"
-              />
-              
-              <DateSelector 
-                onDateChange={handleDateChange}
-                className="rounded-xl h-12"
-              />
-              
-              <GuestSelector 
-                onGuestCountChange={handleGuestCountChange}
-                className="rounded-xl h-12"
-              />
-              
-              <Button 
-                onClick={handleSearch}
-                size={isMobile ? "default" : "lg"} 
-                className="bg-wedding-olive hover:bg-wedding-olive/90 text-white rounded-xl flex items-center gap-2 h-12 text-sm"
-              >
-                <Search size={18} />
-                <span>Rechercher</span>
-              </Button>
-            </div>
-          </div>
-        </Tabs>
-      </Card>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Type de recherche" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="lieu">Lieu de réception</SelectItem>
+            <SelectItem value="prestataire">Prestataire</SelectItem>
+          </SelectContent>
+        </Select>
+        
+        <Button 
+          onClick={handleSearch}
+          className="bg-wedding-olive hover:bg-wedding-olive/90 text-white"
+        >
+          <Search size={18} />
+        </Button>
+      </div>
     </div>
   );
 };

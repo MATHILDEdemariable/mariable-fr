@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from "@/components/ui/navigation-menu";
+import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuList, NavigationMenuTrigger } from "@/components/ui/navigation-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { Menu, X, Users, UserRound, Home, Phone, Info } from 'lucide-react';
+import { Menu, X, Users } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 const ListItem = React.forwardRef<
@@ -36,6 +37,7 @@ const Header = () => {
   const isMobile = useIsMobile();
   const [isScrolled, setIsScrolled] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -207,23 +209,30 @@ const Header = () => {
                         </ul>
                       </NavigationMenuContent>
                     </NavigationMenuItem>
-
-                    <NavigationMenuItem>
-                      <Link to="/professionnels" className="inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium transition-colors hover:bg-wedding-cream text-wedding-black">
-                        <Users size={16} className="mr-1" />
-                        Professionnels
-                      </Link>
-                    </NavigationMenuItem>
                   </NavigationMenuList>
                 </NavigationMenu>
                 
-                <Link 
-                  to="/login-frame" 
-                  className="flex items-center gap-2 px-4 py-2 bg-white rounded-full border border-wedding-black/20 shadow-sm hover:shadow transition-all"
-                >
-                  <UserRound size={20} className="text-wedding-black" />
-                  <span className="text-sm font-medium">Connexion</span>
-                </Link>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button className="flex items-center gap-2 px-4 py-2 bg-white rounded-full border border-wedding-black/20 shadow-sm hover:shadow transition-all">
+                      <Users size={20} className="text-wedding-black" />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-48">
+                    <DropdownMenuItem asChild>
+                      <Link to="/professionnels" className="flex items-center gap-2">
+                        <Users size={16} />
+                        <span>Professionnels</span>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/login-frame" className="flex items-center gap-2">
+                        <Users size={16} />
+                        <span>Futurs mariés</span>
+                      </Link>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </>
             )}
           </div>
