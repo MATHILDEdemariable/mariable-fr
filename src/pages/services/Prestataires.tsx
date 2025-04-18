@@ -1,8 +1,9 @@
+
 import React from 'react';
 import ServiceTemplate from '../ServiceTemplate';
 import { Button } from '@/components/ui/button';
 import { BookOpen } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import SEO from '@/components/SEO';
 
 const PrestataireContent = () => {
