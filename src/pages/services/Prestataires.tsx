@@ -36,11 +36,22 @@ const PrestataireContent = () => {
       
       <h2 className="text-2xl font-serif mt-8 mb-4">Comment ça marche ?</h2>
       
-      <p>
-        Notre algorithme intelligent analyse vos préférences et vous propose uniquement 
-        des prestataires qui correspondent à vos critères. Plus besoin de passer des heures 
-        à faire des recherches, nous le faisons pour vous !
-      </p>
+      <div className="flex flex-col md:flex-row gap-4 items-start mb-8">
+        <p className="flex-grow">
+          Notre algorithme intelligent analyse vos préférences et vous propose uniquement 
+          des prestataires qui correspondent à vos critères. Plus besoin de passer des heures 
+          à faire des recherches, nous le faisons pour vous !
+        </p>
+        <Button 
+          variant="outline" 
+          className="whitespace-nowrap"
+          asChild
+        >
+          <Link to="/demo">
+            Voir la démo
+          </Link>
+        </Button>
+      </div>
       
       <h2 className="text-2xl font-serif mt-8 mb-4">Nos catégories de prestataires</h2>
       
