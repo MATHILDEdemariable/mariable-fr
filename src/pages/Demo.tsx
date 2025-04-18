@@ -1,15 +1,32 @@
-
 import React, { useState } from 'react';
 import Header from '@/components/Header';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Calendar } from '@/components/ui/calendar';
-import { MapPin, Users, Star, Award, CalendarCheck, Euro } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Label } from '@/components/ui/label';
+import { MapPin, Users, Star, Award, CalendarCheck, Euro, MessageSquare } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { toast } from '@/components/ui/use-toast';
+
+interface Package {
+  name: string;
+  basePrice: number;
+  description: string;
+}
+
+const packages: Package[] = [
+  { name: 'Classique', basePrice: 3200, description: 'Location simple du domaine' },
+  { name: 'Premium', basePrice: 4500, description: 'Location + coordination' },
+  { name: 'Luxe', basePrice: 6000, description: 'Service tout inclus' },
+];
 
 const Demo = () => {
   const [date, setDate] = useState<Date | undefined>(undefined);
+  const [guests, setGuests] = useState<number>(100);
+  const [selectedPackage, setSelectedPackage] = useState<Package>(packages[0]);
   
   const disabledDates = [
     new Date(2025, 5, 15),
@@ -17,6 +34,37 @@ const Demo = () => {
     new Date(2025, 5, 17),
     new Date(2025, 6, 1),
   ];
+
+  const handleDateSelect = (newDate: Date | undefined) => {
+    setDate(newDate);
+    if (newDate) {
+      const isDisabled = disabledDates.some(
+        (disabled) => disabled.toDateString() === newDate.toDateString()
+      );
+      if (isDisabled) {
+        toast({
+          description: "Cette date n'est pas disponible",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          description: "Date disponible ! Vous pouvez poursuivre votre réservation.",
+        });
+      }
+    }
+  };
+
+  const calculateTotal = () => {
+    const basePrice = selectedPackage.basePrice;
+    const commission = basePrice * 0.04; // 4% de commission
+    return {
+      basePrice,
+      commission,
+      total: basePrice + commission
+    };
+  };
+
+  const prices = calculateTotal();
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
@@ -119,6 +167,8 @@ const Demo = () => {
             <div className="w-full lg:w-80 space-y-4">
               <Card className="p-4">
                 <h3 className="text-lg font-medium mb-4">Vérifier les disponibilités</h3>
+                
+                {/* Date Selection */}
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button variant="outline" className="w-full justify-start text-left font-normal">
@@ -129,14 +179,69 @@ const Demo = () => {
                     <Calendar
                       mode="single"
                       selected={date}
-                      onSelect={setDate}
+                      onSelect={handleDateSelect}
                       disabled={disabledDates}
                       className="pointer-events-auto"
                     />
                   </PopoverContent>
                 </Popover>
+
+                {/* Guest Count */}
+                <div className="mt-4">
+                  <Label htmlFor="guests">Nombre d'invités</Label>
+                  <Input
+                    id="guests"
+                    type="number"
+                    value={guests}
+                    onChange={(e) => setGuests(parseInt(e.target.value) || 0)}
+                    min={1}
+                    max={200}
+                    className="mt-1"
+                  />
+                </div>
+
+                {/* Package Selection */}
+                <div className="mt-4">
+                  <Label>Formule</Label>
+                  <RadioGroup 
+                    value={selectedPackage.name} 
+                    onValueChange={(value) => setSelectedPackage(packages.find(p => p.name === value) || packages[0])}
+                    className="mt-2"
+                  >
+                    {packages.map((pkg) => (
+                      <div key={pkg.name} className="flex items-center space-x-2">
+                        <RadioGroupItem value={pkg.name} id={pkg.name} />
+                        <Label htmlFor={pkg.name}>{pkg.name}</Label>
+                      </div>
+                    ))}
+                  </RadioGroup>
+                </div>
+
+                {/* Price Breakdown */}
+                <div className="mt-6 border-t pt-4 space-y-2">
+                  <div className="flex justify-between">
+                    <span>Prix de base</span>
+                    <span>{prices.basePrice}€</span>
+                  </div>
+                  <div className="flex justify-between text-sm text-muted-foreground">
+                    <span>Frais de réservation (4%)</span>
+                    <span>{prices.commission}€</span>
+                  </div>
+                  <div className="flex justify-between font-medium text-lg border-t pt-2">
+                    <span>Total</span>
+                    <span>{prices.total}€</span>
+                  </div>
+                </div>
+
                 <Button className="w-full mt-4 bg-wedding-olive hover:bg-wedding-olive/90">
-                  Réserver
+                  Prendre RDV
+                </Button>
+              </Card>
+
+              <Card className="p-4">
+                <Button variant="outline" className="w-full" onClick={() => toast({ description: "La messagerie sera bientôt disponible" })}>
+                  <MessageSquare className="mr-2 h-4 w-4" />
+                  Contacter
                 </Button>
               </Card>
             </div>
