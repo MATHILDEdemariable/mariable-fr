@@ -1,8 +1,8 @@
-
 import React from 'react';
 import ServiceTemplate from '../ServiceTemplate';
 import { Button } from '@/components/ui/button';
 import { useIsMobile } from '@/hooks/use-mobile';
+import SEO from '@/components/SEO';
 
 // Custom WhatsApp icon component
 const CustomWhatsappIcon = () => (
@@ -83,7 +83,12 @@ const Conseils = () => {
       title="Conseils mariage"
       description="Des recommandations personnalisées pour votre grand jour"
       content={<ConseilsContent />}
-    />
+    >
+      <SEO 
+        title="Conseils et astuces pour organiser votre mariage"
+        description="Découvrez les meilleurs conseils pour organiser un mariage unique qui vous ressemble, par nos experts et notre communauté."
+      />
+    </ServiceTemplate>
   );
 };
 
