@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -49,56 +48,58 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <ScrollToTop />
-        <Routes>
-          <Route path="/" element={<Index />} />
-          
-          {/* Email capture page */}
-          <Route path="/commencer" element={<EmailCapture />} />
-          
-          {/* Professionals page */}
-          <Route path="/professionnels" element={<Professionnels />} />
-          
-          {/* Services pages */}
-          <Route path="/services/prestataires" element={<Prestataires />} />
-          <Route path="/services/planification" element={<Planification />} />
-          <Route path="/services/budget" element={<Budget />} />
-          <Route path="/services/conseils" element={<Conseils />} />
-          
-          {/* Guide Mariable */}
-          <Route path="/guide-mariable" element={<GuideMariable />} />
-          <Route path="/guide-mariable-frame" element={<GuideMariableFrame />} />
-          <Route path="/login-frame" element={<LoginFrame />} />
-          
-          {/* About pages */}
-          <Route path="/about/histoire" element={<Histoire />} />
-          <Route path="/about/charte" element={<Charte />} />
-          <Route path="/about/temoignages" element={<Temoignages />} />
-          <Route path="/about/approche" element={<Approche />} />
-          
-          {/* Contact pages */}
-          <Route path="/contact/nous-contacter" element={<NousContacter />} />
-          <Route path="/contact/faq" element={<FAQ />} />
-          
-          {/* Legal pages */}
-          <Route path="/mentions-legales" element={<MentionsLegales />} />
-          <Route path="/cgv" element={<CGV />} />
-          
-          {/* Redirect for old privacy policy route */}
-          <Route path="/politique-confidentialite" element={<Navigate to="/mentions-legales" replace />} />
-          
-          {/* Demo page */}
-          <Route path="/demo" element={<Demo />} />
-          
-          {/* Catch-all route */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
+    <HelmetProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <ScrollToTop />
+          <Routes>
+            <Route path="/" element={<Index />} />
+            
+            {/* Email capture page */}
+            <Route path="/commencer" element={<EmailCapture />} />
+            
+            {/* Professionals page */}
+            <Route path="/professionnels" element={<Professionnels />} />
+            
+            {/* Services pages */}
+            <Route path="/services/prestataires" element={<Prestataires />} />
+            <Route path="/services/planification" element={<Planification />} />
+            <Route path="/services/budget" element={<Budget />} />
+            <Route path="/services/conseils" element={<Conseils />} />
+            
+            {/* Guide Mariable */}
+            <Route path="/guide-mariable" element={<GuideMariable />} />
+            <Route path="/guide-mariable-frame" element={<GuideMariableFrame />} />
+            <Route path="/login-frame" element={<LoginFrame />} />
+            
+            {/* About pages */}
+            <Route path="/about/histoire" element={<Histoire />} />
+            <Route path="/about/charte" element={<Charte />} />
+            <Route path="/about/temoignages" element={<Temoignages />} />
+            <Route path="/about/approche" element={<Approche />} />
+            
+            {/* Contact pages */}
+            <Route path="/contact/nous-contacter" element={<NousContacter />} />
+            <Route path="/contact/faq" element={<FAQ />} />
+            
+            {/* Legal pages */}
+            <Route path="/mentions-legales" element={<MentionsLegales />} />
+            <Route path="/cgv" element={<CGV />} />
+            
+            {/* Redirect for old privacy policy route */}
+            <Route path="/politique-confidentialite" element={<Navigate to="/mentions-legales" replace />} />
+            
+            {/* Demo page */}
+            <Route path="/demo" element={<Demo />} />
+            
+            {/* Catch-all route */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </HelmetProvider>
   </QueryClientProvider>
 );
 

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Header from '@/components/Header';
 import { Link } from 'react-router-dom';
@@ -8,11 +7,13 @@ interface ServiceTemplateProps {
   title: string;
   description: string;
   content: React.ReactNode;
+  children?: React.ReactNode;
 }
 
-const ServiceTemplate: React.FC<ServiceTemplateProps> = ({ title, description, content }) => {
+const ServiceTemplate: React.FC<ServiceTemplateProps> = ({ title, description, content, children }) => {
   return (
     <div className="min-h-screen flex flex-col bg-white">
+      {children}
       <Header />
       
       <main className="flex-grow py-16 container bg-white">

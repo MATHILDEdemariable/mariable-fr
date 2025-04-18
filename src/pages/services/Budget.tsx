@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from 'react';
 import ServiceTemplate from '../ServiceTemplate';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -13,6 +12,7 @@ import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { toast } from "@/hooks/use-toast";
 import jsPDF from 'jspdf';
+import SEO from '@/components/SEO';
 
 // Coût par invité pour le traiteur selon le niveau de service
 const COST_PER_GUEST = {
@@ -691,10 +691,15 @@ const BudgetContent = () => (
 const Budget = () => {
   return (
     <ServiceTemplate 
-      title="Budget mariage"
-      description="Gérez facilement votre budget et suivez vos dépenses"
+      title="Budget de mariage"
+      description="Calculez et gérez votre budget de mariage"
       content={<BudgetContent />}
-    />
+    >
+      <SEO 
+        title="Calculette de budget mariage – Estimez votre budget"
+        description="Calculez facilement le coût estimatif de votre mariage selon vos envies, vos invités et vos prestataires."
+      />
+    </ServiceTemplate>
   );
 };
 

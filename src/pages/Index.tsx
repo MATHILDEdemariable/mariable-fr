@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { useIsMobile } from '@/hooks/use-mobile';
 import SearchBar from '@/components/search/SearchBar';
 import ChatbotButton from '@/components/ChatbotButton';
+import SEO from '@/components/SEO';
 
 const Index = () => {
   const navigate = useNavigate();
@@ -21,7 +22,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
-      <Header />
+      <SEO />
       
       <main className="flex-grow">
         <section className="relative min-h-[70vh] sm:min-h-[80vh] flex items-center">

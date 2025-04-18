@@ -3,6 +3,7 @@ import ServiceTemplate from '../ServiceTemplate';
 import { Button } from '@/components/ui/button';
 import { BookOpen } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import SEO from '@/components/SEO';
 
 const PrestataireContent = () => {
   const navigate = useNavigate();
@@ -63,7 +64,12 @@ const Prestataires = () => {
       title="Recherche de prestataires"
       description="Trouvez les meilleurs prestataires pour votre mariage"
       content={<PrestataireContent />}
-    />
+    >
+      <SEO 
+        title="Trouvez les meilleurs prestataires de mariage"
+        description="Lieux, traiteurs, photographes, DJs… Découvrez une sélection de prestataires vérifiés selon votre région et votre style."
+      />
+    </ServiceTemplate>
   );
 };
 

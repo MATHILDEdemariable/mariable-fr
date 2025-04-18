@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import ServiceTemplate from '../ServiceTemplate';
@@ -7,8 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import SEO from '@/components/SEO';
 
-// Wedding planning tasks
 const weddingTasks = [
   { id: 1, title: "Posez les bases", description: "Définissez la vision de votre mariage : style, ambiance, type de cérémonie.", priority: "haute", category: "essentiel" },
   { id: 2, title: "Estimez le nombre d'invités", description: "Même approximatif, cela guidera vos choix logistiques et budgétaires.", priority: "haute", category: "organisation" },
@@ -151,7 +150,12 @@ const Planification = () => {
       title="Planification de mariage"
       description="Organisez chaque étape de votre mariage sans stress"
       content={<PlanificationContent />}
-    />
+    >
+      <SEO 
+        title="Planification mariage étape par étape"
+        description="Un rétroplanning mariage simple et personnalisé."
+      />
+    </ServiceTemplate>
   );
 };
 
