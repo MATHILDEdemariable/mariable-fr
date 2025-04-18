@@ -8,7 +8,6 @@ import { useEffect } from "react";
 import { HelmetProvider } from "react-helmet-async";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
-import EmailCapture from "./pages/EmailCapture";
 import MentionsLegales from "./pages/MentionsLegales";
 import CGV from "./pages/CGV";
 import GuideMariable from "./pages/GuideMariable";
@@ -58,9 +57,6 @@ const App = () => (
           <ScrollToTop />
           <Routes>
             <Route path="/" element={<Index />} />
-            
-            {/* Email capture page */}
-            <Route path="/commencer" element={<EmailCapture />} />
             
             {/* Professionals page */}
             <Route path="/professionnels" element={<Professionnels />} />

@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import Header from '@/components/Header';
 import { Card } from '@/components/ui/card';
@@ -80,7 +81,7 @@ const Demo = () => {
         {/* Hero Section */}
         <div className="relative h-[60vh] w-full">
           <img
-            src="/lovable-uploads/17e05913-97e1-4dec-bc8b-2e038b342ec2.png"
+            src="/lovable-uploads/99fde439-7310-4090-9478-8c9244627554.png"
             alt="Château de Mariable"
             className="w-full h-full object-cover"
           />

@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
@@ -23,6 +24,7 @@ const Index = () => {
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <SEO />
+      <Header />
       
       <main className="flex-grow">
         <section className="relative min-h-[70vh] sm:min-h-[80vh] flex items-center">
