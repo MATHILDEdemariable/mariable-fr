@@ -66,6 +66,12 @@ const Demo = () => {
 
   const prices = calculateTotal();
 
+  const handleBookingClick = () => {
+    toast({
+      description: "La réservation en ligne sera bientôt disponible",
+    });
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <Header />
@@ -233,7 +239,10 @@ const Demo = () => {
                   </div>
                 </div>
 
-                <Button className="w-full mt-4 bg-wedding-olive hover:bg-wedding-olive/90">
+                <Button 
+                  className="w-full mt-4 bg-wedding-olive hover:bg-wedding-olive/90"
+                  onClick={handleBookingClick}
+                >
                   Prendre RDV
                 </Button>
               </Card>
