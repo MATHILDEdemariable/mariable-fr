@@ -1,130 +1,148 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import Header from '@/components/Header';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Link } from 'react-router-dom';
-import { ArrowLeft, Calendar, Search, CheckCircle2 } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Calendar } from '@/components/ui/calendar';
+import { MapPin, Users, Star, Award, CalendarCheck, Euro } from 'lucide-react';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
 const Demo = () => {
+  const [date, setDate] = useState<Date | undefined>(undefined);
+  
+  const disabledDates = [
+    new Date(2025, 5, 15),
+    new Date(2025, 5, 16),
+    new Date(2025, 5, 17),
+    new Date(2025, 6, 1),
+  ];
+
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <Header />
       
-      <main className="flex-grow container py-12">
-        <div className="mb-8">
-          <Link to="/" className="inline-flex items-center text-wedding-olive hover:underline">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Retour à l'accueil
-          </Link>
-          
-          <h1 className="text-3xl md:text-4xl font-serif mt-4 mb-2">Merci pour votre intérêt !</h1>
-          <p className="text-muted-foreground max-w-3xl">
-            Nous vous remercions de votre confiance. L'application définitive est actuellement en cours de développement, 
-            mais nous sommes ravis de vous présenter cette démonstration.
-          </p>
+      <main className="flex-grow">
+        {/* Hero Section */}
+        <div className="relative h-[60vh] w-full">
+          <img
+            src="/lovable-uploads/17e05913-97e1-4dec-bc8b-2e038b342ec2.png"
+            alt="Château de Mariable"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-black/30" />
         </div>
-        
-        <div className="flex justify-center mb-10">
-          <Button 
-            className="bg-wedding-olive hover:bg-wedding-olive/90 text-white" 
-            size="lg" 
-            asChild
-          >
-            <a href="https://www.mariable.fr/selectionmariable" target="_blank" rel="noopener noreferrer">
-              Voir la sélection Mariable
-            </a>
-          </Button>
+
+        {/* Content */}
+        <div className="container max-w-6xl px-4 py-8">
+          <div className="flex flex-col lg:flex-row gap-8">
+            {/* Main Content */}
+            <div className="flex-grow space-y-6">
+              <div>
+                <h1 className="text-3xl font-serif mb-2">Château de Mariable</h1>
+                <div className="flex items-center text-muted-foreground gap-2 mb-4">
+                  <MapPin className="h-4 w-4" />
+                  <span>Cap Ferret, Sud-Ouest</span>
+                </div>
+                
+                <div className="flex flex-wrap gap-2">
+                  <Badge variant="secondary" className="flex items-center gap-1">
+                    <Award className="h-3 w-3" />
+                    Exclusif
+                  </Badge>
+                  <Badge variant="secondary" className="flex items-center gap-1">
+                    <Star className="h-3 w-3" />
+                    Prestataire recommandé
+                  </Badge>
+                  <Badge variant="secondary" className="flex items-center gap-1">
+                    <CalendarCheck className="h-3 w-3" />
+                    Disponible 2025
+                  </Badge>
+                </div>
+              </div>
+
+              {/* Key Information */}
+              <Card className="p-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="flex items-center gap-2">
+                    <Users className="h-5 w-5 text-wedding-olive" />
+                    <div>
+                      <p className="font-medium">Capacité</p>
+                      <p className="text-sm text-muted-foreground">Jusqu'à 200 invités</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Euro className="h-5 w-5 text-wedding-olive" />
+                    <div>
+                      <p className="font-medium">À partir de</p>
+                      <p className="text-sm text-muted-foreground">3200€ / jour</p>
+                    </div>
+                  </div>
+                </div>
+
+                <p className="mt-4 text-muted-foreground">
+                  Un château authentique du XVIIIe siècle niché dans un parc de 15 hectares, 
+                  offrant un cadre exceptionnel pour votre mariage de rêve.
+                </p>
+              </Card>
+
+              {/* Pricing Options */}
+              <div className="space-y-4">
+                <h2 className="text-xl font-serif">Nos formules</h2>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <Card className="p-4">
+                    <h3 className="font-medium mb-2">Classique</h3>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      Location simple du domaine
+                    </p>
+                    <p className="font-medium">3200€</p>
+                  </Card>
+                  <Card className="p-4 border-wedding-olive">
+                    <h3 className="font-medium mb-2">Premium</h3>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      Location + coordination
+                    </p>
+                    <p className="font-medium">4500€</p>
+                  </Card>
+                  <Card className="p-4">
+                    <h3 className="font-medium mb-2">À la carte</h3>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      Services personnalisés
+                    </p>
+                    <p className="font-medium">Sur devis</p>
+                  </Card>
+                </div>
+              </div>
+            </div>
+
+            {/* Sidebar */}
+            <div className="w-full lg:w-80 space-y-4">
+              <Card className="p-4">
+                <h3 className="text-lg font-medium mb-4">Vérifier les disponibilités</h3>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" className="w-full justify-start text-left font-normal">
+                      {date ? date.toLocaleDateString() : 'Sélectionner une date'}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={date}
+                      onSelect={setDate}
+                      disabled={disabledDates}
+                      className="pointer-events-auto"
+                    />
+                  </PopoverContent>
+                </Popover>
+                <Button className="w-full mt-4 bg-wedding-olive hover:bg-wedding-olive/90">
+                  Réserver
+                </Button>
+              </Card>
+            </div>
+          </div>
         </div>
-        
-        <div className="grid md:grid-cols-3 gap-8 mt-12">
-          <Card>
-            <CardHeader className="pb-3">
-              <div className="w-12 h-12 bg-wedding-olive/10 rounded-full flex items-center justify-center mb-4">
-                <Search className="text-wedding-olive" />
-              </div>
-              <CardTitle>Trouvez les meilleurs prestataires</CardTitle>
-              <CardDescription>
-                Accédez à notre base de données de prestataires sélectionnés avec soin
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground mb-4">
-                Mariable vous aide à trouver les prestataires qui correspondent exactement à vos critères :
-                style, budget, localisation et disponibilité.
-              </p>
-              <Button variant="outline" asChild>
-                <Link to="/services/prestataires">En savoir plus</Link>
-              </Button>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader className="pb-3">
-              <div className="w-12 h-12 bg-wedding-olive/10 rounded-full flex items-center justify-center mb-4">
-                <Calendar className="text-wedding-olive" />
-              </div>
-              <CardTitle>Planifiez sans stress</CardTitle>
-              <CardDescription>
-                Utilisez notre outil de planification pour ne rien oublier
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground mb-4">
-                Notre rétroplanning personnalisé vous guide étape par étape, avec des rappels
-                et conseils pour chaque phase de l'organisation.
-              </p>
-              <Button variant="outline" asChild>
-                <Link to="/services/planification">Voir le planning</Link>
-              </Button>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader className="pb-3">
-              <div className="w-12 h-12 bg-wedding-olive/10 rounded-full flex items-center justify-center mb-4">
-                <CheckCircle2 className="text-wedding-olive" />
-              </div>
-              <CardTitle>Obtenez des conseils d'experts</CardTitle>
-              <CardDescription>
-                Bénéficiez de l'expérience de vrais wedding planners
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground mb-4">
-                Des conseils personnalisés, des astuces et des inspirations pour créer
-                un mariage unique qui vous ressemble.
-              </p>
-              <Button variant="outline" asChild>
-                <Link to="/services/conseils">Découvrir les conseils</Link>
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
-        
-        <Card className="mt-12 bg-wedding-olive/5 border-wedding-olive/20">
-          <CardHeader>
-            <CardTitle className="text-wedding-olive">Nous vous recontacterons bientôt</CardTitle>
-            <CardDescription>
-              Notre équipe est en train d'analyser votre demande pour vous proposer les meilleurs prestataires
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="flex flex-col sm:flex-row gap-4">
-            <Button asChild>
-              <Link to="/contact/nous-contacter">Nous contacter</Link>
-            </Button>
-            <Button variant="outline">
-              <Link to="/">Revenir à l'accueil</Link>
-            </Button>
-          </CardContent>
-        </Card>
       </main>
-      
-      <footer className="py-6 border-t">
-        <div className="container text-center text-sm text-muted-foreground">
-          © 2025 Mariable - Merci de votre confiance
-        </div>
-      </footer>
     </div>
   );
 };
