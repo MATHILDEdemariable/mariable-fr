@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import Header from '@/components/Header';
 import { Card } from '@/components/ui/card';
@@ -49,61 +50,135 @@ const Budget = () => {
           La transparence des prix est au cœur de notre approche. Notre plateforme vous permet d'accéder aux tarifs réels des prestataires sans mauvaises surprises.
         </p>
 
-        <h2 className="text-2xl font-serif mb-6 bg-wedding-cream px-4 py-2 rounded-lg inline-block">Calculez votre budget mariage</h2>
-        
-        <Card className="p-6 mb-8">
-          <h2 className="text-2xl font-serif mb-2">Calculatrice de budget mariage</h2>
-          <p className="text-muted-foreground mb-6">Estimez le budget de votre mariage en quelques étapes</p>
+        <Tabs defaultValue="calculator" className="space-y-8">
+          <TabsList className="grid grid-cols-2 w-full max-w-md">
+            <TabsTrigger value="calculator">Calculatrice</TabsTrigger>
+            <TabsTrigger value="breakdown">Répartition</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="calculator" className="space-y-8">
+            <Card className="p-6">
+              <div className="flex items-center gap-2 mb-6">
+                <Calculator className="h-6 w-6 text-wedding-olive" />
+                <h2 className="text-2xl font-serif">Simulez votre budget</h2>
+              </div>
+              
+              <div className="space-y-6">
+                <div>
+                  <Label htmlFor="budget" className="mb-2 block">Budget total (€)</Label>
+                  <div className="flex items-center gap-4">
+                    <Slider
+                      id="budget"
+                      min={5000}
+                      max={100000}
+                      step={1000}
+                      value={[budget]}
+                      onValueChange={(vals) => setBudget(vals[0])}
+                      className="flex-grow"
+                    />
+                    <Input
+                      type="number"
+                      value={budget}
+                      onChange={(e) => setBudget(Number(e.target.value))}
+                      className="w-24"
+                    />
+                  </div>
+                </div>
+                
+                <div>
+                  <Label htmlFor="guests" className="mb-2 block">Nombre d'invités</Label>
+                  <div className="flex items-center gap-4">
+                    <Slider
+                      id="guests"
+                      min={10}
+                      max={500}
+                      step={5}
+                      value={[guests]}
+                      onValueChange={(vals) => setGuests(vals[0])}
+                      className="flex-grow"
+                    />
+                    <Input
+                      type="number"
+                      value={guests}
+                      onChange={(e) => setGuests(Number(e.target.value))}
+                      className="w-24"
+                    />
+                  </div>
+                </div>
+              </div>
+            </Card>
+            
+            <Card className="p-6">
+              <div className="flex items-center gap-2 mb-6">
+                <PieChart className="h-6 w-6 text-wedding-olive" />
+                <h2 className="text-2xl font-serif">Répartition suggérée</h2>
+              </div>
+              
+              <div className="space-y-4">
+                {categories.map((category) => (
+                  <div key={category.name}>
+                    <div className="flex justify-between items-center mb-1">
+                      <span>{category.name}</span>
+                      <span className="font-medium">{category.percentage}%</span>
+                    </div>
+                    <div className="flex justify-between items-center text-sm text-muted-foreground">
+                      <span>{calculateCategoryBudget(category.percentage)} €</span>
+                      <span>{calculatePerGuest(category.percentage)} € / invité</span>
+                    </div>
+                    <div className="w-full h-2 bg-gray-100 rounded-full mt-1">
+                      <div
+                        className="bg-wedding-olive h-2 rounded-full"
+                        style={{ width: `${category.percentage}%` }}
+                      ></div>
+                    </div>
+                    <Separator className="mt-3 mb-2" />
+                  </div>
+                ))}
+                
+                <div className="mt-6 flex justify-between items-center text-lg font-medium">
+                  <span>Total</span>
+                  <span>{budget} €</span>
+                </div>
+              </div>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="breakdown">
+            <Card className="p-6">
+              <h2 className="text-2xl font-serif mb-6">Détails par poste de dépense</h2>
+              
+              <div className="space-y-8">
+                <div>
+                  <h3 className="text-xl font-medium mb-4">Lieu de réception</h3>
+                  <p className="mb-2">Comprend : location de la salle, hébergement, mobilier de base</p>
+                  <p className="text-muted-foreground">Le lieu de réception représente généralement le poste de dépense le plus important d'un mariage. Les prix varient considérablement selon la région, la saison, et les prestations incluses.</p>
+                </div>
+                
+                <div>
+                  <h3 className="text-xl font-medium mb-4">Traiteur & boissons</h3>
+                  <p className="mb-2">Comprend : cocktail, repas, service, location de matériel spécifique</p>
+                  <p className="text-muted-foreground">Le budget traiteur est calculé sur une base par personne et dépend du type de menu, du nombre de pièces au cocktail, et du niveau de service.</p>
+                </div>
+                
+                <div>
+                  <h3 className="text-xl font-medium mb-4">Décoration & fleurs</h3>
+                  <p className="mb-2">Comprend : décorations de salle, centres de table, bouquets, arche florale</p>
+                  <p className="text-muted-foreground">Les fleurs fraîches représentent un coût significatif. Certains couples optent pour un mélange de fleurs fraîches et artificielles pour optimiser leur budget.</p>
+                </div>
+              </div>
+            </Card>
+          </TabsContent>
+        </Tabs>
 
-          <div className="space-y-1 mb-4">
-            <div className="w-full bg-gray-200 h-2 rounded-full">
-              <div className="w-1/4 h-full bg-wedding-olive rounded-full"></div>
-            </div>
-            <div className="flex justify-between text-sm text-muted-foreground">
-              <span>Étape 1</span>
-              <span>Étape 2</span>
-              <span>Étape 3</span>
-              <span>Étape 4</span>
-            </div>
-          </div>
+        {/* Texte de transition vers la calculatrice de boissons */}
+        <div className="my-8 p-4 bg-wedding-cream rounded-lg">
+          <p className="text-lg">
+            L'estimation du budget traiteur ci-dessus est calculée hors boissons. Pour vous aider à prévoir avec précision la quantité et le coût des boissons pour votre mariage, nous avons développé une calculatrice spéciale ci-dessous.
+          </p>
+        </div>
 
-          <div className="mt-8">
-            <h3 className="text-xl font-serif mb-4">Étape 1/4 : Région</h3>
-            <Label className="mb-2 block">Région du mariage</Label>
-            <div className="relative">
-              <select className="w-full p-2 pr-8 border rounded-md appearance-none bg-white">
-                <option value="">Sélectionnez une région</option>
-                <option value="idf">Île-de-France</option>
-                <option value="paca">Provence-Alpes-Côte d'Azur</option>
-                <option value="aura">Auvergne-Rhône-Alpes</option>
-                <option value="occi">Occitanie</option>
-                <option value="hdf">Hauts-de-France</option>
-                <option value="na">Nouvelle-Aquitaine</option>
-                <option value="bfc">Bourgogne-Franche-Comté</option>
-                <option value="cvl">Centre-Val de Loire</option>
-                <option value="norm">Normandie</option>
-                <option value="pdl">Pays de la Loire</option>
-                <option value="bre">Bretagne</option>
-                <option value="ge">Grand Est</option>
-                <option value="corse">Corse</option>
-              </select>
-              <MapPin className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
-            </div>
-          </div>
-
-          <div className="mt-8 flex justify-between">
-            <Button variant="outline" disabled>
-              Précédent
-            </Button>
-            <Button className="bg-wedding-olive hover:bg-wedding-olive/90">
-              Suivant
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </div>
-        </Card>
-
-        {/* Drinks Calculator - keeping the new component */}
-        <div className="mt-12">
+        {/* Calculatrice de boissons */}
+        <div className="mt-4 mb-12">
           <DrinksCalculator />
         </div>
       </main>
