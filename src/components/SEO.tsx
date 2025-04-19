@@ -9,11 +9,11 @@ interface SEOProps {
 }
 
 const SEO: React.FC<SEOProps> = ({ 
-  title = "Mariable",
-  description = "Mariable est la plateforme intelligente qui vous aide à organiser votre mariage simplement : trouvez des prestataires de qualité, planifiez chaque étape, suivez votre budget.",
+  title = "MARIABLE",
+  description = "MARIABLE est la plateforme intelligente qui vous aide à organiser votre mariage simplement : trouvez des prestataires de qualité, planifiez chaque étape, suivez votre budget.",
   image = "/lovable-uploads/23541521-b6ff-4175-a8c8-5017e5b19312.png"
 }) => {
-  const fullTitle = title === "Mariable" ? title : `${title} – Mariable`;
+  const fullTitle = title === "MARIABLE" ? title : `${title} – MARIABLE`;
 
   return (
     <Helmet>

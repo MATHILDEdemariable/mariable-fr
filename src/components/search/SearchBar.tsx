@@ -23,7 +23,7 @@ const SearchBar = () => {
             placeholder="Un traiteur exceptionnel à Bordeaux"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10 w-full"
+            className="pl-10 w-full text-xs sm:text-sm" // Added text size classes for better mobile visibility
           />
         </div>
         <Button 
