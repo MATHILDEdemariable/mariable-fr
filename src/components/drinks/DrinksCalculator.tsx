@@ -67,7 +67,7 @@ const DrinksCalculator = () => {
 
   return (
     <Card className="p-6 max-w-2xl mx-auto">
-      <h2 className="text-2xl font-serif mb-6">Calculez vos boissons</h2>
+      <h2 className="text-2xl font-serif mb-6">Calculatrice boissons : quantité et budget</h2>
       
       <div className="space-y-6">
         {/* Nombre d'invités */}

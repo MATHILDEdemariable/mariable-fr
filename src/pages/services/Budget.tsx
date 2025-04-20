@@ -461,7 +461,7 @@ const Budget = () => {
         </div>
         
         <div className="text-center py-8">
-          <h3 className="text-3xl font-serif mb-4">Budget total estimé</h3>
+          <h3 className="text-3xl font-serif mb-4 text-wedding-olive">Budget total estimé</h3>
           <p className="text-4xl text-wedding-olive font-medium">{budgetEstimate.total.toLocaleString('fr-FR')} €</p>
           <p className="text-sm text-muted-foreground mt-2">Ce montant inclut uniquement les prestataires sélectionnés</p>
         </div>
