@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Header from '@/components/Header';
 import { Card } from '@/components/ui/card';
@@ -28,7 +27,7 @@ type Region = string;
 type Season = 'haute' | 'basse';
 type ServiceLevel = 'economique' | 'abordable' | 'premium' | 'luxe';
 
-type VendorType = 'lieu' | 'traiteur' | 'photo' | 'dj' | 'planner' | 'deco' | 'robe' | 'costume' | 'fleurs' | 'papeterie';
+type VendorType = 'lieu' | 'traiteur' | 'photo' | 'dj' | 'planner' | 'deco';
 
 interface BudgetLine {
   name: string;
@@ -44,44 +43,49 @@ interface BudgetEstimate {
 
 // Constantes pour les calculs
 const BASE_PRICES: Record<VendorType, number> = {
-  lieu: 2500,
-  traiteur: 80,  // par invité
+  lieu: 3000,
+  traiteur: 0,
   photo: 1800,
-  dj: 1200,
+  dj: 1500,
   planner: 2000,
-  deco: 1000,
-  robe: 1200,
-  costume: 500,
-  fleurs: 800,
-  papeterie: 300
+  deco: 0
 };
 
-const PRICE_MODIFIERS: Record<ServiceLevel, number> = {
-  economique: 0.7,
-  abordable: 1.0,
-  premium: 1.8,
-  luxe: 3.0
+const CATERING_PRICES: Record<ServiceLevel, number> = {
+  economique: 50,
+  abordable: 80,
+  premium: 110,
+  luxe: 200
+};
+
+const DECOR_PRICES: Record<ServiceLevel, number> = {
+  economique: 8,
+  abordable: 15,
+  premium: 25,
+  luxe: 50
 };
 
 const REGION_MODIFIERS: Record<string, number> = {
-  'Île-de-France': 1.3,
+  'Île-de-France': 1.2,
   'Provence-Alpes-Côte d\'Azur': 1.2,
-  'Pays de la Loire': 0.9,
-  'Bretagne': 0.95,
-  'Normandie': 0.9,
-  'Nouvelle-Aquitaine': 0.95,
-  'Occitanie': 0.9,
+  'Bretagne': 1.0,
+  'Centre-Val de Loire': 1.0,
+  'Bourgogne-Franche-Comté': 0.95,
+  'Occitanie': 0.95,
+  'Normandie': 1.0,
+  'Nouvelle-Aquitaine': 1.0,
   'Auvergne-Rhône-Alpes': 1.0,
-  'Bourgogne-Franche-Comté': 0.85,
-  'Grand Est': 0.85,
-  'Hauts-de-France': 0.9,
-  'Centre-Val de Loire': 0.85,
-  'Corse': 1.3
+  'Grand Est': 1.0,
+  'Hauts-de-France': 1.0,
+  'Corse': 1.0,
+  'Pays de la Loire': 1.0
 };
 
-const SEASON_MODIFIERS: Record<Season, number> = {
-  haute: 1.2,
-  basse: 0.9
+const PRICE_MODIFIERS: Record<ServiceLevel, number> = {
+  economique: 1.0,
+  abordable: 1.2,
+  premium: 1.4,
+  luxe: 2.0
 };
 
 const BUDGET_COLORS: Record<VendorType, string> = {
@@ -90,11 +94,7 @@ const BUDGET_COLORS: Record<VendorType, string> = {
   photo: '#4f46e5',
   dj: '#8b5cf6',
   planner: '#6366f1',
-  deco: '#a78bfa',
-  robe: '#c084fc',
-  costume: '#d8b4fe',
-  fleurs: '#e879f9',
-  papeterie: '#f0abfc'
+  deco: '#a78bfa'
 };
 
 const Budget = () => {
@@ -108,7 +108,7 @@ const Budget = () => {
   const [guestCount, setGuestCount] = useState<number>(100);
   const [guestCountInput, setGuestCountInput] = useState<string>("100");
   const [selectedVendors, setSelectedVendors] = useState<VendorType[]>([
-    'lieu', 'traiteur', 'photo', 'dj', 'deco', 'fleurs'
+    'lieu', 'traiteur', 'photo', 'dj', 'deco'
   ]);
   const [serviceLevel, setServiceLevel] = useState<ServiceLevel>('premium');
   
@@ -146,40 +146,32 @@ const Budget = () => {
     const breakdown: BudgetLine[] = [];
     
     // Récupérer les multiplicateurs
-    const regionMod = REGION_MODIFIERS[region] || 1;
-    const seasonMod = SEASON_MODIFIERS[season];
+    const regionMod = REGION_MODIFIERS[region] || 1.0;
     const serviceMod = PRICE_MODIFIERS[serviceLevel];
     
     // Calculer pour chaque prestataire sélectionné
     selectedVendors.forEach(vendor => {
+      let finalPrice = 0;
       let basePrice = BASE_PRICES[vendor];
-      let finalPrice;
       
       // Calculer le prix en fonction du type de prestataire
       if (vendor === 'traiteur') {
-        // Le traiteur est calculé par invité
-        finalPrice = basePrice * guestCount * regionMod * seasonMod * serviceMod;
+        // Catering is per guest
+        const pricePerGuest = CATERING_PRICES[serviceLevel];
+        finalPrice = pricePerGuest * guestCount * regionMod;
+      } else if (vendor === 'deco') {
+        // Decor/flowers is per guest
+        const pricePerGuest = DECOR_PRICES[serviceLevel];
+        finalPrice = pricePerGuest * guestCount * regionMod;
       } else {
-        // Autres prestataires sont des prix fixes
-        finalPrice = basePrice * regionMod * seasonMod * serviceMod;
-        
-        // Ajuster certains prestataires en fonction du nombre d'invités
-        if (vendor === 'lieu') {
-          if (guestCount > 150) finalPrice *= 1.3;
-          else if (guestCount > 100) finalPrice *= 1.15;
-        }
-        
-        if (vendor === 'deco' || vendor === 'fleurs') {
-          if (guestCount > 150) finalPrice *= 1.4;
-          else if (guestCount > 100) finalPrice *= 1.2;
-        }
+        // Fixed price vendors
+        finalPrice = basePrice * regionMod * serviceMod;
       }
       
-      // Arrondir et ajouter à la ventilation
-      finalPrice = Math.round(finalPrice);
+      // Round to nearest 10
+      finalPrice = Math.round(finalPrice / 10) * 10;
       totalBudget += finalPrice;
       
-      // Construire l'entrée de ventilation
       breakdown.push({
         name: getVendorName(vendor),
         amount: finalPrice,
@@ -188,22 +180,11 @@ const Budget = () => {
       });
     });
     
-    // Ajouter divers et imprévus (10% du total)
-    const miscAmount = Math.round(totalBudget * 0.1);
-    totalBudget += miscAmount;
-    breakdown.push({
-      name: 'Divers & Imprévus',
-      amount: miscAmount,
-      basePrice: 0,
-      color: '#94a3b8'
-    });
-    
-    // Trier par montant décroissant
+    // Sort by amount
     breakdown.sort((a, b) => b.amount - a.amount);
     
-    // Mettre à jour l'état
     setBudgetEstimate({
-      total: totalBudget,
+      total: Math.round(totalBudget / 10) * 10,
       breakdown: breakdown
     });
   };
@@ -212,15 +193,11 @@ const Budget = () => {
   const getVendorName = (vendor: VendorType): string => {
     const names: Record<VendorType, string> = {
       lieu: 'Lieu de réception',
-      traiteur: 'Traiteur & Boissons',
+      traiteur: 'Traiteur (hors boissons)',
       photo: 'Photographe & Vidéaste',
       dj: 'DJ / Animation',
       planner: 'Wedding Planner',
-      deco: 'Décoration',
-      robe: 'Robe de mariée',
-      costume: 'Costume du marié',
-      fleurs: 'Fleurs',
-      papeterie: 'Papeterie & Invitations'
+      deco: 'Décoration & Fleurs'
     };
     return names[vendor];
   };
@@ -381,7 +358,7 @@ const Budget = () => {
                     onCheckedChange={() => toggleVendor('traiteur')}
                     className="border-2 h-6 w-6"
                   />
-                  <Label htmlFor="vendor-traiteur" className="text-base">Traiteur & Boissons</Label>
+                  <Label htmlFor="vendor-traiteur" className="text-base">Traiteur (hors boissons)</Label>
                 </div>
                 
                 <div className="flex items-center space-x-2">
@@ -421,47 +398,7 @@ const Budget = () => {
                     onCheckedChange={() => toggleVendor('deco')}
                     className="border-2 h-6 w-6"
                   />
-                  <Label htmlFor="vendor-deco" className="text-base">Décoration</Label>
-                </div>
-                
-                <div className="flex items-center space-x-2">
-                  <Checkbox 
-                    id="vendor-robe" 
-                    checked={selectedVendors.includes('robe')} 
-                    onCheckedChange={() => toggleVendor('robe')}
-                    className="border-2 h-6 w-6"
-                  />
-                  <Label htmlFor="vendor-robe" className="text-base">Robe de mariée</Label>
-                </div>
-                
-                <div className="flex items-center space-x-2">
-                  <Checkbox 
-                    id="vendor-costume" 
-                    checked={selectedVendors.includes('costume')} 
-                    onCheckedChange={() => toggleVendor('costume')}
-                    className="border-2 h-6 w-6"
-                  />
-                  <Label htmlFor="vendor-costume" className="text-base">Costume du marié</Label>
-                </div>
-                
-                <div className="flex items-center space-x-2">
-                  <Checkbox 
-                    id="vendor-fleurs" 
-                    checked={selectedVendors.includes('fleurs')} 
-                    onCheckedChange={() => toggleVendor('fleurs')}
-                    className="border-2 h-6 w-6"
-                  />
-                  <Label htmlFor="vendor-fleurs" className="text-base">Fleurs</Label>
-                </div>
-                
-                <div className="flex items-center space-x-2">
-                  <Checkbox 
-                    id="vendor-papeterie" 
-                    checked={selectedVendors.includes('papeterie')} 
-                    onCheckedChange={() => toggleVendor('papeterie')}
-                    className="border-2 h-6 w-6"
-                  />
-                  <Label htmlFor="vendor-papeterie" className="text-base">Papeterie & Invitations</Label>
+                  <Label htmlFor="vendor-deco" className="text-base">Décoration & Fleurs</Label>
                 </div>
               </div>
             </div>
