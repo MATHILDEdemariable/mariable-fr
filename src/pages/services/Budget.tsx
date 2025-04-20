@@ -470,19 +470,10 @@ const Budget = () => {
           <h3 className="text-2xl font-serif mb-4">Répartition détaillée</h3>
           <div className="space-y-6">
             {sortedBreakdown.map((item, index) => (
-              <div key={index}>
+              <div key={index} className="border-b pb-3 last:border-b-0">
                 <div className="flex justify-between mb-1">
                   <span>{item.name}</span>
                   <span className="font-medium">{item.amount.toLocaleString('fr-FR')} €</span>
-                </div>
-                <div className="w-full h-2 bg-gray-100 rounded">
-                  <div
-                    className="h-2 rounded"
-                    style={{
-                      width: `${(item.amount / budgetEstimate.total) * 100}%`,
-                      backgroundColor: item.color
-                    }}
-                  ></div>
                 </div>
               </div>
             ))}
@@ -594,7 +585,7 @@ const Budget = () => {
                 
                 <Button
                   type="button"
-                  className="bg-wedding-olive hover:bg-wedding-olive/90 text-white flex items-center gap-2"
+                  className="bg-wedding-olive hover:bg-wedding-olive/90 text-white flex items-center justify-center gap-2"
                   onClick={goToNextStep}
                 >
                   {currentStep === 4 ? (
