@@ -5,7 +5,6 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
 import { 
   MapPin, Calculator, PieChart, ArrowRight, ArrowLeft, 
@@ -448,6 +447,12 @@ const Budget = () => {
 
   // Rendu du résultat de l'estimation
   const renderEstimate = () => {
+    // Sort the budget breakdown to put "lieu" first
+    const sortedBreakdown = [
+      ...budgetEstimate.breakdown.filter(item => item.name === 'Lieu de réception'),
+      ...budgetEstimate.breakdown.filter(item => item.name !== 'Lieu de réception')
+    ];
+
     return (
       <div className="space-y-8">
         <div>
@@ -464,7 +469,7 @@ const Budget = () => {
         <div>
           <h3 className="text-2xl font-serif mb-4">Répartition détaillée</h3>
           <div className="space-y-6">
-            {budgetEstimate.breakdown.map((item, index) => (
+            {sortedBreakdown.map((item, index) => (
               <div key={index}>
                 <div className="flex justify-between mb-1">
                   <span>{item.name}</span>
@@ -479,13 +484,6 @@ const Budget = () => {
                     }}
                   ></div>
                 </div>
-                <p className="text-xs text-muted-foreground mt-1">
-                  {item.name === 'Divers & Imprévus' 
-                    ? '10% du budget total pour les imprévus'
-                    : item.name === 'Traiteur & Boissons' 
-                      ? `Environ ${Math.round(item.amount / guestCount)} € par invité`
-                      : ''}
-                </p>
               </div>
             ))}
           </div>
@@ -526,32 +524,30 @@ const Budget = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
           <Button 
             type="button" 
-            className="flex items-center justify-center gap-2 bg-wedding-olive hover:bg-wedding-olive/90 text-white"
-            onClick={handleDownloadPDF}
-          >
-            <Download size={18} />
-            Télécharger en PDF
-          </Button>
-          
-          <Button 
-            type="button" 
             variant="outline"
-            className="flex items-center justify-center gap-2"
-            onClick={handleSendByEmail}
-          >
-            <Mail size={18} />
-            Recevoir par email
-          </Button>
-          
-          <Button 
-            type="button"
-            className="md:col-span-2 bg-gray-200 hover:bg-gray-300 text-wedding-black"
+            className="md:col-span-2 bg-gray-200 hover:bg-gray-300 text-wedding-black flex items-center justify-center gap-2"
             onClick={() => {
               setShowEstimate(false);
               setCurrentStep(1);
             }}
           >
             Recommencer l'estimation
+          </Button>
+          
+          <Button 
+            type="button"
+            variant="outline"
+            className="md:col-span-2 bg-gray-200 hover:bg-gray-300 text-wedding-black flex items-center justify-center gap-2"
+            onClick={() => {
+              toast({
+                title: "Inscription",
+                description: "Inscrivez-vous : fonctionnalité prochainement disponible",
+                duration: 3000,
+              });
+            }}
+          >
+            <Mail size={18} />
+            Recevoir par email
           </Button>
         </div>
       </div>
@@ -574,16 +570,7 @@ const Budget = () => {
             <p className="text-muted-foreground">Estimez le budget de votre mariage en quelques étapes</p>
           </div>
           
-          <div className="flex items-center gap-2 my-6">
-            <div className="h-2 flex-grow grid grid-cols-4 gap-1">
-              {[1, 2, 3, 4].map((step) => (
-                <div 
-                  key={step}
-                  className={`h-full rounded-full ${step <= currentStep || showEstimate ? 'bg-wedding-olive' : 'bg-gray-200'}`}
-                />
-              ))}
-            </div>
-          </div>
+          {/* Progress bars removed */}
           
           {showEstimate ? (
             renderEstimate()
