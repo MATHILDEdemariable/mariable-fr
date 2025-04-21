@@ -26,7 +26,7 @@ type Region = string;
 type Season = 'haute' | 'basse';
 type ServiceLevel = 'economique' | 'abordable' | 'premium' | 'luxe';
 
-type VendorType = 'lieu' | 'traiteur' | 'photo' | 'dj' | 'planner' | 'deco';
+type VendorType = 'lieu' | 'traiteur' | 'photo' | 'dj' | 'planner' | 'deco' | 'autres';
 
 interface BudgetLine {
   name: string;
@@ -96,6 +96,16 @@ const BUDGET_COLORS: Record<VendorType, string> = {
   deco: '#a78bfa'
 };
 
+const BUDGET_ALLOCATION: { name: string, key: VendorType, percent: number, color: string }[] = [
+  { name: "Traiteur (hors boissons)", key: 'traiteur', percent: 40, color: '#9b87f5' },
+  { name: "Lieu de réception", key: 'lieu', percent: 25, color: '#7e69ab' },
+  { name: "Photographe & Vidéaste", key: 'photo', percent: 10, color: '#4f46e5' },
+  { name: "DJ / Animation", key: 'dj', percent: 5, color: '#8b5cf6' },
+  { name: "Décoration & Fleurs", key: 'deco', percent: 7, color: '#a78bfa' },
+  { name: "Wedding Planner", key: 'planner', percent: 8, color: '#6366f1' },
+  { name: "Autres (risques)", key: 'autres', percent: 5, color: '#4CAF50' }
+];
+
 const Budget = () => {
   // État pour le multi-étapes de la calculatrice
   const [currentStep, setCurrentStep] = useState<Step>(1);
@@ -104,8 +114,8 @@ const Budget = () => {
   // États pour les paramètres de budget
   const [region, setRegion] = useState<Region>('Pays de la Loire');
   const [season, setSeason] = useState<Season>('basse');
-  const [guestCount, setGuestCount] = useState<number>(100);
-  const [guestCountInput, setGuestCountInput] = useState<string>("100");
+  const [globalBudgetInput, setGlobalBudgetInput] = useState<string>("");
+  const [globalBudget, setGlobalBudget] = useState<number>(0);
   const [selectedVendors, setSelectedVendors] = useState<VendorType[]>([
     'lieu', 'traiteur', 'photo', 'dj', 'deco'
   ]);
@@ -141,50 +151,20 @@ const Budget = () => {
 
   // Calculer le budget basé sur les sélections
   const calculateBudget = () => {
-    let totalBudget = 0;
-    const breakdown: BudgetLine[] = [];
-    
-    // Récupérer les multiplicateurs
-    const regionMod = REGION_MODIFIERS[region] || 1.0;
-    const serviceMod = PRICE_MODIFIERS[serviceLevel];
-    
-    // Calculer pour chaque prestataire sélectionné
-    selectedVendors.forEach(vendor => {
-      let finalPrice = 0;
-      let basePrice = BASE_PRICES[vendor];
-      
-      // Calculer le prix en fonction du type de prestataire
-      if (vendor === 'traiteur') {
-        // Catering is per guest
-        const pricePerGuest = CATERING_PRICES[serviceLevel];
-        finalPrice = pricePerGuest * guestCount * regionMod;
-      } else if (vendor === 'deco') {
-        // Decor/flowers is per guest
-        const pricePerGuest = DECOR_PRICES[serviceLevel];
-        finalPrice = pricePerGuest * guestCount * regionMod;
-      } else {
-        // Fixed price vendors
-        finalPrice = basePrice * regionMod * serviceMod;
-      }
-      
-      // Round to nearest 10
-      finalPrice = Math.round(finalPrice / 10) * 10;
-      totalBudget += finalPrice;
-      
-      breakdown.push({
-        name: getVendorName(vendor),
-        amount: finalPrice,
-        basePrice: basePrice,
-        color: BUDGET_COLORS[vendor]
-      });
-    });
-    
-    // Sort by amount
-    breakdown.sort((a, b) => b.amount - a.amount);
-    
+    let totalBudget = globalBudget;
+    // Si pas de saisie, on estime à 15 000 €
+    if (!totalBudget || totalBudget <= 0) totalBudget = 15000;
+
+    const breakdown: BudgetLine[] = BUDGET_ALLOCATION.map(({ name, key, percent, color }) => ({
+      name,
+      amount: Math.round(totalBudget * percent / 100),
+      basePrice: 0,
+      color
+    }));
+
     setBudgetEstimate({
-      total: Math.round(totalBudget / 10) * 10,
-      breakdown: breakdown
+      total: totalBudget,
+      breakdown
     });
   };
 
@@ -283,8 +263,25 @@ const Budget = () => {
       case 2:
         return (
           <>
-            <h2 className="text-2xl font-serif mb-6">Étape 2/4 : Saison et invités</h2>
-            
+            <h2 className="text-2xl font-serif mb-6">Étape 2/4 : Budget et Saison</h2>
+            <div className="mb-6">
+              <Label htmlFor="globalBudget" className="text-lg mb-2 block">Budget global disponible (€)</Label>
+              <Input
+                type="number"
+                id="globalBudget"
+                value={globalBudgetInput}
+                onChange={e => {
+                  setGlobalBudgetInput(e.target.value);
+                  const val = parseInt(e.target.value, 10);
+                  if(!isNaN(val) && val>0) setGlobalBudget(val);
+                }}
+                className="py-6"
+                min="500"
+                max="100000"
+                placeholder="Ex: 15000"
+              />
+              <p className="text-xs text-muted-foreground mt-1">Indiquez votre budget total (minimum recommandé : 500 €)</p>
+            </div>
             <div className="mb-6">
               <Label className="text-lg mb-2 block">Période de l'année</Label>
               <div className="flex flex-wrap gap-4 mt-2">
@@ -308,26 +305,6 @@ const Budget = () => {
                   <span>Basse saison (oct-mars)</span>
                 </Button>
               </div>
-            </div>
-            
-            <div className="mb-6">
-              <Label htmlFor="guestCount" className="text-lg mb-2 block">Nombre d'invités</Label>
-              <div className="relative">
-                <Users className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={20} />
-                <Input
-                  type="number"
-                  id="guestCount"
-                  value={guestCountInput}
-                  onChange={handleGuestCountChange}
-                  className="pl-10 py-6"
-                  min="1"
-                  max="500"
-                  placeholder="Saisissez le nombre exact d'invités"
-                />
-              </div>
-              <p className="text-xs text-muted-foreground mt-1">
-                Entre 1 et 500 invités
-              </p>
             </div>
           </>
         );
@@ -447,23 +424,21 @@ const Budget = () => {
 
   // Rendu du résultat de l'estimation
   const renderEstimate = () => {
-    // Sort the budget breakdown to put "lieu" first
-    const sortedBreakdown = [
-      ...budgetEstimate.breakdown.filter(item => item.name === 'Lieu de réception'),
-      ...budgetEstimate.breakdown.filter(item => item.name !== 'Lieu de réception')
-    ];
+    const sortedBreakdown = BUDGET_ALLOCATION.map((ba) =>
+      budgetEstimate.breakdown.find(b => b.name === ba.name)
+    ).filter(Boolean);
 
     return (
       <div className="space-y-8">
         <div>
-          <h2 className="text-3xl font-serif mb-2">Estimation budgétaire</h2>
+          <h2 className="text-2xl md:text-3xl font-serif mb-2">Estimation budgétaire</h2>
           <p className="text-muted-foreground">Voici une estimation basée sur vos critères</p>
         </div>
         
         <div className="text-center py-8">
-          <h3 className="text-3xl font-serif mb-4 text-wedding-olive">Budget total estimé</h3>
+          <h3 className="text-2xl md:text-3xl font-serif mb-4" style={{ color: '#4CAF50' }}>Budget total estimé</h3>
           <p className="text-4xl text-wedding-olive font-medium">{budgetEstimate.total.toLocaleString('fr-FR')} €</p>
-          <p className="text-sm text-muted-foreground mt-2">Ce montant inclut uniquement les prestataires sélectionnés</p>
+          <p className="text-sm text-muted-foreground mt-2">Ce montant est réparti selon les proportions standard du secteur</p>
         </div>
         
         <div>
@@ -472,8 +447,8 @@ const Budget = () => {
             {sortedBreakdown.map((item, index) => (
               <div key={index} className="border-b pb-3 last:border-b-0">
                 <div className="flex justify-between mb-1">
-                  <span>{item.name}</span>
-                  <span className="font-medium">{item.amount.toLocaleString('fr-FR')} €</span>
+                  <span>{item?.name}</span>
+                  <span className="font-medium">{item?.amount?.toLocaleString('fr-FR')} €</span>
                 </div>
               </div>
             ))}
@@ -482,7 +457,7 @@ const Budget = () => {
         
         <div className="flex items-start gap-2 text-sm text-muted-foreground bg-gray-50 p-4 rounded-md">
           <Info size={18} className="shrink-0 mt-0.5" />
-          <p>Estimation indicative basée sur vos choix, ajustable selon vos prestataires réels.</p>
+          <p>Estimation indicative basée sur les standards, à ajuster selon vos choix et besoins spécifiques.</p>
         </div>
         
         <div>
@@ -492,22 +467,13 @@ const Budget = () => {
               <p className="text-sm font-medium">Région</p>
               <p>{region}</p>
             </div>
-            
             <div className="border p-3 rounded">
               <p className="text-sm font-medium">Saison</p>
               <p>{season === 'haute' ? 'Haute saison (avril-sept)' : 'Basse saison (oct-mars)'}</p>
             </div>
-            
             <div className="border p-3 rounded">
-              <p className="text-sm font-medium">Invités</p>
-              <p>{guestCount}</p>
-            </div>
-            
-            <div className="border p-3 rounded">
-              <p className="text-sm font-medium">Niveau</p>
-              <p>{serviceLevel === 'economique' ? 'Économique' : 
-                   serviceLevel === 'abordable' ? 'Abordable' : 
-                   serviceLevel === 'premium' ? 'Premium' : 'Luxe'}</p>
+              <p className="text-sm font-medium">Budget global</p>
+              <p>{budgetEstimate.total.toLocaleString('fr-FR')} €</p>
             </div>
           </div>
         </div>
@@ -524,7 +490,6 @@ const Budget = () => {
           >
             Recommencer l'estimation
           </Button>
-          
           <Button 
             type="button"
             variant="outline"
@@ -557,7 +522,7 @@ const Budget = () => {
         
         <Card className="p-6 mt-6 bg-wedding-cream/20">
           <div className="mb-4">
-            <h2 className="text-2xl font-serif mb-2">Calculatrice de budget mariage</h2>
+            <h2 className="text-2xl md:text-3xl font-serif mb-2">Calculatrice de budget mariage</h2>
             <p className="text-muted-foreground">Estimez le budget de votre mariage en quelques étapes</p>
           </div>
           
@@ -614,6 +579,7 @@ const Budget = () => {
 
         {/* Calculatrice de boissons */}
         <div className="mt-4 mb-12">
+          <h2 className="text-2xl md:text-3xl font-serif mb-4">Calculatrice boissons : quantité et budget</h2>
           <DrinksCalculator />
         </div>
       </main>
