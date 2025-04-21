@@ -42,19 +42,19 @@ interface BudgetEstimate {
 
 // Constantes pour les calculs
 const BASE_PRICES: Record<VendorType, number> = {
-  lieu: 3000,
-  traiteur: 0,
+  lieu: 4000,
+  traiteur: 1,
   photo: 1800,
   dj: 1500,
-  planner: 2000,
-  deco: 0
+  planner:2000,
+  deco: 1
 };
 
 const CATERING_PRICES: Record<ServiceLevel, number> = {
   economique: 50,
-  abordable: 80,
-  premium: 110,
-  luxe: 200
+  abordable: 90,
+  premium: 150,
+  luxe: 250
 };
 
 const DECOR_PRICES: Record<ServiceLevel, number> = {
@@ -65,7 +65,7 @@ const DECOR_PRICES: Record<ServiceLevel, number> = {
 };
 
 const REGION_MODIFIERS: Record<string, number> = {
-  'Île-de-France': 1.2,
+  'Île-de-France': 1.5,
   'Provence-Alpes-Côte d\'Azur': 1.2,
   'Bretagne': 1.0,
   'Centre-Val de Loire': 1.0,
@@ -83,7 +83,7 @@ const REGION_MODIFIERS: Record<string, number> = {
 const PRICE_MODIFIERS: Record<ServiceLevel, number> = {
   economique: 1.0,
   abordable: 1.2,
-  premium: 1.4,
+  premium: 1.5,
   luxe: 2.0
 };
 
