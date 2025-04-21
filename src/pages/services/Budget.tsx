@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import Header from '@/components/Header';
 import { Card } from '@/components/ui/card';
@@ -47,7 +48,8 @@ const BASE_PRICES: Record<VendorType, number> = {
   photo: 1800,
   dj: 1500,
   planner:2000,
-  deco: 1
+  deco: 1,
+  autres: 0
 };
 
 const CATERING_PRICES: Record<ServiceLevel, number> = {
@@ -93,18 +95,9 @@ const BUDGET_COLORS: Record<VendorType, string> = {
   photo: '#4f46e5',
   dj: '#8b5cf6',
   planner: '#6366f1',
-  deco: '#a78bfa'
+  deco: '#a78bfa',
+  autres: '#4CAF50'
 };
-
-const BUDGET_ALLOCATION: { name: string, key: VendorType, percent: number, color: string }[] = [
-  { name: "Traiteur (hors boissons)", key: 'traiteur', percent: 40, color: '#9b87f5' },
-  { name: "Lieu de réception", key: 'lieu', percent: 25, color: '#7e69ab' },
-  { name: "Photographe & Vidéaste", key: 'photo', percent: 10, color: '#4f46e5' },
-  { name: "DJ / Animation", key: 'dj', percent: 5, color: '#8b5cf6' },
-  { name: "Décoration & Fleurs", key: 'deco', percent: 7, color: '#a78bfa' },
-  { name: "Wedding Planner", key: 'planner', percent: 8, color: '#6366f1' },
-  { name: "Autres (risques)", key: 'autres', percent: 5, color: '#4CAF50' }
-];
 
 const Budget = () => {
   // État pour le multi-étapes de la calculatrice
@@ -152,18 +145,73 @@ const Budget = () => {
   // Calculer le budget basé sur les sélections
   const calculateBudget = () => {
     let totalBudget = globalBudget;
-    // Si pas de saisie, on estime à 15 000 €
+    // Si pas de saisie, on estime à 15 000 €
     if (!totalBudget || totalBudget <= 0) totalBudget = 15000;
 
-    const breakdown: BudgetLine[] = BUDGET_ALLOCATION.map(({ name, key, percent, color }) => ({
-      name,
-      amount: Math.round(totalBudget * percent / 100),
+    // Format des lignes budgétaires
+    const breakdown: BudgetLine[] = [];
+    
+    // Pondération par niveau de service
+    const serviceMultiplier = PRICE_MODIFIERS[serviceLevel];
+    
+    // Pondération par région
+    const regionMultiplier = REGION_MODIFIERS[region];
+    
+    // Pondération par saison
+    const seasonMultiplier = season === 'haute' ? 1.2 : 1.0;
+    
+    // Pour chaque prestataire sélectionné
+    selectedVendors.forEach(vendor => {
+      let amount = 0;
+      let basePrice = BASE_PRICES[vendor];
+      
+      if (vendor === 'lieu') {
+        // Calcul pour le lieu
+        amount = basePrice * serviceMultiplier * regionMultiplier * seasonMultiplier;
+      } else if (vendor === 'traiteur') {
+        // Calcul pour le traiteur
+        const guestsCount = 100; // Valeur par défaut
+        const pricePerGuest = CATERING_PRICES[serviceLevel];
+        amount = pricePerGuest * guestsCount * regionMultiplier * seasonMultiplier;
+        basePrice = pricePerGuest;
+      } else if (vendor === 'deco') {
+        // Calcul pour la déco
+        const guestsCount = 100; // Valeur par défaut
+        const pricePerGuest = DECOR_PRICES[serviceLevel];
+        amount = pricePerGuest * guestsCount * regionMultiplier * seasonMultiplier;
+        basePrice = pricePerGuest;
+      } else {
+        // Calcul standard pour les autres prestataires
+        amount = basePrice * serviceMultiplier * regionMultiplier * seasonMultiplier;
+      }
+      
+      // Ajouter la ligne au budget
+      breakdown.push({
+        name: getVendorName(vendor),
+        amount: Math.round(amount),
+        basePrice,
+        color: BUDGET_COLORS[vendor]
+      });
+    });
+    
+    // Calculer le total
+    const total = breakdown.reduce((sum, item) => sum + item.amount, 0);
+    
+    // Ajouter une ligne "Autres dépenses" (10% du budget)
+    const otherExpenses = Math.round(total * 0.1);
+    breakdown.push({
+      name: 'Autres dépenses',
+      amount: otherExpenses,
       basePrice: 0,
-      color
-    }));
-
+      color: '#4CAF50'
+    });
+    
+    // Nouveau total incluant les autres dépenses
+    const grandTotal = total + otherExpenses;
+    
+    // Mise à jour de l'état
     setBudgetEstimate({
-      total: totalBudget,
+      total: grandTotal,
       breakdown
     });
   };
@@ -176,7 +224,8 @@ const Budget = () => {
       photo: 'Photographe & Vidéaste',
       dj: 'DJ / Animation',
       planner: 'Wedding Planner',
-      deco: 'Décoration & Fleurs'
+      deco: 'Décoration & Fleurs',
+      autres: 'Autres (risques)'
     };
     return names[vendor];
   };
@@ -188,17 +237,6 @@ const Budget = () => {
         ? prev.filter(v => v !== vendor) 
         : [...prev, vendor]
     );
-  };
-
-  // Gérer le changement du nombre d'invités avec validation
-  const handleGuestCountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setGuestCountInput(value);
-    
-    const numValue = parseInt(value);
-    if (!isNaN(numValue) && numValue > 0 && numValue <= 500) {
-      setGuestCount(numValue);
-    }
   };
 
   // Fonctions pour les actions sur l'estimation
@@ -280,7 +318,7 @@ const Budget = () => {
                 max="100000"
                 placeholder="Ex: 15000"
               />
-              <p className="text-xs text-muted-foreground mt-1">Indiquez votre budget total (minimum recommandé : 500 €)</p>
+              <p className="text-xs text-muted-foreground mt-1">Indiquez votre budget total (minimum recommandé : 500 €)</p>
             </div>
             <div className="mb-6">
               <Label className="text-lg mb-2 block">Période de l'année</Label>
@@ -424,10 +462,6 @@ const Budget = () => {
 
   // Rendu du résultat de l'estimation
   const renderEstimate = () => {
-    const sortedBreakdown = BUDGET_ALLOCATION.map((ba) =>
-      budgetEstimate.breakdown.find(b => b.name === ba.name)
-    ).filter(Boolean);
-
     return (
       <div className="space-y-8">
         <div>
@@ -444,11 +478,11 @@ const Budget = () => {
         <div>
           <h3 className="text-2xl font-serif mb-4">Répartition détaillée</h3>
           <div className="space-y-6">
-            {sortedBreakdown.map((item, index) => (
+            {budgetEstimate.breakdown.map((item, index) => (
               <div key={index} className="border-b pb-3 last:border-b-0">
                 <div className="flex justify-between mb-1">
-                  <span>{item?.name}</span>
-                  <span className="font-medium">{item?.amount?.toLocaleString('fr-FR')} €</span>
+                  <span>{item.name}</span>
+                  <span className="font-medium">{item.amount.toLocaleString('fr-FR')} €</span>
                 </div>
               </div>
             ))}
