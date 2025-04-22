@@ -107,6 +107,7 @@ export const generateSchedule = ({
     label: 'Trajet vers le lieu de réception',
     time: travelStart,
     duration: travelDuration,
+    isHighlight: false, // Adding the missing isHighlight property
     type: 'travel',
     id: idx++
   });
