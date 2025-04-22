@@ -9,3 +9,11 @@ export interface WeddingEvent {
 export interface WeddingDaySchedule {
   events: WeddingEvent[];
 }
+
+export interface KeyEvents {
+  hasPhotoSession: boolean;
+  hasCoupleEntrance: boolean;
+  hasSpeeches: boolean;
+  hasWeddingCake: boolean;
+  hasFirstDance: boolean;
+}

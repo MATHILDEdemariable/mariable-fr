@@ -1,16 +1,23 @@
 
 import { addMinutes, parse } from 'date-fns';
-import type { WeddingDaySchedule } from './types';
+import type { WeddingDaySchedule, KeyEvents } from './types';
+
+interface GenerateScheduleProps extends KeyEvents {
+  ceremonyTime: string;
+  travelDuration: number;
+  isCeremonyReligious: boolean;
+}
 
 export const generateSchedule = ({
   ceremonyTime,
   travelDuration,
   isCeremonyReligious,
-}: {
-  ceremonyTime: string;
-  travelDuration: number;
-  isCeremonyReligious: boolean;
-}): WeddingDaySchedule => {
+  hasPhotoSession,
+  hasCoupleEntrance,
+  hasSpeeches,
+  hasWeddingCake,
+  hasFirstDance,
+}: GenerateScheduleProps): WeddingDaySchedule => {
   const baseDate = new Date();
   const startTime = parse(ceremonyTime, 'HH:mm', baseDate);
   const ceremonyDuration = isCeremonyReligious ? 90 : 60;
@@ -22,7 +29,7 @@ export const generateSchedule = ({
       isHighlight: true,
     },
     {
-      label: 'Retard anticipé',
+      label: 'Temps de marge',
       time: startTime,
       duration: 10,
     },
@@ -36,54 +43,46 @@ export const generateSchedule = ({
 
   let currentTime = addMinutes(startTime, 10 + ceremonyDuration);
 
-  events.push(
-    {
-      label: 'Temps de sortie',
-      time: currentTime,
-      duration: 10,
-    },
-    {
-      label: 'Photos sur le parvis',
-      time: addMinutes(currentTime, 10),
-      duration: 30,
-    }
-  );
+  if (hasPhotoSession) {
+    events.push(
+      {
+        label: 'Temps de marge',
+        time: currentTime,
+        duration: 10,
+      },
+      {
+        label: 'Séance photos',
+        time: addMinutes(currentTime, 10),
+        duration: 45,
+        isHighlight: true,
+      }
+    );
+    currentTime = addMinutes(currentTime, 55);
+  }
 
-  currentTime = addMinutes(currentTime, 40);
+  events.push({
+    label: 'Trajet vers le lieu de festivités',
+    time: currentTime,
+    duration: travelDuration,
+  });
 
-  events.push(
-    {
-      label: 'Départ des mariés',
-      time: currentTime,
-      duration: 0,
-    },
-    {
-      label: 'Départ des invités',
-      time: addMinutes(currentTime, 10),
-      duration: 0,
-    },
-    {
-      label: 'Trajet vers le lieu de festivités',
-      time: addMinutes(currentTime, 10),
-      duration: travelDuration,
-    }
-  );
+  currentTime = addMinutes(currentTime, travelDuration);
 
-  currentTime = addMinutes(currentTime, 10 + travelDuration);
+  events.push({
+    label: 'Début du cocktail',
+    time: currentTime,
+    isHighlight: true,
+    duration: 120,
+  });
 
-  events.push(
-    {
-      label: 'Début du cocktail',
-      time: currentTime,
+  if (hasCoupleEntrance) {
+    events.push({
+      label: 'Entrée des mariés',
+      time: addMinutes(currentTime, 30),
+      duration: 15,
       isHighlight: true,
-      duration: 120,
-    },
-    {
-      label: 'Photos des mariés',
-      time: addMinutes(currentTime, 15),
-      duration: 45,
-    }
-  );
+    });
+  }
 
   currentTime = addMinutes(currentTime, 120);
   events.push({
@@ -93,13 +92,39 @@ export const generateSchedule = ({
     duration: 180,
   });
 
+  if (hasSpeeches) {
+    events.push({
+      label: 'Animations & discours',
+      time: addMinutes(currentTime, 60),
+      duration: 45,
+      isHighlight: true,
+    });
+  }
+
+  if (hasWeddingCake) {
+    events.push({
+      label: 'Service de la pièce montée',
+      time: addMinutes(currentTime, 150),
+      duration: 30,
+      isHighlight: true,
+    });
+  }
+
   currentTime = addMinutes(currentTime, 180);
-  events.push({
-    label: 'Ouverture du bal',
-    time: currentTime,
-    isHighlight: true,
-    duration: 30,
-  });
+
+  if (hasFirstDance) {
+    events.push({
+      label: 'Temps de marge',
+      time: currentTime,
+      duration: 15,
+    },
+    {
+      label: 'Ouverture du bal',
+      time: addMinutes(currentTime, 15),
+      duration: 30,
+      isHighlight: true,
+    });
+  }
 
   return { events };
 };

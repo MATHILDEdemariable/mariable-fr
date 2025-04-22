@@ -13,6 +13,11 @@ export const WeddingDayPlanner = () => {
     ceremonyTime: string;
     travelDuration: number;
     isCeremonyReligious: boolean;
+    hasPhotoSession: boolean;
+    hasCoupleEntrance: boolean;
+    hasSpeeches: boolean;
+    hasWeddingCake: boolean;
+    hasFirstDance: boolean;
   }) => {
     const generatedSchedule = generateSchedule(formData);
     setSchedule(generatedSchedule);
