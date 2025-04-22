@@ -12,9 +12,10 @@ export const WeddingDayPlanner = () => {
   const handleFormSubmit = (formData: {
     ceremonyTime: string;
     travelDuration: number;
-    isCeremonyReligious: boolean;
+    ceremonyType: 'religieuse' | 'laique';
     hasPhotoSession: boolean;
     hasCoupleEntrance: boolean;
+    hasOtherAnimations: boolean;
     hasSpeeches: boolean;
     hasWeddingCake: boolean;
     hasFirstDance: boolean;
