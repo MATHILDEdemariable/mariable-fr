@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -20,6 +19,7 @@ import Prestataires from "./pages/services/Prestataires";
 import Planification from "./pages/services/Planification";
 import Budget from "./pages/services/Budget";
 import Conseils from "./pages/services/Conseils";
+import JourJ from "./pages/services/JourJ";
 
 // About pages
 import Histoire from "./pages/about/Histoire";
@@ -66,6 +66,7 @@ const App = () => (
             <Route path="/services/planification" element={<Planification />} />
             <Route path="/services/budget" element={<Budget />} />
             <Route path="/services/conseils" element={<Conseils />} />
+            <Route path="/services/jour-j" element={<JourJ />} />
             
             {/* Guide Mariable */}
             <Route path="/guide-mariable" element={<GuideMariable />} />
