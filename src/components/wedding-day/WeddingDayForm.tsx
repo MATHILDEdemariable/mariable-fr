@@ -61,7 +61,7 @@ export const WeddingDayForm = ({ onSubmit }: WeddingDayFormProps) => {
           name="travelDuration"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Durée du trajet (en minutes)</FormLabel>
+              <FormLabel>Durée du trajet entre le lieu de cérémonie et le lieu des festivités (en minutes)</FormLabel>
               <FormControl>
                 <Input
                   type="number"
@@ -85,7 +85,7 @@ export const WeddingDayForm = ({ onSubmit }: WeddingDayFormProps) => {
                   onCheckedChange={field.onChange}
                 />
               </FormControl>
-              <FormLabel>Cérémonie religieuse</FormLabel>
+              <FormLabel>Cérémonie religieuse (1h30) - Si non coché : cérémonie laïque (1h)</FormLabel>
             </FormItem>
           )}
         />

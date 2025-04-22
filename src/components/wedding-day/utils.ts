@@ -13,7 +13,7 @@ export const generateSchedule = ({
 }): WeddingDaySchedule => {
   const baseDate = new Date();
   const startTime = parse(ceremonyTime, 'HH:mm', baseDate);
-  const ceremonyDuration = isCeremonyReligious ? 120 : 60;
+  const ceremonyDuration = isCeremonyReligious ? 90 : 60;
 
   const events = [
     {
@@ -27,19 +27,15 @@ export const generateSchedule = ({
       duration: 10,
     },
     {
-      label: 'Début cérémonie estimé',
-      time: addMinutes(startTime, 10),
-    },
-    {
-      label: 'Durée cérémonie',
+      label: isCeremonyReligious ? 'Cérémonie religieuse' : 'Cérémonie laïque',
       time: addMinutes(startTime, 10),
       duration: ceremonyDuration,
+      isHighlight: true,
     },
   ];
 
   let currentTime = addMinutes(startTime, 10 + ceremonyDuration);
 
-  // Ajout des événements suivants...
   events.push(
     {
       label: 'Temps de sortie',
@@ -55,18 +51,19 @@ export const generateSchedule = ({
 
   currentTime = addMinutes(currentTime, 40);
 
-  // Départ et trajet
   events.push(
     {
       label: 'Départ des mariés',
       time: currentTime,
+      duration: 0,
     },
     {
       label: 'Départ des invités',
       time: addMinutes(currentTime, 10),
+      duration: 0,
     },
     {
-      label: 'Temps de trajet',
+      label: 'Trajet vers le lieu de festivités',
       time: addMinutes(currentTime, 10),
       duration: travelDuration,
     }
@@ -74,12 +71,12 @@ export const generateSchedule = ({
 
   currentTime = addMinutes(currentTime, 10 + travelDuration);
 
-  // Cocktail et photos
   events.push(
     {
       label: 'Début du cocktail',
       time: currentTime,
       isHighlight: true,
+      duration: 120,
     },
     {
       label: 'Photos des mariés',
@@ -88,21 +85,20 @@ export const generateSchedule = ({
     }
   );
 
-  // Continuer avec le reste des événements...
-  // Dîner
   currentTime = addMinutes(currentTime, 120);
   events.push({
     label: 'Début du dîner',
     time: currentTime,
     isHighlight: true,
+    duration: 180,
   });
 
-  // Soirée
   currentTime = addMinutes(currentTime, 180);
   events.push({
     label: 'Ouverture du bal',
     time: currentTime,
     isHighlight: true,
+    duration: 30,
   });
 
   return { events };

@@ -103,6 +103,9 @@ const Header = () => {
                           <Link to="/services/conseils" className="block w-full text-sm text-wedding-black hover:text-wedding-olive transition-colors py-2 px-4" onClick={() => setSheetOpen(false)}>
                             Conseils personnalisés
                           </Link>
+                          <Link to="/services/jour-j" className="block w-full text-sm text-wedding-black hover:text-wedding-olive transition-colors py-2 px-4" onClick={() => setSheetOpen(false)}>
+                            Planning Jour-J
+                          </Link>
                         </div>
                       </div>
                       
@@ -174,6 +177,9 @@ const Header = () => {
                           </ListItem>
                           <ListItem href="/services/conseils" title="Conseils personnalisés">
                             Obtenez des recommandations adaptées à votre style et vos envies
+                          </ListItem>
+                          <ListItem href="/services/jour-j" title="Planning Jour-J">
+                            Créez votre déroulé de journée de mariage
                           </ListItem>
                         </ul>
                       </NavigationMenuContent>
