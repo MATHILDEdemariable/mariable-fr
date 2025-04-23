@@ -95,12 +95,7 @@ export default function Header() {
         {/* User Menu à droite */}
         <div className="flex items-center">
           <HeaderDropdown
-            label={
-              <span>
-                <User2 className="w-7 h-7" />
-                <span className="sr-only">Compte utilisateur</span>
-              </span>
-            }
+            label={<User2 className="w-7 h-7" />}
             className="ml-6"
           >
             <HeaderDropdownMenu>
