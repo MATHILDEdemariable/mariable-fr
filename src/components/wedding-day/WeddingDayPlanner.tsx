@@ -1,10 +1,9 @@
-
 import React, { useState } from 'react';
 import { WeddingDayForm } from './WeddingDayForm';
 import { WeddingDayTimeline } from './WeddingDayTimeline';
 import { Card } from '@/components/ui/card';
 import type { WeddingDaySchedule } from './types';
-import { generateSchedule } from './utils';
+import { generateSchedule } from "./utils";
 
 export const WeddingDayPlanner = () => {
   const [schedule, setSchedule] = useState<WeddingDaySchedule | null>(null);
