@@ -1,88 +1,125 @@
 
 import React from "react";
-import { Link } from "react-router-dom";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Button } from "@/components/ui/button";
-import { Menu } from "lucide-react";
-import { ModeToggle } from "@/components/ModeToggle";
-import { Logo } from "./Logo";
+import { Link, useNavigate } from "react-router-dom";
+import { HeaderDropdown, HeaderDropdownMenu, HeaderDropdownItem } from "./HeaderDropdown";
+import { User2 } from "lucide-react";
 
-function Header() {
+// New, bigger logo for header
+const HeaderLogo = () => (
+  <Link to="/" className="flex items-center justify-center">
+    <img
+      src="/lovable-uploads/cb5c64ba-4141-40cc-9954-ab1a0f30d7ef.png"
+      alt="Mariable Logo"
+      className="h-24 w-24 object-contain mx-8 my-3"
+      draggable={false}
+      loading="eager"
+    />
+  </Link>
+);
+
+export default function Header() {
+  const navigate = useNavigate();
+
   return (
-    <header className="bg-background sticky top-0 z-50 w-full border-b">
-      <div className="container flex h-16 items-center justify-between">
-        <Link to="/" className="flex items-center gap-2">
-          <Logo />
-          <span className="font-semibold text-lg">Mariable</span>
-        </Link>
-        <nav className="items-center hidden lg:flex">
-          <Link to="/" className="text-lg font-medium px-4 py-2 rounded hover-scale">
-            Accueil
-          </Link>
-          <Link to="/professionnels" className="text-lg font-medium px-4 py-2 rounded hover-scale">
-            Professionnels
-          </Link>
-          <div className="relative group">
-            <button className="text-lg font-medium px-4 py-2 rounded hover-scale">
-              Services
-            </button>
-            <div className="absolute hidden group-hover:block bg-white border rounded shadow-lg z-20 min-w-[220px] mt-1">
-              <Link to="/services/prestataires" className="block px-4 py-2 hover:bg-gray-50">Prestataires</Link>
-              <Link to="/services/planification" className="block px-4 py-2 hover:bg-gray-50">Planification</Link>
-              <Link to="/services/budget" className="block px-4 py-2 hover:bg-gray-50">Budget</Link>
-              <Link to="/services/conseils" className="block px-4 py-2 hover:bg-gray-50">Conseils</Link>
-              <Link to="/services/jour-j" className="block px-4 py-2 hover:bg-gray-50">Jour-J Planning</Link>
-            </div>
-          </div>
-          <Link to="/guide-mariable" className="text-lg font-medium px-4 py-2 rounded hover-scale">
-            Guide Mariable
-          </Link>
-          <ModeToggle />
+    <header className="bg-white w-full border-b shadow-none">
+      <div className="flex justify-between items-center max-w-7xl mx-auto px-4 sm:px-8">
+        {/* Logo à gauche */}
+        <HeaderLogo />
+
+        {/* Menu principal centré */}
+        <nav className="flex-1 flex justify-center items-center gap-3">
+          {/* Nos Services Dropdown */}
+          <HeaderDropdown label="Nos Services">
+            <HeaderDropdownMenu>
+              <HeaderDropdownItem
+                label="Recherche de prestataires"
+                description="Trouvez les meilleurs prestataires adaptés à vos besoins"
+                to="/services/prestataires"
+              />
+              <HeaderDropdownItem
+                label="Planification"
+                description="Organisez chaque étape de votre mariage sans stress"
+                to="/services/planification"
+              />
+              <HeaderDropdownItem
+                label="Budgétisation"
+                description="Gérez votre budget et suivez vos dépenses facilement"
+                to="/services/budget"
+              />
+              <HeaderDropdownItem
+                label="Conseils personnalisés"
+                description="Obtenez des recommandations adaptées à votre style et vos envies"
+                to="/services/conseils"
+              />
+            </HeaderDropdownMenu>
+          </HeaderDropdown>
+
+          {/* À propos Dropdown */}
+          <HeaderDropdown label="À propos">
+            <HeaderDropdownMenu>
+              <HeaderDropdownItem
+                label="Notre histoire"
+                description="Découvrez comment Mariable est né d'une passion"
+                to="/about/histoire"
+              />
+              <HeaderDropdownItem
+                label="Notre charte"
+                description="Une méthode innovante et personnalisée pour organiser votre mariage"
+                to="/about/charte"
+              />
+              <HeaderDropdownItem
+                label="Témoignages"
+                description="Ce que nos clients disent de nous"
+                to="/about/temoignages"
+              />
+            </HeaderDropdownMenu>
+          </HeaderDropdown>
+
+          {/* Contact Dropdown */}
+          <HeaderDropdown label="Contact">
+            <HeaderDropdownMenu>
+              <HeaderDropdownItem
+                label="Nous contacter"
+                description="Discutez avec notre équipe pour toutes vos questions"
+                to="/contact/nous-contacter"
+              />
+              <HeaderDropdownItem
+                label="FAQ"
+                description="Réponses aux questions fréquemment posées"
+                to="/contact/faq"
+              />
+            </HeaderDropdownMenu>
+          </HeaderDropdown>
         </nav>
-        <Sheet>
-          <SheetTrigger asChild className="lg:hidden">
-            <Button variant="ghost" className="p-2">
-              <Menu className="h-6 w-6" />
-              <span className="sr-only">Open menu</span>
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="left" className="pr-0">
-            <Link to="/" className="flex items-center gap-2 pb-6">
-              <Logo />
-              <span className="font-semibold text-lg">Mariable</span>
-            </Link>
-            <nav className="grid gap-6">
-              <Link to="/" className="text-lg font-medium px-4 py-2 rounded hover-scale">
-                Accueil
-              </Link>
-              <Link to="/professionnels" className="text-lg font-medium px-4 py-2 rounded hover-scale">
+
+        {/* User Menu à droite */}
+        <div className="flex items-center">
+          <HeaderDropdown
+            label={
+              <span>
+                <User2 className="w-7 h-7" />
+                <span className="sr-only">Compte utilisateur</span>
+              </span>
+            }
+            className="ml-6"
+          >
+            <HeaderDropdownMenu>
+              <Link
+                to="/professionnels"
+                className="block px-5 py-2 text-base hover:bg-wedding-cream rounded"
+              >
                 Professionnels
               </Link>
-              <Link to="/services/prestataires" className="text-lg font-medium px-4 py-2 rounded hover-scale">
-                Prestataires
+              <Link
+                to="/"
+                className="block px-5 py-2 text-base hover:bg-wedding-cream rounded"
+              >
+                Futurs mariés
               </Link>
-              <Link to="/services/planification" className="text-lg font-medium px-4 py-2 rounded hover-scale">
-                Planification
-              </Link>
-              <Link to="/services/budget" className="text-lg font-medium px-4 py-2 rounded hover-scale">
-                Budget
-              </Link>
-              <Link to="/services/conseils" className="text-lg font-medium px-4 py-2 rounded hover-scale">
-                Conseils
-              </Link>
-              <Link to="/services/jour-j" className="text-lg font-medium px-4 py-2 rounded hover-scale">
-                Jour-J Planning
-              </Link>
-              <Link to="/guide-mariable" className="text-lg font-medium px-4 py-2 rounded hover-scale">
-                Guide Mariable
-              </Link>
-              <ModeToggle />
-            </nav>
-          </SheetContent>
-        </Sheet>
+            </HeaderDropdownMenu>
+          </HeaderDropdown>
+        </div>
       </div>
     </header>
   );
 }
-
-export default Header;
