@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   HeaderDropdown,
   HeaderDropdownMenu,
@@ -10,8 +10,8 @@ import { User2, Menu as MenuIcon } from "lucide-react";
 import { Drawer, DrawerContent } from "./ui/drawer";
 import { useIsMobile } from "../hooks/use-mobile";
 
-// Nouveau logo
-const LOGO_URL = "/lovable-uploads/cb5c64ba-4141-40cc-9954-ab1a0f30d7ef.png";
+// Nouveau logo joint
+const LOGO_URL = "/lovable-uploads/a13321ac-adeb-489a-911e-3a88b1411ac2.png";
 
 const HeaderLogo = () => (
   <Link to="/" className="flex items-center justify-center shrink-0 mr-2 md:mr-8">
@@ -148,9 +148,21 @@ export default function Header() {
             <MenuIcon className="w-8 h-8" />
           </button>
           <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
-            <DrawerContent>
+            {/* Custom DrawerContent to appear from the top instead of bottom */}
+            <DrawerContent
+              className="!top-0 !bottom-auto max-h-[92vh] w-full left-0 right-0 rounded-t-none rounded-b-lg">
+              <div className="flex items-center justify-between px-4 pt-4">
+                {/* Logo again for mobile menu */}
+                <HeaderLogo />
+                <button
+                  aria-label="Fermer le menu"
+                  onClick={() => setDrawerOpen(false)}
+                  className="p-2 rounded-md hover:bg-wedding-light transition"
+                >
+                  <MenuIcon className="w-8 h-8 rotate-90" /> {/* Optionally use an 'X' icon */}
+                </button>
+              </div>
               <div className="py-3 grid gap-4">
-                {/* Menus déroulants sous forme de liste simple (vertical menus) */}
                 <nav className="flex flex-col gap-1">
                   <Menus onClick={() => setDrawerOpen(false)} />
                 </nav>
