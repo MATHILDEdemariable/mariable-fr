@@ -6,7 +6,7 @@ import {
   HeaderDropdownMenu,
   HeaderDropdownItem,
 } from "./HeaderDropdown";
-import { User2, menu as MenuIcon } from "lucide-react";
+import { User2, Menu as MenuIcon } from "lucide-react";
 import { Drawer, DrawerContent } from "./ui/drawer";
 import { useIsMobile } from "../hooks/use-mobile";
 
