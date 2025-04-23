@@ -1,18 +1,22 @@
 
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { HeaderDropdown, HeaderDropdownMenu, HeaderDropdownItem } from "./HeaderDropdown";
+import {
+  HeaderDropdown,
+  HeaderDropdownMenu,
+  HeaderDropdownItem,
+} from "./HeaderDropdown";
 import { User2 } from "lucide-react";
 
-// New, bigger logo for header
 const HeaderLogo = () => (
-  <Link to="/" className="flex items-center justify-center">
+  <Link to="/" className="flex items-center justify-center shrink-0 mr-2 md:mr-8">
     <img
-      src="/lovable-uploads/cb5c64ba-4141-40cc-9954-ab1a0f30d7ef.png"
+      src="/lovable-uploads/08e3c50f-4f4b-49ad-8e52-3f1eeacb6bd0.png"
       alt="Mariable Logo"
-      className="h-24 w-24 object-contain mx-8 my-3"
+      className="h-16 w-16 md:h-24 md:w-24 object-contain"
       draggable={false}
       loading="eager"
+      style={{ minWidth: '4rem', minHeight: '4rem' }}
     />
   </Link>
 );
@@ -21,13 +25,13 @@ export default function Header() {
   const navigate = useNavigate();
 
   return (
-    <header className="bg-white w-full border-b shadow-none">
-      <div className="flex justify-between items-center max-w-7xl mx-auto px-4 sm:px-8">
+    <header className="bg-white w-full border-b shadow-none z-30 sticky top-0">
+      <div className="flex items-center justify-between mx-auto max-w-7xl px-2 sm:px-6 lg:px-8 h-20 md:h-28">
         {/* Logo à gauche */}
         <HeaderLogo />
 
-        {/* Menu principal centré */}
-        <nav className="flex-1 flex justify-center items-center gap-3">
+        {/* Menu principal, à droite et centré verticalement */}
+        <nav className="hidden md:flex flex-1 justify-end items-center gap-4 md:gap-6">
           {/* Nos Services Dropdown */}
           <HeaderDropdown label="Nos Services">
             <HeaderDropdownMenu>
@@ -90,29 +94,27 @@ export default function Header() {
               />
             </HeaderDropdownMenu>
           </HeaderDropdown>
-        </nav>
-
-        {/* User Menu à droite */}
-        <div className="flex items-center">
+          {/* User Menu */}
           <HeaderDropdown
             label={<User2 className="w-7 h-7" />}
-            className="ml-6"
+            className="ml-2"
           >
             <HeaderDropdownMenu>
-              <Link
+              <HeaderDropdownItem
+                label="Professionnels"
                 to="/professionnels"
-                className="block px-5 py-2 text-base hover:bg-wedding-cream rounded"
-              >
-                Professionnels
-              </Link>
-              <Link
+              />
+              <HeaderDropdownItem
+                label="Futurs mariés"
                 to="/"
-                className="block px-5 py-2 text-base hover:bg-wedding-cream rounded"
-              >
-                Futurs mariés
-              </Link>
+              />
             </HeaderDropdownMenu>
           </HeaderDropdown>
+        </nav>
+
+        {/* Hamburger menu pour mobile */}
+        <div className="md:hidden flex-1 flex justify-end items-center">
+          {/* Place a future mobile menu here if needed */}
         </div>
       </div>
     </header>
