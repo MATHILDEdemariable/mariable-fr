@@ -4,9 +4,9 @@ export interface WeddingEvent {
   label: string;
   time: Date;
   duration?: number;
-  isHighlight?: boolean;
-  isMargin?: boolean;
-  note?: string;
+  isHighlight?: boolean;  // Rendu optionnel car pas toujours présent
+  isMargin?: boolean;     // Ajout de cette propriété
+  note?: string;          // Ajout de cette propriété
   type?: string;
   id: number;
 }
