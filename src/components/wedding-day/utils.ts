@@ -1,6 +1,6 @@
 
 import { addMinutes, parse } from 'date-fns';
-import type { WeddingDaySchedule } from './types';
+import type { WeddingDaySchedule, WeddingEvent } from './types';
 
 interface GenerateScheduleProps {
   ceremonyTime: string;
@@ -36,7 +36,7 @@ export const generateSchedule = ({
   let idx = 0;
 
   // Heure Cérémonie officielle
-  const events = [{
+  const events: WeddingEvent[] = [{
     label: "Heure cérémonie officielle",
     time: startTime,
     isHighlight: true,
