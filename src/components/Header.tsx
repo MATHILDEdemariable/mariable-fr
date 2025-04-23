@@ -1,120 +1,162 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   HeaderDropdown,
   HeaderDropdownMenu,
   HeaderDropdownItem,
 } from "./HeaderDropdown";
-import { User2 } from "lucide-react";
+import { User2, menu as MenuIcon } from "lucide-react";
+import { Drawer, DrawerContent } from "./ui/drawer";
+import { useIsMobile } from "../hooks/use-mobile";
+
+// Nouveau logo
+const LOGO_URL = "/lovable-uploads/cb5c64ba-4141-40cc-9954-ab1a0f30d7ef.png";
 
 const HeaderLogo = () => (
   <Link to="/" className="flex items-center justify-center shrink-0 mr-2 md:mr-8">
     <img
-      src="/lovable-uploads/08e3c50f-4f4b-49ad-8e52-3f1eeacb6bd0.png"
+      src={LOGO_URL}
       alt="Mariable Logo"
-      className="h-16 w-16 md:h-24 md:w-24 object-contain"
+      className="h-14 w-14 md:h-24 md:w-24 object-contain"
       draggable={false}
       loading="eager"
-      style={{ minWidth: '4rem', minHeight: '4rem' }}
+      style={{ minWidth: '3.5rem', minHeight: '3.5rem' }}
     />
   </Link>
 );
 
+function Menus({ onClick }: { onClick?: () => void }) {
+  return (
+    <>
+      {/* Nos Services Dropdown */}
+      <HeaderDropdown label="Nos Services">
+        <HeaderDropdownMenu>
+          <HeaderDropdownItem
+            label="Recherche de prestataires"
+            description="Trouvez les meilleurs prestataires adaptés à vos besoins"
+            to="/services/prestataires"
+            onClick={onClick}
+          />
+          <HeaderDropdownItem
+            label="Planification"
+            description="Organisez chaque étape de votre mariage sans stress"
+            to="/services/planification"
+            onClick={onClick}
+          />
+          <HeaderDropdownItem
+            label="Budgétisation"
+            description="Gérez votre budget et suivez vos dépenses facilement"
+            to="/services/budget"
+            onClick={onClick}
+          />
+          <HeaderDropdownItem
+            label="Conseils personnalisés"
+            description="Obtenez des recommandations adaptées à votre style et vos envies"
+            to="/services/conseils"
+            onClick={onClick}
+          />
+        </HeaderDropdownMenu>
+      </HeaderDropdown>
+
+      {/* À propos Dropdown */}
+      <HeaderDropdown label="À propos">
+        <HeaderDropdownMenu>
+          <HeaderDropdownItem
+            label="Notre histoire"
+            description="Découvrez comment Mariable est né d'une passion"
+            to="/about/histoire"
+            onClick={onClick}
+          />
+          <HeaderDropdownItem
+            label="Notre charte"
+            description="Une méthode innovante et personnalisée pour organiser votre mariage"
+            to="/about/charte"
+            onClick={onClick}
+          />
+          <HeaderDropdownItem
+            label="Témoignages"
+            description="Ce que nos clients disent de nous"
+            to="/about/temoignages"
+            onClick={onClick}
+          />
+        </HeaderDropdownMenu>
+      </HeaderDropdown>
+
+      {/* Contact Dropdown */}
+      <HeaderDropdown label="Contact">
+        <HeaderDropdownMenu>
+          <HeaderDropdownItem
+            label="Nous contacter"
+            description="Discutez avec notre équipe pour toutes vos questions"
+            to="/contact/nous-contacter"
+            onClick={onClick}
+          />
+          <HeaderDropdownItem
+            label="FAQ"
+            description="Réponses aux questions fréquemment posées"
+            to="/contact/faq"
+            onClick={onClick}
+          />
+        </HeaderDropdownMenu>
+      </HeaderDropdown>
+
+      {/* User Menu */}
+      <HeaderDropdown
+        label={<User2 className="w-7 h-7" />}
+        className="ml-2"
+      >
+        <HeaderDropdownMenu>
+          <HeaderDropdownItem
+            label="Professionnels"
+            to="/professionnels"
+            onClick={onClick}
+          />
+          <HeaderDropdownItem
+            label="Futurs mariés"
+            to="/"
+            onClick={onClick}
+          />
+        </HeaderDropdownMenu>
+      </HeaderDropdown>
+    </>
+  );
+}
+
 export default function Header() {
-  const navigate = useNavigate();
+  const isMobile = useIsMobile();
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   return (
     <header className="bg-white w-full border-b shadow-none z-30 sticky top-0">
-      <div className="flex items-center justify-between mx-auto max-w-7xl px-2 sm:px-6 lg:px-8 h-20 md:h-28">
+      <div className="flex items-center justify-between mx-auto max-w-7xl px-2 sm:px-6 lg:px-8 h-16 md:h-28">
         {/* Logo à gauche */}
         <HeaderLogo />
 
-        {/* Menu principal, à droite et centré verticalement */}
+        {/* Desktop: Menus à droite, centrés */}
         <nav className="hidden md:flex flex-1 justify-end items-center gap-4 md:gap-6">
-          {/* Nos Services Dropdown */}
-          <HeaderDropdown label="Nos Services">
-            <HeaderDropdownMenu>
-              <HeaderDropdownItem
-                label="Recherche de prestataires"
-                description="Trouvez les meilleurs prestataires adaptés à vos besoins"
-                to="/services/prestataires"
-              />
-              <HeaderDropdownItem
-                label="Planification"
-                description="Organisez chaque étape de votre mariage sans stress"
-                to="/services/planification"
-              />
-              <HeaderDropdownItem
-                label="Budgétisation"
-                description="Gérez votre budget et suivez vos dépenses facilement"
-                to="/services/budget"
-              />
-              <HeaderDropdownItem
-                label="Conseils personnalisés"
-                description="Obtenez des recommandations adaptées à votre style et vos envies"
-                to="/services/conseils"
-              />
-            </HeaderDropdownMenu>
-          </HeaderDropdown>
-
-          {/* À propos Dropdown */}
-          <HeaderDropdown label="À propos">
-            <HeaderDropdownMenu>
-              <HeaderDropdownItem
-                label="Notre histoire"
-                description="Découvrez comment Mariable est né d'une passion"
-                to="/about/histoire"
-              />
-              <HeaderDropdownItem
-                label="Notre charte"
-                description="Une méthode innovante et personnalisée pour organiser votre mariage"
-                to="/about/charte"
-              />
-              <HeaderDropdownItem
-                label="Témoignages"
-                description="Ce que nos clients disent de nous"
-                to="/about/temoignages"
-              />
-            </HeaderDropdownMenu>
-          </HeaderDropdown>
-
-          {/* Contact Dropdown */}
-          <HeaderDropdown label="Contact">
-            <HeaderDropdownMenu>
-              <HeaderDropdownItem
-                label="Nous contacter"
-                description="Discutez avec notre équipe pour toutes vos questions"
-                to="/contact/nous-contacter"
-              />
-              <HeaderDropdownItem
-                label="FAQ"
-                description="Réponses aux questions fréquemment posées"
-                to="/contact/faq"
-              />
-            </HeaderDropdownMenu>
-          </HeaderDropdown>
-          {/* User Menu */}
-          <HeaderDropdown
-            label={<User2 className="w-7 h-7" />}
-            className="ml-2"
-          >
-            <HeaderDropdownMenu>
-              <HeaderDropdownItem
-                label="Professionnels"
-                to="/professionnels"
-              />
-              <HeaderDropdownItem
-                label="Futurs mariés"
-                to="/"
-              />
-            </HeaderDropdownMenu>
-          </HeaderDropdown>
+          <Menus />
         </nav>
 
-        {/* Hamburger menu pour mobile */}
-        <div className="md:hidden flex-1 flex justify-end items-center">
-          {/* Place a future mobile menu here if needed */}
+        {/* Mobile: Burger menu à droite */}
+        <div className="md:hidden flex flex-1 justify-end items-center">
+          <button
+            aria-label="Menu"
+            onClick={() => setDrawerOpen(true)}
+            className="p-2 rounded-md hover:bg-wedding-light transition"
+          >
+            <MenuIcon className="w-8 h-8" />
+          </button>
+          <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
+            <DrawerContent>
+              <div className="py-3 grid gap-4">
+                {/* Menus déroulants sous forme de liste simple (vertical menus) */}
+                <nav className="flex flex-col gap-1">
+                  <Menus onClick={() => setDrawerOpen(false)} />
+                </nav>
+              </div>
+            </DrawerContent>
+          </Drawer>
         </div>
       </div>
     </header>

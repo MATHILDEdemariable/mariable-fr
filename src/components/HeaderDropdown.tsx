@@ -18,7 +18,7 @@ interface DropdownProps {
 }
 
 interface DropdownMenuProps {
-  children: ReactNode;
+  children: React.ReactNode; // Correction
 }
 
 export const HeaderDropdown: React.FC<DropdownProps> = ({
@@ -41,11 +41,7 @@ export const HeaderDropdown: React.FC<DropdownProps> = ({
   }, []);
 
   return (
-    <div
-      ref={ref}
-      className={`relative ${className}`}
-      tabIndex={-1}
-    >
+    <div ref={ref} className={`relative ${className}`} tabIndex={-1}>
       <button
         type="button"
         className={`flex items-center gap-1 font-medium px-4 py-2 rounded-md text-black focus:outline-none transition bg-transparent ${
@@ -58,19 +54,13 @@ export const HeaderDropdown: React.FC<DropdownProps> = ({
         {label}
         {typeof label === "string" && (
           <ChevronDown
-            className={`w-4 h-4 transition-transform ${
-              open ? "rotate-180" : ""
-            }`}
+            className={`w-4 h-4 transition-transform ${open ? "rotate-180" : ""}`}
           />
         )}
       </button>
       <div
         className={`absolute right-0 top-[110%] shadow-xl rounded-xl bg-[#f8f6f0] min-w-[260px] z-50 transition-all border border-gray-200
-        ${
-          open
-            ? "block animate-fade-in"
-            : "hidden"
-        }`}
+        ${open ? "block animate-fade-in" : "hidden"}`}
       >
         {children}
       </div>
@@ -101,4 +91,3 @@ export const HeaderDropdownItem: React.FC<ItemProps> = ({
     )}
   </Link>
 );
-
