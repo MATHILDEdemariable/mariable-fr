@@ -10,31 +10,31 @@ interface WeddingDayTimelineProps {
 
 // Helper to determine if an event is a highlight moment
 const isHighlightEvent = (type?: string): boolean => {
-  const highlightTypes = ['photos', 'entrance', 'firstdance'];
+  const highlightTypes = ['couple_photos', 'entrance', 'firstdance'];
   return type ? highlightTypes.includes(type) : false;
 };
 
 // Helper to determine if an event should be hidden based on user selections
 const shouldShowEvent = (event: { type?: string }, schedule: WeddingDaySchedule): boolean => {
   // Always show non-optional events
-  if (!event.type || ['ceremony', 'ceremony_time', 'travel', 'cocktail', 'dinner', 'marge'].includes(event.type)) {
+  if (!event.type || ['ceremony', 'ceremony_time', 'travel', 'cocktail', 'dinner'].includes(event.type)) {
     return true;
   }
   
   // Check if specific optional events should be displayed
   switch(event.type) {
-    case 'photos':
-      return schedule.userChoices?.hasPhotoSession ?? true;
+    case 'couple_photos':
+      return schedule.userChoices?.hasCouplePhotoSession ?? true;
     case 'entrance':
       return schedule.userChoices?.hasCoupleEntrance ?? true;
     case 'animation':
       return schedule.userChoices?.hasOtherAnimations ?? false;
     case 'cake':
       return schedule.userChoices?.hasWeddingCake ?? true;
-    case 'speech':
-      return schedule.userChoices?.hasSpeeches ?? true;
     case 'firstdance':
       return schedule.userChoices?.hasFirstDance ?? true;
+    case 'marge':
+      return true;
     default:
       return true;
   }
@@ -50,7 +50,7 @@ function formatEndTime(event: { time: Date; duration?: number }) {
 
 export const WeddingDayTimeline = ({ schedule }: WeddingDayTimelineProps) => {
   return (
-    <div className="space-y-6">
+    <div className="space-y-3">
       {schedule.events.map((event, index) => {
         // Skip events that shouldn't be shown based on user choices
         if (!shouldShowEvent(event, schedule)) {
@@ -68,13 +68,14 @@ export const WeddingDayTimeline = ({ schedule }: WeddingDayTimelineProps) => {
               isHighlight
                 ? 'bg-wedding-light border-wedding-olive shadow-sm'
                 : event.isMargin
-                ? 'bg-gray-50/50 border-dashed border-gray-200'
+                ? 'bg-gray-50/50 border-dashed border-gray-200 py-2'
                 : 'bg-white border-gray-100',
+              event.isMargin ? 'text-sm' : ''
             ].join(' ')}
           >
             {/* En-tête avec les horaires */}
             <div className="flex justify-between items-start mb-2">
-              <span className="text-base font-medium">
+              <span className={`${event.isMargin ? 'text-sm' : 'text-base'} font-medium`}>
                 {format(event.time, 'HH:mm', { locale: fr })}
                 {endTime && (
                   <span className="text-muted-foreground">
@@ -92,7 +93,7 @@ export const WeddingDayTimeline = ({ schedule }: WeddingDayTimelineProps) => {
 
             {/* Corps de l'événement */}
             <div className="space-y-1">
-              <h3 className={`text-lg ${isHighlight ? 'text-wedding-olive font-medium' : 'font-normal'}`}>
+              <h3 className={`${event.isMargin ? 'text-sm' : 'text-lg'} ${isHighlight ? 'text-wedding-olive font-medium' : 'font-normal'}`}>
                 {event.label}
               </h3>
 

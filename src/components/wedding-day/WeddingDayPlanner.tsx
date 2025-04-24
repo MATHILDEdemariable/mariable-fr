@@ -13,18 +13,18 @@ export const WeddingDayPlanner = () => {
     ceremonyTime: string;
     travelDuration: number;
     ceremonyType: 'religieuse' | 'laique';
+    hasCouplePhotoSession: boolean;
     hasPhotoSession: boolean;
     hasCoupleEntrance: boolean;
     hasOtherAnimations: boolean;
-    hasSpeeches: boolean;
     hasWeddingCake: boolean;
     hasFirstDance: boolean;
   }) => {
     const userChoices: UserChoices = {
+      hasCouplePhotoSession: formData.hasCouplePhotoSession,
       hasPhotoSession: formData.hasPhotoSession,
       hasCoupleEntrance: formData.hasCoupleEntrance,
       hasOtherAnimations: formData.hasOtherAnimations,
-      hasSpeeches: formData.hasSpeeches,
       hasWeddingCake: formData.hasWeddingCake,
       hasFirstDance: formData.hasFirstDance,
     };
