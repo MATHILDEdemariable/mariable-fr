@@ -1,4 +1,3 @@
-
 // Type utilisé dans le planning du Jour J
 export interface WeddingEvent {
   label: string;
@@ -19,6 +18,7 @@ export interface UserChoices {
   hasOtherAnimations: boolean;
   hasWeddingCake: boolean;
   hasFirstDance: boolean;
+  hasDancingParty?: boolean;
 }
 
 export interface WeddingDaySchedule {
