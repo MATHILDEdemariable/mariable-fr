@@ -1,8 +1,10 @@
-import React from 'react';
+
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import ServiceTemplate from '../ServiceTemplate';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import { ArrowRight } from 'lucide-react';
 import SEO from '@/components/SEO';
 
@@ -118,17 +120,17 @@ const PlanningChecklist = () => {
       </div>
 
       <div className="mt-8">
-        <Card className="bg-wedding-light border-wedding-olive/10">
+        <Card className="bg-wedding-cream/20 border-wedding-olive/20">
           <CardContent className="pt-6 pb-6">
-            <h3 className="text-2xl font-serif mb-4">Organisez votre journée de mariage en détail</h3>
+            <h3 className="text-2xl font-serif mb-4">Prêt à planifier votre jour ?</h3>
             <p className="mb-6">
-              Prêt à planifier chaque moment de votre journée ? Notre outil de planning jour-J vous permet de visualiser et d'organiser le timing idéal, de la cérémonie jusqu'à l'ouverture du bal.
+              Notre outil de planning jour-J vous permet de visualiser et d'organiser le timing idéal, de la cérémonie jusqu'à la soirée dansante.
             </p>
             <Link to="/services/jour-j">
               <Button 
                 size="lg"
                 variant="wedding"
-                className="w-full sm:w-auto"
+                className="w-full sm:w-auto bg-wedding-olive hover:bg-wedding-olive/90 text-white"
               >
                 Créer mon planning jour-J <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
