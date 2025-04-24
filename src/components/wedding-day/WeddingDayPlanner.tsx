@@ -1,8 +1,9 @@
+
 import React, { useState } from 'react';
 import { WeddingDayForm } from './WeddingDayForm';
 import { WeddingDayTimeline } from './WeddingDayTimeline';
 import { Card } from '@/components/ui/card';
-import type { WeddingDaySchedule } from './types';
+import type { WeddingDaySchedule, UserChoices } from './types';
 import { generateSchedule } from "./utils";
 
 export const WeddingDayPlanner = () => {
@@ -19,7 +20,18 @@ export const WeddingDayPlanner = () => {
     hasWeddingCake: boolean;
     hasFirstDance: boolean;
   }) => {
+    const userChoices: UserChoices = {
+      hasPhotoSession: formData.hasPhotoSession,
+      hasCoupleEntrance: formData.hasCoupleEntrance,
+      hasOtherAnimations: formData.hasOtherAnimations,
+      hasSpeeches: formData.hasSpeeches,
+      hasWeddingCake: formData.hasWeddingCake,
+      hasFirstDance: formData.hasFirstDance,
+    };
+    
     const generatedSchedule = generateSchedule(formData);
+    // Add user choices to the schedule for filtering events in the timeline
+    generatedSchedule.userChoices = userChoices;
     setSchedule(generatedSchedule);
   };
 

@@ -14,6 +14,32 @@ const isHighlightEvent = (type?: string): boolean => {
   return type ? highlightTypes.includes(type) : false;
 };
 
+// Helper to determine if an event should be hidden based on user selections
+const shouldShowEvent = (event: { type?: string }, schedule: WeddingDaySchedule): boolean => {
+  // Always show non-optional events
+  if (!event.type || ['ceremony', 'ceremony_time', 'travel', 'cocktail', 'dinner', 'marge'].includes(event.type)) {
+    return true;
+  }
+  
+  // Check if specific optional events should be displayed
+  switch(event.type) {
+    case 'photos':
+      return schedule.userChoices?.hasPhotoSession ?? true;
+    case 'entrance':
+      return schedule.userChoices?.hasCoupleEntrance ?? true;
+    case 'animation':
+      return schedule.userChoices?.hasOtherAnimations ?? false;
+    case 'cake':
+      return schedule.userChoices?.hasWeddingCake ?? true;
+    case 'speech':
+      return schedule.userChoices?.hasSpeeches ?? true;
+    case 'firstdance':
+      return schedule.userChoices?.hasFirstDance ?? true;
+    default:
+      return true;
+  }
+};
+
 function formatEndTime(event: { time: Date; duration?: number }) {
   if (event.duration) {
     const end = addMinutes(event.time, event.duration);
@@ -26,6 +52,11 @@ export const WeddingDayTimeline = ({ schedule }: WeddingDayTimelineProps) => {
   return (
     <div className="space-y-6">
       {schedule.events.map((event, index) => {
+        // Skip events that shouldn't be shown based on user choices
+        if (!shouldShowEvent(event, schedule)) {
+          return null;
+        }
+        
         const endTime = formatEndTime(event);
         const isHighlight = isHighlightEvent(event.type);
 

@@ -14,6 +14,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 const formSchema = z.object({
   ceremonyTime: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, {
@@ -23,7 +24,7 @@ const formSchema = z.object({
   ceremonyType: z.enum(['religieuse', 'laique']),
   hasPhotoSession: z.boolean().default(true),
   hasCoupleEntrance: z.boolean().default(true),
-  hasOtherAnimations: z.boolean().default(true),
+  hasOtherAnimations: z.boolean().default(false),
   hasSpeeches: z.boolean().default(true),
   hasWeddingCake: z.boolean().default(true),
   hasFirstDance: z.boolean().default(true),
@@ -90,120 +91,131 @@ export const WeddingDayForm = ({ onSubmit }: WeddingDayFormProps) => {
 
         <div className="space-y-4 border-t pt-4">
           <h3 className="font-medium">Type de cérémonie</h3>
-          <div className="flex gap-4">
+          <RadioGroup
+            defaultValue={form.getValues('ceremonyType')}
+            onValueChange={(value) => form.setValue('ceremonyType', value as 'religieuse' | 'laique')}
+            className="flex gap-4"
+          >
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="religieuse" id="religieuse" />
+              <FormLabel htmlFor="religieuse" className="cursor-pointer">Cérémonie religieuse (1h30)</FormLabel>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="laique" id="laique" />
+              <FormLabel htmlFor="laique" className="cursor-pointer">Cérémonie laïque (1h)</FormLabel>
+            </div>
+          </RadioGroup>
+        </div>
+
+        <div className="space-y-4 border-t pt-4">
+          <h3 className="font-medium">Temps forts à inclure</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <FormField
               control={form.control}
-              name="ceremonyType"
+              name="hasPhotoSession"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-center gap-2">
+                <FormItem className="flex items-start space-x-3 space-y-0 rounded-md border p-3 shadow-sm"
+                  data-selected={field.value ? "true" : "false"}
+                  data-highlight="true">
                   <FormControl>
-                    <input
-                      type="radio"
-                      checked={field.value === 'religieuse'}
-                      onChange={() => field.onChange('religieuse')}
-                      id="religieuse"
-                      className="accent-wedding-olive"
-                    />
+                    <Checkbox checked={field.value} onCheckedChange={field.onChange} />
                   </FormControl>
-                  <FormLabel htmlFor="religieuse" className="cursor-pointer">Cérémonie religieuse (1h30)</FormLabel>
+                  <div className="space-y-1 leading-none">
+                    <FormLabel className="text-sm font-medium">
+                      📷 Séance photo groupe
+                    </FormLabel>
+                    <p className="text-xs text-muted-foreground">
+                      Pendant le cocktail (30min)
+                    </p>
+                  </div>
                 </FormItem>
               )}
             />
             <FormField
               control={form.control}
-              name="ceremonyType"
+              name="hasCoupleEntrance"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-center gap-2">
+                <FormItem className="flex items-start space-x-3 space-y-0 rounded-md border p-3 shadow-sm"
+                  data-selected={field.value ? "true" : "false"}
+                  data-highlight="true">
                   <FormControl>
-                    <input
-                      type="radio"
-                      checked={field.value === 'laique'}
-                      onChange={() => field.onChange('laique')}
-                      id="laique"
-                      className="accent-wedding-olive"
-                    />
+                    <Checkbox checked={field.value} onCheckedChange={field.onChange} />
                   </FormControl>
-                  <FormLabel htmlFor="laique" className="cursor-pointer">Cérémonie laïque (1h)</FormLabel>
+                  <div className="space-y-1 leading-none">
+                    <FormLabel className="text-sm font-medium">
+                      🎉 Entrée des mariés
+                    </FormLabel>
+                    <p className="text-xs text-muted-foreground">
+                      Avant le dîner (5min)
+                    </p>
+                  </div>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="hasOtherAnimations"
+              render={({ field }) => (
+                <FormItem className="flex items-start space-x-3 space-y-0 rounded-md border p-3 shadow-sm"
+                  data-selected={field.value ? "true" : "false"}
+                  data-highlight="true">
+                  <FormControl>
+                    <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                  </FormControl>
+                  <div className="space-y-1 leading-none">
+                    <FormLabel className="text-sm font-medium">
+                      🗣️ Animations pendant le dîner
+                    </FormLabel>
+                    <p className="text-xs text-muted-foreground">
+                      Discours, surprises (20-30min)
+                    </p>
+                  </div>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="hasWeddingCake"
+              render={({ field }) => (
+                <FormItem className="flex items-start space-x-3 space-y-0 rounded-md border p-3 shadow-sm"
+                  data-selected={field.value ? "true" : "false"}
+                  data-highlight="true">
+                  <FormControl>
+                    <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                  </FormControl>
+                  <div className="space-y-1 leading-none">
+                    <FormLabel className="text-sm font-medium">
+                      🍰 Pièce montée
+                    </FormLabel>
+                    <p className="text-xs text-muted-foreground">
+                      Fin du dîner (10min)
+                    </p>
+                  </div>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="hasFirstDance"
+              render={({ field }) => (
+                <FormItem className="flex items-start space-x-3 space-y-0 rounded-md border p-3 shadow-sm"
+                  data-selected={field.value ? "true" : "false"}
+                  data-highlight="true">
+                  <FormControl>
+                    <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                  </FormControl>
+                  <div className="space-y-1 leading-none">
+                    <FormLabel className="text-sm font-medium">
+                      💃 Danse des mariés
+                    </FormLabel>
+                    <p className="text-xs text-muted-foreground">
+                      Ouverture du bal (après dîner)
+                    </p>
+                  </div>
                 </FormItem>
               )}
             />
           </div>
-        </div>
-
-        <div className="space-y-4 border-t pt-4">
-          <h3 className="font-medium">Temps forts facultatifs</h3>
-          <FormField
-            control={form.control}
-            name="hasPhotoSession"
-            render={({ field }) => (
-              <FormItem className="flex flex-row items-center space-x-2 space-y-0">
-                <FormControl>
-                  <Checkbox checked={field.value} onCheckedChange={field.onChange} />
-                </FormControl>
-                <FormLabel>Séance photo (30min)</FormLabel>
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="hasCoupleEntrance"
-            render={({ field }) => (
-              <FormItem className="flex flex-row items-center space-x-2 space-y-0">
-                <FormControl>
-                  <Checkbox checked={field.value} onCheckedChange={field.onChange} />
-                </FormControl>
-                <FormLabel>Entrée des mariés</FormLabel>
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="hasOtherAnimations"
-            render={({ field }) => (
-              <FormItem className="flex flex-row items-center space-x-2 space-y-0">
-                <FormControl>
-                  <Checkbox checked={field.value} onCheckedChange={field.onChange} />
-                </FormControl>
-                <FormLabel>Animations autres (discours, intervention surprise...)</FormLabel>
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="hasSpeeches"
-            render={({ field }) => (
-              <FormItem className="flex flex-row items-center space-x-2 space-y-0">
-                <FormControl>
-                  <Checkbox checked={field.value} onCheckedChange={field.onChange} />
-                </FormControl>
-                <FormLabel>Discours des proches</FormLabel>
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="hasWeddingCake"
-            render={({ field }) => (
-              <FormItem className="flex flex-row items-center space-x-2 space-y-0">
-                <FormControl>
-                  <Checkbox checked={field.value} onCheckedChange={field.onChange} />
-                </FormControl>
-                <FormLabel>Pièce montée</FormLabel>
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="hasFirstDance"
-            render={({ field }) => (
-              <FormItem className="flex flex-row items-center space-x-2 space-y-0">
-                <FormControl>
-                  <Checkbox checked={field.value} onCheckedChange={field.onChange} />
-                </FormControl>
-                <FormLabel>Danse des mariés</FormLabel>
-              </FormItem>
-            )}
-          />
         </div>
 
         <Button type="submit" variant="wedding" className="w-full">

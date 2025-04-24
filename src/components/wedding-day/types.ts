@@ -11,6 +11,17 @@ export interface WeddingEvent {
   id: number;
 }
 
+// User choices for optional events
+export interface UserChoices {
+  hasPhotoSession: boolean;
+  hasCoupleEntrance: boolean;
+  hasOtherAnimations: boolean;
+  hasSpeeches: boolean;
+  hasWeddingCake: boolean;
+  hasFirstDance: boolean;
+}
+
 export interface WeddingDaySchedule {
   events: WeddingEvent[];
+  userChoices?: UserChoices;
 }
