@@ -8,6 +8,12 @@ interface WeddingDayTimelineProps {
   schedule: WeddingDaySchedule;
 }
 
+// Helper to determine if an event is a highlight moment
+const isHighlightEvent = (type?: string): boolean => {
+  const highlightTypes = ['photos', 'entrance', 'firstdance'];
+  return type ? highlightTypes.includes(type) : false;
+};
+
 function formatEndTime(event: { time: Date; duration?: number }) {
   if (event.duration) {
     const end = addMinutes(event.time, event.duration);
@@ -18,57 +24,66 @@ function formatEndTime(event: { time: Date; duration?: number }) {
 
 export const WeddingDayTimeline = ({ schedule }: WeddingDayTimelineProps) => {
   return (
-    <div className="space-y-4">
-      {schedule.events.map((event, index) => (
-        <div
-          key={index}
-          className={[
-            'p-4 rounded-md',
-            event.isHighlight
-              ? 'bg-wedding-olive/10 border border-wedding-olive'
-              : event.isMargin
-              ? 'bg-gray-50 border border-dashed border-gray-200'
-              : 'bg-gray-50'
-          ].join(' ')}
-        >
-          <div className="flex flex-col gap-1">
-            <div className="flex justify-between items-center">
-              <span
-                className={[
-                  'font-medium',
-                  event.isHighlight ? 'text-wedding-olive' : '',
-                ].join(' ')}
-              >
-                {event.label}
-              </span>
-              <span className="text-base font-semibold">
+    <div className="space-y-6">
+      {schedule.events.map((event, index) => {
+        const endTime = formatEndTime(event);
+        const isHighlight = isHighlightEvent(event.type);
+
+        return (
+          <div
+            key={index}
+            className={[
+              'p-4 rounded-lg border transition-all',
+              isHighlight
+                ? 'bg-wedding-light border-wedding-olive shadow-sm'
+                : event.isMargin
+                ? 'bg-gray-50/50 border-dashed border-gray-200'
+                : 'bg-white border-gray-100',
+            ].join(' ')}
+          >
+            {/* En-tête avec les horaires */}
+            <div className="flex justify-between items-start mb-2">
+              <span className="text-base font-medium">
                 {format(event.time, 'HH:mm', { locale: fr })}
-                {/* Affiche aussi l'heure de fin pour la cérémonie */}
-                {event.type === 'ceremony' && event.duration ? (
-                  <span className="ml-3 text-sm font-normal text-muted-foreground">
-                    {'→ '}
-                    {formatEndTime(event)} <span className="italic">(fin)</span>
+                {endTime && (
+                  <span className="text-muted-foreground">
+                    {' → '}
+                    {endTime}
                   </span>
-                ) : null}
-              </span>
-            </div>
-            {event.duration !== undefined && event.duration > 0 && (
-              <div
-                className={`${
-                  event.isMargin
-                    ? 'text-xs text-gray-600 italic mt-1'
-                    : 'text-sm text-muted-foreground pt-1 border-t'
-                }`}
-              >
-                Durée : {event.duration} minutes
-                {event.note && (
-                  <span className="block mt-1 italic">{event.note}</span>
                 )}
-              </div>
-            )}
+              </span>
+              {isHighlight && (
+                <span className="px-2 py-0.5 text-xs font-medium text-wedding-olive bg-wedding-olive/10 rounded-full">
+                  Temps fort
+                </span>
+              )}
+            </div>
+
+            {/* Corps de l'événement */}
+            <div className="space-y-1">
+              <h3 className={`text-lg ${isHighlight ? 'text-wedding-olive font-medium' : 'font-normal'}`}>
+                {event.label}
+              </h3>
+
+              {/* Informations supplémentaires */}
+              {(event.duration || event.note) && (
+                <div className={`${
+                  event.isMargin
+                    ? 'text-xs text-muted-foreground italic'
+                    : 'text-sm text-muted-foreground'
+                }`}>
+                  {event.duration && (
+                    <p>
+                      Durée estimative : {event.duration} minutes
+                    </p>
+                  )}
+                  {event.note && <p className="mt-1 italic">{event.note}</p>}
+                </div>
+              )}
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 };
