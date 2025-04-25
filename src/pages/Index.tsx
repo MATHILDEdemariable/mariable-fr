@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
@@ -40,7 +39,7 @@ const Index = () => {
           
           <div className="container relative z-10 mx-auto px-4 py-6 md:py-16">
             <div className="max-w-3xl mx-auto text-center mb-8 md:mb-12">
-              <h1 className="text-white text-2xl sm:text-3xl md:text-4xl lg:text-5xl mb-3 md:mb-4">
+              <h1 className="text-white text-2xl sm:text-3xl md:text-4xl lg:text-5xl mb-3 md:mb-4 font-serif">
                 Organisez le mariage <span className="text-wedding-cream">dont vous rêvez</span>
               </h1>
               <p className="text-white/90 text-sm md:text-base mb-6 md:mb-8 max-w-2xl mx-auto">
