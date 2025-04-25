@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import ServiceTemplate from '../ServiceTemplate';
@@ -103,8 +104,8 @@ const PlanningChecklist = () => {
       <div className="mt-8 text-center">
         <Card className="bg-wedding-cream/20 border-wedding-olive/20">
           <CardContent className="pt-6 pb-6">
-            <h3 className="text-2xl font-serif mb-4">Prêt à dire oui à la simplicité ?</h3>
-            <p className="mb-6">
+            <h3 className="text-2xl font-serif mb-4 text-center">Prêt à dire oui à la simplicité ?</h3>
+            <p className="mb-6 text-center">
               Créez votre compte pour sauvegarder votre planning et accéder à toutes nos fonctionnalités.
             </p>
             <Button 
@@ -117,7 +118,9 @@ const PlanningChecklist = () => {
           </CardContent>
         </Card>
       </div>
-
+    </div>
+  );
+};
 
 const PlanificationContent = () => {
   const navigate = useNavigate();
