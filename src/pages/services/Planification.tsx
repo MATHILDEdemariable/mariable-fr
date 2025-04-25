@@ -118,28 +118,6 @@ const PlanningChecklist = () => {
         </Card>
       </div>
 
-      <div className="mt-8">
-        <Card className="bg-wedding-cream/20 border-wedding-olive/20">
-          <CardContent className="pt-6 pb-6">
-            <h3 className="text-2xl font-serif mb-4">Prêt à planifier votre jour ?</h3>
-            <p className="mb-6">
-              Notre outil de planning jour-J vous permet de visualiser et d'organiser le timing idéal, de la cérémonie jusqu'à la soirée dansante.
-            </p>
-            <Link to="/services/jour-j">
-              <Button 
-                size="lg"
-                variant="wedding"
-                className="w-full sm:w-auto bg-wedding-olive hover:bg-wedding-olive/90 text-white"
-              >
-                Créer mon planning jour-J <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
-      </div>
-    </div>
-  );
-};
 
 const PlanificationContent = () => {
   const navigate = useNavigate();
