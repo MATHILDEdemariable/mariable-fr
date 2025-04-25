@@ -61,15 +61,9 @@ export const WeddingDayTimeline = ({ schedule }: WeddingDayTimelineProps) => {
         return (
           <div
             key={index}
-            className={[
-              'p-4 rounded-lg transition-all',
-              isHighlight
-                ? 'bg-wedding-light shadow-sm'
-                : event.isMargin
-                ? 'bg-gray-50/50 border-dashed border-gray-200 py-2'
-                : 'bg-white border-gray-100',
-              event.isMargin ? 'text-sm' : ''
-            ].join(' ')}
+            className={`p-4 rounded-lg transition-all ${
+              event.isMargin ? 'bg-gray-50/50 border-dashed border-gray-200 py-2' : 'bg-white'
+            }`}
           >
             {/* En-tête avec les horaires */}
             <div className="flex justify-between items-start mb-2">
@@ -91,7 +85,9 @@ export const WeddingDayTimeline = ({ schedule }: WeddingDayTimelineProps) => {
 
             {/* Corps de l'événement */}
             <div className="space-y-1">
-              <h3 className={`${event.isMargin ? 'text-sm' : 'text-lg'} ${isHighlight ? 'text-wedding-olive font-medium' : 'font-normal'}`}>
+              <h3 className={`${event.isMargin ? 'text-sm' : 'text-lg'} ${
+                isHighlight ? 'text-wedding-olive font-medium' : 'font-normal'
+              }`}>
                 {event.label}
               </h3>
 

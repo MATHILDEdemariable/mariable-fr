@@ -167,7 +167,7 @@ const PlanificationContent = () => {
               <Button 
                 size="lg"
                 variant="wedding"
-                className="bg-wedding-olive hover:bg-wedding-olive/90 text-white mx-auto"
+                className="w-full sm:w-auto bg-wedding-olive hover:bg-wedding-olive/90 text-white"
               >
                 Créer mon planning jour-J <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
