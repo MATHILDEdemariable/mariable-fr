@@ -82,7 +82,7 @@ const CharteContent = () => {
               variant="secondary"
               size="lg"
               className="bg-white text-wedding-olive hover:bg-gray-100"
-              onClick={() => navigate('/login-frame')}
+              onClick={() => navigate('/professionnels')}
             >
               Espace professionnel <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
@@ -112,3 +112,4 @@ const Charte = () => {
 };
 
 export default Charte;
+
