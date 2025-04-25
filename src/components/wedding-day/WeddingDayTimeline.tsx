@@ -1,4 +1,3 @@
-
 import React from 'react';
 import type { WeddingDaySchedule } from './types';
 import { format, addMinutes } from 'date-fns';
@@ -52,7 +51,6 @@ export const WeddingDayTimeline = ({ schedule }: WeddingDayTimelineProps) => {
   return (
     <div className="space-y-3">
       {schedule.events.map((event, index) => {
-        // Skip events that shouldn't be shown based on user choices
         if (!shouldShowEvent(event, schedule)) {
           return null;
         }
@@ -64,9 +62,9 @@ export const WeddingDayTimeline = ({ schedule }: WeddingDayTimelineProps) => {
           <div
             key={index}
             className={[
-              'p-4 rounded-lg border transition-all',
+              'p-4 rounded-lg transition-all',
               isHighlight
-                ? 'bg-wedding-light border-wedding-olive shadow-sm'
+                ? 'bg-wedding-light shadow-sm'
                 : event.isMargin
                 ? 'bg-gray-50/50 border-dashed border-gray-200 py-2'
                 : 'bg-white border-gray-100',

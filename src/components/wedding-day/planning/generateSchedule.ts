@@ -1,3 +1,4 @@
+
 import { addMinutes, parse } from "date-fns";
 import type { WeddingDaySchedule, WeddingEvent } from "../types";
 import { getCeremonyStart, getCeremonyDuration } from "./dateHelpers";
@@ -148,13 +149,21 @@ export const generateSchedule = ({
 
   // Danse des mariés (optionnel)
   if (hasFirstDance) {
+    events.push({
+      label: "Danse des mariés",
+      time: currentTime,
+      duration: 10,
+      isHighlight: true,
+      type: "firstdance",
+      id: idx++,
+    });
     currentTime = addMinutes(currentTime, 10);
   }
 
   events.push({
     label: 'Soirée dansante',
     time: currentTime,
-    duration: 240, // 4 heures
+    duration: 240,
     note: 'Durée estimative : 2h à 4h',
     type: 'dancing_party',
     id: idx++,

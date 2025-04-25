@@ -156,23 +156,7 @@ const PlanificationContent = () => {
       
       <PlanningChecklist />
       
-      <div className="mt-8 text-center space-y-8">
-        <Card className="bg-wedding-cream/20 border-wedding-olive/20">
-          <CardContent className="pt-6 pb-6 text-center">
-            <h3 className="text-2xl font-serif mb-4 text-center">Prêt à dire oui à la simplicité ?</h3>
-            <p className="mb-6 text-center">
-              Créez votre compte pour sauvegarder votre planning et accéder à toutes nos fonctionnalités.
-            </p>
-            <Button 
-              size="lg"
-              className="bg-wedding-olive hover:bg-wedding-olive/90 text-white mx-auto"
-              onClick={() => navigate('/login-frame')}
-            >
-              S'inscrire <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </CardContent>
-        </Card>
-
+      <div className="mt-8 text-center">
         <Card className="bg-wedding-cream/20 border-wedding-olive/20">
           <CardContent className="pt-6 pb-6 text-center">
             <h3 className="text-2xl font-serif mb-4 text-center">Prêt à planifier votre jour ?</h3>
