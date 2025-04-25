@@ -114,7 +114,7 @@ function Menus({ onClick }: { onClick?: () => void }) {
           />
           <HeaderDropdownItem
             label="Futurs mariés"
-            to="/"
+            to="/login-frame"
             onClick={onClick}
           />
         </HeaderDropdownMenu>

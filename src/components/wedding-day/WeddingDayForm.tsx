@@ -43,12 +43,12 @@ export const WeddingDayForm = ({ onSubmit }: WeddingDayFormProps) => {
       ceremonyTime: '',
       travelDuration: 20,
       ceremonyType: 'religieuse',
-      hasPhotoSession: true,
-      hasCoupleEntrance: true,
+      hasPhotoSession: false,
+      hasCoupleEntrance: false,
       hasOtherAnimations: false,
-      hasSpeeches: true,
-      hasWeddingCake: true,
-      hasFirstDance: true,
+      hasSpeeches: false,
+      hasWeddingCake: false,
+      hasFirstDance: false,
     },
   });
 
