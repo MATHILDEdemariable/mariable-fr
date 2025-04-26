@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -6,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { jsPDF } from "jspdf";
-import { FilePdf } from "lucide-react";
+import { File } from "lucide-react";
 import Header from '@/components/Header';
 import SEO from '@/components/SEO';
 
@@ -138,13 +137,11 @@ const TestFormulaire = () => {
   };
 
   const handleChange = (value: string, name: keyof FormData, styleKey: string) => {
-    // Update form data
     setFormData(prev => ({
       ...prev,
       [name]: value
     }));
 
-    // Update style scores
     setStyleScores(prev => ({
       ...prev,
       [styleKey]: prev[styleKey as keyof StyleScore] + 1
@@ -173,24 +170,20 @@ const TestFormulaire = () => {
     
     const doc = new jsPDF();
     
-    // Add header
     doc.setFont("helvetica", "bold");
     doc.setFontSize(20);
-    doc.setTextColor(127, 148, 116); // wedding-olive color
+    doc.setTextColor(127, 148, 116);
     doc.text("Votre Style de Mariage", 105, 20, { align: "center" });
     
-    // Add style title
     doc.setFont("helvetica", "bold");
     doc.setFontSize(16);
     doc.setTextColor(0, 0, 0);
     doc.text(styleInfo.title, 105, 30, { align: "center" });
     
-    // Add style description
     doc.setFont("helvetica", "normal");
     doc.setFontSize(12);
     doc.text(doc.splitTextToSize(styleInfo.description, 170), 20, 45);
     
-    // Add key elements
     doc.setFont("helvetica", "bold");
     doc.text("Éléments clés pour votre mariage:", 20, 80);
     
@@ -201,7 +194,6 @@ const TestFormulaire = () => {
       yPosition += 10;
     });
     
-    // Add your responses
     doc.setFont("helvetica", "bold");
     doc.text("Vos réponses:", 20, yPosition + 10);
     doc.setFont("helvetica", "normal");
@@ -223,7 +215,6 @@ const TestFormulaire = () => {
       yPosition += 10;
     });
     
-    // Add footer
     yPosition = 260;
     doc.setFontSize(10);
     doc.setTextColor(127, 148, 116);
@@ -309,7 +300,7 @@ const TestFormulaire = () => {
             onClick={generatePDF}
             className="bg-wedding-olive hover:bg-wedding-olive/90 gap-2"
           >
-            <FilePdf size={18} />
+            <File size={18} />
             Télécharger en PDF
           </Button>
         </div>
@@ -369,7 +360,7 @@ const TestFormulaire = () => {
               disabled={!formData.priority}
               className="bg-wedding-olive hover:bg-wedding-olive/90 gap-2"
             >
-              <FilePdf size={18} />
+              <File size={18} />
               Voir mon style
             </Button>
           )}
