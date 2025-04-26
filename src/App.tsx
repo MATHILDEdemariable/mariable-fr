@@ -34,6 +34,9 @@ import FAQ from "./pages/contact/FAQ";
 // Demo page
 import Demo from "./pages/Demo";
 
+// Test Formulaire
+import TestFormulaire from "./pages/TestFormulaire";
+
 // Composant pour scroller en haut de la page à chaque changement de route
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -92,6 +95,9 @@ const App = () => (
             
             {/* Demo page */}
             <Route path="/demo" element={<Demo />} />
+            
+            {/* Test Formulaire */}
+            <Route path="/test-formulaire" element={<TestFormulaire />} />
             
             {/* Catch-all route */}
             <Route path="*" element={<NotFound />} />
