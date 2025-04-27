@@ -8,8 +8,24 @@ import { Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import vendorsData from '@/data/vendors.json';
 import type { Database } from '@/integrations/supabase/types';
+import { VendorJson } from '@/types/vendorTypes';
 
 type Prestataire = Database['public']['Tables']['prestataires']['Row'];
+
+// Convertir les données JSON au format attendu
+const convertedVendors: VendorJson[] = Array.isArray(vendorsData) ? 
+  vendorsData.map((vendor: any) => ({
+    nom: vendor.nom || '',
+    type_prestataire: vendor.type || vendor.type_prestataire || '',
+    description_courte: vendor.description_courte || vendor.description || '',
+    region: vendor.region || '',
+    prix_affiche: vendor.prix_affiche || (vendor.budget ? `A partir de ${vendor.budget}€` : ''),
+    distance_grande_ville: vendor.distance_grande_ville || vendor.lieu || '',
+    instagram_url: vendor.instagram_url || vendor.lien || vendor.contact || '',
+    sous_categorie: vendor.sous_categorie || '',
+    capacite_max_invites: vendor.capacite_max_invites || '',
+    brochure_url: vendor.brochure_url || ''
+  })) : [];
 
 const ImportAirtable = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -65,14 +81,14 @@ const ImportAirtable = () => {
     };
 
     try {
-      for (const vendor of vendorsData) {
+      for (const vendor of convertedVendors) {
         try {
           const prestataireData = {
             nom: vendor.nom,
             categorie: mapTypeToCategorie(vendor.type_prestataire),
             description: vendor.description_courte || null,
-            region: mapRegion(vendor.region),
-            prix_a_partir_de: extractPriceNumber(vendor.prix_affiche),
+            region: mapRegion(vendor.region || ''),
+            prix_a_partir_de: extractPriceNumber(vendor.prix_affiche || ''),
             ville: vendor.distance_grande_ville ? vendor.distance_grande_ville.split(' ').pop() : null,
             distance: vendor.distance_grande_ville || null,
             site_web: vendor.instagram_url || null,
@@ -95,7 +111,7 @@ const ImportAirtable = () => {
           } else {
             importResults.success++;
           }
-        } catch (error) {
+        } catch (error: any) {
           console.error("Erreur pour le prestataire", vendor.nom, error);
           importResults.errors++;
           importResults.errorDetails.push({
@@ -111,7 +127,7 @@ const ImportAirtable = () => {
         title: "Importation terminée",
         description: `${importResults.success} prestataires importés avec succès.`,
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Erreur lors de l'importation:", error);
       toast({
         title: "Erreur",
