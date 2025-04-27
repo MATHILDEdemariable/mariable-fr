@@ -2,7 +2,7 @@
 import React from 'react';
 import ServiceTemplate from '../ServiceTemplate';
 import { Button } from '@/components/ui/button';
-import { BookOpen } from 'lucide-react';
+import { BookOpen, Search } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import SEO from '@/components/SEO';
 
@@ -20,13 +20,26 @@ const PrestataireContent = () => {
         <p className="mb-4">
           Découvrez nos sélections de prestataires de qualité pour votre mariage, soigneusement vérifiés par notre équipe.
         </p>
-        <Button 
-          className="bg-wedding-olive hover:bg-wedding-olive/90"
-          onClick={handleGuideClick}
-        >
-          <BookOpen className="mr-2 h-4 w-4" />
-          Guide Mariable
-        </Button>
+        <div className="flex flex-wrap gap-3">
+          <Button 
+            className="bg-wedding-olive hover:bg-wedding-olive/90"
+            onClick={handleGuideClick}
+          >
+            <BookOpen className="mr-2 h-4 w-4" />
+            Guide Mariable
+          </Button>
+          
+          <Button
+            variant="outline"
+            className="border-wedding-olive text-wedding-olive hover:bg-wedding-olive/10"
+            asChild
+          >
+            <Link to="/recherche">
+              <Search className="mr-2 h-4 w-4" />
+              Rechercher un prestataire
+            </Link>
+          </Button>
+        </div>
       </div>
     
       <p>
@@ -43,15 +56,26 @@ const PrestataireContent = () => {
           des prestataires qui correspondent à vos critères. Plus besoin de passer des heures 
           à faire des recherches, nous le faisons pour vous !
         </p>
-        <Button 
-          variant="outline" 
-          className="whitespace-nowrap"
-          asChild
-        >
-          <Link to="/demo">
-            Voir la démo
-          </Link>
-        </Button>
+        <div className="flex gap-2 whitespace-nowrap">
+          <Button 
+            variant="outline" 
+            className="border-wedding-olive text-wedding-olive hover:bg-wedding-olive/10"
+            asChild
+          >
+            <Link to="/recherche">
+              <Search className="mr-2 h-4 w-4" />
+              Rechercher
+            </Link>
+          </Button>
+          <Button 
+            variant="outline" 
+            asChild
+          >
+            <Link to="/demo">
+              Voir la démo
+            </Link>
+          </Button>
+        </div>
       </div>
       
       <h2 className="text-2xl font-serif mt-8 mb-4">Nos catégories de prestataires</h2>

@@ -1,5 +1,9 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { Database } from '@/integrations/supabase/types';
 import Header from '@/components/Header';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -11,6 +15,10 @@ import { Label } from '@/components/ui/label';
 import { MapPin, Users, Star, Award, CalendarCheck, Euro, MessageSquare } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { toast } from '@/components/ui/use-toast';
+import { Loader2 } from 'lucide-react';
+
+type Prestataire = Database['public']['Tables']['prestataires']['Row'];
+type PrestatairePhoto = Database['public']['Tables']['prestataires_photos']['Row'];
 
 interface Package {
   name: string;
@@ -18,16 +26,20 @@ interface Package {
   description: string;
 }
 
-const packages: Package[] = [
+const DEFAULT_PACKAGES: Package[] = [
   { name: 'Classique', basePrice: 3200, description: 'Location simple du domaine' },
   { name: 'Premium', basePrice: 4500, description: 'Location + coordination' },
   { name: 'Luxe', basePrice: 6000, description: 'Service tout inclus' },
 ];
 
 const Demo = () => {
+  const [searchParams] = useSearchParams();
+  const vendorId = searchParams.get('id');
+  
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [guests, setGuests] = useState<number>(100);
-  const [selectedPackage, setSelectedPackage] = useState<Package>(packages[0]);
+  const [packages, setPackages] = useState<Package[]>(DEFAULT_PACKAGES);
+  const [selectedPackage, setSelectedPackage] = useState<Package>(DEFAULT_PACKAGES[0]);
   
   const disabledDates = [
     new Date(2025, 5, 15),
@@ -35,6 +47,68 @@ const Demo = () => {
     new Date(2025, 5, 17),
     new Date(2025, 6, 1),
   ];
+
+  // Récupérer les données du prestataire depuis Supabase
+  const { data: vendor, isLoading } = useQuery({
+    queryKey: ['vendor', vendorId],
+    queryFn: async () => {
+      if (!vendorId) return null;
+      
+      const { data, error } = await supabase
+        .from('prestataires')
+        .select('*')
+        .eq('id', vendorId)
+        .single();
+      
+      if (error) {
+        toast({
+          description: `Erreur lors du chargement du prestataire: ${error.message}`,
+          variant: "destructive",
+        });
+        throw new Error(error.message);
+      }
+      
+      return data as Prestataire;
+    },
+    enabled: !!vendorId
+  });
+  
+  // Récupérer les photos du prestataire
+  const { data: photos } = useQuery({
+    queryKey: ['vendor-photos', vendorId],
+    queryFn: async () => {
+      if (!vendorId) return [];
+      
+      const { data, error } = await supabase
+        .from('prestataires_photos')
+        .select('*')
+        .eq('prestataire_id', vendorId)
+        .order('ordre', { ascending: true });
+      
+      if (error) {
+        console.error('Error fetching photos:', error);
+        return [];
+      }
+      
+      return data as PrestatairePhoto[];
+    },
+    enabled: !!vendorId
+  });
+  
+  // Ajuster les packages en fonction du prix du prestataire
+  useEffect(() => {
+    if (vendor) {
+      if (vendor.prix_a_partir_de) {
+        const newPackages = [
+          { name: 'Classique', basePrice: vendor.prix_a_partir_de, description: 'Formule de base' },
+          { name: 'Premium', basePrice: vendor.prix_a_partir_de * 1.4, description: 'Formule intermédiaire' },
+          { name: 'Luxe', basePrice: vendor.prix_a_partir_de * 1.8, description: 'Formule complète' },
+        ];
+        setPackages(newPackages);
+        setSelectedPackage(newPackages[0]);
+      }
+    }
+  }, [vendor]);
 
   const handleDateSelect = (newDate: Date | undefined) => {
     setDate(newDate);
@@ -72,6 +146,67 @@ const Demo = () => {
       description: "La réservation en ligne sera bientôt disponible",
     });
   };
+  
+  // Si aucun vendeur n'est fourni et chargement terminé, afficher un message
+  if (!vendorId && !isLoading) {
+    return (
+      <div className="min-h-screen flex flex-col bg-white">
+        <Header />
+        <div className="container max-w-6xl px-4 py-12 flex justify-center">
+          <Card className="p-8 text-center">
+            <h1 className="text-2xl font-serif mb-4">Aucun prestataire sélectionné</h1>
+            <p className="mb-6">Veuillez sélectionner un prestataire depuis notre moteur de recherche.</p>
+            <Button 
+              className="bg-wedding-olive hover:bg-wedding-olive/90"
+              onClick={() => window.location.href = '/recherche'}
+            >
+              Retour à la recherche
+            </Button>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+  
+  // Si chargement en cours, afficher un indicateur de chargement
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex flex-col bg-white">
+        <Header />
+        <div className="container max-w-6xl px-4 py-12 flex justify-center items-center">
+          <div className="text-center">
+            <Loader2 className="h-12 w-12 animate-spin text-wedding-olive mx-auto mb-4" />
+            <p>Chargement des informations...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  
+  if (!vendor) {
+    return (
+      <div className="min-h-screen flex flex-col bg-white">
+        <Header />
+        <div className="container max-w-6xl px-4 py-12 flex justify-center">
+          <Card className="p-8 text-center">
+            <h1 className="text-2xl font-serif mb-4">Prestataire non trouvé</h1>
+            <p className="mb-6">Ce prestataire n'existe pas ou a été supprimé.</p>
+            <Button 
+              className="bg-wedding-olive hover:bg-wedding-olive/90"
+              onClick={() => window.location.href = '/recherche'}
+            >
+              Retour à la recherche
+            </Button>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  // Image principale - utiliser soit la photo principale de la DB, soit une photo par défaut
+  const mainImage = photos && photos.length > 0 
+    ? photos.find(p => p.principale)?.url || photos[0].url 
+    : "/placeholder.svg";
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
@@ -81,8 +216,8 @@ const Demo = () => {
         {/* Hero Section */}
         <div className="relative h-[60vh] w-full">
           <img
-            src="/lovable-uploads/99fde439-7310-4090-9478-8c9244627554.png"
-            alt="Château de Mariable"
+            src={mainImage}
+            alt={vendor.nom || "Prestataire de mariage"}
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-black/30" />
@@ -94,25 +229,24 @@ const Demo = () => {
             {/* Main Content */}
             <div className="flex-grow space-y-6">
               <div>
-                <h1 className="text-3xl font-serif mb-2">Château de Mariable</h1>
+                <h1 className="text-3xl font-serif mb-2">{vendor.nom}</h1>
                 <div className="flex items-center text-muted-foreground gap-2 mb-4">
                   <MapPin className="h-4 w-4" />
-                  <span>Cap Ferret, Sud-Ouest</span>
+                  <span>{vendor.ville ? `${vendor.ville}, ${vendor.region || ''}` : vendor.region || 'Non spécifié'}</span>
                 </div>
                 
                 <div className="flex flex-wrap gap-2">
                   <Badge variant="secondary" className="flex items-center gap-1">
                     <Award className="h-3 w-3" />
-                    Exclusif
+                    {vendor.categorie}
                   </Badge>
-                  <Badge variant="secondary" className="flex items-center gap-1">
-                    <Star className="h-3 w-3" />
-                    Prestataire recommandé
-                  </Badge>
-                  <Badge variant="secondary" className="flex items-center gap-1">
-                    <CalendarCheck className="h-3 w-3" />
-                    Disponible 2025
-                  </Badge>
+                  {vendor.styles && (
+                    JSON.parse(String(vendor.styles)).map((style: string, index: number) => (
+                      <Badge key={index} variant="outline">
+                        {style}
+                      </Badge>
+                    ))
+                  )}
                 </div>
               </div>
 
@@ -123,21 +257,26 @@ const Demo = () => {
                     <Users className="h-5 w-5 text-wedding-olive" />
                     <div>
                       <p className="font-medium">Capacité</p>
-                      <p className="text-sm text-muted-foreground">Jusqu'à 200 invités</p>
+                      <p className="text-sm text-muted-foreground">Variable selon prestation</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
                     <Euro className="h-5 w-5 text-wedding-olive" />
                     <div>
-                      <p className="font-medium">À partir de</p>
-                      <p className="text-sm text-muted-foreground">3200€ / jour</p>
+                      <p className="font-medium">Prix</p>
+                      <p className="text-sm text-muted-foreground">
+                        {vendor.prix_par_personne 
+                          ? `À partir de ${vendor.prix_par_personne}€/pers.`
+                          : vendor.prix_a_partir_de 
+                            ? `À partir de ${vendor.prix_a_partir_de}€`
+                            : 'Prix sur demande'}
+                      </p>
                     </div>
                   </div>
                 </div>
 
                 <p className="mt-4 text-muted-foreground">
-                  Un château authentique du XVIIIe siècle niché dans un parc de 15 hectares, 
-                  offrant un cadre exceptionnel pour votre mariage de rêve.
+                  {vendor.description || "Aucune description disponible pour ce prestataire."}
                 </p>
               </Card>
 
@@ -145,27 +284,18 @@ const Demo = () => {
               <div className="space-y-4">
                 <h2 className="text-xl font-serif">Nos formules</h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <Card className="p-4">
-                    <h3 className="font-medium mb-2">Classique</h3>
-                    <p className="text-sm text-muted-foreground mb-4">
-                      Location simple du domaine
-                    </p>
-                    <p className="font-medium">3200€</p>
-                  </Card>
-                  <Card className="p-4 border-wedding-olive">
-                    <h3 className="font-medium mb-2">Premium</h3>
-                    <p className="text-sm text-muted-foreground mb-4">
-                      Location + coordination
-                    </p>
-                    <p className="font-medium">4500€</p>
-                  </Card>
-                  <Card className="p-4">
-                    <h3 className="font-medium mb-2">À la carte</h3>
-                    <p className="text-sm text-muted-foreground mb-4">
-                      Services personnalisés
-                    </p>
-                    <p className="font-medium">Sur devis</p>
-                  </Card>
+                  {packages.map((pkg, index) => (
+                    <Card 
+                      key={index}
+                      className={`p-4 ${index === 1 ? 'border-wedding-olive' : ''}`}
+                    >
+                      <h3 className="font-medium mb-2">{pkg.name}</h3>
+                      <p className="text-sm text-muted-foreground mb-4">
+                        {pkg.description}
+                      </p>
+                      <p className="font-medium">{Math.round(pkg.basePrice)}€</p>
+                    </Card>
+                  ))}
                 </div>
               </div>
             </div>
@@ -228,15 +358,15 @@ const Demo = () => {
                 <div className="mt-6 border-t pt-4 space-y-2">
                   <div className="flex justify-between">
                     <span>Prix de base</span>
-                    <span>{prices.basePrice}€</span>
+                    <span>{Math.round(prices.basePrice)}€</span>
                   </div>
                   <div className="flex justify-between text-sm text-muted-foreground">
                     <span>Frais de réservation (4%)</span>
-                    <span>{prices.commission}€</span>
+                    <span>{Math.round(prices.commission)}€</span>
                   </div>
                   <div className="flex justify-between font-medium text-lg border-t pt-2">
                     <span>Total</span>
-                    <span>{prices.total}€</span>
+                    <span>{Math.round(prices.total)}€</span>
                   </div>
                 </div>
 
@@ -249,7 +379,14 @@ const Demo = () => {
               </Card>
 
               <Card className="p-4">
-                <Button variant="outline" className="w-full" onClick={() => toast({ description: "La messagerie sera bientôt disponible" })}>
+                <Button 
+                  variant="outline" 
+                  className="w-full" 
+                  onClick={() => {
+                    toast({ description: "La messagerie sera bientôt disponible" });
+                    window.open(`mailto:${vendor.email || ''}`, '_blank');
+                  }}
+                >
                   <MessageSquare className="mr-2 h-4 w-4" />
                   Contacter
                 </Button>

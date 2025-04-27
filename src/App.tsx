@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -13,6 +14,7 @@ import GuideMariable from "./pages/GuideMariable";
 import Professionnels from "./pages/Professionnels";
 import GuideMariableFrame from "./pages/GuideMariableFrame";
 import LoginFrame from "./pages/LoginFrame";
+import MoteurRecherche from "./pages/MoteurRecherche"; // Nouvelle importation
 
 // Services pages
 import Prestataires from "./pages/services/Prestataires";
@@ -95,6 +97,9 @@ const App = () => (
             
             {/* Demo page */}
             <Route path="/demo" element={<Demo />} />
+            
+            {/* Moteur de recherche page */}
+            <Route path="/recherche" element={<MoteurRecherche />} />
             
             {/* Test Formulaire */}
             <Route path="/test-formulaire" element={<TestFormulaire />} />
