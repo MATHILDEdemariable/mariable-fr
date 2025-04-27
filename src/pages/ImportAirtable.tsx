@@ -29,7 +29,14 @@ const convertedVendors: VendorJson[] = Array.isArray(vendorsData) ?
 
 const ImportAirtable = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [results, setResults] = useState<any>(null);
+  const [results, setResults] = useState<{
+    success: number;
+    errors: number;
+    errorDetails: any[];
+    suggestions?: string[];
+    photoCount?: number;
+    brochureCount?: number;
+  } | null>(null);
 
   const mapTypeToCategorie = (type: string): Database['public']['Enums']['prestataire_categorie'] => {
     const typeMapping: Record<string, Database['public']['Enums']['prestataire_categorie']> = {
@@ -97,9 +104,7 @@ const ImportAirtable = () => {
 
           const { error } = await supabase
             .from('prestataires')
-            .upsert([prestataireData], {
-              onConflict: 'nom'
-            });
+            .insert([prestataireData]);
 
           if (error) {
             console.error("Erreur lors de l'insertion:", error);
@@ -175,26 +180,26 @@ const ImportAirtable = () => {
             <div className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="p-4 bg-gray-50 rounded-md">
-                  <div className="text-3xl font-bold text-wedding-olive">{results.results.success}</div>
+                  <div className="text-3xl font-bold text-wedding-olive">{results.success}</div>
                   <div className="text-sm text-muted-foreground">Prestataires importés avec succès</div>
                 </div>
                 
                 <div className="p-4 bg-gray-50 rounded-md">
-                  <div className="text-3xl font-bold text-wedding-olive">{results.results.photoCount || 0}</div>
+                  <div className="text-3xl font-bold text-wedding-olive">{results.photoCount || 0}</div>
                   <div className="text-sm text-muted-foreground">Photos importées</div>
                 </div>
                 
                 <div className="p-4 bg-gray-50 rounded-md">
-                  <div className="text-3xl font-bold text-wedding-olive">{results.results.brochureCount || 0}</div>
+                  <div className="text-3xl font-bold text-wedding-olive">{results.brochureCount || 0}</div>
                   <div className="text-sm text-muted-foreground">Brochures importées</div>
                 </div>
               </div>
               
-              {results.results.errors > 0 && (
+              {results.errors > 0 && (
                 <div className="mt-4">
-                  <h3 className="text-lg font-medium mb-2 text-red-600">{results.results.errors} erreurs détectées</h3>
+                  <h3 className="text-lg font-medium mb-2 text-red-600">{results.errors} erreurs détectées</h3>
                   <div className="bg-red-50 p-4 rounded-md max-h-60 overflow-auto">
-                    <pre className="text-xs whitespace-pre-wrap">{JSON.stringify(results.results.errorDetails, null, 2)}</pre>
+                    <pre className="text-xs whitespace-pre-wrap">{JSON.stringify(results.errorDetails, null, 2)}</pre>
                   </div>
                 </div>
               )}
