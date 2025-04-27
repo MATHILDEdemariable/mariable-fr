@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -48,7 +47,6 @@ const Demo = () => {
     new Date(2025, 6, 1),
   ];
 
-  // Récupérer les données du prestataire depuis Supabase
   const { data: vendor, isLoading } = useQuery({
     queryKey: ['vendor', vendorId],
     queryFn: async () => {
@@ -73,7 +71,6 @@ const Demo = () => {
     enabled: !!vendorId
   });
   
-  // Récupérer les photos du prestataire
   const { data: photos } = useQuery({
     queryKey: ['vendor-photos', vendorId],
     queryFn: async () => {
@@ -95,7 +92,6 @@ const Demo = () => {
     enabled: !!vendorId
   });
   
-  // Ajuster les packages en fonction du prix du prestataire
   useEffect(() => {
     if (vendor) {
       if (vendor.prix_a_partir_de) {
@@ -147,7 +143,6 @@ const Demo = () => {
     });
   };
   
-  // Si aucun vendeur n'est fourni et chargement terminé, afficher un message
   if (!vendorId && !isLoading) {
     return (
       <div className="min-h-screen flex flex-col bg-white">
@@ -168,7 +163,6 @@ const Demo = () => {
     );
   }
   
-  // Si chargement en cours, afficher un indicateur de chargement
   if (isLoading) {
     return (
       <div className="min-h-screen flex flex-col bg-white">
@@ -203,91 +197,82 @@ const Demo = () => {
     );
   }
 
-  // Image principale - utiliser soit la photo principale de la DB, soit une photo par défaut
   const mainImage = photos && photos.length > 0 
     ? photos.find(p => p.principale)?.url || photos[0].url 
     : "/placeholder.svg";
+
+  const renderStyleBadges = () => {
+    try {
+      if (vendor?.styles && Array.isArray(vendor.styles)) {
+        return vendor.styles.map((style, index) => (
+          <Badge key={index} variant="outline">
+            {String(style)}
+          </Badge>
+        ));
+      }
+      else if (vendor?.styles && typeof vendor.styles === 'string') {
+        try {
+          const styles = JSON.parse(String(vendor.styles));
+          if (Array.isArray(styles)) {
+            return styles.map((style, index) => (
+              <Badge key={index} variant="outline">
+                {String(style)}
+              </Badge>
+            ));
+          }
+        } catch (e) {
+          console.warn('Error parsing vendor styles in Demo:', e);
+          return (
+            <Badge variant="outline">
+              {String(vendor.styles)}
+            </Badge>
+          );
+        }
+      }
+      return (
+        <Badge variant="outline">
+          Style non spécifié
+        </Badge>
+      );
+    } catch (error) {
+      console.warn('Error processing vendor styles:', error);
+      return null;
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <Header />
       
       <main className="flex-grow">
-        {/* Hero Section */}
         <div className="relative h-[60vh] w-full">
           <img
             src={mainImage}
-            alt={vendor.nom || "Prestataire de mariage"}
+            alt={vendor?.nom || "Prestataire de mariage"}
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-black/30" />
         </div>
 
-        {/* Content */}
         <div className="container max-w-6xl px-4 py-8">
           <div className="flex flex-col lg:flex-row gap-8">
-            {/* Main Content */}
             <div className="flex-grow space-y-6">
               <div>
-                <h1 className="text-3xl font-serif mb-2">{vendor.nom}</h1>
+                <h1 className="text-3xl font-serif mb-2">{vendor?.nom}</h1>
                 <div className="flex items-center text-muted-foreground gap-2 mb-4">
                   <MapPin className="h-4 w-4" />
-                  <span>{vendor.ville ? `${vendor.ville}, ${vendor.region || ''}` : vendor.region || 'Non spécifié'}</span>
+                  <span>{vendor?.ville ? `${vendor.ville}, ${vendor.region || ''}` : vendor?.region || 'Non spécifié'}</span>
                 </div>
                 
                 <div className="flex flex-wrap gap-2">
                   <Badge variant="secondary" className="flex items-center gap-1">
                     <Award className="h-3 w-3" />
-                    {vendor.categorie}
+                    {vendor?.categorie}
                   </Badge>
-                  {vendor.styles && (
-                    (() => {
-                      try {
-                        // Check if styles is already an array
-                        if (Array.isArray(vendor.styles)) {
-                          return vendor.styles.map((style, index) => (
-                            <Badge key={index} variant="outline">
-                              {style}
-                            </Badge>
-                          ));
-                        }
-                        // Check if styles is a string that can be parsed as JSON
-                        else if (typeof vendor.styles === 'string') {
-                          try {
-                            const styles = JSON.parse(String(vendor.styles));
-                            if (Array.isArray(styles)) {
-                              return styles.map((style, index) => (
-                                <Badge key={index} variant="outline">
-                                  {style}
-                                </Badge>
-                              ));
-                            }
-                          } catch (e) {
-                            console.warn('Error parsing vendor styles in Demo:', e);
-                            // Return single badge for non-parseable string
-                            return (
-                              <Badge variant="outline">
-                                {String(vendor.styles)}
-                              </Badge>
-                            );
-                          }
-                        }
-                        // Fallback for non-array, non-string case
-                        return (
-                          <Badge variant="outline">
-                            Style non spécifié
-                          </Badge>
-                        );
-                      } catch (error) {
-                        console.warn('Error processing vendor styles:', error);
-                        return null;
-                      }
-                    })()
-                  )}
+                  {vendor?.styles && renderStyleBadges()}
                 </div>
               </div>
 
-              {/* Key Information */}
               <Card className="p-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="flex items-center gap-2">
@@ -317,7 +302,6 @@ const Demo = () => {
                 </p>
               </Card>
 
-              {/* Pricing Options */}
               <div className="space-y-4">
                 <h2 className="text-xl font-serif">Nos formules</h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -337,12 +321,10 @@ const Demo = () => {
               </div>
             </div>
 
-            {/* Sidebar */}
             <div className="w-full lg:w-80 space-y-4">
               <Card className="p-4">
                 <h3 className="text-lg font-medium mb-4">Vérifier les disponibilités</h3>
                 
-                {/* Date Selection */}
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button variant="outline" className="w-full justify-start text-left font-normal">
@@ -360,7 +342,6 @@ const Demo = () => {
                   </PopoverContent>
                 </Popover>
 
-                {/* Guest Count */}
                 <div className="mt-4">
                   <Label htmlFor="guests">Nombre d'invités</Label>
                   <Input
@@ -374,7 +355,6 @@ const Demo = () => {
                   />
                 </div>
 
-                {/* Package Selection */}
                 <div className="mt-4">
                   <Label>Formule</Label>
                   <RadioGroup 
@@ -391,7 +371,6 @@ const Demo = () => {
                   </RadioGroup>
                 </div>
 
-                {/* Price Breakdown */}
                 <div className="mt-6 border-t pt-4 space-y-2">
                   <div className="flex justify-between">
                     <span>Prix de base</span>
