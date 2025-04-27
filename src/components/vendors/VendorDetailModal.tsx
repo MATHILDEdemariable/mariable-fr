@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { 
   Dialog, 
@@ -9,23 +8,27 @@ import {
   DialogClose 
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Tables } from '@/integrations/supabase/types';
+import { Database } from '@/integrations/supabase/types';
 import { X, MapPin, Euro, Mail, Phone, Globe, Download, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { supabase } from '@/integrations/supabase/client';
 
+type Prestataire = Database['public']['Tables']['prestataires']['Row'];
+type PrestatairePhoto = Database['public']['Tables']['prestataires_photos']['Row'];
+type PrestataireBrochure = Database['public']['Tables']['prestataires_brochures']['Row'];
+
 interface VendorDetailModalProps {
   isOpen: boolean;
   onClose: () => void;
-  vendor: Tables['prestataires']['Row'] | null;
+  vendor: Prestataire | null;
 }
 
 const VendorDetailModal: React.FC<VendorDetailModalProps> = ({ isOpen, onClose, vendor }) => {
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
-  const [photos, setPhotos] = useState<Tables['prestataires_photos']['Row'][]>([]);
-  const [brochures, setBrochures] = useState<Tables['prestataires_brochures']['Row'][]>([]);
+  const [photos, setPhotos] = useState<PrestatairePhoto[]>([]);
+  const [brochures, setBrochures] = useState<PrestataireBrochure[]>([]);
 
   React.useEffect(() => {
     const fetchVendorMedia = async () => {
@@ -64,7 +67,7 @@ const VendorDetailModal: React.FC<VendorDetailModalProps> = ({ isOpen, onClose, 
     window.open(url, '_blank');
   };
 
-  const parsedStyles = vendor.styles ? JSON.parse(vendor.styles) : [];
+  const parsedStyles = vendor.styles ? JSON.parse(String(vendor.styles)) : [];
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>

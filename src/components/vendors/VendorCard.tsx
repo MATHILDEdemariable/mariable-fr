@@ -5,16 +5,18 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { MapPin, Euro, ExternalLink } from 'lucide-react';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
-import { Tables } from '@/integrations/supabase/types';
+import { Database } from '@/integrations/supabase/types';
+
+type Prestataire = Database['public']['Tables']['prestataires']['Row'];
 
 interface VendorCardProps {
-  vendor: Tables['prestataires']['Row'];
-  onClick: (vendor: Tables['prestataires']['Row']) => void;
+  vendor: Prestataire;
+  onClick: (vendor: Prestataire) => void;
 }
 
 const VendorCard: React.FC<VendorCardProps> = ({ vendor, onClick }) => {
   // Obtenir l'image principale (première photo)
-  const mainImage = vendor.styles && JSON.parse(vendor.styles)[0] || '/placeholder.svg';
+  const mainImage = vendor.styles && JSON.parse(String(vendor.styles))[0] || '/placeholder.svg';
   
   // Obtenir la localisation 
   const location = `${vendor.ville || ''}, ${vendor.region || ''}`.trim();
