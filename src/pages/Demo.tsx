@@ -241,11 +241,48 @@ const Demo = () => {
                     {vendor.categorie}
                   </Badge>
                   {vendor.styles && (
-                    JSON.parse(String(vendor.styles)).map((style: string, index: number) => (
-                      <Badge key={index} variant="outline">
-                        {style}
-                      </Badge>
-                    ))
+                    (() => {
+                      try {
+                        // Check if styles is already an array
+                        if (Array.isArray(vendor.styles)) {
+                          return vendor.styles.map((style, index) => (
+                            <Badge key={index} variant="outline">
+                              {style}
+                            </Badge>
+                          ));
+                        }
+                        // Check if styles is a string that can be parsed as JSON
+                        else if (typeof vendor.styles === 'string') {
+                          try {
+                            const styles = JSON.parse(String(vendor.styles));
+                            if (Array.isArray(styles)) {
+                              return styles.map((style, index) => (
+                                <Badge key={index} variant="outline">
+                                  {style}
+                                </Badge>
+                              ));
+                            }
+                          } catch (e) {
+                            console.warn('Error parsing vendor styles in Demo:', e);
+                            // Return single badge for non-parseable string
+                            return (
+                              <Badge variant="outline">
+                                {String(vendor.styles)}
+                              </Badge>
+                            );
+                          }
+                        }
+                        // Fallback for non-array, non-string case
+                        return (
+                          <Badge variant="outline">
+                            Style non spécifié
+                          </Badge>
+                        );
+                      } catch (error) {
+                        console.warn('Error processing vendor styles:', error);
+                        return null;
+                      }
+                    })()
                   )}
                 </div>
               </div>

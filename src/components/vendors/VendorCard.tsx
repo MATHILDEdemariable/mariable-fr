@@ -21,14 +21,14 @@ const VendorCard: React.FC<VendorCardProps> = ({ vendor, onClick }) => {
   try {
     // Check if styles is already an array
     if (vendor.styles && Array.isArray(vendor.styles) && vendor.styles.length > 0) {
-      mainImage = vendor.styles[0];
+      mainImage = String(vendor.styles[0]);
     } 
     // Check if styles is a string that can be parsed as JSON
     else if (vendor.styles && typeof vendor.styles === 'string') {
       try {
         const parsedStyles = JSON.parse(String(vendor.styles));
         if (Array.isArray(parsedStyles) && parsedStyles.length > 0) {
-          mainImage = parsedStyles[0];
+          mainImage = String(parsedStyles[0]);
         }
       } catch (e) {
         console.warn('Error parsing vendor styles:', e);
