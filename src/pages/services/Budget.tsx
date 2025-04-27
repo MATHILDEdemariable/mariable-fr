@@ -66,7 +66,7 @@ const DECOR_PRICES: Record<ServiceLevel, number> = {
 };
 
 const REGION_MODIFIERS: Record<string, number> = {
-  'Île-de-France': 1.2,
+  'Île-de-France': 1.3,
   'Provence-Alpes-Côte d\'Azur': 1.2,
   'Bretagne': 1.0,
   'Centre-Val de Loire': 1.0,
