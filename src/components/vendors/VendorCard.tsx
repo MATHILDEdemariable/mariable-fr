@@ -15,13 +15,35 @@ interface VendorCardProps {
 }
 
 const VendorCard: React.FC<VendorCardProps> = ({ vendor, onClick }) => {
-  // Obtenir l'image principale (première photo)
-  const mainImage = vendor.styles && JSON.parse(String(vendor.styles))[0] || '/placeholder.svg';
+  // Get the main image (first photo) with safety checks
+  let mainImage = '/placeholder.svg';
   
-  // Obtenir la localisation 
+  try {
+    // Check if styles is already an array
+    if (vendor.styles && Array.isArray(vendor.styles) && vendor.styles.length > 0) {
+      mainImage = vendor.styles[0];
+    } 
+    // Check if styles is a string that can be parsed as JSON
+    else if (vendor.styles && typeof vendor.styles === 'string') {
+      try {
+        const parsedStyles = JSON.parse(String(vendor.styles));
+        if (Array.isArray(parsedStyles) && parsedStyles.length > 0) {
+          mainImage = parsedStyles[0];
+        }
+      } catch (e) {
+        console.warn('Error parsing vendor styles:', e);
+        // Use default image
+      }
+    }
+  } catch (error) {
+    console.warn('Error processing vendor styles:', error);
+    // Use default image
+  }
+  
+  // Get location
   const location = `${vendor.ville || ''}, ${vendor.region || ''}`.trim();
   
-  // Obtenir le prix formaté
+  // Get formatted price
   const getFormattedPrice = () => {
     if (vendor.prix_par_personne) {
       return `Environ ${vendor.prix_par_personne}€/pers.`;
