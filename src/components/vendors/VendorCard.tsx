@@ -4,31 +4,27 @@ import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { MapPin, Euro, ExternalLink } from 'lucide-react';
-import { AirtableVendor } from '@/types/airtable';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
+import { Tables } from '@/integrations/supabase/types';
 
 interface VendorCardProps {
-  vendor: AirtableVendor;
-  onClick: (vendor: AirtableVendor) => void;
+  vendor: Tables['prestataires']['Row'];
+  onClick: (vendor: Tables['prestataires']['Row']) => void;
 }
 
 const VendorCard: React.FC<VendorCardProps> = ({ vendor, onClick }) => {
-  const { fields } = vendor;
-  
   // Obtenir l'image principale (première photo)
-  const mainImage = fields.Photos && fields.Photos.length > 0 
-    ? fields.Photos[0].url 
-    : '/placeholder.svg';
+  const mainImage = vendor.styles && JSON.parse(vendor.styles)[0] || '/placeholder.svg';
   
-  // Obtenir la localisation (ville ou distance)
-  const location = fields.Distance || fields.Ville || '';
+  // Obtenir la localisation 
+  const location = `${vendor.ville || ''}, ${vendor.region || ''}`.trim();
   
   // Obtenir le prix formaté
   const getFormattedPrice = () => {
-    if (fields["Prix par personne"]) {
-      return `Environ ${fields["Prix par personne"]}€/pers.`;
-    } else if (fields["Prix à partir de"]) {
-      return `À partir de ${fields["Prix à partir de"]} €`;
+    if (vendor.prix_par_personne) {
+      return `Environ ${vendor.prix_par_personne}€/pers.`;
+    } else if (vendor.prix_a_partir_de) {
+      return `À partir de ${vendor.prix_a_partir_de} €`;
     } else {
       return "Prix sur demande";
     }
@@ -40,19 +36,19 @@ const VendorCard: React.FC<VendorCardProps> = ({ vendor, onClick }) => {
         <AspectRatio ratio={16 / 9}>
           <img 
             src={mainImage} 
-            alt={fields.Nom || "Prestataire de mariage"} 
+            alt={vendor.nom || "Prestataire de mariage"} 
             className="w-full h-full object-cover"
           />
         </AspectRatio>
         <Badge 
           className="absolute top-3 left-3 bg-white/80 text-black font-medium"
         >
-          {fields.Catégorie || "Prestataire"}
+          {vendor.categorie || "Prestataire"}
         </Badge>
       </div>
       
       <CardContent className="p-4">
-        <h3 className="text-lg font-serif mb-1">{fields.Nom}</h3>
+        <h3 className="text-lg font-serif mb-1">{vendor.nom}</h3>
         
         <div className="flex items-center text-sm text-muted-foreground">
           <MapPin className="h-4 w-4 mr-1" /> {location}

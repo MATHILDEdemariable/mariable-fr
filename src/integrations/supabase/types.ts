@@ -9,7 +9,163 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      prestataires: {
+        Row: {
+          adresse: string | null
+          categorie: Database["public"]["Enums"]["prestataire_categorie"]
+          code_postal: string | null
+          created_at: string
+          description: string | null
+          distance: string | null
+          email: string | null
+          id: string
+          latitude: number | null
+          longitude: number | null
+          nom: string
+          prix_a_partir_de: number | null
+          prix_par_personne: number | null
+          region: Database["public"]["Enums"]["region_france"] | null
+          responsable_bio: string | null
+          responsable_nom: string | null
+          site_web: string | null
+          styles: Json | null
+          telephone: string | null
+          updated_at: string
+          ville: string | null
+          visible: boolean | null
+        }
+        Insert: {
+          adresse?: string | null
+          categorie: Database["public"]["Enums"]["prestataire_categorie"]
+          code_postal?: string | null
+          created_at?: string
+          description?: string | null
+          distance?: string | null
+          email?: string | null
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          nom: string
+          prix_a_partir_de?: number | null
+          prix_par_personne?: number | null
+          region?: Database["public"]["Enums"]["region_france"] | null
+          responsable_bio?: string | null
+          responsable_nom?: string | null
+          site_web?: string | null
+          styles?: Json | null
+          telephone?: string | null
+          updated_at?: string
+          ville?: string | null
+          visible?: boolean | null
+        }
+        Update: {
+          adresse?: string | null
+          categorie?: Database["public"]["Enums"]["prestataire_categorie"]
+          code_postal?: string | null
+          created_at?: string
+          description?: string | null
+          distance?: string | null
+          email?: string | null
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          nom?: string
+          prix_a_partir_de?: number | null
+          prix_par_personne?: number | null
+          region?: Database["public"]["Enums"]["region_france"] | null
+          responsable_bio?: string | null
+          responsable_nom?: string | null
+          site_web?: string | null
+          styles?: Json | null
+          telephone?: string | null
+          updated_at?: string
+          ville?: string | null
+          visible?: boolean | null
+        }
+        Relationships: []
+      }
+      prestataires_brochures: {
+        Row: {
+          created_at: string
+          filename: string | null
+          id: string
+          prestataire_id: string
+          size: number | null
+          type: string | null
+          url: string
+        }
+        Insert: {
+          created_at?: string
+          filename?: string | null
+          id?: string
+          prestataire_id: string
+          size?: number | null
+          type?: string | null
+          url: string
+        }
+        Update: {
+          created_at?: string
+          filename?: string | null
+          id?: string
+          prestataire_id?: string
+          size?: number | null
+          type?: string | null
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "prestataires_brochures_prestataire_id_fkey"
+            columns: ["prestataire_id"]
+            isOneToOne: false
+            referencedRelation: "prestataires"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      prestataires_photos: {
+        Row: {
+          created_at: string
+          filename: string | null
+          id: string
+          ordre: number | null
+          prestataire_id: string
+          principale: boolean | null
+          size: number | null
+          type: string | null
+          url: string
+        }
+        Insert: {
+          created_at?: string
+          filename?: string | null
+          id?: string
+          ordre?: number | null
+          prestataire_id: string
+          principale?: boolean | null
+          size?: number | null
+          type?: string | null
+          url: string
+        }
+        Update: {
+          created_at?: string
+          filename?: string | null
+          id?: string
+          ordre?: number | null
+          prestataire_id?: string
+          principale?: boolean | null
+          size?: number | null
+          type?: string | null
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "prestataires_photos_prestataire_id_fkey"
+            columns: ["prestataire_id"]
+            isOneToOne: false
+            referencedRelation: "prestataires"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -18,7 +174,30 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      prestataire_categorie:
+        | "Lieu de réception"
+        | "Traiteur"
+        | "Photographe"
+        | "Vidéaste"
+        | "Coordination"
+        | "DJ"
+        | "Fleuriste"
+        | "Robe de mariée"
+        | "Décoration"
+      region_france:
+        | "Île-de-France"
+        | "Auvergne-Rhône-Alpes"
+        | "Bourgogne-Franche-Comté"
+        | "Bretagne"
+        | "Centre-Val de Loire"
+        | "Corse"
+        | "Grand Est"
+        | "Hauts-de-France"
+        | "Normandie"
+        | "Nouvelle-Aquitaine"
+        | "Occitanie"
+        | "Pays de la Loire"
+        | "Provence-Alpes-Côte d'Azur"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -133,6 +312,33 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      prestataire_categorie: [
+        "Lieu de réception",
+        "Traiteur",
+        "Photographe",
+        "Vidéaste",
+        "Coordination",
+        "DJ",
+        "Fleuriste",
+        "Robe de mariée",
+        "Décoration",
+      ],
+      region_france: [
+        "Île-de-France",
+        "Auvergne-Rhône-Alpes",
+        "Bourgogne-Franche-Comté",
+        "Bretagne",
+        "Centre-Val de Loire",
+        "Corse",
+        "Grand Est",
+        "Hauts-de-France",
+        "Normandie",
+        "Nouvelle-Aquitaine",
+        "Occitanie",
+        "Pays de la Loire",
+        "Provence-Alpes-Côte d'Azur",
+      ],
+    },
   },
 } as const
