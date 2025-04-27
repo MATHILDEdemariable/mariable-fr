@@ -43,7 +43,7 @@ interface BudgetEstimate {
 
 // Constantes pour les calculs
 const BASE_PRICES: Record<VendorType, number> = {
-  lieu: 4000,
+  lieu: 3500,
   traiteur: 1,
   photo: 1800,
   dj: 1500,
@@ -55,8 +55,8 @@ const BASE_PRICES: Record<VendorType, number> = {
 const CATERING_PRICES: Record<ServiceLevel, number> = {
   economique: 50,
   abordable: 90,
-  premium: 150,
-  luxe: 250
+  premium: 115,
+  luxe: 200
 };
 
 const DECOR_PRICES: Record<ServiceLevel, number> = {
