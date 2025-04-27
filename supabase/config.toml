@@ -1,1 +1,5 @@
+
 project_id = "bgidfcqktsttzlwlumtz"
+
+[functions."import-airtable"]
+verify_jwt = false
