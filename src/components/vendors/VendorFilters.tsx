@@ -124,14 +124,14 @@ const VendorFilters: React.FC<VendorFiltersProps> = ({ filters, onFilterChange }
           {/* Région */}
           <div className="w-[200px]">
             <Select
-              value={filters.region || ''}
-              onValueChange={(value) => onFilterChange({ region: value === '' ? null : value })}
+              value={filters.region || 'all-regions'}
+              onValueChange={(value) => onFilterChange({ region: value === 'all-regions' ? null : value })}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Région" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Toutes les régions</SelectItem>
+                <SelectItem value="all-regions">Toutes les régions</SelectItem>
                 {REGIONS.map((region) => (
                   <SelectItem key={region} value={region}>
                     {region}
@@ -223,14 +223,14 @@ const VendorFilters: React.FC<VendorFiltersProps> = ({ filters, onFilterChange }
                 <div>
                   <label className="text-sm font-medium mb-1 block">Région</label>
                   <Select
-                    value={filters.region || ''}
-                    onValueChange={(value) => onFilterChange({ region: value === '' ? null : value })}
+                    value={filters.region || 'all-regions'}
+                    onValueChange={(value) => onFilterChange({ region: value === 'all-regions' ? null : value })}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Région" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Toutes les régions</SelectItem>
+                      <SelectItem value="all-regions">Toutes les régions</SelectItem>
                       {REGIONS.map((region) => (
                         <SelectItem key={region} value={region}>
                           {region}
