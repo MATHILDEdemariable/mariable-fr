@@ -5,36 +5,111 @@ import { Card } from '@/components/ui/card';
 import { toast } from '@/components/ui/use-toast';
 import Header from '@/components/Header';
 import { Loader2 } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import vendorsData from '@/data/vendors.json';
+import type { Database } from '@/integrations/supabase/types';
+
+type Prestataire = Database['public']['Tables']['prestataires']['Row'];
 
 const ImportAirtable = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [results, setResults] = useState<any>(null);
 
+  const mapTypeToCategorie = (type: string): Database['public']['Enums']['prestataire_categorie'] => {
+    const typeMapping: Record<string, Database['public']['Enums']['prestataire_categorie']> = {
+      "Lieu de récéption": "Lieu de réception",
+      "Restauration": "Traiteur",
+      "Photographe": "Photographe",
+      "Vidéaste": "Vidéaste",
+      "Coordination": "Coordination",
+      "Fleuriste": "Fleuriste",
+      "Maquillage à domicile": "Décoration",
+      "Conciergerie / Navette privée": "Coordination",
+    };
+
+    // Si le type contient plusieurs valeurs (séparées par des virgules), on prend la première
+    const primaryType = type.split(',')[0].trim();
+    return typeMapping[primaryType] || "Lieu de réception";
+  };
+
+  const extractPriceNumber = (priceString: string): number | null => {
+    if (!priceString) return null;
+    
+    const matches = priceString.match(/(\d+)/);
+    if (matches) {
+      return Number(matches[1]);
+    }
+    return null;
+  };
+
+  const mapRegion = (region: string): Database['public']['Enums']['region_france'] | null => {
+    const regionMapping: Record<string, Database['public']['Enums']['region_france']> = {
+      "Centre Val-de-Loire": "Centre-Val de Loire",
+      "Grand-Est": "Grand Est",
+      "Aquitaine": "Nouvelle-Aquitaine",
+      "Basse Normandie": "Normandie"
+    };
+    
+    return region ? regionMapping[region] || null : null;
+  };
+
   const handleImport = async () => {
     setIsLoading(true);
     setResults(null);
 
-    try {
-      const response = await fetch(
-        'https://bgidfcqktsttzlwlumtz.supabase.co/functions/v1/import-airtable', 
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          }
-        }
-      );
+    const importResults = {
+      success: 0,
+      errors: 0,
+      errorDetails: [] as any[],
+      suggestions: [] as string[]
+    };
 
-      const data = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(data.error || 'Une erreur est survenue lors de l\'importation');
+    try {
+      for (const vendor of vendorsData) {
+        try {
+          const prestataireData = {
+            nom: vendor.nom,
+            categorie: mapTypeToCategorie(vendor.type_prestataire),
+            description: vendor.description_courte || null,
+            region: mapRegion(vendor.region),
+            prix_a_partir_de: extractPriceNumber(vendor.prix_affiche),
+            ville: vendor.distance_grande_ville ? vendor.distance_grande_ville.split(' ').pop() : null,
+            distance: vendor.distance_grande_ville || null,
+            site_web: vendor.instagram_url || null,
+            visible: true
+          };
+
+          const { error } = await supabase
+            .from('prestataires')
+            .upsert([prestataireData], {
+              onConflict: 'nom'
+            });
+
+          if (error) {
+            console.error("Erreur lors de l'insertion:", error);
+            importResults.errors++;
+            importResults.errorDetails.push({
+              nom: vendor.nom,
+              error: error.message
+            });
+          } else {
+            importResults.success++;
+          }
+        } catch (error) {
+          console.error("Erreur pour le prestataire", vendor.nom, error);
+          importResults.errors++;
+          importResults.errorDetails.push({
+            nom: vendor.nom,
+            error: error.message
+          });
+        }
       }
 
-      setResults(data);
+      setResults(importResults);
+      
       toast({
         title: "Importation terminée",
-        description: `${data.results.success} prestataires importés avec succès.`,
+        description: `${importResults.success} prestataires importés avec succès.`,
       });
     } catch (error) {
       console.error("Erreur lors de l'importation:", error);
