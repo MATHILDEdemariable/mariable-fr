@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Header from '@/components/Header';
 import { Card } from '@/components/ui/card';
@@ -113,6 +112,7 @@ const Budget = () => {
     'lieu', 'traiteur', 'photo', 'dj', 'deco'
   ]);
   const [serviceLevel, setServiceLevel] = useState<ServiceLevel>('premium');
+  const [guestsCount, setGuestsCount] = useState<number>(100);
   
   // État pour l'estimation du budget
   const [budgetEstimate, setBudgetEstimate] = useState<BudgetEstimate>({
@@ -151,7 +151,7 @@ const Budget = () => {
     // Format des lignes budgétaires
     const breakdown: BudgetLine[] = [];
     
-    // Pondération par niveau de service
+    // Pondération par niveau de service (uniquement pour les postes fixes)
     const serviceMultiplier = PRICE_MODIFIERS[serviceLevel];
     
     // Pondération par région
@@ -166,26 +166,23 @@ const Budget = () => {
       let basePrice = BASE_PRICES[vendor];
       
       if (vendor === 'lieu') {
-        // Calcul pour le lieu
+        // Poste fixe : lieu
         amount = basePrice * serviceMultiplier * regionMultiplier * seasonMultiplier;
       } else if (vendor === 'traiteur') {
-        // Calcul pour le traiteur
-        const guestsCount = 100; // Valeur par défaut
+        // Poste variable : traiteur (dépend du nombre d'invités)
         const pricePerGuest = CATERING_PRICES[serviceLevel];
         amount = pricePerGuest * guestsCount * regionMultiplier * seasonMultiplier;
         basePrice = pricePerGuest;
       } else if (vendor === 'deco') {
-        // Calcul pour la déco
-        const guestsCount = 100; // Valeur par défaut
+        // Poste variable : déco (dépend du nombre d'invités)
         const pricePerGuest = DECOR_PRICES[serviceLevel];
         amount = pricePerGuest * guestsCount * regionMultiplier * seasonMultiplier;
         basePrice = pricePerGuest;
-      } else {
-        // Calcul standard pour les autres prestataires
+      } else if (vendor === 'photo' || vendor === 'dj' || vendor === 'planner') {
+        // Postes fixes : photo, DJ, wedding planner
         amount = basePrice * serviceMultiplier * regionMultiplier * seasonMultiplier;
       }
       
-      // Ajouter la ligne au budget
       breakdown.push({
         name: getVendorName(vendor),
         amount: Math.round(amount),
@@ -194,11 +191,9 @@ const Budget = () => {
       });
     });
     
-    // Calculer le total
     const total = breakdown.reduce((sum, item) => sum + item.amount, 0);
-    
-    // Ajouter une ligne "Autres dépenses" (10% du budget)
     const otherExpenses = Math.round(total * 0.1);
+    
     breakdown.push({
       name: 'Autres dépenses',
       amount: otherExpenses,
@@ -206,12 +201,8 @@ const Budget = () => {
       color: '#4CAF50'
     });
     
-    // Nouveau total incluant les autres dépenses
-    const grandTotal = total + otherExpenses;
-    
-    // Mise à jour de l'état
     setBudgetEstimate({
-      total: grandTotal,
+      total: total + otherExpenses,
       breakdown
     });
   };
@@ -301,24 +292,23 @@ const Budget = () => {
       case 2:
         return (
           <>
-            <h2 className="text-2xl font-serif mb-6">Étape 2/4 : Budget et Saison</h2>
+            <h2 className="text-2xl font-serif mb-6">Étape 2/4 : Nombre d'invités et Saison</h2>
             <div className="mb-6">
-              <Label htmlFor="globalBudget" className="text-lg mb-2 block">Budget global disponible (€)</Label>
+              <Label htmlFor="guestsCount" className="text-lg mb-2 block">Nombre d'invités</Label>
               <Input
                 type="number"
-                id="globalBudget"
-                value={globalBudgetInput}
+                id="guestsCount"
+                value={guestsCount}
                 onChange={e => {
-                  setGlobalBudgetInput(e.target.value);
                   const val = parseInt(e.target.value, 10);
-                  if(!isNaN(val) && val>0) setGlobalBudget(val);
+                  if (!isNaN(val) && val > 0) setGuestsCount(val);
                 }}
                 className="py-6"
-                min="500"
-                max="100000"
-                placeholder="Ex: 15000"
+                min="10"
+                max="500"
+                placeholder="Ex: 100"
               />
-              <p className="text-xs text-muted-foreground mt-1">Indiquez votre budget total (minimum recommandé : 500 €)</p>
+              <p className="text-xs text-muted-foreground mt-1">Nombre d'invités minimum recommandé : 10 personnes</p>
             </div>
             <div className="mb-6">
               <Label className="text-lg mb-2 block">Période de l'année</Label>
@@ -498,6 +488,10 @@ const Budget = () => {
           <h3 className="text-2xl font-serif mb-4">Paramètres de votre estimation</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div className="border p-3 rounded">
+              <p className="text-sm font-medium">Nombre d'invités</p>
+              <p>{guestsCount} personnes</p>
+            </div>
+            <div className="border p-3 rounded">
               <p className="text-sm font-medium">Région</p>
               <p>{region}</p>
             </div>
@@ -506,8 +500,8 @@ const Budget = () => {
               <p>{season === 'haute' ? 'Haute saison (avril-sept)' : 'Basse saison (oct-mars)'}</p>
             </div>
             <div className="border p-3 rounded">
-              <p className="text-sm font-medium">Budget global</p>
-              <p>{budgetEstimate.total.toLocaleString('fr-FR')} €</p>
+              <p className="text-sm font-medium">Niveau de prestation</p>
+              <p className="capitalize">{serviceLevel}</p>
             </div>
           </div>
         </div>
