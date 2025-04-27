@@ -1,11 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Database } from '@/integrations/supabase/types';
 import { supabase } from '@/integrations/supabase/client';
 import Header from '@/components/Header';
-import { VendorCard } from '@/components/vendors/VendorCard';
+import VendorCard from '@/components/vendors/VendorCard';
 import VendorFilters from '@/components/vendors/VendorFilters';
 import { toast } from '@/components/ui/use-toast';
 import { Loader2 } from 'lucide-react';
@@ -33,12 +32,10 @@ const MoteurRecherche = () => {
     maxPrice: searchParams.get('max') ? Number(searchParams.get('max')) : undefined,
   });
   
-  // Fonction pour rediriger vers la page de détails
   const navigateToVendorDetails = (vendor: Prestataire) => {
     window.location.href = `/demo?id=${vendor.id}`;
   };
   
-  // Actualiser les paramètres d'URL lorsque les filtres changent
   useEffect(() => {
     const newParams = new URLSearchParams();
     
@@ -51,12 +48,10 @@ const MoteurRecherche = () => {
     setSearchParams(newParams);
   }, [filters, setSearchParams]);
   
-  // Mettre à jour les filtres
   const handleFilterChange = (newFilters: Partial<VendorFilter>) => {
     setFilters(prev => ({ ...prev, ...newFilters }));
   };
   
-  // Requête à Supabase pour récupérer les prestataires filtrés
   const { data: vendors, isLoading, error } = useQuery({
     queryKey: ['vendors', filters],
     queryFn: async () => {
@@ -65,7 +60,6 @@ const MoteurRecherche = () => {
         .select('*')
         .eq('visible', true);
       
-      // Appliquer les filtres
       if (filters.search) {
         query = query.ilike('nom', `%${filters.search}%`);
       }
@@ -75,7 +69,7 @@ const MoteurRecherche = () => {
       }
       
       if (filters.region) {
-        query = query.eq('region', filters.region);
+        query = query.eq('region', filters.region as any);
       }
       
       if (filters.minPrice) {
@@ -93,7 +87,6 @@ const MoteurRecherche = () => {
     }
   });
   
-  // Gérer les erreurs
   useEffect(() => {
     if (error) {
       toast({
@@ -115,7 +108,6 @@ const MoteurRecherche = () => {
           Découvrez notre sélection de prestataires de qualité pour votre mariage
         </p>
         
-        {/* Filtres */}
         <div className="mb-8">
           <VendorFilters 
             filters={filters} 
@@ -123,7 +115,6 @@ const MoteurRecherche = () => {
           />
         </div>
         
-        {/* Liste des prestataires */}
         {isLoading ? (
           <div className="flex justify-center items-center py-12">
             <Loader2 className="h-8 w-8 animate-spin text-wedding-olive" />
