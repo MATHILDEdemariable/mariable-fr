@@ -87,15 +87,23 @@ const SettingsPage = () => {
   useEffect(() => {
     const getUserData = async () => {
       const { data: { user } } = await supabase.auth.getUser();
+  
       if (user) {
         setUserData({
           email: user.email || '',
           first_name: user.user_metadata?.first_name || '',
           last_name: user.user_metadata?.last_name || '',
         });
+      } else {
+        // FAKE USER POUR DEV
+        setUserData({
+          email: 'test@exemple.com',
+          first_name: 'Marie',
+          last_name: 'Dupont',
+        });
       }
     };
-    
+  
     getUserData();
   }, []);
   
