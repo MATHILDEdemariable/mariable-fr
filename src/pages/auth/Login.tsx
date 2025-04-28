@@ -54,34 +54,15 @@ const Login = () => {
     try {
       setIsLoading(true);
       
-      // Check if user exists
-      const { data: existingUsers } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('email', email)
-        .maybeSingle();
+      // Use sign in with OTP - no need to check if user exists first
+      const { error } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          shouldCreateUser: true,
+        }
+      });
       
-      if (existingUsers) {
-        // User exists, sign them in
-        const { error } = await supabase.auth.signInWithOtp({
-          email,
-          options: {
-            shouldCreateUser: false,
-          }
-        });
-        
-        if (error) throw error;
-      } else {
-        // User doesn't exist, create them and sign them in
-        const { error } = await supabase.auth.signInWithOtp({
-          email,
-          options: {
-            shouldCreateUser: true,
-          }
-        });
-        
-        if (error) throw error;
-      }
+      if (error) throw error;
       
       toast({
         title: "Connexion en cours",
