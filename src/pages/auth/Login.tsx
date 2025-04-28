@@ -65,8 +65,8 @@ const Login = () => {
       if (error) throw error;
       
       toast({
-        title: "Connexion en cours",
-        description: "Redirection vers votre espace personnel...",
+        title: "Accès envoyé !",
+        description: "Vérifiez votre email pour accéder à votre tableau de bord mariage",
       });
       
       // Note: Redirection will happen through auth state listener
@@ -87,16 +87,16 @@ const Login = () => {
     <div className="min-h-screen bg-wedding-cream/10">
       <SEO
         title="Connexion | Mariable"
-        description="Connectez-vous à votre espace personnel Mariable pour gérer vos projets de mariage."
+        description="Accédez à votre espace personnel Mariable pour gérer votre projet de mariage."
       />
       <Header />
       
       <main className="container max-w-md mx-auto py-12 px-4">
         <Card className="w-full">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl font-serif text-center">Connexion</CardTitle>
+            <CardTitle className="text-2xl font-serif text-center">Votre espace mariage</CardTitle>
             <CardDescription className="text-center">
-              Accédez à votre espace personnel Mariable
+              Entrez simplement votre email pour accéder à votre tableau de bord personnalisé
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">

@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Card, 
   CardContent, 
@@ -25,21 +25,28 @@ import {
   MessageSquare,
   CheckCircle,
   Clock,
-  Plus
+  Plus,
+  RefreshCw,
+  Trash
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Database } from '@/integrations/supabase/types';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/components/ui/use-toast';
+import AddVendorDialog from './AddVendorDialog';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 
 type VendorStatus = Database['public']['Enums']['vendor_status'];
 
 interface Vendor {
   id: string;
-  name: string;
+  vendor_name: string;
   category: string;
   status: VendorStatus;
   location?: string;
-  lastContact?: Date;
-  notes?: string;
+  contact_date?: Date | null;
+  response_date?: Date | null;
+  notes?: string | null;
 }
 
 const statusColorMap: Record<VendorStatus, string> = {
@@ -58,53 +65,67 @@ const statusIconMap: Record<VendorStatus, React.ReactNode> = {
   'à valider': <Calendar className="h-4 w-4" />,
 };
 
-// Sample vendors data - will be replaced with real data from Supabase
-const initialVendors: Vendor[] = [
-  {
-    id: '1',
-    name: 'Château des Fleurs',
-    category: 'Lieu de réception',
-    status: 'à contacter',
-    location: 'Bordeaux',
-  },
-  {
-    id: '2',
-    name: 'Traiteur Délices',
-    category: 'Traiteur',
-    status: 'contactés',
-    location: 'Paris',
-    lastContact: new Date('2023-04-15'),
-  },
-  {
-    id: '3',
-    name: 'Photo Souvenirs',
-    category: 'Photographe',
-    status: 'en attente',
-    location: 'Lyon',
-    lastContact: new Date('2023-04-10'),
-  },
-  {
-    id: '4',
-    name: 'DJ Animation',
-    category: 'DJ',
-    status: 'réponse reçue',
-    location: 'Nantes',
-    lastContact: new Date('2023-04-05'),
-  },
-  {
-    id: '5',
-    name: 'Fleuriste Passion',
-    category: 'Fleuriste',
-    status: 'à valider',
-    location: 'Toulouse',
-    lastContact: new Date('2023-04-01'),
-  },
-];
+interface VendorTrackingProps {
+  projectId?: string;
+}
 
-const VendorTracking: React.FC = () => {
-  const [vendors, setVendors] = useState<Vendor[]>(initialVendors);
+const VendorTracking: React.FC<VendorTrackingProps> = ({ projectId }) => {
+  const [vendors, setVendors] = useState<Vendor[]>([]);
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
+  const [isLoading, setIsLoading] = useState(false);
+  const [addDialogOpen, setAddDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [vendorToDelete, setVendorToDelete] = useState<string | null>(null);
+  const { toast } = useToast();
+  
+  // Fetch vendors from the database
+  const fetchVendors = async () => {
+    setIsLoading(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        setIsLoading(false);
+        return;
+      }
+
+      let query = supabase
+        .from('vendors_tracking')
+        .select('*')
+        .eq('user_id', user.id);
+        
+      if (projectId) {
+        query = query.eq('project_id', projectId);
+      }
+        
+      const { data, error } = await query.order('created_at', { ascending: false });
+
+      if (error) throw error;
+      
+      if (data) {
+        setVendors(data.map(v => ({
+          ...v,
+          contact_date: v.contact_date ? new Date(v.contact_date) : null,
+          response_date: v.response_date ? new Date(v.response_date) : null
+        })));
+      }
+    } catch (error) {
+      console.error('Error fetching vendors:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de récupérer la liste des prestataires",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  // Initial fetch
+  useEffect(() => {
+    fetchVendors();
+  }, [projectId]);
   
   // Get unique categories for filter
   const categories = [...new Set(vendors.map(vendor => vendor.category))];
@@ -117,19 +138,91 @@ const VendorTracking: React.FC = () => {
   });
   
   // Update vendor status
-  const updateVendorStatus = (id: string, newStatus: VendorStatus) => {
-    const updatedVendors = vendors.map(vendor => {
-      if (vendor.id === id) {
-        return { 
-          ...vendor, 
-          status: newStatus, 
-          lastContact: newStatus === 'contactés' ? new Date() : vendor.lastContact 
-        };
+  const updateVendorStatus = async (id: string, newStatus: VendorStatus) => {
+    try {
+      const updates: any = { 
+        status: newStatus,
+      };
+      
+      // Update date based on status
+      if (newStatus === 'contactés') {
+        updates.contact_date = new Date().toISOString();
+      } else if (newStatus === 'réponse reçue') {
+        updates.response_date = new Date().toISOString();
       }
-      return vendor;
-    });
+      
+      const { error } = await supabase
+        .from('vendors_tracking')
+        .update(updates)
+        .eq('id', id);
+        
+      if (error) throw error;
+      
+      // Update local state
+      setVendors(prev => prev.map(vendor => {
+        if (vendor.id === id) {
+          return { 
+            ...vendor, 
+            status: newStatus,
+            contact_date: newStatus === 'contactés' ? new Date() : vendor.contact_date,
+            response_date: newStatus === 'réponse reçue' ? new Date() : vendor.response_date
+          };
+        }
+        return vendor;
+      }));
+      
+      toast({
+        title: "Statut mis à jour",
+        description: "Le statut du prestataire a été mis à jour",
+      });
+      
+    } catch (error) {
+      console.error('Error updating vendor status:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de mettre à jour le statut",
+        variant: "destructive",
+      });
+    }
+  };
+  
+  // Delete vendor
+  const deleteVendor = async () => {
+    if (!vendorToDelete) return;
     
-    setVendors(updatedVendors);
+    try {
+      const { error } = await supabase
+        .from('vendors_tracking')
+        .delete()
+        .eq('id', vendorToDelete);
+        
+      if (error) throw error;
+      
+      // Update local state
+      setVendors(prev => prev.filter(vendor => vendor.id !== vendorToDelete));
+      
+      toast({
+        title: "Prestataire supprimé",
+        description: "Le prestataire a été supprimé de votre liste",
+      });
+      
+      setVendorToDelete(null);
+      setDeleteDialogOpen(false);
+      
+    } catch (error) {
+      console.error('Error deleting vendor:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de supprimer le prestataire",
+        variant: "destructive",
+      });
+    }
+  };
+  
+  // Format date for display
+  const formatDate = (date?: Date | null) => {
+    if (!date) return "Aucun contact";
+    return date.toLocaleDateString('fr-FR');
   };
 
   return (
@@ -171,8 +264,19 @@ const VendorTracking: React.FC = () => {
               </SelectContent>
             </Select>
             
-            <div className="flex-1 flex justify-end">
-              <Button className="bg-wedding-olive hover:bg-wedding-olive/90 ml-auto">
+            <div className="flex-1 flex gap-2 justify-end">
+              <Button 
+                variant="outline"
+                onClick={fetchVendors}
+                className="hidden sm:flex"
+              >
+                <RefreshCw className="h-4 w-4 mr-2" /> Actualiser
+              </Button>
+              
+              <Button 
+                className="bg-wedding-olive hover:bg-wedding-olive/90"
+                onClick={() => setAddDialogOpen(true)}
+              >
                 <Plus className="h-4 w-4 mr-2" /> Ajouter un prestataire
               </Button>
             </div>
@@ -190,19 +294,32 @@ const VendorTracking: React.FC = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredVendors.length === 0 ? (
+                {isLoading ? (
+                  <TableRow>
+                    <TableCell colSpan={5} className="text-center py-6">
+                      <div className="flex justify-center">
+                        <RefreshCw className="h-5 w-5 animate-spin" />
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ) : filteredVendors.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={5} className="text-center py-6 text-muted-foreground">
-                      Aucun prestataire trouvé avec ces critères
+                      {vendors.length === 0 ? 
+                        "Aucun prestataire ajouté. Cliquez sur 'Ajouter un prestataire' pour commencer." :
+                        "Aucun prestataire trouvé avec ces critères"
+                      }
                     </TableCell>
                   </TableRow>
                 ) : (
                   filteredVendors.map((vendor) => (
                     <TableRow key={vendor.id}>
                       <TableCell>
-                        <div className="font-medium">{vendor.name}</div>
-                        {vendor.location && (
-                          <div className="text-xs text-muted-foreground">{vendor.location}</div>
+                        <div className="font-medium">{vendor.vendor_name}</div>
+                        {vendor.notes && (
+                          <div className="text-xs text-muted-foreground truncate max-w-[200px]">
+                            {vendor.notes}
+                          </div>
                         )}
                       </TableCell>
                       <TableCell>{vendor.category}</TableCell>
@@ -213,10 +330,7 @@ const VendorTracking: React.FC = () => {
                         </Badge>
                       </TableCell>
                       <TableCell>
-                        {vendor.lastContact ? 
-                          vendor.lastContact.toLocaleDateString() : 
-                          "Aucun contact"
-                        }
+                        {formatDate(vendor.contact_date)}
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-2">
@@ -235,8 +349,15 @@ const VendorTracking: React.FC = () => {
                               <SelectItem value="à valider">À valider</SelectItem>
                             </SelectContent>
                           </Select>
-                          <Button variant="outline" size="icon">
-                            <Mail className="h-4 w-4" />
+                          <Button 
+                            variant="outline" 
+                            size="icon"
+                            onClick={() => {
+                              setVendorToDelete(vendor.id);
+                              setDeleteDialogOpen(true);
+                            }}
+                          >
+                            <Trash className="h-4 w-4" />
                           </Button>
                         </div>
                       </TableCell>
@@ -248,6 +369,35 @@ const VendorTracking: React.FC = () => {
           </div>
         </div>
       </CardContent>
+      
+      {/* Add Vendor Dialog */}
+      <AddVendorDialog 
+        open={addDialogOpen} 
+        onOpenChange={setAddDialogOpen} 
+        onVendorAdded={fetchVendors}
+        projectId={projectId}
+      />
+      
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Êtes-vous sûr ?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Cette action ne peut pas être annulée. Le prestataire sera définitivement supprimé de votre liste.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annuler</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={deleteVendor}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              Supprimer
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Card>
   );
 };
