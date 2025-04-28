@@ -166,6 +166,102 @@ export type Database = {
           },
         ]
       }
+      projects: {
+        Row: {
+          budget: number | null
+          created_at: string
+          guest_count: number | null
+          id: string
+          location: string | null
+          title: string
+          updated_at: string
+          user_id: string
+          wedding_date: string | null
+        }
+        Insert: {
+          budget?: number | null
+          created_at?: string
+          guest_count?: number | null
+          id?: string
+          location?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+          wedding_date?: string | null
+        }
+        Update: {
+          budget?: number | null
+          created_at?: string
+          guest_count?: number | null
+          id?: string
+          location?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+          wedding_date?: string | null
+        }
+        Relationships: []
+      }
+      vendors_tracking: {
+        Row: {
+          category: string
+          contact_date: string | null
+          created_at: string
+          id: string
+          notes: string | null
+          prestataire_id: string | null
+          project_id: string | null
+          response_date: string | null
+          status: Database["public"]["Enums"]["vendor_status"]
+          updated_at: string
+          user_id: string
+          vendor_name: string
+        }
+        Insert: {
+          category: string
+          contact_date?: string | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          prestataire_id?: string | null
+          project_id?: string | null
+          response_date?: string | null
+          status?: Database["public"]["Enums"]["vendor_status"]
+          updated_at?: string
+          user_id: string
+          vendor_name: string
+        }
+        Update: {
+          category?: string
+          contact_date?: string | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          prestataire_id?: string | null
+          project_id?: string | null
+          response_date?: string | null
+          status?: Database["public"]["Enums"]["vendor_status"]
+          updated_at?: string
+          user_id?: string
+          vendor_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vendors_tracking_prestataire_id_fkey"
+            columns: ["prestataire_id"]
+            isOneToOne: false
+            referencedRelation: "prestataires"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vendors_tracking_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -198,6 +294,12 @@ export type Database = {
         | "Occitanie"
         | "Pays de la Loire"
         | "Provence-Alpes-Côte d'Azur"
+      vendor_status:
+        | "à contacter"
+        | "contactés"
+        | "en attente"
+        | "réponse reçue"
+        | "à valider"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -338,6 +440,13 @@ export const Constants = {
         "Occitanie",
         "Pays de la Loire",
         "Provence-Alpes-Côte d'Azur",
+      ],
+      vendor_status: [
+        "à contacter",
+        "contactés",
+        "en attente",
+        "réponse reçue",
+        "à valider",
       ],
     },
   },

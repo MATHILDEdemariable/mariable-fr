@@ -35,9 +35,10 @@ import {
 } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { Database } from '@/integrations/supabase/types';
 import SEO from '@/components/SEO';
 
-type VendorStatus = 'à contacter' | 'contactés' | 'en attente' | 'réponse reçue' | 'à valider';
+type VendorStatus = Database['public']['Enums']['vendor_status'];
 
 interface Vendor {
   id: string;
@@ -48,7 +49,6 @@ interface Vendor {
   lastContact?: Date;
 }
 
-// Sample vendors data
 const sampleVendors: Vendor[] = [
   {
     id: '1',
