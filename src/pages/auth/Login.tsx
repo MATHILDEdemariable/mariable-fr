@@ -39,7 +39,7 @@ const Login = () => {
     return () => subscription.unsubscribe();
   }, [navigate]);
 
-  const handleEmailLogin = async (e: React.FormEvent) => {
+  const handleSimpleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!email) {
@@ -54,21 +54,41 @@ const Login = () => {
     try {
       setIsLoading(true);
       
-      const { error } = await supabase.auth.signInWithOtp({
-        email,
-        options: {
-          emailRedirectTo: window.location.origin + '/dashboard',
-        },
-      });
+      // Check if user exists
+      const { data: existingUsers } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('email', email)
+        .maybeSingle();
       
-      if (error) throw error;
+      if (existingUsers) {
+        // User exists, sign them in
+        const { error } = await supabase.auth.signInWithOtp({
+          email,
+          options: {
+            shouldCreateUser: false,
+          }
+        });
+        
+        if (error) throw error;
+      } else {
+        // User doesn't exist, create them and sign them in
+        const { error } = await supabase.auth.signInWithOtp({
+          email,
+          options: {
+            shouldCreateUser: true,
+          }
+        });
+        
+        if (error) throw error;
+      }
       
       toast({
         title: "Connexion en cours",
         description: "Redirection vers votre espace personnel...",
       });
-
-      // Automatic redirection will happen through the auth state change listener
+      
+      // Note: Redirection will happen through auth state listener
       
     } catch (error: any) {
       console.error('Login error:', error);
@@ -99,7 +119,7 @@ const Login = () => {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <form onSubmit={handleEmailLogin} className="space-y-4">
+            <form onSubmit={handleSimpleLogin} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <div className="relative">
@@ -122,9 +142,13 @@ const Login = () => {
                 disabled={isLoading}
               >
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Se connecter
+                Accéder à mon espace
               </Button>
             </form>
+            
+            <p className="text-center text-sm text-muted-foreground">
+              En vous connectant, vous accéderez à votre tableau de bord personnalisé pour gérer votre projet de mariage.
+            </p>
           </CardContent>
         </Card>
       </main>

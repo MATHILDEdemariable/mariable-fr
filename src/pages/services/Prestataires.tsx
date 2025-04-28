@@ -1,3 +1,4 @@
+
 import React from 'react';
 import ServiceTemplate from '../ServiceTemplate';
 import { Button } from '@/components/ui/button';
@@ -7,10 +8,6 @@ import SEO from '@/components/SEO';
 
 const PrestataireContent = () => {
   const navigate = useNavigate();
-  
-  const handleGuideClick = () => {
-    navigate('/guide-mariable-frame');
-  };
 
   return (
     <>
@@ -44,16 +41,6 @@ const PrestataireContent = () => {
           des prestataires qui correspondent à vos critères. Plus besoin de passer des heures 
           à faire des recherches, nous le faisons pour vous !
         </p>
-        <div className="flex gap-2 whitespace-nowrap">
-          <Button 
-            variant="outline" 
-            asChild
-          >
-            <Link to="/demo">
-              Voir la démo
-            </Link>
-          </Button>
-        </div>
       </div>
       
       <h2 className="text-2xl font-serif mt-8 mb-4">Nos catégories de prestataires</h2>

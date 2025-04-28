@@ -101,7 +101,7 @@ const App = () => (
             {/* Auth and Dashboard pages */}
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            <Route path="/dashboard" element={<UserDashboard />} />
+            <Route path="/dashboard/*" element={<UserDashboard />} />
             
             {/* Redirect for old privacy policy route */}
             <Route path="/politique-confidentialite" element={<Navigate to="/mentions-legales" replace />} />
