@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { jsPDF } from "jspdf";
-import { File } from "lucide-react";
+import { File, Home, Calendar } from "lucide-react";
 import Header from '@/components/Header';
 import SEO from '@/components/SEO';
 
@@ -302,6 +302,25 @@ const TestFormulaire = () => {
           >
             <File size={18} />
             Télécharger en PDF
+          </Button>
+        </div>
+        
+        <div className="flex flex-col sm:flex-row justify-center gap-4 mt-8">
+          <Button 
+            onClick={() => navigate('/services/planification')}
+            className="bg-wedding-olive hover:bg-wedding-olive/90 gap-2"
+          >
+            <Calendar size={18} />
+            Commencer ma planification
+          </Button>
+          
+          <Button 
+            variant="outline"
+            onClick={() => navigate('/')}
+            className="border-wedding-olive text-wedding-olive hover:bg-wedding-olive/10 gap-2"
+          >
+            <Home size={18} />
+            Retour à l'accueil
           </Button>
         </div>
       </div>

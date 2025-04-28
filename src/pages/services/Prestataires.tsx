@@ -2,7 +2,7 @@
 import React from 'react';
 import ServiceTemplate from '../ServiceTemplate';
 import { Button } from '@/components/ui/button';
-import { BookOpen, Search } from 'lucide-react';
+import { BookOpen } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import SEO from '@/components/SEO';
 
@@ -23,21 +23,10 @@ const PrestataireContent = () => {
         <div className="flex flex-wrap gap-3">
           <Button 
             className="bg-wedding-olive hover:bg-wedding-olive/90"
-            onClick={handleGuideClick}
+            onClick={() => navigate('/recherche')}
           >
             <BookOpen className="mr-2 h-4 w-4" />
             Guide Mariable
-          </Button>
-          
-          <Button
-            variant="outline"
-            className="border-wedding-olive text-wedding-olive hover:bg-wedding-olive/10"
-            asChild
-          >
-            <Link to="/recherche">
-              <Search className="mr-2 h-4 w-4" />
-              Rechercher un prestataire
-            </Link>
           </Button>
         </div>
       </div>
@@ -57,16 +46,6 @@ const PrestataireContent = () => {
           à faire des recherches, nous le faisons pour vous !
         </p>
         <div className="flex gap-2 whitespace-nowrap">
-          <Button 
-            variant="outline" 
-            className="border-wedding-olive text-wedding-olive hover:bg-wedding-olive/10"
-            asChild
-          >
-            <Link to="/recherche">
-              <Search className="mr-2 h-4 w-4" />
-              Rechercher
-            </Link>
-          </Button>
           <Button 
             variant="outline" 
             asChild

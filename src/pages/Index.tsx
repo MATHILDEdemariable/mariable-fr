@@ -8,6 +8,18 @@ import SearchBar from '@/components/search/SearchBar';
 import ChatbotButton from '@/components/ChatbotButton';
 import SEO from '@/components/SEO';
 
+const StartButton = () => {
+  const navigate = useNavigate();
+  return (
+    <Button
+      onClick={() => navigate('/test-formulaire')}
+      className="bg-wedding-olive hover:bg-wedding-olive/90 text-white px-6 py-6 text-lg font-medium rounded-lg mt-8"
+    >
+      Commencer
+    </Button>
+  );
+};
+
 const Index = () => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
@@ -115,15 +127,7 @@ const Index = () => {
               </ul>
               
               <div className="text-center mt-6">
-                <Button 
-                  size={isMobile ? "sm" : "default"} 
-                  className="bg-wedding-olive hover:bg-wedding-olive/90 text-white"
-                  asChild
-                >
-                  <Link to="/services/planification">
-                    Commencer maintenant
-                  </Link>
-                </Button>
+                <StartButton />
               </div>
             </div>
           </div>
