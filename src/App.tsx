@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -41,6 +40,7 @@ import Demo from "./pages/Demo";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import UserDashboard from "./pages/dashboard/UserDashboard";
+import EmailConfirmation from "./pages/auth/EmailConfirmation";
 
 // Test Formulaire
 import TestFormulaire from "./pages/TestFormulaire";
@@ -98,9 +98,10 @@ const App = () => (
             <Route path="/mentions-legales" element={<MentionsLegales />} />
             <Route path="/cgv" element={<CGV />} />
             
-            {/* Auth and Dashboard pages */}
+            {/* Auth Routes */}
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/auth/email-confirmation" element={<EmailConfirmation />} />
             <Route path="/dashboard/*" element={<UserDashboard />} />
             
             {/* Redirect for old privacy policy route */}

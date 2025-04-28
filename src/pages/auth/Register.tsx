@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -25,18 +24,15 @@ const Register = () => {
   const navigate = useNavigate();
   
   useEffect(() => {
-    // Set up auth state listener first
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (_event, session) => {
         setSession(session);
         if (session) {
-          // If user is logged in, redirect to dashboard
           navigate('/dashboard');
         }
       }
     );
 
-    // Then check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       if (session) {
@@ -68,19 +64,10 @@ const Register = () => {
       return;
     }
     
-    if (password.length < 6) {
-      toast({
-        title: "Erreur",
-        description: "Le mot de passe doit contenir au moins 6 caractères",
-        variant: "destructive",
-      });
-      return;
-    }
-    
     try {
       setIsLoading(true);
       
-      const { error, data } = await supabase.auth.signUp({
+      const { error } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -88,24 +75,13 @@ const Register = () => {
             first_name: firstName,
             last_name: lastName,
           },
-          emailRedirectTo: window.location.origin + '/dashboard',
         },
       });
       
       if (error) throw error;
       
-      toast({
-        title: "Inscription réussie",
-        description: "Un email de confirmation vous a été envoyé",
-      });
+      navigate('/auth/email-confirmation');
       
-      // Successfully created user, now navigate to dashboard or confirm email page
-      if (data.session) {
-        navigate('/dashboard');
-      } else {
-        // If email confirmation is enabled
-        navigate('/login');
-      }
     } catch (error: any) {
       console.error('Registration error:', error);
       toast({

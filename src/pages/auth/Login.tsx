@@ -1,19 +1,21 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Loader2, Mail } from 'lucide-react';
+import { Loader2, Mail, Lock } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import Header from '@/components/Header';
 import { supabase } from '@/integrations/supabase/client';
 import { Session } from '@supabase/supabase-js';
 import SEO from '@/components/SEO';
+import { Link } from 'react-router-dom';
 
 const Login = () => {
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [session, setSession] = useState<Session | null>(null);
   const { toast } = useToast();
@@ -39,13 +41,13 @@ const Login = () => {
     return () => subscription.unsubscribe();
   }, [navigate]);
 
-  const handleSimpleLogin = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!email) {
+    if (!email || !password) {
       toast({
         title: "Erreur",
-        description: "Veuillez entrer votre adresse email",
+        description: "Veuillez remplir tous les champs",
         variant: "destructive",
       });
       return;
@@ -54,28 +56,20 @@ const Login = () => {
     try {
       setIsLoading(true);
       
-      // Use sign in with OTP - no need to check if user exists first
-      const { error } = await supabase.auth.signInWithOtp({
+      const { error } = await supabase.auth.signInWithPassword({
         email,
-        options: {
-          shouldCreateUser: true,
-        }
+        password
       });
       
       if (error) throw error;
       
-      toast({
-        title: "Accès envoyé !",
-        description: "Vérifiez votre email pour accéder à votre tableau de bord mariage",
-      });
-      
-      // Note: Redirection will happen through auth state listener
+      // La redirection sera gérée par le listener onAuthStateChange
       
     } catch (error: any) {
       console.error('Login error:', error);
       toast({
         title: "Erreur de connexion",
-        description: error.message || "Une erreur est survenue lors de la connexion",
+        description: error.message || "Identifiants incorrects",
         variant: "destructive",
       });
     } finally {
@@ -96,11 +90,11 @@ const Login = () => {
           <CardHeader className="space-y-1">
             <CardTitle className="text-2xl font-serif text-center">Votre espace mariage</CardTitle>
             <CardDescription className="text-center">
-              Entrez simplement votre email pour accéder à votre tableau de bord personnalisé
+              Connectez-vous pour accéder à votre tableau de bord personnalisé
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <form onSubmit={handleSimpleLogin} className="space-y-4">
+            <form onSubmit={handleLogin} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <div className="relative">
@@ -117,20 +111,40 @@ const Login = () => {
                 </div>
               </div>
               
+              <div className="space-y-2">
+                <Label htmlFor="password">Mot de passe</Label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    id="password"
+                    type="password"
+                    placeholder="Votre mot de passe"
+                    className="pl-10"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    disabled={isLoading}
+                  />
+                </div>
+              </div>
+              
               <Button 
                 type="submit" 
                 className="w-full bg-wedding-olive hover:bg-wedding-olive/90" 
                 disabled={isLoading}
               >
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Accéder à mon espace
+                Se connecter
               </Button>
             </form>
-            
-            <p className="text-center text-sm text-muted-foreground">
-              En vous connectant, vous accéderez à votre tableau de bord personnalisé pour gérer votre projet de mariage.
-            </p>
           </CardContent>
+          <CardFooter className="flex flex-col gap-2">
+            <div className="text-center text-sm">
+              Pas encore de compte ?{" "}
+              <Link to="/register" className="text-wedding-olive hover:underline font-medium">
+                S'inscrire
+              </Link>
+            </div>
+          </CardFooter>
         </Card>
       </main>
     </div>
