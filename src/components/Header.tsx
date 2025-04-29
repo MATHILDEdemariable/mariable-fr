@@ -134,7 +134,7 @@ export default function Header() {
         <HeaderLogo />
 
         {/* Desktop: Menus à droite, centrés */}
-        <nav className="hidden md:flex flex-1 justify-end items-center gap-4 md:gap-6">
+        <nav className="hidden md:flex flex-1 justify-end items-center gap-4 md:gap-6 font-serif">
           <Menus />
         </nav>
 
@@ -163,7 +163,7 @@ export default function Header() {
                 </button>
               </div>
               <div className="py-3 grid gap-4">
-                <nav className="flex flex-col gap-1">
+                <nav className="flex flex-col gap-1 font-serif">
                   <Menus onClick={() => setDrawerOpen(false)} />
                 </nav>
               </div>
