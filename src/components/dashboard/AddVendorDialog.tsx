@@ -59,19 +59,20 @@ const AddVendorDialog: React.FC<AddVendorDialogProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  // Initialize with empty array to avoid undefined is not iterable error
+  // Always initialize with an empty array to avoid undefined issues
   const [prestataires, setPrestataires] = useState<Prestataire[]>([]);
   const [selectedPrestataire, setSelectedPrestataire] = useState<Prestataire | null>(null);
   const { toast } = useToast();
 
   // Fetch prestataires when search term changes
   useEffect(() => {
+    // Only search if we have at least 2 characters
+    if (searchTerm.length < 2) {
+      setPrestataires([]);
+      return;
+    }
+    
     const fetchPrestataires = async () => {
-      if (searchTerm.length < 2) {
-        setPrestataires([]);
-        return;
-      }
-      
       setIsLoading(true);
       
       try {
@@ -81,13 +82,16 @@ const AddVendorDialog: React.FC<AddVendorDialogProps> = ({
           .ilike('nom', `%${searchTerm}%`)
           .limit(10);
           
-        if (error) throw error;
+        if (error) {
+          console.error('Error fetching prestataires:', error);
+          throw error;
+        }
         
-        // Ensure we always set an array, even if data is null or undefined
+        // Always set an array, even if data is undefined
         setPrestataires(data || []);
       } catch (error) {
         console.error('Error fetching prestataires:', error);
-        // Reset to empty array on error to prevent undefined
+        // Reset to empty array on error
         setPrestataires([]);
       } finally {
         setIsLoading(false);
@@ -207,7 +211,6 @@ const AddVendorDialog: React.FC<AddVendorDialogProps> = ({
                   )}
                   <CommandEmpty>Aucun résultat trouvé.</CommandEmpty>
                   <CommandGroup>
-                    {/* Ensure we're iterating over a valid array */}
                     {prestataires.map((prestataire) => (
                       <CommandItem
                         key={prestataire.id}
