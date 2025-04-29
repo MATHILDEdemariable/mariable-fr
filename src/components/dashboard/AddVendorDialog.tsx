@@ -59,16 +59,16 @@ const AddVendorDialog: React.FC<AddVendorDialogProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  // Always initialize with an empty array to avoid undefined issues
+  // Initialize with an empty array to always have a valid iterable
   const [prestataires, setPrestataires] = useState<Prestataire[]>([]);
   const [selectedPrestataire, setSelectedPrestataire] = useState<Prestataire | null>(null);
   const { toast } = useToast();
 
-  // Fetch prestataires when search term changes
+  // Fetch prestataires when search term changes with safety measures
   useEffect(() => {
     // Only search if we have at least 2 characters
-    if (searchTerm.length < 2) {
-      setPrestataires([]);
+    if (!searchTerm || searchTerm.length < 2) {
+      setPrestataires([]); // Reset to empty array when search term is too short
       return;
     }
     
@@ -84,14 +84,15 @@ const AddVendorDialog: React.FC<AddVendorDialogProps> = ({
           
         if (error) {
           console.error('Error fetching prestataires:', error);
+          setPrestataires([]); // Reset to empty array on error
           throw error;
         }
         
-        // Always set an array, even if data is undefined
-        setPrestataires(data || []);
+        // Ensure we always set a valid array
+        setPrestataires(Array.isArray(data) ? data : []);
       } catch (error) {
         console.error('Error fetching prestataires:', error);
-        // Reset to empty array on error
+        // Reset to empty array on error to ensure we always have a valid iterable
         setPrestataires([]);
       } finally {
         setIsLoading(false);
@@ -101,10 +102,12 @@ const AddVendorDialog: React.FC<AddVendorDialogProps> = ({
     fetchPrestataires();
   }, [searchTerm]);
   
-  // Handle prestataire selection
+  // Handle prestataire selection with null checks
   const handlePrestataireSelect = (prestataire: Prestataire) => {
+    if (!prestataire) return;
+    
     setSelectedPrestataire(prestataire);
-    setVendorName(prestataire.nom);
+    setVendorName(prestataire.nom || '');
     if (prestataire.categorie) {
       setCategory(prestataire.categorie);
     }
@@ -211,7 +214,7 @@ const AddVendorDialog: React.FC<AddVendorDialogProps> = ({
                   )}
                   <CommandEmpty>Aucun résultat trouvé.</CommandEmpty>
                   <CommandGroup>
-                    {prestataires.map((prestataire) => (
+                    {(Array.isArray(prestataires) ? prestataires : []).map((prestataire) => (
                       <CommandItem
                         key={prestataire.id}
                         value={prestataire.nom}

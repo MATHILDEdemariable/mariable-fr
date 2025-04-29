@@ -103,14 +103,15 @@ const VendorTracking: React.FC<VendorTrackingProps> = ({ projectId }) => {
 
       if (error) throw error;
       
-      if (data) {
+      // Ensure we always set a valid array
+      if (Array.isArray(data)) {
         setVendors(data.map(v => ({
           ...v,
           contact_date: v.contact_date ? new Date(v.contact_date) : null,
           response_date: v.response_date ? new Date(v.response_date) : null
         })));
       } else {
-        // Ensure we set an empty array if data is null
+        // Reset to empty array if data is null or undefined
         setVendors([]);
       }
     } catch (error) {
@@ -132,17 +133,17 @@ const VendorTracking: React.FC<VendorTrackingProps> = ({ projectId }) => {
     fetchVendors();
   }, [projectId]);
   
-  // Get unique categories for filter - make sure we handle empty arrays
-  const categories = vendors && vendors.length > 0 
+  // Get unique categories for filter - make sure vendors is an array
+  const categories = vendors && Array.isArray(vendors) && vendors.length > 0 
     ? [...new Set(vendors.map(vendor => vendor.category))] 
     : [];
   
-  // Filter vendors based on selected filters
-  const filteredVendors = vendors.filter(vendor => {
+  // Filter vendors based on selected filters - ensure vendors is an array
+  const filteredVendors = Array.isArray(vendors) ? vendors.filter(vendor => {
     const matchesStatus = statusFilter === 'all' || vendor.status === statusFilter;
     const matchesCategory = categoryFilter === 'all' || vendor.category === categoryFilter;
     return matchesStatus && matchesCategory;
-  });
+  }) : [];
   
   // Update vendor status
   const updateVendorStatus = async (id: string, newStatus: VendorStatus) => {
@@ -165,18 +166,22 @@ const VendorTracking: React.FC<VendorTrackingProps> = ({ projectId }) => {
         
       if (error) throw error;
       
-      // Update local state
-      setVendors(prev => prev.map(vendor => {
-        if (vendor.id === id) {
-          return { 
-            ...vendor, 
-            status: newStatus,
-            contact_date: newStatus === 'contactés' ? new Date() : vendor.contact_date,
-            response_date: newStatus === 'réponse reçue' ? new Date() : vendor.response_date
-          };
-        }
-        return vendor;
-      }));
+      // Update local state - ensure vendors is an array
+      setVendors(prev => {
+        if (!Array.isArray(prev)) return [];
+        
+        return prev.map(vendor => {
+          if (vendor.id === id) {
+            return { 
+              ...vendor, 
+              status: newStatus,
+              contact_date: newStatus === 'contactés' ? new Date() : vendor.contact_date,
+              response_date: newStatus === 'réponse reçue' ? new Date() : vendor.response_date
+            };
+          }
+          return vendor;
+        });
+      });
       
       toast({
         title: "Statut mis à jour",
@@ -205,8 +210,11 @@ const VendorTracking: React.FC<VendorTrackingProps> = ({ projectId }) => {
         
       if (error) throw error;
       
-      // Update local state
-      setVendors(prev => prev.filter(vendor => vendor.id !== vendorToDelete));
+      // Update local state - ensure vendors is an array
+      setVendors(prev => {
+        if (!Array.isArray(prev)) return [];
+        return prev.filter(vendor => vendor.id !== vendorToDelete);
+      });
       
       toast({
         title: "Prestataire supprimé",
@@ -263,7 +271,7 @@ const VendorTracking: React.FC<VendorTrackingProps> = ({ projectId }) => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Toutes les catégories</SelectItem>
-                {(categories || []).map((category) => (
+                {Array.isArray(categories) && categories.map((category) => (
                   <SelectItem key={category} value={category}>
                     {category}
                   </SelectItem>
@@ -312,7 +320,7 @@ const VendorTracking: React.FC<VendorTrackingProps> = ({ projectId }) => {
                 ) : filteredVendors.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={5} className="text-center py-6 text-muted-foreground">
-                      {vendors.length === 0 ? 
+                      {Array.isArray(vendors) && vendors.length === 0 ? 
                         "Aucun prestataire ajouté. Cliquez sur 'Ajouter un prestataire' pour commencer." :
                         "Aucun prestataire trouvé avec ces critères"
                       }
