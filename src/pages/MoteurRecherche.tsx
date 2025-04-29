@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -69,21 +70,22 @@ const MoteurRecherche = () => {
       }
       
       if (filters.region) {
-        query = query.eq('region', filters.region as any);
+        query = query.eq('region', filters.region);
       }
       
-      if (filters.minPrice) {
+      // Fix for the pricing filter - more robust handling of undefined values
+      if (typeof filters.minPrice === 'number') {
         query = query.or(`prix_a_partir_de.gte.${filters.minPrice},prix_par_personne.gte.${filters.minPrice}`);
       }
       
-      if (filters.maxPrice) {
+      if (typeof filters.maxPrice === 'number') {
         query = query.or(`prix_a_partir_de.lte.${filters.maxPrice},prix_par_personne.lte.${filters.maxPrice}`);
       }
       
       const { data, error } = await query;
       
       if (error) throw new Error(error.message);
-      return data as Prestataire[];
+      return data || []; // Ensure we always return an array, even when data is undefined
     }
   });
   
@@ -97,6 +99,9 @@ const MoteurRecherche = () => {
       console.error('Error fetching vendors:', error);
     }
   }, [error]);
+
+  // Make sure vendors is always treated as an array
+  const vendorsList = Array.isArray(vendors) ? vendors : [];
 
   return (
     <div className="min-h-screen bg-white">
@@ -119,9 +124,9 @@ const MoteurRecherche = () => {
           <div className="flex justify-center items-center py-12">
             <Loader2 className="h-8 w-8 animate-spin text-wedding-olive" />
           </div>
-        ) : vendors && vendors.length > 0 ? (
+        ) : vendorsList.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {vendors.map(vendor => (
+            {vendorsList.map(vendor => (
               <VendorCard 
                 key={vendor.id} 
                 vendor={vendor} 
