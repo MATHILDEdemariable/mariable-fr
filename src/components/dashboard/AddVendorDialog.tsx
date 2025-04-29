@@ -208,7 +208,7 @@ const AddVendorDialog: React.FC<AddVendorDialogProps> = ({
                   <CommandEmpty>Aucun résultat trouvé.</CommandEmpty>
                   <CommandGroup>
                     {/* Ensure we're iterating over a valid array */}
-                    {(prestataires || []).map((prestataire) => (
+                    {prestataires.map((prestataire) => (
                       <CommandItem
                         key={prestataire.id}
                         value={prestataire.nom}

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -129,6 +130,7 @@ const Demo = () => {
     }
   };
 
+  // Fonction mise à jour pour calculer dynamiquement le prix en fonction du nombre d'invités pour les traiteurs
   const calculateTotal = () => {
     const basePrice = selectedPackage.basePrice;
     let totalBasePrice = basePrice;
@@ -146,7 +148,14 @@ const Demo = () => {
     };
   };
 
+  // Calculer les prix à chaque fois que guests ou selectedPackage change
   const prices = calculateTotal();
+
+  // Gestionnaire pour mettre à jour le nombre d'invités
+  const handleGuestsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseInt(event.target.value) || 0;
+    setGuests(value);
+  };
 
   const handleBookingClick = () => {
     toast({
@@ -371,7 +380,7 @@ const Demo = () => {
                     id="guests"
                     type="number"
                     value={guests}
-                    onChange={(e) => setGuests(parseInt(e.target.value) || 0)}
+                    onChange={handleGuestsChange}
                     min={1}
                     max={200}
                     className="mt-1"
