@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -93,11 +92,13 @@ const Demo = () => {
     enabled: !!vendorId
   });
   
+  // Check if the vendor is a caterer
   const isCaterer = vendor?.categorie?.toLowerCase() === 'traiteur';
   
   useEffect(() => {
     if (vendor) {
       if (vendor.prix_a_partir_de) {
+        // For caterers, use the price per person as base price
         const basePrice = isCaterer && vendor.prix_par_personne ? vendor.prix_par_personne : vendor.prix_a_partir_de;
         
         const newPackages = [
@@ -130,17 +131,17 @@ const Demo = () => {
     }
   };
 
-  // Fonction mise à jour pour calculer dynamiquement le prix en fonction du nombre d'invités pour les traiteurs
+  // Updated calculation function to properly handle caterers
   const calculateTotal = () => {
     const basePrice = selectedPackage.basePrice;
     let totalBasePrice = basePrice;
     
-    // Si c'est un traiteur, on multiplie par le nombre d'invités
-    if (isCaterer && vendor?.prix_par_personne) {
+    // If it's a caterer, we multiply the price per person by the number of guests
+    if (isCaterer) {
       totalBasePrice = basePrice * guests;
     }
     
-    const commission = totalBasePrice * 0.04; // 4% de commission
+    const commission = totalBasePrice * 0.04; // 4% commission
     return {
       basePrice: totalBasePrice,
       commission,
@@ -148,10 +149,10 @@ const Demo = () => {
     };
   };
 
-  // Calculer les prix à chaque fois que guests ou selectedPackage change
+  // Calculate prices whenever guests or selectedPackage changes
   const prices = calculateTotal();
 
-  // Gestionnaire pour mettre à jour le nombre d'invités
+  // Handler to update the number of guests
   const handleGuestsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(event.target.value) || 0;
     setGuests(value);

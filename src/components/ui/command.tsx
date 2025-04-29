@@ -68,7 +68,7 @@ const CommandList = React.forwardRef<
 
 CommandList.displayName = CommandPrimitive.List.displayName
 
-// Enhanced with better undefined handling
+// Fixed with proper empty children handling
 const CommandEmpty = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive.Empty>,
   React.ComponentPropsWithoutRef<typeof CommandPrimitive.Empty>
