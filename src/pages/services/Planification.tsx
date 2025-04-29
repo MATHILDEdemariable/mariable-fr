@@ -44,7 +44,7 @@ const PlanningChecklist = () => {
   };
 
   const handleSignUpClick = () => {
-    navigate('/login-frame');
+    navigate('/register');
   };
 
   return (

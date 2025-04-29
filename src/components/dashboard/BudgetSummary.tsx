@@ -13,12 +13,12 @@ interface BudgetCategory {
 }
 
 const BUDGET_DATA: BudgetCategory[] = [
-  { name: 'Lieu', amount: 5000, color: '#4CAF50' },
-  { name: 'Traiteur', amount: 7000, color: '#2196F3' },
-  { name: 'Décoration', amount: 2000, color: '#FFC107' },
-  { name: 'Tenue', amount: 3000, color: '#9C27B0' },
-  { name: 'Photo & Vidéo', amount: 2500, color: '#F44336' },
-  { name: 'Marge & Imprévus', amount: 1500, color: '#607D8B' }
+  { name: 'Lieu', amount: 5000, color: '#7F9474' },  // Sage green
+  { name: 'Traiteur', amount: 7000, color: '#A3B18A' }, // Lighter green
+  { name: 'Décoration', amount: 2000, color: '#DAD7CD' }, // Beige
+  { name: 'Tenue', amount: 3000, color: '#E9EDC9' }, // Light beige
+  { name: 'Photo & Vidéo', amount: 2500, color: '#CCD5AE' }, // Light olive
+  { name: 'Marge & Imprévus', amount: 1500, color: '#F8F6F0' } // Wedding cream
 ];
 
 const BudgetSummary: React.FC = () => {
@@ -33,11 +33,11 @@ const BudgetSummary: React.FC = () => {
   };
   
   return (
-    <Card>
+    <Card className="bg-wedding-cream/10 border-wedding-olive/20">
       <CardHeader className="pb-2">
-        <CardTitle className="font-serif">Budget</CardTitle>
+        <CardTitle className="font-serif text-wedding-olive">Budget</CardTitle>
         <CardDescription>
-          Aperçu de votre budget de mariage : {formatCurrency(totalBudget)}
+          Aperçu de votre budget de mariage
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -50,17 +50,25 @@ const BudgetSummary: React.FC = () => {
                 cy="50%"
                 innerRadius={60}
                 outerRadius={80}
-                paddingAngle={2}
+                paddingAngle={3}
                 dataKey="amount"
                 nameKey="name"
                 label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
                 labelLine={false}
+                strokeWidth={1}
+                stroke="#F8F6F0"
               >
                 {BUDGET_DATA.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={entry.color} />
                 ))}
               </Pie>
-              <Legend />
+              <Legend 
+                layout="horizontal" 
+                verticalAlign="bottom"
+                align="center"
+                iconType="circle"
+                iconSize={8}
+              />
             </PieChart>
           </ResponsiveContainer>
         </div>
@@ -79,10 +87,20 @@ const BudgetSummary: React.FC = () => {
             </div>
           ))}
         </div>
+
+        <div className="mt-6 border-t pt-4 flex items-center justify-center">
+          <div className="text-center">
+            <div className="flex items-center justify-center mb-2">
+              <Euro className="h-6 w-6 text-wedding-olive mr-2" />
+              <h3 className="text-2xl font-serif text-wedding-olive">{formatCurrency(totalBudget)}</h3>
+            </div>
+            <p className="text-sm text-muted-foreground">Budget total estimé</p>
+          </div>
+        </div>
         
         <Button 
           variant="outline" 
-          className="w-full mt-2" 
+          className="w-full mt-2 border-wedding-olive/30 text-wedding-olive hover:bg-wedding-olive/10" 
           asChild
         >
           <Link to="/dashboard/budget">

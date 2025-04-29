@@ -15,7 +15,7 @@ interface Task {
   completed: boolean;
 }
 
-// Sample tasks
+// Sample tasks including ones from the planning service page
 const initialTasks: Task[] = [
   {
     id: '1',
@@ -62,6 +62,47 @@ const initialTasks: Task[] = [
     category: 'personal',
     completed: false,
   },
+  // Added tasks from planning service
+  {
+    id: '6',
+    title: 'Poser les bases',
+    description: 'Définissez la vision de votre mariage : style, ambiance, type de cérémonie.',
+    priority: 'high',
+    category: 'preparation',
+    completed: false,
+  },
+  {
+    id: '7',
+    title: 'Estimer le nombre d\'invités',
+    description: 'Même approximatif, cela guidera vos choix logistiques et budgétaires.',
+    priority: 'high',
+    category: 'preparation',
+    completed: false,
+  },
+  {
+    id: '8',
+    title: 'Calibrer votre budget',
+    description: 'Évaluez vos moyens et priorisez les postes les plus importants selon vos envies.',
+    priority: 'high',
+    category: 'preparation',
+    completed: false,
+  },
+  {
+    id: '9',
+    title: 'Gérer les démarches officielles',
+    description: 'Mairie, cérémonies religieuses ou laïques, contrats, assurances, etc.',
+    priority: 'medium',
+    category: 'logistics',
+    completed: false,
+  },
+  {
+    id: '10',
+    title: 'Anticiper la coordination du jour J',
+    description: 'Prévoyez une coordinatrice, les préparatifs beauté, la logistique et les temps forts.',
+    priority: 'medium',
+    category: 'logistics',
+    completed: false,
+  },
 ];
 
 const priorityColorMap = {
@@ -86,14 +127,22 @@ const TasksList: React.FC = () => {
   // Calculate progress percentage
   const progress = Math.round((tasks.filter(t => t.completed).length / tasks.length) * 100);
   
-  // Get upcoming tasks (incomplete tasks ordered by due date)
-  const upcomingTasks = tasks
-    .filter(task => !task.completed)
-    .sort((a, b) => {
+  // Sort tasks: completed tasks at the bottom, uncompleted tasks at the top
+  const sortedTasks = [...tasks].sort((a, b) => {
+    // First sort by completion status
+    if (a.completed !== b.completed) {
+      return a.completed ? 1 : -1;
+    }
+    
+    // Then sort uncompleted tasks by due date if available
+    if (!a.completed && !b.completed) {
       if (!a.dueDate) return 1;
       if (!b.dueDate) return -1;
       return a.dueDate.getTime() - b.dueDate.getTime();
-    });
+    }
+    
+    return 0;
+  });
   
   const formatDueDate = (dueDate?: Date) => {
     if (!dueDate) return 'Non défini';
@@ -120,12 +169,12 @@ const TasksList: React.FC = () => {
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          {upcomingTasks.length === 0 ? (
+          {sortedTasks.length === 0 ? (
             <p className="text-center py-4 text-muted-foreground">
-              Toutes vos tâches sont complétées !
+              Aucune tâche à afficher
             </p>
           ) : (
-            upcomingTasks.slice(0, 5).map((task) => (
+            sortedTasks.map((task) => (
               <div key={task.id} className="flex items-start space-x-2 pb-4 border-b last:border-0">
                 <Checkbox 
                   id={`task-${task.id}`}
@@ -137,7 +186,7 @@ const TasksList: React.FC = () => {
                   <div className="flex justify-between">
                     <label
                       htmlFor={`task-${task.id}`}
-                      className="text-base font-medium leading-none cursor-pointer"
+                      className={`text-base font-medium leading-none cursor-pointer ${task.completed ? 'line-through text-muted-foreground' : ''}`}
                     >
                       {task.title}
                     </label>
@@ -148,22 +197,18 @@ const TasksList: React.FC = () => {
                     </Badge>
                   </div>
                   
-                  <p className="text-sm text-muted-foreground">{task.description}</p>
+                  <p className={`text-sm ${task.completed ? 'line-through text-muted-foreground' : 'text-muted-foreground'}`}>
+                    {task.description}
+                  </p>
                   
                   {task.dueDate && (
-                    <p className="text-xs text-muted-foreground">
+                    <p className={`text-xs ${task.completed ? 'line-through text-muted-foreground' : 'text-muted-foreground'}`}>
                       Échéance : {formatDueDate(task.dueDate)}
                     </p>
                   )}
                 </div>
               </div>
             ))
-          )}
-          
-          {upcomingTasks.length > 5 && (
-            <p className="text-center text-sm text-muted-foreground pt-2">
-              + {upcomingTasks.length - 5} autres tâches à accomplir
-            </p>
           )}
         </div>
       </CardContent>
