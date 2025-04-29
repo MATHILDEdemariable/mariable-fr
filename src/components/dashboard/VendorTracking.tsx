@@ -109,6 +109,9 @@ const VendorTracking: React.FC<VendorTrackingProps> = ({ projectId }) => {
           contact_date: v.contact_date ? new Date(v.contact_date) : null,
           response_date: v.response_date ? new Date(v.response_date) : null
         })));
+      } else {
+        // Ensure we set an empty array if data is null
+        setVendors([]);
       }
     } catch (error) {
       console.error('Error fetching vendors:', error);
@@ -117,6 +120,8 @@ const VendorTracking: React.FC<VendorTrackingProps> = ({ projectId }) => {
         description: "Impossible de récupérer la liste des prestataires",
         variant: "destructive",
       });
+      // Reset to empty array on error
+      setVendors([]);
     } finally {
       setIsLoading(false);
     }
@@ -127,8 +132,10 @@ const VendorTracking: React.FC<VendorTrackingProps> = ({ projectId }) => {
     fetchVendors();
   }, [projectId]);
   
-  // Get unique categories for filter
-  const categories = [...new Set(vendors.map(vendor => vendor.category))];
+  // Get unique categories for filter - make sure we handle empty arrays
+  const categories = vendors && vendors.length > 0 
+    ? [...new Set(vendors.map(vendor => vendor.category))] 
+    : [];
   
   // Filter vendors based on selected filters
   const filteredVendors = vendors.filter(vendor => {
@@ -256,7 +263,7 @@ const VendorTracking: React.FC<VendorTrackingProps> = ({ projectId }) => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Toutes les catégories</SelectItem>
-                {categories.map((category) => (
+                {(categories || []).map((category) => (
                   <SelectItem key={category} value={category}>
                     {category}
                   </SelectItem>
