@@ -92,19 +92,23 @@ const Demo = () => {
     enabled: !!vendorId
   });
   
+  const isCaterer = vendor?.categorie?.toLowerCase() === 'traiteur';
+  
   useEffect(() => {
     if (vendor) {
       if (vendor.prix_a_partir_de) {
+        const basePrice = isCaterer && vendor.prix_par_personne ? vendor.prix_par_personne : vendor.prix_a_partir_de;
+        
         const newPackages = [
-          { name: 'Classique', basePrice: vendor.prix_a_partir_de, description: 'Formule de base' },
-          { name: 'Premium', basePrice: vendor.prix_a_partir_de * 1.4, description: 'Formule intermédiaire' },
-          { name: 'Luxe', basePrice: vendor.prix_a_partir_de * 1.8, description: 'Formule complète' },
+          { name: 'Classique', basePrice: basePrice, description: 'Formule de base' },
+          { name: 'Premium', basePrice: basePrice * 1.4, description: 'Formule intermédiaire' },
+          { name: 'Luxe', basePrice: basePrice * 1.8, description: 'Formule complète' },
         ];
         setPackages(newPackages);
         setSelectedPackage(newPackages[0]);
       }
     }
-  }, [vendor]);
+  }, [vendor, isCaterer]);
 
   const handleDateSelect = (newDate: Date | undefined) => {
     setDate(newDate);
@@ -127,11 +131,18 @@ const Demo = () => {
 
   const calculateTotal = () => {
     const basePrice = selectedPackage.basePrice;
-    const commission = basePrice * 0.04; // 4% de commission
+    let totalBasePrice = basePrice;
+    
+    // Si c'est un traiteur, on multiplie par le nombre d'invités
+    if (isCaterer && vendor?.prix_par_personne) {
+      totalBasePrice = basePrice * guests;
+    }
+    
+    const commission = totalBasePrice * 0.04; // 4% de commission
     return {
-      basePrice,
+      basePrice: totalBasePrice,
       commission,
-      total: basePrice + commission
+      total: totalBasePrice + commission
     };
   };
 
@@ -141,6 +152,10 @@ const Demo = () => {
     toast({
       description: "La réservation en ligne sera bientôt disponible",
     });
+  };
+  
+  const handleContactClick = () => {
+    window.location.href = 'mailto:mathilde@mariable.fr';
   };
   
   if (!vendorId && !isLoading) {
@@ -269,6 +284,12 @@ const Demo = () => {
                     <Award className="h-3 w-3" />
                     {vendor?.categorie}
                   </Badge>
+                  {isCaterer && (
+                    <Badge variant="secondary" className="flex items-center gap-1 bg-wedding-olive/20">
+                      <Euro className="h-3 w-3" />
+                      Prix par personne
+                    </Badge>
+                  )}
                   {vendor?.styles && renderStyleBadges()}
                 </div>
               </div>
@@ -287,7 +308,7 @@ const Demo = () => {
                     <div>
                       <p className="font-medium">Prix</p>
                       <p className="text-sm text-muted-foreground">
-                        {vendor.prix_par_personne 
+                        {isCaterer && vendor.prix_par_personne 
                           ? `À partir de ${vendor.prix_par_personne}€/pers.`
                           : vendor.prix_a_partir_de 
                             ? `À partir de ${vendor.prix_a_partir_de}€`
@@ -314,7 +335,9 @@ const Demo = () => {
                       <p className="text-sm text-muted-foreground mb-4">
                         {pkg.description}
                       </p>
-                      <p className="font-medium">{Math.round(pkg.basePrice)}€</p>
+                      <p className="font-medium">
+                        {isCaterer ? `${Math.round(pkg.basePrice)}€/pers.` : `${Math.round(pkg.basePrice)}€`}
+                      </p>
                     </Card>
                   ))}
                 </div>
@@ -373,7 +396,7 @@ const Demo = () => {
 
                 <div className="mt-6 border-t pt-4 space-y-2">
                   <div className="flex justify-between">
-                    <span>Prix de base</span>
+                    <span>Prix {isCaterer ? `(${guests} pers.)` : ''}</span>
                     <span>{Math.round(prices.basePrice)}€</span>
                   </div>
                   <div className="flex justify-between text-sm text-muted-foreground">
@@ -398,10 +421,7 @@ const Demo = () => {
                 <Button 
                   variant="outline" 
                   className="w-full" 
-                  onClick={() => {
-                    toast({ description: "La messagerie sera bientôt disponible" });
-                    window.open(`mailto:${vendor.email || ''}`, '_blank');
-                  }}
+                  onClick={handleContactClick}
                 >
                   <MessageSquare className="mr-2 h-4 w-4" />
                   Contacter

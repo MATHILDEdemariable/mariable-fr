@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { 
   Dialog, 
@@ -68,16 +69,22 @@ const VendorDetailModal: React.FC<VendorDetailModalProps> = ({ isOpen, onClose, 
   };
 
   const parsedStyles = vendor.styles ? JSON.parse(String(vendor.styles)) : [];
+  const isCaterer = vendor.categorie?.toLowerCase() === 'traiteur';
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-serif flex items-center gap-2">
+          <DialogTitle className="text-2xl flex items-center gap-2">
             {vendor.nom}
             <Badge variant="outline" className="ml-2">
               {vendor.categorie}
             </Badge>
+            {isCaterer && (
+              <Badge variant="outline" className="ml-1 bg-wedding-olive/20">
+                Prix par personne
+              </Badge>
+            )}
           </DialogTitle>
           <DialogDescription className="flex items-center text-sm">
             <MapPin className="h-4 w-4 mr-1" /> 
@@ -170,7 +177,7 @@ const VendorDetailModal: React.FC<VendorDetailModalProps> = ({ isOpen, onClose, 
               <h3 className="font-medium mb-2">Prix</h3>
               <p className="text-sm flex items-center">
                 <Euro className="h-4 w-4 mr-1" />
-                {vendor.prix_par_personne 
+                {isCaterer && vendor.prix_par_personne
                   ? `Environ ${vendor.prix_par_personne}€ par personne`
                   : vendor.prix_a_partir_de 
                     ? `À partir de ${vendor.prix_a_partir_de} €` 
@@ -203,12 +210,10 @@ const VendorDetailModal: React.FC<VendorDetailModalProps> = ({ isOpen, onClose, 
           </TabsContent>
           
           <TabsContent value="contact" className="space-y-4">
-            {vendor.email && (
-              <div className="flex items-center gap-2">
-                <Mail className="h-4 w-4" />
-                <a href={`mailto:${vendor.email}`} className="text-sm hover:underline">{vendor.email}</a>
-              </div>
-            )}
+            <div className="flex items-center gap-2">
+              <Mail className="h-4 w-4" />
+              <a href="mailto:mathilde@mariable.fr" className="text-sm hover:underline">mathilde@mariable.fr</a>
+            </div>
             
             {vendor.telephone && (
               <div className="flex items-center gap-2">
@@ -224,10 +229,6 @@ const VendorDetailModal: React.FC<VendorDetailModalProps> = ({ isOpen, onClose, 
                   {vendor.site_web}
                 </a>
               </div>
-            )}
-            
-            {(!vendor.email && !vendor.telephone && !vendor.site_web) && (
-              <p className="text-sm text-muted-foreground">Aucune information de contact disponible</p>
             )}
           </TabsContent>
         </Tabs>
