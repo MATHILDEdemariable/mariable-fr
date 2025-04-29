@@ -12,6 +12,7 @@ interface BudgetCategory {
   color: string;
 }
 
+// Ensure we always have valid data with proper structure
 const BUDGET_DATA: BudgetCategory[] = [
   { name: 'Lieu', amount: 5000, color: '#7F9474' },  // Sage green
   { name: 'Traiteur', amount: 7000, color: '#A3B18A' }, // Lighter green
@@ -32,6 +33,9 @@ const BudgetSummary: React.FC = () => {
     }).format(amount);
   };
   
+  // Ensure we have valid data for the chart
+  const safeChartData = BUDGET_DATA.length > 0 ? BUDGET_DATA : [{ name: 'No Data', amount: 100, color: '#CCCCCC' }];
+  
   return (
     <Card className="bg-wedding-cream/10 border-wedding-olive/20">
       <CardHeader className="pb-2">
@@ -45,7 +49,7 @@ const BudgetSummary: React.FC = () => {
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
-                data={BUDGET_DATA}
+                data={safeChartData}
                 cx="50%"
                 cy="50%"
                 innerRadius={60}
@@ -58,7 +62,7 @@ const BudgetSummary: React.FC = () => {
                 strokeWidth={1}
                 stroke="#F8F6F0"
               >
-                {BUDGET_DATA.map((entry, index) => (
+                {safeChartData.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={entry.color} />
                 ))}
               </Pie>
@@ -74,7 +78,7 @@ const BudgetSummary: React.FC = () => {
         </div>
         
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-          {BUDGET_DATA.map((category) => (
+          {safeChartData.map((category) => (
             <div key={category.name} className="flex items-center space-x-2">
               <div 
                 className="h-3 w-3 rounded-full" 
