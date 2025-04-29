@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -59,6 +58,7 @@ const AddVendorDialog: React.FC<AddVendorDialogProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  // Initialize with empty array to avoid undefined is not iterable error
   const [prestataires, setPrestataires] = useState<Prestataire[]>([]);
   const [selectedPrestataire, setSelectedPrestataire] = useState<Prestataire | null>(null);
   const { toast } = useToast();
@@ -82,9 +82,12 @@ const AddVendorDialog: React.FC<AddVendorDialogProps> = ({
           
         if (error) throw error;
         
+        // Ensure we always set an array, even if data is null or undefined
         setPrestataires(data || []);
       } catch (error) {
         console.error('Error fetching prestataires:', error);
+        // Reset to empty array on error to prevent undefined
+        setPrestataires([]);
       } finally {
         setIsLoading(false);
       }
@@ -203,7 +206,8 @@ const AddVendorDialog: React.FC<AddVendorDialogProps> = ({
                   )}
                   <CommandEmpty>Aucun résultat trouvé.</CommandEmpty>
                   <CommandGroup>
-                    {prestataires.map((prestataire) => (
+                    {/* Ensure we're iterating over a valid array */}
+                    {(prestataires || []).map((prestataire) => (
                       <CommandItem
                         key={prestataire.id}
                         value={prestataire.nom}
