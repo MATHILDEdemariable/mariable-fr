@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -93,20 +92,9 @@ const Demo = () => {
     enabled: !!vendorId
   });
   
-  const isCaterer = vendor?.categorie?.toLowerCase() === 'traiteur';
-  
   useEffect(() => {
     if (vendor) {
-      if (isCaterer && vendor.prix_par_personne) {
-        const basePrice = vendor.prix_par_personne;
-        const newPackages = [
-          { name: 'Menu Standard', basePrice: basePrice, description: 'Menu de base avec entrée, plat, dessert' },
-          { name: 'Menu Gourmet', basePrice: basePrice * 1.3, description: 'Menu gastronomique avec mises en bouche' },
-          { name: 'Menu Prestige', basePrice: basePrice * 1.6, description: 'Menu haut de gamme avec animation culinaire' },
-        ];
-        setPackages(newPackages);
-        setSelectedPackage(newPackages[0]);
-      } else if (vendor.prix_a_partir_de) {
+      if (vendor.prix_a_partir_de) {
         const newPackages = [
           { name: 'Classique', basePrice: vendor.prix_a_partir_de, description: 'Formule de base' },
           { name: 'Premium', basePrice: vendor.prix_a_partir_de * 1.4, description: 'Formule intermédiaire' },
@@ -116,7 +104,7 @@ const Demo = () => {
         setSelectedPackage(newPackages[0]);
       }
     }
-  }, [vendor, isCaterer]);
+  }, [vendor]);
 
   const handleDateSelect = (newDate: Date | undefined) => {
     setDate(newDate);
@@ -138,15 +126,7 @@ const Demo = () => {
   };
 
   const calculateTotal = () => {
-    if (!selectedPackage) return { basePrice: 0, commission: 0, total: 0 };
-    
-    let basePrice = selectedPackage.basePrice;
-    
-    // Si c'est un traiteur, on calcule le prix par personne × nombre d'invités
-    if (isCaterer) {
-      basePrice = basePrice * guests;
-    }
-    
+    const basePrice = selectedPackage.basePrice;
     const commission = basePrice * 0.04; // 4% de commission
     return {
       basePrice,
@@ -163,10 +143,6 @@ const Demo = () => {
     });
   };
   
-  const handleContactClick = () => {
-    window.open(`mailto:mathilde@mariable.fr?subject=Contact à propos de ${vendor?.nom || 'votre prestataire'}&body=Bonjour, je souhaiterais avoir des informations sur ${vendor?.nom || 'ce prestataire'}.`, '_blank');
-  };
-  
   if (!vendorId && !isLoading) {
     return (
       <div className="min-h-screen flex flex-col bg-white">
@@ -178,7 +154,6 @@ const Demo = () => {
             <Button 
               className="bg-wedding-olive hover:bg-wedding-olive/90"
               onClick={() => window.location.href = '/recherche'}
-              variant="wedding"
             >
               Retour à la recherche
             </Button>
@@ -211,7 +186,7 @@ const Demo = () => {
             <h1 className="text-2xl font-serif mb-4">Prestataire non trouvé</h1>
             <p className="mb-6">Ce prestataire n'existe pas ou a été supprimé.</p>
             <Button 
-              variant="wedding"
+              className="bg-wedding-olive hover:bg-wedding-olive/90"
               onClick={() => window.location.href = '/recherche'}
             >
               Retour à la recherche
@@ -294,11 +269,6 @@ const Demo = () => {
                     <Award className="h-3 w-3" />
                     {vendor?.categorie}
                   </Badge>
-                  {isCaterer && vendor.prix_par_personne && 
-                    <Badge className="bg-wedding-olive text-white">
-                      Prix par personne
-                    </Badge>
-                  }
                   {vendor?.styles && renderStyleBadges()}
                 </div>
               </div>
@@ -317,7 +287,7 @@ const Demo = () => {
                     <div>
                       <p className="font-medium">Prix</p>
                       <p className="text-sm text-muted-foreground">
-                        {isCaterer && vendor.prix_par_personne 
+                        {vendor.prix_par_personne 
                           ? `À partir de ${vendor.prix_par_personne}€/pers.`
                           : vendor.prix_a_partir_de 
                             ? `À partir de ${vendor.prix_a_partir_de}€`
@@ -344,11 +314,7 @@ const Demo = () => {
                       <p className="text-sm text-muted-foreground mb-4">
                         {pkg.description}
                       </p>
-                      <p className="font-medium">
-                        {isCaterer 
-                          ? `${Math.round(pkg.basePrice)}€/pers` 
-                          : `${Math.round(pkg.basePrice)}€`}
-                      </p>
+                      <p className="font-medium">{Math.round(pkg.basePrice)}€</p>
                     </Card>
                   ))}
                 </div>
@@ -357,7 +323,7 @@ const Demo = () => {
 
             <div className="w-full lg:w-80 space-y-4">
               <Card className="p-4">
-                <h3 className="text-lg font-serif mb-4">Vérifier les disponibilités</h3>
+                <h3 className="text-lg font-medium mb-4">Vérifier les disponibilités</h3>
                 
                 <Popover>
                   <PopoverTrigger asChild>
@@ -421,9 +387,8 @@ const Demo = () => {
                 </div>
 
                 <Button 
-                  className="w-full mt-4"
+                  className="w-full mt-4 bg-wedding-olive hover:bg-wedding-olive/90"
                   onClick={handleBookingClick}
-                  variant="wedding"
                 >
                   Prendre RDV
                 </Button>
@@ -433,7 +398,10 @@ const Demo = () => {
                 <Button 
                   variant="outline" 
                   className="w-full" 
-                  onClick={handleContactClick}
+                  onClick={() => {
+                    toast({ description: "La messagerie sera bientôt disponible" });
+                    window.open(`mailto:${vendor.email || ''}`, '_blank');
+                  }}
                 >
                   <MessageSquare className="mr-2 h-4 w-4" />
                   Contacter
