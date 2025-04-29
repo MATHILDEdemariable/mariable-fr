@@ -12,6 +12,7 @@ import { Loader2 } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 type Prestataire = Database['public']['Tables']['prestataires']['Row'];
+type RegionFrance = Database['public']['Enums']['region_france'];
 
 export interface VendorFilter {
   search: string;
@@ -70,7 +71,9 @@ const MoteurRecherche = () => {
       }
       
       if (filters.region) {
-        query = query.eq('region', filters.region);
+        // Fix: Cast filters.region as a valid RegionFrance value
+        // This tells TypeScript that we're ensuring it's a valid region
+        query = query.eq('region', filters.region as RegionFrance);
       }
       
       // Fix for the pricing filter - more robust handling of undefined values
