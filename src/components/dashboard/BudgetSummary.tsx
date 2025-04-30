@@ -12,14 +12,13 @@ interface BudgetCategory {
   color: string;
 }
 
-// Ensure we always have valid data with proper structure
 const BUDGET_DATA: BudgetCategory[] = [
-  { name: 'Lieu', amount: 5000, color: '#7F9474' },  // Sage green
-  { name: 'Traiteur', amount: 7000, color: '#A3B18A' }, // Lighter green
-  { name: 'Décoration', amount: 2000, color: '#DAD7CD' }, // Beige
-  { name: 'Tenue', amount: 3000, color: '#E9EDC9' }, // Light beige
-  { name: 'Photo & Vidéo', amount: 2500, color: '#CCD5AE' }, // Light olive
-  { name: 'Marge & Imprévus', amount: 1500, color: '#F8F6F0' } // Wedding cream
+  { name: 'Lieu', amount: 5000, color: '#4CAF50' },
+  { name: 'Traiteur', amount: 7000, color: '#2196F3' },
+  { name: 'Décoration', amount: 2000, color: '#FFC107' },
+  { name: 'Tenue', amount: 3000, color: '#9C27B0' },
+  { name: 'Photo & Vidéo', amount: 2500, color: '#F44336' },
+  { name: 'Marge & Imprévus', amount: 1500, color: '#607D8B' }
 ];
 
 const BudgetSummary: React.FC = () => {
@@ -33,15 +32,12 @@ const BudgetSummary: React.FC = () => {
     }).format(amount);
   };
   
-  // Ensure we have valid data for the chart
-  const safeChartData = BUDGET_DATA.length > 0 ? BUDGET_DATA : [{ name: 'No Data', amount: 100, color: '#CCCCCC' }];
-  
   return (
-    <Card className="bg-wedding-cream/10 border-wedding-olive/20">
+    <Card>
       <CardHeader className="pb-2">
-        <CardTitle className="font-serif text-wedding-olive">Budget</CardTitle>
+        <CardTitle className="font-serif">Budget</CardTitle>
         <CardDescription>
-          Aperçu de votre budget de mariage
+          Aperçu de votre budget de mariage : {formatCurrency(totalBudget)}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -49,36 +45,28 @@ const BudgetSummary: React.FC = () => {
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
-                data={safeChartData}
+                data={BUDGET_DATA}
                 cx="50%"
                 cy="50%"
                 innerRadius={60}
                 outerRadius={80}
-                paddingAngle={3}
+                paddingAngle={2}
                 dataKey="amount"
                 nameKey="name"
                 label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
                 labelLine={false}
-                strokeWidth={1}
-                stroke="#F8F6F0"
               >
-                {safeChartData.map((entry, index) => (
+                {BUDGET_DATA.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={entry.color} />
                 ))}
               </Pie>
-              <Legend 
-                layout="horizontal" 
-                verticalAlign="bottom"
-                align="center"
-                iconType="circle"
-                iconSize={8}
-              />
+              <Legend />
             </PieChart>
           </ResponsiveContainer>
         </div>
         
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-          {safeChartData.map((category) => (
+          {BUDGET_DATA.map((category) => (
             <div key={category.name} className="flex items-center space-x-2">
               <div 
                 className="h-3 w-3 rounded-full" 
@@ -91,20 +79,10 @@ const BudgetSummary: React.FC = () => {
             </div>
           ))}
         </div>
-
-        <div className="mt-6 border-t pt-4 flex items-center justify-center">
-          <div className="text-center">
-            <div className="flex items-center justify-center mb-2">
-              <Euro className="h-6 w-6 text-wedding-olive mr-2" />
-              <h3 className="text-2xl font-serif text-wedding-olive">{formatCurrency(totalBudget)}</h3>
-            </div>
-            <p className="text-sm text-muted-foreground">Budget total estimé</p>
-          </div>
-        </div>
         
         <Button 
           variant="outline" 
-          className="w-full mt-2 border-wedding-olive/30 text-wedding-olive hover:bg-wedding-olive/10" 
+          className="w-full mt-2" 
           asChild
         >
           <Link to="/dashboard/budget">

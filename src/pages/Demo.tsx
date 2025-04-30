@@ -92,25 +92,19 @@ const Demo = () => {
     enabled: !!vendorId
   });
   
-  // Check if the vendor is a caterer
-  const isCaterer = vendor?.categorie?.toLowerCase() === 'traiteur';
-  
   useEffect(() => {
     if (vendor) {
       if (vendor.prix_a_partir_de) {
-        // For caterers, use the price per person as base price
-        const basePrice = isCaterer && vendor.prix_par_personne ? vendor.prix_par_personne : vendor.prix_a_partir_de;
-        
         const newPackages = [
-          { name: 'Classique', basePrice: basePrice, description: 'Formule de base' },
-          { name: 'Premium', basePrice: basePrice * 1.4, description: 'Formule intermédiaire' },
-          { name: 'Luxe', basePrice: basePrice * 1.8, description: 'Formule complète' },
+          { name: 'Classique', basePrice: vendor.prix_a_partir_de, description: 'Formule de base' },
+          { name: 'Premium', basePrice: vendor.prix_a_partir_de * 1.4, description: 'Formule intermédiaire' },
+          { name: 'Luxe', basePrice: vendor.prix_a_partir_de * 1.8, description: 'Formule complète' },
         ];
         setPackages(newPackages);
         setSelectedPackage(newPackages[0]);
       }
     }
-  }, [vendor, isCaterer]);
+  }, [vendor]);
 
   const handleDateSelect = (newDate: Date | undefined) => {
     setDate(newDate);
@@ -131,41 +125,22 @@ const Demo = () => {
     }
   };
 
-  // Updated calculation function to properly handle caterers
   const calculateTotal = () => {
     const basePrice = selectedPackage.basePrice;
-    let totalBasePrice = basePrice;
-    
-    // If it's a caterer, we multiply the price per person by the number of guests
-    if (isCaterer) {
-      totalBasePrice = basePrice * guests;
-    }
-    
-    const commission = totalBasePrice * 0.04; // 4% commission
+    const commission = basePrice * 0.04; // 4% de commission
     return {
-      basePrice: totalBasePrice,
+      basePrice,
       commission,
-      total: totalBasePrice + commission
+      total: basePrice + commission
     };
   };
 
-  // Calculate prices whenever guests or selectedPackage changes
   const prices = calculateTotal();
-
-  // Handler to update the number of guests
-  const handleGuestsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseInt(event.target.value) || 0;
-    setGuests(value);
-  };
 
   const handleBookingClick = () => {
     toast({
       description: "La réservation en ligne sera bientôt disponible",
     });
-  };
-  
-  const handleContactClick = () => {
-    window.location.href = 'mailto:mathilde@mariable.fr';
   };
   
   if (!vendorId && !isLoading) {
@@ -294,12 +269,6 @@ const Demo = () => {
                     <Award className="h-3 w-3" />
                     {vendor?.categorie}
                   </Badge>
-                  {isCaterer && (
-                    <Badge variant="secondary" className="flex items-center gap-1 bg-wedding-olive/20">
-                      <Euro className="h-3 w-3" />
-                      Prix par personne
-                    </Badge>
-                  )}
                   {vendor?.styles && renderStyleBadges()}
                 </div>
               </div>
@@ -318,7 +287,7 @@ const Demo = () => {
                     <div>
                       <p className="font-medium">Prix</p>
                       <p className="text-sm text-muted-foreground">
-                        {isCaterer && vendor.prix_par_personne 
+                        {vendor.prix_par_personne 
                           ? `À partir de ${vendor.prix_par_personne}€/pers.`
                           : vendor.prix_a_partir_de 
                             ? `À partir de ${vendor.prix_a_partir_de}€`
@@ -345,9 +314,7 @@ const Demo = () => {
                       <p className="text-sm text-muted-foreground mb-4">
                         {pkg.description}
                       </p>
-                      <p className="font-medium">
-                        {isCaterer ? `${Math.round(pkg.basePrice)}€/pers.` : `${Math.round(pkg.basePrice)}€`}
-                      </p>
+                      <p className="font-medium">{Math.round(pkg.basePrice)}€</p>
                     </Card>
                   ))}
                 </div>
@@ -381,7 +348,7 @@ const Demo = () => {
                     id="guests"
                     type="number"
                     value={guests}
-                    onChange={handleGuestsChange}
+                    onChange={(e) => setGuests(parseInt(e.target.value) || 0)}
                     min={1}
                     max={200}
                     className="mt-1"
@@ -406,7 +373,7 @@ const Demo = () => {
 
                 <div className="mt-6 border-t pt-4 space-y-2">
                   <div className="flex justify-between">
-                    <span>Prix {isCaterer ? `(${guests} pers.)` : ''}</span>
+                    <span>Prix de base</span>
                     <span>{Math.round(prices.basePrice)}€</span>
                   </div>
                   <div className="flex justify-between text-sm text-muted-foreground">
@@ -431,7 +398,10 @@ const Demo = () => {
                 <Button 
                   variant="outline" 
                   className="w-full" 
-                  onClick={handleContactClick}
+                  onClick={() => {
+                    toast({ description: "La messagerie sera bientôt disponible" });
+                    window.open(`mailto:${vendor.email || ''}`, '_blank');
+                  }}
                 >
                   <MessageSquare className="mr-2 h-4 w-4" />
                   Contacter

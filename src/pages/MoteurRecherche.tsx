@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -12,7 +11,6 @@ import { Loader2 } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 type Prestataire = Database['public']['Tables']['prestataires']['Row'];
-type RegionFrance = Database['public']['Enums']['region_france'];
 
 export interface VendorFilter {
   search: string;
@@ -71,24 +69,21 @@ const MoteurRecherche = () => {
       }
       
       if (filters.region) {
-        // Fix: Cast filters.region as a valid RegionFrance value
-        // This tells TypeScript that we're ensuring it's a valid region
-        query = query.eq('region', filters.region as RegionFrance);
+        query = query.eq('region', filters.region as any);
       }
       
-      // Fix for the pricing filter - more robust handling of undefined values
-      if (typeof filters.minPrice === 'number') {
+      if (filters.minPrice) {
         query = query.or(`prix_a_partir_de.gte.${filters.minPrice},prix_par_personne.gte.${filters.minPrice}`);
       }
       
-      if (typeof filters.maxPrice === 'number') {
+      if (filters.maxPrice) {
         query = query.or(`prix_a_partir_de.lte.${filters.maxPrice},prix_par_personne.lte.${filters.maxPrice}`);
       }
       
       const { data, error } = await query;
       
       if (error) throw new Error(error.message);
-      return data || []; // Ensure we always return an array, even when data is undefined
+      return data as Prestataire[];
     }
   });
   
@@ -102,9 +97,6 @@ const MoteurRecherche = () => {
       console.error('Error fetching vendors:', error);
     }
   }, [error]);
-
-  // Make sure vendors is always treated as an array
-  const vendorsList = Array.isArray(vendors) ? vendors : [];
 
   return (
     <div className="min-h-screen bg-white">
@@ -127,9 +119,9 @@ const MoteurRecherche = () => {
           <div className="flex justify-center items-center py-12">
             <Loader2 className="h-8 w-8 animate-spin text-wedding-olive" />
           </div>
-        ) : vendorsList.length > 0 ? (
+        ) : vendors && vendors.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {vendorsList.map(vendor => (
+            {vendors.map(vendor => (
               <VendorCard 
                 key={vendor.id} 
                 vendor={vendor} 

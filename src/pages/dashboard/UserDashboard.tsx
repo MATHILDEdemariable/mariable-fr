@@ -326,9 +326,7 @@ const Dashboard = () => {
     });
     
     return () => {
-      if (authListener && authListener.subscription) {
-        authListener.subscription.unsubscribe();
-      }
+      authListener.subscription.unsubscribe();
     };
   }, [navigate]);
   

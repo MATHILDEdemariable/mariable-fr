@@ -77,7 +77,6 @@ const AddVendorDialog: React.FC<AddVendorDialogProps> = ({
         status: 'à contacter',
         contact_date: null,
         response_date: null,
-        prestataire_id: null, // No longer linking to prestataire_id
       });
 
       if (error) throw error;

@@ -112,9 +112,7 @@ export default {
 			},
 			fontFamily: {
 				serif: ['Playfair Display', 'serif'],
-				sans: ['Raleway', 'sans-serif'],
-				playfair: ['Playfair Display', 'serif'],
-				lato: ['Lato', 'sans-serif']
+				sans: ['Raleway', 'sans-serif']
 			}
 		}
 	},

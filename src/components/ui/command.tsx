@@ -1,4 +1,3 @@
-
 import * as React from "react"
 import { type DialogProps } from "@radix-ui/react-dialog"
 import { Command as CommandPrimitive } from "cmdk"
@@ -68,7 +67,6 @@ const CommandList = React.forwardRef<
 
 CommandList.displayName = CommandPrimitive.List.displayName
 
-// Fixed with proper empty children handling
 const CommandEmpty = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive.Empty>,
   React.ComponentPropsWithoutRef<typeof CommandPrimitive.Empty>
