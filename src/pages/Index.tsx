@@ -1,7 +1,8 @@
+
 import React, { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
-import { Calendar, MapPin, Heart, Instagram, Mail, BookOpen, MessageCircle, CheckCircle, Sparkles } from 'lucide-react';
+import { Calendar, MapPin, Heart, Instagram, Mail, BookOpen, MessageCircle, CheckCircle, Sparkles, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useIsMobile } from '@/hooks/use-mobile';
 import SearchBar from '@/components/search/SearchBar';
