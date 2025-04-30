@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -67,7 +68,11 @@ const Register = () => {
     try {
       setIsLoading(true);
       
-      const { error } = await supabase.auth.signUp({
+      // Définir l'URL de redirection pour les emails de confirmation
+      const origin = window.location.origin;
+      const redirectTo = `${origin}/auth/callback`;
+      
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -75,11 +80,24 @@ const Register = () => {
             first_name: firstName,
             last_name: lastName,
           },
+          emailRedirectTo: redirectTo,
         },
       });
       
       if (error) throw error;
       
+      // Vérifier si l'email nécessite une confirmation
+      if (data.user && data.user.identities && data.user.identities.length === 0) {
+        // L'utilisateur existe déjà
+        toast({
+          title: "Erreur",
+          description: "Un compte avec cette adresse email existe déjà",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      // Rediriger vers la page de confirmation d'email
       navigate('/auth/email-confirmation');
       
     } catch (error: any) {

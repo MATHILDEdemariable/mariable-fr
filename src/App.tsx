@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -41,6 +42,7 @@ import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import UserDashboard from "./pages/dashboard/UserDashboard";
 import EmailConfirmation from "./pages/auth/EmailConfirmation";
+import Callback from "./pages/auth/Callback";
 
 // Test Formulaire
 import TestFormulaire from "./pages/TestFormulaire";
@@ -102,6 +104,7 @@ const App = () => (
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/auth/email-confirmation" element={<EmailConfirmation />} />
+            <Route path="/auth/callback" element={<Callback />} />
             <Route path="/dashboard/*" element={<UserDashboard />} />
             
             {/* Redirect for old privacy policy route */}
