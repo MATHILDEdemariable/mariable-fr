@@ -55,7 +55,7 @@ const VendorCard: React.FC<VendorCardProps> = ({ vendor, onClick }) => {
   };
 
   return (
-    <Card className="overflow-hidden border-wedding-olive/20 hover:shadow-md transition-all">
+    <Card className="overflow-hidden border-wedding-olive/20 hover:shadow-md transition-all cursor-pointer" onClick={() => onClick(vendor)}>
       <div className="relative">
         <AspectRatio ratio={16 / 9}>
           <img 
@@ -88,7 +88,10 @@ const VendorCard: React.FC<VendorCardProps> = ({ vendor, onClick }) => {
       
       <CardFooter className="px-4 pb-4 pt-0">
         <Button 
-          onClick={() => onClick(vendor)}
+          onClick={(e) => {
+            e.stopPropagation();
+            onClick(vendor);
+          }}
           className="w-full bg-wedding-olive hover:bg-wedding-olive/90"
         >
           <ExternalLink className="h-4 w-4 mr-1" /> En savoir plus

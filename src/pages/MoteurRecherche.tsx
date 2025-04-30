@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Database } from '@/integrations/supabase/types';
 import { supabase } from '@/integrations/supabase/client';
@@ -22,6 +23,7 @@ export interface VendorFilter {
 
 const MoteurRecherche = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
   const isMobile = useIsMobile();
   
   const [filters, setFilters] = useState<VendorFilter>({
@@ -33,7 +35,7 @@ const MoteurRecherche = () => {
   });
   
   const navigateToVendorDetails = (vendor: Prestataire) => {
-    window.location.href = `/demo?id=${vendor.id}`;
+    navigate(`/demo?id=${vendor.id}`);
   };
   
   useEffect(() => {
