@@ -11,9 +11,12 @@ export type Database = {
     Tables: {
       prestataires: {
         Row: {
-          categorie: Database["public"]["Enums"]["prestataire_categorie"] | null
+          adresse: string | null
+          categorie: Database["public"]["Enums"]["prestataire_categorie"]
+          code_postal: string | null
           created_at: string
           description: string | null
+          distance: string | null
           email: string | null
           id: string
           latitude: number | null
@@ -32,11 +35,12 @@ export type Database = {
           visible: boolean | null
         }
         Insert: {
-          categorie?:
-            | Database["public"]["Enums"]["prestataire_categorie"]
-            | null
+          adresse?: string | null
+          categorie: Database["public"]["Enums"]["prestataire_categorie"]
+          code_postal?: string | null
           created_at?: string
           description?: string | null
+          distance?: string | null
           email?: string | null
           id?: string
           latitude?: number | null
@@ -55,11 +59,12 @@ export type Database = {
           visible?: boolean | null
         }
         Update: {
-          categorie?:
-            | Database["public"]["Enums"]["prestataire_categorie"]
-            | null
+          adresse?: string | null
+          categorie?: Database["public"]["Enums"]["prestataire_categorie"]
+          code_postal?: string | null
           created_at?: string
           description?: string | null
+          distance?: string | null
           email?: string | null
           id?: string
           latitude?: number | null

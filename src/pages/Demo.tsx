@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -19,7 +18,6 @@ import { Loader2 } from 'lucide-react';
 
 type Prestataire = Database['public']['Tables']['prestataires']['Row'];
 type PrestatairePhoto = Database['public']['Tables']['prestataires_photos']['Row'];
-type PrestataireBrochure = Database['public']['Tables']['prestataires_brochures']['Row'];
 
 interface Package {
   name: string;
@@ -94,24 +92,9 @@ const Demo = () => {
     enabled: !!vendorId
   });
   
-  // Determine if the vendor is a caterer
-  const isCaterer = vendor?.categorie === 'Traiteur';
-  
   useEffect(() => {
     if (vendor) {
-      // Handle different pricing structures based on vendor type
-      if (isCaterer && vendor.prix_par_personne) {
-        // For caterers, base the package prices on per-person pricing
-        const basePrice = vendor.prix_par_personne;
-        const newPackages = [
-          { name: 'Menu Standard', basePrice: basePrice, description: 'Menu classique' },
-          { name: 'Menu Gourmand', basePrice: basePrice * 1.3, description: 'Menu élaboré' },
-          { name: 'Menu Prestige', basePrice: basePrice * 1.6, description: 'Menu gastronomique' },
-        ];
-        setPackages(newPackages);
-        setSelectedPackage(newPackages[0]);
-      } else if (vendor.prix_a_partir_de) {
-        // For non-caterers, use fixed package pricing
+      if (vendor.prix_a_partir_de) {
         const newPackages = [
           { name: 'Classique', basePrice: vendor.prix_a_partir_de, description: 'Formule de base' },
           { name: 'Premium', basePrice: vendor.prix_a_partir_de * 1.4, description: 'Formule intermédiaire' },
@@ -121,7 +104,7 @@ const Demo = () => {
         setSelectedPackage(newPackages[0]);
       }
     }
-  }, [vendor, isCaterer]);
+  }, [vendor]);
 
   const handleDateSelect = (newDate: Date | undefined) => {
     setDate(newDate);
@@ -144,17 +127,11 @@ const Demo = () => {
 
   const calculateTotal = () => {
     const basePrice = selectedPackage.basePrice;
-    
-    // Calculate total differently for caterers with per-person pricing
-    let subtotal = isCaterer ? basePrice * guests : basePrice;
-    
-    const commission = subtotal * 0.04; // 4% commission
+    const commission = basePrice * 0.04; // 4% de commission
     return {
-      basePrice: isCaterer ? basePrice : subtotal,
-      perPersonPrice: isCaterer ? basePrice : null,
-      subtotal: subtotal,
+      basePrice,
       commission,
-      total: subtotal + commission
+      total: basePrice + commission
     };
   };
 
@@ -292,12 +269,6 @@ const Demo = () => {
                     <Award className="h-3 w-3" />
                     {vendor?.categorie}
                   </Badge>
-                  {isCaterer && vendor.prix_par_personne && (
-                    <Badge variant="outline" className="bg-wedding-cream/70 flex items-center gap-1">
-                      <Euro className="h-3 w-3" />
-                      Prix par personne
-                    </Badge>
-                  )}
                   {vendor?.styles && renderStyleBadges()}
                 </div>
               </div>
@@ -316,8 +287,8 @@ const Demo = () => {
                     <div>
                       <p className="font-medium">Prix</p>
                       <p className="text-sm text-muted-foreground">
-                        {isCaterer && vendor.prix_par_personne 
-                          ? `${vendor.prix_par_personne}€/personne`
+                        {vendor.prix_par_personne 
+                          ? `À partir de ${vendor.prix_par_personne}€/pers.`
                           : vendor.prix_a_partir_de 
                             ? `À partir de ${vendor.prix_a_partir_de}€`
                             : 'Prix sur demande'}
@@ -343,10 +314,7 @@ const Demo = () => {
                       <p className="text-sm text-muted-foreground mb-4">
                         {pkg.description}
                       </p>
-                      <p className="font-medium">
-                        {Math.round(pkg.basePrice)}€
-                        {isCaterer && <span className="text-sm text-muted-foreground">/personne</span>}
-                      </p>
+                      <p className="font-medium">{Math.round(pkg.basePrice)}€</p>
                     </Card>
                   ))}
                 </div>
@@ -404,27 +372,10 @@ const Demo = () => {
                 </div>
 
                 <div className="mt-6 border-t pt-4 space-y-2">
-                  {isCaterer ? (
-                    <>
-                      <div className="flex justify-between">
-                        <span>Prix par personne</span>
-                        <span>{Math.round(prices.perPersonPrice || 0)}€</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Nombre d'invités</span>
-                        <span>× {guests}</span>
-                      </div>
-                      <div className="flex justify-between font-medium">
-                        <span>Sous-total</span>
-                        <span>{Math.round(prices.subtotal)}€</span>
-                      </div>
-                    </>
-                  ) : (
-                    <div className="flex justify-between">
-                      <span>Prix de base</span>
-                      <span>{Math.round(prices.basePrice)}€</span>
-                    </div>
-                  )}
+                  <div className="flex justify-between">
+                    <span>Prix de base</span>
+                    <span>{Math.round(prices.basePrice)}€</span>
+                  </div>
                   <div className="flex justify-between text-sm text-muted-foreground">
                     <span>Frais de réservation (4%)</span>
                     <span>{Math.round(prices.commission)}€</span>
@@ -448,8 +399,8 @@ const Demo = () => {
                   variant="outline" 
                   className="w-full" 
                   onClick={() => {
-                    toast({ description: "Vous allez être redirigé vers votre messagerie" });
-                    window.open(`mailto:mathilde@mariable.fr?subject=Contact prestataire: ${vendor.nom}`, '_blank');
+                    toast({ description: "La messagerie sera bientôt disponible" });
+                    window.open(`mailto:${vendor.email || ''}`, '_blank');
                   }}
                 >
                   <MessageSquare className="mr-2 h-4 w-4" />

@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { PieChart, Pie, Cell, ResponsiveContainer, Legend } from 'recharts';
 import { Euro, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
@@ -12,12 +13,12 @@ interface BudgetCategory {
 }
 
 const BUDGET_DATA: BudgetCategory[] = [
-  { name: 'Lieu', amount: 5000, color: '#7F9474' },
-  { name: 'Traiteur', amount: 7000, color: '#9C9474' },
-  { name: 'Décoration', amount: 2000, color: '#BEAE93' },
-  { name: 'Tenue', amount: 3000, color: '#CCC5B9' },
-  { name: 'Photo & Vidéo', amount: 2500, color: '#A69F88' },
-  { name: 'Imprévus', amount: 1500, color: '#D1C8B8' }
+  { name: 'Lieu', amount: 5000, color: '#4CAF50' },
+  { name: 'Traiteur', amount: 7000, color: '#2196F3' },
+  { name: 'Décoration', amount: 2000, color: '#FFC107' },
+  { name: 'Tenue', amount: 3000, color: '#9C27B0' },
+  { name: 'Photo & Vidéo', amount: 2500, color: '#F44336' },
+  { name: 'Marge & Imprévus', amount: 1500, color: '#607D8B' }
 ];
 
 const BudgetSummary: React.FC = () => {
@@ -32,7 +33,7 @@ const BudgetSummary: React.FC = () => {
   };
   
   return (
-    <Card className="bg-wedding-cream/10 border-wedding-olive/20">
+    <Card>
       <CardHeader className="pb-2">
         <CardTitle className="font-serif">Budget</CardTitle>
         <CardDescription>
@@ -40,39 +41,48 @@ const BudgetSummary: React.FC = () => {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="space-y-3">
+        <div className="h-56">
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie
+                data={BUDGET_DATA}
+                cx="50%"
+                cy="50%"
+                innerRadius={60}
+                outerRadius={80}
+                paddingAngle={2}
+                dataKey="amount"
+                nameKey="name"
+                label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                labelLine={false}
+              >
+                {BUDGET_DATA.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.color} />
+                ))}
+              </Pie>
+              <Legend />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+        
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           {BUDGET_DATA.map((category) => (
-            <div key={category.name} className="relative">
-              <div className="flex justify-between text-sm mb-1">
-                <span>{category.name}</span>
-                <span>{formatCurrency(category.amount)}</span>
-              </div>
-              <div className="w-full h-3 bg-wedding-cream/30 rounded-full overflow-hidden">
-                <div 
-                  className="h-full rounded-full" 
-                  style={{ 
-                    width: `${(category.amount / totalBudget) * 100}%`,
-                    backgroundColor: category.color 
-                  }}
-                />
+            <div key={category.name} className="flex items-center space-x-2">
+              <div 
+                className="h-3 w-3 rounded-full" 
+                style={{ backgroundColor: category.color }}
+              />
+              <div>
+                <p className="text-sm font-medium">{category.name}</p>
+                <p className="text-xs text-muted-foreground">{formatCurrency(category.amount)}</p>
               </div>
             </div>
           ))}
         </div>
         
-        <div className="mt-6 pt-4 border-t border-wedding-olive/10 flex items-center justify-between">
-          <div>
-            <p className="text-sm text-muted-foreground">Budget total</p>
-            <p className="text-2xl font-medium font-serif">{formatCurrency(totalBudget)}</p>
-          </div>
-          <div className="h-12 w-12 rounded-full bg-wedding-olive/10 flex items-center justify-center">
-            <Euro className="h-6 w-6 text-wedding-olive" />
-          </div>
-        </div>
-        
         <Button 
           variant="outline" 
-          className="w-full mt-2 border-wedding-olive text-wedding-olive hover:bg-wedding-olive hover:text-white" 
+          className="w-full mt-2" 
           asChild
         >
           <Link to="/dashboard/budget">
