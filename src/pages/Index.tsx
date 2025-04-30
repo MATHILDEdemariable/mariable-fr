@@ -29,7 +29,7 @@ const Index = () => {
   }, []);
 
   const handleConnexionClick = () => {
-    navigate('/login-frame');
+    navigate('/register');
   };
 
   return (
@@ -184,11 +184,13 @@ const Index = () => {
               Prêt à révolutionner l'organisation de votre mariage ?
             </h2>
             <Button 
-              size={isMobile ? "default" : "lg"} 
+              size="lg" 
               className="bg-wedding-olive hover:bg-wedding-olive/90 text-white"
-              onClick={handleConnexionClick}
+              asChild
             >
-              Oui je le veux
+              <Link to="/register">
+                Oui je le veux <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
             </Button>
           </div>
         </section>
