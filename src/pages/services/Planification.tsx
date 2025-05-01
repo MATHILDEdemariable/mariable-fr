@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import ServiceTemplate from '../ServiceTemplate';
@@ -200,8 +201,11 @@ const PlanningChecklist = () => {
   };
   
   const toggleTaskCompletion = async (taskId: number | string) => {
+    // Convert taskId to string for consistent comparison
+    const taskIdStr = taskId.toString();
+    
     // Trouver la tâche à mettre à jour
-    const taskIndex = tasks.findIndex(t => t.id.toString() === taskId.toString());
+    const taskIndex = tasks.findIndex(t => t.id.toString() === taskIdStr);
     if (taskIndex === -1) return;
     
     const taskToUpdate = tasks[taskIndex];
@@ -218,7 +222,7 @@ const PlanningChecklist = () => {
         const { error } = await supabase
           .from('todos_planification')
           .update({ completed: newCompletedState })
-          .eq('id', taskId);
+          .eq('id', taskIdStr);
           
         if (error) throw error;
       } catch (error) {
@@ -237,7 +241,7 @@ const PlanningChecklist = () => {
       const savedTaskStatuses = localStorage.getItem('weddingTasksStatus');
       const statuses = savedTaskStatuses ? JSON.parse(savedTaskStatuses) : {};
       
-      statuses[taskId] = newCompletedState;
+      statuses[taskIdStr] = newCompletedState;
       localStorage.setItem('weddingTasksStatus', JSON.stringify(statuses));
     }
   };
