@@ -72,56 +72,57 @@ const BudgetSummary: React.FC = () => {
                 ))}
               </Pie>
               <Legend formatter={(value) => <span className="text-sm font-medium">{value}</span>} />
-            </ResponsiveContainer>
-          </div>
-          
-          <div className="pt-6 border-t border-wedding-cream/30">
-            <div className="flex items-center justify-center gap-3 mb-4">
-              <div className="bg-wedding-cream/20 p-2 rounded-full">
-                <Euro className="h-8 w-8 text-wedding-olive" />
-              </div>
-              <div className="text-center">
-                <p className="text-sm text-muted-foreground">Budget total</p>
-                <p className="text-2xl font-medium text-wedding-olive">{formatCurrency(totalBudget)}</p>
-              </div>
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+        
+        <div className="pt-6 border-t border-wedding-cream/30">
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <div className="bg-wedding-cream/20 p-2 rounded-full">
+              <Euro className="h-8 w-8 text-wedding-olive" />
+            </div>
+            <div className="text-center">
+              <p className="text-sm text-muted-foreground">Budget total</p>
+              <p className="text-2xl font-medium text-wedding-olive">{formatCurrency(totalBudget)}</p>
             </div>
           </div>
-          
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-            {BUDGET_DATA.map((category) => (
-              <div key={category.name} className="flex items-center space-x-2">
-                <div 
-                  className="h-3 w-3 rounded-full" 
-                  style={{ backgroundColor: category.color }}
-                />
-                <div>
-                  <p className="text-sm font-medium">{category.name}</p>
-                  <p className="text-xs text-muted-foreground">{formatCurrency(category.amount)}</p>
-                </div>
+        </div>
+        
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+          {BUDGET_DATA.map((category) => (
+            <div key={category.name} className="flex items-center space-x-2">
+              <div 
+                className="h-3 w-3 rounded-full" 
+                style={{ backgroundColor: category.color }}
+              />
+              <div>
+                <p className="text-sm font-medium">{category.name}</p>
+                <p className="text-xs text-muted-foreground">{formatCurrency(category.amount)}</p>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
+        </div>
+        
+        <div className="flex items-center justify-between gap-2 mt-4">
+          <Button 
+            variant="outline" 
+            className="flex-1" 
+            asChild
+          >
+            <Link to="/dashboard/budget">
+              Voir le détail <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
+          </Button>
           
-          <div className="flex items-center justify-between gap-2 mt-4">
-            <Button 
-              variant="outline" 
-              className="flex-1" 
-              asChild
-            >
-              <Link to="/dashboard/budget">
-                Voir le détail <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
-            
-            <Button 
-              variant="outline"
-              className="bg-wedding-olive/10 hover:bg-wedding-olive/20 text-wedding-olive"
-              onClick={handleExportPDF}
-            >
-              <Download className="mr-2 h-4 w-4" />
-              Exporter
-            </Button>
-          </div>
+          <Button 
+            variant="outline"
+            className="bg-wedding-olive/10 hover:bg-wedding-olive/20 text-wedding-olive"
+            onClick={handleExportPDF}
+          >
+            <Download className="mr-2 h-4 w-4" />
+            Exporter
+          </Button>
+        </div>
       </CardContent>
     </Card>
   );
