@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { 
@@ -21,6 +20,7 @@ import { Separator } from '@/components/ui/separator';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { exportDashboardToPDF } from '@/services/pdfExportService';
 import { supabase } from '@/integrations/supabase/client';
+import { Json } from '@/integrations/supabase/types';
 
 interface BudgetCategory {
   name: string;
@@ -283,6 +283,14 @@ const BudgetSummary: React.FC = () => {
           
         const projectId = projects && projects.length > 0 ? projects[0].id : null;
         
+        // Convertir le tableau breakdown en format compatible avec Json
+        const breakdownJson = breakdown.map(item => ({
+          name: item.name,
+          amount: item.amount,
+          basePrice: item.basePrice,
+          color: item.color
+        })) as Json;
+        
         // Insérer les données de budget dans Supabase
         await supabase
           .from('budgets_dashboard')
@@ -295,7 +303,7 @@ const BudgetSummary: React.FC = () => {
             service_level: serviceLevel,
             selected_vendors: selectedVendors,
             total_budget: finalBudgetEstimate.total,
-            breakdown: finalBudgetEstimate.breakdown
+            breakdown: breakdownJson
           });
         
         toast({
@@ -365,8 +373,13 @@ const BudgetSummary: React.FC = () => {
             setGlobalBudget(latestBudget.total_budget);
             
             if (latestBudget.breakdown) {
-              // Mettre à jour le graphique
-              const newBudgetData = latestBudget.breakdown.map((item: any) => ({
+              // S'assurer que breakdown est un tableau avant d'utiliser map
+              const breakdownArray = Array.isArray(latestBudget.breakdown) 
+                ? latestBudget.breakdown 
+                : [];
+                
+              // Mettre à jour le graphique avec les données 
+              const newBudgetData = breakdownArray.map((item: any) => ({
                 name: item.name,
                 amount: item.amount,
                 color: item.color
