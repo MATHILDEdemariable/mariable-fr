@@ -1,10 +1,9 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Routes, Route, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
-import { Calendar, Clock, Euro, Layout, Plus, Users } from 'lucide-react';
+import { Calendar, Clock, Euro, Layout, Plus, Users, Download } from 'lucide-react';
 import Header from '@/components/Header';
 import SEO from '@/components/SEO';
 import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
@@ -14,6 +13,7 @@ import TasksList from '@/components/dashboard/TasksList';
 import BudgetSummary from '@/components/dashboard/BudgetSummary';
 import DocumentsSection from '@/components/dashboard/DocumentsSection';
 import CreateProjectDialog from '@/components/dashboard/CreateProjectDialog';
+import { exportDashboardToPDF } from '@/services/pdfExportService';
 
 // Types for our project data
 interface Project {
@@ -32,7 +32,33 @@ const DashboardHome = () => {
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
 
-  // Calculate days remaining until wedding
+  // Fonction pour exporter le dashboard en PDF
+  const handleExportPDF = async () => {
+    toast({
+      title: "Export PDF en cours",
+      description: "Préparation de votre document...",
+    });
+    
+    // Attendre que le DOM soit complètement chargé
+    setTimeout(async () => {
+      const success = await exportDashboardToPDF();
+      
+      if (success) {
+        toast({
+          title: "Export réussi",
+          description: "Votre dashboard a été exporté en PDF",
+        });
+      } else {
+        toast({
+          title: "Erreur d'export",
+          description: "Une erreur s'est produite lors de l'export en PDF",
+          variant: "destructive"
+        });
+      }
+    }, 500);
+  };
+
+  // Calculer les jours restants jusqu'au mariage
   const calculateDaysRemaining = (weddingDate: string | null) => {
     if (!weddingDate) return null;
     
@@ -82,6 +108,19 @@ const DashboardHome = () => {
     }
   };
 
+  // Charger les données du localStorage
+  const savedProject = localStorage.getItem('weddingProject');
+  let localWeddingDate = "";
+  let localGuestCount = 0;
+  let localBudget = 0;
+  
+  if (savedProject) {
+    const parsedProject = JSON.parse(savedProject);
+    localWeddingDate = parsedProject.weddingDate || "";
+    localGuestCount = parsedProject.guestCount || 0;
+    localBudget = parsedProject.budget || 0;
+  }
+
   // Load project data on component mount
   useEffect(() => {
     fetchUserProject();
@@ -120,24 +159,32 @@ const DashboardHome = () => {
   // Calculate project data
   const projectData = {
     name: project.title,
-    date: project.wedding_date ? new Date(project.wedding_date).toLocaleDateString('fr-FR', {
-      day: 'numeric', 
-      month: 'long', 
-      year: 'numeric'
-    }) : "Non définie",
-    guestCount: project.guest_count || 0,
-    budget: project.budget || 0,
+    date: localWeddingDate || project.wedding_date || "Non définie",
+    guestCount: localGuestCount || project.guest_count || 0,
+    budget: localBudget || project.budget || 0,
     location: project.location || "Non défini",
-    daysRemaining: calculateDaysRemaining(project.wedding_date),
+    daysRemaining: calculateDaysRemaining(localWeddingDate || project.wedding_date),
     progress: 35 // Default progress value, would be calculated based on tasks completion
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div id="dashboard-content" className="space-y-6">
+      <div className="flex justify-between items-center mb-2">
+        <h1 className="text-2xl font-serif">Tableau de bord</h1>
+        <Button
+          variant="outline"
+          className="bg-wedding-olive/10 hover:bg-wedding-olive/20 text-wedding-olive"
+          onClick={handleExportPDF}
+        >
+          <Download className="mr-2 h-4 w-4" />
+          Exporter en PDF
+        </Button>
+      </div>
+      
       <div className="md:col-span-2">
         <ProjectSummary 
           projectName={projectData.name}
-          weddingDate={projectData.date}
+          weddingDate={typeof projectData.date === 'string' ? projectData.date : undefined}
           guestCount={projectData.guestCount}
           budget={projectData.budget}
           daysRemaining={projectData.daysRemaining || 0}
