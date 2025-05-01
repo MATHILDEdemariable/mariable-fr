@@ -9,6 +9,59 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      budgets_dashboard: {
+        Row: {
+          breakdown: Json
+          created_at: string
+          guests_count: number
+          id: string
+          project_id: string | null
+          region: string
+          season: string
+          selected_vendors: string[]
+          service_level: string
+          total_budget: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          breakdown: Json
+          created_at?: string
+          guests_count: number
+          id?: string
+          project_id?: string | null
+          region: string
+          season: string
+          selected_vendors: string[]
+          service_level: string
+          total_budget: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          breakdown?: Json
+          created_at?: string
+          guests_count?: number
+          id?: string
+          project_id?: string | null
+          region?: string
+          season?: string
+          selected_vendors?: string[]
+          service_level?: string
+          total_budget?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "budgets_dashboard_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       prestataires: {
         Row: {
           categorie: Database["public"]["Enums"]["prestataire_categorie"] | null
