@@ -250,6 +250,48 @@ export type Database = {
         }
         Relationships: []
       }
+      todos_planification: {
+        Row: {
+          category: string | null
+          completed: boolean
+          created_at: string
+          description: string | null
+          due_date: string | null
+          id: string
+          label: string
+          position: number
+          priority: Database["public"]["Enums"]["todo_priority"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          category?: string | null
+          completed?: boolean
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          label: string
+          position: number
+          priority: Database["public"]["Enums"]["todo_priority"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          category?: string | null
+          completed?: boolean
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          label?: string
+          position?: number
+          priority?: Database["public"]["Enums"]["todo_priority"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       vendors_tracking: {
         Row: {
           category: string
@@ -342,6 +384,7 @@ export type Database = {
         | "Occitanie"
         | "Pays de la Loire"
         | "Provence-Alpes-Côte d'Azur"
+      todo_priority: "haute" | "moyenne" | "basse"
       vendor_status:
         | "à contacter"
         | "contactés"
@@ -489,6 +532,7 @@ export const Constants = {
         "Pays de la Loire",
         "Provence-Alpes-Côte d'Azur",
       ],
+      todo_priority: ["haute", "moyenne", "basse"],
       vendor_status: [
         "à contacter",
         "contactés",

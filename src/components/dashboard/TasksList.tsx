@@ -3,166 +3,176 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Loader2 } from 'lucide-react';
+import { useToast } from '@/components/ui/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 import ProgressBar from './ProgressBar';
 
 interface Task {
   id: string;
-  title: string;
-  description: string;
-  dueDate?: Date;
-  priority: 'high' | 'medium' | 'low';
-  category: 'preparation' | 'vendors' | 'logistics' | 'personal';
+  label: string;
+  description: string | null;
+  due_date?: Date;
+  priority: 'haute' | 'moyenne' | 'basse';
+  category: string | null;
   completed: boolean;
+  position: number;
 }
 
-// Liste des tâches combinant les tâches existantes et celles de la planification
-const initialTasks: Task[] = [
-  {
-    id: '1',
-    title: 'Définir la date du mariage',
-    description: 'Choisir une date définitive pour la cérémonie et la réception',
-    dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-    priority: 'high',
-    category: 'preparation',
-    completed: false,
-  },
-  {
-    id: '2',
-    title: 'Réserver le lieu de réception',
-    description: 'Contacter et visiter différents lieux potentiels pour la réception',
-    dueDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
-    priority: 'high',
-    category: 'vendors',
-    completed: false,
-  },
-  {
-    id: '3',
-    title: 'Choisir le traiteur',
-    description: 'Organiser des dégustations avec différents traiteurs',
-    dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-    priority: 'high',
-    category: 'vendors',
-    completed: false,
-  },
-  {
-    id: '4',
-    title: 'Planifier la liste d\'invités',
-    description: 'Finaliser la liste des personnes à inviter',
-    dueDate: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000),
-    priority: 'medium',
-    category: 'preparation',
-    completed: false,
-  },
-  {
-    id: '5',
-    title: 'Commander les faire-part',
-    description: 'Concevoir et commander les faire-part de mariage',
-    dueDate: new Date(Date.now() + 20 * 24 * 60 * 60 * 1000),
-    priority: 'medium',
-    category: 'personal',
-    completed: false,
-  },
-  // Tâches de la page planification
-  {
-    id: '6',
-    title: "Poser les bases",
-    description: "Définir la vision de votre mariage : style, ambiance, type de cérémonie",
-    priority: "high",
-    category: "preparation",
-    completed: false,
-  },
-  {
-    id: '7',
-    title: "Estimer le nombre d'invités",
-    description: "Même approximatif, cela guidera vos choix logistiques et budgétaires",
-    priority: "high",
-    category: "preparation",
-    completed: false,
-  },
-  {
-    id: '8',
-    title: "Calibrer votre budget",
-    description: "Évaluer vos moyens et prioriser les postes les plus importants selon vos envies",
-    priority: "high",
-    category: "preparation",
-    completed: false,
-  },
-  {
-    id: '9',
-    title: "Choisir une période ou une date cible",
-    description: "Cela conditionne les disponibilités des lieux et prestataires",
-    priority: "high",
-    category: "preparation",
-    completed: false,
-  },
-  {
-    id: '10',
-    title: "Réserver les prestataires clés",
-    description: "Lieu, traiteur, photographe en priorité. Puis DJ, déco, animation, etc",
-    priority: "high",
-    category: "vendors",
-    completed: false,
-  }
-];
-
+// Mapping pour les couleurs de priorité
 const priorityColorMap = {
-  high: 'bg-red-100 text-red-800',
-  medium: 'bg-amber-100 text-amber-800',
-  low: 'bg-blue-100 text-blue-800',
+  haute: 'bg-red-100 text-red-800',
+  moyenne: 'bg-amber-100 text-amber-800',
+  basse: 'bg-blue-100 text-blue-800',
+};
+
+// Mapping pour le texte de priorité en français
+const priorityTextMap = {
+  haute: 'Priorité haute',
+  moyenne: 'Priorité moyenne',
+  basse: 'Priorité basse',
 };
 
 const TasksList: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [showCompleted, setShowCompleted] = useState(false);
+  const [activeTab, setActiveTab] = useState<string>("all");
+  const { toast } = useToast();
   
   useEffect(() => {
-    // Récupération des tâches depuis le localStorage s'il y en a
-    const savedTasks = localStorage.getItem('weddingTasks');
-    if (savedTasks) {
-      const parsedTasks = JSON.parse(savedTasks).map((task: any) => ({
-        ...task,
-        dueDate: task.dueDate ? new Date(task.dueDate) : undefined
-      }));
-      setTasks(parsedTasks);
-    } else {
-      setTasks(initialTasks);
-    }
+    fetchTasks();
+    
+    // S'abonner aux mises à jour en temps réel
+    const channel = supabase
+      .channel('todos_changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'todos_planification',
+        },
+        () => {
+          // Rafraîchir les tâches lors d'une modification
+          fetchTasks();
+        }
+      )
+      .subscribe();
+      
+    // Nettoyage à la désactivation du composant
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
   
-  const toggleTaskCompletion = (taskId: string) => {
-    const updatedTasks = tasks.map(task => 
-      task.id === taskId 
-        ? { ...task, completed: !task.completed } 
-        : task
-    );
-    
-    setTasks(updatedTasks);
-    
-    // Sauvegarde dans localStorage
-    localStorage.setItem('weddingTasks', JSON.stringify(updatedTasks));
+  const fetchTasks = async () => {
+    try {
+      setIsLoading(true);
+      
+      // Vérifier si l'utilisateur est connecté
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (user) {
+        // Récupérer les tâches de l'utilisateur depuis Supabase
+        const { data: tasksData, error } = await supabase
+          .from('todos_planification')
+          .select('*')
+          .order('position', { ascending: true });
+          
+        if (error) throw error;
+        
+        // Formater les dates
+        const formattedTasks = tasksData.map((task: any) => ({
+          ...task,
+          due_date: task.due_date ? new Date(task.due_date) : undefined,
+        }));
+        
+        setTasks(formattedTasks);
+      } else {
+        // Si l'utilisateur n'est pas connecté, utiliser les données de démonstration
+        setTasks([]);
+      }
+    } catch (error) {
+      console.error('Erreur lors du chargement des tâches:', error);
+      toast({
+        title: "Erreur de chargement",
+        description: "Impossible de charger vos tâches",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
   
-  // Calculate progress percentage
-  const progress = Math.round((tasks.filter(t => t.completed).length / tasks.length) * 100);
+  const toggleTaskCompletion = async (taskId: string) => {
+    try {
+      // Trouver la tâche à mettre à jour
+      const taskToUpdate = tasks.find(task => task.id === taskId);
+      if (!taskToUpdate) return;
+      
+      // Mettre à jour l'état local d'abord pour une UI réactive
+      const updatedTasks = tasks.map(task => 
+        task.id === taskId 
+          ? { ...task, completed: !task.completed } 
+          : task
+      );
+      
+      setTasks(updatedTasks);
+      
+      // Mettre à jour dans Supabase
+      const { error } = await supabase
+        .from('todos_planification')
+        .update({ completed: !taskToUpdate.completed })
+        .eq('id', taskId);
+        
+      if (error) throw error;
+      
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour de la tâche:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de mettre à jour la tâche",
+        variant: "destructive",
+      });
+      
+      // Revenir à l'état initial en cas d'erreur
+      fetchTasks();
+    }
+  };
   
-  // Filtrer les tâches à afficher
-  const filteredTasks = tasks
-    .filter(task => showCompleted ? true : !task.completed)
-    .sort((a, b) => {
-      // Trier d'abord par complété
-      if (a.completed !== b.completed) return a.completed ? 1 : -1;
-      
-      // Ensuite par date d'échéance si disponible
-      if (a.dueDate && b.dueDate) {
-        return a.dueDate.getTime() - b.dueDate.getTime();
-      }
-      if (a.dueDate) return -1;
-      if (b.dueDate) return 1;
-      
-      // Enfin par priorité
-      const priorityMap = { high: 0, medium: 1, low: 2 };
-      return priorityMap[a.priority] - priorityMap[b.priority];
-    });
+  // Calculer le pourcentage de progression
+  const progress = tasks.length > 0 
+    ? Math.round((tasks.filter(t => t.completed).length / tasks.length) * 100) 
+    : 0;
+  
+  // Filtrer les tâches en fonction des onglets et de l'option "Afficher les tâches complétées"
+  const filterTasks = () => {
+    return tasks
+      .filter(task => {
+        // Filtre pour les tâches complétées/non complétées
+        if (!showCompleted && task.completed) return false;
+        
+        // Filtre par catégorie (onglets)
+        if (activeTab !== "all" && task.category !== activeTab) return false;
+        
+        return true;
+      })
+      .sort((a, b) => {
+        // Trier d'abord par complété
+        if (a.completed !== b.completed) return a.completed ? 1 : -1;
+        
+        // Ensuite par position (ordre défini dans la page planification)
+        return a.position - b.position;
+      });
+  };
+  
+  const filteredTasks = filterTasks();
+  
+  // Extraire les catégories uniques pour les onglets
+  const uniqueCategories = Array.from(new Set(tasks.map(task => task.category)))
+    .filter(Boolean) as string[];
   
   const formatDueDate = (dueDate?: Date) => {
     if (!dueDate) return 'Non défini';
@@ -186,8 +196,21 @@ const TasksList: React.FC = () => {
         <CardTitle className="font-serif">Tâches à accomplir</CardTitle>
         <CardDescription>Gérez votre liste de tâches pour votre mariage</CardDescription>
         <ProgressBar percentage={progress} className="mt-2" />
-        <div className="flex justify-end mt-2">
-          <div className="flex items-center space-x-2">
+        <div className="flex justify-between items-center mt-2">
+          {uniqueCategories.length > 0 && (
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+              <TabsList className="grid grid-cols-auto-fit gap-2">
+                <TabsTrigger value="all">Toutes</TabsTrigger>
+                {uniqueCategories.map(category => (
+                  <TabsTrigger key={category} value={category}>
+                    {category.charAt(0).toUpperCase() + category.slice(1)}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </Tabs>
+          )}
+          
+          <div className="flex items-center space-x-2 ml-4">
             <Checkbox 
               id="show-completed" 
               checked={showCompleted}
@@ -203,49 +226,55 @@ const TasksList: React.FC = () => {
         </div>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4">
-          {filteredTasks.length === 0 ? (
-            <p className="text-center py-4 text-muted-foreground">
-              Toutes vos tâches sont complétées !
-            </p>
-          ) : (
-            filteredTasks.map((task) => (
-              <div key={task.id} className="flex items-start space-x-2 pb-4 border-b last:border-0">
-                <Checkbox 
-                  id={`task-${task.id}`}
-                  checked={task.completed}
-                  onCheckedChange={() => toggleTaskCompletion(task.id)}
-                />
-                
-                <div className="space-y-1 flex-1">
-                  <div className="flex justify-between">
-                    <label
-                      htmlFor={`task-${task.id}`}
-                      className={`text-base font-medium leading-none cursor-pointer ${task.completed ? 'line-through text-muted-foreground' : ''}`}
-                    >
-                      {task.title}
-                    </label>
-                    <Badge className={priorityColorMap[task.priority]}>
-                      {task.priority === 'high' && 'Priorité haute'}
-                      {task.priority === 'medium' && 'Priorité moyenne'}
-                      {task.priority === 'low' && 'Priorité basse'}
-                    </Badge>
-                  </div>
+        {isLoading ? (
+          <div className="flex justify-center py-8">
+            <Loader2 className="h-8 w-8 animate-spin text-wedding-olive" />
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {filteredTasks.length === 0 ? (
+              <p className="text-center py-4 text-muted-foreground">
+                {tasks.length === 0 
+                  ? "Aucune tâche disponible. Créez des tâches dans la section Planification." 
+                  : "Toutes vos tâches sont complétées !"}
+              </p>
+            ) : (
+              filteredTasks.map((task) => (
+                <div key={task.id} className="flex items-start space-x-2 pb-4 border-b last:border-0">
+                  <Checkbox 
+                    id={`task-${task.id}`}
+                    checked={task.completed}
+                    onCheckedChange={() => toggleTaskCompletion(task.id)}
+                  />
                   
-                  <p className={`text-sm ${task.completed ? 'line-through text-muted-foreground' : 'text-muted-foreground'}`}>
-                    {task.description}
-                  </p>
-                  
-                  {task.dueDate && (
-                    <p className={`text-xs ${task.completed ? 'line-through text-muted-foreground' : 'text-muted-foreground'}`}>
-                      Échéance : {formatDueDate(task.dueDate)}
+                  <div className="space-y-1 flex-1">
+                    <div className="flex justify-between">
+                      <label
+                        htmlFor={`task-${task.id}`}
+                        className={`text-base font-medium leading-none cursor-pointer ${task.completed ? 'line-through text-muted-foreground' : ''}`}
+                      >
+                        {task.label}
+                      </label>
+                      <Badge className={priorityColorMap[task.priority]}>
+                        {priorityTextMap[task.priority]}
+                      </Badge>
+                    </div>
+                    
+                    <p className={`text-sm ${task.completed ? 'line-through text-muted-foreground' : 'text-muted-foreground'}`}>
+                      {task.description || ''}
                     </p>
-                  )}
+                    
+                    {task.due_date && (
+                      <p className={`text-xs ${task.completed ? 'line-through text-muted-foreground' : 'text-muted-foreground'}`}>
+                        Échéance : {formatDueDate(task.due_date)}
+                      </p>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))
-          )}
-        </div>
+              ))
+            )}
+          </div>
+        )}
       </CardContent>
     </Card>
   );
