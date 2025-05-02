@@ -49,7 +49,7 @@ const formSchema = z.object({
   siret: z.string().min(9, { message: 'Le numéro SIRET est requis' }),
   assurance_nom: z.string().min(2, { message: "Le nom de l'assurance est requis" }),
   description: z.string().optional(),
-  prix_minimum: z.string().transform((val) => parseFloat(val)),
+  prix_minimum: z.string().transform((val) => parseFloat(val) || 0),
   accord_referencement: z.boolean().refine((val) => val === true, {
     message: 'Vous devez accepter le référencement'
   }),
@@ -183,8 +183,8 @@ const ProfessionalRegistrationForm = () => {
           site_web: values.site_web || null,
           siret: values.siret,
           assurance_nom: values.assurance_nom,
-          // Ensure prix_minimum is a number - after zod transformation it should be
-          prix_minimum: Number(values.prix_minimum),
+          // Since the Zod schema transforms prix_minimum to a number already
+          prix_minimum: values.prix_minimum,
           description: values.description || null,
           accord_referencement: values.accord_referencement,
           accord_cgv: values.accord_cgv,
