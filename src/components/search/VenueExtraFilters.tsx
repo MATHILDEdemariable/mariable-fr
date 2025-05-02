@@ -54,14 +54,14 @@ const VenueExtraFilters: React.FC<VenueExtraFiltersProps> = ({ onFilterChange })
       <div>
         <Label className="text-xs">Type de lieu</Label>
         <Select
-          value={categorieLieu || ''}
+          value={categorieLieu || 'all-types'}
           onValueChange={handleCategorieLieuChange}
         >
           <SelectTrigger className="mt-1">
             <SelectValue placeholder="Tous les types de lieu" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Tous les types</SelectItem>
+            <SelectItem value="all-types">Tous les types</SelectItem>
             {LIEU_CATEGORIES.map((type) => (
               <SelectItem key={type} value={type}>{type}</SelectItem>
             ))}
