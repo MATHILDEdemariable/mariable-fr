@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/popover';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { VendorFilter } from '@/pages/MoteurRecherche';
+import VenueExtraFilters from '@/components/search/VenueExtraFilters';
 
 type PrestataireCategorie = Database['public']['Enums']['prestataire_categorie'];
 type RegionFrance = Database['public']['Enums']['region_france'];
@@ -63,7 +64,11 @@ const VendorFilters: React.FC<VendorFiltersProps> = ({ filters, onFilterChange }
     filters.category !== 'Tous' || 
     filters.region !== null || 
     filters.minPrice !== undefined || 
-    filters.maxPrice !== undefined;
+    filters.maxPrice !== undefined ||
+    filters.categorieLieu !== undefined ||
+    filters.capaciteMin !== undefined ||
+    filters.hebergement !== undefined ||
+    filters.couchages !== undefined;
   
   const handlePriceChange = (value: number[]) => {
     setPriceRange([value[0], value[1]]);
@@ -81,10 +86,25 @@ const VendorFilters: React.FC<VendorFiltersProps> = ({ filters, onFilterChange }
       category: 'Tous',
       region: null,
       minPrice: undefined,
-      maxPrice: undefined
+      maxPrice: undefined,
+      categorieLieu: undefined,
+      capaciteMin: undefined,
+      hebergement: undefined,
+      couchages: undefined
     });
     setPriceRange([0, 10000]);
   };
+
+  const handleVenueExtraFiltersChange = (venueFilters: {
+    categorieLieu?: string | null;
+    capaciteMin?: number | null;
+    hebergement?: boolean | null;
+    couchages?: number | null;
+  }) => {
+    onFilterChange(venueFilters);
+  };
+
+  const isVenueCategory = filters.category === 'Lieu de réception';
 
   return (
     <div className="space-y-4 bg-white">
@@ -179,6 +199,13 @@ const VendorFilters: React.FC<VendorFiltersProps> = ({ filters, onFilterChange }
           )}
         </div>
       )}
+
+      {/* Filtres spécifiques aux lieux de réception (desktop) */}
+      {!isMobile && isVenueCategory && (
+        <div className="mt-4">
+          <VenueExtraFilters onFilterChange={handleVenueExtraFiltersChange} />
+        </div>
+      )}
       
       {/* Filtres mobile (bouton) */}
       {isMobile && (
@@ -256,6 +283,11 @@ const VendorFilters: React.FC<VendorFiltersProps> = ({ filters, onFilterChange }
                     onValueChange={handlePriceChange}
                   />
                 </div>
+
+                {/* Filtres spécifiques aux lieux de réception (mobile) */}
+                {isVenueCategory && (
+                  <VenueExtraFilters onFilterChange={handleVenueExtraFiltersChange} />
+                )}
                 
                 <div className="flex gap-2 pt-2">
                   {hasActiveFilters && (

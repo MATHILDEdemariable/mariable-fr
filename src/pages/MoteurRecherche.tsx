@@ -19,6 +19,11 @@ export interface VendorFilter {
   region: string | null;
   minPrice?: number;
   maxPrice?: number;
+  // Nouveaux filtres pour les lieux de réception
+  categorieLieu?: string | null;
+  capaciteMin?: number | null;
+  hebergement?: boolean | null;
+  couchages?: number | null;
 }
 
 const MoteurRecherche = () => {
@@ -32,6 +37,10 @@ const MoteurRecherche = () => {
     region: searchParams.get('region'),
     minPrice: searchParams.get('min') ? Number(searchParams.get('min')) : undefined,
     maxPrice: searchParams.get('max') ? Number(searchParams.get('max')) : undefined,
+    categorieLieu: searchParams.get('categorieLieu'),
+    capaciteMin: searchParams.get('capaciteMin') ? Number(searchParams.get('capaciteMin')) : undefined,
+    hebergement: searchParams.get('hebergement') === 'true' ? true : undefined,
+    couchages: searchParams.get('couchages') ? Number(searchParams.get('couchages')) : undefined,
   });
   
   const navigateToVendorDetails = (vendor: Prestataire) => {
@@ -46,6 +55,12 @@ const MoteurRecherche = () => {
     if (filters.region) newParams.set('region', filters.region);
     if (filters.minPrice) newParams.set('min', filters.minPrice.toString());
     if (filters.maxPrice) newParams.set('max', filters.maxPrice.toString());
+    
+    // Nouveaux paramètres pour les lieux
+    if (filters.categorieLieu) newParams.set('categorieLieu', filters.categorieLieu);
+    if (filters.capaciteMin) newParams.set('capaciteMin', filters.capaciteMin.toString());
+    if (filters.hebergement !== undefined) newParams.set('hebergement', filters.hebergement.toString());
+    if (filters.couchages) newParams.set('couchages', filters.couchages.toString());
     
     setSearchParams(newParams);
   }, [filters, setSearchParams]);
@@ -80,6 +95,25 @@ const MoteurRecherche = () => {
       
       if (filters.maxPrice) {
         query = query.or(`prix_a_partir_de.lte.${filters.maxPrice},prix_par_personne.lte.${filters.maxPrice}`);
+      }
+      
+      // Filtres supplémentaires pour les lieux de réception
+      if (filters.category === 'Lieu de réception') {
+        if (filters.categorieLieu) {
+          query = query.eq('categorie_lieu', filters.categorieLieu);
+        }
+        
+        if (filters.capaciteMin) {
+          query = query.gte('capacite_invites', filters.capaciteMin);
+        }
+        
+        if (filters.hebergement !== undefined) {
+          query = query.eq('hebergement_inclus', filters.hebergement);
+        }
+        
+        if (filters.couchages) {
+          query = query.gte('nombre_couchages', filters.couchages);
+        }
       }
       
       const { data, error } = await query;

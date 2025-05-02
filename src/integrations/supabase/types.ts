@@ -64,14 +64,18 @@ export type Database = {
       }
       prestataires: {
         Row: {
+          capacite_invites: number | null
           categorie: Database["public"]["Enums"]["prestataire_categorie"] | null
+          categorie_lieu: string | null
           created_at: string
           description: string | null
           email: string | null
+          hebergement_inclus: boolean | null
           id: string
           latitude: number | null
           longitude: number | null
           nom: string
+          nombre_couchages: number | null
           prix_a_partir_de: number | null
           prix_par_personne: number | null
           region: Database["public"]["Enums"]["region_france"] | null
@@ -85,16 +89,20 @@ export type Database = {
           visible: boolean | null
         }
         Insert: {
+          capacite_invites?: number | null
           categorie?:
             | Database["public"]["Enums"]["prestataire_categorie"]
             | null
+          categorie_lieu?: string | null
           created_at?: string
           description?: string | null
           email?: string | null
+          hebergement_inclus?: boolean | null
           id?: string
           latitude?: number | null
           longitude?: number | null
           nom: string
+          nombre_couchages?: number | null
           prix_a_partir_de?: number | null
           prix_par_personne?: number | null
           region?: Database["public"]["Enums"]["region_france"] | null
@@ -108,16 +116,20 @@ export type Database = {
           visible?: boolean | null
         }
         Update: {
+          capacite_invites?: number | null
           categorie?:
             | Database["public"]["Enums"]["prestataire_categorie"]
             | null
+          categorie_lieu?: string | null
           created_at?: string
           description?: string | null
           email?: string | null
+          hebergement_inclus?: boolean | null
           id?: string
           latitude?: number | null
           longitude?: number | null
           nom?: string
+          nombre_couchages?: number | null
           prix_a_partir_de?: number | null
           prix_par_personne?: number | null
           region?: Database["public"]["Enums"]["region_france"] | null
