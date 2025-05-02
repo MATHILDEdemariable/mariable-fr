@@ -64,6 +64,9 @@ export type Database = {
       }
       prestataires: {
         Row: {
+          accord_cgv: boolean | null
+          accord_referencement: boolean | null
+          assurance_nom: string | null
           capacite_invites: number | null
           categorie: Database["public"]["Enums"]["prestataire_categorie"] | null
           categorie_lieu: string | null
@@ -77,10 +80,12 @@ export type Database = {
           nom: string
           nombre_couchages: number | null
           prix_a_partir_de: number | null
+          prix_minimum: number | null
           prix_par_personne: number | null
           region: Database["public"]["Enums"]["region_france"] | null
           responsable_bio: string | null
           responsable_nom: string | null
+          siret: string | null
           site_web: string | null
           styles: Json | null
           telephone: string | null
@@ -89,6 +94,9 @@ export type Database = {
           visible: boolean | null
         }
         Insert: {
+          accord_cgv?: boolean | null
+          accord_referencement?: boolean | null
+          assurance_nom?: string | null
           capacite_invites?: number | null
           categorie?:
             | Database["public"]["Enums"]["prestataire_categorie"]
@@ -104,10 +112,12 @@ export type Database = {
           nom: string
           nombre_couchages?: number | null
           prix_a_partir_de?: number | null
+          prix_minimum?: number | null
           prix_par_personne?: number | null
           region?: Database["public"]["Enums"]["region_france"] | null
           responsable_bio?: string | null
           responsable_nom?: string | null
+          siret?: string | null
           site_web?: string | null
           styles?: Json | null
           telephone?: string | null
@@ -116,6 +126,9 @@ export type Database = {
           visible?: boolean | null
         }
         Update: {
+          accord_cgv?: boolean | null
+          accord_referencement?: boolean | null
+          assurance_nom?: string | null
           capacite_invites?: number | null
           categorie?:
             | Database["public"]["Enums"]["prestataire_categorie"]
@@ -131,10 +144,12 @@ export type Database = {
           nom?: string
           nombre_couchages?: number | null
           prix_a_partir_de?: number | null
+          prix_minimum?: number | null
           prix_par_personne?: number | null
           region?: Database["public"]["Enums"]["region_france"] | null
           responsable_bio?: string | null
           responsable_nom?: string | null
+          siret?: string | null
           site_web?: string | null
           styles?: Json | null
           telephone?: string | null

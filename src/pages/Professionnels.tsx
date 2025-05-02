@@ -1,8 +1,10 @@
+
 import React from 'react';
 import Header from '@/components/Header';
 import { Link } from 'react-router-dom';
 import { Instagram, Mail, Linkedin, FileDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import ProfessionalRegistrationForm from '@/components/forms/ProfessionalRegistrationForm';
 
 const Professionnels = () => {
   return (
@@ -80,17 +82,7 @@ const Professionnels = () => {
           
           <div className="border rounded-lg p-6 bg-white shadow-sm">
             <h2 className="text-2xl font-serif mb-4">Formulaire d'inscription prestataire</h2>
-            <div className="h-[533px] w-full">
-              <iframe 
-                className="airtable-embed" 
-                src="https://airtable.com/embed/app6YR8d1UIVu4KQG/pag7nPaUv6s53SyCk/form" 
-                frameBorder="0" 
-                width="100%" 
-                height="533" 
-                style={{ background: 'transparent', border: '1px solid #ccc' }}
-                title="Formulaire prestataire"
-              />
-            </div>
+            <ProfessionalRegistrationForm />
           </div>
         </div>
       </main>
