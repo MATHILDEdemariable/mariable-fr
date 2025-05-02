@@ -183,7 +183,7 @@ const ProfessionalRegistrationForm = () => {
           site_web: values.site_web || null,
           siret: values.siret,
           assurance_nom: values.assurance_nom,
-          prix_minimum: values.prix_minimum,
+          prix_minimum: values.prix_minimum, // Après notre transformation, c'est maintenant un number
           description: values.description || null,
           accord_referencement: values.accord_referencement,
           accord_cgv: values.accord_cgv,
