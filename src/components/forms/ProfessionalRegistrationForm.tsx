@@ -8,6 +8,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Loader2, Upload } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
 import { v4 as uuidv4 } from 'uuid';
+import { Link } from 'react-router-dom';
 
 import {
   Form,
@@ -40,7 +41,7 @@ const formSchema = z.object({
   region: z.enum([
     'Auvergne-Rhône-Alpes', 'Bourgogne-Franche-Comté', 'Bretagne', 'Centre-Val de Loire',
     'Corse', 'Grand Est', 'Hauts-de-France', 'Île-de-France', 'Normandie',
-    'Nouvelle-Aquitaine', 'Occitanie', 'Pays de la Loire', 'Provence-Alpes-Côte d'Azur'
+    'Nouvelle-Aquitaine', 'Occitanie', 'Pays de la Loire', "Provence-Alpes-Côte d'Azur"
   ] as const),
   email: z.string().email({ message: 'Adresse email invalide' }),
   telephone: z.string().optional(),
