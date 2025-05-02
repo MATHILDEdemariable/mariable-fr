@@ -95,16 +95,37 @@ const Demo = () => {
   useEffect(() => {
     if (vendor) {
       if (vendor.prix_a_partir_de) {
-        const newPackages = [
-          { name: 'Classique', basePrice: vendor.prix_a_partir_de, description: 'Formule de base' },
-          { name: 'Premium', basePrice: vendor.prix_a_partir_de * 1.4, description: 'Formule intermédiaire' },
-          { name: 'Luxe', basePrice: vendor.prix_a_partir_de * 1.8, description: 'Formule complète' },
-        ];
-        setPackages(newPackages);
-        setSelectedPackage(newPackages[0]);
+        // Pour les traiteurs, on utilise plutôt le prix par personne
+        if (vendor.categorie === 'Traiteur' && vendor.prix_par_personne) {
+          const basePrice = vendor.prix_par_personne;
+          const newPackages = [
+            { name: 'Menu Standard', basePrice: basePrice, description: 'Menu basique' },
+            { name: 'Menu Premium', basePrice: basePrice * 1.4, description: 'Menu intermédiaire' },
+            { name: 'Menu Gastronomique', basePrice: basePrice * 1.8, description: 'Menu complet' },
+          ];
+          setPackages(newPackages);
+          setSelectedPackage(newPackages[0]);
+        } else {
+          // Autres types de prestataires
+          const newPackages = [
+            { name: 'Classique', basePrice: vendor.prix_a_partir_de, description: 'Formule de base' },
+            { name: 'Premium', basePrice: vendor.prix_a_partir_de * 1.4, description: 'Formule intermédiaire' },
+            { name: 'Luxe', basePrice: vendor.prix_a_partir_de * 1.8, description: 'Formule complète' },
+          ];
+          setPackages(newPackages);
+          setSelectedPackage(newPackages[0]);
+        }
       }
     }
   }, [vendor]);
+
+  // Effet pour recalculer le prix lorsque le nombre d'invités change (pour les traiteurs)
+  useEffect(() => {
+    if (vendor?.categorie === 'Traiteur') {
+      // Mise à jour de la formule sélectionnée pour forcer le recalcul des prix
+      setSelectedPackage(prev => ({...prev}));
+    }
+  }, [guests, vendor?.categorie]);
 
   const handleDateSelect = (newDate: Date | undefined) => {
     setDate(newDate);
@@ -127,11 +148,18 @@ const Demo = () => {
 
   const calculateTotal = () => {
     const basePrice = selectedPackage.basePrice;
-    const commission = basePrice * 0.04; // 4% de commission
+    
+    // Calcul spécifique pour les traiteurs (prix par personne × nombre d'invités)
+    let calculatedBasePrice = basePrice;
+    if (vendor?.categorie === 'Traiteur') {
+      calculatedBasePrice = basePrice * guests;
+    }
+    
+    const commission = calculatedBasePrice * 0.04; // 4% de commission
     return {
-      basePrice,
+      basePrice: calculatedBasePrice,
       commission,
-      total: basePrice + commission
+      total: calculatedBasePrice + commission
     };
   };
 
@@ -141,6 +169,11 @@ const Demo = () => {
     toast({
       description: "La réservation en ligne sera bientôt disponible",
     });
+  };
+  
+  const handleGuestsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newGuests = parseInt(e.target.value) || 0;
+    setGuests(newGuests);
   };
   
   if (!vendorId && !isLoading) {
@@ -287,7 +320,7 @@ const Demo = () => {
                     <div>
                       <p className="font-medium">Prix</p>
                       <p className="text-sm text-muted-foreground">
-                        {vendor.prix_par_personne 
+                        {vendor.categorie === 'Traiteur' && vendor.prix_par_personne 
                           ? `À partir de ${vendor.prix_par_personne}€/pers.`
                           : vendor.prix_a_partir_de 
                             ? `À partir de ${vendor.prix_a_partir_de}€`
@@ -303,7 +336,9 @@ const Demo = () => {
               </Card>
 
               <div className="space-y-4">
-                <h2 className="text-xl font-serif">Nos formules</h2>
+                <h2 className="text-xl font-serif">
+                  {vendor.categorie === 'Traiteur' ? 'Nos menus' : 'Nos formules'}
+                </h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   {packages.map((pkg, index) => (
                     <Card 
@@ -314,7 +349,10 @@ const Demo = () => {
                       <p className="text-sm text-muted-foreground mb-4">
                         {pkg.description}
                       </p>
-                      <p className="font-medium">{Math.round(pkg.basePrice)}€</p>
+                      <p className="font-medium">
+                        {Math.round(pkg.basePrice)}€
+                        {vendor.categorie === 'Traiteur' ? '/pers' : ''}
+                      </p>
                     </Card>
                   ))}
                 </div>
@@ -348,7 +386,7 @@ const Demo = () => {
                     id="guests"
                     type="number"
                     value={guests}
-                    onChange={(e) => setGuests(parseInt(e.target.value) || 0)}
+                    onChange={handleGuestsChange}
                     min={1}
                     max={200}
                     className="mt-1"
@@ -356,7 +394,9 @@ const Demo = () => {
                 </div>
 
                 <div className="mt-4">
-                  <Label>Formule</Label>
+                  <Label>
+                    {vendor.categorie === 'Traiteur' ? 'Menu' : 'Formule'}
+                  </Label>
                   <RadioGroup 
                     value={selectedPackage.name} 
                     onValueChange={(value) => setSelectedPackage(packages.find(p => p.name === value) || packages[0])}
@@ -373,7 +413,11 @@ const Demo = () => {
 
                 <div className="mt-6 border-t pt-4 space-y-2">
                   <div className="flex justify-between">
-                    <span>Prix de base</span>
+                    <span>
+                      {vendor.categorie === 'Traiteur' 
+                        ? `Prix du menu (${guests} pers.)` 
+                        : 'Prix de base'}
+                    </span>
                     <span>{Math.round(prices.basePrice)}€</span>
                   </div>
                   <div className="flex justify-between text-sm text-muted-foreground">
