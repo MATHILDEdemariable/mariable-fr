@@ -1,10 +1,11 @@
+
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Database } from '@/integrations/supabase/types';
 import { supabase } from '@/integrations/supabase/client';
-import { Loader2, Upload } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
 import { v4 as uuidv4 } from 'uuid';
 import { Link } from 'react-router-dom';
@@ -182,7 +183,8 @@ const ProfessionalRegistrationForm = () => {
           site_web: values.site_web || null,
           siret: values.siret,
           assurance_nom: values.assurance_nom,
-          prix_minimum: values.prix_minimum,
+          // Ensure prix_minimum is a number - after zod transformation it should be
+          prix_minimum: Number(values.prix_minimum),
           description: values.description || null,
           accord_referencement: values.accord_referencement,
           accord_cgv: values.accord_cgv,
