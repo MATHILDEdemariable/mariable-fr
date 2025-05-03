@@ -2,14 +2,15 @@
 import React, { useState } from 'react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import VenueCapacitySelector from './VenueCapacitySelector';
 
 interface VenueExtraFiltersProps {
   onFilterChange: (filters: {
     categorieLieu?: string | null;
     capaciteMin?: number | null;
+    capaciteMax?: number | null;
     hebergement?: boolean | null;
     couchages?: number | null;
   }) => void;
@@ -21,7 +22,8 @@ const LIEU_CATEGORIES = [
 
 const VenueExtraFilters: React.FC<VenueExtraFiltersProps> = ({ onFilterChange }) => {
   const [categorieLieu, setCategorieLieu] = useState<string | null>(null);
-  const [capaciteInvites, setCapaciteInvites] = useState<number>(100);
+  const [minCapacity, setMinCapacity] = useState<string>('');
+  const [maxCapacity, setMaxCapacity] = useState<string>('');
   const [hebergementInclus, setHebergementInclus] = useState<boolean>(false);
   const [nombreCouchages, setNombreCouchages] = useState<string>('');
 
@@ -30,9 +32,26 @@ const VenueExtraFilters: React.FC<VenueExtraFiltersProps> = ({ onFilterChange })
     onFilterChange({ categorieLieu: value });
   };
 
-  const handleCapaciteChange = (value: number[]) => {
-    setCapaciteInvites(value[0]);
-    onFilterChange({ capaciteMin: value[0] });
+  const handleMinCapacityChange = (value: string) => {
+    setMinCapacity(value);
+    const minVal = value === 'custom' ? null : parseInt(value, 10);
+    onFilterChange({ capaciteMin: minVal });
+  };
+
+  const handleMaxCapacityChange = (value: string) => {
+    setMaxCapacity(value);
+    const maxVal = value === 'custom' ? null : parseInt(value, 10);
+    onFilterChange({ capaciteMax: maxVal });
+  };
+
+  const handleCustomMinCapacityChange = (value: string) => {
+    setMinCapacity(value);
+    onFilterChange({ capaciteMin: value ? parseInt(value, 10) : null });
+  };
+
+  const handleCustomMaxCapacityChange = (value: string) => {
+    setMaxCapacity(value);
+    onFilterChange({ capaciteMax: value ? parseInt(value, 10) : null });
   };
 
   const handleHebergementChange = (checked: boolean) => {
@@ -69,22 +88,25 @@ const VenueExtraFilters: React.FC<VenueExtraFiltersProps> = ({ onFilterChange })
         </Select>
       </div>
       
-      {/* Capacité d'invités */}
-      <div>
-        <div className="flex justify-between">
-          <Label className="text-xs">Capacité minimale</Label>
-          <span className="text-xs text-muted-foreground">{capaciteInvites} invités</span>
-        </div>
-        <Slider
-          className="mt-2"
-          defaultValue={[100]}
-          min={10}
-          max={500}
-          step={10}
-          value={[capaciteInvites]}
-          onValueChange={handleCapaciteChange}
-        />
-      </div>
+      {/* Capacité d'invités - nouveau sélecteur */}
+      <VenueCapacitySelector 
+        minCapacity={minCapacity}
+        maxCapacity={maxCapacity}
+        onMinCapacityChange={(value) => {
+          if (value === "custom") {
+            handleMinCapacityChange(value);
+          } else {
+            handleCustomMinCapacityChange(value);
+          }
+        }}
+        onMaxCapacityChange={(value) => {
+          if (value === "custom") {
+            handleMaxCapacityChange(value);
+          } else {
+            handleCustomMaxCapacityChange(value);
+          }
+        }}
+      />
       
       {/* Hébergement inclus */}
       <div className="flex items-center justify-between">

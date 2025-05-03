@@ -19,9 +19,10 @@ export interface VendorFilter {
   region: string | null;
   minPrice?: number;
   maxPrice?: number;
-  // Nouveaux filtres pour les lieux de réception
+  // Filtres pour les lieux de réception
   categorieLieu?: string | null;
   capaciteMin?: number | null;
+  capaciteMax?: number | null;
   hebergement?: boolean | null;
   couchages?: number | null;
 }
@@ -39,6 +40,7 @@ const MoteurRecherche = () => {
     maxPrice: searchParams.get('max') ? Number(searchParams.get('max')) : undefined,
     categorieLieu: searchParams.get('categorieLieu'),
     capaciteMin: searchParams.get('capaciteMin') ? Number(searchParams.get('capaciteMin')) : undefined,
+    capaciteMax: searchParams.get('capaciteMax') ? Number(searchParams.get('capaciteMax')) : undefined,
     hebergement: searchParams.get('hebergement') === 'true' ? true : undefined,
     couchages: searchParams.get('couchages') ? Number(searchParams.get('couchages')) : undefined,
   });
@@ -56,9 +58,10 @@ const MoteurRecherche = () => {
     if (filters.minPrice) newParams.set('min', filters.minPrice.toString());
     if (filters.maxPrice) newParams.set('max', filters.maxPrice.toString());
     
-    // Nouveaux paramètres pour les lieux
+    // Paramètres pour les lieux
     if (filters.categorieLieu) newParams.set('categorieLieu', filters.categorieLieu);
     if (filters.capaciteMin) newParams.set('capaciteMin', filters.capaciteMin.toString());
+    if (filters.capaciteMax) newParams.set('capaciteMax', filters.capaciteMax.toString());
     if (filters.hebergement !== undefined) newParams.set('hebergement', filters.hebergement.toString());
     if (filters.couchages) newParams.set('couchages', filters.couchages.toString());
     
@@ -103,8 +106,13 @@ const MoteurRecherche = () => {
           query = query.eq('categorie_lieu', filters.categorieLieu);
         }
         
+        // Nouveau filtre pour la capacité avec min et max
         if (filters.capaciteMin) {
           query = query.gte('capacite_invites', filters.capaciteMin);
+        }
+        
+        if (filters.capaciteMax) {
+          query = query.lte('capacite_invites', filters.capaciteMax);
         }
         
         if (filters.hebergement !== undefined) {

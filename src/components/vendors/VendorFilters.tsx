@@ -67,6 +67,7 @@ const VendorFilters: React.FC<VendorFiltersProps> = ({ filters, onFilterChange }
     filters.maxPrice !== undefined ||
     filters.categorieLieu !== undefined ||
     filters.capaciteMin !== undefined ||
+    filters.capaciteMax !== undefined ||
     filters.hebergement !== undefined ||
     filters.couchages !== undefined;
   
@@ -89,6 +90,7 @@ const VendorFilters: React.FC<VendorFiltersProps> = ({ filters, onFilterChange }
       maxPrice: undefined,
       categorieLieu: undefined,
       capaciteMin: undefined,
+      capaciteMax: undefined,
       hebergement: undefined,
       couchages: undefined
     });
@@ -98,6 +100,7 @@ const VendorFilters: React.FC<VendorFiltersProps> = ({ filters, onFilterChange }
   const handleVenueExtraFiltersChange = (venueFilters: {
     categorieLieu?: string | null;
     capaciteMin?: number | null;
+    capaciteMax?: number | null;
     hebergement?: boolean | null;
     couchages?: number | null;
   }) => {
