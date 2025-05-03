@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -49,7 +48,7 @@ const formSchema = z.object({
   siret: z.string().min(9, { message: 'Le numéro SIRET est requis' }),
   assurance_nom: z.string().min(2, { message: "Le nom de l'assurance est requis" }),
   description: z.string().optional(),
-  prix_minimum: z.string().transform((val) => parseFloat(val) || 0),
+  prix_minimum: z.coerce.number().nonnegative(),
   accord_referencement: z.boolean().refine((val) => val === true, {
     message: 'Vous devez accepter le référencement'
   }),
@@ -106,7 +105,7 @@ const ProfessionalRegistrationForm = () => {
       siret: '',
       assurance_nom: '',
       description: '',
-      prix_minimum: '0',
+      prix_minimum: 0,
       accord_referencement: false,
       accord_cgv: false,
     },
@@ -183,7 +182,6 @@ const ProfessionalRegistrationForm = () => {
           site_web: values.site_web || null,
           siret: values.siret,
           assurance_nom: values.assurance_nom,
-          // Since the Zod schema transforms prix_minimum to a number already
           prix_minimum: values.prix_minimum,
           description: values.description || null,
           accord_referencement: values.accord_referencement,
