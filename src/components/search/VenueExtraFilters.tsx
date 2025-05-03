@@ -10,7 +10,6 @@ interface VenueExtraFiltersProps {
   onFilterChange: (filters: {
     categorieLieu?: string | null;
     capaciteMin?: number | null;
-    capaciteMax?: number | null;
     hebergement?: boolean | null;
     couchages?: number | null;
   }) => void;
@@ -22,8 +21,7 @@ const LIEU_CATEGORIES = [
 
 const VenueExtraFilters: React.FC<VenueExtraFiltersProps> = ({ onFilterChange }) => {
   const [categorieLieu, setCategorieLieu] = useState<string | null>(null);
-  const [minCapacity, setMinCapacity] = useState<string>('');
-  const [maxCapacity, setMaxCapacity] = useState<string>('');
+  const [capacity, setCapacity] = useState<string>('');
   const [hebergementInclus, setHebergementInclus] = useState<boolean>(false);
   const [nombreCouchages, setNombreCouchages] = useState<string>('');
 
@@ -32,26 +30,15 @@ const VenueExtraFilters: React.FC<VenueExtraFiltersProps> = ({ onFilterChange })
     onFilterChange({ categorieLieu: value });
   };
 
-  const handleMinCapacityChange = (value: string) => {
-    setMinCapacity(value);
-    const minVal = value === 'custom' ? null : parseInt(value, 10);
-    onFilterChange({ capaciteMin: minVal });
+  const handleCapacityChange = (value: string) => {
+    setCapacity(value);
+    const capacityVal = value === 'custom' ? null : parseInt(value, 10);
+    onFilterChange({ capaciteMin: capacityVal });
   };
 
-  const handleMaxCapacityChange = (value: string) => {
-    setMaxCapacity(value);
-    const maxVal = value === 'custom' ? null : parseInt(value, 10);
-    onFilterChange({ capaciteMax: maxVal });
-  };
-
-  const handleCustomMinCapacityChange = (value: string) => {
-    setMinCapacity(value);
+  const handleCustomCapacityChange = (value: string) => {
+    setCapacity(value);
     onFilterChange({ capaciteMin: value ? parseInt(value, 10) : null });
-  };
-
-  const handleCustomMaxCapacityChange = (value: string) => {
-    setMaxCapacity(value);
-    onFilterChange({ capaciteMax: value ? parseInt(value, 10) : null });
   };
 
   const handleHebergementChange = (checked: boolean) => {
@@ -88,22 +75,14 @@ const VenueExtraFilters: React.FC<VenueExtraFiltersProps> = ({ onFilterChange })
         </Select>
       </div>
       
-      {/* Capacité d'invités - nouveau sélecteur */}
+      {/* Capacité d'invités - nouveau sélecteur simplifié */}
       <VenueCapacitySelector 
-        minCapacity={minCapacity}
-        maxCapacity={maxCapacity}
-        onMinCapacityChange={(value) => {
+        capacity={capacity}
+        onCapacityChange={(value) => {
           if (value === "custom") {
-            handleMinCapacityChange(value);
+            handleCapacityChange(value);
           } else {
-            handleCustomMinCapacityChange(value);
-          }
-        }}
-        onMaxCapacityChange={(value) => {
-          if (value === "custom") {
-            handleMaxCapacityChange(value);
-          } else {
-            handleCustomMaxCapacityChange(value);
+            handleCustomCapacityChange(value);
           }
         }}
       />

@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Database } from '@/integrations/supabase/types';
@@ -44,6 +43,18 @@ const MoteurRecherche = () => {
     hebergement: searchParams.get('hebergement') === 'true' ? true : undefined,
     couchages: searchParams.get('couchages') ? Number(searchParams.get('couchages')) : undefined,
   });
+
+  // Debounce pour la recherche
+  const [debouncedSearch, setDebouncedSearch] = useState(filters.search);
+  
+  // Effet pour gérer le debounce
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(filters.search);
+    }, 300);
+    
+    return () => clearTimeout(timer);
+  }, [filters.search]);
   
   const navigateToVendorDetails = (vendor: Prestataire) => {
     navigate(`/demo?id=${vendor.id}`);
@@ -61,7 +72,6 @@ const MoteurRecherche = () => {
     // Paramètres pour les lieux
     if (filters.categorieLieu) newParams.set('categorieLieu', filters.categorieLieu);
     if (filters.capaciteMin) newParams.set('capaciteMin', filters.capaciteMin.toString());
-    if (filters.capaciteMax) newParams.set('capaciteMax', filters.capaciteMax.toString());
     if (filters.hebergement !== undefined) newParams.set('hebergement', filters.hebergement.toString());
     if (filters.couchages) newParams.set('couchages', filters.couchages.toString());
     
@@ -73,20 +83,21 @@ const MoteurRecherche = () => {
   };
   
   const { data: vendors, isLoading, error } = useQuery({
-    queryKey: ['vendors', filters],
+    queryKey: ['vendors', filters.category, filters.region, filters.minPrice, filters.maxPrice, 
+               filters.categorieLieu, filters.capaciteMin, filters.hebergement, filters.couchages, debouncedSearch],
     queryFn: async () => {
       let query = supabase
         .from('prestataires')
         .select('*')
         .eq('visible', true);
       
-      if (filters.search) {
+      if (debouncedSearch) {
         // Recherche étendue sur plusieurs champs
         query = query.or(
-          `nom.ilike.%${filters.search}%,` +
-          `ville.ilike.%${filters.search}%,` +
-          `region.ilike.%${filters.search}%,` +
-          `description.ilike.%${filters.search}%`
+          `nom.ilike.%${debouncedSearch}%,` +
+          `ville.ilike.%${debouncedSearch}%,` +
+          `region.ilike.%${debouncedSearch}%,` +
+          `description.ilike.%${debouncedSearch}%`
         );
       }
       
@@ -112,13 +123,9 @@ const MoteurRecherche = () => {
           query = query.eq('categorie_lieu', filters.categorieLieu);
         }
         
-        // Nouveau filtre pour la capacité avec min et max
+        // Nouveau filtre pour la capacité simplifiée
         if (filters.capaciteMin) {
           query = query.gte('capacite_invites', filters.capaciteMin);
-        }
-        
-        if (filters.capaciteMax) {
-          query = query.lte('capacite_invites', filters.capaciteMax);
         }
         
         if (filters.hebergement !== undefined) {

@@ -11,10 +11,8 @@ import {
 import { Input } from '@/components/ui/input';
 
 interface VenueCapacitySelectorProps {
-  minCapacity: string;
-  maxCapacity: string;
-  onMinCapacityChange: (value: string) => void;
-  onMaxCapacityChange: (value: string) => void;
+  capacity: string;
+  onCapacityChange: (value: string) => void;
 }
 
 // Predefined capacity ranges
@@ -23,83 +21,45 @@ const CAPACITY_RANGES = [
 ];
 
 const VenueCapacitySelector: React.FC<VenueCapacitySelectorProps> = ({
-  minCapacity,
-  maxCapacity,
-  onMinCapacityChange,
-  onMaxCapacityChange
+  capacity,
+  onCapacityChange
 }) => {
   return (
     <div className="space-y-3">
       <Label className="text-xs">Capacité du lieu</Label>
       
-      <div className="flex items-center gap-2">
-        <div className="flex-1">
-          <Label htmlFor="min-capacity" className="text-xs text-muted-foreground mb-1 block">
-            Minimum
-          </Label>
-          <Select
-            value={minCapacity}
-            onValueChange={onMinCapacityChange}
-          >
-            <SelectTrigger id="min-capacity" className="w-full">
-              <SelectValue placeholder="Min" />
-            </SelectTrigger>
-            <SelectContent>
-              {CAPACITY_RANGES.map((value) => (
-                <SelectItem key={`min-${value}`} value={value}>
-                  {value} invités
-                </SelectItem>
-              ))}
-              <SelectItem value="custom">
-                Personnalisé
+      <div>
+        <Label htmlFor="capacity" className="text-xs text-muted-foreground mb-1 block">
+          Nombre d'invités
+        </Label>
+        <Select
+          value={capacity}
+          onValueChange={onCapacityChange}
+        >
+          <SelectTrigger id="capacity" className="w-full">
+            <SelectValue placeholder="Sélectionner" />
+          </SelectTrigger>
+          <SelectContent>
+            {CAPACITY_RANGES.map((value) => (
+              <SelectItem key={value} value={value}>
+                {value} invités
               </SelectItem>
-            </SelectContent>
-          </Select>
-          
-          {minCapacity === "custom" && (
-            <Input 
-              type="number" 
-              placeholder="Ex: 75"
-              className="mt-1" 
-              min="0"
-              onChange={(e) => onMinCapacityChange(e.target.value)}
-            />
-          )}
-        </div>
+            ))}
+            <SelectItem value="custom">
+              Personnalisé
+            </SelectItem>
+          </SelectContent>
+        </Select>
         
-        <div className="flex-1">
-          <Label htmlFor="max-capacity" className="text-xs text-muted-foreground mb-1 block">
-            Maximum
-          </Label>
-          <Select
-            value={maxCapacity}
-            onValueChange={onMaxCapacityChange}
-          >
-            <SelectTrigger id="max-capacity" className="w-full">
-              <SelectValue placeholder="Max" />
-            </SelectTrigger>
-            <SelectContent>
-              {CAPACITY_RANGES.map((value) => (
-                <SelectItem key={`max-${value}`} value={value}>
-                  {value} invités
-                </SelectItem>
-              ))}
-              <SelectItem value="custom">
-                Personnalisé
-              </SelectItem>
-            </SelectContent>
-          </Select>
-          
-          {maxCapacity === "custom" && (
-            <Input 
-              type="number" 
-              placeholder="Ex: 125"
-              className="mt-1" 
-              min="0"
-              onChange={(e) => onMaxCapacityChange(e.target.value)}
-            />
-          )}
-        </div>
+        {capacity === "custom" && (
+          <Input 
+            type="number" 
+            placeholder="Ex: 175"
+            className="mt-1" 
+            min="0"
+            onChange={(e) => onCapacityChange(e.target.value)}
+          />
+        )}
       </div>
     </div>
   );
