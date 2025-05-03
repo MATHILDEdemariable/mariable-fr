@@ -81,7 +81,13 @@ const MoteurRecherche = () => {
         .eq('visible', true);
       
       if (filters.search) {
-        query = query.ilike('nom', `%${filters.search}%`);
+        // Recherche étendue sur plusieurs champs
+        query = query.or(
+          `nom.ilike.%${filters.search}%,` +
+          `ville.ilike.%${filters.search}%,` +
+          `region.ilike.%${filters.search}%,` +
+          `description.ilike.%${filters.search}%`
+        );
       }
       
       if (filters.category && filters.category !== 'Tous') {

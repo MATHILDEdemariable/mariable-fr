@@ -115,7 +115,7 @@ const VendorFilters: React.FC<VendorFiltersProps> = ({ filters, onFilterChange }
       <div className="relative">
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input
-          placeholder="Rechercher par nom..."
+          placeholder="Rechercher par nom, ville, région ou description..."
           className="pl-10"
           value={filters.search}
           onChange={(e) => onFilterChange({ search: e.target.value })}
@@ -135,7 +135,8 @@ const VendorFilters: React.FC<VendorFiltersProps> = ({ filters, onFilterChange }
                 <SelectValue placeholder="Catégorie" />
               </SelectTrigger>
               <SelectContent>
-                {CATEGORIES.map((category) => (
+                <SelectItem value="Tous">Tous les prestataires</SelectItem>
+                {CATEGORIES.filter(category => category !== 'Tous').map((category) => (
                   <SelectItem key={category} value={category}>
                     {category}
                   </SelectItem>
@@ -240,7 +241,8 @@ const VendorFilters: React.FC<VendorFiltersProps> = ({ filters, onFilterChange }
                       <SelectValue placeholder="Catégorie" />
                     </SelectTrigger>
                     <SelectContent>
-                      {CATEGORIES.map((category) => (
+                      <SelectItem value="Tous">Tous les prestataires</SelectItem>
+                      {CATEGORIES.filter(category => category !== 'Tous').map((category) => (
                         <SelectItem key={category} value={category}>
                           {category}
                         </SelectItem>
