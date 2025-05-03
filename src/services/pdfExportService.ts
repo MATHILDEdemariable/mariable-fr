@@ -2,24 +2,28 @@
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
 
-export const exportDashboardToPDF = async () => {
+export const exportDashboardToPDF = async (
+  elementId: string = 'dashboard-content',
+  fileName: string = 'Mariable-Dashboard.pdf',
+  orientation: 'portrait' | 'landscape' = 'portrait'
+) => {
   try {
-    // Sélection du dashboard
-    const dashboardElement = document.querySelector('#dashboard-content');
+    // Sélection de l'élément
+    const element = document.querySelector(`#${elementId}`);
     
-    if (!dashboardElement) {
-      throw new Error("Contenu du dashboard non trouvé");
+    if (!element) {
+      throw new Error(`Élément avec l'ID ${elementId} non trouvé`);
     }
     
-    // Création du PDF au format A4
+    // Création du PDF au format spécifié
     const pdf = new jsPDF({
-      orientation: 'portrait',
+      orientation: orientation,
       unit: 'mm',
       format: 'a4'
     });
     
     // Conversion du HTML en canvas
-    const canvas = await html2canvas(dashboardElement as HTMLElement, {
+    const canvas = await html2canvas(element as HTMLElement, {
       scale: 2, // Meilleure qualité
       useCORS: true,
       logging: false,
@@ -28,8 +32,19 @@ export const exportDashboardToPDF = async () => {
     
     // Récupération des dimensions
     const imgData = canvas.toDataURL('image/png');
-    const imgWidth = 210; // A4 width in mm
-    const pageHeight = 297; // A4 height in mm
+    
+    // Définir largeur et hauteur selon orientation
+    let pageWidth, pageHeight;
+    
+    if (orientation === 'landscape') {
+      pageWidth = 297; // A4 height in mm quand en paysage
+      pageHeight = 210; // A4 width in mm quand en paysage
+    } else {
+      pageWidth = 210; // A4 width in mm
+      pageHeight = 297; // A4 height in mm
+    }
+    
+    const imgWidth = pageWidth;
     const imgHeight = (canvas.height * imgWidth) / canvas.width;
     let heightLeft = imgHeight;
     let position = 0;
@@ -47,7 +62,7 @@ export const exportDashboardToPDF = async () => {
     }
     
     // Téléchargement du PDF
-    pdf.save('Mariable-Dashboard.pdf');
+    pdf.save(fileName);
     
     return true;
   } catch (error) {

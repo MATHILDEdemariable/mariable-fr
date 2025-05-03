@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Routes, Route, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -13,6 +14,7 @@ import TasksList from '@/components/dashboard/TasksList';
 import BudgetSummary from '@/components/dashboard/BudgetSummary';
 import DocumentsSection from '@/components/dashboard/DocumentsSection';
 import CreateProjectDialog from '@/components/dashboard/CreateProjectDialog';
+import CoordinationPage from './CoordinationPage';
 import { exportDashboardToPDF } from '@/services/pdfExportService';
 
 // Types for our project data
@@ -403,6 +405,7 @@ const Dashboard = () => {
               <Route path="/prestataires" element={<PrestatairesPage />} />
               <Route path="/budget" element={<BudgetPage />} />
               <Route path="/tasks" element={<TasksPage />} />
+              <Route path="/coordination" element={<CoordinationPage />} />
               <Route path="/documents" element={<DocumentsPage />} />
               <Route path="/settings" element={<SettingsPage />} />
             </Routes>
