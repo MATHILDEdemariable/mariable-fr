@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { jsPDF } from "jspdf";
-import { File, Home, Calendar } from "lucide-react";
+import { File, Home, Calendar, Loader2 } from "lucide-react";
 import Header from '@/components/Header';
 import SEO from '@/components/SEO';
+import { supabase } from "@/integrations/supabase/client";
 
 interface FormData {
   style: string;
@@ -23,6 +25,21 @@ interface StyleScore {
   romanticFairy: number;
   urbanTrendy: number;
   funFestive: number;
+}
+
+interface FormQuestion {
+  id: string;
+  question_order: number;
+  question_title: string;
+  question_label: string;
+  input_type: 'select' | 'input' | 'checkbox';
+  options: Array<{
+    value: string;
+    label: string;
+    style: string;
+  }> | null;
+  default_value: string | null;
+  category: string;
 }
 
 const TestFormulaire = () => {
@@ -44,69 +61,8 @@ const TestFormulaire = () => {
   });
   const [dominantStyle, setDominantStyle] = useState("");
   const [showResult, setShowResult] = useState(false);
-
-  const questions = [
-    {
-      id: 1,
-      title: "Quel style de mariage vous fait rêver ?",
-      name: "style",
-      options: [
-        { value: "elegantClassic", label: "Élégant & Classique", style: "elegantClassic" },
-        { value: "bohemeNature", label: "Bohème & Nature", style: "bohemeNature" },
-        { value: "romanticFairy", label: "Romantique & Féérique", style: "romanticFairy" },
-        { value: "urbanTrendy", label: "Urbain & Tendance", style: "urbanTrendy" },
-        { value: "funFestive", label: "Délire & Festif", style: "funFestive" }
-      ]
-    },
-    {
-      id: 2,
-      title: "Quelle est votre vision du mariage ?",
-      name: "relation",
-      options: [
-        { value: "elegantClassic", label: "Une célébration élégante et traditionnelle", style: "elegantClassic" },
-        { value: "bohemeNature", label: "Une célébration simple et authentique", style: "bohemeNature" },
-        { value: "romanticFairy", label: "Un rêve d'enfant qui se réalise", style: "romanticFairy" },
-        { value: "urbanTrendy", label: "Un événement unique et mémorable", style: "urbanTrendy" },
-        { value: "funFestive", label: "Une grande fête inoubliable avec nos proches", style: "funFestive" }
-      ]
-    },
-    {
-      id: 3,
-      title: "Quel est votre budget global estimé ?",
-      name: "budget",
-      options: [
-        { value: "elegantClassic", label: "Plus de 50 000€", style: "elegantClassic" },
-        { value: "bohemeNature", label: "15 000€ - 25 000€", style: "bohemeNature" },
-        { value: "romanticFairy", label: "35 000€ - 50 000€", style: "romanticFairy" },
-        { value: "urbanTrendy", label: "25 000€ - 35 000€", style: "urbanTrendy" },
-        { value: "funFestive", label: "Budget variable selon les priorités", style: "funFestive" }
-      ]
-    },
-    {
-      id: 4,
-      title: "Quelle ambiance souhaitez-vous créer ?",
-      name: "ambiance",
-      options: [
-        { value: "elegantClassic", label: "Élégante & Raffinée", style: "elegantClassic" },
-        { value: "bohemeNature", label: "Naturelle & Décontractée", style: "bohemeNature" },
-        { value: "romanticFairy", label: "Romantique & Poétique", style: "romanticFairy" },
-        { value: "urbanTrendy", label: "Contemporaine & Créative", style: "urbanTrendy" },
-        { value: "funFestive", label: "Festive & Joyeuse", style: "funFestive" }
-      ]
-    },
-    {
-      id: 5,
-      title: "Quelle est votre priorité absolue ?",
-      name: "priority",
-      options: [
-        { value: "elegantClassic", label: "Le lieu de réception prestigieux", style: "elegantClassic" },
-        { value: "bohemeNature", label: "Une décoration naturelle et éco-responsable", style: "bohemeNature" },
-        { value: "romanticFairy", label: "La décoration et les fleurs", style: "romanticFairy" },
-        { value: "urbanTrendy", label: "Un concept original et unique", style: "urbanTrendy" },
-        { value: "funFestive", label: "L'ambiance générale et l'animation", style: "funFestive" }
-      ]
-    }
-  ];
+  const [questions, setQuestions] = useState<FormQuestion[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const styleDescriptions = {
     elegantClassic: {
@@ -135,6 +91,33 @@ const TestFormulaire = () => {
       keyElements: ["Décoration colorée et festive", "Animations et jeux pour les invités", "Ambiance décontractée", "Expériences immersives et surprenantes"]
     }
   };
+
+  useEffect(() => {
+    async function fetchQuestions() {
+      try {
+        const { data, error } = await supabase
+          .from('couple_formulaire')
+          .select('*')
+          .order('question_order', { ascending: true });
+
+        if (error) throw error;
+
+        // Parse JSON options
+        const questionsWithParsedOptions = data.map(q => ({
+          ...q,
+          options: q.options ? q.options : null
+        }));
+
+        setQuestions(questionsWithParsedOptions);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching questions:', error);
+        setLoading(false);
+      }
+    }
+
+    fetchQuestions();
+  }, []);
 
   const handleChange = (value: string, name: keyof FormData, styleKey: string) => {
     setFormData(prev => ({
@@ -226,7 +209,7 @@ const TestFormulaire = () => {
   };
 
   const handleNext = () => {
-    if (currentStep < 5) {
+    if (currentStep < questions.length) {
       setCurrentStep(prev => prev + 1);
     }
   };
@@ -257,7 +240,12 @@ const TestFormulaire = () => {
     setDominantStyle("");
   };
 
-  const currentQuestion = questions[currentStep - 1];
+  const getCurrentQuestion = () => {
+    if (loading || questions.length === 0) return null;
+    return questions[currentStep - 1];
+  };
+
+  const currentQuestion = getCurrentQuestion();
 
   const renderResultScreen = () => {
     const styleKey = dominantStyle as keyof typeof styleDescriptions;
@@ -328,32 +316,50 @@ const TestFormulaire = () => {
   };
 
   const renderQuestionScreen = () => {
+    if (loading) {
+      return (
+        <div className="flex justify-center items-center p-12">
+          <Loader2 className="h-8 w-8 animate-spin text-wedding-olive" />
+        </div>
+      );
+    }
+
+    if (!currentQuestion) {
+      return (
+        <div className="text-center p-8">
+          <p>Aucune question trouvée. Veuillez réessayer plus tard.</p>
+        </div>
+      );
+    }
+
     return (
       <>
         <div className="mb-8">
           <h2 className="text-xl font-serif mb-6 text-center">
-            {currentQuestion.title}
+            {currentQuestion.question_title}
           </h2>
           
-          <RadioGroup
-            value={formData[currentQuestion.name as keyof FormData]}
-            onValueChange={(value) => {
-              const selectedOption = currentQuestion.options.find(opt => opt.value === value);
-              if (selectedOption) {
-                handleChange(value, currentQuestion.name as keyof FormData, selectedOption.style);
-              }
-            }}
-            className="space-y-4"
-          >
-            {currentQuestion.options.map((option) => (
-              <div key={option.value} className="flex items-center space-x-2 p-4 rounded-lg border hover:bg-wedding-cream/10 transition-colors">
-                <RadioGroupItem value={option.value} id={option.value} />
-                <Label htmlFor={option.value} className="flex-grow cursor-pointer">
-                  {option.label}
-                </Label>
-              </div>
-            ))}
-          </RadioGroup>
+          {currentQuestion.input_type === 'select' && currentQuestion.options && (
+            <RadioGroup
+              value={formData[currentQuestion.category as keyof FormData] || ''}
+              onValueChange={(value) => {
+                const selectedOption = currentQuestion.options?.find(opt => opt.value === value);
+                if (selectedOption) {
+                  handleChange(value, currentQuestion.category as keyof FormData, selectedOption.style);
+                }
+              }}
+              className="space-y-4"
+            >
+              {currentQuestion.options.map((option) => (
+                <div key={option.value} className="flex items-center space-x-2 p-4 rounded-lg border hover:bg-wedding-cream/10 transition-colors">
+                  <RadioGroupItem value={option.value} id={option.value} />
+                  <Label htmlFor={option.value} className="flex-grow cursor-pointer">
+                    {option.label}
+                  </Label>
+                </div>
+              ))}
+            </RadioGroup>
+          )}
         </div>
 
         <div className="flex justify-between mt-8">
@@ -365,10 +371,10 @@ const TestFormulaire = () => {
             Précédent
           </Button>
           
-          {currentStep < 5 ? (
+          {currentStep < questions.length ? (
             <Button
               onClick={handleNext}
-              disabled={!formData[currentQuestion.name as keyof FormData]}
+              disabled={!formData[currentQuestion.category as keyof FormData]}
               className="bg-wedding-olive hover:bg-wedding-olive/90"
             >
               Suivant
@@ -376,7 +382,7 @@ const TestFormulaire = () => {
           ) : (
             <Button
               onClick={generatePDF}
-              disabled={!formData.priority}
+              disabled={!formData[currentQuestion.category as keyof FormData]}
               className="bg-wedding-olive hover:bg-wedding-olive/90 gap-2"
             >
               <File size={18} />
@@ -403,9 +409,9 @@ const TestFormulaire = () => {
               <h1 className="text-2xl md:text-3xl font-serif text-wedding-black">
                 Découvrez votre style de mariage
               </h1>
-              {!showResult && (
+              {!showResult && !loading && questions.length > 0 && (
                 <p className="text-muted-foreground mt-2">
-                  Question {currentStep} sur 5
+                  Question {currentStep} sur {questions.length}
                 </p>
               )}
             </CardHeader>

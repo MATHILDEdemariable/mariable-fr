@@ -62,6 +62,39 @@ export type Database = {
           },
         ]
       }
+      couple_formulaire: {
+        Row: {
+          category: string
+          default_value: string | null
+          id: string
+          input_type: Database["public"]["Enums"]["input_type"]
+          options: Json | null
+          question_label: string
+          question_order: number
+          question_title: string
+        }
+        Insert: {
+          category: string
+          default_value?: string | null
+          id?: string
+          input_type: Database["public"]["Enums"]["input_type"]
+          options?: Json | null
+          question_label: string
+          question_order: number
+          question_title: string
+        }
+        Update: {
+          category?: string
+          default_value?: string | null
+          id?: string
+          input_type?: Database["public"]["Enums"]["input_type"]
+          options?: Json | null
+          question_label?: string
+          question_order?: number
+          question_title?: string
+        }
+        Relationships: []
+      }
       prestataires: {
         Row: {
           accord_cgv: boolean | null
@@ -387,6 +420,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
+      input_type: "select" | "input" | "checkbox"
       prestataire_categorie:
         | "Lieu de réception"
         | "Traiteur"
@@ -533,6 +567,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      input_type: ["select", "input", "checkbox"],
       prestataire_categorie: [
         "Lieu de réception",
         "Traiteur",
