@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -184,6 +185,12 @@ const FormQuestionsAdmin = () => {
     try {
       // Process each question
       for (const question of questions) {
+        // Convertir les options FormOption[] en Json avant l'envoi à Supabase
+        const supabaseQuestion = {
+          ...question,
+          options: question.options as unknown as Json
+        };
+
         if (question.id) {
           // Update existing question
           const { error } = await supabase
@@ -193,7 +200,7 @@ const FormQuestionsAdmin = () => {
               question_title: question.question_title,
               question_label: question.question_label,
               input_type: question.input_type,
-              options: question.options,
+              options: question.options as unknown as Json,
               default_value: question.default_value,
               category: question.category
             })
@@ -209,7 +216,7 @@ const FormQuestionsAdmin = () => {
               question_title: question.question_title,
               question_label: question.question_label,
               input_type: question.input_type,
-              options: question.options,
+              options: question.options as unknown as Json,
               default_value: question.default_value,
               category: question.category
             });
