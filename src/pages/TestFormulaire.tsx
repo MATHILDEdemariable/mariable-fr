@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -9,7 +8,7 @@ import { jsPDF } from "jspdf";
 import { File, Home, Calendar, Loader2 } from "lucide-react";
 import Header from '@/components/Header';
 import SEO from '@/components/SEO';
-import { supabase } from "@/integrations/supabase/client";
+import { supabase, type Json } from "@/integrations/supabase/client";
 
 interface FormData {
   style: string;
@@ -27,17 +26,19 @@ interface StyleScore {
   funFestive: number;
 }
 
+interface FormOption {
+  value: string;
+  label: string;
+  style: string;
+}
+
 interface FormQuestion {
   id: string;
   question_order: number;
   question_title: string;
   question_label: string;
   input_type: 'select' | 'input' | 'checkbox';
-  options: Array<{
-    value: string;
-    label: string;
-    style: string;
-  }> | null;
+  options: FormOption[] | null;
   default_value: string | null;
   category: string;
 }
@@ -102,10 +103,10 @@ const TestFormulaire = () => {
 
         if (error) throw error;
 
-        // Parse JSON options
+        // Conversion des données JSON vers le type attendu
         const questionsWithParsedOptions = data.map(q => ({
           ...q,
-          options: q.options ? q.options : null
+          options: q.options ? (q.options as any) as FormOption[] : null
         }));
 
         setQuestions(questionsWithParsedOptions);

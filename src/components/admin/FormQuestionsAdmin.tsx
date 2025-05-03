@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,8 +6,14 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Trash2, PlusCircle, Save } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase, type Json } from "@/integrations/supabase/client";
 import { toast } from 'sonner';
+
+interface FormOption {
+  value: string;
+  label: string;
+  style: string;
+}
 
 interface FormQuestion {
   id?: string;
@@ -16,11 +21,7 @@ interface FormQuestion {
   question_title: string;
   question_label: string;
   input_type: 'select' | 'input' | 'checkbox';
-  options: Array<{
-    value: string;
-    label: string;
-    style: string;
-  }> | null;
+  options: FormOption[] | null;
   default_value: string | null;
   category: string;
 }
@@ -43,7 +44,14 @@ const FormQuestionsAdmin = () => {
         .order('question_order', { ascending: true });
 
       if (error) throw error;
-      setQuestions(data || []);
+      
+      // Conversion des données JSON vers le type attendu
+      const parsedQuestions = data?.map(q => ({
+        ...q,
+        options: q.options ? (q.options as any) as FormOption[] : null,
+      }));
+      
+      setQuestions(parsedQuestions || []);
     } catch (error) {
       console.error('Error fetching questions:', error);
       toast.error('Erreur lors du chargement des questions');
