@@ -12,6 +12,7 @@ import { Loader2 } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 type Prestataire = Database['public']['Tables']['prestataires']['Row'];
+type RegionFrance = Database['public']['Enums']['region_france'];
 
 export interface VendorFilter {
   search: string;
@@ -22,7 +23,6 @@ export interface VendorFilter {
   // Filtres pour les lieux de réception
   categorieLieu?: string | null;
   capaciteMin?: number | null;
-  capaciteMax?: number | null;
   hebergement?: boolean | null;
   couchages?: number | null;
 }
@@ -106,7 +106,8 @@ const MoteurRecherche = () => {
       }
       
       if (filters.region) {
-        query = query.eq('region', filters.region);
+        // Utiliser une assertion de type pour assurer la compatibilité
+        query = query.eq('region', filters.region as RegionFrance);
       }
       
       if (filters.minPrice) {
