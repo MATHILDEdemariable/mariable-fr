@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -39,7 +40,6 @@ const MoteurRecherche = () => {
     maxPrice: searchParams.get('max') ? Number(searchParams.get('max')) : undefined,
     categorieLieu: searchParams.get('categorieLieu'),
     capaciteMin: searchParams.get('capaciteMin') ? Number(searchParams.get('capaciteMin')) : undefined,
-    capaciteMax: searchParams.get('capaciteMax') ? Number(searchParams.get('capaciteMax')) : undefined,
     hebergement: searchParams.get('hebergement') === 'true' ? true : undefined,
     couchages: searchParams.get('couchages') ? Number(searchParams.get('couchages')) : undefined,
   });
@@ -106,7 +106,7 @@ const MoteurRecherche = () => {
       }
       
       if (filters.region) {
-        query = query.eq('region', filters.region as any);
+        query = query.eq('region', filters.region);
       }
       
       if (filters.minPrice) {
@@ -123,7 +123,7 @@ const MoteurRecherche = () => {
           query = query.eq('categorie_lieu', filters.categorieLieu);
         }
         
-        // Nouveau filtre pour la capacité simplifiée
+        // Filtre simplifié pour la capacité
         if (filters.capaciteMin) {
           query = query.gte('capacite_invites', filters.capaciteMin);
         }

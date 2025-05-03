@@ -32,13 +32,8 @@ const VenueExtraFilters: React.FC<VenueExtraFiltersProps> = ({ onFilterChange })
 
   const handleCapacityChange = (value: string) => {
     setCapacity(value);
-    const capacityVal = value === 'custom' ? null : parseInt(value, 10);
+    const capacityVal = value ? parseInt(value, 10) : null;
     onFilterChange({ capaciteMin: capacityVal });
-  };
-
-  const handleCustomCapacityChange = (value: string) => {
-    setCapacity(value);
-    onFilterChange({ capaciteMin: value ? parseInt(value, 10) : null });
   };
 
   const handleHebergementChange = (checked: boolean) => {
@@ -75,16 +70,10 @@ const VenueExtraFilters: React.FC<VenueExtraFiltersProps> = ({ onFilterChange })
         </Select>
       </div>
       
-      {/* Capacité d'invités - nouveau sélecteur simplifié */}
+      {/* Capacité d'invités - utilise maintenant un simple Input */}
       <VenueCapacitySelector 
         capacity={capacity}
-        onCapacityChange={(value) => {
-          if (value === "custom") {
-            handleCapacityChange(value);
-          } else {
-            handleCustomCapacityChange(value);
-          }
-        }}
+        onCapacityChange={handleCapacityChange}
       />
       
       {/* Hébergement inclus */}
