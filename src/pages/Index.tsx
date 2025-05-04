@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
@@ -20,24 +21,32 @@ const StartButton = () => {
   );
 };
 
-// Composant pour l'effet typing du titre principal
+// Composant pour l'effet typing du titre principal avec une meilleure finition visuelle
 const TypingEffect = ({ text }: { text: string }) => {
   const [displayedText, setDisplayedText] = useState('');
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isTypingComplete, setIsTypingComplete] = useState(false);
 
   useEffect(() => {
     if (currentIndex < text.length) {
       const timer = setTimeout(() => {
         setDisplayedText(prev => prev + text[currentIndex]);
         setCurrentIndex(prev => prev + 1);
-      }, 100); // Vitesse de l'animation
+      }, 75); // Vitesse de l'animation ajustée pour une meilleure lecture
       
       return () => clearTimeout(timer);
+    } else {
+      // Animation terminée, on supprime le curseur après un délai
+      const finishTimer = setTimeout(() => {
+        setIsTypingComplete(true);
+      }, 500);
+      
+      return () => clearTimeout(finishTimer);
     }
   }, [currentIndex, text]);
 
   return (
-    <span className="inline-block border-r-2 border-wedding-cream animate-pulse">
+    <span className={`inline-block ${isTypingComplete ? 'typing-complete' : 'border-r-2 border-wedding-cream animate-pulse'}`}>
       {displayedText}
     </span>
   );
@@ -74,7 +83,7 @@ const Index = () => {
           
           <div className="container relative z-10 mx-auto px-4 py-6 md:py-16">
             <div className="max-w-3xl mx-auto text-center mb-8 md:mb-12">
-              <h1 className="text-white text-2xl sm:text-3xl md:text-4xl lg:text-5xl mb-3 md:mb-4 font-serif">
+              <h1 className="text-white text-2xl sm:text-3xl md:text-4xl lg:text-5xl mb-7 md:mb-8 font-serif pb-8">
                 <TypingEffect text="Organisez le mariage parfait, simplement" />
               </h1>
               <p className="text-white/90 text-sm md:text-base mb-6 md:mb-8 max-w-2xl mx-auto">
