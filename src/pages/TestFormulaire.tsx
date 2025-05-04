@@ -5,11 +5,12 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { jsPDF } from "jspdf";
-import { File, Home, Calendar, Loader2, UserPlus, Share, RefreshCw } from "lucide-react";
+import { File, Home, Calendar, Loader2, Share, RefreshCw } from "lucide-react";
 import Header from '@/components/Header';
 import SEO from '@/components/SEO';
 import { supabase, type Json } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface FormData {
   style: string;
@@ -66,6 +67,7 @@ const TestFormulaire = () => {
   const [questions, setQuestions] = useState<FormQuestion[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const isMobile = useIsMobile();
 
   const styleDescriptions = {
     elegantClassic: {
@@ -317,11 +319,11 @@ const TestFormulaire = () => {
           </ul>
         </div>
         
-        <div className="flex flex-col sm:flex-row justify-center gap-4 mt-8">
+        <div className={`flex flex-col gap-3 mt-8 ${isMobile ? 'space-y-2' : 'sm:flex-row sm:flex-wrap sm:justify-center sm:gap-4'}`}>
           <Button 
             variant="outline"
             onClick={handleReset}
-            className="border-wedding-olive text-wedding-olive hover:bg-wedding-olive/10 gap-2"
+            className="border-wedding-olive text-wedding-olive hover:bg-wedding-olive/10 gap-2 py-3 px-4 w-full sm:w-auto"
           >
             <RefreshCw size={18} />
             Refaire le test
@@ -329,7 +331,7 @@ const TestFormulaire = () => {
           
           <Button 
             onClick={handleStartPlanningClick}
-            className="bg-wedding-olive hover:bg-wedding-olive/90 gap-2"
+            className="bg-wedding-olive hover:bg-wedding-olive/90 gap-2 py-3 px-4 w-full sm:w-auto"
           >
             <Calendar size={18} />
             Commencer ma planification
@@ -338,7 +340,7 @@ const TestFormulaire = () => {
           <Button 
             variant="outline"
             onClick={handleShareResult}
-            className="border-wedding-olive text-wedding-olive hover:bg-wedding-olive/10 gap-2"
+            className="border-wedding-olive text-wedding-olive hover:bg-wedding-olive/10 gap-2 py-3 px-4 w-full sm:w-auto"
           >
             <Share size={18} />
             Partager
@@ -347,7 +349,7 @@ const TestFormulaire = () => {
           <Button 
             variant="outline"
             onClick={() => navigate('/')}
-            className="border-wedding-olive text-wedding-olive hover:bg-wedding-olive/10 gap-2"
+            className="border-wedding-olive text-wedding-olive hover:bg-wedding-olive/10 gap-2 py-3 px-4 w-full sm:w-auto"
           >
             <Home size={18} />
             Retour à l'accueil

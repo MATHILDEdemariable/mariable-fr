@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Routes, Route, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -16,6 +17,7 @@ import CreateProjectDialog from '@/components/dashboard/CreateProjectDialog';
 import CoordinationPage from './CoordinationPage';
 import DrinksCalculatorWidget from '@/components/dashboard/DrinksCalculatorWidget';
 import { exportDashboardToPDF } from '@/services/pdfExportService';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 // Types for our project data
 interface Project {
@@ -171,11 +173,11 @@ const DashboardHome = () => {
 
   return (
     <div id="dashboard-content" className="space-y-6">
-      <div className="flex justify-between items-center mb-2">
+      <div className="flex flex-col sm:flex-row justify-between items-center gap-3 mb-4">
         <h1 className="text-2xl font-serif">Tableau de bord</h1>
         <Button
           variant="outline"
-          className="bg-wedding-olive/10 hover:bg-wedding-olive/20 text-wedding-olive"
+          className="bg-wedding-olive/10 hover:bg-wedding-olive/20 text-wedding-olive w-full sm:w-auto"
           onClick={handleExportPDF}
         >
           <Download className="mr-2 h-4 w-4" />
@@ -352,7 +354,9 @@ const SettingsPage = () => {
 const Dashboard = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   
   // Check if user is logged in
   useEffect(() => {
@@ -391,6 +395,10 @@ const Dashboard = () => {
     );
   }
   
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
+  
   return (
     <div className="min-h-screen bg-wedding-cream/5">
       <SEO
@@ -400,20 +408,34 @@ const Dashboard = () => {
       <Header />
       
       <div className="container mx-auto px-4 py-8">
+        {isMobile && (
+          <Button 
+            onClick={toggleSidebar} 
+            className="mb-4 w-full bg-wedding-olive hover:bg-wedding-olive/90"
+          >
+            <Layout className="mr-2 h-4 w-4" />
+            {sidebarOpen ? "Masquer le menu" : "Afficher le menu"}
+          </Button>
+        )}
+        
         <div className="flex flex-col lg:flex-row gap-6">
-          <DashboardSidebar />
+          {(!isMobile || sidebarOpen) && (
+            <DashboardSidebar />
+          )}
           
-          <main className="flex-1 space-y-6">
-            <Routes>
-              <Route path="/" element={<DashboardHome />} />
-              <Route path="/prestataires" element={<PrestatairesPage />} />
-              <Route path="/budget" element={<BudgetPage />} />
-              <Route path="/tasks" element={<TasksPage />} />
-              <Route path="/coordination" element={<CoordinationPage />} />
-              <Route path="/documents" element={<DocumentsPage />} />
-              <Route path="/settings" element={<SettingsPage />} />
-              <Route path="/drinks" element={<DrinksCalculatorPage />} />
-            </Routes>
+          <main className={`flex-1 space-y-6 transition-all duration-300 ${isMobile && sidebarOpen ? "mt-4" : ""}`}>
+            {(!isMobile || !sidebarOpen) && (
+              <Routes>
+                <Route path="/" element={<DashboardHome />} />
+                <Route path="/prestataires" element={<PrestatairesPage />} />
+                <Route path="/budget" element={<BudgetPage />} />
+                <Route path="/tasks" element={<TasksPage />} />
+                <Route path="/coordination" element={<CoordinationPage />} />
+                <Route path="/documents" element={<DocumentsPage />} />
+                <Route path="/settings" element={<SettingsPage />} />
+                <Route path="/drinks" element={<DrinksCalculatorPage />} />
+              </Routes>
+            )}
           </main>
         </div>
       </div>

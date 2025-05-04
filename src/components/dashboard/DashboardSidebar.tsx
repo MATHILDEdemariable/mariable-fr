@@ -16,6 +16,7 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface SidebarItemProps {
   icon: React.ElementType;
@@ -29,7 +30,7 @@ const SidebarItem = ({ icon: Icon, label, href, isActive }: SidebarItemProps) =>
     <Link 
       to={href} 
       className={cn(
-        "flex items-center gap-3 px-4 py-3 rounded-md text-sm font-medium transition-colors",
+        "flex items-center gap-3 px-3 py-2 sm:px-4 sm:py-3 rounded-md text-sm font-medium transition-colors",
         isActive 
           ? "bg-wedding-olive text-white" 
           : "hover:bg-wedding-olive/10"
@@ -44,6 +45,7 @@ const SidebarItem = ({ icon: Icon, label, href, isActive }: SidebarItemProps) =>
 const DashboardSidebar = () => {
   const location = useLocation();
   const { toast } = useToast();
+  const isMobile = useIsMobile();
   
   const handleLogout = async () => {
     try {
@@ -73,9 +75,9 @@ const DashboardSidebar = () => {
   ];
   
   return (
-    <div className="min-w-[240px] border-r p-4 h-full bg-wedding-cream/5">
-      <div className="space-y-4">
-        <div className="px-4 py-2">
+    <div className={`min-w-[240px] ${isMobile ? 'w-full' : ''} border-r p-2 sm:p-4 h-full bg-wedding-cream/5 rounded-lg`}>
+      <div className="space-y-3 sm:space-y-4">
+        <div className="px-2 sm:px-4 py-2">
           <h2 className="text-lg font-semibold">Mon mariage</h2>
           <p className="text-sm text-muted-foreground">Tableau de bord</p>
         </div>
@@ -92,7 +94,7 @@ const DashboardSidebar = () => {
           ))}
         </div>
         
-        <div className="pt-4 border-t mt-6">
+        <div className="pt-4 border-t mt-4 sm:mt-6">
           <Button 
             variant="ghost" 
             className="w-full justify-start text-red-500 hover:bg-red-50 hover:text-red-600"
