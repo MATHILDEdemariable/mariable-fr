@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
 import { Card } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
@@ -8,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Separator } from '@/components/ui/separator';
 import { 
   MapPin, Calculator, PieChart, ArrowRight, ArrowLeft, 
-  Sun, Snowflake, Users, Info, CalendarIcon, Download, Mail 
+  Sun, Snowflake, Users, Info, CalendarIcon, Download, Mail, UserPlus 
 } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -538,6 +539,8 @@ const Budget = () => {
     );
   };
 
+  const navigate = useNavigate();
+
   return (
     <div className="min-h-screen bg-background">
       <SEO 
@@ -603,6 +606,15 @@ const Budget = () => {
           <p className="text-lg">
             L'estimation du budget traiteur ci-dessus est calculée avec une estimation globale des boissons. Pour vous aider à prévoir avec précision la quantité et le coût des boissons pour votre mariage, nous avons développé une calculatrice spéciale ci-dessous.
           </p>
+          <div className="mt-4 text-center">
+            <Button 
+              className="bg-wedding-olive hover:bg-wedding-olive/90 gap-2"
+              onClick={() => navigate('/register')}
+            >
+              <UserPlus size={18} />
+              Créer mon compte pour sauvegarder mon budget
+            </Button>
+          </div>
         </div>
 
         {/* Calculatrice de boissons */}

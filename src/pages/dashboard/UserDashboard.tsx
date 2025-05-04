@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Routes, Route, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -15,6 +14,7 @@ import BudgetSummary from '@/components/dashboard/BudgetSummary';
 import DocumentsSection from '@/components/dashboard/DocumentsSection';
 import CreateProjectDialog from '@/components/dashboard/CreateProjectDialog';
 import CoordinationPage from './CoordinationPage';
+import DrinksCalculatorWidget from '@/components/dashboard/DrinksCalculatorWidget';
 import { exportDashboardToPDF } from '@/services/pdfExportService';
 
 // Types for our project data
@@ -262,6 +262,10 @@ const DocumentsPage = () => (
   <DocumentsSection />
 );
 
+const DrinksCalculatorPage = () => (
+  <DrinksCalculatorWidget />
+);
+
 const SettingsPage = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -408,6 +412,7 @@ const Dashboard = () => {
               <Route path="/coordination" element={<CoordinationPage />} />
               <Route path="/documents" element={<DocumentsPage />} />
               <Route path="/settings" element={<SettingsPage />} />
+              <Route path="/drinks" element={<DrinksCalculatorPage />} />
             </Routes>
           </main>
         </div>

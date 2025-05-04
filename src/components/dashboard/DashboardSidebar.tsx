@@ -9,7 +9,8 @@ import {
   FileText,
   Settings, 
   LogOut,
-  Calendar
+  Calendar,
+  Wine
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -64,6 +65,7 @@ const DashboardSidebar = () => {
     { icon: LayoutDashboard, label: "Accueil du projet", href: "/dashboard" },
     { icon: Users, label: "Prestataires", href: "/dashboard/prestataires" },
     { icon: BarChart3, label: "Budget", href: "/dashboard/budget" },
+    { icon: Wine, label: "Calculateur boissons", href: "/dashboard/drinks" },
     { icon: CheckSquare, label: "Tâches & To-Do", href: "/dashboard/tasks" },
     { icon: Calendar, label: "Coordination Jour J", href: "/dashboard/coordination" },
     { icon: FileText, label: "Documents & Devis", href: "/dashboard/documents" },

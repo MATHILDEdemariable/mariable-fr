@@ -343,27 +343,7 @@ const TestFormulaire = () => {
             <Share size={18} />
             Partager
           </Button>
-        </div>
-        
-        <div className="flex flex-col sm:flex-row justify-center gap-4 mt-8">
-          {!isAuthenticated && (
-            <Button 
-              onClick={handleSignUpClick}
-              className="bg-wedding-olive hover:bg-wedding-olive/90 gap-2"
-            >
-              <UserPlus size={18} />
-              Créer mon compte pour accéder à toutes les fonctionnalités
-            </Button>
-          )}
-          
-          <Button 
-            onClick={() => navigate('/services/planification')}
-            className="bg-wedding-olive hover:bg-wedding-olive/90 gap-2"
-          >
-            <Calendar size={18} />
-            Commencer ma planification
-          </Button>
-          
+
           <Button 
             variant="outline"
             onClick={() => navigate('/')}
