@@ -5,7 +5,7 @@ import {
   BarChart, Bar, XAxis, YAxis, Tooltip as RechartsTooltip
 } from 'recharts';
 import { 
-  Euro, ArrowRight, Download, 
+  Euro, ArrowRight, Download, Share2,
   MapPin, Calculator, Users, Calendar, Info, ChevronRight, ChevronDown 
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -96,22 +96,22 @@ const PRICE_MODIFIERS: Record<ServiceLevel, number> = {
 };
 
 const BUDGET_COLORS: Record<VendorType, string> = {
-  lieu: '#a19c88', // beige
-  traiteur: '#7F9474', // vert sauge
-  photo: '#b5c4a8', // vert clair
-  dj: '#d1c7b7', // beige clair
-  planner: '#908e7e', // taupe
-  deco: '#dbdacb', // crème
-  autres: '#f8f6f0' // blanc cassé
+  lieu: '#9b87f5', // changed to higher contrast purple
+  traiteur: '#7E69AB', // changed to higher contrast
+  photo: '#6E59A5', // changed to higher contrast
+  dj: '#D6BCFA', // changed to higher contrast
+  planner: '#8E9196', // changed to higher contrast gray
+  deco: '#1A1F2C', // changed to darker for contrast
+  autres: '#aaadb0' // changed to higher contrast
 };
 
 const INITIAL_BUDGET_DATA: BudgetCategory[] = [
-  { name: 'Lieu', amount: 5000, color: '#a19c88' }, // beige
-  { name: 'Traiteur', amount: 7000, color: '#7F9474' }, // vert sauge
-  { name: 'Décoration', amount: 2000, color: '#b5c4a8' }, // vert clair
-  { name: 'Tenue', amount: 3000, color: '#d1c7b7' }, // beige clair
-  { name: 'Photo & Vidéo', amount: 2500, color: '#908e7e' }, // taupe
-  { name: 'Imprévus', amount: 1500, color: '#dbdacb' } // crème
+  { name: 'Lieu', amount: 5000, color: '#9b87f5' }, // changed to higher contrast purple
+  { name: 'Traiteur', amount: 7000, color: '#7E69AB' }, // changed to higher contrast
+  { name: 'Décoration', amount: 2000, color: '#6E59A5' }, // changed to higher contrast
+  { name: 'Tenue', amount: 3000, color: '#D6BCFA' }, // changed to higher contrast
+  { name: 'Photo & Vidéo', amount: 2500, color: '#8E9196' }, // changed to higher contrast gray
+  { name: 'Imprévus', amount: 1500, color: '#1A1F2C' } // changed to darker for contrast
 ];
 
 const BudgetSummary: React.FC = () => {
@@ -729,7 +729,7 @@ const BudgetSummary: React.FC = () => {
           )
         ) : (
           <>
-            <div className="h-64">
+            <div className="h-64 md:h-80"> {/* Adjusted height for better display */}
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
@@ -737,11 +737,11 @@ const BudgetSummary: React.FC = () => {
                     cx="50%"
                     cy="50%"
                     innerRadius={60}
-                    outerRadius={90}
+                    outerRadius="90%"
                     paddingAngle={2}
                     dataKey="amount"
                     nameKey="name"
-                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                    label={({ name, percent }) => `${(percent * 100).toFixed(0)}%`} {/* Simplified labels for better visibility */}
                     labelLine={{ stroke: '#7F9474', strokeWidth: 0.5 }}
                     strokeWidth={1}
                     stroke="#f8f6f0"
@@ -750,7 +750,6 @@ const BudgetSummary: React.FC = () => {
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
-                  <Legend formatter={(value) => <span className="text-sm font-medium">{value}</span>} />
                 </PieChart>
               </ResponsiveContainer>
             </div>
@@ -767,25 +766,26 @@ const BudgetSummary: React.FC = () => {
               </div>
             </div>
             
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            {/* Responsive legend - grid on desktop, single column on mobile */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
               {budgetData.map((category) => (
-                <div key={category.name} className="flex items-center space-x-2">
+                <div key={category.name} className="flex items-center space-x-3 p-2 bg-white/50 rounded-md">
                   <div 
-                    className="h-3 w-3 rounded-full" 
+                    className="h-4 w-4 rounded-full shrink-0" 
                     style={{ backgroundColor: category.color }}
                   />
-                  <div>
+                  <div className="flex-1">
                     <p className="text-sm font-medium">{category.name}</p>
-                    <p className="text-xs text-muted-foreground">{formatCurrency(category.amount)}</p>
+                    <p className="text-sm text-muted-foreground">{formatCurrency(category.amount)}</p>
                   </div>
                 </div>
               ))}
             </div>
             
-            <div className="flex items-center justify-between gap-2 mt-6">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mt-6">
               <Button 
                 variant="outline" 
-                className="flex-1 bg-wedding-cream/10 hover:bg-wedding-cream/20" 
+                className="w-full sm:flex-1 bg-wedding-cream/10 hover:bg-wedding-cream/20" 
                 onClick={() => setShowCalculator(true)}
               >
                 <Calculator className="mr-2 h-4 w-4" />
@@ -794,7 +794,7 @@ const BudgetSummary: React.FC = () => {
               
               <Button 
                 variant="outline"
-                className="bg-wedding-olive/10 hover:bg-wedding-olive/20 text-wedding-olive"
+                className="w-full sm:w-auto bg-wedding-olive/10 hover:bg-wedding-olive/20 text-wedding-olive"
                 onClick={handleExportPDF}
               >
                 <Download className="mr-2 h-4 w-4" />

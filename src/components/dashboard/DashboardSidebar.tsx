@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { 
   LayoutDashboard, 
@@ -10,7 +10,9 @@ import {
   Settings, 
   LogOut,
   Calendar,
-  Wine
+  Wine,
+  Menu,
+  X
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -46,6 +48,7 @@ const DashboardSidebar = () => {
   const location = useLocation();
   const { toast } = useToast();
   const isMobile = useIsMobile();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   
   const handleLogout = async () => {
     try {
@@ -74,8 +77,73 @@ const DashboardSidebar = () => {
     { icon: Settings, label: "Paramètres", href: "/dashboard/settings" }
   ];
   
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+  // When a menu item is clicked on mobile, close the menu
+  const handleMenuItemClick = () => {
+    if (isMobile) {
+      setIsMenuOpen(false);
+    }
+  };
+  
+  // For mobile, render a collapsible sidebar
+  if (isMobile) {
+    return (
+      <>
+        {/* Mobile menu button */}
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          className="fixed top-4 left-4 z-50"
+          onClick={toggleMenu}
+        >
+          {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+        </Button>
+        
+        {/* Mobile sidebar */}
+        <div className={`fixed inset-0 z-40 bg-white transform transition-transform duration-300 ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+          <div className="p-4 h-full overflow-y-auto">
+            <div className="pt-12 space-y-6">
+              <div className="px-2 py-4">
+                <h2 className="text-lg font-semibold">Mon mariage</h2>
+                <p className="text-sm text-muted-foreground">Tableau de bord</p>
+              </div>
+              
+              <div className="space-y-1">
+                {menuItems.map((item) => (
+                  <div key={item.href} onClick={handleMenuItemClick}>
+                    <SidebarItem 
+                      icon={item.icon}
+                      label={item.label}
+                      href={item.href}
+                      isActive={location.pathname === item.href}
+                    />
+                  </div>
+                ))}
+              </div>
+              
+              <div className="pt-4 border-t mt-4">
+                <Button 
+                  variant="ghost" 
+                  className="w-full justify-start text-red-500 hover:bg-red-50 hover:text-red-600"
+                  onClick={handleLogout}
+                >
+                  <LogOut className="h-5 w-5 mr-2" />
+                  Déconnexion
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
+  
+  // For desktop, render the normal sidebar
   return (
-    <div className={`min-w-[240px] ${isMobile ? 'w-full' : ''} border-r p-2 sm:p-4 h-full bg-wedding-cream/5 rounded-lg`}>
+    <div className="min-w-[240px] border-r p-2 sm:p-4 h-full bg-wedding-cream/5 rounded-lg">
       <div className="space-y-3 sm:space-y-4">
         <div className="px-2 sm:px-4 py-2">
           <h2 className="text-lg font-semibold">Mon mariage</h2>
