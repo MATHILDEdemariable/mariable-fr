@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
@@ -14,7 +13,7 @@ const StartButton = () => {
   return (
     <Button
       onClick={() => navigate('/test-formulaire')}
-      className="bg-wedding-olive hover:bg-wedding-olive/90 text-white px-6 py-6 text-lg font-medium rounded-lg mt-8"
+      className="bg-wedding-olive hover:bg-wedding-olive/90 text-white px-6 py-6 text-lg font-medium rounded-lg mt-8 w-full sm:w-auto"
     >
       Commencer
     </Button>
@@ -107,7 +106,7 @@ const Index = () => {
         <section className="py-8 md:py-12 bg-wedding-cream/40">
           <div className="container px-4">
             <div className="text-center mb-6 md:mb-8">
-              <h2 className="text-base md:text-lg font-serif mb-2 md:mb-3">
+              <h2 className="text-xl md:text-2xl lg:text-3xl font-serif mb-2 md:mb-3">
                 Comment Mariable facilite l'organisation de votre mariage ?
               </h2>
               <p className="text-muted-foreground text-xs md:text-sm max-w-2xl mx-auto">
@@ -144,8 +143,8 @@ const Index = () => {
                 <li className="flex items-start gap-3 p-3 md:p-4 bg-white rounded-lg shadow-sm">
                   <CheckCircle className="text-wedding-olive shrink-0 mt-1" size={18} />
                   <div>
-                    <h3 className="font-serif text-base md:text-lg text-wedding-black">Réserver et gérer en ligne</h3>
-                    <p className="text-xs sm:text-sm text-muted-foreground">Directement en ligne - prochainement disponible</p>
+                    <h3 className="font-serif text-base md:text-lg text-wedding-black">De nouvelles fonctionnalités à venir</h3>
+                    <p className="text-xs sm:text-sm text-muted-foreground">Prochainement disponible</p>
                   </div>
                 </li>
               </ul>
@@ -160,7 +159,7 @@ const Index = () => {
         <section id="features" className="py-8 md:py-12 bg-white">
           <div className="container px-4">
             <div className="text-center mb-6 md:mb-8">
-              <h2 className="text-base md:text-lg font-serif mb-2 md:mb-3">
+              <h2 className="text-xl md:text-2xl lg:text-3xl font-serif mb-2 md:mb-3">
                 Transformez l'organisation du mariage en une expérience simple, rapide & agréable
               </h2>
               <p className="text-muted-foreground text-xs md:text-sm max-w-2xl mx-auto">
@@ -183,9 +182,9 @@ const Index = () => {
                 <div className="w-10 h-10 bg-wedding-black/10 rounded-full flex items-center justify-center mb-3">
                   <MapPin className="text-wedding-black h-5 w-5" />
                 </div>
-                <h3 className="text-base md:text-lg font-serif mb-2">Recommandations personnalisées</h3>
+                <h3 className="text-base md:text-lg font-serif mb-2">Garantie des bons choix de prestataires</h3>
                 <p className="text-xs md:text-sm text-muted-foreground">
-                  Accédez à un référencement de professionnels adaptés et reconnus pour leur expertise.
+                  Des experts triés sur le volet pour votre sérénité
                 </p>
               </div>
               
@@ -193,9 +192,9 @@ const Index = () => {
                 <div className="w-10 h-10 bg-wedding-black/10 rounded-full flex items-center justify-center mb-3">
                   <Heart className="text-wedding-black h-5 w-5" />
                 </div>
-                <h3 className="text-base md:text-lg font-serif mb-2">Sans stress</h3>
+                <h3 className="text-base md:text-lg font-serif mb-2">Réduction de la charge mentale</h3>
                 <p className="text-xs md:text-sm text-muted-foreground">
-                  Faites nous confiance et utilisez notre outil de planification pour ne rien oublier.
+                  Gérez tout au même endroit, sans stress ni oubli
                 </p>
               </div>
             </div>
@@ -204,12 +203,12 @@ const Index = () => {
         
         <section id="contact" className="py-8 md:py-12 bg-white text-wedding-black">
           <div className="container text-center px-4">
-            <h2 className="text-base md:text-lg font-serif mb-3 md:mb-4">
+            <h2 className="text-xl md:text-2xl lg:text-3xl font-serif mb-3 md:mb-4">
               Prêt à révolutionner l'organisation de votre mariage ?
             </h2>
             <Button 
               size={isMobile ? "default" : "lg"} 
-              className="bg-wedding-olive hover:bg-wedding-olive/90 text-white"
+              className="bg-wedding-olive hover:bg-wedding-olive/90 text-white px-6 py-6 text-lg font-medium w-full sm:w-auto"
               onClick={handleConnexionClick}
             >
               Oui je le veux
