@@ -5,10 +5,11 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { jsPDF } from "jspdf";
-import { File, Home, Calendar, Loader2, UserPlus } from "lucide-react";
+import { File, Home, Calendar, Loader2, UserPlus, Share, RefreshCw } from "lucide-react";
 import Header from '@/components/Header';
 import SEO from '@/components/SEO';
 import { supabase, type Json } from "@/integrations/supabase/client";
+import { toast } from "@/hooks/use-toast";
 
 interface FormData {
   style: string;
@@ -252,6 +253,35 @@ const TestFormulaire = () => {
     navigate('/register');
   };
 
+  const handleStartPlanningClick = () => {
+    if (isAuthenticated) {
+      navigate('/dashboard');
+    } else {
+      navigate('/register');
+    }
+  };
+
+  const handleShareResult = () => {
+    const url = window.location.href;
+    
+    if (navigator.share && navigator.canShare({ url })) {
+      // Use Web Share API if supported
+      navigator.share({
+        title: 'Mon style de mariage - Mariable',
+        text: `J'ai découvert mon style de mariage avec Mariable : ${styleDescriptions[dominantStyle as keyof typeof styleDescriptions]?.title}`,
+        url: url,
+      }).catch(error => console.log('Erreur lors du partage:', error));
+    } else {
+      // Fallback to copy link
+      navigator.clipboard.writeText(url).then(() => {
+        toast({
+          title: "Lien copié !",
+          description: "Le lien a été copié dans votre presse-papiers",
+        });
+      });
+    }
+  };
+
   const getCurrentQuestion = () => {
     if (loading || questions.length === 0) return null;
     return questions[currentStep - 1];
@@ -291,17 +321,27 @@ const TestFormulaire = () => {
           <Button 
             variant="outline"
             onClick={handleReset}
-            className="border-wedding-olive text-wedding-olive hover:bg-wedding-olive/10"
+            className="border-wedding-olive text-wedding-olive hover:bg-wedding-olive/10 gap-2"
           >
+            <RefreshCw size={18} />
             Refaire le test
           </Button>
           
           <Button 
-            onClick={generatePDF}
+            onClick={handleStartPlanningClick}
             className="bg-wedding-olive hover:bg-wedding-olive/90 gap-2"
           >
-            <File size={18} />
-            Télécharger en PDF
+            <Calendar size={18} />
+            Commencer ma planification
+          </Button>
+          
+          <Button 
+            variant="outline"
+            onClick={handleShareResult}
+            className="border-wedding-olive text-wedding-olive hover:bg-wedding-olive/10 gap-2"
+          >
+            <Share size={18} />
+            Partager
           </Button>
         </div>
         

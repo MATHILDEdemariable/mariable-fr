@@ -4,7 +4,7 @@ import ServiceTemplate from '../ServiceTemplate';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, UserPlus } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import SEO from '@/components/SEO';
@@ -251,7 +251,7 @@ const PlanningChecklist = () => {
   };
 
   const handleSignUpClick = () => {
-    navigate('/login-frame');
+    navigate('/register');
   };
 
   return (
@@ -320,14 +320,15 @@ const PlanningChecklist = () => {
             <CardContent className="pt-6 pb-6">
               <h3 className="text-2xl font-serif mb-4 text-center">Prêt à dire oui à la simplicité ?</h3>
               <p className="mb-6 text-center">
-                Créez votre compte pour sauvegarder votre planning et accéder à toutes nos fonctionnalités.
+                Créez votre compte pour sauvegarder votre planning, accéder à toutes nos fonctionnalités et à un outil de planification jour-J personnalisé.
               </p>
               <Button 
                 size="lg"
-                className="bg-wedding-olive hover:bg-wedding-olive/90 text-white"
+                className="bg-wedding-olive hover:bg-wedding-olive/90 text-white gap-2"
                 onClick={handleSignUpClick}
               >
-                S'inscrire <ArrowRight className="ml-2 h-4 w-4" />
+                <UserPlus size={18} />
+                Créer mon compte
               </Button>
             </CardContent>
           </Card>
@@ -369,29 +370,6 @@ const PlanificationContent = () => {
       <h2 className="text-2xl font-serif mt-8 mb-4">Votre checklist de mariage simplifiée</h2>
       
       <PlanningChecklist />
-      
-      <div className="mt-8 text-center">
-        <Card className="bg-wedding-cream/20 border-wedding-olive/20">
-          <CardContent className="pt-6 pb-6 text-center">
-            <h3 className="text-2xl font-serif mb-4 text-center">Prêt à planifier votre jour ?</h3>
-            <p className="mb-6 text-center">
-              Notre outil de planning jour-J vous permet de visualiser et d'organiser le timing idéal, de la cérémonie jusqu'à la soirée dansante.
-            </p>
-            <Button 
-              size="lg"
-              variant="wedding"
-              className="w-full sm:w-auto bg-wedding-olive hover:bg-wedding-olive/90 text-white"
-              onClick={handlePlanningClick}
-            >
-              {isAuthenticated ? (
-                <>Créer mon planning jour-J <ArrowRight className="ml-2 h-4 w-4" /></>
-              ) : (
-                <>Se connecter pour accéder à la coordination personnalisée <ArrowRight className="ml-2 h-4 w-4" /></>
-              )}
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
     </>
   );
 };
