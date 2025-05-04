@@ -10,7 +10,13 @@ const SearchBar = () => {
   const navigate = useNavigate();
 
   const handleSearch = () => {
-    navigate('/guide-mariable-frame');
+    navigate('/recherche', { state: { query: searchQuery } });
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
   };
 
   return (
@@ -23,6 +29,7 @@ const SearchBar = () => {
             placeholder="Un traiteur exceptionnel à Bordeaux"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyPress={handleKeyPress}
             className="pl-10 w-full text-xs sm:text-sm" // Added text size classes for better mobile visibility
           />
         </div>

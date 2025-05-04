@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
 import { Calendar, MapPin, Heart, Instagram, Mail, BookOpen, MessageCircle, CheckCircle, Sparkles } from 'lucide-react';
@@ -18,6 +18,29 @@ const StartButton = () => {
     >
       Commencer
     </Button>
+  );
+};
+
+// Composant pour l'effet typing du titre principal
+const TypingEffect = ({ text }: { text: string }) => {
+  const [displayedText, setDisplayedText] = useState('');
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    if (currentIndex < text.length) {
+      const timer = setTimeout(() => {
+        setDisplayedText(prev => prev + text[currentIndex]);
+        setCurrentIndex(prev => prev + 1);
+      }, 100); // Vitesse de l'animation
+      
+      return () => clearTimeout(timer);
+    }
+  }, [currentIndex, text]);
+
+  return (
+    <span className="inline-block border-r-2 border-wedding-cream animate-pulse">
+      {displayedText}
+    </span>
   );
 };
 
@@ -53,7 +76,7 @@ const Index = () => {
           <div className="container relative z-10 mx-auto px-4 py-6 md:py-16">
             <div className="max-w-3xl mx-auto text-center mb-8 md:mb-12">
               <h1 className="text-white text-2xl sm:text-3xl md:text-4xl lg:text-5xl mb-3 md:mb-4 font-serif">
-                Organisez le mariage <span className="text-wedding-cream">dont vous rêvez</span>
+                <TypingEffect text="Organisez le mariage parfait, simplement" />
               </h1>
               <p className="text-white/90 text-sm md:text-base mb-6 md:mb-8 max-w-2xl mx-auto">
                 Trouvez les meilleurs prestataires
@@ -85,10 +108,10 @@ const Index = () => {
           <div className="container px-4">
             <div className="text-center mb-6 md:mb-8">
               <h2 className="text-base md:text-lg font-serif mb-2 md:mb-3">
-                Mariable facilite l'organisation de votre mariage
+                Comment Mariable facilite l'organisation de votre mariage ?
               </h2>
               <p className="text-muted-foreground text-xs md:text-sm max-w-2xl mx-auto">
-                Transformez l'organisation du mariage en une expérience simple, rapide & agréable
+                En devenant votre wedding planner digital & intelligent
               </p>
             </div>
             
@@ -97,24 +120,24 @@ const Index = () => {
                 <li className="flex items-start gap-3 p-3 md:p-4 bg-white rounded-lg shadow-sm">
                   <CheckCircle className="text-wedding-olive shrink-0 mt-1" size={18} />
                   <div>
-                    <h3 className="font-serif text-base md:text-lg text-wedding-black">Trouver les meilleurs prestataires</h3>
-                    <p className="text-xs sm:text-sm text-muted-foreground">Grâce à notre guide de référence soigneusement sélectionné</p>
+                    <h3 className="font-serif text-base md:text-lg text-wedding-black">Un guide de prestataires de confiance</h3>
+                    <p className="text-xs sm:text-sm text-muted-foreground">Grâce à notre sélection soigneusement établie</p>
                   </div>
                 </li>
                 
                 <li className="flex items-start gap-3 p-3 md:p-4 bg-white rounded-lg shadow-sm">
                   <CheckCircle className="text-wedding-olive shrink-0 mt-1" size={18} />
                   <div>
-                    <h3 className="font-serif text-base md:text-lg text-wedding-black">Planifier chaque étape</h3>
-                    <p className="text-xs sm:text-sm text-muted-foreground">Organisez votre mariage avec clarté</p>
+                    <h3 className="font-serif text-base md:text-lg text-wedding-black">Des Outils de planification</h3>
+                    <p className="text-xs sm:text-sm text-muted-foreground">Check-list en 10 étapes, planning jour-j</p>
                   </div>
                 </li>
                 
                 <li className="flex items-start gap-3 p-3 md:p-4 bg-white rounded-lg shadow-sm">
                   <CheckCircle className="text-wedding-olive shrink-0 mt-1" size={18} />
                   <div>
-                    <h3 className="font-serif text-base md:text-lg text-wedding-black">Gérer facilement votre budget</h3>
-                    <p className="text-xs sm:text-sm text-muted-foreground">Avec une transparence totale des prix et des prestations</p>
+                    <h3 className="font-serif text-base md:text-lg text-wedding-black">Des Calculatrices magiques</h3>
+                    <p className="text-xs sm:text-sm text-muted-foreground">Budget, boissons et autres outils pratiques</p>
                   </div>
                 </li>
                 
@@ -138,10 +161,10 @@ const Index = () => {
           <div className="container px-4">
             <div className="text-center mb-6 md:mb-8">
               <h2 className="text-base md:text-lg font-serif mb-2 md:mb-3">
-                Le premier wedding planner digital qui centralise et simplifie les démarches
+                Transformez l'organisation du mariage en une expérience simple, rapide & agréable
               </h2>
               <p className="text-muted-foreground text-xs md:text-sm max-w-2xl mx-auto">
-                Tout en vous laissant la liberté de garder la main sur votre grand jour
+                Gardez la main sur votre grand jour
               </p>
             </div>
             
