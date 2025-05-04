@@ -352,6 +352,41 @@ export type Database = {
         }
         Relationships: []
       }
+      vendor_wishlist: {
+        Row: {
+          created_at: string
+          id: string
+          user_id: string
+          vendor_category: string | null
+          vendor_id: string
+          vendor_name: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          user_id: string
+          vendor_category?: string | null
+          vendor_id: string
+          vendor_name: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          user_id?: string
+          vendor_category?: string | null
+          vendor_id?: string
+          vendor_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vendor_wishlist_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "prestataires"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       vendors_tracking: {
         Row: {
           category: string

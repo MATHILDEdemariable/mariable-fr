@@ -71,12 +71,13 @@ const VendorCard: React.FC<VendorCardProps> = ({ vendor, onClick, onWishlistAdd 
       
       if (!user) return;
       
+      // Fixed: Use correct query to check if vendor is in wishlist
       const { data } = await supabase
         .from('vendor_wishlist')
-        .select('*')
+        .select('id')
         .eq('user_id', user.id)
         .eq('vendor_id', vendor.id)
-        .single();
+        .maybeSingle();
       
       setIsInWishlist(!!data);
     };
@@ -99,7 +100,7 @@ const VendorCard: React.FC<VendorCardProps> = ({ vendor, onClick, onWishlistAdd 
       setIsAddingToWishlist(true);
       
       if (isInWishlist) {
-        // Remove from wishlist
+        // Remove from wishlist - use correct table name
         await supabase
           .from('vendor_wishlist')
           .delete()
@@ -113,7 +114,7 @@ const VendorCard: React.FC<VendorCardProps> = ({ vendor, onClick, onWishlistAdd 
         
         setIsInWishlist(false);
       } else {
-        // Add to wishlist
+        // Add to wishlist - with correct table and fields
         await supabase
           .from('vendor_wishlist')
           .insert({

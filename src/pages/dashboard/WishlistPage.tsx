@@ -10,13 +10,15 @@ import { toast } from '@/components/ui/use-toast';
 import { useNavigate } from 'react-router-dom';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 
+type Prestataire = Database['public']['Tables']['prestataires']['Row'];
+
 type WishlistItem = {
   id: string;
   vendor_id: string;
   vendor_name: string;
   vendor_category: string;
   created_at: string;
-  vendor?: Database['public']['Tables']['prestataires']['Row'];
+  vendor?: Prestataire;
 };
 
 const WishlistPage = () => {
@@ -34,16 +36,10 @@ const WishlistPage = () => {
         return;
       }
 
-      // Fetch wishlist items
+      // Fetch wishlist items - fixed: use correct table name
       const { data, error } = await supabase
         .from('vendor_wishlist')
-        .select(`
-          id,
-          vendor_id,
-          vendor_name,
-          vendor_category,
-          created_at
-        `)
+        .select('*')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });
 
@@ -62,7 +58,7 @@ const WishlistPage = () => {
             return {
               ...item,
               vendor: vendorData || undefined
-            };
+            } as WishlistItem;
           })
         );
         
@@ -86,6 +82,7 @@ const WishlistPage = () => {
 
   const handleRemoveFromWishlist = async (itemId: string, vendorName: string) => {
     try {
+      // Fixed: Use correct table name
       const { error } = await supabase
         .from('vendor_wishlist')
         .delete()
@@ -110,7 +107,7 @@ const WishlistPage = () => {
     }
   };
 
-  const handleContactVendor = (vendor: Database['public']['Tables']['prestataires']['Row']) => {
+  const handleContactVendor = (vendor: Prestataire) => {
     // Add code to contact vendor (email or direct link)
     if (vendor.email) {
       window.location.href = `mailto:${vendor.email}?subject=Question%20concernant%20votre%20service%20de%20mariage`;
@@ -130,7 +127,7 @@ const WishlistPage = () => {
   };
 
   // Get image from vendor
-  const getVendorImage = (vendor?: Database['public']['Tables']['prestataires']['Row']) => {
+  const getVendorImage = (vendor?: Prestataire) => {
     if (!vendor) return '/placeholder.svg';
     
     let mainImage = '/placeholder.svg';
