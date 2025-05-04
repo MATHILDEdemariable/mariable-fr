@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Routes, Route, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -268,6 +267,9 @@ const DrinksCalculatorPage = () => (
   <DrinksCalculatorWidget />
 );
 
+// Nouvelle page pour la wishlist 
+const WishlistPage = React.lazy(() => import('./WishlistPage'));
+
 const SettingsPage = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -432,6 +434,11 @@ const Dashboard = () => {
                 <Route path="/tasks" element={<TasksPage />} />
                 <Route path="/coordination" element={<CoordinationPage />} />
                 <Route path="/documents" element={<DocumentsPage />} />
+                <Route path="/wishlist" element={
+                  <React.Suspense fallback={<div className="flex justify-center items-center h-32"><div className="animate-spin h-8 w-8 border-t-2 border-b-2 border-wedding-olive rounded-full"></div></div>}>
+                    <WishlistPage />
+                  </React.Suspense>
+                } />
                 <Route path="/settings" element={<SettingsPage />} />
                 <Route path="/drinks" element={<DrinksCalculatorPage />} />
               </Routes>

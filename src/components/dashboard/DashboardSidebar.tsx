@@ -1,179 +1,88 @@
 
-import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { 
-  LayoutDashboard, 
-  Users, 
-  BarChart3, 
-  CheckSquare, 
-  FileText,
-  Settings, 
-  LogOut,
+import React from 'react';
+import { NavLink } from 'react-router-dom';
+import {
+  LayoutDashboard,
   Calendar,
+  ListTodo,
+  Clock,
+  Euro,
+  FileText,
+  Settings,
+  Users,
   Wine,
-  Menu,
-  X
+  Heart
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
-import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/components/ui/use-toast';
-import { useIsMobile } from '@/hooks/use-mobile';
 
-interface SidebarItemProps {
-  icon: React.ElementType;
-  label: string;
-  href: string;
-  isActive: boolean;
-}
-
-const SidebarItem = ({ icon: Icon, label, href, isActive }: SidebarItemProps) => {
-  return (
-    <Link 
-      to={href} 
-      className={cn(
-        "flex items-center gap-3 px-3 py-2 sm:px-4 sm:py-3 rounded-md text-sm font-medium transition-colors",
-        isActive 
-          ? "bg-wedding-olive text-white" 
-          : "hover:bg-wedding-olive/10"
-      )}
-    >
-      <Icon className="h-5 w-5" />
-      <span>{label}</span>
-    </Link>
-  );
-};
+const navItems = [
+  {
+    name: 'Tableau de bord',
+    path: '/dashboard',
+    icon: <LayoutDashboard className="h-5 w-5" />
+  },
+  {
+    name: 'Prestataires',
+    path: '/dashboard/prestataires',
+    icon: <Users className="h-5 w-5" />
+  },
+  {
+    name: 'Ma wishlist',
+    path: '/dashboard/wishlist',
+    icon: <Heart className="h-5 w-5" />
+  },
+  {
+    name: 'Budget',
+    path: '/dashboard/budget',
+    icon: <Euro className="h-5 w-5" />
+  },
+  {
+    name: 'Tâches',
+    path: '/dashboard/tasks',
+    icon: <ListTodo className="h-5 w-5" />
+  },
+  {
+    name: 'Coordination J-J',
+    path: '/dashboard/coordination',
+    icon: <Clock className="h-5 w-5" />
+  },
+  {
+    name: 'Calculateur boissons',
+    path: '/dashboard/drinks',
+    icon: <Wine className="h-5 w-5" />
+  },
+  {
+    name: 'Documents',
+    path: '/dashboard/documents',
+    icon: <FileText className="h-5 w-5" />
+  },
+  {
+    name: 'Paramètres',
+    path: '/dashboard/settings',
+    icon: <Settings className="h-5 w-5" />
+  }
+];
 
 const DashboardSidebar = () => {
-  const location = useLocation();
-  const { toast } = useToast();
-  const isMobile = useIsMobile();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  
-  const handleLogout = async () => {
-    try {
-      await supabase.auth.signOut();
-      toast({
-        title: "Déconnexion réussie",
-        description: "Vous avez été déconnecté avec succès",
-      });
-    } catch (error: any) {
-      toast({
-        title: "Erreur",
-        description: error.message || "Une erreur est survenue lors de la déconnexion",
-        variant: "destructive",
-      });
-    }
-  };
-  
-  const menuItems = [
-    { icon: LayoutDashboard, label: "Accueil du projet", href: "/dashboard" },
-    { icon: Users, label: "Prestataires", href: "/dashboard/prestataires" },
-    { icon: BarChart3, label: "Budget", href: "/dashboard/budget" },
-    { icon: Wine, label: "Calculateur boissons", href: "/dashboard/drinks" },
-    { icon: CheckSquare, label: "Tâches & To-Do", href: "/dashboard/tasks" },
-    { icon: Calendar, label: "Coordination Jour J", href: "/dashboard/coordination" },
-    { icon: FileText, label: "Documents & Devis", href: "/dashboard/documents" },
-    { icon: Settings, label: "Paramètres", href: "/dashboard/settings" }
-  ];
-  
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
-
-  // When a menu item is clicked on mobile, close the menu
-  const handleMenuItemClick = () => {
-    if (isMobile) {
-      setIsMenuOpen(false);
-    }
-  };
-  
-  // For mobile, render a collapsible sidebar
-  if (isMobile) {
-    return (
-      <>
-        {/* Mobile menu button */}
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          className="fixed top-4 left-4 z-50"
-          onClick={toggleMenu}
-        >
-          {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-        </Button>
-        
-        {/* Mobile sidebar */}
-        <div className={`fixed inset-0 z-40 bg-white transform transition-transform duration-300 ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-          <div className="p-4 h-full overflow-y-auto">
-            <div className="pt-12 space-y-6">
-              <div className="px-2 py-4">
-                <h2 className="text-lg font-semibold">Mon mariage</h2>
-                <p className="text-sm text-muted-foreground">Tableau de bord</p>
-              </div>
-              
-              <div className="space-y-1">
-                {menuItems.map((item) => (
-                  <div key={item.href} onClick={handleMenuItemClick}>
-                    <SidebarItem 
-                      icon={item.icon}
-                      label={item.label}
-                      href={item.href}
-                      isActive={location.pathname === item.href}
-                    />
-                  </div>
-                ))}
-              </div>
-              
-              <div className="pt-4 border-t mt-4">
-                <Button 
-                  variant="ghost" 
-                  className="w-full justify-start text-red-500 hover:bg-red-50 hover:text-red-600"
-                  onClick={handleLogout}
-                >
-                  <LogOut className="h-5 w-5 mr-2" />
-                  Déconnexion
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </>
-    );
-  }
-  
-  // For desktop, render the normal sidebar
   return (
-    <div className="min-w-[240px] border-r p-2 sm:p-4 h-full bg-wedding-cream/5 rounded-lg">
-      <div className="space-y-3 sm:space-y-4">
-        <div className="px-2 sm:px-4 py-2">
-          <h2 className="text-lg font-semibold">Mon mariage</h2>
-          <p className="text-sm text-muted-foreground">Tableau de bord</p>
-        </div>
-        
-        <div className="space-y-1">
-          {menuItems.map((item) => (
-            <SidebarItem 
-              key={item.href}
-              icon={item.icon}
-              label={item.label}
-              href={item.href}
-              isActive={location.pathname === item.href}
-            />
-          ))}
-        </div>
-        
-        <div className="pt-4 border-t mt-4 sm:mt-6">
-          <Button 
-            variant="ghost" 
-            className="w-full justify-start text-red-500 hover:bg-red-50 hover:text-red-600"
-            onClick={handleLogout}
+    <aside className="w-full lg:w-64 lg:min-w-64 bg-white rounded-lg shadow p-4 lg:sticky lg:top-4 lg:self-start">
+      <nav className="space-y-1">
+        {navItems.map((item) => (
+          <NavLink 
+            to={item.path} 
+            key={item.path}
+            end={item.path === '/dashboard'}
+            className={({ isActive }) => 
+              `flex items-center gap-3 px-3 py-2 rounded-md transition-colors hover:bg-wedding-cream/20 
+              ${isActive ? 'bg-wedding-olive text-white hover:bg-wedding-olive/90' : 'text-wedding-black'}
+              `
+            }
           >
-            <LogOut className="h-5 w-5 mr-2" />
-            Déconnexion
-          </Button>
-        </div>
-      </div>
-    </div>
+            {item.icon}
+            <span className="text-sm">{item.name}</span>
+          </NavLink>
+        ))}
+      </nav>
+    </aside>
   );
 };
 

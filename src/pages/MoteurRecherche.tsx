@@ -59,6 +59,11 @@ const MoteurRecherche = () => {
   const navigateToVendorDetails = (vendor: Prestataire) => {
     navigate(`/demo?id=${vendor.id}`);
   };
+
+  const handleWishlistAdd = (vendor: Prestataire) => {
+    // Cette fonction sera déclenchée après l'ajout à la wishlist
+    // On peut simplement afficher une notification supplémentaire si nécessaire
+  };
   
   useEffect(() => {
     const newParams = new URLSearchParams();
@@ -183,7 +188,8 @@ const MoteurRecherche = () => {
               <VendorCard 
                 key={vendor.id} 
                 vendor={vendor} 
-                onClick={navigateToVendorDetails} 
+                onClick={navigateToVendorDetails}
+                onWishlistAdd={handleWishlistAdd}
               />
             ))}
           </div>
