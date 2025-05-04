@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { jsPDF } from "jspdf";
-import { File, Home, Calendar, Loader2 } from "lucide-react";
+import { File, Home, Calendar, Loader2, UserPlus } from "lucide-react";
 import Header from '@/components/Header';
 import SEO from '@/components/SEO';
 import { supabase, type Json } from "@/integrations/supabase/client";
@@ -64,6 +64,7 @@ const TestFormulaire = () => {
   const [showResult, setShowResult] = useState(false);
   const [questions, setQuestions] = useState<FormQuestion[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const styleDescriptions = {
     elegantClassic: {
@@ -94,6 +95,11 @@ const TestFormulaire = () => {
   };
 
   useEffect(() => {
+    async function checkAuth() {
+      const { data: { user } } = await supabase.auth.getUser();
+      setIsAuthenticated(!!user);
+    }
+
     async function fetchQuestions() {
       try {
         const { data, error } = await supabase
@@ -117,6 +123,7 @@ const TestFormulaire = () => {
       }
     }
 
+    checkAuth();
     fetchQuestions();
   }, []);
 
@@ -241,6 +248,10 @@ const TestFormulaire = () => {
     setDominantStyle("");
   };
 
+  const handleSignUpClick = () => {
+    navigate('/register');
+  };
+
   const getCurrentQuestion = () => {
     if (loading || questions.length === 0) return null;
     return questions[currentStep - 1];
@@ -295,6 +306,16 @@ const TestFormulaire = () => {
         </div>
         
         <div className="flex flex-col sm:flex-row justify-center gap-4 mt-8">
+          {!isAuthenticated && (
+            <Button 
+              onClick={handleSignUpClick}
+              className="bg-wedding-olive hover:bg-wedding-olive/90 gap-2"
+            >
+              <UserPlus size={18} />
+              Créer mon compte pour accéder à toutes les fonctionnalités
+            </Button>
+          )}
+          
           <Button 
             onClick={() => navigate('/services/planification')}
             className="bg-wedding-olive hover:bg-wedding-olive/90 gap-2"

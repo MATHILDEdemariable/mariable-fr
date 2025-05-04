@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import ServiceTemplate from '../ServiceTemplate';
@@ -340,6 +339,24 @@ const PlanningChecklist = () => {
 
 const PlanificationContent = () => {
   const navigate = useNavigate();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setIsAuthenticated(!!user);
+    };
+    
+    checkAuth();
+  }, []);
+  
+  const handlePlanningClick = () => {
+    if (isAuthenticated) {
+      navigate('/services/jour-j');
+    } else {
+      navigate('/login', { state: { redirectAfterLogin: '/services/jour-j' } });
+    }
+  };
 
   return (
     <>
@@ -360,15 +377,18 @@ const PlanificationContent = () => {
             <p className="mb-6 text-center">
               Notre outil de planning jour-J vous permet de visualiser et d'organiser le timing idéal, de la cérémonie jusqu'à la soirée dansante.
             </p>
-            <Link to="/services/jour-j">
-              <Button 
-                size="lg"
-                variant="wedding"
-                className="w-full sm:w-auto bg-wedding-olive hover:bg-wedding-olive/90 text-white"
-              >
-                Créer mon planning jour-J <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </Link>
+            <Button 
+              size="lg"
+              variant="wedding"
+              className="w-full sm:w-auto bg-wedding-olive hover:bg-wedding-olive/90 text-white"
+              onClick={handlePlanningClick}
+            >
+              {isAuthenticated ? (
+                <>Créer mon planning jour-J <ArrowRight className="ml-2 h-4 w-4" /></>
+              ) : (
+                <>Se connecter pour accéder à la coordination personnalisée <ArrowRight className="ml-2 h-4 w-4" /></>
+              )}
+            </Button>
           </CardContent>
         </Card>
       </div>
