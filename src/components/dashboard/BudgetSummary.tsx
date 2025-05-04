@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { 
@@ -741,7 +742,8 @@ const BudgetSummary: React.FC = () => {
                     paddingAngle={2}
                     dataKey="amount"
                     nameKey="name"
-                    label={({ name, percent }) => `${(percent * 100).toFixed(0)}%`} {/* Simplified labels for better visibility */}
+                    /* Simplified labels for better visibility */
+                    label={({ name, percent }) => `${(percent * 100).toFixed(0)}%`}
                     labelLine={{ stroke: '#7F9474', strokeWidth: 0.5 }}
                     strokeWidth={1}
                     stroke="#f8f6f0"
