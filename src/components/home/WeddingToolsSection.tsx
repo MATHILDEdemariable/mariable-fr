@@ -7,7 +7,8 @@ const WeddingToolsSection = () => {
   return (
     <section className="py-10 md:py-16 bg-white">
       <div className="container px-4">
-        <h2 className="text-2xl md:text-3xl font-serif mb-8 text-center">Nos outils pour organiser votre mariage</h2>
+        <h2 className="text-2xl md:text-3xl font-serif mb-8 text-center">Comment Mariable facilite l'organisation de votre mariage ?
+        </h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
           <div className="border rounded-lg p-5 hover:shadow-md transition-all">
@@ -16,7 +17,7 @@ const WeddingToolsSection = () => {
               <h3 className="font-medium text-lg">Checklist mariage complète</h3>
             </div>
             <p className="mb-3">
-              Suivez toutes les étapes importantes dans notre checklist mariage personnalisée pour ne rien oublier.
+              Suivez toutes les étapes importantes dans notre checklist mariage personnalisée pour ne rien oublier jusqu'au jour J.
             </p>
             <Link to="/services/planification" className="text-wedding-olive hover:underline inline-flex items-center">
               Accéder à la checklist <span className="ml-1">→</span>
@@ -39,13 +40,13 @@ const WeddingToolsSection = () => {
           <div className="border rounded-lg p-5 hover:shadow-md transition-all">
             <div className="flex items-center gap-2 mb-3">
               <Calendar className="h-5 w-5 text-wedding-olive" />
-              <h3 className="font-medium text-lg">Planning jour J</h3>
+              <h3 className="font-medium text-lg">Conseils personnalisés</h3>
             </div>
             <p className="mb-3">
-              Créez un déroulé de mariage détaillé pour que votre grand jour se déroule parfaitement.
+            Écrivez nous sur WhatsApp, nous répondrons au mieux à vos questions & demandes
             </p>
-            <Link to="/services/jour-j" className="text-wedding-olive hover:underline inline-flex items-center">
-              Planifier mon jour J <span className="ml-1">→</span>
+            <Link to="/services/conseils" className="text-wedding-olive hover:underline inline-flex items-center">
+              Rejoindre le groupe <span className="ml-1">→</span>
             </Link>
           </div>
           
