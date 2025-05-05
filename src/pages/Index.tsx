@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
@@ -123,62 +124,138 @@ const Index = () => {
               </p>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
-              {/* Conseils personnalisés */}
-              <div className="border rounded-lg p-5 hover:shadow-md transition-all">
-                <div className="flex items-center gap-2 mb-3">
-                  <MessageCircle className="h-5 w-5 text-wedding-olive" />
-                  <h3 className="font-medium text-lg">Conseils personnalisés</h3>
-                </div>
-                <p className="mb-3">
-                  Écrivez nous sur WhatsApp, nous répondrons au mieux à vos questions & demandes
-                </p>
-                <a 
-                  href="https://chat.whatsapp.com/In5xf3ZMJNvJkhy4F9g5C5" 
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-wedding-olive hover:underline inline-flex items-center bg-wedding-olive hover:bg-wedding-olive/90 text-white px-4 py-2 rounded-md"
-                >
-                  Rejoindre la communauté
-                </a>
+            <div className="max-w-4xl mx-auto">
+              {/* Replacing the 4 tools grid with 3 main buttons */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+                {/* Card 1: Conseils personnalisés */}
+                <Card className="bg-white rounded-lg shadow-sm hover:shadow-md transition-all">
+                  <CardContent className="p-5">
+                    <div className="flex items-start gap-3">
+                      <MessageCircle className="text-wedding-olive shrink-0 mt-1" size={22} />
+                      <div>
+                        <h3 className="font-serif text-base md:text-lg text-wedding-black mb-2">Conseils personnalisés</h3>
+                        <p className="text-xs sm:text-sm text-muted-foreground mb-4">
+                          Écrivez nous sur WhatsApp, nous répondrons au mieux à vos questions & demandes
+                        </p>
+                        <a 
+                          href="https://chat.whatsapp.com/In5xf3ZMJNvJkhy4F9g5C5" 
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="bg-wedding-olive hover:bg-wedding-olive/90 text-white px-4 py-2 rounded-md inline-flex items-center text-sm"
+                        >
+                          Rejoindre la communauté
+                        </a>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+                
+                {/* Card 2: Des outils pour organiser */}
+                <Card className="bg-white rounded-lg shadow-sm hover:shadow-md transition-all">
+                  <CardContent className="p-5">
+                    <div className="flex items-start gap-3">
+                      <CheckCircle className="text-wedding-olive shrink-0 mt-1" size={22} />
+                      <div>
+                        <h3 className="font-serif text-base md:text-lg text-wedding-black mb-2">Des outils pour organiser votre mariage</h3>
+                        <p className="text-xs sm:text-sm text-muted-foreground mb-4">
+                          Checklist, gestion budget, planning jour J
+                        </p>
+                        <Link 
+                          to="/services/planification"
+                          className="bg-wedding-olive hover:bg-wedding-olive/90 text-white px-4 py-2 rounded-md inline-flex items-center text-sm"
+                        >
+                          Accéder
+                        </Link>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+                
+                {/* Card 3: Sélection de prestataires */}
+                <Card className="bg-white rounded-lg shadow-sm hover:shadow-md transition-all">
+                  <CardContent className="p-5">
+                    <div className="flex items-start gap-3">
+                      <Camera className="text-wedding-olive shrink-0 mt-1" size={22} />
+                      <div>
+                        <h3 className="font-serif text-base md:text-lg text-wedding-black mb-2">Sélection de prestataires</h3>
+                        <p className="text-xs sm:text-sm text-muted-foreground mb-4">
+                          Trouvez les meilleurs prestataires adaptés à votre style et budget
+                        </p>
+                        <Link 
+                          to="/recherche"
+                          className="bg-wedding-olive hover:bg-wedding-olive/90 text-white px-4 py-2 rounded-md inline-flex items-center text-sm"
+                        >
+                          Découvrir les prestataires
+                        </Link>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
               
-              {/* Des outils pour organiser */}
+              <div className="text-center mt-6">
+                <StartButton />
+              </div>
+            </div>
+          </div>
+        </section>
+        
+        {/* New section with the requested design for wedding tools */}
+        <section className="py-10 md:py-16 bg-white">
+          <div className="container px-4">
+            <h2 className="text-2xl md:text-3xl font-serif mb-8 text-center">Nos outils pour organiser votre mariage</h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
               <div className="border rounded-lg p-5 hover:shadow-md transition-all">
                 <div className="flex items-center gap-2 mb-3">
-                  <CheckCircle className="h-5 w-5 text-wedding-olive" />
-                  <h3 className="font-medium text-lg">Des outils pour organiser votre mariage</h3>
+                  <CheckSquare className="h-5 w-5 text-wedding-olive" />
+                  <h3 className="font-medium text-lg">Checklist mariage complète</h3>
                 </div>
                 <p className="mb-3">
-                  Checklist, gestion budget, planning jour J
+                  Suivez toutes les étapes importantes dans notre checklist mariage personnalisée pour ne rien oublier.
                 </p>
-                <Link 
-                  to="/services/planification"
-                  className="text-wedding-olive hover:underline inline-flex items-center bg-wedding-olive hover:bg-wedding-olive/90 text-white px-4 py-2 rounded-md"
-                >
-                  Accéder
+                <Link to="/services/planification" className="text-wedding-olive hover:underline inline-flex items-center">
+                  Accéder à la checklist <span className="ml-1">→</span>
                 </Link>
               </div>
               
-              {/* Sélection de prestataires */}
-              <div className="border rounded-lg p-5 hover:shadow-md transition-all md:col-span-2 md:max-w-md md:mx-auto">
+              <div className="border rounded-lg p-5 hover:shadow-md transition-all">
+                <div className="flex items-center gap-2 mb-3">
+                  <DollarSign className="h-5 w-5 text-wedding-olive" />
+                  <h3 className="font-medium text-lg">Gestion du budget mariage</h3>
+                </div>
+                <p className="mb-3">
+                  Maîtrisez votre budget mariage grâce à notre outil de suivi financier intelligent.
+                </p>
+                <Link to="/services/budget" className="text-wedding-olive hover:underline inline-flex items-center">
+                  Gérer mon budget <span className="ml-1">→</span>
+                </Link>
+              </div>
+              
+              <div className="border rounded-lg p-5 hover:shadow-md transition-all">
+                <div className="flex items-center gap-2 mb-3">
+                  <Calendar className="h-5 w-5 text-wedding-olive" />
+                  <h3 className="font-medium text-lg">Planning jour J</h3>
+                </div>
+                <p className="mb-3">
+                  Créez un déroulé de mariage détaillé pour que votre grand jour se déroule parfaitement.
+                </p>
+                <Link to="/services/jour-j" className="text-wedding-olive hover:underline inline-flex items-center">
+                  Planifier mon jour J <span className="ml-1">→</span>
+                </Link>
+              </div>
+              
+              <div className="border rounded-lg p-5 hover:shadow-md transition-all">
                 <div className="flex items-center gap-2 mb-3">
                   <Camera className="h-5 w-5 text-wedding-olive" />
                   <h3 className="font-medium text-lg">Sélection de prestataires</h3>
                 </div>
                 <p className="mb-3">
-                  Trouvez les meilleurs prestataires adaptés à votre style et budget
+                  Trouvez les meilleurs prestataires de mariage adaptés à votre style et à votre budget.
                 </p>
-                <Link 
-                  to="/recherche"
-                  className="text-wedding-olive hover:underline inline-flex items-center bg-wedding-olive hover:bg-wedding-olive/90 text-white px-4 py-2 rounded-md"
-                >
-                  Découvrir les prestataires
+                <Link to="/recherche" className="text-wedding-olive hover:underline inline-flex items-center">
+                  Découvrir les prestataires <span className="ml-1">→</span>
                 </Link>
-              </div>
-              
-              <div className="text-center md:col-span-2 mt-4">
-                <StartButton />
               </div>
             </div>
           </div>
