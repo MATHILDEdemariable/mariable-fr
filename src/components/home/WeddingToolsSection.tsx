@@ -1,13 +1,13 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { CheckSquare, DollarSign, Camera, Calendar } from 'lucide-react';
+import { CheckSquare, DollarSign, Camera, MessageCircle } from 'lucide-react';
 
 const WeddingToolsSection = () => {
   return (
     <section className="py-10 md:py-16 bg-white">
       <div className="container px-4">
-        <h2 className="text-2xl md:text-3xl font-serif mb-8 text-center">Nos outils pour organiser votre mariage</h2>
+        <h2 className="text-2xl md:text-3xl font-serif mb-8 text-center">Comment Mariable facilite l'organisation de votre mariage</h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
           <div className="border rounded-lg p-5 hover:shadow-md transition-all">
@@ -38,15 +38,20 @@ const WeddingToolsSection = () => {
           
           <div className="border rounded-lg p-5 hover:shadow-md transition-all">
             <div className="flex items-center gap-2 mb-3">
-              <Calendar className="h-5 w-5 text-wedding-olive" />
-              <h3 className="font-medium text-lg">Planning jour J</h3>
+              <MessageCircle className="h-5 w-5 text-wedding-olive" />
+              <h3 className="font-medium text-lg">Conseils personnalisés</h3>
             </div>
             <p className="mb-3">
-              Créez un déroulé de mariage détaillé pour que votre grand jour se déroule parfaitement.
+              Écrivez-nous directement sur WhatsApp
             </p>
-            <Link to="/services/jour-j" className="text-wedding-olive hover:underline inline-flex items-center">
-              Planifier mon jour J <span className="ml-1">→</span>
-            </Link>
+            <a 
+              href="https://chat.whatsapp.com/In5xf3ZMJNvJkhy4F9g5C5" 
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md inline-flex items-center text-sm"
+            >
+              Rejoindre le groupe Mariable
+            </a>
           </div>
           
           <div className="border rounded-lg p-5 hover:shadow-md transition-all">

@@ -4,7 +4,6 @@ import Header from '@/components/Header';
 import ChatbotButton from '@/components/ChatbotButton';
 import SEO from '@/components/SEO';
 import HeroSection from '@/components/home/HeroSection';
-import ToolsSection from '@/components/home/ToolsSection';
 import WeddingToolsSection from '@/components/home/WeddingToolsSection';
 import FeaturesSection from '@/components/home/FeaturesSection';
 import CallToAction from '@/components/home/CallToAction';
@@ -22,7 +21,6 @@ const Index = () => {
       
       <main className="flex-grow">
         <HeroSection />
-        <ToolsSection />
         <WeddingToolsSection />
         <FeaturesSection />
         <CallToAction />
