@@ -35,7 +35,7 @@ function Menus({ onClick }: { onClick?: () => void }) {
           <HeaderDropdownItem
             label="Recherche de prestataires"
             description="Trouvez les meilleurs prestataires adaptés à vos besoins"
-            to="/services/prestataires"
+            to="/recherche"
             onClick={onClick}
           />
           <HeaderDropdownItem

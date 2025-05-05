@@ -1,10 +1,11 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import ServiceTemplate from '../ServiceTemplate';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { ArrowRight, UserPlus } from 'lucide-react';
+import { ArrowRight, UserPlus, Calendar } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import SEO from '@/components/SEO';
@@ -334,6 +335,25 @@ const PlanningChecklist = () => {
           </Card>
         </div>
       )}
+
+      {/* Nouveau bouton pour planifier le Jour J */}
+      <div className="flex justify-center mt-8">
+        <Button
+          variant="wedding"
+          size="lg"
+          className="gap-2"
+          onClick={() => {
+            if (isAuthenticated) {
+              navigate('/services/jour-j');
+            } else {
+              navigate('/login', { state: { redirectAfterLogin: '/services/jour-j' } });
+            }
+          }}
+        >
+          <Calendar size={18} />
+          Planifier aussi votre Jour J
+        </Button>
+      </div>
     </div>
   );
 };
