@@ -8,6 +8,7 @@ import WeddingToolsSection from '@/components/home/WeddingToolsSection';
 import FeaturesSection from '@/components/home/FeaturesSection';
 import CallToAction from '@/components/home/CallToAction';
 import Footer from '@/components/Footer';
+import StyleQuizButton from '@/components/home/StyleQuizButton';
 
 const Index = () => {
   useEffect(() => {
@@ -21,6 +22,7 @@ const Index = () => {
       
       <main className="flex-grow">
         <HeroSection />
+        <StyleQuizButton />
         <WeddingToolsSection />
         <FeaturesSection />
         <CallToAction />
