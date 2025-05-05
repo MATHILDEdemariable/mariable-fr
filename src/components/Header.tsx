@@ -29,7 +29,7 @@ const HeaderLogo = () => (
 function Menus({ onClick }: { onClick?: () => void }) {
   return (
     <>
-      {/* Nos Services Dropdown - Order changed as requested */}
+      {/* Nos Services Dropdown - Updated order as requested */}
       <HeaderDropdown label="Nos Services">
         <HeaderDropdownMenu>
           <HeaderDropdownItem

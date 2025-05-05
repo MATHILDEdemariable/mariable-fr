@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
@@ -7,6 +8,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import SearchBar from '@/components/search/SearchBar';
 import ChatbotButton from '@/components/ChatbotButton';
 import SEO from '@/components/SEO';
+import { Card, CardContent } from '@/components/ui/card';
 
 const StartButton = () => {
   const navigate = useNavigate();
@@ -15,7 +17,7 @@ const StartButton = () => {
       onClick={() => navigate('/test-formulaire')}
       className="bg-wedding-olive hover:bg-wedding-olive/90 text-white px-6 py-6 text-lg font-medium rounded-lg mt-8 w-full sm:w-auto"
     >
-      Commencer
+      Découvrez votre style de mariage
     </Button>
   );
 };
@@ -123,39 +125,73 @@ const Index = () => {
             </div>
             
             <div className="max-w-4xl mx-auto">
-              <ul className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
-                <li className="flex items-start gap-3 p-3 md:p-4 bg-white rounded-lg shadow-sm">
-                  <CheckCircle className="text-wedding-olive shrink-0 mt-1" size={18} />
-                  <div>
-                    <h3 className="font-serif text-base md:text-lg text-wedding-black">Un guide de prestataires de confiance</h3>
-                    <p className="text-xs sm:text-sm text-muted-foreground">Grâce à notre sélection soigneusement établie</p>
-                  </div>
-                </li>
+              {/* Replacing the 4 tools grid with 3 main buttons */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+                {/* Card 1: Conseils personnalisés */}
+                <Card className="bg-white rounded-lg shadow-sm hover:shadow-md transition-all">
+                  <CardContent className="p-5">
+                    <div className="flex items-start gap-3">
+                      <MessageCircle className="text-wedding-olive shrink-0 mt-1" size={22} />
+                      <div>
+                        <h3 className="font-serif text-base md:text-lg text-wedding-black mb-2">Conseils personnalisés</h3>
+                        <p className="text-xs sm:text-sm text-muted-foreground mb-4">
+                          Écrivez nous sur WhatsApp, nous répondrons au mieux à vos questions & demandes
+                        </p>
+                        <a 
+                          href="https://chat.whatsapp.com/In5xf3ZMJNvJkhy4F9g5C5" 
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="bg-wedding-olive hover:bg-wedding-olive/90 text-white px-4 py-2 rounded-md inline-flex items-center text-sm"
+                        >
+                          Rejoindre la communauté
+                        </a>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
                 
-                <li className="flex items-start gap-3 p-3 md:p-4 bg-white rounded-lg shadow-sm">
-                  <CheckCircle className="text-wedding-olive shrink-0 mt-1" size={18} />
-                  <div>
-                    <h3 className="font-serif text-base md:text-lg text-wedding-black">Des Outils de planification</h3>
-                    <p className="text-xs sm:text-sm text-muted-foreground">Check-list en 10 étapes, planning jour-j</p>
-                  </div>
-                </li>
+                {/* Card 2: Des outils pour organiser */}
+                <Card className="bg-white rounded-lg shadow-sm hover:shadow-md transition-all">
+                  <CardContent className="p-5">
+                    <div className="flex items-start gap-3">
+                      <CheckCircle className="text-wedding-olive shrink-0 mt-1" size={22} />
+                      <div>
+                        <h3 className="font-serif text-base md:text-lg text-wedding-black mb-2">Des outils pour organiser votre mariage</h3>
+                        <p className="text-xs sm:text-sm text-muted-foreground mb-4">
+                          Checklist, gestion budget, planning jour J
+                        </p>
+                        <Link 
+                          to="/services/planification"
+                          className="bg-wedding-olive hover:bg-wedding-olive/90 text-white px-4 py-2 rounded-md inline-flex items-center text-sm"
+                        >
+                          Accéder
+                        </Link>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
                 
-                <li className="flex items-start gap-3 p-3 md:p-4 bg-white rounded-lg shadow-sm">
-                  <CheckCircle className="text-wedding-olive shrink-0 mt-1" size={18} />
-                  <div>
-                    <h3 className="font-serif text-base md:text-lg text-wedding-black">Des Calculatrices magiques</h3>
-                    <p className="text-xs sm:text-sm text-muted-foreground">Budget, boissons et autres outils pratiques</p>
-                  </div>
-                </li>
-                
-                <li className="flex items-start gap-3 p-3 md:p-4 bg-white rounded-lg shadow-sm">
-                  <CheckCircle className="text-wedding-olive shrink-0 mt-1" size={18} />
-                  <div>
-                    <h3 className="font-serif text-base md:text-lg text-wedding-black">De nouvelles fonctionnalités à venir</h3>
-                    <p className="text-xs sm:text-sm text-muted-foreground">Prochainement disponible</p>
-                  </div>
-                </li>
-              </ul>
+                {/* Card 3: Sélection de prestataires */}
+                <Card className="bg-white rounded-lg shadow-sm hover:shadow-md transition-all">
+                  <CardContent className="p-5">
+                    <div className="flex items-start gap-3">
+                      <Camera className="text-wedding-olive shrink-0 mt-1" size={22} />
+                      <div>
+                        <h3 className="font-serif text-base md:text-lg text-wedding-black mb-2">Sélection de prestataires</h3>
+                        <p className="text-xs sm:text-sm text-muted-foreground mb-4">
+                          Trouvez les meilleurs prestataires adaptés à votre style et budget
+                        </p>
+                        <Link 
+                          to="/recherche"
+                          className="bg-wedding-olive hover:bg-wedding-olive/90 text-white px-4 py-2 rounded-md inline-flex items-center text-sm"
+                        >
+                          Découvrir les prestataires
+                        </Link>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
               
               <div className="text-center mt-6">
                 <StartButton />
