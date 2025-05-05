@@ -2,21 +2,28 @@
 import React from 'react';
 import Header from '@/components/Header';
 import { Link } from 'react-router-dom';
-import { Instagram, Mail, Linkedin, FileDown } from 'lucide-react';
+import { Instagram, Mail, Linkedin, FileDown, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ProfessionalRegistrationForm from '@/components/forms/ProfessionalRegistrationForm';
+import SEO from '@/components/SEO';
 
 const Professionnels = () => {
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <Header />
       
+      <SEO 
+        title="Rejoignez Mariable | Prestataires de mariage d'excellence"
+        description="Devenez un prestataire de mariage référencé sur Mariable. Bénéficiez d'une visibilité auprès de futurs mariés ciblés et développez votre activité."
+        canonical="/professionnels"
+      />
+      
       <main className="flex-grow py-12 md:py-16 container bg-white">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-4xl md:text-5xl font-serif mb-4 text-wedding-black">Rejoignez une communauté de professionnels d'excellence</h1>
+          <h1 className="text-4xl md:text-5xl font-serif mb-4 text-wedding-black">Rejoignez une communauté de prestataires de mariage d'excellence</h1>
           
           <p className="text-xl text-muted-foreground mb-8">
-            Faites partie des prestataires de mariage les plus recommandés par Mariable.
+            Faites partie des prestataires de mariage les plus recommandés par Mariable et développez votre activité.
           </p>
 
           {/* Badge for free service */}
@@ -27,10 +34,28 @@ const Professionnels = () => {
           <div className="grid md:grid-cols-2 gap-8 mb-12">
             <div className="space-y-4">
               <h2 className="text-2xl font-serif">Pourquoi rejoindre Mariable ?</h2>
-              <ul className="list-disc pl-5 space-y-2">
-                <li>Un référencement focalisé sur l'humain et la qualité</li>
-                <li>Un gage de qualité pour vos clients</li>
-                <li>L'accès à des fonctionnalités innovantes</li>
+              <ul className="space-y-3">
+                <li className="flex items-start gap-2">
+                  <CheckCircle className="h-5 w-5 text-wedding-olive shrink-0 mt-0.5" />
+                  <div>
+                    <h3 className="font-medium">Visibilité ciblée</h3>
+                    <p className="text-sm text-muted-foreground">Touchez des futurs mariés activement à la recherche de prestataires de qualité.</p>
+                  </div>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle className="h-5 w-5 text-wedding-olive shrink-0 mt-0.5" />
+                  <div>
+                    <h3 className="font-medium">Un gage de qualité</h3>
+                    <p className="text-sm text-muted-foreground">Différenciez-vous avec le label d'excellence Mariable.</p>
+                  </div>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle className="h-5 w-5 text-wedding-olive shrink-0 mt-0.5" />
+                  <div>
+                    <h3 className="font-medium">Fonctionnalités innovantes</h3>
+                    <p className="text-sm text-muted-foreground">Accédez à des outils de gestion spécifiques pour les professionnels du mariage.</p>
+                  </div>
+                </li>
               </ul>
               
               <div className="pt-4">
@@ -50,7 +75,7 @@ const Professionnels = () => {
             
             <div className="space-y-4">
               <h2 className="text-2xl font-serif">Comment nous rejoindre ?</h2>
-              <p>Deux options s'offrent à vous pour intégrer notre réseau de prestataires d'excellence :</p>
+              <p>Deux options s'offrent à vous pour intégrer notre réseau de prestataires de mariage d'excellence :</p>
               
               <div className="space-y-3 pt-2">
                 <div className="flex items-start gap-3">
@@ -81,7 +106,7 @@ const Professionnels = () => {
           </div>
           
           <div className="border rounded-lg p-6 bg-white shadow-sm">
-            <h2 className="text-2xl font-serif mb-4">Formulaire d'inscription prestataire</h2>
+            <h2 className="text-2xl font-serif mb-4">Formulaire d'inscription prestataire mariage</h2>
             <ProfessionalRegistrationForm />
           </div>
         </div>

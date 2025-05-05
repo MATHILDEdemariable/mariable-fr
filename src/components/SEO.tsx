@@ -6,31 +6,53 @@ interface SEOProps {
   title?: string;
   description?: string;
   image?: string;
+  canonical?: string;
 }
 
 const SEO: React.FC<SEOProps> = ({ 
-  title = "MARIABLE",
-  description = "MARIABLE est la plateforme intelligente qui vous aide à organiser votre mariage simplement : trouvez des prestataires de qualité, planifiez chaque étape, suivez votre budget.",
-  image = "/lovable-uploads/23541521-b6ff-4175-a8c8-5017e5b19312.png"
+  title = "MARIABLE - Planifiez votre mariage simplement",
+  description = "Organisez votre mariage sans stress avec MARIABLE : trouvez les meilleurs prestataires de qualité, planifiez chaque étape, gérez facilement votre budget.",
+  image = "/lovable-uploads/23541521-b6ff-4175-a8c8-5017e5b19312.png",
+  canonical
 }) => {
-  const fullTitle = title === "MARIABLE" ? title : `${title} – MARIABLE`;
+  const fullTitle = title === "MARIABLE - Planifiez votre mariage simplement" ? title : `${title} – MARIABLE`;
+  const siteUrl = "https://www.mariable.fr";
 
   return (
     <Helmet>
       <title>{fullTitle}</title>
       <meta name="description" content={description} />
+      <meta name="robots" content="index, follow" />
+      {canonical && <link rel="canonical" href={`${siteUrl}${canonical}`} />}
       
       {/* Open Graph / Facebook */}
       <meta property="og:type" content="website" />
       <meta property="og:title" content={fullTitle} />
       <meta property="og:description" content={description} />
       <meta property="og:image" content={image} />
+      <meta property="og:site_name" content="MARIABLE" />
       
       {/* Twitter */}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={fullTitle} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={image} />
+      
+      {/* Structured data for Local Business */}
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          "name": "MARIABLE",
+          "url": "https://www.mariable.fr",
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://www.mariable.fr/recherche?q={search_term_string}",
+            "query-input": "required name=search_term_string"
+          },
+          "description": "Plateforme intelligente d'organisation de mariage : trouvez les meilleurs prestataires, planifiez chaque étape, suivez votre budget."
+        })}
+      </script>
     </Helmet>
   );
 };
