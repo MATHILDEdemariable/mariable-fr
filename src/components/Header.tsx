@@ -29,13 +29,13 @@ const HeaderLogo = () => (
 function Menus({ onClick }: { onClick?: () => void }) {
   return (
     <>
-      {/* Nos Services Dropdown */}
+      {/* Nos Services Dropdown - Order changed as requested */}
       <HeaderDropdown label="Nos Services">
         <HeaderDropdownMenu>
           <HeaderDropdownItem
-            label="Recherche de prestataires"
-            description="Trouvez les meilleurs prestataires adaptés à vos besoins"
-            to="/recherche"
+            label="Conseils personnalisés"
+            description="Obtenez des recommandations adaptées à votre style et vos envies"
+            to="/services/conseils"
             onClick={onClick}
           />
           <HeaderDropdownItem
@@ -51,9 +51,9 @@ function Menus({ onClick }: { onClick?: () => void }) {
             onClick={onClick}
           />
           <HeaderDropdownItem
-            label="Conseils personnalisés"
-            description="Obtenez des recommandations adaptées à votre style et vos envies"
-            to="/services/conseils"
+            label="Recherche de prestataires"
+            description="Trouvez les meilleurs prestataires adaptés à vos besoins"
+            to="/recherche"
             onClick={onClick}
           />
         </HeaderDropdownMenu>
