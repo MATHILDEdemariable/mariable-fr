@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import ServiceTemplate from '../ServiceTemplate';
@@ -315,28 +314,7 @@ const PlanningChecklist = () => {
         </CardContent>
       </Card>
 
-      {!isAuthenticated && (
-        <div className="mt-8 text-center">
-          <Card className="bg-wedding-cream/20 border-wedding-olive/20">
-            <CardContent className="pt-6 pb-6">
-              <h3 className="text-2xl font-serif mb-4 text-center">Prêt à dire oui à la simplicité ?</h3>
-              <p className="mb-6 text-center">
-                Créez votre compte pour sauvegarder votre planning, accéder à toutes nos fonctionnalités et à un outil de planification jour-J personnalisé.
-              </p>
-              <Button 
-                size="lg"
-                className="bg-wedding-olive hover:bg-wedding-olive/90 text-white gap-2"
-                onClick={handleSignUpClick}
-              >
-                <UserPlus size={18} />
-                Créer mon compte
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
-      )}
-
-      {/* Nouveau bouton pour planifier le Jour J */}
+      {/* Bouton pour planifier le Jour J - maintenant le seul bouton d'appel à l'action */}
       <div className="flex justify-center mt-8">
         <Button
           variant="wedding"
@@ -351,7 +329,7 @@ const PlanningChecklist = () => {
           }}
         >
           <Calendar size={18} />
-          Planifier aussi votre Jour J
+          Planifier votre Jour J
         </Button>
       </div>
     </div>

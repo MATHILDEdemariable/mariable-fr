@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
@@ -247,7 +246,7 @@ const WishlistPage = () => {
                 Ajoutez des prestataires à votre wishlist en cliquant sur le ❤️ quand vous parcourez nos prestataires
               </p>
               <Button 
-                onClick={() => navigate('/services/prestataires')}
+                onClick={() => navigate('/recherche')}
                 className="bg-wedding-olive hover:bg-wedding-olive/90"
               >
                 Découvrir nos prestataires
