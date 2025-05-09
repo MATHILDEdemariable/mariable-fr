@@ -94,7 +94,7 @@ const MoteurRecherche = () => {
     queryFn: async () => {
       let query = supabase
         .from('prestataires_rows')
-        .select('*')
+        .select('*, prestataires_photos_preprod (*)')
         .eq('visible', true)
         .order('featured',{ascending:false})
       

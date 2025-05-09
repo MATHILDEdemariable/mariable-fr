@@ -262,9 +262,7 @@ export type Database = {
           accord_referencement?: boolean | null
           assurance_nom?: string | null
           capacite_invites?: number | null
-          categorie?:
-            | Database["public"]["Enums"]["prestataire_categorie"]
-            | null
+          categorie?:| Database["public"]["Enums"]["prestataire_categorie"]| null
           categorie_lieu?: string | null
           created_at?: string
           description?: string | null

@@ -21,6 +21,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Database, Constants } from "@/integrations/supabase/types";
 import { v4 as uuidv4 } from "uuid";
+import slugify from "@/utils/slugify";
 
 type Prestataire = Database["public"]["Tables"]["prestataires_rows"]["Row"];
 type PrestataireInsert =
@@ -62,8 +63,6 @@ const PrestataireModal: React.FC<Props> = ({
 
     setIsUploading(true);
 
-    console.log("Uploading image:", selectedFile);
-
     try {
       const fileExt = selectedFile.name.split(".").pop();
       const fileName = `${uuidv4()}.${fileExt}`;
@@ -82,17 +81,17 @@ const PrestataireModal: React.FC<Props> = ({
         data: { publicUrl },
       } = supabase.storage.from("photos").getPublicUrl(filePath);
 
-      if(mode === "edit") {
+      if (mode === "edit") {
         const { error: UpdateError } = await supabase
-        .from("prestataires_photos_preprod")
-        .update({
-          url: publicUrl,
-          filename: selectedFile.name,
-          type: selectedFile.type,
-          size: selectedFile.size,
-          principale: true,
-        })
-        .eq("prestataire_id", prestataireId)
+          .from("prestataires_photos_preprod")
+          .update({
+            url: publicUrl,
+            filename: selectedFile.name,
+            type: selectedFile.type,
+            size: selectedFile.size,
+            principale: true,
+          })
+          .eq("prestataire_id", prestataireId);
         if (UpdateError) {
           console.error(
             "Erreur lors de la mise à jour de l'image dans la base de données:",
@@ -100,26 +99,24 @@ const PrestataireModal: React.FC<Props> = ({
           );
           throw UpdateError;
         }
-
-      }
-      else{
+      } else {
         const { error: InsertError } = await supabase
-        .from("prestataires_photos_preprod")
-        .insert({
-          prestataire_id: prestataireId,
-          url: publicUrl,
-          filename: selectedFile.name,
-          type: selectedFile.type,
-          size: selectedFile.size,
-          principale: true,
-        });
-      if (InsertError) {
-        console.error(
-          "Erreur lors de l'insertion de l'image dans la base de données:",
-          InsertError
-        );
-        throw InsertError;
-      }
+          .from("prestataires_photos_preprod")
+          .insert({
+            prestataire_id: prestataireId,
+            url: publicUrl,
+            filename: selectedFile.name,
+            type: selectedFile.type,
+            size: selectedFile.size,
+            principale: true,
+          });
+        if (InsertError) {
+          console.error(
+            "Erreur lors de l'insertion de l'image dans la base de données:",
+            InsertError
+          );
+          throw InsertError;
+        }
       }
 
       return publicUrl;
@@ -148,11 +145,11 @@ const PrestataireModal: React.FC<Props> = ({
 
       if (error) return toast.error("Erreur mise à jour");
       if (selectedFile) {
-        console.log('les probleme commence ici')
-       await uploadImage(prestataire.id);
+        await uploadImage(prestataire.id);
       }
       toast.success("Prestataire mis à jour");
     } else {
+      form.slug = slugify(form.nom);
       const { data, error } = await supabase
         .from("prestataires_rows")
         .insert(form)

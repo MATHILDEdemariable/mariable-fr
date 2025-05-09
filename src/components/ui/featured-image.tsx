@@ -3,12 +3,12 @@ const FeaturedImage = ({ presta }) => {
   const featured = Array.isArray(photos)
     ? photos.find((photo) => photo.principale)
     : null;
-
+  console.log(presta);  
   return (
     <img
-      src={featured?.url || "https://placehold.co/150x150?text=No+Image"}
+      src={featured?.url || "https://placehold.co/1920x1920?text=No+Image"}
       alt={presta.nom}
-      className="w-16 h-16 object-cover"
+      className="object-cover w-full h-full "
     />
   );
 };

@@ -9,6 +9,7 @@ import { Database } from '@/integrations/supabase/types';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/components/ui/use-toast';
+import FeaturedImage from '@/components/ui/featured-image';
 import AuthRequiredModal from '@/components/auth/AuthRequiredModal';
 
 type Prestataire = Database['public']['Tables']['prestataires_rows']['Row'];
@@ -162,11 +163,7 @@ const VendorCard: React.FC<VendorCardProps> = ({ vendor, onClick, onWishlistAdd 
       <Card className="overflow-hidden border-wedding-olive/20 hover:shadow-md transition-all cursor-pointer" onClick={() => onClick(vendor)}>
         <div className="relative">
           <AspectRatio ratio={16 / 9}>
-            <img 
-              src={mainImage} 
-              alt={vendor.nom || "Prestataire de mariage"} 
-              className="w-full h-full object-cover"
-            />
+            <FeaturedImage presta={vendor} />
           </AspectRatio>
           <Badge 
             className="absolute top-3 left-3 bg-white/80 text-black font-medium"
