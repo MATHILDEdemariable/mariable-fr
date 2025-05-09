@@ -72,47 +72,6 @@ const queryClient = new QueryClient();
 
 const App = () => {
 
-  // Protection de la page en mode préproduction
-  const [isProtected, setIsProtected] = useState(false);
-
-  useEffect(() => {
-    if (import.meta.env.VITE_PROTECTION_ENABLED === "true") {
-      const expected = window.btoa(
-        `${import.meta.env.VITE_PROTECTION_USER}:${import.meta.env.VITE_PROTECTION_PASSWORD}`
-      );
-  
-      const savedAuth = localStorage.getItem("preprod_auth");
-  
-      if (savedAuth === expected) {
-        return; 
-      }
-  
-      const user = window.prompt("Nom d’utilisateur :");
-      const pass = window.prompt("Mot de passe :");
-  
-      const auth = window.btoa(`${user}:${pass}`);
-  
-      if (auth === expected) {
-        localStorage.setItem("preprod_auth", auth); 
-        setIsProtected(true);
-      } else {
-        alert("Accès refusé.");
-        setIsProtected(false);
-        window.location.href = "https://www.instagram.com/mariable.fr/";
-      }
-    }
-  }, []);
-  if(localStorage.getItem("preprod_auth") === null && import.meta.env.VITE_PROTECTION_ENABLED === "true" ) {
-    return(
-      <div className="flex items-center justify-center h-screen">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold">Accès refusé</h1>
-          <p>Veuillez entrer les identifiants corrects.</p>
-        </div>
-      </div>
-    )
-  }
-
   return(
   <QueryClientProvider client={queryClient}>
     <HelmetProvider>
