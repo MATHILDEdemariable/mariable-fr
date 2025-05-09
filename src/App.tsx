@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -70,7 +69,35 @@ const ScrollToTop = () => {
 
 const queryClient = new QueryClient();
 
-const App = () => (
+const App = () => {
+
+  useEffect(() => {
+    if (import.meta.env.VITE_PROTECTION_ENABLED === "true") {
+      const expected = window.btoa(
+        `${import.meta.env.VITE_PROTECTION_USER}:${import.meta.env.VITE_PROTECTION_PASSWORD}`
+      );
+  
+      const savedAuth = localStorage.getItem("preprod_auth");
+  
+      if (savedAuth === expected) {
+        return; // L'utilisateur est déjà authentifié
+      }
+  
+      const user = window.prompt("Nom d’utilisateur :");
+      const pass = window.prompt("Mot de passe :");
+  
+      const auth = window.btoa(`${user}:${pass}`);
+  
+      if (auth === expected) {
+        localStorage.setItem("preprod_auth", auth); // On sauvegarde l'auth valide
+      } else {
+        alert("Accès refusé.");
+        // window.location.href = "https://google.com";
+      }
+    }
+  }, []);
+
+  return(
   <QueryClientProvider client={queryClient}>
     <HelmetProvider>
       <TooltipProvider>
@@ -147,6 +174,7 @@ const App = () => (
       </TooltipProvider>
     </HelmetProvider>
   </QueryClientProvider>
-);
+  );
+};
 
 export default App;
