@@ -80,7 +80,7 @@ const App = () => {
       const savedAuth = localStorage.getItem("preprod_auth");
   
       if (savedAuth === expected) {
-        return; // L'utilisateur est déjà authentifié
+        return; 
       }
   
       const user = window.prompt("Nom d’utilisateur :");
@@ -89,10 +89,10 @@ const App = () => {
       const auth = window.btoa(`${user}:${pass}`);
   
       if (auth === expected) {
-        localStorage.setItem("preprod_auth", auth); // On sauvegarde l'auth valide
+        localStorage.setItem("preprod_auth", auth); 
       } else {
         alert("Accès refusé.");
-        // window.location.href = "https://google.com";
+        window.location.href = "https://www.instagram.com/mariable.fr/";
       }
     }
   }, []);
