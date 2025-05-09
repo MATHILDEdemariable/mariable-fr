@@ -9,6 +9,27 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      admin_users: {
+        Row: {
+          created_at: string
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       budgets_dashboard: {
         Row: {
           breakdown: Json
@@ -192,6 +213,147 @@ export type Database = {
         }
         Relationships: []
       }
+      prestataires_rows: {
+        Row: {
+          accord_cgv: boolean | null
+          accord_referencement: boolean | null
+          assurance_nom: string | null
+          capacite_invites: number | null
+          categorie: Database["public"]["Enums"]["prestataire_categorie"] | null
+          categorie_lieu: string | null
+          created_at: string
+          description: string | null
+          email: string | null
+          hebergement_inclus: boolean | null
+          id: string
+          latitude: number | null
+          longitude: number | null
+          nom: string | null
+          nombre_couchages: number | null
+          prix_a_partir_de: number | null
+          prix_minimum: number | null
+          prix_par_personne: number | null
+          region: Database["public"]["Enums"]["region_france"] | null
+          responsable_bio: string | null
+          responsable_nom: string | null
+          siret: string | null
+          site_web: string | null
+          styles: Json | null
+          telephone: string | null
+          updated_at: string
+          ville: string | null
+          featured: boolean | null
+          visible: boolean | null
+          prestataires_photos_preprod:{
+            created_at: string
+            filename: string | null
+            id: string
+            ordre: number | null
+            prestataire_id: string
+            principale: boolean | null
+            size: number | null
+            type: string | null
+            url: string
+          }
+        }
+        Insert: {
+          accord_cgv?: boolean | null
+          accord_referencement?: boolean | null
+          assurance_nom?: string | null
+          capacite_invites?: number | null
+          categorie?:
+            | Database["public"]["Enums"]["prestataire_categorie"]
+            | null
+          categorie_lieu?: string | null
+          created_at?: string
+          description?: string | null
+          email?: string | null
+          hebergement_inclus?: boolean | null
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          nom: string | null
+          nombre_couchages?: number | null
+          prix_a_partir_de?: number | null
+          prix_minimum?: number | null
+          prix_par_personne?: number | null
+          region?: Database["public"]["Enums"]["region_france"] | null
+          responsable_bio?: string | null
+          responsable_nom?: string | null
+          siret?: string | null
+          site_web?: string | null
+          styles?: Json | null
+          telephone?: string | null
+          updated_at?: string
+          ville?: string | null
+          featured?: boolean | null
+          visible: boolean | null
+          prestataires_photos_preprod:{
+            created_at: string
+            filename: string | null
+            id: string
+            ordre: number | null
+            prestataire_id: string
+            principale: boolean | null
+            size: number | null
+            type: string | null
+            url: string
+          }
+        }
+        Update: {
+          accord_cgv?: boolean | null
+          accord_referencement?: boolean | null
+          assurance_nom?: string | null
+          capacite_invites?: number | null
+          categorie?:
+            | Database["public"]["Enums"]["prestataire_categorie"]
+            | null
+          categorie_lieu?: string | null
+          created_at?: string
+          description?: string | null
+          email?: string | null
+          hebergement_inclus?: boolean | null
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          nom?: string | null
+          nombre_couchages?: number | null
+          prix_a_partir_de?: number | null
+          prix_minimum?: number | null
+          prix_par_personne?: number | null
+          region?: Database["public"]["Enums"]["region_france"] | null
+          responsable_bio?: string | null
+          responsable_nom?: string | null
+          siret?: string | null
+          site_web?: string | null
+          styles?: Json | null
+          telephone?: string | null
+          updated_at?: string
+          ville?: string | null
+          featured?: boolean | null
+          visible: boolean | null
+          prestataires_photos_preprod:{
+            created_at: string
+            filename: string | null
+            id: string
+            ordre: number | null
+            prestataire_id: string
+            principale: boolean | null
+            size: number | null
+            type: string | null
+            url: string
+          }
+        }
+        Relationships: [
+          {
+            foreignKeyName: "prestataires_photos_prestataire_preprod_id_fkey",
+            columns: ["id"],
+            isOneToOne: true,
+            referencedRelation: "prestataires_photos_preprod",
+            referencedColumns: ["prestataire_id"]
+          }
+        ]
+      }
       prestataires_brochures: {
         Row: {
           created_at: string
@@ -273,6 +435,50 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      prestataires_photos_preprod: {
+        Row: {
+          created_at: string
+          filename: string | null
+          id: string
+          ordre: number | null
+          prestataire_id: string
+          principale: boolean | null
+          size: number | null
+          type: string | null
+          url: string
+        }
+        Insert: {
+          created_at?: string
+          filename?: string | null
+          id?: string
+          ordre?: number | null
+          prestataire_id: string
+          principale?: boolean | null
+          size?: number | null
+          type?: string | null
+          url: string
+        }
+        Update: {
+          created_at?: string
+          filename?: string | null
+          id?: string
+          ordre?: number | null
+          prestataire_id?: string
+          principale?: boolean | null
+          size?: number | null
+          type?: string | null
+          url?: string
+        }
+        // Relationships: [
+        //   {
+        //     foreignKeyName: "prestataires_photos_prestataire_preprod_id_fkey"
+        //     columns: ["prestataire_id"]
+        //     isOneToOne: false
+        //     referencedRelation: "prestataires_row"
+        //     referencedColumns: ["id"]
+        //   },
+        // ]
       }
       projects: {
         Row: {
@@ -388,6 +594,66 @@ export type Database = {
         ]
       }
       vendors_tracking: {
+        Row: {
+          category: string
+          contact_date: string | null
+          created_at: string
+          id: string
+          notes: string | null
+          prestataire_id: string | null
+          project_id: string | null
+          response_date: string | null
+          status: Database["public"]["Enums"]["vendor_status"]
+          updated_at: string
+          user_id: string
+          vendor_name: string
+        }
+        Insert: {
+          category: string
+          contact_date?: string | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          prestataire_id?: string | null
+          project_id?: string | null
+          response_date?: string | null
+          status?: Database["public"]["Enums"]["vendor_status"]
+          updated_at?: string
+          user_id: string
+          vendor_name: string
+        }
+        Update: {
+          category?: string
+          contact_date?: string | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          prestataire_id?: string | null
+          project_id?: string | null
+          response_date?: string | null
+          status?: Database["public"]["Enums"]["vendor_status"]
+          updated_at?: string
+          user_id?: string
+          vendor_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vendors_tracking_prestataire_id_fkey"
+            columns: ["prestataire_id"]
+            isOneToOne: false
+            referencedRelation: "prestataires"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vendors_tracking_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vendors_tracking_preprod: {
         Row: {
           category: string
           contact_date: string | null

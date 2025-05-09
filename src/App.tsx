@@ -36,6 +36,7 @@ import FAQ from "./pages/contact/FAQ";
 
 // Demo page
 import Demo from "./pages/Demo";
+import Preview from "./pages/Preview";
 
 // Auth and Dashboard pages
 import Login from "./pages/auth/Login";
@@ -46,6 +47,15 @@ import Callback from "./pages/auth/Callback";
 
 // Test Formulaire
 import TestFormulaire from "./pages/TestFormulaire";
+
+// Admin pages
+import AdminPrestataires from "./pages/admin/Prestataires";
+
+// Prestataire pages
+// import TrackingPage from "./pages/prestataire/tracking";
+
+
+
 
 // Composant pour scroller en haut de la page à chaque changement de route
 const ScrollToTop = () => {
@@ -112,6 +122,7 @@ const App = () => (
             
             {/* Demo page */}
             <Route path="/demo" element={<Demo />} />
+            <Route path="/preview" element={<Preview />} />
             
             {/* Moteur de recherche page */}
             <Route path="/recherche" element={<MoteurRecherche />} />
@@ -121,6 +132,11 @@ const App = () => (
             
             {/* Import Airtable */}
             <Route path="/import-airtable" element={<ImportAirtable />} />
+
+            {/* Admin Routes */}
+            <Route path="/admin/prestataires" element={<AdminPrestataires />} />
+
+
             
             {/* Catch-all route */}
             <Route path="*" element={<NotFound />} />
