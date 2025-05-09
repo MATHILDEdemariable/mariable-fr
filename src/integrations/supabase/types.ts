@@ -355,6 +355,38 @@ export type Database = {
           }
         ]
       }
+      prestataires_meta:{
+        Row: {
+          created_at: string
+          id: string
+          metak_key: string
+          metak_value: string
+          prestataire_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          metak_key: string
+          metak_value: string
+          prestataire_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          metak_key?: string
+          metak_value?: string
+          prestataire_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "prestataires_meta_prestataire_id_fkey"
+            columns: ["prestataire_id"]
+            isOneToOne: false
+            referencedRelation: "prestataires"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       prestataires_brochures: {
         Row: {
           created_at: string

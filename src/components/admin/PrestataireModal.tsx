@@ -22,10 +22,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { Database, Constants } from "@/integrations/supabase/types";
 import { v4 as uuidv4 } from "uuid";
 import slugify from "@/utils/slugify";
+import { extractMetas } from "@/lib/extractMetas";
 
 type Prestataire = Database["public"]["Tables"]["prestataires_rows"]["Row"];
 type PrestataireInsert =
   Database["public"]["Tables"]["prestataires_rows"]["Insert"];
+type MetaInsert = Database["public"]["Tables"]["prestataires_meta"]["Insert"];
 
 interface Props {
   open: boolean;
@@ -135,6 +137,23 @@ const PrestataireModal: React.FC<Props> = ({
       return;
     }
 
+    const metas = extractMetas(form, [
+      "id",
+      "slug",
+      "categorie",
+      "categorie_lieu",
+      "created_at",
+      "updated_at",
+      "description",
+      "email",
+      "nom",
+      "region",
+      "ville",
+      "featured",
+      "visible",
+      "prestataires_photos_preprod",
+    ]);
+
     if (mode === "edit" && prestataire) {
       const { prestataires_photos_preprod, ...formWithoutRelations } = form;
 
@@ -147,6 +166,30 @@ const PrestataireModal: React.FC<Props> = ({
       if (selectedFile) {
         await uploadImage(prestataire.id);
       }
+      //deleta all meta for prestataire
+
+      const { error: deleteError } = await supabase
+        .from("prestataires_meta")
+        .delete()
+        .eq("prestataire_id", prestataire.id);
+
+      const metasArray = Object.entries(metas).map(([key, value]) => ({
+        meta_key: key,
+        meta_value: value,
+        prestataire_id: prestataire.id,
+      }));
+
+      if (metasArray.length > 0) {
+        const { error: metaError } = await supabase
+          .from("prestataires_meta")
+          .insert(metasArray);
+
+        if (metaError) {
+          toast.error("Erreur lors de l'enregistrement des métas");
+          console.error(metaError);
+        }
+      }
+
       toast.success("Prestataire mis à jour");
     } else {
       form.slug = slugify(form.nom);
@@ -159,11 +202,27 @@ const PrestataireModal: React.FC<Props> = ({
       if (error) return toast.error("Erreur création");
       await uploadImage(data.id);
 
+      const metasArray = Object.entries(metas).map(([key, value]) => ({
+        meta_key: key,
+        meta_value: value,
+        prestataire_id: data.id,
+      }));
+
+      if (metasArray.length > 0) {
+        const { error: metaError } = await supabase
+          .from("prestataires_meta")
+          .insert(metasArray);
+
+        if (metaError) {
+          toast.error("Erreur lors de l'enregistrement des métas");
+          console.error(metaError);
+        }
+      }
       toast.success("Prestataire ajouté");
     }
 
-    onClose();
-    onSave();
+    // onClose();
+    // onSave();
   };
 
   return (
