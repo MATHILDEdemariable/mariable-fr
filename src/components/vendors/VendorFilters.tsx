@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
 import { Database } from '@/integrations/supabase/types';
@@ -89,7 +90,7 @@ const VendorFilters: React.FC<VendorFiltersProps> = ({ filters, onFilterChange }
       categorieLieu: undefined,
       capaciteMin: undefined,
       hebergement: undefined,
-      couchages: undefined
+      couchages: undefined,
     });
     setPriceRange([0, 10000]);
   };
@@ -197,6 +198,7 @@ const VendorFilters: React.FC<VendorFiltersProps> = ({ filters, onFilterChange }
               <X className="h-4 w-4" /> Réinitialiser
             </Button>
           )}
+
         </div>
       )}
 

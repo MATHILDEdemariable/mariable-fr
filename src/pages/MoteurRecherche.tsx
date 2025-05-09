@@ -11,7 +11,7 @@ import { toast } from '@/components/ui/use-toast';
 import { Loader2 } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 
-type Prestataire = Database['public']['Tables']['prestataires']['Row'];
+type Prestataire = Database['public']['Tables']['prestataires_rows']['Row'];
 type RegionFrance = Database['public']['Enums']['region_france'];
 
 export interface VendorFilter {
@@ -84,6 +84,7 @@ const MoteurRecherche = () => {
   }, [filters, setSearchParams]);
   
   const handleFilterChange = (newFilters: Partial<VendorFilter>) => {
+    console.log('New filters:', newFilters);
     setFilters(prev => ({ ...prev, ...newFilters }));
   };
   
@@ -92,9 +93,10 @@ const MoteurRecherche = () => {
                filters.categorieLieu, filters.capaciteMin, filters.hebergement, filters.couchages, debouncedSearch],
     queryFn: async () => {
       let query = supabase
-        .from('prestataires')
+        .from('prestataires_rows')
         .select('*')
-        .eq('visible', true);
+        .eq('visible', true)
+        .order('featured',{ascending:false})
       
       if (debouncedSearch) {
         // Recherche étendue sur plusieurs champs

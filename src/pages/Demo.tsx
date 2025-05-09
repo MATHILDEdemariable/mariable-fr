@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Database } from '@/integrations/supabase/types';
+import { Session } from "@supabase/supabase-js";
 import Header from '@/components/Header';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -15,9 +16,11 @@ import { MapPin, Users, Star, Award, CalendarCheck, Euro, MessageSquare } from '
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { toast } from '@/components/ui/use-toast';
 import { Loader2 } from 'lucide-react';
+import { se } from 'date-fns/locale';
 
 type Prestataire = Database['public']['Tables']['prestataires']['Row'];
 type PrestatairePhoto = Database['public']['Tables']['prestataires_photos']['Row'];
+type VendorsTrackingPreprod = Database['public']['Tables']['vendors_tracking_preprod']['Row']; 
 
 interface Package {
   name: string;
@@ -39,6 +42,18 @@ const Demo = () => {
   const [guests, setGuests] = useState<number>(100);
   const [packages, setPackages] = useState<Package[]>(DEFAULT_PACKAGES);
   const [selectedPackage, setSelectedPackage] = useState<Package>(DEFAULT_PACKAGES[0]);
+
+  //check if user is connected
+  const [session, setSession] = useState<Session | null>(null);
+  useEffect(() => {
+    const subscription = supabase.auth.onAuthStateChange((_event, newSession) => {
+      setSession(newSession);
+    });
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+  }, []);
   
   const disabledDates = [
     new Date(2025, 5, 15),
@@ -165,10 +180,68 @@ const Demo = () => {
 
   const prices = calculateTotal();
 
-  const handleBookingClick = () => {
-    toast({
-      description: "La réservation en ligne sera bientôt disponible",
-    });
+  const checkCurrentRDV = async () => {
+    if (session) {
+      const { data, error } = await supabase
+        .from('vendors_tracking_preprod')
+        .select('*')
+        .eq('user_id', session.user.id)
+        .eq('prestataire_id', vendorId)
+        .single();
+
+      return data;
+    }
+    return null;
+  }
+
+  const handleBookingClick = async () => {
+
+    const currentButton = document.querySelector('#button-rdv');
+    const newDate = date?.toLocaleDateString();
+    const newGuests = guests;
+    const newPackage = selectedPackage;
+
+    const currentRDV = await checkCurrentRDV();
+    if(session) {
+      if(currentRDV) {
+        toast({
+          description: "Vous avez déjà une réservation en attente pour ce prestataire.",
+          variant: "destructive",
+        });
+        return;
+      }
+      if (newDate && newGuests && newPackage) {
+        const { data, error } = await supabase
+          .from('vendors_tracking_preprod')
+          .insert([
+            {
+              contact_date: new Date().toISOString(),
+              user_id: session.user.id,
+              prestataire_id: vendorId,
+              category: vendor?.categorie || "Non spécifié",
+              vendor_name: vendor?.nom || "Non spécifié",
+              status: "en attente"
+            },
+          ]);
+          currentButton?.setAttribute('disabled', 'true');
+
+        toast({
+          description: `Votre réservation pour ${newGuests} invités le ${newDate} avec le package ${newPackage.name} à bien été envoyée.`,
+          variant: "default",
+        })
+      } else {
+        toast({
+          description: "Veuillez sélectionner une date.",
+          variant: "destructive",
+        });
+      }
+    }else{
+      toast({
+        description: "Merci de vous connecter pour réserver",
+      });
+    }
+
+ 
   };
   
   const handleGuestsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -431,6 +504,7 @@ const Demo = () => {
                 </div>
 
                 <Button 
+                  id="button-rdv"
                   className="w-full mt-4 bg-wedding-olive hover:bg-wedding-olive/90"
                   onClick={handleBookingClick}
                 >

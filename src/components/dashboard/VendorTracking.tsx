@@ -65,11 +65,11 @@ const statusIconMap: Record<VendorStatus, React.ReactNode> = {
   'à valider': <Calendar className="h-4 w-4" />,
 };
 
-interface VendorTrackingProps {
-  projectId?: string;
-}
+// interface VendorTrackingProps {
+//   projectId?: string;
+// }
 
-const VendorTracking: React.FC<VendorTrackingProps> = ({ projectId }) => {
+const VendorTracking = () => {
   const [vendors, setVendors] = useState<Vendor[]>([]);
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
@@ -78,7 +78,6 @@ const VendorTracking: React.FC<VendorTrackingProps> = ({ projectId }) => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [vendorToDelete, setVendorToDelete] = useState<string | null>(null);
   const { toast } = useToast();
-  
   // Fetch vendors from the database
   const fetchVendors = async () => {
     setIsLoading(true);
@@ -90,14 +89,15 @@ const VendorTracking: React.FC<VendorTrackingProps> = ({ projectId }) => {
         return;
       }
 
+
       let query = supabase
-        .from('vendors_tracking')
+        .from('vendors_tracking_preprod')
         .select('*')
         .eq('user_id', user.id);
         
-      if (projectId) {
-        query = query.eq('project_id', projectId);
-      }
+      // if (projectId) {
+      //   query = query.eq('project_id', projectId);
+      // }
         
       const { data, error } = await query.order('created_at', { ascending: false });
 
@@ -125,7 +125,7 @@ const VendorTracking: React.FC<VendorTrackingProps> = ({ projectId }) => {
   // Initial fetch
   useEffect(() => {
     fetchVendors();
-  }, [projectId]);
+  }, []);
   
   // Get unique categories for filter
   const categories = [...new Set(vendors.map(vendor => vendor.category))];
@@ -334,6 +334,12 @@ const VendorTracking: React.FC<VendorTrackingProps> = ({ projectId }) => {
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-2">
+                          {vendor.response_date && (<Button
+                            variant='outline' onClick={
+                              () => {
+                                window.open(`/prestataire/tracking?id=${vendor.id}&edit=user`, '_blank');
+                              }
+                            }>Voir la demande</Button> )}
                           <Select 
                             defaultValue={vendor.status}
                             onValueChange={(value) => updateVendorStatus(vendor.id, value as VendorStatus)}
@@ -349,6 +355,7 @@ const VendorTracking: React.FC<VendorTrackingProps> = ({ projectId }) => {
                               <SelectItem value="à valider">À valider</SelectItem>
                             </SelectContent>
                           </Select>
+
                           <Button 
                             variant="outline" 
                             size="icon"
@@ -375,7 +382,7 @@ const VendorTracking: React.FC<VendorTrackingProps> = ({ projectId }) => {
         open={addDialogOpen} 
         onOpenChange={setAddDialogOpen} 
         onVendorAdded={fetchVendors}
-        projectId={projectId}
+        // projectId={projectId}
       />
       
       {/* Delete Confirmation Dialog */}

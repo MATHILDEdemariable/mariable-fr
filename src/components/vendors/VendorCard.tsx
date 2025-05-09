@@ -11,7 +11,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/components/ui/use-toast';
 import AuthRequiredModal from '@/components/auth/AuthRequiredModal';
 
-type Prestataire = Database['public']['Tables']['prestataires']['Row'];
+type Prestataire = Database['public']['Tables']['prestataires_rows']['Row'];
 
 interface VendorCardProps {
   vendor: Prestataire;

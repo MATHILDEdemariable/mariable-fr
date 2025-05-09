@@ -30,7 +30,20 @@ function Menus({ onClick }: { onClick?: () => void }) {
   return (
     <>
       {/* Nos Services Dropdown - Updated order as requested */}
-      <HeaderDropdown label="Nos Services">
+      <Link to="/recherche" className="hidden md:flex items-center gap-2">
+        <span>Prestataires</span>
+      </Link>
+
+      <Link to="/services/planification" className="hidden md:flex items-center gap-2">
+        <span >Planification</span>
+      </Link>
+      <Link to="/services/budget" className="hidden md:flex items-center gap-2">
+        <span >Budgétisation</span>
+      </Link>
+      <Link to="/services/conseils" className="hidden md:flex items-center gap-2">
+        <span >Conseils personnalisés</span>
+      </Link>
+      <HeaderDropdown label="Nos Services" className="hidden">
         <HeaderDropdownMenu>
           <HeaderDropdownItem
             label="Conseils personnalisés"
