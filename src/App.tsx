@@ -102,7 +102,7 @@ const App = () => {
       }
     }
   }, []);
-  if(import.meta.env.VITE_PROTECTION_ENABLED === 'true' && !isProtected) {
+  if(localStorage.getItem("preprod_auth") === null && import.meta.env.VITE_PROTECTION_ENABLED === "true" ) {
     return(
       <div className="flex items-center justify-center h-screen">
         <div className="text-center">
