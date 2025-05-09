@@ -101,8 +101,15 @@ const App = () => {
       }
     }
   }, []);
-  if(import.meta.env.VITE_PROTECTION_ENABLED && !isProtected) {
-    return null;
+  if(import.meta.env.VITE_PROTECTION_ENABLED === 'true' && !isProtected) {
+    return(
+      <div className="flex items-center justify-center h-screen">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold">Accès refusé</h1>
+          <p>Veuillez entrer les identifiants corrects.</p>
+        </div>
+      </div>
+    )
   }
 
   return(
