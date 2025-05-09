@@ -3,7 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect,useState } from "react";
 import { HelmetProvider } from "react-helmet-async";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
@@ -71,6 +71,9 @@ const queryClient = new QueryClient();
 
 const App = () => {
 
+  // Protection de la page en mode préproduction
+  const [isProtected, setIsProtected] = useState(false);
+
   useEffect(() => {
     if (import.meta.env.VITE_PROTECTION_ENABLED === "true") {
       const expected = window.btoa(
@@ -90,12 +93,17 @@ const App = () => {
   
       if (auth === expected) {
         localStorage.setItem("preprod_auth", auth); 
+        setIsProtected(true);
       } else {
         alert("Accès refusé.");
+        setIsProtected(false);
         window.location.href = "https://www.instagram.com/mariable.fr/";
       }
     }
   }, []);
+  if(import.meta.env.VITE_PROTECTION_ENABLED && !isProtected) {
+    return null;
+  }
 
   return(
   <QueryClientProvider client={queryClient}>
