@@ -57,7 +57,7 @@ const MoteurRecherche = () => {
   }, [filters.search]);
   
   const navigateToVendorDetails = (vendor: Prestataire) => {
-    navigate(`/demo?id=${vendor.id}`);
+    navigate(`/prestataire/${vendor.slug}`);
   };
 
   const handleWishlistAdd = (vendor: Prestataire) => {

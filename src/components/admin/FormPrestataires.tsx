@@ -1,17 +1,33 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Database } from "@/integrations/supabase/types";
 
 import PrestataireModal from "./PrestataireModal";
 
-type Prestataire = Database["public"]["Tables"]["prestataires_rows"]["Row"];
-type PrestataireInsert = Database["public"]["Tables"]["prestataires_rows"]["Insert"];
+import FeaturedImage from "@/components/ui/featured-image";
 
+type Prestataire = Database["public"]["Tables"]["prestataires_rows"]["Row"];
+type PrestataireInsert =
+  Database["public"]["Tables"]["prestataires_rows"]["Insert"];
+ 
 const PrestatairesAdmin = () => {
   const [prestataires, setPrestataires] = useState<Prestataire[]>([]);
   const [selected, setSelected] = useState<Prestataire | null>(null);
@@ -19,12 +35,15 @@ const PrestatairesAdmin = () => {
   const [mode, setMode] = useState<"edit" | "add">("add");
 
   const fetchPrestataires = async () => {
-    const { data, error } = await supabase.from("prestataires_rows").select(`*, prestataires_photos_preprod (url)`).order("nom", { ascending: true });
+    const { data, error } = await supabase
+      .from("prestataires_rows")
+      .select(`*, prestataires_photos_preprod (*)`)
+      .order("nom", { ascending: true });
     if (error) {
       toast.error("Erreur lors du chargement");
       return;
     }
-    console.log("Prestataires:", data);
+    // console.log("Prestataires:", data);
     setPrestataires(data || []);
   };
 
@@ -33,7 +52,10 @@ const PrestatairesAdmin = () => {
   }, []);
 
   const handleDelete = async (id: string) => {
-    const { error } = await supabase.from("prestataires_rows").delete().eq("id", id);
+    const { error } = await supabase
+      .from("prestataires_rows")
+      .delete()
+      .eq("id", id);
     if (error) return toast.error("Erreur suppression");
     toast.success("Prestataire supprimé");
     fetchPrestataires();
@@ -45,19 +67,22 @@ const PrestatairesAdmin = () => {
     setDialogOpen(true);
   };
   const handlePublish = async (presta: Prestataire) => {
-    const { error } = await supabase.from("prestataires_rows").update({ visible: !presta.visible }).eq("id", presta.id);
+    const { error } = await supabase
+      .from("prestataires_rows")
+      .update({ visible: !presta.visible })
+      .eq("id", presta.id);
     if (error) return toast.error("Erreur lors de la publication");
     toast.success(presta.visible ? "Prestataire caché" : "Prestataire publié");
     fetchPrestataires();
-  }
+  };
   const handleAdd = () => {
     setSelected(null);
     setMode("add");
     setDialogOpen(true);
   };
 
-  const handleHref = (id: string) => {
-    window.open(`/preview?id=${id}`, "_blank");
+  const handleHref = (slug: string) => {
+    window.open(`/prestataire/${slug}`, "_blank");
   };
 
   return (
@@ -80,26 +105,50 @@ const PrestatairesAdmin = () => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {prestataires.map((presta) => (
-            <TableRow key={presta.id}>
-              <TableCell>
-                <img src={presta.prestataires_photos_preprod?.[0]?.url || "https://placehold.co/150x150?text=No+Image"} alt={presta.nom} className="w-16 h-16 object-cover" />
-              </TableCell>
-              <TableCell>{presta.nom}</TableCell>
-              <TableCell>{presta.ville}</TableCell>
-              <TableCell>{presta.categorie}</TableCell>
-              <TableCell>{presta.email}</TableCell>
-              <TableCell>
-                {presta.featured ? "Oui" : "Non"}
-              </TableCell>
-              <TableCell className="space-x-2 flex flex-row">
-                <Button size="sm" variant="outline" onClick={() => handleHref(presta.id)}>Prévisualiser</Button>
-                <Button size="sm" variant={presta.visible ? "publish" : "unpublish"} onClick={() => handlePublish(presta)}>{presta.visible ? "Cacher" : "Publier"}</Button>
-                <Button size="sm" variant="outline" onClick={() => handleEdit(presta)}>Modifier</Button>
-                <Button size="sm" variant="destructive" onClick={() => handleDelete(presta.id)}>Supprimer</Button>
-              </TableCell>
-            </TableRow>
-          ))}
+          {prestataires.map((presta) => {
+            return (
+              <TableRow key={presta.id}>
+                <TableCell>
+                  <FeaturedImage presta={presta} />
+                </TableCell>
+                <TableCell>{presta.nom}</TableCell>
+                <TableCell>{presta.ville}</TableCell>
+                <TableCell>{presta.categorie}</TableCell>
+                <TableCell>{presta.email}</TableCell>
+                <TableCell>{presta.featured ? "Oui" : "Non"}</TableCell>
+                <TableCell className="space-x-2 flex flex-row">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => handleHref(presta.slug)}
+                  >
+                    Prévisualiser
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant={presta.visible ? "publish" : "unpublish"}
+                    onClick={() => handlePublish(presta)}
+                  >
+                    {presta.visible ? "Cacher" : "Publier"}
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => handleEdit(presta)}
+                  >
+                    Modifier
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="destructive"
+                    onClick={() => handleDelete(presta.id)}
+                  >
+                    Supprimer
+                  </Button>
+                </TableCell>
+              </TableRow>
+            );
+          })}
         </TableBody>
       </Table>
 

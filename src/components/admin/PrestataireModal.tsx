@@ -23,7 +23,8 @@ import { Database, Constants } from "@/integrations/supabase/types";
 import { v4 as uuidv4 } from "uuid";
 
 type Prestataire = Database["public"]["Tables"]["prestataires_rows"]["Row"];
-type PrestataireInsert = Database["public"]["Tables"]["prestataires_rows"]["Insert"];
+type PrestataireInsert =
+  Database["public"]["Tables"]["prestataires_rows"]["Insert"];
 
 interface Props {
   open: boolean;
@@ -61,6 +62,8 @@ const PrestataireModal: React.FC<Props> = ({
 
     setIsUploading(true);
 
+    console.log("Uploading image:", selectedFile);
+
     try {
       const fileExt = selectedFile.name.split(".").pop();
       const fileName = `${uuidv4()}.${fileExt}`;
@@ -71,30 +74,56 @@ const PrestataireModal: React.FC<Props> = ({
         .upload(filePath, selectedFile);
 
       if (uploadError) {
-        console.error("Erreur lors du téléchargement de l'image:", uploadError); 
+        console.error("Erreur lors du téléchargement de l'image:", uploadError);
         throw uploadError;
       }
-
 
       const {
         data: { publicUrl },
       } = supabase.storage.from("photos").getPublicUrl(filePath);
 
+      if(mode === "edit") {
+        const { error: UpdateError } = await supabase
+        .from("prestataires_photos_preprod")
+        .update({
+          url: publicUrl,
+          filename: selectedFile.name,
+          type: selectedFile.type,
+          size: selectedFile.size,
+          principale: true,
+        })
+        .eq("prestataire_id", prestataireId)
+        if (UpdateError) {
+          console.error(
+            "Erreur lors de la mise à jour de l'image dans la base de données:",
+            UpdateError
+          );
+          throw UpdateError;
+        }
 
-      const {error: InsertError} = await supabase.from("prestataires_photos_preprod").insert({
-        prestataire_id: prestataireId,
-        url: publicUrl,
-        filename: selectedFile.name,
-        type: selectedFile.type,
-        size: selectedFile.size,
-      });
+      }
+      else{
+        const { error: InsertError } = await supabase
+        .from("prestataires_photos_preprod")
+        .insert({
+          prestataire_id: prestataireId,
+          url: publicUrl,
+          filename: selectedFile.name,
+          type: selectedFile.type,
+          size: selectedFile.size,
+          principale: true,
+        });
       if (InsertError) {
-        console.error("Erreur lors de l'insertion de l'image dans la base de données:", InsertError);
+        console.error(
+          "Erreur lors de l'insertion de l'image dans la base de données:",
+          InsertError
+        );
         throw InsertError;
       }
+      }
+
       return publicUrl;
     } catch (error) {
-      //toast
       toast.error(error.message);
       console.error("Erreur lors du téléchargement de la brochure:", error);
       return null;
@@ -110,17 +139,25 @@ const PrestataireModal: React.FC<Props> = ({
     }
 
     if (mode === "edit" && prestataire) {
+      const { prestataires_photos_preprod, ...formWithoutRelations } = form;
+
       const { error } = await supabase
         .from("prestataires_rows")
-        .update(form)
+        .update(formWithoutRelations)
         .eq("id", prestataire.id);
-      if (error) return toast.error("Erreur mise à jour");
 
+      if (error) return toast.error("Erreur mise à jour");
+      if (selectedFile) {
+        console.log('les probleme commence ici')
+       await uploadImage(prestataire.id);
+      }
       toast.success("Prestataire mis à jour");
     } else {
-      // Add nouveau prestataire and get the ID
- 
-      const { data,error } = await supabase.from("prestataires_rows").insert(form).select("id").single();
+      const { data, error } = await supabase
+        .from("prestataires_rows")
+        .insert(form)
+        .select("id")
+        .single();
 
       if (error) return toast.error("Erreur création");
       await uploadImage(data.id);
@@ -140,10 +177,14 @@ const PrestataireModal: React.FC<Props> = ({
             {mode === "edit" ? "Modifier" : "Ajouter"} un prestataire
           </DialogTitle>
         </DialogHeader>
-        {mode==="edit" &&(
+        <p>Image de couverture du prestataire</p>
+        {mode === "edit" && (
           <div>
             <img
-              src={prestataire.prestataires_photos_preprod?.[0]?.url || "https://placehold.co/500x150"}
+              src={
+                prestataire.prestataires_photos_preprod?.[0]?.url ||
+                "https://placehold.co/500x150"
+              }
               alt="Prestataire"
               className="w-full max-h-[150px] object-cover rounded-lg "
             />
@@ -168,6 +209,7 @@ const PrestataireModal: React.FC<Props> = ({
           }}
           className="mb-4"
         />
+        <p>Autres informations</p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Input
             placeholder="Nom"
@@ -353,7 +395,9 @@ const PrestataireModal: React.FC<Props> = ({
         </div>
 
         <DialogFooter className="mt-6">
-          <Button variant="outline" onClick={onClose}>Annuler</Button>
+          <Button variant="outline" onClick={onClose}>
+            Annuler
+          </Button>
           <Button onClick={handleSubmit}>Enregistrer</Button>
         </DialogFooter>
       </DialogContent>

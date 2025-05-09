@@ -255,6 +255,7 @@ export type Database = {
             type: string | null
             url: string
           }
+          slug?: string | null
         }
         Insert: {
           accord_cgv?: boolean | null
@@ -299,6 +300,7 @@ export type Database = {
             type: string | null
             url: string
           }
+          slug?: string | null
         }
         Update: {
           accord_cgv?: boolean | null
@@ -343,6 +345,7 @@ export type Database = {
             type: string | null
             url: string
           }
+          slug?: string | null
         }
         Relationships: [
           {

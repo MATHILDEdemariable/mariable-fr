@@ -35,6 +35,7 @@ import FAQ from "./pages/contact/FAQ";
 
 // Demo page
 import Demo from "./pages/Demo";
+import SinglePrestataire from "./pages/prestataire/slug";
 import Preview from "./pages/Preview";
 
 // Auth and Dashboard pages
@@ -164,7 +165,8 @@ const App = () => {
             
             {/* Demo page */}
             <Route path="/demo" element={<Demo />} />
-            <Route path="/preview" element={<Preview />} />
+            {/* <Route path="/preview" element={<Preview />} /> */}
+            <Route path="/prestataire/:slug" element={<SinglePrestataire />} />
             
             {/* Moteur de recherche page */}
             <Route path="/recherche" element={<MoteurRecherche />} />
