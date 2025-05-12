@@ -47,6 +47,7 @@ const PrestataireModal: React.FC<Props> = ({
   const [form, setForm] = useState<PrestataireInsert>({ nom: "" });
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [carouselFiles, setCarouselFiles] = useState<File[]>([]);
 
   useEffect(() => {
     if (prestataire) {
@@ -83,50 +84,44 @@ const PrestataireModal: React.FC<Props> = ({
         data: { publicUrl },
       } = supabase.storage.from("photos").getPublicUrl(filePath);
 
-
       if (mode === "edit") {
-
         //check if the prestataire already has a photo
         const { data: existingPhotos } = await supabase
           .from("prestataires_photos_preprod")
           .select("*")
           .eq("prestataire_id", prestataireId);
         if (existingPhotos && existingPhotos.length > 0) {
-          const { data,error: UpdateError } = await supabase
-          .from("prestataires_photos_preprod")
-          .update({
-            url: publicUrl,
-            filename: selectedFile.name,
-            type: selectedFile.type,
-            size: selectedFile.size,
-            principale: true,
-          })
-          .eq("prestataire_id", prestataireId);
-        if (UpdateError) {
-          console.error(
-            "Erreur lors de la mise à jour de l'image dans la base de données:",
-            UpdateError
-          );
-          throw UpdateError;
-        }
-        toast.success("Image mise à jour avec succès");
-        }
-        else{
+          const { data, error: UpdateError } = await supabase
+            .from("prestataires_photos_preprod")
+            .update({
+              url: publicUrl,
+              filename: selectedFile.name,
+              type: selectedFile.type,
+              size: selectedFile.size,
+              principale: true,
+            })
+            .eq("prestataire_id", prestataireId);
+          if (UpdateError) {
+            console.error(
+              "Erreur lors de la mise à jour de l'image dans la base de données:",
+              UpdateError
+            );
+            throw UpdateError;
+          }
+          toast.success("Image mise à jour avec succès");
+        } else {
           const { error: InsertError } = await supabase
-          .from("prestataires_photos_preprod")
-          .insert({
-            prestataire_id: prestataireId,
-            url: publicUrl,
-            filename: selectedFile.name,
-            type: selectedFile.type,
-            size: selectedFile.size,
-            principale: true,
-          });
-          toast.success("Image ajoutée avec succès");       
+            .from("prestataires_photos_preprod")
+            .insert({
+              prestataire_id: prestataireId,
+              url: publicUrl,
+              filename: selectedFile.name,
+              type: selectedFile.type,
+              size: selectedFile.size,
+              principale: true,
+            });
+          toast.success("Image ajoutée avec succès");
         }
-
-
-
       } else {
         const { error: InsertError } = await supabase
           .from("prestataires_photos_preprod")
@@ -154,6 +149,49 @@ const PrestataireModal: React.FC<Props> = ({
       return null;
     } finally {
       setIsUploading(false);
+    }
+  };
+
+  const uploadCarouselImages = async (prestataireId: string) => {
+    for (const file of carouselFiles) {
+      try {
+        const fileExt = file.name.split(".").pop();
+        const fileName = `${uuidv4()}.${fileExt}`;
+        const filePath = `${prestataireId}/carousel/${fileName}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from("photos")
+          .upload(filePath, file);
+
+        if (uploadError) {
+          console.error("Erreur lors de l'upload carousel:", uploadError);
+          continue;
+        }
+
+        const {
+          data: { publicUrl },
+        } = supabase.storage.from("photos").getPublicUrl(filePath);
+
+        const { error: insertError } = await supabase
+          .from("prestataires_photos_preprod")
+          .insert({
+            prestataire_id: prestataireId,
+            url: publicUrl,
+            filename: file.name,
+            type: file.type,
+            size: file.size,
+            principale: false, // image du carousel
+          });
+
+        if (insertError) {
+          console.error("Erreur DB carousel:", insertError);
+        }
+      } catch (error) {
+        console.error(
+          "Erreur inconnue lors de l'upload d'image carousel:",
+          error
+        );
+      }
     }
   };
 
@@ -192,14 +230,16 @@ const PrestataireModal: React.FC<Props> = ({
       if (selectedFile) {
         await uploadImage(prestataire.id);
       }
-      //deleta all meta for prestataire
+
+      if (carouselFiles.length > 0) {
+        await uploadCarouselImages(prestataire.id);
+      }
 
       const { error: deleteError } = await supabase
         .from("prestataires_meta")
         .delete()
         .eq("prestataire_id", prestataire.id);
 
-      //Modification des metas in supabase
       const metasArray = Object.entries(metas).map(([key, value]) => ({
         meta_key: key,
         meta_value: value,
@@ -216,11 +256,9 @@ const PrestataireModal: React.FC<Props> = ({
           console.error(metaError);
         }
       }
-      //END Modification des metas in supabase
 
       toast.success("Prestataire mis à jour");
-    }
-    else {
+    } else {
       form.slug = slugify(form.nom);
       const { data, error } = await supabase
         .from("prestataires_rows")
@@ -230,6 +268,10 @@ const PrestataireModal: React.FC<Props> = ({
 
       if (error) return toast.error("Erreur création");
       await uploadImage(data.id);
+
+      if (carouselFiles.length > 0) {
+        await uploadCarouselImages(data.id);
+      }
 
       const metasArray = Object.entries(metas).map(([key, value]) => ({
         meta_key: key,
@@ -254,6 +296,21 @@ const PrestataireModal: React.FC<Props> = ({
     onSave();
   };
 
+  const deleteCarouselImage = (id: string) => async () => {
+      const currentImageHml = document.getElementById(`carousel-image-${id}`);
+      
+      const { error } = await supabase
+        .from("prestataires_photos_preprod")
+        .delete()
+        .eq("id", id);
+      if (error) {
+        toast.error("Erreur lors de la suppression de l'image");
+      } else {
+        currentImageHml?.remove();
+        toast.success("Image supprimée avec succès");
+      }
+  }
+
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
@@ -263,27 +320,18 @@ const PrestataireModal: React.FC<Props> = ({
           </DialogTitle>
         </DialogHeader>
         <p>Image de couverture du prestataire</p>
-        {mode === "edit" && (
-          <div>
-            <img
-              src={
-                prestataire.prestataires_photos_preprod?.[0]?.url ||
-                "https://placehold.co/500x150"
-              }
-              alt="Prestataire"
-              className="w-full max-h-[150px] object-cover rounded-lg "
-            />
-          </div>
-        )}
-        {mode === "add" && selectedFile && (
-          <div className="mb-4">
-            <img
-              src={URL.createObjectURL(selectedFile)}
-              alt="Preview"
-              className="w-full max-h-[150px] object-cover rounded-lg "
-            />
-          </div>
-        )}
+        <div>
+          <img
+            src={
+              selectedFile
+                ? URL.createObjectURL(selectedFile)
+                : prestataire?.prestataires_photos_preprod?.[0]?.url ||
+                  "https://placehold.co/500x150?text=No+image"
+            }
+            alt="Prestataire"
+            className="w-full max-h-[150px] object-cover rounded-lg "
+          />
+        </div>
         <Input
           type="file"
           accept="image/*"
@@ -294,7 +342,45 @@ const PrestataireModal: React.FC<Props> = ({
           }}
           className="mb-4"
         />
-        <p>Autres informations</p>
+
+        <p>Images du carousel</p>
+        {prestataire?.prestataires_photos_preprod && (
+          <>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-2">
+              {
+              Array.isArray(prestataire.prestataires_photos_preprod) &&
+              prestataire.prestataires_photos_preprod.filter((item) => !item.principale)
+                .map((item) => (
+                  <div
+                    key={item.id}
+                    id={`carousel-image-${item.id}`}
+                    className="relative w-full aspect-video overflow-hidden rounded-lg border"
+                  >
+                    <span className="absolute top-2 right-2 bg-red-500 text-white text-xs px-1 rounded cursor-pointer"
+                    onClick={deleteCarouselImage(item.id)}>X</span>
+                    <img
+                      src={item.url}
+                      alt={`carousel-${item.filename}`}
+                      className="object-cover w-full h-full"
+                    />
+                  </div>
+                ))}
+                </div>
+          </>
+        )}
+        <Input
+          type="file"
+          accept="image/*"
+          multiple
+          onChange={(e) => {
+            if (e.target.files) {
+              setCarouselFiles(Array.from(e.target.files).slice(0, 5)); // max 5 images
+            }
+          }}
+          className="mb-4"
+        />
+        
+        <p>Informations</p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Input
             placeholder="Nom"

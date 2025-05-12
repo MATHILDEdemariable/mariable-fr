@@ -57,7 +57,7 @@ const AdminPrestataires = () => {
     <div className="min-h-screen flex items-center justify-center px-4">
       {isAdmin ? (
         <div className="w-full max-w-6xl">
-          <h1 className="text-2xl font-bold mb-4 text-center">Admin Prestataires</h1>
+          <h1 className="text-2xl font-bold mb-4 text-center mt-12">Admin Prestataires</h1>
           <p className="text-lg text-center mb-4">
             Bienvenue dans l'interface d'administration des prestataires.
           </p>
