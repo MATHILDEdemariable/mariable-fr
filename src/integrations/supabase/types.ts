@@ -700,6 +700,12 @@ export type Database = {
           updated_at: string
           user_id: string
           vendor_name: string
+          email_client: string 
+          email_presta: string
+          first_date_rdv: string
+          second_date_rdv: string
+          third_date_rdv: string
+          validate_date_rdv: number
         }
         Insert: {
           category: string
@@ -714,6 +720,12 @@ export type Database = {
           updated_at?: string
           user_id: string
           vendor_name: string
+          email_client: string 
+          email_presta: string
+          first_date_rdv: string
+          second_date_rdv: string
+          third_date_rdv: string
+          validate_date_rdv: number
         }
         Update: {
           category?: string
@@ -728,6 +740,12 @@ export type Database = {
           updated_at?: string
           user_id?: string
           vendor_name?: string
+          email_client: string 
+          email_presta: string
+          first_date_rdv: string
+          second_date_rdv: string
+          third_date_rdv: string
+          validate_date_rdv: number
         }
         Relationships: [
           {

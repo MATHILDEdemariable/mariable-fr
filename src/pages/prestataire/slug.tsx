@@ -38,6 +38,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import RdvForm from "@/components/forms/RdvForm";
 
 type Prestataire = Database["public"]["Tables"]["prestataires_rows"]["Row"];
 type PrestatairePhoto =
@@ -253,60 +254,29 @@ const SinglePrestataire = () => {
         .select("*")
         .eq("user_id", session.user.id)
         .eq("prestataire_id", vendorId)
-        .single();
-
+        .maybeSingle();
       return data;
     }
     return null;
   };
+  const [hasCurrentRDV, setHasCurrentRDV] = useState(false);
 
-  const handleBookingClick = async () => {
-    const currentButton = document.querySelector("#button-rdv");
-    const newDate = date?.toLocaleDateString();
-    const newGuests = guests;
-    const newPackage = selectedPackage;
-
-    const currentRDV = await checkCurrentRDV();
-    if (session) {
-      if (currentRDV) {
-        toast({
-          description:
-            "Vous avez déjà une réservation en attente pour ce prestataire.",
-          variant: "destructive",
-        });
-        return;
-      }
-      if (newDate && newGuests && newPackage) {
-        const { data, error } = await supabase
+  useEffect(() => {
+    const fetchRDV = async () => {
+      if (session) {
+        const { data } = await supabase
           .from("vendors_tracking_preprod")
-          .insert([
-            {
-              contact_date: new Date().toISOString(),
-              user_id: session.user.id,
-              prestataire_id: vendorId,
-              category: vendor?.categorie || "Non spécifié",
-              vendor_name: vendor?.nom || "Non spécifié",
-              status: "en attente",
-            },
-          ]);
-        currentButton?.setAttribute("disabled", "true");
+          .select("*")
+          .eq("user_id", session.user.id)
+          .eq("prestataire_id", vendorId)
+          .maybeSingle();
 
-        toast({
-          description: `Votre réservation pour ${newGuests} invités le ${newDate} avec le package ${newPackage.name} à bien été envoyée.`,
-          variant: "default",
-        });
-      } else {
-        toast({
-          description: "Veuillez sélectionner une date.",
-          variant: "destructive",
-        });
+        setHasCurrentRDV(!!data);
       }
-    } else {
-      toast({
-        description: "Merci de vous connecter pour réserver",
-      });
-    }
-  };
+    };
+
+    fetchRDV();
+  }, [session, vendorId]);
 
   const handleGuestsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newGuests = parseInt(e.target.value) || 0;
@@ -517,15 +487,14 @@ const SinglePrestataire = () => {
                       <Dialog key={photo.id}>
                         <DialogTrigger asChild>
                           <Card>
-                          <img
-                            src={photo.url}
-                            alt={vendor.nom}
-                            className="w-full h-auto cursor-pointer"
-                          />
+                            <img
+                              src={photo.url}
+                              alt={vendor.nom}
+                              className="w-full h-auto cursor-pointer"
+                            />
                           </Card>
                         </DialogTrigger>
                         <DialogContent className="max-w-[80vw] max-h-[90vh] overflow-y-auto">
-
                           <img
                             src={photo.url}
                             alt={vendor.nom}
@@ -625,14 +594,32 @@ const SinglePrestataire = () => {
                     <span>{Math.round(prices.total)}€</span>
                   </div>
                 </div>
-
-                <Button
-                  id="button-rdv"
-                  className="w-full mt-4 bg-wedding-olive hover:bg-wedding-olive/90"
-                  onClick={handleBookingClick}
-                >
-                  Prendre RDV
-                </Button>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button
+                      id="button-rdv"
+                      className="w-full mt-4 bg-wedding-olive hover:bg-wedding-olive/90"
+                      disabled={hasCurrentRDV}
+                    >
+                      Prendre RDV
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-[70%] max-h-[90vh] overflow-y-auto">
+                    <DialogHeader>
+                      <DialogTitle>
+                        Demande de rendez-vous avec {vendor.nom}
+                      </DialogTitle>
+                    </DialogHeader>
+                    <div className="flex flex-col gap-4">
+                      <RdvForm
+                        prestataire_id={vendor.id}
+                        prestataire_name={vendor.nom}
+                        contact_date={date}
+                        email_prestataire={vendor.email}
+                      />
+                    </div>
+                  </DialogContent>
+                </Dialog>
               </Card>
 
               <Card className="p-4">
