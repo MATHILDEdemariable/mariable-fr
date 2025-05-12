@@ -623,19 +623,36 @@ const SinglePrestataire = () => {
               </Card>
 
               <Card className="p-4">
-                <Button
+
+              <Dialog>
+                  <DialogTrigger asChild>
+                  <Button
                   variant="outline"
                   className="w-full"
                   onClick={() => {
                     toast({
-                      description: "La messagerie sera bientôt disponible",
+                      description: "En cours de développement.",
                     });
-                    window.open(`mailto:${vendor.email || ""}`, "_blank");
+                    // window.open(`mailto:${vendor.email || ""}`, "_blank");
                   }}
                 >
                   <MessageSquare className="mr-2 h-4 w-4" />
                   Contacter
                 </Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-[70%] max-h-[90vh] overflow-y-auto">
+                    <DialogHeader>
+                      <DialogTitle>
+                        Demande de rendez-vous avec {vendor.nom}
+                      </DialogTitle>
+                    </DialogHeader>
+                    <div className="flex flex-col gap-4">
+
+                    </div>
+                  </DialogContent>
+                </Dialog>
+
+
               </Card>
             </div>
           </div>
