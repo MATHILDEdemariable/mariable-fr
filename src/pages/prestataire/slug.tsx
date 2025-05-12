@@ -520,7 +520,7 @@ const SinglePrestataire = () => {
                           <img
                             src={photo.url}
                             alt={vendor.nom}
-                            className="w-full h-auto"
+                            className="w-full h-auto cursor-pointer"
                           />
                           </Card>
                         </DialogTrigger>

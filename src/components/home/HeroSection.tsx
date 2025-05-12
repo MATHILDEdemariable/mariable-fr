@@ -38,7 +38,7 @@ const TypingEffect = ({ text }: { text: string }) => {
 
 const HeroSection = () => {
   return (
-    <section className="relative min-h-[70vh] sm:min-h-[80vh] flex items-center">
+    <section className="relative min-h-[40vh] sm:min-h-[30vh] flex items-center">
       <div className="absolute inset-0 w-full h-full overflow-hidden z-0">
         <img
           src="/lovable-uploads/977ff726-5f78-4cbc-bf10-dbf0bbd10ab7.png"
