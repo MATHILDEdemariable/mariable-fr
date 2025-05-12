@@ -83,8 +83,16 @@ const PrestataireModal: React.FC<Props> = ({
         data: { publicUrl },
       } = supabase.storage.from("photos").getPublicUrl(filePath);
 
+
       if (mode === "edit") {
-        const { error: UpdateError } = await supabase
+
+        //check if the prestataire already has a photo
+        const { data: existingPhotos } = await supabase
+          .from("prestataires_photos_preprod")
+          .select("*")
+          .eq("prestataire_id", prestataireId);
+        if (existingPhotos && existingPhotos.length > 0) {
+          const { data,error: UpdateError } = await supabase
           .from("prestataires_photos_preprod")
           .update({
             url: publicUrl,
@@ -101,6 +109,24 @@ const PrestataireModal: React.FC<Props> = ({
           );
           throw UpdateError;
         }
+        toast.success("Image mise à jour avec succès");
+        }
+        else{
+          const { error: InsertError } = await supabase
+          .from("prestataires_photos_preprod")
+          .insert({
+            prestataire_id: prestataireId,
+            url: publicUrl,
+            filename: selectedFile.name,
+            type: selectedFile.type,
+            size: selectedFile.size,
+            principale: true,
+          });
+          toast.success("Image ajoutée avec succès");       
+        }
+
+
+
       } else {
         const { error: InsertError } = await supabase
           .from("prestataires_photos_preprod")
@@ -173,6 +199,7 @@ const PrestataireModal: React.FC<Props> = ({
         .delete()
         .eq("prestataire_id", prestataire.id);
 
+      //Modification des metas in supabase
       const metasArray = Object.entries(metas).map(([key, value]) => ({
         meta_key: key,
         meta_value: value,
@@ -189,9 +216,11 @@ const PrestataireModal: React.FC<Props> = ({
           console.error(metaError);
         }
       }
+      //END Modification des metas in supabase
 
       toast.success("Prestataire mis à jour");
-    } else {
+    }
+    else {
       form.slug = slugify(form.nom);
       const { data, error } = await supabase
         .from("prestataires_rows")
@@ -221,8 +250,8 @@ const PrestataireModal: React.FC<Props> = ({
       toast.success("Prestataire ajouté");
     }
 
-    // onClose();
-    // onSave();
+    onClose();
+    onSave();
   };
 
   return (

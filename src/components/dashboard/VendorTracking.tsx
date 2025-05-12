@@ -275,7 +275,9 @@ const VendorTracking = () => {
               
               <Button 
                 className="bg-wedding-olive hover:bg-wedding-olive/90"
-                onClick={() => setAddDialogOpen(true)}
+                onClick={()=> (
+                  window.open('/recherche','_self')
+                )}
               >
                 <Plus className="h-4 w-4 mr-2" /> Ajouter un prestataire
               </Button>
