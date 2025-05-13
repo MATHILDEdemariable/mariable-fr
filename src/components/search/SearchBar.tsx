@@ -10,7 +10,7 @@ const SearchBar = () => {
   const navigate = useNavigate();
 
   const handleSearch = () => {
-    navigate('/recherche', { state: { query: searchQuery } });
+    navigate(`/recherche?q=${encodeURIComponent(searchQuery)}`);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -30,7 +30,7 @@ const SearchBar = () => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onKeyPress={handleKeyPress}
-            className="pl-10 w-full text-xs sm:text-sm" // Added text size classes for better mobile visibility
+            className="pl-10 w-full text-xs sm:text-sm" 
           />
         </div>
         <Button 

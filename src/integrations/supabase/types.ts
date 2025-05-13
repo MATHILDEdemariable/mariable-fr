@@ -773,6 +773,8 @@ export type Database = {
           message: string | null
           email_client: string 
           email_presta: String
+          origin_user:boolean
+          origin_id:string
         }
         Insert: {
           id?: string
@@ -782,6 +784,8 @@ export type Database = {
           message: string | null
           email_client: string 
           email_presta: String
+          origin_user:boolean
+          origin_id:string
         }
         Update: {
           id?: string
@@ -791,6 +795,8 @@ export type Database = {
           message: string | null
           email_client: string 
           email_presta: String
+          origin_user:boolean
+          origin_id:string
         }
         Relationships:[
           {

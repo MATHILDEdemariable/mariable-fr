@@ -100,10 +100,10 @@ const MoteurRecherche = () => {
       
       if (debouncedSearch) {
         // Recherche étendue sur plusieurs champs
+        console.log('oui');
         query = query.or(
           `nom.ilike.%${debouncedSearch}%,` +
           `ville.ilike.%${debouncedSearch}%,` +
-          `region.ilike.%${debouncedSearch}%,` +
           `description.ilike.%${debouncedSearch}%`
         );
       }

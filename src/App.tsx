@@ -53,6 +53,7 @@ import AdminPrestataires from "./pages/admin/Prestataires";
 
 // Prestataire pages
 import TrackingPage from "./pages/prestataire/tracking";
+import ContactTracking from "./pages/prestataire/contact";
 
 
 
@@ -141,6 +142,7 @@ const App = () => {
 
             {/* Prestataire Routes */}
             <Route path="/prestataire/tracking" element={<TrackingPage />} />
+            <Route path="/prestataire/contact" element={<ContactTracking />} />
 
             
             {/* Catch-all route */}

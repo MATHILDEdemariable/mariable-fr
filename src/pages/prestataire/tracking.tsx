@@ -1,25 +1,14 @@
-import React from "react";
+
 import { useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "@/components/ui/use-toast";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
 import { useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
-import { Select } from "@/components/ui/select";
-import {
-  SelectContent,
-  SelectItem,
-  SelectValue,
-  SelectTrigger,
-} from "@/components/ui/select";
+
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 

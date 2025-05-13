@@ -83,6 +83,7 @@ const VendorFilters: React.FC<VendorFiltersProps> = ({ filters, onFilterChange }
   
   const resetFilters = () => {
     onFilterChange({
+      search:null,
       category: 'Tous',
       region: null,
       minPrice: undefined,
@@ -92,6 +93,7 @@ const VendorFilters: React.FC<VendorFiltersProps> = ({ filters, onFilterChange }
       hebergement: undefined,
       couchages: undefined,
     });
+    onFilterChange({search: ''});
     setPriceRange([0, 10000]);
   };
 

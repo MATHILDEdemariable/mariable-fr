@@ -9,9 +9,6 @@ type InsertVendorContact = Database["public"]["Tables"]["vendors_contact_preprod
 
 const ContactForm = ({prestataire, dialogClose,user}) => {
 
-
-  console.log(user);
-
   const sendMessage = async () => {
     const message = document.querySelector("textarea")?.value;
     //insert to supabase
@@ -22,7 +19,8 @@ const ContactForm = ({prestataire, dialogClose,user}) => {
         email_presta: prestataire.email,
         client_id: user.user.id,
         email_client: user.user.email,
-        message: message
+        message: message,
+        origin_user:true
       });
       if(error){
         toast({
