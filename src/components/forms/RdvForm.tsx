@@ -158,7 +158,7 @@ const RdvForm = ({prestataire_id,prestataire_name,contact_date,email_prestataire
     // console.log(date1);
     // console.log(date2);
     // console.log(date3);
-    if (date1 && date2 && date3  ) {
+    if (date1.hour && date2.hour && date3.hour  ) {
       const { error } = await supabase.from("vendors_tracking_preprod").insert([
         {
           contact_date: contact_date,

@@ -72,6 +72,9 @@ const TrackingPage = () => {
         });
         return null;
       }
+
+      console.log(data.user_id);
+
       const { data: project, error: userError } = await supabase
         .from("projects")
         .select("*")
@@ -102,7 +105,7 @@ const TrackingPage = () => {
 
   let dateCreated = null;
   let dateMariage = null;
-  if (vendor && project) {
+  if (vendor || project) {
     dateCreated = new Date(vendor.created_at).toLocaleDateString("fr-FR", {
       year: "numeric",
       month: "2-digit",
