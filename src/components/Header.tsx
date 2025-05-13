@@ -30,20 +30,10 @@ function Menus({ onClick }: { onClick?: () => void }) {
   return (
     <>
       {/* Nos Services Dropdown - Updated order as requested */}
-      <Link to="/recherche" className="hidden md:flex items-center gap-2">
-        <span>Prestataires</span>
+      <Link to="/recherche" className="pl-4 flex items-center gap-2">
+        <span className="font-medium">Trouver vos prestataires</span>
       </Link>
-
-      <Link to="/services/planification" className="hidden md:flex items-center gap-2">
-        <span >Planification</span>
-      </Link>
-      <Link to="/services/budget" className="hidden md:flex items-center gap-2">
-        <span >Budgétisation</span>
-      </Link>
-      <Link to="/services/conseils" className="hidden md:flex items-center gap-2">
-        <span >Conseils personnalisés</span>
-      </Link>
-      <HeaderDropdown label="Nos Services" className="hidden">
+      <HeaderDropdown label="Simplifer votre organisation" >
         <HeaderDropdownMenu>
           <HeaderDropdownItem
             label="Conseils personnalisés"
@@ -61,12 +51,6 @@ function Menus({ onClick }: { onClick?: () => void }) {
             label="Budgétisation"
             description="Gérez votre budget et suivez vos dépenses facilement"
             to="/services/budget"
-            onClick={onClick}
-          />
-          <HeaderDropdownItem
-            label="Recherche de prestataires"
-            description="Trouvez les meilleurs prestataires adaptés à vos besoins"
-            to="/recherche"
             onClick={onClick}
           />
         </HeaderDropdownMenu>
