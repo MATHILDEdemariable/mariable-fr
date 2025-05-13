@@ -764,6 +764,51 @@ export type Database = {
           },
         ]
       }
+      vendors_contact_preprod:{
+        Row: {
+          id: string
+          created_at: string
+          prestataire_id: string
+          client_id: string 
+          message: string | null
+          email_client: string 
+          email_presta: String
+        }
+        Insert: {
+          id?: string
+          created_at?: string
+          prestataire_id: string
+          client_id: string 
+          message: string | null
+          email_client: string 
+          email_presta: String
+        }
+        Update: {
+          id?: string
+          created_at?: string
+          prestataire_id?: string
+          client_id?: string 
+          message: string | null
+          email_client: string 
+          email_presta: String
+        }
+        Relationships:[
+          {
+            foreignKeyName: "vendors_contact_preprod_prestataire_id_fkey1"
+            columns: ["prestataire_id"]
+            isOneToOne: false
+            referencedRelation: "prestataires"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vendors_contact_preprod_prestataire_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

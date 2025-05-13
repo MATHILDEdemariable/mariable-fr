@@ -39,6 +39,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import RdvForm from "@/components/forms/RdvForm";
+import ContactForm from "@/components/forms/ContactForm";
 
 type Prestataire = Database["public"]["Tables"]["prestataires_rows"]["Row"];
 type PrestatairePhoto =
@@ -71,6 +72,8 @@ const SinglePrestataire = () => {
   const [selectedPackage, setSelectedPackage] = useState<Package>(
     DEFAULT_PACKAGES[0]
   );
+  const [open, setOpen] = useState(false);
+  const [openContact, setOpenContact] = useState(false);
 
   //check if user is connected
   const [session, setSession] = useState<Session | null>(null);
@@ -255,7 +258,13 @@ const SinglePrestataire = () => {
         .eq("user_id", session.user.id)
         .eq("prestataire_id", vendorId)
         .maybeSingle();
+
+      setOpen(true);
       return data;
+    } else {
+      toast({
+        description: "Vous devez être connecté pour effectuer cette action.",
+      });
     }
     return null;
   };
@@ -282,6 +291,10 @@ const SinglePrestataire = () => {
     const newGuests = parseInt(e.target.value) || 0;
     setGuests(newGuests);
   };
+
+  const sendMessage = async () => {
+    setOpenContact(true);
+  }
 
   if (!slug && !isLoading) {
     return (
@@ -594,16 +607,15 @@ const SinglePrestataire = () => {
                     <span>{Math.round(prices.total)}€</span>
                   </div>
                 </div>
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button
-                      id="button-rdv"
-                      className="w-full mt-4 bg-wedding-olive hover:bg-wedding-olive/90"
-                      disabled={hasCurrentRDV}
-                    >
-                      Prendre RDV
-                    </Button>
-                  </DialogTrigger>
+                <Button
+                  id="button-rdv"
+                  className="w-full mt-4 bg-wedding-olive hover:bg-wedding-olive/90"
+                  disabled={hasCurrentRDV}
+                  onClick={checkCurrentRDV}
+                >
+                  Prendre RDV
+                </Button>
+                <Dialog open={open} onOpenChange={setOpen}>
                   <DialogContent className="max-w-[95%] md:max-w-[70%] md:max-h-[90vh] overflow-y-auto">
                     <DialogHeader>
                       <DialogTitle>
@@ -616,6 +628,7 @@ const SinglePrestataire = () => {
                         prestataire_name={vendor.nom}
                         contact_date={date}
                         email_prestataire={vendor.email}
+                        dialogClose={() => setOpen(false)}
                       />
                     </div>
                   </DialogContent>
@@ -623,36 +636,29 @@ const SinglePrestataire = () => {
               </Card>
 
               <Card className="p-4">
-
-              <Dialog>
-                  <DialogTrigger asChild>
-                  <Button
+                <Button
                   variant="outline"
                   className="w-full"
-                  onClick={() => {
-                    toast({
-                      description: "En cours de développement.",
-                    });
-                    // window.open(`mailto:${vendor.email || ""}`, "_blank");
-                  }}
+                  onClick={sendMessage}
                 >
                   <MessageSquare className="mr-2 h-4 w-4" />
                   Contacter
                 </Button>
-                  </DialogTrigger>
-                  <DialogContent className="max-w-[70%] max-h-[90vh] overflow-y-auto">
+                <Dialog open={openContact} onOpenChange={setOpenContact}>
+                  <DialogTrigger asChild></DialogTrigger>
+                  <DialogContent className="max-w-[95%] md:max-w-[70%] md:max-h-[90vh] overflow-y-auto">
                     <DialogHeader>
                       <DialogTitle>
-                        Demande de rendez-vous avec {vendor.nom}
+                        Demande de contact avec {vendor.nom}
                       </DialogTitle>
                     </DialogHeader>
-                    <div className="flex flex-col gap-4">
-
-                    </div>
+                      <ContactForm
+                      prestataire={vendor}
+                      user={(session)??session}
+                      dialogClose={() => setOpenContact(false)}
+                      /> 
                   </DialogContent>
                 </Dialog>
-
-
               </Card>
             </div>
           </div>

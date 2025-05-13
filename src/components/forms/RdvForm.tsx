@@ -106,7 +106,7 @@ const DateTimePicker = ({
   );
 };
 
-const RdvForm = ({prestataire_id,prestataire_name,contact_date,email_prestataire}) => {
+const RdvForm = ({prestataire_id,prestataire_name,contact_date,email_prestataire,dialogClose}) => {
   const [date1, setDate1] = useState<DateTime>({
     date: undefined,
     hour: undefined,
@@ -189,6 +189,7 @@ const RdvForm = ({prestataire_id,prestataire_name,contact_date,email_prestataire
           description: `Votre demande de prise de rendez-vous été envoyé au prestataire.`,
           variant: "default",
         });
+        dialogClose();
       }
     } else {
       toast({
@@ -242,7 +243,7 @@ const RdvForm = ({prestataire_id,prestataire_name,contact_date,email_prestataire
           Merci de choisir trois dates et heures qui vous conviennent le mieux.
         </p>
         <Textarea
-          placeholder="Insérer un message (facultatif)"
+          placeholder="Insérer votre message... (facultatif)"
           className="w-full h-32 resize-none mb-4"
         />
         <Button
