@@ -604,7 +604,7 @@ const SinglePrestataire = () => {
                       Prendre RDV
                     </Button>
                   </DialogTrigger>
-                  <DialogContent className="max-w-[70%] max-h-[90vh] overflow-y-auto">
+                  <DialogContent className="max-w-[95%] md:max-w-[70%] md:max-h-[90vh] overflow-y-auto">
                     <DialogHeader>
                       <DialogTitle>
                         Demande de rendez-vous avec {vendor.nom}

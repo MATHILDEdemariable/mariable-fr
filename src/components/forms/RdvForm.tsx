@@ -200,7 +200,7 @@ const RdvForm = ({prestataire_id,prestataire_name,contact_date,email_prestataire
 
   return (
     <div>
-        <div className="flex flex-row justify-center items-start gap-4 mb-2">
+        <div className="flex flex-col md:flex-row justify-center items-start gap-4 mb-2">
           <Input
             type="text"
             placeholder="Nom et prénom"
@@ -221,7 +221,7 @@ const RdvForm = ({prestataire_id,prestataire_name,contact_date,email_prestataire
           />
         </div>
 
-        <div className="flex flex-row justify-center items-start gap-4 mb-2">
+        <div className="flex flex-col md:flex-row justify-center items-start gap-4 mb-2">
           <DateTimePicker
             value={date1}
             onChange={setDate1}
