@@ -84,6 +84,14 @@ const VendorCard: React.FC<VendorCardProps> = ({ vendor, onClick, onWishlistAdd 
     };
     
     checkWishlistStatus();
+
+    // const checkIsPartner = async () => {
+    //   const { data } = await supabase
+    //     .from('vendor_wishlist')
+    //     .select('id')
+    //     .eq('user_id', user.id)
+    //     .eq('vendor_id', vendor.id)
+    // }
   }, [vendor.id]);
   
   const handleWishlistClick = async (e: React.MouseEvent) => {

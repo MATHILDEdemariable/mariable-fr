@@ -25,8 +25,7 @@ import slugify from "@/utils/slugify";
 import { extractMetas } from "@/lib/extractMetas";
 
 type Prestataire = Database["public"]["Tables"]["prestataires_rows"]["Row"];
-type PrestataireInsert =
-  Database["public"]["Tables"]["prestataires_rows"]["Insert"];
+type PrestataireInsert = Database["public"]["Tables"]["prestataires_rows"]["Insert"];
 type MetaInsert = Database["public"]["Tables"]["prestataires_meta"]["Insert"];
 
 interface Props {
@@ -524,6 +523,12 @@ const PrestataireModal: React.FC<Props> = ({
               handleChange("nombre_couchages", parseInt(e.target.value))
             }
           />
+          <Textarea
+            placeholder="Description en plus"
+            value={form.description_more || ""}
+            onChange={(e) => handleChange("description_more", e.target.value)}
+            className="md:col-span-2"
+          />
           <div className="flex items-center space-x-2">
             <Checkbox
               checked={form.hebergement_inclus ?? false}
@@ -563,8 +568,14 @@ const PrestataireModal: React.FC<Props> = ({
             />
             <label>Publier</label>
           </div>
+                    <div className="flex items-center space-x-2">
+            <Checkbox
+              checked={form.partner ?? false}
+              onCheckedChange={(val) => handleChange("partner", !!val)}
+            />
+            <label>Partenaire</label>
+          </div>
         </div>
-
         <DialogFooter className="mt-6">
           <Button variant="outline" onClick={onClose}>
             Annuler

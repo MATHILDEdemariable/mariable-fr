@@ -397,7 +397,7 @@ const SinglePrestataire = () => {
       <Header />
 
       <main className="flex-grow">
-        <div className="relative h-[60vh] w-full">
+        <div className="relative h-[25vh] w-full">
           <img
             src={mainImage}
             alt={vendor?.nom || "Prestataire de mariage"}
