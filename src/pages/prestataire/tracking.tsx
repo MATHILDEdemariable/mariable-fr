@@ -1,4 +1,3 @@
-
 import { useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
@@ -12,6 +11,8 @@ import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 
+import { Input } from "@/components/ui/input";
+import { v4 as uuidv4 } from "uuid";
 const TrackingPage = () => {
   const [searchParams] = useSearchParams();
   const vendorId = searchParams.get("id");
@@ -19,6 +20,9 @@ const TrackingPage = () => {
   const LOGO_URL = "/lovable-uploads/a13321ac-adeb-489a-911e-3a88b1411ac2.png";
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [selectedSwitch, setSelectedSwitch] = useState(null);
+  const [selectedFileDocument, setSelectedFileDocument] = useState<File | null>(
+    null
+  );
 
   const disabledDates = [
     new Date(2025, 5, 15),
@@ -73,7 +77,6 @@ const TrackingPage = () => {
         return null;
       }
 
-      console.log(data.user_id);
 
       const { data: project, error: userError } = await supabase
         .from("projects")
@@ -94,6 +97,22 @@ const TrackingPage = () => {
           variant: "destructive",
         });
         return null;
+      }
+      
+      const {data:documents,error:documentsError} = await supabase
+      .from("prestataires_documents_preprod")
+      .select("*")
+      .eq("item_id", data.id)
+
+      if(documentsError){
+        toast({
+          description: `Erreur lors du chargement des documents: ${documentsError.message}`,
+          variant: "destructive",
+        });
+        throw new Error(documentsError.message);
+      }
+      if(documents){
+        data.documents = documents;
       }
 
       return { vendorData: data, project };
@@ -118,6 +137,7 @@ const TrackingPage = () => {
     });
   }
 
+
   const handleSwitchChange = (value) => {
     setSelectedSwitch(value === selectedSwitch ? null : value); // toggle si on clique encore
   };
@@ -125,7 +145,6 @@ const TrackingPage = () => {
   const sendRequest = async () => {
     const message = document.querySelector("textarea")?.value;
     const selectedDate = selectedSwitch;
-
 
     if (!selectedDate) {
       toast({
@@ -186,16 +205,15 @@ const TrackingPage = () => {
 
     const getFormattedDate = (dateStr: string) => {
       const date = new Date(dateStr);
-      return date
-        .toLocaleString("fr-FR", {
-          year: "numeric",
-          month: "long",
-          day: "2-digit",
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: false,
-          timeZone: "Europe/Paris",
-        })
+      return date.toLocaleString("fr-FR", {
+        year: "numeric",
+        month: "long",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+        timeZone: "Europe/Paris",
+      });
     };
 
     if (validate === 1) return getFormattedDate(vendor.first_date_rdv);
@@ -236,6 +254,68 @@ const TrackingPage = () => {
 
     return getFormattedDate(date, type);
   };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      setSelectedFileDocument(files[0]);
+    }
+  };
+
+  const uploadDocument = async (
+    itemId: string
+  ): Promise<string | null> => {
+    if (!selectedFileDocument) return null;
+
+    try {
+      const fileExt = selectedFileDocument.name.split(".").pop();
+      const fileName = `${uuidv4()}.${fileExt}`;
+      const filePath = `${itemId}/${fileName}`;
+
+      const { error: uploadError, data } = await supabase.storage
+        .from("documents")
+        .upload(filePath, selectedFileDocument);
+
+      if (uploadError) {
+        throw uploadError;
+      }
+
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from("documents").getPublicUrl(filePath);
+
+      await supabase.from("prestataires_documents_preprod").insert({
+        item_id: itemId,
+        url: publicUrl,
+        filename: selectedFileDocument.name,
+        type: selectedFileDocument.type,
+        size: selectedFileDocument.size,
+      });
+
+      return publicUrl;
+    } catch (error) {
+      console.error("Erreur lors du téléchargement du document:", error);
+      return null;
+    }
+  };
+
+  const handleUpload = async (itemId: string) => {
+  const result = await uploadDocument(itemId);
+  if (result) {
+    console.log("Fichier envoyé avec succès :", result);
+    const uploadInput = document.querySelector("#upload-document") as HTMLInputElement | null;
+    if (uploadInput) {
+      uploadInput.value = "";
+    }
+    toast({
+      description: "Fichier envoyé avec succès !",
+      variant: "default",
+    });
+
+  } else {
+    console.error("Échec de l'envoi du fichier.");
+  }
+};
 
   return (
     <div className="tracking-page max-w-[720px] mx-auto p-4 mt-8 border border-stone-300 rounded-lg shadow-md">
@@ -311,13 +391,13 @@ const TrackingPage = () => {
                     <p className="text-sm text-gray-500 mb-2">
                       Date : <br />
                       <strong>
-                        {displayDateOrHour(vendor.first_date_rdv,'date')}
+                        {displayDateOrHour(vendor.first_date_rdv, "date")}
                       </strong>
                     </p>
                     <p className="text-sm text-gray-500 mb-2">
                       Heure :<br />
                       <strong>
-                        {displayDateOrHour(vendor.first_date_rdv,'hour')}
+                        {displayDateOrHour(vendor.first_date_rdv, "hour")}
                       </strong>
                     </p>
                     <Switch
@@ -331,13 +411,13 @@ const TrackingPage = () => {
                     <p className="text-sm text-gray-500 mb-2">
                       Date :<br />
                       <strong>
-                        {displayDateOrHour(vendor.second_date_rdv,'date')}
+                        {displayDateOrHour(vendor.second_date_rdv, "date")}
                       </strong>
                     </p>
                     <p className="text-sm text-gray-500 mb-2">
                       Heure :<br />
                       <strong>
-                        {displayDateOrHour(vendor.second_date_rdv,'hour')}
+                        {displayDateOrHour(vendor.second_date_rdv, "hour")}
                       </strong>
                     </p>
                     <Switch
@@ -351,13 +431,13 @@ const TrackingPage = () => {
                     <p className="text-sm text-gray-500 mb-2">
                       Date :<br />
                       <strong>
-                        {displayDateOrHour(vendor.third_date_rdv,'date')}
+                        {displayDateOrHour(vendor.third_date_rdv, "date")}
                       </strong>
                     </p>
                     <p className="text-sm text-gray-500 mb-2">
                       Heure :<br />
                       <strong>
-                        {displayDateOrHour(vendor.third_date_rdv,'hour')}
+                        {displayDateOrHour(vendor.third_date_rdv, "hour")}
                       </strong>
                     </p>
                     <Switch
@@ -400,6 +480,36 @@ const TrackingPage = () => {
                   </Badge>
                 </strong>
               </p>
+              <div className="mt-4 ">
+                <h2 className="text-lg font-bold">Documents</h2>
+                {vendor?.documents && (
+                  <>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-2 mb-4">
+                      {Array.isArray(vendor.documents) &&
+                        vendor.documents.map((item) => (
+                          <div
+                            key={item.id}
+                            id={`brochure-${item.id}`}
+                            className="relative w-full  py-4 overflow-hidden rounded-lg border flex flex-col items-center justify-center"
+                          >
+                            <p className="text-center"><a href={item.url} target="_blank" rel="noopener noreferrer">{item.filename}</a></p>
+                          </div>
+                        ))}
+                    </div>
+                  </>
+                )}
+                <Input
+                  type="file"
+                  id="upload-document"
+                  className="max-w-full"
+                  accept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                  onChange={handleFileChange}
+                  
+                />
+                <Button className="mt-4" onClick={() => handleUpload(vendor.id)}>
+                  Envoyer le fichier
+                </Button>
+              </div>
             </div>
           )}
         </div>
