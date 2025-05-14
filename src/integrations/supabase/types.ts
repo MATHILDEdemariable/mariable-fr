@@ -923,7 +923,8 @@ export type Database = {
         | "contactés"
         | "en attente"
         | "réponse reçue"
-        | "à valider";
+        | "à valider"
+        | "annuler"
     };
     CompositeTypes: {
       [_ in never]: never;
@@ -1073,6 +1074,7 @@ export const Constants = {
         "en attente",
         "réponse reçue",
         "à valider",
+        "annuler",
       ],
     },
   },

@@ -77,7 +77,6 @@ const TrackingPage = () => {
         return null;
       }
 
-
       const { data: project, error: userError } = await supabase
         .from("projects")
         .select("*")
@@ -98,20 +97,20 @@ const TrackingPage = () => {
         });
         return null;
       }
-      
-      const {data:documents,error:documentsError} = await supabase
-      .from("prestataires_documents_preprod")
-      .select("*")
-      .eq("item_id", data.id)
 
-      if(documentsError){
+      const { data: documents, error: documentsError } = await supabase
+        .from("prestataires_documents_preprod")
+        .select("*")
+        .eq("item_id", data.id);
+
+      if (documentsError) {
         toast({
           description: `Erreur lors du chargement des documents: ${documentsError.message}`,
           variant: "destructive",
         });
         throw new Error(documentsError.message);
       }
-      if(documents){
+      if (documents) {
         data.documents = documents;
       }
 
@@ -136,7 +135,6 @@ const TrackingPage = () => {
       day: "2-digit",
     });
   }
-
 
   const handleSwitchChange = (value) => {
     setSelectedSwitch(value === selectedSwitch ? null : value); // toggle si on clique encore
@@ -262,9 +260,7 @@ const TrackingPage = () => {
     }
   };
 
-  const uploadDocument = async (
-    itemId: string
-  ): Promise<string | null> => {
+  const uploadDocument = async (itemId: string): Promise<string | null> => {
     if (!selectedFileDocument) return null;
 
     try {
@@ -300,22 +296,46 @@ const TrackingPage = () => {
   };
 
   const handleUpload = async (itemId: string) => {
-  const result = await uploadDocument(itemId);
-  if (result) {
-    console.log("Fichier envoyé avec succès :", result);
-    const uploadInput = document.querySelector("#upload-document") as HTMLInputElement | null;
-    if (uploadInput) {
-      uploadInput.value = "";
+    const result = await uploadDocument(itemId);
+    if (result) {
+      console.log("Fichier envoyé avec succès :", result);
+      const uploadInput = document.querySelector(
+        "#upload-document"
+      ) as HTMLInputElement | null;
+      if (uploadInput) {
+        uploadInput.value = "";
+      }
+      toast({
+        description: "Fichier envoyé avec succès !",
+        variant: "default",
+      });
+    } else {
+      console.error("Échec de l'envoi du fichier.");
     }
-    toast({
-      description: "Fichier envoyé avec succès !",
-      variant: "default",
-    });
+  };
 
-  } else {
-    console.error("Échec de l'envoi du fichier.");
+  const cancelRdv = async () => {
+    // vendor.id
+    if (!vendorId) return
+    const { data, error } = await supabase
+      .from("vendors_tracking_preprod")
+      .update({
+        status: "annuler",
+      })
+      .eq("id", vendorId);
+    if(data){
+      toast({
+        description: "Rendez-vous annulé !",
+        variant: "default",
+      });
+    }
+    if (error) {
+      toast({
+        description: `Erreur lors de l'annulation du rendez-vous: ${error.message}, celui ci n'a pas été annulé.`,
+        variant: "destructive",
+      });
+    }
   }
-};
 
   return (
     <div className="tracking-page max-w-[720px] mx-auto p-4 mt-8 border border-stone-300 rounded-lg shadow-md">
@@ -479,6 +499,13 @@ const TrackingPage = () => {
                     {displayDate(vendor.valide_date_rdv || 0)}
                   </Badge>
                 </strong>
+                <Button
+                  className="mt-4 bg-red-500 text-white"
+                  variant="outline"
+                  onClick={cancelRdv}
+                >
+                  Annuler le rdv
+                </Button>
               </p>
               <div className="mt-4 ">
                 <h2 className="text-lg font-bold">Documents</h2>
@@ -492,7 +519,15 @@ const TrackingPage = () => {
                             id={`brochure-${item.id}`}
                             className="relative w-full  py-4 overflow-hidden rounded-lg border flex flex-col items-center justify-center"
                           >
-                            <p className="text-center"><a href={item.url} target="_blank" rel="noopener noreferrer">{item.filename}</a></p>
+                            <p className="text-center">
+                              <a
+                                href={item.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                {item.filename}
+                              </a>
+                            </p>
                           </div>
                         ))}
                     </div>
@@ -504,9 +539,11 @@ const TrackingPage = () => {
                   className="max-w-full"
                   accept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                   onChange={handleFileChange}
-                  
                 />
-                <Button className="mt-4" onClick={() => handleUpload(vendor.id)}>
+                <Button
+                  className="mt-4"
+                  onClick={() => handleUpload(vendor.id)}
+                >
                   Envoyer le fichier
                 </Button>
               </div>
