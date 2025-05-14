@@ -23,6 +23,7 @@ import { Database, Constants } from "@/integrations/supabase/types";
 import { v4 as uuidv4 } from "uuid";
 import slugify from "@/utils/slugify";
 import { extractMetas } from "@/lib/extractMetas";
+import { FormDescription, FormItem, FormLabel } from "@/components/ui/form";
 import { any } from "zod";
 
 type Prestataire = Database["public"]["Tables"]["prestataires_rows"]["Row"];
@@ -49,6 +50,9 @@ const PrestataireModal: React.FC<Props> = ({
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [carouselFiles, setCarouselFiles] = useState<File[]>([]);
+  const [selectedFileBrochure, setSelectedFileBrochure] = useState<File | null>(
+    null
+  );
 
   useEffect(() => {
     if (prestataire) {
@@ -196,6 +200,53 @@ const PrestataireModal: React.FC<Props> = ({
     }
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      setSelectedFileBrochure(files[0]);
+    }
+  };
+
+  const uploadBrochure = async (
+    prestataireId: string
+  ): Promise<string | null> => {
+    if (!selectedFileBrochure) return null;
+
+    setIsUploading(true);
+
+    try {
+      const fileExt = selectedFileBrochure.name.split(".").pop();
+      const fileName = `${uuidv4()}.${fileExt}`;
+      const filePath = `${prestataireId}/${fileName}`;
+
+      const { error: uploadError, data } = await supabase.storage
+        .from("brochures")
+        .upload(filePath, selectedFileBrochure);
+
+      if (uploadError) {
+        throw uploadError;
+      }
+
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from("brochures").getPublicUrl(filePath);
+
+      await supabase.from("prestataires_brochures_preprod").insert({
+        prestataire_id: prestataireId,
+        url: publicUrl,
+        filename: selectedFileBrochure.name,
+        type: selectedFileBrochure.type,
+        size: selectedFileBrochure.size,
+      });
+
+      return publicUrl;
+    } catch (error) {
+      console.error("Erreur lors du téléchargement de la brochure:", error);
+      toast.error("Impossible de télécharger la brochure. Veuillez réessayer.");
+      return null;
+    }
+  };
+
   const handleSubmit = async () => {
     if (!form.nom) {
       toast.error("Nom requis");
@@ -236,6 +287,10 @@ const PrestataireModal: React.FC<Props> = ({
         await uploadCarouselImages(prestataire.id);
       }
 
+      if (selectedFileBrochure){
+        await uploadBrochure(prestataire.id);
+      }
+
       const { error: deleteError } = await supabase
         .from("prestataires_meta")
         .delete()
@@ -274,6 +329,10 @@ const PrestataireModal: React.FC<Props> = ({
         await uploadCarouselImages(data.id);
       }
 
+            if (selectedFileBrochure){
+        await uploadBrochure(data.id);
+      }
+
       const metasArray = Object.entries(metas).map(([key, value]) => ({
         meta_key: key,
         meta_value: value,
@@ -293,8 +352,8 @@ const PrestataireModal: React.FC<Props> = ({
       toast.success("Prestataire ajouté");
     }
 
-    onClose();
-    onSave();
+    // onClose();
+    // onSave();
   };
 
   const deleteCarouselImage = (id: string) => async () => {
@@ -384,8 +443,19 @@ const PrestataireModal: React.FC<Props> = ({
           }}
           className="mb-4"
         />
+ 
+        <p>Brochure</p>
+          <Input
+            type="file"
+            id="brochure"
+            className="max-w-full"
+            accept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            onChange={handleFileChange}
+          />
 
-        <h2 className="mt-4  bg-slate-50 p-2 rounded-md text-center text-slate-500">Informations</h2>
+        <h2 className="mt-4  bg-slate-50 p-2 rounded-md text-center text-slate-500">
+          Informations
+        </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Input
             placeholder="Nom"
@@ -535,7 +605,9 @@ const PrestataireModal: React.FC<Props> = ({
             onChange={(e) => handleChange("description_more", e.target.value)}
             className="md:col-span-2"
           />
-          <h2 className="mt-4  md:col-span-2 bg-slate-50 p-2 rounded-md text-center text-slate-500">Packages</h2>
+          <h2 className="mt-4  md:col-span-2 bg-slate-50 p-2 rounded-md text-center text-slate-500">
+            Packages
+          </h2>
           <div className="grid grid-cols-3 flex-wrap gap-4 md:col-span-2">
             <Input
               type="number"
@@ -571,7 +643,9 @@ const PrestataireModal: React.FC<Props> = ({
               }
             />
           </div>
-          <h2 className="mt-4  md:col-span-2 bg-slate-50 p-2 rounded-md text-center text-slate-500">Autres informations</h2>
+          <h2 className="mt-4  md:col-span-2 bg-slate-50 p-2 rounded-md text-center text-slate-500">
+            Autres informations
+          </h2>
           <div className="flex items-center space-x-2">
             <Checkbox
               checked={form.hebergement_inclus ?? false}

@@ -99,7 +99,6 @@ const PrestatairesAdmin = () => {
             <TableHead>Nom</TableHead>
             <TableHead>Ville</TableHead>
             <TableHead>Catégorie</TableHead>
-            <TableHead>Email</TableHead>
             <TableHead>Mise en avant</TableHead>
             <TableHead>Actions</TableHead>
           </TableRow>
@@ -114,7 +113,6 @@ const PrestatairesAdmin = () => {
                 <TableCell>{presta.nom}</TableCell>
                 <TableCell>{presta.ville}</TableCell>
                 <TableCell>{presta.categorie}</TableCell>
-                <TableCell>{presta.email}</TableCell>
                 <TableCell>{presta.featured ? "Oui" : "Non"}</TableCell>
                 <TableCell className="space-x-2 flex flex-row">
                   <Button
