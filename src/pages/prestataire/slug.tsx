@@ -576,23 +576,59 @@ const SinglePrestataire = () => {
                 </div>
               </div>
               {vendor.prestataires_brochures.length > 0 && (
-              <div className="space-y-4">
-                <h2 className="text-xl font-serif">Brochures</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {vendor.prestataires_brochures.map((brochure) =>
-                    brochure.url ? (
-                      <Card key={brochure.id}>
-                        <p><a href={brochure.url} target="_blank" className="p-4 block" rel="noopener noreferrer">Télécharger la brochure</a></p>
-                      </Card>
-                    ): (
-                      <p>Aucune brochure disponible pour ce prestataire.</p>
-                    ))}
+                <div className="space-y-4">
+                  <h2 className="text-xl font-serif">Brochures</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {vendor.prestataires_brochures.map((brochure) =>
+                      brochure.url ? (
+                        <Card key={brochure.id}>
+                          <p>
+                            <a
+                              href={brochure.url}
+                              target="_blank"
+                              className="p-4 block"
+                              rel="noopener noreferrer"
+                            >
+                              Télécharger la brochure
+                            </a>
+                          </p>
+                        </Card>
+                      ) : (
+                        <p>Aucune brochure disponible pour ce prestataire.</p>
+                      )
+                    )}
+                  </div>
                 </div>
-              </div>
-            )}
-            </div>   
+              )}
+            </div>
 
             <div className="w-full lg:w-80 space-y-4">
+              <Card className="p-4">
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={sendMessage}
+                >
+                  <MessageSquare className="mr-2 h-4 w-4" />
+                  Contacter
+                </Button>
+                <Dialog open={openContact} onOpenChange={setOpenContact}>
+                  <DialogTrigger asChild></DialogTrigger>
+                  <DialogContent className="max-w-[95%] md:max-w-[70%] md:max-h-[90vh] overflow-y-auto">
+                    <DialogHeader>
+                      <DialogTitle>
+                        Demande de contact avec {vendor.nom}
+                      </DialogTitle>
+                    </DialogHeader>
+                    <ContactForm
+                      prestataire={vendor}
+                      user={session ?? session}
+                      dialogClose={() => setOpenContact(false)}
+                    />
+                  </DialogContent>
+                </Dialog>
+              </Card>
+
               <Card className="p-4">
                 <h3 className="text-lg font-medium mb-4">
                   Vérifier les disponibilités
@@ -700,32 +736,6 @@ const SinglePrestataire = () => {
                         dialogClose={() => setOpen(false)}
                       />
                     </div>
-                  </DialogContent>
-                </Dialog>
-              </Card>
-
-              <Card className="p-4">
-                <Button
-                  variant="outline"
-                  className="w-full"
-                  onClick={sendMessage}
-                >
-                  <MessageSquare className="mr-2 h-4 w-4" />
-                  Contacter
-                </Button>
-                <Dialog open={openContact} onOpenChange={setOpenContact}>
-                  <DialogTrigger asChild></DialogTrigger>
-                  <DialogContent className="max-w-[95%] md:max-w-[70%] md:max-h-[90vh] overflow-y-auto">
-                    <DialogHeader>
-                      <DialogTitle>
-                        Demande de contact avec {vendor.nom}
-                      </DialogTitle>
-                    </DialogHeader>
-                    <ContactForm
-                      prestataire={vendor}
-                      user={session ?? session}
-                      dialogClose={() => setOpenContact(false)}
-                    />
                   </DialogContent>
                 </Dialog>
               </Card>
