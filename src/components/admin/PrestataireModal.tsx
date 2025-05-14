@@ -385,7 +385,7 @@ const PrestataireModal: React.FC<Props> = ({
           className="mb-4"
         />
 
-        <p>Informations</p>
+        <h2 className="mt-4  bg-slate-50 p-2 rounded-md text-center text-slate-500">Informations</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Input
             placeholder="Nom"
@@ -535,7 +535,7 @@ const PrestataireModal: React.FC<Props> = ({
             onChange={(e) => handleChange("description_more", e.target.value)}
             className="md:col-span-2"
           />
-          <h2>Packages</h2>
+          <h2 className="mt-4  md:col-span-2 bg-slate-50 p-2 rounded-md text-center text-slate-500">Packages</h2>
           <div className="grid grid-cols-3 flex-wrap gap-4 md:col-span-2">
             <Input
               type="number"
@@ -571,6 +571,7 @@ const PrestataireModal: React.FC<Props> = ({
               }
             />
           </div>
+          <h2 className="mt-4  md:col-span-2 bg-slate-50 p-2 rounded-md text-center text-slate-500">Autres informations</h2>
           <div className="flex items-center space-x-2">
             <Checkbox
               checked={form.hebergement_inclus ?? false}

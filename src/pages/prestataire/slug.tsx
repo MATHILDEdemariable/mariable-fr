@@ -218,7 +218,6 @@ const SinglePrestataire = () => {
       );
 
       if (hasAllThreePrices) {
-        // const basePrice =
         const getMetaValue = (key: string) => {
           const meta = vendor.prestataires_meta.find(
             (meta) => meta.meta_key === key
