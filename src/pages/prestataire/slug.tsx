@@ -347,7 +347,13 @@ const SinglePrestataire = () => {
   };
 
   const sendMessage = async () => {
+    if(!session){
+         toast({
+        description: "Vous devez être connecté pour effectuer cette action.",
+      });   
+    }else{
     setOpenContact(true);
+    }
   };
 
   if (!slug && !isLoading) {
