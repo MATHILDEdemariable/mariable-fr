@@ -115,6 +115,14 @@ const SinglePrestataire = () => {
 
         data.prestataires_meta = metas;
       }
+      if (data) {
+        const { data: brochures } = await supabase
+          .from("prestataires_brochures_preprod")
+          .select("*")
+          .eq("prestataire_id", data.id);
+
+        data.prestataires_brochures = brochures;
+      }
 
       if (error) {
         toast({
@@ -567,7 +575,22 @@ const SinglePrestataire = () => {
                   )}
                 </div>
               </div>
-            </div>
+              {vendor.prestataires_brochures.length > 0 && (
+              <div className="space-y-4">
+                <h2 className="text-xl font-serif">Brochures</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {vendor.prestataires_brochures.map((brochure) =>
+                    brochure.url ? (
+                      <Card key={brochure.id}>
+                        <p><a href={brochure.url} target="_blank" className="p-4 block" rel="noopener noreferrer">Télécharger la brochure</a></p>
+                      </Card>
+                    ): (
+                      <p>Aucune brochure disponible pour ce prestataire.</p>
+                    ))}
+                </div>
+              </div>
+            )}
+            </div>   
 
             <div className="w-full lg:w-80 space-y-4">
               <Card className="p-4">

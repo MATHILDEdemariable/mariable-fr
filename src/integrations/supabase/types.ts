@@ -271,6 +271,15 @@ export type Database = {
             meta_value: string;
             prestataire_id: string;
             created_at: string;
+          }>;
+          prestataires_brochures: Array<{
+            created_at: string;
+            filename: string | null;
+            id: string;
+            prestataire_id: string;
+            size: number | null
+            url: string;
+            type: string | null;
           }>
         };
         Insert: {
@@ -319,7 +328,7 @@ export type Database = {
           slug?: string | null;
           description_more: string | null;
           partner: boolean | null;
-                    first_price_package: number | null;
+          first_price_package: number | null;
           second_price_package: number | null;
           third_price_package: number | null; 
           prestataires_meta: Array<{
@@ -328,6 +337,15 @@ export type Database = {
             meta_value: string;
             prestataire_id: string;
             created_at: string;
+          }>;
+          prestataires_brochures: Array<{
+            created_at: string;
+            filename: string | null;
+            id: string;
+            prestataire_id: string;
+            size: number | null
+            url: string;
+            type: string | null;
           }>
         };
         Update: {
@@ -376,7 +394,7 @@ export type Database = {
           slug?: string | null;
           description_more: string | null;
           partner: boolean | null;
-                    first_price_package: number | null;
+          first_price_package: number | null;
           second_price_package: number | null;
           third_price_package: number | null; 
           prestataires_meta: Array<{
@@ -385,6 +403,15 @@ export type Database = {
             meta_value: string;
             prestataire_id: string;
             created_at: string;
+          }>;
+          prestataires_brochures: Array<{
+            created_at: string;
+            filename: string | null;
+            id: string;
+            prestataire_id: string;
+            size: number | null
+            url: string;
+            type: string | null;
           }>
         };
         Relationships: [

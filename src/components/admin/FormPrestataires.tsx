@@ -27,7 +27,7 @@ import FeaturedImage from "@/components/ui/featured-image";
 type Prestataire = Database["public"]["Tables"]["prestataires_rows"]["Row"];
 type PrestataireInsert =
   Database["public"]["Tables"]["prestataires_rows"]["Insert"];
- 
+
 const PrestatairesAdmin = () => {
   const [prestataires, setPrestataires] = useState<Prestataire[]>([]);
   const [selected, setSelected] = useState<Prestataire | null>(null);
@@ -42,6 +42,16 @@ const PrestatairesAdmin = () => {
     if (error) {
       toast.error("Erreur lors du chargement");
       return;
+    }
+    if (data) {
+      for (const presta of data) {
+        const { data: brochures } = await supabase
+          .from("prestataires_brochures_preprod")
+          .select("*")
+          .eq("prestataire_id", presta.id);
+
+        presta.prestataires_brochures = brochures;
+      }
     }
     // console.log("Prestataires:", data);
     setPrestataires(data || []);

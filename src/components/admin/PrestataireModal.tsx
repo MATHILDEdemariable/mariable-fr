@@ -268,10 +268,11 @@ const PrestataireModal: React.FC<Props> = ({
       "featured",
       "visible",
       "prestataires_photos_preprod",
+      "prestataires_brochures"
     ]);
 
     if (mode === "edit" && prestataire) {
-      const { prestataires_photos_preprod, ...formWithoutRelations } = form;
+      const { prestataires_photos_preprod,prestataires_brochures, ...formWithoutRelations } = form;
 
       const { error } = await supabase
         .from("prestataires_rows")
@@ -287,7 +288,7 @@ const PrestataireModal: React.FC<Props> = ({
         await uploadCarouselImages(prestataire.id);
       }
 
-      if (selectedFileBrochure){
+      if (selectedFileBrochure) {
         await uploadBrochure(prestataire.id);
       }
 
@@ -329,7 +330,7 @@ const PrestataireModal: React.FC<Props> = ({
         await uploadCarouselImages(data.id);
       }
 
-            if (selectedFileBrochure){
+      if (selectedFileBrochure) {
         await uploadBrochure(data.id);
       }
 
@@ -352,8 +353,8 @@ const PrestataireModal: React.FC<Props> = ({
       toast.success("Prestataire ajouté");
     }
 
-    // onClose();
-    // onSave();
+    onClose();
+    onSave();
   };
 
   const deleteCarouselImage = (id: string) => async () => {
@@ -368,6 +369,21 @@ const PrestataireModal: React.FC<Props> = ({
     } else {
       currentImageHml?.remove();
       toast.success("Image supprimée avec succès");
+    }
+  };
+
+  const deleteBrochure = (id: string) => async () => {
+    const currentBrochure = document.getElementById(`brochure-${id}`);
+
+    const { error } = await supabase
+      .from("prestataires_brochures_preprod")
+      .delete()
+      .eq("id", id);
+    if (error) {
+      toast.error("Erreur lors de la suppression de la brochure");
+    } else {
+      currentBrochure?.remove();
+      toast.success("Brochure supprimée avec succès");
     }
   };
 
@@ -406,7 +422,7 @@ const PrestataireModal: React.FC<Props> = ({
         <p>Images du carousel</p>
         {prestataire?.prestataires_photos_preprod && (
           <>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-2">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 ">
               {Array.isArray(prestataire.prestataires_photos_preprod) &&
                 prestataire.prestataires_photos_preprod
                   .filter((item) => !item.principale)
@@ -443,15 +459,38 @@ const PrestataireModal: React.FC<Props> = ({
           }}
           className="mb-4"
         />
- 
+
         <p>Brochure</p>
-          <Input
-            type="file"
-            id="brochure"
-            className="max-w-full"
-            accept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-            onChange={handleFileChange}
-          />
+        {prestataire?.prestataires_brochures && (
+          <>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-2">
+              {Array.isArray(prestataire.prestataires_brochures) &&
+                prestataire.prestataires_brochures.map((item) => (
+                  <div
+                    key={item.id}
+                    id={`brochure-${item.id}`}
+                    className="relative w-full aspect-video overflow-hidden rounded-lg border flex flex-col items-center justify-center"
+                  >
+                    <span
+                      className="absolute top-2 right-2 bg-red-500 text-white text-xs px-1 rounded cursor-pointer"
+                      onClick={deleteBrochure(item.id)}
+                    >
+                      X
+                    </span>
+                    <p className="text-center">{item.filename}</p>
+                  </div>
+                ))}
+            </div>
+          </>
+        )}
+
+        <Input
+          type="file"
+          id="brochure"
+          className="max-w-full"
+          accept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+          onChange={handleFileChange}
+        />
 
         <h2 className="mt-4  bg-slate-50 p-2 rounded-md text-center text-slate-500">
           Informations
