@@ -262,6 +262,16 @@ export type Database = {
           slug?: string | null;
           description_more: string | null;
           partner: boolean | null;
+          first_price_package: number | null;
+          second_price_package: number | null;
+          third_price_package: number | null; 
+          prestataires_meta: Array<{
+            id: string;
+            meta_key: string;
+            meta_value: string;
+            prestataire_id: string;
+            created_at: string;
+          }>
         };
         Insert: {
           accord_cgv?: boolean | null;
@@ -309,6 +319,16 @@ export type Database = {
           slug?: string | null;
           description_more: string | null;
           partner: boolean | null;
+                    first_price_package: number | null;
+          second_price_package: number | null;
+          third_price_package: number | null; 
+          prestataires_meta: Array<{
+            id: string;
+            meta_key: string;
+            meta_value: string;
+            prestataire_id: string;
+            created_at: string;
+          }>
         };
         Update: {
           accord_cgv?: boolean | null;
@@ -356,6 +376,16 @@ export type Database = {
           slug?: string | null;
           description_more: string | null;
           partner: boolean | null;
+                    first_price_package: number | null;
+          second_price_package: number | null;
+          third_price_package: number | null; 
+          prestataires_meta: Array<{
+            id: string;
+            meta_key: string;
+            meta_value: string;
+            prestataire_id: string;
+            created_at: string;
+          }>
         };
         Relationships: [
           {

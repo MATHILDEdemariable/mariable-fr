@@ -107,6 +107,15 @@ const SinglePrestataire = () => {
         .eq("slug", slug)
         .single();
 
+      if (data) {
+        const { data: metas } = await supabase
+          .from("prestataires_meta")
+          .select("*")
+          .eq("prestataire_id", data.id);
+
+        data.prestataires_meta = metas;
+      }
+
       if (error) {
         toast({
           description: `Erreur lors du chargement du prestataire: ${error.message}`,
@@ -178,27 +187,65 @@ const SinglePrestataire = () => {
           setPackages(newPackages);
           setSelectedPackage(newPackages[0]);
         } else {
-          // Autres types de prestataires
+          const basePrice = vendor.prix_a_partir_de;
           const newPackages = [
             {
               name: "Classique",
-              basePrice: vendor.prix_a_partir_de,
+              basePrice: basePrice,
               description: "Formule de base",
             },
             {
               name: "Premium",
-              basePrice: vendor.prix_a_partir_de * 1.4,
+              basePrice: basePrice * 1.4,
               description: "Formule intermédiaire",
             },
             {
               name: "Luxe",
-              basePrice: vendor.prix_a_partir_de * 1.8,
+              basePrice: basePrice * 1.8,
               description: "Formule complète",
             },
           ];
           setPackages(newPackages);
           setSelectedPackage(newPackages[0]);
         }
+      }
+      const hasAllThreePrices = [
+        "first_price_package",
+        "second_price_package",
+        "third_price_package",
+      ].every((key) =>
+        vendor.prestataires_meta.some((meta) => meta.meta_key === key)
+      );
+
+      if (hasAllThreePrices) {
+        // const basePrice =
+        const getMetaValue = (key: string) => {
+          const meta = vendor.prestataires_meta.find(
+            (meta) => meta.meta_key === key
+          );
+          return meta ? parseFloat(meta.meta_value) : 0;
+        };
+
+        const newPackages = [
+          {
+            name: "Classique",
+            basePrice: getMetaValue("first_price_package"),
+            description: "Formule de base",
+          },
+          {
+            name: "Premium",
+            basePrice: getMetaValue("second_price_package"),
+            description: "Formule intermédiaire",
+          },
+          {
+            name: "Luxe",
+            basePrice: getMetaValue("third_price_package"),
+            description: "Formule complète",
+          },
+        ];
+
+        setPackages(newPackages);
+        setSelectedPackage(newPackages[0]);
       }
     }
   }, [vendor]);
@@ -294,7 +341,7 @@ const SinglePrestataire = () => {
 
   const sendMessage = async () => {
     setOpenContact(true);
-  }
+  };
 
   if (!slug && !isLoading) {
     return (
@@ -652,11 +699,11 @@ const SinglePrestataire = () => {
                         Demande de contact avec {vendor.nom}
                       </DialogTitle>
                     </DialogHeader>
-                      <ContactForm
+                    <ContactForm
                       prestataire={vendor}
-                      user={(session)??session}
+                      user={session ?? session}
                       dialogClose={() => setOpenContact(false)}
-                      /> 
+                    />
                   </DialogContent>
                 </Dialog>
               </Card>

@@ -3,7 +3,6 @@ const FeaturedImage = ({ presta }) => {
   const featured = Array.isArray(photos)
     ? photos.find((photo) => photo.principale)
     : null;
-  console.log(presta);  
   return (
     <img
       src={featured?.url || "https://placehold.co/1920x1920?text=No+Image"}

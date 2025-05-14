@@ -23,9 +23,11 @@ import { Database, Constants } from "@/integrations/supabase/types";
 import { v4 as uuidv4 } from "uuid";
 import slugify from "@/utils/slugify";
 import { extractMetas } from "@/lib/extractMetas";
+import { any } from "zod";
 
 type Prestataire = Database["public"]["Tables"]["prestataires_rows"]["Row"];
-type PrestataireInsert = Database["public"]["Tables"]["prestataires_rows"]["Insert"];
+type PrestataireInsert =
+  Database["public"]["Tables"]["prestataires_rows"]["Insert"];
 type MetaInsert = Database["public"]["Tables"]["prestataires_meta"]["Insert"];
 
 interface Props {
@@ -296,19 +298,19 @@ const PrestataireModal: React.FC<Props> = ({
   };
 
   const deleteCarouselImage = (id: string) => async () => {
-      const currentImageHml = document.getElementById(`carousel-image-${id}`);
-      
-      const { error } = await supabase
-        .from("prestataires_photos_preprod")
-        .delete()
-        .eq("id", id);
-      if (error) {
-        toast.error("Erreur lors de la suppression de l'image");
-      } else {
-        currentImageHml?.remove();
-        toast.success("Image supprimée avec succès");
-      }
-  }
+    const currentImageHml = document.getElementById(`carousel-image-${id}`);
+
+    const { error } = await supabase
+      .from("prestataires_photos_preprod")
+      .delete()
+      .eq("id", id);
+    if (error) {
+      toast.error("Erreur lors de la suppression de l'image");
+    } else {
+      currentImageHml?.remove();
+      toast.success("Image supprimée avec succès");
+    }
+  };
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -346,25 +348,29 @@ const PrestataireModal: React.FC<Props> = ({
         {prestataire?.prestataires_photos_preprod && (
           <>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-2">
-              {
-              Array.isArray(prestataire.prestataires_photos_preprod) &&
-              prestataire.prestataires_photos_preprod.filter((item) => !item.principale)
-                .map((item) => (
-                  <div
-                    key={item.id}
-                    id={`carousel-image-${item.id}`}
-                    className="relative w-full aspect-video overflow-hidden rounded-lg border"
-                  >
-                    <span className="absolute top-2 right-2 bg-red-500 text-white text-xs px-1 rounded cursor-pointer"
-                    onClick={deleteCarouselImage(item.id)}>X</span>
-                    <img
-                      src={item.url}
-                      alt={`carousel-${item.filename}`}
-                      className="object-cover w-full h-full"
-                    />
-                  </div>
-                ))}
-                </div>
+              {Array.isArray(prestataire.prestataires_photos_preprod) &&
+                prestataire.prestataires_photos_preprod
+                  .filter((item) => !item.principale)
+                  .map((item) => (
+                    <div
+                      key={item.id}
+                      id={`carousel-image-${item.id}`}
+                      className="relative w-full aspect-video overflow-hidden rounded-lg border"
+                    >
+                      <span
+                        className="absolute top-2 right-2 bg-red-500 text-white text-xs px-1 rounded cursor-pointer"
+                        onClick={deleteCarouselImage(item.id)}
+                      >
+                        X
+                      </span>
+                      <img
+                        src={item.url}
+                        alt={`carousel-${item.filename}`}
+                        className="object-cover w-full h-full"
+                      />
+                    </div>
+                  ))}
+            </div>
           </>
         )}
         <Input
@@ -378,7 +384,7 @@ const PrestataireModal: React.FC<Props> = ({
           }}
           className="mb-4"
         />
-        
+
         <p>Informations</p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Input
@@ -529,6 +535,42 @@ const PrestataireModal: React.FC<Props> = ({
             onChange={(e) => handleChange("description_more", e.target.value)}
             className="md:col-span-2"
           />
+          <h2>Packages</h2>
+          <div className="grid grid-cols-3 flex-wrap gap-4 md:col-span-2">
+            <Input
+              type="number"
+              step="0.01"
+              min="0"
+              max="99999999.99"
+              placeholder="Exemple : 3800,00"
+              value={form.first_price_package ?? ""}
+              onChange={(e) =>
+                handleChange("first_price_package", parseFloat(e.target.value))
+              }
+            />
+            <Input
+              type="number"
+              step="0.01"
+              min="0"
+              max="99999999.99"
+              placeholder="Exemple : 4200,00"
+              value={form.second_price_package ?? ""}
+              onChange={(e) =>
+                handleChange("second_price_package", parseFloat(e.target.value))
+              }
+            />
+            <Input
+              type="number"
+              step="0.01"
+              min="0"
+              max="99999999.99"
+              placeholder="Exemple : 5400,00"
+              value={form.third_price_package ?? ""}
+              onChange={(e) =>
+                handleChange("third_price_package", parseFloat(e.target.value))
+              }
+            />
+          </div>
           <div className="flex items-center space-x-2">
             <Checkbox
               checked={form.hebergement_inclus ?? false}
@@ -568,7 +610,7 @@ const PrestataireModal: React.FC<Props> = ({
             />
             <label>Publier</label>
           </div>
-                    <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2">
             <Checkbox
               checked={form.partner ?? false}
               onCheckedChange={(val) => handleChange("partner", !!val)}
