@@ -41,12 +41,10 @@ import {
 import RdvForm from "@/components/forms/RdvForm";
 import ContactForm from "@/components/forms/ContactForm";
 
-// At the beginning of the file, import the extended Prestataire type
+// Import the Prestataire type
+import { Prestataire } from "@/components/admin/types";
 import { PrestataireRow } from "@/components/wedding-day/utils";
 
-type Prestataire = Database["public"]["Tables"]["prestataires_rows"]["Row"];
-type PrestatairePhoto =
-  Database["public"]["Tables"]["prestataires_photos_preprod"]["Row"];
 type VendorsTrackingPreprod =
   Database["public"]["Tables"]["vendors_tracking_preprod"]["Row"];
 
@@ -111,21 +109,25 @@ const SinglePrestataire = () => {
         .single();
 
       if (data) {
+        const prestataireData = data as unknown as Prestataire;
+        
         // Add prestataires_meta property to data
         const { data: metas } = await supabase
           .from("prestataires_meta")
           .select("*")
-          .eq("prestataire_id", data.id);
+          .eq("prestataire_id", prestataireData.id);
 
-        data.prestataires_meta = metas || [];
+        prestataireData.prestataires_meta = metas || [];
         
         // Add prestataires_brochures property to data
         const { data: brochures } = await supabase
           .from("prestataires_brochures_preprod")
           .select("*")
-          .eq("prestataire_id", data.id);
+          .eq("prestataire_id", prestataireData.id);
 
-        data.prestataires_brochures = brochures || [];
+        prestataireData.prestataires_brochures = brochures || [];
+        
+        return prestataireData;
       }
 
       if (error) {
@@ -135,13 +137,13 @@ const SinglePrestataire = () => {
         });
         throw new Error(error.message);
       }
-      return data as Prestataire;
+      return null;
     },
     enabled: !!slug,
   });
 
   useEffect(() => {
-    if (vendor?.id) {
+    if (vendor) {
       if (vendor.visible === false) {
         toast({
           description: `Preview du prestataire ${vendor.nom} en cours.`,
@@ -221,7 +223,7 @@ const SinglePrestataire = () => {
           setSelectedPackage(newPackages[0]);
         }
       }
-      const hasAllThreePrices = [
+      const hasAllThreePrices = vendor.prestataires_meta && [
         "first_price_package",
         "second_price_package",
         "third_price_package",
@@ -229,12 +231,12 @@ const SinglePrestataire = () => {
         vendor.prestataires_meta.some((meta) => meta.meta_key === key)
       );
 
-      if (hasAllThreePrices) {
+      if (hasAllThreePrices && vendor.prestataires_meta) {
         const getMetaValue = (key: string) => {
-          const meta = vendor.prestataires_meta.find(
+          const meta = vendor.prestataires_meta?.find(
             (meta) => meta.meta_key === key
           );
-          return meta ? parseFloat(meta.meta_value) : 0;
+          return meta ? parseFloat(meta.meta_value || "0") : 0;
         };
 
         const newPackages = [
@@ -582,7 +584,7 @@ const SinglePrestataire = () => {
               <div className="space-y-4">
                 <h2 className="text-xl font-serif">Galerie photo</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {vendor.prestataires_photos_preprod ? (
+                  {vendor && vendor.prestataires_photos_preprod ? (
                     Array.isArray(vendor.prestataires_photos_preprod) &&
                     vendor.prestataires_photos_preprod.map((photo) => (
                       <Dialog key={photo.id}>
@@ -609,7 +611,7 @@ const SinglePrestataire = () => {
                   )}
                 </div>
               </div>
-              {vendor.prestataires_brochures.length > 0 && (
+              {vendor && vendor.prestataires_brochures && vendor.prestataires_brochures.length > 0 && (
                 <div className="space-y-4">
                   <h2 className="text-xl font-serif">Brochures</h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

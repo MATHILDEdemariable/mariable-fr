@@ -13,6 +13,8 @@ export type Prestataire = Database["public"]["Tables"]["prestataires_rows"]["Row
   prestataires_brochures?: Array<{
     id: string;
     url: string;
+    filename?: string;
+    type?: string;
   }>;
   prestataires_meta?: Array<{
     id: number;

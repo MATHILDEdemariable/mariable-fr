@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -42,17 +41,24 @@ const PrestatairesAdmin = () => {
       return;
     }
     if (data) {
-      for (const presta of data) {
+      const prestataireData = data as unknown as Prestataire[];
+      for (const presta of prestataireData) {
         const { data: brochures } = await supabase
           .from("prestataires_brochures_preprod")
           .select("*")
           .eq("prestataire_id", presta.id);
 
-        presta.prestataires_brochures = brochures;
+        const { data: meta } = await supabase
+          .from("prestataires_meta")
+          .select("*")
+          .eq("prestataire_id", presta.id);
+
+        presta.prestataires_brochures = brochures || [];
+        presta.prestataires_meta = meta || [];
       }
     }
     // console.log("Prestataires:", data);
-    setPrestataires(data || []);
+    setPrestataires(data as unknown as Prestataire[] || []);
   };
 
   useEffect(() => {

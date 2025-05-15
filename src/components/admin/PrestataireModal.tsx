@@ -35,12 +35,12 @@ const VendorDetailModal: React.FC<VendorDetailModalProps> = ({ isOpen, onClose, 
     const fetchVendorMedia = async () => {
       if (vendor) {
         const { data: photoData, error: photoError } = await supabase
-          .from('prestataires_photos')
+          .from('prestataires_photos_preprod')
           .select('*')
           .eq('prestataire_id', vendor.id);
 
         const { data: brochureData, error: brochureError } = await supabase
-          .from('prestataires_brochures')
+          .from('prestataires_brochures_preprod')
           .select('*')
           .eq('prestataire_id', vendor.id);
 

@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -158,11 +159,10 @@ const RdvForm = ({prestataire_id, prestataire_name, contact_date, email_prestata
 
   const handleBookingClick = async () => {
     const message = document.querySelector("textarea")?.value;
-    const selectedDate = selectedSwitch;
 
-    if (!selectedDate) {
+    if (!date1.hour) {
       toast({
-        description: "Veuillez sélectionner une date.",
+        description: "Veuillez sélectionner au moins une date.",
         variant: "destructive",
       });
       return;

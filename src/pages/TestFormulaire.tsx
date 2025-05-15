@@ -8,7 +8,7 @@ import { jsPDF } from "jspdf";
 import { File, Home, Calendar, Loader2, Share, RefreshCw } from "lucide-react";
 import Header from '@/components/Header';
 import SEO from '@/components/SEO';
-import { supabase, type Json } from "@/integrations/supabase/client";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { useIsMobile } from '@/hooks/use-mobile';
 
