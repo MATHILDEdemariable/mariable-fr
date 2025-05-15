@@ -110,11 +110,14 @@ const TrackingPage = () => {
         });
         throw new Error(documentsError.message);
       }
-      if (documents) {
-        data.documents = documents;
-      }
+      
+      // Add documents to data object to make it available in the component
+      const vendorData = {
+        ...data,
+        documents: documents || []
+      };
 
-      return { vendorData: data, project };
+      return { vendorData, project };
     },
     enabled: !!vendorId,
   });
@@ -219,8 +222,9 @@ const TrackingPage = () => {
     if (validate === 3) return getFormattedDate(vendor.third_date_rdv);
   };
 
-  const displayDateOrHour = (date: Date, type: string) => {
-    const getFormattedDate = (dateStr: Date, type: string) => {
+  // For the displayDateOrHour function, fix the type conversion issues:
+  const displayDateOrHour = (dateStr: string, type: string) => {
+    const getFormattedDate = (dateStr: string, type: string) => {
       const date = new Date(dateStr);
       if (type === "date") {
         return date
@@ -248,9 +252,10 @@ const TrackingPage = () => {
           })
           .replace(",", " à");
       }
+      return "";
     };
 
-    return getFormattedDate(date, type);
+    return getFormattedDate(dateStr, type);
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {

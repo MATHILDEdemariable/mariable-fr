@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -159,11 +160,9 @@ const PrestatairesAdmin = () => {
 
       {dialogOpen && (
         <PrestataireModal
-          open={dialogOpen}
+          isOpen={dialogOpen}
           onClose={() => setDialogOpen(false)}
-          onSave={fetchPrestataires}
-          mode={mode}
-          prestataire={selected}
+          vendor={selected}
         />
       )}
     </div>

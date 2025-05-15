@@ -19,6 +19,12 @@ export type Prestataire = Database["public"]["Tables"]["prestataires_rows"]["Row
     meta_key?: string;
     meta_value?: string;
   }>;
+  documents?: Array<{
+    id: string;
+    url: string;
+    filename?: string;
+    type?: string;
+  }>;
 };
 
 export type PrestataireInsert = Database["public"]["Tables"]["prestataires_rows"]["Insert"];

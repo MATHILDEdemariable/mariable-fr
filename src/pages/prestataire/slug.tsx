@@ -111,20 +111,21 @@ const SinglePrestataire = () => {
         .single();
 
       if (data) {
+        // Add prestataires_meta property to data
         const { data: metas } = await supabase
           .from("prestataires_meta")
           .select("*")
           .eq("prestataire_id", data.id);
 
-        data.prestataires_meta = metas;
-      }
-      if (data) {
+        data.prestataires_meta = metas || [];
+        
+        // Add prestataires_brochures property to data
         const { data: brochures } = await supabase
           .from("prestataires_brochures_preprod")
           .select("*")
           .eq("prestataire_id", data.id);
 
-        data.prestataires_brochures = brochures;
+        data.prestataires_brochures = brochures || [];
       }
 
       if (error) {
@@ -390,7 +391,7 @@ const SinglePrestataire = () => {
         <div className="container max-w-6xl px-4 py-12 flex justify-center">
           <Card className="p-8 text-center">
             <h1 className="text-2xl font-serif mb-4">
-              Aucun prestataire sélectionné
+              Aucun prestataire s��lectionné
             </h1>
             <p className="mb-6">
               Veuillez sélectionner un prestataire depuis notre moteur de
@@ -760,7 +761,7 @@ const SinglePrestataire = () => {
                       <RdvForm
                         prestataire_id={vendor.id}
                         prestataire_name={vendor.nom}
-                        contact_date={date}
+                        contact_date={date ? date.toISOString() : undefined}
                         email_prestataire={vendor.email}
                         dialogClose={() => setOpen(false)}
                       />

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -111,7 +110,7 @@ const DateTimePicker = ({
 type RdvFormProps = {
   prestataire_id: string;
   prestataire_name: string;
-  contact_date: string;
+  contact_date: string | undefined;
   email_prestataire: string;
   dialogClose: () => void;
 };
@@ -158,46 +157,50 @@ const RdvForm = ({prestataire_id, prestataire_name, contact_date, email_prestata
   }, []);
 
   const handleBookingClick = async () => {
-    const currentButton = document.querySelector("#button-rdv");
+    const message = document.querySelector("textarea")?.value;
+    const selectedDate = selectedSwitch;
 
-    if (date1.hour && date2.hour && date3.hour) {
-      // Fix type issue with the vendors_tracking_preprod insert
-      // Create a single object instead of an array, and ensure types are correct
-      const { error } = await supabase.from("vendors_tracking_preprod").insert({
-        contact_date: contact_date,
-        user_id: userData.id,
-        prestataire_id: prestataire_id,
-        status: "en attente",
-        email_client: userData.email,
-        email_presta: email_prestataire,
-        vendor_name: prestataire_name,
-        category: "Rendez-vous",
-        first_date_rdv: date1.hour.toISOString(),
-        second_date_rdv: date2.hour.toISOString(),
-        third_date_rdv: date3.hour.toISOString(),
-        valide_date_rdv: 0
-      });
-
-      if (error) {
-        toast({
-          description: `Erreur lors de la réservation: ${error.message}`,
-          variant: "destructive",
-        });
-        return;
-      } else {
-        currentButton?.setAttribute("disabled", "true");
-        
-        toast({
-          description: `Votre demande de prise de rendez-vous été envoyé au prestataire.`,
-          variant: "default",
-        });
-        dialogClose();
-      }
-    } else {
+    if (!selectedDate) {
       toast({
-        description: "Veuillez remplir tous les champs.",
+        description: "Veuillez sélectionner une date.",
         variant: "destructive",
       });
+      return;
+    }
+
+    if (!prestataire_id) return;
+
+    // Create a single object for the insert instead of an array
+    const { error } = await supabase.from("vendors_tracking_preprod").insert({
+      contact_date: contact_date,
+      user_id: userData.id,
+      prestataire_id: prestataire_id,
+      status: "en attente",
+      email_client: userData.email,
+      email_presta: email_prestataire,
+      vendor_name: prestataire_name,
+      category: "Rendez-vous",
+      first_date_rdv: date1.hour ? date1.hour.toISOString() : null,
+      second_date_rdv: date2.hour ? date2.hour.toISOString() : null,
+      third_date_rdv: date3.hour ? date3.hour.toISOString() : null,
+      valide_date_rdv: 0
+    });
+
+    if (error) {
+      toast({
+        description: `Erreur lors de la réservation: ${error.message}`,
+        variant: "destructive",
+      });
+      return;
+    } else {
+      const currentButton = document.querySelector("#button-rdv");
+      currentButton?.setAttribute("disabled", "true");
+      
+      toast({
+        description: `Votre demande de prise de rendez-vous été envoyé au prestataire.`,
+        variant: "default",
+      });
+      dialogClose();
     }
   };
 

@@ -54,6 +54,7 @@ const statusColorMap: Record<VendorStatus, string> = {
   'en attente': 'bg-orange-100 text-orange-800',
   'réponse reçue': 'bg-green-100 text-green-800',
   'à valider': 'bg-purple-100 text-purple-800',
+  'annuler': 'bg-red-100 text-red-800',
 };
 
 const statusIconMap: Record<VendorStatus, React.ReactNode> = {
@@ -62,6 +63,7 @@ const statusIconMap: Record<VendorStatus, React.ReactNode> = {
   'en attente': <Clock className="h-4 w-4" />,
   'réponse reçue': <CheckCircle className="h-4 w-4" />,
   'à valider': <Calendar className="h-4 w-4" />,
+  'annuler': <Trash className="h-4 w-4" />,
 };
 
 // interface VendorTrackingProps {
@@ -250,6 +252,7 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
                 <SelectItem value="en attente">En attente</SelectItem>
                 <SelectItem value="réponse reçue">Réponse reçue</SelectItem>
                 <SelectItem value="à valider">À valider</SelectItem>
+                <SelectItem value="annuler">Annuler</SelectItem>
               </SelectContent>
             </Select>
             
@@ -359,6 +362,7 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
                               <SelectItem value="en attente">En attente</SelectItem>
                               <SelectItem value="réponse reçue">Réponse reçue</SelectItem>
                               <SelectItem value="à valider">À valider</SelectItem>
+                              <SelectItem value="annuler">Annuler</SelectItem>
                             </SelectContent>
                           </Select>
                           <Button 
