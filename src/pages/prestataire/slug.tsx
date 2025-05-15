@@ -304,38 +304,62 @@ const SinglePrestataire = () => {
 
   const prices = calculateTotal();
 
-  const checkCurrentRDV = async () => {
-    if (session) {
-      const { data, error } = await supabase
-        .from("vendors_tracking_preprod")
-        .select("*")
-        .eq("user_id", session.user.id)
-        .eq("prestataire_id", vendorId)
-        .maybeSingle();
+  const fetchCurrentRDV = async (
+    userId: string | null | undefined,
+    vendorId: string | null | undefined
+  ) => {
+    if (!userId || !vendorId || vendorId.trim() === "") {
+      console.warn("ID(s) manquant(s) pour fetchCurrentRDV", {
+        userId,
+        vendorId,
+      });
+      return null;
+    }
 
+    const { data, error } = await supabase
+      .from("vendors_tracking_preprod")
+      .select("*")
+      .eq("user_id", userId)
+      .eq("prestataire_id", vendorId)
+      .maybeSingle();
+
+    if (error) {
+      return null;
+    }
+
+    return data;
+  };
+
+  const checkCurrentRDV = async () => {
+    if (!session || !vendorId || vendorId.trim() === "") {
+      toast({
+        description: "Vous devez être connecté pour effectuer cette action.",
+      });
+      return null;
+    }
+
+    const data = await fetchCurrentRDV(session.user.id, vendorId);
+
+    if (!data || data.status === "annuler") {
       setOpen(true);
       return data;
     } else {
       toast({
         description: "Vous devez être connecté pour effectuer cette action.",
       });
+      return null;
     }
-    return null;
   };
   const [hasCurrentRDV, setHasCurrentRDV] = useState(false);
 
   useEffect(() => {
-    const fetchRDV = async () => {
-      if (session) {
-        const { data } = await supabase
-          .from("vendors_tracking_preprod")
-          .select("*")
-          .eq("user_id", session.user.id)
-          .eq("prestataire_id", vendorId)
-          .maybeSingle();
+    if (!session || !vendorId || vendorId.trim() === "") return;
 
-        setHasCurrentRDV(!!data);
-      }
+    const fetchRDV = async () => {
+      const data = await fetchCurrentRDV(session.user.id, vendorId);
+      console.log(data);
+
+      setHasCurrentRDV(!!data && data.status !== "annuler");
     };
 
     fetchRDV();
@@ -347,12 +371,12 @@ const SinglePrestataire = () => {
   };
 
   const sendMessage = async () => {
-    if(!session){
-         toast({
+    if (!session) {
+      toast({
         description: "Vous devez être connecté pour effectuer cette action.",
-      });   
-    }else{
-    setOpenContact(true);
+      });
+    } else {
+      setOpenContact(true);
     }
   };
 

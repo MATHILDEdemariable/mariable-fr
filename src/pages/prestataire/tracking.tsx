@@ -547,7 +547,9 @@ const TrackingPage = () => {
                     </div>
                   </>
                 )}
-                <Input
+                {!isUser && (
+                  <>
+                                 <Input
                   type="file"
                   id="upload-document"
                   className="max-w-full"
@@ -560,6 +562,10 @@ const TrackingPage = () => {
                 >
                   Envoyer le fichier
                 </Button>
+                  </>
+
+                ) }
+ 
               </div>
             </div>
           )}

@@ -336,12 +336,12 @@ const VendorTracking = () => {
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-2">
-                          {vendor.response_date && (<Button
+                          <Button
                             variant='outline' onClick={
                               () => {
                                 window.open(`/prestataire/tracking?id=${vendor.id}&edit=user`, '_blank');
                               }
-                            }>Voir la demande</Button> )}
+                            }>Voir la demande</Button>
                           <Select 
                             defaultValue={vendor.status}
                             onValueChange={(value) => updateVendorStatus(vendor.id, value as VendorStatus)}
@@ -361,6 +361,7 @@ const VendorTracking = () => {
                           <Button 
                             variant="outline" 
                             size="icon"
+                            className="hidden"
                             onClick={() => {
                               setVendorToDelete(vendor.id);
                               setDeleteDialogOpen(true);
