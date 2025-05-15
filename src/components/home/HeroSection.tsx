@@ -44,14 +44,14 @@ const HeroSection = () => {
           src="/lovable-uploads/977ff726-5f78-4cbc-bf10-dbf0bbd10ab7.png"
           alt="Couple de mariés célébrant leur union"
           className="absolute min-w-full min-h-full object-cover"
-          style={{ objectPosition: "center center" }}
+          style={{ objectPosition: "center bottom" }}
         />
         <div className="absolute inset-0 bg-wedding-black/40 backdrop-blur-[2px]"></div>
       </div>
       
       <div className="container relative z-10 mx-auto px-4 py-6 md:py-16">
         <div className="max-w-3xl mx-auto text-center mb-8 md:mb-12">
-          <h1 className="text-white text-2xl sm:text-3xl md:text-4xl lg:text-5xl mb-7 md:mb-8 font-serif pb-8 font-bold">
+          <h1 className="text-white text-2xl sm:text-3xl md:text-4xl lg:text-5xl mb-4 md:mb-5 font-serif pb-4 font-bold">
             <TypingEffect text="Votre mariage mérite d'être incroyable" />
           </h1>
           <p className="text-white/90 text-sm md:text-base mb-6 md:mb-8 max-w-2xl mx-auto">
@@ -65,9 +65,7 @@ const HeroSection = () => {
                 <Sparkles size={16} className="text-wedding-cream" />
                 <span className="text-wedding-cream text-xs md:text-sm">
                   Nouveauté 2025 – MariableGPT, l'Intelligence amoureuse - <a 
-                    href="https://chatgpt.com/g/g-67b5d482dd208191ae458763db0bb08c-mathilde-de-mariable" 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
+                    href="/recherche" 
                     className="underline hover:text-white transition-colors"
                   >
                     voir une démo
