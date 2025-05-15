@@ -477,7 +477,7 @@ const PrestataireModal: React.FC<Props> = ({
                     >
                       X
                     </span>
-                    <p className="text-center">{item.filename}</p>
+                    <p className="text-center"><a href={item.url} target="_blank">{item.filename}</a></p>
                   </div>
                 ))}
             </div>

@@ -83,13 +83,7 @@ const formSchema = z.object({
   }),
   accord_cgv: z.boolean().refine((val) => val === true, {
     message: "Vous devez accepter les CGV",
-  }),
-  featured: z.boolean(),
-  description_more: z.string().optional(),
-  partner: z.boolean(),
-  first_price_package: z.string().optional(),
-  second_price_package: z.string().optional(),
-  third_price_package: z.string().optional(),
+  })
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -142,13 +136,7 @@ const ProfessionalRegistrationForm = () => {
       description: "",
       prix_minimum: 0,
       accord_referencement: false,
-      accord_cgv: false,
-      featured: false,
-      description_more: "",
-      partner: false,
-      first_price_package: null,
-      second_price_package: null,
-      third_price_package: null,
+      accord_cgv: false
     },
   });
 
@@ -209,6 +197,7 @@ const ProfessionalRegistrationForm = () => {
   };
 
   const onSubmit = async (values: FormValues) => {
+    console.log('test')
     setIsSubmitting(true);
 
     try {
