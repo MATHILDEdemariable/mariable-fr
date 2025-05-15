@@ -29,7 +29,7 @@ const PrestatairesAdmin = () => {
   const [prestataires, setPrestataires] = useState<Prestataire[]>([]);
   const [selected, setSelected] = useState<Prestataire | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [mode, setMode: "edit" | "add">("add");
+  const [mode, setMode] = useState<"edit" | "add">("add");
 
   const fetchPrestataires = async () => {
     const { data, error } = await supabase
