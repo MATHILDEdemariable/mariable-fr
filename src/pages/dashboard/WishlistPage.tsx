@@ -9,7 +9,7 @@ import { toast } from '@/components/ui/use-toast';
 import { useNavigate } from 'react-router-dom';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 
-type Prestataire = Database['public']['Tables']['prestataires']['Row'];
+type Prestataire = Database['public']['Tables']['prestataires_rows']['Row'];
 
 type WishlistItem = {
   id: string;
@@ -49,7 +49,7 @@ const WishlistPage = () => {
         const wishlistWithDetails = await Promise.all(
           data.map(async (item) => {
             const { data: vendorData } = await supabase
-              .from('prestataires')
+              .from('prestataires_rows')
               .select('*')
               .eq('id', item.vendor_id)
               .single();

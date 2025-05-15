@@ -631,7 +631,6 @@ const SinglePrestataire = () => {
                 </div>
               )}
             </div>
-
             <div className="w-full lg:w-80 space-y-4">
               <Card className="p-4">
                 <h3 className="text-lg font-medium mb-4">
@@ -766,7 +765,6 @@ const SinglePrestataire = () => {
                   </DialogContent>
                 </Dialog>
               </Card>
-
             </div>
           </div>
         </div>

@@ -343,10 +343,11 @@ const VendorTracking = () => {
                               }
                             }>Voir la demande</Button>
                           <Select 
+
                             defaultValue={vendor.status}
                             onValueChange={(value) => updateVendorStatus(vendor.id, value as VendorStatus)}
                           >
-                            <SelectTrigger className="w-[140px]">
+                            <SelectTrigger className="w-[140px] hidden">
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
@@ -357,7 +358,6 @@ const VendorTracking = () => {
                               <SelectItem value="à valider">À valider</SelectItem>
                             </SelectContent>
                           </Select>
-
                           <Button 
                             variant="outline" 
                             size="icon"
