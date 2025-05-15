@@ -60,6 +60,8 @@ const WishlistPage = () => {
             } as WishlistItem;
           })
         );
+
+        console.log(wishlistWithDetails);
         
         setWishlistItems(wishlistWithDetails);
       }
@@ -121,8 +123,8 @@ const WishlistPage = () => {
     }
   };
 
-  const handleViewVendor = (vendorId: string) => {
-    navigate(`/demo?id=${vendorId}`);
+  const handleViewVendor = (vendorSlug: string) => {
+    navigate(`/prestataire/${vendorSlug}`);
   };
 
   // Get image from vendor
@@ -227,7 +229,7 @@ const WishlistPage = () => {
                     
                     {item.vendor && (
                       <Button 
-                        onClick={() => handleViewVendor(item.vendor_id)}
+                        onClick={() => handleViewVendor(item.vendor.slug)}
                         variant="ghost"
                         className="w-full text-muted-foreground"
                       >
