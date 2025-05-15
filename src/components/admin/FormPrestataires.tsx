@@ -23,16 +23,13 @@ import { Database } from "@/integrations/supabase/types";
 import PrestataireModal from "./PrestataireModal";
 
 import FeaturedImage from "@/components/ui/featured-image";
-
-type Prestataire = Database["public"]["Tables"]["prestataires_rows"]["Row"];
-type PrestataireInsert =
-  Database["public"]["Tables"]["prestataires_rows"]["Insert"];
+import { Prestataire, PrestataireInsert } from "./types";
 
 const PrestatairesAdmin = () => {
   const [prestataires, setPrestataires] = useState<Prestataire[]>([]);
   const [selected, setSelected] = useState<Prestataire | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [mode, setMode] = useState<"edit" | "add">("add");
+  const [mode, setMode: "edit" | "add">("add");
 
   const fetchPrestataires = async () => {
     const { data, error } = await supabase

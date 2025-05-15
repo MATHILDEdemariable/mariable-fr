@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import { 
   Card, 
   CardContent, 
@@ -69,7 +68,11 @@ const statusIconMap: Record<VendorStatus, React.ReactNode> = {
 //   projectId?: string;
 // }
 
-const VendorTracking = () => {
+type VendorTrackingProps = {
+  project_id?: string;
+};
+
+const VendorTracking = ({ project_id }: VendorTrackingProps) => {
   const [vendors, setVendors] = useState<Vendor[]>([]);
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');

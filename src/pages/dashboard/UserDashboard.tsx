@@ -196,7 +196,7 @@ const DashboardHome = () => {
       </div>
       
       <div className="md:col-span-2">
-        <VendorTracking projectId={project.id} />
+        <VendorTracking project_id={project.id} />
       </div>
       
       <TasksList />
@@ -242,7 +242,7 @@ const PrestatairesPage = () => {
   }, []);
 
   return (
-    <VendorTracking projectId={project?.id} />
+    <VendorTracking project_id={project?.id} />
   );
 };
 

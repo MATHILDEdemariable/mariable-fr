@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -17,6 +18,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Input } from "../ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/components/ui/use-toast";
+import { Database } from "@/integrations/supabase/types";
 
 type DateTime = {
   date: Date | undefined;
@@ -106,7 +108,15 @@ const DateTimePicker = ({
   );
 };
 
-const RdvForm = ({prestataire_id,prestataire_name,contact_date,email_prestataire,dialogClose}) => {
+type RdvFormProps = {
+  prestataire_id: string;
+  prestataire_name: string;
+  contact_date: string;
+  email_prestataire: string;
+  dialogClose: () => void;
+};
+
+const RdvForm = ({prestataire_id, prestataire_name, contact_date, email_prestataire, dialogClose}: RdvFormProps) => {
   const [date1, setDate1] = useState<DateTime>({
     date: undefined,
     hour: undefined,
@@ -121,7 +131,7 @@ const RdvForm = ({prestataire_id,prestataire_name,contact_date,email_prestataire
   });
 
   const [userData, setUserData] = useState({
-		id: "",
+    id: "",
     email: "",
     first_name: "",
     last_name: "",
@@ -135,7 +145,7 @@ const RdvForm = ({prestataire_id,prestataire_name,contact_date,email_prestataire
 
       if (user) {
         setUserData({
-					id: user.id,
+          id: user.id,
           email: user.email || "",
           first_name: user.user_metadata?.first_name || "",
           last_name: user.user_metadata?.last_name || "",
@@ -149,32 +159,24 @@ const RdvForm = ({prestataire_id,prestataire_name,contact_date,email_prestataire
 
   const handleBookingClick = async () => {
     const currentButton = document.querySelector("#button-rdv");
-    const newGuests = 100;
-    const newPackage = {
-      name: "Nom du package",
-      price: 100,
-    };
 
-    // console.log(date1);
-    // console.log(date2);
-    // console.log(date3);
-    if (date1.hour && date2.hour && date3.hour  ) {
-      const { error } = await supabase.from("vendors_tracking_preprod").insert([
-        {
-          contact_date: contact_date,
-          user_id: userData.id,
-          prestataire_id: prestataire_id,
-          status: "en attente",
-					email_client: userData.email,
-					email_presta: email_prestataire,
-					vendor_name: prestataire_name,
-					category: "Rendez-vous",
-					first_date_rdv: date1.hour,
-					second_date_rdv: date2.hour,
-					third_date_rdv: date3.hour,
-					valide_date_rdv:0
-        },
-      ]);
+    if (date1.hour && date2.hour && date3.hour) {
+      // Fix type issue with the vendors_tracking_preprod insert
+      // Create a single object instead of an array, and ensure types are correct
+      const { error } = await supabase.from("vendors_tracking_preprod").insert({
+        contact_date: contact_date,
+        user_id: userData.id,
+        prestataire_id: prestataire_id,
+        status: "en attente",
+        email_client: userData.email,
+        email_presta: email_prestataire,
+        vendor_name: prestataire_name,
+        category: "Rendez-vous",
+        first_date_rdv: date1.hour.toISOString(),
+        second_date_rdv: date2.hour.toISOString(),
+        third_date_rdv: date3.hour.toISOString(),
+        valide_date_rdv: 0
+      });
 
       if (error) {
         toast({
@@ -184,7 +186,7 @@ const RdvForm = ({prestataire_id,prestataire_name,contact_date,email_prestataire
         return;
       } else {
         currentButton?.setAttribute("disabled", "true");
-				
+        
         toast({
           description: `Votre demande de prise de rendez-vous été envoyé au prestataire.`,
           variant: "default",
@@ -201,58 +203,58 @@ const RdvForm = ({prestataire_id,prestataire_name,contact_date,email_prestataire
 
   return (
     <div>
-        <div className="flex flex-col md:flex-row justify-center items-start gap-4 mb-2">
-          <Input
-            type="text"
-            placeholder="Nom et prénom"
-            className="mb-4"
-            defaultValue={
-              userData?.first_name && userData?.last_name
-                ? `${userData.first_name} ${userData.last_name}`
-                : ""
-            }
-            required
-          />
-
-          <Input
-            type="text"
-            placeholder="Téléphone"
-            className="mb-4"
-            required
-          />
-        </div>
-
-        <div className="flex flex-col md:flex-row justify-center items-start gap-4 mb-2">
-          <DateTimePicker
-            value={date1}
-            onChange={setDate1}
-            placeHolder="Sélectionner une premiere date"
-          />
-          <DateTimePicker
-            value={date2}
-            onChange={setDate2}
-            placeHolder="Sélectionner une deuxième date"
-          />
-          <DateTimePicker
-            value={date3}
-            onChange={setDate3}
-            placeHolder="Sélectionner une troisième date"
-          />
-        </div>
-        <p className=" text-wedding-olive text-sm mb-4 ">
-          Merci de choisir trois dates et heures qui vous conviennent le mieux.
-        </p>
-        <Textarea
-          placeholder="Insérer votre message... (facultatif)"
-          className="w-full h-32 resize-none mb-4"
+      <div className="flex flex-col md:flex-row justify-center items-start gap-4 mb-2">
+        <Input
+          type="text"
+          placeholder="Nom et prénom"
+          className="mb-4"
+          defaultValue={
+            userData?.first_name && userData?.last_name
+              ? `${userData.first_name} ${userData.last_name}`
+              : ""
+          }
+          required
         />
-        <Button
-          id="button-rdv"
-          className="w-full bg-wedding-olive hover:bg-wedding-olive/90"
-					onClick={handleBookingClick}
-        >
-          Prendre RDV
-        </Button>
+
+        <Input
+          type="text"
+          placeholder="Téléphone"
+          className="mb-4"
+          required
+        />
+      </div>
+
+      <div className="flex flex-col md:flex-row justify-center items-start gap-4 mb-2">
+        <DateTimePicker
+          value={date1}
+          onChange={setDate1}
+          placeHolder="Sélectionner une premiere date"
+        />
+        <DateTimePicker
+          value={date2}
+          onChange={setDate2}
+          placeHolder="Sélectionner une deuxième date"
+        />
+        <DateTimePicker
+          value={date3}
+          onChange={setDate3}
+          placeHolder="Sélectionner une troisième date"
+        />
+      </div>
+      <p className="text-wedding-olive text-sm mb-4">
+        Merci de choisir trois dates et heures qui vous conviennent le mieux.
+      </p>
+      <Textarea
+        placeholder="Insérer votre message... (facultatif)"
+        className="w-full h-32 resize-none mb-4"
+      />
+      <Button
+        id="button-rdv"
+        className="w-full bg-wedding-olive hover:bg-wedding-olive/90"
+        onClick={handleBookingClick}
+      >
+        Prendre RDV
+      </Button>
     </div>
   );
 };

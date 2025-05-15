@@ -41,6 +41,9 @@ import {
 import RdvForm from "@/components/forms/RdvForm";
 import ContactForm from "@/components/forms/ContactForm";
 
+// At the beginning of the file, import the extended Prestataire type
+import { PrestataireRow } from "@/components/wedding-day/utils";
+
 type Prestataire = Database["public"]["Tables"]["prestataires_rows"]["Row"];
 type PrestatairePhoto =
   Database["public"]["Tables"]["prestataires_photos_preprod"]["Row"];
