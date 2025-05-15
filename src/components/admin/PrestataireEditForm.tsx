@@ -154,6 +154,13 @@ const PrestataireEditForm: React.FC<EditFormProps> = ({
     setIsSubmitting(true);
     
     try {
+      // Ensure required fields are present
+      if (!formData.nom) {
+        toast.error('Le nom du prestataire est requis');
+        setIsSubmitting(false);
+        return;
+      }
+      
       // Format styles as JSON string
       const submissionData = {
         ...formData,
@@ -170,13 +177,6 @@ const PrestataireEditForm: React.FC<EditFormProps> = ({
         if (error) throw error;
         toast.success('Prestataire mis à jour avec succès');
       } else {
-        // Create new prestataire - ensure required fields are present
-        if (!submissionData.nom) {
-          toast.error('Le nom du prestataire est requis');
-          setIsSubmitting(false);
-          return;
-        }
-        
         // Create new prestataire
         const { error } = await supabase
           .from('prestataires_rows')
