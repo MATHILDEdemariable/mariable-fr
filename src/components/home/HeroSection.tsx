@@ -52,7 +52,7 @@ const HeroSection = () => {
       <div className="container relative z-10 mx-auto px-4 py-6 md:py-16">
         <div className="max-w-3xl mx-auto text-center mb-8 md:mb-12">
           <h1 className="text-white text-2xl sm:text-3xl md:text-4xl lg:text-5xl mb-7 md:mb-8 font-serif pb-8">
-            <TypingEffect text="Organisez le mariage parfait, simplement" />
+            <TypingEffect text="Devenez votre propre wedding planner" />
           </h1>
           <p className="text-white/90 text-sm md:text-base mb-6 md:mb-8 max-w-2xl mx-auto">
             Trouvez les meilleurs prestataires
