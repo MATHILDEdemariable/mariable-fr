@@ -19,10 +19,9 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
 import { supabase } from '@/integrations/supabase/client';
 import { Prestataire } from './types';
-import { toast } from 'sonner';
+import { toast } from '@/components/ui/use-toast';
 import { Switch } from '@/components/ui/switch';
 import { Constants } from '@/integrations/supabase/types';
 import { Separator } from '@/components/ui/separator';
@@ -156,15 +155,19 @@ const PrestataireEditForm: React.FC<EditFormProps> = ({
     try {
       // Ensure required fields are present
       if (!formData.nom) {
-        toast.error('Le nom du prestataire est requis');
+        toast({
+          title: "Erreur",
+          description: "Le nom du prestataire est requis",
+          variant: "destructive"
+        });
         setIsSubmitting(false);
         return;
       }
       
-      // Format styles as JSON string
+      // Prepare submission data with proper types
       const submissionData = {
         ...formData,
-        styles: JSON.stringify(stylesList)
+        styles: JSON.stringify(stylesList || [])
       };
       
       if (prestataire) {
@@ -175,21 +178,32 @@ const PrestataireEditForm: React.FC<EditFormProps> = ({
           .eq('id', prestataire.id);
           
         if (error) throw error;
-        toast.success('Prestataire mis à jour avec succès');
+        toast({
+          title: "Succès",
+          description: "Prestataire mis à jour avec succès"
+        });
       } else {
-        // Create new prestataire
+        // Create new prestataire - ensure required fields
         const { error } = await supabase
           .from('prestataires_rows')
-          .insert([submissionData]);
+          .insert(submissionData);
           
         if (error) throw error;
-        toast.success('Prestataire créé avec succès');
+        toast({
+          title: "Succès",
+          description: "Prestataire créé avec succès"
+        });
       }
       
       onSuccess();
-    } catch (error) {
+      onClose();
+    } catch (error: any) {
       console.error('Erreur lors de la sauvegarde:', error);
-      toast.error('Erreur lors de la sauvegarde');
+      toast({
+        title: "Erreur",
+        description: error.message || "Erreur lors de la sauvegarde",
+        variant: "destructive"
+      });
     } finally {
       setIsSubmitting(false);
     }
