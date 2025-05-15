@@ -223,6 +223,27 @@ const Budget = () => {
     }
   };
 
+  // New function to handle saving the budget (redirects to registration)
+  const handleSaveBudget = async () => {
+    try {
+      const { data } = await supabase.auth.getSession();
+      if (data.session) {
+        // User is logged in, save to their account
+        toast({
+          title: "Budget sauvegardé",
+          description: "Votre estimation budgétaire a été sauvegardée dans votre compte",
+          duration: 3000,
+        });
+      } else {
+        // User is not logged in, redirect to registration
+        navigate('/register');
+      }
+    } catch (error) {
+      console.error("Erreur lors de la vérification de l'authentification:", error);
+      navigate('/register');
+    }
+  };
+
   // Obtenir le nom lisible d'un type de prestataire
   const getVendorName = (vendor: VendorType): string => {
     const names: Record<VendorType, string> = {
@@ -538,22 +559,16 @@ const Budget = () => {
             type="button"
             variant="outline"
             className="md:col-span-2 bg-gray-200 hover:bg-gray-300 text-wedding-black flex items-center justify-center gap-2"
-            onClick={() => {
-              toast({
-                title: "Inscription",
-                description: "Inscrivez-vous : fonctionnalité prochainement disponible",
-                duration: 3000,
-              });
-            }}
+            onClick={handleSaveBudget}
           >
-            <Mail size={18} />
-            Recevoir par email
+            Sauvegarder
           </Button>
         </div>
       </div>
     );
   };
 
+  // Obtain the navigate helper to use for redirects
   const navigate = useNavigate();
 
   return (

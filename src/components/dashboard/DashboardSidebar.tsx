@@ -7,7 +7,6 @@ import {
   ListTodo,
   Clock,
   Euro,
-  FileText,
   Settings,
   Users,
   Wine,
@@ -66,11 +65,6 @@ const navItems = [
     name: 'Calculateur boissons',
     path: '/dashboard/drinks',
     icon: <Wine className="h-5 w-5" />
-  },
-  {
-    name: 'Documents',
-    path: '/dashboard/documents',
-    icon: <FileText className="h-5 w-5" />
   },
   {
     name: 'Paramètres',

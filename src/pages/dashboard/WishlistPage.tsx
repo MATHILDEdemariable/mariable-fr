@@ -1,9 +1,10 @@
+
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { MapPin, Euro, Heart, Trash2, Mail, ExternalLink } from 'lucide-react';
+import { MapPin, Euro, Heart, Trash2, ExternalLink } from 'lucide-react';
 import { Database } from '@/integrations/supabase/types';
 import { toast } from '@/components/ui/use-toast';
 import { useNavigate } from 'react-router-dom';
@@ -108,21 +109,6 @@ const WishlistPage = () => {
     }
   };
 
-  const handleContactVendor = (vendor: Prestataire) => {
-    // Add code to contact vendor (email or direct link)
-    if (vendor.email) {
-      window.location.href = `mailto:${vendor.email}?subject=Question%20concernant%20votre%20service%20de%20mariage`;
-    } else if (vendor.site_web) {
-      window.open(vendor.site_web, '_blank', 'noopener,noreferrer');
-    } else {
-      toast({
-        title: "Information manquante",
-        description: "Aucune information de contact disponible pour ce prestataire.",
-        variant: "destructive"
-      });
-    }
-  };
-
   const handleViewVendor = (vendorSlug: string) => {
     navigate(`/prestataire/${vendorSlug}`);
   };
@@ -211,11 +197,11 @@ const WishlistPage = () => {
                   <CardFooter className="px-4 pb-4 pt-0 flex flex-col gap-2">
                     <div className="flex gap-2 w-full">
                       <Button 
-                        onClick={() => item.vendor && handleContactVendor(item.vendor)}
+                        onClick={() => item.vendor && handleViewVendor(item.vendor.slug)}
                         className="flex-1 bg-wedding-olive hover:bg-wedding-olive/90"
                         disabled={!item.vendor}
                       >
-                        <Mail className="h-4 w-4 mr-1" /> Contacter
+                        <ExternalLink className="h-4 w-4 mr-1" /> Contacter
                       </Button>
                       
                       <Button 
