@@ -77,13 +77,7 @@ function Menus({ onClick }: { onClick?: () => void }) {
             to="/about/temoignages"
             onClick={onClick}
           />
-        </HeaderDropdownMenu>
-      </HeaderDropdown>
-
-      {/* Contact Dropdown */}
-      <HeaderDropdown label="Contact">
-        <HeaderDropdownMenu>
-          <HeaderDropdownItem
+                    <HeaderDropdownItem
             label="Nous contacter"
             description="Discutez avec notre équipe pour toutes vos questions"
             to="/contact/nous-contacter"
@@ -96,6 +90,7 @@ function Menus({ onClick }: { onClick?: () => void }) {
             onClick={onClick}
           />
         </HeaderDropdownMenu>
+        
       </HeaderDropdown>
 
       {/* User Menu */}
