@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useSearchParams, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -41,8 +42,8 @@ import {
 import RdvForm from "@/components/forms/RdvForm";
 import ContactForm from "@/components/forms/ContactForm";
 
-// Import the Prestataire type
-import { Prestataire } from "@/components/admin/types";
+// Import the Prestataire type and PrestatairePhoto
+import { Prestataire, PrestatairePhoto } from "@/components/admin/types";
 import { PrestataireRow } from "@/components/wedding-day/utils";
 
 type VendorsTrackingPreprod =
