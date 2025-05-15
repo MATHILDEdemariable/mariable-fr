@@ -1,9 +1,12 @@
+
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Session } from "@supabase/supabase-js";
 import PrestatairesAdmin from "@/components/admin/FormPrestataires";
 import { Database } from "@/integrations/supabase/types";
+import { toast } from "sonner";
+import { Toaster } from "@/components/ui/toaster";
 
 type SupabaseAdminUser = Database["public"]["Tables"]["admin_users"]["Row"];
 
@@ -11,6 +14,7 @@ const AdminPrestataires = () => {
   const navigate = useNavigate();
   const [session, setSession] = useState<Session | null>(null);
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null); 
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const {
@@ -21,6 +25,7 @@ const AdminPrestataires = () => {
         checkIfAdmin(newSession.user.id);
       } else {
         setIsAdmin(false);
+        setIsLoading(false);
       }
     });
 
@@ -30,6 +35,7 @@ const AdminPrestataires = () => {
         checkIfAdmin(session.user.id);
       } else {
         setIsAdmin(false);
+        setIsLoading(false);
       }
     });
 
@@ -37,15 +43,28 @@ const AdminPrestataires = () => {
   }, [navigate]);
 
   const checkIfAdmin = async (userId: string) => {
-    const { data, error } = await supabase
-      .from("admin_users")
-      .select("id")
-      .eq("user_id", userId)
-      .single<SupabaseAdminUser>(); 
-    setIsAdmin(!error && !!data);
+    try {
+      const { data, error } = await supabase
+        .from("admin_users")
+        .select("id")
+        .eq("user_id", userId)
+        .single<SupabaseAdminUser>();
+      
+      setIsAdmin(!error && !!data);
+      setIsLoading(false);
+      
+      if (error || !data) {
+        toast.error("Vous n'avez pas les droits administrateur");
+      }
+    } catch (err) {
+      console.error("Erreur lors de la vérification des droits admin:", err);
+      setIsAdmin(false);
+      setIsLoading(false);
+      toast.error("Une erreur est survenue lors de la vérification de vos droits");
+    }
   };
 
-  if (isAdmin === null) {
+  if (isLoading) {
     return (
       <div className="flex justify-center items-center h-screen">
         <p>Chargement...</p>
@@ -56,17 +75,17 @@ const AdminPrestataires = () => {
   return (
     <div className="min-h-screen flex items-center justify-center px-4">
       {isAdmin ? (
-        <div className="w-full max-w-6xl">
-          <h1 className="text-2xl font-bold mb-4 text-center mt-12">Admin Prestataires</h1>
-          <p className="text-lg text-center mb-4">
-            Bienvenue dans l'interface d'administration des prestataires.
+        <div className="w-full max-w-7xl">
+          <h1 className="text-2xl font-bold mb-4 text-center mt-12">Administration des Prestataires</h1>
+          <p className="text-lg text-center mb-6">
+            Gérez votre base de prestataires depuis cette interface.
           </p>
           <PrestatairesAdmin />
+          <Toaster />
         </div>
       ) : (
-        <div className="text-center">
-          <h2 className="text-xl font-semibold">Accès restreint</h2>
-          {session?.user?.id}
+        <div className="text-center p-8 border rounded-lg shadow-md">
+          <h2 className="text-xl font-semibold mb-4">Accès restreint</h2>
           <p className="text-muted-foreground">
             Vous devez être connecté avec un compte administrateur pour accéder à cette page.
           </p>
