@@ -26,7 +26,7 @@ import { toast } from 'sonner';
 import { Switch } from '@/components/ui/switch';
 import { Constants } from '@/integrations/supabase/types';
 import { Separator } from '@/components/ui/separator';
-import { slugify } from '@/utils/slugify';
+import slugify from '@/utils/slugify';
 
 interface EditFormProps {
   isOpen: boolean;
@@ -170,6 +170,13 @@ const PrestataireEditForm: React.FC<EditFormProps> = ({
         if (error) throw error;
         toast.success('Prestataire mis à jour avec succès');
       } else {
+        // Create new prestataire - ensure required fields are present
+        if (!submissionData.nom) {
+          toast.error('Le nom du prestataire est requis');
+          setIsSubmitting(false);
+          return;
+        }
+        
         // Create new prestataire
         const { error } = await supabase
           .from('prestataires_rows')
