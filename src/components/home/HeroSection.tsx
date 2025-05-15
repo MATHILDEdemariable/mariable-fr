@@ -41,7 +41,7 @@ const HeroSection = () => {
     <section className="relative min-h-[40vh] sm:min-h-[30vh] flex items-center">
       <div className="absolute inset-0 w-full h-full overflow-hidden z-0">
         <img
-          src="/lovable-uploads/977ff726-5f78-4cbc-bf10-dbf0bbd10ab7.png"
+          src="/lovable-uploads/9b1d88ec-ed12-4818-ba94-bf11f036a875.png"
           alt="Couple de mariés célébrant leur union"
           className="absolute min-w-full min-h-full object-cover"
           style={{ objectPosition: "center bottom" }}

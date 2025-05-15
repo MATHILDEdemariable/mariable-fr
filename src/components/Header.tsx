@@ -33,7 +33,7 @@ function Menus({ onClick }: { onClick?: () => void }) {
       <Link to="/recherche" className="pl-4 flex items-center gap-2">
         <span className="font-medium">Trouver vos prestataires</span>
       </Link>
-      <HeaderDropdown label="Simplifer votre organisation" >
+      <HeaderDropdown label="Simplifier votre organisation" >
         <HeaderDropdownMenu>
           <HeaderDropdownItem
             label="Conseils personnalisés"
