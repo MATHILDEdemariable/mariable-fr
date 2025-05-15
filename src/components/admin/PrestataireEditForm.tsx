@@ -20,7 +20,7 @@ import {
   SelectValue
 } from '@/components/ui/select';
 import { supabase } from '@/integrations/supabase/client';
-import { Prestataire } from './types';
+import { Prestataire, PrestataireInsert } from './types';
 import { toast } from '@/components/ui/use-toast';
 import { Switch } from '@/components/ui/switch';
 import { Constants } from '@/integrations/supabase/types';
@@ -165,9 +165,10 @@ const PrestataireEditForm: React.FC<EditFormProps> = ({
       }
       
       // Prepare submission data with proper types
-      const submissionData = {
+      const submissionData: PrestataireInsert = {
         ...formData,
-        styles: JSON.stringify(stylesList || [])
+        styles: JSON.stringify(stylesList || []),
+        nom: formData.nom // Explicitly include required field
       };
       
       if (prestataire) {
