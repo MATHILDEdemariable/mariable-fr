@@ -634,32 +634,6 @@ const SinglePrestataire = () => {
 
             <div className="w-full lg:w-80 space-y-4">
               <Card className="p-4">
-                <Button
-                  variant="outline"
-                  className="w-full"
-                  onClick={sendMessage}
-                >
-                  <MessageSquare className="mr-2 h-4 w-4" />
-                  Contacter
-                </Button>
-                <Dialog open={openContact} onOpenChange={setOpenContact}>
-                  <DialogTrigger asChild></DialogTrigger>
-                  <DialogContent className="max-w-[95%] md:max-w-[70%] md:max-h-[90vh] overflow-y-auto">
-                    <DialogHeader>
-                      <DialogTitle>
-                        Demande de contact avec {vendor.nom}
-                      </DialogTitle>
-                    </DialogHeader>
-                    <ContactForm
-                      prestataire={vendor}
-                      user={session ?? session}
-                      dialogClose={() => setOpenContact(false)}
-                    />
-                  </DialogContent>
-                </Dialog>
-              </Card>
-
-              <Card className="p-4">
                 <h3 className="text-lg font-medium mb-4">
                   Vérifier les disponibilités
                 </h3>
@@ -742,6 +716,29 @@ const SinglePrestataire = () => {
                     <span>{Math.round(prices.total)}€</span>
                   </div>
                 </div>
+                 <Button
+                  variant="outline"
+                  className="w-full mt-4"
+                  onClick={sendMessage}
+                >
+                  <MessageSquare className="mr-2 h-4 w-4" />
+                  Contacter
+                </Button>
+                <Dialog open={openContact} onOpenChange={setOpenContact}>
+                  <DialogTrigger asChild></DialogTrigger>
+                  <DialogContent className="max-w-[95%] md:max-w-[70%] md:max-h-[90vh] overflow-y-auto">
+                    <DialogHeader>
+                      <DialogTitle>
+                        Demande de contact avec {vendor.nom}
+                      </DialogTitle>
+                    </DialogHeader>
+                    <ContactForm
+                      prestataire={vendor}
+                      user={session ?? session}
+                      dialogClose={() => setOpenContact(false)}
+                    />
+                  </DialogContent>
+                </Dialog>
                 <Button
                   id="button-rdv"
                   className="w-full mt-4 bg-wedding-olive hover:bg-wedding-olive/90"
@@ -769,6 +766,7 @@ const SinglePrestataire = () => {
                   </DialogContent>
                 </Dialog>
               </Card>
+
             </div>
           </div>
         </div>
