@@ -316,14 +316,14 @@ const TrackingPage = () => {
 
   const cancelRdv = async () => {
     // vendor.id
-    if (!vendorId) return
+    if (!vendorId) return;
     const { data, error } = await supabase
       .from("vendors_tracking_preprod")
       .update({
         status: "annuler",
       })
       .eq("id", vendorId);
-    if(data){
+    if (data) {
       toast({
         description: "Rendez-vous annulé !",
         variant: "default",
@@ -335,7 +335,7 @@ const TrackingPage = () => {
         variant: "destructive",
       });
     }
-  }
+  };
 
   return (
     <div className="tracking-page max-w-[720px] mx-auto p-4 mt-8 border border-stone-300 rounded-lg shadow-md">
@@ -352,7 +352,21 @@ const TrackingPage = () => {
           marginBottom: "1rem",
         }}
       />
+
       {isLoading && <p className="text-center">Loading...</p>}
+
+      <div className="flex flex-row flex-wrap items-center justify-center gap-4 mb-4">
+        <a href="/">
+          <Badge className="bg-wedding-olive  text-white " color="green">
+            Accueil
+          </Badge>
+        </a>
+        {isUser && (
+          <a href="/dashboard">
+            <Badge className="bg-wedding-cream text-black">Dashboard</Badge>
+          </a>
+        )}
+      </div>
 
       {vendor && (
         <div className="text-center">
