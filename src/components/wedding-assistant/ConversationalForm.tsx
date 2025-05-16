@@ -76,7 +76,8 @@ const ConversationalForm: React.FC<Props> = ({ onComplete }) => {
       const [mainField, subField] = field.split('.');
       if (subField) {
         // Create a properly typed copy of the main field object
-        const mainFieldObject = { ...prev[mainField as keyof FormState] } as Record<string, any>;
+        const mainFieldKey = mainField as keyof FormState;
+        const mainFieldObject = { ...(prev[mainFieldKey] as Record<string, any>) };
         
         return {
           ...prev,
@@ -100,7 +101,7 @@ const ConversationalForm: React.FC<Props> = ({ onComplete }) => {
       if (mainField && subField) {
         const mainFieldKey = mainField as keyof FormState;
         // Create a properly typed copy of the main field object
-        const mainFieldObject = { ...(prev[mainFieldKey] as object) } as Record<string, any>;
+        const mainFieldObject = { ...(prev[mainFieldKey] as Record<string, any>) };
         
         // Safely access and copy the array
         const currentValues = [...(mainFieldObject[subField] || [])];
