@@ -22,11 +22,34 @@ interface FormStep {
   component: React.ReactNode;
 }
 
+// Define a more specific interface for our form state
+interface FormState {
+  couple: {
+    name1: string;
+    name2: string;
+    email: string;
+  };
+  preferences: {
+    style: string;
+    theme: string[];
+    colors: string[];
+    season: string;
+  };
+  budget: {
+    total: number;
+  };
+  timeline: {
+    weddingDate: string | null;
+    engagementLength: string;
+  };
+  additionalInfo: string;
+}
+
 const ConversationalForm: React.FC<Props> = ({ onComplete }) => {
   const { addBrief, setCurrentBrief } = useBriefContext();
   const [currentStep, setCurrentStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formState, setFormState] = useState({
+  const [formState, setFormState] = useState<FormState>({
     couple: {
       name1: '',
       name2: '',
@@ -34,15 +57,15 @@ const ConversationalForm: React.FC<Props> = ({ onComplete }) => {
     },
     preferences: {
       style: '',
-      theme: [] as string[],
-      colors: [] as string[],
+      theme: [],
+      colors: [],
       season: '',
     },
     budget: {
       total: 0,
     },
     timeline: {
-      weddingDate: null as string | null,
+      weddingDate: null,
       engagementLength: '',
     },
     additionalInfo: '',
@@ -55,7 +78,7 @@ const ConversationalForm: React.FC<Props> = ({ onComplete }) => {
         return {
           ...prev,
           [mainField]: {
-            ...prev[mainField as keyof typeof prev],
+            ...prev[mainField as keyof FormState],
             [subField]: value,
           },
         };
@@ -70,24 +93,30 @@ const ConversationalForm: React.FC<Props> = ({ onComplete }) => {
   const handleCheckboxChange = (field: string, value: string, checked: boolean) => {
     setFormState((prev) => {
       const [mainField, subField] = field.split('.');
-      const currentValues = [...prev[mainField as keyof typeof prev][subField as keyof typeof prev[keyof typeof prev]]];
       
-      if (checked) {
-        currentValues.push(value);
-      } else {
-        const index = currentValues.indexOf(value);
-        if (index > -1) {
-          currentValues.splice(index, 1);
+      if (mainField && subField) {
+        const mainFieldKey = mainField as keyof FormState;
+        const currentValues = [...(prev[mainFieldKey] as any)[subField]];
+        
+        if (checked) {
+          currentValues.push(value);
+        } else {
+          const index = currentValues.indexOf(value);
+          if (index > -1) {
+            currentValues.splice(index, 1);
+          }
         }
+        
+        return {
+          ...prev,
+          [mainField]: {
+            ...prev[mainFieldKey],
+            [subField]: currentValues,
+          },
+        };
       }
       
-      return {
-        ...prev,
-        [mainField]: {
-          ...prev[mainField as keyof typeof prev],
-          [subField]: currentValues,
-        },
-      };
+      return prev;
     });
   };
 
