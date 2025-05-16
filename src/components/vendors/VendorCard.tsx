@@ -28,7 +28,7 @@ const VendorCard: React.FC<VendorCardProps> = ({
   const [isAddingToWishlist, setIsAddingToWishlist] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [isInWishlist, setIsInWishlist] = useState(false);
-  const [isPartner, setIsPartner] = useState(false);
+  const [isPartner, setIsPartner] = useState(vendor.partner);
 
   // Get the main image (first photo) with safety checks
   let mainImage = "/placeholder.svg";
@@ -95,18 +95,18 @@ const VendorCard: React.FC<VendorCardProps> = ({
 
     checkWishlistStatus();
 
-    const checkIsPartner = async () => {
-      const { data } = await supabase
-        .from("prestataires_meta")
-        .select("meta_value")
-        .eq("meta_key", "partner")
-        .eq("prestataire_id", vendor.id)
-        .maybeSingle();
+    // const checkIsPartner = async () => {
+    //   const { data } = await supabase
+    //     .from("prestataires_rows")
+    //     .select("meta_value")
+    //     .eq("meta_key", "partner")
+    //     .eq("prestataire_id", vendor.id)
+    //     .maybeSingle();
 
-      console.log(data);
-      setIsPartner(!!data);
-    };
-    checkIsPartner();
+    //   console.log(data);
+    //   setIsPartner(!!data);
+    // };
+    // checkIsPartner();
   }, [vendor.id]);
 
   const handleWishlistClick = async (e: React.MouseEvent) => {
