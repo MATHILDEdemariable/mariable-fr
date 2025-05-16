@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -16,6 +17,7 @@ import LoginFrame from "./pages/LoginFrame";
 import MoteurRecherche from "./pages/MoteurRecherche";
 import ImportAirtable from './pages/ImportAirtable';
 import TestAssistantVirtuel from "./pages/TestAssistantVirtuel";
+import LandingPage from "./pages/LandingPage";
 
 // Services pages
 import Prestataires from "./pages/services/Prestataires";
@@ -57,8 +59,6 @@ import TrackingPage from "./pages/prestataire/tracking";
 import ContactTracking from "./pages/prestataire/contact";
 
 
-
-
 // Composant pour scroller en haut de la page à chaque changement de route
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -84,6 +84,9 @@ const App = () => {
           <ScrollToTop />
           <Routes>
             <Route path="/" element={<Index />} />
+            
+            {/* Landing Page */}
+            <Route path="/landing" element={<LandingPage />} />
             
             {/* Professionals page */}
             <Route path="/professionnels" element={<Professionnels />} />
