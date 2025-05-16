@@ -15,6 +15,7 @@ import GuideMariableFrame from "./pages/GuideMariableFrame";
 import LoginFrame from "./pages/LoginFrame";
 import MoteurRecherche from "./pages/MoteurRecherche";
 import ImportAirtable from './pages/ImportAirtable';
+import TestAssistantVirtuel from "./pages/TestAssistantVirtuel";
 
 // Services pages
 import Prestataires from "./pages/services/Prestataires";
@@ -133,6 +134,7 @@ const App = () => {
             
             {/* Test Formulaire */}
             <Route path="/test-formulaire" element={<TestFormulaire />} />
+            <Route path="/test-assistant-virtuel" element={<TestAssistantVirtuel />} />
             
             {/* Import Airtable */}
             <Route path="/import-airtable" element={<ImportAirtable />} />
