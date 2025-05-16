@@ -75,10 +75,13 @@ const ConversationalForm: React.FC<Props> = ({ onComplete }) => {
     setFormState((prev) => {
       const [mainField, subField] = field.split('.');
       if (subField) {
+        // Create a properly typed copy of the main field object
+        const mainFieldObject = { ...prev[mainField as keyof FormState] };
+        
         return {
           ...prev,
           [mainField]: {
-            ...prev[mainField as keyof FormState],
+            ...mainFieldObject,
             [subField]: value,
           },
         };
@@ -96,7 +99,11 @@ const ConversationalForm: React.FC<Props> = ({ onComplete }) => {
       
       if (mainField && subField) {
         const mainFieldKey = mainField as keyof FormState;
-        const currentValues = [...(prev[mainFieldKey] as any)[subField]];
+        // Create a properly typed copy of the main field object
+        const mainFieldObject = { ...(prev[mainFieldKey] as object) };
+        
+        // Safely access and copy the array
+        const currentValues = [...((mainFieldObject as any)[subField] || [])];
         
         if (checked) {
           currentValues.push(value);
@@ -110,7 +117,7 @@ const ConversationalForm: React.FC<Props> = ({ onComplete }) => {
         return {
           ...prev,
           [mainField]: {
-            ...prev[mainFieldKey],
+            ...mainFieldObject,
             [subField]: currentValues,
           },
         };
@@ -124,9 +131,14 @@ const ConversationalForm: React.FC<Props> = ({ onComplete }) => {
     setIsSubmitting(true);
     
     try {
+      // Create a new brief object with proper typing
       const newBrief: WeddingBrief = {
-        ...formState,
         id: uuidv4(),
+        couple: { ...formState.couple },
+        preferences: { ...formState.preferences },
+        budget: { ...formState.budget },
+        timeline: { ...formState.timeline },
+        additionalInfo: formState.additionalInfo,
         createdAt: new Date(),
       };
       
