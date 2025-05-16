@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { Check, Layout, Calendar, DollarSign, Users, MessageCircle, Image } from 'lucide-react';
@@ -10,9 +10,35 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { useIsMobile } from '@/hooks/use-mobile';
 
+// Composant pour l'effet machine à écrire du CTA
+const TypewriterEffect = ({ text }: { text: string }) => {
+  const [displayText, setDisplayText] = useState('');
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isComplete, setIsComplete] = useState(false);
+
+  useEffect(() => {
+    if (currentIndex < text.length) {
+      const timeout = setTimeout(() => {
+        setDisplayText(prev => prev + text[currentIndex]);
+        setCurrentIndex(prev => prev + 1);
+      }, 50);
+      return () => clearTimeout(timeout);
+    } else {
+      setIsComplete(true);
+    }
+  }, [currentIndex, text]);
+
+  return (
+    <span className={`${isComplete ? "" : "border-r-2 border-white"}`}>
+      {displayText}
+    </span>
+  );
+};
+
 const LandingPage = () => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+  const [showTypewriter, setShowTypewriter] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -20,6 +46,11 @@ const LandingPage = () => {
 
   const handleCTAClick = () => {
     navigate('/register');
+  };
+
+  // Effet pour démarrer l'animation du bouton lors du survol
+  const handleButtonHover = () => {
+    setShowTypewriter(true);
   };
 
   return (
@@ -57,15 +88,16 @@ const LandingPage = () => {
               variant="wedding" 
               size={isMobile ? "default" : "lg"}
               onClick={handleCTAClick}
-              className="animate-pulse hover:animate-none transition-all duration-300 hover:scale-105 shadow-lg"
+              onMouseEnter={handleButtonHover}
+              className="transition-all duration-300 hover:scale-105 shadow-lg"
             >
-              Je découvre Mariable !
+              {showTypewriter ? <TypewriterEffect text="Je découvre Mariable !" /> : "Je découvre Mariable !"}
             </Button>
           </div>
         </section>
 
-        {/* Features Section */}
-        <section className="py-12 md:py-16 bg-wedding-cream">
+        {/* Features Section - Changé en blanc */}
+        <section className="py-12 md:py-16 bg-white">
           <div className="container mx-auto px-4">
             <h2 className="text-xl md:text-2xl lg:text-3xl font-serif mb-8 text-center text-wedding-black">
               Pourquoi choisir Mariable ?
@@ -226,8 +258,8 @@ const LandingPage = () => {
           </div>
         </section>
 
-        {/* Call To Action Section */}
-        <section className="py-12 md:py-16 bg-wedding-olive/10">
+        {/* Call To Action Section - Changé en blanc */}
+        <section className="py-12 md:py-16 bg-white">
           <div className="container mx-auto px-4 text-center">
             <h2 className="text-xl md:text-2xl lg:text-3xl font-serif mb-4 text-wedding-black">
               Lancez-vous aujourd'hui. Votre futur vous dira merci.
