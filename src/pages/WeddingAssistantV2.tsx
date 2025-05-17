@@ -10,6 +10,13 @@ import BudgetCalculator from '@/components/wedding-assistant/v2/BudgetCalculator
 import WeddingChatbot from '@/components/wedding-assistant/v2/WeddingChatbot';
 import { useIsMobile } from '@/hooks/use-mobile';
 
+// CSS to hide the header in the embedded Budget component
+const embedStyles = `
+  .budget-calculator-wrapper header {
+    display: none !important;
+  }
+`;
+
 const WeddingAssistantV2: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>('planning');
   const isMobile = useIsMobile();
@@ -19,6 +26,7 @@ const WeddingAssistantV2: React.FC = () => {
       <Helmet>
         <title>Assistant Virtuel | Mariable</title>
         <meta name="description" content="Assistant virtuel de planification de mariage - Mariable" />
+        <style>{embedStyles}</style>
       </Helmet>
 
       <Header />

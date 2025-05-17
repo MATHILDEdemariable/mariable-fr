@@ -7,17 +7,17 @@ interface BudgetCalculatorProps {
 }
 
 const BudgetCalculator: React.FC<BudgetCalculatorProps> = ({ showFullCalculator = false }) => {
-  // Si showFullCalculator est true, on affiche directement la calculatrice complète
-  // sans le header du site
+  // If showFullCalculator is true, we display the full calculator directly
+  // without the site header
   if (showFullCalculator) {
     return (
       <div className="budget-calculator-wrapper">
-        <Budget hideHeader={true} />
+        <Budget />
       </div>
     );
   }
 
-  // Code pour le mode d'affichage minimal (non utilisé dans ce cas)
+  // Code for minimal display mode (not used in this case)
   return null;
 };
 
