@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { QuizQuestion, UserAnswers, PlanningResult, QuizScoring } from './types';
 import { Button } from "@/components/ui/button";
@@ -13,6 +12,7 @@ import { useToast } from '@/components/ui/use-toast';
 import EmailCaptureForm from './EmailCaptureForm';
 import StepIndicator from './StepIndicator';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { Json } from '@/integrations/supabase/types';
 
 const WeddingQuiz: React.FC = () => {
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
@@ -64,12 +64,25 @@ const WeddingQuiz: React.FC = () => {
       if (scoringError) throw scoringError;
       
       if (questionsData && questionsData.length > 0) {
-        setQuestions(questionsData);
-        setScoringRules(scoringData || []);
-        setCurrentSection(questionsData[0].section);
+        // Convertir les données JSON en types appropriés
+        const formattedQuestions: QuizQuestion[] = questionsData.map(q => ({
+          ...q,
+          options: parseJsonArray<string>(q.options),
+          scores: parseJsonArray<number>(q.scores)
+        }));
+        
+        const formattedScoring: QuizScoring[] = scoringData?.map(s => ({
+          ...s,
+          objectives: parseJsonArray<string>(s.objectives),
+          categories: parseJsonArray<string>(s.categories)
+        })) || [];
+
+        setQuestions(formattedQuestions);
+        setScoringRules(formattedScoring);
+        setCurrentSection(formattedQuestions[0].section);
         
         // Extraire et définir les sections uniques dans l'ordre correct
-        const uniqueSections = Array.from(new Set(questionsData.map(q => q.section)));
+        const uniqueSections = Array.from(new Set(formattedQuestions.map(q => q.section)));
         setSections(uniqueSections);
         
         // Initialiser sections complétées
@@ -89,6 +102,15 @@ const WeddingQuiz: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // Fonction utilitaire pour analyser le JSON de manière sécurisée
+  const parseJsonArray = <T,>(jsonValue: Json): T[] => {
+    if (Array.isArray(jsonValue)) {
+      return jsonValue as T[];
+    }
+    // Si la valeur n'est pas un tableau, renvoyer un tableau vide
+    return [];
   };
 
   const handleAnswer = (questionId: string, scoreIndex: number) => {
