@@ -47,3 +47,12 @@ export interface QuizEmailCapture {
   created_at: string;
   updated_at: string;
 }
+
+// Ordre défini des sections pour le quiz
+export const SECTION_ORDER = [
+  "Organisation Générale",
+  "Réception",
+  "Cérémonie",
+  "Invités",
+  "Mariés"
+];

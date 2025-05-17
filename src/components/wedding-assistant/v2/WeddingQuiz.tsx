@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect } from 'react';
-import { QuizQuestion, UserAnswers, PlanningResult, QuizScoring } from './types';
+import { QuizQuestion, UserAnswers, PlanningResult, QuizScoring, SECTION_ORDER } from './types';
 import { Button } from "@/components/ui/button";
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
@@ -77,17 +78,22 @@ const WeddingQuiz: React.FC = () => {
           categories: parseJsonArray<string>(s.categories)
         })) || [];
 
-        setQuestions(formattedQuestions);
-        setScoringRules(formattedScoring);
-        setCurrentSection(formattedQuestions[0].section);
+        // Trier les questions selon l'ordre prédéfini des sections
+        const sortedQuestions = sortQuestionsBySectionOrder(formattedQuestions);
         
-        // Extraire et définir les sections uniques dans l'ordre correct
-        const uniqueSections = Array.from(new Set(formattedQuestions.map(q => q.section)));
-        setSections(uniqueSections);
+        setQuestions(sortedQuestions);
+        setScoringRules(formattedScoring);
+        setCurrentSection(sortedQuestions[0].section);
+        
+        // Utiliser l'ordre prédéfini des sections au lieu de l'extraire des questions
+        const availableSections = SECTION_ORDER.filter(section => 
+          sortedQuestions.some(q => q.section === section)
+        );
+        setSections(availableSections);
         
         // Initialiser sections complétées
         const initialSectionsCompleted: {[key: string]: boolean} = {};
-        uniqueSections.forEach(section => {
+        availableSections.forEach(section => {
           initialSectionsCompleted[section] = false;
         });
         setSectionsCompleted(initialSectionsCompleted);
@@ -102,6 +108,22 @@ const WeddingQuiz: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // Fonction pour trier les questions selon l'ordre prédéfini des sections
+  const sortQuestionsBySectionOrder = (questions: QuizQuestion[]): QuizQuestion[] => {
+    return [...questions].sort((a, b) => {
+      // D'abord, comparer selon l'ordre des sections
+      const sectionIndexA = SECTION_ORDER.indexOf(a.section as any);
+      const sectionIndexB = SECTION_ORDER.indexOf(b.section as any);
+      
+      if (sectionIndexA !== sectionIndexB) {
+        return sectionIndexA - sectionIndexB;
+      }
+      
+      // Ensuite, pour les questions de la même section, utiliser order_index
+      return a.order_index - b.order_index;
+    });
   };
 
   // Fonction utilitaire pour analyser le JSON de manière sécurisée

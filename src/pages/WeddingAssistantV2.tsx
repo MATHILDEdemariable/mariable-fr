@@ -27,10 +27,12 @@ const WeddingAssistantV2: React.FC = () => {
         <h1 className="text-3xl font-serif text-center mb-8">Assistant Virtuel de Planification</h1>
         
         <Tabs defaultValue="planning" value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className={`grid ${isMobile ? 'grid-cols-1 gap-2' : 'grid-cols-3'} mb-8 w-full max-w-2xl mx-auto`}>
-            <TabsTrigger value="planning">Planning</TabsTrigger>
-            <TabsTrigger value="budget">Budget personnalisé</TabsTrigger>
-            <TabsTrigger value="conseils">Conseils personnalisés</TabsTrigger>
+          <TabsList className="w-full max-w-2xl mx-auto mb-8">
+            <div className={`grid ${isMobile ? 'grid-cols-1 gap-2' : 'grid-cols-3'} w-full`}>
+              <TabsTrigger value="planning" className="w-full">Planning</TabsTrigger>
+              <TabsTrigger value="budget" className="w-full">Budget personnalisé</TabsTrigger>
+              <TabsTrigger value="conseils" className="w-full">Conseils personnalisés</TabsTrigger>
+            </div>
           </TabsList>
           
           <TabsContent value="planning">
