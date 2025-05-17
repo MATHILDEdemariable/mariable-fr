@@ -582,6 +582,36 @@ export type Database = {
         }
         Relationships: []
       }
+      quiz_email_captures: {
+        Row: {
+          created_at: string
+          email: string
+          full_name: string | null
+          id: string
+          quiz_score: number | null
+          quiz_status: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          full_name?: string | null
+          id?: string
+          quiz_score?: number | null
+          quiz_status?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          full_name?: string | null
+          id?: string
+          quiz_score?: number | null
+          quiz_status?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       quiz_questions: {
         Row: {
           created_at: string

@@ -35,3 +35,13 @@ export interface PlanningResult {
   objectives: string[];
   categories: string[];
 }
+
+export interface QuizEmailCapture {
+  id: string;
+  email: string;
+  full_name?: string;
+  quiz_score?: number;
+  quiz_status?: string;
+  created_at: string;
+  updated_at: string;
+}

@@ -4,13 +4,15 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Label } from "@/components/ui/label";
-import { Check, ArrowRight, RefreshCcw } from "lucide-react";
+import { Check, ArrowRight, RefreshCcw, Mail, User, LogIn } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { useNavigate } from 'react-router-dom';
 import { supabase } from "@/integrations/supabase/client";
 import { QuizQuestion, QuizScoring, UserAnswers, PlanningResult } from './types';
+import EmailCaptureForm from './EmailCaptureForm';
 
 const WeddingQuiz: React.FC = () => {
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
@@ -24,6 +26,9 @@ const WeddingQuiz: React.FC = () => {
   const [result, setResult] = useState<PlanningResult | null>(null);
   const [currentStep, setCurrentStep] = useState<number>(0);
   const [progress, setProgress] = useState<number>(0);
+  const [emailCaptured, setEmailCaptured] = useState<boolean>(false);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchQuizData();
@@ -131,7 +136,7 @@ const WeddingQuiz: React.FC = () => {
       
       if (resultData) {
         setResult(resultData);
-        setCurrentStep(1); // Move to results view
+        setCurrentStep(1); // Move to email capture view
       } else {
         setError('Une erreur est survenue lors du calcul des résultats.');
       }
@@ -148,11 +153,35 @@ const WeddingQuiz: React.FC = () => {
     setResult(null);
     setCurrentStep(0);
     setProgress(0);
+    setEmailCaptured(false);
+  };
+
+  const handleEmailCaptureComplete = () => {
+    setEmailCaptured(true);
+    setCurrentStep(2); // Move to results view
+  };
+
+  const handleGoToDashboard = async () => {
+    try {
+      const { data } = await supabase.auth.getSession();
+      if (data.session) {
+        navigate('/dashboard');
+      } else {
+        navigate('/register');
+      }
+    } catch (error) {
+      console.error("Erreur lors de la vérification de l'authentification:", error);
+      navigate('/register');
+    }
   };
 
   // Check if all questions are answered
   const allQuestionsAnswered = questions.length > 0 && 
     questions.every(q => userAnswers[q.id] !== undefined);
+
+  // Check if all questions in the current section are answered
+  const allCurrentSectionQuestionsAnswered = getSectionQuestions().length > 0 &&
+    getSectionQuestions().every(q => userAnswers[q.id] !== undefined);
 
   if (loading) {
     return <div className="flex justify-center items-center py-12">Chargement du quiz...</div>;
@@ -170,8 +199,15 @@ const WeddingQuiz: React.FC = () => {
     );
   }
 
-  // Results view
+  // Email capture view
   if (currentStep === 1 && result) {
+    return (
+      <EmailCaptureForm quizResult={result} onComplete={handleEmailCaptureComplete} />
+    );
+  }
+
+  // Results view
+  if (currentStep === 2 && result && emailCaptured) {
     return (
       <div className="space-y-6">
         <Alert className="bg-wedding-olive/10 border-wedding-olive">
@@ -209,7 +245,15 @@ const WeddingQuiz: React.FC = () => {
               ))}
             </div>
           </CardContent>
-          <CardFooter>
+          <CardFooter className="flex flex-col gap-3">
+            <Button 
+              onClick={handleGoToDashboard} 
+              className="w-full bg-wedding-olive hover:bg-wedding-olive/90"
+            >
+              <LogIn size={16} className="mr-2" />
+              Obtenir votre plan personnalisé détaillé et l'exporter
+            </Button>
+            
             <Button 
               onClick={resetQuiz} 
               variant="outline" 
@@ -242,9 +286,22 @@ const WeddingQuiz: React.FC = () => {
               variant={currentSection === section ? "default" : "outline"}
               size="sm"
               onClick={() => handleSectionChange(section)}
-              className="whitespace-nowrap"
+              className={`whitespace-nowrap flex items-center gap-2 ${
+                // Disable steps that come after the first incomplete section
+                index > 0 && !sections.slice(0, index).every(s => 
+                  questions.filter(q => q.section === s).every(q => userAnswers[q.id] !== undefined)
+                ) ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+              disabled={
+                index > 0 && !sections.slice(0, index).every(s => 
+                  questions.filter(q => q.section === s).every(q => userAnswers[q.id] !== undefined)
+                )
+              }
             >
-              {index + 1}. {section}
+              <div className="flex items-center justify-center w-6 h-6 rounded-full bg-wedding-olive text-white">
+                {index + 1}
+              </div>
+              <span>{section}</span>
             </Button>
           ))}
         </div>
@@ -294,6 +351,7 @@ const WeddingQuiz: React.FC = () => {
                 setCurrentSection(sections[currentIndex + 1]);
               }
             }}
+            disabled={!allCurrentSectionQuestionsAnswered}
           >
             Section suivante
             <ArrowRight size={16} className="ml-2" />
