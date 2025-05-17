@@ -1,370 +1,352 @@
 
 import React, { useState, useEffect } from 'react';
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { QuizQuestion, UserAnswers, PlanningResult, QuizScoring } from './types';
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { Label } from "@/components/ui/label";
-import { Check, ArrowRight, RefreshCcw, Mail, User, LogIn } from "lucide-react";
-import { Separator } from "@/components/ui/separator";
-import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from "@/integrations/supabase/client";
-import { QuizQuestion, QuizScoring, UserAnswers, PlanningResult } from './types';
+import { ArrowRight, CalendarIcon, ArrowLeft } from 'lucide-react';
+import { Separator } from '@/components/ui/separator';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Label } from '@/components/ui/label';
+import { Progress } from '@/components/ui/progress';
+import { useToast } from '@/components/ui/use-toast';
 import EmailCaptureForm from './EmailCaptureForm';
+import StepIndicator from './StepIndicator';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const WeddingQuiz: React.FC = () => {
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
   const [scoringRules, setScoringRules] = useState<QuizScoring[]>([]);
-  const [userAnswers, setUserAnswers] = useState<UserAnswers>({});
   const [currentSection, setCurrentSection] = useState<string>("");
-  const [sections, setSections] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [userAnswers, setUserAnswers] = useState<UserAnswers>({});
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
   const [result, setResult] = useState<PlanningResult | null>(null);
-  const [currentStep, setCurrentStep] = useState<number>(0);
-  const [progress, setProgress] = useState<number>(0);
-  const [emailCaptured, setEmailCaptured] = useState<boolean>(false);
-
+  const [showResult, setShowResult] = useState(false);
+  const [showEmailCapture, setShowEmailCapture] = useState(false);
   const navigate = useNavigate();
-
+  const { toast } = useToast();
+  const isMobile = useIsMobile();
+  
+  // Déterminer les sections distinctes pour l'indicateur d'étapes
+  const [sections, setSections] = useState<string[]>([]);
+  const [currentStep, setCurrentStep] = useState(1);
+  const [sectionsCompleted, setSectionsCompleted] = useState<{[key: string]: boolean}>({});
+  
   useEffect(() => {
     fetchQuizData();
   }, []);
-
+  
+  // Effet pour mettre à jour currentStep en fonction de la section actuelle
   useEffect(() => {
-    if (questions.length > 0) {
-      const uniqueSections = Array.from(new Set(questions.map(q => q.section)));
-      setSections(uniqueSections);
-      setCurrentSection(uniqueSections[0]);
+    if (currentSection && sections.length > 0) {
+      const sectionIndex = sections.indexOf(currentSection);
+      if (sectionIndex >= 0) {
+        setCurrentStep(sectionIndex + 1);
+      }
     }
-  }, [questions]);
-
-  useEffect(() => {
-    // Calculate progress
-    if (questions.length > 0) {
-      const answeredQuestions = Object.keys(userAnswers).length;
-      const progressValue = (answeredQuestions / questions.length) * 100;
-      setProgress(progressValue);
-    }
-  }, [userAnswers, questions]);
+  }, [currentSection, sections]);
 
   const fetchQuizData = async () => {
+    setIsLoading(true);
     try {
-      setLoading(true);
-      // Fetch questions
       const { data: questionsData, error: questionsError } = await supabase
         .from('quiz_questions')
         .select('*')
         .order('order_index', { ascending: true });
-
+      
       if (questionsError) throw questionsError;
-
-      // Fetch scoring rules
+      
       const { data: scoringData, error: scoringError } = await supabase
         .from('quiz_scoring')
-        .select('*')
-        .order('score_min', { ascending: true });
-
+        .select('*');
+      
       if (scoringError) throw scoringError;
-
-      // Transform data structure to match our types
-      const formattedQuestions = questionsData.map(q => ({
-        ...q,
-        options: q.options as string[],
-        scores: q.scores as number[]
-      }));
-
-      const formattedScoring = scoringData.map(s => ({
-        ...s,
-        objectives: s.objectives as string[],
-        categories: s.categories as string[]
-      }));
-
-      setQuestions(formattedQuestions);
-      setScoringRules(formattedScoring);
-      setLoading(false);
+      
+      if (questionsData && questionsData.length > 0) {
+        setQuestions(questionsData);
+        setScoringRules(scoringData || []);
+        setCurrentSection(questionsData[0].section);
+        
+        // Extraire et définir les sections uniques dans l'ordre correct
+        const uniqueSections = Array.from(new Set(questionsData.map(q => q.section)));
+        setSections(uniqueSections);
+        
+        // Initialiser sections complétées
+        const initialSectionsCompleted: {[key: string]: boolean} = {};
+        uniqueSections.forEach(section => {
+          initialSectionsCompleted[section] = false;
+        });
+        setSectionsCompleted(initialSectionsCompleted);
+      }
     } catch (error) {
       console.error('Error fetching quiz data:', error);
-      setError('Une erreur est survenue lors du chargement du quiz. Veuillez réessayer.');
-      setLoading(false);
+      toast({
+        title: "Erreur",
+        description: "Impossible de charger les questions du quiz.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const getSectionQuestions = () => {
-    return questions.filter(q => q.section === currentSection);
-  };
-
-  const handleAnswerChange = (questionId: string, score: number) => {
+  const handleAnswer = (questionId: string, scoreIndex: number) => {
     setUserAnswers(prev => ({
       ...prev,
-      [questionId]: score
+      [questionId]: scoreIndex
     }));
   };
 
-  const handleSectionChange = (section: string) => {
-    setCurrentSection(section);
+  const handleNext = () => {
+    // Si on est à la dernière question de la section actuelle
+    const currentSectionQuestions = questions.filter(q => q.section === currentSection);
+    const isLastQuestionInSection = 
+      currentSectionQuestions.findIndex(q => q.id === questions[currentQuestionIndex].id) === 
+      currentSectionQuestions.length - 1;
+    
+    if (isLastQuestionInSection) {
+      // Marquer cette section comme complétée
+      setSectionsCompleted(prev => ({
+        ...prev,
+        [currentSection]: true
+      }));
+      
+      // Trouver la prochaine section non complétée
+      const nextSectionIndex = sections.indexOf(currentSection) + 1;
+      
+      // Si nous avons atteint la dernière section
+      if (nextSectionIndex >= sections.length) {
+        calculateResult();
+        setShowEmailCapture(true);
+      } else {
+        // Passer à la première question de la section suivante
+        const nextSection = sections[nextSectionIndex];
+        setCurrentSection(nextSection);
+        const nextSectionFirstQuestionIndex = questions.findIndex(q => q.section === nextSection);
+        setCurrentQuestionIndex(nextSectionFirstQuestionIndex);
+      }
+    } else {
+      // Simplement passer à la question suivante dans la même section
+      setCurrentQuestionIndex(prevIndex => prevIndex + 1);
+    }
   };
 
-  const calculateTotalScore = () => {
-    return Object.values(userAnswers).reduce((total, score) => total + score, 0);
+  const handlePrevious = () => {
+    if (currentQuestionIndex > 0) {
+      const prevQuestion = questions[currentQuestionIndex - 1];
+      // Si la question précédente est d'une section différente
+      if (prevQuestion.section !== currentSection) {
+        setCurrentSection(prevQuestion.section);
+      }
+      setCurrentQuestionIndex(prevIndex => prevIndex - 1);
+    }
   };
 
-  const getResultForScore = (score: number) => {
-    const matchingRule = scoringRules.find(
-      rule => score >= rule.score_min && score <= rule.score_max
+  const calculateResult = () => {
+    // Calculer le score total
+    let totalScore = 0;
+    let answeredCount = 0;
+    
+    Object.entries(userAnswers).forEach(([questionId, answerIndex]) => {
+      const question = questions.find(q => q.id === questionId);
+      if (question && question.scores[answerIndex] !== undefined) {
+        totalScore += question.scores[answerIndex];
+        answeredCount++;
+      }
+    });
+    
+    // Normaliser le score si nécessaire
+    const normalizedScore = answeredCount > 0 ? Math.round(totalScore / answeredCount * 10) : 0;
+    
+    // Trouver la règle de scoring applicable
+    const applicableRule = scoringRules.find(rule => 
+      normalizedScore >= rule.score_min && normalizedScore <= rule.score_max
     );
     
-    if (!matchingRule) return null;
-    
-    return {
-      score,
-      status: matchingRule.status,
-      objectives: matchingRule.objectives,
-      categories: matchingRule.categories
-    };
-  };
-
-  const handleSubmit = () => {
-    setSubmitting(true);
-    
-    try {
-      const totalScore = calculateTotalScore();
-      const resultData = getResultForScore(totalScore);
-      
-      if (resultData) {
-        setResult(resultData);
-        setCurrentStep(1); // Move to email capture view
-      } else {
-        setError('Une erreur est survenue lors du calcul des résultats.');
-      }
-    } catch (err) {
-      console.error('Error submitting quiz:', err);
-      setError('Une erreur est survenue lors de la soumission du quiz.');
+    if (applicableRule) {
+      setResult({
+        score: normalizedScore,
+        status: applicableRule.status,
+        objectives: applicableRule.objectives,
+        categories: applicableRule.categories
+      });
+    } else {
+      setResult({
+        score: normalizedScore,
+        status: "Non défini",
+        objectives: ["Planifier votre mariage étape par étape"],
+        categories: ["Organisation générale"]
+      });
     }
-    
-    setSubmitting(false);
   };
 
-  const resetQuiz = () => {
-    setUserAnswers({});
-    setResult(null);
-    setCurrentStep(0);
-    setProgress(0);
-    setEmailCaptured(false);
+  const handleStepClick = (stepIndex: number) => {
+    // Seulement permettre de naviguer vers des sections déjà complétées
+    const targetSection = sections[stepIndex - 1];
+    if (sectionsCompleted[targetSection] || targetSection === currentSection) {
+      setCurrentSection(targetSection);
+      // Trouver l'index de la première question de cette section
+      const firstQuestionIndex = questions.findIndex(q => q.section === targetSection);
+      if (firstQuestionIndex >= 0) {
+        setCurrentQuestionIndex(firstQuestionIndex);
+      }
+    }
   };
 
   const handleEmailCaptureComplete = () => {
-    setEmailCaptured(true);
-    setCurrentStep(2); // Move to results view
+    setShowEmailCapture(false);
+    setShowResult(true);
   };
 
-  const handleGoToDashboard = async () => {
-    try {
-      const { data } = await supabase.auth.getSession();
-      if (data.session) {
-        navigate('/dashboard');
-      } else {
-        navigate('/register');
-      }
-    } catch (error) {
-      console.error("Erreur lors de la vérification de l'authentification:", error);
-      navigate('/register');
-    }
+  const handleRegisterClick = () => {
+    navigate('/register');
   };
 
-  // Check if all questions are answered
-  const allQuestionsAnswered = questions.length > 0 && 
-    questions.every(q => userAnswers[q.id] !== undefined);
-
-  // Check if all questions in the current section are answered
-  const allCurrentSectionQuestionsAnswered = getSectionQuestions().length > 0 &&
-    getSectionQuestions().every(q => userAnswers[q.id] !== undefined);
-
-  if (loading) {
-    return <div className="flex justify-center items-center py-12">Chargement du quiz...</div>;
-  }
-
-  if (error) {
+  if (isLoading || questions.length === 0) {
     return (
-      <Alert variant="destructive" className="mb-6">
-        <AlertTitle>Erreur</AlertTitle>
-        <AlertDescription>{error}</AlertDescription>
-        <Button variant="outline" onClick={fetchQuizData} className="mt-4">
-          Réessayer
-        </Button>
-      </Alert>
-    );
-  }
-
-  // Email capture view
-  if (currentStep === 1 && result) {
-    return (
-      <EmailCaptureForm quizResult={result} onComplete={handleEmailCaptureComplete} />
-    );
-  }
-
-  // Results view
-  if (currentStep === 2 && result && emailCaptured) {
-    return (
-      <div className="space-y-6">
-        <Alert className="bg-wedding-olive/10 border-wedding-olive">
-          <AlertTitle className="text-lg font-semibold">
-            Votre progression : {result.status}
-          </AlertTitle>
-          <AlertDescription>
-            Score total : {result.score} points
-          </AlertDescription>
-        </Alert>
-
-        <Card className="border-wedding-olive/30">
-          <CardHeader>
-            <CardTitle>Votre plan personnalisé</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <h3 className="font-medium text-lg">Objectifs prioritaires :</h3>
-            <ul className="space-y-2">
-              {result.objectives.map((objective, index) => (
-                <li key={index} className="flex items-start gap-2">
-                  <Check size={18} className="text-wedding-olive mt-1 flex-shrink-0" />
-                  <span>{objective}</span>
-                </li>
-              ))}
-            </ul>
-            
-            <Separator className="my-4" />
-            
-            <h3 className="font-medium text-lg">Catégories à prioriser :</h3>
-            <div className="flex flex-wrap gap-2 mt-2">
-              {result.categories.map((category, index) => (
-                <Badge key={index} variant="outline" className="bg-wedding-cream">
-                  {category}
-                </Badge>
-              ))}
-            </div>
-          </CardContent>
-          <CardFooter className="flex flex-col gap-3">
-            <Button 
-              onClick={handleGoToDashboard} 
-              className="w-full bg-wedding-olive hover:bg-wedding-olive/90"
-            >
-              <LogIn size={16} className="mr-2" />
-              Obtenir votre plan personnalisé détaillé et l'exporter
-            </Button>
-            
-            <Button 
-              onClick={resetQuiz} 
-              variant="outline" 
-              className="w-full"
-            >
-              <RefreshCcw size={16} className="mr-2" />
-              Recommencer le quiz
-            </Button>
-          </CardFooter>
-        </Card>
+      <div className="py-8 text-center">
+        <p>Chargement du questionnaire...</p>
       </div>
     );
   }
 
-  // Quiz view
-  return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="text-xl font-serif mb-4">Évaluez l'avancement de votre mariage</h2>
-        <p className="text-muted-foreground mb-6">
-          Répondez aux questions suivantes pour obtenir un plan personnalisé.
-        </p>
-        
-        <Progress value={progress} className="h-2 mb-4" />
-        
-        <div className="flex gap-2 overflow-x-auto py-2 mb-6">
-          {sections.map((section, index) => (
-            <Button
-              key={section}
-              variant={currentSection === section ? "default" : "outline"}
-              size="sm"
-              onClick={() => handleSectionChange(section)}
-              className={`whitespace-nowrap flex items-center gap-2 ${
-                // Disable steps that come after the first incomplete section
-                index > 0 && !sections.slice(0, index).every(s => 
-                  questions.filter(q => q.section === s).every(q => userAnswers[q.id] !== undefined)
-                ) ? "opacity-50 cursor-not-allowed" : ""
-              }`}
-              disabled={
-                index > 0 && !sections.slice(0, index).every(s => 
-                  questions.filter(q => q.section === s).every(q => userAnswers[q.id] !== undefined)
-                )
-              }
-            >
-              <div className="flex items-center justify-center w-6 h-6 rounded-full bg-wedding-olive text-white">
-                {index + 1}
+  if (showEmailCapture && result) {
+    return <EmailCaptureForm quizResult={result} onComplete={handleEmailCaptureComplete} />;
+  }
+
+  if (showResult && result) {
+    return (
+      <div className="max-w-2xl mx-auto py-8 space-y-8">
+        <div className="text-center mb-6">
+          <h2 className="text-2xl font-serif mb-2">Votre niveau de préparation</h2>
+          <div className="inline-block bg-wedding-cream px-4 py-2 rounded-md">
+            <p className="text-xl font-semibold">{result.status}</p>
+          </div>
+          <div className="mt-4">
+            <p className="text-sm text-muted-foreground">Score: {result.score}/10</p>
+          </div>
+        </div>
+
+        <div className="space-y-6">
+          <h3 className="text-xl font-serif">Objectifs recommandés</h3>
+          <ul className="space-y-2">
+            {result.objectives.map((objective, index) => (
+              <li key={index} className="flex items-start gap-2">
+                <div className="h-6 w-6 rounded-full bg-wedding-olive text-white flex items-center justify-center flex-shrink-0 mt-0.5">
+                  {index + 1}
+                </div>
+                <span>{objective}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <Separator />
+
+        <div className="space-y-6">
+          <h3 className="text-xl font-serif">Catégories à prioriser</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {result.categories.map((category, index) => (
+              <div key={index} className="border rounded-md p-3 bg-wedding-light/50">
+                <p>{category}</p>
               </div>
-              <span>{section}</span>
-            </Button>
-          ))}
+            ))}
+          </div>
+        </div>
+
+        <div className="pt-6">
+          <Button 
+            onClick={handleRegisterClick}
+            className="w-full bg-wedding-olive hover:bg-wedding-olive/90 flex items-center justify-center gap-2"
+          >
+            <CalendarIcon size={18} />
+            Obtenir votre plan personnalisé détaillé et l'exporter
+            <ArrowRight size={16} />
+          </Button>
         </div>
       </div>
+    );
+  }
 
-      <div className="space-y-8">
-        {getSectionQuestions().map((question) => (
-          <div key={question.id} className="space-y-3">
-            <h3 className="font-medium">{question.question}</h3>
-            <RadioGroup
-              onValueChange={(value) => handleAnswerChange(question.id, parseInt(value))}
-              value={userAnswers[question.id]?.toString() || ""}
-            >
-              {question.options.map((option, index) => (
-                <div key={index} className="flex items-center space-x-2 py-1">
-                  <RadioGroupItem value={question.scores[index].toString()} id={`${question.id}-${index}`} />
-                  <Label htmlFor={`${question.id}-${index}`} className="cursor-pointer">
-                    {option}
-                  </Label>
-                </div>
-              ))}
-            </RadioGroup>
-            <Separator />
-          </div>
-        ))}
+  // Filtrer les questions pour la section actuelle
+  const currentSectionQuestions = questions.filter(q => q.section === currentSection);
+  const currentSectionQuestionIndex = currentSectionQuestions.findIndex(q => q.id === questions[currentQuestionIndex].id);
+  const currentQuestion = questions[currentQuestionIndex];
+
+  // Calculer le progrès global (basé sur toutes les questions)
+  const progressPercentage = ((currentQuestionIndex + 1) / questions.length) * 100;
+
+  return (
+    <div className="max-w-2xl mx-auto py-4 space-y-6">
+      {/* Indicateur d'étapes */}
+      <StepIndicator 
+        currentStep={currentStep}
+        totalSteps={sections.length}
+        stepNames={!isMobile ? sections : undefined}
+        onStepClick={handleStepClick}
+        allowNavigation={true}
+      />
+
+      {/* Titre de la section */}
+      <div className="text-center mb-2">
+        <h2 className="text-xl font-serif">{currentSection}</h2>
+        <p className="text-sm text-muted-foreground">
+          Question {currentSectionQuestionIndex + 1} sur {currentSectionQuestions.length}
+        </p>
       </div>
 
+      {/* Barre de progression globale */}
+      <Progress value={progressPercentage} className="h-2" />
+      
+      {/* Question actuelle */}
+      <div className="bg-wedding-light/50 p-6 rounded-lg shadow-sm">
+        <p className="text-lg mb-4">{currentQuestion.question}</p>
+        
+        <RadioGroup 
+          value={userAnswers[currentQuestion.id]?.toString() || ""} 
+          onValueChange={(value) => handleAnswer(currentQuestion.id, parseInt(value))}
+          className="space-y-3"
+        >
+          {currentQuestion.options.map((option, index) => (
+            <div key={index} className="flex items-center space-x-2">
+              <RadioGroupItem 
+                value={index.toString()} 
+                id={`option-${currentQuestion.id}-${index}`} 
+              />
+              <Label 
+                htmlFor={`option-${currentQuestion.id}-${index}`}
+                className="text-base"
+              >
+                {option}
+              </Label>
+            </div>
+          ))}
+        </RadioGroup>
+      </div>
+      
+      {/* Boutons navigation */}
       <div className="flex justify-between pt-4">
         <Button
+          type="button"
           variant="outline"
-          disabled={sections.indexOf(currentSection) === 0}
-          onClick={() => {
-            const currentIndex = sections.indexOf(currentSection);
-            if (currentIndex > 0) {
-              setCurrentSection(sections[currentIndex - 1]);
-            }
-          }}
+          onClick={handlePrevious}
+          disabled={currentQuestionIndex === 0}
+          className="flex items-center gap-2"
         >
-          Section précédente
+          <ArrowLeft size={16} />
+          Précédent
         </Button>
         
-        {sections.indexOf(currentSection) < sections.length - 1 ? (
-          <Button
-            onClick={() => {
-              const currentIndex = sections.indexOf(currentSection);
-              if (currentIndex < sections.length - 1) {
-                setCurrentSection(sections[currentIndex + 1]);
-              }
-            }}
-            disabled={!allCurrentSectionQuestionsAnswered}
-          >
-            Section suivante
-            <ArrowRight size={16} className="ml-2" />
-          </Button>
-        ) : (
-          <Button 
-            onClick={handleSubmit} 
-            disabled={!allQuestionsAnswered || submitting}
-          >
-            Obtenir mon plan
-            <ArrowRight size={16} className="ml-2" />
-          </Button>
-        )}
+        <Button
+          type="button"
+          onClick={handleNext}
+          disabled={userAnswers[currentQuestion.id] === undefined}
+          className="bg-wedding-olive hover:bg-wedding-olive/90 flex items-center gap-2"
+        >
+          {currentQuestionIndex === questions.length - 1 ? 'Terminer' : 'Suivant'}
+          <ArrowRight size={16} />
+        </Button>
       </div>
     </div>
   );

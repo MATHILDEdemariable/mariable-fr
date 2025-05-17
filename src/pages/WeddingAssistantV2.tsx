@@ -8,9 +8,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import WeddingQuiz from '@/components/wedding-assistant/v2/WeddingQuiz';
 import BudgetCalculator from '@/components/wedding-assistant/v2/BudgetCalculator';
 import WeddingChatbot from '@/components/wedding-assistant/v2/WeddingChatbot';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const WeddingAssistantV2: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>('planning');
+  const isMobile = useIsMobile();
 
   return (
     <>
@@ -25,7 +27,7 @@ const WeddingAssistantV2: React.FC = () => {
         <h1 className="text-3xl font-serif text-center mb-8">Assistant Virtuel de Planification</h1>
         
         <Tabs defaultValue="planning" value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid grid-cols-3 mb-8 w-full max-w-2xl mx-auto">
+          <TabsList className={`grid ${isMobile ? 'grid-cols-1 gap-2' : 'grid-cols-3'} mb-8 w-full max-w-2xl mx-auto`}>
             <TabsTrigger value="planning">Planning</TabsTrigger>
             <TabsTrigger value="budget">Budget personnalisé</TabsTrigger>
             <TabsTrigger value="conseils">Conseils personnalisés</TabsTrigger>
@@ -42,7 +44,7 @@ const WeddingAssistantV2: React.FC = () => {
           <TabsContent value="budget">
             <Card>
               <CardContent className="pt-6">
-                <BudgetCalculator />
+                <BudgetCalculator showFullCalculator={true} />
               </CardContent>
             </Card>
           </TabsContent>

@@ -6,8 +6,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Calculator, ArrowRight, Download } from 'lucide-react';
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/components/ui/use-toast";
+import Budget from '@/pages/services/Budget'; 
 
-const BudgetCalculator: React.FC = () => {
+interface BudgetCalculatorProps {
+  showFullCalculator?: boolean;
+}
+
+const BudgetCalculator: React.FC<BudgetCalculatorProps> = ({ showFullCalculator = false }) => {
   const navigate = useNavigate();
   const [redirecting, setRedirecting] = useState(false);
 
@@ -31,6 +36,12 @@ const BudgetCalculator: React.FC = () => {
     }
   };
 
+  // Si showFullCalculator est true, on affiche directement la calculatrice complète
+  if (showFullCalculator) {
+    return <Budget />;
+  }
+
+  // Sinon, on affiche les cartes d'information et les boutons
   return (
     <div className="space-y-8">
       <div className="max-w-3xl mx-auto">
