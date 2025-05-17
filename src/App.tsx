@@ -17,6 +17,7 @@ import LoginFrame from "./pages/LoginFrame";
 import MoteurRecherche from "./pages/MoteurRecherche";
 import ImportAirtable from './pages/ImportAirtable';
 import TestAssistantVirtuel from "./pages/TestAssistantVirtuel";
+import WeddingAssistantV2 from "./pages/WeddingAssistantV2";
 import LandingPage from "./pages/LandingPage";
 
 // Services pages
@@ -138,6 +139,7 @@ const App = () => {
             {/* Test Formulaire */}
             <Route path="/test-formulaire" element={<TestFormulaire />} />
             <Route path="/test-assistant-virtuel" element={<TestAssistantVirtuel />} />
+            <Route path="/assistant-v2" element={<WeddingAssistantV2 />} />
             
             {/* Import Airtable */}
             <Route path="/import-airtable" element={<ImportAirtable />} />

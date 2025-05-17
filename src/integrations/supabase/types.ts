@@ -582,6 +582,72 @@ export type Database = {
         }
         Relationships: []
       }
+      quiz_questions: {
+        Row: {
+          created_at: string
+          id: string
+          options: Json
+          order_index: number
+          question: string
+          scores: Json
+          section: Database["public"]["Enums"]["quiz_section"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          options?: Json
+          order_index?: number
+          question: string
+          scores?: Json
+          section: Database["public"]["Enums"]["quiz_section"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          options?: Json
+          order_index?: number
+          question?: string
+          scores?: Json
+          section?: Database["public"]["Enums"]["quiz_section"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      quiz_scoring: {
+        Row: {
+          categories: Json
+          created_at: string
+          id: string
+          objectives: Json
+          score_max: number
+          score_min: number
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          categories?: Json
+          created_at?: string
+          id?: string
+          objectives?: Json
+          score_max: number
+          score_min: number
+          status: string
+          updated_at?: string
+        }
+        Update: {
+          categories?: Json
+          created_at?: string
+          id?: string
+          objectives?: Json
+          score_max?: number
+          score_min?: number
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       todos_planification: {
         Row: {
           category: string | null
@@ -841,6 +907,36 @@ export type Database = {
           },
         ]
       }
+      wedding_faq: {
+        Row: {
+          answer: string
+          category: string
+          created_at: string
+          id: string
+          question: string
+          tags: Json
+          updated_at: string
+        }
+        Insert: {
+          answer: string
+          category: string
+          created_at?: string
+          id?: string
+          question: string
+          tags?: Json
+          updated_at?: string
+        }
+        Update: {
+          answer?: string
+          category?: string
+          created_at?: string
+          id?: string
+          question?: string
+          tags?: Json
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -860,6 +956,12 @@ export type Database = {
         | "Fleuriste"
         | "Robe de mariée"
         | "Décoration"
+      quiz_section:
+        | "Organisation Générale"
+        | "Réception"
+        | "Cérémonie"
+        | "Invités"
+        | "Mariés"
       region_france:
         | "Île-de-France"
         | "Auvergne-Rhône-Alpes"
@@ -1008,6 +1110,13 @@ export const Constants = {
         "Fleuriste",
         "Robe de mariée",
         "Décoration",
+      ],
+      quiz_section: [
+        "Organisation Générale",
+        "Réception",
+        "Cérémonie",
+        "Invités",
+        "Mariés",
       ],
       region_france: [
         "Île-de-France",
