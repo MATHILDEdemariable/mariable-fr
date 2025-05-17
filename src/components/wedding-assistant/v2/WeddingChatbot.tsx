@@ -48,7 +48,7 @@ const WeddingChatbot: React.FC = () => {
       const filtered = faqList.filter(
         faq => 
           faq.question.toLowerCase().includes(lowercaseSearch) ||
-          faq.tags.some(tag => tag.toLowerCase().includes(lowercaseSearch))
+          (Array.isArray(faq.tags) && faq.tags.some((tag: string) => tag.toLowerCase().includes(lowercaseSearch)))
       );
       setFilteredFAQ(filtered);
     } else {
@@ -67,7 +67,7 @@ const WeddingChatbot: React.FC = () => {
       
       const faqData = data.map(item => ({
         ...item,
-        tags: item.tags as string[]
+        tags: Array.isArray(item.tags) ? item.tags : []
       }));
       
       setFaqList(faqData);
@@ -106,7 +106,7 @@ const WeddingChatbot: React.FC = () => {
     const lowercaseInput = input.toLowerCase();
     const matchingFAQ = faqList.find(faq => 
       faq.question.toLowerCase().includes(lowercaseInput) ||
-      faq.tags.some(tag => tag.toLowerCase().includes(lowercaseInput))
+      (Array.isArray(faq.tags) && faq.tags.some((tag: string) => tag.toLowerCase().includes(lowercaseInput)))
     );
     
     // Prepare bot response

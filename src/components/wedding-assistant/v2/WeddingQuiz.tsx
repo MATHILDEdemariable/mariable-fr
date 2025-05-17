@@ -214,8 +214,8 @@ const WeddingQuiz: React.FC = () => {
               onClick={resetQuiz} 
               variant="outline" 
               className="w-full"
-              startIcon={<RefreshCcw size={16} />}
             >
+              <RefreshCcw size={16} className="mr-2" />
               Recommencer le quiz
             </Button>
           </CardFooter>

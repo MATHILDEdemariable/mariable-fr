@@ -26,7 +26,7 @@ export interface WeddingFAQ {
   question: string;
   answer: string;
   category: string;
-  tags: string[];
+  tags: string[] | any; // Updated to handle Json type from Supabase
 }
 
 export interface PlanningResult {
