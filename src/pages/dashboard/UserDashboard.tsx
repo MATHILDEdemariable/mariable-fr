@@ -5,7 +5,6 @@ import { Helmet } from 'react-helmet-async';
 import { supabase } from '@/integrations/supabase/client';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import ProjectSummary from '@/components/dashboard/ProjectSummary';
-import PrestairesList from '@/components/dashboard/VendorTracking';
 import TasksList from '@/components/dashboard/TasksList';
 import CoordinationPage from './CoordinationPage';
 import WishlistPage from './WishlistPage';
@@ -47,7 +46,6 @@ const UserDashboard: React.FC = () => {
           <Route index element={<ProjectSummary />} />
           <Route path="tasks" element={<TasksList />} />
           <Route path="budget" element={<BudgetPage />} />
-          <Route path="prestataires" element={<PrestairesList />} />
           <Route path="vendor-tracking" element={<VendorTrackingPage />} />
           <Route path="wishlist" element={<WishlistPage />} />
           <Route path="coordination" element={<CoordinationPage />} />

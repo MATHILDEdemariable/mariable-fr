@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -9,6 +9,7 @@ import WeddingQuiz from '@/components/wedding-assistant/v2/WeddingQuiz';
 import BudgetCalculator from '@/components/wedding-assistant/v2/BudgetCalculator';
 import WeddingChatbot from '@/components/wedding-assistant/v2/WeddingChatbot';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useLocation } from 'react-router-dom';
 
 // CSS to hide the header in the embedded Budget component
 const embedStyles = `
@@ -20,6 +21,16 @@ const embedStyles = `
 const WeddingAssistantV2: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>('planning');
   const isMobile = useIsMobile();
+  const location = useLocation();
+
+  // Check URL parameters for direct tab access
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const tabParam = params.get('tab');
+    if (tabParam && ['planning', 'budget', 'conseils'].includes(tabParam)) {
+      setActiveTab(tabParam);
+    }
+  }, [location]);
 
   return (
     <>

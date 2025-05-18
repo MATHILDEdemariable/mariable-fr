@@ -263,6 +263,39 @@ const DetailedBudget: React.FC = () => {
     updateBudgetMutation.mutate();
   };
 
+  // Export budget as CSV
+  const exportToCSV = () => {
+    // Create CSV header
+    let csvContent = "Catégorie,Élément,Budget Estimé (€),Coût Réel (€),Acompte Versé (€),Reste à Payer (€)\n";
+    
+    // Add data for each category and item
+    categories.forEach(category => {
+      // Add category totals
+      csvContent += `${category.name},TOTAL,${category.totalEstimated.toFixed(2)},${category.totalActual.toFixed(2)},${category.totalDeposit.toFixed(2)},${category.totalRemaining.toFixed(2)}\n`;
+      
+      // Add each item in the category
+      category.items.forEach(item => {
+        csvContent += `${category.name},${item.name},${item.estimated.toFixed(2)},${item.actual.toFixed(2)},${item.deposit.toFixed(2)},${item.remaining.toFixed(2)}\n`;
+      });
+    });
+    
+    // Add overall totals
+    csvContent += `TOTAL,,${totalEstimated.toFixed(2)},${totalActual.toFixed(2)},${totalDeposit.toFixed(2)},${totalRemaining.toFixed(2)}\n`;
+    
+    // Create and download the CSV file
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    
+    link.setAttribute('href', url);
+    link.setAttribute('download', 'budget_mariage.csv');
+    link.style.visibility = 'hidden';
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   if (isLoading) {
     return (
       <div className="text-center py-12">
@@ -275,23 +308,32 @@ const DetailedBudget: React.FC = () => {
     <Card>
       <CardHeader className="flex flex-row items-center justify-between bg-white sticky top-0 z-10">
         <CardTitle className="text-xl font-serif">Budget Détaillé</CardTitle>
-        <Button 
-          onClick={handleSaveBudget} 
-          className="bg-wedding-olive hover:bg-wedding-olive/90"
-          disabled={updateBudgetMutation.isPending}
-        >
-          {updateBudgetMutation.isPending ? (
-            <span className="flex items-center">
-              <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-b-transparent"></span>
-              Enregistrement...
-            </span>
-          ) : (
-            <span className="flex items-center">
-              <Save className="mr-2 h-4 w-4" />
-              Enregistrer
-            </span>
-          )}
-        </Button>
+        <div className="flex gap-2">
+          <Button 
+            onClick={exportToCSV}
+            variant="outline"
+            className="text-wedding-olive border-wedding-olive hover:bg-wedding-olive/10"
+          >
+            Exporter CSV
+          </Button>
+          <Button 
+            onClick={handleSaveBudget} 
+            className="bg-wedding-olive hover:bg-wedding-olive/90"
+            disabled={updateBudgetMutation.isPending}
+          >
+            {updateBudgetMutation.isPending ? (
+              <span className="flex items-center">
+                <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-b-transparent"></span>
+                Enregistrement...
+              </span>
+            ) : (
+              <span className="flex items-center">
+                <Save className="mr-2 h-4 w-4" />
+                Enregistrer
+              </span>
+            )}
+          </Button>
+        </div>
       </CardHeader>
       <CardContent className="px-0">
         <div className="overflow-x-auto">
