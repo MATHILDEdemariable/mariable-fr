@@ -142,7 +142,8 @@ const ProjectSummary: React.FC = () => {
           .update({
             wedding_date: weddingDate || null,
             guest_count: guestCount ? parseInt(guestCount) : null,
-            updated_at: new Date()
+            // Fix here: Change 'new Date()' to a string using ISO format
+            updated_at: new Date().toISOString()
           })
           .eq('id', existingProject.id);
           
