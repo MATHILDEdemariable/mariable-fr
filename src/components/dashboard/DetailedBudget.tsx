@@ -197,8 +197,10 @@ const DetailedBudget: React.FC = () => {
     if (field === 'name') {
       item.name = value as string;
     } else {
+      // Fix: Convert string to number safely
       const numValue = typeof value === 'string' ? parseFloat(value) || 0 : value;
-      item[field] = numValue as number;
+      // Fix: Use type assertion to handle the TypeScript error
+      (item[field] as number) = numValue;
       
       // Auto-calculate remaining amount
       if (field === 'estimated' || field === 'actual' || field === 'deposit') {
