@@ -2,15 +2,20 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { Check, Layout, Calendar, DollarSign, Users, MessageCircle, Image } from 'lucide-react';
+import { Layout, Calendar, Calculator, Briefcase, Folder, ArrowRight, CheckCircle, XCircle, HelpCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { 
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Card, CardContent } from '@/components/ui/card';
 
-// Composant pour l'effet machine à écrire du CTA
+// Composant pour l'effet machine à écrire du titre principal
 const TypewriterEffect = ({ text }: { text: string }) => {
   const [displayText, setDisplayText] = useState('');
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -35,23 +40,123 @@ const TypewriterEffect = ({ text }: { text: string }) => {
   );
 };
 
+const FeatureCard = ({ icon: Icon, title, description }: { icon: React.ElementType, title: string, description: string }) => (
+  <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 transition-all hover:shadow-md">
+    <div className="w-12 h-12 bg-wedding-olive/10 rounded-full flex items-center justify-center mb-4">
+      <Icon className="h-6 w-6 text-wedding-olive" />
+    </div>
+    <h3 className="font-serif text-lg font-medium mb-2">{title}</h3>
+    <p className="text-muted-foreground text-sm">{description}</p>
+  </div>
+);
+
+const TestimonialCard = ({ name, role, content, imageSrc }: { name: string, role: string, content: string, imageSrc?: string }) => (
+  <Card className="overflow-hidden border-wedding-olive/10">
+    <CardContent className="p-6">
+      <div className="flex items-start space-x-4">
+        {imageSrc && (
+          <div className="flex-shrink-0">
+            <div className="w-14 h-14 rounded-full overflow-hidden bg-wedding-light">
+              <img src={imageSrc} alt={name} className="w-full h-full object-cover" />
+            </div>
+          </div>
+        )}
+        <div>
+          <p className="text-sm italic mb-3">"{content}"</p>
+          <p className="font-medium text-sm">{name}</p>
+          <p className="text-xs text-muted-foreground">{role}</p>
+        </div>
+      </div>
+    </CardContent>
+  </Card>
+);
+
+const StatCard = ({ number, text, subtext }: { number: string, text: string, subtext?: string }) => (
+  <div className="bg-wedding-light p-5 rounded-lg text-center">
+    <p className="text-3xl sm:text-4xl font-serif text-wedding-olive mb-1">{number}</p>
+    <p className="font-medium text-sm">{text}</p>
+    {subtext && <p className="text-xs text-muted-foreground mt-1">{subtext}</p>}
+  </div>
+);
+
 const LandingPage = () => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
-  const [showTypewriter, setShowTypewriter] = useState(false);
+  const [showAnimation, setShowAnimation] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    setShowAnimation(true);
   }, []);
 
   const handleCTAClick = () => {
     navigate('/register');
   };
 
-  // Effet pour démarrer l'animation du bouton lors du survol
-  const handleButtonHover = () => {
-    setShowTypewriter(true);
-  };
+  // Données pour les différentes sections
+  const features = [
+    {
+      icon: Layout,
+      title: "Tableau de bord",
+      description: "Une vue d'ensemble intuitive pour suivre toutes les étapes de votre mariage."
+    },
+    {
+      icon: Calendar,
+      title: "Planning personnalisé",
+      description: "Un calendrier sur-mesure adapté à votre style, date et besoins spécifiques."
+    },
+    {
+      icon: Calculator,
+      title: "Budget estimatif en un clic",
+      description: "Créez et gérez facilement votre budget avec des estimations précises."
+    },
+    {
+      icon: Briefcase,
+      title: "Choix de prestataires",
+      description: "Accédez à une sélection rigoureuse de professionnels à votre écoute."
+    },
+    {
+      icon: Folder,
+      title: "Gestion Centralisée",
+      description: "Toutes vos réservations et informations regroupées en un seul endroit."
+    }
+  ];
+
+  const testimonials = [
+    {
+      name: "Sophie & Thomas",
+      role: "Mariés en Juin 2023",
+      content: "Mariable a transformé notre expérience d'organisation. Fini le stress et les tableaux Excel interminables!",
+      imageSrc: "/lovable-uploads/99fde439-7310-4090-9478-8c9244627554.png"
+    },
+    {
+      name: "Marie & Jean",
+      role: "Mariés en Septembre 2023",
+      content: "Nous avons trouvé des prestataires extraordinaires qui correspondaient parfaitement à nos attentes et notre budget.",
+      imageSrc: "/lovable-uploads/977ff726-5f78-4cbc-bf10-dbf0bbd10ab7.png"
+    },
+    {
+      name: "Lucie & David",
+      role: "Mariés en Mai 2024",
+      content: "Le planning personnalisé nous a guidés pas à pas. Je ne sais pas comment nous aurions fait sans Mariable.",
+      imageSrc: "/lovable-uploads/9f8c319a-9a98-4d4c-a886-79f9986a7dcd.png"
+    }
+  ];
+
+  const faqItems = [
+    {
+      question: "Comment fonctionne le dashboard utilisateur?",
+      answer: "Notre tableau de bord centralise toutes les informations essentielles pour votre mariage : planning personnalisé, budget, liste de tâches, et préstataires sélectionnés. Il est intuitif et accessible 24/7 depuis n'importe quel appareil."
+    },
+    {
+      question: "Comment contacter un prestataire ?",
+      answer: "Vous pouvez contacter directement les prestataires depuis votre tableau de bord ou via la page de recherche de prestataires. Un système de messagerie intégré vous permet d'échanger facilement avec eux et de conserver l'historique de vos conversations."
+    },
+    {
+      question: "Comment obtenir de l'aide personnalisé ?",
+      answer: "Notre équipe d'assistance est disponible par chat, email et téléphone pour répondre à toutes vos questions. Vous pouvez également accéder à nos guides détaillés et à notre assistant virtuel qui vous aidera à chaque étape de l'organisation de votre mariage."
+    }
+  ];
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
@@ -63,220 +168,153 @@ const LandingPage = () => {
       <Header />
 
       <main className="flex-grow">
-        {/* Hero Section */}
-        <section className="relative py-14 md:py-20 bg-white">
-          <div className="absolute inset-0 opacity-10 overflow-hidden z-0">
+        {/* Section 1: Hero Section */}
+        <section className="relative py-16 md:py-24 bg-wedding-black text-white">
+          <div className="absolute inset-0 opacity-40 overflow-hidden">
             <img
               src="/lovable-uploads/9b1d88ec-ed12-4818-ba94-bf11f036a875.png"
               alt="Couple de mariés"
               className="absolute min-w-full min-h-full object-cover object-center"
             />
           </div>
-          <div className="container relative z-10 mx-auto px-4 text-center">
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-serif mb-4 md:mb-6 text-wedding-black">
-              Mariez-vous sans stress. <br className="hidden sm:block" />
-              <span className="text-wedding-olive">Mariable s'occupe de tout.</span>
+          <div className="container mx-auto px-4 relative z-10 text-center">
+            <h1 className="text-2xl md:text-3xl lg:text-4xl font-serif mb-4 md:mb-6">
+              {showAnimation ? (
+                <TypewriterEffect text="Faciliter l'organisation de votre mariage" />
+              ) : (
+                "Faciliter l'organisation de votre mariage"
+              )}
             </h1>
-            <p className="text-base md:text-lg lg:text-xl mb-6 md:mb-8 max-w-2xl mx-auto text-wedding-black/80">
+            <p className="text-xl md:text-2xl mb-4 font-serif max-w-3xl mx-auto">
               Le premier assistant virtuel pour planifier votre mariage et vivre une organisation simple, rapide et agréable
             </p>
-            <p className="text-sm md:text-base mb-8 max-w-xl mx-auto text-wedding-black/70">
-              Respirez. Mariable est là pour transformer votre to-do-list infinie en un plan clair et personnalisé.
-              Adieu la complexité ou les conflits avec votre moitié.
+            <p className="mb-8 text-white/80 max-w-xl mx-auto">
+              Gagnez du temps, économisez de l'énergie, profitez pleinement de vos préparatifs.
             </p>
             <Button 
               variant="wedding" 
               size={isMobile ? "default" : "lg"}
               onClick={handleCTAClick}
-              onMouseEnter={handleButtonHover}
-              className="transition-all duration-300 hover:scale-105 shadow-lg"
+              className="shadow-lg hover:shadow-xl transition-all"
             >
-              {showTypewriter ? <TypewriterEffect text="Je découvre Mariable !" /> : "Je découvre Mariable !"}
+              Je découvre Mariable
             </Button>
           </div>
         </section>
 
-        {/* Features Section - Changé en blanc */}
-        <section className="py-12 md:py-16 bg-white">
+        {/* Section 2: Pourquoi Mariable */}
+        <section className="py-16 bg-white">
           <div className="container mx-auto px-4">
-            <h2 className="text-xl md:text-2xl lg:text-3xl font-serif mb-8 text-center text-wedding-black">
-              Pourquoi choisir Mariable ?
+            <h2 className="text-2xl md:text-3xl font-serif mb-10 text-center">
+              Pourquoi Mariable ?
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-              <div className="flex items-start gap-3 p-4">
-                <div className="mt-1 flex-shrink-0">
-                  <Check className="h-5 w-5 text-wedding-olive" />
-                </div>
-                <div>
-                  <p className="font-medium text-wedding-black">Gagnez du temps</p>
-                  <p className="text-sm text-wedding-black/70">Planning intelligent, centralisation des démarches, tout en un seul clic.</p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3 p-4">
-                <div className="mt-1 flex-shrink-0">
-                  <Check className="h-5 w-5 text-wedding-olive" />
-                </div>
-                <div>
-                  <p className="font-medium text-wedding-black">Simplifiez vos décisions</p>
-                  <p className="text-sm text-wedding-black/70">Sélection rapide de prestataires fiables adaptés à VOTRE style.</p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3 p-4">
-                <div className="mt-1 flex-shrink-0">
-                  <Check className="h-5 w-5 text-wedding-olive" />
-                </div>
-                <div>
-                  <p className="font-medium text-wedding-black">Soyez soutenus à chaque instant</p>
-                  <p className="text-sm text-wedding-black/70">Dispo 24/7, même pour vos petites angoisses à 2h du mat.</p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3 p-4">
-                <div className="mt-1 flex-shrink-0">
-                  <Check className="h-5 w-5 text-wedding-olive" />
-                </div>
-                <div>
-                  <p className="font-medium text-wedding-black">Économisez les services d'un wedding planner</p>
-                  <p className="text-sm text-wedding-black/70">Tous les avantages sans le budget conséquent.</p>
-                </div>
-              </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto mb-10">
+              <StatCard 
+                number="200+" 
+                text="heures nécessaires pour organiser un mariage" 
+                subtext="C'est 14 aller-retours Paris-New York en avion"
+              />
+              <StatCard 
+                number="77%" 
+                text="des couples ont vécu des tensions liées à l'organisation"
+              />
+              <StatCard 
+                number="1 sur 2" 
+                text="couples trouve difficile de trouver les prestataires adéquats"
+              />
+            </div>
+            <div className="text-center">
+              <Button 
+                variant="outline" 
+                className="border-wedding-olive text-wedding-olive hover:bg-wedding-olive/10"
+                onClick={handleCTAClick}
+              >
+                Ne vous perdez plus dans un flot d'informations — Mariable centralise tout pour vous
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
             </div>
           </div>
         </section>
 
-        {/* Application Overview Section */}
-        <section className="py-12 md:py-16 bg-white">
+        {/* Section 3: Ce que vous allez adorer */}
+        <section className="py-16 bg-wedding-light">
           <div className="container mx-auto px-4">
-            <h2 className="text-xl md:text-2xl lg:text-3xl font-serif mb-3 md:mb-5 text-center text-wedding-black">
-              Votre tableau de bord, votre nouveau meilleur ami
+            <h2 className="text-2xl md:text-3xl font-serif mb-10 text-center">
+              Ce que vous allez adorer
             </h2>
-            <p className="text-center text-wedding-black/80 mb-8 max-w-xl mx-auto">
-              Tout ce dont vous rêviez, sans le savoir. Mariable est:
-            </p>
-
-            <div className="overflow-auto max-w-4xl mx-auto">
-              <Table className="w-full">
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-1/3 font-serif text-wedding-black">Fonction</TableHead>
-                    <TableHead className="font-serif text-wedding-black">Ce que ça vous apporte</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  <TableRow>
-                    <TableCell className="font-medium">
-                      <div className="flex items-center gap-2">
-                        <Layout size={16} className="text-wedding-olive" />
-                        Tableau de bord
-                      </div>
-                    </TableCell>
-                    <TableCell>Une vue claire de tout votre mariage, en un clin d'œil.</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell className="font-medium">
-                      <div className="flex items-center gap-2">
-                        <Calendar size={16} className="text-wedding-olive" />
-                        Planning dynamique
-                      </div>
-                    </TableCell>
-                    <TableCell>Votre calendrier qui anticipe pour vous.</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell className="font-medium">
-                      <div className="flex items-center gap-2">
-                        <DollarSign size={16} className="text-wedding-olive" />
-                        Suivi du budget
-                      </div>
-                    </TableCell>
-                    <TableCell>Chaque dépense sous contrôle, sans effort.</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell className="font-medium">
-                      <div className="flex items-center gap-2">
-                        <Users size={16} className="text-wedding-olive" />
-                        Choix de prestataires
-                      </div>
-                    </TableCell>
-                    <TableCell>Des recommandations fiables, testées et approuvées.</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell className="font-medium">
-                      <div className="flex items-center gap-2">
-                        <MessageCircle size={16} className="text-wedding-olive" />
-                        Outils collaboratifs
-                      </div>
-                    </TableCell>
-                    <TableCell>Planifiez à deux (ou avec la belle-mère) sans crises de nerfs.</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell className="font-medium">
-                      <div className="flex items-center gap-2">
-                        <Image size={16} className="text-wedding-olive" />
-                        Visio & Moodboard
-                      </div>
-                    </TableCell>
-                    <TableCell>Brainstormez, rêvez et choisissez visuellement.</TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+              {features.map((feature, index) => (
+                <FeatureCard 
+                  key={index} 
+                  icon={feature.icon} 
+                  title={feature.title} 
+                  description={feature.description} 
+                />
+              ))}
             </div>
-            
-            <p className="text-center text-wedding-black/70 mt-6 max-w-xl mx-auto text-sm">
-              Tout est pensé pour rendre l'organisation aussi fluide qu'un slow sur votre chanson préférée.
-            </p>
           </div>
         </section>
 
-        {/* Social Proof Section */}
-        <section className="py-12 md:py-16 bg-wedding-light">
+        {/* Section 4: Témoignages */}
+        <section className="py-16 bg-white">
           <div className="container mx-auto px-4">
-            <h3 className="text-lg md:text-xl lg:text-2xl font-serif mb-8 text-center text-wedding-black">
-              Ce qu'en pensent ceux qui ont sauté le pas
-            </h3>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-              <Card className="border-wedding-olive/20 shadow-sm">
-                <CardContent className="pt-6">
-                  <p className="italic text-wedding-black/80 mb-4">
-                    « On a planifié notre mariage sans stress et avec un mois d'avance ! »
-                  </p>
-                  <p className="font-medium text-right text-wedding-olive">— Léa & Victor</p>
-                </CardContent>
-              </Card>
-              
-              <Card className="border-wedding-olive/20 shadow-sm">
-                <CardContent className="pt-6">
-                  <p className="italic text-wedding-black/80 mb-4">
-                    « Mariable a été notre filet de sécurité : zéro oubli, zéro prise de tête. »
-                  </p>
-                  <p className="font-medium text-right text-wedding-olive">— Camille & Hugo</p>
-                </CardContent>
-              </Card>
+            <h2 className="text-2xl md:text-3xl font-serif mb-3 text-center">
+              Pourquoi nos utilisateurs nous adorent
+            </h2>
+            <p className="text-center text-muted-foreground mb-10 max-w-xl mx-auto">
+              Ils ont choisi Mariable pour organiser leur jour J
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+              {testimonials.map((testimonial, index) => (
+                <TestimonialCard 
+                  key={index} 
+                  name={testimonial.name} 
+                  role={testimonial.role} 
+                  content={testimonial.content} 
+                  imageSrc={testimonial.imageSrc} 
+                />
+              ))}
             </div>
           </div>
         </section>
 
-        {/* Call To Action Section - Changé en blanc */}
-        <section className="py-12 md:py-16 bg-white">
+        {/* Section 5: CTA */}
+        <section className="py-16 bg-wedding-olive text-white">
           <div className="container mx-auto px-4 text-center">
-            <h2 className="text-xl md:text-2xl lg:text-3xl font-serif mb-4 text-wedding-black">
-              Lancez-vous aujourd'hui. Votre futur vous dira merci.
+            <h2 className="text-2xl md:text-3xl font-serif mb-4">
+              Organisez votre mariage facilement & sans stress
             </h2>
-            
-            <p className="text-wedding-black/80 font-medium mb-6 max-w-xl mx-auto">
-              ✨ Inscription gratuite en 2 minutes pour 100% de sérénité.
+            <p className="mb-8 max-w-xl mx-auto">
+              Accédez gratuitement à des outils puissants et une sélection de prestataires d'excellence.
             </p>
-            
             <Button 
-              variant="wedding" 
+              className="bg-white text-wedding-olive hover:bg-white/90 shadow-lg hover:shadow-xl transition-all"
               size={isMobile ? "default" : "lg"}
               onClick={handleCTAClick}
-              className="shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl"
             >
-              Organisez votre mariage facilement & sans stress
+              Créez un compte dès maintenant
             </Button>
+          </div>
+        </section>
+
+        {/* Section 6: FAQ */}
+        <section className="py-16 bg-white">
+          <div className="container mx-auto px-4">
+            <h2 className="text-2xl md:text-3xl font-serif mb-10 text-center">
+              Vos questions, nos réponses
+            </h2>
+            <div className="max-w-3xl mx-auto">
+              <Accordion type="single" collapsible className="w-full">
+                {faqItems.map((item, index) => (
+                  <AccordionItem key={index} value={`item-${index}`}>
+                    <AccordionTrigger className="text-left font-medium py-4">
+                      {item.question}
+                    </AccordionTrigger>
+                    <AccordionContent>{item.answer}</AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+            </div>
           </div>
         </section>
       </main>
