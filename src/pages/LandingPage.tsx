@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { Layout, Calendar, Calculator, Briefcase, Folder, ArrowRight, CheckCircle, XCircle, HelpCircle } from 'lucide-react';
+import { Layout, Calendar, Calculator, Briefcase, Folder, ArrowRight, CheckCircle, XCircle, HelpCircle, Users, Clock, DollarSign } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -14,6 +14,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Card, CardContent } from '@/components/ui/card';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 // Composant pour l'effet machine à écrire du titre principal
 const TypewriterEffect = ({ text }: { text: string }) => {
@@ -40,13 +41,13 @@ const TypewriterEffect = ({ text }: { text: string }) => {
   );
 };
 
-const FeatureCard = ({ icon: Icon, title, description }: { icon: React.ElementType, title: string, description: string }) => (
-  <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 transition-all hover:shadow-md">
-    <div className="w-12 h-12 bg-wedding-olive/10 rounded-full flex items-center justify-center mb-4">
-      <Icon className="h-6 w-6 text-wedding-olive" />
+const BenefitCard = ({ icon: Icon, title, description }: { icon: React.ElementType, title: string, description: string }) => (
+  <div className="flex flex-col items-center bg-white p-6 rounded-lg shadow text-center">
+    <div className="w-14 h-14 bg-wedding-olive/10 rounded-full flex items-center justify-center mb-4">
+      <Icon className="h-7 w-7 text-wedding-olive" />
     </div>
-    <h3 className="font-serif text-lg font-medium mb-2">{title}</h3>
-    <p className="text-muted-foreground text-sm">{description}</p>
+    <h3 className="font-serif text-xl font-medium mb-3">{title}</h3>
+    <p className="text-muted-foreground">{description}</p>
   </div>
 );
 
@@ -72,7 +73,7 @@ const TestimonialCard = ({ name, role, content, imageSrc }: { name: string, role
 );
 
 const StatCard = ({ number, text, subtext }: { number: string, text: string, subtext?: string }) => (
-  <div className="bg-wedding-light p-5 rounded-lg text-center">
+  <div className="p-5 rounded-lg border border-gray-200 text-center">
     <p className="text-3xl sm:text-4xl font-serif text-wedding-olive mb-1">{number}</p>
     <p className="font-medium text-sm">{text}</p>
     {subtext && <p className="text-xs text-muted-foreground mt-1">{subtext}</p>}
@@ -94,31 +95,49 @@ const LandingPage = () => {
   };
 
   // Données pour les différentes sections
+  const benefits = [
+    {
+      icon: Users,
+      title: "Service Personnalisé & Premium",
+      description: "Une expérience sur mesure adaptée à vos besoins et vos préférences pour un mariage unique."
+    },
+    {
+      icon: Clock,
+      title: "Simple: Gain de temps & Efficacité",
+      description: "Des outils intuitifs qui simplifient l'organisation et vous font gagner des heures précieuses."
+    },
+    {
+      icon: DollarSign,
+      title: "Service 100% Gratuit",
+      description: "Accédez à tous nos outils et notre réseau de prestataires sans aucun frais supplémentaire."
+    }
+  ];
+  
   const features = [
     {
-      icon: Layout,
-      title: "Tableau de bord",
-      description: "Une vue d'ensemble intuitive pour suivre toutes les étapes de votre mariage."
+      name: "Tableau de bord",
+      description: "Vue d'ensemble intuitive pour suivre les étapes de votre mariage",
+      icon: Layout
     },
     {
-      icon: Calendar,
-      title: "Planning personnalisé",
-      description: "Un calendrier sur-mesure adapté à votre style, date et besoins spécifiques."
+      name: "Planning Personnalisé",
+      description: "Calendrier sur-mesure adapté à votre style et vos besoins",
+      icon: Calendar
     },
     {
-      icon: Calculator,
-      title: "Budget estimatif en un clic",
-      description: "Créez et gérez facilement votre budget avec des estimations précises."
+      name: "Budget Estimatif",
+      description: "Création et gestion facile de votre budget avec estimations précises",
+      icon: Calculator
     },
     {
-      icon: Briefcase,
-      title: "Choix de prestataires",
-      description: "Accédez à une sélection rigoureuse de professionnels à votre écoute."
+      name: "Sélection Prestataires",
+      description: "Accès à des professionnels rigoureusement sélectionnés",
+      icon: Briefcase
     },
     {
-      icon: Folder,
-      title: "Gestion Centralisée",
-      description: "Toutes vos réservations et informations regroupées en un seul endroit."
+      name: "Gestion Centralisée",
+      description: "Toutes vos informations regroupées en un seul endroit",
+      icon: Folder
     }
   ];
 
@@ -168,7 +187,7 @@ const LandingPage = () => {
       <Header />
 
       <main className="flex-grow">
-        {/* Section 1: Hero Section */}
+        {/* Section 1: Hero Section - Simplified */}
         <section className="relative py-16 md:py-24 bg-wedding-black text-white">
           <div className="absolute inset-0 opacity-40 overflow-hidden">
             <img
@@ -178,19 +197,13 @@ const LandingPage = () => {
             />
           </div>
           <div className="container mx-auto px-4 relative z-10 text-center">
-            <h1 className="text-2xl md:text-3xl lg:text-4xl font-serif mb-4 md:mb-6">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-serif mb-8 md:mb-10 font-bold">
               {showAnimation ? (
                 <TypewriterEffect text="Faciliter l'organisation de votre mariage" />
               ) : (
                 "Faciliter l'organisation de votre mariage"
               )}
             </h1>
-            <p className="text-xl md:text-2xl mb-4 font-serif max-w-3xl mx-auto">
-              Le premier assistant virtuel pour planifier votre mariage et vivre une organisation simple, rapide et agréable
-            </p>
-            <p className="mb-8 text-white/80 max-w-xl mx-auto">
-              Gagnez du temps, économisez de l'énergie, profitez pleinement de vos préparatifs.
-            </p>
             <Button 
               variant="wedding" 
               size={isMobile ? "default" : "lg"}
@@ -202,7 +215,29 @@ const LandingPage = () => {
           </div>
         </section>
 
-        {/* Section 2: Pourquoi Mariable */}
+        {/* Section Nouvelle: Premier assistant virtuel */}
+        <section className="py-16 bg-gray-50">
+          <div className="container mx-auto px-4">
+            <h2 className="text-2xl md:text-3xl font-serif mb-3 text-center">
+              Le premier assistant virtuel à la planification de mariage
+            </h2>
+            <p className="text-center text-muted-foreground mb-10 max-w-2xl mx-auto">
+              Mariable révolutionne l'organisation de votre mariage avec des services pensés pour vous
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+              {benefits.map((benefit, index) => (
+                <BenefitCard 
+                  key={index}
+                  icon={benefit.icon}
+                  title={benefit.title}
+                  description={benefit.description}
+                />
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Section 2: Pourquoi Mariable - Modified without green backgrounds */}
         <section className="py-16 bg-white">
           <div className="container mx-auto px-4">
             <h2 className="text-2xl md:text-3xl font-serif mb-10 text-center">
@@ -236,21 +271,37 @@ const LandingPage = () => {
           </div>
         </section>
 
-        {/* Section 3: Ce que vous allez adorer */}
+        {/* Section 3: Ce que vous allez adorer - Modified to table format */}
         <section className="py-16 bg-wedding-light">
           <div className="container mx-auto px-4">
             <h2 className="text-2xl md:text-3xl font-serif mb-10 text-center">
               Ce que vous allez adorer
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-              {features.map((feature, index) => (
-                <FeatureCard 
-                  key={index} 
-                  icon={feature.icon} 
-                  title={feature.title} 
-                  description={feature.description} 
-                />
-              ))}
+            <div className="max-w-4xl mx-auto">
+              <div className="bg-white rounded-lg shadow overflow-hidden">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-12"></TableHead>
+                      <TableHead className="font-medium">Fonctionnalité</TableHead>
+                      <TableHead>Description</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {features.map((feature, index) => (
+                      <TableRow key={index}>
+                        <TableCell className="p-4">
+                          <div className="w-10 h-10 bg-wedding-olive/10 rounded-full flex items-center justify-center">
+                            <feature.icon className="h-5 w-5 text-wedding-olive" />
+                          </div>
+                        </TableCell>
+                        <TableCell className="font-medium">{feature.name}</TableCell>
+                        <TableCell>{feature.description}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
             </div>
           </div>
         </section>
