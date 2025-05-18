@@ -79,6 +79,7 @@ const TasksList: React.FC = () => {
         const { data: tasksData, error } = await supabase
           .from('todos_planification')
           .select('*')
+          .eq('user_id', user.id)
           .order('position', { ascending: true });
           
         if (error) throw error;
@@ -235,7 +236,7 @@ const TasksList: React.FC = () => {
             {filteredTasks.length === 0 ? (
               <p className="text-center py-4 text-muted-foreground">
                 {tasks.length === 0 
-                  ? "Aucune tâche disponible. Créez des tâches dans la section Planification." 
+                  ? "Aucune tâche disponible. Complétez le quiz de planification pour obtenir votre plan personnalisé." 
                   : "Toutes vos tâches sont complétées !"}
               </p>
             ) : (

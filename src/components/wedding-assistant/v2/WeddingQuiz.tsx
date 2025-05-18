@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { QuizQuestion, UserAnswers, PlanningResult, QuizScoring, SECTION_ORDER } from './types';
 import { Button } from "@/components/ui/button";
@@ -114,8 +113,8 @@ const WeddingQuiz: React.FC = () => {
   const sortQuestionsBySectionOrder = (questions: QuizQuestion[]): QuizQuestion[] => {
     return [...questions].sort((a, b) => {
       // D'abord, comparer selon l'ordre des sections
-      const sectionIndexA = SECTION_ORDER.indexOf(a.section as any);
-      const sectionIndexB = SECTION_ORDER.indexOf(b.section as any);
+      const sectionIndexA = SECTION_ORDER.indexOf(a.section);
+      const sectionIndexB = SECTION_ORDER.indexOf(b.section);
       
       if (sectionIndexA !== sectionIndexB) {
         return sectionIndexA - sectionIndexB;
@@ -243,8 +242,17 @@ const WeddingQuiz: React.FC = () => {
     setShowResult(true);
   };
 
-  const handleRegisterClick = () => {
-    navigate('/register');
+  const handleRegisterClick = async () => {
+    // Vérifier si l'utilisateur est connecté
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (user) {
+      // Si déjà connecté, rediriger vers le tableau de bord
+      navigate('/dashboard');
+    } else {
+      // Sinon, rediriger vers la page d'inscription
+      navigate('/register');
+    }
   };
 
   if (isLoading || questions.length === 0) {
