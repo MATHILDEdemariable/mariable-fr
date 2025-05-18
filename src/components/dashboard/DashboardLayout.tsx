@@ -1,16 +1,16 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import DashboardSidebar from './DashboardSidebar';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { Drawer, DrawerContent, DrawerClose } from '@/components/ui/drawer';
-import { X } from 'lucide-react';
+import { Drawer, DrawerContent, DrawerTrigger, DrawerClose } from '@/components/ui/drawer';
+import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Header from '@/components/Header';
 
 const DashboardLayout: React.FC = () => {
   const isMobile = useIsMobile();
-  const [sidebarOpen, setSidebarOpen] = React.useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -23,24 +23,18 @@ const DashboardLayout: React.FC = () => {
           </div>
         )}
 
-        {/* Mobile sidebar - modified to always be open initially and stay open */}
+        {/* Mobile sidebar - using Drawer component for sliding effect */}
         {isMobile && (
           <Drawer open={sidebarOpen} onOpenChange={setSidebarOpen}>
-            <div className="fixed top-14 left-4 z-40 lg:hidden">
+            <DrawerTrigger asChild>
               <Button 
                 variant="outline" 
-                size="icon"
-                className="bg-white shadow-sm"
-                onClick={() => setSidebarOpen(true)}
+                size="icon" 
+                className="fixed top-4 left-4 z-40 lg:hidden"
               >
-                <span className="sr-only">Open sidebar</span>
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="3" y1="6" x2="21" y2="6"></line>
-                  <line x1="3" y1="12" x2="21" y2="12"></line>
-                  <line x1="3" y1="18" x2="21" y2="18"></line>
-                </svg>
+                <Menu className="h-5 w-5" />
               </Button>
-            </div>
+            </DrawerTrigger>
             <DrawerContent className="p-0 w-[280px] sm:max-w-sm bg-white">
               <div className="absolute top-4 right-4 z-50">
                 <DrawerClose asChild>

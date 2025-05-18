@@ -11,8 +11,7 @@ import {
   MessageCircle,
   Settings,
   Sparkles,
-  Palette,
-  Wine
+  Palette
 } from 'lucide-react';
 
 interface MenuItemProps {
@@ -98,12 +97,20 @@ const DashboardSidebar: React.FC = () => {
             active={isActive('/dashboard/budget')}
           />
           
-          {/* Suivi des prestataires - combining both prestataires and vendor-tracking */}
+          {/* Prestataires */}
           <MenuItem
             icon={<Users size={20} />}
+            label="Prestataires"
+            to="/dashboard/prestataires"
+            active={isActive('/dashboard/prestataires')}
+          />
+          
+          {/* Suivi des prestataires */}
+          <MenuItem
+            icon={<CheckSquare size={20} />}
             label="Suivi prestataires"
             to="/dashboard/vendor-tracking"
-            active={isActive('/dashboard/vendor-tracking') || isActive('/dashboard/prestataires')}
+            active={isActive('/dashboard/vendor-tracking')}
           />
           
           {/* Wishlist */}
@@ -121,20 +128,12 @@ const DashboardSidebar: React.FC = () => {
             to="/dashboard/coordination"
             active={isActive('/dashboard/coordination')}
           />
-
-          {/* Calculatrice de boisson - New menu item */}
-          <MenuItem
-            icon={<Wine size={20} />}
-            label="Calculatrice de boisson"
-            to="/dashboard/drinks"
-            active={isActive('/dashboard/drinks')}
-          />
           
-          {/* Assistant virtuel - Updated to point directly to the advice tab */}
+          {/* Assistant virtuel */}
           <MenuItem
             icon={<Sparkles size={20} />}
             label="Assistant virtuel"
-            to="/assistant-v2?tab=conseils"
+            to="/assistant-v2"
             active={isActive('/assistant-v2')}
           />
           
