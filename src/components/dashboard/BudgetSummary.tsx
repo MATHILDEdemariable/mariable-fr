@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { 
@@ -97,22 +96,22 @@ const PRICE_MODIFIERS: Record<ServiceLevel, number> = {
 };
 
 const BUDGET_COLORS: Record<VendorType, string> = {
-  lieu: '#9b87f5', // changed to higher contrast purple
-  traiteur: '#7E69AB', // changed to higher contrast
-  photo: '#6E59A5', // changed to higher contrast
-  dj: '#D6BCFA', // changed to higher contrast
-  planner: '#8E9196', // changed to higher contrast gray
-  deco: '#1A1F2C', // changed to darker for contrast
+  lieu: '#7F9474', // wedding-olive
+  traiteur: '#948970', // wedding-cream dark
+  photo: '#A99E89', // wedding color
+  dj: '#C6BCA9', // wedding color light
+  planner: '#8E9196', // neutral gray
+  deco: '#1A1F2C', // dark for contrast
   autres: '#aaadb0' // changed to higher contrast
 };
 
 const INITIAL_BUDGET_DATA: BudgetCategory[] = [
-  { name: 'Lieu', amount: 5000, color: '#9b87f5' }, // changed to higher contrast purple
-  { name: 'Traiteur', amount: 7000, color: '#7E69AB' }, // changed to higher contrast
-  { name: 'Décoration', amount: 2000, color: '#6E59A5' }, // changed to higher contrast
-  { name: 'Tenue', amount: 3000, color: '#D6BCFA' }, // changed to higher contrast
-  { name: 'Photo & Vidéo', amount: 2500, color: '#8E9196' }, // changed to higher contrast gray
-  { name: 'Imprévus', amount: 1500, color: '#1A1F2C' } // changed to darker for contrast
+  { name: 'Lieu', amount: 5000, color: '#7F9474' }, // changed to wedding-olive
+  { name: 'Traiteur', amount: 7000, color: '#948970' }, // changed to wedding-cream dark
+  { name: 'Décoration', amount: 2000, color: '#A99E89' }, // changed to wedding color
+  { name: 'Tenue', amount: 3000, color: '#C6BCA9' }, // changed to wedding color light
+  { name: 'Photo & Vidéo', amount: 2500, color: '#8E9196' }, // neutral gray
+  { name: 'Imprévus', amount: 1500, color: '#1A1F2C' } // dark for contrast
 ];
 
 const BudgetSummary: React.FC = () => {
@@ -176,6 +175,44 @@ const BudgetSummary: React.FC = () => {
         });
       }
     }, 500);
+  };
+
+  const handleExportExcel = () => {
+    toast({
+      title: "Export Excel en cours",
+      description: "Préparation de votre document CSV...",
+    });
+    
+    setTimeout(() => {
+      // Create CSV content from budget data
+      let csvContent = "Category,Amount\n";
+      budgetData.forEach(item => {
+        csvContent += `"${item.name}","${item.amount}"\n`;
+      });
+      
+      // Create and download the file
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', `budget-summary-${format(new Date(), 'yyyy-MM-dd')}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      toast({
+        title: "Export réussi",
+        description: "Votre résumé budgétaire a été exporté au format CSV",
+      });
+    }, 500);
+  };
+
+  const handleExportGoogleSheets = () => {
+    toast({
+      title: "Export Google Sheets",
+      description: "Cette fonctionnalité sera bientôt disponible",
+    });
   };
 
   // Gérer la navigation entre étapes
@@ -794,14 +831,36 @@ const BudgetSummary: React.FC = () => {
                 Calculer mon budget
               </Button>
               
-              <Button 
-                variant="outline"
-                className="w-full sm:w-auto bg-wedding-olive/10 hover:bg-wedding-olive/20 text-wedding-olive"
-                onClick={handleExportPDF}
-              >
-                <Download className="mr-2 h-4 w-4" />
-                Exporter
-              </Button>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button 
+                    variant="outline" 
+                    className="w-full sm:w-auto bg-wedding-olive/10 hover:bg-wedding-olive/20 text-wedding-olive"
+                  >
+                    <Download className="mr-2 h-4 w-4" />
+                    Exporter
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Exporter mon budget</DialogTitle>
+                  </DialogHeader>
+                  <div className="grid gap-4 py-4">
+                    <Button onClick={handleExportPDF} className="w-full flex items-center justify-center gap-2">
+                      <FileText className="h-4 w-4" />
+                      Exporter en PDF
+                    </Button>
+                    <Button onClick={handleExportExcel} className="w-full flex items-center justify-center gap-2">
+                      <FileText className="h-4 w-4" />
+                      Exporter vers Excel (CSV)
+                    </Button>
+                    <Button onClick={handleExportGoogleSheets} className="w-full flex items-center justify-center gap-2">
+                      <FileText className="h-4 w-4" />
+                      Exporter vers Google Sheets
+                    </Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
             </div>
           </>
         )}
