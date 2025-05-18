@@ -27,17 +27,18 @@ interface BudgetCategory {
   totalRemaining: number;
 }
 
-const DEFAULT_CATEGORIES = [
-  { name: 'Lieu de réception', items: [] },
-  { name: 'Traiteur & Boissons', items: [] },
-  { name: 'Tenues & Accessoires', items: [] },
-  { name: 'Décoration & Fleurs', items: [] },
-  { name: 'Photo & Vidéo', items: [] },
-  { name: 'Musique & Animation', items: [] },
-  { name: 'Transport', items: [] },
-  { name: 'Papeterie', items: [] },
-  { name: 'Cadeaux', items: [] },
-  { name: 'Divers', items: [] },
+// Default categories with proper initialization of all required properties
+const DEFAULT_CATEGORIES: BudgetCategory[] = [
+  { name: 'Lieu de réception', items: [], totalEstimated: 0, totalActual: 0, totalDeposit: 0, totalRemaining: 0 },
+  { name: 'Traiteur & Boissons', items: [], totalEstimated: 0, totalActual: 0, totalDeposit: 0, totalRemaining: 0 },
+  { name: 'Tenues & Accessoires', items: [], totalEstimated: 0, totalActual: 0, totalDeposit: 0, totalRemaining: 0 },
+  { name: 'Décoration & Fleurs', items: [], totalEstimated: 0, totalActual: 0, totalDeposit: 0, totalRemaining: 0 },
+  { name: 'Photo & Vidéo', items: [], totalEstimated: 0, totalActual: 0, totalDeposit: 0, totalRemaining: 0 },
+  { name: 'Musique & Animation', items: [], totalEstimated: 0, totalActual: 0, totalDeposit: 0, totalRemaining: 0 },
+  { name: 'Transport', items: [], totalEstimated: 0, totalActual: 0, totalDeposit: 0, totalRemaining: 0 },
+  { name: 'Papeterie', items: [], totalEstimated: 0, totalActual: 0, totalDeposit: 0, totalRemaining: 0 },
+  { name: 'Cadeaux', items: [], totalEstimated: 0, totalActual: 0, totalDeposit: 0, totalRemaining: 0 },
+  { name: 'Divers', items: [], totalEstimated: 0, totalActual: 0, totalDeposit: 0, totalRemaining: 0 },
 ];
 
 const DetailedBudget: React.FC = () => {
@@ -80,16 +81,32 @@ const DetailedBudget: React.FC = () => {
           ? JSON.parse(budgetData.breakdown) 
           : budgetData.breakdown;
 
-        if (breakdownData.categories) {
-          setCategories(breakdownData.categories);
+        if (breakdownData && breakdownData.categories) {
+          // Make sure we initialize totals properly for each category
+          const processedCategories = Array.isArray(breakdownData.categories) ? breakdownData.categories.map(cat => ({
+            ...cat,
+            totalEstimated: typeof cat.totalEstimated === 'number' ? cat.totalEstimated : 0,
+            totalActual: typeof cat.totalActual === 'number' ? cat.totalActual : 0,
+            totalDeposit: typeof cat.totalDeposit === 'number' ? cat.totalDeposit : 0,
+            totalRemaining: typeof cat.totalRemaining === 'number' ? cat.totalRemaining : 0,
+            items: Array.isArray(cat.items) ? cat.items.map(item => ({
+              ...item,
+              estimated: typeof item.estimated === 'number' ? item.estimated : 0,
+              actual: typeof item.actual === 'number' ? item.actual : 0,
+              deposit: typeof item.deposit === 'number' ? item.deposit : 0,
+              remaining: typeof item.remaining === 'number' ? item.remaining : 0
+            })) : []
+          })) : DEFAULT_CATEGORIES;
           
-          // Update totals
-          setTotalEstimated(breakdownData.totalEstimated || 0);
-          setTotalActual(breakdownData.totalActual || 0);
-          setTotalDeposit(breakdownData.totalDeposit || 0);
-          setTotalRemaining(breakdownData.totalRemaining || 0);
+          setCategories(processedCategories);
+          
+          // Update totals with safe values
+          setTotalEstimated(typeof breakdownData.totalEstimated === 'number' ? breakdownData.totalEstimated : 0);
+          setTotalActual(typeof breakdownData.totalActual === 'number' ? breakdownData.totalActual : 0);
+          setTotalDeposit(typeof breakdownData.totalDeposit === 'number' ? breakdownData.totalDeposit : 0);
+          setTotalRemaining(typeof breakdownData.totalRemaining === 'number' ? breakdownData.totalRemaining : 0);
         } else {
-          // If not, initialize with default categories
+          // If no categories found, initialize with default categories
           setCategories(DEFAULT_CATEGORIES);
         }
       } catch (e) {
@@ -103,7 +120,7 @@ const DetailedBudget: React.FC = () => {
 
   // Update budget data in Supabase
   const updateBudgetMutation = useMutation({
-    mutationFn: async (newBudgetData: any) => {
+    mutationFn: async () => {
       const { data: userData } = await supabase.auth.getUser();
       if (!userData.user) throw new Error("User not authenticated");
 
@@ -117,13 +134,13 @@ const DetailedBudget: React.FC = () => {
           season: budgetData?.season || 'summer',
           service_level: budgetData?.service_level || 'standard',
           selected_vendors: budgetData?.selected_vendors || [],
-          breakdown: {
+          breakdown: JSON.stringify({
             categories,
             totalEstimated,
             totalActual,
             totalDeposit,
             totalRemaining
-          }
+          })
         })
         .select();
 
@@ -207,10 +224,10 @@ const DetailedBudget: React.FC = () => {
       let categoryRemaining = 0;
       
       category.items.forEach(item => {
-        categoryEstimated += item.estimated;
-        categoryActual += item.actual;
-        categoryDeposit += item.deposit;
-        categoryRemaining += item.remaining;
+        categoryEstimated += item.estimated || 0;
+        categoryActual += item.actual || 0;
+        categoryDeposit += item.deposit || 0;
+        categoryRemaining += item.remaining || 0;
       });
       
       // Update category totals
@@ -241,7 +258,7 @@ const DetailedBudget: React.FC = () => {
 
   // Save budget to database
   const handleSaveBudget = () => {
-    updateBudgetMutation.mutate({});
+    updateBudgetMutation.mutate();
   };
 
   if (isLoading) {
@@ -293,10 +310,18 @@ const DetailedBudget: React.FC = () => {
                   {/* Category row */}
                   <tr className="bg-wedding-cream/20 border-t">
                     <td className="px-4 py-2 font-medium text-base">{category.name}</td>
-                    <td className="px-4 py-2 text-right font-medium">{category.totalEstimated.toFixed(2)}</td>
-                    <td className="px-4 py-2 text-right font-medium">{category.totalActual.toFixed(2)}</td>
-                    <td className="px-4 py-2 text-right font-medium">{category.totalDeposit.toFixed(2)}</td>
-                    <td className="px-4 py-2 text-right font-medium">{category.totalRemaining.toFixed(2)}</td>
+                    <td className="px-4 py-2 text-right font-medium">
+                      {(category.totalEstimated || 0).toFixed(2)}
+                    </td>
+                    <td className="px-4 py-2 text-right font-medium">
+                      {(category.totalActual || 0).toFixed(2)}
+                    </td>
+                    <td className="px-4 py-2 text-right font-medium">
+                      {(category.totalDeposit || 0).toFixed(2)}
+                    </td>
+                    <td className="px-4 py-2 text-right font-medium">
+                      {(category.totalRemaining || 0).toFixed(2)}
+                    </td>
                     <td className="px-4 py-2 text-center">
                       <Button 
                         variant="ghost" 
@@ -316,7 +341,7 @@ const DetailedBudget: React.FC = () => {
                       <td className="px-4 py-2">
                         <Input
                           type="text"
-                          value={item.name}
+                          value={item.name || ''}
                           onChange={(e) => handleItemChange(categoryIndex, itemIndex, 'name', e.target.value)}
                           className="h-8 border-gray-200"
                           placeholder="Nom de l'élément"
@@ -350,7 +375,7 @@ const DetailedBudget: React.FC = () => {
                         />
                       </td>
                       <td className="px-4 py-2 text-right">
-                        {item.remaining.toFixed(2)}
+                        {(item.remaining || 0).toFixed(2)}
                       </td>
                       <td className="px-4 py-2 text-center">
                         <Button
@@ -370,10 +395,10 @@ const DetailedBudget: React.FC = () => {
               {/* Totals row */}
               <tr className="border-t-2 border-t-wedding-olive/50 font-semibold">
                 <td className="px-4 py-3">TOTAL</td>
-                <td className="px-4 py-3 text-right">{totalEstimated.toFixed(2)}</td>
-                <td className="px-4 py-3 text-right">{totalActual.toFixed(2)}</td>
-                <td className="px-4 py-3 text-right">{totalDeposit.toFixed(2)}</td>
-                <td className="px-4 py-3 text-right">{totalRemaining.toFixed(2)}</td>
+                <td className="px-4 py-3 text-right">{(totalEstimated || 0).toFixed(2)}</td>
+                <td className="px-4 py-3 text-right">{(totalActual || 0).toFixed(2)}</td>
+                <td className="px-4 py-3 text-right">{(totalDeposit || 0).toFixed(2)}</td>
+                <td className="px-4 py-3 text-right">{(totalRemaining || 0).toFixed(2)}</td>
                 <td className="px-4 py-3"></td>
               </tr>
             </tbody>

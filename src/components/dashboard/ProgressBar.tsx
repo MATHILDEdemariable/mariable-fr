@@ -1,31 +1,27 @@
 
 import React from 'react';
+import { cn } from '@/lib/utils';
 
 interface ProgressBarProps {
-  percentage: number;
-  label?: string;
+  progress: number;
+  maxValue: number;
   className?: string;
 }
 
 const ProgressBar: React.FC<ProgressBarProps> = ({ 
-  percentage, 
-  label, 
-  className = "" 
+  progress = 0, 
+  maxValue = 100, 
+  className 
 }) => {
+  // Calculate percentage (clamped between 0-100%)
+  const percentage = Math.min(Math.max((progress / maxValue) * 100, 0), 100);
+  
   return (
-    <div className={`space-y-1 ${className}`}>
-      {label && (
-        <div className="flex justify-between text-sm">
-          <span>{label}</span>
-          <span className="text-wedding-olive font-semibold">{percentage}%</span>
-        </div>
-      )}
-      <div className="h-2 bg-gray-200 rounded-full">
-        <div 
-          className="h-full bg-wedding-olive rounded-full transition-all duration-500 ease-out" 
-          style={{ width: `${percentage}%` }} 
-        />
-      </div>
+    <div className={cn("w-full bg-gray-200 rounded-full overflow-hidden", className)}>
+      <div 
+        className="bg-wedding-olive h-full transition-all duration-500 ease-in-out"
+        style={{ width: `${percentage}%` }}
+      />
     </div>
   );
 };

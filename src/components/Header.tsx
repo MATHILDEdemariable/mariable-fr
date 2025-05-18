@@ -60,16 +60,16 @@ function Menus({ onClick }: { onClick?: () => void }) {
       </HeaderDropdown>
       
       {/* Professionnels - Lien direct */}
-      <HeaderDropdown
+      <HeaderDropdown 
         label="Professionnels"
-        to="/professionnels"
+        href="/professionnels"
         onClick={onClick}
       />
       
       {/* Futurs mariés - Lien direct */}
       <HeaderDropdown
         label="Futurs mariés"
-        to="/login-frame"
+        href="/login-frame"
         onClick={onClick}
       />
     </>

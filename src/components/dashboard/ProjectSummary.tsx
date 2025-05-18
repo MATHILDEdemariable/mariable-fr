@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useNavigate } from 'react-router-dom';
@@ -7,6 +6,30 @@ import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { ListTodo, Euro, Users, MessageCircle, ArrowRight } from 'lucide-react';
 import ProgressBar from './ProgressBar';
+
+// Define interfaces for budget data
+interface BudgetCategory {
+  name: string;
+  items: any[];
+  totalEstimated: number;
+  totalActual: number;
+  totalDeposit: number;
+  totalRemaining: number;
+}
+
+interface BudgetBreakdown {
+  categories: BudgetCategory[];
+  totalEstimated: number;
+  totalActual: number;
+  totalDeposit: number;
+  totalRemaining: number;
+}
+
+interface Budget {
+  breakdown?: string | BudgetBreakdown;
+  total_budget: number;
+  // Other fields...
+}
 
 const ProjectSummary: React.FC = () => {
   const navigate = useNavigate();
@@ -32,7 +55,7 @@ const ProjectSummary: React.FC = () => {
   });
   
   // Récupérer le budget
-  const { data: budget } = useQuery({
+  const { data: budget } = useQuery<Budget | null>({
     queryKey: ['budgetSummary'],
     queryFn: async () => {
       const { data: userData } = await supabase.auth.getUser();
@@ -67,6 +90,23 @@ const ProjectSummary: React.FC = () => {
       return data;
     }
   });
+
+  // Parse budget breakdown safely
+  const parseBudgetBreakdown = (): BudgetBreakdown | null => {
+    if (!budget || !budget.breakdown) return null;
+    
+    try {
+      if (typeof budget.breakdown === 'string') {
+        return JSON.parse(budget.breakdown) as BudgetBreakdown;
+      }
+      return budget.breakdown as BudgetBreakdown;
+    } catch (e) {
+      console.error('Error parsing budget breakdown:', e);
+      return null;
+    }
+  };
+  
+  const budgetBreakdown = parseBudgetBreakdown();
 
   return (
     <div className="space-y-6 pb-10">
@@ -168,7 +208,7 @@ const ProjectSummary: React.FC = () => {
             </Button>
           </CardHeader>
           <CardContent>
-            {budget && budget.breakdown ? (
+            {budget && budgetBreakdown ? (
               <div className="space-y-4">
                 <div>
                   <div className="flex items-center justify-between mb-1">
@@ -176,31 +216,30 @@ const ProjectSummary: React.FC = () => {
                     <p className="font-bold">{budget.total_budget?.toLocaleString()} €</p>
                   </div>
                   
-                  {typeof budget.breakdown === 'object' && budget.breakdown.totalEstimated && (
+                  {budgetBreakdown.totalEstimated !== undefined && (
                     <>
                       <ProgressBar 
-                        value={(budget.breakdown.totalEstimated / budget.total_budget) * 100} 
-                        max={100}
+                        progress={(budgetBreakdown.totalEstimated / budget.total_budget) * 100} 
+                        maxValue={100}
                         className="h-2.5" 
                       />
                       <div className="flex justify-between text-sm mt-1">
-                        <p>Prévu: {budget.breakdown.totalEstimated?.toLocaleString()} €</p>
-                        <p>Restant: {(budget.total_budget - budget.breakdown.totalEstimated)?.toLocaleString()} €</p>
+                        <p>Prévu: {budgetBreakdown.totalEstimated?.toLocaleString()} €</p>
+                        <p>Restant: {(budget.total_budget - budgetBreakdown.totalEstimated)?.toLocaleString()} €</p>
                       </div>
                     </>
                   )}
                 </div>
                 
-                {typeof budget.breakdown === 'object' && budget.breakdown.categories && 
-                 budget.breakdown.categories.slice(0, 3).map((category, index) => (
+                {budgetBreakdown.categories && budgetBreakdown.categories.slice(0, 3).map((category, index) => (
                   <div key={index} className="pt-3">
                     <div className="flex items-center justify-between mb-1">
                       <p className="font-medium">{category.name}</p>
-                      <p>{category.totalEstimated?.toLocaleString()} €</p>
+                      <p>{(category.totalEstimated || 0)?.toLocaleString()} €</p>
                     </div>
                     <ProgressBar 
-                      value={category.totalActual} 
-                      max={category.totalEstimated || 1}
+                      progress={category.totalActual || 0} 
+                      maxValue={category.totalEstimated || 1}
                       className="h-2"
                     />
                   </div>
