@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { QuizQuestion, UserAnswers, PlanningResult, QuizScoring, SECTION_ORDER } from './types';
 import { Button } from "@/components/ui/button";
@@ -9,10 +10,11 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/components/ui/use-toast';
-import EmailCaptureForm from './EmailCaptureForm';
 import StepIndicator from './StepIndicator';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Json } from '@/integrations/supabase/types';
+import AuthRequiredModal from '@/components/auth/AuthRequiredModal';
+import { generateTasksFromQuizResult } from './taskGenerator';
 
 const WeddingQuiz: React.FC = () => {
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
@@ -23,7 +25,7 @@ const WeddingQuiz: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [result, setResult] = useState<PlanningResult | null>(null);
   const [showResult, setShowResult] = useState(false);
-  const [showEmailCapture, setShowEmailCapture] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
   const isMobile = useIsMobile();
@@ -161,7 +163,8 @@ const WeddingQuiz: React.FC = () => {
       // Si nous avons atteint la dernière section
       if (nextSectionIndex >= sections.length) {
         calculateResult();
-        setShowEmailCapture(true);
+        // Ouvrir la modal d'authentification au lieu de l'email capture
+        setShowAuthModal(true);
       } else {
         // Passer à la première question de la section suivante
         const nextSection = sections[nextSectionIndex];
@@ -237,21 +240,63 @@ const WeddingQuiz: React.FC = () => {
     }
   };
 
-  const handleEmailCaptureComplete = () => {
-    setShowEmailCapture(false);
-    setShowResult(true);
-  };
-
-  const handleRegisterClick = async () => {
-    // Vérifier si l'utilisateur est connecté
-    const { data: { user } } = await supabase.auth.getUser();
+  const handleAuthSuccess = async () => {
+    if (!result) return;
     
-    if (user) {
-      // Si déjà connecté, rediriger vers le tableau de bord
-      navigate('/dashboard');
-    } else {
-      // Sinon, rediriger vers la page d'inscription
-      navigate('/register');
+    try {
+      // Vérifier si l'utilisateur est authentifié
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (user) {
+        // Sauvegarder les résultats dans la table quiz_email_captures
+        const { error: captureError } = await supabase
+          .from('quiz_email_captures')
+          .insert([
+            { 
+              email: user.email, 
+              quiz_score: result.score,
+              quiz_status: result.status
+            }
+          ]);
+          
+        if (captureError) console.error('Error saving quiz results:', captureError);
+
+        // Générer et sauvegarder les tâches
+        const tasks = generateTasksFromQuizResult(result);
+        
+        if (tasks.length > 0) {
+          // Ajouter user_id à chaque tâche
+          const tasksWithUserId = tasks.map(task => ({
+            ...task,
+            user_id: user.id
+          }));
+          
+          // Insérer les tâches dans la table todos_planification
+          const { error: tasksError } = await supabase
+            .from('todos_planification')
+            .insert(tasksWithUserId);
+            
+          if (tasksError) {
+            console.error('Error saving tasks:', tasksError);
+            toast({
+              title: "Attention",
+              description: "Vos résultats ont été enregistrés, mais nous n'avons pas pu créer votre plan personnalisé.",
+              variant: "default"
+            });
+          } else {
+            toast({
+              title: "Plan créé avec succès",
+              description: "Votre plan personnalisé a été créé et est disponible dans votre tableau de bord.",
+              variant: "default"
+            });
+          }
+        }
+        
+        // Rediriger vers le dashboard
+        navigate('/dashboard');
+      }
+    } catch (error) {
+      console.error('Error processing quiz results:', error);
     }
   };
 
@@ -263,8 +308,66 @@ const WeddingQuiz: React.FC = () => {
     );
   }
 
-  if (showEmailCapture && result) {
-    return <EmailCaptureForm quizResult={result} onComplete={handleEmailCaptureComplete} />;
+  if (showAuthModal) {
+    return (
+      <>
+        <div className="max-w-2xl mx-auto py-8 space-y-8">
+          <div className="text-center mb-6">
+            <h2 className="text-2xl font-serif mb-2">Votre niveau de préparation</h2>
+            <div className="inline-block bg-wedding-cream px-4 py-2 rounded-md">
+              <p className="text-xl font-semibold">{result?.status}</p>
+            </div>
+            <div className="mt-4">
+              <p className="text-sm text-muted-foreground">Score: {result?.score}/10</p>
+            </div>
+          </div>
+
+          <div className="space-y-6">
+            <h3 className="text-xl font-serif">Objectifs recommandés</h3>
+            <ul className="space-y-2">
+              {result?.objectives.map((objective, index) => (
+                <li key={index} className="flex items-start gap-2">
+                  <div className="h-6 w-6 rounded-full bg-wedding-olive text-white flex items-center justify-center flex-shrink-0 mt-0.5">
+                    {index + 1}
+                  </div>
+                  <span>{objective}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <Separator />
+
+          <div className="space-y-6">
+            <h3 className="text-xl font-serif">Catégories à prioriser</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {result?.categories.map((category, index) => (
+                <div key={index} className="border rounded-md p-3 bg-wedding-light/50">
+                  <p>{category}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="pt-6">
+            <Button 
+              onClick={() => setShowAuthModal(true)}
+              className="w-full bg-wedding-olive hover:bg-wedding-olive/90 flex items-center justify-center gap-2"
+            >
+              <CalendarIcon size={18} />
+              Obtenir votre plan personnalisé détaillé et l'exporter
+              <ArrowRight size={16} />
+            </Button>
+          </div>
+        </div>
+        
+        <AuthRequiredModal 
+          open={showAuthModal} 
+          onOpenChange={setShowAuthModal} 
+          onSuccess={handleAuthSuccess}
+        />
+      </>
+    );
   }
 
   if (showResult && result) {
@@ -309,7 +412,7 @@ const WeddingQuiz: React.FC = () => {
 
         <div className="pt-6">
           <Button 
-            onClick={handleRegisterClick}
+            onClick={() => setShowAuthModal(true)}
             className="w-full bg-wedding-olive hover:bg-wedding-olive/90 flex items-center justify-center gap-2"
           >
             <CalendarIcon size={18} />

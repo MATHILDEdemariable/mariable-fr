@@ -36,7 +36,7 @@ const WeddingAssistantV2: React.FC = () => {
         
         <Tabs defaultValue="planning" value={activeTab} onValueChange={setActiveTab} className="w-full">
           <div className="flex justify-center w-full mb-8">
-            <TabsList className={`${isMobile ? 'w-full' : 'max-w-2xl w-full'}`}>
+            <TabsList className={`${isMobile ? 'w-full' : 'max-w-2xl w-full mx-auto'}`}>
               <div className={`grid ${isMobile ? 'grid-cols-1 gap-2' : 'grid-cols-3'} w-full`}>
                 <TabsTrigger value="planning" className="w-full">Planning</TabsTrigger>
                 <TabsTrigger value="budget" className="w-full">Budget personnalisé</TabsTrigger>

@@ -3,7 +3,7 @@ import { useNavigate, Routes, Route, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
-import { Calendar, Clock, Euro, Layout, Plus, Users, Download } from 'lucide-react';
+import { Calendar, Clock, Euro, Layout, Plus, Users, Download, CheckCircle, HelpCircle } from 'lucide-react';
 import Header from '@/components/Header';
 import SEO from '@/components/SEO';
 import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
@@ -29,11 +29,178 @@ interface Project {
   created_at: string;
 }
 
+// Component to show top priority tasks
+interface TopTasksProps {
+  projectId?: string;
+}
+
+const TopTasks: React.FC<TopTasksProps> = ({ projectId }) => {
+  const [tasks, setTasks] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchTopTasks = async () => {
+      try {
+        setIsLoading(true);
+        
+        // Vérifier si l'utilisateur est connecté
+        const { data: { user } } = await supabase.auth.getUser();
+        
+        if (user) {
+          // Récupérer les 3 tâches prioritaires non complétées
+          const { data: tasksData, error } = await supabase
+            .from('todos_planification')
+            .select('*')
+            .eq('user_id', user.id)
+            .eq('completed', false)
+            .order('priority', { ascending: false })
+            .order('position', { ascending: true })
+            .limit(3);
+            
+          if (error) throw error;
+          
+          setTasks(tasksData || []);
+        }
+      } catch (error) {
+        console.error('Erreur lors du chargement des tâches prioritaires:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchTopTasks();
+  }, []);
+
+  const handleToggleComplete = async (taskId: string, completed: boolean) => {
+    try {
+      const { error } = await supabase
+        .from('todos_planification')
+        .update({ completed: !completed })
+        .eq('id', taskId);
+        
+      if (error) throw error;
+      
+      // Update the local state
+      setTasks(prevTasks => 
+        prevTasks.map(task => 
+          task.id === taskId ? { ...task, completed: !completed } : task
+        )
+      );
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour de la tâche:', error);
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="flex justify-between items-center">
+        <h3 className="text-lg font-medium">Tâches prioritaires</h3>
+        <Button 
+          variant="ghost" 
+          className="text-wedding-olive"
+          onClick={() => navigate('/dashboard/tasks')}
+        >
+          Voir tout
+        </Button>
+      </div>
+      
+      {isLoading ? (
+        <div className="flex justify-center py-4">
+          <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-wedding-olive"></div>
+        </div>
+      ) : tasks.length > 0 ? (
+        <div className="space-y-2">
+          {tasks.map(task => (
+            <div key={task.id} className="flex items-center justify-between p-3 bg-white rounded-md shadow-sm">
+              <div className="flex items-center space-x-3">
+                <Button 
+                  variant="ghost" 
+                  className="h-6 w-6 p-0 rounded-full"
+                  onClick={() => handleToggleComplete(task.id, task.completed)}
+                >
+                  <div className={`h-5 w-5 rounded-full border ${task.completed ? 'bg-wedding-olive border-wedding-olive' : 'border-gray-300'} flex items-center justify-center`}>
+                    {task.completed && <CheckCircle className="h-4 w-4 text-white" />}
+                  </div>
+                </Button>
+                <span className={`${task.completed ? 'line-through text-gray-400' : ''}`}>
+                  {task.label}
+                </span>
+              </div>
+              <span className={`text-xs px-2 py-1 rounded-full ${
+                task.priority === 'haute' ? 'bg-red-100 text-red-800' :
+                task.priority === 'moyenne' ? 'bg-amber-100 text-amber-800' :
+                'bg-blue-100 text-blue-800'
+              }`}>
+                {task.priority === 'haute' ? 'Haute' :
+                 task.priority === 'moyenne' ? 'Moyenne' : 'Basse'}
+              </span>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p className="text-center py-4 text-muted-foreground">
+          Aucune tâche prioritaire pour le moment.
+        </p>
+      )}
+    </div>
+  );
+};
+
+// Component for FAQ/Help section
+const FAQSection: React.FC = () => {
+  const navigate = useNavigate();
+  
+  const commonQuestions = [
+    {
+      question: "Comment ajouter un prestataire à mon suivi ?",
+      answer: "Allez dans la section 'Prestataires' et cliquez sur 'Ajouter un prestataire'."
+    },
+    {
+      question: "Comment modifier mon budget ?",
+      answer: "Dans la section 'Budget', vous pouvez ajuster les montants alloués à chaque catégorie."
+    },
+    {
+      question: "Comment exporter mon planning ?",
+      answer: "Utilisez le bouton 'Exporter en PDF' en haut du tableau de bord."
+    }
+  ];
+  
+  return (
+    <div className="space-y-4">
+      <h3 className="text-lg font-medium">FAQ & Aide</h3>
+      <div className="space-y-3">
+        {commonQuestions.map((item, index) => (
+          <div key={index} className="bg-white p-3 rounded-md shadow-sm">
+            <details className="group">
+              <summary className="flex justify-between items-center font-medium cursor-pointer list-none">
+                <span className="flex items-center gap-2">
+                  <HelpCircle className="h-4 w-4 text-wedding-olive" />
+                  {item.question}
+                </span>
+                <span className="transition group-open:rotate-180">
+                  <svg fill="none" height="24" width="24" shapeRendering="geometricPrecision" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" viewBox="0 0 24 24">
+                    <path d="M6 9l6 6 6-6"></path>
+                  </svg>
+                </span>
+              </summary>
+              <p className="text-sm text-neutral-600 mt-3 group-open:animate-fadeIn">
+                {item.answer}
+              </p>
+            </details>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 const DashboardHome = () => {
   const [project, setProject] = useState<Project | null>(null);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
+  const isMobile = useIsMobile();
 
   // Fonction pour exporter le dashboard en PDF
   const handleExportPDF = async () => {
@@ -184,27 +351,44 @@ const DashboardHome = () => {
         </Button>
       </div>
       
-      <div className="md:col-span-2">
-        <ProjectSummary 
-          projectName={projectData.name}
-          weddingDate={typeof projectData.date === 'string' ? projectData.date : undefined}
-          guestCount={projectData.guestCount}
-          budget={projectData.budget}
-          daysRemaining={projectData.daysRemaining || 0}
-          progress={projectData.progress}
-        />
+      {/* Notre mariage section */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="md:col-span-2">
+          <ProjectSummary 
+            projectName={projectData.name}
+            weddingDate={typeof projectData.date === 'string' ? projectData.date : undefined}
+            guestCount={projectData.guestCount}
+            budget={projectData.budget}
+            daysRemaining={projectData.daysRemaining || 0}
+            progress={projectData.progress}
+          />
+        </div>
       </div>
       
-      <div className="md:col-span-2">
-        <VendorTracking project_id={project.id} />
+      {/* Tasks section */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="md:col-span-2 bg-white p-5 rounded-lg shadow-sm">
+          <TopTasks projectId={project.id} />
+        </div>
       </div>
       
-      <TasksList />
+      {/* Budget summary */}
+      <div className="grid grid-cols-1 gap-6">
+        <BudgetSummary />
+      </div>
       
-      <BudgetSummary />
+      {/* Vendor tracking */}
+      <div className="grid grid-cols-1 gap-6">
+        <div className="md:col-span-2">
+          <VendorTracking project_id={project.id} />
+        </div>
+      </div>
       
-      <div className="md:col-span-2">
-        <DocumentsSection />
+      {/* FAQ & Help section (replacing Documents) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="md:col-span-2 bg-white p-5 rounded-lg shadow-sm">
+          <FAQSection />
+        </div>
       </div>
     </div>
   );
