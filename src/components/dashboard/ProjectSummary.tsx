@@ -1,12 +1,14 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
-import { ListTodo, Euro, Users, MessageCircle, ArrowRight } from 'lucide-react';
+import { ListTodo, Euro, Users, MessageCircle, ArrowRight, Calendar } from 'lucide-react';
 import ProgressBar from './ProgressBar';
+import { Input } from '@/components/ui/input';
+import { useToast } from '@/components/ui/use-toast';
 
 // Define interfaces for budget data
 interface BudgetCategory {
@@ -43,6 +45,9 @@ interface Budget {
 
 const ProjectSummary: React.FC = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
+  const [weddingDate, setWeddingDate] = useState<string>('');
+  const [guestCount, setGuestCount] = useState<string>('');
   
   // Récupérer les tâches principales
   const { data: tasks } = useQuery({
@@ -118,61 +123,124 @@ const ProjectSummary: React.FC = () => {
   
   const budgetBreakdown = parseBudgetBreakdown();
 
+  const saveWeddingInfo = async () => {
+    try {
+      const { data: userData } = await supabase.auth.getUser();
+      if (!userData.user) return;
+      
+      // Check if a project exists for this user
+      const { data: existingProject } = await supabase
+        .from('projects')
+        .select('*')
+        .eq('user_id', userData.user.id)
+        .single();
+      
+      if (existingProject) {
+        // Update existing project
+        const { error } = await supabase
+          .from('projects')
+          .update({
+            wedding_date: weddingDate || null,
+            guest_count: guestCount ? parseInt(guestCount) : null,
+            updated_at: new Date()
+          })
+          .eq('id', existingProject.id);
+          
+        if (error) throw error;
+      } else {
+        // Create new project
+        const { error } = await supabase
+          .from('projects')
+          .insert({
+            user_id: userData.user.id,
+            title: 'Mon Mariage',
+            wedding_date: weddingDate || null,
+            guest_count: guestCount ? parseInt(guestCount) : null
+          });
+          
+        if (error) throw error;
+      }
+      
+      toast({
+        title: "Information sauvegardée",
+        description: "Les détails de votre mariage ont été mis à jour",
+      });
+    } catch (error) {
+      console.error('Error saving wedding info:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de sauvegarder les informations",
+        variant: "destructive"
+      });
+    }
+  };
+
+  // Load existing project data
+  useQuery({
+    queryKey: ['projectData'],
+    queryFn: async () => {
+      const { data: userData } = await supabase.auth.getUser();
+      if (!userData.user) return null;
+      
+      const { data, error } = await supabase
+        .from('projects')
+        .select('*')
+        .eq('user_id', userData.user.id)
+        .single();
+        
+      if (error && error.code !== 'PGRST116') throw error;
+      if (data) {
+        if (data.wedding_date) setWeddingDate(data.wedding_date);
+        if (data.guest_count) setGuestCount(data.guest_count.toString());
+      }
+      return data;
+    }
+  });
+
   return (
     <div className="space-y-6 pb-10">
       <h1 className="text-3xl font-serif mb-6 text-wedding-olive">Tableau de Bord</h1>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base flex items-center gap-2">
-              <ListTodo className="h-5 w-5" />
-              Tâches à faire
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="text-2xl font-bold">
-            {tasks ? tasks.filter(task => !task.completed).length : '-'}
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base flex items-center gap-2">
-              <Euro className="h-5 w-5" />
-              Budget Total
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="text-2xl font-bold">
-            {budget?.total_budget ? `${budget.total_budget.toLocaleString()} €` : '-'}
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base flex items-center gap-2">
-              <Users className="h-5 w-5" />
-              Prestataires
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="text-2xl font-bold">
-            {vendors ? vendors.length : '-'}
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base flex items-center gap-2">
-              <MessageCircle className="h-5 w-5" />
-              Conseils personnalisés
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="text-base">
-            <Button className="bg-green-600 hover:bg-green-700 w-full" onClick={() => window.open('https://chat.whatsapp.com/In5xf3ZMJNvJkhy4F9g5C5', '_blank')}>
-              Groupe WhatsApp
+      {/* Section Wedding Info */}
+      <Card>
+        <CardHeader className="flex justify-between items-center">
+          <CardTitle className="text-lg font-serif">Informations de Mariage</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <div>
+              <label htmlFor="wedding-date" className="block text-sm font-medium mb-1">
+                Date de mariage (fixe ou en cours de réflexion)
+              </label>
+              <Input
+                id="wedding-date"
+                type="date"
+                value={weddingDate}
+                onChange={(e) => setWeddingDate(e.target.value)}
+                className="w-full sm:w-64"
+              />
+            </div>
+            <div>
+              <label htmlFor="guest-count" className="block text-sm font-medium mb-1">
+                Nombre d'invités estimatif
+              </label>
+              <Input
+                id="guest-count"
+                type="number"
+                value={guestCount}
+                onChange={(e) => setGuestCount(e.target.value)}
+                className="w-full sm:w-64"
+              />
+            </div>
+            <Button 
+              onClick={saveWeddingInfo} 
+              className="bg-wedding-olive hover:bg-wedding-olive/90"
+            >
+              Enregistrer
             </Button>
-          </CardContent>
-        </Card>
-      </div>
+          </div>
+        </CardContent>
+      </Card>
       
       {/* Sections suivantes */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -268,7 +336,7 @@ const ProjectSummary: React.FC = () => {
         <Card>
           <CardHeader className="flex justify-between items-center">
             <CardTitle className="text-lg font-serif">Suivi des Prestataires</CardTitle>
-            <Button variant="ghost" size="sm" onClick={() => navigate('/dashboard/vendor-tracking')} className="text-wedding-olive hover:text-wedding-olive/70">
+            <Button variant="ghost" size="sm" onClick={() => navigate('/dashboard/prestataires')} className="text-wedding-olive hover:text-wedding-olive/70">
               Voir tout
               <ArrowRight className="h-4 w-4 ml-1" />
             </Button>

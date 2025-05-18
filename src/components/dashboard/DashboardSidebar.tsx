@@ -98,7 +98,7 @@ const DashboardSidebar: React.FC = () => {
             active={isActive('/dashboard/budget')}
           />
           
-          {/* Prestataires - Now pointing to /dashboard/prestataires */}
+          {/* Prestataires */}
           <MenuItem
             icon={<Users size={20} />}
             label="Prestataires"

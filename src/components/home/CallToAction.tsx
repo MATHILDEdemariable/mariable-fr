@@ -8,8 +8,8 @@ const CallToAction = () => {
   const isMobile = useIsMobile();
   const navigate = useNavigate();
   
-  const handleConnexionClick = () => {
-    navigate('/dashboard'); // Redirect to dashboard, which will redirect to login if not authenticated
+  const handleSignupClick = () => {
+    navigate('/register');
   };
 
   return (
@@ -21,9 +21,9 @@ const CallToAction = () => {
         <Button 
           size={isMobile ? "default" : "lg"} 
           className="bg-wedding-olive hover:bg-wedding-olive/90 text-white px-6 py-6 text-lg font-medium w-full sm:w-auto"
-          onClick={handleConnexionClick}
+          onClick={handleSignupClick}
         >
-          Oui je le veux
+          Créez un compte dès maintenant
         </Button>
       </div>
     </section>
