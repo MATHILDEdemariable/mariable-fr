@@ -4,10 +4,130 @@ import { Helmet } from 'react-helmet-async';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import BudgetSummary from '@/components/dashboard/BudgetSummary';
 import DetailedBudget from '@/components/dashboard/DetailedBudget';
-import { BarChart, PieChart } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { BarChart, PieChart, Download } from 'lucide-react';
+import { useToast } from '@/components/ui/use-toast';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
 const BudgetPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>('summary');
+  const { toast } = useToast();
+
+  // Fetch budget data for export
+  const { data: budgetData } = useQuery({
+    queryKey: ['budgetDashboard'],
+    queryFn: async () => {
+      const { data: userData } = await supabase.auth.getUser();
+      if (!userData.user) throw new Error("User not authenticated");
+      
+      const { data, error } = await supabase
+        .from('budgets_dashboard')
+        .select('*')
+        .eq('user_id', userData.user.id)
+        .single();
+        
+      if (error && error.code !== 'PGRST116') {
+        throw error;
+      }
+      
+      return data || { breakdown: JSON.stringify({ categories: [] }) };
+    }
+  });
+
+  // Export budget data as CSV
+  const handleExportCSV = () => {
+    try {
+      if (!budgetData || !budgetData.breakdown) {
+        toast({
+          title: "Erreur",
+          description: "Aucune donnée de budget disponible pour l'exportation",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Parse the breakdown data
+      const breakdownData = typeof budgetData.breakdown === 'string' 
+        ? JSON.parse(budgetData.breakdown) 
+        : budgetData.breakdown;
+
+      if (!breakdownData || !breakdownData.categories || !Array.isArray(breakdownData.categories)) {
+        toast({
+          title: "Erreur",
+          description: "Format de données invalide pour l'exportation",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Create CSV content
+      let csvContent = "Catégorie,Élément,Budget Estimé,Coût Réel,Acompte Versé,Reste à Payer\n";
+      
+      breakdownData.categories.forEach(category => {
+        if (category.items && Array.isArray(category.items)) {
+          category.items.forEach(item => {
+            // Format item data, handle empty fields
+            const line = [
+              `"${category.name}"`,
+              `"${item.name || ''}"`,
+              item.estimated || 0,
+              item.actual || 0,
+              item.deposit || 0,
+              item.remaining || 0
+            ].join(',');
+            csvContent += line + "\n";
+          });
+        }
+        
+        // Add category total line
+        const totalLine = [
+          `"TOTAL ${category.name}"`,
+          `""`,
+          category.totalEstimated || 0,
+          category.totalActual || 0,
+          category.totalDeposit || 0,
+          category.totalRemaining || 0
+        ].join(',');
+        csvContent += totalLine + "\n";
+      });
+      
+      // Add grand totals
+      csvContent += [
+        `"GRAND TOTAL"`,
+        `""`,
+        breakdownData.totalEstimated || 0,
+        breakdownData.totalActual || 0,
+        breakdownData.totalDeposit || 0,
+        breakdownData.totalRemaining || 0
+      ].join(',') + "\n";
+
+      // Create and download the CSV file
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement("a");
+      const url = URL.createObjectURL(blob);
+      
+      link.setAttribute("href", url);
+      link.setAttribute("download", "budget_mariage.csv");
+      link.style.visibility = 'hidden';
+      
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      toast({
+        title: "Téléchargement réussi",
+        description: "Votre budget a été exporté au format CSV",
+      });
+    } catch (error) {
+      console.error("Error exporting budget data:", error);
+      toast({
+        title: "Erreur",
+        description: "Échec de l'exportation du budget",
+        variant: "destructive",
+      });
+    }
+  };
 
   return (
     <>
@@ -17,7 +137,13 @@ const BudgetPage: React.FC = () => {
       </Helmet>
 
       <div>
-        <h1 className="text-3xl font-serif mb-6 text-wedding-olive">Budget de Mariage</h1>
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-serif text-wedding-olive">Budget de Mariage</h1>
+          <Button onClick={handleExportCSV} className="bg-wedding-olive hover:bg-wedding-olive/80 flex gap-2 items-center">
+            <Download size={18} />
+            Télécharger
+          </Button>
+        </div>
 
         <Tabs defaultValue="summary" value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="mb-6 grid w-full grid-cols-1 sm:grid-cols-2 bg-wedding-cream/10">

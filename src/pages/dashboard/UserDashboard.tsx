@@ -12,7 +12,6 @@ import WishlistPage from './WishlistPage';
 import BudgetPage from './BudgetPage';
 import { useToast } from '@/components/ui/use-toast';
 import DrinksCalculator from '@/components/drinks/DrinksCalculator';
-import VendorTrackingPage from './VendorTrackingPage';
 
 const UserDashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -48,7 +47,6 @@ const UserDashboard: React.FC = () => {
           <Route path="tasks" element={<TasksList />} />
           <Route path="budget" element={<BudgetPage />} />
           <Route path="prestataires" element={<PrestairesList />} />
-          <Route path="vendor-tracking" element={<VendorTrackingPage />} />
           <Route path="wishlist" element={<WishlistPage />} />
           <Route path="coordination" element={<CoordinationPage />} />
           <Route path="drinks" element={<DrinksCalculator />} />

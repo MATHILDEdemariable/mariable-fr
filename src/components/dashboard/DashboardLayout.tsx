@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Outlet } from 'react-router-dom';
 import DashboardSidebar from './DashboardSidebar';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -10,7 +10,6 @@ import Header from '@/components/Header';
 
 const DashboardLayout: React.FC = () => {
   const isMobile = useIsMobile();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -18,14 +17,14 @@ const DashboardLayout: React.FC = () => {
       <div className="flex flex-1">
         {/* Desktop sidebar - always visible on larger screens */}
         {!isMobile && (
-          <div className="hidden lg:block w-64 flex-shrink-0">
+          <div className="w-64 flex-shrink-0">
             <DashboardSidebar />
           </div>
         )}
 
-        {/* Mobile sidebar - using Drawer component for sliding effect */}
+        {/* Mobile sidebar - using Drawer component for sliding effect, but now always open */}
         {isMobile && (
-          <Drawer open={sidebarOpen} onOpenChange={setSidebarOpen}>
+          <Drawer defaultOpen={true}>
             <DrawerTrigger asChild>
               <Button 
                 variant="outline" 
