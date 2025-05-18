@@ -33,7 +33,7 @@ const DashboardLayout: React.FC = () => {
                 <Menu className="h-5 w-5" />
               </Button>
             </DrawerTrigger>
-            <DrawerContent side="left" className="p-0 w-[280px] sm:max-w-sm bg-white">
+            <DrawerContent className="p-0 w-[280px] sm:max-w-sm bg-white">
               <div className="absolute top-4 right-4 z-50">
                 <DrawerClose asChild>
                   <Button variant="ghost" size="icon">
