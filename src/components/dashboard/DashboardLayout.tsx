@@ -6,6 +6,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { Drawer, DrawerContent, DrawerTrigger, DrawerClose } from '@/components/ui/drawer';
 import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import Header from '@/components/Header';
 
 const DashboardLayout: React.FC = () => {
   const isMobile = useIsMobile();
@@ -13,6 +14,7 @@ const DashboardLayout: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
+      <Header />
       <div className="flex flex-1">
         {/* Desktop sidebar - always visible on larger screens */}
         {!isMobile && (
@@ -49,7 +51,7 @@ const DashboardLayout: React.FC = () => {
         )}
 
         {/* Main content area */}
-        <div className="flex-1 overflow-auto">
+        <div className="flex-1 overflow-auto pt-6">
           <main className="container mx-auto py-6 px-4 lg:px-8">
             <Outlet />
           </main>

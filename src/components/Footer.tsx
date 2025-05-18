@@ -26,7 +26,7 @@ const Footer = () => {
             <h3 className="font-serif text-base mb-2 md:mb-3">Liens Rapides</h3>
             <ul className="space-y-1 text-xs md:text-sm">
               <li><Link to="/" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Accueil</Link></li>
-              <li><Link to="/recherche" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Notre guide de prestataire</Link></li>
+              <li><Link to="/recherche" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Notre guide de prestataires</Link></li>
               <li><Link to="/services/planification" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Planification</Link></li>
               <li><Link to="/services/budget" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Budget</Link></li>
               <li><Link to="/services/conseils" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Conseils</Link></li>

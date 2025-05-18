@@ -12,6 +12,7 @@ import WishlistPage from './WishlistPage';
 import BudgetPage from './BudgetPage';
 import { useToast } from '@/components/ui/use-toast';
 import DrinksCalculator from '@/components/drinks/DrinksCalculator';
+import VendorTrackingPage from './VendorTrackingPage';
 
 const UserDashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -44,11 +45,12 @@ const UserDashboard: React.FC = () => {
       <Routes>
         <Route path="/" element={<DashboardLayout />}>
           <Route index element={<ProjectSummary />} />
-          <Route path="prestataires" element={<PrestairesList />} />
           <Route path="tasks" element={<TasksList />} />
           <Route path="budget" element={<BudgetPage />} />
-          <Route path="coordination" element={<CoordinationPage />} />
+          <Route path="prestataires" element={<PrestairesList />} />
+          <Route path="vendor-tracking" element={<VendorTrackingPage />} />
           <Route path="wishlist" element={<WishlistPage />} />
+          <Route path="coordination" element={<CoordinationPage />} />
           <Route path="drinks" element={<DrinksCalculator />} />
           <Route path="settings" element={<div>Paramètres</div>} />
           <Route path="*" element={<div>Page non trouvée</div>} />

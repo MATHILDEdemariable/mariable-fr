@@ -1,130 +1,83 @@
 
 import React from 'react';
-import ServiceTemplate from '../ServiceTemplate';
-import { Card, CardContent } from '@/components/ui/card';
+import { Helmet } from 'react-helmet-async';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-
-const CharteContent = () => {
-  const navigate = useNavigate();
-
-  return (
-    <>
-      <div className="mb-12 text-center max-w-3xl mx-auto">
-        <h1 className="text-4xl font-serif mb-6">La Charte Mariable</h1>
-        <p className="text-lg text-muted-foreground">
-          Le Label Mariable distingue les prestataires du mariage qui se démarquent par leur professionnalisme, 
-          leur passion et leur engagement à offrir des prestations haut de gamme.
-        </p>
-      </div>
-      
-      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
-        {[
-          {
-            title: "Confiance",
-            description: "Créer une relation transparente avec les mariés grâce à des tarifs clairs et des services définis."
-          },
-          {
-            title: "Passion",
-            description: "Offrir des prestations personnalisées et marquées par l'excellence et la créativité."
-          },
-          {
-            title: "Relationnel humain",
-            description: "Accompagner les clients de manière flexible, attentive et bienveillante."
-          },
-          {
-            title: "Excellence",
-            description: "Maintenir des standards élevés, notamment en termes de service, de logistique et de rendu final."
-          }
-        ].map((value, index) => (
-          <Card key={index} className="relative overflow-hidden group hover:shadow-lg transition-shadow">
-            <CardContent className="pt-6">
-              <div className="absolute top-0 left-0 w-1 h-full bg-wedding-olive transform scale-y-0 group-hover:scale-y-100 transition-transform origin-top"></div>
-              <h2 className="text-xl font-serif font-medium mb-3">{value.title}</h2>
-              <p className="text-muted-foreground">{value.description}</p>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-      
-      <Card className="bg-wedding-cream/20 border-wedding-olive/20 max-w-2xl mx-auto mb-16">
-        <CardContent className="pt-8 pb-8">
-          <h3 className="text-2xl font-serif text-center mb-6">
-            Nos prestataires s'engagent à...
-          </h3>
-          <div className="grid md:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <h4 className="font-medium">Transparence des informations</h4>
-              <p className="text-muted-foreground">
-                Présenter leurs services selon un format standardisé et afficher les tarifs.
-              </p>
-            </div>
-            <div className="space-y-2">
-              <h4 className="font-medium">Audit d'excellence</h4>
-              <p className="text-muted-foreground">
-                Accepter l'évaluation des clients et l'audit annuel de Mariable sur la base de critères précis.
-              </p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-      
-      <Card className="bg-wedding-olive text-white max-w-2xl mx-auto mb-16">
-        <CardContent className="pt-8 pb-8 text-center">
-          <h3 className="text-3xl font-serif mb-6">Rejoignez l'excellence</h3>
-          <p className="mb-8 text-lg opacity-90">
-            Que vous soyez un professionnel du mariage ou un futur marié, 
-            découvrez l'univers Mariable et son engagement pour l'excellence.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button 
-              variant="secondary"
-              size="lg"
-              className="bg-white text-wedding-olive hover:bg-gray-100"
-              onClick={() => navigate('/professionnels')}
-            >
-              Espace professionnel <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-            <Button 
-              variant="secondary"
-              size="lg"
-              className="bg-white text-wedding-olive hover:bg-gray-100"
-              onClick={() => navigate('/login-frame')}
-            >
-              Espace futurs mariés <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-      
-      {/* Nouveau lien vers la page de recherche de prestataires */}
-      <div className="text-center mb-16">
-        <h3 className="text-2xl font-serif mb-6">Découvrez nos prestataires sélectionnés</h3>
-        <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
-          Tous les prestataires présents dans notre guide ont été rigoureusement sélectionnés pour 
-          répondre aux exigences de notre charte d'excellence.
-        </p>
-        <Button 
-          variant="wedding"
-          size="lg"
-          onClick={() => navigate('/recherche')}
-          className="mx-auto"
-        >
-          Consulter notre guide de prestataires <ArrowRight className="ml-2 h-4 w-4" />
-        </Button>
-      </div>
-    </>
-  );
-};
 
 const Charte = () => {
   return (
-    <ServiceTemplate 
-      title="Notre charte"
-      description="Notre engagement pour des prestations de qualité"
-      content={<CharteContent />}
-    />
+    <>
+      <Helmet>
+        <title>Notre Charte | Mariable</title>
+        <meta name="description" content="Découvrez notre charte Mariable et nos engagements" />
+      </Helmet>
+
+      <Header />
+
+      <main className="container mx-auto px-4 py-12 max-w-4xl">
+        <h1 className="text-4xl font-serif mb-8 text-center">Notre Charte Mariable</h1>
+
+        <div className="prose prose-lg mx-auto">
+          <p className="lead text-xl mb-8">
+            Chez Mariable, nous nous engageons à vous offrir une expérience exceptionnelle pour la planification de votre mariage, avec des valeurs fortes et une méthodologie rigoureuse.
+          </p>
+
+          <h2 className="text-2xl font-serif mt-8 mb-4">Nos Principes Fondamentaux</h2>
+          <ul className="space-y-4">
+            <li>
+              <strong>Excellence :</strong> Nous sélectionnons rigoureusement les prestataires que nous référençons pour garantir un service impeccable.
+            </li>
+            <li>
+              <strong>Transparence :</strong> Toutes nos recommandations sont basées sur des critères objectifs et des avis vérifiés.
+            </li>
+            <li>
+              <strong>Personnalisation :</strong> Chaque couple est unique, et nous adaptons nos conseils à votre vision, votre budget et vos priorités.
+            </li>
+            <li>
+              <strong>Accessibilité :</strong> Nous proposons des outils et des conseils pour tous les budgets et tous les styles de mariage.
+            </li>
+          </ul>
+
+          <h2 className="text-2xl font-serif mt-10 mb-4">Notre Promesse</h2>
+          <p>
+            Mariable s'engage à être votre allié de confiance tout au long de votre parcours de planification. Notre plateforme vous offre :
+          </p>
+          <ul className="space-y-4">
+            <li>Des conseils personnalisés par des experts du mariage</li>
+            <li>Des outils de planification pratiques et intuitifs</li>
+            <li>Un accompagnement humain et bienveillant</li>
+            <li>Une sélection des meilleurs prestataires pour votre projet</li>
+          </ul>
+
+          <h2 className="text-2xl font-serif mt-10 mb-4">Rejoignez l'Excellence</h2>
+          <p>
+            Nous sommes fiers de référencer uniquement des prestataires qui partagent nos valeurs d'excellence et de professionnalisme. Notre processus de sélection rigoureux garantit que chaque prestataire recommandé saura répondre à vos attentes les plus élevées.
+          </p>
+          
+          <div className="mt-6 mb-10 flex justify-center">
+            <Link to="/recherche">
+              <Button className="bg-wedding-olive hover:bg-wedding-olive/90">
+                Découvrir notre guide de prestataires
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
+
+          <h2 className="text-2xl font-serif mt-10 mb-4">Votre confiance, notre priorité</h2>
+          <p>
+            En choisissant Mariable, vous optez pour un partenaire transparent et engagé dans la réussite de votre mariage. Nous mettons un point d'honneur à protéger vos données personnelles et à vous fournir uniquement des informations fiables et pertinentes.
+          </p>
+          <p className="mt-4">
+            Notre équipe reste à votre écoute pour répondre à toutes vos questions et vous accompagner dans cette belle aventure.
+          </p>
+        </div>
+      </main>
+
+      <Footer />
+    </>
   );
 };
 

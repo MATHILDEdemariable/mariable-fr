@@ -2,15 +2,13 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import {
-  LayoutDashboard,
-  Calendar,
   ListTodo,
-  Clock,
   Euro,
-  Settings,
   Users,
+  Clock,
   Wine,
   Heart,
+  Settings,
   MessageCircle
 } from 'lucide-react';
 
@@ -26,25 +24,9 @@ const WhatsAppIcon = () => (
 
 const navItems = [
   {
-    name: 'Conseils Personnalisés',
-    path: 'https://chat.whatsapp.com/In5xf3ZMJNvJkhy4F9g5C5',
-    icon: <WhatsAppIcon />,
-    external: true
-  },
-  {
-    name: 'Tableau de bord',
-    path: '/dashboard',
-    icon: <LayoutDashboard className="h-5 w-5" />
-  },
-  {
-    name: 'Prestataires',
-    path: '/dashboard/prestataires',
-    icon: <Users className="h-5 w-5" />
-  },
-  {
-    name: 'Ma wishlist',
-    path: '/dashboard/wishlist',
-    icon: <Heart className="h-5 w-5" />
+    name: 'Tâches',
+    path: '/dashboard/tasks',
+    icon: <ListTodo className="h-5 w-5" />
   },
   {
     name: 'Budget',
@@ -52,14 +34,30 @@ const navItems = [
     icon: <Euro className="h-5 w-5" />
   },
   {
-    name: 'Tâches',
-    path: '/dashboard/tasks',
-    icon: <ListTodo className="h-5 w-5" />
+    name: 'Prestataires',
+    path: '/dashboard/prestataires',
+    icon: <Users className="h-5 w-5" />
   },
   {
-    name: 'Coordination J-J',
+    name: 'Suivi des prestataires',
+    path: '/dashboard/vendor-tracking',
+    icon: <Users className="h-5 w-5" />
+  },
+  {
+    name: 'Wishlist prestataires',
+    path: '/dashboard/wishlist',
+    icon: <Heart className="h-5 w-5" />
+  },
+  {
+    name: 'Coordination Jour-J',
     path: '/dashboard/coordination',
     icon: <Clock className="h-5 w-5" />
+  },
+  {
+    name: 'Conseils personnalisés',
+    path: 'https://chat.whatsapp.com/In5xf3ZMJNvJkhy4F9g5C5',
+    icon: <WhatsAppIcon />,
+    external: true
   },
   {
     name: 'Calculateur boissons',

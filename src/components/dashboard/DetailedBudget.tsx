@@ -1,644 +1,383 @@
 
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
-import { Calendar, Download, FileText } from 'lucide-react';
-import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Calendar as CalendarComponent } from '@/components/ui/calendar';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
+import { Plus, Trash2, Save } from 'lucide-react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
-// Types for the budget data
+// Type for budget category
 interface BudgetItem {
   id: string;
-  category: string;
-  subCategory: string;
-  description: string;
-  estimatedCost: number;
-  actualCost: number;
-  comment: string;
+  name: string;
+  estimated: number;
+  actual: number;
   deposit: number;
-  depositDate: Date | null;
-  payer: string;
   remaining: number;
 }
 
 interface BudgetCategory {
   name: string;
   items: BudgetItem[];
+  totalEstimated: number;
+  totalActual: number;
+  totalDeposit: number;
+  totalRemaining: number;
 }
 
-// Type for our breakdown JSON structure in the database
-interface BudgetBreakdown {
-  categories?: BudgetCategory[];
-  guests?: any;
-  totalEstimated?: number;
-  totalActual?: number;
-  totalDeposit?: number;
-  totalRemaining?: number;
-  [key: string]: any;
-}
-
-const INITIAL_CATEGORIES: BudgetCategory[] = [
-  {
-    name: "Lieu de réception",
-    items: [
-      { id: "lieu-1", category: "Lieu de réception", subCategory: "Location salle", description: "", estimatedCost: 0, actualCost: 0, comment: "", deposit: 0, depositDate: null, payer: "", remaining: 0 },
-      { id: "lieu-2", category: "Lieu de réception", subCategory: "Options (logement/ménage)", description: "", estimatedCost: 0, actualCost: 0, comment: "", deposit: 0, depositDate: null, payer: "", remaining: 0 },
-      { id: "lieu-3", category: "Lieu de réception", subCategory: "Mobilier supplémentaire", description: "", estimatedCost: 0, actualCost: 0, comment: "", deposit: 0, depositDate: null, payer: "", remaining: 0 }
-    ]
-  },
-  {
-    name: "Coordination Jour-J",
-    items: [
-      { id: "coord-1", category: "Coordination Jour-J", subCategory: "Wedding planner", description: "", estimatedCost: 0, actualCost: 0, comment: "", deposit: 0, depositDate: null, payer: "", remaining: 0 },
-      { id: "coord-2", category: "Coordination Jour-J", subCategory: "Assistants", description: "", estimatedCost: 0, actualCost: 0, comment: "", deposit: 0, depositDate: null, payer: "", remaining: 0 }
-    ]
-  },
-  {
-    name: "Traiteur",
-    items: [
-      { id: "traiteur-1", category: "Traiteur", subCategory: "Cocktail", description: "", estimatedCost: 0, actualCost: 0, comment: "", deposit: 0, depositDate: null, payer: "", remaining: 0 },
-      { id: "traiteur-2", category: "Traiteur", subCategory: "Dîner (adultes)", description: "", estimatedCost: 0, actualCost: 0, comment: "", deposit: 0, depositDate: null, payer: "", remaining: 0 },
-      { id: "traiteur-3", category: "Traiteur", subCategory: "Dîner (enfants)", description: "", estimatedCost: 0, actualCost: 0, comment: "", deposit: 0, depositDate: null, payer: "", remaining: 0 },
-      { id: "traiteur-4", category: "Traiteur", subCategory: "Dessert/Gâteau", description: "", estimatedCost: 0, actualCost: 0, comment: "", deposit: 0, depositDate: null, payer: "", remaining: 0 },
-      { id: "traiteur-5", category: "Traiteur", subCategory: "Brunch", description: "", estimatedCost: 0, actualCost: 0, comment: "", deposit: 0, depositDate: null, payer: "", remaining: 0 },
-      { id: "traiteur-6", category: "Traiteur", subCategory: "Personnel de service", description: "", estimatedCost: 0, actualCost: 0, comment: "", deposit: 0, depositDate: null, payer: "", remaining: 0 }
-    ]
-  },
-  {
-    name: "Boissons",
-    items: [
-      { id: "boissons-1", category: "Boissons", subCategory: "Vin", description: "", estimatedCost: 0, actualCost: 0, comment: "", deposit: 0, depositDate: null, payer: "", remaining: 0 },
-      { id: "boissons-2", category: "Boissons", subCategory: "Champagne", description: "", estimatedCost: 0, actualCost: 0, comment: "", deposit: 0, depositDate: null, payer: "", remaining: 0 },
-      { id: "boissons-3", category: "Boissons", subCategory: "Alcools forts", description: "", estimatedCost: 0, actualCost: 0, comment: "", deposit: 0, depositDate: null, payer: "", remaining: 0 },
-      { id: "boissons-4", category: "Boissons", subCategory: "Softs", description: "", estimatedCost: 0, actualCost: 0, comment: "", deposit: 0, depositDate: null, payer: "", remaining: 0 },
-      { id: "boissons-5", category: "Boissons", subCategory: "Bar et service", description: "", estimatedCost: 0, actualCost: 0, comment: "", deposit: 0, depositDate: null, payer: "", remaining: 0 }
-    ]
-  },
-  {
-    name: "Décoration",
-    items: [
-      { id: "deco-1", category: "Décoration", subCategory: "Fleurs", description: "", estimatedCost: 0, actualCost: 0, comment: "", deposit: 0, depositDate: null, payer: "", remaining: 0 },
-      { id: "deco-2", category: "Décoration", subCategory: "Bougies / Photophores", description: "", estimatedCost: 0, actualCost: 0, comment: "", deposit: 0, depositDate: null, payer: "", remaining: 0 },
-      { id: "deco-3", category: "Décoration", subCategory: "Éclairage", description: "", estimatedCost: 0, actualCost: 0, comment: "", deposit: 0, depositDate: null, payer: "", remaining: 0 },
-      { id: "deco-4", category: "Décoration", subCategory: "Plan de table", description: "", estimatedCost: 0, actualCost: 0, comment: "", deposit: 0, depositDate: null, payer: "", remaining: 0 },
-      { id: "deco-5", category: "Décoration", subCategory: "Décoration de table", description: "", estimatedCost: 0, actualCost: 0, comment: "", deposit: 0, depositDate: null, payer: "", remaining: 0 }
-    ]
-  },
-  {
-    name: "Papeterie",
-    items: [
-      { id: "papeterie-1", category: "Papeterie", subCategory: "Faire-parts", description: "", estimatedCost: 0, actualCost: 0, comment: "", deposit: 0, depositDate: null, payer: "", remaining: 0 },
-      { id: "papeterie-2", category: "Papeterie", subCategory: "Menu", description: "", estimatedCost: 0, actualCost: 0, comment: "", deposit: 0, depositDate: null, payer: "", remaining: 0 },
-      { id: "papeterie-3", category: "Papeterie", subCategory: "Cartes de remerciement", description: "", estimatedCost: 0, actualCost: 0, comment: "", deposit: 0, depositDate: null, payer: "", remaining: 0 }
-    ]
-  },
-  {
-    name: "Musique",
-    items: [
-      { id: "musique-1", category: "Musique", subCategory: "DJ", description: "", estimatedCost: 0, actualCost: 0, comment: "", deposit: 0, depositDate: null, payer: "", remaining: 0 },
-      { id: "musique-2", category: "Musique", subCategory: "Sonorisation", description: "", estimatedCost: 0, actualCost: 0, comment: "", deposit: 0, depositDate: null, payer: "", remaining: 0 },
-      { id: "musique-3", category: "Musique", subCategory: "Groupe live", description: "", estimatedCost: 0, actualCost: 0, comment: "", deposit: 0, depositDate: null, payer: "", remaining: 0 },
-      { id: "musique-4", category: "Musique", subCategory: "Cérémonie", description: "", estimatedCost: 0, actualCost: 0, comment: "", deposit: 0, depositDate: null, payer: "", remaining: 0 }
-    ]
-  },
-  {
-    name: "Souvenirs & cadeaux invités",
-    items: [
-      { id: "souvenirs-1", category: "Souvenirs & cadeaux invités", subCategory: "Cadeaux invités", description: "", estimatedCost: 0, actualCost: 0, comment: "", deposit: 0, depositDate: null, payer: "", remaining: 0 },
-      { id: "souvenirs-2", category: "Souvenirs & cadeaux invités", subCategory: "Témoins / Parents", description: "", estimatedCost: 0, actualCost: 0, comment: "", deposit: 0, depositDate: null, payer: "", remaining: 0 }
-    ]
-  },
-  {
-    name: "Animations",
-    items: [
-      { id: "animations-1", category: "Animations", subCategory: "Bar à bonbons", description: "", estimatedCost: 0, actualCost: 0, comment: "", deposit: 0, depositDate: null, payer: "", remaining: 0 },
-      { id: "animations-2", category: "Animations", subCategory: "Photobooth", description: "", estimatedCost: 0, actualCost: 0, comment: "", deposit: 0, depositDate: null, payer: "", remaining: 0 },
-      { id: "animations-3", category: "Animations", subCategory: "Bar à cigares", description: "", estimatedCost: 0, actualCost: 0, comment: "", deposit: 0, depositDate: null, payer: "", remaining: 0 },
-      { id: "animations-4", category: "Animations", subCategory: "Autres animations", description: "", estimatedCost: 0, actualCost: 0, comment: "", deposit: 0, depositDate: null, payer: "", remaining: 0 }
-    ]
-  },
-  {
-    name: "Photo & vidéo",
-    items: [
-      { id: "photo-1", category: "Photo & vidéo", subCategory: "Photographe", description: "", estimatedCost: 0, actualCost: 0, comment: "", deposit: 0, depositDate: null, payer: "", remaining: 0 },
-      { id: "photo-2", category: "Photo & vidéo", subCategory: "Vidéaste", description: "", estimatedCost: 0, actualCost: 0, comment: "", deposit: 0, depositDate: null, payer: "", remaining: 0 },
-      { id: "photo-3", category: "Photo & vidéo", subCategory: "Albums / Tirages", description: "", estimatedCost: 0, actualCost: 0, comment: "", deposit: 0, depositDate: null, payer: "", remaining: 0 }
-    ]
-  },
-  {
-    name: "Tenues",
-    items: [
-      { id: "tenue-1", category: "Tenues", subCategory: "Mariée (robe)", description: "", estimatedCost: 0, actualCost: 0, comment: "", deposit: 0, depositDate: null, payer: "", remaining: 0 },
-      { id: "tenue-2", category: "Tenues", subCategory: "Marié (costume)", description: "", estimatedCost: 0, actualCost: 0, comment: "", deposit: 0, depositDate: null, payer: "", remaining: 0 },
-      { id: "tenue-3", category: "Tenues", subCategory: "Accessoires mariée", description: "", estimatedCost: 0, actualCost: 0, comment: "", deposit: 0, depositDate: null, payer: "", remaining: 0 },
-      { id: "tenue-4", category: "Tenues", subCategory: "Accessoires marié", description: "", estimatedCost: 0, actualCost: 0, comment: "", deposit: 0, depositDate: null, payer: "", remaining: 0 },
-      { id: "tenue-5", category: "Tenues", subCategory: "Enfants", description: "", estimatedCost: 0, actualCost: 0, comment: "", deposit: 0, depositDate: null, payer: "", remaining: 0 },
-      { id: "tenue-6", category: "Tenues", subCategory: "Coiffure & maquillage", description: "", estimatedCost: 0, actualCost: 0, comment: "", deposit: 0, depositDate: null, payer: "", remaining: 0 }
-    ]
-  },
-  {
-    name: "Alliances & accessoires",
-    items: [
-      { id: "alliances-1", category: "Alliances & accessoires", subCategory: "Alliances", description: "", estimatedCost: 0, actualCost: 0, comment: "", deposit: 0, depositDate: null, payer: "", remaining: 0 },
-      { id: "alliances-2", category: "Alliances & accessoires", subCategory: "Bijoux", description: "", estimatedCost: 0, actualCost: 0, comment: "", deposit: 0, depositDate: null, payer: "", remaining: 0 }
-    ]
-  },
-  {
-    name: "Cérémonie",
-    items: [
-      { id: "ceremonie-1", category: "Cérémonie", subCategory: "Religieuse", description: "", estimatedCost: 0, actualCost: 0, comment: "", deposit: 0, depositDate: null, payer: "", remaining: 0 },
-      { id: "ceremonie-2", category: "Cérémonie", subCategory: "Civile", description: "", estimatedCost: 0, actualCost: 0, comment: "", deposit: 0, depositDate: null, payer: "", remaining: 0 },
-      { id: "ceremonie-3", category: "Cérémonie", subCategory: "Officiant", description: "", estimatedCost: 0, actualCost: 0, comment: "", deposit: 0, depositDate: null, payer: "", remaining: 0 },
-      { id: "ceremonie-4", category: "Cérémonie", subCategory: "Décoration", description: "", estimatedCost: 0, actualCost: 0, comment: "", deposit: 0, depositDate: null, payer: "", remaining: 0 }
-    ]
-  },
-  {
-    name: "Transport & hébergement",
-    items: [
-      { id: "transport-1", category: "Transport & hébergement", subCategory: "Voiture des mariés", description: "", estimatedCost: 0, actualCost: 0, comment: "", deposit: 0, depositDate: null, payer: "", remaining: 0 },
-      { id: "transport-2", category: "Transport & hébergement", subCategory: "Invités", description: "", estimatedCost: 0, actualCost: 0, comment: "", deposit: 0, depositDate: null, payer: "", remaining: 0 },
-      { id: "transport-3", category: "Transport & hébergement", subCategory: "Hébergement mariés", description: "", estimatedCost: 0, actualCost: 0, comment: "", deposit: 0, depositDate: null, payer: "", remaining: 0 },
-      { id: "transport-4", category: "Transport & hébergement", subCategory: "Hébergement invités", description: "", estimatedCost: 0, actualCost: 0, comment: "", deposit: 0, depositDate: null, payer: "", remaining: 0 }
-    ]
-  },
-  {
-    name: "Autres dépenses",
-    items: [
-      { id: "autres-1", category: "Autres dépenses", subCategory: "Voyage de noces", description: "", estimatedCost: 0, actualCost: 0, comment: "", deposit: 0, depositDate: null, payer: "", remaining: 0 },
-      { id: "autres-2", category: "Autres dépenses", subCategory: "Assurance mariage", description: "", estimatedCost: 0, actualCost: 0, comment: "", deposit: 0, depositDate: null, payer: "", remaining: 0 },
-      { id: "autres-3", category: "Autres dépenses", subCategory: "Imprévus", description: "", estimatedCost: 0, actualCost: 0, comment: "", deposit: 0, depositDate: null, payer: "", remaining: 0 },
-      { id: "autres-4", category: "Autres dépenses", subCategory: "Divers", description: "", estimatedCost: 0, actualCost: 0, comment: "", deposit: 0, depositDate: null, payer: "", remaining: 0 }
-    ]
-  }
+const DEFAULT_CATEGORIES = [
+  { name: 'Lieu de réception', items: [] },
+  { name: 'Traiteur & Boissons', items: [] },
+  { name: 'Tenues & Accessoires', items: [] },
+  { name: 'Décoration & Fleurs', items: [] },
+  { name: 'Photo & Vidéo', items: [] },
+  { name: 'Musique & Animation', items: [] },
+  { name: 'Transport', items: [] },
+  { name: 'Papeterie', items: [] },
+  { name: 'Cadeaux', items: [] },
+  { name: 'Divers', items: [] },
 ];
 
 const DetailedBudget: React.FC = () => {
-  const [categories, setCategories] = useState<BudgetCategory[]>(INITIAL_CATEGORIES);
-  const [editingItemId, setEditingItemId] = useState<string | null>(null);
-  const [newItemCategory, setNewItemCategory] = useState<string>("");
   const { toast } = useToast();
+  const queryClient = useQueryClient();
+  const [categories, setCategories] = useState<BudgetCategory[]>([]);
+  const [totalEstimated, setTotalEstimated] = useState(0);
+  const [totalActual, setTotalActual] = useState(0);
+  const [totalDeposit, setTotalDeposit] = useState(0);
+  const [totalRemaining, setTotalRemaining] = useState(0);
   
-  // Get the estimated and actual total budget
-  const getTotalEstimated = () => {
-    return categories.reduce((total, category) => 
-      total + category.items.reduce((catTotal, item) => catTotal + item.estimatedCost, 0), 0);
-  };
-  
-  const getTotalActual = () => {
-    return categories.reduce((total, category) => 
-      total + category.items.reduce((catTotal, item) => catTotal + item.actualCost, 0), 0);
-  };
-
-  const getTotalDeposit = () => {
-    return categories.reduce((total, category) => 
-      total + category.items.reduce((catTotal, item) => catTotal + item.deposit, 0), 0);
-  };
-
-  const getTotalRemaining = () => {
-    return categories.reduce((total, category) => 
-      total + category.items.reduce((catTotal, item) => catTotal + item.remaining, 0), 0);
-  };
-  
-  const getCategoryTotal = (categoryName: string, field: 'estimatedCost' | 'actualCost' | 'deposit' | 'remaining') => {
-    const category = categories.find(c => c.name === categoryName);
-    if (!category) return 0;
-    return category.items.reduce((total, item) => total + item[field], 0);
-  };
-  
-  const handleItemChange = (id: string, field: keyof BudgetItem, value: any) => {
-    setCategories(prevCategories => 
-      prevCategories.map(category => ({
-        ...category,
-        items: category.items.map(item => {
-          if (item.id === id) {
-            const updatedItem = { ...item, [field]: value };
-            
-            // Auto-calculate remaining amount when deposit or actual cost changes
-            if (field === 'deposit' || field === 'actualCost') {
-              updatedItem.remaining = updatedItem.actualCost - updatedItem.deposit;
-            }
-            
-            return updatedItem;
-          }
-          return item;
-        })
-      }))
-    );
-  };
-  
-  const handleAddItem = () => {
-    if (!newItemCategory) {
-      toast({
-        title: "Erreur",
-        description: "Veuillez sélectionner une catégorie",
-        variant: "destructive"
-      });
-      return;
-    }
-    
-    const category = categories.find(c => c.name === newItemCategory);
-    if (!category) return;
-    
-    const newId = `${newItemCategory.toLowerCase().replace(/\s+/g, '-')}-${category.items.length + 1}`;
-    
-    setCategories(prevCategories => 
-      prevCategories.map(c => {
-        if (c.name === newItemCategory) {
-          return {
-            ...c,
-            items: [
-              ...c.items,
-              { 
-                id: newId, 
-                category: newItemCategory, 
-                subCategory: "Autre", 
-                description: "", 
-                estimatedCost: 0, 
-                actualCost: 0, 
-                comment: "", 
-                deposit: 0, 
-                depositDate: null, 
-                payer: "", 
-                remaining: 0 
-              }
-            ]
-          };
-        }
-        return c;
-      })
-    );
-    
-    setNewItemCategory("");
-    
-    toast({
-      title: "Ligne ajoutée",
-      description: "Une nouvelle ligne a été ajoutée à votre budget"
-    });
-  };
-  
-  const saveBudget = async () => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
+  // Fetch budget data from Supabase
+  const { data: budgetData, isLoading } = useQuery({
+    queryKey: ['budgetDashboard'],
+    queryFn: async () => {
+      const { data: userData } = await supabase.auth.getUser();
+      if (!userData.user) throw new Error("User not authenticated");
       
-      if (user) {
-        // Get existing budgets data first
-        const { data: existingData, error: fetchError } = await supabase
-          .from('budgets_dashboard')
-          .select('*')
-          .eq('user_id', user.id)
-          .order('updated_at', { ascending: false })
-          .limit(1);
+      const { data, error } = await supabase
+        .from('budgets_dashboard')
+        .select('*')
+        .eq('user_id', userData.user.id)
+        .single();
         
-        if (fetchError) throw fetchError;
-        
-        let budgetData;
-        
-        if (existingData && existingData.length > 0) {
-          // Update existing record with required fields
-          budgetData = {
-            id: existingData[0].id,
-            user_id: user.id,
-            total_budget: getTotalActual(),
-            guests_count: existingData[0].guests_count || 0,
-            region: existingData[0].region,
-            season: existingData[0].season,
-            service_level: existingData[0].service_level,
-            selected_vendors: existingData[0].selected_vendors,
-            breakdown: {
-              ...(existingData[0].breakdown as BudgetBreakdown || {}),
-              categories: categories,
-              totalEstimated: getTotalEstimated(),
-              totalActual: getTotalActual(),
-              totalDeposit: getTotalDeposit(),
-              totalRemaining: getTotalRemaining(),
-            }
-          };
-        } else {
-          // Create new record with all required fields
-          budgetData = {
-            user_id: user.id,
-            total_budget: getTotalActual(),
-            guests_count: 0,
-            region: 'unknown',
-            season: 'unknown',
-            service_level: 'standard',
-            selected_vendors: [],
-            breakdown: {
-              categories: categories,
-              totalEstimated: getTotalEstimated(),
-              totalActual: getTotalActual(),
-              totalDeposit: getTotalDeposit(),
-              totalRemaining: getTotalRemaining(),
-            }
-          };
-        }
-        
-        const { data, error } = await supabase
-          .from('budgets_dashboard')
-          .upsert(budgetData);
-          
-        if (error) throw error;
-        
-        toast({
-          title: "Budget sauvegardé",
-          description: "Vos modifications ont été enregistrées"
-        });
-      } else {
-        toast({
-          title: "Non connecté",
-          description: "Connectez-vous pour sauvegarder votre budget",
-          variant: "destructive"
-        });
+      if (error && error.code !== 'PGRST116') {
+        // PGRST116 means no rows returned
+        throw error;
       }
-    } catch (error) {
-      console.error("Erreur lors de la sauvegarde:", error);
+      
+      return data;
+    }
+  });
+
+  // Initialize categories once budget data is loaded
+  useEffect(() => {
+    if (budgetData?.breakdown) {
+      try {
+        // Check if breakdown contains the 'categories' property
+        const breakdownData = typeof budgetData.breakdown === 'string' 
+          ? JSON.parse(budgetData.breakdown) 
+          : budgetData.breakdown;
+
+        if (breakdownData.categories) {
+          setCategories(breakdownData.categories);
+          
+          // Update totals
+          setTotalEstimated(breakdownData.totalEstimated || 0);
+          setTotalActual(breakdownData.totalActual || 0);
+          setTotalDeposit(breakdownData.totalDeposit || 0);
+          setTotalRemaining(breakdownData.totalRemaining || 0);
+        } else {
+          // If not, initialize with default categories
+          setCategories(DEFAULT_CATEGORIES);
+        }
+      } catch (e) {
+        console.error("Error parsing budget data:", e);
+        setCategories(DEFAULT_CATEGORIES);
+      }
+    } else {
+      setCategories(DEFAULT_CATEGORIES);
+    }
+  }, [budgetData]);
+
+  // Update budget data in Supabase
+  const updateBudgetMutation = useMutation({
+    mutationFn: async (newBudgetData: any) => {
+      const { data: userData } = await supabase.auth.getUser();
+      if (!userData.user) throw new Error("User not authenticated");
+
+      const { data, error } = await supabase
+        .from('budgets_dashboard')
+        .upsert({
+          user_id: userData.user.id,
+          total_budget: totalEstimated,
+          guests_count: budgetData?.guests_count || 100,
+          region: budgetData?.region || 'paris',
+          season: budgetData?.season || 'summer',
+          service_level: budgetData?.service_level || 'standard',
+          selected_vendors: budgetData?.selected_vendors || [],
+          breakdown: {
+            categories,
+            totalEstimated,
+            totalActual,
+            totalDeposit,
+            totalRemaining
+          }
+        })
+        .select();
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['budgetDashboard'] });
+      toast({
+        title: "Budget sauvegardé",
+        description: "Les modifications ont été enregistrées avec succès.",
+      });
+    },
+    onError: (error) => {
+      console.error("Error saving budget:", error);
       toast({
         title: "Erreur",
-        description: "Une erreur est survenue lors de la sauvegarde",
-        variant: "destructive"
+        description: "Impossible de sauvegarder les modifications.",
+        variant: "destructive",
       });
     }
-  };
+  });
 
-  // Charger les données sauvegardées
-  useEffect(() => {
-    const fetchBudgetData = async () => {
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        
-        if (user) {
-          const { data, error } = await supabase
-            .from('budgets_dashboard')
-            .select('*')
-            .eq('user_id', user.id)
-            .order('updated_at', { ascending: false })
-            .limit(1);
-            
-          if (error) throw error;
-            
-          if (data && data.length > 0 && data[0].breakdown) {
-            const breakdown = data[0].breakdown as BudgetBreakdown;
-            if (breakdown.categories) {
-              setCategories(breakdown.categories);
-            }
-          }
-        }
-      } catch (error) {
-        console.error("Erreur lors de la récupération des données:", error);
-      }
+  // Add a new item to a category
+  const handleAddItem = (categoryIndex: number) => {
+    const newCategories = [...categories];
+    const newItem: BudgetItem = {
+      id: `item_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      name: '',
+      estimated: 0,
+      actual: 0,
+      deposit: 0,
+      remaining: 0
     };
     
-    fetchBudgetData();
-  }, []);
-  
-  const exportToCSV = () => {
-    // Create CSV content
-    let csvContent = "Category,Sub-Category,Description,Estimated Cost,Actual Cost,Comment,Deposit,Deposit Date,Payer,Remaining\n";
+    newCategories[categoryIndex].items.push(newItem);
+    setCategories(newCategories);
+  };
+
+  // Remove an item from a category
+  const handleRemoveItem = (categoryIndex: number, itemIndex: number) => {
+    const newCategories = [...categories];
+    newCategories[categoryIndex].items.splice(itemIndex, 1);
+    setCategories(newCategories);
+    updateTotals(newCategories);
+  };
+
+  // Update an item property (name, estimated, actual, etc.)
+  const handleItemChange = (categoryIndex: number, itemIndex: number, field: keyof BudgetItem, value: string | number) => {
+    const newCategories = [...categories];
+    const item = newCategories[categoryIndex].items[itemIndex];
     
-    categories.forEach(category => {
+    // Update field value
+    if (field === 'name') {
+      item.name = value as string;
+    } else {
+      const numValue = typeof value === 'string' ? parseFloat(value) || 0 : value;
+      item[field] = numValue as number;
+      
+      // Auto-calculate remaining amount
+      if (field === 'estimated' || field === 'actual' || field === 'deposit') {
+        item.remaining = (item.estimated > item.actual ? item.estimated : item.actual) - item.deposit;
+      }
+    }
+    
+    setCategories(newCategories);
+    updateTotals(newCategories);
+  };
+
+  // Update totals for all categories and overall totals
+  const updateTotals = (updatedCategories: BudgetCategory[]) => {
+    let estimatedTotal = 0;
+    let actualTotal = 0;
+    let depositTotal = 0;
+    let remainingTotal = 0;
+    
+    const categoriesWithTotals = updatedCategories.map(category => {
+      let categoryEstimated = 0;
+      let categoryActual = 0;
+      let categoryDeposit = 0;
+      let categoryRemaining = 0;
+      
       category.items.forEach(item => {
-        const row = [
-          item.category,
-          item.subCategory,
-          item.description,
-          item.estimatedCost,
-          item.actualCost,
-          item.comment,
-          item.deposit,
-          item.depositDate ? format(item.depositDate, 'yyyy-MM-dd') : '',
-          item.payer,
-          item.remaining
-        ].map(cell => `"${cell}"`).join(',');
-        
-        csvContent += row + "\n";
+        categoryEstimated += item.estimated;
+        categoryActual += item.actual;
+        categoryDeposit += item.deposit;
+        categoryRemaining += item.remaining;
       });
+      
+      // Update category totals
+      const updatedCategory = {
+        ...category,
+        totalEstimated: categoryEstimated,
+        totalActual: categoryActual,
+        totalDeposit: categoryDeposit,
+        totalRemaining: categoryRemaining
+      };
+      
+      // Add to overall totals
+      estimatedTotal += categoryEstimated;
+      actualTotal += categoryActual;
+      depositTotal += categoryDeposit;
+      remainingTotal += categoryRemaining;
+      
+      return updatedCategory;
     });
     
-    // Create and download the file
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    const url = URL.createObjectURL(blob);
-    link.setAttribute('href', url);
-    link.setAttribute('download', `budget-mariage-${format(new Date(), 'yyyy-MM-dd')}.csv`);
-    link.style.visibility = 'hidden';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    
-    toast({
-      title: "Export réussi",
-      description: "Votre budget a été exporté en format CSV"
-    });
+    // Update state
+    setCategories(categoriesWithTotals);
+    setTotalEstimated(estimatedTotal);
+    setTotalActual(actualTotal);
+    setTotalDeposit(depositTotal);
+    setTotalRemaining(remainingTotal);
   };
-  
-  const exportToGoogleSheets = () => {
-    // This would integrate with Google Sheets API in a real implementation
-    // For now we'll just simulate it with a toast
-    toast({
-      title: "Export vers Google Sheets",
-      description: "Cette fonctionnalité sera disponible prochainement"
-    });
+
+  // Save budget to database
+  const handleSaveBudget = () => {
+    updateBudgetMutation.mutate({});
   };
-  
+
+  if (isLoading) {
+    return (
+      <div className="text-center py-12">
+        <p>Chargement du budget détaillé...</p>
+      </div>
+    );
+  }
+
   return (
-    <Card className="bg-wedding-cream/5">
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle className="font-serif text-wedding-olive">Budget Détaillé</CardTitle>
-        <div className="flex gap-2">
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button variant="outline" size="sm" className="gap-1">
-                <Download className="h-4 w-4" />
-                <span>Exporter</span>
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Exporter mon budget</DialogTitle>
-              </DialogHeader>
-              <div className="grid gap-4 py-4">
-                <Button onClick={exportToCSV} className="w-full flex items-center justify-center gap-2 bg-wedding-olive hover:bg-wedding-olive/90">
-                  <FileText className="h-4 w-4" />
-                  Exporter vers Excel (CSV)
-                </Button>
-                <Button onClick={exportToGoogleSheets} className="w-full flex items-center justify-center gap-2 bg-wedding-olive hover:bg-wedding-olive/90">
-                  <FileText className="h-4 w-4" />
-                  Exporter vers Google Sheets
-                </Button>
-              </div>
-            </DialogContent>
-          </Dialog>
-          
-          <Button size="sm" variant="wedding" onClick={saveBudget}>
-            Sauvegarder
-          </Button>
-        </div>
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between bg-white sticky top-0 z-10">
+        <CardTitle className="text-xl font-serif">Budget Détaillé</CardTitle>
+        <Button 
+          onClick={handleSaveBudget} 
+          className="bg-wedding-olive hover:bg-wedding-olive/90"
+          disabled={updateBudgetMutation.isPending}
+        >
+          {updateBudgetMutation.isPending ? (
+            <span className="flex items-center">
+              <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-b-transparent"></span>
+              Enregistrement...
+            </span>
+          ) : (
+            <span className="flex items-center">
+              <Save className="mr-2 h-4 w-4" />
+              Enregistrer
+            </span>
+          )}
+        </Button>
       </CardHeader>
-      <CardContent>
-        <div className="rounded-md border overflow-auto">
-          <Table className="w-full">
-            <TableHeader className="bg-wedding-cream/20 sticky top-0 z-10">
-              <TableRow>
-                <TableHead className="w-[220px]">Catégorie / Sous-catégorie</TableHead>
-                <TableHead>Description</TableHead>
-                <TableHead className="text-right">Budget Estimé</TableHead>
-                <TableHead className="text-right">Coût Réel</TableHead>
-                <TableHead>Commentaire</TableHead>
-                <TableHead className="text-right">Acompte</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead>Payeur</TableHead>
-                <TableHead className="text-right">Reste à payer</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {categories.map((category) => (
-                <React.Fragment key={category.name}>
-                  <TableRow className="bg-wedding-olive/10">
-                    <TableCell colSpan={2} className="font-medium">{category.name}</TableCell>
-                    <TableCell className="text-right font-medium">
-                      {getCategoryTotal(category.name, 'estimatedCost').toLocaleString('fr-FR')} €
-                    </TableCell>
-                    <TableCell className="text-right font-medium">
-                      {getCategoryTotal(category.name, 'actualCost').toLocaleString('fr-FR')} €
-                    </TableCell>
-                    <TableCell></TableCell>
-                    <TableCell className="text-right font-medium">
-                      {getCategoryTotal(category.name, 'deposit').toLocaleString('fr-FR')} €
-                    </TableCell>
-                    <TableCell></TableCell>
-                    <TableCell></TableCell>
-                    <TableCell className="text-right font-medium">
-                      {getCategoryTotal(category.name, 'remaining').toLocaleString('fr-FR')} €
-                    </TableCell>
-                  </TableRow>
+      <CardContent className="px-0">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="bg-gray-50 border-y">
+                <th className="px-4 py-3 text-left font-medium">Catégorie / Élément</th>
+                <th className="px-4 py-3 text-right font-medium">Budget Estimé (€)</th>
+                <th className="px-4 py-3 text-right font-medium">Coût Réel (€)</th>
+                <th className="px-4 py-3 text-right font-medium">Acompte Versé (€)</th>
+                <th className="px-4 py-3 text-right font-medium">Reste à Payer (€)</th>
+                <th className="px-4 py-3 text-center font-medium">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {categories.map((category, categoryIndex) => (
+                <React.Fragment key={`category-${categoryIndex}`}>
+                  {/* Category row */}
+                  <tr className="bg-wedding-cream/20 border-t">
+                    <td className="px-4 py-2 font-medium text-base">{category.name}</td>
+                    <td className="px-4 py-2 text-right font-medium">{category.totalEstimated.toFixed(2)}</td>
+                    <td className="px-4 py-2 text-right font-medium">{category.totalActual.toFixed(2)}</td>
+                    <td className="px-4 py-2 text-right font-medium">{category.totalDeposit.toFixed(2)}</td>
+                    <td className="px-4 py-2 text-right font-medium">{category.totalRemaining.toFixed(2)}</td>
+                    <td className="px-4 py-2 text-center">
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={() => handleAddItem(categoryIndex)}
+                        className="h-8 text-wedding-olive hover:text-wedding-olive/70"
+                      >
+                        <Plus className="h-4 w-4 mr-1" />
+                        <span>Ajouter</span>
+                      </Button>
+                    </td>
+                  </tr>
                   
-                  {category.items.map((item) => (
-                    <TableRow key={item.id}>
-                      <TableCell className="font-medium">{item.subCategory}</TableCell>
-                      <TableCell>
+                  {/* Items rows */}
+                  {category.items.map((item, itemIndex) => (
+                    <tr key={item.id} className="hover:bg-gray-50/50 border-t border-gray-100">
+                      <td className="px-4 py-2">
                         <Input
-                          value={item.description}
-                          onChange={(e) => handleItemChange(item.id, 'description', e.target.value)}
-                          className="h-8 min-w-[100px]"
+                          type="text"
+                          value={item.name}
+                          onChange={(e) => handleItemChange(categoryIndex, itemIndex, 'name', e.target.value)}
+                          className="h-8 border-gray-200"
+                          placeholder="Nom de l'élément"
                         />
-                      </TableCell>
-                      <TableCell className="text-right">
+                      </td>
+                      <td className="px-4 py-2">
                         <Input
                           type="number"
-                          value={item.estimatedCost}
-                          onChange={(e) => handleItemChange(item.id, 'estimatedCost', parseFloat(e.target.value) || 0)}
-                          className="h-8 w-20 text-right"
-                        /> €
-                      </TableCell>
-                      <TableCell className="text-right">
+                          value={item.estimated || ''}
+                          onChange={(e) => handleItemChange(categoryIndex, itemIndex, 'estimated', e.target.value)}
+                          className="h-8 text-right border-gray-200"
+                          placeholder="0.00"
+                        />
+                      </td>
+                      <td className="px-4 py-2">
                         <Input
                           type="number"
-                          value={item.actualCost}
-                          onChange={(e) => handleItemChange(item.id, 'actualCost', parseFloat(e.target.value) || 0)}
-                          className="h-8 w-20 text-right"
-                        /> €
-                      </TableCell>
-                      <TableCell>
-                        <Input
-                          value={item.comment}
-                          onChange={(e) => handleItemChange(item.id, 'comment', e.target.value)}
-                          className="h-8"
+                          value={item.actual || ''}
+                          onChange={(e) => handleItemChange(categoryIndex, itemIndex, 'actual', e.target.value)}
+                          className="h-8 text-right border-gray-200"
+                          placeholder="0.00"
                         />
-                      </TableCell>
-                      <TableCell className="text-right">
+                      </td>
+                      <td className="px-4 py-2">
                         <Input
                           type="number"
-                          value={item.deposit}
-                          onChange={(e) => handleItemChange(item.id, 'deposit', parseFloat(e.target.value) || 0)}
-                          className="h-8 w-20 text-right"
-                        /> €
-                      </TableCell>
-                      <TableCell>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="h-8 justify-start text-left font-normal w-[130px]"
-                            >
-                              <Calendar className="mr-2 h-4 w-4" />
-                              {item.depositDate ? format(item.depositDate, 'dd/MM/yyyy', { locale: fr }) : <span>Sélectionner</span>}
-                            </Button>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-auto p-0" align="start">
-                            <CalendarComponent
-                              mode="single"
-                              selected={item.depositDate || undefined}
-                              onSelect={(date) => handleItemChange(item.id, 'depositDate', date)}
-                              locale={fr}
-                              initialFocus
-                            />
-                          </PopoverContent>
-                        </Popover>
-                      </TableCell>
-                      <TableCell>
-                        <Input
-                          value={item.payer}
-                          onChange={(e) => handleItemChange(item.id, 'payer', e.target.value)}
-                          className="h-8"
+                          value={item.deposit || ''}
+                          onChange={(e) => handleItemChange(categoryIndex, itemIndex, 'deposit', e.target.value)}
+                          className="h-8 text-right border-gray-200"
+                          placeholder="0.00"
                         />
-                      </TableCell>
-                      <TableCell className="text-right font-medium">
-                        {item.remaining.toLocaleString('fr-FR')} €
-                      </TableCell>
-                    </TableRow>
+                      </td>
+                      <td className="px-4 py-2 text-right">
+                        {item.remaining.toFixed(2)}
+                      </td>
+                      <td className="px-4 py-2 text-center">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleRemoveItem(categoryIndex, itemIndex)}
+                          className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </td>
+                    </tr>
                   ))}
                 </React.Fragment>
               ))}
               
-              <TableRow className="bg-wedding-olive/20">
-                <TableCell colSpan={2} className="font-bold text-lg">TOTAL</TableCell>
-                <TableCell className="text-right font-bold text-lg">
-                  {getTotalEstimated().toLocaleString('fr-FR')} €
-                </TableCell>
-                <TableCell className="text-right font-bold text-lg">
-                  {getTotalActual().toLocaleString('fr-FR')} €
-                </TableCell>
-                <TableCell></TableCell>
-                <TableCell className="text-right font-bold">
-                  {getTotalDeposit().toLocaleString('fr-FR')} €
-                </TableCell>
-                <TableCell></TableCell>
-                <TableCell></TableCell>
-                <TableCell className="text-right font-bold">
-                  {getTotalRemaining().toLocaleString('fr-FR')} €
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </div>
-        
-        <div className="mt-6 flex items-end gap-4">
-          <div className="space-y-2 flex-1">
-            <div className="text-sm font-medium">Ajouter une nouvelle ligne</div>
-            <div className="flex gap-2">
-              <select 
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                value={newItemCategory}
-                onChange={(e) => setNewItemCategory(e.target.value)}
-              >
-                <option value="">Sélectionner une catégorie</option>
-                {categories.map(category => (
-                  <option key={category.name} value={category.name}>
-                    {category.name}
-                  </option>
-                ))}
-              </select>
-              <Button onClick={handleAddItem} className="bg-wedding-olive hover:bg-wedding-olive/90">Ajouter</Button>
-            </div>
-          </div>
+              {/* Totals row */}
+              <tr className="border-t-2 border-t-wedding-olive/50 font-semibold">
+                <td className="px-4 py-3">TOTAL</td>
+                <td className="px-4 py-3 text-right">{totalEstimated.toFixed(2)}</td>
+                <td className="px-4 py-3 text-right">{totalActual.toFixed(2)}</td>
+                <td className="px-4 py-3 text-right">{totalDeposit.toFixed(2)}</td>
+                <td className="px-4 py-3 text-right">{totalRemaining.toFixed(2)}</td>
+                <td className="px-4 py-3"></td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </CardContent>
     </Card>
