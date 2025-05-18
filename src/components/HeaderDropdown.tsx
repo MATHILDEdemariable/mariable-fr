@@ -12,13 +12,15 @@ interface ItemProps {
 
 interface DropdownProps {
   label: string | ReactNode;
-  children: ReactNode;
+  children?: ReactNode;
   className?: string;
   active?: boolean;
+  href?: string;
+  onClick?: () => void;
 }
 
 interface DropdownMenuProps {
-  children: React.ReactNode; // Correction
+  children: React.ReactNode;
 }
 
 export const HeaderDropdown: React.FC<DropdownProps> = ({
@@ -26,6 +28,8 @@ export const HeaderDropdown: React.FC<DropdownProps> = ({
   children,
   className = "",
   active = false,
+  href,
+  onClick,
 }) => {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -39,6 +43,21 @@ export const HeaderDropdown: React.FC<DropdownProps> = ({
     document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
+
+  // If href is provided, render a link instead of dropdown
+  if (href) {
+    return (
+      <div className={`relative ${className}`}>
+        <Link 
+          to={href}
+          className="flex items-center gap-1 font-medium px-4 py-2 rounded-md text-black hover:bg-wedding-cream transition"
+          onClick={onClick}
+        >
+          {label}
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div ref={ref} className={`relative ${className}`} tabIndex={-1}>

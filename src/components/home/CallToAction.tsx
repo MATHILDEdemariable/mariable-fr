@@ -9,7 +9,7 @@ const CallToAction = () => {
   const navigate = useNavigate();
   
   const handleConnexionClick = () => {
-    navigate('/register');
+    navigate('/dashboard'); // Redirect to dashboard, which will redirect to login if not authenticated
   };
 
   return (

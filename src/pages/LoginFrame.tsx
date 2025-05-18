@@ -8,8 +8,8 @@ const LoginFrame = () => {
   const navigate = useNavigate();
   
   useEffect(() => {
-    // Redirect to the register page
-    navigate('/register');
+    // Redirect to the dashboard page
+    navigate('/dashboard');
   }, [navigate]);
 
   return (
@@ -18,7 +18,7 @@ const LoginFrame = () => {
       
       <main className="flex-grow w-full flex items-center justify-center">
         <div className="text-center">
-          <p>Redirection vers la page d'inscription...</p>
+          <p>Redirection vers le tableau de bord...</p>
         </div>
       </main>
       

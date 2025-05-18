@@ -29,7 +29,21 @@ const HeaderLogo = () => (
 function Menus({ onClick }: { onClick?: () => void }) {
   return (
     <>
-      {/* À propos Dropdown - Sans témoignages */}
+      {/* Futurs mariés - En premier */}
+      <HeaderDropdown
+        label="Futurs mariés"
+        href="/dashboard"
+        onClick={onClick}
+      />
+      
+      {/* Professionnels - En second */}
+      <HeaderDropdown 
+        label="Professionnels"
+        href="/professionnels"
+        onClick={onClick}
+      />
+      
+      {/* À propos Dropdown - Sans témoignages, en dernier */}
       <HeaderDropdown label="À propos">
         <HeaderDropdownMenu>
           <HeaderDropdownItem
@@ -58,20 +72,6 @@ function Menus({ onClick }: { onClick?: () => void }) {
           />
         </HeaderDropdownMenu>
       </HeaderDropdown>
-      
-      {/* Professionnels - Lien direct */}
-      <HeaderDropdown 
-        label="Professionnels"
-        href="/professionnels"
-        onClick={onClick}
-      />
-      
-      {/* Futurs mariés - Lien direct */}
-      <HeaderDropdown
-        label="Futurs mariés"
-        href="/login-frame"
-        onClick={onClick}
-      />
     </>
   );
 }

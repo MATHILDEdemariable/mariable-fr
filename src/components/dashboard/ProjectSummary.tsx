@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useNavigate } from 'react-router-dom';
@@ -26,9 +27,18 @@ interface BudgetBreakdown {
 }
 
 interface Budget {
-  breakdown?: string | BudgetBreakdown;
+  id: string;
+  user_id: string;
+  breakdown: string | BudgetBreakdown;
   total_budget: number;
-  // Other fields...
+  created_at: string;
+  updated_at: string;
+  guests_count: number;
+  project_id: string | null;
+  region: string;
+  season: string;
+  service_level: string;
+  selected_vendors: string[];
 }
 
 const ProjectSummary: React.FC = () => {
@@ -68,7 +78,7 @@ const ProjectSummary: React.FC = () => {
         .single();
         
       if (error && error.code !== 'PGRST116') throw error;
-      return data;
+      return data as Budget | null;
     }
   });
   

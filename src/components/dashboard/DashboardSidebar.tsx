@@ -1,110 +1,153 @@
 
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import {
-  ListTodo,
+  LayoutDashboard,
+  CheckSquare,
   Euro,
   Users,
-  Clock,
-  Wine,
   Heart,
+  Calendar,
+  MessageCircle,
   Settings,
-  MessageCircle
+  Sparkles,
+  Palette
 } from 'lucide-react';
 
-// Custom WhatsApp icon component
-const WhatsAppIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21" />
-    <path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1Z" />
-    <path d="M14 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1Z" />
-    <path d="M9.5 13.5c.5 1.5 2.5 2 3.5 0" />
-  </svg>
-);
+interface MenuItemProps {
+  icon: React.ReactNode;
+  label: string;
+  to: string;
+  active?: boolean;
+  external?: boolean;
+}
 
-const navItems = [
-  {
-    name: 'Tâches',
-    path: '/dashboard/tasks',
-    icon: <ListTodo className="h-5 w-5" />
-  },
-  {
-    name: 'Budget',
-    path: '/dashboard/budget',
-    icon: <Euro className="h-5 w-5" />
-  },
-  {
-    name: 'Prestataires',
-    path: '/dashboard/prestataires',
-    icon: <Users className="h-5 w-5" />
-  },
-  {
-    name: 'Suivi des prestataires',
-    path: '/dashboard/vendor-tracking',
-    icon: <Users className="h-5 w-5" />
-  },
-  {
-    name: 'Wishlist prestataires',
-    path: '/dashboard/wishlist',
-    icon: <Heart className="h-5 w-5" />
-  },
-  {
-    name: 'Coordination Jour-J',
-    path: '/dashboard/coordination',
-    icon: <Clock className="h-5 w-5" />
-  },
-  {
-    name: 'Conseils personnalisés',
-    path: 'https://chat.whatsapp.com/In5xf3ZMJNvJkhy4F9g5C5',
-    icon: <WhatsAppIcon />,
-    external: true
-  },
-  {
-    name: 'Calculateur boissons',
-    path: '/dashboard/drinks',
-    icon: <Wine className="h-5 w-5" />
-  },
-  {
-    name: 'Paramètres',
-    path: '/dashboard/settings',
-    icon: <Settings className="h-5 w-5" />
-  }
-];
+const MenuItem: React.FC<MenuItemProps> = ({ icon, label, to, active = false, external = false }) => {
+  const Component = external ? 'a' : Link;
+  const props = external ? { href: to, target: "_blank", rel: "noopener noreferrer" } : { to };
 
-const DashboardSidebar = () => {
   return (
-    <aside className="w-full lg:w-64 lg:min-w-64 bg-white rounded-lg shadow p-4 lg:sticky lg:top-4 lg:self-start">
-      <nav className="space-y-1">
-        {navItems.map((item) => (
-          item.external ? (
-            <a 
-              href={item.path} 
-              key={item.path}
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="flex items-center gap-3 px-3 py-2 rounded-md transition-colors hover:bg-wedding-cream/20 text-wedding-black"
-            >
-              {item.icon}
-              <span className="text-sm">{item.name}</span>
-            </a>
-          ) : (
-            <NavLink 
-              to={item.path} 
-              key={item.path}
-              end={item.path === '/dashboard'}
-              className={({ isActive }) => 
-                `flex items-center gap-3 px-3 py-2 rounded-md transition-colors hover:bg-wedding-cream/20 
-                ${isActive ? 'bg-wedding-olive text-white hover:bg-wedding-olive/90' : 'text-wedding-black'}
-                `
-              }
-            >
-              {item.icon}
-              <span className="text-sm">{item.name}</span>
-            </NavLink>
-          )
-        ))}
-      </nav>
-    </aside>
+    <Component
+      {...props}
+      className={`flex items-center px-3 py-2 rounded-lg transition-colors ${
+        active
+          ? 'bg-wedding-olive/10 text-wedding-olive font-medium'
+          : 'hover:bg-gray-100'
+      }`}
+    >
+      <span className="mr-3">{icon}</span>
+      <span>{label}</span>
+    </Component>
+  );
+};
+
+const DashboardSidebar: React.FC = () => {
+  const location = useLocation();
+  const currentPath = location.pathname;
+
+  const isActive = (path: string) => {
+    if (path === '/dashboard') {
+      return currentPath === '/dashboard' || currentPath === '/dashboard/';
+    }
+    return currentPath.startsWith(path);
+  };
+
+  return (
+    <div className="h-full bg-white border-r w-full">
+      <div className="p-4">
+        <h2 className="text-xl font-serif text-wedding-olive mb-6">Tableau de Bord</h2>
+        
+        <nav className="space-y-2">
+          {/* Tableau de bord principal */}
+          <MenuItem
+            icon={<LayoutDashboard size={20} />}
+            label="Tableau de bord"
+            to="/dashboard"
+            active={isActive('/dashboard')}
+          />
+          
+          {/* Tâches */}
+          <MenuItem
+            icon={<CheckSquare size={20} />}
+            label="Tâches"
+            to="/dashboard/tasks"
+            active={isActive('/dashboard/tasks')}
+          />
+          
+          {/* Budget */}
+          <MenuItem
+            icon={<Euro size={20} />}
+            label="Budget"
+            to="/dashboard/budget"
+            active={isActive('/dashboard/budget')}
+          />
+          
+          {/* Prestataires */}
+          <MenuItem
+            icon={<Users size={20} />}
+            label="Prestataires"
+            to="/dashboard/prestataires"
+            active={isActive('/dashboard/prestataires')}
+          />
+          
+          {/* Suivi des prestataires */}
+          <MenuItem
+            icon={<CheckSquare size={20} />}
+            label="Suivi prestataires"
+            to="/dashboard/vendor-tracking"
+            active={isActive('/dashboard/vendor-tracking')}
+          />
+          
+          {/* Wishlist */}
+          <MenuItem
+            icon={<Heart size={20} />}
+            label="Wishlist prestataires"
+            to="/dashboard/wishlist"
+            active={isActive('/dashboard/wishlist')}
+          />
+          
+          {/* Coordination */}
+          <MenuItem
+            icon={<Calendar size={20} />}
+            label="Coordination Jour J"
+            to="/dashboard/coordination"
+            active={isActive('/dashboard/coordination')}
+          />
+          
+          {/* Assistant virtuel */}
+          <MenuItem
+            icon={<Sparkles size={20} />}
+            label="Assistant virtuel"
+            to="/assistant-v2"
+            active={isActive('/assistant-v2')}
+          />
+          
+          {/* Style de mariage */}
+          <MenuItem
+            icon={<Palette size={20} />}
+            label="Style de mariage"
+            to="/test-formulaire"
+            active={isActive('/test-formulaire')}
+          />
+          
+          {/* Conseils */}
+          <MenuItem
+            icon={<MessageCircle size={20} />}
+            label="Conseils personnalisés"
+            to="https://chat.whatsapp.com/In5xf3ZMJNvJkhy4F9g5C5"
+            external={true}
+          />
+          
+          {/* Paramètres */}
+          <MenuItem
+            icon={<Settings size={20} />}
+            label="Paramètres"
+            to="/dashboard/settings"
+            active={isActive('/dashboard/settings')}
+          />
+        </nav>
+      </div>
+    </div>
   );
 };
 
