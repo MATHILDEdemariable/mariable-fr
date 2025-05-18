@@ -187,42 +187,52 @@ const LandingPage = () => {
       <Header />
 
       <main className="flex-grow">
-        {/* Section 1: Hero Section - Simplified */}
-        <section className="relative py-16 md:py-24 bg-wedding-black text-white">
-          <div className="absolute inset-0 opacity-40 overflow-hidden">
-            <img
-              src="/lovable-uploads/9b1d88ec-ed12-4818-ba94-bf11f036a875.png"
-              alt="Couple de mariés"
-              className="absolute min-w-full min-h-full object-cover object-center"
-            />
-          </div>
-          <div className="container mx-auto px-4 relative z-10 text-center">
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-serif mb-8 md:mb-10 font-bold">
-              {showAnimation ? (
-                <TypewriterEffect text="Faciliter l'organisation de votre mariage" />
-              ) : (
-                "Faciliter l'organisation de votre mariage"
-              )}
-            </h1>
-            <Button 
-              variant="wedding" 
-              size={isMobile ? "default" : "lg"}
-              onClick={handleCTAClick}
-              className="shadow-lg hover:shadow-xl transition-all"
-            >
-              Je découvre Mariable
-            </Button>
+        {/* Section 1: Hero Section - Redesigned with two-column layout */}
+        <section className="relative py-16 md:py-20 bg-wedding-black text-white">
+          <div className="container mx-auto px-4 relative z-10">
+            <div className="flex flex-col md:flex-row items-center">
+              <div className="md:w-1/2 text-center md:text-left mb-8 md:mb-0">
+                <h1 className="text-3xl md:text-4xl lg:text-5xl font-serif mb-4 font-bold">
+                  {showAnimation ? (
+                    <TypewriterEffect text="Faciliter l'organisation de votre mariage" />
+                  ) : (
+                    "Faciliter l'organisation de votre mariage"
+                  )}
+                </h1>
+                <p className="mb-6 text-lg text-white/80">
+                  Avec le premier assistant virtuel à la planification de mariage
+                </p>
+                <Button 
+                  variant="wedding" 
+                  size={isMobile ? "default" : "lg"}
+                  onClick={handleCTAClick}
+                  className="shadow-lg hover:shadow-xl transition-all"
+                >
+                  Je découvre Mariable
+                </Button>
+              </div>
+              <div className="md:w-1/2 relative h-64 md:h-80">
+                <div className="absolute inset-0 opacity-80 overflow-hidden rounded-lg">
+                  <img
+                    src="/lovable-uploads/9b1d88ec-ed12-4818-ba94-bf11f036a875.png"
+                    alt="Couple de mariés"
+                    className="w-full h-full object-cover object-center rounded-lg"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-r from-wedding-black/80 to-transparent md:bg-gradient-to-l"></div>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
-        {/* Section Nouvelle: Premier assistant virtuel */}
+        {/* Section 2: Mariable transformation section - Updated title and subtitle */}
         <section className="py-16 bg-gray-50">
           <div className="container mx-auto px-4">
             <h2 className="text-2xl md:text-3xl font-serif mb-3 text-center">
-              Le premier assistant virtuel à la planification de mariage
+              Mariable transforme l'organisation de votre mariage en une expérience simple & agréable
             </h2>
             <p className="text-center text-muted-foreground mb-10 max-w-2xl mx-auto">
-              Mariable révolutionne l'organisation de votre mariage avec des services pensés pour vous
+              Des services sur-mesure pensés pour vous
             </p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
               {benefits.map((benefit, index) => (
@@ -237,13 +247,23 @@ const LandingPage = () => {
           </div>
         </section>
 
-        {/* Section 2: Pourquoi Mariable - Modified without green backgrounds */}
+        {/* Section 3: Pourquoi Mariable - Modified with CTA above */}
         <section className="py-16 bg-white">
           <div className="container mx-auto px-4">
+            <div className="text-center mb-10">
+              <Button 
+                variant="outline" 
+                className="border-wedding-olive text-wedding-olive hover:bg-wedding-olive/10 mb-6"
+                onClick={handleCTAClick}
+              >
+                Dites oui à la simplicité
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </div>
             <h2 className="text-2xl md:text-3xl font-serif mb-10 text-center">
               Pourquoi Mariable ?
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto mb-10">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
               <StatCard 
                 number="200+" 
                 text="heures nécessaires pour organiser un mariage" 
@@ -258,38 +278,29 @@ const LandingPage = () => {
                 text="couples trouve difficile de trouver les prestataires adéquats"
               />
             </div>
-            <div className="text-center">
-              <Button 
-                variant="outline" 
-                className="border-wedding-olive text-wedding-olive hover:bg-wedding-olive/10"
-                onClick={handleCTAClick}
-              >
-                Ne vous perdez plus dans un flot d'informations — Mariable centralise tout pour vous
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </div>
           </div>
         </section>
 
-        {/* Section 3: Ce que vous allez adorer - Modified to table format */}
-        <section className="py-16 bg-wedding-light">
+        {/* Section 4: Ce que vous allez adorer - Redesigned table style */}
+        <section className="py-16 bg-white">
           <div className="container mx-auto px-4">
             <h2 className="text-2xl md:text-3xl font-serif mb-10 text-center">
               Ce que vous allez adorer
             </h2>
-            <div className="max-w-4xl mx-auto">
-              <div className="bg-white rounded-lg shadow overflow-hidden">
+            <div className="max-w-5xl mx-auto">
+              <div className="overflow-hidden border rounded-lg shadow-sm">
                 <Table>
                   <TableHeader>
-                    <TableRow>
-                      <TableHead className="w-12"></TableHead>
-                      <TableHead className="font-medium">Fonctionnalité</TableHead>
-                      <TableHead>Description</TableHead>
+                    <TableRow className="bg-gray-50 hover:bg-gray-50">
+                      <TableHead className="w-16"></TableHead>
+                      <TableHead className="font-medium text-lg">Fonctionnalité</TableHead>
+                      <TableHead>Avantage</TableHead>
+                      <TableHead className="w-24 text-right"></TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {features.map((feature, index) => (
-                      <TableRow key={index}>
+                      <TableRow key={index} className="hover:bg-gray-50/50">
                         <TableCell className="p-4">
                           <div className="w-10 h-10 bg-wedding-olive/10 rounded-full flex items-center justify-center">
                             <feature.icon className="h-5 w-5 text-wedding-olive" />
@@ -297,6 +308,12 @@ const LandingPage = () => {
                         </TableCell>
                         <TableCell className="font-medium">{feature.name}</TableCell>
                         <TableCell>{feature.description}</TableCell>
+                        <TableCell className="text-right">
+                          <Button variant="ghost" size="sm" className="text-wedding-olive hover:text-wedding-olive/80 hover:bg-wedding-olive/10">
+                            Explorer
+                            <ArrowRight className="ml-1 h-4 w-4" />
+                          </Button>
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -306,15 +323,12 @@ const LandingPage = () => {
           </div>
         </section>
 
-        {/* Section 4: Témoignages */}
-        <section className="py-16 bg-white">
+        {/* Section 5: Témoignages - Updated title */}
+        <section className="py-16 bg-gray-50">
           <div className="container mx-auto px-4">
-            <h2 className="text-2xl md:text-3xl font-serif mb-3 text-center">
-              Pourquoi nos utilisateurs nous adorent
+            <h2 className="text-2xl md:text-3xl font-serif mb-10 text-center">
+              Ils ont choisi Mariable
             </h2>
-            <p className="text-center text-muted-foreground mb-10 max-w-xl mx-auto">
-              Ils ont choisi Mariable pour organiser leur jour J
-            </p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
               {testimonials.map((testimonial, index) => (
                 <TestimonialCard 
@@ -329,9 +343,17 @@ const LandingPage = () => {
           </div>
         </section>
 
-        {/* Section 5: CTA */}
-        <section className="py-16 bg-wedding-olive text-white">
-          <div className="container mx-auto px-4 text-center">
+        {/* Section 6: CTA - Redesigned with immersive background */}
+        <section className="py-16 relative text-white">
+          <div className="absolute inset-0">
+            <img 
+              src="/lovable-uploads/cb5c64ba-4141-40cc-9954-ab1a0f30d7ef.png" 
+              alt="Mariage élégant" 
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-wedding-black/60"></div>
+          </div>
+          <div className="container mx-auto px-4 relative z-10 text-center">
             <h2 className="text-2xl md:text-3xl font-serif mb-4">
               Organisez votre mariage facilement & sans stress
             </h2>
@@ -348,7 +370,7 @@ const LandingPage = () => {
           </div>
         </section>
 
-        {/* Section 6: FAQ */}
+        {/* Section 7: FAQ */}
         <section className="py-16 bg-white">
           <div className="container mx-auto px-4">
             <h2 className="text-2xl md:text-3xl font-serif mb-10 text-center">
