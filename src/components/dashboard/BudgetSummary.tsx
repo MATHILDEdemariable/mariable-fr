@@ -6,7 +6,7 @@ import {
 } from 'recharts';
 import { 
   Euro, ArrowRight, Download, Share2,
-  MapPin, Calculator, Users, Calendar, Info, ChevronRight, ChevronDown 
+  MapPin, Calculator, Users, Calendar, Info, ChevronRight, ChevronDown, FileText
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
@@ -21,6 +21,14 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/
 import { exportDashboardToPDF } from '@/services/pdfExportService';
 import { supabase } from '@/integrations/supabase/client';
 import { Json } from '@/integrations/supabase/types';
+import { format } from 'date-fns';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 
 interface BudgetCategory {
   name: string;

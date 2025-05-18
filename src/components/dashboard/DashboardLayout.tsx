@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import DashboardSidebar from './DashboardSidebar';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/drawer';
+import { Drawer, DrawerContent, DrawerTrigger, DrawerClose } from '@/components/ui/drawer';
 import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -21,10 +21,10 @@ const DashboardLayout: React.FC = () => {
           </div>
         )}
 
-        {/* Mobile sidebar - using Sheet component for sliding effect */}
+        {/* Mobile sidebar - using Drawer component for sliding effect */}
         {isMobile && (
-          <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
-            <SheetTrigger asChild>
+          <Drawer open={sidebarOpen} onOpenChange={setSidebarOpen}>
+            <DrawerTrigger asChild>
               <Button 
                 variant="outline" 
                 size="icon" 
@@ -32,20 +32,20 @@ const DashboardLayout: React.FC = () => {
               >
                 <Menu className="h-5 w-5" />
               </Button>
-            </SheetTrigger>
-            <SheetContent side="left" className="p-0 w-[280px] sm:max-w-sm bg-white">
+            </DrawerTrigger>
+            <DrawerContent side="left" className="p-0 w-[280px] sm:max-w-sm bg-white">
               <div className="absolute top-4 right-4 z-50">
-                <SheetClose asChild>
+                <DrawerClose asChild>
                   <Button variant="ghost" size="icon">
                     <X className="h-5 w-5" />
                   </Button>
-                </SheetClose>
+                </DrawerClose>
               </div>
               <div className="h-full overflow-y-auto">
                 <DashboardSidebar />
               </div>
-            </SheetContent>
-          </Sheet>
+            </DrawerContent>
+          </Drawer>
         )}
 
         {/* Main content area */}

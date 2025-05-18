@@ -41,8 +41,8 @@ const UserDashboard: React.FC = () => {
         <meta name="description" content="Tableau de bord utilisateur Mariable" />
       </Helmet>
 
-      <DashboardLayout>
-        <Routes>
+      <Routes>
+        <Route path="/" element={<DashboardLayout />}>
           <Route index element={<ProjectSummary />} />
           <Route path="prestataires" element={<PrestairesList />} />
           <Route path="tasks" element={<TasksList />} />
@@ -52,8 +52,8 @@ const UserDashboard: React.FC = () => {
           <Route path="drinks" element={<DrinksCalculator />} />
           <Route path="settings" element={<div>Paramètres</div>} />
           <Route path="*" element={<div>Page non trouvée</div>} />
-        </Routes>
-      </DashboardLayout>
+        </Route>
+      </Routes>
     </>
   );
 };
