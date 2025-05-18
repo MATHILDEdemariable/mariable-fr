@@ -91,7 +91,7 @@ const LandingPage = () => {
   }, []);
 
   const handleCTAClick = () => {
-    navigate('/register');
+    navigate('/assistant-v2');
   };
 
   // Données pour les différentes sections
@@ -197,20 +197,22 @@ const LandingPage = () => {
       <Header />
 
       <main className="flex-grow">
-        {/* Section 1: Hero Section - Redesigned with white background and two-column layout */}
-        <section className="relative py-16 md:py-20 bg-white">
+        {/* Section 1: Hero Section - Modified with background image and improved responsive layout */}
+        <section className="relative py-16 md:py-20 bg-cover bg-center bg-no-repeat min-h-[60vh] md:min-h-[70vh] flex items-center" 
+          style={{ backgroundImage: "url('/lovable-uploads/9b1d88ec-ed12-4818-ba94-bf11f036a875.png')" }}>
+          <div className="absolute inset-0 bg-black/40"></div>
           <div className="container mx-auto px-4 relative z-10">
-            <div className="flex flex-col md:flex-row items-center">
-              <div className="md:w-1/2 text-center md:text-left mb-8 md:mb-0">
-                <h1 className="text-3xl md:text-4xl lg:text-5xl font-serif mb-4 font-bold text-wedding-black">
+            <div className="max-w-xl mx-auto md:mx-0">
+              <div className="text-center md:text-left text-white">
+                <h1 className="text-3xl md:text-4xl lg:text-5xl font-serif mb-4 font-bold">
                   {showAnimation ? (
                     <TypewriterEffect text="Faciliter l'organisation de votre mariage" />
                   ) : (
                     "Faciliter l'organisation de votre mariage"
                   )}
                 </h1>
-                <p className="mb-6 text-lg text-wedding-black/80">
-                  Avec le premier assistant virtuel à la planification de mariage
+                <p className="mb-8 text-lg text-white/90">
+                  Avec le premier assistant virtuel à la planification
                 </p>
                 <Button 
                   variant="wedding" 
@@ -220,15 +222,6 @@ const LandingPage = () => {
                 >
                   Je découvre Mariable
                 </Button>
-              </div>
-              <div className="md:w-1/2 relative h-64 md:h-80">
-                <div className="absolute inset-0 overflow-hidden rounded-lg">
-                  <img
-                    src="/lovable-uploads/9b1d88ec-ed12-4818-ba94-bf11f036a875.png"
-                    alt="Couple de mariés"
-                    className="w-full h-full object-cover object-center rounded-lg"
-                  />
-                </div>
               </div>
             </div>
           </div>
@@ -345,16 +338,9 @@ const LandingPage = () => {
           </div>
         </section>
 
-        {/* Section 6: CTA - Redesigned with wedding-olive background */}
-        <section className="py-16 relative text-white bg-wedding-olive">
-          <div className="absolute inset-0">
-            <img 
-              src="/lovable-uploads/cb5c64ba-4141-40cc-9954-ab1a0f30d7ef.png" 
-              alt="Mariage élégant" 
-              className="w-full h-full object-cover opacity-20"
-            />
-          </div>
-          <div className="container mx-auto px-4 relative z-10 text-center">
+        {/* Section 6: CTA - Changed to solid wedding-olive background without image */}
+        <section className="py-16 bg-wedding-olive text-white">
+          <div className="container mx-auto px-4 text-center">
             <h2 className="text-2xl md:text-3xl font-serif mb-4">
               Organisez votre mariage facilement & sans stress
             </h2>

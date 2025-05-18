@@ -84,6 +84,7 @@ const App = () => {
         <BrowserRouter>
           <ScrollToTop />
           <Routes>
+            {/* Make LandingPage the main route */}
             <Route path="/" element={<LandingPage />} />
             
             {/* Old index page is now accessible via /home */}
