@@ -6,7 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { useEffect,useState } from "react";
 import { HelmetProvider } from "react-helmet-async";
-import Index from "./pages/Index";
+import LandingPage from "./pages/LandingPage";
 import NotFound from "./pages/NotFound";
 import MentionsLegales from "./pages/MentionsLegales";
 import CGV from "./pages/CGV";
@@ -18,7 +18,7 @@ import MoteurRecherche from "./pages/MoteurRecherche";
 import ImportAirtable from './pages/ImportAirtable';
 import TestAssistantVirtuel from "./pages/TestAssistantVirtuel";
 import WeddingAssistantV2 from "./pages/WeddingAssistantV2";
-import LandingPage from "./pages/LandingPage";
+import Index from "./pages/Index";
 
 // Services pages
 import Prestataires from "./pages/services/Prestataires";
@@ -84,10 +84,13 @@ const App = () => {
         <BrowserRouter>
           <ScrollToTop />
           <Routes>
-            <Route path="/" element={<Index />} />
+            <Route path="/" element={<LandingPage />} />
             
-            {/* Landing Page */}
-            <Route path="/landing" element={<LandingPage />} />
+            {/* Old index page is now accessible via /home */}
+            <Route path="/home" element={<Index />} />
+            
+            {/* Redirect old landing page route to home */}
+            <Route path="/landing" element={<Navigate to="/" replace />} />
             
             {/* Professionals page */}
             <Route path="/professionnels" element={<Professionnels />} />
