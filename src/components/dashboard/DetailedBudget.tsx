@@ -311,16 +311,16 @@ const DetailedBudget: React.FC = () => {
                   <tr className="bg-wedding-cream/20 border-t">
                     <td className="px-4 py-2 font-medium text-base">{category.name}</td>
                     <td className="px-4 py-2 text-right font-medium">
-                      {(category.totalEstimated || 0).toFixed(2)}
+                      {(category.totalEstimated ?? 0).toFixed(2)}
                     </td>
                     <td className="px-4 py-2 text-right font-medium">
-                      {(category.totalActual || 0).toFixed(2)}
+                      {(category.totalActual ?? 0).toFixed(2)}
                     </td>
                     <td className="px-4 py-2 text-right font-medium">
-                      {(category.totalDeposit || 0).toFixed(2)}
+                      {(category.totalDeposit ?? 0).toFixed(2)}
                     </td>
                     <td className="px-4 py-2 text-right font-medium">
-                      {(category.totalRemaining || 0).toFixed(2)}
+                      {(category.totalRemaining ?? 0).toFixed(2)}
                     </td>
                     <td className="px-4 py-2 text-center">
                       <Button 
@@ -375,7 +375,7 @@ const DetailedBudget: React.FC = () => {
                         />
                       </td>
                       <td className="px-4 py-2 text-right">
-                        {(item.remaining || 0).toFixed(2)}
+                        {(item.remaining ?? 0).toFixed(2)}
                       </td>
                       <td className="px-4 py-2 text-center">
                         <Button
@@ -395,10 +395,10 @@ const DetailedBudget: React.FC = () => {
               {/* Totals row */}
               <tr className="border-t-2 border-t-wedding-olive/50 font-semibold">
                 <td className="px-4 py-3">TOTAL</td>
-                <td className="px-4 py-3 text-right">{(totalEstimated || 0).toFixed(2)}</td>
-                <td className="px-4 py-3 text-right">{(totalActual || 0).toFixed(2)}</td>
-                <td className="px-4 py-3 text-right">{(totalDeposit || 0).toFixed(2)}</td>
-                <td className="px-4 py-3 text-right">{(totalRemaining || 0).toFixed(2)}</td>
+                <td className="px-4 py-3 text-right">{(totalEstimated ?? 0).toFixed(2)}</td>
+                <td className="px-4 py-3 text-right">{(totalActual ?? 0).toFixed(2)}</td>
+                <td className="px-4 py-3 text-right">{(totalDeposit ?? 0).toFixed(2)}</td>
+                <td className="px-4 py-3 text-right">{(totalRemaining ?? 0).toFixed(2)}</td>
                 <td className="px-4 py-3"></td>
               </tr>
             </tbody>

@@ -23,12 +23,27 @@ interface MenuItemProps {
 }
 
 const MenuItem: React.FC<MenuItemProps> = ({ icon, label, to, active = false, external = false }) => {
-  const Component = external ? 'a' : Link;
-  const props = external ? { href: to, target: "_blank", rel: "noopener noreferrer" } : { to };
-
+  if (external) {
+    return (
+      <a
+        href={to}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={`flex items-center px-3 py-2 rounded-lg transition-colors ${
+          active
+            ? 'bg-wedding-olive/10 text-wedding-olive font-medium'
+            : 'hover:bg-gray-100'
+        }`}
+      >
+        <span className="mr-3">{icon}</span>
+        <span>{label}</span>
+      </a>
+    );
+  }
+  
   return (
-    <Component
-      {...props}
+    <Link
+      to={to}
       className={`flex items-center px-3 py-2 rounded-lg transition-colors ${
         active
           ? 'bg-wedding-olive/10 text-wedding-olive font-medium'
@@ -37,7 +52,7 @@ const MenuItem: React.FC<MenuItemProps> = ({ icon, label, to, active = false, ex
     >
       <span className="mr-3">{icon}</span>
       <span>{label}</span>
-    </Component>
+    </Link>
   );
 };
 
