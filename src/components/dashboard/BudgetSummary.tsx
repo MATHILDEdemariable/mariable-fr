@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { 
@@ -22,6 +23,7 @@ import { exportDashboardToPDF } from '@/services/pdfExportService';
 import { supabase } from '@/integrations/supabase/client';
 import { Json } from '@/integrations/supabase/types';
 import { format } from 'date-fns';
+import { fr } from 'date-fns/locale';
 import {
   Dialog,
   DialogContent,
