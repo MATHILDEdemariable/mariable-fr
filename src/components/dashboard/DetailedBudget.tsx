@@ -33,6 +33,17 @@ interface BudgetCategory {
   items: BudgetItem[];
 }
 
+// Type for our breakdown JSON structure in the database
+interface BudgetBreakdown {
+  categories?: BudgetCategory[];
+  guests?: any;
+  totalEstimated?: number;
+  totalActual?: number;
+  totalDeposit?: number;
+  totalRemaining?: number;
+  [key: string]: any;
+}
+
 const INITIAL_CATEGORIES: BudgetCategory[] = [
   {
     name: "Lieu de réception",
@@ -277,18 +288,57 @@ const DetailedBudget: React.FC = () => {
       const { data: { user } } = await supabase.auth.getUser();
       
       if (user) {
-        // Save to Supabase using budgets_dashboard table
-        const budgetData = {
-          user_id: user.id,
-          total_budget: getTotalActual(),
-          breakdown: {
-            categories: categories,
-            totalEstimated: getTotalEstimated(),
-            totalActual: getTotalActual(),
-            totalDeposit: getTotalDeposit(),
-            totalRemaining: getTotalRemaining(),
-          }
-        };
+        // Get existing budgets data first
+        const { data: existingData, error: fetchError } = await supabase
+          .from('budgets_dashboard')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('updated_at', { ascending: false })
+          .limit(1);
+        
+        if (fetchError) throw fetchError;
+        
+        let budgetData;
+        
+        if (existingData && existingData.length > 0) {
+          // Update existing record with required fields
+          budgetData = {
+            id: existingData[0].id,
+            user_id: user.id,
+            total_budget: getTotalActual(),
+            guests_count: existingData[0].guests_count || 0,
+            region: existingData[0].region,
+            season: existingData[0].season,
+            service_level: existingData[0].service_level,
+            selected_vendors: existingData[0].selected_vendors,
+            breakdown: {
+              ...(existingData[0].breakdown as BudgetBreakdown || {}),
+              categories: categories,
+              totalEstimated: getTotalEstimated(),
+              totalActual: getTotalActual(),
+              totalDeposit: getTotalDeposit(),
+              totalRemaining: getTotalRemaining(),
+            }
+          };
+        } else {
+          // Create new record with all required fields
+          budgetData = {
+            user_id: user.id,
+            total_budget: getTotalActual(),
+            guests_count: 0,
+            region: 'unknown',
+            season: 'unknown',
+            service_level: 'standard',
+            selected_vendors: [],
+            breakdown: {
+              categories: categories,
+              totalEstimated: getTotalEstimated(),
+              totalActual: getTotalActual(),
+              totalDeposit: getTotalDeposit(),
+              totalRemaining: getTotalRemaining(),
+            }
+          };
+        }
         
         const { data, error } = await supabase
           .from('budgets_dashboard')
@@ -333,8 +383,11 @@ const DetailedBudget: React.FC = () => {
             
           if (error) throw error;
             
-          if (data && data.length > 0 && data[0].breakdown && data[0].breakdown.categories) {
-            setCategories(data[0].breakdown.categories);
+          if (data && data.length > 0 && data[0].breakdown) {
+            const breakdown = data[0].breakdown as BudgetBreakdown;
+            if (breakdown.categories) {
+              setCategories(breakdown.categories);
+            }
           }
         }
       } catch (error) {

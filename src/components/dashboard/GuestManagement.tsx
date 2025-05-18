@@ -21,6 +21,13 @@ interface GuestCounts {
   brunch: number;
 }
 
+// Type for the breakdown field in the database
+interface BudgetBreakdown {
+  guests?: GuestCounts;
+  categories?: any;
+  [key: string]: any;
+}
+
 const GuestManagement: React.FC = () => {
   const [guestCounts, setGuestCounts] = useState<GuestCounts>({
     adults: 0,
@@ -54,8 +61,11 @@ const GuestManagement: React.FC = () => {
             
           if (error) throw error;
             
-          if (data && data.length > 0 && data[0].breakdown && data[0].breakdown.guests) {
-            setGuestCounts(data[0].breakdown.guests);
+          if (data && data.length > 0 && data[0].breakdown) {
+            const breakdown = data[0].breakdown as BudgetBreakdown;
+            if (breakdown.guests) {
+              setGuestCounts(breakdown.guests);
+            }
           }
         }
       } catch (error) {
@@ -92,15 +102,23 @@ const GuestManagement: React.FC = () => {
         
         if (fetchError) throw fetchError;
         
-        let budgetData;
+        let budgetData: any;
         
         if (existingData && existingData.length > 0) {
           // Update existing record
+          const currentBreakdown = existingData[0].breakdown as BudgetBreakdown || {};
+          
           budgetData = {
-            ...existingData[0],
+            id: existingData[0].id,
+            user_id: user.id,
             guests_count: totalGuests,
+            total_budget: existingData[0].total_budget,
+            region: existingData[0].region,
+            season: existingData[0].season,
+            service_level: existingData[0].service_level,
+            selected_vendors: existingData[0].selected_vendors,
             breakdown: {
-              ...existingData[0].breakdown,
+              ...currentBreakdown,
               guests: guestCounts
             }
           };
