@@ -70,7 +70,7 @@ const CharteContent = () => {
         </CardContent>
       </Card>
       
-      <Card className="bg-wedding-olive text-white max-w-2xl mx-auto">
+      <Card className="bg-wedding-olive text-white max-w-2xl mx-auto mb-16">
         <CardContent className="pt-8 pb-8 text-center">
           <h3 className="text-3xl font-serif mb-6">Rejoignez l'excellence</h3>
           <p className="mb-8 text-lg opacity-90">
@@ -97,6 +97,23 @@ const CharteContent = () => {
           </div>
         </CardContent>
       </Card>
+      
+      {/* Nouveau lien vers la page de recherche de prestataires */}
+      <div className="text-center mb-16">
+        <h3 className="text-2xl font-serif mb-6">Découvrez nos prestataires sélectionnés</h3>
+        <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
+          Tous les prestataires présents dans notre guide ont été rigoureusement sélectionnés pour 
+          répondre aux exigences de notre charte d'excellence.
+        </p>
+        <Button 
+          variant="wedding"
+          size="lg"
+          onClick={() => navigate('/recherche')}
+          className="mx-auto"
+        >
+          Consulter notre guide de prestataires <ArrowRight className="ml-2 h-4 w-4" />
+        </Button>
+      </div>
     </>
   );
 };
@@ -112,4 +129,3 @@ const Charte = () => {
 };
 
 export default Charte;
-

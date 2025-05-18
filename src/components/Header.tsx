@@ -29,34 +29,7 @@ const HeaderLogo = () => (
 function Menus({ onClick }: { onClick?: () => void }) {
   return (
     <>
-      {/* Nos Services Dropdown - Updated order as requested */}
-      <Link to="/recherche" className="pl-4 flex items-center gap-2">
-        <span className="font-medium">Trouver vos prestataires</span>
-      </Link>
-      <HeaderDropdown label="Simplifier votre organisation" >
-        <HeaderDropdownMenu>
-          <HeaderDropdownItem
-            label="Conseils personnalisés"
-            description="Obtenez des recommandations adaptées à votre style et vos envies"
-            to="/services/conseils"
-            onClick={onClick}
-          />
-          <HeaderDropdownItem
-            label="Planification"
-            description="Organisez chaque étape de votre mariage sans stress"
-            to="/services/planification"
-            onClick={onClick}
-          />
-          <HeaderDropdownItem
-            label="Budgétisation"
-            description="Gérez votre budget et suivez vos dépenses facilement"
-            to="/services/budget"
-            onClick={onClick}
-          />
-        </HeaderDropdownMenu>
-      </HeaderDropdown>
-
-      {/* À propos Dropdown */}
+      {/* À propos Dropdown - Simplifié */}
       <HeaderDropdown label="À propos">
         <HeaderDropdownMenu>
           <HeaderDropdownItem
@@ -72,12 +45,6 @@ function Menus({ onClick }: { onClick?: () => void }) {
             onClick={onClick}
           />
           <HeaderDropdownItem
-            label="Témoignages"
-            description="Ce que nos clients disent de nous"
-            to="/about/temoignages"
-            onClick={onClick}
-          />
-                    <HeaderDropdownItem
             label="Nous contacter"
             description="Discutez avec notre équipe pour toutes vos questions"
             to="/contact/nous-contacter"
@@ -90,10 +57,9 @@ function Menus({ onClick }: { onClick?: () => void }) {
             onClick={onClick}
           />
         </HeaderDropdownMenu>
-        
       </HeaderDropdown>
 
-      {/* User Menu */}
+      {/* User Menu - Conservé, avec les deux options demandées */}
       <HeaderDropdown
         label={<User2 className="w-7 h-7" />}
         className="ml-2"
@@ -106,7 +72,7 @@ function Menus({ onClick }: { onClick?: () => void }) {
           />
           <HeaderDropdownItem
             label="Futurs mariés"
-            to="/register"
+            to="/login-frame"
             onClick={onClick}
           />
         </HeaderDropdownMenu>
@@ -151,7 +117,7 @@ export default function Header() {
                   onClick={() => setDrawerOpen(false)}
                   className="p-2 rounded-md hover:bg-wedding-light transition"
                 >
-                  <MenuIcon className="w-8 h-8 rotate-90" /> {/* Optionally use an 'X' icon */}
+                  <MenuIcon className="w-8 h-8 rotate-90" />
                 </button>
               </div>
               <div className="py-3 grid gap-4">
