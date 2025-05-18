@@ -277,15 +277,24 @@ const DetailedBudget: React.FC = () => {
       const { data: { user } } = await supabase.auth.getUser();
       
       if (user) {
-        // Save to Supabase
-        await supabase.from('detailed_budget')
-          .upsert({ 
-            user_id: user.id, 
-            budget_data: categories,
-            total_estimated: getTotalEstimated(),
-            total_actual: getTotalActual(),
-            updated_at: new Date()
-          });
+        // Save to Supabase using budgets_dashboard table
+        const budgetData = {
+          user_id: user.id,
+          total_budget: getTotalActual(),
+          breakdown: {
+            categories: categories,
+            totalEstimated: getTotalEstimated(),
+            totalActual: getTotalActual(),
+            totalDeposit: getTotalDeposit(),
+            totalRemaining: getTotalRemaining(),
+          }
+        };
+        
+        const { data, error } = await supabase
+          .from('budgets_dashboard')
+          .upsert(budgetData);
+          
+        if (error) throw error;
         
         toast({
           title: "Budget sauvegardé",
@@ -315,15 +324,17 @@ const DetailedBudget: React.FC = () => {
         const { data: { user } } = await supabase.auth.getUser();
         
         if (user) {
-          const { data } = await supabase
-            .from('detailed_budget')
+          const { data, error } = await supabase
+            .from('budgets_dashboard')
             .select('*')
             .eq('user_id', user.id)
             .order('updated_at', { ascending: false })
             .limit(1);
             
-          if (data && data.length > 0 && data[0].budget_data) {
-            setCategories(data[0].budget_data);
+          if (error) throw error;
+            
+          if (data && data.length > 0 && data[0].breakdown && data[0].breakdown.categories) {
+            setCategories(data[0].breakdown.categories);
           }
         }
       } catch (error) {

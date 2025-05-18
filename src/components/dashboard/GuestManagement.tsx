@@ -45,15 +45,17 @@ const GuestManagement: React.FC = () => {
         const { data: { user } } = await supabase.auth.getUser();
         
         if (user) {
-          const { data: guestData } = await supabase
-            .from('guest_management')
+          const { data, error } = await supabase
+            .from('budgets_dashboard')
             .select('*')
             .eq('user_id', user.id)
-            .order('created_at', { ascending: false })
+            .order('updated_at', { ascending: false })
             .limit(1);
             
-          if (guestData && guestData.length > 0) {
-            setGuestCounts(guestData[0].guest_counts);
+          if (error) throw error;
+            
+          if (data && data.length > 0 && data[0].breakdown && data[0].breakdown.guests) {
+            setGuestCounts(data[0].breakdown.guests);
           }
         }
       } catch (error) {
@@ -80,13 +82,49 @@ const GuestManagement: React.FC = () => {
       const { data: { user } } = await supabase.auth.getUser();
       
       if (user) {
-        await supabase
-          .from('guest_management')
-          .upsert({
+        // Get existing budgets data first
+        const { data: existingData, error: fetchError } = await supabase
+          .from('budgets_dashboard')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('updated_at', { ascending: false })
+          .limit(1);
+        
+        if (fetchError) throw fetchError;
+        
+        let budgetData;
+        
+        if (existingData && existingData.length > 0) {
+          // Update existing record
+          budgetData = {
+            ...existingData[0],
+            guests_count: totalGuests,
+            breakdown: {
+              ...existingData[0].breakdown,
+              guests: guestCounts
+            }
+          };
+        } else {
+          // Create new record
+          budgetData = {
             user_id: user.id,
-            guest_counts: guestCounts,
-            total_guests: totalGuests
-          });
+            guests_count: totalGuests,
+            total_budget: 0,
+            breakdown: {
+              guests: guestCounts
+            },
+            region: 'unknown',
+            season: 'unknown',
+            service_level: 'standard',
+            selected_vendors: []
+          };
+        }
+        
+        const { error: updateError } = await supabase
+          .from('budgets_dashboard')
+          .upsert(budgetData);
+        
+        if (updateError) throw updateError;
         
         toast({
           title: "Données sauvegardées",
