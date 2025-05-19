@@ -5,13 +5,14 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Wine, Martini, Download, Share2, Check } from 'lucide-react';
+import { Wine, Martini, Download, Share2, Check, HelpCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { DrinkTier, DrinkMoment } from '@/types/drinks';
 import { calculateBottles, calculatePrice } from '@/utils/drinkCalculator';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 const DrinksCalculator = () => {
   const [guests, setGuests] = useState(100);
@@ -152,6 +153,36 @@ const DrinksCalculator = () => {
         setIsSharing(false);
       });
   };
+  
+  // Recommandations pour les boissons
+  const recommendationsSection = (
+    <div className="drinks-recommendations mt-6 border-t pt-4 print-section">
+      <div className="flex items-center gap-2 mb-3">
+        <HelpCircle size={18} className="text-wedding-olive" />
+        <h3 className="font-medium">Recommandations de service</h3>
+      </div>
+      
+      <div className="bg-wedding-cream/10 p-4 rounded-md text-sm">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <p className="font-medium mb-1">Apéritif/Cocktail (1 à 1,5 heure) :</p>
+            <p>• Champagne ou cocktail : 2 à 3 coupes/verres par personne</p>
+            
+            <p className="font-medium mt-3 mb-1">Repas (2 à 3 heures) :</p>
+            <p>• Vin Blanc (entrée ou poisson) : 1 verre par personne</p>
+            <p>• Vin Rouge (plat principal) : 2 verres par personne</p>
+          </div>
+          <div>
+            <p className="font-medium mb-1">Dessert :</p>
+            <p>• Champagne pour le toast : 1 coupe par personne</p>
+            
+            <p className="font-medium mt-3 mb-1">Soirée dansante (4 heures ou plus) :</p>
+            <p>• Cocktails : 1 verre par heure par personne</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 
   return (
     <Card className="p-6 max-w-2xl mx-auto" id="drinks-calculator-content">
@@ -159,8 +190,8 @@ const DrinksCalculator = () => {
       
       <div className="space-y-6">
         {/* Nombre d'invités */}
-        <div>
-          <Label htmlFor="guests" className="text-base">Nombre d'invités</Label>
+        <div className="form-row">
+          <Label htmlFor="guests" className="text-base block mb-2">Nombre d'invités</Label>
           <div className="flex items-center gap-2">
             <Input
               id="guests"
@@ -168,13 +199,13 @@ const DrinksCalculator = () => {
               value={guests}
               onChange={(e) => setGuests(parseInt(e.target.value) || 0)}
               min={1}
-              className="max-w-[200px] h-10"
+              className="max-w-[200px] h-10 text-right"
             />
           </div>
         </div>
 
         {/* Moments de consommation */}
-        <div>
+        <div className="form-row">
           <Label className="mb-3 block text-base">Moments de consommation</Label>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {moments.map((moment) => (
@@ -201,8 +232,8 @@ const DrinksCalculator = () => {
         </div>
 
         {/* Gamme de boissons */}
-        <div>
-          <Label htmlFor="tier" className="text-base">Gamme de boissons</Label>
+        <div className="form-row">
+          <Label htmlFor="tier" className="text-base block mb-2">Gamme de boissons</Label>
           <Select value={tier} onValueChange={(value: DrinkTier) => setTier(value)}>
             <SelectTrigger className="w-full sm:w-[200px] h-10">
               <SelectValue placeholder="Sélectionnez une gamme" />
@@ -217,9 +248,9 @@ const DrinksCalculator = () => {
         </div>
 
         {/* Verres par personne */}
-        <div>
+        <div className="form-row">
           <Label className="mb-3 block text-base">Verres par personne</Label>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-4">
             {selectedMoments.map((moment) => (
               <div key={moment} className="flex items-center gap-3 py-1">
                 <Label htmlFor={`drinks-${moment}`} className="flex-grow text-base">
@@ -234,12 +265,15 @@ const DrinksCalculator = () => {
                     [moment]: parseInt(e.target.value) || 0
                   })}
                   min={0}
-                  className="w-20 h-10 text-base"
+                  className="w-20 h-10 text-base text-right"
                 />
               </div>
             ))}
           </div>
         </div>
+        
+        {/* Recommandations de service */}
+        {recommendationsSection}
 
         {/* Résultats */}
         <div className="mt-8 space-y-4 border-t pt-6">
@@ -249,19 +283,19 @@ const DrinksCalculator = () => {
             {totalBottles.champagne > 0 && (
               <div className="p-3 bg-white/50 rounded-md">
                 <span className="text-muted-foreground text-base">Champagne:</span>
-                <p className="font-medium text-base">{totalBottles.champagne} bouteilles</p>
+                <p className="font-medium text-base text-right">{totalBottles.champagne} bouteilles</p>
               </div>
             )}
             {totalBottles.wine > 0 && (
               <div className="p-3 bg-white/50 rounded-md">
                 <span className="text-muted-foreground text-base">Vin:</span>
-                <p className="font-medium text-base">{totalBottles.wine} bouteilles</p>
+                <p className="font-medium text-base text-right">{totalBottles.wine} bouteilles</p>
               </div>
             )}
             {totalBottles.spirits > 0 && (
               <div className="p-3 bg-white/50 rounded-md">
                 <span className="text-muted-foreground text-base">Alcools forts:</span>
-                <p className="font-medium text-base">{totalBottles.spirits} bouteilles</p>
+                <p className="font-medium text-base text-right">{totalBottles.spirits} bouteilles</p>
               </div>
             )}
           </div>
@@ -269,7 +303,7 @@ const DrinksCalculator = () => {
           <div className="border-t pt-4 mt-4">
             <div className="text-lg font-medium flex justify-between items-center">
               <span>Coût total estimé:</span>
-              <span>{totalCost.toFixed(2)}€</span>
+              <span className="text-right">{totalCost.toFixed(2)}€</span>
             </div>
           </div>
         </div>

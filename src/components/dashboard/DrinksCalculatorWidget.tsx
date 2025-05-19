@@ -28,6 +28,16 @@ const DrinksCalculatorWidget: React.FC = () => {
             font-size: 11pt !important;
             line-height: 1.2 !important;
           }
+          #drinks-calculator-export h2 {
+            font-size: 16pt !important;
+            margin-bottom: 16pt !important;
+            text-align: center !important;
+          }
+          #drinks-calculator-export h3 {
+            font-size: 13pt !important;
+            margin-top: 12pt !important;
+            margin-bottom: 8pt !important;
+          }
           #drinks-calculator-export table {
             width: 100% !important;
             border-collapse: collapse !important;
@@ -37,6 +47,9 @@ const DrinksCalculatorWidget: React.FC = () => {
             padding: 4px !important;
             border: 1px solid #ddd !important;
             text-align: center !important;
+          }
+          #drinks-calculator-export .form-row {
+            margin-bottom: 10pt !important;
           }
           #drinks-calculator-export .results-grid {
             display: grid !important;
@@ -54,11 +67,25 @@ const DrinksCalculatorWidget: React.FC = () => {
             font-size: 16pt !important;
             font-weight: bold !important;
             margin-bottom: 8pt !important;
+            text-align: center !important;
           }
           #drinks-calculator-export .subtitle {
             font-size: 12pt !important;
             font-style: italic !important;
             margin-bottom: 12pt !important;
+            text-align: center !important;
+          }
+          #drinks-calculator-export .drinks-recommendations {
+            page-break-inside: avoid !important;
+            margin-top: 14pt !important;
+            padding-top: 10pt !important;
+            border-top: 1pt solid #ddd !important;
+          }
+          #drinks-calculator-export .text-right {
+            text-align: right !important;
+          }
+          #drinks-calculator-export button {
+            display: none !important; 
           }
         }
       `;
@@ -87,6 +114,44 @@ const DrinksCalculatorWidget: React.FC = () => {
       
       clone.insertBefore(subtitle, clone.firstChild);
       clone.insertBefore(title, clone.firstChild);
+      
+      // S'assurer que les recommandations sont présentes
+      const recommendations = clone.querySelector('.drinks-recommendations');
+      
+      if (!recommendations) {
+        const recoSection = document.createElement('div');
+        recoSection.classList.add('drinks-recommendations', 'print-section');
+        recoSection.innerHTML = `
+          <h3 class="font-medium">Recommandations de service</h3>
+          <div class="bg-wedding-cream/10 p-4 rounded-md text-sm">
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <p class="font-medium">Apéritif/Cocktail (1 à 1,5 heure) :</p>
+                <p>• Champagne ou cocktail : 2 à 3 coupes/verres par personne</p>
+                
+                <p class="font-medium">Repas (2 à 3 heures) :</p>
+                <p>• Vin Blanc (entrée ou poisson) : 1 verre par personne</p>
+                <p>• Vin Rouge (plat principal) : 2 verres par personne</p>
+              </div>
+              <div>
+                <p class="font-medium">Dessert :</p>
+                <p>• Champagne pour le toast : 1 coupe par personne</p>
+                
+                <p class="font-medium">Soirée dansante (4 heures ou plus) :</p>
+                <p>• Cocktails : 1 verre par heure par personne</p>
+              </div>
+            </div>
+          </div>
+        `;
+        
+        // Trouver un bon endroit pour l'insérer
+        const resultsSection = clone.querySelector('.results-grid') || clone.querySelector('.border-t');
+        if (resultsSection && resultsSection.parentNode) {
+          resultsSection.parentNode.insertBefore(recoSection, resultsSection.nextSibling);
+        } else {
+          clone.appendChild(recoSection);
+        }
+      }
       
       // Ajouter temporairement le clone au document
       document.body.appendChild(clone);
