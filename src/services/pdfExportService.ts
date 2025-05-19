@@ -5,7 +5,8 @@ import html2canvas from 'html2canvas';
 export const exportDashboardToPDF = async (
   elementId: string = 'dashboard-content',
   fileName: string = 'Mariable-Dashboard.pdf',
-  orientation: 'portrait' | 'landscape' = 'portrait'
+  orientation: 'portrait' | 'landscape' = 'portrait',
+  pageTitle: string = 'Tableau de bord Mariable'
 ) => {
   try {
     // Sélection de l'élément
@@ -15,31 +16,26 @@ export const exportDashboardToPDF = async (
       throw new Error(`Élément avec l'ID ${elementId} non trouvé`);
     }
     
-    // Création du PDF au format spécifié
-    const pdf = new jsPDF({
-      orientation: orientation,
-      unit: 'mm',
-      format: 'a4'
-    });
-    
     // Ajout d'un style temporaire pour optimiser l'affichage pour l'export
     const tempStyle = document.createElement('style');
     tempStyle.innerHTML = `
       @media print {
         body * {
           font-size: 12pt !important;
-          line-height: 1.2 !important;
+          line-height: 1.3 !important;
         }
-        .btn, button {
+        .btn, button, .no-print {
           display: none !important;
         }
         table {
           width: 100% !important;
           border-collapse: collapse !important;
+          page-break-inside: avoid !important;
         }
         table td, table th {
           padding: 4px !important;
           font-size: 10pt !important;
+          border: 1px solid #ddd !important;
         }
         h1, h2, h3 {
           page-break-after: avoid !important;
@@ -54,39 +50,110 @@ export const exportDashboardToPDF = async (
         .responsive-export {
           width: 100% !important;
         }
+        .text-right, .number {
+          text-align: right !important;
+        }
+        .grid {
+          display: grid !important;
+        }
+        .pdf-grid {
+          display: grid !important;
+          grid-template-columns: 1fr 1fr !important;
+          gap: 20px !important;
+        }
+        .pdf-container {
+          width: 100% !important;
+          max-width: 800px !important;
+          margin: 0 auto !important;
+          padding: 20px !important;
+        }
+        .pdf-title {
+          font-size: 18pt !important;
+          font-weight: bold !important;
+          text-align: center !important;
+          margin-bottom: 15pt !important;
+          border-bottom: 1pt solid #ddd !important;
+          padding-bottom: 10pt !important;
+        }
+        .pdf-subtitle {
+          font-size: 14pt !important;
+          font-weight: bold !important;
+          margin-top: 15pt !important;
+          margin-bottom: 10pt !important;
+        }
+        .pdf-section {
+          margin-bottom: 15pt !important;
+          page-break-inside: avoid !important;
+        }
+        .pdf-item {
+          margin-bottom: 8pt !important;
+          page-break-inside: avoid !important;
+        }
+        .pdf-timeline {
+          display: grid !important;
+          grid-template-columns: 120px 1fr !important;
+          gap: 10px !important;
+          margin-bottom: 8pt !important;
+          border-bottom: 1px solid #eee !important;
+          padding-bottom: 8pt !important;
+        }
+        .pdf-timeline-time {
+          font-weight: bold !important;
+        }
+        .pdf-recommendation {
+          background-color: #f9f9f9 !important;
+          padding: 10pt !important;
+          border: 1pt solid #ddd !important;
+          border-radius: 5pt !important;
+          margin-top: 15pt !important;
+          page-break-inside: avoid !important;
+        }
       }
     `;
     document.head.appendChild(tempStyle);
     
+    // Création du PDF au format spécifié
+    const pdf = new jsPDF({
+      orientation: orientation,
+      unit: 'mm',
+      format: 'a4'
+    });
+    
+    // Préparer l'élément pour l'exportation
+    const prepareElement = (doc: Document, elementId: string) => {
+      const clonedElement = doc.querySelector(`#${elementId}`);
+      if (clonedElement) {
+        // Ajouter des classes pour améliorer le rendu PDF
+        clonedElement.classList.add('responsive-export', 'pdf-container');
+        
+        // Ajouter un titre à l'export si nécessaire
+        if (!clonedElement.querySelector('.pdf-title')) {
+          const titleDiv = doc.createElement('div');
+          titleDiv.classList.add('pdf-title');
+          titleDiv.textContent = pageTitle;
+          clonedElement.insertBefore(titleDiv, clonedElement.firstChild);
+        }
+        
+        // Masquer les boutons et éléments non nécessaires
+        const buttons = clonedElement.querySelectorAll('button:not(.essential-button)');
+        buttons.forEach(button => (button as HTMLElement).style.display = 'none');
+      }
+    };
+    
     // Conversion du HTML en canvas avec une échelle optimisée
     const canvas = await html2canvas(element as HTMLElement, {
-      scale: 1.5, // Meilleure qualité
+      scale: 2, // Meilleure qualité
       useCORS: true,
       logging: false,
       backgroundColor: '#ffffff',
-      windowWidth: 1200, // Force une largeur fixe pour la capture
-      onclone: (doc) => {
-        // Ajouter une classe pour identifier l'élément cloné
-        const clonedElement = doc.querySelector(`#${elementId}`);
-        if (clonedElement) {
-          clonedElement.classList.add('responsive-export');
-        }
-        
-        // Masquer les boutons et éléments non nécessaires dans le PDF
-        const buttons = doc.querySelectorAll('button:not(.essential-button)');
-        buttons.forEach(button => {
-          (button as HTMLElement).style.display = 'none';
-        });
-      }
+      windowWidth: orientation === 'landscape' ? 1600 : 1200, // Force une largeur fixe pour la capture
+      onclone: (doc) => prepareElement(doc, elementId)
     });
     
     // Retirer le style temporaire
     document.head.removeChild(tempStyle);
     
-    // Récupération des dimensions
-    const imgData = canvas.toDataURL('image/png');
-    
-    // Définir largeur et hauteur selon orientation
+    // Définir dimensions selon orientation
     let pageWidth, pageHeight;
     
     if (orientation === 'landscape') {
@@ -108,7 +175,7 @@ export const exportDashboardToPDF = async (
     // Ajout du titre et de la date
     pdf.setFont("helvetica", "bold");
     pdf.setFontSize(16);
-    pdf.text("Tableau de bord Mariable", margin, position);
+    pdf.text("Mariable", margin, position);
     pdf.setFont("helvetica", "normal");
     pdf.setFontSize(10);
     pdf.text(`Exporté le ${new Date().toLocaleDateString('fr-FR')}`, margin, position + 8);
@@ -136,7 +203,7 @@ export const exportDashboardToPDF = async (
     
     // Optimiser la qualité du PDF
     pdf.setProperties({
-      title: 'Mariable - Votre Tableau de Bord',
+      title: pageTitle,
       subject: 'Organisation de mariage',
       creator: 'Mariable',
       keywords: 'mariage, planification, dashboard',
@@ -150,4 +217,6 @@ export const exportDashboardToPDF = async (
     console.error("Erreur lors de l'export PDF:", error);
     return false;
   }
+  
+  const imgData = canvas.toDataURL('image/png');
 };

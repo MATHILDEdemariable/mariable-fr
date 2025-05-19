@@ -8,27 +8,31 @@ import { WeddingDayPlanner } from '@/components/wedding-day/WeddingDayPlanner';
 import { exportDashboardToPDF } from '@/services/pdfExportService';
 
 const CoordinationPage = () => {
+  const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
   const handleExportPDF = async () => {
-    toast({
-      title: "Export PDF en cours",
-      description: "Préparation de votre planning...",
-    });
+    setLoading(true);
     
-    setTimeout(async () => {
-      const coordinationElement = document.querySelector('#coordination-content');
+    try {
+      toast({
+        title: "Export PDF en cours",
+        description: "Préparation de votre planning...",
+      });
       
-      if (!coordinationElement) {
-        toast({
-          title: "Erreur d'export",
-          description: "Impossible de trouver le planning à exporter",
-          variant: "destructive"
-        });
-        return;
+      // Ajout d'une classe spéciale pour l'export PDF
+      const contentElement = document.getElementById('coordination-content');
+      if (contentElement) {
+        contentElement.classList.add('pdf-export-ready');
       }
       
-      const success = await exportDashboardToPDF('coordination-content', 'Planning-Jour-J.pdf', 'landscape');
+      // Utiliser le service partagé d'exportation PDF avec des paramètres optimisés
+      const success = await exportDashboardToPDF(
+        'coordination-content', 
+        'Planning-Jour-J.pdf', 
+        'landscape',
+        'Planning Jour J - Mariable'
+      );
       
       if (success) {
         toast({
@@ -42,7 +46,21 @@ const CoordinationPage = () => {
           variant: "destructive"
         });
       }
-    }, 500);
+      
+      // Retirer la classe d'export
+      if (contentElement) {
+        contentElement.classList.remove('pdf-export-ready');
+      }
+    } catch (error) {
+      console.error("Erreur lors de l'export PDF:", error);
+      toast({
+        title: "Erreur d'export",
+        description: "Une erreur s'est produite lors de l'export en PDF",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -53,9 +71,19 @@ const CoordinationPage = () => {
           variant="outline"
           className="bg-wedding-olive/10 hover:bg-wedding-olive/20 text-wedding-olive"
           onClick={handleExportPDF}
+          disabled={loading}
         >
-          <Download className="mr-2 h-4 w-4" />
-          Exporter en PDF
+          {loading ? (
+            <>
+              <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-t-transparent"></div>
+              Export...
+            </>
+          ) : (
+            <>
+              <Download className="mr-2 h-4 w-4" />
+              Exporter en PDF
+            </>
+          )}
         </Button>
       </div>
       
@@ -67,7 +95,7 @@ const CoordinationPage = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div id="coordination-content">
+          <div id="coordination-content" className="pdf-optimized">
             <WeddingDayPlanner />
           </div>
         </CardContent>
