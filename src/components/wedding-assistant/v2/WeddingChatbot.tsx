@@ -1,258 +1,204 @@
 
-import React, { useState, useEffect, useRef } from 'react';
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card";
-import { Search, Send, RefreshCcw } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
-import { WeddingFAQ } from './types';
+import React, { useState, useRef, useEffect } from 'react';
+import { Avatar } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Loader2, Send } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { v4 as uuidv4 } from 'uuid';
 
-interface Message {
+type Message = {
   id: string;
-  text: string;
-  isUser: boolean;
+  content: string;
+  role: 'user' | 'assistant';
   timestamp: Date;
+};
+
+interface Props {
+  preventScroll?: boolean;
 }
 
-const WeddingChatbot: React.FC = () => {
-  const [messages, setMessages] = useState<Message[]>([]);
+const WeddingChatbot: React.FC<Props> = ({ preventScroll = false }) => {
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      id: 'welcome',
+      content: "Bonjour ! Je suis votre assistant mariage. Comment puis-je vous aider aujourd'hui ?",
+      role: 'assistant',
+      timestamp: new Date(),
+    },
+  ]);
   const [input, setInput] = useState('');
-  const [faqList, setFaqList] = useState<WeddingFAQ[]>([]);
-  const [filteredFAQ, setFilteredFAQ] = useState<WeddingFAQ[]>([]);
-  const [categories, setCategories] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [searching, setSearching] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
+  // Scroll to bottom when messages change, but only if preventScroll is false
   useEffect(() => {
-    fetchFAQs();
-    
-    // Add initial greeting
-    setMessages([
-      {
-        id: '1',
-        text: "Bonjour ! Je suis votre assistant virtuel de mariage. Comment puis-je vous aider aujourd'hui ?",
-        isUser: false,
-        timestamp: new Date()
-      }
-    ]);
-  }, []);
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-  
-  useEffect(() => {
-    if (searching) {
-      const lowercaseSearch = searching.toLowerCase();
-      const filtered = faqList.filter(
-        faq => 
-          faq.question.toLowerCase().includes(lowercaseSearch) ||
-          (Array.isArray(faq.tags) && faq.tags.some((tag: string) => tag.toLowerCase().includes(lowercaseSearch)))
-      );
-      setFilteredFAQ(filtered);
-    } else {
-      setFilteredFAQ([]);
+    if (!preventScroll && messages.length > 1) {
+      scrollToBottom();
     }
-  }, [searching, faqList]);
-
-  const fetchFAQs = async () => {
-    try {
-      setLoading(true);
-      const { data, error } = await supabase
-        .from('wedding_faq')
-        .select('*');
-      
-      if (error) throw error;
-      
-      const faqData = data.map(item => ({
-        ...item,
-        tags: Array.isArray(item.tags) ? item.tags : []
-      }));
-      
-      setFaqList(faqData);
-      
-      // Extract unique categories
-      const uniqueCategories = Array.from(
-        new Set(data.map((faq: WeddingFAQ) => faq.category))
-      );
-      setCategories(uniqueCategories);
-      
-      setLoading(false);
-    } catch (error) {
-      console.error('Error fetching FAQs:', error);
-      setLoading(false);
-    }
-  };
+  }, [messages, preventScroll]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const handleSend = () => {
+  const handleSendMessage = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    
     if (!input.trim()) return;
     
-    // Add user message
     const userMessage: Message = {
-      id: Date.now().toString(),
-      text: input,
-      isUser: true,
-      timestamp: new Date()
+      id: uuidv4(),
+      content: input,
+      role: 'user',
+      timestamp: new Date(),
     };
     
     setMessages(prev => [...prev, userMessage]);
+    setInput('');
+    setIsLoading(true);
     
-    // Search for answer in FAQs
-    const lowercaseInput = input.toLowerCase();
-    const matchingFAQ = faqList.find(faq => 
-      faq.question.toLowerCase().includes(lowercaseInput) ||
-      (Array.isArray(faq.tags) && faq.tags.some((tag: string) => tag.toLowerCase().includes(lowercaseInput)))
-    );
-    
-    // Prepare bot response
-    setTimeout(() => {
-      let botResponse: Message;
+    try {
+      // Fetch FAQ data from Supabase first
+      const { data: faqData, error: faqError } = await supabase
+        .from('wedding_faq')
+        .select('question, answer, tags')
+        .order('created_at', { ascending: true });
       
-      if (matchingFAQ) {
-        botResponse = {
-          id: (Date.now() + 1).toString(),
-          text: matchingFAQ.answer,
-          isUser: false,
-          timestamp: new Date()
-        };
-      } else {
-        botResponse = {
-          id: (Date.now() + 1).toString(),
-          text: "Je n'ai pas trouvé de réponse spécifique à votre question. Pourriez-vous la reformuler ou choisir parmi les questions fréquentes ci-dessous ?",
-          isUser: false,
-          timestamp: new Date()
-        };
+      if (faqError) {
+        console.error('Error fetching FAQ data:', faqError);
+        throw new Error('Failed to fetch FAQ data');
       }
       
-      setMessages(prev => [...prev, botResponse]);
-    }, 500);
-    
-    setInput('');
-    setSearching('');
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      handleSend();
+      // Simplified matching logic - we're just showing the first FAQ match
+      // In a real implementation, you might use vector similarity or a more sophisticated matching algorithm
+      const matchedFaq = faqData?.find(faq => {
+        const lowerUserInput = input.toLowerCase();
+        const lowerQuestion = faq.question.toLowerCase();
+        // Check if user input contains keywords from the question
+        return lowerQuestion.split(' ').some(word => 
+          word.length > 3 && lowerUserInput.includes(word)
+        );
+      });
+      
+      let responseContent = '';
+      
+      if (matchedFaq) {
+        responseContent = matchedFaq.answer;
+      } else {
+        responseContent = "Je ne trouve pas de réponse précise à votre question. Pourriez-vous reformuler ou essayer une question différente à propos de l'organisation de votre mariage ?";
+      }
+      
+      const botResponse: Message = {
+        id: uuidv4(),
+        content: responseContent,
+        role: 'assistant',
+        timestamp: new Date(),
+      };
+      
+      // Simulate a delay to make it feel more natural
+      setTimeout(() => {
+        setMessages(prev => [...prev, botResponse]);
+        setIsLoading(false);
+        
+        // Only scroll if preventScroll is false
+        if (!preventScroll) {
+          setTimeout(scrollToBottom, 100);
+        }
+      }, 1000);
+      
+    } catch (error) {
+      console.error('Error fetching response:', error);
+      const errorResponse: Message = {
+        id: uuidv4(),
+        content: "Désolé, je n'ai pas pu traiter votre demande pour le moment. Veuillez réessayer plus tard.",
+        role: 'assistant',
+        timestamp: new Date(),
+      };
+      
+      setMessages(prev => [...prev, errorResponse]);
+      setIsLoading(false);
     }
   };
 
-  const handleFAQSelect = (faq: WeddingFAQ) => {
-    // Add user question
-    const userMessage: Message = {
-      id: Date.now().toString(),
-      text: faq.question,
-      isUser: true,
-      timestamp: new Date()
-    };
-    
-    // Add bot response
-    const botResponse: Message = {
-      id: (Date.now() + 1).toString(),
-      text: faq.answer,
-      isUser: false,
-      timestamp: new Date()
-    };
-    
-    setMessages(prev => [...prev, userMessage, botResponse]);
-    setSearching('');
-    setFilteredFAQ([]);
-  };
-
-  const resetChat = () => {
-    setMessages([
-      {
-        id: '1',
-        text: "Bonjour ! Je suis votre assistant virtuel de mariage. Comment puis-je vous aider aujourd'hui ?",
-        isUser: false,
-        timestamp: new Date()
-      }
-    ]);
-  };
-
   return (
-    <div className="flex flex-col h-[600px] max-h-[70vh]">
-      <div className="flex-1 overflow-y-auto mb-4 px-2">
+    <div className="flex flex-col h-[600px]">
+      <ScrollArea className="flex-1 p-4 overflow-y-auto">
         <div className="space-y-4">
-          {messages.map(message => (
+          {messages.map((message) => (
             <div
               key={message.id}
-              className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}
+              className={`flex ${
+                message.role === 'user' ? 'justify-end' : 'justify-start'
+              }`}
             >
               <div
-                className={`max-w-[80%] rounded-lg px-4 py-2 ${
-                  message.isUser
+                className={`max-w-[80%] rounded-lg p-3 ${
+                  message.role === 'user'
                     ? 'bg-wedding-olive text-white'
-                    : 'bg-gray-100 text-gray-800'
+                    : 'bg-wedding-cream text-gray-800'
                 }`}
               >
-                <p>{message.text}</p>
-                <div className={`text-xs mt-1 ${message.isUser ? 'text-white/70' : 'text-gray-500'}`}>
-                  {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                <div className="flex items-start">
+                  {message.role === 'assistant' && (
+                    <Avatar className="h-8 w-8 mr-2">
+                      <img src="/logo-simplified.png" alt="Mariable Assistant" />
+                    </Avatar>
+                  )}
+                  <div>
+                    <p className="whitespace-pre-wrap">{message.content}</p>
+                    <p className="text-xs opacity-70 mt-1 text-right">
+                      {message.timestamp.toLocaleTimeString([], {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      })}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
           ))}
+          {isLoading && (
+            <div className="flex justify-start">
+              <div className="max-w-[80%] rounded-lg p-3 bg-wedding-cream text-gray-800">
+                <div className="flex items-center space-x-2">
+                  <Avatar className="h-8 w-8">
+                    <img src="/logo-simplified.png" alt="Mariable Assistant" />
+                  </Avatar>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                </div>
+              </div>
+            </div>
+          )}
           <div ref={messagesEndRef} />
         </div>
-      </div>
-      
-      {/* Categories and FAQs */}
-      <div className="mb-4">
-        <h3 className="font-medium text-sm mb-2">Questions fréquentes par catégorie:</h3>
-        <div className="flex flex-wrap gap-2 mb-3">
-          {categories.map(category => (
-            <Button
-              key={category}
-              variant="outline"
-              size="sm"
-              className="text-xs"
-              onClick={() => setSearching(category)}
-            >
-              {category}
-            </Button>
-          ))}
-        </div>
-        
-        {filteredFAQ.length > 0 && (
-          <div className="max-h-32 overflow-y-auto border rounded-md p-2 mb-3">
-            {filteredFAQ.map(faq => (
-              <Button
-                key={faq.id}
-                variant="ghost"
-                className="w-full justify-start text-left h-auto py-2 px-3 mb-1"
-                onClick={() => handleFAQSelect(faq)}
-              >
-                {faq.question}
-              </Button>
-            ))}
-          </div>
-        )}
-      </div>
-      
-      <div className="flex items-center gap-2">
-        <Input
-          placeholder="Posez votre question..."
-          value={input}
-          onChange={(e) => {
-            setInput(e.target.value);
-            setSearching(e.target.value);
-          }}
-          onKeyDown={handleKeyDown}
-          className="flex-1"
-        />
-        <Button onClick={handleSend} disabled={!input.trim()}>
-          <Send size={18} />
-        </Button>
-        <Button variant="outline" onClick={resetChat} title="Réinitialiser la conversation">
-          <RefreshCcw size={18} />
-        </Button>
-      </div>
+      </ScrollArea>
+
+      <Card className="border-t rounded-none p-2">
+        <form onSubmit={handleSendMessage} className="flex items-center gap-2">
+          <Input
+            placeholder="Posez votre question sur l'organisation de votre mariage..."
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            disabled={isLoading}
+            ref={inputRef}
+            className="flex-1"
+          />
+          <Button
+            type="submit"
+            size="icon"
+            disabled={isLoading || !input.trim()}
+            onClick={() => handleSendMessage()}
+            className="bg-wedding-olive hover:bg-wedding-olive/90 text-white"
+          >
+            <Send className="h-5 w-5" />
+            <span className="sr-only">Envoyer</span>
+          </Button>
+        </form>
+      </Card>
     </div>
   );
 };

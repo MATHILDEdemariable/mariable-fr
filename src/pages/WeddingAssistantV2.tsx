@@ -6,7 +6,6 @@ import Footer from '@/components/Footer';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
 import WeddingQuiz from '@/components/wedding-assistant/v2/WeddingQuiz';
-import BudgetCalculator from '@/components/wedding-assistant/v2/BudgetCalculator';
 import WeddingChatbot from '@/components/wedding-assistant/v2/WeddingChatbot';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useLocation } from 'react-router-dom';
@@ -28,7 +27,7 @@ const WeddingAssistantV2: React.FC = () => {
     const searchParams = new URLSearchParams(location.search);
     const tabParam = searchParams.get('tab');
     
-    if (tabParam && ['planning', 'budget', 'conseils'].includes(tabParam)) {
+    if (tabParam && ['planning', 'conseils'].includes(tabParam)) {
       setActiveTab(tabParam);
     }
   }, [location.search]);
@@ -49,9 +48,8 @@ const WeddingAssistantV2: React.FC = () => {
         <Tabs defaultValue="planning" value={activeTab} onValueChange={setActiveTab} className="w-full">
           <div className="flex justify-center w-full mb-8">
             <TabsList className={`${isMobile ? 'w-full' : 'max-w-2xl w-full mx-auto'}`}>
-              <div className={`grid ${isMobile ? 'grid-cols-1 gap-2' : 'grid-cols-3'} w-full`}>
-                <TabsTrigger value="planning" className="w-full">Planning</TabsTrigger>
-                <TabsTrigger value="budget" className="w-full">Budget personnalisé</TabsTrigger>
+              <div className={`grid ${isMobile ? 'grid-cols-1 gap-2' : 'grid-cols-2'} w-full`}>
+                <TabsTrigger value="planning" className="w-full">Planning personnalisé</TabsTrigger>
                 <TabsTrigger value="conseils" className="w-full">Conseils personnalisés</TabsTrigger>
               </div>
             </TabsList>
@@ -65,18 +63,10 @@ const WeddingAssistantV2: React.FC = () => {
             </Card>
           </TabsContent>
           
-          <TabsContent value="budget">
-            <Card>
-              <CardContent className="pt-6">
-                <BudgetCalculator showFullCalculator={true} />
-              </CardContent>
-            </Card>
-          </TabsContent>
-          
           <TabsContent value="conseils">
             <Card>
               <CardContent className="pt-6">
-                <WeddingChatbot />
+                <WeddingChatbot preventScroll={true} />
               </CardContent>
             </Card>
           </TabsContent>
