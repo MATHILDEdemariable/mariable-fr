@@ -8,12 +8,24 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Loader2, Send } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { v4 as uuidv4 } from 'uuid';
+import { Badge } from '@/components/ui/badge';
 
 type Message = {
   id: string;
   content: string;
   role: 'user' | 'assistant';
   timestamp: Date;
+};
+
+type Category = {
+  name: string;
+  questions: Question[];
+};
+
+type Question = {
+  id: string;
+  text: string;
+  answer: string;
 };
 
 interface Props {
@@ -31,8 +43,15 @@ const WeddingChatbot: React.FC<Props> = ({ preventScroll = false }) => {
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [categories, setCategories] = useState<string[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [categoryQuestions, setCategoryQuestions] = useState<Question[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
 
   // Scroll to bottom when messages change, but only if preventScroll is false
   useEffect(() => {
@@ -41,18 +60,62 @@ const WeddingChatbot: React.FC<Props> = ({ preventScroll = false }) => {
     }
   }, [messages, preventScroll]);
 
+  const fetchCategories = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('wedding_faq')
+        .select('category')
+        .order('category', { ascending: true });
+      
+      if (error) throw error;
+      
+      // Extract unique categories
+      const uniqueCategories = [...new Set(data.map(item => item.category))];
+      setCategories(uniqueCategories);
+      
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+    }
+  };
+
+  const fetchQuestionsByCategory = async (category: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('wedding_faq')
+        .select('id, question, answer')
+        .eq('category', category)
+        .order('created_at', { ascending: true });
+      
+      if (error) throw error;
+      
+      if (data) {
+        const questions: Question[] = data.map(item => ({
+          id: item.id,
+          text: item.question,
+          answer: item.answer
+        }));
+        setCategoryQuestions(questions);
+      }
+      
+    } catch (error) {
+      console.error('Error fetching questions:', error);
+    }
+  };
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const handleSendMessage = async (e?: React.FormEvent) => {
+  const handleSendMessage = async (e?: React.FormEvent, questionText?: string) => {
     if (e) e.preventDefault();
     
-    if (!input.trim()) return;
+    const messageText = questionText || input;
+    
+    if (!messageText.trim()) return;
     
     const userMessage: Message = {
       id: uuidv4(),
-      content: input,
+      content: messageText,
       role: 'user',
       timestamp: new Date(),
     };
@@ -73,16 +136,22 @@ const WeddingChatbot: React.FC<Props> = ({ preventScroll = false }) => {
         throw new Error('Failed to fetch FAQ data');
       }
       
-      // Simplified matching logic - we're just showing the first FAQ match
-      // In a real implementation, you might use vector similarity or a more sophisticated matching algorithm
-      const matchedFaq = faqData?.find(faq => {
-        const lowerUserInput = input.toLowerCase();
-        const lowerQuestion = faq.question.toLowerCase();
-        // Check if user input contains keywords from the question
-        return lowerQuestion.split(' ').some(word => 
-          word.length > 3 && lowerUserInput.includes(word)
-        );
-      });
+      // First try to find exact match with question
+      let matchedFaq = faqData?.find(faq => 
+        faq.question.toLowerCase() === messageText.toLowerCase()
+      );
+      
+      // If no exact match, try keyword matching
+      if (!matchedFaq) {
+        matchedFaq = faqData?.find(faq => {
+          const lowerUserInput = messageText.toLowerCase();
+          const lowerQuestion = faq.question.toLowerCase();
+          // Check if user input contains keywords from the question
+          return lowerQuestion.split(' ').some(word => 
+            word.length > 3 && lowerUserInput.includes(word)
+          );
+        });
+      }
       
       let responseContent = '';
       
@@ -104,6 +173,10 @@ const WeddingChatbot: React.FC<Props> = ({ preventScroll = false }) => {
         setMessages(prev => [...prev, botResponse]);
         setIsLoading(false);
         
+        // Reset UI state
+        setSelectedCategory(null);
+        setCategoryQuestions([]);
+        
         // Only scroll if preventScroll is false
         if (!preventScroll) {
           setTimeout(scrollToBottom, 100);
@@ -122,6 +195,34 @@ const WeddingChatbot: React.FC<Props> = ({ preventScroll = false }) => {
       setMessages(prev => [...prev, errorResponse]);
       setIsLoading(false);
     }
+  };
+
+  const handleCategoryClick = async (category: string) => {
+    setSelectedCategory(category);
+    await fetchQuestionsByCategory(category);
+    
+    // Add a message indicating category selection
+    const assistantMessage: Message = {
+      id: uuidv4(),
+      content: `Voici quelques questions courantes sur "${category}":`,
+      role: 'assistant',
+      timestamp: new Date(),
+    };
+    
+    setMessages(prev => [...prev, assistantMessage]);
+  };
+
+  const handleQuestionClick = (question: Question) => {
+    // Send the selected question as a message
+    handleSendMessage(undefined, question.text);
+  };
+
+  const showCategorySelector = () => {
+    return !selectedCategory && categories.length > 0 && !isLoading;
+  };
+
+  const showQuestionSelector = () => {
+    return selectedCategory !== null && categoryQuestions.length > 0 && !isLoading;
   };
 
   return (
@@ -161,6 +262,51 @@ const WeddingChatbot: React.FC<Props> = ({ preventScroll = false }) => {
               </div>
             </div>
           ))}
+          
+          {showCategorySelector() && (
+            <div className="flex justify-center my-4">
+              <div className="flex flex-wrap gap-2 justify-center max-w-[80%]">
+                {categories.map((category) => (
+                  <Badge
+                    key={category}
+                    variant="outline" 
+                    className="px-3 py-2 cursor-pointer hover:bg-wedding-cream transition-colors"
+                    onClick={() => handleCategoryClick(category)}
+                  >
+                    {category}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          )}
+          
+          {showQuestionSelector() && (
+            <div className="flex justify-center my-4">
+              <div className="flex flex-col gap-2 max-w-[80%]">
+                {categoryQuestions.map((question) => (
+                  <Button
+                    key={question.id}
+                    variant="outline"
+                    className="text-left justify-start h-auto py-2 hover:bg-wedding-cream/50 transition-colors"
+                    onClick={() => handleQuestionClick(question)}
+                  >
+                    {question.text}
+                  </Button>
+                ))}
+                <Button
+                  variant="ghost"
+                  className="text-sm text-muted-foreground mt-2"
+                  onClick={() => {
+                    setSelectedCategory(null);
+                    setCategoryQuestions([]);
+                  }}
+                >
+                  Retour aux catégories
+                </Button>
+              </div>
+            </div>
+          )}
+          
           {isLoading && (
             <div className="flex justify-start">
               <div className="max-w-[80%] rounded-lg p-3 bg-wedding-cream text-gray-800">
@@ -191,7 +337,6 @@ const WeddingChatbot: React.FC<Props> = ({ preventScroll = false }) => {
             type="submit"
             size="icon"
             disabled={isLoading || !input.trim()}
-            onClick={() => handleSendMessage()}
             className="bg-wedding-olive hover:bg-wedding-olive/90 text-white"
           >
             <Send className="h-5 w-5" />

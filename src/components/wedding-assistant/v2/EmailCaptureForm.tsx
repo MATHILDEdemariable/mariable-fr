@@ -52,7 +52,10 @@ const EmailCaptureForm: React.FC<EmailCaptureFormProps> = ({ quizResult, onCompl
           }
         ]);
         
-      if (captureError) throw captureError;
+      if (captureError) {
+        console.error('Error saving quiz results:', captureError);
+        throw captureError;
+      }
 
       // 2. If the user is authenticated, save the tasks to the todos_planification table
       if (user) {
@@ -89,15 +92,8 @@ const EmailCaptureForm: React.FC<EmailCaptureFormProps> = ({ quizResult, onCompl
       
       setIsSuccess(true);
       
-      // Delay to show success state before proceeding
-      setTimeout(() => {
-        if (user) {
-          // If user is logged in, redirect to dashboard after completing quiz
-          navigate('/dashboard');
-        } else {
-          onComplete();
-        }
-      }, 2000);
+      // Proceed immediately to show results instead of waiting
+      onComplete();
       
     } catch (error) {
       console.error('Error saving quiz results:', error);
