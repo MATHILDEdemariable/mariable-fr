@@ -112,13 +112,6 @@ export const exportDashboardToPDF = async (
     `;
     document.head.appendChild(tempStyle);
     
-    // Création du PDF au format spécifié
-    const pdf = new jsPDF({
-      orientation: orientation,
-      unit: 'mm',
-      format: 'a4'
-    });
-    
     // Préparer l'élément pour l'exportation
     const prepareElement = (doc: Document, elementId: string) => {
       const clonedElement = doc.querySelector(`#${elementId}`);
@@ -150,6 +143,9 @@ export const exportDashboardToPDF = async (
       onclone: (doc) => prepareElement(doc, elementId)
     });
     
+    // Générer l'image à partir du canvas
+    const imgData = canvas.toDataURL('image/png');
+    
     // Retirer le style temporaire
     document.head.removeChild(tempStyle);
     
@@ -171,6 +167,13 @@ export const exportDashboardToPDF = async (
     
     let heightLeft = imgHeight;
     let position = margin;
+    
+    // Création du PDF au format spécifié
+    const pdf = new jsPDF({
+      orientation: orientation,
+      unit: 'mm',
+      format: 'a4'
+    });
     
     // Ajout du titre et de la date
     pdf.setFont("helvetica", "bold");
@@ -217,6 +220,4 @@ export const exportDashboardToPDF = async (
     console.error("Erreur lors de l'export PDF:", error);
     return false;
   }
-  
-  const imgData = canvas.toDataURL('image/png');
 };
