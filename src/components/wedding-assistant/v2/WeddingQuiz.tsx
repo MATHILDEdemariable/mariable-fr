@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { QuizQuestion, UserAnswers, PlanningResult, QuizScoring, SECTION_ORDER } from './types';
 import { Button } from "@/components/ui/button";
@@ -241,9 +242,42 @@ const WeddingQuiz: React.FC = () => {
     }
   };
 
-  const handleEmailCaptureComplete = () => {
-    setShowEmailCapture(false);
-    setShowResult(true);
+  const handleEmailCaptureComplete = async (email: string, fullName?: string) => {
+    if (!result) return;
+
+    try {
+      // Déterminer le niveau basé sur le score
+      let level: string;
+      if (result.score <= 3) {
+        level = "Début";
+      } else if (result.score <= 7) {
+        level = "Milieu";
+      } else {
+        level = "Fin";
+      }
+
+      // Enregistrer les données dans Supabase
+      const { error } = await supabase
+        .from('quiz_email_captures')
+        .insert({
+          email: email,
+          full_name: fullName || null,
+          quiz_score: result.score,
+          quiz_status: level
+        });
+
+      if (error) throw error;
+
+      // Rediriger vers la page de planning personnalisé avec les paramètres nécessaires
+      navigate(`/planning-personnalise?score=${result.score}&level=${encodeURIComponent(level)}`);
+    } catch (error) {
+      console.error('Erreur lors de l\'enregistrement des données:', error);
+      toast({
+        title: "Erreur",
+        description: "Une erreur s'est produite. Veuillez réessayer.",
+        variant: "destructive"
+      });
+    }
   };
 
   if (isLoading || questions.length === 0) {

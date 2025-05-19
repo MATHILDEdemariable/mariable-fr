@@ -1,160 +1,101 @@
 
 import React, { useState } from 'react';
-import { PlanningResult } from './types';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { supabase } from '@/integrations/supabase/client';
-import { Check, Loader2 } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { ArrowRight } from 'lucide-react';
+import { PlanningResult } from './types';
 import { useToast } from '@/components/ui/use-toast';
-import { useNavigate } from 'react-router-dom';
-import { generateTasksFromQuizResult } from './taskGenerator';
 
 interface EmailCaptureFormProps {
   quizResult: PlanningResult;
-  onComplete: () => void;
+  onComplete: (email: string, fullName?: string) => void;
 }
 
 const EmailCaptureForm: React.FC<EmailCaptureFormProps> = ({ quizResult, onComplete }) => {
   const [email, setEmail] = useState('');
   const [fullName, setFullName] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
   const { toast } = useToast();
-  const navigate = useNavigate();
 
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
     
-    if (!email) {
+    if (!email || !validateEmail(email)) {
       toast({
-        title: "Erreur",
-        description: "Veuillez entrer votre email",
+        title: "Email invalide",
+        description: "Veuillez entrer une adresse email valide.",
         variant: "destructive"
       });
       return;
     }
-    
-    setIsSubmitting(true);
-    
-    try {
-      // Check if the user is authenticated
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      // 1. Save the quiz results to the email_captures table
-      const { error: captureError } = await supabase
-        .from('quiz_email_captures')
-        .insert([
-          { 
-            email, 
-            full_name: fullName,
-            quiz_score: quizResult.score,
-            quiz_status: quizResult.status
-          }
-        ]);
-        
-      if (captureError) {
-        console.error('Error saving quiz results:', captureError);
-        throw captureError;
-      }
 
-      // 2. If the user is authenticated, save the tasks to the todos_planification table
-      if (user) {
-        const tasks = generateTasksFromQuizResult(quizResult);
-        
-        if (tasks.length > 0) {
-          // Add user_id to each task
-          const tasksWithUserId = tasks.map(task => ({
-            ...task,
-            user_id: user.id
-          }));
-          
-          // Insert tasks into the todos_planification table
-          const { error: tasksError } = await supabase
-            .from('todos_planification')
-            .insert(tasksWithUserId);
-            
-          if (tasksError) {
-            console.error('Error saving tasks:', tasksError);
-            toast({
-              title: "Attention",
-              description: "Vos résultats ont été enregistrés, mais nous n'avons pas pu créer votre plan personnalisé.",
-              variant: "default"
-            });
-          } else {
-            toast({
-              title: "Plan créé avec succès",
-              description: "Votre plan personnalisé a été créé et est disponible dans votre tableau de bord.",
-              variant: "default"
-            });
-          }
-        }
-      }
-      
-      setIsSuccess(true);
-      
-      // Proceed immediately to show results instead of waiting
-      onComplete();
-      
-    } catch (error) {
-      console.error('Error saving quiz results:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible d'enregistrer vos résultats. Veuillez réessayer.",
-        variant: "destructive"
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
+    setIsSubmitting(true);
+    onComplete(email, fullName);
+  };
+
+  const validateEmail = (email: string): boolean => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
   };
 
   return (
-    <div className="max-w-md mx-auto bg-white p-6 rounded-lg shadow-sm">
-      <h2 className="text-xl font-serif text-center mb-4">Recevez votre plan personnalisé</h2>
-      <p className="text-sm text-gray-600 mb-4 text-center">
-        Entrez votre email pour recevoir votre plan de mariage personnalisé basé sur vos réponses.
-      </p>
+    <Card className="border shadow-md">
+      <CardHeader className="text-center">
+        <CardTitle className="text-xl md:text-2xl font-serif">Recevez votre planning personnalisé</CardTitle>
+        <CardDescription>
+          Obtenez votre planning sur-mesure adapté à votre avancement actuel
+        </CardDescription>
+      </CardHeader>
       
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <Input
-            type="text"
-            placeholder="Votre nom complet"
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
-            className="w-full"
-          />
-        </div>
-        
-        <div>
-          <Input
-            type="email"
-            placeholder="Votre email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            className="w-full"
-          />
-        </div>
-        
-        <Button 
-          type="submit" 
-          className="w-full bg-wedding-olive hover:bg-wedding-olive/90"
-          disabled={isSubmitting || isSuccess}
-        >
-          {isSubmitting ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Enregistrement...
-            </>
-          ) : isSuccess ? (
-            <>
-              <Check className="mr-2 h-4 w-4" /> Enregistré avec succès!
-            </>
-          ) : (
-            'Recevoir mon plan personnalisé'
-          )}
-        </Button>
-      </form>
-    </div>
+      <CardContent>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <Input 
+              type="text"
+              placeholder="Votre prénom et nom (facultatif)"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <Input 
+              type="email"
+              placeholder="Votre adresse email *"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
+          
+          <div className="pt-2">
+            <Button 
+              type="submit" 
+              className="w-full bg-wedding-olive hover:bg-wedding-olive/90"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <span className="flex items-center gap-2">
+                  <span className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span>
+                  Traitement...
+                </span>
+              ) : (
+                <span className="flex items-center gap-2">
+                  Recevoir mon plan personnalisé
+                  <ArrowRight size={16} />
+                </span>
+              )}
+            </Button>
+          </div>
+          
+          <p className="text-xs text-center text-muted-foreground pt-2">
+            En soumettant ce formulaire, vous acceptez de recevoir des emails de notre part.
+            Vous pourrez vous désabonner à tout moment.
+          </p>
+        </form>
+      </CardContent>
+    </Card>
   );
 };
 
