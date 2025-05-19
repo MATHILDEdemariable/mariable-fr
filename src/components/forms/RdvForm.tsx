@@ -151,7 +151,6 @@ const RdvForm = ({prestataire_id, prestataire_name, contact_date, email_prestata
           last_name: user.user_metadata?.last_name || "",
         });
       }
-      console.log(userData);
     };
 
     getUserData();
@@ -160,13 +159,14 @@ const RdvForm = ({prestataire_id, prestataire_name, contact_date, email_prestata
   const handleBookingClick = async () => {
     const message = document.querySelector("textarea")?.value;
 
-    if (!date1.hour) {
+    if (!date1.hour || !date2.hour || !date3.hour) {
       toast({
-        description: "Veuillez sélectionner au moins une date.",
+        description: "Veuillez sélectionner toutes les propositions de dates.",
         variant: "destructive",
       });
       return;
     }
+
 
     if (!prestataire_id) return;
 

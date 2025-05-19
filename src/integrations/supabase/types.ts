@@ -879,6 +879,7 @@ export type Database = {
           user_id: string
           valide_date_rdv: number | null
           vendor_name: string
+          key_prestataire:string
         }
         Insert: {
           category: string
@@ -899,6 +900,7 @@ export type Database = {
           user_id: string
           valide_date_rdv?: number | null
           vendor_name: string
+          key_prestataire:string
         }
         Update: {
           category?: string
@@ -919,6 +921,7 @@ export type Database = {
           user_id?: string
           valide_date_rdv?: number | null
           vendor_name?: string
+          key_prestataire:string
         }
         Relationships: [
           {

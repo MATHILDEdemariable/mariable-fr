@@ -17,6 +17,7 @@ const TrackingPage = () => {
   const [searchParams] = useSearchParams();
   const vendorId = searchParams.get("id");
   const isUser = searchParams.get("edit") === "user" ? true : false;
+  const keyPresta = searchParams.get("key");
   const LOGO_URL = "/lovable-uploads/a13321ac-adeb-489a-911e-3a88b1411ac2.png";
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [selectedSwitch, setSelectedSwitch] = useState(null);
@@ -389,11 +390,21 @@ const TrackingPage = () => {
           <h2 className="mt-4">Informations</h2>
           {project && (
             <div className="text-sm text-gray-500">
-              <p>Nom du projet : {project.title}</p>
-              <p>Date du mariage : {dateMariage}</p>
-              <p>Lieu du mariage : {project.location}</p>
-              <p>Budget dédié : {project.budget}€</p>
-              <p>Nombre d'invités : {project.guest_count}</p>
+              {project.title && (
+                <p>Nom du projet : {project.title}</p>
+              )}
+              {dateMariage && (
+                <p>Date du mariage : {dateMariage}</p>
+              )}
+              {project.location && (
+                <p>Lieu du mariage : {project.location}</p>
+              )}
+              {project.budget && (
+                <p>Budget dédié : {project.budget}€</p>
+              )}
+              {project.guest_count && (
+                <p>Nombre d'invités : {project.guest_count}</p>
+              )}
             </div>
           )}
           {vendor.status === "à valider" && (
@@ -421,10 +432,14 @@ const TrackingPage = () => {
               )}
             </div>
           )}
-          {vendor.status === "en attente" && (
+         {(vendor.status === "en attente" && keyPresta!==vendor.key_prestataire) && (
+          <p className="mt-4 font-bold">Date en attente de validation par la pretataire.</p>
+         )}
+          {(vendor.status === "en attente" && keyPresta===vendor.key_prestataire) && (
             <>
               <h2 className="text-lg font-bold mt-4">Demande en attente</h2>
               <div className="flex flex-col md:flex-row gap-4 justify-center items-center mt-4">
+                {vendor.first_date_rdv && (
                 <Card className="pt-6">
                   <CardContent>
                     <p className="text-sm text-gray-500 mb-2">
@@ -445,6 +460,8 @@ const TrackingPage = () => {
                     />
                   </CardContent>
                 </Card>
+                )}
+                {vendor.second_date_rdv && (
                 <Card className="pt-6">
                   <CardContent>
                     <p className="text-sm text-gray-500 mb-2">
@@ -465,6 +482,8 @@ const TrackingPage = () => {
                     />
                   </CardContent>
                 </Card>
+                )}
+                {vendor.third_date_rdv && (
                 <Card className="pt-6">
                   <CardContent>
                     <p className="text-sm text-gray-500 mb-2">
@@ -485,6 +504,7 @@ const TrackingPage = () => {
                     />
                   </CardContent>
                 </Card>
+                )}
               </div>
 
               <Textarea
