@@ -3,8 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
-import { useEffect,useState } from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import LandingPage from "./pages/LandingPage";
 import NotFound from "./pages/NotFound";
@@ -59,30 +58,20 @@ import AdminPrestataires from "./pages/admin/Prestataires";
 import TrackingPage from "./pages/prestataire/tracking";
 import ContactTracking from "./pages/prestataire/contact";
 
-
-// Composant pour scroller en haut de la page à chaque changement de route
-const ScrollToTop = () => {
-  const { pathname } = useLocation();
-
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [pathname]);
-
-  return null;
-};
-
+// Initialize the query client
 const queryClient = new QueryClient();
 
-const App = () => {
+// Create a helmetContext object to pass to HelmetProvider
+const helmetContext = {};
 
+const App = () => {
   return(
   <QueryClientProvider client={queryClient}>
-    <HelmetProvider>
+    <HelmetProvider context={helmetContext}>
       <TooltipProvider>
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <ScrollToTop />
           <Routes>
             {/* Make LandingPage the main route */}
             <Route path="/" element={<LandingPage />} />
@@ -154,7 +143,6 @@ const App = () => {
             {/* Prestataire Routes */}
             <Route path="/prestataire/tracking" element={<TrackingPage />} />
             <Route path="/prestataire/contact" element={<ContactTracking />} />
-
             
             {/* Catch-all route */}
             <Route path="*" element={<NotFound />} />

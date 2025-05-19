@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Helmet } from 'react-helmet-async';
+import SEO from '@/components/SEO';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { BriefContextProvider } from '@/components/wedding-assistant/BriefContext';
@@ -9,10 +9,10 @@ import WeddingAssistantDashboard from '@/components/wedding-assistant/WeddingAss
 const TestAssistantVirtuel: React.FC = () => {
   return (
     <>
-      <Helmet>
-        <title>Test Assistant Virtuel | Mariable</title>
-        <meta name="description" content="Assistant virtuel de planification de mariage - Mariable" />
-      </Helmet>
+      <SEO 
+        title="Test Assistant Virtuel | Mariable"
+        description="Assistant virtuel de planification de mariage - Mariable" 
+      />
 
       <Header />
       

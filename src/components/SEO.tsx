@@ -39,8 +39,8 @@ const SEO: React.FC<SEOProps> = ({
       <meta name="twitter:image" content={image} />
       
       {/* Structured data for Local Business */}
-      <script type="application/ld+json">
-        {JSON.stringify({
+      <script type="application/ld+json">{`
+        {
           "@context": "https://schema.org",
           "@type": "WebSite",
           "name": "MARIABLE",
@@ -51,8 +51,8 @@ const SEO: React.FC<SEOProps> = ({
             "query-input": "required name=search_term_string"
           },
           "description": "Plateforme intelligente d'organisation de mariage : trouvez les meilleurs prestataires, planifiez chaque étape, suivez votre budget."
-        })}
-      </script>
+        }
+      `}</script>
     </Helmet>
   );
 };
