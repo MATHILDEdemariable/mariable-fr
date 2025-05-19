@@ -5,7 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import BudgetSummary from '@/components/dashboard/BudgetSummary';
 import DetailedBudget from '@/components/dashboard/DetailedBudget';
 import { Button } from '@/components/ui/button';
-import { BarChart, PieChart, Download } from 'lucide-react';
+import { BarChart, PieChart, Download, FileDown } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -129,6 +129,47 @@ const BudgetPage: React.FC = () => {
     }
   };
 
+  // Download template file
+  const handleDownloadTemplate = () => {
+    // Simple template with categories and empty items
+    let csvContent = "Catégorie,Élément,Budget Estimé,Coût Réel,Acompte Versé,Reste à Payer\n";
+    
+    const categories = [
+      "Lieu de réception",
+      "Traiteur & Boissons",
+      "Tenues & Accessoires",
+      "Décoration & Fleurs",
+      "Photo & Vidéo",
+      "Musique & Animation",
+      "Transport",
+      "Papeterie",
+      "Cadeaux",
+      "Divers"
+    ];
+    
+    categories.forEach(category => {
+      csvContent += `"${category}","",0,0,0,0\n`;
+    });
+
+    // Create and download the template
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    
+    link.setAttribute("href", url);
+    link.setAttribute("download", "template_budget_mariage.csv");
+    link.style.visibility = 'hidden';
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    toast({
+      title: "Téléchargement du template réussi",
+      description: "Le modèle de budget a été téléchargé",
+    });
+  };
+
   return (
     <>
       <Helmet>
@@ -139,10 +180,16 @@ const BudgetPage: React.FC = () => {
       <div>
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-serif text-wedding-olive">Budget de Mariage</h1>
-          <Button onClick={handleExportCSV} className="bg-wedding-olive hover:bg-wedding-olive/80 flex gap-2 items-center">
-            <Download size={18} />
-            Télécharger
-          </Button>
+          <div className="flex gap-2">
+            <Button onClick={handleDownloadTemplate} variant="outline" className="flex gap-2 items-center">
+              <FileDown size={18} />
+              Template CSV
+            </Button>
+            <Button onClick={handleExportCSV} className="bg-wedding-olive hover:bg-wedding-olive/80 flex gap-2 items-center">
+              <Download size={18} />
+              Exporter CSV
+            </Button>
+          </div>
         </div>
 
         <Tabs defaultValue="summary" value={activeTab} onValueChange={setActiveTab}>

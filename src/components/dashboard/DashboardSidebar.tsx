@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard,
@@ -12,8 +12,12 @@ import {
   Settings,
   Sparkles,
   Palette,
-  Wine
+  Wine,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { cn } from '@/lib/utils';
 
 interface MenuItemProps {
   icon: React.ReactNode;
@@ -21,9 +25,10 @@ interface MenuItemProps {
   to: string;
   active?: boolean;
   external?: boolean;
+  collapsed?: boolean;
 }
 
-const MenuItem: React.FC<MenuItemProps> = ({ icon, label, to, active = false, external = false }) => {
+const MenuItem: React.FC<MenuItemProps> = ({ icon, label, to, active = false, external = false, collapsed = false }) => {
   if (external) {
     return (
       <a
@@ -37,7 +42,7 @@ const MenuItem: React.FC<MenuItemProps> = ({ icon, label, to, active = false, ex
         }`}
       >
         <span className="mr-3">{icon}</span>
-        <span>{label}</span>
+        {!collapsed && <span className="truncate">{label}</span>}
       </a>
     );
   }
@@ -51,8 +56,8 @@ const MenuItem: React.FC<MenuItemProps> = ({ icon, label, to, active = false, ex
           : 'hover:bg-gray-100'
       }`}
     >
-      <span className="mr-3">{icon}</span>
-      <span>{label}</span>
+      <span className="mr-3 flex-shrink-0">{icon}</span>
+      {!collapsed && <span className="truncate">{label}</span>}
     </Link>
   );
 };
@@ -60,6 +65,8 @@ const MenuItem: React.FC<MenuItemProps> = ({ icon, label, to, active = false, ex
 const DashboardSidebar: React.FC = () => {
   const location = useLocation();
   const currentPath = location.pathname;
+  const isMobile = useIsMobile();
+  const [collapsed, setCollapsed] = useState(false);
 
   const isActive = (path: string) => {
     if (path === '/dashboard') {
@@ -69,9 +76,24 @@ const DashboardSidebar: React.FC = () => {
   };
 
   return (
-    <div className="h-full bg-white border-r w-full">
+    <div className="h-full bg-white border-r w-full relative">
       <div className="p-4">
-        <h2 className="text-xl font-serif text-wedding-olive mb-6">Tableau de Bord</h2>
+        <div className="flex justify-between items-center mb-6">
+          <h2 className={cn("text-xl font-serif text-wedding-olive", collapsed ? "hidden" : "block")}>
+            Tableau de Bord
+          </h2>
+          <button 
+            onClick={() => setCollapsed(!collapsed)} 
+            className="p-1 rounded-md hover:bg-gray-100"
+            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          >
+            {collapsed ? (
+              <ChevronRight size={18} />
+            ) : (
+              <ChevronLeft size={18} />
+            )}
+          </button>
+        </div>
         
         <nav className="space-y-2">
           {/* Tableau de bord principal */}
@@ -80,6 +102,7 @@ const DashboardSidebar: React.FC = () => {
             label="Tableau de bord"
             to="/dashboard"
             active={isActive('/dashboard')}
+            collapsed={collapsed}
           />
           
           {/* Tâches */}
@@ -88,6 +111,7 @@ const DashboardSidebar: React.FC = () => {
             label="Tâches"
             to="/dashboard/tasks"
             active={isActive('/dashboard/tasks')}
+            collapsed={collapsed}
           />
           
           {/* Budget */}
@@ -96,6 +120,7 @@ const DashboardSidebar: React.FC = () => {
             label="Budget"
             to="/dashboard/budget"
             active={isActive('/dashboard/budget')}
+            collapsed={collapsed}
           />
           
           {/* Prestataires */}
@@ -104,6 +129,7 @@ const DashboardSidebar: React.FC = () => {
             label="Prestataires"
             to="/dashboard/prestataires"
             active={isActive('/dashboard/prestataires')}
+            collapsed={collapsed}
           />
           
           {/* Wishlist */}
@@ -112,6 +138,7 @@ const DashboardSidebar: React.FC = () => {
             label="Wishlist prestataires"
             to="/dashboard/wishlist"
             active={isActive('/dashboard/wishlist')}
+            collapsed={collapsed}
           />
           
           {/* Coordination */}
@@ -120,22 +147,25 @@ const DashboardSidebar: React.FC = () => {
             label="Coordination Jour J"
             to="/dashboard/coordination"
             active={isActive('/dashboard/coordination')}
+            collapsed={collapsed}
           />
           
-          {/* NEW: Calculatrice de boissons */}
+          {/* Calculatrice de boissons */}
           <MenuItem
             icon={<Wine size={20} />}
             label="Calculatrice de boissons"
             to="/dashboard/drinks"
             active={isActive('/dashboard/drinks')}
+            collapsed={collapsed}
           />
           
-          {/* Assistant virtuel - Updated to go directly to the "Conseils" tab */}
+          {/* Assistant virtuel */}
           <MenuItem
             icon={<Sparkles size={20} />}
             label="Assistant virtuel"
             to="/assistant-v2?tab=conseils"
             active={isActive('/assistant-v2')}
+            collapsed={collapsed}
           />
           
           {/* Style de mariage */}
@@ -144,6 +174,7 @@ const DashboardSidebar: React.FC = () => {
             label="Style de mariage"
             to="/test-formulaire"
             active={isActive('/test-formulaire')}
+            collapsed={collapsed}
           />
           
           {/* Conseils */}
@@ -152,6 +183,7 @@ const DashboardSidebar: React.FC = () => {
             label="Conseils personnalisés"
             to="https://chat.whatsapp.com/In5xf3ZMJNvJkhy4F9g5C5"
             external={true}
+            collapsed={collapsed}
           />
           
           {/* Paramètres */}
@@ -160,6 +192,7 @@ const DashboardSidebar: React.FC = () => {
             label="Paramètres"
             to="/dashboard/settings"
             active={isActive('/dashboard/settings')}
+            collapsed={collapsed}
           />
         </nav>
       </div>
