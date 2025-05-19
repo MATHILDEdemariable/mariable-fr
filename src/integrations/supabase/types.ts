@@ -868,7 +868,6 @@ export type Database = {
           email_presta: string | null
           first_date_rdv: string | null
           id: string
-          key_prestataire: string | null
           notes: string | null
           prestataire_id: string | null
           project_id: string | null
@@ -880,6 +879,7 @@ export type Database = {
           user_id: string
           valide_date_rdv: number | null
           vendor_name: string
+          key_prestataire:string
         }
         Insert: {
           category: string
@@ -889,7 +889,6 @@ export type Database = {
           email_presta?: string | null
           first_date_rdv?: string | null
           id?: string
-          key_prestataire?: string | null
           notes?: string | null
           prestataire_id?: string | null
           project_id?: string | null
@@ -901,6 +900,7 @@ export type Database = {
           user_id: string
           valide_date_rdv?: number | null
           vendor_name: string
+          key_prestataire:string
         }
         Update: {
           category?: string
@@ -910,7 +910,6 @@ export type Database = {
           email_presta?: string | null
           first_date_rdv?: string | null
           id?: string
-          key_prestataire?: string | null
           notes?: string | null
           prestataire_id?: string | null
           project_id?: string | null
@@ -922,6 +921,7 @@ export type Database = {
           user_id?: string
           valide_date_rdv?: number | null
           vendor_name?: string
+          key_prestataire:string
         }
         Relationships: [
           {
