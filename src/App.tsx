@@ -17,6 +17,7 @@ import ImportAirtable from './pages/ImportAirtable';
 import TestAssistantVirtuel from "./pages/TestAssistantVirtuel";
 import WeddingAssistantV2 from "./pages/WeddingAssistantV2";
 import PlanningPersonnalise from "./pages/PlanningPersonnalise";
+import PlanningResultatsPersonnalises from "./pages/PlanningResultatsPersonnalises";
 import Index from "./pages/Index";
 
 // Services pages
@@ -134,6 +135,7 @@ const App = () => {
             <Route path="/test-assistant-virtuel" element={<TestAssistantVirtuel />} />
             <Route path="/assistant-v2" element={<WeddingAssistantV2 />} />
             <Route path="/planning-personnalise" element={<PlanningPersonnalise />} />
+            <Route path="/planning-personnalise/resultats" element={<PlanningResultatsPersonnalises />} />
             
             {/* Import Airtable */}
             <Route path="/import-airtable" element={<ImportAirtable />} />

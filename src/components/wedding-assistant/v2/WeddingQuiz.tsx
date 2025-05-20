@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { QuizQuestion, UserAnswers, PlanningResult, QuizScoring, SECTION_ORDER } from './types';
 import { Button } from "@/components/ui/button";
@@ -241,9 +242,21 @@ const WeddingQuiz: React.FC = () => {
     }
   };
 
-  const handleEmailCaptureComplete = () => {
-    setShowEmailCapture(false);
-    setShowResult(true);
+  // Modifié pour rediriger vers la page de résultats après capture d'email
+  const handleEmailCaptureComplete = (emailData: { email: string; full_name?: string }) => {
+    if (result) {
+      // Stocker le résultat dans le localStorage pour pouvoir l'utiliser sur la page de résultats
+      localStorage.setItem('quizResult', JSON.stringify(result));
+      
+      // Rediriger vers la page de résultats
+      navigate('/planning-personnalise/resultats');
+    } else {
+      toast({
+        title: "Erreur",
+        description: "Impossible de générer votre plan personnalisé.",
+        variant: "destructive"
+      });
+    }
   };
 
   if (isLoading || questions.length === 0) {
@@ -262,82 +275,7 @@ const WeddingQuiz: React.FC = () => {
     );
   }
 
-  if (showResult && result) {
-    return (
-      <ScrollArea className="h-[70vh]">
-        <div className="max-w-2xl mx-auto py-8 space-y-8">
-          <div className="text-center mb-6">
-            <h2 className="text-2xl font-serif mb-2">Votre niveau de préparation</h2>
-            <div className="inline-block bg-wedding-cream px-4 py-2 rounded-md">
-              <p className="text-xl font-semibold">{result.status}</p>
-            </div>
-            <div className="mt-4">
-              <p className="text-sm text-muted-foreground">Score: {result.score}/10</p>
-            </div>
-          </div>
-
-          <div className="space-y-6">
-            <h3 className="text-xl font-serif">Objectifs recommandés</h3>
-            <ul className="space-y-2">
-              {result.objectives.map((objective, index) => (
-                <li key={index} className="flex items-start gap-2">
-                  <div className="h-6 w-6 rounded-full bg-wedding-olive text-white flex items-center justify-center flex-shrink-0 mt-0.5">
-                    {index + 1}
-                  </div>
-                  <span>{objective}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <Separator />
-
-          <div className="space-y-6">
-            <h3 className="text-xl font-serif">Catégories à prioriser</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {result.categories.map((category, index) => (
-                <div key={index} className="border rounded-md p-3 bg-wedding-light/50">
-                  <p>{category}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <Separator />
-          
-          <div className="space-y-6">
-            <h3 className="text-xl font-serif mb-2">Prêt à organiser votre mariage ?</h3>
-            <p className="text-muted-foreground">Accédez à des outils plus détaillés pour organiser votre grand jour :</p>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-              <Link to="/register" className="border rounded-md p-4 bg-wedding-light/50 hover:bg-wedding-light text-center">
-                <h4 className="font-medium mb-1">Calculer votre budget</h4>
-                <p className="text-sm text-muted-foreground">Créez un compte pour obtenir une estimation précise</p>
-              </Link>
-              
-              <Link to="/register" className="border rounded-md p-4 bg-wedding-light/50 hover:bg-wedding-light text-center">
-                <h4 className="font-medium mb-1">Voir votre checklist détaillée</h4>
-                <p className="text-sm text-muted-foreground">Accédez à votre planning personnalisé</p>
-              </Link>
-            </div>
-            
-            <div className="pt-4">
-              <Button 
-                asChild
-                className="w-full bg-wedding-olive hover:bg-wedding-olive/90 flex items-center justify-center gap-2"
-              >
-                <Link to="/register">
-                  <CalendarIcon size={18} />
-                  Créer un compte gratuitement
-                  <ArrowRight size={16} />
-                </Link>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </ScrollArea>
-    );
-  }
+  // La partie résultat n'est plus affichée ici car on redirige vers une nouvelle page
 
   // Filtrer les questions pour la section actuelle
   const currentSectionQuestions = questions.filter(q => q.section === currentSection);

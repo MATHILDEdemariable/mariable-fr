@@ -1,159 +1,126 @@
 
 import React, { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { PlanningResult } from './types';
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { supabase } from '@/integrations/supabase/client';
-import { Check, Loader2 } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
-import { useNavigate } from 'react-router-dom';
-import { generateTasksFromQuizResult } from './taskGenerator';
 
 interface EmailCaptureFormProps {
   quizResult: PlanningResult;
-  onComplete: () => void;
+  onComplete: (data: { email: string; full_name?: string }) => void;
 }
 
 const EmailCaptureForm: React.FC<EmailCaptureFormProps> = ({ quizResult, onComplete }) => {
   const [email, setEmail] = useState('');
   const [fullName, setFullName] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
   const { toast } = useToast();
-  const navigate = useNavigate();
 
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     
-    if (!email) {
+    if (!email.trim()) {
       toast({
-        title: "Erreur",
-        description: "Veuillez entrer votre email",
+        title: "Champ requis",
+        description: "Veuillez entrer votre adresse e-mail.",
         variant: "destructive"
       });
       return;
     }
     
     setIsSubmitting(true);
-    
+
     try {
-      // Check if the user is authenticated
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      // 1. Save the quiz results to the email_captures table
-      const { error: captureError } = await supabase
-        .from('quiz_email_captures')
-        .insert([
-          { 
-            email, 
-            full_name: fullName,
-            quiz_score: quizResult.score,
-            quiz_status: quizResult.status
-          }
-        ]);
-        
-      if (captureError) {
-        console.error('Error saving quiz results:', captureError);
-        throw captureError;
+      // Sauvegarder les données dans Supabase
+      const { error } = await supabase.from('quiz_email_captures').insert({
+        email: email.trim(),
+        full_name: fullName.trim() || null,
+        quiz_score: quizResult.score,
+        quiz_status: quizResult.status
+      });
+
+      if (error) {
+        console.error("Erreur lors de l'enregistrement:", error);
+        toast({
+          title: "Erreur",
+          description: "Impossible d'enregistrer vos coordonnées. Veuillez réessayer.",
+          variant: "destructive"
+        });
+        setIsSubmitting(false);
+        return;
       }
 
-      // 2. If the user is authenticated, save the tasks to the todos_planification table
-      if (user) {
-        const tasks = generateTasksFromQuizResult(quizResult);
-        
-        if (tasks.length > 0) {
-          // Add user_id to each task
-          const tasksWithUserId = tasks.map(task => ({
-            ...task,
-            user_id: user.id
-          }));
-          
-          // Insert tasks into the todos_planification table
-          const { error: tasksError } = await supabase
-            .from('todos_planification')
-            .insert(tasksWithUserId);
-            
-          if (tasksError) {
-            console.error('Error saving tasks:', tasksError);
-            toast({
-              title: "Attention",
-              description: "Vos résultats ont été enregistrés, mais nous n'avons pas pu créer votre plan personnalisé.",
-              variant: "default"
-            });
-          } else {
-            toast({
-              title: "Plan créé avec succès",
-              description: "Votre plan personnalisé a été créé et est disponible dans votre tableau de bord.",
-              variant: "default"
-            });
-          }
-        }
-      }
+      // Appeler onComplete avec les données
+      onComplete({ email, full_name: fullName });
       
-      setIsSuccess(true);
-      
-      // Proceed immediately to show results instead of waiting
-      onComplete();
-      
+      toast({
+        title: "Merci !",
+        description: "Vos informations ont été enregistrées avec succès.",
+      });
     } catch (error) {
-      console.error('Error saving quiz results:', error);
+      console.error("Erreur:", error);
       toast({
         title: "Erreur",
-        description: "Impossible d'enregistrer vos résultats. Veuillez réessayer.",
+        description: "Une erreur est survenue. Veuillez réessayer.",
         variant: "destructive"
       });
-    } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="max-w-md mx-auto bg-white p-6 rounded-lg shadow-sm">
-      <h2 className="text-xl font-serif text-center mb-4">Recevez votre plan personnalisé</h2>
-      <p className="text-sm text-gray-600 mb-4 text-center">
-        Entrez votre email pour recevoir votre plan de mariage personnalisé basé sur vos réponses.
-      </p>
+    <div className="space-y-6">
+      <div className="text-center">
+        <h2 className="text-2xl font-serif mb-2">Voir votre planning personnalisé</h2>
+        <p className="text-muted-foreground">
+          Recevez votre planning personnalisé basé sur votre niveau d'avancement dans les préparatifs.
+        </p>
+      </div>
       
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <Input
-            type="text"
-            placeholder="Votre nom complet"
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
-            className="w-full"
-          />
-        </div>
-        
-        <div>
-          <Input
-            type="email"
-            placeholder="Votre email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            className="w-full"
-          />
-        </div>
-        
-        <Button 
-          type="submit" 
-          className="w-full bg-wedding-olive hover:bg-wedding-olive/90"
-          disabled={isSubmitting || isSuccess}
-        >
-          {isSubmitting ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Enregistrement...
-            </>
-          ) : isSuccess ? (
-            <>
-              <Check className="mr-2 h-4 w-4" /> Enregistré avec succès!
-            </>
-          ) : (
-            'Recevoir mon plan personnalisé'
-          )}
-        </Button>
-      </form>
+      <div className="border rounded-lg p-6 bg-wedding-light/30">
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="fullName">Votre nom</Label>
+            <Input 
+              id="fullName"
+              type="text"
+              placeholder="Votre nom"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="email">Votre e-mail <span className="text-red-500">*</span></Label>
+            <Input 
+              id="email"
+              type="email"
+              placeholder="votre@email.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+          
+          <div className="pt-2">
+            <Button 
+              type="submit" 
+              className="w-full bg-wedding-olive hover:bg-wedding-olive/90"
+              disabled={isSubmitting}
+            >
+              <Sparkles className="mr-2 h-4 w-4" />
+              Recevoir mon plan personnalisé
+            </Button>
+          </div>
+          
+          <p className="text-xs text-center text-muted-foreground pt-2">
+            En soumettant ce formulaire, vous acceptez de recevoir des informations sur nos services.
+          </p>
+        </form>
+      </div>
     </div>
   );
 };
