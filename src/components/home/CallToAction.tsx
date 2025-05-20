@@ -20,7 +20,7 @@ const CallToAction = () => {
             className="bg-wedding-olive hover:bg-wedding-olive/80 text-white font-medium shadow-md"
           >
             <Link to="/register">
-              Créer un compte dès maintenant
+              Je découvre Mariable
             </Link>
           </Button>
           <Button 
@@ -29,8 +29,8 @@ const CallToAction = () => {
             variant="outline" 
             className="border-wedding-olive text-wedding-olive hover:bg-wedding-olive/10"
           >
-            <Link to="/contact/nous-contacter">
-              Discuter avec un conseiller
+            <Link to="/login">
+              Dites oui à la simplicité
             </Link>
           </Button>
         </div>

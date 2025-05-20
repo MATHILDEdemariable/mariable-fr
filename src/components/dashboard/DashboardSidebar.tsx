@@ -21,14 +21,25 @@ import { cn } from '@/lib/utils';
 interface MenuItemProps {
   icon: React.ReactNode;
   label: string;
-  to: string;
+  to?: string;
+  modalName?: string;
   active?: boolean;
   external?: boolean;
   collapsed?: boolean;
+  onClick?: () => void;
 }
 
-const MenuItem: React.FC<MenuItemProps> = ({ icon, label, to, active = false, external = false, collapsed = false }) => {
-  if (external) {
+const MenuItem: React.FC<MenuItemProps> = ({ 
+  icon, 
+  label, 
+  to, 
+  modalName,
+  active = false, 
+  external = false, 
+  collapsed = false,
+  onClick 
+}) => {
+  if (external && to) {
     return (
       <a
         href={to}
@@ -46,10 +57,26 @@ const MenuItem: React.FC<MenuItemProps> = ({ icon, label, to, active = false, ex
     );
   }
   
+  if (to) {
+    return (
+      <Link
+        to={to}
+        className={`flex items-center px-3 py-2 rounded-lg transition-colors ${
+          active
+            ? 'bg-wedding-olive/10 text-wedding-olive font-medium'
+            : 'hover:bg-gray-100'
+        }`}
+      >
+        <span className="mr-3 flex-shrink-0">{icon}</span>
+        {!collapsed && <span className="truncate">{label}</span>}
+      </Link>
+    );
+  }
+  
   return (
-    <Link
-      to={to}
-      className={`flex items-center px-3 py-2 rounded-lg transition-colors ${
+    <button
+      onClick={onClick}
+      className={`flex w-full items-center px-3 py-2 rounded-lg transition-colors text-left ${
         active
           ? 'bg-wedding-olive/10 text-wedding-olive font-medium'
           : 'hover:bg-gray-100'
@@ -57,11 +84,15 @@ const MenuItem: React.FC<MenuItemProps> = ({ icon, label, to, active = false, ex
     >
       <span className="mr-3 flex-shrink-0">{icon}</span>
       {!collapsed && <span className="truncate">{label}</span>}
-    </Link>
+    </button>
   );
 };
 
-const DashboardSidebar: React.FC = () => {
+interface DashboardSidebarProps {
+  onMenuItemClick?: (modalName: string) => void;
+}
+
+const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ onMenuItemClick }) => {
   const location = useLocation();
   const currentPath = location.pathname;
   const isMobile = useIsMobile();
@@ -72,6 +103,12 @@ const DashboardSidebar: React.FC = () => {
       return currentPath === '/dashboard' || currentPath === '/dashboard/';
     }
     return currentPath.startsWith(path);
+  };
+
+  const handleMenuItemClick = (modalName: string) => {
+    if (onMenuItemClick) {
+      onMenuItemClick(modalName);
+    }
   };
 
   return (
@@ -122,31 +159,34 @@ const DashboardSidebar: React.FC = () => {
             collapsed={collapsed}
           />
           
-          {/* 4. Tâches */}
+          {/* 4. Tâches - via modale */}
           <MenuItem
             icon={<CheckSquare size={20} />}
             label="Tâches"
-            to="/dashboard/tasks"
+            modalName="tasks"
             active={isActive('/dashboard/tasks')}
             collapsed={collapsed}
+            onClick={() => handleMenuItemClick('tasks')}
           />
           
-          {/* 5. Budget */}
+          {/* 5. Budget - via modale */}
           <MenuItem
             icon={<Euro size={20} />}
             label="Budget"
-            to="/dashboard/budget"
+            modalName="budget"
             active={isActive('/dashboard/budget')}
             collapsed={collapsed}
+            onClick={() => handleMenuItemClick('budget')}
           />
           
-          {/* 6. Calculatrice de boissons */}
+          {/* 6. Calculatrice de boissons - via modale */}
           <MenuItem
             icon={<Wine size={20} />}
             label="Calculatrice de boissons"
-            to="/dashboard/drinks"
+            modalName="drinks"
             active={isActive('/dashboard/drinks')}
             collapsed={collapsed}
+            onClick={() => handleMenuItemClick('drinks')}
           />
           
           {/* 7. Coordination */}
@@ -158,13 +198,14 @@ const DashboardSidebar: React.FC = () => {
             collapsed={collapsed}
           />
           
-          {/* 8. Prestataires */}
+          {/* 8. Prestataires - via modale */}
           <MenuItem
             icon={<Users size={20} />}
             label="Prestataires"
-            to="/dashboard/prestataires"
+            modalName="prestataires"
             active={isActive('/dashboard/prestataires')}
             collapsed={collapsed}
+            onClick={() => handleMenuItemClick('prestataires')}
           />
           
           {/* 9. Wishlist */}
@@ -185,13 +226,14 @@ const DashboardSidebar: React.FC = () => {
             collapsed={collapsed}
           />
           
-          {/* 11. Paramètres */}
+          {/* 11. Paramètres - via modale */}
           <MenuItem
             icon={<Settings size={20} />}
             label="Paramètres"
-            to="/dashboard/settings"
+            modalName="settings"
             active={isActive('/dashboard/settings')}
             collapsed={collapsed}
+            onClick={() => handleMenuItemClick('settings')}
           />
         </nav>
       </div>

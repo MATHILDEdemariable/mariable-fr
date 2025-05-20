@@ -1,78 +1,44 @@
 
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Sparkles } from 'lucide-react';
+import React from 'react';
 import { Button } from '@/components/ui/button';
-import SearchBar from '@/components/search/SearchBar';
-
-// Composant pour l'effet typing du titre principal avec une meilleure finition visuelle
-const TypingEffect = ({ text }: { text: string }) => {
-  const [displayedText, setDisplayedText] = useState('');
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isTypingComplete, setIsTypingComplete] = useState(false);
-
-  useEffect(() => {
-    if (currentIndex < text.length) {
-      const timer = setTimeout(() => {
-        setDisplayedText(prev => prev + text[currentIndex]);
-        setCurrentIndex(prev => prev + 1);
-      }, 75); // Vitesse de l'animation ajustée pour une meilleure lecture
-      
-      return () => clearTimeout(timer);
-    } else {
-      // Animation terminée, on supprime le curseur après un délai
-      const finishTimer = setTimeout(() => {
-        setIsTypingComplete(true);
-      }, 500);
-      
-      return () => clearTimeout(finishTimer);
-    }
-  }, [currentIndex, text]);
-
-  return (
-    <span className={`inline-block ${isTypingComplete ? 'typing-complete' : 'border-r-2 border-wedding-cream animate-pulse'}`}>
-      {displayedText}
-    </span>
-  );
-};
+import { ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const HeroSection = () => {
   return (
-    <section className="relative min-h-[40vh] sm:min-h-[30vh] flex items-center">
-      <div className="absolute inset-0 w-full h-full overflow-hidden z-0">
-        <img
-          src="/lovable-uploads/9b1d88ec-ed12-4818-ba94-bf11f036a875.png"
-          alt="Couple de mariés célébrant leur union"
-          className="absolute min-w-full min-h-full object-cover"
-          style={{ objectPosition: "center bottom" }}
-        />
-        <div className="absolute inset-0 bg-wedding-black/40 backdrop-blur-[2px]"></div>
-      </div>
-      
-      <div className="container relative z-10 mx-auto px-4 py-6 md:py-16">
-        <div className="max-w-3xl mx-auto text-center mb-8 md:mb-12">
-          <h1 className="text-white text-2xl sm:text-3xl md:text-4xl lg:text-5xl mb-4 md:mb-5 font-serif pb-4 font-bold">
-            <TypingEffect text="Votre mariage mérite d'être incroyable" />
-          </h1>
-          <p className="text-white/90 text-sm md:text-base mb-6 md:mb-8 max-w-2xl mx-auto">
-            Trouvez les meilleurs professionnels et planifiez votre événement simplement.
-          </p>
+    <section className="relative bg-wedding-cream/20 overflow-hidden">
+      <div className="container mx-auto px-4 py-20 md:py-28 flex flex-col items-center text-center">
+        <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-wedding-olive mb-6 max-w-4xl">
+          Dites oui à un mariage sans stress avec <span className="bg-clip-text text-transparent bg-gradient-to-r from-wedding-olive to-wedding-olive/80">Mariable</span>
+        </h1>
+        
+        <p className="text-lg md:text-xl text-gray-700 mb-8 max-w-2xl">
+          Une application intuitive qui vous accompagne pas à pas dans l'organisation 
+          de votre mariage, du choix des prestataires jusqu'à la coordination du jour J.
+        </p>
+        
+        <div className="flex flex-col sm:flex-row gap-4 mb-12">
+          <Button asChild size="lg" className="bg-wedding-olive hover:bg-wedding-olive/90">
+            <Link to="/register">
+              Je découvre Mariable <ArrowRight className="ml-2 h-5 w-5" />
+            </Link>
+          </Button>
+        </div>
+        
+        <div className="flex flex-wrap justify-center gap-8 text-gray-500 max-w-xl mx-auto">
+          <div className="flex flex-col items-center">
+            <span className="text-3xl font-bold text-wedding-olive">+500</span>
+            <span>Prestataires référencés</span>
+          </div>
           
-          <div className="max-w-4xl mx-auto">
-            <SearchBar />
-            <div className="flex justify-center mt-3">
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-wedding-cream/20 backdrop-blur-sm rounded-full">
-                <Sparkles size={16} className="text-wedding-cream" />
-                <span className="text-wedding-cream text-xs md:text-sm">
-                  Nouveauté 2025 – MariableGPT, l'Intelligence amoureuse - <a 
-                    href="/recherche" 
-                    className="underline hover:text-white transition-colors"
-                  >
-                    voir une démo
-                  </a>
-                </span>
-              </div>
-            </div>
+          <div className="flex flex-col items-center">
+            <span className="text-3xl font-bold text-wedding-olive">200+</span>
+            <span>Mariages organisés</span>
+          </div>
+          
+          <div className="flex flex-col items-center">
+            <span className="text-3xl font-bold text-wedding-olive">92%</span>
+            <span>Clients satisfaits</span>
           </div>
         </div>
       </div>

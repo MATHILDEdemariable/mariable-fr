@@ -1,17 +1,75 @@
 
 import React, { useState } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import DashboardSidebar from './DashboardSidebar';
 import { useIsMobile } from '@/hooks/use-mobile';
 import Header from '@/components/Header';
 import { Menu } from 'lucide-react';
+import DashboardModal from './DashboardModal';
+import TasksList from './TasksList';
+import GuestManagement from './GuestManagement';
+import VendorTracking from './VendorTracking';
+import UserProfile from './UserProfile';
+import DrinksCalculator from '@/components/drinks/DrinksCalculator';
+import DetailedBudget from './DetailedBudget';
+import ProjectSummary from './ProjectSummary';
 
 const DashboardLayout: React.FC = () => {
   const isMobile = useIsMobile();
   const [sidebarVisible, setSidebarVisible] = useState(!isMobile);
+  const location = useLocation();
+  
+  // État pour contrôler l'affichage des modales
+  const [activeModal, setActiveModal] = useState<string | null>(null);
   
   const toggleSidebar = () => {
     setSidebarVisible(!sidebarVisible);
+  };
+
+  // Fonction pour ouvrir une modale spécifique
+  const openModal = (modalName: string) => {
+    setActiveModal(modalName);
+  };
+
+  // Fonction pour fermer la modale active
+  const closeModal = () => {
+    setActiveModal(null);
+  };
+
+  // Contenu correspondant à chaque modale
+  const getModalContent = (modal: string) => {
+    switch (modal) {
+      case 'tasks':
+        return <TasksList />;
+      case 'budget':
+        return <DetailedBudget />;
+      case 'prestataires':
+        return <VendorTracking />;
+      case 'settings':
+        return <UserProfile />;
+      case 'drinks':
+        return <DrinksCalculator />;
+      default:
+        return <div>Contenu non disponible</div>;
+    }
+  };
+
+  // Titre correspondant à chaque modale
+  const getModalTitle = (modal: string) => {
+    switch (modal) {
+      case 'tasks':
+        return 'Mes Tâches';
+      case 'budget':
+        return 'Mon Budget';
+      case 'prestataires':
+        return 'Mes Prestataires';
+      case 'settings':
+        return 'Paramètres';
+      case 'drinks':
+        return 'Calculatrice de Boissons';
+      default:
+        return 'Mariable';
+    }
   };
 
   return (
@@ -36,14 +94,18 @@ const DashboardLayout: React.FC = () => {
                     ${(isMobile && !sidebarVisible) ? '-translate-x-full' : 'translate-x-0'}`}
           style={{ width: isMobile ? '240px' : 'auto' }}
         >
-          <DashboardSidebar />
+          <DashboardSidebar onMenuItemClick={openModal} />
         </div>
 
         {/* Main content area - adjusted margin for mobile */}
         <div className="flex-1 overflow-auto pt-6 transition-all duration-300" 
              style={{ marginLeft: (!isMobile && sidebarVisible) ? '16rem' : '0' }}>
           <main className="container mx-auto py-6 px-4 lg:px-8">
-            <Outlet />
+            {location.pathname === '/dashboard' || location.pathname === '/dashboard/' ? (
+              <ProjectSummary />
+            ) : (
+              <Outlet />
+            )}
           </main>
         </div>
         
@@ -55,6 +117,17 @@ const DashboardLayout: React.FC = () => {
           />
         )}
       </div>
+
+      {/* Modales pour chaque section du dashboard */}
+      {activeModal && (
+        <DashboardModal 
+          title={getModalTitle(activeModal)}
+          open={!!activeModal}
+          onOpenChange={(open) => !open && closeModal()}
+        >
+          {getModalContent(activeModal)}
+        </DashboardModal>
+      )}
     </div>
   );
 };
