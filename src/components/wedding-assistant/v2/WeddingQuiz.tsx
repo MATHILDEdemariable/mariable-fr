@@ -1,10 +1,9 @@
-
 import React, { useState, useEffect } from 'react';
 import { QuizQuestion, UserAnswers, PlanningResult, QuizScoring, SECTION_ORDER } from './types';
 import { Button } from "@/components/ui/button";
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight, CalendarIcon, ArrowLeft } from 'lucide-react';
+import { ArrowRight, CalendarIcon, ArrowLeft, CheckCircle } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
@@ -17,6 +16,7 @@ import EmailCaptureForm from './EmailCaptureForm';
 import { generateTasksFromQuizResult } from './taskGenerator';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Link } from 'react-router-dom';
+import { Card, CardContent } from "@/components/ui/card";
 
 const WeddingQuiz: React.FC = () => {
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
@@ -27,7 +27,6 @@ const WeddingQuiz: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [result, setResult] = useState<PlanningResult | null>(null);
   const [showResult, setShowResult] = useState(false);
-  const [showEmailCapture, setShowEmailCapture] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
   const isMobile = useIsMobile();
@@ -165,8 +164,8 @@ const WeddingQuiz: React.FC = () => {
       // Si nous avons atteint la dernière section
       if (nextSectionIndex >= sections.length) {
         calculateResult();
-        // Afficher le formulaire de capture d'email au lieu de la modal d'authentification
-        setShowEmailCapture(true);
+        // Afficher directement les résultats au lieu du formulaire de capture d'email
+        setShowResult(true);
       } else {
         // Passer à la première question de la section suivante
         const nextSection = sections[nextSectionIndex];
@@ -242,22 +241,42 @@ const WeddingQuiz: React.FC = () => {
     }
   };
 
-  // Modifié pour rediriger vers la page de résultats après capture d'email
-  const handleEmailCaptureComplete = (emailData: { email: string; full_name?: string }) => {
-    if (result) {
-      // Stocker le résultat dans le localStorage pour pouvoir l'utiliser sur la page de résultats
-      localStorage.setItem('quizResult', JSON.stringify(result));
+  // Déterminer le niveau en fonction du score
+  const getLevel = (score: number): string => {
+    if (score <= 3) return 'Début';
+    if (score <= 7) return 'Milieu';
+    return 'Fin';
+  };
+
+  // Fonction pour sauvegarder les résultats anonymement
+  const saveAnonymousResult = async () => {
+    if (!result) return;
+    
+    try {
+      const level = getLevel(result.score);
       
-      // Rediriger vers la page de résultats
-      navigate('/planning-personnalise/resultats');
-    } else {
-      toast({
-        title: "Erreur",
-        description: "Impossible de générer votre plan personnalisé.",
-        variant: "destructive"
+      // On peut toujours enregistrer une entrée anonyme pour des statistiques
+      await supabase.from('quiz_email_captures').insert({
+        email: `anonymous_${new Date().getTime()}@example.com`, // Email fictif pour les utilisateurs anonymes
+        full_name: "Utilisateur Anonyme",
+        quiz_score: result.score,
+        quiz_status: result.status,
+        level: level
       });
+      
+      // Pas besoin d'afficher de toast ou de redirection car l'utilisateur voit déjà les résultats
+    } catch (error) {
+      console.error("Erreur lors de l'enregistrement des données anonymes:", error);
+      // Pas besoin d'afficher d'erreur à l'utilisateur
     }
   };
+
+  // Sauvegarder les résultats anonymement lorsqu'ils sont disponibles
+  useEffect(() => {
+    if (result && showResult) {
+      saveAnonymousResult();
+    }
+  }, [result, showResult]);
 
   if (isLoading || questions.length === 0) {
     return (
@@ -267,15 +286,96 @@ const WeddingQuiz: React.FC = () => {
     );
   }
 
-  if (showEmailCapture && result) {
+  if (showResult && result) {
+    const level = getLevel(result.score);
+    
     return (
       <div className="max-w-2xl mx-auto py-4">
-        <EmailCaptureForm quizResult={result} onComplete={handleEmailCaptureComplete} />
+        <ScrollArea className="h-[70vh]">
+          <div className="space-y-8">
+            <div className="text-center mb-6">
+              <h2 className="text-2xl font-serif mb-2">Votre niveau de préparation</h2>
+              <div className="inline-block bg-wedding-cream px-4 py-2 rounded-md">
+                <p className="text-xl font-semibold">{result.status}</p>
+              </div>
+              <div className="mt-4">
+                <p className="text-sm text-muted-foreground">Score: {result.score}/10</p>
+                <p className="text-sm font-medium mt-1">Niveau: {level}</p>
+              </div>
+            </div>
+
+            <div className="space-y-6">
+              <h3 className="text-xl font-serif">Objectifs recommandés</h3>
+              {result.objectives.length > 0 ? (
+                <ul className="space-y-4">
+                  {result.objectives.map((objective, index) => (
+                    <li key={index} className="flex items-start gap-3">
+                      <div className="h-6 w-6 rounded-full bg-wedding-olive text-white flex items-center justify-center flex-shrink-0 mt-0.5">
+                        {index + 1}
+                      </div>
+                      <span>{objective}</span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-muted-foreground">Aucun objectif spécifique n'a été trouvé pour votre niveau.</p>
+              )}
+            </div>
+
+            <Separator />
+
+            <div className="space-y-6">
+              <h3 className="text-xl font-serif">Catégories à prioriser</h3>
+              {result.categories.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {result.categories.map((category, index) => (
+                    <div key={index} className="border rounded-md p-4 bg-wedding-light/50 flex items-start gap-3">
+                      <CheckCircle className="h-5 w-5 text-wedding-olive flex-shrink-0 mt-0.5" />
+                      <p>{category}</p>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-muted-foreground">Aucune catégorie spécifique n'a été trouvée pour votre niveau.</p>
+              )}
+            </div>
+
+            <Separator />
+            
+            <div className="space-y-6">
+              <h3 className="text-xl font-serif mb-2">Prêt à organiser votre mariage ?</h3>
+              <p className="text-muted-foreground">Accédez à des outils plus détaillés pour organiser votre grand jour :</p>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                <Link to="/register" className="border rounded-md p-4 bg-wedding-light/50 hover:bg-wedding-light text-center">
+                  <h4 className="font-medium mb-1">Calculer votre budget</h4>
+                  <p className="text-sm text-muted-foreground">Créez un compte pour obtenir une estimation précise</p>
+                </Link>
+                
+                <Link to="/register" className="border rounded-md p-4 bg-wedding-light/50 hover:bg-wedding-light text-center">
+                  <h4 className="font-medium mb-1">Voir votre checklist détaillée</h4>
+                  <p className="text-sm text-muted-foreground">Accédez à votre planning personnalisé</p>
+                </Link>
+              </div>
+              
+              <div className="pt-4">
+                <Button 
+                  asChild
+                  className="w-full bg-wedding-olive hover:bg-wedding-olive/90 flex items-center justify-center gap-2"
+                >
+                  <Link to="/register">
+                    <CalendarIcon size={18} />
+                    Créer un compte gratuitement
+                    <ArrowRight size={16} />
+                  </Link>
+                </Button>
+              </div>
+            </div>
+          </div>
+        </ScrollArea>
       </div>
     );
   }
-
-  // La partie résultat n'est plus affichée ici car on redirige vers une nouvelle page
 
   // Filtrer les questions pour la section actuelle
   const currentSectionQuestions = questions.filter(q => q.section === currentSection);
