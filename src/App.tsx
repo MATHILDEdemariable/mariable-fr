@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -133,6 +132,7 @@ const App = () => {
             <Route path="/test-formulaire" element={<TestFormulaire />} />
             <Route path="/test-assistant-virtuel" element={<TestAssistantVirtuel />} />
             <Route path="/assistant-v2" element={<WeddingAssistantV2 />} />
+            <Route path="/planning-personnalise" element={<PlanningPersonnalise />} />
             
             {/* Import Airtable */}
             <Route path="/import-airtable" element={<ImportAirtable />} />

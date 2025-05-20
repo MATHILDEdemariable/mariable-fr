@@ -11,7 +11,6 @@ import {
   MessageCircle,
   Settings,
   Sparkles,
-  Palette,
   Wine,
   ChevronLeft,
   ChevronRight
@@ -109,7 +108,7 @@ const DashboardSidebar: React.FC = () => {
           <MenuItem
             icon={<Sparkles size={20} />}
             label="Assistant virtuel"
-            to="/assistant-v2?tab=conseils"
+            to="/assistant-v2"
             active={isActive('/assistant-v2')}
             collapsed={collapsed}
           />
@@ -172,8 +171,8 @@ const DashboardSidebar: React.FC = () => {
           <MenuItem
             icon={<MessageCircle size={20} />}
             label="Conseils personnalisés"
-            to="https://chat.whatsapp.com/In5xf3ZMJNvJkhy4F9g5C5"
-            external={true}
+            to="/assistant-v2"
+            active={isActive('/assistant-v2')}
             collapsed={collapsed}
           />
           
@@ -185,15 +184,6 @@ const DashboardSidebar: React.FC = () => {
             active={isActive('/dashboard/settings')}
             collapsed={collapsed}
           />
-          
-          {/* Style de mariage - Remove from main nav or move it elsewhere if needed */}
-          {/* <MenuItem
-            icon={<Palette size={20} />}
-            label="Style de mariage"
-            to="/test-formulaire"
-            active={isActive('/test-formulaire')}
-            collapsed={collapsed}
-          /> */}
         </nav>
       </div>
     </div>

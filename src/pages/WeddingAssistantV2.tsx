@@ -1,14 +1,10 @@
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
-import WeddingQuiz from '@/components/wedding-assistant/v2/WeddingQuiz';
 import WeddingChatbot from '@/components/wedding-assistant/v2/WeddingChatbot';
-import { useIsMobile } from '@/hooks/use-mobile';
-import { useLocation } from 'react-router-dom';
 
 // CSS to hide the header in the embedded Budget component
 const embedStyles = `
@@ -18,69 +14,24 @@ const embedStyles = `
 `;
 
 const WeddingAssistantV2: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<string>('planning');
-  const isMobile = useIsMobile();
-  const location = useLocation();
-
-  // Parse URL parameters to set the active tab
-  useEffect(() => {
-    const searchParams = new URLSearchParams(location.search);
-    const tabParam = searchParams.get('tab');
-    
-    if (tabParam && ['planning', 'conseils'].includes(tabParam)) {
-      setActiveTab(tabParam);
-    }
-  }, [location.search]);
-
   return (
     <>
       <Helmet>
-        <title>Assistant Virtuel | Mariable</title>
-        <meta name="description" content="Assistant virtuel de planification de mariage - Mariable" />
+        <title>Conseils personnalisés | Mariable</title>
+        <meta name="description" content="Conseils personnalisés pour votre mariage - Mariable" />
         <style>{embedStyles}</style>
       </Helmet>
 
       <Header />
       
       <main className="container mx-auto px-4 py-8 mb-16">
-        <h1 className="text-3xl font-serif text-center mb-8">Assistant Virtuel de Planification</h1>
+        <h1 className="text-3xl font-serif text-center mb-8">Conseils personnalisés pour votre mariage</h1>
         
-        <Tabs defaultValue="planning" value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <div className="flex justify-center w-full mb-8">
-            <TabsList className={`${isMobile ? 'w-full' : 'max-w-2xl w-full mx-auto'} bg-gray-100 rounded-lg p-1.5`}>
-              <div className="grid w-full grid-cols-2 gap-2">
-                <TabsTrigger 
-                  value="planning" 
-                  className="w-full py-3 data-[state=active]:bg-wedding-olive data-[state=active]:text-white rounded-md"
-                >
-                  Planning personnalisé
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="conseils" 
-                  className="w-full py-3 data-[state=active]:bg-wedding-olive data-[state=active]:text-white rounded-md"
-                >
-                  Conseils personnalisés
-                </TabsTrigger>
-              </div>
-            </TabsList>
-          </div>
-          
-          <TabsContent value="planning">
-            <Card>
-              <CardContent className="pt-6">
-                <WeddingQuiz />
-              </CardContent>
-            </Card>
-          </TabsContent>
-          
-          <TabsContent value="conseils">
-            <Card>
-              <CardContent className="pt-6">
-                <WeddingChatbot preventScroll={true} />
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+        <Card>
+          <CardContent className="pt-6">
+            <WeddingChatbot preventScroll={true} />
+          </CardContent>
+        </Card>
       </main>
 
       <Footer />
