@@ -2,13 +2,12 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Calendar, MessageCircle, Sparkles, Users, Wine, Check, FileText, DollarSign, Heart, ChevronRight } from 'lucide-react';
+import { Calendar, MessageCircle, Sparkles, Users, Wine, Check, FileText, DollarSign, Heart, ChevronRight, Bot, Briefcase } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import ProgressBar from './ProgressBar';
 import TasksList from './TasksList';
 import BudgetSummary from './BudgetSummary';
 import DrinksCalculatorWidget from './DrinksCalculatorWidget';
@@ -22,9 +21,6 @@ const ProjectSummary = () => {
   
   // Calculer le nombre de jours restants jusqu'au mariage
   const daysUntilWedding = weddingDate ? Math.ceil((weddingDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)) : null;
-  
-  // Progression fictive pour la démonstration
-  const progress = 75;
   
   return (
     <div className="space-y-8">
@@ -107,52 +103,84 @@ const ProjectSummary = () => {
         </ul>
       </section>
       
-      {/* Zone gamifiée avec progression */}
-      <section className="bg-gradient-to-r from-wedding-cream/30 to-white p-6 rounded-xl border border-wedding-cream/40">
-        <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-          <div>
-            <h2 className="text-xl font-medium mb-2 text-wedding-olive">Votre progression</h2>
-            <p className="text-lg font-medium mb-3">
-              Vous êtes à <span className="text-wedding-olive font-bold">{progress}%</span> – bientôt prêt...
-            </p>
-          </div>
-          <div className="w-full md:w-1/2">
-            <ProgressBar progress={progress} maxValue={100} />
-          </div>
-        </div>
-        <p className="text-sm text-gray-500 mt-4 italic">
-          Continuez sur cette lancée ! Complétez vos tâches prioritaires pour avancer dans votre préparation.
-        </p>
-      </section>
-      
-      {/* Grille de cartes */}
+      {/* Grille de cartes uniformes */}
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {/* Prochain rendez-vous */}
-        <Card className="overflow-hidden border-wedding-olive/20 hover:shadow-md transition-shadow">
-          <CardHeader className="bg-wedding-olive/10 pb-3">
+        {/* PREMIÈRE RANGÉE: Cartes prioritaires */}
+        
+        {/* Assistant Virtuel (prioritaire) */}
+        <Card className="overflow-hidden bg-gradient-to-br from-wedding-olive/10 to-wedding-cream/20 border-wedding-olive/20 hover:shadow-md transition-shadow h-[280px] flex flex-col">
+          <CardHeader className="pb-3">
             <CardTitle className="text-lg flex items-center gap-2">
-              <Calendar className="h-5 w-5 text-wedding-olive" />
-              Prochain rendez-vous
+              <Bot className="h-5 w-5 text-wedding-olive" />
+              Assistant Virtuel
             </CardTitle>
-            <CardDescription>Assistant virtuel</CardDescription>
+            <CardDescription>Conseils personnalisés</CardDescription>
           </CardHeader>
-          <CardContent className="pt-4">
+          <CardContent className="pt-4 flex-grow">
             <p className="mb-4">
-              Besoin de conseils pour votre projet de mariage ? Discutez avec notre assistant virtuel intelligent.
+              Besoin d'aide pour planifier votre mariage ? Notre assistant virtuel peut vous guider pas à pas.
             </p>
           </CardContent>
-          <CardFooter className="bg-gray-50 flex justify-between items-center">
-            <span className="text-sm text-gray-500">Personnalisé pour vous</span>
-            <Button asChild variant="ghost" size="sm" className="text-wedding-olive">
-              <Link to="/assistant-v2" className="flex items-center">
-                Consulter <ChevronRight className="ml-1 h-4 w-4" />
+          <CardFooter className="bg-white/50 flex justify-center mt-auto">
+            <Button asChild className="w-full bg-wedding-olive hover:bg-wedding-olive/80">
+              <Link to="/assistant-v2" className="flex items-center justify-center">
+                Parler à l'assistant <MessageCircle className="ml-2 h-4 w-4" />
               </Link>
             </Button>
           </CardFooter>
         </Card>
         
+        {/* Trouver ses prestataires (prioritaire) */}
+        <Card className="overflow-hidden border-wedding-olive/20 hover:shadow-md transition-shadow h-[280px] flex flex-col">
+          <CardHeader className="bg-wedding-olive/10 pb-3">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Briefcase className="h-5 w-5 text-wedding-olive" />
+              Trouver des prestataires
+            </CardTitle>
+            <CardDescription>Professionnels du mariage</CardDescription>
+          </CardHeader>
+          <CardContent className="pt-4 flex-grow">
+            <p className="mb-4">
+              Découvrez notre sélection de prestataires de qualité pour votre mariage, avec avis et disponibilités.
+            </p>
+          </CardContent>
+          <CardFooter className="bg-gray-50 flex justify-between items-center mt-auto">
+            <span className="text-sm text-gray-500">Services vérifiés</span>
+            <Button asChild variant="ghost" size="sm" className="text-wedding-olive">
+              <Link to="/recherche" className="flex items-center">
+                Explorer <ChevronRight className="ml-1 h-4 w-4" />
+              </Link>
+            </Button>
+          </CardFooter>
+        </Card>
+        
+        {/* Coordination Jour J (prioritaire) */}
+        <Card className="overflow-hidden bg-gradient-to-br from-wedding-cream/30 to-white border-wedding-cream/40 hover:shadow-md transition-shadow h-[280px] flex flex-col">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Calendar className="h-5 w-5 text-wedding-olive" />
+              Coordination Jour J
+            </CardTitle>
+            <CardDescription>Planning détaillé</CardDescription>
+          </CardHeader>
+          <CardContent className="pt-4 flex-grow">
+            <p className="mb-4">
+              Planifiez votre journée de mariage heure par heure et assurez-vous que tout se déroule comme prévu.
+            </p>
+          </CardContent>
+          <CardFooter className="bg-white/50 flex justify-center mt-auto">
+            <Button asChild className="w-full bg-wedding-olive hover:bg-wedding-olive/80">
+              <Link to="/dashboard/coordination" className="flex items-center justify-center">
+                Planifier ma journée <ChevronRight className="ml-1 h-4 w-4" />
+              </Link>
+            </Button>
+          </CardFooter>
+        </Card>
+        
+        {/* DEUXIÈME RANGÉE */}
+        
         {/* Top 3 tâches avec cases à cocher */}
-        <Card className="overflow-hidden border-wedding-olive/20 hover:shadow-md transition-shadow">
+        <Card className="overflow-hidden border-wedding-olive/20 hover:shadow-md transition-shadow h-[280px] flex flex-col">
           <CardHeader className="bg-wedding-olive/10 pb-3">
             <CardTitle className="text-lg flex items-center gap-2">
               <Check className="h-5 w-5 text-wedding-olive" />
@@ -160,12 +188,12 @@ const ProjectSummary = () => {
             </CardTitle>
             <CardDescription>À faire prochainement</CardDescription>
           </CardHeader>
-          <CardContent className="pt-4">
-            <div className="mb-4">
+          <CardContent className="pt-4 flex-grow overflow-auto">
+            <div className="mb-4 max-h-[100px]">
               <TasksList />
             </div>
           </CardContent>
-          <CardFooter className="bg-gray-50 flex justify-between items-center">
+          <CardFooter className="bg-gray-50 flex justify-between items-center mt-auto">
             <span className="text-sm text-gray-500">Prochaines étapes</span>
             <Button asChild variant="ghost" size="sm" className="text-wedding-olive">
               <Link to="/dashboard/tasks" className="flex items-center">
@@ -176,7 +204,7 @@ const ProjectSummary = () => {
         </Card>
         
         {/* Suivi budget */}
-        <Card className="overflow-hidden border-wedding-olive/20 hover:shadow-md transition-shadow">
+        <Card className="overflow-hidden border-wedding-olive/20 hover:shadow-md transition-shadow h-[280px] flex flex-col">
           <CardHeader className="bg-wedding-olive/10 pb-3">
             <CardTitle className="text-lg flex items-center gap-2">
               <DollarSign className="h-5 w-5 text-wedding-olive" />
@@ -184,10 +212,12 @@ const ProjectSummary = () => {
             </CardTitle>
             <CardDescription>Suivi des dépenses</CardDescription>
           </CardHeader>
-          <CardContent className="pt-4">
-            <BudgetSummary />
+          <CardContent className="pt-4 flex-grow overflow-auto">
+            <div className="max-h-[100px]">
+              <BudgetSummary />
+            </div>
           </CardContent>
-          <CardFooter className="bg-gray-50 flex justify-between items-center">
+          <CardFooter className="bg-gray-50 flex justify-between items-center mt-auto">
             <span className="text-sm text-gray-500">Votre situation financière</span>
             <Button asChild variant="ghost" size="sm" className="text-wedding-olive">
               <Link to="/dashboard/budget" className="flex items-center">
@@ -198,7 +228,7 @@ const ProjectSummary = () => {
         </Card>
         
         {/* Wishlist prestataires */}
-        <Card className="overflow-hidden border-wedding-olive/20 hover:shadow-md transition-shadow">
+        <Card className="overflow-hidden border-wedding-olive/20 hover:shadow-md transition-shadow h-[280px] flex flex-col">
           <CardHeader className="bg-wedding-olive/10 pb-3">
             <CardTitle className="text-lg flex items-center gap-2">
               <Heart className="h-5 w-5 text-wedding-olive" />
@@ -206,7 +236,7 @@ const ProjectSummary = () => {
             </CardTitle>
             <CardDescription>Vos favoris</CardDescription>
           </CardHeader>
-          <CardContent className="pt-4">
+          <CardContent className="pt-4 flex-grow">
             <p className="mb-4">
               Retrouvez tous les prestataires que vous avez sauvegardés pour votre événement.
             </p>
@@ -217,7 +247,7 @@ const ProjectSummary = () => {
               <span className="bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-xs">Fleuriste</span>
             </div>
           </CardContent>
-          <CardFooter className="bg-gray-50 flex justify-between items-center">
+          <CardFooter className="bg-gray-50 flex justify-between items-center mt-auto">
             <span className="text-sm text-gray-500">{Math.floor(Math.random() * 6) + 3} prestataires favoris</span>
             <Button asChild variant="ghost" size="sm" className="text-wedding-olive">
               <Link to="/dashboard/wishlist" className="flex items-center">
@@ -227,68 +257,8 @@ const ProjectSummary = () => {
           </CardFooter>
         </Card>
         
-        {/* Documents récents */}
-        <Card className="overflow-hidden border-wedding-olive/20 hover:shadow-md transition-shadow">
-          <CardHeader className="bg-wedding-olive/10 pb-3">
-            <CardTitle className="text-lg flex items-center gap-2">
-              <FileText className="h-5 w-5 text-wedding-olive" />
-              Documents récents
-            </CardTitle>
-            <CardDescription>Contrats et devis</CardDescription>
-          </CardHeader>
-          <CardContent className="pt-4">
-            <ul className="space-y-3">
-              <li className="flex justify-between items-center">
-                <span className="flex items-center">
-                  <FileText className="h-4 w-4 mr-2 text-gray-500" />
-                  Devis_Photographe.pdf
-                </span>
-                <span className="text-xs text-gray-500">Il y a 2j</span>
-              </li>
-              <li className="flex justify-between items-center">
-                <span className="flex items-center">
-                  <FileText className="h-4 w-4 mr-2 text-gray-500" />
-                  Contrat_Salle.pdf
-                </span>
-                <span className="text-xs text-gray-500">Il y a 5j</span>
-              </li>
-            </ul>
-          </CardContent>
-          <CardFooter className="bg-gray-50 flex justify-between items-center">
-            <span className="text-sm text-gray-500">Gérez vos documents</span>
-            <Button asChild variant="ghost" size="sm" className="text-wedding-olive">
-              <Link to="/dashboard/prestataires" className="flex items-center">
-                Tous les documents <ChevronRight className="ml-1 h-4 w-4" />
-              </Link>
-            </Button>
-          </CardFooter>
-        </Card>
-        
-        {/* Assistant virtuel */}
-        <Card className="overflow-hidden bg-gradient-to-br from-wedding-olive/10 to-wedding-cream/20 border-wedding-olive/20 hover:shadow-md transition-shadow">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-lg flex items-center gap-2">
-              <Sparkles className="h-5 w-5 text-wedding-olive" />
-              Assistant Virtuel
-            </CardTitle>
-            <CardDescription>Conseils personnalisés</CardDescription>
-          </CardHeader>
-          <CardContent className="pt-4">
-            <p className="mb-4">
-              Besoin d'aide pour planifier votre mariage ? Notre assistant virtuel peut vous guider pas à pas.
-            </p>
-          </CardContent>
-          <CardFooter className="bg-white/50 flex justify-center">
-            <Button asChild className="w-full bg-wedding-olive hover:bg-wedding-olive/80">
-              <Link to="/assistant-v2" className="flex items-center justify-center">
-                Parler à l'assistant <MessageCircle className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
-          </CardFooter>
-        </Card>
-        
         {/* Communauté - Groupe WhatsApp */}
-        <Card className="overflow-hidden bg-gradient-to-br from-green-50 to-white border-green-100 hover:shadow-md transition-shadow">
+        <Card className="overflow-hidden bg-gradient-to-br from-green-50 to-white border-green-100 hover:shadow-md transition-shadow h-[280px] flex flex-col">
           <CardHeader className="pb-3">
             <CardTitle className="text-lg flex items-center gap-2">
               <Users className="h-5 w-5 text-green-600" />
@@ -296,12 +266,12 @@ const ProjectSummary = () => {
             </CardTitle>
             <CardDescription>Entraide entre futurs mariés</CardDescription>
           </CardHeader>
-          <CardContent className="pt-4">
+          <CardContent className="pt-4 flex-grow">
             <p className="mb-4">
               Rejoignez notre groupe WhatsApp pour échanger avec d'autres couples et trouver de l'inspiration.
             </p>
           </CardContent>
-          <CardFooter className="bg-white/50 flex justify-center">
+          <CardFooter className="bg-white/50 flex justify-center mt-auto">
             <Button 
               asChild
               className="w-full bg-green-600 hover:bg-green-700"
@@ -313,24 +283,25 @@ const ProjectSummary = () => {
           </CardFooter>
         </Card>
         
-        {/* Coordination Jour J */}
-        <Card className="overflow-hidden bg-gradient-to-br from-wedding-cream/30 to-white border-wedding-cream/40 hover:shadow-md transition-shadow">
-          <CardHeader className="pb-3">
+        {/* Calculatrice de boissons */}
+        <Card className="overflow-hidden border-wedding-olive/20 hover:shadow-md transition-shadow h-[280px] flex flex-col">
+          <CardHeader className="bg-wedding-olive/10 pb-3">
             <CardTitle className="text-lg flex items-center gap-2">
-              <Calendar className="h-5 w-5 text-wedding-olive" />
-              Coordination Jour J
+              <Wine className="h-5 w-5 text-wedding-olive" />
+              Calculatrice de boissons
             </CardTitle>
-            <CardDescription>Planning détaillé</CardDescription>
+            <CardDescription>Estimation pour votre réception</CardDescription>
           </CardHeader>
-          <CardContent className="pt-4">
+          <CardContent className="pt-4 flex-grow">
             <p className="mb-4">
-              Planifiez votre journée de mariage heure par heure et assurez-vous que tout se déroule comme prévu.
+              Calculez les quantités de boissons nécessaires en fonction du nombre d'invités et de la durée de votre réception.
             </p>
           </CardContent>
-          <CardFooter className="bg-white/50 flex justify-center">
-            <Button asChild className="w-full bg-wedding-olive hover:bg-wedding-olive/80">
-              <Link to="/dashboard/coordination" className="flex items-center justify-center">
-                Planifier ma journée <ChevronRight className="ml-1 h-4 w-4" />
+          <CardFooter className="bg-gray-50 flex justify-between items-center mt-auto">
+            <span className="text-sm text-gray-500">Outil pratique</span>
+            <Button asChild variant="ghost" size="sm" className="text-wedding-olive">
+              <Link to="/dashboard/drinks" className="flex items-center">
+                Calculer <ChevronRight className="ml-1 h-4 w-4" />
               </Link>
             </Button>
           </CardFooter>
