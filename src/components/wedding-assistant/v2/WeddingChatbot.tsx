@@ -1,6 +1,5 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Avatar } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -243,21 +242,14 @@ const WeddingChatbot: React.FC<Props> = ({ preventScroll = false }) => {
                     : 'bg-wedding-cream text-gray-800'
                 }`}
               >
-                <div className="flex items-start">
-                  {message.role === 'assistant' && (
-                    <Avatar className="h-8 w-8 mr-2">
-                      <img src="/logo-simplified.png" alt="Mariable Assistant" />
-                    </Avatar>
-                  )}
-                  <div>
-                    <p className="whitespace-pre-wrap">{message.content}</p>
-                    <p className="text-xs opacity-70 mt-1 text-right">
-                      {message.timestamp.toLocaleTimeString([], {
-                        hour: '2-digit',
-                        minute: '2-digit',
-                      })}
-                    </p>
-                  </div>
+                <div>
+                  <p className="whitespace-pre-wrap">{message.content}</p>
+                  <p className="text-xs opacity-70 mt-1 text-right">
+                    {message.timestamp.toLocaleTimeString([], {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })}
+                  </p>
                 </div>
               </div>
             </div>
@@ -311,9 +303,6 @@ const WeddingChatbot: React.FC<Props> = ({ preventScroll = false }) => {
             <div className="flex justify-start">
               <div className="max-w-[80%] rounded-lg p-3 bg-wedding-cream text-gray-800">
                 <div className="flex items-center space-x-2">
-                  <Avatar className="h-8 w-8">
-                    <img src="/logo-simplified.png" alt="Mariable Assistant" />
-                  </Avatar>
                   <Loader2 className="h-4 w-4 animate-spin" />
                 </div>
               </div>

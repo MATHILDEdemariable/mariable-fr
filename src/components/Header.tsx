@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
   HeaderDropdown,
@@ -9,6 +9,7 @@ import {
 import { User2, Menu as MenuIcon } from "lucide-react";
 import { Drawer, DrawerContent } from "./ui/drawer";
 import { useIsMobile } from "../hooks/use-mobile";
+import { supabase } from '@/integrations/supabase/client';
 
 // Nouveau logo joint
 const LOGO_URL = "/lovable-uploads/a13321ac-adeb-489a-911e-3a88b1411ac2.png";
@@ -26,22 +27,36 @@ const HeaderLogo = () => (
   </Link>
 );
 
-function Menus({ onClick }: { onClick?: () => void }) {
+function Menus({ onClick, isLoggedIn }: { onClick?: () => void, isLoggedIn?: boolean }) {
   return (
     <>
-      {/* Futurs mariés - En premier */}
-      <HeaderDropdown
-        label="Futurs mariés"
-        href="/dashboard"
-        onClick={onClick}
-      />
-      
-      {/* Professionnels - En second */}
-      <HeaderDropdown 
-        label="Professionnels"
-        href="/professionnels"
-        onClick={onClick}
-      />
+      {/* Show this menu only when user is not logged in */}
+      {!isLoggedIn && (
+        <>
+          {/* Futurs mariés - En premier */}
+          <HeaderDropdown
+            label="Futurs mariés"
+            href="/dashboard"
+            onClick={onClick}
+          />
+          
+          {/* Professionnels - En second */}
+          <HeaderDropdown 
+            label="Professionnels"
+            href="/professionnels"
+            onClick={onClick}
+          />
+        </>
+      )}
+
+      {/* Show this menu when user is logged in */}
+      {isLoggedIn && (
+        <HeaderDropdown
+          label="Mon compte"
+          href="/dashboard"
+          onClick={onClick}
+        />
+      )}
       
       {/* À propos Dropdown - Sans témoignages, en dernier */}
       <HeaderDropdown label="À propos">
@@ -79,6 +94,30 @@ function Menus({ onClick }: { onClick?: () => void }) {
 export default function Header() {
   const isMobile = useIsMobile();
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  // Check if user is logged in
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data } = await supabase.auth.getSession();
+      setIsLoggedIn(!!data.session);
+    };
+
+    checkAuth();
+
+    // Set up a listener for auth state changes
+    const { data: authListener } = supabase.auth.onAuthStateChange((event) => {
+      if (event === 'SIGNED_IN') {
+        setIsLoggedIn(true);
+      } else if (event === 'SIGNED_OUT') {
+        setIsLoggedIn(false);
+      }
+    });
+
+    return () => {
+      authListener?.subscription.unsubscribe();
+    };
+  }, []);
 
   return (
     <header className="bg-white w-full border-b shadow-none z-30 sticky top-0">
@@ -88,7 +127,7 @@ export default function Header() {
 
         {/* Desktop: Menus à droite, centrés */}
         <nav className="hidden md:flex flex-1 justify-end items-center gap-4 md:gap-6">
-          <Menus />
+          <Menus isLoggedIn={isLoggedIn} />
         </nav>
 
         {/* Mobile: Burger menu à droite */}
@@ -117,7 +156,7 @@ export default function Header() {
               </div>
               <div className="py-3 grid gap-4">
                 <nav className="flex flex-col gap-1">
-                  <Menus onClick={() => setDrawerOpen(false)} />
+                  <Menus onClick={() => setDrawerOpen(false)} isLoggedIn={isLoggedIn} />
                 </nav>
               </div>
             </DrawerContent>

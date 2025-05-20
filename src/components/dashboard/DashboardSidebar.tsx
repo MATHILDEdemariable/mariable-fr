@@ -96,7 +96,7 @@ const DashboardSidebar: React.FC = () => {
         </div>
         
         <nav className="space-y-2">
-          {/* Tableau de bord principal */}
+          {/* 1. Tableau de bord principal */}
           <MenuItem
             icon={<LayoutDashboard size={20} />}
             label="Tableau de bord"
@@ -105,61 +105,7 @@ const DashboardSidebar: React.FC = () => {
             collapsed={collapsed}
           />
           
-          {/* Tâches */}
-          <MenuItem
-            icon={<CheckSquare size={20} />}
-            label="Tâches"
-            to="/dashboard/tasks"
-            active={isActive('/dashboard/tasks')}
-            collapsed={collapsed}
-          />
-          
-          {/* Budget */}
-          <MenuItem
-            icon={<Euro size={20} />}
-            label="Budget"
-            to="/dashboard/budget"
-            active={isActive('/dashboard/budget')}
-            collapsed={collapsed}
-          />
-          
-          {/* Prestataires */}
-          <MenuItem
-            icon={<Users size={20} />}
-            label="Prestataires"
-            to="/dashboard/prestataires"
-            active={isActive('/dashboard/prestataires')}
-            collapsed={collapsed}
-          />
-          
-          {/* Wishlist */}
-          <MenuItem
-            icon={<Heart size={20} />}
-            label="Wishlist prestataires"
-            to="/dashboard/wishlist"
-            active={isActive('/dashboard/wishlist')}
-            collapsed={collapsed}
-          />
-          
-          {/* Coordination */}
-          <MenuItem
-            icon={<Calendar size={20} />}
-            label="Coordination Jour J"
-            to="/dashboard/coordination"
-            active={isActive('/dashboard/coordination')}
-            collapsed={collapsed}
-          />
-          
-          {/* Calculatrice de boissons */}
-          <MenuItem
-            icon={<Wine size={20} />}
-            label="Calculatrice de boissons"
-            to="/dashboard/drinks"
-            active={isActive('/dashboard/drinks')}
-            collapsed={collapsed}
-          />
-          
-          {/* Assistant virtuel */}
+          {/* 2. Assistant virtuel */}
           <MenuItem
             icon={<Sparkles size={20} />}
             label="Assistant virtuel"
@@ -168,16 +114,61 @@ const DashboardSidebar: React.FC = () => {
             collapsed={collapsed}
           />
           
-          {/* Style de mariage */}
+          {/* 3. Tâches */}
           <MenuItem
-            icon={<Palette size={20} />}
-            label="Style de mariage"
-            to="/test-formulaire"
-            active={isActive('/test-formulaire')}
+            icon={<CheckSquare size={20} />}
+            label="Tâches"
+            to="/dashboard/tasks"
+            active={isActive('/dashboard/tasks')}
             collapsed={collapsed}
           />
           
-          {/* Conseils */}
+          {/* 4. Budget */}
+          <MenuItem
+            icon={<Euro size={20} />}
+            label="Budget"
+            to="/dashboard/budget"
+            active={isActive('/dashboard/budget')}
+            collapsed={collapsed}
+          />
+          
+          {/* 5. Calculatrice de boissons */}
+          <MenuItem
+            icon={<Wine size={20} />}
+            label="Calculatrice de boissons"
+            to="/dashboard/drinks"
+            active={isActive('/dashboard/drinks')}
+            collapsed={collapsed}
+          />
+          
+          {/* 6. Coordination */}
+          <MenuItem
+            icon={<Calendar size={20} />}
+            label="Coordination Jour J"
+            to="/dashboard/coordination"
+            active={isActive('/dashboard/coordination')}
+            collapsed={collapsed}
+          />
+          
+          {/* 7. Prestataires */}
+          <MenuItem
+            icon={<Users size={20} />}
+            label="Prestataires"
+            to="/dashboard/prestataires"
+            active={isActive('/dashboard/prestataires')}
+            collapsed={collapsed}
+          />
+          
+          {/* 8. Wishlist */}
+          <MenuItem
+            icon={<Heart size={20} />}
+            label="Wishlist prestataires"
+            to="/dashboard/wishlist"
+            active={isActive('/dashboard/wishlist')}
+            collapsed={collapsed}
+          />
+          
+          {/* 9. Conseils */}
           <MenuItem
             icon={<MessageCircle size={20} />}
             label="Conseils personnalisés"
@@ -186,7 +177,7 @@ const DashboardSidebar: React.FC = () => {
             collapsed={collapsed}
           />
           
-          {/* Paramètres */}
+          {/* 10. Paramètres */}
           <MenuItem
             icon={<Settings size={20} />}
             label="Paramètres"
@@ -194,6 +185,15 @@ const DashboardSidebar: React.FC = () => {
             active={isActive('/dashboard/settings')}
             collapsed={collapsed}
           />
+          
+          {/* Style de mariage - Remove from main nav or move it elsewhere if needed */}
+          {/* <MenuItem
+            icon={<Palette size={20} />}
+            label="Style de mariage"
+            to="/test-formulaire"
+            active={isActive('/test-formulaire')}
+            collapsed={collapsed}
+          /> */}
         </nav>
       </div>
     </div>

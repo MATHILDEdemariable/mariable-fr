@@ -1,30 +1,39 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { useIsMobile } from '@/hooks/use-mobile';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 const CallToAction = () => {
-  const isMobile = useIsMobile();
-  const navigate = useNavigate();
-  
-  const handleSignupClick = () => {
-    navigate('/register');
-  };
-
   return (
-    <section id="contact" className="py-8 md:py-12 bg-white text-wedding-black">
-      <div className="container text-center px-4">
-        <h2 className="text-xl md:text-2xl lg:text-3xl font-serif mb-3 md:mb-4">
-          Prêt à révolutionner l'organisation de votre mariage ?
+    <section className="bg-wedding-cream py-20">
+      <div className="container mx-auto px-4 text-center">
+        <h2 className="text-3xl md:text-4xl font-serif text-wedding-olive mb-4">
+          Prêt à commencer l'organisation de votre mariage ?
         </h2>
-        <Button 
-          size={isMobile ? "default" : "lg"} 
-          className="bg-wedding-olive hover:bg-wedding-olive/90 text-white px-6 py-6 text-lg font-medium w-full sm:w-auto"
-          onClick={handleSignupClick}
-        >
-          Créez un compte dès maintenant
-        </Button>
+        <p className="text-lg md:text-xl text-gray-700 max-w-2xl mx-auto mb-10">
+          Rejoignez Mariable dès aujourd'hui et découvrez comment nous pouvons transformer l'organisation de votre mariage en une expérience sereine et mémorable.
+        </p>
+        <div className="flex flex-col sm:flex-row justify-center gap-4 md:gap-6">
+          <Button 
+            asChild
+            size="lg" 
+            className="bg-wedding-olive hover:bg-wedding-olive/80 text-white font-medium shadow-md"
+          >
+            <Link to="/register">
+              Créer un compte dès maintenant
+            </Link>
+          </Button>
+          <Button 
+            asChild
+            size="lg" 
+            variant="outline" 
+            className="border-wedding-olive text-wedding-olive hover:bg-wedding-olive/10"
+          >
+            <Link to="/contact/nous-contacter">
+              Discuter avec un conseiller
+            </Link>
+          </Button>
+        </div>
       </div>
     </section>
   );
