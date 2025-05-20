@@ -6,7 +6,7 @@ import { Calendar, MessageCircle, Sparkles, Users, Wine, Check, FileText, Dollar
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { DatePicker } from '@/components/ui/calendar';
+import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import ProgressBar from './ProgressBar';
 import TasksList from './TasksList';
@@ -45,11 +45,12 @@ const ProjectSummary = () => {
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="end">
-                <DatePicker
+                <CalendarComponent
                   mode="single"
                   selected={weddingDate}
                   onSelect={setWeddingDate}
                   initialFocus
+                  className="p-3 pointer-events-auto"
                 />
               </PopoverContent>
             </Popover>
