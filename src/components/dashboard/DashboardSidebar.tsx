@@ -113,7 +113,16 @@ const DashboardSidebar: React.FC = () => {
             collapsed={collapsed}
           />
           
-          {/* 3. Tâches */}
+          {/* 3. Planning personnalisé */}
+          <MenuItem
+            icon={<Calendar size={20} />}
+            label="Planning personnalisé"
+            to="/planning-personnalise"
+            active={isActive('/planning-personnalise')}
+            collapsed={collapsed}
+          />
+          
+          {/* 4. Tâches */}
           <MenuItem
             icon={<CheckSquare size={20} />}
             label="Tâches"
@@ -122,7 +131,7 @@ const DashboardSidebar: React.FC = () => {
             collapsed={collapsed}
           />
           
-          {/* 4. Budget */}
+          {/* 5. Budget */}
           <MenuItem
             icon={<Euro size={20} />}
             label="Budget"
@@ -131,7 +140,7 @@ const DashboardSidebar: React.FC = () => {
             collapsed={collapsed}
           />
           
-          {/* 5. Calculatrice de boissons */}
+          {/* 6. Calculatrice de boissons */}
           <MenuItem
             icon={<Wine size={20} />}
             label="Calculatrice de boissons"
@@ -140,7 +149,7 @@ const DashboardSidebar: React.FC = () => {
             collapsed={collapsed}
           />
           
-          {/* 6. Coordination */}
+          {/* 7. Coordination */}
           <MenuItem
             icon={<Calendar size={20} />}
             label="Coordination Jour J"
@@ -149,7 +158,7 @@ const DashboardSidebar: React.FC = () => {
             collapsed={collapsed}
           />
           
-          {/* 7. Prestataires */}
+          {/* 8. Prestataires */}
           <MenuItem
             icon={<Users size={20} />}
             label="Prestataires"
@@ -158,7 +167,7 @@ const DashboardSidebar: React.FC = () => {
             collapsed={collapsed}
           />
           
-          {/* 8. Wishlist */}
+          {/* 9. Wishlist */}
           <MenuItem
             icon={<Heart size={20} />}
             label="Wishlist prestataires"
@@ -167,7 +176,7 @@ const DashboardSidebar: React.FC = () => {
             collapsed={collapsed}
           />
           
-          {/* 9. Conseils */}
+          {/* 10. Conseils */}
           <MenuItem
             icon={<MessageCircle size={20} />}
             label="Conseils personnalisés"
@@ -176,7 +185,7 @@ const DashboardSidebar: React.FC = () => {
             collapsed={collapsed}
           />
           
-          {/* 10. Paramètres */}
+          {/* 11. Paramètres */}
           <MenuItem
             icon={<Settings size={20} />}
             label="Paramètres"

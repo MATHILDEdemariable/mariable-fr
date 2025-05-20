@@ -16,6 +16,7 @@ import MoteurRecherche from "./pages/MoteurRecherche";
 import ImportAirtable from './pages/ImportAirtable';
 import TestAssistantVirtuel from "./pages/TestAssistantVirtuel";
 import WeddingAssistantV2 from "./pages/WeddingAssistantV2";
+import PlanningPersonnalise from "./pages/PlanningPersonnalise";
 import Index from "./pages/Index";
 
 // Services pages
