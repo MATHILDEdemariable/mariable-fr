@@ -16,7 +16,7 @@ const ProjectSummary = () => {
       
       <section>
         <h2 className="text-xl font-medium mb-4">Avancement du projet</h2>
-        <ProgressBar completed={35} total={100} />
+        <ProgressBar progress={35} maxValue={100} />
         <p className="text-sm text-gray-500 mt-2">
           Votre projet avance bien ! Continuez sur votre lancée.
         </p>
@@ -34,7 +34,7 @@ const ProjectSummary = () => {
           </CardHeader>
           <CardContent>
             <div className="mb-4">
-              <TasksList limit={3} />
+              <TasksList />
             </div>
             <Button asChild className="w-full" variant="outline">
               <Link to="/dashboard/tasks">Voir toutes les tâches</Link>
