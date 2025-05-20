@@ -29,6 +29,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import slugify from '@/utils/slugify';
+
 
 type PrestataireCategorie =
   Database["public"]["Enums"]["prestataire_categorie"];
@@ -83,7 +85,7 @@ const formSchema = z.object({
   }),
   accord_cgv: z.boolean().refine((val) => val === true, {
     message: "Vous devez accepter les CGV",
-  })
+  }),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -136,7 +138,7 @@ const ProfessionalRegistrationForm = () => {
       description: "",
       prix_minimum: 0,
       accord_referencement: false,
-      accord_cgv: false
+      accord_cgv: false,
     },
   });
 
@@ -197,7 +199,6 @@ const ProfessionalRegistrationForm = () => {
   };
 
   const onSubmit = async (values: FormValues) => {
-    console.log('test')
     setIsSubmitting(true);
 
     try {
@@ -224,6 +225,7 @@ const ProfessionalRegistrationForm = () => {
           first_price_package: null,
           second_price_package: null,
           third_price_package: null,
+          slug: slugify(values.nom)
         })
         .select("id")
         .single();
