@@ -7,6 +7,7 @@ import { PlanningResult } from './types';
 import { supabase } from '@/integrations/supabase/client';
 import { Sparkles } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
+import { useNavigate } from 'react-router-dom';
 
 interface EmailCaptureFormProps {
   quizResult: PlanningResult;
@@ -18,6 +19,14 @@ const EmailCaptureForm: React.FC<EmailCaptureFormProps> = ({ quizResult, onCompl
   const [fullName, setFullName] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
+  const navigate = useNavigate();
+
+  // Fonction pour déterminer le niveau en fonction du score
+  const getLevelFromScore = (score: number): string => {
+    if (score <= 3) return 'Début';
+    if (score <= 7) return 'Milieu';
+    return 'Fin';
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,12 +43,16 @@ const EmailCaptureForm: React.FC<EmailCaptureFormProps> = ({ quizResult, onCompl
     setIsSubmitting(true);
 
     try {
+      // Déterminer le niveau en fonction du score
+      const level = getLevelFromScore(quizResult.score);
+      
       // Sauvegarder les données dans Supabase
       const { error } = await supabase.from('quiz_email_captures').insert({
         email: email.trim(),
         full_name: fullName.trim() || null,
         quiz_score: quizResult.score,
-        quiz_status: quizResult.status
+        quiz_status: quizResult.status,
+        level: level,
       });
 
       if (error) {
@@ -69,6 +82,16 @@ const EmailCaptureForm: React.FC<EmailCaptureFormProps> = ({ quizResult, onCompl
       });
       setIsSubmitting(false);
     }
+  };
+
+  const handleSkip = () => {
+    navigate('/register', { 
+      state: { 
+        fromQuiz: true,
+        quizScore: quizResult.score,
+        quizStatus: quizResult.status
+      } 
+    });
   };
 
   return (
@@ -113,6 +136,18 @@ const EmailCaptureForm: React.FC<EmailCaptureFormProps> = ({ quizResult, onCompl
             >
               <Sparkles className="mr-2 h-4 w-4" />
               Recevoir mon plan personnalisé
+            </Button>
+          </div>
+          
+          <div className="text-center mt-4">
+            <Button 
+              type="button" 
+              variant="ghost"
+              size="sm"
+              onClick={handleSkip}
+              className="text-muted-foreground"
+            >
+              Créer un compte complet
             </Button>
           </div>
           

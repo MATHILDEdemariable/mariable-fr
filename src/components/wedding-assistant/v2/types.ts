@@ -44,6 +44,7 @@ export interface QuizEmailCapture {
   full_name?: string;
   quiz_score?: number;
   quiz_status?: string;
+  level?: string;
   created_at: string;
   updated_at: string;
 }
