@@ -1,115 +1,117 @@
+
 import React from 'react';
-import type { WeddingDaySchedule } from './types';
-import { format, addMinutes } from 'date-fns';
+import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import { Card, CardContent } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
+import { 
+  Clock, 
+  Calendar, 
+  MapPin, 
+  Camera, 
+  Music, 
+  Utensils, 
+  Heart, 
+  Car, 
+  Award, 
+  Film
+} from 'lucide-react';
+import { ScheduleEvent, WeddingSchedule } from './types/scheduleTypes';
 
 interface WeddingDayTimelineProps {
-  schedule: WeddingDaySchedule;
+  schedule: WeddingSchedule;
 }
 
-// Helper to determine if an event is a highlight moment
-const isHighlightEvent = (type?: string): boolean => {
-  const highlightTypes = ['couple_photos', 'entrance', 'firstdance'];
-  return type ? highlightTypes.includes(type) : false;
-};
-
-// Helper to determine if an event should be hidden based on user selections
-const shouldShowEvent = (event: { type?: string }, schedule: WeddingDaySchedule): boolean => {
-  // Always show non-optional events
-  if (!event.type || ['ceremony', 'ceremony_time', 'travel', 'cocktail', 'dinner'].includes(event.type)) {
-    return true;
-  }
+export const WeddingDayTimeline: React.FC<WeddingDayTimelineProps> = ({ schedule }) => {
+  const { events } = schedule;
   
-  // Check if specific optional events should be displayed
-  switch(event.type) {
-    case 'couple_photos':
-      return schedule.userChoices?.hasCouplePhotoSession ?? true;
-    case 'entrance':
-      return schedule.userChoices?.hasCoupleEntrance ?? true;
-    case 'animation':
-      return schedule.userChoices?.hasOtherAnimations ?? false;
-    case 'cake':
-      return schedule.userChoices?.hasWeddingCake ?? true;
-    case 'firstdance':
-      return schedule.userChoices?.hasFirstDance ?? true;
-    case 'marge':
-      return true;
-    default:
-      return true;
-  }
-};
-
-function formatEndTime(event: { time: Date; duration?: number }) {
-  if (event.duration) {
-    const end = addMinutes(event.time, event.duration);
-    return format(end, 'HH:mm', { locale: fr });
-  }
-  return '';
-}
-
-export const WeddingDayTimeline = ({ schedule }: WeddingDayTimelineProps) => {
+  // Helper function to get the appropriate icon for each event type
+  const getEventIcon = (type: string) => {
+    switch (type) {
+      case 'ceremony':
+      case 'civil_ceremony':
+        return <Heart className="h-5 w-5 text-wedding-olive" />;
+      case 'travel':
+        return <Car className="h-5 w-5 text-slate-600" />;
+      case 'cocktail':
+        return <Utensils className="h-5 w-5 text-amber-600" />;
+      case 'dinner':
+        return <Utensils className="h-5 w-5 text-slate-600" />;
+      case 'party':
+        return <Music className="h-5 w-5 text-purple-600" />;
+      case 'cake_cutting':
+        return <Award className="h-5 w-5 text-pink-500" />;
+      case 'couple_entrance':
+        return <Award className="h-5 w-5 text-wedding-olive" />;
+      case 'photos':
+      case 'couple_photos':
+        return <Camera className="h-5 w-5 text-blue-500" />;
+      default:
+        return <Clock className="h-5 w-5 text-slate-600" />;
+    }
+  };
+  
   return (
-    <div className="space-y-3">
-      {schedule.events.map((event, index) => {
-        if (!shouldShowEvent(event, schedule)) {
-          return null;
-        }
-        
-        const endTime = formatEndTime(event);
-        const isHighlight = isHighlightEvent(event.type);
-
-        return (
-          <div
-            key={index}
-            className={`p-4 rounded-lg transition-all ${
-              event.isMargin ? 'bg-gray-50/50 border-dashed border-gray-200 py-2' : 'bg-white'
-            }`}
-          >
-            {/* En-tête avec les horaires */}
-            <div className="flex justify-between items-start mb-2">
-              <span className={`${event.isMargin ? 'text-sm' : 'text-base'} font-medium`}>
-                {format(event.time, 'HH:mm', { locale: fr })}
-                {endTime && (
-                  <span className="text-muted-foreground">
-                    {' → '}
-                    {endTime}
-                  </span>
-                )}
-              </span>
-              {isHighlight && (
-                <span className="px-2 py-0.5 text-xs font-medium text-wedding-olive bg-wedding-olive/10 rounded-full">
-                  Temps fort
-                </span>
-              )}
-            </div>
-
-            {/* Corps de l'événement */}
-            <div className="space-y-1">
-              <h3 className={`${event.isMargin ? 'text-sm' : 'text-lg'} ${
-                isHighlight ? 'text-wedding-olive font-medium' : 'font-normal'
-              }`}>
-                {event.label}
-              </h3>
-
-              {/* Informations supplémentaires */}
-              {(event.duration || event.note) && (
-                <div className={`${
-                  event.isMargin
-                    ? 'text-xs text-muted-foreground italic'
-                    : 'text-sm text-muted-foreground'
+    <div id="wedding-day-timeline" className="space-y-4">
+      {events.map((event, index) => (
+        <Card key={event.id} className={`overflow-hidden transition-all ${
+          event.isHighlight ? 'border-wedding-olive/30 bg-wedding-olive/5' : ''
+        }`}>
+          <CardContent className="p-4">
+            <div className="flex items-start gap-4">
+              <div className="flex flex-col items-center">
+                <div className={`rounded-full p-2 ${
+                  event.isHighlight ? 'bg-wedding-olive/20' : 'bg-slate-100'
                 }`}>
-                  {event.duration && (
-                    <p>
-                      Durée estimative : {event.duration} minutes
-                    </p>
-                  )}
-                  {event.note && <p className="mt-1 italic">{event.note}</p>}
+                  {getEventIcon(event.type)}
                 </div>
-              )}
+                <div className="w-px h-full bg-slate-200 my-2 flex-grow"></div>
+              </div>
+              
+              <div className="flex-1 space-y-2">
+                <div className="flex justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className={`font-semibold text-lg ${
+                      event.isHighlight ? 'text-wedding-olive' : ''
+                    }`}>
+                      {format(event.startTime, 'HH:mm', { locale: fr })}
+                    </span>
+                    {event.duration > 0 && (
+                      <span className="text-slate-500 text-sm">
+                        → {format(event.endTime, 'HH:mm', { locale: fr })}
+                      </span>
+                    )}
+                  </div>
+                  
+                  {event.isHighlight && (
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-wedding-olive/20 text-wedding-olive">
+                      Moment clé
+                    </span>
+                  )}
+                </div>
+                
+                <h3 className={`font-medium ${
+                  event.isHighlight ? 'text-wedding-olive' : ''
+                }`}>
+                  {event.title}
+                </h3>
+                
+                {event.duration > 0 && (
+                  <p className="text-sm text-slate-500">
+                    Durée: {event.duration} minutes
+                  </p>
+                )}
+                
+                {event.notes && (
+                  <p className="text-sm italic text-slate-600 mt-1">
+                    {event.notes}
+                  </p>
+                )}
+              </div>
             </div>
-          </div>
-        );
-      })}
+          </CardContent>
+        </Card>
+      ))}
     </div>
   );
 };
