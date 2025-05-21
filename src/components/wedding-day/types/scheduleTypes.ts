@@ -5,6 +5,7 @@ export interface QuizOption {
   valeur?: string;
   duree?: number;
   quantite?: number[];
+  duree_par_discours?: number;
 }
 
 export interface QuizField {
@@ -18,6 +19,7 @@ export interface QuizField {
 
 export interface QuizSection {
   [key: string]: QuizField | QuizSection;
+  label?: string;
 }
 
 export interface QuizData {

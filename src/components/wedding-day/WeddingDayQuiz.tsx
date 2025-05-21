@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -16,12 +16,12 @@ import { Input } from '@/components/ui/input';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Separator } from '@/components/ui/separator';
-import { QuizData, QuizField, QuizFormValues, QuizSection } from './types/scheduleTypes';
+import { QuizData, QuizField, QuizFormValues, QuizSection, WeddingSchedule } from './types/scheduleTypes';
 import { generateScheduleFromQuiz } from './utils/scheduleGenerator';
 
 interface WeddingDayQuizProps {
   quizData: QuizData;
-  onSubmit: (formData: any, schedule: any) => void;
+  onSubmit: (formData: QuizFormValues, schedule: WeddingSchedule) => void;
 }
 
 export const WeddingDayQuiz: React.FC<WeddingDayQuizProps> = ({ quizData, onSubmit }) => {
@@ -169,6 +169,8 @@ export const WeddingDayQuiz: React.FC<WeddingDayQuizProps> = ({ quizData, onSubm
                   <Input 
                     type="time" 
                     {...formField} 
+                    // Convert any non-string values to string for the input
+                    value={String(formField.value || '')}
                     className="w-full max-w-[200px]"
                   />
                 </FormControl>
@@ -196,6 +198,8 @@ export const WeddingDayQuiz: React.FC<WeddingDayQuizProps> = ({ quizData, onSubm
                   <Input 
                     type="number" 
                     {...formField} 
+                    // Convert any non-numeric values to string for the input
+                    value={String(formField.value || '')}
                     className="w-full max-w-[200px]"
                   />
                 </FormControl>
@@ -218,6 +222,9 @@ export const WeddingDayQuiz: React.FC<WeddingDayQuizProps> = ({ quizData, onSubm
   // Recursively render fields in a section
   const renderSection = (section: QuizSection, parentKey: string = '') => {
     return Object.entries(section).map(([key, value]) => {
+      // Skip the 'label' key when rendering subsections
+      if (key === 'label') return null;
+      
       const fieldName = parentKey ? `${parentKey}.${key}` : key;
       
       if ((value as QuizField).type) {

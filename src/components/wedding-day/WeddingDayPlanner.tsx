@@ -5,9 +5,10 @@ import { WeddingDayTimeline } from './WeddingDayTimeline';
 import { Card } from '@/components/ui/card';
 import type { WeddingDaySchedule, UserChoices } from './types';
 import { generateSchedule } from "./utils";
+import { WeddingSchedule } from './types/scheduleTypes';
 
 export const WeddingDayPlanner = () => {
-  const [schedule, setSchedule] = useState<WeddingDaySchedule | null>(null);
+  const [schedule, setSchedule] = useState<WeddingSchedule | null>(null);
 
   const handleFormSubmit = (formData: {
     ceremonyTime: string;
@@ -29,10 +30,30 @@ export const WeddingDayPlanner = () => {
       hasFirstDance: formData.hasFirstDance,
     };
     
-    const generatedSchedule = generateSchedule(formData);
-    // Add user choices to the schedule for filtering events in the timeline
-    generatedSchedule.userChoices = userChoices;
-    setSchedule(generatedSchedule);
+    // Create a compatible schedule format
+    const oldSchedule: WeddingDaySchedule = generateSchedule(formData);
+    
+    // Convert to the new schedule format
+    const newSchedule: WeddingSchedule = {
+      events: oldSchedule.events.map(event => ({
+        id: String(event.id),
+        title: event.label,
+        startTime: event.time,
+        endTime: new Date(event.time.getTime() + (event.duration || 0) * 60000),
+        duration: event.duration || 0,
+        type: event.type || 'default',
+        isHighlight: event.isHighlight || false,
+        notes: event.note
+      })),
+      metadata: {
+        weddingDate: new Date(),
+        ceremonyType: formData.ceremonyType,
+        hasMultipleLocations: formData.travelDuration > 0,
+        includedActivities: []
+      }
+    };
+    
+    setSchedule(newSchedule);
   };
 
   return (

@@ -53,38 +53,31 @@ const quizData: QuizData = {
     "preparatifs_mariee": {
       "label": "Préparatifs de la mariée",
       "coiffure": {
+        "label": "Coiffure",
         "lieu": {
           "label": "Lieu de coiffure",
           "type": "choix",
           "options": ["domicile", "salon"]
-        },
-        "duree": 90,
-        "trajet_si_salon": {
-          "label": "Trajet salon (si applicable)",
-          "type": "number",
-          "unit": "minutes"
         }
       },
       "maquillage": {
-        "label": "Durée maquillage",
-        "duree": 60
+        "label": "Maquillage",
+        "type": "time"
       },
       "habillage": {
-        "label": "Durée habillage",
-        "duree": 15
+        "label": "Habillage",
+        "type": "time"
       }
     },
     "first_look": {
       "label": "Souhaitez-vous organiser un first look ?",
       "type": "choix",
-      "options": ["oui", "non"],
-      "duree": 10
+      "options": ["oui", "non"]
     },
     "moment_photos": {
       "label": "Quand souhaitez-vous faire les photos de couple ?",
       "type": "choix",
-      "options": ["avant_cérémonie", "après_cérémonie", "entre_les_deux"],
-      "duree": 30
+      "options": ["avant_cérémonie", "après_cérémonie", "entre_les_deux"]
     },
     "format_cocktail": {
       "label": "Durée du cocktail",
@@ -124,7 +117,7 @@ const quizData: QuizData = {
       "options": [
         { "valeur": "photos_groupe", "duree": 20 },
         { "valeur": "entree_maries", "duree": 10 },
-        { "valeur": "discours", "quantite": [1, 2, 3, 4, 5], "duree_par_discours": 5 },
+        { "valeur": "discours", "duree": 5 },
         { "valeur": "decoupe_dessert", "duree": 15 },
         { "valeur": "animation_supplementaire", "duree": 20 }
       ]
