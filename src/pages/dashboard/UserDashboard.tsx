@@ -5,11 +5,13 @@ import { Helmet } from 'react-helmet-async';
 import { supabase } from '@/integrations/supabase/client';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import ProjectSummary from '@/components/dashboard/ProjectSummary';
-import PrestairesList from '@/components/dashboard/VendorTracking';
+import VendorTracking from '@/components/dashboard/VendorTracking';
 import TasksList from '@/components/dashboard/TasksList';
 import CoordinationPage from './CoordinationPage';
 import WishlistPage from './WishlistPage';
 import BudgetPage from './BudgetPage';
+import DetailedBudget from '@/components/dashboard/DetailedBudget';
+import UserProfile from '@/components/dashboard/UserProfile';
 import { useToast } from '@/components/ui/use-toast';
 import DrinksCalculator from '@/components/drinks/DrinksCalculator';
 
@@ -45,12 +47,12 @@ const UserDashboard: React.FC = () => {
         <Route path="/" element={<DashboardLayout />}>
           <Route index element={<ProjectSummary />} />
           <Route path="tasks" element={<TasksList />} />
-          <Route path="budget" element={<BudgetPage />} />
-          <Route path="prestataires" element={<PrestairesList />} />
+          <Route path="budget" element={<DetailedBudget />} />
+          <Route path="prestataires" element={<VendorTracking />} />
           <Route path="wishlist" element={<WishlistPage />} />
           <Route path="coordination" element={<CoordinationPage />} />
           <Route path="drinks" element={<DrinksCalculator />} />
-          <Route path="settings" element={<div>Paramètres</div>} />
+          <Route path="settings" element={<UserProfile />} />
           <Route path="*" element={<div>Page non trouvée</div>} />
         </Route>
       </Routes>
