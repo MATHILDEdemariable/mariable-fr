@@ -87,8 +87,10 @@ const ReaderView = () => {
       </Helmet>
       
       <DashboardLayout>
-        <ReaderBanner />
-        <ProjectSummary />
+        <>
+          <ReaderBanner />
+          <ProjectSummary />
+        </>
       </DashboardLayout>
     </>
   );

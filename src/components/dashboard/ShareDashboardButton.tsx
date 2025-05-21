@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Share } from "lucide-react";
@@ -23,6 +22,12 @@ const ShareDashboardButton = () => {
     try {
       setIsGenerating(true);
       
+      // Get current user session
+      const { data: sessionData } = await supabase.auth.getSession();
+      if (!sessionData.session?.user?.id) {
+        throw new Error("Utilisateur non connecté");
+      }
+      
       // Générer un token unique
       const token = uuidv4();
       
@@ -34,6 +39,7 @@ const ShareDashboardButton = () => {
         .from('dashboard_share_tokens')
         .insert({
           token,
+          user_id: sessionData.session.user.id,
           expires_at: expiresAt ? expiresAt.toISOString() : null,
           description: description || 'Lien de partage du tableau de bord'
         });
