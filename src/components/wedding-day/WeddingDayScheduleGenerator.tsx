@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Share2, Download, FileDown, RefreshCw } from 'lucide-react';
+import { Share2, Download, RefreshCw } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import { WeddingDayQuiz } from './WeddingDayQuiz';
 import { WeddingDayTimeline } from './WeddingDayTimeline';
