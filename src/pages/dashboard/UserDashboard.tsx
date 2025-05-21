@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
@@ -14,7 +13,7 @@ import DetailedBudget from '@/components/dashboard/DetailedBudget';
 import UserProfile from '@/components/dashboard/UserProfile';
 import { useToast } from '@/components/ui/use-toast';
 import DrinksCalculator from '@/components/drinks/DrinksCalculator';
-import { BudgetCalculator } from '@/components/dashboard/BudgetCalculator';
+import BudgetCalculator from '@/components/dashboard/BudgetCalculator';
 
 const UserDashboard: React.FC = () => {
   const navigate = useNavigate();

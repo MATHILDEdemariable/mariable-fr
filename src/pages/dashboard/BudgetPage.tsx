@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -10,6 +9,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import Budget from '../services/Budget';
+import BudgetCalculator from '@/components/dashboard/BudgetCalculator';
 
 const BudgetPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>('summary');
@@ -227,15 +227,6 @@ const BudgetPage: React.FC = () => {
         </Tabs>
       </div>
     </>
-  );
-};
-
-// Composant intégré pour la calculatrice de budget
-const BudgetCalculator: React.FC = () => {
-  return (
-    <div className="p-4">
-      <Budget />
-    </div>
   );
 };
 
