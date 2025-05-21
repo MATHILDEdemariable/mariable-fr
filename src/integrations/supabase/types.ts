@@ -113,6 +113,36 @@ export type Database = {
         }
         Relationships: []
       }
+      dashboard_share_tokens: {
+        Row: {
+          active: boolean
+          created_at: string
+          description: string | null
+          expires_at: string | null
+          id: string
+          token: string
+          user_id: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          description?: string | null
+          expires_at?: string | null
+          id?: string
+          token: string
+          user_id: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          description?: string | null
+          expires_at?: string | null
+          id?: string
+          token?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       prestataires: {
         Row: {
           accord_cgv: boolean | null
@@ -975,7 +1005,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      validate_share_token: {
+        Args: { token_value: string }
+        Returns: {
+          is_valid: boolean
+          user_id: string
+        }[]
+      }
     }
     Enums: {
       input_type: "select" | "input" | "checkbox"

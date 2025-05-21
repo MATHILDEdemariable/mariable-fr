@@ -1,209 +1,119 @@
-
-import React, { useState } from 'react';
+import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import {
-  LayoutDashboard,
-  CheckSquare,
-  Euro,
-  Users,
-  Heart,
-  Calendar,
-  MessageCircle,
+import { 
+  LayoutDashboard, 
+  Calendar, 
+  ListChecks, 
+  Coins, 
+  Store, 
+  Heart, 
   Settings,
-  Sparkles,
-  Wine,
-  ChevronLeft,
-  ChevronRight
+  Logout
 } from 'lucide-react';
-import { useIsMobile } from '@/hooks/use-mobile';
-import { cn } from '@/lib/utils';
+import { supabase } from '@/integrations/supabase/client';
 
-interface MenuItemProps {
-  icon: React.ReactNode;
-  label: string;
-  to: string;
-  active?: boolean;
-  external?: boolean;
-  collapsed?: boolean;
+interface DashboardSidebarProps {
+  isReaderMode?: boolean;
 }
 
-const MenuItem: React.FC<MenuItemProps> = ({ 
-  icon, 
-  label, 
-  to, 
-  active = false, 
-  external = false, 
-  collapsed = false,
-}) => {
-  if (external) {
-    return (
-      <a
-        href={to}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={`flex items-center px-3 py-3 rounded-lg transition-colors ${
-          active
-            ? 'bg-wedding-olive/10 text-wedding-olive font-medium'
-            : 'hover:bg-gray-100'
-        }`}
-      >
-        <span className="mr-3">{icon}</span>
-        {!collapsed && <span className="truncate">{label}</span>}
-      </a>
-    );
-  }
-  
-  return (
-    <Link
-      to={to}
-      className={`flex items-center px-3 py-3 rounded-lg transition-colors ${
-        active
-          ? 'bg-wedding-olive/10 text-wedding-olive font-medium'
-          : 'hover:bg-gray-100'
-      }`}
-    >
-      <span className="mr-3 flex-shrink-0">{icon}</span>
-      {!collapsed && <span className="truncate">{label}</span>}
-    </Link>
-  );
-};
-
-const DashboardSidebar: React.FC = () => {
+const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = false }) => {
   const location = useLocation();
-  const currentPath = location.pathname;
-  const isMobile = useIsMobile();
-  const [collapsed, setCollapsed] = useState(false);
-
+  
+  const navigationItems = [
+    {
+      label: 'Tableau de bord',
+      icon: <LayoutDashboard className="h-4 w-4" />,
+      path: '/dashboard',
+    },
+    {
+      label: 'Tâches',
+      icon: <ListChecks className="h-4 w-4" />,
+      path: '/dashboard/tasks',
+    },
+    {
+      label: 'Budget',
+      icon: <Coins className="h-4 w-4" />,
+      path: '/dashboard/budget',
+    },
+    {
+      label: 'Prestataires',
+      icon: <Store className="h-4 w-4" />,
+      path: '/dashboard/prestataires',
+    },
+    {
+      label: 'Wishlist',
+      icon: <Heart className="h-4 w-4" />,
+      path: '/dashboard/wishlist',
+    },
+    {
+      label: 'Coordination Jour J',
+      icon: <Calendar className="h-4 w-4" />,
+      path: '/dashboard/coordination',
+    },
+    {
+      label: 'Paramètres',
+      icon: <Settings className="h-4 w-4" />,
+      path: '/dashboard/settings',
+    },
+  ];
+  
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+  };
+  
   const isActive = (path: string) => {
-    if (path === '/dashboard') {
-      return currentPath === '/dashboard' || currentPath === '/dashboard/';
-    }
-    return currentPath.startsWith(path);
+    return location.pathname === path;
   };
 
   return (
-    <div className="h-full bg-white border-r w-full relative">
-      <div className="p-4">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className={cn("text-xl font-serif text-wedding-olive", collapsed ? "hidden" : "block")}>
-            Tableau de Bord
-          </h2>
-          {!isMobile && (
-            <button 
-              onClick={() => setCollapsed(!collapsed)} 
-              className="p-1 rounded-md hover:bg-gray-100"
-              aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-            >
-              {collapsed ? (
-                <ChevronRight size={18} />
-              ) : (
-                <ChevronLeft size={18} />
-              )}
-            </button>
-          )}
-        </div>
-        
-        <nav className="space-y-1">
-          {/* 1. Tableau de bord principal */}
-          <MenuItem
-            icon={<LayoutDashboard size={20} />}
-            label="Tableau de bord"
-            to="/dashboard"
-            active={isActive('/dashboard')}
-            collapsed={collapsed}
-          />
-          
-          {/* 2. Assistant virtuel */}
-          <MenuItem
-            icon={<Sparkles size={20} />}
-            label="Assistant virtuel"
-            to="/assistant-v2"
-            active={isActive('/assistant-v2')}
-            collapsed={collapsed}
-          />
-          
-          {/* 3. Planning personnalisé */}
-          <MenuItem
-            icon={<Calendar size={20} />}
-            label="Planning personnalisé"
-            to="/planning-personnalise"
-            active={isActive('/planning-personnalise')}
-            collapsed={collapsed}
-          />
-          
-          {/* 4. Tâches */}
-          <MenuItem
-            icon={<CheckSquare size={20} />}
-            label="Tâches"
-            to="/dashboard/tasks"
-            active={isActive('/dashboard/tasks')}
-            collapsed={collapsed}
-          />
-          
-          {/* 5. Budget */}
-          <MenuItem
-            icon={<Euro size={20} />}
-            label="Budget"
-            to="/dashboard/budget"
-            active={isActive('/dashboard/budget')}
-            collapsed={collapsed}
-          />
-          
-          {/* 6. Calculatrice de boissons */}
-          <MenuItem
-            icon={<Wine size={20} />}
-            label="Calculatrice de boissons"
-            to="/dashboard/drinks"
-            active={isActive('/dashboard/drinks')}
-            collapsed={collapsed}
-          />
-          
-          {/* 7. Coordination */}
-          <MenuItem
-            icon={<Calendar size={20} />}
-            label="Coordination Jour J"
-            to="/dashboard/coordination"
-            active={isActive('/dashboard/coordination')}
-            collapsed={collapsed}
-          />
-          
-          {/* 8. Prestataires */}
-          <MenuItem
-            icon={<Users size={20} />}
-            label="Prestataires"
-            to="/dashboard/prestataires"
-            active={isActive('/dashboard/prestataires')}
-            collapsed={collapsed}
-          />
-          
-          {/* 9. Wishlist */}
-          <MenuItem
-            icon={<Heart size={20} />}
-            label="Wishlist prestataires"
-            to="/dashboard/wishlist"
-            active={isActive('/dashboard/wishlist')}
-            collapsed={collapsed}
-          />
-          
-          {/* 10. Conseils */}
-          <MenuItem
-            icon={<MessageCircle size={20} />}
-            label="Conseils personnalisés"
-            to="/assistant-v2"
-            active={isActive('/assistant-v2')}
-            collapsed={collapsed}
-          />
-          
-          {/* 11. Paramètres */}
-          <MenuItem
-            icon={<Settings size={20} />}
-            label="Paramètres"
-            to="/dashboard/settings"
-            active={isActive('/dashboard/settings')}
-            collapsed={collapsed}
-          />
-        </nav>
+    <div className="h-full min-h-screen bg-white border-r border-gray-200">
+      <div className="flex items-center px-6 py-4">
+        <span className="font-bold text-xl">Mon espace</span>
       </div>
+      
+      <nav className="py-4 px-3 space-y-1">
+        {navigationItems.map((item) => (
+          <Link
+            key={item.path}
+            to={isReaderMode ? '#' : item.path}
+            onClick={(e) => {
+              if (isReaderMode) {
+                e.preventDefault();
+              }
+            }}
+            className={`flex items-center px-3 py-2.5 text-sm font-medium rounded-md ${
+              isActive(item.path)
+                ? 'bg-wedding-olive text-white'
+                : 'text-gray-600 hover:bg-gray-100'
+            } ${isReaderMode ? 'pointer-events-none opacity-70' : ''}`}
+          >
+            {item.icon}
+            <span className="ml-3">{item.label}</span>
+            {isReaderMode && item.path !== '/dashboard' && (
+              <span className="ml-auto text-xs text-gray-400">(Lecture seule)</span>
+            )}
+          </Link>
+        ))}
+      </nav>
+      
+      <div className="mt-auto px-3 py-2">
+        <button 
+          onClick={handleLogout} 
+          className="flex items-center px-3 py-2.5 text-sm font-medium rounded-md text-gray-600 hover:bg-gray-100 w-full justify-start"
+          disabled={isReaderMode}
+        >
+          <Logout className="h-4 w-4" />
+          <span className="ml-3">Déconnexion</span>
+        </button>
+      </div>
+      
+      {isReaderMode && (
+        <div className="px-3 py-4 mt-auto border-t border-gray-200">
+          <div className="bg-wedding-olive/10 p-3 rounded-md text-xs text-gray-700">
+            Vous êtes en mode lecture seule. Les modifications ne sont pas possibles dans ce mode.
+          </div>
+        </div>
+      )}
     </div>
   );
 };

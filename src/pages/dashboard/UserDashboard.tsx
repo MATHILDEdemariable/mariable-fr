@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
@@ -14,13 +15,18 @@ import UserProfile from '@/components/dashboard/UserProfile';
 import { useToast } from '@/components/ui/use-toast';
 import DrinksCalculator from '@/components/drinks/DrinksCalculator';
 import BudgetCalculator from '@/components/dashboard/BudgetCalculator';
+import { useReaderMode } from '@/contexts/ReaderModeContext';
 
 const UserDashboard: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
+  const { isReaderMode } = useReaderMode();
 
   useEffect(() => {
+    // Si on est en mode lecteur, on ne vérifie pas l'authentification
+    if (isReaderMode) return;
+    
     const checkAuth = async () => {
       const { data, error } = await supabase.auth.getSession();
       if (error || !data.session) {
@@ -34,7 +40,7 @@ const UserDashboard: React.FC = () => {
     };
 
     checkAuth();
-  }, [navigate, location.pathname, toast]);
+  }, [navigate, location.pathname, toast, isReaderMode]);
 
   return (
     <>

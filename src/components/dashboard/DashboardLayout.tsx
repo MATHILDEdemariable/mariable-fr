@@ -5,11 +5,14 @@ import DashboardSidebar from './DashboardSidebar';
 import { useIsMobile } from '@/hooks/use-mobile';
 import Header from '@/components/Header';
 import { Menu } from 'lucide-react';
+import { useReaderMode } from '@/contexts/ReaderModeContext';
+import ShareDashboardButton from './ShareDashboardButton';
 
 const DashboardLayout: React.FC = () => {
   const isMobile = useIsMobile();
   const [sidebarVisible, setSidebarVisible] = useState(!isMobile);
   const location = useLocation();
+  const { isReaderMode } = useReaderMode();
   
   const toggleSidebar = () => {
     setSidebarVisible(!sidebarVisible);
@@ -37,13 +40,18 @@ const DashboardLayout: React.FC = () => {
                     ${(isMobile && !sidebarVisible) ? '-translate-x-full' : 'translate-x-0'}`}
           style={{ width: isMobile ? '240px' : '250px' }}
         >
-          <DashboardSidebar />
+          <DashboardSidebar isReaderMode={isReaderMode} />
         </div>
 
         {/* Main content area - centered and responsive */}
         <div className="flex-1 flex justify-start items-start transition-all duration-300" 
              style={{ marginLeft: (!isMobile && sidebarVisible) ? '0' : '0' }}>
           <main className="w-full max-w-6xl mx-auto py-6 px-4 lg:px-8">
+            {!isReaderMode && (
+              <div className="flex justify-end mb-4">
+                <ShareDashboardButton />
+              </div>
+            )}
             <Outlet />
           </main>
         </div>
