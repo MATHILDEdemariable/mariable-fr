@@ -88,14 +88,14 @@ const OnboardingProgress: React.FC = () => {
       {/* Visual progression with icons and arrows */}
       <h2 className="text-2xl font-serif text-wedding-olive mb-6 text-center">Les étapes de l'onboarding</h2>
       
-      <div className="relative mb-6">
-        <div className="flex items-center justify-between w-full">
+      <div className="relative mb-6 overflow-x-auto pb-2">
+        <div className="flex items-center justify-between w-full min-w-max">
           {steps.map((step, index) => (
             <React.Fragment key={index}>
               {/* Step icon with background */}
               <div 
                 className={cn(
-                  "relative z-10 flex flex-col items-center transition-all cursor-pointer group",
+                  "relative z-10 flex flex-col items-center transition-all cursor-pointer group mx-1 sm:mx-0",
                   step.current ? "scale-110" : ""
                 )}
                 onClick={() => handleStepClick(step)}
@@ -133,8 +133,8 @@ const OnboardingProgress: React.FC = () => {
         </div>
       </div>
       
-      {/* Bottom claim banner */}
-      <div className="bg-blue-400 text-white rounded-full py-4 px-6 text-center my-6">
+      {/* Bottom claim banner - Changed from blue to wedding-olive color */}
+      <div className="bg-wedding-olive text-white rounded-full py-4 px-6 text-center my-6">
         <p className="text-xl font-serif">Moins de stress, plus d'amour.</p>
       </div>
     </div>

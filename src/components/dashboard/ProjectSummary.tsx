@@ -41,32 +41,34 @@ const ProjectSummary = () => {
             <p className="text-gray-600 mt-1">{formattedDate}</p>
           </div>
           
-          <div className="flex flex-col sm:flex-row gap-3">
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button variant="outline" className="flex items-center gap-2">
-                  <Calendar className="h-4 w-4 text-wedding-olive" />
-                  {weddingDate ? format(weddingDate, 'dd/MM/yyyy') : 'Date du mariage'}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="end">
-                <CalendarComponent
-                  mode="single"
-                  selected={weddingDate}
-                  onSelect={setWeddingDate}
-                  initialFocus
-                  className="p-3 pointer-events-auto"
-                />
-              </PopoverContent>
-            </Popover>
+          <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+            <div className="flex flex-1 sm:flex-auto">
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" className="flex items-center gap-2 flex-1 justify-start sm:justify-center">
+                    <Calendar className="h-4 w-4 text-wedding-olive" />
+                    {weddingDate ? format(weddingDate, 'dd/MM/yyyy') : 'Date du mariage'}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="end">
+                  <CalendarComponent
+                    mode="single"
+                    selected={weddingDate}
+                    onSelect={setWeddingDate}
+                    initialFocus
+                    className="p-3 pointer-events-auto"
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
             
-            <div className="flex items-center gap-2 border rounded-md p-2">
-              <span className="text-wedding-olive">Invités:</span>
+            <div className="flex flex-1 sm:flex-auto items-center gap-2 border rounded-md p-2">
+              <span className="text-wedding-olive whitespace-nowrap">Invités:</span>
               <Input
                 type="number"
                 value={guestCount}
                 onChange={(e) => setGuestCount(e.target.value)}
-                className="w-24 border-none p-0 focus-visible:ring-0"
+                className="w-full sm:w-24 border-none p-0 focus-visible:ring-0"
                 min="1"
               />
             </div>
