@@ -17,9 +17,10 @@ export interface QuizField {
   visible_si?: Record<string, string>;
 }
 
+// Modified QuizSection interface to handle label property correctly
 export interface QuizSection {
-  [key: string]: QuizField | QuizSection;
   label?: string;
+  [key: string]: QuizField | QuizSection | string | undefined;
 }
 
 export interface QuizData {

@@ -170,7 +170,7 @@ export const WeddingDayQuiz: React.FC<WeddingDayQuizProps> = ({ quizData, onSubm
                     type="time" 
                     {...formField} 
                     // Convert any non-string values to string for the input
-                    value={String(formField.value || '')}
+                    value={typeof formField.value === 'string' ? formField.value : ''}
                     className="w-full max-w-[200px]"
                   />
                 </FormControl>
@@ -199,7 +199,9 @@ export const WeddingDayQuiz: React.FC<WeddingDayQuizProps> = ({ quizData, onSubm
                     type="number" 
                     {...formField} 
                     // Convert any non-numeric values to string for the input
-                    value={String(formField.value || '')}
+                    value={typeof formField.value === 'number' ? formField.value : (
+                      typeof formField.value === 'string' ? formField.value : ''
+                    )}
                     className="w-full max-w-[200px]"
                   />
                 </FormControl>

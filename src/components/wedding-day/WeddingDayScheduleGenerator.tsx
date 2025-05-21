@@ -54,6 +54,7 @@ const quizData: QuizData = {
       "label": "Préparatifs de la mariée",
       "coiffure": {
         "label": "Coiffure",
+        "type": "section",
         "lieu": {
           "label": "Lieu de coiffure",
           "type": "choix",
