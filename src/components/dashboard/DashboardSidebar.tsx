@@ -8,7 +8,7 @@ import {
   Store, 
   Heart, 
   Settings,
-  Logout
+  LogOut
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -102,7 +102,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
           className="flex items-center px-3 py-2.5 text-sm font-medium rounded-md text-gray-600 hover:bg-gray-100 w-full justify-start"
           disabled={isReaderMode}
         >
-          <Logout className="h-4 w-4" />
+          <LogOut className="h-4 w-4" />
           <span className="ml-3">Déconnexion</span>
         </button>
       </div>

@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/components/ui/use-toast';
-import { addDays } from 'date-fns';
+import { addDays, format } from 'date-fns';
 
 const ShareDashboardButton = () => {
   const [open, setOpen] = useState(false);
@@ -34,7 +34,7 @@ const ShareDashboardButton = () => {
         .from('dashboard_share_tokens')
         .insert({
           token,
-          expires_at: expiresAt,
+          expires_at: expiresAt ? expiresAt.toISOString() : null,
           description: description || 'Lien de partage du tableau de bord'
         });
       
