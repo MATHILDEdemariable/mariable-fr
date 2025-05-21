@@ -8,7 +8,11 @@ import { Menu } from 'lucide-react';
 import { useReaderMode } from '@/contexts/ReaderModeContext';
 import ShareDashboardButton from './ShareDashboardButton';
 
-const DashboardLayout: React.FC = () => {
+interface DashboardLayoutProps {
+  children?: React.ReactNode;
+}
+
+const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const isMobile = useIsMobile();
   const [sidebarVisible, setSidebarVisible] = useState(!isMobile);
   const location = useLocation();
@@ -52,7 +56,7 @@ const DashboardLayout: React.FC = () => {
                 <ShareDashboardButton />
               </div>
             )}
-            <Outlet />
+            {children || <Outlet />}
           </main>
         </div>
         

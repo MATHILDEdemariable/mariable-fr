@@ -86,12 +86,13 @@ const ReaderView = () => {
         <title>Tableau de bord partagé | Mariable</title>
       </Helmet>
       
-      <DashboardLayout>
-        <div>
+      <div>
+        <DashboardLayout />
+        <main className="w-full max-w-6xl mx-auto py-6 px-4 lg:px-8">
           <ReaderBanner />
           <ProjectSummary />
-        </div>
-      </DashboardLayout>
+        </main>
+      </div>
     </>
   );
 };
