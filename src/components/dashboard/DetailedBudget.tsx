@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -272,8 +271,8 @@ const DetailedBudget: React.FC = () => {
   }
 
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between bg-white sticky top-0 z-10">
+    <Card className="border shadow-sm">
+      <CardHeader className="flex flex-row items-center justify-between bg-white sticky top-0 z-10 border-b">
         <CardTitle className="text-xl font-serif">Budget Détaillé</CardTitle>
         <Button 
           onClick={handleSaveBudget} 
@@ -293,7 +292,7 @@ const DetailedBudget: React.FC = () => {
           )}
         </Button>
       </CardHeader>
-      <CardContent className="px-0">
+      <CardContent className="px-0 overflow-auto">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>

@@ -5,10 +5,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import BudgetSummary from '@/components/dashboard/BudgetSummary';
 import DetailedBudget from '@/components/dashboard/DetailedBudget';
 import { Button } from '@/components/ui/button';
-import { BarChart, PieChart, Download, FileDown } from 'lucide-react';
+import { BarChart, PieChart, Download, FileDown, Calculator } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import Budget from '../services/Budget';
 
 const BudgetPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>('summary');
@@ -177,8 +178,8 @@ const BudgetPage: React.FC = () => {
         <meta name="description" content="Gérez le budget de votre mariage" />
       </Helmet>
 
-      <div>
-        <div className="flex justify-between items-center mb-6">
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
           <h1 className="text-3xl font-serif text-wedding-olive">Budget de Mariage</h1>
           <div className="flex gap-2">
             <Button onClick={handleDownloadTemplate} variant="outline" className="flex gap-2 items-center">
@@ -193,7 +194,7 @@ const BudgetPage: React.FC = () => {
         </div>
 
         <Tabs defaultValue="summary" value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="mb-6 grid w-full grid-cols-1 sm:grid-cols-2 bg-wedding-cream/10">
+          <TabsList className="mb-6 grid w-full grid-cols-1 sm:grid-cols-3 bg-wedding-cream/10">
             <TabsTrigger value="summary" className="flex items-center gap-2 data-[state=active]:bg-wedding-cream/30 data-[state=active]:text-wedding-olive">
               <PieChart className="h-4 w-4" />
               <span>Résumé</span>
@@ -202,18 +203,39 @@ const BudgetPage: React.FC = () => {
               <BarChart className="h-4 w-4" />
               <span>Budget Détaillé</span>
             </TabsTrigger>
+            <TabsTrigger value="calculator" className="flex items-center gap-2 data-[state=active]:bg-wedding-cream/30 data-[state=active]:text-wedding-olive">
+              <Calculator className="h-4 w-4" />
+              <span>Calculatrice</span>
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="summary">
-            <BudgetSummary />
+            <div className="bg-white p-6 rounded-lg shadow-sm">
+              <BudgetSummary />
+            </div>
           </TabsContent>
 
           <TabsContent value="detailed">
             <DetailedBudget />
           </TabsContent>
+
+          <TabsContent value="calculator" className="bg-white rounded-lg">
+            <div className="bg-white rounded-lg">
+              <BudgetCalculator />
+            </div>
+          </TabsContent>
         </Tabs>
       </div>
     </>
+  );
+};
+
+// Composant intégré pour la calculatrice de budget
+const BudgetCalculator: React.FC = () => {
+  return (
+    <div className="p-4">
+      <Budget />
+    </div>
   );
 };
 

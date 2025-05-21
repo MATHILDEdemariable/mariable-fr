@@ -33,17 +33,17 @@ const DashboardLayout: React.FC = () => {
         
         {/* Sidebar - conditionally visible */}
         <div 
-          className={`${isMobile ? 'fixed z-40 h-full overflow-y-auto transition-transform duration-300 transform' : 'w-64 flex-shrink-0'} 
+          className={`${isMobile ? 'fixed z-40 h-full overflow-y-auto transition-transform duration-300 transform' : 'flex-shrink-0'} 
                     ${(isMobile && !sidebarVisible) ? '-translate-x-full' : 'translate-x-0'}`}
-          style={{ width: isMobile ? '240px' : 'auto' }}
+          style={{ width: isMobile ? '240px' : '250px' }}
         >
           <DashboardSidebar />
         </div>
 
-        {/* Main content area - adjusted margin for mobile */}
-        <div className="flex-1 overflow-auto pt-6 transition-all duration-300" 
-             style={{ marginLeft: (!isMobile && sidebarVisible) ? '16rem' : '0' }}>
-          <main className="container mx-auto py-6 px-4 lg:px-8">
+        {/* Main content area - centered and responsive */}
+        <div className="flex-1 flex justify-start items-start transition-all duration-300" 
+             style={{ marginLeft: (!isMobile && sidebarVisible) ? '0' : '0' }}>
+          <main className="w-full max-w-6xl mx-auto py-6 px-4 lg:px-8">
             <Outlet />
           </main>
         </div>

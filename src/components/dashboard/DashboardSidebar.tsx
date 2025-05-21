@@ -41,7 +41,7 @@ const MenuItem: React.FC<MenuItemProps> = ({
         href={to}
         target="_blank"
         rel="noopener noreferrer"
-        className={`flex items-center px-3 py-2 rounded-lg transition-colors ${
+        className={`flex items-center px-3 py-3 rounded-lg transition-colors ${
           active
             ? 'bg-wedding-olive/10 text-wedding-olive font-medium'
             : 'hover:bg-gray-100'
@@ -56,7 +56,7 @@ const MenuItem: React.FC<MenuItemProps> = ({
   return (
     <Link
       to={to}
-      className={`flex items-center px-3 py-2 rounded-lg transition-colors ${
+      className={`flex items-center px-3 py-3 rounded-lg transition-colors ${
         active
           ? 'bg-wedding-olive/10 text-wedding-olive font-medium'
           : 'hover:bg-gray-100'
@@ -88,20 +88,22 @@ const DashboardSidebar: React.FC = () => {
           <h2 className={cn("text-xl font-serif text-wedding-olive", collapsed ? "hidden" : "block")}>
             Tableau de Bord
           </h2>
-          <button 
-            onClick={() => setCollapsed(!collapsed)} 
-            className="p-1 rounded-md hover:bg-gray-100"
-            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-          >
-            {collapsed ? (
-              <ChevronRight size={18} />
-            ) : (
-              <ChevronLeft size={18} />
-            )}
-          </button>
+          {!isMobile && (
+            <button 
+              onClick={() => setCollapsed(!collapsed)} 
+              className="p-1 rounded-md hover:bg-gray-100"
+              aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            >
+              {collapsed ? (
+                <ChevronRight size={18} />
+              ) : (
+                <ChevronLeft size={18} />
+              )}
+            </button>
+          )}
         </div>
         
-        <nav className="space-y-2">
+        <nav className="space-y-1">
           {/* 1. Tableau de bord principal */}
           <MenuItem
             icon={<LayoutDashboard size={20} />}
