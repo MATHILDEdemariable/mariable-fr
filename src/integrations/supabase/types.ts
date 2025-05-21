@@ -170,6 +170,75 @@ export type Database = {
         }
         Relationships: []
       }
+      planning_questions: {
+        Row: {
+          categorie: string
+          created_at: string
+          duree_minutes: number | null
+          id: string
+          label: string
+          option_name: string
+          options: Json | null
+          ordre_affichage: number
+          type: string
+          updated_at: string
+          visible_si: Json | null
+        }
+        Insert: {
+          categorie: string
+          created_at?: string
+          duree_minutes?: number | null
+          id?: string
+          label: string
+          option_name: string
+          options?: Json | null
+          ordre_affichage: number
+          type: string
+          updated_at?: string
+          visible_si?: Json | null
+        }
+        Update: {
+          categorie?: string
+          created_at?: string
+          duree_minutes?: number | null
+          id?: string
+          label?: string
+          option_name?: string
+          options?: Json | null
+          ordre_affichage?: number
+          type?: string
+          updated_at?: string
+          visible_si?: Json | null
+        }
+        Relationships: []
+      }
+      planning_reponses_utilisateur: {
+        Row: {
+          date_creation: string
+          email: string | null
+          id: string
+          planning_genere: Json | null
+          reponses: Json
+          user_id: string
+        }
+        Insert: {
+          date_creation?: string
+          email?: string | null
+          id?: string
+          planning_genere?: Json | null
+          reponses?: Json
+          user_id: string
+        }
+        Update: {
+          date_creation?: string
+          email?: string | null
+          id?: string
+          planning_genere?: Json | null
+          reponses?: Json
+          user_id?: string
+        }
+        Relationships: []
+      }
       prestataires: {
         Row: {
           accord_cgv: boolean | null
