@@ -58,6 +58,7 @@ const PlanningResultatsPersonnalises: React.FC = () => {
           return;
         }
         
+        // Type assertion for the data returned from the edge function
         setQuizResult(quizData as UserQuizResult);
         
         // Get generated tasks for the user
