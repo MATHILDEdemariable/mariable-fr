@@ -40,6 +40,13 @@ export const validateShareToken = async (token: string | null): Promise<{
  * Sets the share token header for anonymous requests
  */
 export const setShareTokenHeader = (token: string) => {
-  // Set the token in the Supabase headers for all future requests
-  supabase.functions.setAuthHeader(token);
+  // Use a custom header for share token
+  // We'll make requests with this header, and our RLS policies will check it
+  const customHeaders = {
+    'x-share-token': token
+  };
+  
+  // Set custom headers for future requests
+  // This works with the latest Supabase JS client
+  supabase.functions.setCustomHeaders(customHeaders);
 };

@@ -40,8 +40,8 @@ const ReaderView = () => {
         setShareToken(token);
         setUserId(userId);
         
-        // Set up the Supabase client to include the token in requests
-        supabase.headers['x-share-token'] = token;
+        // Set up the custom header for share token
+        setShareTokenHeader(token);
         
         // Activate reader mode
         setReaderMode(true);
@@ -61,9 +61,8 @@ const ReaderView = () => {
       setReaderMode(false);
       setShareToken(null);
       setUserId(null);
-      if (supabase.headers['x-share-token']) {
-        delete supabase.headers['x-share-token'];
-      }
+      // Remove custom headers
+      supabase.functions.setCustomHeaders({});
     };
   }, [token, setReaderMode, setShareToken, setUserId]);
 
