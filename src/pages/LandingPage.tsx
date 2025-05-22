@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/accordion";
 import { Card, CardContent } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { supabase } from '@/integrations/supabase/client';
 
 // Composant pour l'effet machine à écrire du titre principal
 const TypewriterEffect = ({ text }: { text: string }) => {
@@ -84,14 +85,36 @@ const LandingPage = () => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const [showAnimation, setShowAnimation] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
     setShowAnimation(true);
+
+    // Check authentication status
+    const checkAuth = async () => {
+      const { data } = await supabase.auth.getSession();
+      setIsLoggedIn(!!data.session);
+    };
+    
+    checkAuth();
+    
+    // Listen for auth changes
+    const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsLoggedIn(!!session);
+    });
+
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
   }, []);
 
   const handleCTAClick = () => {
-    navigate('/assistant-v2');
+    if (isLoggedIn) {
+      navigate('/dashboard');
+    } else {
+      navigate('/register');
+    }
   };
 
   // Données pour les différentes sections
@@ -214,14 +237,24 @@ const LandingPage = () => {
                 <p className="mb-8 text-lg text-white/90">
                   Avec le premier assistant virtuel à la planification
                 </p>
-                <Button 
-                  variant="wedding" 
-                  size={isMobile ? "default" : "lg"}
-                  onClick={handleCTAClick}
-                  className="shadow-lg hover:shadow-xl transition-all"
-                >
-                  Je découvre Mariable
-                </Button>
+                <div className="flex flex-col sm:flex-row items-center gap-4 justify-center md:justify-start">
+                  <Button 
+                    variant="wedding" 
+                    size={isMobile ? "default" : "lg"}
+                    onClick={handleCTAClick}
+                    className="shadow-lg hover:shadow-xl transition-all"
+                  >
+                    {isLoggedIn ? "Accéder à mon tableau de bord" : "Je découvre Mariable"}
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size={isMobile ? "default" : "lg"}
+                    className="bg-white/10 border-white text-white hover:bg-white/20"
+                    onClick={() => navigate('/guide-mariable')}
+                  >
+                    Découvrez le Guide Mariable
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
@@ -253,14 +286,24 @@ const LandingPage = () => {
         <section className="py-16 bg-white">
           <div className="container mx-auto px-4">
             <div className="text-center mb-10">
-              <Button 
-                variant="outline" 
-                className="border-wedding-olive text-wedding-olive hover:bg-wedding-olive/10 mb-6"
-                onClick={handleCTAClick}
-              >
-                Dites oui à la simplicité
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Button 
+                  variant="outline" 
+                  className="border-wedding-olive text-wedding-olive hover:bg-wedding-olive/10 mb-6"
+                  onClick={() => navigate('/assistant-v2')}
+                >
+                  Dites oui à la simplicité
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+                <Button
+                  variant="wedding"
+                  className="mb-6"
+                  onClick={() => navigate('/guide-mariable')}
+                >
+                  Découvrez le Guide Mariable
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </div>
             </div>
             <h2 className="text-2xl md:text-3xl font-serif mb-10 text-center">
               Pourquoi Mariable ?
@@ -352,7 +395,7 @@ const LandingPage = () => {
               size={isMobile ? "default" : "lg"}
               onClick={handleCTAClick}
             >
-              Créez un compte dès maintenant
+              {isLoggedIn ? "Accéder à mon tableau de bord" : "Créez un compte dès maintenant"}
             </Button>
           </div>
         </section>

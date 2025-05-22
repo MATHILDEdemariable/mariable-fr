@@ -1,11 +1,14 @@
 
 import React, { useEffect } from 'react';
-import { Navigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const GuideMariable = () => {
+  const navigate = useNavigate();
+  
   useEffect(() => {
-    window.location.href = 'https://leguidemariable.softr.app/';
-  }, []);
+    // Redirect to the internal MoteurRecherche page instead of external URL
+    navigate('/recherche');
+  }, [navigate]);
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center">

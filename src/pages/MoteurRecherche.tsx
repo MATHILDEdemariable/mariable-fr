@@ -10,6 +10,7 @@ import VendorFilters from '@/components/vendors/VendorFilters';
 import { toast } from '@/components/ui/use-toast';
 import { Loader2 } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { Button } from '@/components/ui/button';
 
 type Prestataire = Database['public']['Tables']['prestataires_rows']['Row'];
 type RegionFrance = Database['public']['Enums']['region_france'];
@@ -168,10 +169,21 @@ const MoteurRecherche = () => {
       <Header />
       
       <main className="container max-w-7xl px-4 py-6 md:py-8">
-        <h1 className="text-2xl md:text-3xl font-serif mb-2">Trouvez le prestataire idéal</h1>
-        <p className="text-muted-foreground mb-6">
-          Découvrez notre sélection de prestataires de qualité pour votre mariage
-        </p>
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+          <div>
+            <h1 className="text-2xl md:text-3xl font-serif mb-2">Trouvez le prestataire idéal</h1>
+            <p className="text-muted-foreground">
+              Découvrez notre sélection de prestataires de qualité pour votre mariage
+            </p>
+          </div>
+          
+          <Button 
+            className="bg-wedding-olive hover:bg-wedding-olive/90 text-white"
+            onClick={() => navigate('/professionnels')}
+          >
+            Être référencé
+          </Button>
+        </div>
         
         <div className="mb-8">
           <VendorFilters 
