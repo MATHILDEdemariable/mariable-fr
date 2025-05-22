@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { PlanningResult } from './types';
 import { supabase } from '@/integrations/supabase/client';
-import { Sparkles } from 'lucide-react';
+import { Sparkles, Loader2 } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import { useNavigate } from 'react-router-dom';
 
@@ -47,13 +47,35 @@ const EmailCaptureForm: React.FC<EmailCaptureFormProps> = ({ quizResult, onCompl
       const level = getLevelFromScore(quizResult.score);
       
       // Sauvegarder les données dans Supabase
-      const { error } = await supabase.from('quiz_email_captures').insert({
-        email: email.trim(),
-        full_name: fullName.trim() || null,
-        quiz_score: quizResult.score,
-        quiz_status: quizResult.status,
-        level: level,
-      });
+      // D'abord dans user_quiz_results
+      const { data: resultData, error: resultError } = await supabase
+        .from('user_quiz_results')
+        .insert({
+          email: email.trim(),
+          score: quizResult.score,
+          status: quizResult.status,
+          level: level,
+          objectives: quizResult.objectives,
+          categories: quizResult.categories
+        })
+        .select()
+        .single();
+      
+      if (resultError) {
+        console.error("Erreur lors de l'enregistrement du résultat:", resultError);
+        throw resultError;
+      }
+      
+      // Puis dans quiz_email_captures pour compatibilité
+      const { error } = await supabase
+        .from('quiz_email_captures')
+        .insert({
+          email: email.trim(),
+          full_name: fullName.trim() || null,
+          quiz_score: quizResult.score,
+          quiz_status: quizResult.status,
+          level: level,
+        });
 
       if (error) {
         console.error("Erreur lors de l'enregistrement:", error);
@@ -73,6 +95,10 @@ const EmailCaptureForm: React.FC<EmailCaptureFormProps> = ({ quizResult, onCompl
         title: "Merci !",
         description: "Vos informations ont été enregistrées avec succès.",
       });
+      
+      // Stocker le résultat dans localStorage
+      localStorage.setItem('quizResult', JSON.stringify(quizResult));
+      
     } catch (error) {
       console.error("Erreur:", error);
       toast({
@@ -134,8 +160,17 @@ const EmailCaptureForm: React.FC<EmailCaptureFormProps> = ({ quizResult, onCompl
               className="w-full bg-wedding-olive hover:bg-wedding-olive/90"
               disabled={isSubmitting}
             >
-              <Sparkles className="mr-2 h-4 w-4" />
-              Recevoir mon plan personnalisé
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Envoi en cours...
+                </>
+              ) : (
+                <>
+                  <Sparkles className="mr-2 h-4 w-4" />
+                  Recevoir mon plan personnalisé
+                </>
+              )}
             </Button>
           </div>
           

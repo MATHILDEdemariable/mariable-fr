@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect } from 'react';
-import { QuizQuestion, UserAnswers, PlanningResult, QuizScoring, SECTION_ORDER } from './types';
+import { QuizQuestion, UserAnswers, PlanningResult, QuizScoring, SECTION_ORDER, UserQuizResult } from './types';
 import { Button } from "@/components/ui/button";
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
@@ -27,6 +28,7 @@ const WeddingQuiz: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [result, setResult] = useState<PlanningResult | null>(null);
   const [showResult, setShowResult] = useState(false);
+  const [showEmailCapture, setShowEmailCapture] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
   const isMobile = useIsMobile();
@@ -35,8 +37,16 @@ const WeddingQuiz: React.FC = () => {
   const [sections, setSections] = useState<string[]>([]);
   const [currentStep, setCurrentStep] = useState(1);
   const [sectionsCompleted, setSectionsCompleted] = useState<{[key: string]: boolean}>({});
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   
   useEffect(() => {
+    // Check if user is authenticated
+    const checkAuth = async () => {
+      const { data } = await supabase.auth.getUser();
+      setIsAuthenticated(!!data.user);
+    };
+    
+    checkAuth();
     fetchQuizData();
   }, []);
   
@@ -164,8 +174,15 @@ const WeddingQuiz: React.FC = () => {
       // Si nous avons atteint la dernière section
       if (nextSectionIndex >= sections.length) {
         calculateResult();
-        // Afficher directement les résultats au lieu du formulaire de capture d'email
-        setShowResult(true);
+        
+        // Si l'utilisateur est authentifié, montrer directement les résultats
+        // Sinon, afficher le formulaire de capture d'email
+        if (isAuthenticated) {
+          saveQuizResultAndGenerateTasks(null);
+          setShowResult(true);
+        } else {
+          setShowEmailCapture(true);
+        }
       } else {
         // Passer à la première question de la section suivante
         const nextSection = sections[nextSectionIndex];
@@ -248,41 +265,91 @@ const WeddingQuiz: React.FC = () => {
     return 'Fin';
   };
 
-  // Fonction pour sauvegarder les résultats anonymement
-  const saveAnonymousResult = async () => {
+  // Fonction pour sauvegarder les résultats et générer des tâches
+  const saveQuizResultAndGenerateTasks = async (email: string | null) => {
     if (!result) return;
     
     try {
+      const { data: userData } = await supabase.auth.getUser();
       const level = getLevel(result.score);
       
-      // On peut toujours enregistrer une entrée anonyme pour des statistiques
-      await supabase.from('quiz_email_captures').insert({
-        email: `anonymous_${new Date().getTime()}@example.com`, // Email fictif pour les utilisateurs anonymes
-        full_name: "Utilisateur Anonyme",
-        quiz_score: result.score,
-        quiz_status: result.status,
-        level: level
-      });
+      // Préparer l'objet de résultat du quiz
+      const quizResult: UserQuizResult = {
+        user_id: userData?.user?.id,
+        email: email || userData?.user?.email || undefined,
+        score: result.score,
+        status: result.status,
+        level: level,
+        objectives: result.objectives,
+        categories: result.categories
+      };
       
-      // Pas besoin d'afficher de toast ou de redirection car l'utilisateur voit déjà les résultats
+      // Sauvegarder le résultat du quiz
+      const { data: savedResult, error: saveError } = await supabase
+        .from('user_quiz_results')
+        .insert(quizResult)
+        .select()
+        .single();
+      
+      if (saveError) {
+        throw saveError;
+      }
+      
+      if (userData?.user?.id) {
+        // Générer des tâches basées sur le résultat du quiz
+        const tasks = generateTasksFromQuizResult(result);
+        
+        // Ajouter l'ID utilisateur et l'ID du résultat du quiz à chaque tâche
+        const tasksWithIds = tasks.map(task => ({
+          ...task,
+          user_id: userData.user?.id,
+          quiz_result_id: savedResult.id
+        }));
+        
+        // Sauvegarder les tâches générées
+        const { error: tasksError } = await supabase
+          .from('generated_tasks')
+          .insert(tasksWithIds);
+        
+        if (tasksError) {
+          console.error('Error saving generated tasks:', tasksError);
+        }
+      }
+      
+      // Stocker le résultat dans localStorage pour permettre à d'autres pages d'y accéder
+      localStorage.setItem('quizResult', JSON.stringify(result));
+      
     } catch (error) {
-      console.error("Erreur lors de l'enregistrement des données anonymes:", error);
-      // Pas besoin d'afficher d'erreur à l'utilisateur
+      console.error('Error saving quiz result:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de sauvegarder vos résultats.",
+        variant: "destructive"
+      });
     }
   };
 
-  // Sauvegarder les résultats anonymement lorsqu'ils sont disponibles
-  useEffect(() => {
-    if (result && showResult) {
-      saveAnonymousResult();
-    }
-  }, [result, showResult]);
+  // Gérer la soumission du formulaire de capture d'email
+  const handleEmailSubmit = async (data: { email: string; full_name?: string }) => {
+    await saveQuizResultAndGenerateTasks(data.email);
+    setShowEmailCapture(false);
+    setShowResult(true);
+  };
 
   if (isLoading || questions.length === 0) {
     return (
       <div className="py-8 text-center">
         <p>Chargement du questionnaire...</p>
       </div>
+    );
+  }
+
+  if (showEmailCapture && result) {
+    return (
+      <EmailCaptureForm 
+        quizResult={result} 
+        onComplete={handleEmailSubmit}
+      />
     );
   }
 
@@ -347,28 +414,57 @@ const WeddingQuiz: React.FC = () => {
               <p className="text-muted-foreground">Accédez à des outils plus détaillés pour organiser votre grand jour :</p>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-                <Link to="/register" className="border rounded-md p-4 bg-wedding-light/50 hover:bg-wedding-light text-center">
-                  <h4 className="font-medium mb-1">Calculer votre budget</h4>
-                  <p className="text-sm text-muted-foreground">Créez un compte pour obtenir une estimation précise</p>
-                </Link>
-                
-                <Link to="/register" className="border rounded-md p-4 bg-wedding-light/50 hover:bg-wedding-light text-center">
-                  <h4 className="font-medium mb-1">Voir votre checklist détaillée</h4>
-                  <p className="text-sm text-muted-foreground">Accédez à votre planning personnalisé</p>
-                </Link>
+                {isAuthenticated ? (
+                  <>
+                    <Link to="/dashboard/budget/calculator" className="border rounded-md p-4 bg-wedding-light/50 hover:bg-wedding-light text-center">
+                      <h4 className="font-medium mb-1">Calculer votre budget</h4>
+                      <p className="text-sm text-muted-foreground">Obtenez une estimation précise pour votre mariage</p>
+                    </Link>
+                    
+                    <Link to="/dashboard/tasks" className="border rounded-md p-4 bg-wedding-light/50 hover:bg-wedding-light text-center">
+                      <h4 className="font-medium mb-1">Voir votre checklist détaillée</h4>
+                      <p className="text-sm text-muted-foreground">Consultez les tâches générées pour vous</p>
+                    </Link>
+                  </>
+                ) : (
+                  <>
+                    <Link to="/register" className="border rounded-md p-4 bg-wedding-light/50 hover:bg-wedding-light text-center">
+                      <h4 className="font-medium mb-1">Calculer votre budget</h4>
+                      <p className="text-sm text-muted-foreground">Créez un compte pour obtenir une estimation précise</p>
+                    </Link>
+                    
+                    <Link to="/register" className="border rounded-md p-4 bg-wedding-light/50 hover:bg-wedding-light text-center">
+                      <h4 className="font-medium mb-1">Voir votre checklist détaillée</h4>
+                      <p className="text-sm text-muted-foreground">Accédez à votre planning personnalisé</p>
+                    </Link>
+                  </>
+                )}
               </div>
               
               <div className="pt-4">
-                <Button 
-                  asChild
-                  className="w-full bg-wedding-olive hover:bg-wedding-olive/90 flex items-center justify-center gap-2"
-                >
-                  <Link to="/register">
-                    <CalendarIcon size={18} />
-                    Créer un compte gratuitement
-                    <ArrowRight size={16} />
-                  </Link>
-                </Button>
+                {isAuthenticated ? (
+                  <Button 
+                    asChild
+                    className="w-full bg-wedding-olive hover:bg-wedding-olive/90 flex items-center justify-center gap-2"
+                  >
+                    <Link to="/dashboard/tasks">
+                      <CalendarIcon size={18} />
+                      Consulter votre planning
+                      <ArrowRight size={16} />
+                    </Link>
+                  </Button>
+                ) : (
+                  <Button 
+                    asChild
+                    className="w-full bg-wedding-olive hover:bg-wedding-olive/90 flex items-center justify-center gap-2"
+                  >
+                    <Link to="/register">
+                      <CalendarIcon size={18} />
+                      Créer un compte gratuitement
+                      <ArrowRight size={16} />
+                    </Link>
+                  </Button>
+                )}
               </div>
             </div>
           </div>

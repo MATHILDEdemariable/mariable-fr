@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Loader2, Filter } from 'lucide-react';
+import { Loader2, Filter, PlusCircle } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import ProgressBar from './ProgressBar';
@@ -16,6 +16,9 @@ import {
   DropdownMenuTrigger,
   DropdownMenuCheckboxItem,
 } from '@/components/ui/dropdown-menu';
+import { UserQuizResult } from '../wedding-assistant/v2/types';
+import { Separator } from '@/components/ui/separator';
+import { Link } from 'react-router-dom';
 
 interface Task {
   id: string;
@@ -26,6 +29,8 @@ interface Task {
   category: string | null;
   completed: boolean;
   position: number;
+  from_quiz?: boolean;
+  quiz_result_id?: string;
 }
 
 interface QuizScore {
@@ -54,6 +59,8 @@ const TasksList: React.FC = () => {
   const [showCompleted, setShowCompleted] = useState(false);
   const [activeTab, setActiveTab] = useState<string>("all");
   const [selectedPriorities, setSelectedPriorities] = useState<string[]>(['haute', 'moyenne', 'basse']);
+  const [latestQuizResult, setLatestQuizResult] = useState<UserQuizResult | null>(null);
+  const [viewingSource, setViewingSource] = useState<'all' | 'manual' | 'quiz'>('all');
   const { toast } = useToast();
   
   // Fetch user's quiz score to adjust task prioritization
@@ -73,11 +80,46 @@ const TasksList: React.FC = () => {
     }
   });
   
+  // Fetch latest quiz result
+  useEffect(() => {
+    const fetchLatestQuizResult = async () => {
+      try {
+        const { data: userData } = await supabase.auth.getUser();
+        if (!userData?.user?.id) return;
+        
+        const { data, error } = await supabase
+          .from('user_quiz_results')
+          .select('*')
+          .eq('user_id', userData.user.id)
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .single();
+          
+        if (error) {
+          console.error('Error fetching latest quiz result:', error);
+          return;
+        }
+        
+        if (data) {
+          setLatestQuizResult({
+            ...data,
+            objectives: Array.isArray(data.objectives) ? data.objectives : [],
+            categories: Array.isArray(data.categories) ? data.categories : []
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching latest quiz result:', error);
+      }
+    };
+    
+    fetchLatestQuizResult();
+  }, []);
+  
   useEffect(() => {
     fetchTasks();
     
     // S'abonner aux mises à jour en temps réel
-    const channel = supabase
+    const todosChannel = supabase
       .channel('todos_changes')
       .on(
         'postgres_changes',
@@ -92,10 +134,27 @@ const TasksList: React.FC = () => {
         }
       )
       .subscribe();
+
+    const generatedTasksChannel = supabase
+      .channel('generated_tasks_changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'generated_tasks',
+        },
+        () => {
+          // Rafraîchir les tâches lors d'une modification
+          fetchTasks();
+        }
+      )
+      .subscribe();
       
     // Nettoyage à la désactivation du composant
     return () => {
-      supabase.removeChannel(channel);
+      supabase.removeChannel(todosChannel);
+      supabase.removeChannel(generatedTasksChannel);
     };
   }, []);
   
@@ -107,30 +166,47 @@ const TasksList: React.FC = () => {
       const { data: { user } } = await supabase.auth.getUser();
       
       if (user) {
-        // Récupérer les tâches de l'utilisateur depuis Supabase
-        const { data: tasksData, error } = await supabase
+        // Récupérer les tâches manuelles de l'utilisateur
+        const { data: manualTasks, error: manualError } = await supabase
           .from('todos_planification')
           .select('*')
           .eq('user_id', user.id)
           .order('position', { ascending: true });
           
-        if (error) throw error;
+        if (manualError) throw manualError;
         
-        // Formater les dates
-        const formattedTasks = tasksData.map((task: any) => ({
+        // Récupérer les tâches générées de l'utilisateur
+        const { data: generatedTasks, error: generatedError } = await supabase
+          .from('generated_tasks')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('position', { ascending: true });
+          
+        if (generatedError) throw generatedError;
+        
+        // Formater les tâches manuelles
+        const formattedManualTasks = manualTasks.map((task: any) => ({
           ...task,
           due_date: task.due_date ? new Date(task.due_date) : undefined,
+          from_quiz: false
         }));
         
+        // Formater les tâches générées
+        const formattedGeneratedTasks = generatedTasks.map((task: any) => ({
+          ...task,
+          due_date: task.due_date ? new Date(task.due_date) : undefined,
+          from_quiz: true
+        }));
+        
+        // Combiner les deux ensembles de tâches
+        let allTasks = [...formattedManualTasks, ...formattedGeneratedTasks];
+        
         // Trier les tâches en fonction du score du quiz si disponible
-        let sortedTasks = formattedTasks;
         if (quizData?.quiz_score !== undefined) {
-          // Ajustement des priorités ou de l'ordre en fonction du score du quiz
-          // Plus le score est élevé, plus l'utilisateur a besoin d'aide structurée
-          sortedTasks = sortTasksByQuizScore(formattedTasks, quizData.quiz_score, quizData.quiz_status);
+          allTasks = sortTasksByQuizScore(allTasks, quizData.quiz_score, quizData.quiz_status);
         }
         
-        setTasks(sortedTasks);
+        setTasks(allTasks);
       } else {
         // Si l'utilisateur n'est pas connecté
         setTasks([]);
@@ -188,7 +264,7 @@ const TasksList: React.FC = () => {
     });
   };
   
-  const toggleTaskCompletion = async (taskId: string) => {
+  const toggleTaskCompletion = async (taskId: string, fromQuiz: boolean = false) => {
     try {
       // Trouver la tâche à mettre à jour
       const taskToUpdate = tasks.find(task => task.id === taskId);
@@ -203,9 +279,11 @@ const TasksList: React.FC = () => {
       
       setTasks(updatedTasks);
       
-      // Mettre à jour dans Supabase
+      // Mettre à jour dans la table appropriée de Supabase
+      const tableName = fromQuiz ? 'generated_tasks' : 'todos_planification';
+      
       const { error } = await supabase
-        .from('todos_planification')
+        .from(tableName)
         .update({ completed: !taskToUpdate.completed })
         .eq('id', taskId);
         
@@ -241,6 +319,10 @@ const TasksList: React.FC = () => {
   const filterTasks = () => {
     return tasks
       .filter(task => {
+        // Filtre pour la source des tâches (manuelles/générées par quiz)
+        if (viewingSource === 'manual' && task.from_quiz) return false;
+        if (viewingSource === 'quiz' && !task.from_quiz) return false;
+        
         // Filtre pour les tâches complétées/non complétées
         if (!showCompleted && task.completed) return false;
         
@@ -308,6 +390,36 @@ const TasksList: React.FC = () => {
         <ProgressBar percentage={progress} className="mt-2 h-2" />
         
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mt-4">
+          {/* Filtres pour la source des tâches */}
+          <div className="flex items-center gap-2">
+            <TabsList className="grid grid-cols-3 gap-1">
+              <TabsTrigger 
+                value="all" 
+                onClick={() => setViewingSource('all')} 
+                data-state={viewingSource === 'all' ? 'active' : 'inactive'}
+                className="text-xs sm:text-sm"
+              >
+                Toutes
+              </TabsTrigger>
+              <TabsTrigger 
+                value="manual" 
+                onClick={() => setViewingSource('manual')} 
+                data-state={viewingSource === 'manual' ? 'active' : 'inactive'}
+                className="text-xs sm:text-sm"
+              >
+                Manuelles
+              </TabsTrigger>
+              <TabsTrigger 
+                value="quiz" 
+                onClick={() => setViewingSource('quiz')} 
+                data-state={viewingSource === 'quiz' ? 'active' : 'inactive'}
+                className="text-xs sm:text-sm"
+              >
+                Quiz
+              </TabsTrigger>
+            </TabsList>
+          </div>
+          
           {uniqueCategories.length > 0 && (
             <Tabs 
               value={activeTab} 
@@ -395,12 +507,46 @@ const TasksList: React.FC = () => {
           </div>
         ) : (
           <div className="space-y-6">
+            {/* Afficher un résumé du quiz si des résultats sont disponibles */}
+            {viewingSource === 'quiz' && latestQuizResult && (
+              <div className="bg-wedding-light/30 p-4 rounded-lg mb-6">
+                <h3 className="text-lg font-medium mb-2">Votre niveau de planification</h3>
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+                  <Badge variant="outline" className="w-fit">
+                    Score: {latestQuizResult.score}/10
+                  </Badge>
+                  <p><span className="font-medium">Statut:</span> {latestQuizResult.status}</p>
+                  <p><span className="font-medium">Niveau:</span> {latestQuizResult.level}</p>
+                </div>
+                
+                <div className="mt-4">
+                  <Link to="/planning-personnalise" className="text-sm text-wedding-olive hover:underline flex items-center gap-1">
+                    <PlusCircle className="h-3 w-3" />
+                    Refaire le quiz de planification
+                  </Link>
+                </div>
+              </div>
+            )}
+
             {Object.keys(groupedTasks).length === 0 ? (
-              <p className="text-center py-4 text-muted-foreground">
-                {tasks.length === 0 
-                  ? "Aucune tâche disponible. Complétez le quiz de planification pour obtenir votre plan personnalisé." 
-                  : "Toutes vos tâches sont complétées !"}
-              </p>
+              <div className="space-y-4 text-center py-4">
+                <p className="text-muted-foreground">
+                  {tasks.length === 0 
+                    ? "Aucune tâche disponible." 
+                    : "Toutes vos tâches sont complétées !"}
+                </p>
+                
+                {tasks.length === 0 && viewingSource === 'quiz' && (
+                  <div className="pt-2">
+                    <Link to="/planning-personnalise">
+                      <Button className="bg-wedding-olive hover:bg-wedding-olive/90">
+                        <PlusCircle className="h-4 w-4 mr-2" />
+                        Faire le quiz de planification
+                      </Button>
+                    </Link>
+                  </div>
+                )}
+              </div>
             ) : (
               Object.entries(groupedTasks).map(([category, categoryTasks]) => (
                 <div key={category} className="space-y-3">
@@ -413,12 +559,12 @@ const TasksList: React.FC = () => {
                         key={task.id} 
                         className={`flex items-start space-x-3 p-3 rounded-lg border ${
                           task.completed ? 'bg-gray-50 border-gray-200' : 'bg-white border-gray-200 hover:border-gray-300'
-                        } transition-all`}
+                        } ${task.from_quiz ? 'border-l-4 border-l-wedding-olive' : ''} transition-all`}
                       >
                         <Checkbox 
                           id={`task-${task.id}`}
                           checked={task.completed}
-                          onCheckedChange={() => toggleTaskCompletion(task.id)}
+                          onCheckedChange={() => toggleTaskCompletion(task.id, task.from_quiz)}
                           className="mt-1"
                         />
                         
@@ -430,9 +576,16 @@ const TasksList: React.FC = () => {
                             >
                               {task.label}
                             </label>
-                            <Badge className={`${priorityColorMap[task.priority]} self-start whitespace-nowrap text-xs`}>
-                              {priorityTextMap[task.priority]}
-                            </Badge>
+                            <div className="flex flex-wrap gap-2 self-start">
+                              <Badge className={`${priorityColorMap[task.priority]} whitespace-nowrap text-xs`}>
+                                {priorityTextMap[task.priority]}
+                              </Badge>
+                              {task.from_quiz && (
+                                <Badge variant="outline" className="whitespace-nowrap text-xs">
+                                  Quiz
+                                </Badge>
+                              )}
+                            </div>
                           </div>
                           
                           <p className={`text-sm ${task.completed ? 'line-through text-muted-foreground' : 'text-muted-foreground'}`}>
@@ -450,6 +603,12 @@ const TasksList: React.FC = () => {
                   </div>
                 </div>
               ))
+            )}
+            
+            {tasks.length > 0 && tasks.every(task => task.completed) && (
+              <div className="text-center py-4 border-t mt-4">
+                <p className="font-medium text-wedding-olive">Félicitations ! Toutes vos tâches sont terminées. 🎉</p>
+              </div>
             )}
           </div>
         )}

@@ -1,21 +1,9 @@
 
-import { PlanningResult } from './types';
+import { PlanningResult, GeneratedTask } from './types';
 import { v4 as uuidv4 } from 'uuid';
 
-// Types pour les tâches à créer dans Supabase
-interface Task {
-  id: string;
-  label: string;
-  description: string | null;
-  priority: 'haute' | 'moyenne' | 'basse';
-  category: string;
-  position: number;
-  completed: boolean;
-  due_date?: string | null;
-}
-
 // Définir les tâches pour chaque niveau de préparation
-const beginnerTasks: Omit<Task, 'id' | 'user_id'>[] = [
+const beginnerTasks: Omit<GeneratedTask, 'id' | 'user_id' | 'quiz_result_id'>[] = [
   {
     label: "Définir un budget approximatif",
     description: "Discuter avec votre partenaire et les personnes qui pourraient contribuer financièrement",
@@ -58,7 +46,7 @@ const beginnerTasks: Omit<Task, 'id' | 'user_id'>[] = [
   }
 ];
 
-const intermediateTasks: Omit<Task, 'id' | 'user_id'>[] = [
+const intermediateTasks: Omit<GeneratedTask, 'id' | 'user_id' | 'quiz_result_id'>[] = [
   {
     label: "Finaliser votre budget détaillé",
     description: "Répartir le budget par poste de dépense",
@@ -109,7 +97,7 @@ const intermediateTasks: Omit<Task, 'id' | 'user_id'>[] = [
   }
 ];
 
-const advancedTasks: Omit<Task, 'id' | 'user_id'>[] = [
+const advancedTasks: Omit<GeneratedTask, 'id' | 'user_id' | 'quiz_result_id'>[] = [
   {
     label: "Finaliser tous les détails avec vos prestataires",
     description: "Confirmer les horaires, menus, et autres détails spécifiques",
@@ -152,11 +140,155 @@ const advancedTasks: Omit<Task, 'id' | 'user_id'>[] = [
   }
 ];
 
-// Fonction pour générer des tâches en fonction du score du quiz
-export function generateTasksFromQuizResult(result: PlanningResult): Task[] {
-  let tasks: Omit<Task, 'id' | 'user_id'>[] = [];
+// Fonction pour générer des tâches additionnelles basées sur les objectifs
+const generateTasksFromObjectives = (objectives: string[]): Omit<GeneratedTask, 'id' | 'user_id' | 'quiz_result_id'>[] => {
+  const objectiveTasks: Omit<GeneratedTask, 'id' | 'user_id' | 'quiz_result_id'>[] = [];
+  let position = 1;
   
-  // Déterminer quelles tâches ajouter en fonction du statut
+  objectives.forEach(objective => {
+    // Convertir l'objectif en tâche
+    const taskFromObjective: Omit<GeneratedTask, 'id' | 'user_id' | 'quiz_result_id'> = {
+      label: objective,
+      description: `Objectif généré à partir de votre quiz: ${objective}`,
+      priority: "haute",
+      category: "Objectifs Quiz",
+      position: position++,
+      completed: false,
+    };
+    
+    objectiveTasks.push(taskFromObjective);
+  });
+  
+  return objectiveTasks;
+};
+
+// Fonction pour générer des tâches en fonction des catégories
+const generateTasksFromCategories = (categories: string[]): Omit<GeneratedTask, 'id' | 'user_id' | 'quiz_result_id'>[] => {
+  const categoryTasks: Omit<GeneratedTask, 'id' | 'user_id' | 'quiz_result_id'>[] = [];
+  let position = 1;
+  
+  // Mapping des catégories vers des tâches spécifiques
+  const categoryTaskMapping: Record<string, Omit<GeneratedTask, 'id' | 'user_id' | 'quiz_result_id'>[]> = {
+    "Budget": [
+      {
+        label: "Établir votre budget global",
+        description: "Déterminez combien vous pouvez dépenser au total pour votre mariage",
+        priority: "haute",
+        category: "Budget",
+        position: position++,
+        completed: false,
+      },
+      {
+        label: "Créer une ventilation du budget par poste",
+        description: "Répartissez votre budget entre les différentes catégories de dépenses",
+        priority: "haute",
+        category: "Budget",
+        position: position++,
+        completed: false,
+      }
+    ],
+    "Organisation générale": [
+      {
+        label: "Créer un calendrier de planification",
+        description: "Établissez un calendrier avec toutes les étapes importantes jusqu'au jour J",
+        priority: "haute",
+        category: "Organisation Générale",
+        position: position++,
+        completed: false,
+      },
+      {
+        label: "Définir le style et le thème de votre mariage",
+        description: "Choisissez les couleurs, l'ambiance et le style qui reflètent votre personnalité",
+        priority: "moyenne",
+        category: "Organisation Générale",
+        position: position++,
+        completed: false,
+      }
+    ],
+    "Invités": [
+      {
+        label: "Finaliser la liste des invités",
+        description: "Confirmez le nombre final d'invités et leurs coordonnées",
+        priority: "haute",
+        category: "Invités",
+        position: position++,
+        completed: false,
+      },
+      {
+        label: "Préparer et envoyer les faire-part",
+        description: "Concevez, commandez et envoyez vos invitations",
+        priority: "moyenne",
+        category: "Invités",
+        position: position++,
+        completed: false,
+      }
+    ],
+    "Réception": [
+      {
+        label: "Réserver le lieu de réception",
+        description: "Visitez et réservez le lieu qui correspond à vos attentes et à votre budget",
+        priority: "haute",
+        category: "Réception",
+        position: position++,
+        completed: false,
+      },
+      {
+        label: "Choisir le menu et le service de traiteur",
+        description: "Organisez des dégustations et sélectionnez votre traiteur",
+        priority: "haute",
+        category: "Réception",
+        position: position++,
+        completed: false,
+      }
+    ],
+    "Cérémonie": [
+      {
+        label: "Organiser la cérémonie",
+        description: "Réservez le lieu et l'officiant pour votre cérémonie",
+        priority: "haute",
+        category: "Cérémonie",
+        position: position++,
+        completed: false,
+      },
+      {
+        label: "Planifier le déroulement de la cérémonie",
+        description: "Définissez le programme, les lectures, la musique et les moments clés",
+        priority: "moyenne",
+        category: "Cérémonie",
+        position: position++,
+        completed: false,
+      }
+    ]
+  };
+  
+  // Pour chaque catégorie identifiée, ajouter les tâches correspondantes
+  categories.forEach(category => {
+    const normalizedCategory = category.trim().toLowerCase();
+    
+    // Trouver la clé qui correspond le mieux dans notre mapping
+    const matchingKey = Object.keys(categoryTaskMapping).find(key => 
+      key.toLowerCase().includes(normalizedCategory) || normalizedCategory.includes(key.toLowerCase())
+    );
+    
+    if (matchingKey) {
+      // Ajouter les tâches correspondantes avec position incrémentée
+      categoryTaskMapping[matchingKey].forEach(task => {
+        categoryTasks.push({
+          ...task,
+          position: position++
+        });
+      });
+    }
+  });
+  
+  return categoryTasks;
+};
+
+// Fonction pour générer des tâches en fonction du score du quiz
+export function generateTasksFromQuizResult(result: PlanningResult): GeneratedTask[] {
+  let tasks: Omit<GeneratedTask, 'id' | 'user_id' | 'quiz_result_id'>[] = [];
+  
+  // Déterminer les tâches de base en fonction du statut/score
   if (result.status.includes("Débutant") || result.score <= 3) {
     tasks = [...beginnerTasks];
   } else if (result.status.includes("Intermédiaire") || (result.score > 3 && result.score <= 7)) {
@@ -165,20 +297,19 @@ export function generateTasksFromQuizResult(result: PlanningResult): Task[] {
     tasks = [...advancedTasks];
   }
   
-  // Ajouter des tâches spécifiques basées sur les catégories recommandées
-  result.categories.forEach(category => {
-    // Ajouter des tâches spécifiques pour chaque catégorie si nécessaire
-    if (category === "Organisation générale" && !tasks.some(t => t.category === "Organisation Générale")) {
-      tasks.push({
-        label: "Créer un calendrier de planification",
-        description: "Définir les échéances pour chaque étape importante",
-        priority: "haute",
-        category: "Organisation Générale",
-        position: tasks.length + 1,
-        completed: false,
-      });
-    }
-  });
+  // Ajouter des tâches spécifiques basées sur les objectifs
+  const objectiveTasks = generateTasksFromObjectives(result.objectives);
+  tasks = [...tasks, ...objectiveTasks];
+  
+  // Ajouter des tâches spécifiques basées sur les catégories
+  const categoryTasks = generateTasksFromCategories(result.categories);
+  tasks = [...tasks, ...categoryTasks];
+  
+  // Mettre à jour les positions pour éviter les doublons
+  tasks = tasks.map((task, index) => ({
+    ...task,
+    position: index + 1
+  }));
   
   // Ajouter un ID unique à chaque tâche
   return tasks.map(task => ({

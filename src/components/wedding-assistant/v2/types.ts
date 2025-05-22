@@ -49,6 +49,34 @@ export interface QuizEmailCapture {
   updated_at: string;
 }
 
+export interface UserQuizResult {
+  id?: string;
+  user_id?: string;
+  email?: string;
+  score: number;
+  status: string;
+  level: string;
+  objectives: string[];
+  categories: string[];
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface GeneratedTask {
+  id?: string;
+  user_id?: string;
+  quiz_result_id?: string;
+  label: string;
+  description: string | null;
+  priority: 'haute' | 'moyenne' | 'basse';
+  category: string;
+  position: number;
+  completed: boolean;
+  due_date?: string | null;
+  created_at?: string;
+  updated_at?: string;
+}
+
 // Ordre défini des sections pour le quiz
 export const SECTION_ORDER = [
   "Organisation Générale",

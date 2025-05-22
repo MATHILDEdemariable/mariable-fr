@@ -170,6 +170,59 @@ export type Database = {
         }
         Relationships: []
       }
+      generated_tasks: {
+        Row: {
+          category: string
+          completed: boolean | null
+          created_at: string | null
+          description: string | null
+          due_date: string | null
+          id: string
+          label: string
+          position: number
+          priority: string | null
+          quiz_result_id: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          category: string
+          completed?: boolean | null
+          created_at?: string | null
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          label: string
+          position: number
+          priority?: string | null
+          quiz_result_id?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          category?: string
+          completed?: boolean | null
+          created_at?: string | null
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          label?: string
+          position?: number
+          priority?: string | null
+          quiz_result_id?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "generated_tasks_quiz_result_id_fkey"
+            columns: ["quiz_result_id"]
+            isOneToOne: false
+            referencedRelation: "user_quiz_results"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       planning_questions: {
         Row: {
           categorie: string
@@ -843,6 +896,45 @@ export type Database = {
           priority?: Database["public"]["Enums"]["todo_priority"]
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      user_quiz_results: {
+        Row: {
+          categories: Json | null
+          created_at: string | null
+          email: string | null
+          id: string
+          level: string
+          objectives: Json | null
+          score: number
+          status: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          categories?: Json | null
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          level: string
+          objectives?: Json | null
+          score: number
+          status: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          categories?: Json | null
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          level?: string
+          objectives?: Json | null
+          score?: number
+          status?: string
+          updated_at?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }
