@@ -62,6 +62,7 @@ const ReaderView = () => {
       setShareToken(null);
       setUserId(null);
       // Remove custom headers
+      // Use empty object to clear headers
       supabase.functions.setCustomHeaders({});
     };
   }, [token, setReaderMode, setShareToken, setUserId]);
