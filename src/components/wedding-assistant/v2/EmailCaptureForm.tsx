@@ -10,25 +10,23 @@ import { useToast } from '@/components/ui/use-toast';
 import { useNavigate } from 'react-router-dom';
 
 interface EmailCaptureFormProps {
-  onSubmit: (email: string, fullName: string) => void;
-  onSkip: () => void;
-  quizScore: number;
-  quizStatus: string;
-  level: string;
+  quizResult: PlanningResult;
+  onComplete: (data: { email: string; full_name?: string }) => void;
 }
 
-const EmailCaptureForm: React.FC<EmailCaptureFormProps> = ({ 
-  onSubmit, 
-  onSkip, 
-  quizScore, 
-  quizStatus, 
-  level 
-}) => {
+const EmailCaptureForm: React.FC<EmailCaptureFormProps> = ({ quizResult, onComplete }) => {
   const [email, setEmail] = useState('');
   const [fullName, setFullName] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  // Fonction pour déterminer le niveau en fonction du score
+  const getLevelFromScore = (score: number): string => {
+    if (score <= 3) return 'Début';
+    if (score <= 7) return 'Milieu';
+    return 'Fin';
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,8 +43,31 @@ const EmailCaptureForm: React.FC<EmailCaptureFormProps> = ({
     setIsSubmitting(true);
 
     try {
-      // Save email and quiz results
-      onSubmit(email.trim(), fullName.trim());
+      // Déterminer le niveau en fonction du score
+      const level = getLevelFromScore(quizResult.score);
+      
+      // Sauvegarder les données dans Supabase
+      const { error } = await supabase.from('quiz_email_captures').insert({
+        email: email.trim(),
+        full_name: fullName.trim() || null,
+        quiz_score: quizResult.score,
+        quiz_status: quizResult.status,
+        level: level,
+      });
+
+      if (error) {
+        console.error("Erreur lors de l'enregistrement:", error);
+        toast({
+          title: "Erreur",
+          description: "Impossible d'enregistrer vos coordonnées. Veuillez réessayer.",
+          variant: "destructive"
+        });
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Appeler onComplete avec les données
+      onComplete({ email, full_name: fullName });
       
       toast({
         title: "Merci !",
@@ -67,8 +88,8 @@ const EmailCaptureForm: React.FC<EmailCaptureFormProps> = ({
     navigate('/register', { 
       state: { 
         fromQuiz: true,
-        quizScore,
-        quizStatus
+        quizScore: quizResult.score,
+        quizStatus: quizResult.status
       } 
     });
   };
@@ -123,7 +144,7 @@ const EmailCaptureForm: React.FC<EmailCaptureFormProps> = ({
               type="button" 
               variant="ghost"
               size="sm"
-              onClick={onSkip}
+              onClick={handleSkip}
               className="text-muted-foreground"
             >
               Créer un compte complet

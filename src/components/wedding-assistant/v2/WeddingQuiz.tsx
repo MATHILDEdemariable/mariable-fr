@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { QuizQuestion, UserAnswers, PlanningResult, QuizScoring, SECTION_ORDER, UserQuizResult } from './types';
+import { QuizQuestion, UserAnswers, PlanningResult, QuizScoring, SECTION_ORDER } from './types';
 import { Button } from "@/components/ui/button";
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
@@ -27,29 +27,20 @@ const WeddingQuiz: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [result, setResult] = useState<PlanningResult | null>(null);
   const [showResult, setShowResult] = useState(false);
-  const [showEmailForm, setShowEmailForm] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
   const isMobile = useIsMobile();
   
-  // Determine distinct sections for step indicator
+  // Déterminer les sections distinctes pour l'indicateur d'étapes
   const [sections, setSections] = useState<string[]>([]);
   const [currentStep, setCurrentStep] = useState(1);
   const [sectionsCompleted, setSectionsCompleted] = useState<{[key: string]: boolean}>({});
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   
   useEffect(() => {
-    // Check if user is authenticated
-    const checkAuth = async () => {
-      const { data } = await supabase.auth.getSession();
-      setIsAuthenticated(!!data.session);
-    };
-    
-    checkAuth();
     fetchQuizData();
   }, []);
   
-  // Effect to update currentStep based on the current section
+  // Effet pour mettre à jour currentStep en fonction de la section actuelle
   useEffect(() => {
     if (currentSection && sections.length > 0) {
       const sectionIndex = sections.indexOf(currentSection);
@@ -76,7 +67,7 @@ const WeddingQuiz: React.FC = () => {
       if (scoringError) throw scoringError;
       
       if (questionsData && questionsData.length > 0) {
-        // Convert JSON data to appropriate types
+        // Convertir les données JSON en types appropriés
         const formattedQuestions: QuizQuestion[] = questionsData.map(q => ({
           ...q,
           options: parseJsonArray<string>(q.options),
@@ -89,20 +80,20 @@ const WeddingQuiz: React.FC = () => {
           categories: parseJsonArray<string>(s.categories)
         })) || [];
 
-        // Sort questions by predefined section order
+        // Trier les questions selon l'ordre prédéfini des sections
         const sortedQuestions = sortQuestionsBySectionOrder(formattedQuestions);
         
         setQuestions(sortedQuestions);
         setScoringRules(formattedScoring);
         setCurrentSection(sortedQuestions[0].section);
         
-        // Use predefined section order instead of extracting from questions
+        // Utiliser l'ordre prédéfini des sections au lieu de l'extraire des questions
         const availableSections = SECTION_ORDER.filter(section => 
           sortedQuestions.some(q => q.section === section)
         );
         setSections(availableSections);
         
-        // Initialize completed sections
+        // Initialiser sections complétées
         const initialSectionsCompleted: {[key: string]: boolean} = {};
         availableSections.forEach(section => {
           initialSectionsCompleted[section] = false;
@@ -121,10 +112,10 @@ const WeddingQuiz: React.FC = () => {
     }
   };
 
-  // Function to sort questions by predefined section order
+  // Fonction pour trier les questions selon l'ordre prédéfini des sections
   const sortQuestionsBySectionOrder = (questions: QuizQuestion[]): QuizQuestion[] => {
     return [...questions].sort((a, b) => {
-      // First compare by section order
+      // D'abord, comparer selon l'ordre des sections
       const sectionIndexA = SECTION_ORDER.indexOf(a.section);
       const sectionIndexB = SECTION_ORDER.indexOf(b.section);
       
@@ -132,16 +123,17 @@ const WeddingQuiz: React.FC = () => {
         return sectionIndexA - sectionIndexB;
       }
       
-      // Then for questions in same section, use order_index
+      // Ensuite, pour les questions de la même section, utiliser order_index
       return a.order_index - b.order_index;
     });
   };
 
-  // Utility function to safely parse JSON
+  // Fonction utilitaire pour analyser le JSON de manière sécurisée
   const parseJsonArray = <T,>(jsonValue: Json): T[] => {
     if (Array.isArray(jsonValue)) {
       return jsonValue as T[];
     }
+    // Si la valeur n'est pas un tableau, renvoyer un tableau vide
     return [];
   };
 
@@ -153,43 +145,36 @@ const WeddingQuiz: React.FC = () => {
   };
 
   const handleNext = () => {
-    // Check if this is last question in current section
+    // Si on est à la dernière question de la section actuelle
     const currentSectionQuestions = questions.filter(q => q.section === currentSection);
     const isLastQuestionInSection = 
       currentSectionQuestions.findIndex(q => q.id === questions[currentQuestionIndex].id) === 
       currentSectionQuestions.length - 1;
     
     if (isLastQuestionInSection) {
-      // Mark this section as completed
+      // Marquer cette section comme complétée
       setSectionsCompleted(prev => ({
         ...prev,
         [currentSection]: true
       }));
       
-      // Find next uncompleted section
+      // Trouver la prochaine section non complétée
       const nextSectionIndex = sections.indexOf(currentSection) + 1;
       
-      // If reached last section
+      // Si nous avons atteint la dernière section
       if (nextSectionIndex >= sections.length) {
         calculateResult();
-        
-        // If user is authenticated, show results directly
-        if (isAuthenticated) {
-          setShowResult(true);
-          saveResultToSupabase(null); // User is already authenticated
-        } else {
-          // Show email capture form for non-authenticated users
-          setShowEmailForm(true);
-        }
+        // Afficher directement les résultats au lieu du formulaire de capture d'email
+        setShowResult(true);
       } else {
-        // Move to first question of next section
+        // Passer à la première question de la section suivante
         const nextSection = sections[nextSectionIndex];
         setCurrentSection(nextSection);
         const nextSectionFirstQuestionIndex = questions.findIndex(q => q.section === nextSection);
         setCurrentQuestionIndex(nextSectionFirstQuestionIndex);
       }
     } else {
-      // Just move to next question in same section
+      // Simplement passer à la question suivante dans la même section
       setCurrentQuestionIndex(prevIndex => prevIndex + 1);
     }
   };
@@ -197,7 +182,7 @@ const WeddingQuiz: React.FC = () => {
   const handlePrevious = () => {
     if (currentQuestionIndex > 0) {
       const prevQuestion = questions[currentQuestionIndex - 1];
-      // If previous question is in different section
+      // Si la question précédente est d'une section différente
       if (prevQuestion.section !== currentSection) {
         setCurrentSection(prevQuestion.section);
       }
@@ -206,7 +191,7 @@ const WeddingQuiz: React.FC = () => {
   };
 
   const calculateResult = () => {
-    // Calculate total score
+    // Calculer le score total
     let totalScore = 0;
     let answeredCount = 0;
     
@@ -218,10 +203,10 @@ const WeddingQuiz: React.FC = () => {
       }
     });
     
-    // Normalize score if needed
+    // Normaliser le score si nécessaire
     const normalizedScore = answeredCount > 0 ? Math.round(totalScore / answeredCount * 10) : 0;
     
-    // Find applicable scoring rule
+    // Trouver la règle de scoring applicable
     const applicableRule = scoringRules.find(rule => 
       normalizedScore >= rule.score_min && normalizedScore <= rule.score_max
     );
@@ -244,11 +229,11 @@ const WeddingQuiz: React.FC = () => {
   };
 
   const handleStepClick = (stepIndex: number) => {
-    // Only allow navigating to already completed sections
+    // Seulement permettre de naviguer vers des sections déjà complétées
     const targetSection = sections[stepIndex - 1];
     if (sectionsCompleted[targetSection] || targetSection === currentSection) {
       setCurrentSection(targetSection);
-      // Find index of first question in this section
+      // Trouver l'index de la première question de cette section
       const firstQuestionIndex = questions.findIndex(q => q.section === targetSection);
       if (firstQuestionIndex >= 0) {
         setCurrentQuestionIndex(firstQuestionIndex);
@@ -256,92 +241,47 @@ const WeddingQuiz: React.FC = () => {
     }
   };
 
-  // Determine level based on score
+  // Déterminer le niveau en fonction du score
   const getLevel = (score: number): string => {
     if (score <= 3) return 'Début';
     if (score <= 7) return 'Milieu';
     return 'Fin';
   };
 
-  // Save results to Supabase
-  const saveResultToSupabase = async (email: string | null) => {
+  // Fonction pour sauvegarder les résultats anonymement
+  const saveAnonymousResult = async () => {
     if (!result) return;
     
     try {
-      // Get user session if available
-      const { data: { session } } = await supabase.auth.getSession();
-      const userId = session?.user?.id;
       const level = getLevel(result.score);
       
-      // Call the edge function to insert the quiz result
-      const { data, error } = await supabase.functions.invoke('insert_user_quiz_result', {
-        body: {
-          p_user_id: userId || null,
-          p_email: email || (userId ? session?.user?.email : null),
-          p_score: result.score,
-          p_status: result.status,
-          p_level: level,
-          p_objectives: result.objectives,
-          p_categories: result.categories
-        }
+      // On peut toujours enregistrer une entrée anonyme pour des statistiques
+      await supabase.from('quiz_email_captures').insert({
+        email: `anonymous_${new Date().getTime()}@example.com`, // Email fictif pour les utilisateurs anonymes
+        full_name: "Utilisateur Anonyme",
+        quiz_score: result.score,
+        quiz_status: result.status,
+        level: level
       });
       
-      if (error) {
-        console.error("Error using edge function:", error);
-        
-        // No fallback to direct insert since the table doesn't exist in the TypeScript types
-        // Just log the error and continue
-        console.log("Unable to save quiz results directly due to schema mismatch");
-      }
-      
-      // If user is authenticated, tasks will be automatically created via trigger
-      if (userId) {
-        toast({
-          title: "Vos résultats ont été enregistrés",
-          description: "Votre planning a été généré dans votre tableau de bord.",
-          duration: 5000
-        });
-      }
-      
-      // Show results after saving
-      setShowResult(true);
-      
+      // Pas besoin d'afficher de toast ou de redirection car l'utilisateur voit déjà les résultats
     } catch (error) {
-      console.error("Erreur lors de l'enregistrement des résultats:", error);
-      toast({
-        title: "Erreur",
-        description: "Une erreur est survenue lors de l'enregistrement des résultats.",
-        variant: "destructive"
-      });
-      // Show results anyway even if saving failed
-      setShowResult(true);
+      console.error("Erreur lors de l'enregistrement des données anonymes:", error);
+      // Pas besoin d'afficher d'erreur à l'utilisateur
     }
   };
 
-  // Handle email form submission
-  const handleEmailSubmit = (email: string, fullName: string) => {
-    saveResultToSupabase(email);
-  };
+  // Sauvegarder les résultats anonymement lorsqu'ils sont disponibles
+  useEffect(() => {
+    if (result && showResult) {
+      saveAnonymousResult();
+    }
+  }, [result, showResult]);
 
   if (isLoading || questions.length === 0) {
     return (
       <div className="py-8 text-center">
         <p>Chargement du questionnaire...</p>
-      </div>
-    );
-  }
-
-  // Show email capture form
-  if (showEmailForm && !showResult && result) {
-    return (
-      <div className="max-w-2xl mx-auto py-4">
-        <EmailCaptureForm 
-          onSubmit={handleEmailSubmit} 
-          onSkip={() => setShowResult(true)} 
-          quizScore={result.score}
-          quizStatus={result.status}
-          level={getLevel(result.score)}
-        />
       </div>
     );
   }
@@ -407,31 +347,15 @@ const WeddingQuiz: React.FC = () => {
               <p className="text-muted-foreground">Accédez à des outils plus détaillés pour organiser votre grand jour :</p>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-                {isAuthenticated ? (
-                  <>
-                    <Link to="/dashboard/tasks" className="border rounded-md p-4 bg-wedding-light/50 hover:bg-wedding-light text-center">
-                      <h4 className="font-medium mb-1">Voir votre checklist détaillée</h4>
-                      <p className="text-sm text-muted-foreground">Accédez à votre planning personnalisé</p>
-                    </Link>
-                    
-                    <Link to="/dashboard/budget" className="border rounded-md p-4 bg-wedding-light/50 hover:bg-wedding-light text-center">
-                      <h4 className="font-medium mb-1">Calculer votre budget</h4>
-                      <p className="text-sm text-muted-foreground">Estimez le budget de votre mariage</p>
-                    </Link>
-                  </>
-                ) : (
-                  <>
-                    <Link to="/register" className="border rounded-md p-4 bg-wedding-light/50 hover:bg-wedding-light text-center">
-                      <h4 className="font-medium mb-1">Calculer votre budget</h4>
-                      <p className="text-sm text-muted-foreground">Créez un compte pour obtenir une estimation précise</p>
-                    </Link>
-                    
-                    <Link to="/register" className="border rounded-md p-4 bg-wedding-light/50 hover:bg-wedding-light text-center">
-                      <h4 className="font-medium mb-1">Voir votre checklist détaillée</h4>
-                      <p className="text-sm text-muted-foreground">Accédez à votre planning personnalisé</p>
-                    </Link>
-                  </>
-                )}
+                <Link to="/register" className="border rounded-md p-4 bg-wedding-light/50 hover:bg-wedding-light text-center">
+                  <h4 className="font-medium mb-1">Calculer votre budget</h4>
+                  <p className="text-sm text-muted-foreground">Créez un compte pour obtenir une estimation précise</p>
+                </Link>
+                
+                <Link to="/register" className="border rounded-md p-4 bg-wedding-light/50 hover:bg-wedding-light text-center">
+                  <h4 className="font-medium mb-1">Voir votre checklist détaillée</h4>
+                  <p className="text-sm text-muted-foreground">Accédez à votre planning personnalisé</p>
+                </Link>
               </div>
               
               <div className="pt-4">
@@ -439,19 +363,11 @@ const WeddingQuiz: React.FC = () => {
                   asChild
                   className="w-full bg-wedding-olive hover:bg-wedding-olive/90 flex items-center justify-center gap-2"
                 >
-                  {isAuthenticated ? (
-                    <Link to="/dashboard">
-                      <CalendarIcon size={18} />
-                      Accéder à mon tableau de bord
-                      <ArrowRight size={16} />
-                    </Link>
-                  ) : (
-                    <Link to="/register">
-                      <CalendarIcon size={18} />
-                      Créer un compte gratuitement
-                      <ArrowRight size={16} />
-                    </Link>
-                  )}
+                  <Link to="/register">
+                    <CalendarIcon size={18} />
+                    Créer un compte gratuitement
+                    <ArrowRight size={16} />
+                  </Link>
                 </Button>
               </div>
             </div>
@@ -461,17 +377,17 @@ const WeddingQuiz: React.FC = () => {
     );
   }
 
-  // Filter questions for current section
+  // Filtrer les questions pour la section actuelle
   const currentSectionQuestions = questions.filter(q => q.section === currentSection);
   const currentSectionQuestionIndex = currentSectionQuestions.findIndex(q => q.id === questions[currentQuestionIndex].id);
   const currentQuestion = questions[currentQuestionIndex];
 
-  // Calculate overall progress (based on all questions)
+  // Calculer le progrès global (basé sur toutes les questions)
   const progressPercentage = ((currentQuestionIndex + 1) / questions.length) * 100;
 
   return (
     <div className="max-w-2xl mx-auto py-4 space-y-6">
-      {/* Step indicator */}
+      {/* Indicateur d'étapes */}
       <StepIndicator 
         currentStep={currentStep}
         totalSteps={sections.length}
@@ -480,7 +396,7 @@ const WeddingQuiz: React.FC = () => {
         allowNavigation={true}
       />
 
-      {/* Section title */}
+      {/* Titre de la section */}
       <div className="text-center mb-2">
         <h2 className="text-xl font-serif">{currentSection}</h2>
         <p className="text-sm text-muted-foreground">
@@ -488,10 +404,10 @@ const WeddingQuiz: React.FC = () => {
         </p>
       </div>
 
-      {/* Global progress bar */}
+      {/* Barre de progression globale */}
       <Progress value={progressPercentage} className="h-2" />
       
-      {/* Current question */}
+      {/* Question actuelle */}
       <div className="bg-wedding-light/50 p-6 rounded-lg shadow-sm">
         <p className="text-lg mb-4">{currentQuestion.question}</p>
         
@@ -517,7 +433,7 @@ const WeddingQuiz: React.FC = () => {
         </RadioGroup>
       </div>
       
-      {/* Navigation buttons */}
+      {/* Boutons navigation */}
       <div className="flex justify-between pt-4">
         <Button
           type="button"

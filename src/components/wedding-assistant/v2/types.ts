@@ -1,3 +1,4 @@
+
 import { Json } from "@/integrations/supabase/types";
 
 export interface QuizQuestion {
@@ -48,22 +49,7 @@ export interface QuizEmailCapture {
   updated_at: string;
 }
 
-// New interface for user quiz results from database
-export interface UserQuizResult {
-  id: string;
-  user_id: string | null;
-  email: string | null;
-  score: number;
-  status: string;
-  level: string;
-  objectives: string[];
-  categories: string[];
-  created_at: string;
-  updated_at: string;
-  synchronized: boolean;
-}
-
-// Predefined order of sections for the quiz
+// Ordre défini des sections pour le quiz
 export const SECTION_ORDER = [
   "Organisation Générale",
   "Réception",
