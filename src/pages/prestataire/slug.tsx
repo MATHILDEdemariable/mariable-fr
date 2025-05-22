@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useSearchParams, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -301,11 +300,10 @@ const SinglePrestataire = () => {
       calculatedBasePrice = basePrice * guests;
     }
 
-    const commission = calculatedBasePrice * 0.04; // 4% de commission
+    // Removed 4% commission calculation
     return {
       basePrice: calculatedBasePrice,
-      commission,
-      total: calculatedBasePrice + commission,
+      total: calculatedBasePrice
     };
   };
 
@@ -712,10 +710,6 @@ const SinglePrestataire = () => {
                         : "Prix de base"}
                     </span>
                     <span>{Math.round(prices.basePrice)}€</span>
-                  </div>
-                  <div className="flex justify-between text-sm text-muted-foreground">
-                    <span>Frais de réservation (4%)</span>
-                    <span>{Math.round(prices.commission)}€</span>
                   </div>
                   <div className="flex justify-between font-medium text-lg border-t pt-2">
                     <span>Total</span>

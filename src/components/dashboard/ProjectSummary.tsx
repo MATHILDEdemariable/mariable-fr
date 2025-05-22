@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -41,11 +40,12 @@ const ProjectSummary = () => {
             <p className="text-gray-600 mt-1">{formattedDate}</p>
           </div>
           
-          <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+          {/* Improved date picker and guest count alignment */}
+          <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
             <div className="flex flex-1 sm:flex-auto">
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button variant="outline" className="flex items-center gap-2 flex-1 justify-start sm:justify-center">
+                  <Button variant="outline" className="flex items-center gap-2 w-full sm:w-auto justify-start">
                     <Calendar className="h-4 w-4 text-wedding-olive" />
                     {weddingDate ? format(weddingDate, 'dd/MM/yyyy') : 'Date du mariage'}
                   </Button>
@@ -62,13 +62,13 @@ const ProjectSummary = () => {
               </Popover>
             </div>
             
-            <div className="flex flex-1 sm:flex-auto items-center gap-2 border rounded-md p-2">
+            <div className="flex items-center gap-2 border rounded-md p-2 w-full sm:w-auto">
               <span className="text-wedding-olive whitespace-nowrap">Invités:</span>
               <Input
                 type="number"
                 value={guestCount}
                 onChange={(e) => setGuestCount(e.target.value)}
-                className="w-full sm:w-24 border-none p-0 focus-visible:ring-0"
+                className="border-none p-0 focus-visible:ring-0"
                 min="1"
               />
             </div>

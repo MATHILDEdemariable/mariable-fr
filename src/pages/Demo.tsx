@@ -166,15 +166,14 @@ const Demo = () => {
     
     // Calcul spécifique pour les traiteurs (prix par personne × nombre d'invités)
     let calculatedBasePrice = basePrice;
-    if (vendor?.categorie === 'Traiteur') {
+    if (vendor?.categorie === "Traiteur") {
       calculatedBasePrice = basePrice * guests;
     }
     
-    const commission = calculatedBasePrice * 0.04; // 4% de commission
+    // Removed the 4% commission calculation
     return {
       basePrice: calculatedBasePrice,
-      commission,
-      total: calculatedBasePrice + commission
+      total: calculatedBasePrice
     };
   };
 
@@ -487,15 +486,11 @@ const Demo = () => {
                 <div className="mt-6 border-t pt-4 space-y-2">
                   <div className="flex justify-between">
                     <span>
-                      {vendor.categorie === 'Traiteur' 
+                      {vendor.categorie === "Traiteur" 
                         ? `Prix du menu (${guests} pers.)` 
                         : 'Prix de base'}
                     </span>
                     <span>{Math.round(prices.basePrice)}€</span>
-                  </div>
-                  <div className="flex justify-between text-sm text-muted-foreground">
-                    <span>Frais de réservation (4%)</span>
-                    <span>{Math.round(prices.commission)}€</span>
                   </div>
                   <div className="flex justify-between font-medium text-lg border-t pt-2">
                     <span>Total</span>
