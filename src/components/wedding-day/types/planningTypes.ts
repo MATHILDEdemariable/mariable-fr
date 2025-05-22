@@ -38,6 +38,12 @@ export type PlanningEvent = {
   location?: string;
 };
 
+// This type is needed for JSON serialization
+export type SerializablePlanningEvent = Omit<PlanningEvent, 'startTime' | 'endTime'> & {
+  startTime: string;
+  endTime: string;
+};
+
 export type PlanningFormValues = Record<string, any>;
 
 export type PlanningSection = {
@@ -85,6 +91,7 @@ export const fetchPlanningQuestions = async (
   };
 };
 
+// Modified function to handle date serialization
 export const savePlanningResponses = async (
   supabase: SupabaseClient<Database>,
   userId: string,
@@ -92,14 +99,21 @@ export const savePlanningResponses = async (
   responses: PlanningFormValues,
   generatedPlanning: PlanningEvent[]
 ): Promise<void> => {
+  // Convert Date objects to ISO strings for JSON serialization
+  const serializablePlanning: SerializablePlanningEvent[] = generatedPlanning.map(event => ({
+    ...event,
+    startTime: event.startTime.toISOString(),
+    endTime: event.endTime.toISOString()
+  }));
+  
   const { error } = await supabase
     .from('planning_reponses_utilisateur')
-    .insert([{
+    .insert({
       user_id: userId,
       email,
       reponses: responses,
-      planning_genere: generatedPlanning
-    }]);
+      planning_genere: serializablePlanning
+    });
     
   if (error) {
     console.error("Error saving planning responses:", error);

@@ -7,7 +7,12 @@ import { Download, Share2, RefreshCw } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { User } from '@supabase/supabase-js';
-import { PlanningFormValues, PlanningEvent, savePlanningResponses } from './types/planningTypes';
+import { 
+  PlanningFormValues, 
+  PlanningEvent, 
+  SerializablePlanningEvent, 
+  savePlanningResponses 
+} from './types/planningTypes';
 import PlanningQuiz from './PlanningQuiz';
 import PlanningTimeline from './PlanningTimeline';
 import { exportDashboardToPDF } from '@/services/pdfExportService';

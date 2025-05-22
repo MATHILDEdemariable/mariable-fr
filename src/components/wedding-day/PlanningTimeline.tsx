@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { format, addMinutes } from 'date-fns';
+import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
@@ -15,10 +15,10 @@ import {
   Car,
   Award
 } from 'lucide-react';
-import { PlanningEvent } from './types/planningTypes';
+import { PlanningEvent, SerializablePlanningEvent } from './types/planningTypes';
 
 interface PlanningTimelineProps {
-  events: PlanningEvent[];
+  events: PlanningEvent[] | SerializablePlanningEvent[];
 }
 
 const PlanningTimeline: React.FC<PlanningTimelineProps> = ({ events }) => {
@@ -42,6 +42,12 @@ const PlanningTimeline: React.FC<PlanningTimelineProps> = ({ events }) => {
       default:
         return <Calendar className="h-5 w-5 text-slate-600" />;
     }
+  };
+
+  // Helper to ensure we always work with Date objects
+  const getTimeFromEvent = (event: PlanningEvent | SerializablePlanningEvent, timeKey: 'startTime' | 'endTime'): Date => {
+    const time = event[timeKey];
+    return time instanceof Date ? time : new Date(time);
   };
   
   return (
@@ -67,11 +73,11 @@ const PlanningTimeline: React.FC<PlanningTimelineProps> = ({ events }) => {
                     <span className={`font-semibold text-lg ${
                       event.isHighlight ? 'text-wedding-olive' : ''
                     }`}>
-                      {format(new Date(event.startTime), 'HH:mm', { locale: fr })}
+                      {format(getTimeFromEvent(event, 'startTime'), 'HH:mm', { locale: fr })}
                     </span>
                     {event.duration > 0 && (
                       <span className="text-slate-500 text-sm">
-                        → {format(new Date(event.endTime), 'HH:mm', { locale: fr })}
+                        → {format(getTimeFromEvent(event, 'endTime'), 'HH:mm', { locale: fr })}
                       </span>
                     )}
                   </div>
