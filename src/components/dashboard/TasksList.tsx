@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -101,10 +100,19 @@ const TasksList: React.FC = () => {
         }
         
         if (data) {
+          // Convert Json[] to string[] if needed
+          const objectives = Array.isArray(data.objectives) 
+            ? data.objectives.map(obj => String(obj)) 
+            : [];
+            
+          const categories = Array.isArray(data.categories) 
+            ? data.categories.map(cat => String(cat)) 
+            : [];
+            
           setLatestQuizResult({
             ...data,
-            objectives: Array.isArray(data.objectives) ? data.objectives : [],
-            categories: Array.isArray(data.categories) ? data.categories : []
+            objectives,
+            categories
           });
         }
       } catch (error) {

@@ -56,8 +56,8 @@ export interface UserQuizResult {
   score: number;
   status: string;
   level: string;
-  objectives: string[];
-  categories: string[];
+  objectives: string[] | Json[];
+  categories: string[] | Json[];
   created_at?: string;
   updated_at?: string;
 }
