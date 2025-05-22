@@ -1,18 +1,39 @@
 
 import React from 'react';
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { EyeIcon } from "lucide-react";
+import { Eye, ExternalLink } from 'lucide-react';
+import { Button } from '../ui/button';
+import { useReaderMode } from '@/contexts/ReaderModeContext';
 
-const ReaderBanner = () => {
+const ReaderBanner: React.FC = () => {
+  const { shareToken } = useReaderMode();
+
   return (
-    <Alert variant="default" className="bg-wedding-olive/10 border-wedding-olive mb-4">
-      <div className="flex items-center gap-2">
-        <EyeIcon className="h-4 w-4 text-wedding-olive" />
-        <AlertDescription className="text-wedding-olive font-medium">
-          Mode lecture seule - Vous visualisez un tableau de bord partagé
-        </AlertDescription>
+    <div className="bg-wedding-olive/10 border border-wedding-olive/20 rounded-lg p-4 mb-6">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Eye className="h-5 w-5 text-wedding-olive" />
+          <h2 className="text-lg font-medium">Mode Lecture Seule</h2>
+        </div>
+        
+        <Button 
+          variant="outline" 
+          size="sm" 
+          className="flex items-center gap-2"
+          onClick={() => window.location.href = 'https://mariable.fr'}
+        >
+          Visiter Mariable <ExternalLink className="h-3.5 w-3.5" />
+        </Button>
       </div>
-    </Alert>
+      
+      <p className="mt-2 text-sm text-muted-foreground">
+        Vous consultez un tableau de bord partagé en mode lecture. Vous ne pouvez pas modifier les informations. 
+        {shareToken && (
+          <span className="block mt-1 text-xs">
+            Identifiant de partage: {shareToken.substring(0, 8)}...
+          </span>
+        )}
+      </p>
+    </div>
   );
 };
 

@@ -18,6 +18,7 @@ import {
 import { UserQuizResult } from '../wedding-assistant/v2/types';
 import { Separator } from '@/components/ui/separator';
 import { Link } from 'react-router-dom';
+import { useReaderMode } from '@/contexts/ReaderModeContext';
 
 interface Task {
   id: string;
@@ -61,6 +62,7 @@ const TasksList: React.FC = () => {
   const [latestQuizResult, setLatestQuizResult] = useState<UserQuizResult | null>(null);
   const [viewingSource, setViewingSource] = useState<'all' | 'manual' | 'quiz'>('all');
   const { toast } = useToast();
+  const { isReaderMode, userId } = useReaderMode();
   
   // Fetch user's quiz score to adjust task prioritization
   const { data: quizData } = useQuery({
@@ -164,21 +166,30 @@ const TasksList: React.FC = () => {
       supabase.removeChannel(todosChannel);
       supabase.removeChannel(generatedTasksChannel);
     };
-  }, []);
+  }, [userId]);
   
   const fetchTasks = async () => {
     try {
       setIsLoading(true);
       
-      // Vérifier si l'utilisateur est connecté
-      const { data: { user } } = await supabase.auth.getUser();
+      // Determine the user ID to use for queries
+      let queryUserId: string | null = null;
       
-      if (user) {
+      if (isReaderMode && userId) {
+        // In reader mode, use the shared userId
+        queryUserId = userId;
+      } else {
+        // Regular mode - get logged in user
+        const { data: { user } } = await supabase.auth.getUser();
+        queryUserId = user?.id || null;
+      }
+      
+      if (queryUserId) {
         // Récupérer les tâches manuelles de l'utilisateur
         const { data: manualTasks, error: manualError } = await supabase
           .from('todos_planification')
           .select('*')
-          .eq('user_id', user.id)
+          .eq('user_id', queryUserId)
           .order('position', { ascending: true });
           
         if (manualError) throw manualError;
@@ -187,7 +198,7 @@ const TasksList: React.FC = () => {
         const { data: generatedTasks, error: generatedError } = await supabase
           .from('generated_tasks')
           .select('*')
-          .eq('user_id', user.id)
+          .eq('user_id', queryUserId)
           .order('position', { ascending: true });
           
         if (generatedError) throw generatedError;
@@ -273,6 +284,16 @@ const TasksList: React.FC = () => {
   };
   
   const toggleTaskCompletion = async (taskId: string, fromQuiz: boolean = false) => {
+    // Prevent task completion in reader mode
+    if (isReaderMode) {
+      toast({
+        title: "Mode lecture seule",
+        description: "Vous ne pouvez pas modifier les tâches en mode lecture",
+        variant: "warning",
+      });
+      return;
+    }
+    
     try {
       // Trouver la tâche à mettre à jour
       const taskToUpdate = tasks.find(task => task.id === taskId);

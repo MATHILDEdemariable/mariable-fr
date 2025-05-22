@@ -2,23 +2,24 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { supabase } from '@/integrations/supabase/client';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import ProjectSummary from '@/components/dashboard/ProjectSummary';
 import ReaderBanner from '@/components/dashboard/ReaderBanner';
 import { useReaderMode } from '@/contexts/ReaderModeContext';
 import { useToast } from '@/components/ui/use-toast';
+import { validateShareToken, setShareTokenHeader } from '@/utils/tokenUtils';
+import { supabase } from '@/integrations/supabase/client';
 
 const ReaderView = () => {
   const { token } = useParams<{ token: string }>();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { setReaderMode } = useReaderMode();
+  const { setReaderMode, setShareToken, setUserId } = useReaderMode();
   const navigate = useNavigate();
   const { toast } = useToast();
 
   useEffect(() => {
-    const validateToken = async () => {
+    const validateAndSetupToken = async () => {
       try {
         setIsLoading(true);
         
@@ -27,19 +28,22 @@ const ReaderView = () => {
           return;
         }
         
-        // Utiliser la fonction RPC pour valider le token
-        const { data, error } = await supabase
-          .rpc('validate_share_token', { token_value: token });
+        // Validate the token
+        const { isValid, userId } = await validateShareToken(token);
           
-        if (error) throw error;
-        
-        // Si le token n'est pas valide ou qu'aucun résultat n'est retourné
-        if (!data || data.length === 0 || !data[0].is_valid) {
+        if (!isValid || !userId) {
           setError('Ce lien de partage a expiré ou est invalide');
           return;
         }
 
-        // Activer le mode lecteur
+        // Store the token for future requests
+        setShareToken(token);
+        setUserId(userId);
+        
+        // Set up the Supabase client to include the token in requests
+        supabase.headers['x-share-token'] = token;
+        
+        // Activate reader mode
         setReaderMode(true);
         
       } catch (err) {
@@ -50,13 +54,18 @@ const ReaderView = () => {
       }
     };
 
-    validateToken();
+    validateAndSetupToken();
 
-    // Nettoyage lors du démontage du composant
+    // Cleanup when unmounting
     return () => {
       setReaderMode(false);
+      setShareToken(null);
+      setUserId(null);
+      if (supabase.headers['x-share-token']) {
+        delete supabase.headers['x-share-token'];
+      }
     };
-  }, [token, setReaderMode]);
+  }, [token, setReaderMode, setShareToken, setUserId]);
 
   useEffect(() => {
     if (error) {

@@ -21,11 +21,11 @@ const UserDashboard: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
-  const { isReaderMode } = useReaderMode();
+  const { isReaderMode, shareToken } = useReaderMode();
 
   useEffect(() => {
-    // Si on est en mode lecteur, on ne vérifie pas l'authentification
-    if (isReaderMode) return;
+    // If in reader mode, skip authentication check
+    if (isReaderMode && shareToken) return;
     
     const checkAuth = async () => {
       const { data, error } = await supabase.auth.getSession();
@@ -40,7 +40,7 @@ const UserDashboard: React.FC = () => {
     };
 
     checkAuth();
-  }, [navigate, location.pathname, toast, isReaderMode]);
+  }, [navigate, location.pathname, toast, isReaderMode, shareToken]);
 
   return (
     <>

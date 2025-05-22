@@ -1193,6 +1193,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      is_valid_share_token: {
+        Args: { token_value: string }
+        Returns: boolean
+      }
       validate_share_token: {
         Args: { token_value: string }
         Returns: {
