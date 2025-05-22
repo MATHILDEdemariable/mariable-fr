@@ -61,9 +61,15 @@ const ReaderView = () => {
       setReaderMode(false);
       setShareToken(null);
       setUserId(null);
-      // Remove custom headers
-      // Use empty object to clear headers
-      supabase.functions.setCustomHeaders({});
+      
+      // Reset headers by using a compatible approach
+      if (supabase.functions && typeof supabase.functions.setAuth === 'function') {
+        // For newer Supabase clients - remove auth
+        supabase.functions.setAuth(null);
+      }
+      
+      // Reset any custom headers we might have set
+      (supabase as any).headers = {};
     };
   }, [token, setReaderMode, setShareToken, setUserId]);
 

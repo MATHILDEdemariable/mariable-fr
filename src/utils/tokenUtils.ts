@@ -46,7 +46,16 @@ export const setShareTokenHeader = (token: string) => {
     'x-share-token': token
   };
   
-  // Set custom headers for future requests
-  // This works with the latest Supabase JS client
-  supabase.functions.setCustomHeaders(customHeaders);
+  // Set headers for auth and functions as needed
+  // This approach is compatible with various Supabase client versions
+  if (supabase.functions && typeof supabase.functions.setAuth === 'function') {
+    // For newer Supabase clients
+    supabase.functions.setAuth(token);
+  }
+  
+  // Add header to all requests as a fallback
+  (supabase as any).headers = {
+    ...(supabase as any).headers,
+    ...customHeaders
+  };
 };
