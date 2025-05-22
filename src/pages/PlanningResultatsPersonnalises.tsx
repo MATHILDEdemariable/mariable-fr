@@ -11,17 +11,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { CheckCircle, ClipboardList, ArrowRight } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { Link } from 'react-router-dom';
-
-interface QuizResult {
-  id: string;
-  user_id: string | null;
-  email: string | null;
-  score: number;
-  status: string;
-  level: string;
-  objectives: string[];
-  categories: string[];
-}
+import { UserQuizResult } from '@/components/wedding-assistant/v2/types';
 
 interface Task {
   id: string;
@@ -33,7 +23,7 @@ interface Task {
 }
 
 const PlanningResultatsPersonnalises: React.FC = () => {
-  const [quizResult, setQuizResult] = useState<QuizResult | null>(null);
+  const [quizResult, setQuizResult] = useState<UserQuizResult | null>(null);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
@@ -54,29 +44,20 @@ const PlanningResultatsPersonnalises: React.FC = () => {
       setIsAuthenticated(isAuth);
       
       if (isAuth) {
-        // Get latest quiz result for the user
+        // Get latest quiz result for the user using RPC to avoid type issues
         const { data: quizData, error: quizError } = await supabase
-          .from('user_quiz_results')
-          .select('*')
-          .eq('user_id', session.user.id)
-          .order('created_at', { ascending: false })
-          .limit(1)
-          .single();
+          .rpc('get_latest_user_quiz_result', {
+            p_user_id: session.user.id
+          });
         
-        if (quizError) {
+        if (quizError || !quizData) {
+          console.error("Error fetching quiz results:", quizError);
           // If no results yet, redirect to quiz
           navigate('/planning-personnalise');
           return;
         }
         
-        // Format the quiz result
-        const formattedQuiz: QuizResult = {
-          ...quizData,
-          objectives: Array.isArray(quizData.objectives) ? quizData.objectives : [],
-          categories: Array.isArray(quizData.categories) ? quizData.categories : [],
-        };
-        
-        setQuizResult(formattedQuiz);
+        setQuizResult(quizData);
         
         // Get generated tasks for the user
         const { data: tasksData, error: tasksError } = await supabase
@@ -142,11 +123,15 @@ const PlanningResultatsPersonnalises: React.FC = () => {
                       <div>
                         <h3 className="text-lg font-medium mb-3">Priorités</h3>
                         <div className="flex flex-wrap gap-2">
-                          {quizResult.categories.map((category, index) => (
-                            <div key={index} className="bg-wedding-light/50 px-3 py-1 rounded-full text-sm">
-                              {category}
-                            </div>
-                          ))}
+                          {quizResult.categories && quizResult.categories.length > 0 ? (
+                            quizResult.categories.map((category, index) => (
+                              <div key={index} className="bg-wedding-light/50 px-3 py-1 rounded-full text-sm">
+                                {category}
+                              </div>
+                            ))
+                          ) : (
+                            <p className="text-sm text-muted-foreground">Aucune catégorie définie</p>
+                          )}
                         </div>
                       </div>
                     </div>

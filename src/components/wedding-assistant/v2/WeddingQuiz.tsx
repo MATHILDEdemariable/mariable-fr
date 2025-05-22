@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
-import { QuizQuestion, UserAnswers, PlanningResult, QuizScoring, SECTION_ORDER } from './types';
+import { QuizQuestion, UserAnswers, PlanningResult, QuizScoring, SECTION_ORDER, UserQuizResult } from './types';
 import { Button } from "@/components/ui/button";
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
@@ -275,17 +274,34 @@ const WeddingQuiz: React.FC = () => {
       const level = getLevel(result.score);
       
       // Insert quiz result
-      const { data, error } = await supabase.from('user_quiz_results').insert({
-        user_id: userId || null,
-        email: email || (userId ? session?.user?.email : null),
-        score: result.score,
-        status: result.status,
-        level: level,
-        objectives: result.objectives,
-        categories: result.categories
-      });
+      const { data, error } = await supabase
+        .rpc('insert_user_quiz_result', {
+          p_user_id: userId || null,
+          p_email: email || (userId ? session?.user?.email : null),
+          p_score: result.score,
+          p_status: result.status,
+          p_level: level,
+          p_objectives: result.objectives,
+          p_categories: result.categories
+        });
       
-      if (error) throw error;
+      if (error) {
+        console.error("Error using RPC:", error);
+        // Fallback to traditional insert if RPC fails
+        const { error: insertError } = await supabase
+          .from('user_quiz_results')
+          .insert({
+            user_id: userId || null,
+            email: email || (userId ? session?.user?.email : null),
+            score: result.score,
+            status: result.status,
+            level: level,
+            objectives: result.objectives,
+            categories: result.categories
+          });
+        
+        if (insertError) throw insertError;
+      }
       
       // If user is authenticated, tasks will be automatically created via trigger
       if (userId) {
