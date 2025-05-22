@@ -1,4 +1,3 @@
-
 import { Json } from "@/integrations/supabase/types";
 
 export interface QuizQuestion {
@@ -72,4 +71,3 @@ export const SECTION_ORDER = [
   "Invités",
   "Mariés"
 ];
-

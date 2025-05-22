@@ -273,9 +273,9 @@ const WeddingQuiz: React.FC = () => {
       const userId = session?.user?.id;
       const level = getLevel(result.score);
       
-      // Insert quiz result
-      const { data, error } = await supabase
-        .rpc('insert_user_quiz_result', {
+      // Call the edge function to insert the quiz result
+      const { data, error } = await supabase.functions.invoke('insert_user_quiz_result', {
+        body: {
           p_user_id: userId || null,
           p_email: email || (userId ? session?.user?.email : null),
           p_score: result.score,
@@ -283,11 +283,12 @@ const WeddingQuiz: React.FC = () => {
           p_level: level,
           p_objectives: result.objectives,
           p_categories: result.categories
-        });
+        }
+      });
       
       if (error) {
-        console.error("Error using RPC:", error);
-        // Fallback to traditional insert if RPC fails
+        console.error("Error using edge function:", error);
+        // Fallback to traditional insert if edge function fails
         const { error: insertError } = await supabase
           .from('user_quiz_results')
           .insert({

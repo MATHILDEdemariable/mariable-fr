@@ -44,11 +44,12 @@ const PlanningResultatsPersonnalises: React.FC = () => {
       setIsAuthenticated(isAuth);
       
       if (isAuth) {
-        // Get latest quiz result for the user using RPC to avoid type issues
-        const { data: quizData, error: quizError } = await supabase
-          .rpc('get_latest_user_quiz_result', {
+        // Get latest quiz result for the user using the edge function
+        const { data: quizData, error: quizError } = await supabase.functions.invoke('get_latest_user_quiz_result', {
+          body: {
             p_user_id: session.user.id
-          });
+          }
+        });
         
         if (quizError || !quizData) {
           console.error("Error fetching quiz results:", quizError);
@@ -57,7 +58,7 @@ const PlanningResultatsPersonnalises: React.FC = () => {
           return;
         }
         
-        setQuizResult(quizData);
+        setQuizResult(quizData as UserQuizResult);
         
         // Get generated tasks for the user
         const { data: tasksData, error: tasksError } = await supabase
