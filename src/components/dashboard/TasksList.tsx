@@ -400,32 +400,28 @@ const TasksList: React.FC = () => {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mt-4">
           {/* Filtres pour la source des tâches */}
           <div className="flex items-center gap-2">
-            <TabsList className="grid grid-cols-3 gap-1">
-              <TabsTrigger 
-                value="all" 
-                onClick={() => setViewingSource('all')} 
-                data-state={viewingSource === 'all' ? 'active' : 'inactive'}
-                className="text-xs sm:text-sm"
-              >
-                Toutes
-              </TabsTrigger>
-              <TabsTrigger 
-                value="manual" 
-                onClick={() => setViewingSource('manual')} 
-                data-state={viewingSource === 'manual' ? 'active' : 'inactive'}
-                className="text-xs sm:text-sm"
-              >
-                Manuelles
-              </TabsTrigger>
-              <TabsTrigger 
-                value="quiz" 
-                onClick={() => setViewingSource('quiz')} 
-                data-state={viewingSource === 'quiz' ? 'active' : 'inactive'}
-                className="text-xs sm:text-sm"
-              >
-                Quiz
-              </TabsTrigger>
-            </TabsList>
+            <Tabs value={viewingSource} onValueChange={(value: string) => setViewingSource(value as 'all' | 'manual' | 'quiz')}>
+              <TabsList className="grid grid-cols-3 gap-1">
+                <TabsTrigger 
+                  value="all" 
+                  className="text-xs sm:text-sm"
+                >
+                  Toutes
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="manual" 
+                  className="text-xs sm:text-sm"
+                >
+                  Manuelles
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="quiz" 
+                  className="text-xs sm:text-sm"
+                >
+                  Quiz
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
           </div>
           
           {uniqueCategories.length > 0 && (
