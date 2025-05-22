@@ -49,7 +49,7 @@ export interface QuizEmailCapture {
   updated_at: string;
 }
 
-// Ordre défini des sections pour le quiz
+// Predefined order of sections for the quiz
 export const SECTION_ORDER = [
   "Organisation Générale",
   "Réception",

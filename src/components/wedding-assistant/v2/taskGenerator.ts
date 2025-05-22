@@ -2,7 +2,7 @@
 import { PlanningResult } from './types';
 import { v4 as uuidv4 } from 'uuid';
 
-// Types pour les tâches à créer dans Supabase
+// Types for tasks to create in Supabase
 interface Task {
   id: string;
   label: string;
@@ -14,7 +14,7 @@ interface Task {
   due_date?: string | null;
 }
 
-// Définir les tâches pour chaque niveau de préparation
+// Define tasks for each preparation level
 const beginnerTasks: Omit<Task, 'id' | 'user_id'>[] = [
   {
     label: "Définir un budget approximatif",
@@ -152,11 +152,11 @@ const advancedTasks: Omit<Task, 'id' | 'user_id'>[] = [
   }
 ];
 
-// Fonction pour générer des tâches en fonction du score du quiz
+// Function to generate tasks based on quiz score
 export function generateTasksFromQuizResult(result: PlanningResult): Task[] {
   let tasks: Omit<Task, 'id' | 'user_id'>[] = [];
   
-  // Déterminer quelles tâches ajouter en fonction du statut
+  // Determine which tasks to add based on status
   if (result.status.includes("Débutant") || result.score <= 3) {
     tasks = [...beginnerTasks];
   } else if (result.status.includes("Intermédiaire") || (result.score > 3 && result.score <= 7)) {
@@ -165,9 +165,9 @@ export function generateTasksFromQuizResult(result: PlanningResult): Task[] {
     tasks = [...advancedTasks];
   }
   
-  // Ajouter des tâches spécifiques basées sur les catégories recommandées
+  // Add specific tasks based on recommended categories
   result.categories.forEach(category => {
-    // Ajouter des tâches spécifiques pour chaque catégorie si nécessaire
+    // Add specific tasks for each category if needed
     if (category === "Organisation générale" && !tasks.some(t => t.category === "Organisation Générale")) {
       tasks.push({
         label: "Créer un calendrier de planification",
@@ -180,7 +180,7 @@ export function generateTasksFromQuizResult(result: PlanningResult): Task[] {
     }
   });
   
-  // Ajouter un ID unique à chaque tâche
+  // Add a unique ID to each task
   return tasks.map(task => ({
     ...task,
     id: uuidv4(),
