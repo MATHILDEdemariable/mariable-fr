@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
@@ -117,22 +116,27 @@ const LandingPage = () => {
     }
   };
 
-  // Données pour les différentes sections
-  const benefits = [
+  // Updated benefits for Mariable experience
+  const mariableExperience = [
     {
-      icon: Users,
-      title: "Service Personnalisé & Premium",
+      title: "Personnalisé",
       description: "Une expérience sur mesure adaptée à vos besoins et vos préférences pour un mariage unique."
     },
     {
-      icon: Clock,
-      title: "Simple: Gain de temps & Efficacité",
+      title: "Maîtrisé",
+      description: "Des outils et une méthode éprouvée pour garder le contrôle de votre organisation."
+    },
+    {
+      title: "Premium",
+      description: "Accès exclusif à une sélection de prestataires d'excellence rigoureusement choisis."
+    },
+    {
+      title: "Simple",
       description: "Des outils intuitifs qui simplifient l'organisation et vous font gagner des heures précieuses."
     },
     {
-      icon: DollarSign,
-      title: "Service 100% Gratuit",
-      description: "Accédez à tous nos outils et notre réseau de prestataires sans aucun frais supplémentaire."
+      title: "Au meilleur rapport qualité-prix",
+      description: "Bénéficiez de tarifs préférentiels et d'un service complet sans frais cachés."
     }
   ];
   
@@ -220,7 +224,7 @@ const LandingPage = () => {
       <Header />
 
       <main className="flex-grow">
-        {/* Section 1: Hero Section - Modified with background image and improved responsive layout */}
+        {/* Section 1: Hero Section */}
         <section className="relative py-16 md:py-20 bg-cover bg-center bg-no-repeat min-h-[60vh] md:min-h-[70vh] flex items-center" 
           style={{ backgroundImage: "url('/lovable-uploads/9b1d88ec-ed12-4818-ba94-bf11f036a875.png')" }}>
           <div className="absolute inset-0 bg-black/40"></div>
@@ -235,7 +239,7 @@ const LandingPage = () => {
                   )}
                 </h1>
                 <p className="mb-8 text-lg text-white/90">
-                  Avec le premier assistant virtuel à la planification
+                  avec une solution complète
                 </p>
                 <div className="flex flex-col sm:flex-row items-center gap-4 justify-center md:justify-start">
                   <Button 
@@ -244,15 +248,7 @@ const LandingPage = () => {
                     onClick={handleCTAClick}
                     className="shadow-lg hover:shadow-xl transition-all"
                   >
-                    {isLoggedIn ? "Accéder à mon tableau de bord" : "Je découvre Mariable"}
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    size={isMobile ? "default" : "lg"}
-                    className="bg-white/10 border-white text-white hover:bg-white/20"
-                    onClick={() => navigate('/guide-mariable')}
-                  >
-                    Découvrez le Guide Mariable
+                    Découvrir
                   </Button>
                 </div>
               </div>
@@ -260,24 +256,59 @@ const LandingPage = () => {
           </div>
         </section>
 
-        {/* Section 2: Mariable transformation section - Updated title and subtitle */}
+        {/* Section 2: Avec Mariable, l'organisation reste une joie */}
         <section className="py-16 bg-gray-50">
           <div className="container mx-auto px-4">
             <h2 className="text-2xl md:text-3xl font-serif mb-3 text-center">
-              Mariable transforme vos préparatifs
+              Avec Mariable, l'organisation reste une joie
             </h2>
-            <p className="text-center text-muted-foreground mb-10 max-w-2xl mx-auto">
-              en une expérience simple & agréable grâce à des services sur-mesure pensés pour vous
+            <p className="text-center text-muted-foreground mb-10 max-w-3xl mx-auto">
+              Vous êtes les mieux placés pour organiser votre mariage. Mais on ne s'improvise pas chef de projet événementiel du jour au lendemain. Avec Mariable, vous organisez votre mariage plus simplement. C'est votre première fois, mais pas la nôtre. Mariable simplifie tout, pour que vous profitiez de l'essentiel.
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-              {benefits.map((benefit, index) => (
-                <BenefitCard 
-                  key={index}
-                  icon={benefit.icon}
-                  title={benefit.title}
-                  description={benefit.description}
-                />
-              ))}
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+              {/* Aide à la planification */}
+              <div className="bg-white p-8 rounded-lg shadow-sm border">
+                <h3 className="text-xl font-serif mb-4 text-wedding-olive">Aide à la planification</h3>
+                <div className="space-y-3 mb-6">
+                  <div className="flex items-start gap-3">
+                    <div className="w-2 h-2 bg-wedding-olive rounded-full mt-2 flex-shrink-0"></div>
+                    <span><strong>Avant:</strong> Planning personnalisé, budget, organisation</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-2 h-2 bg-wedding-olive rounded-full mt-2 flex-shrink-0"></div>
+                    <span><strong>Pendant:</strong> Coordination jour-J, timing détaillé</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-2 h-2 bg-wedding-olive rounded-full mt-2 flex-shrink-0"></div>
+                    <span><strong>Après:</strong> Suivi et accompagnement post-mariage</span>
+                  </div>
+                </div>
+                <Button 
+                  variant="wedding" 
+                  className="w-full"
+                  onClick={() => navigate('/services/planification')}
+                >
+                  Découvrir nos outils de planification
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </div>
+
+              {/* Le guide Mariable */}
+              <div className="bg-white p-8 rounded-lg shadow-sm border">
+                <h3 className="text-xl font-serif mb-4 text-wedding-olive">Le guide Mariable</h3>
+                <p className="text-muted-foreground mb-6">
+                  Une sélection rigoureuse de prestataires premium, testés et approuvés pour garantir la qualité de votre mariage.
+                </p>
+                <Button 
+                  variant="wedding" 
+                  className="w-full"
+                  onClick={() => navigate('/guide-mariable')}
+                >
+                  Accéder au guide Mariable
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </div>
             </div>
           </div>
         </section>
@@ -293,14 +324,6 @@ const LandingPage = () => {
                   onClick={() => navigate('/assistant-v2')}
                 >
                   Dites oui à la simplicité
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-                <Button
-                  variant="wedding"
-                  className="mb-6"
-                  onClick={() => navigate('/guide-mariable')}
-                >
-                  Découvrez le Guide Mariable
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </div>
@@ -326,37 +349,24 @@ const LandingPage = () => {
           </div>
         </section>
 
-        {/* Section 4: Ce que vous allez adorer - Redesigned table style with added features */}
+        {/* Section 4: L'expérience Mariable - Updated content */}
         <section className="py-16 bg-white">
           <div className="container mx-auto px-4">
             <h2 className="text-2xl md:text-3xl font-serif mb-10 text-center">
-              Ce que vous allez adorer
+              L'expérience Mariable
             </h2>
-            <div className="max-w-5xl mx-auto">
-              <div className="overflow-hidden border rounded-lg shadow-sm">
-                <Table>
-                  <TableHeader>
-                    <TableRow className="bg-gray-50 hover:bg-gray-50">
-                      <TableHead className="w-16"></TableHead>
-                      <TableHead className="font-medium text-lg">Fonctionnalité</TableHead>
-                      <TableHead>Avantage</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {features.map((feature, index) => (
-                      <TableRow key={index} className="hover:bg-gray-50/50">
-                        <TableCell className="p-4">
-                          <div className="w-10 h-10 bg-wedding-olive/10 rounded-full flex items-center justify-center">
-                            <feature.icon className="h-5 w-5 text-wedding-olive" />
-                          </div>
-                        </TableCell>
-                        <TableCell className="font-medium">{feature.name}</TableCell>
-                        <TableCell>{feature.description}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+              {mariableExperience.map((item, index) => (
+                <div key={index} className="bg-gray-50 p-6 rounded-lg border">
+                  <div className="flex items-center mb-3">
+                    <span className="bg-wedding-olive text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-medium mr-3">
+                      {index + 1}
+                    </span>
+                    <h3 className="font-serif text-lg font-medium">{item.title}</h3>
+                  </div>
+                  <p className="text-muted-foreground text-sm">{item.description}</p>
+                </div>
+              ))}
             </div>
           </div>
         </section>

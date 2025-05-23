@@ -13,14 +13,13 @@ const HeroSection = () => {
         </h1>
         
         <p className="text-lg md:text-xl text-gray-700 mb-8 max-w-2xl">
-          Une application intuitive qui vous accompagne pas à pas dans l'organisation 
-          de votre mariage, du choix des prestataires jusqu'à la coordination du jour J.
+          avec une solution complète
         </p>
         
         <div className="mb-12">
           <Button asChild size="lg" className="bg-wedding-olive hover:bg-wedding-olive/90">
             <Link to="/register">
-              Je découvre Mariable <ArrowRight className="ml-2 h-5 w-5" />
+              Découvrir <ArrowRight className="ml-2 h-5 w-5" />
             </Link>
           </Button>
         </div>
