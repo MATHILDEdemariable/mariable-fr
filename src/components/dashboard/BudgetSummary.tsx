@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { 
@@ -170,7 +169,7 @@ const BudgetSummary: React.FC = () => {
     breakdown: []
   });
   
-  // Pour les toasts et export PDF
+  // Pour les toasts
   const { toast } = useToast();
   
   // Formater les montants en euros
@@ -204,6 +203,42 @@ const BudgetSummary: React.FC = () => {
           variant: "destructive"
         });
       }
+    }, 500);
+  };
+
+  // Handle direct CSV export
+  const handleDirectExport = () => {
+    toast({
+      title: "Export CSV en cours",
+      description: "Préparation de votre document...",
+    });
+    
+    setTimeout(() => {
+      // Create CSV content from budget data
+      let csvContent = "Catégorie,Montant\n";
+      budgetData.forEach(item => {
+        csvContent += `"${item.name}","${item.amount}"\n`;
+      });
+      
+      // Add total
+      const total = budgetData.reduce((sum, item) => sum + item.amount, 0);
+      csvContent += `"TOTAL","${total}"\n";
+      
+      // Create and download the file
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', `budget-summary-${format(new Date(), 'yyyy-MM-dd')}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      toast({
+        title: "Export réussi",
+        description: "Votre résumé budgétaire a été exporté au format CSV",
+      });
     }, 500);
   };
 
@@ -1074,36 +1109,13 @@ const BudgetSummary: React.FC = () => {
                 Calculer mon budget
               </Button>
               
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button 
-                    variant="outline" 
-                    className="w-full sm:w-auto bg-wedding-olive/10 hover:bg-wedding-olive/20 text-wedding-olive"
-                  >
-                    <Download className="mr-2 h-4 w-4" />
-                    Exporter
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Exporter mon budget</DialogTitle>
-                  </DialogHeader>
-                  <div className="grid gap-4 py-4">
-                    <Button onClick={handleExportPDF} className="w-full flex items-center justify-center gap-2">
-                      <FileText className="h-4 w-4" />
-                      Exporter en PDF
-                    </Button>
-                    <Button onClick={handleExportExcel} className="w-full flex items-center justify-center gap-2">
-                      <FileText className="h-4 w-4" />
-                      Exporter vers Excel (CSV)
-                    </Button>
-                    <Button onClick={handleExportGoogleSheets} className="w-full flex items-center justify-center gap-2">
-                      <FileText className="h-4 w-4" />
-                      Exporter vers Google Sheets
-                    </Button>
-                  </div>
-                </DialogContent>
-              </Dialog>
+              <Button 
+                onClick={handleDirectExport}
+                className="w-full sm:w-auto bg-wedding-olive hover:bg-wedding-olive/80 flex gap-2 items-center"
+              >
+                <Download className="h-4 w-4" />
+                Exporter CSV
+              </Button>
             </div>
           </>
         )}
