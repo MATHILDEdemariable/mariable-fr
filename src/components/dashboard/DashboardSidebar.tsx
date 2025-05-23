@@ -8,7 +8,8 @@ import {
   Store, 
   Heart, 
   Settings,
-  LogOut
+  LogOut,
+  Wine
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -49,6 +50,11 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
       label: 'Coordination Jour J',
       icon: <Calendar className="h-4 w-4" />,
       path: '/dashboard/coordination',
+    },
+    {
+      label: 'Calculatrice de boisson',
+      icon: <Wine className="h-4 w-4" />,
+      path: '/dashboard/drinks',
     },
     {
       label: 'Paramètres',
