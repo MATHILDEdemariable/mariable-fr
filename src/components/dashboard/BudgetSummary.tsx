@@ -222,7 +222,7 @@ const BudgetSummary: React.FC = () => {
       
       // Add total
       const total = budgetData.reduce((sum, item) => sum + item.amount, 0);
-      csvContent += `"TOTAL","${total}"\n";
+      csvContent += `"TOTAL","${total}"\n`;
       
       // Create and download the file
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
