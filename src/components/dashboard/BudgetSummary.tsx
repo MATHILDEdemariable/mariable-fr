@@ -5,12 +5,12 @@ import {
   BarChart, Bar, XAxis, YAxis, Tooltip as RechartsTooltip
 } from 'recharts';
 import { 
-  Euro, ArrowRight, Download,
+  Euro, ArrowRight, Download, Loader2,
   MapPin, Calculator, Users, Calendar, Info, ChevronRight, ChevronDown
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -30,6 +30,16 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 interface BudgetCategory {
   name: string;
@@ -162,49 +172,82 @@ const BudgetSummary: React.FC = () => {
   };
 
   // Gérer l'export PDF
+  const [isExporting, setIsExporting] = useState(false);
+  const [showExportDialog, setShowExportDialog] = useState(false);
+  
   const handleExportPDF = async () => {
+    setIsExporting(true);
+    setShowExportDialog(false);
+    
     toast({
       title: "Export PDF en cours",
       description: "Préparation de votre document...",
     });
     
-    setTimeout(async () => {
-      const success = await exportDashboardToPDF();
+    try {
+      // Wait a moment for UI feedback
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      const success = await exportDashboardToPDF(
+        'budget-dashboard-content',
+        `budget-mariable-${format(new Date(), 'yyyy-MM-dd')}.pdf`,
+        'portrait',
+        'Budget de Mariage - Mariable'
+      );
       
       if (success) {
         toast({
           title: "Export réussi",
-          description: "Votre dashboard a été exporté en PDF",
+          description: "Votre budget a été exporté en PDF",
         });
       } else {
-        toast({
-          title: "Erreur d'export",
-          description: "Une erreur s'est produite lors de l'export en PDF",
-          variant: "destructive"
-        });
+        throw new Error("PDF export failed");
       }
-    }, 500);
+    } catch (error) {
+      console.error("Erreur lors de l'export PDF:", error);
+      toast({
+        title: "Erreur d'export PDF",
+        description: "Impossible d'exporter le fichier. Tentative d'export CSV...",
+        variant: "destructive"
+      });
+      
+      // Fallback to CSV export
+      setTimeout(() => {
+        handleExportCSV();
+      }, 1000);
+    } finally {
+      setIsExporting(false);
+    }
   };
 
-  const handleExportExcel = () => {
+  const handleExportCSV = async () => {
+    setIsExporting(true);
+    setShowExportDialog(false);
+    
     toast({
-      title: "Export Excel en cours",
-      description: "Préparation de votre document CSV...",
+      title: "Export CSV en cours",
+      description: "Préparation de votre document...",
     });
     
-    setTimeout(() => {
+    try {
+      // Wait a moment for UI feedback
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
       // Create CSV content from budget data
-      let csvContent = "Category,Amount\n";
+      let csvContent = "Catégorie,Montant (€)\n";
       budgetData.forEach(item => {
         csvContent += `"${item.name}","${item.amount}"\n`;
       });
+      
+      // Add total
+      csvContent += `"TOTAL","${totalBudget}"\n";
       
       // Create and download the file
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
       const link = document.createElement('a');
       const url = URL.createObjectURL(blob);
       link.setAttribute('href', url);
-      link.setAttribute('download', `budget-summary-${format(new Date(), 'yyyy-MM-dd')}.csv`);
+      link.setAttribute('download', `budget-mariable-${format(new Date(), 'yyyy-MM-dd')}.csv`);
       link.style.visibility = 'hidden';
       document.body.appendChild(link);
       link.click();
@@ -212,9 +255,18 @@ const BudgetSummary: React.FC = () => {
       
       toast({
         title: "Export réussi",
-        description: "Votre résumé budgétaire a été exporté au format CSV",
+        description: "Votre budget a été exporté au format CSV",
       });
-    }, 500);
+    } catch (error) {
+      console.error("Erreur lors de l'export CSV:", error);
+      toast({
+        title: "Erreur d'export",
+        description: "Impossible d'exporter le fichier. Veuillez réessayer.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsExporting(false);
+    }
   };
 
   const handleExportGoogleSheets = () => {
@@ -725,134 +777,168 @@ const BudgetSummary: React.FC = () => {
   };
   
   return (
-    <Card className="bg-wedding-cream/5 border-wedding-cream/20">
-      <CardHeader className="pb-2">
-        <CardTitle className="font-serif text-wedding-olive">Budget</CardTitle>
-        <CardDescription className="text-muted-foreground">
-          Répartition de votre budget de mariage
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        {showCalculator ? (
-          showEstimate ? (
-            renderEstimate()
+    <div id="budget-dashboard-content">
+      <Card className="bg-wedding-cream/5 border-wedding-cream/20">
+        <CardHeader className="pb-2">
+          <CardTitle className="font-serif text-wedding-olive">Budget</CardTitle>
+          <CardDescription className="text-muted-foreground">
+            Répartition de votre budget de mariage
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {showCalculator ? (
+            showEstimate ? (
+              renderEstimate()
+            ) : (
+              <>
+                <div className="min-h-[300px]">
+                  {renderStepContent()}
+                </div>
+                
+                <div className="flex justify-between mt-6">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="flex items-center gap-2"
+                    onClick={goToPreviousStep}
+                    disabled={currentStep === 1}
+                  >
+                    <ArrowRight className="mr-2 h-4 w-4 rotate-180" />
+                    Précédent
+                  </Button>
+                  
+                  <Button
+                    type="button"
+                    className="bg-wedding-olive hover:bg-wedding-olive/90 text-white flex items-center justify-center gap-2"
+                    onClick={goToNextStep}
+                  >
+                    {currentStep === 4 ? (
+                      <>
+                        Calculer
+                        <Calculator className="ml-2 h-4 w-4" />
+                      </>
+                    ) : (
+                      <>
+                        Suivant
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </>
+            )
           ) : (
             <>
-              <div className="min-h-[300px]">
-                {renderStepContent()}
+              <div className="h-64 md:h-80">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={budgetData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={60}
+                      outerRadius="90%"
+                      paddingAngle={2}
+                      dataKey="amount"
+                      nameKey="name"
+                      label={({ name, percent }) => `${(percent * 100).toFixed(0)}%`}
+                      labelLine={{ stroke: '#7F9474', strokeWidth: 0.5 }}
+                      strokeWidth={1}
+                      stroke="#f8f6f0"
+                    >
+                      {budgetData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                  </PieChart>
+                </ResponsiveContainer>
               </div>
               
-              <div className="flex justify-between mt-6">
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="flex items-center gap-2"
-                  onClick={goToPreviousStep}
-                  disabled={currentStep === 1}
-                >
-                  <ArrowRight className="mr-2 h-4 w-4 rotate-180" />
-                  Précédent
-                </Button>
-                
-                <Button
-                  type="button"
-                  className="bg-wedding-olive hover:bg-wedding-olive/90 text-white flex items-center justify-center gap-2"
-                  onClick={goToNextStep}
-                >
-                  {currentStep === 4 ? (
-                    <>
-                      Calculer
-                      <Calculator className="ml-2 h-4 w-4" />
-                    </>
-                  ) : (
-                    <>
-                      Suivant
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </>
-                  )}
-                </Button>
-              </div>
-            </>
-          )
-        ) : (
-          <>
-            <div className="h-64 md:h-80"> {/* Adjusted height for better display */}
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={budgetData}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={60}
-                    outerRadius="90%"
-                    paddingAngle={2}
-                    dataKey="amount"
-                    nameKey="name"
-                    /* Simplified labels for better visibility */
-                    label={({ name, percent }) => `${(percent * 100).toFixed(0)}%`}
-                    labelLine={{ stroke: '#7F9474', strokeWidth: 0.5 }}
-                    strokeWidth={1}
-                    stroke="#f8f6f0"
-                  >
-                    {budgetData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
-            
-            <div className="pt-6 border-t border-wedding-cream/30">
-              <div className="flex items-center justify-center gap-3 mb-4">
-                <div className="bg-wedding-cream/20 p-2 rounded-full">
-                  <Euro className="h-8 w-8 text-wedding-olive" />
-                </div>
-                <div className="text-center">
-                  <p className="text-sm text-muted-foreground">Budget total</p>
-                  <p className="text-2xl font-medium text-wedding-olive">{formatCurrency(totalBudget)}</p>
-                </div>
-              </div>
-            </div>
-            
-            {/* Responsive legend - grid on desktop, single column on mobile */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-              {budgetData.map((category) => (
-                <div key={category.name} className="flex items-center space-x-3 p-2 bg-white/50 rounded-md">
-                  <div 
-                    className="h-4 w-4 rounded-full shrink-0" 
-                    style={{ backgroundColor: category.color }}
-                  />
-                  <div className="flex-1">
-                    <p className="text-sm font-medium">{category.name}</p>
-                    <p className="text-sm text-muted-foreground">{formatCurrency(category.amount)}</p>
+              <div className="pt-6 border-t border-wedding-cream/30">
+                <div className="flex items-center justify-center gap-3 mb-4">
+                  <div className="bg-wedding-cream/20 p-2 rounded-full">
+                    <Euro className="h-8 w-8 text-wedding-olive" />
+                  </div>
+                  <div className="text-center">
+                    <p className="text-sm text-muted-foreground">Budget total</p>
+                    <p className="text-2xl font-medium text-wedding-olive">{formatCurrency(totalBudget)}</p>
                   </div>
                 </div>
-              ))}
-            </div>
-            
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mt-6">
-              <Button 
-                variant="outline" 
-                className="w-full sm:flex-1 bg-wedding-cream/10 hover:bg-wedding-cream/20" 
-                onClick={() => setShowCalculator(true)}
-              >
-                <Calculator className="mr-2 h-4 w-4" />
-                Calculer mon budget
-              </Button>
+              </div>
               
-              <Button 
-                variant="outline" 
-                className="w-full sm:w-auto bg-wedding-olive/10 hover:bg-wedding-olive/20 text-wedding-olive"
-                onClick={handleExportPDF}
-              >
-                <Download className="mr-2 h-4 w-4" />
-                Exporter
-              </Button>
-            </div>
-          </>
-        )}
-      </CardContent>
-    </Card>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                {budgetData.map((category) => (
+                  <div key={category.name} className="flex items-center space-x-3 p-2 bg-white/50 rounded-md">
+                    <div 
+                      className="h-4 w-4 rounded-full shrink-0" 
+                      style={{ backgroundColor: category.color }}
+                    />
+                    <div className="flex-1">
+                      <p className="text-sm font-medium">{category.name}</p>
+                      <p className="text-sm text-muted-foreground">{formatCurrency(category.amount)}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mt-6">
+                <Button 
+                  variant="outline" 
+                  className="w-full sm:flex-1 bg-wedding-cream/10 hover:bg-wedding-cream/20" 
+                  onClick={() => setShowCalculator(true)}
+                >
+                  <Calculator className="mr-2 h-4 w-4" />
+                  Calculer mon budget
+                </Button>
+                
+                <AlertDialog open={showExportDialog} onOpenChange={setShowExportDialog}>
+                  <AlertDialogTrigger asChild>
+                    <Button 
+                      variant="outline" 
+                      className="w-full sm:w-auto bg-wedding-olive/10 hover:bg-wedding-olive/20 text-wedding-olive"
+                      disabled={isExporting}
+                    >
+                      {isExporting ? (
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      ) : (
+                        <Download className="mr-2 h-4 w-4" />
+                      )}
+                      {isExporting ? 'Export en cours...' : 'Exporter'}
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Choisir le format d'export</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Sélectionnez le format dans lequel vous souhaitez exporter votre budget de mariage.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter className="flex flex-col sm:flex-row gap-3">
+                      <AlertDialogCancel>Annuler</AlertDialogCancel>
+                      <Button
+                        onClick={handleExportCSV}
+                        variant="outline"
+                        className="flex items-center gap-2"
+                      >
+                        <Download className="h-4 w-4" />
+                        Export CSV
+                      </Button>
+                      <AlertDialogAction
+                        onClick={handleExportPDF}
+                        className="bg-wedding-olive hover:bg-wedding-olive/90 text-white flex items-center gap-2"
+                      >
+                        <Download className="h-4 w-4" />
+                        Export PDF
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
+            </>
+          )}
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 

@@ -7,7 +7,6 @@ import DetailedBudget from '@/components/dashboard/DetailedBudget';
 import { BarChart, PieChart, Calculator } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import Budget from '../services/Budget';
 import BudgetCalculator from '@/components/dashboard/BudgetCalculator';
 
 const BudgetPage: React.FC = () => {
@@ -41,7 +40,7 @@ const BudgetPage: React.FC = () => {
         <meta name="description" content="Gérez le budget de votre mariage" />
       </Helmet>
 
-      <div className="space-y-6">
+      <div className="space-y-6" id="budget-dashboard-content">
         <div className="flex justify-between items-center">
           <h1 className="text-3xl font-serif text-wedding-olive">Budget de Mariage</h1>
         </div>
