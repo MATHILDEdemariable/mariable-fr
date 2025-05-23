@@ -1,24 +1,15 @@
+
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { 
-  Calendar, 
-  Wine, 
-  Check, 
-  DollarSign, 
-  Heart, 
-  ChevronRight,
-} from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Calendar } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import TasksList from './TasksList';
-import BudgetSummary from './BudgetSummary';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useIsMobile } from '@/hooks/use-mobile';
-import OnboardingProgress from './OnboardingProgress';
+import VerticalOnboardingProgress from './VerticalOnboardingProgress';
+import DashboardInstructions from './DashboardInstructions';
 
 const ProjectSummary = () => {
   const today = new Date();
@@ -91,90 +82,11 @@ const ProjectSummary = () => {
         )}
       </div>
       
-      {/* New Onboarding Progress Section */}
-      <OnboardingProgress />
+      {/* Instructions dashboard */}
+      <DashboardInstructions />
       
-      {/* Section explicative du dashboard */}
-      <section className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
-        <h2 className="text-xl font-medium mb-3 text-wedding-olive">Comment utiliser votre tableau de bord</h2>
-        <p className="text-gray-600">
-          Découvrez comment tirer le meilleur parti de votre tableau de bord Mariable. Suivez ces étapes pour planifier votre mariage sans stress et accéder à tous nos outils.
-        </p>
-      </section>
-      
-      {/* Grille de cartes uniformes */}
-      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {/* Top 3 tâches avec cases à cocher */}
-        <Card className="overflow-hidden border-wedding-olive/20 hover:shadow-md transition-shadow h-[280px] flex flex-col">
-          <CardHeader className="bg-wedding-olive/10 pb-3">
-            <CardTitle className="text-lg flex items-center gap-2">
-              <Check className="h-5 w-5 text-wedding-olive" />
-              Top 3 tâches prioritaires
-            </CardTitle>
-            <CardDescription>À faire prochainement</CardDescription>
-          </CardHeader>
-          <CardContent className="pt-4 flex-grow overflow-auto">
-            <div className="mb-4 max-h-[100px]">
-              <TasksList />
-            </div>
-          </CardContent>
-          <CardFooter className="bg-gray-50 flex justify-between items-center mt-auto">
-            <span className="text-sm text-gray-500">Prochaines étapes</span>
-            <Button asChild variant="ghost" size="sm" className="text-wedding-olive">
-              <Link to="/dashboard/tasks" className="flex items-center">
-                Toutes les tâches <ChevronRight className="ml-1 h-4 w-4" />
-              </Link>
-            </Button>
-          </CardFooter>
-        </Card>
-        
-        {/* Suivi budget */}
-        <Card className="overflow-hidden border-wedding-olive/20 hover:shadow-md transition-shadow h-[280px] flex flex-col">
-          <CardHeader className="bg-wedding-olive/10 pb-3">
-            <CardTitle className="text-lg flex items-center gap-2">
-              <DollarSign className="h-5 w-5 text-wedding-olive" />
-              Aperçu budget
-            </CardTitle>
-            <CardDescription>Suivi des dépenses</CardDescription>
-          </CardHeader>
-          <CardContent className="pt-4 flex-grow overflow-auto">
-            <div className="max-h-[100px]">
-              <BudgetSummary />
-            </div>
-          </CardContent>
-          <CardFooter className="bg-gray-50 flex justify-between items-center mt-auto">
-            <span className="text-sm text-gray-500">Votre situation financière</span>
-            <Button asChild variant="ghost" size="sm" className="text-wedding-olive">
-              <Link to="/dashboard/budget" className="flex items-center">
-                Détails <ChevronRight className="ml-1 h-4 w-4" />
-              </Link>
-            </Button>
-          </CardFooter>
-        </Card>
-        
-        {/* Coordination Jour J (prioritaire) */}
-        <Card className="overflow-hidden bg-gradient-to-br from-wedding-cream/30 to-white border-wedding-cream/40 hover:shadow-md transition-shadow h-[280px] flex flex-col">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-lg flex items-center gap-2">
-              <Calendar className="h-5 w-5 text-wedding-olive" />
-              Coordination Jour J
-            </CardTitle>
-            <CardDescription>Planning détaillé</CardDescription>
-          </CardHeader>
-          <CardContent className="pt-4 flex-grow">
-            <p className="mb-4">
-              Planifiez votre journée de mariage heure par heure et assurez-vous que tout se déroule comme prévu.
-            </p>
-          </CardContent>
-          <CardFooter className="bg-white/50 flex justify-center mt-auto">
-            <Button asChild className="w-full bg-wedding-olive hover:bg-wedding-olive/80">
-              <Link to="/dashboard/coordination" className="flex items-center justify-center">
-                Planifier ma journée <ChevronRight className="ml-1 h-4 w-4" />
-              </Link>
-            </Button>
-          </CardFooter>
-        </Card>
-      </section>
+      {/* Vertical Onboarding Progress */}
+      <VerticalOnboardingProgress />
     </div>
   );
 };

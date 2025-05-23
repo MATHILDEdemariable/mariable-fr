@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import ServiceTemplate from '../ServiceTemplate';
@@ -472,48 +471,6 @@ const PlanificationContent = () => {
             variant={index === 1 ? "primary" : "default"}
           />
         ))}
-      </div>
-
-      {/* Interactive content sections */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-        <div className="bg-wedding-cream/20 rounded-lg p-6">
-          <h3 className="text-lg font-serif mb-4 text-wedding-olive">Inspiration</h3>
-          <p className="text-sm text-muted-foreground mb-4">
-            Découvrez des idées et tendances pour votre mariage
-          </p>
-          <Link 
-            to="/services/conseils" 
-            className="text-wedding-olive hover:underline text-sm font-medium"
-          >
-            Voir les conseils →
-          </Link>
-        </div>
-        
-        <div className="bg-wedding-cream/20 rounded-lg p-6">
-          <h3 className="text-lg font-serif mb-4 text-wedding-olive">Étapes clés</h3>
-          <p className="text-sm text-muted-foreground mb-4">
-            Suivez notre checklist complète de 10 étapes
-          </p>
-          <Link 
-            to="/checklist-mariage" 
-            className="text-wedding-olive hover:underline text-sm font-medium"
-          >
-            Voir la checklist →
-          </Link>
-        </div>
-        
-        <div className="bg-wedding-cream/20 rounded-lg p-6">
-          <h3 className="text-lg font-serif mb-4 text-wedding-olive">Budget</h3>
-          <p className="text-sm text-muted-foreground mb-4">
-            Calculez et gérez votre budget mariage
-          </p>
-          <Link 
-            to="/services/budget" 
-            className="text-wedding-olive hover:underline text-sm font-medium"
-          >
-            Calculer mon budget →
-          </Link>
-        </div>
       </div>
 
       {/* Planning checklist */}
