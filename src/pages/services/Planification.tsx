@@ -4,7 +4,7 @@ import ServiceTemplate from '../ServiceTemplate';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { ArrowRight, UserPlus, Calendar } from 'lucide-react';
+import { ArrowRight, UserPlus, Calendar, Play, CheckCircle, Sparkles } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import SEO from '@/components/SEO';
@@ -82,6 +82,58 @@ const initialWeddingTasks = [
     category: "personnel" 
   }
 ];
+
+const PlanningStageCard = ({ 
+  icon: Icon, 
+  emoji, 
+  title, 
+  description, 
+  content, 
+  ctaText, 
+  ctaAction, 
+  variant = "default" 
+}: { 
+  icon: React.ElementType;
+  emoji: string;
+  title: string;
+  description: string;
+  content: string[];
+  ctaText: string;
+  ctaAction: () => void;
+  variant?: "default" | "primary";
+}) => (
+  <div className="group bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-all duration-300 hover:transform hover:scale-105">
+    <div className="flex items-center mb-4">
+      <span className="text-3xl mr-3">{emoji}</span>
+      <div>
+        <h3 className="text-xl font-serif font-medium text-wedding-olive">{title}</h3>
+        <p className="text-sm text-muted-foreground">{description}</p>
+      </div>
+    </div>
+    
+    <div className="mb-6">
+      <ul className="space-y-2">
+        {content.map((item, index) => (
+          <li key={index} className="flex items-center text-sm">
+            <CheckCircle className="h-4 w-4 text-wedding-olive mr-2 flex-shrink-0" />
+            {item}
+          </li>
+        ))}
+      </ul>
+    </div>
+    
+    <Button 
+      variant={variant === "primary" ? "wedding" : "outline"}
+      className={`w-full group-hover:shadow-lg transition-all ${
+        variant === "default" ? "border-wedding-olive text-wedding-olive hover:bg-wedding-olive/10" : ""
+      }`}
+      onClick={ctaAction}
+    >
+      {ctaText}
+      <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+    </Button>
+  </div>
+);
 
 const PlanningChecklist = () => {
   const [tasks, setTasks] = useState<any[]>([]);
@@ -349,25 +401,83 @@ const PlanificationContent = () => {
     checkAuth();
   }, []);
   
-  const handlePlanningClick = () => {
-    if (isAuthenticated) {
-      navigate('/services/jour-j');
-    } else {
-      navigate('/login', { state: { redirectAfterLogin: '/services/jour-j' } });
+  const planningStages = [
+    {
+      emoji: "🕊️",
+      title: "Je démarre tout juste",
+      description: "Les premiers pas de votre organisation",
+      content: ["Inspiration", "Étapes clés", "Budget"],
+      ctaText: "Créer mon tableau de bord",
+      ctaAction: () => navigate(isAuthenticated ? '/dashboard' : '/register')
+    },
+    {
+      emoji: "📋",
+      title: "Je suis en pleine organisation",
+      description: "L'organisation bat son plein",
+      content: ["Réservations de prestataires", "Suivi", "Conseils"],
+      ctaText: "Accéder à mon tableau de bord",
+      ctaAction: () => navigate(isAuthenticated ? '/dashboard' : '/login')
+    },
+    {
+      emoji: "🎉",
+      title: "Le grand jour approche",
+      description: "Les derniers préparatifs",
+      content: ["Planning détaillé", "Coordination", "Partage"],
+      ctaText: "Générer mon jour J",
+      ctaAction: () => navigate('/services/jour-j')
     }
-  };
+  ];
 
   return (
     <>
-      <p>
-        La planification d'un mariage implique de nombreuses étapes et peut rapidement devenir 
-        source de stress. Notre solution de planification vous guide à travers chaque étape avec 
-        simplicité et efficacité.
-      </p>
-      
-      <h2 className="text-2xl font-serif mt-8 mb-4">Votre checklist de mariage simplifiée</h2>
-      
-      <PlanningChecklist />
+      {/* Introduction section */}
+      <div className="text-center mb-12">
+        <h2 className="text-2xl md:text-3xl font-serif mb-4 text-wedding-olive">
+          À chaque étape, Mariable vous aide
+        </h2>
+        <p className="text-lg text-muted-foreground mb-6">
+          Une organisation fluide et intelligente, structurée autour de vous.
+        </p>
+        
+        {/* Quiz section */}
+        <div className="bg-wedding-cream/20 rounded-lg p-6 mb-8">
+          <h3 className="text-xl font-serif mb-3 text-wedding-olive">Quizz - Où en êtes vous ?</h3>
+          <p className="text-muted-foreground mb-4">
+            Découvrez un planning personnalisé selon votre niveau d'avancement
+          </p>
+          <Button 
+            variant="wedding" 
+            onClick={() => navigate('/planning-personnalise')}
+            className="gap-2"
+          >
+            <Play className="h-4 w-4" />
+            Commencer le quiz
+          </Button>
+        </div>
+      </div>
+
+      {/* Three interactive blocks */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+        {planningStages.map((stage, index) => (
+          <PlanningStageCard
+            key={index}
+            icon={CheckCircle}
+            emoji={stage.emoji}
+            title={stage.title}
+            description={stage.description}
+            content={stage.content}
+            ctaText={stage.ctaText}
+            ctaAction={stage.ctaAction}
+            variant={index === 1 ? "primary" : "default"}
+          />
+        ))}
+      </div>
+
+      {/* Planning checklist */}
+      <div className="border-t pt-12">
+        <h2 className="text-2xl font-serif mt-8 mb-4">Votre checklist de mariage simplifiée</h2>
+        <PlanningChecklist />
+      </div>
     </>
   );
 };

@@ -270,6 +270,9 @@ const LandingPage = () => {
               {/* Aide à la planification */}
               <div className="bg-white p-8 rounded-lg shadow-sm border">
                 <h3 className="text-xl font-serif mb-4 text-wedding-olive">Aide à la planification</h3>
+                <p className="text-muted-foreground mb-6">
+                  Un accompagnement complet de la conception à la réalisation de votre mariage, avec des outils personnalisés et une méthode éprouvée.
+                </p>
                 <div className="space-y-3 mb-6">
                   <div className="flex items-start gap-3">
                     <div className="w-2 h-2 bg-wedding-olive rounded-full mt-2 flex-shrink-0"></div>
@@ -300,6 +303,7 @@ const LandingPage = () => {
                 <p className="text-muted-foreground mb-6">
                   Une sélection rigoureuse de prestataires premium, testés et approuvés pour garantir la qualité de votre mariage.
                 </p>
+                <div className="mb-6 h-16"></div> {/* Spacer to align buttons */}
                 <Button 
                   variant="wedding" 
                   className="w-full"
@@ -313,65 +317,26 @@ const LandingPage = () => {
           </div>
         </section>
 
-        {/* Section 3: Pourquoi Mariable - Modified with CTA above */}
+        {/* Section 3: Ce que vous allez adorer - Modified to table layout */}
         <section className="py-16 bg-white">
           <div className="container mx-auto px-4">
-            <div className="text-center mb-10">
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button 
-                  variant="outline" 
-                  className="border-wedding-olive text-wedding-olive hover:bg-wedding-olive/10 mb-6"
-                  onClick={() => navigate('/assistant-v2')}
-                >
-                  Dites oui à la simplicité
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
+            <h2 className="text-2xl md:text-3xl font-serif mb-10 text-center">
+              Ce que vous allez adorer
+            </h2>
+            <div className="max-w-4xl mx-auto">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {mariableExperience.map((item, index) => (
+                  <div key={index} className="bg-gray-50 p-4 rounded-lg border text-center">
+                    <div className="text-wedding-olive font-serif text-lg font-medium mb-2">{item.title}</div>
+                    <p className="text-muted-foreground text-sm">{item.description}</p>
+                  </div>
+                ))}
               </div>
             </div>
-            <h2 className="text-2xl md:text-3xl font-serif mb-10 text-center">
-              Pourquoi Mariable ?
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-              <StatCard 
-                number="200+" 
-                text="heures nécessaires pour organiser un mariage" 
-                subtext="C'est 14 aller-retours Paris-New York en avion"
-              />
-              <StatCard 
-                number="77%" 
-                text="des couples ont vécu des tensions liées à l'organisation"
-              />
-              <StatCard 
-                number="1 sur 2" 
-                text="couples trouve difficile de trouver les prestataires adéquats"
-              />
-            </div>
           </div>
         </section>
 
-        {/* Section 4: L'expérience Mariable - Updated content */}
-        <section className="py-16 bg-white">
-          <div className="container mx-auto px-4">
-            <h2 className="text-2xl md:text-3xl font-serif mb-10 text-center">
-              L'expérience Mariable
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-              {mariableExperience.map((item, index) => (
-                <div key={index} className="bg-gray-50 p-6 rounded-lg border">
-                  <div className="flex items-center mb-3">
-                    <span className="bg-wedding-olive text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-medium mr-3">
-                      {index + 1}
-                    </span>
-                    <h3 className="font-serif text-lg font-medium">{item.title}</h3>
-                  </div>
-                  <p className="text-muted-foreground text-sm">{item.description}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Section 5: Témoignages - Updated title */}
+        {/* Section 4: Témoignages - Updated title */}
         <section className="py-16 bg-gray-50">
           <div className="container mx-auto px-4">
             <h2 className="text-2xl md:text-3xl font-serif mb-10 text-center">
@@ -391,7 +356,7 @@ const LandingPage = () => {
           </div>
         </section>
 
-        {/* Section 6: CTA - Changed to solid wedding-olive background without image */}
+        {/* Section 5: CTA - Changed to solid wedding-olive background without image */}
         <section className="py-16 bg-wedding-olive text-white">
           <div className="container mx-auto px-4 text-center">
             <h2 className="text-2xl md:text-3xl font-serif mb-4">
@@ -410,7 +375,7 @@ const LandingPage = () => {
           </div>
         </section>
 
-        {/* Section 7: FAQ */}
+        {/* Section 6: FAQ */}
         <section className="py-16 bg-white">
           <div className="container mx-auto px-4">
             <h2 className="text-2xl md:text-3xl font-serif mb-10 text-center">
