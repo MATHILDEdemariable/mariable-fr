@@ -19,6 +19,7 @@ import TestAssistantVirtuel from "./pages/TestAssistantVirtuel";
 import WeddingAssistantV2 from "./pages/WeddingAssistantV2";
 import PlanningPersonnalise from "./pages/PlanningPersonnalise";
 import PlanningResultatsPersonnalises from "./pages/PlanningResultatsPersonnalises";
+import ChecklistMariage from "./pages/ChecklistMariage";
 import Index from "./pages/Index";
 
 // Services pages
@@ -97,6 +98,9 @@ const App = () => {
               <Route path="/services/budget" element={<Budget />} />
               <Route path="/services/conseils" element={<Conseils />} />
               <Route path="/services/jour-j" element={<JourJ />} />
+              
+              {/* Checklist page */}
+              <Route path="/checklist-mariage" element={<ChecklistMariage />} />
               
               {/* Guide Mariable */}
               <Route path="/guide-mariable" element={<GuideMariable />} />

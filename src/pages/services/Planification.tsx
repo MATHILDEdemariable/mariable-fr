@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import ServiceTemplate from '../ServiceTemplate';
@@ -406,7 +407,11 @@ const PlanificationContent = () => {
       emoji: "🕊️",
       title: "Je démarre tout juste",
       description: "Les premiers pas de votre organisation",
-      content: ["Inspiration", "Étapes clés", "Budget"],
+      content: [
+        <Link key="inspiration" to="/services/conseils" className="text-wedding-olive hover:underline">Inspiration</Link>,
+        <Link key="etapes" to="/checklist-mariage" className="text-wedding-olive hover:underline">Étapes clés</Link>,
+        <Link key="budget" to="/services/budget" className="text-wedding-olive hover:underline">Budget</Link>
+      ],
       ctaText: "Créer mon tableau de bord",
       ctaAction: () => navigate(isAuthenticated ? '/dashboard' : '/register')
     },
@@ -486,7 +491,7 @@ const Planification = () => {
   return (
     <ServiceTemplate 
       title="Planification de mariage"
-      description="Organisez chaque étape de votre mariage sans stress"
+      description="Organisez chaque étape de votre mariage sans charge mentale"
       content={<PlanificationContent />}
     >
       <SEO 

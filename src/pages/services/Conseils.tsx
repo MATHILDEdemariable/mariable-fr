@@ -3,9 +3,10 @@ import React from 'react';
 import ServiceTemplate from '../ServiceTemplate';
 import { Button } from '@/components/ui/button';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { Link, useNavigate } from 'react-router-dom';
-import { CalendarDays, CheckSquare, DollarSign, Camera } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import SEO from '@/components/SEO';
+import WeddingChatbot from '@/components/wedding-assistant/v2/WeddingChatbot';
+import { Card, CardContent } from '@/components/ui/card';
 
 // Custom WhatsApp icon component
 const CustomWhatsappIcon = () => (
@@ -63,62 +64,14 @@ const ConseilsContent = () => {
         </div>
       </div>
       
-      {/* Section 2: Outils pratiques */}
-      <h2 className="text-2xl font-serif mt-10 mb-6 text-center">Nos outils pour organiser votre mariage</h2>
+      {/* Section 2: Assistant virtuel intégré */}
+      <h2 className="text-2xl font-serif mt-10 mb-6 text-center">Assistant virtuel pour vos questions mariage</h2>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
-        <div className="border rounded-lg p-5 hover:shadow-md transition-all">
-          <div className="flex items-center gap-2 mb-3">
-            <CheckSquare className="h-5 w-5 text-wedding-olive" />
-            <h3 className="font-medium text-lg">Checklist</h3>
-          </div>
-          <p className="mb-3">
-            Suivez toutes les étapes importantes dans notre checklist mariage personnalisée pour ne rien oublier.
-          </p>
-          <Link to="/services/planification" className="text-wedding-olive hover:underline inline-flex items-center">
-            Accéder à la checklist <span className="ml-1">→</span>
-          </Link>
-        </div>
-        
-        <div className="border rounded-lg p-5 hover:shadow-md transition-all">
-          <div className="flex items-center gap-2 mb-3">
-            <DollarSign className="h-5 w-5 text-wedding-olive" />
-            <h3 className="font-medium text-lg">Budget</h3>
-          </div>
-          <p className="mb-3">
-            Maîtrisez votre budget mariage grâce à notre outil de suivi financier intelligent.
-          </p>
-          <Link to="/services/budget" className="text-wedding-olive hover:underline inline-flex items-center">
-            Gérer mon budget <span className="ml-1">→</span>
-          </Link>
-        </div>
-        
-        <div className="border rounded-lg p-5 hover:shadow-md transition-all">
-          <div className="flex items-center gap-2 mb-3">
-            <CalendarDays className="h-5 w-5 text-wedding-olive" />
-            <h3 className="font-medium text-lg">Planning</h3>
-          </div>
-          <p className="mb-3">
-            Créez un déroulé de mariage détaillé pour que votre grand jour se déroule parfaitement.
-          </p>
-          <Link to="/services/jour-j" className="text-wedding-olive hover:underline inline-flex items-center">
-            Planifier mon jour J <span className="ml-1">→</span>
-          </Link>
-        </div>
-        
-        <div className="border rounded-lg p-5 hover:shadow-md transition-all">
-          <div className="flex items-center gap-2 mb-3">
-            <Camera className="h-5 w-5 text-wedding-olive" />
-            <h3 className="font-medium text-lg">Prestataires</h3>
-          </div>
-          <p className="mb-3">
-            Trouvez les meilleurs prestataires de mariage adaptés à votre style et à votre budget.
-          </p>
-          <Link to="/recherche" className="text-wedding-olive hover:underline inline-flex items-center">
-            Découvrir les prestataires <span className="ml-1">→</span>
-          </Link>
-        </div>
-      </div>
+      <Card className="mb-10">
+        <CardContent className="pt-6">
+          <WeddingChatbot preventScroll={true} />
+        </CardContent>
+      </Card>
       
       {/* Section 3: Appel à l'action */}
       <div className="mt-10 py-8 px-6 bg-wedding-cream/20 rounded-lg border border-wedding-olive/10 text-center">
