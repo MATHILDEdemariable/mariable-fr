@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { 
@@ -6,8 +5,8 @@ import {
   BarChart, Bar, XAxis, YAxis, Tooltip as RechartsTooltip
 } from 'recharts';
 import { 
-  Euro, ArrowRight, Download, Share2,
-  MapPin, Calculator, Users, Calendar, Info, ChevronRight, ChevronDown, FileText
+  Euro, ArrowRight, Download,
+  MapPin, Calculator, Users, Calendar, Info, ChevronRight, ChevronDown
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
@@ -841,36 +840,14 @@ const BudgetSummary: React.FC = () => {
                 Calculer mon budget
               </Button>
               
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button 
-                    variant="outline" 
-                    className="w-full sm:w-auto bg-wedding-olive/10 hover:bg-wedding-olive/20 text-wedding-olive"
-                  >
-                    <Download className="mr-2 h-4 w-4" />
-                    Exporter
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Exporter mon budget</DialogTitle>
-                  </DialogHeader>
-                  <div className="grid gap-4 py-4">
-                    <Button onClick={handleExportPDF} className="w-full flex items-center justify-center gap-2">
-                      <FileText className="h-4 w-4" />
-                      Exporter en PDF
-                    </Button>
-                    <Button onClick={handleExportExcel} className="w-full flex items-center justify-center gap-2">
-                      <FileText className="h-4 w-4" />
-                      Exporter vers Excel (CSV)
-                    </Button>
-                    <Button onClick={handleExportGoogleSheets} className="w-full flex items-center justify-center gap-2">
-                      <FileText className="h-4 w-4" />
-                      Exporter vers Google Sheets
-                    </Button>
-                  </div>
-                </DialogContent>
-              </Dialog>
+              <Button 
+                variant="outline" 
+                className="w-full sm:w-auto bg-wedding-olive/10 hover:bg-wedding-olive/20 text-wedding-olive"
+                onClick={handleExportPDF}
+              >
+                <Download className="mr-2 h-4 w-4" />
+                Exporter
+              </Button>
             </div>
           </>
         )}
