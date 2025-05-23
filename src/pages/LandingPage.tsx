@@ -1,7 +1,8 @@
+
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { Layout, Calendar, Calculator, Briefcase, Folder, ArrowRight, CheckCircle, XCircle, HelpCircle, Users, Clock, DollarSign, Wine, Calendar as CalendarIcon } from 'lucide-react';
+import { Layout, Calendar, Calculator, Briefcase, Folder, ArrowRight, CheckCircle, XCircle, HelpCircle, Users, Clock, DollarSign, Wine, Calendar as CalendarIcon, Star, Shield, Award, Zap, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -116,27 +117,32 @@ const LandingPage = () => {
     }
   };
 
-  // Updated benefits for Mariable experience
+  // Updated benefits for Mariable experience with icons
   const mariableExperience = [
     {
       title: "Personnalisé",
-      description: "Une expérience sur mesure adaptée à vos besoins et vos préférences pour un mariage unique."
+      description: "Une expérience sur mesure adaptée à vos besoins et vos préférences pour un mariage unique.",
+      icon: Heart
     },
     {
       title: "Maîtrisé",
-      description: "Des outils et une méthode éprouvée pour garder le contrôle de votre organisation."
+      description: "Des outils et une méthode éprouvée pour garder le contrôle de votre organisation.",
+      icon: Shield
     },
     {
       title: "Premium",
-      description: "Accès exclusif à une sélection de prestataires d'excellence rigoureusement choisis."
+      description: "Accès exclusif à une sélection de prestataires d'excellence rigoureusement choisis.",
+      icon: Award
     },
     {
       title: "Simple",
-      description: "Des outils intuitifs qui simplifient l'organisation et vous font gagner des heures précieuses."
+      description: "Des outils intuitifs qui simplifient l'organisation et vous font gagner des heures précieuses.",
+      icon: Zap
     },
     {
       title: "Au meilleur rapport qualité-prix",
-      description: "Bénéficiez de tarifs préférentiels et d'un service complet sans frais cachés."
+      description: "Bénéficiez de tarifs préférentiels et d'un service complet sans frais cachés.",
+      icon: Star
     }
   ];
   
@@ -256,7 +262,7 @@ const LandingPage = () => {
           </div>
         </section>
 
-        {/* Section 2: Avec Mariable, l'organisation reste une joie */}
+        {/* Section 2: Avec Mariable, l'organisation reste une joie - Fixed Layout */}
         <section className="py-16 bg-gray-50">
           <div className="container mx-auto px-4">
             <h2 className="text-2xl md:text-3xl font-serif mb-3 text-center">
@@ -267,29 +273,15 @@ const LandingPage = () => {
             </p>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-              {/* Aide à la planification */}
-              <div className="bg-white p-8 rounded-lg shadow-sm border">
+              {/* Aide à la planification - Fixed height and button alignment */}
+              <div className="bg-white p-8 rounded-lg shadow-sm border flex flex-col min-h-[280px]">
                 <h3 className="text-xl font-serif mb-4 text-wedding-olive">Aide à la planification</h3>
-                <p className="text-muted-foreground mb-6">
+                <p className="text-muted-foreground mb-6 flex-grow">
                   Un accompagnement complet de la conception à la réalisation de votre mariage, avec des outils personnalisés et une méthode éprouvée.
                 </p>
-                <div className="space-y-3 mb-6">
-                  <div className="flex items-start gap-3">
-                    <div className="w-2 h-2 bg-wedding-olive rounded-full mt-2 flex-shrink-0"></div>
-                    <span><strong>Avant:</strong> Planning personnalisé, budget, organisation</span>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <div className="w-2 h-2 bg-wedding-olive rounded-full mt-2 flex-shrink-0"></div>
-                    <span><strong>Pendant:</strong> Coordination jour-J, timing détaillé</span>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <div className="w-2 h-2 bg-wedding-olive rounded-full mt-2 flex-shrink-0"></div>
-                    <span><strong>Après:</strong> Suivi et accompagnement post-mariage</span>
-                  </div>
-                </div>
                 <Button 
                   variant="wedding" 
-                  className="w-full"
+                  className="w-full mt-auto"
                   onClick={() => navigate('/services/planification')}
                 >
                   Découvrir nos outils de planification
@@ -297,16 +289,15 @@ const LandingPage = () => {
                 </Button>
               </div>
 
-              {/* Le guide Mariable */}
-              <div className="bg-white p-8 rounded-lg shadow-sm border">
+              {/* Le guide Mariable - Fixed height and button alignment */}
+              <div className="bg-white p-8 rounded-lg shadow-sm border flex flex-col min-h-[280px]">
                 <h3 className="text-xl font-serif mb-4 text-wedding-olive">Le guide Mariable</h3>
-                <p className="text-muted-foreground mb-6">
+                <p className="text-muted-foreground mb-6 flex-grow">
                   Une sélection rigoureuse de prestataires premium, testés et approuvés pour garantir la qualité de votre mariage.
                 </p>
-                <div className="mb-6 h-16"></div> {/* Spacer to align buttons */}
                 <Button 
                   variant="wedding" 
-                  className="w-full"
+                  className="w-full mt-auto"
                   onClick={() => navigate('/guide-mariable')}
                 >
                   Accéder au guide Mariable
@@ -317,20 +308,40 @@ const LandingPage = () => {
           </div>
         </section>
 
-        {/* Section 3: Ce que vous allez adorer - Modified to table layout */}
+        {/* Section 3: Ce que vous allez adorer - Table Layout */}
         <section className="py-16 bg-white">
           <div className="container mx-auto px-4">
             <h2 className="text-2xl md:text-3xl font-serif mb-10 text-center">
               Ce que vous allez adorer
             </h2>
             <div className="max-w-4xl mx-auto">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {mariableExperience.map((item, index) => (
-                  <div key={index} className="bg-gray-50 p-4 rounded-lg border text-center">
-                    <div className="text-wedding-olive font-serif text-lg font-medium mb-2">{item.title}</div>
-                    <p className="text-muted-foreground text-sm">{item.description}</p>
+              <div className="bg-gray-50 rounded-lg p-6 border">
+                <div className="grid grid-cols-1 gap-0">
+                  {/* Header Row */}
+                  <div className="grid grid-cols-2 gap-4 pb-4 mb-4 border-b border-gray-200">
+                    <div className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+                      Expérience
+                    </div>
+                    <div className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+                      Avantage
+                    </div>
                   </div>
-                ))}
+                  
+                  {/* Content Rows */}
+                  {mariableExperience.map((item, index) => (
+                    <div key={index} className="grid grid-cols-2 gap-4 py-4 border-b border-gray-100 last:border-b-0">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 bg-wedding-olive/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                          <item.icon className="h-4 w-4 text-wedding-olive" />
+                        </div>
+                        <span className="font-medium text-wedding-olive">{item.title}</span>
+                      </div>
+                      <div className="text-muted-foreground text-sm leading-relaxed">
+                        {item.description}
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
