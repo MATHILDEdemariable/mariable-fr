@@ -44,6 +44,7 @@ type Region = string;
 type Season = 'haute' | 'basse';
 type ServiceLevel = 'economique' | 'abordable' | 'premium' | 'luxe';
 type VendorType = 'lieu' | 'traiteur' | 'photo' | 'dj' | 'planner' | 'deco' | 'autres';
+type CalculatorMode = 'unknown' | 'known';
 
 interface BudgetLine {
   name: string;
@@ -56,6 +57,18 @@ interface BudgetEstimate {
   total: number;
   breakdown: BudgetLine[];
 }
+
+// Budget allocation percentages for "known budget" mode
+const BUDGET_ALLOCATION_PERCENTAGES = {
+  'lieu': { name: 'Lieu de réception', percentage: 0.35, color: '#7F9474' },
+  'traiteur': { name: 'Traiteur (repas + boissons)', percentage: 0.35, color: '#948970' },
+  'photo': { name: 'Photographe & Vidéaste', percentage: 0.08, color: '#A99E89' },
+  'dj': { name: 'DJ / Animation', percentage: 0.04, color: '#C6BCA9' },
+  'deco': { name: 'Décoration & Fleurs', percentage: 0.07, color: '#8E9196' },
+  'tenues': { name: 'Tenues & mise en beauté', percentage: 0.05, color: '#1A1F2C' },
+  'papeterie': { name: 'Papeterie & faire-part', percentage: 0.02, color: '#B8A99A' },
+  'autres': { name: 'Autres (transport, cadeaux, imprévus)', percentage: 0.04, color: '#aaadb0' }
+};
 
 // Constantes pour les calculs du budget
 const BASE_PRICES: Record<VendorType, number> = {
@@ -106,34 +119,41 @@ const PRICE_MODIFIERS: Record<ServiceLevel, number> = {
 };
 
 const BUDGET_COLORS: Record<VendorType, string> = {
-  lieu: '#7F9474', // wedding-olive
-  traiteur: '#948970', // wedding-cream dark
-  photo: '#A99E89', // wedding color
-  dj: '#C6BCA9', // wedding color light
-  planner: '#8E9196', // neutral gray
-  deco: '#1A1F2C', // dark for contrast
-  autres: '#aaadb0' // changed to higher contrast
+  lieu: '#7F9474',
+  traiteur: '#948970',
+  photo: '#A99E89',
+  dj: '#C6BCA9',
+  planner: '#8E9196',
+  deco: '#1A1F2C',
+  autres: '#aaadb0'
 };
 
 const INITIAL_BUDGET_DATA: BudgetCategory[] = [
-  { name: 'Lieu', amount: 5000, color: '#7F9474' }, // changed to wedding-olive
-  { name: 'Traiteur', amount: 7000, color: '#948970' }, // changed to wedding-cream dark
-  { name: 'Décoration', amount: 2000, color: '#A99E89' }, // changed to wedding color
-  { name: 'Tenue', amount: 3000, color: '#C6BCA9' }, // changed to wedding color light
-  { name: 'Photo & Vidéo', amount: 2500, color: '#8E9196' }, // neutral gray
-  { name: 'Imprévus', amount: 1500, color: '#1A1F2C' } // dark for contrast
+  { name: 'Lieu', amount: 5000, color: '#7F9474' },
+  { name: 'Traiteur', amount: 7000, color: '#948970' },
+  { name: 'Décoration', amount: 2000, color: '#A99E89' },
+  { name: 'Tenue', amount: 3000, color: '#C6BCA9' },
+  { name: 'Photo & Vidéo', amount: 2500, color: '#8E9196' },
+  { name: 'Imprévus', amount: 1500, color: '#1A1F2C' }
 ];
 
 const BudgetSummary: React.FC = () => {
   // État pour le résumé du budget
   const [budgetData, setBudgetData] = useState<BudgetCategory[]>(INITIAL_BUDGET_DATA);
   
-  // État pour le multi-étapes de la calculatrice
+  // État pour le mode calculatrice
+  const [calculatorMode, setCalculatorMode] = useState<CalculatorMode | null>(null);
   const [showCalculator, setShowCalculator] = useState(false);
   const [currentStep, setCurrentStep] = useState<Step>(1);
   const [showEstimate, setShowEstimate] = useState(false);
   
-  // États pour les paramètres de budget
+  // États pour le mode "budget connu"
+  const [knownBudget, setKnownBudget] = useState<string>('');
+  const [selectedCategories, setSelectedCategories] = useState<(keyof typeof BUDGET_ALLOCATION_PERCENTAGES)[]>([
+    'lieu', 'traiteur', 'photo', 'dj', 'deco'
+  ]);
+  
+  // États pour les paramètres de budget (mode inconnu)
   const [region, setRegion] = useState<Region>('Pays de la Loire');
   const [season, setSeason] = useState<Season>('basse');
   const [globalBudgetInput, setGlobalBudgetInput] = useState<string>("");
@@ -225,7 +245,79 @@ const BudgetSummary: React.FC = () => {
     });
   };
 
-  // Gérer la navigation entre étapes
+  // Gérer la sélection du mode calculatrice
+  const handleModeSelection = (mode: CalculatorMode) => {
+    setCalculatorMode(mode);
+    setCurrentStep(1);
+    if (mode === 'known') {
+      setShowEstimate(false);
+    }
+  };
+
+  // Calculer la répartition pour le mode "budget connu"
+  const calculateKnownBudgetAllocation = () => {
+    const totalBudget = parseFloat(knownBudget) || 0;
+    if (totalBudget <= 0) {
+      toast({
+        title: "Erreur",
+        description: "Veuillez saisir un budget valide",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Calculer les montants selon les pourcentages sélectionnés
+    const breakdown: BudgetLine[] = [];
+    let totalPercentage = 0;
+
+    selectedCategories.forEach(categoryKey => {
+      const categoryInfo = BUDGET_ALLOCATION_PERCENTAGES[categoryKey];
+      const amount = Math.round(totalBudget * categoryInfo.percentage);
+      totalPercentage += categoryInfo.percentage;
+      
+      breakdown.push({
+        name: categoryInfo.name,
+        amount,
+        basePrice: amount,
+        color: categoryInfo.color
+      });
+    });
+
+    // Ajuster si le total des pourcentages n'est pas 100%
+    if (totalPercentage < 1) {
+      const remaining = totalBudget - breakdown.reduce((sum, item) => sum + item.amount, 0);
+      if (remaining > 0) {
+        breakdown.push({
+          name: 'Budget non alloué',
+          amount: remaining,
+          basePrice: remaining,
+          color: '#cccccc'
+        });
+      }
+    }
+
+    const finalBudgetEstimate = {
+      total: totalBudget,
+      breakdown
+    };
+    
+    setBudgetEstimate(finalBudgetEstimate);
+    
+    // Mettre à jour le graphique
+    const newBudgetData = breakdown.map(item => ({
+      name: item.name,
+      amount: item.amount,
+      color: item.color
+    }));
+    
+    setBudgetData(newBudgetData);
+    setShowEstimate(true);
+    
+    // Enregistrer dans Supabase
+    saveBudgetToDatabase(finalBudgetEstimate, 'known');
+  };
+
+  // Gérer la navigation entre étapes (mode inconnu)
   const goToNextStep = () => {
     if (currentStep < 4) {
       setCurrentStep(prevStep => (prevStep + 1) as Step);
@@ -241,44 +333,31 @@ const BudgetSummary: React.FC = () => {
     }
   };
 
-  // Calculer le budget basé sur les sélections
+  // Calculer le budget basé sur les sélections (mode inconnu)
   const calculateBudget = async () => {
     let totalBudget = globalBudget;
-    // Si pas de saisie, on estime à 15 000 €
     if (!totalBudget || totalBudget <= 0) totalBudget = 15000;
 
-    // Format des lignes budgétaires
     const breakdown: BudgetLine[] = [];
-    
-    // Pondération par niveau de service (uniquement pour les postes fixes)
     const serviceMultiplier = PRICE_MODIFIERS[serviceLevel];
-    
-    // Pondération par région
     const regionMultiplier = REGION_MODIFIERS[region];
-    
-    // Pondération par saison
     const seasonMultiplier = season === 'haute' ? 1.0 : 0.8;
     
-    // Pour chaque prestataire sélectionné
     selectedVendors.forEach(vendor => {
       let amount = 0;
       let basePrice = BASE_PRICES[vendor];
       
       if (vendor === 'lieu') {
-        // Poste fixe : lieu
         amount = basePrice * serviceMultiplier * regionMultiplier * seasonMultiplier;
       } else if (vendor === 'traiteur') {
-        // Poste variable : traiteur (dépend du nombre d'invités)
         const pricePerGuest = CATERING_PRICES[serviceLevel];
         amount = pricePerGuest * guestsCount * regionMultiplier * seasonMultiplier;
         basePrice = pricePerGuest;
       } else if (vendor === 'deco') {
-        // Poste variable : déco (dépend du nombre d'invités)
         const pricePerGuest = DECOR_PRICES[serviceLevel];
         amount = pricePerGuest * guestsCount * regionMultiplier * seasonMultiplier;
         basePrice = pricePerGuest;
       } else if (vendor === 'photo' || vendor === 'dj' || vendor === 'planner') {
-        // Postes fixes : photo, DJ, wedding planner
         amount = basePrice * serviceMultiplier * regionMultiplier * seasonMultiplier;
       }
       
@@ -307,7 +386,6 @@ const BudgetSummary: React.FC = () => {
     
     setBudgetEstimate(finalBudgetEstimate);
     
-    // Mettre à jour le graphique
     const newBudgetData = breakdown.map(item => ({
       name: item.name,
       amount: item.amount,
@@ -316,12 +394,15 @@ const BudgetSummary: React.FC = () => {
     
     setBudgetData(newBudgetData);
     
-    // Enregistrer dans Supabase
+    saveBudgetToDatabase(finalBudgetEstimate, 'unknown');
+  };
+
+  // Fonction pour enregistrer en base
+  const saveBudgetToDatabase = async (estimate: BudgetEstimate, mode: string) => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       
       if (user) {
-        // Récupérer l'ID du projet actuel si disponible
         const { data: projects } = await supabase
           .from('projects')
           .select('id')
@@ -331,26 +412,24 @@ const BudgetSummary: React.FC = () => {
           
         const projectId = projects && projects.length > 0 ? projects[0].id : null;
         
-        // Convertir le tableau breakdown en format compatible avec Json
-        const breakdownJson = breakdown.map(item => ({
+        const breakdownJson = estimate.breakdown.map(item => ({
           name: item.name,
           amount: item.amount,
           basePrice: item.basePrice,
           color: item.color
         })) as Json;
         
-        // Insérer les données de budget dans Supabase
         await supabase
           .from('budgets_dashboard')
           .insert({
             user_id: user.id,
             project_id: projectId,
-            region,
-            season,
-            guests_count: guestsCount,
-            service_level: serviceLevel,
-            selected_vendors: selectedVendors,
-            total_budget: finalBudgetEstimate.total,
+            region: region || 'France',
+            season: season || 'basse',
+            guests_count: guestsCount || 100,
+            service_level: serviceLevel || 'premium',
+            selected_vendors: mode === 'known' ? selectedCategories : selectedVendors,
+            total_budget: estimate.total,
             breakdown: breakdownJson
           });
         
@@ -391,7 +470,16 @@ const BudgetSummary: React.FC = () => {
         : [...prev, vendor]
     );
   };
-  
+
+  // Gérer les changements de catégories pour le mode "budget connu"
+  const toggleCategory = (category: keyof typeof BUDGET_ALLOCATION_PERCENTAGES) => {
+    setSelectedCategories(prev => 
+      prev.includes(category) 
+        ? prev.filter(c => c !== category) 
+        : [...prev, category]
+    );
+  };
+
   // Calculer le total du budget actuel
   const totalBudget = budgetData.reduce((sum, category) => sum + category.amount, 0);
   
@@ -412,7 +500,6 @@ const BudgetSummary: React.FC = () => {
           if (budgets && budgets.length > 0) {
             const latestBudget = budgets[0];
             
-            // Mettre à jour les états avec les données sauvegardées
             setRegion(latestBudget.region);
             setSeason(latestBudget.season as Season);
             setGuestsCount(latestBudget.guests_count);
@@ -421,12 +508,10 @@ const BudgetSummary: React.FC = () => {
             setGlobalBudget(latestBudget.total_budget);
             
             if (latestBudget.breakdown) {
-              // S'assurer que breakdown est un tableau avant d'utiliser map
               const breakdownArray = Array.isArray(latestBudget.breakdown) 
                 ? latestBudget.breakdown 
                 : [];
                 
-              // Mettre à jour le graphique avec les données 
               const newBudgetData = breakdownArray.map((item: any) => ({
                 name: item.name,
                 amount: item.amount,
@@ -444,8 +529,130 @@ const BudgetSummary: React.FC = () => {
     
     fetchBudgetData();
   }, []);
-  
-  // Rendu des différentes étapes de la calculatrice de budget
+
+  // Rendu du choix de mode initial
+  const renderModeSelection = () => {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h2 className="text-xl font-serif mb-2">Calculatrice de budget</h2>
+          <p className="text-muted-foreground">Choisissez votre méthode de calcul</p>
+        </div>
+        
+        <div className="space-y-4">
+          <Button
+            variant="outline"
+            className="w-full h-auto p-6 flex flex-col items-start text-left hover:bg-wedding-cream/20"
+            onClick={() => handleModeSelection('known')}
+          >
+            <div className="flex items-center gap-3 mb-2">
+              <Euro className="h-6 w-6 text-wedding-olive" />
+              <span className="text-lg font-medium">Je connais mon budget total</span>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Saisissez votre budget et nous le répartirons automatiquement selon les standards du secteur
+            </p>
+          </Button>
+          
+          <Button
+            variant="outline"
+            className="w-full h-auto p-6 flex flex-col items-start text-left hover:bg-wedding-cream/20"
+            onClick={() => handleModeSelection('unknown')}
+          >
+            <div className="flex items-center gap-3 mb-2">
+              <Calculator className="h-6 w-6 text-wedding-olive" />
+              <span className="text-lg font-medium">Je ne connais pas mon budget</span>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Répondez à quelques questions et nous estimerons votre budget selon vos critères
+            </p>
+          </Button>
+        </div>
+        
+        <Button
+          variant="outline"
+          onClick={() => {
+            setShowCalculator(false);
+            setCalculatorMode(null);
+          }}
+          className="w-full"
+        >
+          Retour
+        </Button>
+      </div>
+    );
+  };
+
+  // Rendu du mode "budget connu"
+  const renderKnownBudgetMode = () => {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h2 className="text-xl font-serif mb-2">Budget connu</h2>
+          <p className="text-muted-foreground">Saisissez votre budget et sélectionnez les catégories à inclure</p>
+        </div>
+        
+        <div className="space-y-4">
+          <div>
+            <Label htmlFor="knownBudget" className="text-lg mb-2 block">Budget total (€)</Label>
+            <Input
+              type="number"
+              id="knownBudget"
+              value={knownBudget}
+              onChange={(e) => setKnownBudget(e.target.value)}
+              className="py-6 text-lg"
+              placeholder="Ex: 20000"
+              min="1000"
+              max="200000"
+            />
+          </div>
+          
+          <div>
+            <Label className="text-lg mb-4 block">Catégories à inclure</Label>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {Object.entries(BUDGET_ALLOCATION_PERCENTAGES).map(([key, info]) => (
+                <div key={key} className="flex items-center space-x-3 p-3 border rounded-md">
+                  <Checkbox 
+                    id={`category-${key}`}
+                    checked={selectedCategories.includes(key as keyof typeof BUDGET_ALLOCATION_PERCENTAGES)} 
+                    onCheckedChange={() => toggleCategory(key as keyof typeof BUDGET_ALLOCATION_PERCENTAGES)}
+                    className="border-2 h-5 w-5"
+                  />
+                  <div className="flex-1">
+                    <Label htmlFor={`category-${key}`} className="text-sm font-medium cursor-pointer">
+                      {info.name}
+                    </Label>
+                    <p className="text-xs text-muted-foreground">
+                      {(info.percentage * 100).toFixed(0)}% du budget
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+        
+        <div className="flex justify-between">
+          <Button
+            variant="outline"
+            onClick={() => setCalculatorMode(null)}
+          >
+            Retour
+          </Button>
+          
+          <Button
+            className="bg-wedding-olive hover:bg-wedding-olive/90 text-white"
+            onClick={calculateKnownBudgetAllocation}
+            disabled={!knownBudget || selectedCategories.length === 0}
+          >
+            Calculer la répartition
+          </Button>
+        </div>
+      </div>
+    );
+  };
+
+  // Rendu des différentes étapes de la calculatrice de budget (mode inconnu)
   const renderStepContent = () => {
     switch (currentStep) {
       case 1:
@@ -648,17 +855,33 @@ const BudgetSummary: React.FC = () => {
 
   // Rendu du résultat de l'estimation
   const renderEstimate = () => {
+    const isKnownMode = calculatorMode === 'known';
+    
     return (
       <div className="space-y-6">
         <div>
-          <h2 className="text-xl md:text-2xl font-serif mb-2">Estimation budgétaire</h2>
-          <p className="text-muted-foreground">Voici une estimation basée sur vos critères</p>
+          <h2 className="text-xl md:text-2xl font-serif mb-2">
+            {isKnownMode ? 'Répartition budgétaire' : 'Estimation budgétaire'}
+          </h2>
+          <p className="text-muted-foreground">
+            {isKnownMode 
+              ? 'Voici la répartition de votre budget selon les standards du secteur'
+              : 'Voici une estimation basée sur vos critères'
+            }
+          </p>
         </div>
         
         <div className="text-center py-6">
-          <h3 className="text-xl md:text-2xl font-serif mb-4" style={{ color: '#7F9474' }}>Budget total estimé</h3>
+          <h3 className="text-xl md:text-2xl font-serif mb-4" style={{ color: '#7F9474' }}>
+            Budget total {isKnownMode ? 'réparti' : 'estimé'}
+          </h3>
           <p className="text-3xl text-wedding-olive font-medium">{formatCurrency(budgetEstimate.total)}</p>
-          <p className="text-sm text-muted-foreground mt-2">Ce montant est réparti selon les proportions standard du secteur</p>
+          <p className="text-sm text-muted-foreground mt-2">
+            {isKnownMode 
+              ? 'Réparti selon les proportions standard du secteur'
+              : 'Ce montant est calculé selon les standards du secteur'
+            }
+          </p>
         </div>
         
         <div className="space-y-4">
@@ -683,30 +906,37 @@ const BudgetSummary: React.FC = () => {
         
         <div className="flex items-center space-x-2 text-sm text-muted-foreground bg-gray-50 p-4 rounded-md">
           <Info size={18} className="shrink-0" />
-          <p>Estimation indicative basée sur les standards, à ajuster selon vos choix et besoins spécifiques.</p>
+          <p>
+            {isKnownMode 
+              ? 'Répartition basée sur les standards du secteur, à ajuster selon vos priorités.'
+              : 'Estimation indicative basée sur les standards, à ajuster selon vos choix et besoins spécifiques.'
+            }
+          </p>
         </div>
         
-        <div className="space-y-4">
-          <h3 className="text-xl font-serif mb-2">Paramètres de votre estimation</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <div className="border p-3 rounded">
-              <p className="text-sm font-medium">Nombre d'invités</p>
-              <p>{guestsCount} personnes</p>
-            </div>
-            <div className="border p-3 rounded">
-              <p className="text-sm font-medium">Région</p>
-              <p>{region}</p>
-            </div>
-            <div className="border p-3 rounded">
-              <p className="text-sm font-medium">Saison</p>
-              <p>{season === 'haute' ? 'Haute saison (avril-sept)' : 'Basse saison (oct-mars)'}</p>
-            </div>
-            <div className="border p-3 rounded">
-              <p className="text-sm font-medium">Niveau de prestation</p>
-              <p className="capitalize">{serviceLevel}</p>
+        {!isKnownMode && (
+          <div className="space-y-4">
+            <h3 className="text-xl font-serif mb-2">Paramètres de votre estimation</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div className="border p-3 rounded">
+                <p className="text-sm font-medium">Nombre d'invités</p>
+                <p>{guestsCount} personnes</p>
+              </div>
+              <div className="border p-3 rounded">
+                <p className="text-sm font-medium">Région</p>
+                <p>{region}</p>
+              </div>
+              <div className="border p-3 rounded">
+                <p className="text-sm font-medium">Saison</p>
+                <p>{season === 'haute' ? 'Haute saison (avril-sept)' : 'Basse saison (oct-mars)'}</p>
+              </div>
+              <div className="border p-3 rounded">
+                <p className="text-sm font-medium">Niveau de prestation</p>
+                <p className="capitalize">{serviceLevel}</p>
+              </div>
             </div>
           </div>
-        </div>
+        )}
         
         <div className="pt-4">
           <Button
@@ -716,6 +946,7 @@ const BudgetSummary: React.FC = () => {
               setShowEstimate(false);
               setCurrentStep(1);
               setShowCalculator(false);
+              setCalculatorMode(null);
             }}
           >
             Fermer l'estimation
@@ -737,6 +968,10 @@ const BudgetSummary: React.FC = () => {
         {showCalculator ? (
           showEstimate ? (
             renderEstimate()
+          ) : calculatorMode === null ? (
+            renderModeSelection()
+          ) : calculatorMode === 'known' ? (
+            renderKnownBudgetMode()
           ) : (
             <>
               <div className="min-h-[300px]">
@@ -777,7 +1012,7 @@ const BudgetSummary: React.FC = () => {
           )
         ) : (
           <>
-            <div className="h-64 md:h-80"> {/* Adjusted height for better display */}
+            <div className="h-64 md:h-80">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
@@ -789,7 +1024,6 @@ const BudgetSummary: React.FC = () => {
                     paddingAngle={2}
                     dataKey="amount"
                     nameKey="name"
-                    /* Simplified labels for better visibility */
                     label={({ name, percent }) => `${(percent * 100).toFixed(0)}%`}
                     labelLine={{ stroke: '#7F9474', strokeWidth: 0.5 }}
                     strokeWidth={1}
@@ -815,7 +1049,6 @@ const BudgetSummary: React.FC = () => {
               </div>
             </div>
             
-            {/* Responsive legend - grid on desktop, single column on mobile */}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
               {budgetData.map((category) => (
                 <div key={category.name} className="flex items-center space-x-3 p-2 bg-white/50 rounded-md">
