@@ -89,76 +89,91 @@ const DrinksCalculator = () => {
       // Add PDF-specific styles
       const style = document.createElement('style');
       style.innerHTML = `
-        .pdf-export * {
-          -webkit-print-color-adjust: exact !important;
-          print-color-adjust: exact !important;
-        }
-        .pdf-export .pdf-form-field {
-          border: 2px solid #333 !important;
-          background-color: #f8f9fa !important;
-          padding: 8px 12px !important;
-          margin: 4px 0 !important;
-          border-radius: 6px !important;
-          display: inline-block !important;
-          min-width: 120px !important;
-          text-align: center !important;
-          font-weight: 600 !important;
-          font-size: 14px !important;
-          line-height: 1.4 !important;
-        }
-        .pdf-export .pdf-checkbox-selected {
-          border: 2px solid #333 !important;
-          background-color: #e8f5e8 !important;
-          padding: 8px 12px !important;
-          margin: 4px 0 !important;
-          border-radius: 6px !important;
-          display: flex !important;
-          align-items: center !important;
-          font-weight: 600 !important;
-          font-size: 14px !important;
-          line-height: 1.4 !important;
-        }
-        .pdf-export .pdf-checkbox-selected::before {
-          content: "✓" !important;
-          margin-right: 8px !important;
-          color: #28a745 !important;
-          font-weight: bold !important;
-        }
-        .pdf-export .pdf-section {
-          margin-bottom: 24px !important;
-          page-break-inside: avoid !important;
-        }
-        .pdf-export .pdf-label {
-          font-weight: 600 !important;
-          margin-bottom: 8px !important;
-          font-size: 16px !important;
-          line-height: 1.4 !important;
-        }
-        .pdf-export .pdf-grid {
-          display: grid !important;
-          grid-template-columns: 1fr 1fr !important;
-          gap: 16px !important;
-        }
-        .pdf-export .pdf-results-grid {
-          display: grid !important;
-          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
-          gap: 12px !important;
-        }
-        .pdf-export .pdf-result-item {
-          background-color: #f8f9fa !important;
-          border: 1px solid #ddd !important;
-          padding: 12px !important;
-          border-radius: 6px !important;
-          text-align: center !important;
+        @media print {
+          .no-print {
+            display: none !important;
+          }
+          .export-only {
+            display: block !important;
+          }
+          .export-field {
+            font-size: 14px !important;
+            line-height: 1.6 !important;
+            margin-bottom: 12px !important;
+            padding: 8px 0 !important;
+            border-bottom: 1px solid #eee !important;
+          }
+          .export-field strong {
+            font-weight: 600 !important;
+            color: #333 !important;
+          }
+          .export-section {
+            margin-bottom: 24px !important;
+            page-break-inside: avoid !important;
+          }
+          .export-section h3 {
+            font-size: 16px !important;
+            font-weight: 600 !important;
+            margin-bottom: 16px !important;
+            color: #7F9474 !important;
+            border-bottom: 2px solid #7F9474 !important;
+            padding-bottom: 8px !important;
+          }
+          .export-title {
+            font-size: 20px !important;
+            font-weight: bold !important;
+            text-align: center !important;
+            margin-bottom: 24px !important;
+            color: #333 !important;
+          }
+          .export-results {
+            display: grid !important;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
+            gap: 16px !important;
+            margin-top: 16px !important;
+          }
+          .export-result-item {
+            background-color: #f8f9fa !important;
+            border: 1px solid #ddd !important;
+            padding: 16px !important;
+            border-radius: 8px !important;
+            text-align: center !important;
+          }
+          .export-result-item .title {
+            font-weight: 600 !important;
+            margin-bottom: 8px !important;
+            color: #555 !important;
+          }
+          .export-result-item .value {
+            font-size: 18px !important;
+            font-weight: bold !important;
+            color: #7F9474 !important;
+          }
+          .export-total {
+            background-color: #7F9474 !important;
+            color: white !important;
+            padding: 16px !important;
+            border-radius: 8px !important;
+            text-align: center !important;
+            margin-top: 16px !important;
+            font-size: 18px !important;
+            font-weight: bold !important;
+          }
+          .export-moments-list {
+            list-style: none !important;
+            padding: 0 !important;
+            margin: 8px 0 !important;
+          }
+          .export-moments-list li {
+            padding: 4px 0 !important;
+            border-bottom: 1px solid #f0f0f0 !important;
+          }
         }
       `;
       document.head.appendChild(style);
 
       const element = document.getElementById('drinks-calculator-content');
       if (!element) return;
-
-      // Add PDF export class
-      element.classList.add('pdf-export');
 
       const canvas = await html2canvas(element, {
         scale: 2,
@@ -176,8 +191,8 @@ const DrinksCalculator = () => {
         format: 'a4'
       });
       
-      const imgWidth = 210; // A4 width in mm
-      const pageHeight = 297; // A4 height in mm
+      const imgWidth = 210;
+      const pageHeight = 297;
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
       let heightLeft = imgHeight;
       let position = 0;
@@ -195,7 +210,6 @@ const DrinksCalculator = () => {
       pdf.save('calculateur-boissons.pdf');
       
       // Clean up
-      element.classList.remove('pdf-export');
       document.head.removeChild(style);
       
       toast({
@@ -215,7 +229,6 @@ const DrinksCalculator = () => {
   const shareLink = () => {
     setIsSharing(true);
     
-    // Create a shareable link with parameters
     const baseUrl = window.location.origin + '/dashboard/drinks';
     const params = new URLSearchParams({
       guests: guests.toString(),
@@ -229,7 +242,6 @@ const DrinksCalculator = () => {
     
     const shareUrl = `${baseUrl}?${params.toString()}`;
     
-    // Copy to clipboard
     navigator.clipboard.writeText(shareUrl)
       .then(() => {
         toast({
@@ -251,81 +263,104 @@ const DrinksCalculator = () => {
 
   return (
     <Card className="p-6 max-w-2xl mx-auto" id="drinks-calculator-content">
-      <h2 className="text-2xl font-serif mb-6">Calculatrice boissons : quantité et budget</h2>
+      <h2 className="text-2xl font-serif mb-6 export-title">Calculatrice boissons : quantité et budget</h2>
       
       <div className="space-y-6">
-        {/* Nombre d'invités */}
-        <div className="pdf-section">
-          <Label htmlFor="guests" className="pdf-label block mb-2">Nombre d'invités</Label>
-          <div className="pdf-form-field">
-            <span>{guests} invités</span>
+        {/* Export-only formatted content */}
+        <div className="export-only hidden print:block">
+          <div className="export-section">
+            <h3>Paramètres de l'événement</h3>
+            <div className="export-field">
+              <strong>Nombre d'invités :</strong> {guests}
+            </div>
+            <div className="export-field">
+              <strong>Gamme de boissons :</strong> {tierLabels[tier]}
+            </div>
+            <div className="export-field">
+              <strong>Moments de consommation :</strong>
+              <ul className="export-moments-list">
+                {selectedMoments.map((moment) => (
+                  <li key={moment}>
+                    • {moments.find(m => m.id === moment)?.label} - {drinksPerPerson[moment]} verre{drinksPerPerson[moment] > 1 ? 's' : ''} par personne
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
-          <div className="block md:hidden mt-2">
-            <Input
-              id="guests"
-              type="number"
-              value={guests}
-              onChange={(e) => setGuests(parseInt(e.target.value) || 0)}
-              min={1}
-              className="w-full h-10"
-            />
-          </div>
-          <div className="hidden md:block">
-            <Input
-              id="guests"
-              type="number"
-              value={guests}
-              onChange={(e) => setGuests(parseInt(e.target.value) || 0)}
-              min={1}
-              className="max-w-[200px] h-10 mt-2"
-            />
-          </div>
-        </div>
 
-        {/* Moments de consommation */}
-        <div className="pdf-section">
-          <Label className="pdf-label block mb-3">Moments de consommation</Label>
-          <div className="space-y-2">
-            {moments.map((moment) => (
-              <div key={moment.id}>
-                {selectedMoments.includes(moment.id as DrinkMoment) ? (
-                  <div className="pdf-checkbox-selected">
-                    <moment.icon className="h-5 w-5 mr-2" />
-                    <span>{moment.label}</span>
-                  </div>
-                ) : null}
-                <div className="block pdf-export:hidden">
-                  <div className="flex items-center space-x-3 py-1">
-                    <Checkbox
-                      id={moment.id}
-                      checked={selectedMoments.includes(moment.id as DrinkMoment)}
-                      onCheckedChange={(checked) => {
-                        if (checked) {
-                          setSelectedMoments([...selectedMoments, moment.id as DrinkMoment]);
-                        } else {
-                          setSelectedMoments(selectedMoments.filter(m => m !== moment.id));
-                        }
-                      }}
-                      className="h-5 w-5"
-                    />
-                    <Label htmlFor={moment.id} className="flex items-center gap-2 text-base cursor-pointer">
-                      <moment.icon className="h-5 w-5" />
-                      <span>{moment.label}</span>
-                    </Label>
-                  </div>
+          <div className="export-section">
+            <h3>Résultats du calcul</h3>
+            <div className="export-results">
+              {totalBottles.champagne > 0 && (
+                <div className="export-result-item">
+                  <div className="title">Champagne</div>
+                  <div className="value">{totalBottles.champagne} bouteilles</div>
                 </div>
-              </div>
-            ))}
+              )}
+              {totalBottles.wine > 0 && (
+                <div className="export-result-item">
+                  <div className="title">Vin</div>
+                  <div className="value">{totalBottles.wine} bouteilles</div>
+                </div>
+              )}
+              {totalBottles.spirits > 0 && (
+                <div className="export-result-item">
+                  <div className="title">Alcools forts</div>
+                  <div className="value">{totalBottles.spirits} bouteilles</div>
+                </div>
+              )}
+            </div>
+            <div className="export-total">
+              Coût total estimé : {totalCost.toFixed(2)}€
+            </div>
           </div>
         </div>
 
-        {/* Gamme de boissons */}
-        <div className="pdf-section">
-          <Label htmlFor="tier" className="pdf-label block mb-2">Gamme de boissons</Label>
-          <div className="pdf-form-field">
-            <span>{tierLabels[tier]}</span>
+        {/* Interactive UI - hidden on print */}
+        <div className="no-print">
+          {/* Nombre d'invités */}
+          <div>
+            <Label htmlFor="guests" className="block mb-2">Nombre d'invités</Label>
+            <Input
+              id="guests"
+              type="number"
+              value={guests}
+              onChange={(e) => setGuests(parseInt(e.target.value) || 0)}
+              min={1}
+              className="max-w-[200px] h-10"
+            />
           </div>
-          <div className="pdf-export:hidden mt-2">
+
+          {/* Moments de consommation */}
+          <div>
+            <Label className="block mb-3">Moments de consommation</Label>
+            <div className="space-y-2">
+              {moments.map((moment) => (
+                <div key={moment.id} className="flex items-center space-x-3 py-1">
+                  <Checkbox
+                    id={moment.id}
+                    checked={selectedMoments.includes(moment.id as DrinkMoment)}
+                    onCheckedChange={(checked) => {
+                      if (checked) {
+                        setSelectedMoments([...selectedMoments, moment.id as DrinkMoment]);
+                      } else {
+                        setSelectedMoments(selectedMoments.filter(m => m !== moment.id));
+                      }
+                    }}
+                    className="h-5 w-5"
+                  />
+                  <Label htmlFor={moment.id} className="flex items-center gap-2 text-base cursor-pointer">
+                    <moment.icon className="h-5 w-5" />
+                    <span>{moment.label}</span>
+                  </Label>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Gamme de boissons */}
+          <div>
+            <Label htmlFor="tier" className="block mb-2">Gamme de boissons</Label>
             <Select value={tier} onValueChange={(value: DrinkTier) => setTier(value)}>
               <SelectTrigger className="w-full sm:w-[200px] h-10">
                 <SelectValue placeholder="Sélectionnez une gamme" />
@@ -338,47 +373,44 @@ const DrinksCalculator = () => {
               </SelectContent>
             </Select>
           </div>
-        </div>
 
-        {/* Verres par personne */}
-        <div className="pdf-section">
-          <Label className="pdf-label block mb-3">Verres par personne</Label>
-          <div className="pdf-grid">
-            {selectedMoments.map((moment) => (
-              <div key={moment} className="space-y-2">
-                <div className="font-medium">
-                  {moments.find(m => m.id === moment)?.label}
-                </div>
-                <div className="pdf-form-field">
-                  <span>{drinksPerPerson[moment]} verres</span>
-                </div>
-                <div className="pdf-export:hidden">
-                  <Input
-                    id={`drinks-${moment}`}
-                    type="number"
-                    value={drinksPerPerson[moment]}
-                    onChange={(e) => setDrinksPerPerson({
-                      ...drinksPerPerson,
-                      [moment]: parseInt(e.target.value) || 0
-                    })}
-                    min={0}
-                    className="w-20 h-10 text-right"
-                  />
-                </div>
+          {/* Verres par personne */}
+          {selectedMoments.length > 0 && (
+            <div>
+              <Label className="block mb-3">Verres par personne</Label>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {selectedMoments.map((moment) => (
+                  <div key={moment} className="space-y-2">
+                    <div className="font-medium">
+                      {moments.find(m => m.id === moment)?.label}
+                    </div>
+                    <Input
+                      id={`drinks-${moment}`}
+                      type="number"
+                      value={drinksPerPerson[moment]}
+                      onChange={(e) => setDrinksPerPerson({
+                        ...drinksPerPerson,
+                        [moment]: parseInt(e.target.value) || 0
+                      })}
+                      min={0}
+                      className="w-20 h-10 text-right"
+                    />
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
+            </div>
+          )}
         </div>
         
-        {/* Recommandations de service */}
-        <div className="pdf-section border-t pt-4">
+        {/* Recommandations de service - always visible */}
+        <div className="border-t pt-4">
           <div className="flex items-center gap-2 mb-3">
             <HelpCircle size={18} className="text-wedding-olive" />
-            <h3 className="pdf-label">Recommandations de service</h3>
+            <h3 className="font-medium">Recommandations de service</h3>
           </div>
           
           <div className="bg-wedding-cream/10 p-4 rounded-md text-sm">
-            <div className="pdf-grid">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <p className="font-medium mb-1">Apéritif/Cocktail (1 à 1,5 heure) :</p>
                 <p>• Champagne ou cocktail : 2 à 3 coupes/verres par personne</p>
@@ -398,25 +430,25 @@ const DrinksCalculator = () => {
           </div>
         </div>
 
-        {/* Résultats */}
-        <div className="pdf-section border-t pt-6">
-          <h3 className="pdf-label mb-4">Résultats</h3>
+        {/* Résultats - always visible */}
+        <div className="border-t pt-6">
+          <h3 className="font-medium mb-4">Résultats</h3>
           
-          <div className="pdf-results-grid">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {totalBottles.champagne > 0 && (
-              <div className="pdf-result-item">
+              <div className="bg-gray-50 p-4 rounded-lg text-center">
                 <div className="font-medium">Champagne</div>
                 <div className="text-lg font-bold">{totalBottles.champagne} bouteilles</div>
               </div>
             )}
             {totalBottles.wine > 0 && (
-              <div className="pdf-result-item">
+              <div className="bg-gray-50 p-4 rounded-lg text-center">
                 <div className="font-medium">Vin</div>
                 <div className="text-lg font-bold">{totalBottles.wine} bouteilles</div>
               </div>
             )}
             {totalBottles.spirits > 0 && (
-              <div className="pdf-result-item">
+              <div className="bg-gray-50 p-4 rounded-lg text-center">
                 <div className="font-medium">Alcools forts</div>
                 <div className="text-lg font-bold">{totalBottles.spirits} bouteilles</div>
               </div>
@@ -426,13 +458,13 @@ const DrinksCalculator = () => {
           <div className="border-t pt-4 mt-4">
             <div className="text-lg font-medium flex justify-between items-center">
               <span>Coût total estimé:</span>
-              <span className="pdf-form-field">{totalCost.toFixed(2)}€</span>
+              <span className="text-wedding-olive font-bold">{totalCost.toFixed(2)}€</span>
             </div>
           </div>
         </div>
         
-        {/* Sharing buttons */}
-        <div className="pdf-export:hidden flex flex-col sm:flex-row items-center justify-between gap-3">
+        {/* Sharing buttons - hidden on print */}
+        <div className="no-print flex flex-col sm:flex-row items-center justify-between gap-3">
           <Button 
             variant="outline"
             className="w-full sm:w-auto bg-wedding-olive/10 hover:bg-wedding-olive/20 text-wedding-olive"
