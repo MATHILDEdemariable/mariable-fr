@@ -27,8 +27,10 @@ export const exportDrinksCalculatorToPDF = async (
     exportContainer.style.position = 'absolute';
     exportContainer.style.left = '-9999px';
     exportContainer.style.top = '0';
-    exportContainer.style.width = '800px';
+    exportContainer.style.width = '210mm'; // A4 width
+    exportContainer.style.minHeight = '297mm'; // A4 height
     exportContainer.style.backgroundColor = 'white';
+    exportContainer.style.fontFamily = 'Raleway, Arial, sans-serif';
     
     // Import and render the export component
     const { default: DrinksCalculatorExport } = await import('@/components/drinks/DrinksCalculatorExport');
@@ -45,64 +47,69 @@ export const exportDrinksCalculatorToPDF = async (
     root.render(exportElement);
     
     // Wait for rendering to complete
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise(resolve => setTimeout(resolve, 1000));
     
-    // Apply export-specific styles
+    // Apply export-specific styles for better PDF rendering
     const style = document.createElement('style');
     style.innerHTML = `
       #drinks-export-container {
-        font-family: Arial, sans-serif !important;
-        line-height: 1.5 !important;
+        font-family: 'Raleway', Arial, sans-serif !important;
+        line-height: 1.4 !important;
         color: #000 !important;
+        -webkit-print-color-adjust: exact !important;
+        color-adjust: exact !important;
+        print-color-adjust: exact !important;
       }
       #drinks-export-container * {
-        font-family: Arial, sans-serif !important;
+        font-family: 'Raleway', Arial, sans-serif !important;
+        box-sizing: border-box !important;
       }
-      #drinks-export-container .export-field {
-        page-break-inside: avoid !important;
+      #drinks-export-container .font-serif {
+        font-family: 'Playfair Display', serif !important;
       }
-      #drinks-export-container .export-moment {
-        page-break-inside: avoid !important;
-      }
+      #drinks-export-container .export-field,
+      #drinks-export-container .export-moment,
       #drinks-export-container .export-result {
         page-break-inside: avoid !important;
       }
     `;
     document.head.appendChild(style);
     
-    // Generate canvas from the rendered component
+    // Generate canvas from the rendered component with high quality
     const canvas = await html2canvas(exportContainer, {
-      scale: 2,
+      scale: 2, // High resolution
       useCORS: true,
       logging: false,
       backgroundColor: '#ffffff',
-      width: 800,
-      height: exportContainer.scrollHeight
+      width: Math.round(210 * 3.779527559), // A4 width in pixels at 96 DPI
+      height: Math.round(297 * 3.779527559), // A4 height in pixels at 96 DPI
+      windowWidth: 1200,
+      windowHeight: 1600
     });
     
-    // Create PDF
-    const imgData = canvas.toDataURL('image/png');
+    // Create PDF optimized for single page
     const pdf = new jsPDF({
       orientation: 'portrait',
       unit: 'mm',
-      format: 'a4'
+      format: 'a4',
+      compress: true
+    });
+
+    // Set PDF metadata
+    pdf.setProperties({
+      title: 'Calculateur de Boissons - Mariable',
+      subject: 'Estimation de boissons pour événement',
+      author: 'Mariable',
+      creator: 'Mariable',
+      keywords: 'mariage, boissons, calculateur, estimation'
     });
     
-    const imgWidth = 210;
-    const pageHeight = 297;
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
-    let heightLeft = imgHeight;
-    let position = 0;
+    const imgData = canvas.toDataURL('image/png', 1.0);
+    const imgWidth = 210; // A4 width in mm
+    const imgHeight = 297; // A4 height in mm
     
-    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-    heightLeft -= pageHeight;
-    
-    while (heightLeft >= 0) {
-      position = heightLeft - imgHeight;
-      pdf.addPage();
-      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
-    }
+    // Add the image to fit exactly on one A4 page
+    pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight, undefined, 'FAST');
     
     // Clean up
     document.head.removeChild(style);
