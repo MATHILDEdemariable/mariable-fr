@@ -178,17 +178,19 @@ export const generatePlanning = (
   // Check if dual ceremony
   const isDualCeremony = responses.double_ceremonie === 'oui';
   
-  // Get ceremony times
-  const ceremony1Time = responses.heure_ceremonie_1 ? parseTimeToDate(responses.heure_ceremonie_1) : new Date();
-  const ceremony2Time = isDualCeremony && responses.heure_ceremonie_2 ? 
-    parseTimeToDate(responses.heure_ceremonie_2) : null;
+  // Get ceremony times - handle both single and dual ceremony scenarios
+  let ceremony1Time: Date;
+  let ceremony2Time: Date | null = null;
   
-  // Determine timeline order based on ceremony times
-  const isSecondCeremonyLater = ceremony2Time ? ceremony2Time > ceremony1Time : false;
-  let currentTime = new Date(ceremony1Time);
+  if (isDualCeremony) {
+    ceremony1Time = responses.heure_ceremonie_1 ? parseTimeToDate(responses.heure_ceremonie_1) : new Date();
+    ceremony2Time = responses.heure_ceremonie_2 ? parseTimeToDate(responses.heure_ceremonie_2) : null;
+  } else {
+    ceremony1Time = responses.heure_ceremonie_principale ? parseTimeToDate(responses.heure_ceremonie_principale) : new Date();
+  }
   
   // Start with initial preparations (3 hours before first ceremony)
-  currentTime = addMinutesToDate(ceremony1Time, -180);
+  let currentTime = addMinutesToDate(ceremony1Time, -180);
   
   // 1. Initial Preparations
   const preparationQuestions = questions.filter(q => q.categorie === 'préparatifs_final');
@@ -229,13 +231,18 @@ export const generatePlanning = (
   }
   
   // 3. First Ceremony
-  const ceremony1TypeQuestion = questions.find(q => q.option_name === 'type_ceremonie_1');
+  let ceremony1TypeField = isDualCeremony ? 'type_ceremonie_1' : 'type_ceremonie_principale';
+  const ceremony1TypeQuestion = questions.find(q => q.option_name === ceremony1TypeField);
   const ceremony1Duration = ceremony1TypeQuestion ? 
-    getDurationFromOptions(ceremony1TypeQuestion, responses.type_ceremonie_1) : 60;
+    getDurationFromOptions(ceremony1TypeQuestion, responses[ceremony1TypeField]) : 60;
+  
+  const ceremony1Title = isDualCeremony 
+    ? `Première cérémonie (${responses.type_ceremonie_1 || 'cérémonie'})`
+    : `Cérémonie (${responses.type_ceremonie_principale || 'cérémonie'})`;
   
   events.push({
     id: `ceremony-1-${eventId++}`,
-    title: `Première cérémonie (${responses.type_ceremonie_1 || 'cérémonie'})`,
+    title: ceremony1Title,
     category: 'cérémonie',
     startTime: ceremony1Time,
     endTime: addMinutesToDate(ceremony1Time, ceremony1Duration),

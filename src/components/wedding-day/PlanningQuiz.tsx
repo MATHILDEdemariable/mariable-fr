@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { Card, CardContent } from '@/components/ui/card';
@@ -302,8 +301,73 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
     }
   };
   
+  // Special renderer for ceremony section with conditional fieldsets
+  const renderCeremonySection = () => {
+    const isDualCeremony = watchAllFields.double_ceremonie === 'oui';
+    const ceremonyQuestions = questions.filter(q => q.categorie === 'cérémonie');
+    
+    // Find the double ceremony question
+    const doubleCeremonyQuestion = ceremonyQuestions.find(q => q.option_name === 'double_ceremonie');
+    
+    return (
+      <div className="space-y-6">
+        {/* Double ceremony question */}
+        {doubleCeremonyQuestion && renderQuestionInput(doubleCeremonyQuestion)}
+        
+        {/* Single ceremony fieldset */}
+        {!isDualCeremony && (
+          <fieldset className="border border-gray-200 rounded-lg p-4 space-y-4">
+            <legend className="text-lg font-medium px-2">Votre cérémonie</legend>
+            {ceremonyQuestions
+              .filter(q => q.option_name === 'heure_ceremonie_principale' || q.option_name === 'type_ceremonie_principale')
+              .filter(q => isQuestionVisible(q, watchAllFields))
+              .map(question => (
+                <div key={question.id}>
+                  {renderQuestionInput(question)}
+                </div>
+              ))}
+          </fieldset>
+        )}
+        
+        {/* Dual ceremony fieldsets */}
+        {isDualCeremony && (
+          <>
+            <fieldset className="border border-gray-200 rounded-lg p-4 space-y-4">
+              <legend className="text-lg font-medium px-2">Première cérémonie</legend>
+              {ceremonyQuestions
+                .filter(q => q.option_name === 'heure_ceremonie_1' || q.option_name === 'type_ceremonie_1')
+                .filter(q => isQuestionVisible(q, watchAllFields))
+                .map(question => (
+                  <div key={question.id}>
+                    {renderQuestionInput(question)}
+                  </div>
+                ))}
+            </fieldset>
+            
+            <fieldset className="border border-gray-200 rounded-lg p-4 space-y-4">
+              <legend className="text-lg font-medium px-2">Deuxième cérémonie</legend>
+              {ceremonyQuestions
+                .filter(q => q.option_name === 'heure_ceremonie_2' || q.option_name === 'type_ceremonie_2')
+                .filter(q => isQuestionVisible(q, watchAllFields))
+                .map(question => (
+                  <div key={question.id}>
+                    {renderQuestionInput(question)}
+                  </div>
+                ))}
+            </fieldset>
+          </>
+        )}
+      </div>
+    );
+  };
+  
   // Component to render current section questions
   const CurrentSectionQuestions = () => {
+    // Special handling for ceremony section
+    if (currentSection === 'cérémonie') {
+      return renderCeremonySection();
+    }
+    
     // Filter questions by current section and visibility conditions
     const currentQuestions = questions
       .filter(q => q.categorie === currentSection)
