@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import { Card, CardContent } from '@/components/ui/card';
@@ -112,13 +113,20 @@ const DragDropTimeline: React.FC<DragDropTimelineProps> = ({ events, onEventsUpd
     // Save to database if user is logged in
     if (user) {
       try {
+        // Convert to serializable format for database storage
+        const serializableEvents = updatedEvents.map(event => ({
+          ...event,
+          startTime: event.startTime.toISOString(),
+          endTime: event.endTime.toISOString()
+        }));
+
         // Save updated planning to database
         const { error } = await supabase
           .from('planning_reponses_utilisateur')
           .upsert({
             user_id: user.id,
-            email: user.email,
-            planning_genere: updatedEvents,
+            email: user.email || undefined,
+            planning_genere: serializableEvents,
             reponses: {} // Keep existing responses
           });
 

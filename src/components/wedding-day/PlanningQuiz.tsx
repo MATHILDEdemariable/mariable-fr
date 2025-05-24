@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { Card, CardContent } from '@/components/ui/card';
@@ -26,10 +25,20 @@ import {
 } from './types/planningTypes';
 
 interface PlanningQuizProps {
-  onSubmit: (formData: PlanningFormValues, generatedPlanning: PlanningEvent[]) => void;
+  onSubmit: (data: PlanningFormValues, generatedEvents: PlanningEvent[]) => void;
+  currentStep?: number;
+  onStepChange?: (step: number) => void;
+  onStepComplete?: (stepIndex: number) => void;
+  stepLabels?: string[];
 }
 
-const PlanningQuiz: React.FC<PlanningQuizProps> = ({ onSubmit }) => {
+const PlanningQuiz: React.FC<PlanningQuizProps> = ({ 
+  onSubmit, 
+  currentStep = 0, 
+  onStepChange, 
+  onStepComplete,
+  stepLabels = []
+}) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [questions, setQuestions] = useState<PlanningQuestion[]>([]);
@@ -72,17 +81,23 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({ onSubmit }) => {
   }, []);
   
   // Handle navigation between sections
-  const handleNextSection = () => {
-    const currentIndex = sections.indexOf(currentSection);
-    if (currentIndex < sections.length - 1) {
-      setCurrentSection(sections[currentIndex + 1]);
+  const handleNextStep = () => {
+    if (currentStep < sections.length - 1) {
+      const nextStep = currentStep + 1;
+      if (onStepChange) {
+        onStepChange(nextStep);
+      }
+      if (onStepComplete) {
+        onStepComplete(currentStep);
+      }
     }
   };
   
-  const handlePreviousSection = () => {
-    const currentIndex = sections.indexOf(currentSection);
-    if (currentIndex > 0) {
-      setCurrentSection(sections[currentIndex - 1]);
+  const handlePrevStep = () => {
+    if (currentStep > 0) {
+      if (onStepChange) {
+        onStepChange(currentStep - 1);
+      }
     }
   };
   
@@ -327,7 +342,7 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({ onSubmit }) => {
               <Button
                 type="button"
                 variant="outline"
-                onClick={handlePreviousSection}
+                onClick={handlePrevStep}
                 disabled={sections.indexOf(currentSection) === 0}
               >
                 Précédent
@@ -343,7 +358,7 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({ onSubmit }) => {
               ) : (
                 <Button
                   type="button"
-                  onClick={handleNextSection}
+                  onClick={handleNextStep}
                   className="bg-wedding-olive hover:bg-wedding-olive/80"
                 >
                   Suivant
