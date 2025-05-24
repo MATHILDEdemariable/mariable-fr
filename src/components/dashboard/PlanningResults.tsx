@@ -60,8 +60,8 @@ const PlanningResults: React.FC = () => {
             score: result.score,
             status: result.status,
             level: result.level,
-            objectives: result.objectives,
-            categories: result.categories
+            objectives: Array.isArray(result.objectives) ? result.objectives as string[] : [],
+            categories: Array.isArray(result.categories) ? result.categories as string[] : []
           });
         }
 
@@ -73,7 +73,16 @@ const PlanningResults: React.FC = () => {
           .order('position', { ascending: true });
 
         if (tasks) {
-          setGeneratedTasks(tasks);
+          const mappedTasks: GeneratedTask[] = tasks.map(task => ({
+            id: task.id,
+            title: task.label, // Map label to title
+            description: task.description || '',
+            category: task.category,
+            priority: task.priority as 'haute' | 'moyenne' | 'basse',
+            completed: task.completed,
+            position: task.position
+          }));
+          setGeneratedTasks(mappedTasks);
         }
       }
     } catch (error) {
