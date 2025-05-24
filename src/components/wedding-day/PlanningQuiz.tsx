@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
@@ -69,13 +68,26 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
 
   const fetchQuestions = async () => {
     try {
+      // Use the correct table name from the database schema
       const { data, error } = await supabase
-        .from('planning_jourj_questions')
+        .from('planning_questions')
         .select('*')
-        .order('order_index', { ascending: true });
+        .order('ordre_affichage', { ascending: true });
 
       if (error) throw error;
-      setQuestions(data || []);
+      
+      // Transform the data to match QuizQuestion format
+      const transformedQuestions: QuizQuestion[] = (data || []).map(q => ({
+        id: q.id,
+        question: q.label,
+        type: q.type as any,
+        category: q.categorie,
+        options: Array.isArray(q.options) ? q.options as string[] : [],
+        required: true,
+        placeholder: ''
+      }));
+      
+      setQuestions(transformedQuestions);
     } catch (error) {
       console.error('Error fetching questions:', error);
     } finally {

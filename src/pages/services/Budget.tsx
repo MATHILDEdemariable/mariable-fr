@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -105,7 +104,10 @@ const Budget: React.FC = () => {
       if (data) {
         setTotalBudget(data.total_budget || 0);
         if (data.breakdown) {
-          const breakdown = JSON.parse(data.breakdown);
+          // Handle JSON parsing safely
+          const breakdown = typeof data.breakdown === 'string' 
+            ? JSON.parse(data.breakdown)
+            : data.breakdown;
           if (breakdown.categories) {
             setCategories(breakdown.categories);
           }
@@ -125,7 +127,13 @@ const Budget: React.FC = () => {
         user_id: userData.user.id,
         total_budget: totalBudget,
         breakdown: JSON.stringify({ categories }),
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
+        // Add required fields with default values
+        guests_count: 100,
+        region: 'France',
+        season: 'Printemps',
+        selected_vendors: [],
+        service_level: 'Standard'
       };
 
       const { error } = await supabase
@@ -348,14 +356,6 @@ const Budget: React.FC = () => {
 
       {/* Action Buttons */}
       <div className="flex flex-col sm:flex-row gap-4 justify-center">
-        <Button
-          onClick={saveBudgetData}
-          variant="outline"
-          className="bg-wedding-olive/10 hover:bg-wedding-olive/20 text-wedding-olive"
-        >
-          Sauvegarder
-        </Button>
-        
         <Button
           onClick={handleExportPDF}
           className="bg-wedding-olive hover:bg-wedding-olive/80 flex items-center gap-2"
