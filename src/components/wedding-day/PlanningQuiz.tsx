@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { Card, CardContent } from '@/components/ui/card';
@@ -33,15 +32,15 @@ interface PlanningQuizProps {
   stepLabels?: string[];
 }
 
-// Centralized categories configuration as single source of truth
+// Centralized categories configuration as single source of truth - reordered to put préparatifs after logistique
 const CATEGORIES_CONFIG = [
   { key: 'cérémonie', label: 'Cérémonie(s)', description: 'Informations sur votre/vos cérémonie(s) de mariage' },
   { key: 'logistique', label: 'Logistique', description: 'Temps de trajets et logistique' },
+  { key: 'préparatifs_final', label: 'Préparatifs', description: 'Préparatifs de votre mariage' },
   { key: 'photos', label: 'Photos', description: 'Planification des séances photos' },
   { key: 'cocktail', label: 'Cocktail', description: 'Organisation du cocktail' },
   { key: 'repas', label: 'Repas', description: 'Déroulement du repas' },
-  { key: 'soiree', label: 'Soirée', description: 'Organisation de votre soirée' },
-  { key: 'préparatifs_final', label: 'Préparatifs', description: 'Préparatifs du matin de votre mariage' }
+  { key: 'soiree', label: 'Soirée', description: 'Organisation de votre soirée' }
 ];
 
 const PlanningQuiz: React.FC<PlanningQuizProps> = ({ 
@@ -92,18 +91,8 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
   // Update available categories when form values change (for conditional logic)
   useEffect(() => {
     const baseCategories = CATEGORIES_CONFIG.map(cat => cat.key);
-    let dynamicCategories = [...baseCategories];
-    
-    // Add préparatifs_2 if double ceremony is selected
-    if (watchAllFields.double_ceremonie === 'oui') {
-      // Insert préparatifs_2 before préparatifs_final
-      const finalPrepIndex = dynamicCategories.indexOf('préparatifs_final');
-      if (finalPrepIndex > -1) {
-        dynamicCategories.splice(finalPrepIndex, 0, 'préparatifs_2');
-      }
-    }
-    
-    setAvailableCategories(dynamicCategories);
+    // No longer need to insert préparatifs_2 dynamically since it's integrated
+    setAvailableCategories(baseCategories);
   }, [watchAllFields.double_ceremonie]);
   
   // Sync with parent step changes
@@ -617,171 +606,113 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
     );
   };
 
-  // Special renderer for preparatifs section with conditional preparatifs 2
+  // Unified preparatifs renderer for both single and dual ceremony scenarios
   const renderPreparatifsSection = () => {
     const isDualCeremony = watchAllFields.double_ceremonie === 'oui';
-    const isPreparatifs2 = currentCategory === 'préparatifs_2';
     
-    if (isPreparatifs2) {
-      return (
-        <div className="space-y-6">
-          <div className="bg-blue-50 p-4 rounded-lg">
-            <h3 className="font-medium text-blue-900 mb-2">Préparatifs avant la 2ème cérémonie</h3>
-            <p className="text-sm text-blue-700">
-              Choisissez les étapes de préparation à répéter avant votre deuxième cérémonie.
-            </p>
-          </div>
-          
-          <FormField
-            control={form.control}
-            name="preparatifs_2_coiffure"
-            render={({ field }) => (
-              <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                <FormControl>
-                  <Checkbox
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                </FormControl>
-                <div className="space-y-1 leading-none">
-                  <FormLabel>Retouche coiffure</FormLabel>
-                  <FormDescription>
-                    Retouche et remise en forme de la coiffure (30 minutes)
-                  </FormDescription>
-                </div>
-              </FormItem>
-            )}
-          />
-          
-          <FormField
-            control={form.control}
-            name="preparatifs_2_maquillage"
-            render={({ field }) => (
-              <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                <FormControl>
-                  <Checkbox
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                </FormControl>
-                <div className="space-y-1 leading-none">
-                  <FormLabel>Retouche maquillage</FormLabel>
-                  <FormDescription>
-                    Retouche du maquillage et finalisation (30 minutes)
-                  </FormDescription>
-                </div>
-              </FormItem>
-            )}
-          />
-          
-          <FormField
-            control={form.control}
-            name="preparatifs_2_habillage"
-            render={({ field }) => (
-              <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                <FormControl>
-                  <Checkbox
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                </FormControl>
-                <div className="space-y-1 leading-none">
-                  <FormLabel>Changement de tenue</FormLabel>
-                  <FormDescription>
-                    Changement ou ajustement de la tenue (45 minutes)
-                  </FormDescription>
-                </div>
-              </FormItem>
-            )}
-          />
-        </div>
-      );
-    }
-    
-    // Regular preparatifs section with dual ceremony prep options
+    // Get regular preparatifs questions
     const currentQuestions = questions
       .filter(q => q.categorie === 'préparatifs_final')
       .filter(q => isQuestionVisible(q, watchAllFields));
 
     return (
       <div className="space-y-6">
-        {currentQuestions.map(question => (
-          <div key={question.id} className="py-2">
-            {renderQuestionInput(question)}
-          </div>
-        ))}
-        
-        {/* Show préparatifs 2 options in the main preparatifs section if dual ceremony */}
-        {isDualCeremony && (
-          <fieldset className="border border-blue-200 rounded-lg p-4 space-y-4 bg-blue-50">
-            <legend className="text-lg font-medium px-2 text-blue-900">Préparatifs avant la 2ème cérémonie</legend>
-            <p className="text-sm text-blue-700 mb-4">
-              Choisissez les étapes de préparation à répéter avant votre deuxième cérémonie.
-            </p>
-            
-            <FormField
-              control={form.control}
-              name="preparatifs_2_coiffure"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                  <FormControl>
-                    <Checkbox
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
-                  <div className="space-y-1 leading-none">
-                    <FormLabel>Retouche coiffure</FormLabel>
-                    <FormDescription>
-                      Retouche et remise en forme de la coiffure (30 minutes)
-                    </FormDescription>
-                  </div>
-                </FormItem>
-              )}
-            />
-            
-            <FormField
-              control={form.control}
-              name="preparatifs_2_maquillage"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                  <FormControl>
-                    <Checkbox
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
-                  <div className="space-y-1 leading-none">
-                    <FormLabel>Retouche maquillage</FormLabel>
-                    <FormDescription>
-                      Retouche du maquillage et finalisation (30 minutes)
-                    </FormDescription>
-                  </div>
-                </FormItem>
-              )}
-            />
-            
-            <FormField
-              control={form.control}
-              name="preparatifs_2_habillage"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                  <FormControl>
-                    <Checkbox
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
-                  <div className="space-y-1 leading-none">
-                    <FormLabel>Changement de tenue</FormLabel>
-                    <FormDescription>
-                      Changement ou ajustement de la tenue (45 minutes)
-                    </FormDescription>
-                  </div>
-                </FormItem>
-              )}
-            />
+        {/* Single ceremony: regular preparatifs */}
+        {!isDualCeremony && (
+          <fieldset className="border border-gray-200 rounded-lg p-4 space-y-4">
+            <legend className="text-lg font-medium px-2">Préparatifs de votre mariage</legend>
+            {currentQuestions.map(question => (
+              <div key={question.id} className="py-2">
+                {renderQuestionInput(question)}
+              </div>
+            ))}
           </fieldset>
+        )}
+        
+        {/* Dual ceremony: two separate blocks */}
+        {isDualCeremony && (
+          <>
+            {/* Preparatifs before first ceremony */}
+            <fieldset className="border border-gray-200 rounded-lg p-4 space-y-4">
+              <legend className="text-lg font-medium px-2">Préparatifs avant la 1ère cérémonie</legend>
+              {currentQuestions.map(question => (
+                <div key={question.id} className="py-2">
+                  {renderQuestionInput(question)}
+                </div>
+              ))}
+            </fieldset>
+            
+            {/* Preparatifs before second ceremony */}
+            <fieldset className="border border-blue-200 rounded-lg p-4 space-y-4 bg-blue-50">
+              <legend className="text-lg font-medium px-2 text-blue-900">Préparatifs avant la 2ème cérémonie</legend>
+              <p className="text-sm text-blue-700 mb-4">
+                Choisissez les étapes de préparation à répéter avant votre deuxième cérémonie.
+              </p>
+              
+              <FormField
+                control={form.control}
+                name="preparatifs_2_coiffure"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                    <div className="space-y-1 leading-none">
+                      <FormLabel>Retouche coiffure</FormLabel>
+                      <FormDescription>
+                        Retouche et remise en forme de la coiffure (30 minutes)
+                      </FormDescription>
+                    </div>
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="preparatifs_2_maquillage"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                    <div className="space-y-1 leading-none">
+                      <FormLabel>Retouche maquillage</FormLabel>
+                      <FormDescription>
+                        Retouche du maquillage et finalisation (30 minutes)
+                      </FormDescription>
+                    </div>
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="preparatifs_2_habillage"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                    <div className="space-y-1 leading-none">
+                      <FormLabel>Changement de tenue</FormLabel>
+                      <FormDescription>
+                        Changement ou ajustement de la tenue (45 minutes)
+                      </FormDescription>
+                    </div>
+                  </FormItem>
+                )}
+              />
+            </fieldset>
+          </>
         )}
       </div>
     );
@@ -799,8 +730,8 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
       return renderLogisticsSection();
     }
     
-    // Special handling for preparatifs sections
-    if (currentCategory === 'préparatifs_final' || currentCategory === 'préparatifs_2') {
+    // Special handling for preparatifs section
+    if (currentCategory === 'préparatifs_final') {
       return renderPreparatifsSection();
     }
     
@@ -830,10 +761,6 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
   
   // Get section config helper
   const getCurrentCategoryConfig = () => {
-    if (currentCategory === 'préparatifs_2') {
-      return { key: 'préparatifs_2', label: 'Préparatifs 2', description: 'Préparatifs avant la 2ème cérémonie' };
-    }
-    
     return CATEGORIES_CONFIG.find(cat => cat.key === currentCategory) || 
            { key: currentCategory, label: currentCategory, description: '' };
   };

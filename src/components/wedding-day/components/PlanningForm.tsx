@@ -8,15 +8,15 @@ import { usePlanning } from '../context/PlanningContext';
 import { useToast } from '@/components/ui/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
-// Use the same categories config as in PlanningQuiz for consistency
+// Use the same reordered categories config as in PlanningQuiz for consistency
 const CATEGORIES_CONFIG = [
   { key: 'cérémonie', label: 'Cérémonie' },
   { key: 'logistique', label: 'Logistique' }, 
+  { key: 'préparatifs_final', label: 'Préparatifs' },
   { key: 'photos', label: 'Photos' },
   { key: 'cocktail', label: 'Cocktail' },
   { key: 'repas', label: 'Repas' },
-  { key: 'soiree', label: 'Soirée' },
-  { key: 'préparatifs_final', label: 'Préparatifs' }
+  { key: 'soiree', label: 'Soirée' }
 ];
 
 export const PlanningForm: React.FC = () => {
