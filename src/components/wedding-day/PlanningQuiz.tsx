@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { Card, CardContent } from '@/components/ui/card';
@@ -42,7 +43,6 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [questions, setQuestions] = useState<PlanningQuestion[]>([]);
-  const [currentSection, setCurrentSection] = useState<string>('');
   const [sections, setSections] = useState<string[]>([]);
   
   const form = useForm<PlanningFormValues>({
@@ -50,6 +50,9 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
   });
   
   const watchAllFields = form.watch();
+  
+  // Get current section based on step
+  const currentSection = sections[currentStep] || '';
   
   // Fetch planning questions from Supabase
   useEffect(() => {
@@ -63,11 +66,6 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
         // Extract and set unique section names
         const uniqueSections = [...new Set(data.allQuestions.map(q => q.categorie))];
         setSections(uniqueSections);
-        
-        // Set initial section
-        if (uniqueSections.length > 0 && !currentSection) {
-          setCurrentSection(uniqueSections[0]);
-        }
         
       } catch (err: any) {
         setError(err.message || 'Une erreur est survenue lors du chargement des questions');
@@ -276,10 +274,31 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
     }
   };
   
-  // Filter questions by current section and visibility conditions
-  const currentQuestions = questions
-    .filter(q => q.categorie === currentSection)
-    .filter(q => isQuestionVisible(q, watchAllFields));
+  // Component to render current section questions
+  const CurrentSectionQuestions = () => {
+    // Filter questions by current section and visibility conditions
+    const currentQuestions = questions
+      .filter(q => q.categorie === currentSection)
+      .filter(q => isQuestionVisible(q, watchAllFields));
+
+    if (currentQuestions.length === 0) {
+      return (
+        <div className="text-center py-8 text-gray-500">
+          Aucune question disponible pour cette section.
+        </div>
+      );
+    }
+
+    return (
+      <div className="space-y-6">
+        {currentQuestions.map(question => (
+          <div key={question.id} className="py-2">
+            {renderQuestionInput(question)}
+          </div>
+        ))}
+      </div>
+    );
+  };
   
   if (loading) {
     return (
@@ -328,14 +347,8 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
               </p>
             </div>
             
-            {/* Questions */}
-            <div className="space-y-6">
-              {currentQuestions.map(question => (
-                <div key={question.id} className="py-2">
-                  {renderQuestionInput(question)}
-                </div>
-              ))}
-            </div>
+            {/* Current section questions */}
+            <CurrentSectionQuestions />
             
             {/* Navigation buttons */}
             <div className="flex justify-between pt-4 border-t">
@@ -343,12 +356,12 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
                 type="button"
                 variant="outline"
                 onClick={handlePrevStep}
-                disabled={sections.indexOf(currentSection) === 0}
+                disabled={currentStep === 0}
               >
                 Précédent
               </Button>
               
-              {sections.indexOf(currentSection) === sections.length - 1 ? (
+              {currentStep === sections.length - 1 ? (
                 <Button 
                   type="submit"
                   className="bg-wedding-olive hover:bg-wedding-olive/80"

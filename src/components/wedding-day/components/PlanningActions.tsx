@@ -7,7 +7,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { exportDashboardToPDF } from '@/services/pdfExportService';
 
 export const PlanningActions: React.FC = () => {
-  const { events, setFormData, setEvents, setActiveTab, exportLoading, setExportLoading } = usePlanning();
+  const { events, setFormData, setEvents, setActiveTab, exportLoading, setExportLoading, activeTab } = usePlanning();
   const { toast } = useToast();
 
   const handleReset = () => {
@@ -66,7 +66,8 @@ export const PlanningActions: React.FC = () => {
     });
   };
 
-  if (!events.length) {
+  // Only show actions when we have events and we're not on the form tab
+  if (!events.length || activeTab === "form") {
     return null;
   }
 
