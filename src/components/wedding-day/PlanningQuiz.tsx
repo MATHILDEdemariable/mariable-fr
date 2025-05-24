@@ -32,6 +32,17 @@ interface PlanningQuizProps {
   stepLabels?: string[];
 }
 
+// Centralized categories configuration as single source of truth
+const CATEGORIES_CONFIG = [
+  { key: 'cérémonie', label: 'Cérémonie(s)', description: 'Informations sur votre/vos cérémonie(s) de mariage' },
+  { key: 'logistique', label: 'Logistique', description: 'Temps de trajets et logistique' },
+  { key: 'photos', label: 'Photos', description: 'Planification des séances photos' },
+  { key: 'cocktail', label: 'Cocktail', description: 'Organisation du cocktail' },
+  { key: 'repas', label: 'Repas', description: 'Déroulement du repas' },
+  { key: 'soiree', label: 'Soirée', description: 'Organisation de votre soirée' },
+  { key: 'préparatifs_final', label: 'Préparatifs', description: 'Préparatifs du matin de votre mariage' }
+];
+
 const PlanningQuiz: React.FC<PlanningQuizProps> = ({ 
   onSubmit, 
   currentStep = 0, 
@@ -42,7 +53,8 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [questions, setQuestions] = useState<PlanningQuestion[]>([]);
-  const [sections, setSections] = useState<string[]>([]);
+  const [currentCategoryIndex, setCurrentCategoryIndex] = useState(0);
+  const [availableCategories, setAvailableCategories] = useState<string[]>([]);
   
   const form = useForm<PlanningFormValues>({
     defaultValues: {},
@@ -50,8 +62,8 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
   
   const watchAllFields = form.watch();
   
-  // Get current section based on step
-  const currentSection = sections[currentStep] || '';
+  // Get current category based on step
+  const currentCategory = availableCategories[currentCategoryIndex] || '';
   
   // Fetch planning questions from Supabase
   useEffect(() => {
@@ -59,23 +71,11 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
       try {
         setLoading(true);
         const data = await fetchPlanningQuestions(supabase);
-        
         setQuestions(data.allQuestions);
         
-        // Create dynamic sections based on responses and visibility conditions
-        const baseSections = ['cérémonie', 'logistique', 'photos', 'cocktail', 'repas', 'soiree'];
-        const conditionalSections = [];
-        
-        // Add préparatifs_2 if double ceremony is selected
-        if (watchAllFields.double_ceremonie === 'oui') {
-          conditionalSections.push('préparatifs_2');
-        }
-        
-        // Always add final preparations at the end
-        conditionalSections.push('préparatifs_final');
-        
-        const dynamicSections = [...baseSections, ...conditionalSections];
-        setSections(dynamicSections);
+        // Initialize available categories based on base config
+        const baseCategories = CATEGORIES_CONFIG.map(cat => cat.key);
+        setAvailableCategories(baseCategories);
         
       } catch (err: any) {
         setError(err.message || 'Une erreur est survenue lors du chargement des questions');
@@ -88,40 +88,52 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
     loadQuestions();
   }, []);
   
-  // Update sections when form values change (for conditional logic)
+  // Update available categories when form values change (for conditional logic)
   useEffect(() => {
-    const baseSections = ['cérémonie', 'logistique', 'photos', 'cocktail', 'repas', 'soiree'];
-    const conditionalSections = [];
+    const baseCategories = CATEGORIES_CONFIG.map(cat => cat.key);
+    let dynamicCategories = [...baseCategories];
     
     // Add préparatifs_2 if double ceremony is selected
     if (watchAllFields.double_ceremonie === 'oui') {
-      conditionalSections.push('préparatifs_2');
+      // Insert préparatifs_2 before préparatifs_final
+      const finalPrepIndex = dynamicCategories.indexOf('préparatifs_final');
+      if (finalPrepIndex > -1) {
+        dynamicCategories.splice(finalPrepIndex, 0, 'préparatifs_2');
+      }
     }
     
-    // Always add final preparations at the end
-    conditionalSections.push('préparatifs_final');
-    
-    const dynamicSections = [...baseSections, ...conditionalSections];
-    setSections(dynamicSections);
+    setAvailableCategories(dynamicCategories);
   }, [watchAllFields.double_ceremonie]);
   
-  // Handle navigation between sections
+  // Sync with parent step changes
+  useEffect(() => {
+    if (currentStep !== currentCategoryIndex) {
+      setCurrentCategoryIndex(currentStep);
+    }
+  }, [currentStep]);
+  
+  // Handle navigation between categories
   const handleNextStep = () => {
-    if (currentStep < sections.length - 1) {
-      const nextStep = currentStep + 1;
+    const nextIndex = currentCategoryIndex + 1;
+    
+    if (nextIndex < availableCategories.length) {
+      setCurrentCategoryIndex(nextIndex);
       if (onStepChange) {
-        onStepChange(nextStep);
+        onStepChange(nextIndex);
       }
       if (onStepComplete) {
-        onStepComplete(currentStep);
+        onStepComplete(currentCategoryIndex);
       }
     }
   };
   
   const handlePrevStep = () => {
-    if (currentStep > 0) {
+    const prevIndex = currentCategoryIndex - 1;
+    
+    if (prevIndex >= 0) {
+      setCurrentCategoryIndex(prevIndex);
       if (onStepChange) {
-        onStepChange(currentStep - 1);
+        onStepChange(prevIndex);
       }
     }
   };
@@ -364,13 +376,13 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
   // Component to render current section questions
   const CurrentSectionQuestions = () => {
     // Special handling for ceremony section
-    if (currentSection === 'cérémonie') {
+    if (currentCategory === 'cérémonie') {
       return renderCeremonySection();
     }
     
     // Filter questions by current section and visibility conditions
     const currentQuestions = questions
-      .filter(q => q.categorie === currentSection)
+      .filter(q => q.categorie === currentCategory)
       .filter(q => isQuestionVisible(q, watchAllFields));
 
     if (currentQuestions.length === 0) {
@@ -392,20 +404,10 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
     );
   };
   
-  // Get section title helper
-  const getSectionTitle = (section: string): string => {
-    const titles: Record<string, string> = {
-      'cérémonie': 'Cérémonie(s)',
-      'logistique': 'Logistique et trajets',
-      'photos': 'Séances photos',
-      'cocktail': 'Cocktail',
-      'repas': 'Repas',
-      'soiree': 'Soirée',
-      'préparatifs_2': 'Préparatifs avant la 2e cérémonie',
-      'préparatifs_final': 'Préparatifs du matin'
-    };
-    
-    return titles[section] || section;
+  // Get section config helper
+  const getCurrentCategoryConfig = () => {
+    return CATEGORIES_CONFIG.find(cat => cat.key === currentCategory) || 
+           { key: currentCategory, label: currentCategory, description: '' };
   };
   
   if (loading) {
@@ -436,6 +438,8 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
     );
   }
   
+  const currentCategoryConfig = getCurrentCategoryConfig();
+  
   return (
     <Card>
       <CardContent className="p-6">
@@ -443,16 +447,9 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
           <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-6">
             {/* Section title */}
             <div className="border-b pb-4 mb-6">
-              <h2 className="text-xl font-serif">{getSectionTitle(currentSection)}</h2>
+              <h2 className="text-xl font-serif">{currentCategoryConfig.label}</h2>
               <p className="text-sm text-gray-500">
-                {currentSection === 'cérémonie' && "Informations sur votre/vos cérémonie(s) de mariage"}
-                {currentSection === 'logistique' && "Temps de trajets et logistique"}
-                {currentSection === 'photos' && "Planification des séances photos"}
-                {currentSection === 'cocktail' && "Organisation du cocktail"}
-                {currentSection === 'repas' && "Déroulement du repas"}
-                {currentSection === 'soiree' && "Organisation de votre soirée"}
-                {currentSection === 'préparatifs_2' && "Préparations entre les cérémonies"}
-                {currentSection === 'préparatifs_final' && "Préparatifs du matin de votre mariage"}
+                {currentCategoryConfig.description}
               </p>
             </div>
             
@@ -465,12 +462,12 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
                 type="button"
                 variant="outline"
                 onClick={handlePrevStep}
-                disabled={currentStep === 0}
+                disabled={currentCategoryIndex === 0}
               >
                 Précédent
               </Button>
               
-              {currentStep === sections.length - 1 ? (
+              {currentCategoryIndex === availableCategories.length - 1 ? (
                 <Button 
                   type="submit"
                   className="bg-wedding-olive hover:bg-wedding-olive/80"

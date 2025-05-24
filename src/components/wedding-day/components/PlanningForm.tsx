@@ -8,26 +8,34 @@ import { usePlanning } from '../context/PlanningContext';
 import { useToast } from '@/components/ui/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
+// Use the same categories config as in PlanningQuiz for consistency
+const CATEGORIES_CONFIG = [
+  { key: 'cérémonie', label: 'Cérémonie' },
+  { key: 'logistique', label: 'Logistique' }, 
+  { key: 'photos', label: 'Photos' },
+  { key: 'cocktail', label: 'Cocktail' },
+  { key: 'repas', label: 'Repas' },
+  { key: 'soiree', label: 'Soirée' },
+  { key: 'préparatifs_final', label: 'Préparatifs' }
+];
+
 export const PlanningForm: React.FC = () => {
   const { setFormData, setEvents, setActiveTab, loading, setLoading, user } = usePlanning();
   const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState(0);
   const [completedSteps, setCompletedSteps] = useState<boolean[]>([]);
+  const [availableCategories, setAvailableCategories] = useState<string[]>([]);
   
-  // Define step labels based on planning categories
-  const stepLabels = [
-    'Cérémonie',
-    'Logistique', 
-    'Préparatifs',
-    'Photos',
-    'Cocktail',
-    'Repas',
-    'Soirée'
-  ];
+  // Initialize step labels from categories config
+  const stepLabels = CATEGORIES_CONFIG.map(cat => cat.label);
 
   useEffect(() => {
+    // Initialize available categories
+    const baseCategories = CATEGORIES_CONFIG.map(cat => cat.key);
+    setAvailableCategories(baseCategories);
+    
     // Initialize completed steps array
-    setCompletedSteps(new Array(stepLabels.length).fill(false));
+    setCompletedSteps(new Array(baseCategories.length).fill(false));
   }, []);
 
   const handleStepChange = (stepIndex: number) => {
@@ -89,7 +97,7 @@ export const PlanningForm: React.FC = () => {
         
         <PlanningStepIndicator
           currentStep={currentStep}
-          totalSteps={stepLabels.length}
+          totalSteps={availableCategories.length}
           stepLabels={stepLabels}
           completedSteps={completedSteps}
           onStepClick={handleStepChange}
