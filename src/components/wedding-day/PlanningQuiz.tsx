@@ -1,848 +1,300 @@
+
 import React, { useState, useEffect } from 'react';
-import { useForm, Controller } from 'react-hook-form';
-import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import {
-  Form,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormControl,
-  FormDescription,
-  FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
+import { Progress } from '@/components/ui/progress';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-import {
-  PlanningFormValues,
-  PlanningQuestion,
-  PlanningEvent,
-  fetchPlanningQuestions,
-  isQuestionVisible,
-  generatePlanning
+import { 
+  PlanningFormValues, 
+  PlanningEvent, 
+  QuizQuestion, 
+  FormSection,
+  calculateEventTimes,
+  generatePlanningEvents
 } from './types/planningTypes';
 
-interface PlanningQuizProps {
-  onSubmit: (data: PlanningFormValues, generatedEvents: PlanningEvent[]) => void;
-  currentStep?: number;
-  onStepChange?: (step: number) => void;
-  onStepComplete?: (stepIndex: number) => void;
-  stepLabels?: string[];
-}
-
-// Centralized categories configuration as single source of truth - reordered to put préparatifs after logistique
+// Reordered categories config to include Soirée after Repas
 const CATEGORIES_CONFIG = [
-  { key: 'cérémonie', label: 'Cérémonie(s)', description: 'Informations sur votre/vos cérémonie(s) de mariage' },
-  { key: 'logistique', label: 'Logistique', description: 'Temps de trajets et logistique' },
-  { key: 'préparatifs_final', label: 'Préparatifs', description: 'Préparatifs de votre mariage' },
-  { key: 'photos', label: 'Photos', description: 'Planification des séances photos' },
-  { key: 'cocktail', label: 'Cocktail', description: 'Organisation du cocktail' },
-  { key: 'repas', label: 'Repas', description: 'Déroulement du repas' },
-  { key: 'soiree', label: 'Soirée', description: 'Organisation de votre soirée' }
+  { key: 'cérémonie', label: 'Cérémonie' },
+  { key: 'logistique', label: 'Logistique' }, 
+  { key: 'préparatifs_final', label: 'Préparatifs' },
+  { key: 'photos', label: 'Photos' },
+  { key: 'cocktail', label: 'Cocktail' },
+  { key: 'repas', label: 'Repas' },
+  { key: 'soiree', label: 'Soirée' }
 ];
 
-const PlanningQuiz: React.FC<PlanningQuizProps> = ({ 
-  onSubmit, 
-  currentStep = 0, 
-  onStepChange, 
+interface PlanningQuizProps {
+  onSubmit: (data: PlanningFormValues, events: PlanningEvent[]) => void;
+  currentStep: number;
+  onStepChange: (step: number) => void;
+  onStepComplete: (stepIndex: number) => void;
+  stepLabels: string[];
+}
+
+const PlanningQuiz: React.FC<PlanningQuizProps> = ({
+  onSubmit,
+  currentStep,
+  onStepChange,
   onStepComplete,
-  stepLabels = []
+  stepLabels
 }) => {
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [questions, setQuestions] = useState<PlanningQuestion[]>([]);
-  const [currentCategoryIndex, setCurrentCategoryIndex] = useState(0);
-  const [availableCategories, setAvailableCategories] = useState<string[]>([]);
-  
-  const form = useForm<PlanningFormValues>({
-    defaultValues: {},
+  const [formData, setFormData] = useState<PlanningFormValues>({});
+  const [questions, setQuestions] = useState<QuizQuestion[]>([]);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const currentCategory = CATEGORIES_CONFIG[currentStep]?.key;
+  const currentCategoryQuestions = questions.filter(q => {
+    if (currentCategory === 'préparatifs_final') {
+      // Handle unified Préparatifs step logic
+      if (formData.double_ceremonie === 'non') {
+        return q.category === 'préparatifs_final';
+      } else {
+        return q.category === 'préparatifs_final' || q.category === 'préparatif_2';
+      }
+    }
+    return q.category === currentCategory;
   });
-  
-  const watchAllFields = form.watch();
-  
-  // Get current category based on step
-  const currentCategory = availableCategories[currentCategoryIndex] || '';
-  
-  // Fetch planning questions from Supabase
+
   useEffect(() => {
-    const loadQuestions = async () => {
-      try {
-        setLoading(true);
-        const data = await fetchPlanningQuestions(supabase);
-        setQuestions(data.allQuestions);
-        
-        // Initialize available categories based on base config
-        const baseCategories = CATEGORIES_CONFIG.map(cat => cat.key);
-        setAvailableCategories(baseCategories);
-        
-      } catch (err: any) {
-        setError(err.message || 'Une erreur est survenue lors du chargement des questions');
-        console.error('Error loading planning questions:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    loadQuestions();
+    fetchQuestions();
   }, []);
-  
-  // Update available categories when form values change (for conditional logic)
-  useEffect(() => {
-    const baseCategories = CATEGORIES_CONFIG.map(cat => cat.key);
-    // No longer need to insert préparatifs_2 dynamically since it's integrated
-    setAvailableCategories(baseCategories);
-  }, [watchAllFields.double_ceremonie]);
-  
-  // Sync with parent step changes
-  useEffect(() => {
-    if (currentStep !== currentCategoryIndex) {
-      setCurrentCategoryIndex(currentStep);
-    }
-  }, [currentStep]);
-  
-  // Handle navigation between categories
-  const handleNextStep = () => {
-    const nextIndex = currentCategoryIndex + 1;
-    
-    if (nextIndex < availableCategories.length) {
-      setCurrentCategoryIndex(nextIndex);
-      if (onStepChange) {
-        onStepChange(nextIndex);
-      }
-      if (onStepComplete) {
-        onStepComplete(currentCategoryIndex);
-      }
-    }
-  };
-  
-  const handlePrevStep = () => {
-    const prevIndex = currentCategoryIndex - 1;
-    
-    if (prevIndex >= 0) {
-      setCurrentCategoryIndex(prevIndex);
-      if (onStepChange) {
-        onStepChange(prevIndex);
-      }
-    }
-  };
-  
-  // Handle form submission
-  const handleFormSubmit = (data: PlanningFormValues) => {
+
+  const fetchQuestions = async () => {
     try {
-      // Generate the planning based on the form responses
-      const generatedPlanning = generatePlanning(questions, data);
-      onSubmit(data, generatedPlanning);
-    } catch (err: any) {
-      setError(err.message || 'Erreur lors de la génération du planning');
-      console.error('Error generating planning:', err);
+      const { data, error } = await supabase
+        .from('planning_jourj_questions')
+        .select('*')
+        .order('order_index', { ascending: true });
+
+      if (error) throw error;
+      setQuestions(data || []);
+    } catch (error) {
+      console.error('Error fetching questions:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
-  
-  // Helper to render appropriate input based on question type
-  const renderQuestionInput = (question: PlanningQuestion) => {
-    const { type, option_name } = question;
-    
-    switch (type) {
-      case 'choix':
+
+  const handleInputChange = (questionId: string, value: any) => {
+    setFormData(prev => ({
+      ...prev,
+      [questionId]: value
+    }));
+  };
+
+  const handleNext = () => {
+    if (currentQuestionIndex < currentCategoryQuestions.length - 1) {
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
+    } else {
+      // Mark current step as complete
+      onStepComplete(currentStep);
+      
+      // Move to next step
+      if (currentStep < CATEGORIES_CONFIG.length - 1) {
+        onStepChange(currentStep + 1);
+        setCurrentQuestionIndex(0);
+      } else {
+        // Final submission
+        handleSubmit();
+      }
+    }
+  };
+
+  const handlePrevious = () => {
+    if (currentQuestionIndex > 0) {
+      setCurrentQuestionIndex(currentQuestionIndex - 1);
+    } else if (currentStep > 0) {
+      onStepChange(currentStep - 1);
+      const prevCategoryQuestions = questions.filter(q => {
+        const prevCategory = CATEGORIES_CONFIG[currentStep - 1]?.key;
+        if (prevCategory === 'préparatifs_final') {
+          if (formData.double_ceremonie === 'non') {
+            return q.category === 'préparatifs_final';
+          } else {
+            return q.category === 'préparatifs_final' || q.category === 'préparatif_2';
+          }
+        }
+        return q.category === prevCategory;
+      });
+      setCurrentQuestionIndex(prevCategoryQuestions.length - 1);
+    }
+  };
+
+  const handleSubmit = async () => {
+    setIsSubmitting(true);
+    try {
+      // Generate events from form data
+      const events = generatePlanningEvents(formData);
+      
+      // Calculate times for all events
+      const eventsWithTimes = calculateEventTimes(events, formData);
+      
+      onSubmit(formData, eventsWithTimes);
+    } catch (error) {
+      console.error('Error generating planning:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  if (isLoading) {
+    return <div className="text-center py-8">Chargement des questions...</div>;
+  }
+
+  if (currentCategoryQuestions.length === 0) {
+    return <div className="text-center py-8">Aucune question disponible pour cette section.</div>;
+  }
+
+  const currentQuestion = currentCategoryQuestions[currentQuestionIndex];
+  const progress = ((currentStep * 100) + ((currentQuestionIndex + 1) / currentCategoryQuestions.length * 100)) / CATEGORIES_CONFIG.length;
+
+  const renderQuestionInput = (question: QuizQuestion) => {
+    const value = formData[question.id];
+
+    switch (question.type) {
+      case 'radio':
         return (
-          <FormField
-            key={option_name}
-            control={form.control}
-            name={option_name}
-            render={({ field }) => (
-              <FormItem className="space-y-3">
-                <FormLabel>{question.label}</FormLabel>
-                <FormControl>
-                  <RadioGroup
-                    onValueChange={field.onChange}
-                    value={field.value}
-                    className="flex flex-col space-y-1"
-                  >
-                    {question.options && Array.isArray(question.options) && question.options.map((option, index) => {
-                      const optionValue = typeof option === 'object' ? option.valeur : option;
-                      const optionLabel = typeof option === 'object' 
-                        ? `${option.valeur} (${option.duree_minutes} minutes)`
-                        : option;
-                        
-                      return (
-                        <div key={index} className="flex items-center space-x-2">
-                          <RadioGroupItem value={optionValue} id={`${option_name}-${index}`} />
-                          <label htmlFor={`${option_name}-${index}`} className="text-sm">{optionLabel}</label>
-                        </div>
-                      );
-                    })}
-                  </RadioGroup>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <RadioGroup
+            value={value || ''}
+            onValueChange={(newValue) => handleInputChange(question.id, newValue)}
+          >
+            {question.options?.map((option, index) => (
+              <div key={index} className="flex items-center space-x-2">
+                <RadioGroupItem value={option} id={`${question.id}-${index}`} />
+                <Label htmlFor={`${question.id}-${index}`}>{option}</Label>
+              </div>
+            ))}
+          </RadioGroup>
         );
-        
-      case 'multi-choix':
+
+      case 'checkbox':
         return (
-          <FormField
-            key={option_name}
-            control={form.control}
-            name={option_name}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{question.label}</FormLabel>
-                <div className="flex flex-col space-y-2">
-                  {question.options && Array.isArray(question.options) && question.options.map((option, index) => {
-                    const optionValue = typeof option === 'object' ? option.valeur : option;
-                    const optionLabel = typeof option === 'object' 
-                      ? `${option.valeur} (${option.duree_minutes} minutes)`
-                      : option;
-                      
-                    return (
-                      <div key={index} className="flex items-center space-x-2">
-                        <Checkbox
-                          id={`${option_name}-${index}`}
-                          checked={(field.value || []).includes(optionValue)}
-                          onCheckedChange={(checked) => {
-                            const updatedValue = field.value || [];
-                            if (checked) {
-                              field.onChange([...updatedValue, optionValue]);
-                            } else {
-                              field.onChange(updatedValue.filter((v: string) => v !== optionValue));
-                            }
-                          }}
-                        />
-                        <label htmlFor={`${option_name}-${index}`} className="text-sm">{optionLabel}</label>
-                      </div>
-                    );
-                  })}
-                </div>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        );
-        
-      case 'time':
-        return (
-          <FormField
-            key={option_name}
-            control={form.control}
-            name={option_name}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{question.label}</FormLabel>
-                <FormControl>
-                  <Input 
-                    type="time" 
-                    {...field} 
-                    className="w-full max-w-[200px]"
-                  />
-                </FormControl>
-                <FormDescription>
-                  Heure au format 24h (ex: 14:30)
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        );
-        
-      case 'number':
-        return (
-          <FormField
-            key={option_name}
-            control={form.control}
-            name={option_name}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{question.label}</FormLabel>
-                <FormControl>
-                  <Input 
-                    type="number" 
-                    {...field}
-                    onChange={(e) => field.onChange(parseInt(e.target.value))}
-                    className="w-full max-w-[200px]"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        );
-        
-      case 'texte':
-        return (
-          <FormField
-            key={option_name}
-            control={form.control}
-            name={option_name}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{question.label}</FormLabel>
-                <FormControl>
-                  <Input {...field} className="w-full" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        );
-        
-      case 'fixe':
-        return (
-          <div key={option_name} className="space-y-2">
-            <h3 className="font-medium">{question.label}</h3>
-            <p className="text-sm text-gray-500">
-              {question.duree_minutes > 0 ? `Durée prévue: ${question.duree_minutes} minutes` : ''}
-            </p>
+          <div className="space-y-2">
+            {question.options?.map((option, index) => (
+              <div key={index} className="flex items-center space-x-2">
+                <Checkbox
+                  id={`${question.id}-${index}`}
+                  checked={Array.isArray(value) ? value.includes(option) : false}
+                  onCheckedChange={(checked) => {
+                    const currentArray = Array.isArray(value) ? value : [];
+                    if (checked) {
+                      handleInputChange(question.id, [...currentArray, option]);
+                    } else {
+                      handleInputChange(question.id, currentArray.filter(v => v !== option));
+                    }
+                  }}
+                />
+                <Label htmlFor={`${question.id}-${index}`}>{option}</Label>
+              </div>
+            ))}
           </div>
         );
-        
+
+      case 'time':
+        return (
+          <Input
+            type="time"
+            value={value || ''}
+            onChange={(e) => handleInputChange(question.id, e.target.value)}
+          />
+        );
+
+      case 'number':
+        return (
+          <Input
+            type="number"
+            value={value || ''}
+            onChange={(e) => handleInputChange(question.id, e.target.value)}
+            placeholder={question.placeholder}
+          />
+        );
+
+      case 'text':
+        return (
+          <Input
+            type="text"
+            value={value || ''}
+            onChange={(e) => handleInputChange(question.id, e.target.value)}
+            placeholder={question.placeholder}
+          />
+        );
+
       default:
         return null;
     }
   };
-  
-  // Special renderer for ceremony section with fixed conditional fieldsets
-  const renderCeremonySection = () => {
-    const isDualCeremony = watchAllFields.double_ceremonie === 'oui';
+
+  const isAnswered = () => {
+    const value = formData[currentQuestion.id];
+    if (currentQuestion.required === false) return true;
     
-    // Find the double ceremony question
-    const doubleCeremonyQuestion = questions.find(q => q.option_name === 'double_ceremonie');
-    
-    return (
-      <div className="space-y-6">
-        {/* Double ceremony question - always shown first */}
-        {doubleCeremonyQuestion && renderQuestionInput(doubleCeremonyQuestion)}
-        
-        {/* Conditional rendering based on double ceremony choice */}
-        {isDualCeremony ? (
-          <>
-            {/* First ceremony fieldset */}
-            <fieldset className="border border-gray-200 rounded-lg p-4 space-y-4">
-              <legend className="text-lg font-medium px-2">Première cérémonie</legend>
-              <FormField
-                control={form.control}
-                name="heure_ceremonie_1"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Heure de la 1ère cérémonie</FormLabel>
-                    <FormControl>
-                      <Input 
-                        type="time" 
-                        {...field} 
-                        className="w-full max-w-[200px]"
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      Heure au format 24h (ex: 14:30)
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="type_ceremonie_1"
-                render={({ field }) => (
-                  <FormItem className="space-y-3">
-                    <FormLabel>Type de la 1ère cérémonie</FormLabel>
-                    <FormControl>
-                      <RadioGroup
-                        onValueChange={field.onChange}
-                        value={field.value}
-                        className="flex flex-col space-y-1"
-                      >
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="civile" id="type_ceremonie_1-civile" />
-                          <label htmlFor="type_ceremonie_1-civile" className="text-sm">civile (30 minutes)</label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="religieuse" id="type_ceremonie_1-religieuse" />
-                          <label htmlFor="type_ceremonie_1-religieuse" className="text-sm">religieuse (90 minutes)</label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="laique" id="type_ceremonie_1-laique" />
-                          <label htmlFor="type_ceremonie_1-laique" className="text-sm">laïque (60 minutes)</label>
-                        </div>
-                      </RadioGroup>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </fieldset>
-            
-            {/* Second ceremony fieldset */}
-            <fieldset className="border border-gray-200 rounded-lg p-4 space-y-4">
-              <legend className="text-lg font-medium px-2">Deuxième cérémonie</legend>
-              <FormField
-                control={form.control}
-                name="heure_ceremonie_2"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Heure de la 2ème cérémonie</FormLabel>
-                    <FormControl>
-                      <Input 
-                        type="time" 
-                        {...field} 
-                        className="w-full max-w-[200px]"
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      Heure au format 24h (ex: 14:30)
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="type_ceremonie_2"
-                render={({ field }) => (
-                  <FormItem className="space-y-3">
-                    <FormLabel>Type de la 2ème cérémonie</FormLabel>
-                    <FormControl>
-                      <RadioGroup
-                        onValueChange={field.onChange}
-                        value={field.value}
-                        className="flex flex-col space-y-1"
-                      >
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="civile" id="type_ceremonie_2-civile" />
-                          <label htmlFor="type_ceremonie_2-civile" className="text-sm">civile (30 minutes)</label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="religieuse" id="type_ceremonie_2-religieuse" />
-                          <label htmlFor="type_ceremonie_2-religieuse" className="text-sm">religieuse (90 minutes)</label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="laique" id="type_ceremonie_2-laique" />
-                          <label htmlFor="type_ceremonie_2-laique" className="text-sm">laïque (60 minutes)</label>
-                        </div>
-                      </RadioGroup>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </fieldset>
-          </>
-        ) : (
-          /* Single ceremony fieldset */
-          <fieldset className="border border-gray-200 rounded-lg p-4 space-y-4">
-            <legend className="text-lg font-medium px-2">Votre cérémonie</legend>
-            <FormField
-              control={form.control}
-              name="heure_ceremonie_principale"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Heure de la cérémonie principale</FormLabel>
-                  <FormControl>
-                    <Input 
-                      type="time" 
-                      {...field} 
-                      className="w-full max-w-[200px]"
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    Heure au format 24h (ex: 14:30)
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="type_ceremonie_principale"
-              render={({ field }) => (
-                <FormItem className="space-y-3">
-                  <FormLabel>Type de la cérémonie principale</FormLabel>
-                  <FormControl>
-                    <RadioGroup
-                      onValueChange={field.onChange}
-                      value={field.value}
-                      className="flex flex-col space-y-1"
-                    >
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="civile" id="type_ceremonie_principale-civile" />
-                        <label htmlFor="type_ceremonie_principale-civile" className="text-sm">civile (30 minutes)</label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="religieuse" id="type_ceremonie_principale-religieuse" />
-                        <label htmlFor="type_ceremonie_principale-religieuse" className="text-sm">religieuse (90 minutes)</label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="laique" id="type_ceremonie_principale-laique" />
-                        <label htmlFor="type_ceremonie_principale-laique" className="text-sm">laïque (60 minutes)</label>
-                      </div>
-                    </RadioGroup>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </fieldset>
-        )}
-      </div>
-    );
+    if (Array.isArray(value)) {
+      return value.length > 0;
+    }
+    return value !== undefined && value !== '';
   };
 
-  // Special renderer for logistics section with only pause question and conditional dual ceremony fields
-  const renderLogisticsSection = () => {
-    const isDualCeremony = watchAllFields.double_ceremonie === 'oui';
-    
-    return (
-      <div className="space-y-6">
-        {/* Only show the pause question from regular logistics questions */}
-        {questions
-          .filter(q => q.categorie === 'logistique' && q.option_name === 'pause_maries')
-          .filter(q => isQuestionVisible(q, watchAllFields))
-          .map(question => (
-            <div key={question.id} className="py-2">
-              {renderQuestionInput(question)}
-            </div>
-          ))}
-        
-        {/* Conditional dual ceremony logistics */}
-        {isDualCeremony && (
-          <fieldset className="border border-gray-200 rounded-lg p-4 space-y-4">
-            <legend className="text-lg font-medium px-2">Trajets pour double cérémonie</legend>
-            
-            <FormField
-              control={form.control}
-              name="trajet_1_depart_ceremonie_1"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Trajet 1: point de départ ➝ cérémonie 1</FormLabel>
-                  <FormControl>
-                    <Input 
-                      type="number" 
-                      {...field}
-                      onChange={(e) => field.onChange(parseInt(e.target.value))}
-                      className="w-full max-w-[200px]"
-                      placeholder="Durée en minutes"
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    Temps de trajet en minutes
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            <FormField
-              control={form.control}
-              name="trajet_2_ceremonie_1_arrivee_1"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Trajet 2: cérémonie 1 ➝ point d'arrivée 1</FormLabel>
-                  <FormControl>
-                    <Input 
-                      type="number" 
-                      {...field}
-                      onChange={(e) => field.onChange(parseInt(e.target.value))}
-                      className="w-full max-w-[200px]"
-                      placeholder="Durée en minutes"
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    Temps de trajet en minutes
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            <FormField
-              control={form.control}
-              name="trajet_3_depart_ceremonie_2"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Trajet 3: point de départ ➝ cérémonie 2</FormLabel>
-                  <FormControl>
-                    <Input 
-                      type="number" 
-                      {...field}
-                      onChange={(e) => field.onChange(parseInt(e.target.value))}
-                      className="w-full max-w-[200px]"
-                      placeholder="Durée en minutes"
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    Temps de trajet en minutes
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            <FormField
-              control={form.control}
-              name="trajet_4_ceremonie_2_arrivee_2"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Trajet 4: cérémonie 2 ➝ point d'arrivée 2</FormLabel>
-                  <FormControl>
-                    <Input 
-                      type="number" 
-                      {...field}
-                      onChange={(e) => field.onChange(parseInt(e.target.value))}
-                      className="w-full max-w-[200px]"
-                      placeholder="Durée en minutes"
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    Temps de trajet en minutes
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </fieldset>
-        )}
-      </div>
-    );
-  };
+  const isLastStep = currentStep === CATEGORIES_CONFIG.length - 1;
+  const isLastQuestion = currentQuestionIndex === currentCategoryQuestions.length - 1;
 
-  // Unified preparatifs renderer for both single and dual ceremony scenarios
-  const renderPreparatifsSection = () => {
-    const isDualCeremony = watchAllFields.double_ceremonie === 'oui';
-    
-    // Get regular preparatifs questions
-    const currentQuestions = questions
-      .filter(q => q.categorie === 'préparatifs_final')
-      .filter(q => isQuestionVisible(q, watchAllFields));
-
-    return (
-      <div className="space-y-6">
-        {/* Single ceremony: regular preparatifs */}
-        {!isDualCeremony && (
-          <fieldset className="border border-gray-200 rounded-lg p-4 space-y-4">
-            <legend className="text-lg font-medium px-2">Préparatifs de votre mariage</legend>
-            {currentQuestions.map(question => (
-              <div key={question.id} className="py-2">
-                {renderQuestionInput(question)}
-              </div>
-            ))}
-          </fieldset>
-        )}
-        
-        {/* Dual ceremony: two separate blocks */}
-        {isDualCeremony && (
-          <>
-            {/* Preparatifs before first ceremony */}
-            <fieldset className="border border-gray-200 rounded-lg p-4 space-y-4">
-              <legend className="text-lg font-medium px-2">Préparatifs avant la 1ère cérémonie</legend>
-              {currentQuestions.map(question => (
-                <div key={question.id} className="py-2">
-                  {renderQuestionInput(question)}
-                </div>
-              ))}
-            </fieldset>
-            
-            {/* Preparatifs before second ceremony */}
-            <fieldset className="border border-blue-200 rounded-lg p-4 space-y-4 bg-blue-50">
-              <legend className="text-lg font-medium px-2 text-blue-900">Préparatifs avant la 2ème cérémonie</legend>
-              <p className="text-sm text-blue-700 mb-4">
-                Choisissez les étapes de préparation à répéter avant votre deuxième cérémonie.
-              </p>
-              
-              <FormField
-                control={form.control}
-                name="preparatifs_2_coiffure"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                    <FormControl>
-                      <Checkbox
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                    <div className="space-y-1 leading-none">
-                      <FormLabel>Retouche coiffure</FormLabel>
-                      <FormDescription>
-                        Retouche et remise en forme de la coiffure (30 minutes)
-                      </FormDescription>
-                    </div>
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="preparatifs_2_maquillage"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                    <FormControl>
-                      <Checkbox
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                    <div className="space-y-1 leading-none">
-                      <FormLabel>Retouche maquillage</FormLabel>
-                      <FormDescription>
-                        Retouche du maquillage et finalisation (30 minutes)
-                      </FormDescription>
-                    </div>
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="preparatifs_2_habillage"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                    <FormControl>
-                      <Checkbox
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                    <div className="space-y-1 leading-none">
-                      <FormLabel>Changement de tenue</FormLabel>
-                      <FormDescription>
-                        Changement ou ajustement de la tenue (45 minutes)
-                      </FormDescription>
-                    </div>
-                  </FormItem>
-                )}
-              />
-            </fieldset>
-          </>
-        )}
-      </div>
-    );
-  };
-  
-  // Component to render current section questions
-  const CurrentSectionQuestions = () => {
-    // Special handling for ceremony section
-    if (currentCategory === 'cérémonie') {
-      return renderCeremonySection();
-    }
-    
-    // Special handling for logistics section
-    if (currentCategory === 'logistique') {
-      return renderLogisticsSection();
-    }
-    
-    // Special handling for preparatifs section
-    if (currentCategory === 'préparatifs_final') {
-      return renderPreparatifsSection();
-    }
-    
-    // Filter questions by current section and visibility conditions
-    const currentQuestions = questions
-      .filter(q => q.categorie === currentCategory)
-      .filter(q => isQuestionVisible(q, watchAllFields));
-
-    if (currentQuestions.length === 0) {
-      return (
-        <div className="text-center py-8 text-gray-500">
-          Aucune question disponible pour cette section.
+  return (
+    <div className="space-y-6">
+      <div className="space-y-2">
+        <div className="flex justify-between text-sm text-muted-foreground">
+          <span>Étape {currentStep + 1} sur {CATEGORIES_CONFIG.length}</span>
+          <span>Question {currentQuestionIndex + 1} sur {currentCategoryQuestions.length}</span>
         </div>
-      );
-    }
-
-    return (
-      <div className="space-y-6">
-        {currentQuestions.map(question => (
-          <div key={question.id} className="py-2">
-            {renderQuestionInput(question)}
-          </div>
-        ))}
+        <Progress value={progress} className="h-2" />
       </div>
-    );
-  };
-  
-  // Get section config helper
-  const getCurrentCategoryConfig = () => {
-    return CATEGORIES_CONFIG.find(cat => cat.key === currentCategory) || 
-           { key: currentCategory, label: currentCategory, description: '' };
-  };
-  
-  if (loading) {
-    return (
+
       <Card>
-        <CardContent className="p-6 flex justify-center items-center min-h-[200px]">
-          <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-wedding-olive"></div>
-        </CardContent>
-      </Card>
-    );
-  }
-  
-  if (error) {
-    return (
-      <Card>
-        <CardContent className="p-6">
-          <div className="text-red-500">
-            <p>Erreur: {error}</p>
-            <Button 
-              onClick={() => window.location.reload()}
-              className="mt-4"
+        <CardHeader>
+          <CardTitle className="text-lg">{CATEGORIES_CONFIG[currentStep]?.label}</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div>
+            <h3 className="font-medium mb-4">{currentQuestion.question}</h3>
+            {renderQuestionInput(currentQuestion)}
+          </div>
+
+          <div className="flex justify-between">
+            <Button
+              variant="outline"
+              onClick={handlePrevious}
+              disabled={currentStep === 0 && currentQuestionIndex === 0}
             >
-              Réessayer
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Précédent
+            </Button>
+
+            <Button
+              onClick={handleNext}
+              disabled={!isAnswered() || isSubmitting}
+              className="bg-wedding-olive hover:bg-wedding-olive/80"
+            >
+              {isSubmitting ? (
+                "Génération..."
+              ) : isLastStep && isLastQuestion ? (
+                "Générer le planning"
+              ) : (
+                <>
+                  Suivant
+                  <ArrowRight className="h-4 w-4 ml-2" />
+                </>
+              )}
             </Button>
           </div>
         </CardContent>
       </Card>
-    );
-  }
-  
-  const currentCategoryConfig = getCurrentCategoryConfig();
-  
-  return (
-    <Card>
-      <CardContent className="p-6">
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-6">
-            {/* Section title */}
-            <div className="border-b pb-4 mb-6">
-              <h2 className="text-xl font-serif">{currentCategoryConfig.label}</h2>
-              <p className="text-sm text-gray-500">
-                {currentCategoryConfig.description}
-              </p>
-            </div>
-            
-            {/* Current section questions */}
-            <CurrentSectionQuestions />
-            
-            {/* Navigation buttons */}
-            <div className="flex justify-between pt-4 border-t">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={handlePrevStep}
-                disabled={currentCategoryIndex === 0}
-              >
-                Précédent
-              </Button>
-              
-              {currentCategoryIndex === availableCategories.length - 1 ? (
-                <Button 
-                  type="submit"
-                  className="bg-wedding-olive hover:bg-wedding-olive/80"
-                >
-                  Générer le planning
-                </Button>
-              ) : (
-                <Button
-                  type="button"
-                  onClick={handleNextStep}
-                  className="bg-wedding-olive hover:bg-wedding-olive/80"
-                >
-                  Suivant
-                </Button>
-              )}
-            </div>
-          </form>
-        </Form>
-      </CardContent>
-    </Card>
+    </div>
   );
 };
 
