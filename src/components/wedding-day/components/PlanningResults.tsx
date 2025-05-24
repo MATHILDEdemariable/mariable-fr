@@ -1,18 +1,70 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import PlanningTimeline from '../PlanningTimeline';
+import DragDropTimeline from './DragDropTimeline';
 import { usePlanning } from '../context/PlanningContext';
 import { useToast } from '@/components/ui/use-toast';
 import { exportDashboardToPDF } from '@/services/pdfExportService';
+import { supabase } from '@/integrations/supabase/client';
+import { PlanningEvent } from '../types/planningTypes';
 
 export const PlanningResults: React.FC = () => {
-  const { events, setActiveTab, exportLoading, setExportLoading } = usePlanning();
+  const { events, setEvents, setActiveTab, exportLoading, setExportLoading, user, setFormData } = usePlanning();
   const { toast } = useToast();
+
+  // Load saved planning data on component mount
+  useEffect(() => {
+    const loadSavedPlanning = async () => {
+      if (!user) return;
+
+      try {
+        const { data, error } = await supabase
+          .from('planning_reponses_utilisateur')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('date_creation', { ascending: false })
+          .limit(1);
+
+        if (error) throw error;
+
+        if (data && data.length > 0) {
+          const savedPlanning = data[0];
+          
+          if (savedPlanning.planning_genere) {
+            // Convert saved planning to PlanningEvent format
+            const planningEvents = (savedPlanning.planning_genere as any[]).map(event => ({
+              ...event,
+              startTime: new Date(event.startTime),
+              endTime: new Date(event.endTime)
+            })) as PlanningEvent[];
+            
+            setEvents(planningEvents);
+          }
+          
+          if (savedPlanning.reponses) {
+            setFormData(savedPlanning.reponses as any);
+          }
+        }
+      } catch (error) {
+        console.error('Error loading saved planning:', error);
+        toast({
+          title: "Erreur de chargement",
+          description: "Impossible de charger votre planning sauvegardé.",
+          variant: "destructive"
+        });
+      }
+    };
+
+    loadSavedPlanning();
+  }, [user, setEvents, setFormData, toast]);
 
   const handleReset = () => {
     setActiveTab("form");
+  };
+
+  const handleEventsUpdate = (updatedEvents: PlanningEvent[]) => {
+    setEvents(updatedEvents);
   };
 
   const handleExportPDF = async () => {
@@ -27,7 +79,7 @@ export const PlanningResults: React.FC = () => {
       });
       
       const success = await exportDashboardToPDF(
-        'planning-timeline',
+        'drag-drop-timeline',
         'Planning-Jour-J.pdf',
         'portrait',
         'Planning Jour J'
@@ -78,11 +130,16 @@ export const PlanningResults: React.FC = () => {
       <CardHeader>
         <CardTitle className="font-serif">Votre Planning Jour J</CardTitle>
         <CardDescription>
-          Voici le planning optimisé pour votre journée de mariage.
+          Voici le planning optimisé pour votre journée de mariage. Vous pouvez réorganiser les événements en les glissant-déposant.
         </CardDescription>
       </CardHeader>
       <CardContent className="p-4 sm:p-6">
-        <PlanningTimeline events={events} />
+        <div id="drag-drop-timeline">
+          <DragDropTimeline 
+            events={events} 
+            onEventsUpdate={handleEventsUpdate}
+          />
+        </div>
       </CardContent>
       <CardFooter className="flex flex-col sm:flex-row justify-between gap-4">
         <Button variant="outline" onClick={handleReset}>

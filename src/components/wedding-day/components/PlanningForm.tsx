@@ -1,7 +1,9 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import PlanningQuiz from '../PlanningQuiz';
+import PlanningStepIndicator from './PlanningStepIndicator';
 import { PlanningFormValues, PlanningEvent, savePlanningResponses } from '../types/planningTypes';
 import { usePlanning } from '../context/PlanningContext';
 import { useToast } from '@/components/ui/use-toast';
@@ -10,6 +12,39 @@ import { supabase } from '@/integrations/supabase/client';
 export const PlanningForm: React.FC = () => {
   const { setFormData, setEvents, setActiveTab, loading, setLoading, user } = usePlanning();
   const { toast } = useToast();
+  const [currentStep, setCurrentStep] = useState(0);
+  const [completedSteps, setCompletedSteps] = useState<boolean[]>([]);
+  
+  // Define step labels based on planning categories
+  const stepLabels = [
+    'Cérémonie',
+    'Logistique', 
+    'Préparatifs',
+    'Photos',
+    'Cocktail',
+    'Repas',
+    'Soirée'
+  ];
+
+  useEffect(() => {
+    // Initialize completed steps array
+    setCompletedSteps(new Array(stepLabels.length).fill(false));
+  }, []);
+
+  const handleStepChange = (stepIndex: number) => {
+    // Only allow navigation to completed steps or current step
+    if (stepIndex <= currentStep || completedSteps[stepIndex]) {
+      setCurrentStep(stepIndex);
+    }
+  };
+
+  const handleStepComplete = (stepIndex: number) => {
+    setCompletedSteps(prev => {
+      const newCompleted = [...prev];
+      newCompleted[stepIndex] = true;
+      return newCompleted;
+    });
+  };
 
   const handleFormSubmit = async (data: PlanningFormValues, generatedEvents: PlanningEvent[]) => {
     setFormData(data);
@@ -52,9 +87,24 @@ export const PlanningForm: React.FC = () => {
         <CardDescription>
           Répondez aux questions suivantes pour générer automatiquement le planning optimisé de votre journée de mariage.
         </CardDescription>
+        
+        <PlanningStepIndicator
+          currentStep={currentStep}
+          totalSteps={stepLabels.length}
+          stepLabels={stepLabels}
+          completedSteps={completedSteps}
+          onStepClick={handleStepChange}
+          allowNavigation={true}
+        />
       </CardHeader>
       <CardContent>
-        <PlanningQuiz onSubmit={handleFormSubmit} />
+        <PlanningQuiz 
+          onSubmit={handleFormSubmit}
+          currentStep={currentStep}
+          onStepChange={setCurrentStep}
+          onStepComplete={handleStepComplete}
+          stepLabels={stepLabels}
+        />
       </CardContent>
     </Card>
   );
