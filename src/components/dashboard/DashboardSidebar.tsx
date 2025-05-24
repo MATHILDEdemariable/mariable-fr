@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { 
@@ -9,7 +10,8 @@ import {
   Heart, 
   Settings,
   LogOut,
-  Wine
+  Wine,
+  CheckSquare
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -25,6 +27,11 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
       label: 'Tableau de bord',
       icon: <LayoutDashboard className="h-4 w-4" />,
       path: '/dashboard',
+    },
+    {
+      label: 'Planning',
+      icon: <CheckSquare className="h-4 w-4" />,
+      path: '/dashboard/planning',
     },
     {
       label: 'Tâches',

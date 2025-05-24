@@ -10,6 +10,7 @@ import TasksList from '@/components/dashboard/TasksList';
 import CoordinationPage from './CoordinationPage';
 import WishlistPage from './WishlistPage';
 import BudgetPage from './BudgetPage';
+import PlanningPage from './PlanningPage';
 import DetailedBudget from '@/components/dashboard/DetailedBudget';
 import UserProfile from '@/components/dashboard/UserProfile';
 import { useToast } from '@/components/ui/use-toast';
@@ -52,6 +53,7 @@ const UserDashboard: React.FC = () => {
       <Routes>
         <Route path="/" element={<DashboardLayout />}>
           <Route index element={<ProjectSummary />} />
+          <Route path="planning" element={<PlanningPage />} />
           <Route path="tasks" element={<TasksList />} />
           <Route path="budget" element={<BudgetPage />} />
           <Route path="budget/detailed" element={<DetailedBudget />} />
