@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import ServiceTemplate from '../ServiceTemplate';
@@ -25,38 +26,41 @@ const PlanningStageCard = ({
   ctaAction: () => void;
   variant?: "default" | "primary";
 }) => (
-  <div className="group bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-all duration-300 hover:transform hover:scale-105 flex flex-col h-full">
-    <div className="flex items-center mb-4">
-      <span className="text-3xl mr-3">{emoji}</span>
-      <div>
-        <h3 className="text-xl font-serif font-medium text-black">{title}</h3>
+  <div className="group bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-all duration-300 hover:transform hover:scale-105 flex flex-col h-full justify-between">
+    <div>
+      <div className="flex items-center mb-4">
+        <span className="text-3xl mr-3">{emoji}</span>
+        <div>
+          <h3 className="text-xl font-serif font-medium text-black">{title}</h3>
+        </div>
       </div>
-    </div>
-    
-    <div className="flex-1 mb-4">
-      <div className="flex flex-wrap gap-2 mb-3">
-        {features.map((feature, index) => (
-          <span key={index} className="text-sm text-wedding-olive font-medium">
-            {feature}{index < features.length - 1 && ' · '}
-          </span>
-        ))}
+      
+      <div className="mb-4">
+        <div className="flex flex-wrap gap-2 mb-3">
+          {features.map((feature, index) => (
+            <span key={index} className="text-sm text-wedding-olive font-medium">
+              {feature}{index < features.length - 1 && ' · '}
+            </span>
+          ))}
+        </div>
+        <p className="text-sm text-muted-foreground italic">
+          "{subtext}" – Mathilde
+        </p>
       </div>
-      <p className="text-sm text-muted-foreground italic">
-        "{subtext}" – Mathilde
-      </p>
     </div>
     
     <div className="mt-auto">
-      <Button 
-        variant={variant === "primary" ? "wedding" : "outline"}
-        className={`w-full min-h-[48px] px-4 py-2 text-base font-medium inline-flex items-center justify-center rounded-lg group-hover:shadow-lg transition-all ${
-          variant === "default" ? "border-wedding-olive text-wedding-olive hover:bg-wedding-olive/10" : ""
+      <button 
+        className={`w-full px-4 py-2 text-center font-medium text-sm rounded-lg border transition-all group-hover:shadow-lg inline-flex items-center justify-center ${
+          variant === "primary" 
+            ? "bg-wedding-olive text-white hover:bg-wedding-olive/90 border-wedding-olive" 
+            : "border-wedding-olive text-wedding-olive hover:bg-wedding-olive/10"
         }`}
         onClick={ctaAction}
       >
-        {ctaText}
-        <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-      </Button>
+        <span className="truncate">{ctaText}</span>
+        <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform flex-shrink-0" />
+      </button>
     </div>
   </div>
 );
@@ -80,8 +84,8 @@ const PlanificationContent = () => {
       title: "Je démarre tout juste",
       features: ["Inspiration", "Étapes clés", "Budget"],
       subtext: "Pas d'inquiétude, je vous accompagne pas à pas.",
-      ctaText: "Commencer mon organisation",
-      ctaAction: () => navigate(isAuthenticated ? '/dashboard' : '/register')
+      ctaText: "Voir les 10 étapes clés",
+      ctaAction: () => navigate('/checklist-mariage')
     },
     {
       emoji: "📋",
@@ -114,9 +118,6 @@ const PlanificationContent = () => {
           <h1 className="text-4xl md:text-5xl font-serif mb-6 text-black leading-tight">
             Planifiez votre mariage à votre rythme, sans charge mentale
           </h1>
-          <h2 className="text-xl text-muted-foreground mb-8">
-            Votre tableau de bord intelligent, guidé par Mathilde, votre assistante Mariable.
-          </h2>
           <Button 
             asChild
             size="lg"
@@ -234,7 +235,7 @@ const Planification = () => {
   return (
     <ServiceTemplate 
       title=""
-      description="Organisez chaque étape de votre mariage sans charge mentale"
+      description=""
       content={<PlanificationContent />}
     >
       <SEO 

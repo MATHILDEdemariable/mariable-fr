@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import Header from '@/components/Header';
@@ -352,14 +351,14 @@ const ChecklistMariage = () => {
               className="gap-2"
               onClick={() => {
                 if (isAuthenticated) {
-                  navigate('/services/jour-j');
+                  navigate('/dashboard');
                 } else {
-                  navigate('/login', { state: { redirectAfterLogin: '/services/jour-j' } });
+                  navigate('/register');
                 }
               }}
             >
               <Calendar size={18} />
-              Planifier votre Jour J
+              Créer mon compte
             </Button>
           </div>
         </div>
