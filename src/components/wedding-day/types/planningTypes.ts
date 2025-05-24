@@ -57,6 +57,34 @@ export type PlanningData = {
   allQuestions: PlanningQuestion[];
 };
 
+// Helper function to get duration from options
+const getDurationFromOptions = (question: PlanningQuestion, selectedValue: string): number => {
+  if (!question.options || !Array.isArray(question.options)) {
+    return question.duree_minutes || 0;
+  }
+  
+  const option = question.options.find((opt: any) => 
+    typeof opt === 'object' && opt.valeur === selectedValue
+  );
+  
+  return (option as any)?.duree_minutes || question.duree_minutes || 0;
+};
+
+// Helper function to parse time string to Date
+const parseTimeToDate = (timeString: string): Date => {
+  if (!timeString) return new Date();
+  
+  const [hours, minutes] = timeString.split(':').map(Number);
+  const date = new Date();
+  date.setHours(hours, minutes, 0, 0);
+  return date;
+};
+
+// Helper function to add minutes to a date
+const addMinutesToDate = (date: Date, minutes: number): Date => {
+  return new Date(date.getTime() + minutes * 60000);
+};
+
 export const fetchPlanningQuestions = async (
   supabase: SupabaseClient<Database>
 ): Promise<PlanningData> => {
@@ -139,267 +167,238 @@ export const isQuestionVisible = (
   });
 };
 
-// Function to generate a planning based on the form responses
+// Enhanced function to generate a planning based on the form responses with dual ceremony logic
 export const generatePlanning = (
   questions: PlanningQuestion[],
   responses: PlanningFormValues
 ): PlanningEvent[] => {
   const events: PlanningEvent[] = [];
-  let mainCeremonyTime: Date | null = null;
+  let eventId = 0;
   
-  // First, find the main ceremony time which acts as our anchor point
-  const ceremonyQuestion = questions.find(q => q.option_name === 'heure_ceremonie_1');
-  if (ceremonyQuestion && responses.heure_ceremonie_1) {
-    const [hours, minutes] = responses.heure_ceremonie_1.split(':').map(Number);
-    mainCeremonyTime = new Date();
-    mainCeremonyTime.setHours(hours, minutes, 0, 0);
-  } else {
-    throw new Error("L'heure de la cérémonie est requise pour générer le planning");
-  }
+  // Check if dual ceremony
+  const isDualCeremony = responses.double_ceremonie === 'oui';
   
-  // Add the main ceremony
-  events.push({
-    id: `ceremony-1-${Date.now()}`,
-    title: "Cérémonie principale",
-    category: "cérémonie",
-    startTime: new Date(mainCeremonyTime),
-    endTime: new Date(mainCeremonyTime.getTime() + 60 * 60 * 1000), // Default 1 hour for ceremony
-    duration: 60,
-    type: "ceremony",
-    isHighlight: true
-  });
+  // Get ceremony times
+  const ceremony1Time = responses.heure_ceremonie_1 ? parseTimeToDate(responses.heure_ceremonie_1) : new Date();
+  const ceremony2Time = isDualCeremony && responses.heure_ceremonie_2 ? 
+    parseTimeToDate(responses.heure_ceremonie_2) : null;
   
-  // If there's a second ceremony
-  if (responses.double_ceremonie === 'oui' && responses.heure_ceremonie_2) {
-    const [hours, minutes] = responses.heure_ceremonie_2.split(':').map(Number);
-    const secondCeremonyTime = new Date();
-    secondCeremonyTime.setHours(hours, minutes, 0, 0);
-    
-    events.push({
-      id: `ceremony-2-${Date.now()}`,
-      title: "Deuxième cérémonie",
-      category: "cérémonie",
-      startTime: new Date(secondCeremonyTime),
-      endTime: new Date(secondCeremonyTime.getTime() + 60 * 60 * 1000), // Default 1 hour
-      duration: 60,
-      type: "ceremony",
-      isHighlight: true
-    });
-    
-    // If there's travel between ceremonies
-    if (responses.trajet_ceremonie_1_2) {
-      const travelDuration = Number(responses.trajet_ceremonie_1_2);
-      const earlierCeremony = mainCeremonyTime < secondCeremonyTime ? mainCeremonyTime : secondCeremonyTime;
-      const laterCeremony = mainCeremonyTime < secondCeremonyTime ? secondCeremonyTime : mainCeremonyTime;
-      
-      const travelStartTime = new Date(earlierCeremony.getTime() + 60 * 60 * 1000); // After the first ceremony
+  // Determine timeline order based on ceremony times
+  const isSecondCeremonyLater = ceremony2Time ? ceremony2Time > ceremony1Time : false;
+  let currentTime = new Date(ceremony1Time);
+  
+  // Start with initial preparations (3 hours before first ceremony)
+  currentTime = addMinutesToDate(ceremony1Time, -180);
+  
+  // 1. Initial Preparations
+  const preparationQuestions = questions.filter(q => q.categorie === 'préparatifs_final');
+  
+  preparationQuestions.forEach(question => {
+    if (responses[question.option_name] === 'oui' || question.type === 'fixe') {
+      const duration = getDurationFromOptions(question, responses[question.option_name]) || question.duree_minutes;
       
       events.push({
-        id: `travel-${Date.now()}`,
-        title: "Trajet entre les cérémonies",
-        category: "logistique",
-        startTime: new Date(travelStartTime),
-        endTime: new Date(travelStartTime.getTime() + travelDuration * 60 * 1000),
-        duration: travelDuration,
-        type: "travel"
+        id: `prep-${eventId++}`,
+        title: question.label,
+        category: 'préparatifs',
+        startTime: new Date(currentTime),
+        endTime: addMinutesToDate(currentTime, duration),
+        duration,
+        type: 'preparation',
+        isHighlight: question.option_name === 'habillage'
       });
+      
+      currentTime = addMinutesToDate(currentTime, duration);
     }
-  }
+  });
   
-  // Sort events by start time
-  let sortedEvents = [...events].sort((a, b) => a.startTime.getTime() - b.startTime.getTime());
-  const firstEventTime = sortedEvents[0].startTime;
-  
-  // Add preparation events before the ceremony
-  if (responses.coiffure) {
-    const hairdressingQuestion = questions.find(q => q.option_name === 'coiffure');
-    const hairdressingDuration = hairdressingQuestion?.duree_minutes || 90;
-    
-    const hairdressingEndTime = new Date(firstEventTime.getTime() - 2 * 60 * 60 * 1000); // 2 hours before
-    const hairdressingStartTime = new Date(hairdressingEndTime.getTime() - hairdressingDuration * 60 * 1000);
+  // 2. Travel to first ceremony
+  if (responses.trajet_vers_ceremonie_1) {
+    const travelDuration = Number(responses.trajet_vers_ceremonie_1);
+    const travelStart = addMinutesToDate(ceremony1Time, -travelDuration);
     
     events.push({
-      id: `hairdressing-${Date.now()}`,
-      title: `Coiffure (${responses.coiffure})`,
-      category: "préparatifs",
-      startTime: hairdressingStartTime,
-      endTime: hairdressingEndTime,
-      duration: hairdressingDuration,
-      type: "preparation"
+      id: `travel-1-${eventId++}`,
+      title: 'Trajet vers la première cérémonie',
+      category: 'logistique',
+      startTime: travelStart,
+      endTime: ceremony1Time,
+      duration: travelDuration,
+      type: 'travel'
     });
   }
   
-  // Add makeup preparation
-  const makeupDuration = 60; // Default from the database
-  const makeupEndTime = new Date(firstEventTime.getTime() - 90 * 60 * 1000); // 1.5 hours before
-  const makeupStartTime = new Date(makeupEndTime.getTime() - makeupDuration * 60 * 1000);
+  // 3. First Ceremony
+  const ceremony1TypeQuestion = questions.find(q => q.option_name === 'type_ceremonie_1');
+  const ceremony1Duration = ceremony1TypeQuestion ? 
+    getDurationFromOptions(ceremony1TypeQuestion, responses.type_ceremonie_1) : 60;
   
   events.push({
-    id: `makeup-${Date.now()}`,
-    title: "Maquillage",
-    category: "préparatifs",
-    startTime: makeupStartTime,
-    endTime: makeupEndTime,
-    duration: makeupDuration,
-    type: "preparation"
-  });
-  
-  // Add dressing time
-  const dressingDuration = 15; // Default from the database
-  const dressingEndTime = new Date(firstEventTime.getTime() - 30 * 60 * 1000); // 30 min before
-  const dressingStartTime = new Date(dressingEndTime.getTime() - dressingDuration * 60 * 1000);
-  
-  events.push({
-    id: `dressing-${Date.now()}`,
-    title: "Habillage",
-    category: "préparatifs",
-    startTime: dressingStartTime,
-    endTime: dressingEndTime,
-    duration: dressingDuration,
-    type: "preparation",
+    id: `ceremony-1-${eventId++}`,
+    title: `Première cérémonie (${responses.type_ceremonie_1 || 'cérémonie'})`,
+    category: 'cérémonie',
+    startTime: ceremony1Time,
+    endTime: addMinutesToDate(ceremony1Time, ceremony1Duration),
+    duration: ceremony1Duration,
+    type: 'ceremony',
     isHighlight: true
   });
   
-  // First look if requested
-  if (responses.first_look === 'oui') {
-    const firstLookDuration = 10; // Default from the database
-    const firstLookEndTime = new Date(firstEventTime.getTime() - 15 * 60 * 1000); // 15 min before
-    const firstLookStartTime = new Date(firstLookEndTime.getTime() - firstLookDuration * 60 * 1000);
+  currentTime = addMinutesToDate(ceremony1Time, ceremony1Duration);
+  
+  if (isDualCeremony && ceremony2Time) {
+    // 4. Travel between ceremonies
+    if (responses.trajet_ceremonie_1_2) {
+      const travelDuration = Number(responses.trajet_ceremonie_1_2);
+      
+      events.push({
+        id: `travel-between-${eventId++}`,
+        title: 'Trajet entre les cérémonies',
+        category: 'logistique',
+        startTime: new Date(currentTime),
+        endTime: addMinutesToDate(currentTime, travelDuration),
+        duration: travelDuration,
+        type: 'travel'
+      });
+      
+      currentTime = addMinutesToDate(currentTime, travelDuration);
+    }
+    
+    // 5. Pause between ceremonies (if selected)
+    if (responses.pause_entre_ceremonies === 'oui' && responses.duree_pause) {
+      const pauseDuration = Number(responses.duree_pause);
+      
+      events.push({
+        id: `pause-${eventId++}`,
+        title: 'Pause entre les cérémonies',
+        category: 'logistique',
+        startTime: new Date(currentTime),
+        endTime: addMinutesToDate(currentTime, pauseDuration),
+        duration: pauseDuration,
+        type: 'break'
+      });
+      
+      currentTime = addMinutesToDate(currentTime, pauseDuration);
+    }
+    
+    // 6. Second preparations (if selected)
+    if (responses.preparation_avant_ceremonie_2 === 'oui') {
+      const prep2Questions = questions.filter(q => q.categorie === 'préparatifs_2');
+      
+      prep2Questions.forEach(question => {
+        if (responses[question.option_name] === 'oui' && question.duree_minutes > 0) {
+          const duration = question.duree_minutes;
+          
+          events.push({
+            id: `prep2-${eventId++}`,
+            title: question.label,
+            category: 'préparatifs',
+            startTime: new Date(currentTime),
+            endTime: addMinutesToDate(currentTime, duration),
+            duration,
+            type: 'preparation',
+            isHighlight: true
+          });
+          
+          currentTime = addMinutesToDate(currentTime, duration);
+        }
+      });
+    }
+    
+    // Adjust current time to match second ceremony time
+    currentTime = ceremony2Time;
+    
+    // 7. Second Ceremony
+    const ceremony2TypeQuestion = questions.find(q => q.option_name === 'type_ceremonie_2');
+    const ceremony2Duration = ceremony2TypeQuestion ? 
+      getDurationFromOptions(ceremony2TypeQuestion, responses.type_ceremonie_2) : 60;
     
     events.push({
-      id: `first-look-${Date.now()}`,
-      title: "First Look",
-      category: "photos",
-      startTime: firstLookStartTime,
-      endTime: firstLookEndTime,
-      duration: firstLookDuration,
-      type: "photos",
+      id: `ceremony-2-${eventId++}`,
+      title: `Deuxième cérémonie (${responses.type_ceremonie_2 || 'cérémonie'})`,
+      category: 'cérémonie',
+      startTime: ceremony2Time,
+      endTime: addMinutesToDate(ceremony2Time, ceremony2Duration),
+      duration: ceremony2Duration,
+      type: 'ceremony',
       isHighlight: true
     });
+    
+    currentTime = addMinutesToDate(ceremony2Time, ceremony2Duration);
   }
   
-  // Photos before the ceremony if requested
-  if (responses.photos_couple_avant === 'oui') {
-    const photosDuration = 30; // Default from the database
-    const photosEndTime = new Date(firstEventTime.getTime() - 5 * 60 * 1000); // 5 min before
-    const photosStartTime = new Date(photosEndTime.getTime() - photosDuration * 60 * 1000);
+  // 8. Travel to reception
+  if (responses.trajet_vers_reception) {
+    const travelDuration = Number(responses.trajet_vers_reception);
     
     events.push({
-      id: `couple-photos-${Date.now()}`,
-      title: "Photos de couple",
-      category: "photos",
-      startTime: photosStartTime,
-      endTime: photosEndTime,
-      duration: photosDuration,
-      type: "couple_photos"
+      id: `travel-reception-${eventId++}`,
+      title: 'Trajet vers le lieu de réception',
+      category: 'logistique',
+      startTime: new Date(currentTime),
+      endTime: addMinutesToDate(currentTime, travelDuration),
+      duration: travelDuration,
+      type: 'travel'
     });
+    
+    currentTime = addMinutesToDate(currentTime, travelDuration);
   }
   
-  // Find the last ceremony or event before cocktail
-  sortedEvents = [...events].sort((a, b) => a.startTime.getTime() - b.startTime.getTime());
-  let lastCeremonyOrEvent = sortedEvents
-    .filter(event => event.category === 'cérémonie')
-    .sort((a, b) => b.endTime.getTime() - a.endTime.getTime())[0];
-  
-  if (!lastCeremonyOrEvent) {
-    lastCeremonyOrEvent = sortedEvents.sort((a, b) => b.endTime.getTime() - a.endTime.getTime())[0];
-  }
-  
-  // Add cocktail after the ceremony
+  // 9. Rest of the day (cocktail, dinner, party)
+  // Add cocktail
   if (responses.cocktail) {
-    const cocktailOption = questions.find(q => q.option_name === 'cocktail')?.options;
-    let cocktailDuration = 60; // Default duration
-    
-    if (Array.isArray(cocktailOption)) {
-      const selectedOption = cocktailOption.find((opt: any) => 
-        opt.valeur === responses.cocktail || opt === responses.cocktail
-      );
-      
-      if (selectedOption && typeof selectedOption === 'object' && 'duree_minutes' in selectedOption) {
-        cocktailDuration = selectedOption.duree_minutes;
-      }
-    }
-    
-    const cocktailStartTime = new Date(lastCeremonyOrEvent.endTime.getTime() + 15 * 60 * 1000); // 15 min after
-    const cocktailEndTime = new Date(cocktailStartTime.getTime() + cocktailDuration * 60 * 1000);
+    const cocktailQuestion = questions.find(q => q.option_name === 'cocktail');
+    const cocktailDuration = cocktailQuestion ? 
+      getDurationFromOptions(cocktailQuestion, responses.cocktail) : 60;
     
     events.push({
-      id: `cocktail-${Date.now()}`,
-      title: "Cocktail",
-      category: "cocktail",
-      startTime: cocktailStartTime,
-      endTime: cocktailEndTime,
+      id: `cocktail-${eventId++}`,
+      title: 'Cocktail',
+      category: 'cocktail',
+      startTime: new Date(currentTime),
+      endTime: addMinutesToDate(currentTime, cocktailDuration),
       duration: cocktailDuration,
-      type: "cocktail",
+      type: 'cocktail',
       isHighlight: true
     });
+    
+    currentTime = addMinutesToDate(currentTime, cocktailDuration);
   }
   
-  // Add dinner after cocktail
+  // Add dinner
   if (responses.duree_repas) {
-    const dinnerOption = questions.find(q => q.option_name === 'duree_repas')?.options;
-    let dinnerDuration = 120; // Default duration
-    
-    if (Array.isArray(dinnerOption)) {
-      const selectedOption = dinnerOption.find((opt: any) => 
-        opt.valeur === responses.duree_repas || opt === responses.duree_repas
-      );
-      
-      if (selectedOption && typeof selectedOption === 'object' && 'duree_minutes' in selectedOption) {
-        dinnerDuration = selectedOption.duree_minutes;
-      }
-    }
-    
-    // Find the cocktail end time or use the last ceremony
-    const cocktailEvent = events.find(e => e.type === 'cocktail');
-    const dinnerStartTime = cocktailEvent 
-      ? new Date(cocktailEvent.endTime.getTime() + 15 * 60 * 1000)
-      : new Date(lastCeremonyOrEvent.endTime.getTime() + 30 * 60 * 1000);
-      
-    const dinnerEndTime = new Date(dinnerStartTime.getTime() + dinnerDuration * 60 * 1000);
+    const dinnerQuestion = questions.find(q => q.option_name === 'duree_repas');
+    const dinnerDuration = dinnerQuestion ? 
+      getDurationFromOptions(dinnerQuestion, responses.duree_repas) : 120;
     
     events.push({
-      id: `dinner-${Date.now()}`,
-      title: "Dîner",
-      category: "repas",
-      startTime: dinnerStartTime,
-      endTime: dinnerEndTime,
+      id: `dinner-${eventId++}`,
+      title: 'Dîner',
+      category: 'repas',
+      startTime: new Date(currentTime),
+      endTime: addMinutesToDate(currentTime, dinnerDuration),
       duration: dinnerDuration,
-      type: "dinner",
+      type: 'dinner',
       isHighlight: true
     });
+    
+    currentTime = addMinutesToDate(currentTime, dinnerDuration);
   }
   
-  // Add dancing party after dinner
+  // Add party
   if (responses.soiree && responses.soiree !== 'pas_de_soiree') {
-    const partyOption = questions.find(q => q.option_name === 'soiree')?.options;
-    let partyDuration = 240; // Default duration
-    
-    if (Array.isArray(partyOption)) {
-      const selectedOption = partyOption.find((opt: any) => 
-        opt.valeur === responses.soiree || opt === responses.soiree
-      );
-      
-      if (selectedOption && typeof selectedOption === 'object' && 'duree_minutes' in selectedOption) {
-        partyDuration = selectedOption.duree_minutes;
-      }
-    }
-    
-    // Find the dinner end time
-    const dinnerEvent = events.find(e => e.type === 'dinner');
-    if (!dinnerEvent) return events;
-    
-    const partyStartTime = new Date(dinnerEvent.endTime.getTime() + 15 * 60 * 1000);
-    const partyEndTime = new Date(partyStartTime.getTime() + partyDuration * 60 * 1000);
+    const partyQuestion = questions.find(q => q.option_name === 'soiree');
+    const partyDuration = partyQuestion ? 
+      getDurationFromOptions(partyQuestion, responses.soiree) : 240;
     
     events.push({
-      id: `party-${Date.now()}`,
-      title: "Soirée dansante",
-      category: "soiree",
-      startTime: partyStartTime,
-      endTime: partyEndTime,
+      id: `party-${eventId++}`,
+      title: 'Soirée dansante',
+      category: 'soiree',
+      startTime: new Date(currentTime),
+      endTime: addMinutesToDate(currentTime, partyDuration),
       duration: partyDuration,
-      type: "party"
+      type: 'party'
     });
   }
   

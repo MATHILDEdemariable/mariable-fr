@@ -63,9 +63,20 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
         
         setQuestions(data.allQuestions);
         
-        // Extract and set unique section names
-        const uniqueSections = [...new Set(data.allQuestions.map(q => q.categorie))];
-        setSections(uniqueSections);
+        // Create dynamic sections based on responses and visibility conditions
+        const baseSections = ['cérémonie', 'logistique', 'photos', 'cocktail', 'repas', 'soiree'];
+        const conditionalSections = [];
+        
+        // Add préparatifs_2 if double ceremony is selected
+        if (watchAllFields.double_ceremonie === 'oui') {
+          conditionalSections.push('préparatifs_2');
+        }
+        
+        // Always add final preparations at the end
+        conditionalSections.push('préparatifs_final');
+        
+        const dynamicSections = [...baseSections, ...conditionalSections];
+        setSections(dynamicSections);
         
       } catch (err: any) {
         setError(err.message || 'Une erreur est survenue lors du chargement des questions');
@@ -77,6 +88,23 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
     
     loadQuestions();
   }, []);
+  
+  // Update sections when form values change (for conditional logic)
+  useEffect(() => {
+    const baseSections = ['cérémonie', 'logistique', 'photos', 'cocktail', 'repas', 'soiree'];
+    const conditionalSections = [];
+    
+    // Add préparatifs_2 if double ceremony is selected
+    if (watchAllFields.double_ceremonie === 'oui') {
+      conditionalSections.push('préparatifs_2');
+    }
+    
+    // Always add final preparations at the end
+    conditionalSections.push('préparatifs_final');
+    
+    const dynamicSections = [...baseSections, ...conditionalSections];
+    setSections(dynamicSections);
+  }, [watchAllFields.double_ceremonie]);
   
   // Handle navigation between sections
   const handleNextStep = () => {
@@ -300,6 +328,22 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
     );
   };
   
+  // Get section title helper
+  const getSectionTitle = (section: string): string => {
+    const titles: Record<string, string> = {
+      'cérémonie': 'Cérémonie(s)',
+      'logistique': 'Logistique et trajets',
+      'photos': 'Séances photos',
+      'cocktail': 'Cocktail',
+      'repas': 'Repas',
+      'soiree': 'Soirée',
+      'préparatifs_2': 'Préparatifs avant la 2e cérémonie',
+      'préparatifs_final': 'Préparatifs du matin'
+    };
+    
+    return titles[section] || section;
+  };
+  
   if (loading) {
     return (
       <Card>
@@ -335,15 +379,16 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
           <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-6">
             {/* Section title */}
             <div className="border-b pb-4 mb-6">
-              <h2 className="text-xl font-serif capitalize">{currentSection}</h2>
+              <h2 className="text-xl font-serif">{getSectionTitle(currentSection)}</h2>
               <p className="text-sm text-gray-500">
-                {currentSection === 'cérémonie' && "Informations sur votre cérémonie de mariage"}
-                {currentSection === 'logistique' && "Détails logistiques de votre journée"}
-                {currentSection === 'préparatifs' && "Organisation de vos préparatifs"}
+                {currentSection === 'cérémonie' && "Informations sur votre/vos cérémonie(s) de mariage"}
+                {currentSection === 'logistique' && "Temps de trajets et logistique"}
                 {currentSection === 'photos' && "Planification des séances photos"}
                 {currentSection === 'cocktail' && "Organisation du cocktail"}
                 {currentSection === 'repas' && "Déroulement du repas"}
                 {currentSection === 'soiree' && "Organisation de votre soirée"}
+                {currentSection === 'préparatifs_2' && "Préparations entre les cérémonies"}
+                {currentSection === 'préparatifs_final' && "Préparatifs du matin de votre mariage"}
               </p>
             </div>
             
