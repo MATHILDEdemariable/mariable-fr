@@ -10,9 +10,9 @@ const NousContacter = () => {
       
       <main className="flex-grow py-16 container">
         <div className="max-w-3xl mx-auto">
-          <h1 className="text-4xl md:text-5xl font-serif mb-4">Nous contacter</h1>
+          <h1 className="text-4xl md:text-5xl font-serif mb-4">Me contacter</h1>
           <p className="text-xl text-muted-foreground mb-8">
-            Notre équipe est à votre disposition pour répondre à toutes vos questions.
+            Au plaisir d'échanger avec vous
           </p>
           
           <div className="space-y-6">
@@ -61,7 +61,7 @@ const NousContacter = () => {
               <div>
                 <p className="font-medium">Prendre rendez-vous</p>
                 <a 
-                  href="https://cal.com/mariablebymathilde" 
+                  href="https://cal.com/mathilde-mariable/30min" 
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-wedding-olive hover:underline"

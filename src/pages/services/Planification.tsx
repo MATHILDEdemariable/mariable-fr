@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import ServiceTemplate from '../ServiceTemplate';
@@ -50,7 +49,7 @@ const PlanningStageCard = ({
     <div className="mt-auto">
       <Button 
         variant={variant === "primary" ? "wedding" : "outline"}
-        className={`w-full group-hover:shadow-lg transition-all ${
+        className={`w-full min-h-[48px] px-4 py-2 text-base font-medium inline-flex items-center justify-center rounded-lg group-hover:shadow-lg transition-all ${
           variant === "default" ? "border-wedding-olive text-wedding-olive hover:bg-wedding-olive/10" : ""
         }`}
         onClick={ctaAction}
@@ -168,10 +167,10 @@ const PlanificationContent = () => {
       <div className="bg-wedding-cream/20 rounded-lg p-8 mb-16">
         <div className="text-center max-w-2xl mx-auto">
           <h2 className="text-2xl md:text-3xl font-serif mb-4 text-black">
-            Besoin d'aide ? Mathilde est là.
+            Besoin d'aide ? Contactez-moi.
           </h2>
           <p className="text-lg text-muted-foreground mb-6">
-            Posez vos questions ou recevez un conseil personnalisé à tout moment. 
+            Posez-moi vos questions ou réservez un conseil personnalisé à tout moment. 
             Par chat, email ou RDV express.
           </p>
           
@@ -197,7 +196,7 @@ const PlanificationContent = () => {
             className="gap-2"
           >
             <Link to="/contact/nous-contacter">
-              Parler à Mathilde
+              Me contacter
               <ArrowRight className="h-5 w-5" />
             </Link>
           </Button>
