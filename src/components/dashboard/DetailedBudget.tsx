@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
-import { Plus, Trash2, Save, Download } from 'lucide-react';
+import { Plus, Trash2, Save } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -262,40 +262,6 @@ const DetailedBudget: React.FC = () => {
     updateBudgetMutation.mutate();
   };
 
-  const handleExportPDF = async () => {
-    try {
-      const { exportBudgetToPDF } = await import('@/services/budgetExportService');
-      
-      const success = await exportBudgetToPDF({
-        budgetData: { breakdown: JSON.stringify({ categories, totalEstimated, totalActual, totalDeposit, totalRemaining }) },
-        totalBudget: totalEstimated,
-        guestCount: 100, // Default or from context
-        region: 'France',
-        season: 'Été'
-      });
-      
-      if (success) {
-        toast({
-          title: "Export réussi",
-          description: "Votre budget a été exporté en PDF"
-        });
-      } else {
-        toast({
-          title: "Erreur d'export",
-          description: "Une erreur s'est produite lors de l'export en PDF",
-          variant: "destructive"
-        });
-      }
-    } catch (error) {
-      console.error("Erreur lors de l'export PDF:", error);
-      toast({
-        title: "Erreur d'export",
-        description: "Une erreur s'est produite lors de l'export en PDF",
-        variant: "destructive"
-      });
-    }
-  };
-
   if (isLoading) {
     return (
       <div className="text-center py-12">
@@ -308,33 +274,23 @@ const DetailedBudget: React.FC = () => {
     <Card className="border shadow-sm">
       <CardHeader className="flex flex-row items-center justify-between bg-white sticky top-0 z-10 border-b">
         <CardTitle className="text-xl font-serif">Budget Détaillé</CardTitle>
-        <div className="flex gap-2">
-          <Button 
-            onClick={handleSaveBudget} 
-            variant="outline"
-            disabled={updateBudgetMutation.isPending}
-          >
-            {updateBudgetMutation.isPending ? (
-              <span className="flex items-center">
-                <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-b-transparent"></span>
-                Enregistrement...
-              </span>
-            ) : (
-              <span className="flex items-center">
-                <Save className="mr-2 h-4 w-4" />
-                Enregistrer
-              </span>
-            )}
-          </Button>
-          
-          <Button 
-            onClick={handleExportPDF} 
-            variant="wedding"
-          >
-            <Download className="mr-2 h-4 w-4" />
-            Exporter en PDF
-          </Button>
-        </div>
+        <Button 
+          onClick={handleSaveBudget} 
+          className="bg-wedding-olive hover:bg-wedding-olive/90"
+          disabled={updateBudgetMutation.isPending}
+        >
+          {updateBudgetMutation.isPending ? (
+            <span className="flex items-center">
+              <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-b-transparent"></span>
+              Enregistrement...
+            </span>
+          ) : (
+            <span className="flex items-center">
+              <Save className="mr-2 h-4 w-4" />
+              Enregistrer
+            </span>
+          )}
+        </Button>
       </CardHeader>
       <CardContent className="px-0 overflow-auto">
         <div className="overflow-x-auto">

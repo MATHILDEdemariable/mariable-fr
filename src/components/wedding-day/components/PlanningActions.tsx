@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Download, RefreshCw } from 'lucide-react';
 import { usePlanning } from '../context/PlanningContext';
 import { useToast } from '@/components/ui/use-toast';
+import { exportPlanningJourJToPDF } from '@/services/planningExportService';
 
 export const PlanningActions: React.FC = () => {
   const { events, formData, setFormData, setEvents, setActiveTab, exportLoading, setExportLoading } = usePlanning();
@@ -26,10 +27,8 @@ export const PlanningActions: React.FC = () => {
         description: "Préparation de votre planning..."
       });
       
-      // Use the new branded planning PDF export service
-      const { exportPlanningBrandedToPDF } = await import('@/services/planningBrandedExportService');
-      
-      const success = await exportPlanningBrandedToPDF({
+      // Use the dedicated planning PDF export service
+      const success = await exportPlanningJourJToPDF({
         events,
         weddingDate: formData?.date_mariage ? new Date(formData.date_mariage).toLocaleDateString('fr-FR') : undefined,
         coupleNames: formData?.nom_couple || "Votre mariage"
@@ -76,14 +75,14 @@ export const PlanningActions: React.FC = () => {
       </Button>
       
       <Button
-        variant="wedding"
-        className="flex items-center gap-2"
+        variant="outline"
+        className="bg-wedding-olive/10 hover:bg-wedding-olive/20 text-wedding-olive flex items-center gap-2"
         onClick={handleExportPDF}
         disabled={exportLoading}
       >
         {exportLoading ? (
           <>
-            <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+            <div className="h-4 w-4 border-2 border-wedding-olive border-t-transparent rounded-full animate-spin"></div>
             Export...
           </>
         ) : (
