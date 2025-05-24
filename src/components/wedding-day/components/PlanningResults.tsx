@@ -2,6 +2,7 @@
 import React, { useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Download, RefreshCw } from 'lucide-react';
 import EnhancedDragDropTimeline from './EnhancedDragDropTimeline';
 import { usePlanning } from '../context/PlanningContext';
 import { useToast } from '@/components/ui/use-toast';
@@ -142,7 +143,8 @@ export const PlanningResults: React.FC = () => {
         </div>
       </CardContent>
       <CardFooter className="flex flex-col sm:flex-row justify-between gap-4">
-        <Button variant="outline" onClick={handleReset}>
+        <Button variant="outline" onClick={handleReset} className="w-full sm:w-auto">
+          <RefreshCw className="h-4 w-4 mr-2" />
           Modifier les informations
         </Button>
         <Button 
@@ -150,7 +152,17 @@ export const PlanningResults: React.FC = () => {
           onClick={handleExportPDF}
           disabled={exportLoading}
         >
-          {exportLoading ? "Export en cours..." : "Télécharger en PDF"}
+          {exportLoading ? (
+            <>
+              <div className="h-4 w-4 border-2 border-wedding-olive border-t-transparent rounded-full animate-spin mr-2"></div>
+              Export en cours...
+            </>
+          ) : (
+            <>
+              <Download className="h-4 w-4 mr-2" />
+              Télécharger en PDF
+            </>
+          )}
         </Button>
       </CardFooter>
     </Card>

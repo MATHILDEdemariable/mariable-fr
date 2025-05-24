@@ -1,13 +1,13 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Download, Share2, RefreshCw } from 'lucide-react';
+import { Download, RefreshCw } from 'lucide-react';
 import { usePlanning } from '../context/PlanningContext';
 import { useToast } from '@/components/ui/use-toast';
 import { exportDashboardToPDF } from '@/services/pdfExportService';
 
 export const PlanningActions: React.FC = () => {
-  const { events, setFormData, setEvents, setActiveTab, exportLoading, setExportLoading, activeTab } = usePlanning();
+  const { events, setFormData, setEvents, setActiveTab, exportLoading, setExportLoading } = usePlanning();
   const { toast } = useToast();
 
   const handleReset = () => {
@@ -57,17 +57,9 @@ export const PlanningActions: React.FC = () => {
       setExportLoading(false);
     }
   };
-  
-  const handleShare = () => {
-    // For now, just show a toast that this feature is coming soon
-    toast({
-      title: "Fonctionnalité à venir",
-      description: "Le partage du planning sera bientôt disponible."
-    });
-  };
 
-  // Only show actions when we have events and we're not on the form tab
-  if (!events.length || activeTab === "form") {
+  // Only show actions when we have events
+  if (!events.length) {
     return null;
   }
 
@@ -99,14 +91,6 @@ export const PlanningActions: React.FC = () => {
             Exporter en PDF
           </>
         )}
-      </Button>
-      
-      <Button
-        className="bg-wedding-olive hover:bg-wedding-olive/80 flex items-center gap-2"
-        onClick={handleShare}
-      >
-        <Share2 className="h-4 w-4" />
-        Partager
       </Button>
     </div>
   );

@@ -5,7 +5,6 @@ import { User } from '@supabase/supabase-js';
 import { PlanningProvider, usePlanning } from './context/PlanningContext';
 import { PlanningForm } from './components/PlanningForm';
 import { PlanningResults } from './components/PlanningResults';
-import { PlanningActions } from './components/PlanningActions';
 import AdviceSidebar from './components/AdviceSidebar';
 
 interface PlanningCoordinatorProps {
@@ -16,12 +15,11 @@ const PlanningCoordinatorContent: React.FC = () => {
   const { activeTab, setActiveTab } = usePlanning();
   
   return (
-    <div className="flex gap-6 max-w-7xl mx-auto">
+    <div className="flex flex-col lg:flex-row gap-6 max-w-7xl mx-auto">
       {/* Main content area */}
       <div className="flex-1 space-y-6">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+        <div className="mb-6">
           <h1 className="text-2xl font-serif text-wedding-olive">Générateur de Planning Jour J</h1>
-          <PlanningActions />
         </div>
         
         <Tabs defaultValue="form" value={activeTab} onValueChange={setActiveTab}>
@@ -41,7 +39,7 @@ const PlanningCoordinatorContent: React.FC = () => {
             </TabsTrigger>
             <TabsTrigger 
               value="advice"
-              className="data-[state=active]:bg-wedding-olive data-[state=active]:text-white"
+              className="data-[state=active]:bg-wedding-olive data-[state=active]:text-white lg:hidden"
             >
               Conseils
             </TabsTrigger>
@@ -55,7 +53,7 @@ const PlanningCoordinatorContent: React.FC = () => {
             <PlanningResults />
           </TabsContent>
           
-          <TabsContent value="advice">
+          <TabsContent value="advice" className="lg:hidden">
             <div className="w-full">
               <AdviceSidebar />
             </div>
@@ -63,9 +61,9 @@ const PlanningCoordinatorContent: React.FC = () => {
         </Tabs>
       </div>
       
-      {/* Right sidebar - only show on planning tab */}
+      {/* Right sidebar - only show on desktop and when on planning tab */}
       {activeTab === "results" && (
-        <div className="w-80 flex-shrink-0">
+        <div className="hidden lg:block w-80 flex-shrink-0">
           <div className="sticky top-6">
             <AdviceSidebar />
           </div>
