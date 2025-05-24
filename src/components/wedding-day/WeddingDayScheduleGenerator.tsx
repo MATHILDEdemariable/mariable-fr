@@ -158,22 +158,23 @@ export const WeddingDayScheduleGenerator: React.FC = () => {
       // Import the dedicated planning PDF export service
       const { exportPlanningJourJToPDF } = await import('@/services/planningExportService');
       
-      // Convert schedule events to the expected format
+      // Convert schedule events to the expected PlanningEvent format
       const planningEvents = schedule.events.map(event => ({
         id: event.id,
-        titre: event.title,
-        description: event.description || '',
-        heure_debut: event.startTime,
-        heure_fin: event.endTime,
-        duree_minutes: event.duration,
-        categorie: event.category || 'Autres',
-        position: 0,
-        type: 'generated'
+        title: event.title,
+        category: event.type || 'Autres',
+        startTime: event.startTime,
+        endTime: event.endTime,
+        duration: event.duration,
+        type: event.type,
+        isHighlight: event.isHighlight,
+        notes: event.notes,
+        location: undefined
       }));
       
       const success = await exportPlanningJourJToPDF({
         events: planningEvents,
-        weddingDate: formData?.inputs_mariage?.horaire_ceremonie_principale 
+        weddingDate: formData?.inputs_mariage 
           ? `Planning du ${new Date().toLocaleDateString('fr-FR')}`
           : undefined,
         coupleNames: "Votre mariage"

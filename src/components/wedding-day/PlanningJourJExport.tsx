@@ -17,7 +17,7 @@ const PlanningJourJExport: React.FC<PlanningJourJExportProps> = ({
 }) => {
   // Group events by category for better organization
   const groupedEvents = events.reduce((acc, event) => {
-    const category = event.categorie || 'Autres';
+    const category = event.category || 'Autres';
     if (!acc[category]) {
       acc[category] = [];
     }
@@ -44,9 +44,13 @@ const PlanningJourJExport: React.FC<PlanningJourJExportProps> = ({
     }
   };
 
-  const formatTime = (time: string) => {
-    if (!time) return '';
-    return time.substring(0, 5); // Remove seconds
+  const formatTime = (date: Date) => {
+    if (!date) return '';
+    return date.toLocaleTimeString('fr-FR', { 
+      hour: '2-digit', 
+      minute: '2-digit',
+      hour12: false 
+    });
   };
 
   return (
@@ -110,7 +114,7 @@ const PlanningJourJExport: React.FC<PlanningJourJExportProps> = ({
               <span className="font-medium">Début</span>
             </div>
             <div style={{ color: '#1a5d40', fontSize: '11px' }}>
-              {events.length > 0 ? formatTime(events[0].heure_debut) : ""}
+              {events.length > 0 ? formatTime(events[0].startTime) : ""}
             </div>
           </div>
           
@@ -139,8 +143,7 @@ const PlanningJourJExport: React.FC<PlanningJourJExportProps> = ({
         
         <div className="grid grid-cols-2 gap-3" style={{ fontSize: '11px' }}>
           {events.map((event, index) => {
-            const categoryStyle = getCategoryStyle(event.categorie || '');
-            const isLeftColumn = index % 2 === 0;
+            const categoryStyle = getCategoryStyle(event.category || '');
             
             return (
               <div key={event.id} className="p-2 rounded" style={{ 
@@ -152,7 +155,7 @@ const PlanningJourJExport: React.FC<PlanningJourJExportProps> = ({
                   <div className="flex items-center">
                     <div className="w-2 h-2 rounded-full mr-2" style={{ backgroundColor: categoryStyle.color }}></div>
                     <span className="font-medium text-xs" style={{ color: categoryStyle.color }}>
-                      {formatTime(event.heure_debut)}
+                      {formatTime(event.startTime)}
                     </span>
                   </div>
                   <span className="text-xs px-1 py-0.5 rounded" style={{ 
@@ -160,7 +163,7 @@ const PlanningJourJExport: React.FC<PlanningJourJExportProps> = ({
                     color: 'white',
                     fontSize: '9px'
                   }}>
-                    {event.duree_minutes}min
+                    {event.duration}min
                   </span>
                 </div>
                 
@@ -169,25 +172,25 @@ const PlanningJourJExport: React.FC<PlanningJourJExportProps> = ({
                   color: '#1a5d40',
                   lineHeight: '1.2'
                 }}>
-                  {event.titre}
+                  {event.title}
                 </h4>
                 
-                {event.description && (
+                {event.notes && (
                   <p className="text-xs" style={{ 
                     color: '#666666',
                     lineHeight: '1.2'
                   }}>
-                    {event.description}
+                    {event.notes}
                   </p>
                 )}
                 
                 <div className="flex items-center justify-between mt-1">
                   <span className="text-xs" style={{ color: categoryStyle.color }}>
-                    {event.categorie}
+                    {event.category}
                   </span>
-                  {event.heure_fin && (
+                  {event.endTime && (
                     <span className="text-xs" style={{ color: '#666666' }}>
-                      → {formatTime(event.heure_fin)}
+                      → {formatTime(event.endTime)}
                     </span>
                   )}
                 </div>
@@ -211,7 +214,7 @@ const PlanningJourJExport: React.FC<PlanningJourJExportProps> = ({
         <div className="grid grid-cols-3 gap-2" style={{ fontSize: '10px' }}>
           {Object.entries(groupedEvents).map(([category, categoryEvents]) => {
             const categoryStyle = getCategoryStyle(category);
-            const totalDuration = categoryEvents.reduce((sum, event) => sum + (event.duree_minutes || 0), 0);
+            const totalDuration = categoryEvents.reduce((sum, event) => sum + (event.duration || 0), 0);
             
             return (
               <div key={category} className="p-2 rounded text-center" style={{ 
