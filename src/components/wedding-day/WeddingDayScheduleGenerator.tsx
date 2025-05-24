@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -156,13 +155,29 @@ export const WeddingDayScheduleGenerator: React.FC = () => {
         description: "Préparation de votre planning..."
       });
       
-      // Use the PDF export service
-      const success = await exportDashboardToPDF(
-        'wedding-day-timeline',
-        'Planning-Jour-J.pdf',
-        'portrait',
-        'Planning Jour J'
-      );
+      // Import the dedicated planning PDF export service
+      const { exportPlanningJourJToPDF } = await import('@/services/planningExportService');
+      
+      // Convert schedule events to the expected format
+      const planningEvents = schedule.events.map(event => ({
+        id: event.id,
+        titre: event.title,
+        description: event.description || '',
+        heure_debut: event.startTime,
+        heure_fin: event.endTime,
+        duree_minutes: event.duration,
+        categorie: event.category || 'Autres',
+        position: 0,
+        type: 'generated'
+      }));
+      
+      const success = await exportPlanningJourJToPDF({
+        events: planningEvents,
+        weddingDate: formData?.inputs_mariage?.horaire_ceremonie_principale 
+          ? `Planning du ${new Date().toLocaleDateString('fr-FR')}`
+          : undefined,
+        coupleNames: "Votre mariage"
+      });
       
       if (success) {
         toast({

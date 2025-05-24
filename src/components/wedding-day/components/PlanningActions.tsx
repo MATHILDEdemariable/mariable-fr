@@ -4,10 +4,10 @@ import { Button } from '@/components/ui/button';
 import { Download, RefreshCw } from 'lucide-react';
 import { usePlanning } from '../context/PlanningContext';
 import { useToast } from '@/components/ui/use-toast';
-import { exportDashboardToPDF } from '@/services/pdfExportService';
+import { exportPlanningJourJToPDF } from '@/services/planningExportService';
 
 export const PlanningActions: React.FC = () => {
-  const { events, setFormData, setEvents, setActiveTab, exportLoading, setExportLoading } = usePlanning();
+  const { events, formData, setFormData, setEvents, setActiveTab, exportLoading, setExportLoading } = usePlanning();
   const { toast } = useToast();
 
   const handleReset = () => {
@@ -27,12 +27,12 @@ export const PlanningActions: React.FC = () => {
         description: "Préparation de votre planning..."
       });
       
-      const success = await exportDashboardToPDF(
-        'planning-timeline',
-        'Planning-Jour-J.pdf',
-        'portrait',
-        'Planning Jour J'
-      );
+      // Use the dedicated planning PDF export service
+      const success = await exportPlanningJourJToPDF({
+        events,
+        weddingDate: formData?.date_mariage ? new Date(formData.date_mariage).toLocaleDateString('fr-FR') : undefined,
+        coupleNames: formData?.nom_couple || "Votre mariage"
+      });
       
       if (success) {
         toast({
