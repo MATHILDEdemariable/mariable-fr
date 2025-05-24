@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { Card, CardContent } from '@/components/ui/card';
@@ -313,61 +314,186 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
     }
   };
   
-  // Special renderer for ceremony section with conditional fieldsets
+  // Special renderer for ceremony section with fixed conditional fieldsets
   const renderCeremonySection = () => {
     const isDualCeremony = watchAllFields.double_ceremonie === 'oui';
-    const ceremonyQuestions = questions.filter(q => q.categorie === 'cérémonie');
     
     // Find the double ceremony question
-    const doubleCeremonyQuestion = ceremonyQuestions.find(q => q.option_name === 'double_ceremonie');
+    const doubleCeremonyQuestion = questions.find(q => q.option_name === 'double_ceremonie');
     
     return (
       <div className="space-y-6">
-        {/* Double ceremony question */}
+        {/* Double ceremony question - always shown first */}
         {doubleCeremonyQuestion && renderQuestionInput(doubleCeremonyQuestion)}
         
-        {/* Single ceremony fieldset */}
-        {!isDualCeremony && (
-          <fieldset className="border border-gray-200 rounded-lg p-4 space-y-4">
-            <legend className="text-lg font-medium px-2">Votre cérémonie</legend>
-            {ceremonyQuestions
-              .filter(q => q.option_name === 'heure_ceremonie_principale' || q.option_name === 'type_ceremonie_principale')
-              .filter(q => isQuestionVisible(q, watchAllFields))
-              .map(question => (
-                <div key={question.id}>
-                  {renderQuestionInput(question)}
-                </div>
-              ))}
-          </fieldset>
-        )}
-        
-        {/* Dual ceremony fieldsets */}
-        {isDualCeremony && (
+        {/* Conditional rendering based on double ceremony choice */}
+        {isDualCeremony ? (
           <>
+            {/* First ceremony fieldset */}
             <fieldset className="border border-gray-200 rounded-lg p-4 space-y-4">
               <legend className="text-lg font-medium px-2">Première cérémonie</legend>
-              {ceremonyQuestions
-                .filter(q => q.option_name === 'heure_ceremonie_1' || q.option_name === 'type_ceremonie_1')
-                .filter(q => isQuestionVisible(q, watchAllFields))
-                .map(question => (
-                  <div key={question.id}>
-                    {renderQuestionInput(question)}
-                  </div>
-                ))}
+              <FormField
+                control={form.control}
+                name="heure_ceremonie_1"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Heure de la 1ère cérémonie</FormLabel>
+                    <FormControl>
+                      <Input 
+                        type="time" 
+                        {...field} 
+                        className="w-full max-w-[200px]"
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Heure au format 24h (ex: 14:30)
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="type_ceremonie_1"
+                render={({ field }) => (
+                  <FormItem className="space-y-3">
+                    <FormLabel>Type de la 1ère cérémonie</FormLabel>
+                    <FormControl>
+                      <RadioGroup
+                        onValueChange={field.onChange}
+                        value={field.value}
+                        className="flex flex-col space-y-1"
+                      >
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="civile" id="type_ceremonie_1-civile" />
+                          <label htmlFor="type_ceremonie_1-civile" className="text-sm">civile (30 minutes)</label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="religieuse" id="type_ceremonie_1-religieuse" />
+                          <label htmlFor="type_ceremonie_1-religieuse" className="text-sm">religieuse (90 minutes)</label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="laique" id="type_ceremonie_1-laique" />
+                          <label htmlFor="type_ceremonie_1-laique" className="text-sm">laïque (60 minutes)</label>
+                        </div>
+                      </RadioGroup>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </fieldset>
             
+            {/* Second ceremony fieldset */}
             <fieldset className="border border-gray-200 rounded-lg p-4 space-y-4">
               <legend className="text-lg font-medium px-2">Deuxième cérémonie</legend>
-              {ceremonyQuestions
-                .filter(q => q.option_name === 'heure_ceremonie_2' || q.option_name === 'type_ceremonie_2')
-                .filter(q => isQuestionVisible(q, watchAllFields))
-                .map(question => (
-                  <div key={question.id}>
-                    {renderQuestionInput(question)}
-                  </div>
-                ))}
+              <FormField
+                control={form.control}
+                name="heure_ceremonie_2"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Heure de la 2ème cérémonie</FormLabel>
+                    <FormControl>
+                      <Input 
+                        type="time" 
+                        {...field} 
+                        className="w-full max-w-[200px]"
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Heure au format 24h (ex: 14:30)
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="type_ceremonie_2"
+                render={({ field }) => (
+                  <FormItem className="space-y-3">
+                    <FormLabel>Type de la 2ème cérémonie</FormLabel>
+                    <FormControl>
+                      <RadioGroup
+                        onValueChange={field.onChange}
+                        value={field.value}
+                        className="flex flex-col space-y-1"
+                      >
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="civile" id="type_ceremonie_2-civile" />
+                          <label htmlFor="type_ceremonie_2-civile" className="text-sm">civile (30 minutes)</label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="religieuse" id="type_ceremonie_2-religieuse" />
+                          <label htmlFor="type_ceremonie_2-religieuse" className="text-sm">religieuse (90 minutes)</label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="laique" id="type_ceremonie_2-laique" />
+                          <label htmlFor="type_ceremonie_2-laique" className="text-sm">laïque (60 minutes)</label>
+                        </div>
+                      </RadioGroup>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </fieldset>
           </>
+        ) : (
+          /* Single ceremony fieldset */
+          <fieldset className="border border-gray-200 rounded-lg p-4 space-y-4">
+            <legend className="text-lg font-medium px-2">Votre cérémonie</legend>
+            <FormField
+              control={form.control}
+              name="heure_ceremonie_principale"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Heure de la cérémonie principale</FormLabel>
+                  <FormControl>
+                    <Input 
+                      type="time" 
+                      {...field} 
+                      className="w-full max-w-[200px]"
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Heure au format 24h (ex: 14:30)
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="type_ceremonie_principale"
+              render={({ field }) => (
+                <FormItem className="space-y-3">
+                  <FormLabel>Type de la cérémonie principale</FormLabel>
+                  <FormControl>
+                    <RadioGroup
+                      onValueChange={field.onChange}
+                      value={field.value}
+                      className="flex flex-col space-y-1"
+                    >
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="civile" id="type_ceremonie_principale-civile" />
+                        <label htmlFor="type_ceremonie_principale-civile" className="text-sm">civile (30 minutes)</label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="religieuse" id="type_ceremonie_principale-religieuse" />
+                        <label htmlFor="type_ceremonie_principale-religieuse" className="text-sm">religieuse (90 minutes)</label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="laique" id="type_ceremonie_principale-laique" />
+                        <label htmlFor="type_ceremonie_principale-laique" className="text-sm">laïque (60 minutes)</label>
+                      </div>
+                    </RadioGroup>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </fieldset>
         )}
       </div>
     );
