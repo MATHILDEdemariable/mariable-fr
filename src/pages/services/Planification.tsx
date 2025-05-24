@@ -26,15 +26,15 @@ const PlanningStageCard = ({
   ctaAction: () => void;
   variant?: "default" | "primary";
 }) => (
-  <div className="group bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-all duration-300 hover:transform hover:scale-105">
+  <div className="group bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-all duration-300 hover:transform hover:scale-105 flex flex-col h-full">
     <div className="flex items-center mb-4">
       <span className="text-3xl mr-3">{emoji}</span>
       <div>
-        <h3 className="text-xl font-serif font-medium text-wedding-olive">{title}</h3>
+        <h3 className="text-xl font-serif font-medium text-black">{title}</h3>
       </div>
     </div>
     
-    <div className="mb-4">
+    <div className="flex-1 mb-4">
       <div className="flex flex-wrap gap-2 mb-3">
         {features.map((feature, index) => (
           <span key={index} className="text-sm text-wedding-olive font-medium">
@@ -47,16 +47,18 @@ const PlanningStageCard = ({
       </p>
     </div>
     
-    <Button 
-      variant={variant === "primary" ? "wedding" : "outline"}
-      className={`w-full group-hover:shadow-lg transition-all ${
-        variant === "default" ? "border-wedding-olive text-wedding-olive hover:bg-wedding-olive/10" : ""
-      }`}
-      onClick={ctaAction}
-    >
-      {ctaText}
-      <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-    </Button>
+    <div className="mt-auto">
+      <Button 
+        variant={variant === "primary" ? "wedding" : "outline"}
+        className={`w-full group-hover:shadow-lg transition-all ${
+          variant === "default" ? "border-wedding-olive text-wedding-olive hover:bg-wedding-olive/10" : ""
+        }`}
+        onClick={ctaAction}
+      >
+        {ctaText}
+        <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+      </Button>
+    </div>
   </div>
 );
 
@@ -110,7 +112,7 @@ const PlanificationContent = () => {
       {/* Hero Section - Two columns */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-16">
         <div>
-          <h1 className="text-4xl md:text-5xl font-serif mb-6 text-wedding-olive leading-tight">
+          <h1 className="text-4xl md:text-5xl font-serif mb-6 text-black leading-tight">
             Planifiez votre mariage à votre rythme, sans charge mentale
           </h1>
           <h2 className="text-xl text-muted-foreground mb-8">
@@ -139,7 +141,7 @@ const PlanificationContent = () => {
 
       {/* Three interactive blocks */}
       <div className="mb-16">
-        <h2 className="text-2xl md:text-3xl font-serif text-center mb-4 text-wedding-olive">
+        <h2 className="text-2xl md:text-3xl font-serif text-center mb-4 text-black">
           À chaque étape, Mariable vous aide
         </h2>
         <p className="text-lg text-muted-foreground text-center mb-8">
@@ -165,7 +167,7 @@ const PlanificationContent = () => {
       {/* Support section */}
       <div className="bg-wedding-cream/20 rounded-lg p-8 mb-16">
         <div className="text-center max-w-2xl mx-auto">
-          <h2 className="text-2xl md:text-3xl font-serif mb-4 text-wedding-olive">
+          <h2 className="text-2xl md:text-3xl font-serif mb-4 text-black">
             Besoin d'aide ? Mathilde est là.
           </h2>
           <p className="text-lg text-muted-foreground mb-6">
@@ -208,7 +210,7 @@ const PlanificationContent = () => {
           <div className="inline-block bg-wedding-olive/10 text-wedding-olive px-3 py-1 rounded-full text-sm font-medium mb-4">
             Coming soon
           </div>
-          <h2 className="text-2xl md:text-3xl font-serif mb-4 text-wedding-olive">
+          <h2 className="text-2xl md:text-3xl font-serif mb-4 text-black">
             Offre spéciale Jour J – Bientôt disponible
           </h2>
           <p className="text-lg text-muted-foreground mb-6">
@@ -232,7 +234,7 @@ const PlanificationContent = () => {
 const Planification = () => {
   return (
     <ServiceTemplate 
-      title="Planification de mariage"
+      title=""
       description="Organisez chaque étape de votre mariage sans charge mentale"
       content={<PlanificationContent />}
     >
