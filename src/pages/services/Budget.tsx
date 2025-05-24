@@ -440,8 +440,8 @@ const Budget = () => {
     return (
       <div className="space-y-6">
         <div>
-          <h2 className="text-2xl font-serif mb-2">Calculatrice de budget</h2>
-          <p className="text-muted-foreground">Choisissez votre méthode de calcul</p>
+          <h2 className="text-2xl font-serif mb-2">Choisissez votre méthode de calcul</h2>
+          <p className="text-muted-foreground">Sélectionnez la méthode qui vous convient le mieux</p>
         </div>
         
         <div className="space-y-4">
@@ -904,14 +904,10 @@ const Budget = () => {
       />
       <Header />
       <main className="container max-w-6xl px-4 py-8">
-        <h1 className="text-3xl font-serif mb-2">Calculez votre budget mariage</h1>
+        <h1 className="text-3xl font-serif mb-2">Calculatrice de budget mariage</h1>
+        <p className="text-muted-foreground mb-6">Estimez le budget de votre mariage en quelques étapes</p>
         
         <Card className="p-6 mt-6 bg-wedding-cream/20">
-          <div className="mb-4">
-            <h2 className="text-2xl md:text-3xl font-serif mb-2">Calculatrice de budget mariage</h2>
-            <p className="text-muted-foreground">Estimez le budget de votre mariage en quelques étapes</p>
-          </div>
-          
           {showEstimate ? (
             renderEstimate()
           ) : calculatorMode === null ? (

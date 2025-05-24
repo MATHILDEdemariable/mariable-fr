@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Download, RefreshCw } from 'lucide-react';
 import { usePlanning } from '../context/PlanningContext';
 import { useToast } from '@/components/ui/use-toast';
-import { exportPlanningJourJToPDF } from '@/services/planningExportService';
+import { exportPlanningBrandedPDF } from '@/services/planningBrandedExportService';
 
 export const PlanningActions: React.FC = () => {
   const { events, formData, setFormData, setEvents, setActiveTab, exportLoading, setExportLoading } = usePlanning();
@@ -27,8 +27,8 @@ export const PlanningActions: React.FC = () => {
         description: "Préparation de votre planning..."
       });
       
-      // Use the dedicated planning PDF export service
-      const success = await exportPlanningJourJToPDF({
+      // Use the branded PDF export service
+      const success = await exportPlanningBrandedPDF({
         events,
         weddingDate: formData?.date_mariage ? new Date(formData.date_mariage).toLocaleDateString('fr-FR') : undefined,
         coupleNames: formData?.nom_couple || "Votre mariage"

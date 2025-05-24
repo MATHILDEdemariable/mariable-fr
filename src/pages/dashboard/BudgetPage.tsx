@@ -29,7 +29,13 @@ const BudgetPage: React.FC = () => {
         throw error;
       }
       
-      return data || { breakdown: JSON.stringify({ categories: [] }) };
+      return data || { 
+        breakdown: JSON.stringify({ categories: [] }),
+        total_budget: 0,
+        guests_count: 100,
+        region: 'paris',
+        season: 'summer'
+      };
     }
   });
 
