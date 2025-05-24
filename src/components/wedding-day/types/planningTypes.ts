@@ -1,4 +1,3 @@
-
 import { SupabaseClient } from "@supabase/supabase-js";
 import { Database } from "@/integrations/supabase/types";
 
@@ -214,14 +213,27 @@ export const generatePlanning = (
     }
   });
   
-  // 2. Travel to first ceremony
-  if (responses.trajet_vers_ceremonie_1) {
-    const travelDuration = Number(responses.trajet_vers_ceremonie_1);
+  // 2. Travel to first ceremony (using new dual ceremony logic)
+  if (isDualCeremony && responses.trajet_1_depart_ceremonie_1) {
+    const travelDuration = Number(responses.trajet_1_depart_ceremonie_1);
     const travelStart = addMinutesToDate(ceremony1Time, -travelDuration);
     
     events.push({
       id: `travel-1-${eventId++}`,
-      title: 'Trajet vers la première cérémonie',
+      title: 'Trajet: point de départ ➝ cérémonie 1',
+      category: 'logistique',
+      startTime: travelStart,
+      endTime: ceremony1Time,
+      duration: travelDuration,
+      type: 'travel'
+    });
+  } else if (!isDualCeremony && responses.trajet_vers_ceremonie) {
+    const travelDuration = Number(responses.trajet_vers_ceremonie);
+    const travelStart = addMinutesToDate(ceremony1Time, -travelDuration);
+    
+    events.push({
+      id: `travel-ceremony-${eventId++}`,
+      title: 'Trajet vers la cérémonie',
       category: 'logistique',
       startTime: travelStart,
       endTime: ceremony1Time,
@@ -254,13 +266,13 @@ export const generatePlanning = (
   currentTime = addMinutesToDate(ceremony1Time, ceremony1Duration);
   
   if (isDualCeremony && ceremony2Time) {
-    // 4. Travel between ceremonies
-    if (responses.trajet_ceremonie_1_2) {
-      const travelDuration = Number(responses.trajet_ceremonie_1_2);
+    // 4. Travel after first ceremony
+    if (responses.trajet_2_ceremonie_1_arrivee_1) {
+      const travelDuration = Number(responses.trajet_2_ceremonie_1_arrivee_1);
       
       events.push({
-        id: `travel-between-${eventId++}`,
-        title: 'Trajet entre les cérémonies',
+        id: `travel-2-${eventId++}`,
+        title: 'Trajet: cérémonie 1 ➝ point d\'arrivée 1',
         category: 'logistique',
         startTime: new Date(currentTime),
         endTime: addMinutesToDate(currentTime, travelDuration),
@@ -271,51 +283,97 @@ export const generatePlanning = (
       currentTime = addMinutesToDate(currentTime, travelDuration);
     }
     
-    // 5. Pause between ceremonies (if selected)
-    if (responses.pause_entre_ceremonies === 'oui' && responses.duree_pause) {
-      const pauseDuration = Number(responses.duree_pause);
-      
+    // 5. Pause between ceremonies (if there's time)
+    const timeUntilSecondCeremony = ceremony2Time.getTime() - currentTime.getTime();
+    const minutesUntilSecondCeremony = Math.floor(timeUntilSecondCeremony / (1000 * 60));
+    
+    // Calculate time needed for preparations 2 and travel 3
+    let prep2Duration = 0;
+    if (responses.preparatifs_2_coiffure) prep2Duration += 30;
+    if (responses.preparatifs_2_maquillage) prep2Duration += 30;
+    if (responses.preparatifs_2_habillage) prep2Duration += 45;
+    
+    const travel3Duration = responses.trajet_3_depart_ceremonie_2 ? Number(responses.trajet_3_depart_ceremonie_2) : 0;
+    const bufferTime = (prep2Duration > 0) ? (prep2Duration / 15) * 15 : 0; // 15min buffer between each prep step
+    
+    const totalTimeNeeded = prep2Duration + bufferTime + travel3Duration;
+    const pauseTime = minutesUntilSecondCeremony - totalTimeNeeded;
+    
+    if (pauseTime > 0) {
       events.push({
         id: `pause-${eventId++}`,
         title: 'Pause entre les cérémonies',
         category: 'logistique',
         startTime: new Date(currentTime),
-        endTime: addMinutesToDate(currentTime, pauseDuration),
-        duration: pauseDuration,
+        endTime: addMinutesToDate(currentTime, pauseTime),
+        duration: pauseTime,
         type: 'break'
       });
       
-      currentTime = addMinutesToDate(currentTime, pauseDuration);
+      currentTime = addMinutesToDate(currentTime, pauseTime);
     }
     
     // 6. Second preparations (if selected)
-    if (responses.preparation_avant_ceremonie_2 === 'oui') {
-      const prep2Questions = questions.filter(q => q.categorie === 'préparatifs_2');
+    if (prep2Duration > 0) {
+      if (responses.preparatifs_2_coiffure) {
+        events.push({
+          id: `prep2-coiffure-${eventId++}`,
+          title: 'Retouche coiffure',
+          category: 'préparatifs',
+          startTime: new Date(currentTime),
+          endTime: addMinutesToDate(currentTime, 30),
+          duration: 30,
+          type: 'preparation',
+          isHighlight: true
+        });
+        currentTime = addMinutesToDate(currentTime, 45); // 30min + 15min buffer
+      }
       
-      prep2Questions.forEach(question => {
-        if (responses[question.option_name] === 'oui' && question.duree_minutes > 0) {
-          const duration = question.duree_minutes;
-          
-          events.push({
-            id: `prep2-${eventId++}`,
-            title: question.label,
-            category: 'préparatifs',
-            startTime: new Date(currentTime),
-            endTime: addMinutesToDate(currentTime, duration),
-            duration,
-            type: 'preparation',
-            isHighlight: true
-          });
-          
-          currentTime = addMinutesToDate(currentTime, duration);
-        }
+      if (responses.preparatifs_2_maquillage) {
+        events.push({
+          id: `prep2-maquillage-${eventId++}`,
+          title: 'Retouche maquillage',
+          category: 'préparatifs',
+          startTime: new Date(currentTime),
+          endTime: addMinutesToDate(currentTime, 30),
+          duration: 30,
+          type: 'preparation',
+          isHighlight: true
+        });
+        currentTime = addMinutesToDate(currentTime, 45); // 30min + 15min buffer
+      }
+      
+      if (responses.preparatifs_2_habillage) {
+        events.push({
+          id: `prep2-habillage-${eventId++}`,
+          title: 'Changement de tenue',
+          category: 'préparatifs',
+          startTime: new Date(currentTime),
+          endTime: addMinutesToDate(currentTime, 45),
+          duration: 45,
+          type: 'preparation',
+          isHighlight: true
+        });
+        currentTime = addMinutesToDate(currentTime, 60); // 45min + 15min buffer
+      }
+    }
+    
+    // 7. Travel to second ceremony
+    if (travel3Duration > 0) {
+      const travelStart = addMinutesToDate(ceremony2Time, -travel3Duration);
+      
+      events.push({
+        id: `travel-3-${eventId++}`,
+        title: 'Trajet: point de départ ➝ cérémonie 2',
+        category: 'logistique',
+        startTime: travelStart,
+        endTime: ceremony2Time,
+        duration: travel3Duration,
+        type: 'travel'
       });
     }
     
-    // Adjust current time to match second ceremony time
-    currentTime = ceremony2Time;
-    
-    // 7. Second Ceremony
+    // 8. Second Ceremony
     const ceremony2TypeQuestion = questions.find(q => q.option_name === 'type_ceremonie_2');
     const ceremony2Duration = ceremony2TypeQuestion ? 
       getDurationFromOptions(ceremony2TypeQuestion, responses.type_ceremonie_2) : 60;
@@ -332,10 +390,28 @@ export const generatePlanning = (
     });
     
     currentTime = addMinutesToDate(ceremony2Time, ceremony2Duration);
+    
+    // 9. Travel after second ceremony
+    if (responses.trajet_4_ceremonie_2_arrivee_2) {
+      const travelDuration = Number(responses.trajet_4_ceremonie_2_arrivee_2);
+      
+      events.push({
+        id: `travel-4-${eventId++}`,
+        title: 'Trajet: cérémonie 2 ➝ point d\'arrivée 2',
+        category: 'logistique',
+        startTime: new Date(currentTime),
+        endTime: addMinutesToDate(currentTime, travelDuration),
+        duration: travelDuration,
+        type: 'travel'
+      });
+      
+      currentTime = addMinutesToDate(currentTime, travelDuration);
+    }
   }
   
-  // 8. Travel to reception
-  if (responses.trajet_vers_reception) {
+  // Rest of the day continues as before...
+  // 10. Travel to reception (if not dual ceremony or after dual ceremony logistics)
+  if (!isDualCeremony && responses.trajet_vers_reception) {
     const travelDuration = Number(responses.trajet_vers_reception);
     
     events.push({
@@ -351,7 +427,7 @@ export const generatePlanning = (
     currentTime = addMinutesToDate(currentTime, travelDuration);
   }
   
-  // 9. Rest of the day (cocktail, dinner, party)
+  // 11. Rest of the day (cocktail, dinner, party)
   // Add cocktail
   if (responses.cocktail) {
     const cocktailQuestion = questions.find(q => q.option_name === 'cocktail');

@@ -498,12 +498,237 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
       </div>
     );
   };
+
+  // Special renderer for logistics section with conditional dual ceremony fields
+  const renderLogisticsSection = () => {
+    const isDualCeremony = watchAllFields.double_ceremonie === 'oui';
+    
+    return (
+      <div className="space-y-6">
+        {/* Regular logistics questions that are always shown */}
+        {questions
+          .filter(q => q.categorie === 'logistique' && q.option_name !== 'trajet_entre_lieux')
+          .filter(q => isQuestionVisible(q, watchAllFields))
+          .map(question => (
+            <div key={question.id} className="py-2">
+              {renderQuestionInput(question)}
+            </div>
+          ))}
+        
+        {/* Conditional dual ceremony logistics */}
+        {isDualCeremony && (
+          <fieldset className="border border-gray-200 rounded-lg p-4 space-y-4">
+            <legend className="text-lg font-medium px-2">Trajets pour double cérémonie</legend>
+            
+            <FormField
+              control={form.control}
+              name="trajet_1_depart_ceremonie_1"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Trajet 1: point de départ ➝ cérémonie 1</FormLabel>
+                  <FormControl>
+                    <Input 
+                      type="number" 
+                      {...field}
+                      onChange={(e) => field.onChange(parseInt(e.target.value))}
+                      className="w-full max-w-[200px]"
+                      placeholder="Durée en minutes"
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Temps de trajet en minutes
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            
+            <FormField
+              control={form.control}
+              name="trajet_2_ceremonie_1_arrivee_1"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Trajet 2: cérémonie 1 ➝ point d'arrivée 1</FormLabel>
+                  <FormControl>
+                    <Input 
+                      type="number" 
+                      {...field}
+                      onChange={(e) => field.onChange(parseInt(e.target.value))}
+                      className="w-full max-w-[200px]"
+                      placeholder="Durée en minutes"
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Temps de trajet en minutes
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            
+            <FormField
+              control={form.control}
+              name="trajet_3_depart_ceremonie_2"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Trajet 3: point de départ ➝ cérémonie 2</FormLabel>
+                  <FormControl>
+                    <Input 
+                      type="number" 
+                      {...field}
+                      onChange={(e) => field.onChange(parseInt(e.target.value))}
+                      className="w-full max-w-[200px]"
+                      placeholder="Durée en minutes"
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Temps de trajet en minutes
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            
+            <FormField
+              control={form.control}
+              name="trajet_4_ceremonie_2_arrivee_2"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Trajet 4: cérémonie 2 ➝ point d'arrivée 2</FormLabel>
+                  <FormControl>
+                    <Input 
+                      type="number" 
+                      {...field}
+                      onChange={(e) => field.onChange(parseInt(e.target.value))}
+                      className="w-full max-w-[200px]"
+                      placeholder="Durée en minutes"
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Temps de trajet en minutes
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </fieldset>
+        )}
+      </div>
+    );
+  };
+
+  // Special renderer for preparatifs section with conditional preparatifs 2
+  const renderPreparatifsSection = () => {
+    const isDualCeremony = watchAllFields.double_ceremonie === 'oui';
+    const isPreparatifs2 = currentCategory === 'préparatifs_2';
+    
+    if (isPreparatifs2) {
+      return (
+        <div className="space-y-6">
+          <div className="bg-blue-50 p-4 rounded-lg">
+            <h3 className="font-medium text-blue-900 mb-2">Préparatifs avant la 2ème cérémonie</h3>
+            <p className="text-sm text-blue-700">
+              Choisissez les étapes de préparation à répéter avant votre deuxième cérémonie.
+            </p>
+          </div>
+          
+          <FormField
+            control={form.control}
+            name="preparatifs_2_coiffure"
+            render={({ field }) => (
+              <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                <FormControl>
+                  <Checkbox
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <div className="space-y-1 leading-none">
+                  <FormLabel>Retouche coiffure</FormLabel>
+                  <FormDescription>
+                    Retouche et remise en forme de la coiffure (30 minutes)
+                  </FormDescription>
+                </div>
+              </FormItem>
+            )}
+          />
+          
+          <FormField
+            control={form.control}
+            name="preparatifs_2_maquillage"
+            render={({ field }) => (
+              <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                <FormControl>
+                  <Checkbox
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <div className="space-y-1 leading-none">
+                  <FormLabel>Retouche maquillage</FormLabel>
+                  <FormDescription>
+                    Retouche du maquillage et finalisation (30 minutes)
+                  </FormDescription>
+                </div>
+              </FormItem>
+            )}
+          />
+          
+          <FormField
+            control={form.control}
+            name="preparatifs_2_habillage"
+            render={({ field }) => (
+              <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                <FormControl>
+                  <Checkbox
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <div className="space-y-1 leading-none">
+                  <FormLabel>Changement de tenue</FormLabel>
+                  <FormDescription>
+                    Changement ou ajustement de la tenue (45 minutes)
+                  </FormDescription>
+                </div>
+              </FormItem>
+            )}
+          />
+        </div>
+      );
+    }
+    
+    // Regular preparatifs section
+    const currentQuestions = questions
+      .filter(q => q.categorie === 'préparatifs_final')
+      .filter(q => isQuestionVisible(q, watchAllFields));
+
+    return (
+      <div className="space-y-6">
+        {currentQuestions.map(question => (
+          <div key={question.id} className="py-2">
+            {renderQuestionInput(question)}
+          </div>
+        ))}
+      </div>
+    );
+  };
   
   // Component to render current section questions
   const CurrentSectionQuestions = () => {
     // Special handling for ceremony section
     if (currentCategory === 'cérémonie') {
       return renderCeremonySection();
+    }
+    
+    // Special handling for logistics section
+    if (currentCategory === 'logistique') {
+      return renderLogisticsSection();
+    }
+    
+    // Special handling for preparatifs sections
+    if (currentCategory === 'préparatifs_final' || currentCategory === 'préparatifs_2') {
+      return renderPreparatifsSection();
     }
     
     // Filter questions by current section and visibility conditions
@@ -532,6 +757,10 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
   
   // Get section config helper
   const getCurrentCategoryConfig = () => {
+    if (currentCategory === 'préparatifs_2') {
+      return { key: 'préparatifs_2', label: 'Préparatifs 2', description: 'Préparatifs avant la 2ème cérémonie' };
+    }
+    
     return CATEGORIES_CONFIG.find(cat => cat.key === currentCategory) || 
            { key: currentCategory, label: currentCategory, description: '' };
   };
