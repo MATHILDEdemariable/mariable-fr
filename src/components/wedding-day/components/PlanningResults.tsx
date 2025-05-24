@@ -2,7 +2,7 @@
 import React, { useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import DragDropTimeline from './DragDropTimeline';
+import EnhancedDragDropTimeline from './EnhancedDragDropTimeline';
 import { usePlanning } from '../context/PlanningContext';
 import { useToast } from '@/components/ui/use-toast';
 import { exportDashboardToPDF } from '@/services/pdfExportService';
@@ -79,7 +79,7 @@ export const PlanningResults: React.FC = () => {
       });
       
       const success = await exportDashboardToPDF(
-        'drag-drop-timeline',
+        'enhanced-timeline',
         'Planning-Jour-J.pdf',
         'portrait',
         'Planning Jour J'
@@ -130,12 +130,12 @@ export const PlanningResults: React.FC = () => {
       <CardHeader>
         <CardTitle className="font-serif">Votre Planning Jour J</CardTitle>
         <CardDescription>
-          Voici le planning optimisé pour votre journée de mariage. Vous pouvez réorganiser les événements en les glissant-déposant.
+          Voici le planning optimisé pour votre journée de mariage. Vous pouvez réorganiser les événements, ajouter des étapes personnalisées et modifier les détails directement.
         </CardDescription>
       </CardHeader>
       <CardContent className="p-4 sm:p-6">
-        <div id="drag-drop-timeline">
-          <DragDropTimeline 
+        <div id="enhanced-timeline">
+          <EnhancedDragDropTimeline 
             events={events} 
             onEventsUpdate={handleEventsUpdate}
           />
