@@ -15,24 +15,6 @@ export type PlanningQuestion = {
   updated_at?: string;
 };
 
-// Add the missing QuizQuestion type
-export type QuizQuestion = {
-  id: string;
-  question: string;
-  type: 'radio' | 'checkbox' | 'time' | 'number' | 'text';
-  options?: string[];
-  category: string;
-  required?: boolean;
-  placeholder?: string;
-};
-
-// Add the missing FormSection type
-export type FormSection = {
-  id: string;
-  title: string;
-  questions: QuizQuestion[];
-};
-
 export type PlanningUserResponse = {
   id?: string;
   user_id: string;
@@ -102,18 +84,86 @@ const addMinutesToDate = (date: Date, minutes: number): Date => {
   return new Date(date.getTime() + minutes * 60000);
 };
 
-// Add the missing calculateEventTimes function
-export const calculateEventTimes = (events: PlanningEvent[], formData: PlanningFormValues): PlanningEvent[] => {
-  return events.map(event => ({
-    ...event,
-    startTime: new Date(event.startTime),
-    endTime: new Date(event.endTime)
-  }));
+export const fetchPlanningQuestions = async (
+  supabase: SupabaseClient<Database>
+): Promise<PlanningData> => {
+  const { data, error } = await supabase
+    .from('planning_questions')
+    .select('*')
+    .order('ordre_affichage');
+    
+  if (error) {
+    console.error("Error fetching planning questions:", error);
+    throw new Error(`Error fetching planning questions: ${error.message}`);
+  }
+  
+  const sections: Record<string, PlanningSection> = {};
+  
+  // Group questions by category
+  data.forEach((question: any) => {
+    if (!sections[question.categorie]) {
+      sections[question.categorie] = {
+        name: question.categorie,
+        title: question.categorie.charAt(0).toUpperCase() + question.categorie.slice(1),
+        questions: []
+      };
+    }
+    
+    sections[question.categorie].questions.push(question);
+  });
+  
+  return {
+    sections: Object.values(sections),
+    allQuestions: data as PlanningQuestion[]
+  };
 };
 
-// Add the missing generatePlanningEvents function (alias for generatePlanning)
-export const generatePlanningEvents = (formData: PlanningFormValues): PlanningEvent[] => {
-  return generatePlanning([], formData);
+// Modified function to handle date serialization
+export const savePlanningResponses = async (
+  supabase: SupabaseClient<Database>,
+  userId: string,
+  email: string | undefined,
+  responses: PlanningFormValues,
+  generatedPlanning: PlanningEvent[]
+): Promise<void> => {
+  // Convert Date objects to ISO strings for JSON serialization
+  const serializablePlanning: SerializablePlanningEvent[] = generatedPlanning.map(event => ({
+    ...event,
+    startTime: event.startTime.toISOString(),
+    endTime: event.endTime.toISOString()
+  }));
+  
+  const { error } = await supabase
+    .from('planning_reponses_utilisateur')
+    .insert({
+      user_id: userId,
+      email,
+      reponses: responses,
+      planning_genere: serializablePlanning
+    });
+    
+  if (error) {
+    console.error("Error saving planning responses:", error);
+    throw new Error(`Error saving planning responses: ${error.message}`);
+  }
+};
+
+// Function to check if a question should be visible based on previous answers
+export const isQuestionVisible = (
+  question: PlanningQuestion,
+  formValues: PlanningFormValues
+): boolean => {
+  if (!question.visible_si) return true;
+  
+  return Object.entries(question.visible_si).every(([key, condition]) => {
+    const answer = formValues[key];
+    
+    if (Array.isArray(condition)) {
+      return condition.includes(answer);
+    }
+    
+    return answer === condition;
+  });
 };
 
 // Enhanced function to generate a planning based on the form responses with dual ceremony logic
@@ -437,86 +487,4 @@ export const generatePlanning = (
   
   // Sort all events by start time for proper display
   return events.sort((a, b) => a.startTime.getTime() - b.startTime.getTime());
-};
-
-export const fetchPlanningQuestions = async (
-  supabase: SupabaseClient<Database>
-): Promise<PlanningData> => {
-  const { data, error } = await supabase
-    .from('planning_questions')
-    .select('*')
-    .order('ordre_affichage');
-    
-  if (error) {
-    console.error("Error fetching planning questions:", error);
-    throw new Error(`Error fetching planning questions: ${error.message}`);
-  }
-  
-  const sections: Record<string, PlanningSection> = {};
-  
-  // Group questions by category
-  data.forEach((question: any) => {
-    if (!sections[question.categorie]) {
-      sections[question.categorie] = {
-        name: question.categorie,
-        title: question.categorie.charAt(0).toUpperCase() + question.categorie.slice(1),
-        questions: []
-      };
-    }
-    
-    sections[question.categorie].questions.push(question);
-  });
-  
-  return {
-    sections: Object.values(sections),
-    allQuestions: data as PlanningQuestion[]
-  };
-};
-
-// Modified function to handle date serialization
-export const savePlanningResponses = async (
-  supabase: SupabaseClient<Database>,
-  userId: string,
-  email: string | undefined,
-  responses: PlanningFormValues,
-  generatedPlanning: PlanningEvent[]
-): Promise<void> => {
-  // Convert Date objects to ISO strings for JSON serialization
-  const serializablePlanning: SerializablePlanningEvent[] = generatedPlanning.map(event => ({
-    ...event,
-    startTime: event.startTime.toISOString(),
-    endTime: event.endTime.toISOString()
-  }));
-  
-  const { error } = await supabase
-    .from('planning_reponses_utilisateur')
-    .insert({
-      user_id: userId,
-      email,
-      reponses: responses,
-      planning_genere: serializablePlanning
-    });
-    
-  if (error) {
-    console.error("Error saving planning responses:", error);
-    throw new Error(`Error saving planning responses: ${error.message}`);
-  }
-};
-
-// Function to check if a question should be visible based on previous answers
-export const isQuestionVisible = (
-  question: PlanningQuestion,
-  formValues: PlanningFormValues
-): boolean => {
-  if (!question.visible_si) return true;
-  
-  return Object.entries(question.visible_si).every(([key, condition]) => {
-    const answer = formValues[key];
-    
-    if (Array.isArray(condition)) {
-      return condition.includes(answer);
-    }
-    
-    return answer === condition;
-  });
 };

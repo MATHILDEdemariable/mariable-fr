@@ -27,22 +27,9 @@ export const PlanningActions: React.FC = () => {
         description: "Préparation de votre planning..."
       });
       
-      // Convert events to proper format and ensure soirée events are included
-      const planningEvents = events.map(event => ({
-        id: event.id,
-        title: event.title,
-        category: event.category || 'Autres',
-        startTime: event.startTime,
-        endTime: event.endTime,
-        duration: event.duration,
-        type: event.type,
-        isHighlight: event.isHighlight,
-        notes: event.notes,
-        location: event.location
-      }));
-      
+      // Use the dedicated planning PDF export service
       const success = await exportPlanningJourJToPDF({
-        events: planningEvents,
+        events,
         weddingDate: formData?.date_mariage ? new Date(formData.date_mariage).toLocaleDateString('fr-FR') : undefined,
         coupleNames: formData?.nom_couple || "Votre mariage"
       });
