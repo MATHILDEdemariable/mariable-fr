@@ -499,15 +499,15 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
     );
   };
 
-  // Special renderer for logistics section with conditional dual ceremony fields
+  // Special renderer for logistics section with only pause question and conditional dual ceremony fields
   const renderLogisticsSection = () => {
     const isDualCeremony = watchAllFields.double_ceremonie === 'oui';
     
     return (
       <div className="space-y-6">
-        {/* Regular logistics questions that are always shown */}
+        {/* Only show the pause question from regular logistics questions */}
         {questions
-          .filter(q => q.categorie === 'logistique' && q.option_name !== 'trajet_entre_lieux')
+          .filter(q => q.categorie === 'logistique' && q.option_name === 'pause_maries')
           .filter(q => isQuestionVisible(q, watchAllFields))
           .map(question => (
             <div key={question.id} className="py-2">
@@ -698,7 +698,7 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
       );
     }
     
-    // Regular preparatifs section
+    // Regular preparatifs section with dual ceremony prep options
     const currentQuestions = questions
       .filter(q => q.categorie === 'préparatifs_final')
       .filter(q => isQuestionVisible(q, watchAllFields));
@@ -710,6 +710,79 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
             {renderQuestionInput(question)}
           </div>
         ))}
+        
+        {/* Show préparatifs 2 options in the main preparatifs section if dual ceremony */}
+        {isDualCeremony && (
+          <fieldset className="border border-blue-200 rounded-lg p-4 space-y-4 bg-blue-50">
+            <legend className="text-lg font-medium px-2 text-blue-900">Préparatifs avant la 2ème cérémonie</legend>
+            <p className="text-sm text-blue-700 mb-4">
+              Choisissez les étapes de préparation à répéter avant votre deuxième cérémonie.
+            </p>
+            
+            <FormField
+              control={form.control}
+              name="preparatifs_2_coiffure"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <div className="space-y-1 leading-none">
+                    <FormLabel>Retouche coiffure</FormLabel>
+                    <FormDescription>
+                      Retouche et remise en forme de la coiffure (30 minutes)
+                    </FormDescription>
+                  </div>
+                </FormItem>
+              )}
+            />
+            
+            <FormField
+              control={form.control}
+              name="preparatifs_2_maquillage"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <div className="space-y-1 leading-none">
+                    <FormLabel>Retouche maquillage</FormLabel>
+                    <FormDescription>
+                      Retouche du maquillage et finalisation (30 minutes)
+                    </FormDescription>
+                  </div>
+                </FormItem>
+              )}
+            />
+            
+            <FormField
+              control={form.control}
+              name="preparatifs_2_habillage"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <div className="space-y-1 leading-none">
+                    <FormLabel>Changement de tenue</FormLabel>
+                    <FormDescription>
+                      Changement ou ajustement de la tenue (45 minutes)
+                    </FormDescription>
+                  </div>
+                </FormItem>
+              )}
+            />
+          </fieldset>
+        )}
       </div>
     );
   };
