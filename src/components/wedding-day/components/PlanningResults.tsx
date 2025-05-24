@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,12 +5,12 @@ import { Download, RefreshCw } from 'lucide-react';
 import EnhancedDragDropTimeline from './EnhancedDragDropTimeline';
 import { usePlanning } from '../context/PlanningContext';
 import { useToast } from '@/components/ui/use-toast';
-import { exportDashboardToPDF } from '@/services/pdfExportService';
+import { exportPlanningJourJBrandedPDF } from '@/services/planningJourJBrandedExport';
 import { supabase } from '@/integrations/supabase/client';
 import { PlanningEvent } from '../types/planningTypes';
 
 export const PlanningResults: React.FC = () => {
-  const { events, setEvents, setActiveTab, exportLoading, setExportLoading, user, setFormData } = usePlanning();
+  const { events, setEvents, setActiveTab, exportLoading, setExportLoading, user, setFormData, formData } = usePlanning();
   const { toast } = useToast();
 
   // Load saved planning data on component mount
@@ -76,20 +75,19 @@ export const PlanningResults: React.FC = () => {
     try {
       toast({
         title: "Export PDF en cours",
-        description: "Préparation de votre planning..."
+        description: "Préparation de votre planning personnalisé..."
       });
       
-      const success = await exportDashboardToPDF(
-        'enhanced-timeline',
-        'Planning-Jour-J.pdf',
-        'portrait',
-        'Planning Jour J'
-      );
+      const success = await exportPlanningJourJBrandedPDF({
+        events,
+        weddingDate: formData?.date_mariage ? new Date(formData.date_mariage).toLocaleDateString('fr-FR') : undefined,
+        coupleNames: formData?.nom_couple || "Votre mariage"
+      });
       
       if (success) {
         toast({
           title: "Export réussi",
-          description: "Votre planning a été exporté en PDF"
+          description: "Votre planning Jour J a été exporté en PDF avec le design Mariable"
         });
       } else {
         toast({
