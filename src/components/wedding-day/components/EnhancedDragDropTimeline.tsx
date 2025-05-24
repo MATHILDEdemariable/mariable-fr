@@ -52,6 +52,7 @@ const EnhancedDragDropTimeline: React.FC<EnhancedDragDropTimelineProps> = ({
     const newEvent: PlanningEvent = {
       id: uuidv4(),
       title: block.title,
+      category: 'personnalisé',
       startTime: new Date(),
       endTime: addMinutes(new Date(), block.duration),
       duration: block.duration,
