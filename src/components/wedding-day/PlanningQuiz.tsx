@@ -91,14 +91,16 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
     
     let categoryQuestions = questions.filter(q => q.categorie === currentCategory);
     
-    // For préparatifs, handle both preparatifs_1 and preparatifs_2 logic
-    if (currentCategory === 'préparatifs_final') {
-      // Get all questions from both preparatifs_1 and preparatifs_2
-      const preparatifs1Questions = questions.filter(q => q.categorie === 'preparatifs_1');
+    // For préparatifs, handle both preparatifs_final and preparatifs_2 logic
+    if (currentCategory === 'préparatifs') {
+      // Get all questions from both preparatifs_final and preparatifs_2
+      const preparatifsQuestions = questions.filter(q => 
+        q.categorie === 'preparatifs_final' || q.categorie === 'preparatifs_1'
+      );
       const preparatifs2Questions = questions.filter(q => q.categorie === 'preparatifs_2');
       
-      // Always show preparatifs_1 questions
-      categoryQuestions = [...preparatifs1Questions];
+      // Always show preparatifs_final/preparatifs_1 questions
+      categoryQuestions = [...preparatifsQuestions];
       
       // Only show preparatifs_2 questions if double_ceremonie = "oui"
       if (answers.double_ceremonie === "oui") {
@@ -125,18 +127,14 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
     }));
   };
 
-  // Check if current step can be completed (made more lenient - not all questions required)
+  // Allow progression through all steps (all fields optional)
   const canCompleteCurrentStep = () => {
-    const currentQuestions = getCurrentQuestions();
-    
-    // For now, allow progression even if not all questions are answered
-    // This makes the quiz more user-friendly
-    return true;
+    return true; // All fields are now optional
   };
 
   // Handle next step
   const handleNext = () => {
-    // Mark current step as completed (even if not all questions answered)
+    // Mark current step as completed
     onStepComplete(currentStep);
 
     // Move to next step or submit if this is the last step
@@ -253,7 +251,9 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
 
   // Render preparatifs section with custom structure
   const renderPreparatifsSection = () => {
-    const preparatifs1Questions = questions.filter(q => q.categorie === 'preparatifs_1');
+    const preparatifsQuestions = questions.filter(q => 
+      q.categorie === 'preparatifs_final' || q.categorie === 'preparatifs_1'
+    );
     const preparatifs2Questions = questions.filter(q => q.categorie === 'preparatifs_2');
     
     return (
@@ -262,7 +262,7 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
         <div>
           <h3 className="text-lg font-semibold mb-4">Préparatifs avant la 1ère cérémonie</h3>
           <div className="space-y-6">
-            {preparatifs1Questions.filter(q => isQuestionVisible(q)).map((question) => (
+            {preparatifsQuestions.filter(q => isQuestionVisible(q)).map((question) => (
               <div key={question.id} className="space-y-3">
                 <Label className="text-base font-medium">{question.label}</Label>
                 {question.duree_minutes && (
@@ -286,7 +286,7 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
                 <div key={question.id} className="space-y-3">
                   <Label className="text-base font-medium">{question.label}</Label>
                   {question.duree_minutes && (
-                    <p className="text-sm text-muted-foreground">{question.label.replace('Retouche', 'Retouche et remise en forme')} ({question.duree_minutes} minutes)</p>
+                    <p className="text-sm text-muted-foreground">Durée prévue: {question.duree_minutes} minutes</p>
                   )}
                   {renderQuestionInput(question)}
                 </div>
@@ -318,13 +318,13 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
       )}
 
       <div className="space-y-6">
-        {currentCategory === 'préparatifs_final' ? (
+        {currentCategory === 'préparatifs' ? (
           renderPreparatifsSection()
         ) : (
           currentQuestions.map((question) => (
             <div key={question.id} className="space-y-3">
               <Label className="text-base font-medium">{question.label}</Label>
-              {question.duree_minutes && (
+              {question.duree_minutes && question.duree_minutes > 0 && (
                 <p className="text-sm text-muted-foreground">Durée prévue: {question.duree_minutes} minutes</p>
               )}
               {renderQuestionInput(question)}

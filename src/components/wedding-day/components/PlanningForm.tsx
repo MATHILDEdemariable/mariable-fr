@@ -8,11 +8,11 @@ import { usePlanning } from '../context/PlanningContext';
 import { useToast } from '@/components/ui/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
-// Updated categories config to include all 7 steps with corrected préparatifs structure
+// Updated categories config to include all 7 steps with corrected structure
 const CATEGORIES_CONFIG = [
   { key: 'cérémonie', label: 'Cérémonie' },
   { key: 'logistique', label: 'Logistique' }, 
-  { key: 'préparatifs_final', label: 'Préparatifs' }, // This will handle both preparatifs_1 and preparatifs_2
+  { key: 'préparatifs', label: 'Préparatifs' }, // Use single category name
   { key: 'photos', label: 'Photos' },
   { key: 'cocktail', label: 'Cocktail' },
   { key: 'repas', label: 'Repas' },
@@ -30,7 +30,7 @@ export const PlanningForm: React.FC = () => {
   const stepLabels = CATEGORIES_CONFIG.map(cat => cat.label);
 
   useEffect(() => {
-    // Initialize available categories - use the fixed categories
+    // Initialize available categories using the fixed categories order
     const loadAvailableCategories = async () => {
       try {
         const { data: questions, error } = await supabase
@@ -43,13 +43,8 @@ export const PlanningForm: React.FC = () => {
           // Fallback to all categories
           setAvailableCategories(CATEGORIES_CONFIG.map(cat => cat.key));
         } else {
-          // Get unique categories from database
-          const dbCategories = [...new Set(questions.map(q => q.categorie))];
-          
-          // Use our predefined order, but include préparatifs_final which will handle both preparatifs types
-          const orderedCategories = CATEGORIES_CONFIG.map(cat => cat.key);
-          
-          setAvailableCategories(orderedCategories);
+          // Use our predefined order from CATEGORIES_CONFIG
+          setAvailableCategories(CATEGORIES_CONFIG.map(cat => cat.key));
         }
       } catch (error) {
         console.error('Error loading categories:', error);
