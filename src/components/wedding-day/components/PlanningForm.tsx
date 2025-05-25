@@ -8,7 +8,7 @@ import { usePlanning } from '../context/PlanningContext';
 import { useToast } from '@/components/ui/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
-// Use the same reordered categories config as in PlanningQuiz for consistency
+// Updated categories config to include all 7 steps including Soirée
 const CATEGORIES_CONFIG = [
   { key: 'cérémonie', label: 'Cérémonie' },
   { key: 'logistique', label: 'Logistique' }, 
@@ -30,13 +30,44 @@ export const PlanningForm: React.FC = () => {
   const stepLabels = CATEGORIES_CONFIG.map(cat => cat.label);
 
   useEffect(() => {
-    // Initialize available categories
-    const baseCategories = CATEGORIES_CONFIG.map(cat => cat.key);
-    setAvailableCategories(baseCategories);
-    
-    // Initialize completed steps array
-    setCompletedSteps(new Array(baseCategories.length).fill(false));
+    // Initialize available categories from planning_questions table
+    const loadAvailableCategories = async () => {
+      try {
+        const { data: questions, error } = await supabase
+          .from('planning_questions')
+          .select('categorie')
+          .order('ordre_affichage', { ascending: true });
+
+        if (error) {
+          console.error('Error loading categories:', error);
+          // Fallback to all categories
+          setAvailableCategories(CATEGORIES_CONFIG.map(cat => cat.key));
+        } else {
+          // Get unique categories from database in the correct order
+          const dbCategories = [...new Set(questions.map(q => q.categorie))];
+          
+          // Filter and order categories based on CATEGORIES_CONFIG
+          const orderedCategories = CATEGORIES_CONFIG
+            .map(cat => cat.key)
+            .filter(key => dbCategories.includes(key));
+          
+          setAvailableCategories(orderedCategories);
+        }
+      } catch (error) {
+        console.error('Error loading categories:', error);
+        setAvailableCategories(CATEGORIES_CONFIG.map(cat => cat.key));
+      }
+    };
+
+    loadAvailableCategories();
   }, []);
+
+  useEffect(() => {
+    // Initialize completed steps array based on available categories
+    if (availableCategories.length > 0) {
+      setCompletedSteps(new Array(availableCategories.length).fill(false));
+    }
+  }, [availableCategories]);
 
   const handleStepChange = (stepIndex: number) => {
     // Only allow navigation to completed steps or current step
@@ -54,6 +85,18 @@ export const PlanningForm: React.FC = () => {
   };
 
   const handleFormSubmit = async (data: PlanningFormValues, generatedEvents: PlanningEvent[]) => {
+    // Only proceed with form submission if ALL steps are completed
+    const allStepsCompleted = completedSteps.every(step => step === true);
+    
+    if (!allStepsCompleted) {
+      toast({
+        title: "Formulaire incomplet",
+        description: "Veuillez compléter toutes les étapes avant de générer votre planning.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     setFormData(data);
     setEvents(generatedEvents);
     setActiveTab("results");
@@ -98,7 +141,7 @@ export const PlanningForm: React.FC = () => {
         <PlanningStepIndicator
           currentStep={currentStep}
           totalSteps={availableCategories.length}
-          stepLabels={stepLabels}
+          stepLabels={stepLabels.slice(0, availableCategories.length)}
           completedSteps={completedSteps}
           onStepClick={handleStepChange}
           allowNavigation={true}
@@ -110,7 +153,9 @@ export const PlanningForm: React.FC = () => {
           currentStep={currentStep}
           onStepChange={setCurrentStep}
           onStepComplete={handleStepComplete}
-          stepLabels={stepLabels}
+          stepLabels={stepLabels.slice(0, availableCategories.length)}
+          availableCategories={availableCategories}
+          completedSteps={completedSteps}
         />
       </CardContent>
     </Card>
