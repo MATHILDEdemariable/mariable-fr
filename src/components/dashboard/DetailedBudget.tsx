@@ -32,9 +32,8 @@ interface BudgetCategory {
   totalRemaining: number;
 }
 
-// Who pays options
+// Who pays options - removed empty string option to fix Select error
 const WHO_PAYS_OPTIONS = [
-  { value: '', label: 'Sélectionner...' },
   { value: 'marie_1', label: 'Marié·e 1' },
   { value: 'marie_2', label: 'Marié·e 2' },
   { value: 'famille_marie_1', label: 'Famille Marié·e 1' },
