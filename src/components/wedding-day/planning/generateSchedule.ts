@@ -199,12 +199,17 @@ export const generatePlanningEvents = (answers: Record<string, any>): PlanningEv
   const ceremonyDuration = ceremonyType === "religieuse" ? 90 : 60;
   
   // Add ceremony
+  const ceremonyStartTime = new Date(startTime);
+  const ceremonyEndTime = addMinutes(ceremonyStartTime, ceremonyDuration);
+  
   events.push({
     id: `event-${eventId++}`,
     title: `Cérémonie ${ceremonyType}`,
-    time: ceremonyTime,
+    startTime: ceremonyStartTime,
+    endTime: ceremonyEndTime,
     duration: ceremonyDuration,
     category: "cérémonie",
+    type: "ceremony",
     isHighlight: true
   });
   
@@ -214,47 +219,67 @@ export const generatePlanningEvents = (answers: Record<string, any>): PlanningEv
   // Add travel if different venues
   if (answers.lieux_differents === "oui") {
     const travelDuration = parseInt(answers.temps_de_trajet) || 30;
+    const travelStartTime = new Date(currentTime);
+    const travelEndTime = addMinutes(travelStartTime, travelDuration);
+    
     events.push({
       id: `event-${eventId++}`,
       title: "Trajet vers le lieu de réception",
-      time: currentTime.toTimeString().slice(0, 5),
+      startTime: travelStartTime,
+      endTime: travelEndTime,
       duration: travelDuration,
-      category: "logistique"
+      category: "logistique",
+      type: "travel"
     });
     currentTime = addMinutes(currentTime, travelDuration);
   }
   
   // Add cocktail
   const cocktailDuration = answers.format_cocktail === "long" ? 120 : 90;
+  const cocktailStartTime = new Date(currentTime);
+  const cocktailEndTime = addMinutes(cocktailStartTime, cocktailDuration);
+  
   events.push({
     id: `event-${eventId++}`,
     title: "Cocktail",
-    time: currentTime.toTimeString().slice(0, 5),
+    startTime: cocktailStartTime,
+    endTime: cocktailEndTime,
     duration: cocktailDuration,
-    category: "cocktail"
+    category: "cocktail",
+    type: "cocktail"
   });
   currentTime = addMinutes(currentTime, cocktailDuration);
   
   // Add photos during cocktail if selected
   if (answers.moment_photos === "pendant_cocktail") {
+    const photoStartTime = addMinutes(currentTime, -30);
+    const photoEndTime = addMinutes(photoStartTime, 30);
+    
     events.push({
       id: `event-${eventId++}`,
       title: "Séance photo de groupe",
-      time: addMinutes(currentTime, -30).toTimeString().slice(0, 5),
+      startTime: photoStartTime,
+      endTime: photoEndTime,
       duration: 30,
       category: "photos",
+      type: "photos",
       isHighlight: true
     });
   }
   
   // Add dinner
   const dinnerDuration = parseInt(answers.duree_repas) || 180;
+  const dinnerStartTime = new Date(currentTime);
+  const dinnerEndTime = addMinutes(dinnerStartTime, dinnerDuration);
+  
   events.push({
     id: `event-${eventId++}`,
     title: "Repas",
-    time: currentTime.toTimeString().slice(0, 5),
+    startTime: dinnerStartTime,
+    endTime: dinnerEndTime,
     duration: dinnerDuration,
-    category: "repas"
+    category: "repas",
+    type: "dinner"
   });
   currentTime = addMinutes(currentTime, dinnerDuration);
   
@@ -265,12 +290,17 @@ export const generatePlanningEvents = (answers: Record<string, any>): PlanningEv
     else if (answers.soiree === "jusqu_a_4h") soireeDuration = 240;
     else if (answers.soiree === "plus_de_4h") soireeDuration = 300;
     
+    const partyStartTime = new Date(currentTime);
+    const partyEndTime = addMinutes(partyStartTime, soireeDuration);
+    
     events.push({
       id: `event-${eventId++}`,
       title: "Soirée dansante",
-      time: currentTime.toTimeString().slice(0, 5),
+      startTime: partyStartTime,
+      endTime: partyEndTime,
       duration: soireeDuration,
-      category: "soiree"
+      category: "soiree",
+      type: "party"
     });
   }
   
@@ -279,32 +309,47 @@ export const generatePlanningEvents = (answers: Record<string, any>): PlanningEv
     answers.temps_forts.forEach((moment: string) => {
       switch (moment) {
         case "entree_maries":
+          const entranceStartTime = addMinutes(currentTime, -dinnerDuration);
+          const entranceEndTime = addMinutes(entranceStartTime, 10);
+          
           events.push({
             id: `event-${eventId++}`,
             title: "Entrée des mariés",
-            time: addMinutes(currentTime, -dinnerDuration).toTimeString().slice(0, 5),
+            startTime: entranceStartTime,
+            endTime: entranceEndTime,
             duration: 10,
             category: "soiree",
+            type: "entrance",
             isHighlight: true
           });
           break;
         case "decoupe_dessert":
+          const cakeStartTime = addMinutes(currentTime, -30);
+          const cakeEndTime = addMinutes(cakeStartTime, 15);
+          
           events.push({
             id: `event-${eventId++}`,
             title: "Découpe du gâteau",
-            time: addMinutes(currentTime, -30).toTimeString().slice(0, 5),
+            startTime: cakeStartTime,
+            endTime: cakeEndTime,
             duration: 15,
             category: "soiree",
+            type: "cake",
             isHighlight: true
           });
           break;
         case "discours":
+          const speechStartTime = addMinutes(currentTime, -120);
+          const speechEndTime = addMinutes(speechStartTime, 20);
+          
           events.push({
             id: `event-${eventId++}`,
             title: "Discours",
-            time: addMinutes(currentTime, -120).toTimeString().slice(0, 5),
+            startTime: speechStartTime,
+            endTime: speechEndTime,
             duration: 20,
             category: "repas",
+            type: "speech",
             isHighlight: true
           });
           break;
@@ -313,8 +358,6 @@ export const generatePlanningEvents = (answers: Record<string, any>): PlanningEv
   }
   
   return events.sort((a, b) => {
-    const timeA = parse(a.time, "HH:mm", baseDate);
-    const timeB = parse(b.time, "HH:mm", baseDate);
-    return timeA.getTime() - timeB.getTime();
+    return a.startTime.getTime() - b.startTime.getTime();
   });
 };
