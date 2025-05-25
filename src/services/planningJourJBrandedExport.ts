@@ -19,12 +19,12 @@ export const exportPlanningJourJBrandedPDF = async (data: PlanningJourJExportDat
     tempContainer.style.width = '210mm'; // A4 width
     tempContainer.style.backgroundColor = '#ffffff';
     tempContainer.style.fontFamily = 'Raleway, system-ui, -apple-system, sans-serif';
-    tempContainer.style.padding = '15mm';
+    tempContainer.style.padding = '20mm';
     tempContainer.style.boxSizing = 'border-box';
-    tempContainer.style.lineHeight = '1.5';
+    tempContainer.style.lineHeight = '1.6';
 
-    // Generate branded PDF content
-    tempContainer.innerHTML = generateBrandedPlanningContent(data);
+    // Generate clean linear PDF content
+    tempContainer.innerHTML = generateLinearPlanningContent(data);
     document.body.appendChild(tempContainer);
 
     // Wait for content to render
@@ -144,99 +144,96 @@ const groupEventsByCategory = (events: PlanningEvent[]) => {
 const getCategoryColor = (category: string) => {
   switch (category) {
     case 'Préparatifs':
-      return { primary: '#8B5CF6', light: '#F3E8FF', dark: '#6D28D9' };
+      return { primary: '#8B5CF6', light: '#F3E8FF' };
     case 'Cérémonie':
-      return { primary: '#7F9474', light: '#F1F7F3', dark: '#1a5d40' };
+      return { primary: '#7F9474', light: '#F1F7F3' };
     case 'Cocktail':
-      return { primary: '#d4af37', light: '#FEF3C7', dark: '#B45309' };
+      return { primary: '#d4af37', light: '#FEF3C7' };
     case 'Réception':
-      return { primary: '#1a5d40', light: '#ECFDF5', dark: '#064E3B' };
+      return { primary: '#1a5d40', light: '#ECFDF5' };
     case 'Soirée':
-      return { primary: '#DC2626', light: '#FEF2F2', dark: '#991B1B' };
+      return { primary: '#DC2626', light: '#FEF2F2' };
     case 'Transport':
-      return { primary: '#6B7280', light: '#F9FAFB', dark: '#374151' };
+      return { primary: '#6B7280', light: '#F9FAFB' };
     default:
-      return { primary: '#6B7280', light: '#F9FAFB', dark: '#374151' };
+      return { primary: '#6B7280', light: '#F9FAFB' };
   }
 };
 
-const generateBrandedPlanningContent = (data: PlanningJourJExportData): string => {
+const generateLinearPlanningContent = (data: PlanningJourJExportData): string => {
   const currentDate = new Date().toLocaleDateString('fr-FR');
   const groupedEvents = groupEventsByCategory(data.events);
   
   return `
-    <div style="min-height: 100%; display: flex; flex-direction: column; font-family: 'Raleway', sans-serif;">
-      <!-- Header with Mariable branding -->
-      <div style="text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 3px solid #7F9474;">
-        <div style="font-size: 28px; font-weight: 700; color: #7F9474; font-family: 'Playfair Display', serif; margin-bottom: 8px;">
+    <div style="font-family: 'Raleway', sans-serif; color: #1a1f2c; line-height: 1.6;">
+      <!-- Header -->
+      <div style="text-align: center; margin-bottom: 40px;">
+        <div style="font-size: 32px; font-weight: 700; color: #7F9474; font-family: 'Playfair Display', serif; margin-bottom: 8px;">
           Mariable
         </div>
-        <div style="font-size: 16px; color: #948970; font-weight: 500; margin-bottom: 20px;">
-          Planning Jour J personnalisé
+        <div style="font-size: 18px; color: #948970; font-weight: 600; margin-bottom: 24px;">
+          Planning Jour J
         </div>
         
-        <!-- Wedding details card -->
-        <div style="background: linear-gradient(135deg, #f8f6f0 0%, #f1f7f3 100%); padding: 20px; border-radius: 12px; margin: 20px auto; max-width: 400px; border: 1px solid #e8e5db;">
-          <h1 style="font-size: 22px; font-weight: 700; color: #1A1F2C; margin: 0 0 8px 0; font-family: 'Playfair Display', serif;">
+        <div style="background: linear-gradient(135deg, #f8f6f0 0%, #f1f7f3 100%); padding: 20px; border-radius: 8px; margin: 0 auto; max-width: 400px; border: 1px solid #e8e5db;">
+          <h1 style="font-size: 24px; font-weight: 700; color: #1A1F2C; margin: 0 0 8px 0; font-family: 'Playfair Display', serif;">
             ${data.coupleNames || 'Votre Planning de Mariage'}
           </h1>
           ${data.weddingDate ? `
-            <p style="font-size: 14px; color: #666; margin: 0; display: flex; align-items: center; justify-content: center; gap: 8px;">
-              <span style="display: inline-block; width: 4px; height: 4px; background: #7F9474; border-radius: 50%;"></span>
+            <p style="font-size: 16px; color: #666; margin: 0; font-weight: 500;">
               ${data.weddingDate}
-              <span style="display: inline-block; width: 4px; height: 4px; background: #7F9474; border-radius: 50%;"></span>
             </p>
           ` : ''}
         </div>
       </div>
 
-      <!-- Planning content -->
-      <div style="flex: 1;">
+      <!-- Planning Content - Linear Layout -->
+      <div style="max-width: 100%;">
         ${Object.entries(groupedEvents).map(([categoryName, events]) => {
           const colors = getCategoryColor(categoryName);
           
           return `
-            <div style="margin-bottom: 25px; page-break-inside: avoid;">
-              <!-- Category header -->
-              <div style="display: flex; align-items: center; margin-bottom: 15px; padding: 12px 16px; background: ${colors.light}; border-left: 4px solid ${colors.primary}; border-radius: 8px;">
-                <h2 style="font-size: 18px; font-weight: 600; color: ${colors.dark}; margin: 0; font-family: 'Playfair Display', serif;">
+            <!-- Category Section -->
+            <div style="margin-bottom: 32px; page-break-inside: avoid;">
+              <!-- Category Header -->
+              <div style="margin-bottom: 20px;">
+                <h2 style="font-size: 20px; font-weight: 600; color: ${colors.primary}; margin: 0 0 4px 0; font-family: 'Playfair Display', serif; padding-bottom: 8px; border-bottom: 2px solid ${colors.light};">
                   ${categoryName}
                 </h2>
-                <div style="margin-left: auto; font-size: 12px; color: ${colors.primary}; font-weight: 500;">
-                  ${events.length} étape${events.length > 1 ? 's' : ''}
-                </div>
+                <p style="font-size: 14px; color: #666; margin: 0; font-weight: 500;">
+                  ${events.length} étape${events.length > 1 ? 's' : ''} planifiée${events.length > 1 ? 's' : ''}
+                </p>
               </div>
               
-              <!-- Events grid -->
-              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px;">
-                ${events.map(event => `
-                  <div style="background: white; border: 1px solid ${colors.light}; border-radius: 8px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); position: relative; overflow: hidden;">
-                    <!-- Time badge -->
-                    <div style="position: absolute; top: 0; right: 0; background: ${colors.primary}; color: white; padding: 4px 12px; border-radius: 0 8px 0 8px; font-size: 12px; font-weight: 600;">
-                      ${formatTime(event.startTime)}
-                    </div>
-                    
-                    <div style="margin-top: 20px;">
-                      <h3 style="font-size: 14px; font-weight: 600; color: #1A1F2C; margin: 0 0 8px 0; line-height: 1.3;">
+              <!-- Events List -->
+              <div style="space-y: 12px;">
+                ${events.map((event, index) => `
+                  <div style="background: white; border-left: 4px solid ${colors.primary}; padding: 16px 20px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border-radius: 0 6px 6px 0;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                      <h3 style="font-size: 16px; font-weight: 600; color: #1A1F2C; margin: 0; line-height: 1.3;">
                         ${event.title}
                       </h3>
-                      
+                      <div style="text-align: right; margin-left: 16px;">
+                        <div style="font-size: 14px; font-weight: 600; color: ${colors.primary};">
+                          ${formatTime(event.startTime)}
+                        </div>
+                        ${event.endTime ? `
+                          <div style="font-size: 12px; color: #666; margin-top: 2px;">
+                            → ${formatTime(event.endTime)}
+                          </div>
+                        ` : ''}
+                      </div>
+                    </div>
+                    
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
                       ${event.notes ? `
-                        <p style="font-size: 12px; color: #666; margin: 0 0 8px 0; line-height: 1.4;">
+                        <p style="font-size: 14px; color: #666; margin: 0; line-height: 1.4; flex: 1;">
                           ${event.notes}
                         </p>
-                      ` : ''}
+                      ` : '<div style="flex: 1;"></div>'}
                       
-                      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px;">
-                        <span style="font-size: 11px; color: ${colors.primary}; background: ${colors.light}; padding: 2px 8px; border-radius: 12px; font-weight: 500;">
-                          ${event.duration} min
-                        </span>
-                        
-                        ${event.endTime ? `
-                          <span style="font-size: 11px; color: #999;">
-                            → ${formatTime(event.endTime)}
-                          </span>
-                        ` : ''}
+                      <div style="font-size: 12px; color: ${colors.primary}; background: ${colors.light}; padding: 4px 12px; border-radius: 12px; font-weight: 600; margin-left: 16px;">
+                        ${event.duration} min
                       </div>
                     </div>
                   </div>
@@ -246,26 +243,26 @@ const generateBrandedPlanningContent = (data: PlanningJourJExportData): string =
           `;
         }).join('')}
         
-        <!-- Summary section -->
-        <div style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #f8f6f0 0%, #f1f7f3 100%); border-radius: 12px; border: 1px solid #e8e5db;">
-          <h2 style="font-size: 16px; font-weight: 600; color: #1a5d40; margin: 0 0 15px 0; font-family: 'Playfair Display', serif; text-align: center;">
+        <!-- Summary Section -->
+        <div style="margin-top: 40px; padding: 24px; background: linear-gradient(135deg, #f8f6f0 0%, #f1f7f3 100%); border-radius: 8px; border: 1px solid #e8e5db;">
+          <h2 style="font-size: 18px; font-weight: 600; color: #1a5d40; margin: 0 0 16px 0; font-family: 'Playfair Display', serif; text-align: center; padding-bottom: 8px; border-bottom: 1px solid #e8e5db;">
             Résumé de votre journée
           </h2>
           
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px;">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px;">
             ${Object.entries(groupedEvents).map(([categoryName, events]) => {
               const colors = getCategoryColor(categoryName);
               const totalDuration = events.reduce((sum, event) => sum + (event.duration || 0), 0);
               
               return `
-                <div style="text-align: center; padding: 12px; background: white; border-radius: 8px; border: 1px solid ${colors.light};">
-                  <div style="font-size: 11px; font-weight: 600; color: ${colors.primary}; margin-bottom: 4px;">
+                <div style="text-align: center; padding: 16px; background: white; border-radius: 6px; border: 1px solid ${colors.light};">
+                  <div style="font-size: 14px; font-weight: 600; color: ${colors.primary}; margin-bottom: 6px;">
                     ${categoryName}
                   </div>
-                  <div style="font-size: 10px; color: #666;">
+                  <div style="font-size: 12px; color: #666; margin-bottom: 4px;">
                     ${events.length} étape${events.length > 1 ? 's' : ''}
                   </div>
-                  <div style="font-size: 10px; color: #666;">
+                  <div style="font-size: 12px; color: #666;">
                     ${Math.floor(totalDuration / 60)}h${totalDuration % 60 > 0 ? ` ${totalDuration % 60}min` : ''}
                   </div>
                 </div>
@@ -276,17 +273,15 @@ const generateBrandedPlanningContent = (data: PlanningJourJExportData): string =
       </div>
 
       <!-- Footer -->
-      <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #e8e5db; text-align: center;">
-        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #666; margin-bottom: 8px;">
-          <div>
-            Généré le ${currentDate}
-          </div>
-          <div style="font-weight: 600; color: #7F9474;">
-            mariable.fr
-          </div>
+      <div style="margin-top: 40px; padding-top: 20px; border-top: 2px solid #e8e5db; text-align: center;">
+        <div style="font-size: 12px; color: #666; margin-bottom: 8px;">
+          Planning généré le ${currentDate}
         </div>
-        <div style="font-size: 10px; color: #999; text-align: center;">
-          Planning personnalisé créé avec Mariable - Votre partenaire pour un mariage réussi
+        <div style="font-size: 14px; font-weight: 600; color: #7F9474;">
+          mariable.fr
+        </div>
+        <div style="font-size: 11px; color: #999; margin-top: 4px;">
+          Votre assistant mariage personnalisé
         </div>
       </div>
     </div>
