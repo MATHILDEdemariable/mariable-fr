@@ -8,11 +8,11 @@ import { usePlanning } from '../context/PlanningContext';
 import { useToast } from '@/components/ui/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
-// Updated categories config to include all 7 steps including Soirée
+// Updated categories config to include all 7 steps with corrected préparatifs structure
 const CATEGORIES_CONFIG = [
   { key: 'cérémonie', label: 'Cérémonie' },
   { key: 'logistique', label: 'Logistique' }, 
-  { key: 'préparatifs_final', label: 'Préparatifs' },
+  { key: 'préparatifs_final', label: 'Préparatifs' }, // This will handle both preparatifs_1 and preparatifs_2
   { key: 'photos', label: 'Photos' },
   { key: 'cocktail', label: 'Cocktail' },
   { key: 'repas', label: 'Repas' },
@@ -30,7 +30,7 @@ export const PlanningForm: React.FC = () => {
   const stepLabels = CATEGORIES_CONFIG.map(cat => cat.label);
 
   useEffect(() => {
-    // Initialize available categories from planning_questions table
+    // Initialize available categories - use the fixed categories
     const loadAvailableCategories = async () => {
       try {
         const { data: questions, error } = await supabase
@@ -43,13 +43,11 @@ export const PlanningForm: React.FC = () => {
           // Fallback to all categories
           setAvailableCategories(CATEGORIES_CONFIG.map(cat => cat.key));
         } else {
-          // Get unique categories from database in the correct order
+          // Get unique categories from database
           const dbCategories = [...new Set(questions.map(q => q.categorie))];
           
-          // Filter and order categories based on CATEGORIES_CONFIG
-          const orderedCategories = CATEGORIES_CONFIG
-            .map(cat => cat.key)
-            .filter(key => dbCategories.includes(key));
+          // Use our predefined order, but include préparatifs_final which will handle both preparatifs types
+          const orderedCategories = CATEGORIES_CONFIG.map(cat => cat.key);
           
           setAvailableCategories(orderedCategories);
         }
@@ -70,10 +68,8 @@ export const PlanningForm: React.FC = () => {
   }, [availableCategories]);
 
   const handleStepChange = (stepIndex: number) => {
-    // Only allow navigation to completed steps or current step
-    if (stepIndex <= currentStep || completedSteps[stepIndex]) {
-      setCurrentStep(stepIndex);
-    }
+    // Allow navigation to any step (more flexible)
+    setCurrentStep(stepIndex);
   };
 
   const handleStepComplete = (stepIndex: number) => {
@@ -85,18 +81,6 @@ export const PlanningForm: React.FC = () => {
   };
 
   const handleFormSubmit = async (data: PlanningFormValues, generatedEvents: PlanningEvent[]) => {
-    // Only proceed with form submission if ALL steps are completed
-    const allStepsCompleted = completedSteps.every(step => step === true);
-    
-    if (!allStepsCompleted) {
-      toast({
-        title: "Formulaire incomplet",
-        description: "Veuillez compléter toutes les étapes avant de générer votre planning.",
-        variant: "destructive"
-      });
-      return;
-    }
-
     setFormData(data);
     setEvents(generatedEvents);
     setActiveTab("results");

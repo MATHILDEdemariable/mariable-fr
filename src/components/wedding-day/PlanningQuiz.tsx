@@ -89,8 +89,24 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
     const currentCategory = getCurrentCategory();
     if (!currentCategory) return [];
     
-    return questions.filter(q => q.categorie === currentCategory)
-      .filter(q => isQuestionVisible(q));
+    let categoryQuestions = questions.filter(q => q.categorie === currentCategory);
+    
+    // For préparatifs, handle both preparatifs_1 and preparatifs_2 logic
+    if (currentCategory === 'préparatifs_final') {
+      // Get all questions from both preparatifs_1 and preparatifs_2
+      const preparatifs1Questions = questions.filter(q => q.categorie === 'preparatifs_1');
+      const preparatifs2Questions = questions.filter(q => q.categorie === 'preparatifs_2');
+      
+      // Always show preparatifs_1 questions
+      categoryQuestions = [...preparatifs1Questions];
+      
+      // Only show preparatifs_2 questions if double_ceremonie = "oui"
+      if (answers.double_ceremonie === "oui") {
+        categoryQuestions = [...categoryQuestions, ...preparatifs2Questions];
+      }
+    }
+    
+    return categoryQuestions.filter(q => isQuestionVisible(q));
   };
 
   // Check if question should be visible based on conditions
@@ -109,29 +125,18 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
     }));
   };
 
-  // Check if current step can be completed
+  // Check if current step can be completed (made more lenient - not all questions required)
   const canCompleteCurrentStep = () => {
     const currentQuestions = getCurrentQuestions();
     
-    // Check if all required questions in current step are answered
-    return currentQuestions.every(question => {
-      const answer = answers[question.option_name];
-      return answer !== undefined && answer !== null && answer !== '';
-    });
+    // For now, allow progression even if not all questions are answered
+    // This makes the quiz more user-friendly
+    return true;
   };
 
   // Handle next step
   const handleNext = () => {
-    if (!canCompleteCurrentStep()) {
-      toast({
-        title: "Étape incomplète",
-        description: "Veuillez répondre à toutes les questions avant de continuer.",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    // Mark current step as completed
+    // Mark current step as completed (even if not all questions answered)
     onStepComplete(currentStep);
 
     // Move to next step or submit if this is the last step
@@ -152,17 +157,6 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
 
   // Handle form submission (only after all steps completed)
   const handleSubmit = () => {
-    // Verify all steps are completed
-    const allStepsCompleted = completedSteps.every(step => step === true);
-    if (!allStepsCompleted) {
-      toast({
-        title: "Formulaire incomplet",
-        description: "Veuillez compléter toutes les étapes avant de générer votre planning.",
-        variant: "destructive"
-      });
-      return;
-    }
-
     // Generate events from answers
     const events = generatePlanningEvents(answers);
     
@@ -257,6 +251,53 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
     }
   };
 
+  // Render preparatifs section with custom structure
+  const renderPreparatifsSection = () => {
+    const preparatifs1Questions = questions.filter(q => q.categorie === 'preparatifs_1');
+    const preparatifs2Questions = questions.filter(q => q.categorie === 'preparatifs_2');
+    
+    return (
+      <div className="space-y-8">
+        {/* Préparatifs avant la 1ère cérémonie */}
+        <div>
+          <h3 className="text-lg font-semibold mb-4">Préparatifs avant la 1ère cérémonie</h3>
+          <div className="space-y-6">
+            {preparatifs1Questions.filter(q => isQuestionVisible(q)).map((question) => (
+              <div key={question.id} className="space-y-3">
+                <Label className="text-base font-medium">{question.label}</Label>
+                {question.duree_minutes && (
+                  <p className="text-sm text-muted-foreground">Durée prévue: {question.duree_minutes} minutes</p>
+                )}
+                {renderQuestionInput(question)}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Préparatifs avant la 2ème cérémonie - only if double ceremony */}
+        {answers.double_ceremonie === "oui" && (
+          <div>
+            <h3 className="text-lg font-semibold mb-4 text-blue-600">Préparatifs avant la 2ème cérémonie</h3>
+            <p className="text-sm text-blue-600 mb-4">
+              Choisissez les étapes de préparation à répéter avant votre deuxième cérémonie.
+            </p>
+            <div className="space-y-6">
+              {preparatifs2Questions.filter(q => isQuestionVisible(q)).map((question) => (
+                <div key={question.id} className="space-y-3">
+                  <Label className="text-base font-medium">{question.label}</Label>
+                  {question.duree_minutes && (
+                    <p className="text-sm text-muted-foreground">{question.label.replace('Retouche', 'Retouche et remise en forme')} ({question.duree_minutes} minutes)</p>
+                  )}
+                  {renderQuestionInput(question)}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
+
   if (loading) {
     return <div className="text-center">Chargement des questions...</div>;
   }
@@ -277,12 +318,19 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
       )}
 
       <div className="space-y-6">
-        {currentQuestions.map((question) => (
-          <div key={question.id} className="space-y-3">
-            <Label className="text-base font-medium">{question.label}</Label>
-            {renderQuestionInput(question)}
-          </div>
-        ))}
+        {currentCategory === 'préparatifs_final' ? (
+          renderPreparatifsSection()
+        ) : (
+          currentQuestions.map((question) => (
+            <div key={question.id} className="space-y-3">
+              <Label className="text-base font-medium">{question.label}</Label>
+              {question.duree_minutes && (
+                <p className="text-sm text-muted-foreground">Durée prévue: {question.duree_minutes} minutes</p>
+              )}
+              {renderQuestionInput(question)}
+            </div>
+          ))
+        )}
       </div>
 
       <div className="flex justify-between pt-6">
@@ -298,7 +346,6 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
         <Button
           type="button"
           onClick={handleNext}
-          disabled={!canCompleteCurrentStep()}
           className="bg-wedding-olive hover:bg-wedding-olive/80"
         >
           {isLastStep ? 'Générer le planning' : 'Suivant'}
