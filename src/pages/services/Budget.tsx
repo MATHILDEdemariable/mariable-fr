@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
@@ -438,37 +437,37 @@ const Budget = () => {
   // Rendu du choix de mode initial
   const renderModeSelection = () => {
     return (
-      <div className="space-y-6">
-        <div>
-          <h2 className="text-2xl font-serif mb-2">Choisissez votre méthode de calcul</h2>
-          <p className="text-muted-foreground">Sélectionnez la méthode qui vous convient le mieux</p>
+      <div className="space-y-6 p-4">
+        <div className="text-center">
+          <h2 className="text-xl md:text-2xl font-serif mb-4">Choisissez votre méthode de calcul</h2>
+          <p className="text-sm md:text-base text-muted-foreground px-2">Sélectionnez la méthode qui vous convient le mieux</p>
         </div>
         
         <div className="space-y-4">
           <Button
             variant="outline"
-            className="w-full h-auto p-6 flex flex-col items-start text-left hover:bg-wedding-cream/20"
+            className="w-full h-auto p-4 md:p-6 flex flex-col items-start text-left hover:bg-wedding-cream/20"
             onClick={() => handleModeSelection('known')}
           >
-            <div className="flex items-center gap-3 mb-2">
-              <Euro className="h-6 w-6 text-wedding-olive" />
-              <span className="text-lg font-medium">Je connais mon budget total</span>
+            <div className="flex items-center gap-3 mb-2 w-full">
+              <Euro className="h-5 w-5 md:h-6 md:w-6 text-wedding-olive flex-shrink-0" />
+              <span className="text-base md:text-lg font-medium">Je connais mon budget total</span>
             </div>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-xs md:text-sm text-muted-foreground text-left">
               Saisissez votre budget et nous le répartirons automatiquement selon les standards du secteur
             </p>
           </Button>
           
           <Button
             variant="outline"
-            className="w-full h-auto p-6 flex flex-col items-start text-left hover:bg-wedding-cream/20"
+            className="w-full h-auto p-4 md:p-6 flex flex-col items-start text-left hover:bg-wedding-cream/20"
             onClick={() => handleModeSelection('unknown')}
           >
-            <div className="flex items-center gap-3 mb-2">
-              <Calculator className="h-6 w-6 text-wedding-olive" />
-              <span className="text-lg font-medium">Je ne connais pas mon budget</span>
+            <div className="flex items-center gap-3 mb-2 w-full">
+              <Calculator className="h-5 w-5 md:h-6 md:w-6 text-wedding-olive flex-shrink-0" />
+              <span className="text-base md:text-lg font-medium">Je ne connais pas mon budget</span>
             </div>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-xs md:text-sm text-muted-foreground text-left">
               Répondez à quelques questions et nous estimerons votre budget selon vos critères
             </p>
           </Button>
@@ -480,21 +479,21 @@ const Budget = () => {
   // Rendu du mode "budget connu"
   const renderKnownBudgetMode = () => {
     return (
-      <div className="space-y-6">
-        <div>
-          <h2 className="text-2xl font-serif mb-2">Budget connu</h2>
-          <p className="text-muted-foreground">Saisissez votre budget et sélectionnez les catégories à inclure</p>
+      <div className="space-y-6 p-4">
+        <div className="text-center">
+          <h2 className="text-xl md:text-2xl font-serif mb-4">Budget connu</h2>
+          <p className="text-sm md:text-base text-muted-foreground px-2">Saisissez votre budget et sélectionnez les catégories à inclure</p>
         </div>
         
-        <div className="space-y-4">
+        <div className="space-y-6">
           <div>
-            <Label htmlFor="knownBudget" className="text-lg mb-2 block">Budget total (€)</Label>
+            <Label htmlFor="knownBudget" className="text-base md:text-lg mb-4 block">Budget total (€)</Label>
             <Input
               type="number"
               id="knownBudget"
               value={knownBudget}
               onChange={(e) => setKnownBudget(e.target.value)}
-              className="py-6 text-lg"
+              className="py-4 md:py-6 text-base md:text-lg"
               placeholder="Ex: 20000"
               min="1000"
               max="200000"
@@ -502,18 +501,18 @@ const Budget = () => {
           </div>
           
           <div>
-            <Label className="text-lg mb-4 block">Catégories à inclure</Label>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Label className="text-base md:text-lg mb-4 block">Catégories à inclure</Label>
+            <div className="space-y-3">
               {Object.entries(BUDGET_ALLOCATION_PERCENTAGES).map(([key, info]) => (
-                <div key={key} className="flex items-center space-x-3 p-3 border rounded-md">
+                <div key={key} className="flex items-center space-x-3 p-3 md:p-4 border rounded-md w-full touch-manipulation">
                   <Checkbox 
                     id={`category-${key}`}
                     checked={selectedCategories.includes(key as keyof typeof BUDGET_ALLOCATION_PERCENTAGES)} 
                     onCheckedChange={() => toggleCategory(key as keyof typeof BUDGET_ALLOCATION_PERCENTAGES)}
-                    className="border-2 h-5 w-5"
+                    className="border-2 h-5 w-5 flex-shrink-0"
                   />
-                  <div className="flex-1">
-                    <Label htmlFor={`category-${key}`} className="text-sm font-medium cursor-pointer">
+                  <div className="flex-1 min-w-0">
+                    <Label htmlFor={`category-${key}`} className="text-sm md:text-base font-medium cursor-pointer block">
                       {info.name}
                     </Label>
                     <p className="text-xs text-muted-foreground">
@@ -526,16 +525,17 @@ const Budget = () => {
           </div>
         </div>
         
-        <div className="flex justify-between">
+        <div className="flex flex-col sm:flex-row justify-between gap-4 pt-4">
           <Button
             variant="outline"
             onClick={() => setCalculatorMode(null)}
+            className="w-full sm:w-auto"
           >
             Retour
           </Button>
           
           <Button
-            className="bg-wedding-olive hover:bg-wedding-olive/90 text-white"
+            className="bg-wedding-olive hover:bg-wedding-olive/90 text-white w-full sm:w-auto"
             onClick={calculateKnownBudgetAllocation}
             disabled={!knownBudget || selectedCategories.length === 0}
           >
@@ -551,18 +551,18 @@ const Budget = () => {
     switch (currentStep) {
       case 1:
         return (
-          <>
-            <h2 className="text-2xl font-serif mb-6">Étape 1/4 : Région</h2>
+          <div className="p-4">
+            <h2 className="text-xl md:text-2xl font-serif mb-6">Étape 1/4 : Région</h2>
             
             <div className="mb-6">
-              <Label htmlFor="region" className="text-lg mb-2 block">Région du mariage</Label>
+              <Label htmlFor="region" className="text-base md:text-lg mb-4 block">Région du mariage</Label>
               <div className="relative">
                 <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={20} />
                 <Select 
                   value={region} 
                   onValueChange={(value) => setRegion(value)}
                 >
-                  <SelectTrigger className="w-full pl-10 py-6">
+                  <SelectTrigger className="w-full pl-10 py-4 md:py-6">
                     <SelectValue placeholder="Sélectionnez une région" />
                   </SelectTrigger>
                   <SelectContent>
@@ -583,163 +583,124 @@ const Budget = () => {
                 </Select>
               </div>
             </div>
-          </>
+          </div>
         );
       
       case 2:
         return (
-          <>
-            <h2 className="text-2xl font-serif mb-6">Étape 2/4 : Nombre d'invités et Saison</h2>
-            <div className="mb-6">
-              <Label htmlFor="guestsCount" className="text-lg mb-2 block">Nombre d'invités</Label>
-              <Input
-                type="number"
-                id="guestsCount"
-                value={guestsCount}
-                onChange={e => {
-                  const val = parseInt(e.target.value, 10);
-                  if (!isNaN(val) && val > 0) setGuestsCount(val);
-                }}
-                className="py-6"
-                min="10"
-                max="500"
-                placeholder="Ex: 100"
-              />
-              <p className="text-xs text-muted-foreground mt-1">Nombre d'invités minimum recommandé : 10 personnes</p>
-            </div>
-            <div className="mb-6">
-              <Label className="text-lg mb-2 block">Période de l'année</Label>
-              <div className="flex flex-wrap gap-4 mt-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  className={`flex items-center gap-2 py-6 px-6 rounded-md ${season === 'haute' ? 'bg-wedding-cream border-wedding-olive' : 'bg-white'}`}
-                  onClick={() => setSeason('haute')}
-                >
-                  <Sun size={20} />
-                  <span>Haute saison (avril-sept)</span>
-                </Button>
-                
-                <Button
-                  type="button"
-                  variant="outline"
-                  className={`flex items-center gap-2 py-6 px-6 rounded-md ${season === 'basse' ? 'bg-wedding-cream border-wedding-olive' : 'bg-white'}`}
-                  onClick={() => setSeason('basse')}
-                >
-                  <Snowflake size={20} />
-                  <span>Basse saison (oct-mars)</span>
-                </Button>
+          <div className="p-4">
+            <h2 className="text-xl md:text-2xl font-serif mb-6">Étape 2/4 : Nombre d'invités et Saison</h2>
+            <div className="space-y-6">
+              <div>
+                <Label htmlFor="guestsCount" className="text-base md:text-lg mb-4 block">Nombre d'invités</Label>
+                <Input
+                  type="number"
+                  id="guestsCount"
+                  value={guestsCount}
+                  onChange={e => {
+                    const val = parseInt(e.target.value, 10);
+                    if (!isNaN(val) && val > 0) setGuestsCount(val);
+                  }}
+                  className="py-4 md:py-6"
+                  min="10"
+                  max="500"
+                  placeholder="Ex: 100"
+                />
+                <p className="text-xs text-muted-foreground mt-2">Nombre d'invités minimum recommandé : 10 personnes</p>
+              </div>
+              <div>
+                <Label className="text-base md:text-lg mb-4 block">Période de l'année</Label>
+                <div className="flex flex-col sm:flex-row gap-4 mt-4">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className={`flex items-center justify-center gap-2 py-4 md:py-6 px-4 md:px-6 rounded-md w-full ${season === 'haute' ? 'bg-wedding-cream border-wedding-olive' : 'bg-white'}`}
+                    onClick={() => setSeason('haute')}
+                  >
+                    <Sun size={20} />
+                    <span className="text-sm md:text-base">Haute saison (avril-sept)</span>
+                  </Button>
+                  
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className={`flex items-center justify-center gap-2 py-4 md:py-6 px-4 md:px-6 rounded-md w-full ${season === 'basse' ? 'bg-wedding-cream border-wedding-olive' : 'bg-white'}`}
+                    onClick={() => setSeason('basse')}
+                  >
+                    <Snowflake size={20} />
+                    <span className="text-sm md:text-base">Basse saison (oct-mars)</span>
+                  </Button>
+                </div>
               </div>
             </div>
-          </>
+          </div>
         );
       
       case 3:
         return (
-          <>
-            <h2 className="text-2xl font-serif mb-6">Étape 3/4 : Prestataires</h2>
+          <div className="p-4">
+            <h2 className="text-xl md:text-2xl font-serif mb-6">Étape 3/4 : Prestataires</h2>
             
             <div className="mb-6">
-              <Label className="text-lg mb-2 block">Prestataires nécessaires</Label>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                <div className="flex items-center space-x-2">
-                  <Checkbox 
-                    id="vendor-lieu" 
-                    checked={selectedVendors.includes('lieu')} 
-                    onCheckedChange={() => toggleVendor('lieu')}
-                    className="border-2 h-6 w-6"
-                  />
-                  <Label htmlFor="vendor-lieu" className="text-base">Lieu de réception</Label>
-                </div>
-                
-                <div className="flex items-center space-x-2">
-                  <Checkbox 
-                    id="vendor-traiteur" 
-                    checked={selectedVendors.includes('traiteur')} 
-                    onCheckedChange={() => toggleVendor('traiteur')}
-                    className="border-2 h-6 w-6"
-                  />
-                  <Label htmlFor="vendor-traiteur" className="text-base">Traiteur (hors boissons)</Label>
-                </div>
-                
-                <div className="flex items-center space-x-2">
-                  <Checkbox 
-                    id="vendor-photo" 
-                    checked={selectedVendors.includes('photo')} 
-                    onCheckedChange={() => toggleVendor('photo')}
-                    className="border-2 h-6 w-6"
-                  />
-                  <Label htmlFor="vendor-photo" className="text-base">Photographe & Vidéaste</Label>
-                </div>
-                
-                <div className="flex items-center space-x-2">
-                  <Checkbox 
-                    id="vendor-dj" 
-                    checked={selectedVendors.includes('dj')} 
-                    onCheckedChange={() => toggleVendor('dj')}
-                    className="border-2 h-6 w-6"
-                  />
-                  <Label htmlFor="vendor-dj" className="text-base">DJ / Animation</Label>
-                </div>
-                
-                <div className="flex items-center space-x-2">
-                  <Checkbox 
-                    id="vendor-planner" 
-                    checked={selectedVendors.includes('planner')} 
-                    onCheckedChange={() => toggleVendor('planner')}
-                    className="border-2 h-6 w-6"
-                  />
-                  <Label htmlFor="vendor-planner" className="text-base">Wedding Planner</Label>
-                </div>
-                
-                <div className="flex items-center space-x-2">
-                  <Checkbox 
-                    id="vendor-deco" 
-                    checked={selectedVendors.includes('deco')} 
-                    onCheckedChange={() => toggleVendor('deco')}
-                    className="border-2 h-6 w-6"
-                  />
-                  <Label htmlFor="vendor-deco" className="text-base">Décoration & Fleurs</Label>
-                </div>
+              <Label className="text-base md:text-lg mb-4 block">Prestataires nécessaires</Label>
+              <div className="space-y-3">
+                {[
+                  { id: 'lieu', label: 'Lieu de réception' },
+                  { id: 'traiteur', label: 'Traiteur (hors boissons)' },
+                  { id: 'photo', label: 'Photographe & Vidéaste' },
+                  { id: 'dj', label: 'DJ / Animation' },
+                  { id: 'planner', label: 'Wedding Planner' },
+                  { id: 'deco', label: 'Décoration & Fleurs' }
+                ].map((vendor) => (
+                  <div key={vendor.id} className="flex items-center space-x-3 p-3 md:p-4 border rounded-md w-full touch-manipulation">
+                    <Checkbox 
+                      id={`vendor-${vendor.id}`}
+                      checked={selectedVendors.includes(vendor.id as VendorType)} 
+                      onCheckedChange={() => toggleVendor(vendor.id as VendorType)}
+                      className="border-2 h-5 w-5 md:h-6 md:w-6 flex-shrink-0"
+                    />
+                    <Label htmlFor={`vendor-${vendor.id}`} className="text-sm md:text-base cursor-pointer flex-1">
+                      {vendor.label}
+                    </Label>
+                  </div>
+                ))}
               </div>
             </div>
-          </>
+          </div>
         );
       
       case 4:
         return (
-          <>
-            <h2 className="text-2xl font-serif mb-6">Étape 4/4 : Niveau de prestation</h2>
+          <div className="p-4">
+            <h2 className="text-xl md:text-2xl font-serif mb-6">Étape 4/4 : Niveau de prestation</h2>
             
             <div className="mb-6">
-              <Label className="text-lg mb-2 block">Niveau de prestation souhaité</Label>
+              <Label className="text-base md:text-lg mb-4 block">Niveau de prestation souhaité</Label>
               <RadioGroup 
                 value={serviceLevel} 
                 onValueChange={(value) => setServiceLevel(value as ServiceLevel)}
-                className="mt-4 space-y-6"
+                className="mt-4 space-y-4"
               >
-                <div className="flex items-center space-x-3">
-                  <RadioGroupItem id="level-economique" value="economique" className="h-8 w-8 border-2" />
-                  <Label htmlFor="level-economique" className="text-base">Économique</Label>
-                </div>
-                
-                <div className="flex items-center space-x-3">
-                  <RadioGroupItem id="level-abordable" value="abordable" className="h-8 w-8 border-2" />
-                  <Label htmlFor="level-abordable" className="text-base">Abordable</Label>
-                </div>
-                
-                <div className="flex items-center space-x-3">
-                  <RadioGroupItem id="level-premium" value="premium" className="h-8 w-8 border-2" />
-                  <Label htmlFor="level-premium" className="text-base">Premium</Label>
-                </div>
-                
-                <div className="flex items-center space-x-3">
-                  <RadioGroupItem id="level-luxe" value="luxe" className="h-8 w-8 border-2" />
-                  <Label htmlFor="level-luxe" className="text-base">Luxe</Label>
-                </div>
+                {[
+                  { id: 'economique', label: 'Économique' },
+                  { id: 'abordable', label: 'Abordable' },
+                  { id: 'premium', label: 'Premium' },
+                  { id: 'luxe', label: 'Luxe' }
+                ].map((level) => (
+                  <div key={level.id} className="flex items-center space-x-3 p-3 md:p-4 border rounded-md w-full touch-manipulation">
+                    <RadioGroupItem 
+                      id={`level-${level.id}`} 
+                      value={level.id} 
+                      className="h-6 w-6 md:h-8 md:w-8 border-2 flex-shrink-0" 
+                    />
+                    <Label htmlFor={`level-${level.id}`} className="text-sm md:text-base cursor-pointer flex-1">
+                      {level.label}
+                    </Label>
+                  </div>
+                ))}
               </RadioGroup>
             </div>
-          </>
+          </div>
         );
       
       default:
@@ -752,12 +713,12 @@ const Budget = () => {
     const isKnownMode = calculatorMode === 'known';
     
     return (
-      <div className="space-y-8" id="budget-dashboard-content">
-        <div>
-          <h2 className="text-2xl md:text-3xl font-serif mb-2">
+      <div className="space-y-6 md:space-y-8 p-4" id="budget-dashboard-content">
+        <div className="text-center">
+          <h2 className="text-xl md:text-2xl lg:text-3xl font-serif mb-4">
             {isKnownMode ? 'Répartition budgétaire' : 'Estimation budgétaire'}
           </h2>
-          <p className="text-muted-foreground">
+          <p className="text-sm md:text-base text-muted-foreground px-2">
             {isKnownMode 
               ? 'Voici la répartition de votre budget selon les standards du secteur'
               : 'Voici une estimation basée sur vos critères'
@@ -765,12 +726,12 @@ const Budget = () => {
           </p>
         </div>
         
-        <div className="text-center py-8">
-          <h3 className="text-2xl md:text-3xl font-serif mb-4" style={{ color: '#4CAF50' }}>
+        <div className="text-center py-6 md:py-8">
+          <h3 className="text-xl md:text-2xl lg:text-3xl font-serif mb-4" style={{ color: '#4CAF50' }}>
             Budget total {isKnownMode ? 'réparti' : 'estimé'}
           </h3>
-          <p className="text-4xl text-wedding-olive font-medium">{formatCurrency(budgetEstimate.total)}</p>
-          <p className="text-sm text-muted-foreground mt-2">
+          <p className="text-2xl md:text-3xl lg:text-4xl text-wedding-olive font-medium">{formatCurrency(budgetEstimate.total)}</p>
+          <p className="text-xs md:text-sm text-muted-foreground mt-2 px-2">
             {isKnownMode 
               ? 'Réparti selon les proportions standard du secteur'
               : 'Ce montant est calculé selon les standards du secteur'
@@ -805,26 +766,26 @@ const Budget = () => {
         </div>
         
         <div>
-          <h3 className="text-2xl font-serif mb-4">Répartition détaillée</h3>
-          <div className="space-y-6">
+          <h3 className="text-lg md:text-2xl font-serif mb-4">Répartition détaillée</h3>
+          <div className="space-y-4 md:space-y-6">
             {budgetEstimate.breakdown.map((item, index) => (
               <div key={index} className="border-b pb-3 last:border-b-0">
-                <div className="flex justify-between mb-1">
-                  <div className="flex items-center space-x-2">
+                <div className="flex justify-between items-start mb-1">
+                  <div className="flex items-center space-x-2 flex-1 min-w-0">
                     <div 
-                      className="h-3 w-3 rounded-full" 
+                      className="h-3 w-3 rounded-full flex-shrink-0" 
                       style={{ backgroundColor: item.color }}
                     />
-                    <span>{item.name}</span>
+                    <span className="text-sm md:text-base break-words">{item.name}</span>
                   </div>
-                  <span className="font-medium">{formatCurrency(item.amount)}</span>
+                  <span className="font-medium text-sm md:text-base ml-2 flex-shrink-0">{formatCurrency(item.amount)}</span>
                 </div>
               </div>
             ))}
           </div>
         </div>
         
-        <div className="flex items-start gap-2 text-sm text-muted-foreground bg-gray-50 p-4 rounded-md">
+        <div className="flex items-start gap-2 text-xs md:text-sm text-muted-foreground bg-gray-50 p-4 rounded-md">
           <Info size={18} className="shrink-0 mt-0.5" />
           <p>
             {isKnownMode 
@@ -836,8 +797,8 @@ const Budget = () => {
         
         {!isKnownMode && (
           <div>
-            <h3 className="text-2xl font-serif mb-4">Paramètres de votre estimation</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <h3 className="text-lg md:text-2xl font-serif mb-4">Paramètres de votre estimation</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="border p-3 rounded">
                 <p className="text-sm font-medium">Nombre d'invités</p>
                 <p>{guestsCount} personnes</p>
@@ -858,11 +819,11 @@ const Budget = () => {
           </div>
         )}
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
+        <div className="grid grid-cols-1 gap-4 pt-4">
           <Button 
             type="button" 
             variant="outline"
-            className="md:col-span-2 bg-gray-200 hover:bg-gray-300 text-wedding-black flex items-center justify-center gap-2"
+            className="bg-gray-200 hover:bg-gray-300 text-wedding-black flex items-center justify-center gap-2 w-full py-3"
             onClick={() => {
               setShowEstimate(false);
               setCurrentStep(1);
@@ -873,7 +834,7 @@ const Budget = () => {
           </Button>
           <Button 
             type="button"
-            className="md:col-span-2 bg-wedding-olive hover:bg-wedding-olive/90 text-white flex items-center justify-center gap-2"
+            className="bg-wedding-olive hover:bg-wedding-olive/90 text-white flex items-center justify-center gap-2 w-full py-3"
             onClick={handleDirectExport}
             disabled={isExporting}
           >
@@ -903,11 +864,13 @@ const Budget = () => {
         description="Utilisez notre calculateur de budget de mariage pour estimer vos dépenses et répartir votre budget selon les différentes catégories."
       />
       <Header />
-      <main className="container max-w-6xl px-4 py-8">
-        <h1 className="text-3xl font-serif mb-2">Calculatrice de budget mariage</h1>
-        <p className="text-muted-foreground mb-6">Estimez le budget de votre mariage en quelques étapes</p>
+      <main className="container max-w-4xl px-4 py-6 md:py-8">
+        <div className="text-center mb-6">
+          <h1 className="text-2xl md:text-3xl font-serif mb-2">Calculatrice de budget mariage</h1>
+          <p className="text-sm md:text-base text-muted-foreground px-2">Estimez le budget de votre mariage en quelques étapes</p>
+        </div>
         
-        <Card className="p-6 mt-6 bg-wedding-cream/20">
+        <Card className="mt-6 bg-wedding-cream/20 overflow-hidden">
           {showEstimate ? (
             renderEstimate()
           ) : calculatorMode === null ? (
@@ -915,16 +878,14 @@ const Budget = () => {
           ) : calculatorMode === 'known' ? (
             renderKnownBudgetMode()
           ) : (
-            <>
-              <div className="min-h-[300px]">
-                {renderStepContent()}
-              </div>
+            <div className="min-h-[400px]">
+              {renderStepContent()}
               
-              <div className="flex justify-between mt-8">
+              <div className="flex flex-col sm:flex-row justify-between gap-4 p-4 mt-6 border-t">
                 <Button
                   type="button"
                   variant="outline"
-                  className="flex items-center gap-2"
+                  className="flex items-center justify-center gap-2 w-full sm:w-auto"
                   onClick={goToPreviousStep}
                   disabled={currentStep === 1}
                 >
@@ -934,7 +895,7 @@ const Budget = () => {
                 
                 <Button
                   type="button"
-                  className="bg-wedding-olive hover:bg-wedding-olive/90 text-white flex items-center justify-center gap-2"
+                  className="bg-wedding-olive hover:bg-wedding-olive/90 text-white flex items-center justify-center gap-2 w-full sm:w-auto"
                   onClick={goToNextStep}
                 >
                   {currentStep === 4 ? (
@@ -950,18 +911,18 @@ const Budget = () => {
                   )}
                 </Button>
               </div>
-            </>
+            </div>
           )}
         </Card>
 
         {/* Texte de transition vers la calculatrice de boissons */}
-        <div className="my-8 p-4 bg-wedding-cream rounded-lg">
-          <p className="text-lg">
+        <div className="my-6 md:my-8 p-4 md:p-6 bg-wedding-cream rounded-lg">
+          <p className="text-sm md:text-base lg:text-lg text-center mb-4">
             L'estimation du budget traiteur ci-dessus est calculée hors boissons. Pour estimer précisément la quantité et le coût des boissons pour votre mariage, utilisez notre calculatrice boissons dédiée.
           </p>
-          <div className="mt-4 text-center">
+          <div className="text-center">
             <Button 
-              className="bg-wedding-olive hover:bg-wedding-olive/90 gap-2 w-full sm:w-auto py-2 px-4"
+              className="bg-wedding-olive hover:bg-wedding-olive/90 gap-2 w-full sm:w-auto py-3 px-6"
               onClick={handleDrinksCalculatorClick}
             >
               <Wine size={18} />
