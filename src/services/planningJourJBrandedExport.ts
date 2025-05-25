@@ -19,12 +19,12 @@ export const exportPlanningJourJBrandedPDF = async (data: PlanningJourJExportDat
     tempContainer.style.width = '210mm'; // A4 width
     tempContainer.style.backgroundColor = '#ffffff';
     tempContainer.style.fontFamily = 'Raleway, system-ui, -apple-system, sans-serif';
-    tempContainer.style.padding = '20mm';
+    tempContainer.style.padding = '15mm';
     tempContainer.style.boxSizing = 'border-box';
-    tempContainer.style.lineHeight = '1.6';
+    tempContainer.style.lineHeight = '1.4';
 
-    // Generate clean linear PDF content
-    tempContainer.innerHTML = generateLinearPlanningContent(data);
+    // Generate compact branded PDF content
+    tempContainer.innerHTML = generateCompactPlanningContent(data);
     document.body.appendChild(tempContainer);
 
     // Wait for content to render
@@ -142,97 +142,97 @@ const groupEventsByCategory = (events: PlanningEvent[]) => {
 };
 
 const getCategoryColor = (category: string) => {
+  // Use only brand colors: green, beige, black
   switch (category) {
     case 'Préparatifs':
-      return { primary: '#8B5CF6', light: '#F3E8FF' };
+      return { primary: '#7F9474', light: '#f1f7f3', text: '#1a5d40' };
     case 'Cérémonie':
-      return { primary: '#7F9474', light: '#F1F7F3' };
+      return { primary: '#1a5d40', light: '#f8f6f0', text: '#000000' };
     case 'Cocktail':
-      return { primary: '#d4af37', light: '#FEF3C7' };
+      return { primary: '#7F9474', light: '#f1f7f3', text: '#1a5d40' };
     case 'Réception':
-      return { primary: '#1a5d40', light: '#ECFDF5' };
+      return { primary: '#1a5d40', light: '#f8f6f0', text: '#000000' };
     case 'Soirée':
-      return { primary: '#DC2626', light: '#FEF2F2' };
+      return { primary: '#7F9474', light: '#f1f7f3', text: '#1a5d40' };
     case 'Transport':
-      return { primary: '#6B7280', light: '#F9FAFB' };
+      return { primary: '#1a5d40', light: '#f8f6f0', text: '#000000' };
     default:
-      return { primary: '#6B7280', light: '#F9FAFB' };
+      return { primary: '#7F9474', light: '#f8f6f0', text: '#000000' };
   }
 };
 
-const generateLinearPlanningContent = (data: PlanningJourJExportData): string => {
+const generateCompactPlanningContent = (data: PlanningJourJExportData): string => {
   const currentDate = new Date().toLocaleDateString('fr-FR');
   const groupedEvents = groupEventsByCategory(data.events);
   
   return `
-    <div style="font-family: 'Raleway', sans-serif; color: #1a1f2c; line-height: 1.6;">
-      <!-- Header -->
-      <div style="text-align: center; margin-bottom: 40px;">
-        <div style="font-size: 32px; font-weight: 700; color: #7F9474; font-family: 'Playfair Display', serif; margin-bottom: 8px;">
-          Mariable
-        </div>
-        <div style="font-size: 18px; color: #948970; font-weight: 600; margin-bottom: 24px;">
-          Planning Jour J
-        </div>
-        
-        <div style="background: linear-gradient(135deg, #f8f6f0 0%, #f1f7f3 100%); padding: 20px; border-radius: 8px; margin: 0 auto; max-width: 400px; border: 1px solid #e8e5db;">
-          <h1 style="font-size: 24px; font-weight: 700; color: #1A1F2C; margin: 0 0 8px 0; font-family: 'Playfair Display', serif;">
-            ${data.coupleNames || 'Votre Planning de Mariage'}
+    <div style="font-family: 'Raleway', sans-serif; color: #000000; line-height: 1.4; max-width: 100%;">
+      <!-- Compact Header with Logo -->
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid #1a5d40;">
+        <div style="flex: 1;">
+          <h1 style="font-size: 28px; font-weight: 700; color: #1a5d40; margin: 0 0 8px 0; font-family: 'Playfair Display', serif;">
+            Planning personnalisé
           </h1>
+          <div style="font-size: 16px; color: #7F9474; font-weight: 600; margin: 0;">
+            ${data.coupleNames || 'Votre mariage'}
+          </div>
           ${data.weddingDate ? `
-            <p style="font-size: 16px; color: #666; margin: 0; font-weight: 500;">
+            <div style="font-size: 14px; color: #666; margin-top: 4px;">
               ${data.weddingDate}
-            </p>
+            </div>
           ` : ''}
+        </div>
+        <div style="text-align: right;">
+          <div style="font-size: 24px; font-weight: 700; color: #7F9474; font-family: 'Playfair Display', serif;">
+            Mariable
+          </div>
+          <div style="font-size: 12px; color: #666; margin-top: 2px;">
+            mariable.fr
+          </div>
         </div>
       </div>
 
-      <!-- Planning Content - Linear Layout -->
+      <!-- Compact Planning Content -->
       <div style="max-width: 100%;">
         ${Object.entries(groupedEvents).map(([categoryName, events]) => {
           const colors = getCategoryColor(categoryName);
           
           return `
-            <!-- Category Section -->
-            <div style="margin-bottom: 32px; page-break-inside: avoid;">
+            <!-- Compact Category Section -->
+            <div style="margin-bottom: 18px; page-break-inside: avoid;">
               <!-- Category Header -->
-              <div style="margin-bottom: 20px;">
-                <h2 style="font-size: 20px; font-weight: 600; color: ${colors.primary}; margin: 0 0 4px 0; font-family: 'Playfair Display', serif; padding-bottom: 8px; border-bottom: 2px solid ${colors.light};">
+              <div style="margin-bottom: 12px;">
+                <h2 style="font-size: 18px; font-weight: 600; color: ${colors.primary}; margin: 0 0 6px 0; font-family: 'Playfair Display', serif; padding: 8px 0; border-bottom: 1px solid ${colors.light};">
                   ${categoryName}
                 </h2>
-                <p style="font-size: 14px; color: #666; margin: 0; font-weight: 500;">
-                  ${events.length} étape${events.length > 1 ? 's' : ''} planifiée${events.length > 1 ? 's' : ''}
-                </p>
               </div>
               
-              <!-- Events List -->
-              <div style="space-y: 12px;">
+              <!-- Compact Events List -->
+              <div style="margin-left: 8px;">
                 ${events.map((event, index) => `
-                  <div style="background: white; border-left: 4px solid ${colors.primary}; padding: 16px 20px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border-radius: 0 6px 6px 0;">
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
-                      <h3 style="font-size: 16px; font-weight: 600; color: #1A1F2C; margin: 0; line-height: 1.3;">
-                        ${event.title}
-                      </h3>
-                      <div style="text-align: right; margin-left: 16px;">
-                        <div style="font-size: 14px; font-weight: 600; color: ${colors.primary};">
+                  <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; margin-bottom: 6px; background: ${colors.light}; border-left: 3px solid ${colors.primary}; border-radius: 0 4px 4px 0;">
+                    <div style="flex: 1;">
+                      <div style="display: flex; align-items: center; gap: 12px;">
+                        <div style="font-weight: 600; color: ${colors.primary}; font-size: 14px; min-width: 50px;">
                           ${formatTime(event.startTime)}
                         </div>
-                        ${event.endTime ? `
-                          <div style="font-size: 12px; color: #666; margin-top: 2px;">
-                            → ${formatTime(event.endTime)}
-                          </div>
-                        ` : ''}
+                        <div style="font-weight: 600; color: ${colors.text}; font-size: 14px; flex: 1;">
+                          ${event.title}
+                        </div>
                       </div>
-                    </div>
-                    
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
                       ${event.notes ? `
-                        <p style="font-size: 14px; color: #666; margin: 0; line-height: 1.4; flex: 1;">
+                        <div style="font-size: 12px; color: #666; margin-top: 4px; margin-left: 62px;">
                           ${event.notes}
-                        </p>
-                      ` : '<div style="flex: 1;"></div>'}
-                      
-                      <div style="font-size: 12px; color: ${colors.primary}; background: ${colors.light}; padding: 4px 12px; border-radius: 12px; font-weight: 600; margin-left: 16px;">
+                        </div>
+                      ` : ''}
+                    </div>
+                    <div style="text-align: right; margin-left: 12px;">
+                      ${event.endTime ? `
+                        <div style="font-size: 12px; color: #666; margin-bottom: 2px;">
+                          → ${formatTime(event.endTime)}
+                        </div>
+                      ` : ''}
+                      <div style="font-size: 11px; color: ${colors.primary}; background: white; padding: 2px 8px; border-radius: 10px; font-weight: 600;">
                         ${event.duration} min
                       </div>
                     </div>
@@ -243,26 +243,26 @@ const generateLinearPlanningContent = (data: PlanningJourJExportData): string =>
           `;
         }).join('')}
         
-        <!-- Summary Section -->
-        <div style="margin-top: 40px; padding: 24px; background: linear-gradient(135deg, #f8f6f0 0%, #f1f7f3 100%); border-radius: 8px; border: 1px solid #e8e5db;">
-          <h2 style="font-size: 18px; font-weight: 600; color: #1a5d40; margin: 0 0 16px 0; font-family: 'Playfair Display', serif; text-align: center; padding-bottom: 8px; border-bottom: 1px solid #e8e5db;">
+        <!-- Compact Summary Section -->
+        <div style="margin-top: 24px; padding: 16px; background: #f8f6f0; border-radius: 6px; border: 1px solid #e8e5db;">
+          <h2 style="font-size: 16px; font-weight: 600; color: #1a5d40; margin: 0 0 12px 0; font-family: 'Playfair Display', serif; text-align: center;">
             Résumé de votre journée
           </h2>
           
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px;">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px;">
             ${Object.entries(groupedEvents).map(([categoryName, events]) => {
               const colors = getCategoryColor(categoryName);
               const totalDuration = events.reduce((sum, event) => sum + (event.duration || 0), 0);
               
               return `
-                <div style="text-align: center; padding: 16px; background: white; border-radius: 6px; border: 1px solid ${colors.light};">
-                  <div style="font-size: 14px; font-weight: 600; color: ${colors.primary}; margin-bottom: 6px;">
+                <div style="text-align: center; padding: 12px; background: white; border-radius: 4px; border: 1px solid ${colors.light};">
+                  <div style="font-size: 12px; font-weight: 600; color: ${colors.primary}; margin-bottom: 4px;">
                     ${categoryName}
                   </div>
-                  <div style="font-size: 12px; color: #666; margin-bottom: 4px;">
+                  <div style="font-size: 10px; color: #666; margin-bottom: 2px;">
                     ${events.length} étape${events.length > 1 ? 's' : ''}
                   </div>
-                  <div style="font-size: 12px; color: #666;">
+                  <div style="font-size: 10px; color: #666;">
                     ${Math.floor(totalDuration / 60)}h${totalDuration % 60 > 0 ? ` ${totalDuration % 60}min` : ''}
                   </div>
                 </div>
@@ -272,16 +272,13 @@ const generateLinearPlanningContent = (data: PlanningJourJExportData): string =>
         </div>
       </div>
 
-      <!-- Footer -->
-      <div style="margin-top: 40px; padding-top: 20px; border-top: 2px solid #e8e5db; text-align: center;">
-        <div style="font-size: 12px; color: #666; margin-bottom: 8px;">
+      <!-- Compact Footer -->
+      <div style="margin-top: 24px; padding-top: 12px; border-top: 1px solid #e8e5db; text-align: center;">
+        <div style="font-size: 11px; color: #666; margin-bottom: 4px;">
           Planning généré le ${currentDate}
         </div>
-        <div style="font-size: 14px; font-weight: 600; color: #7F9474;">
-          mariable.fr
-        </div>
-        <div style="font-size: 11px; color: #999; margin-top: 4px;">
-          Votre assistant mariage personnalisé
+        <div style="font-size: 13px; font-weight: 600; color: #7F9474;">
+          mariable.fr - Votre assistant mariage personnalisé
         </div>
       </div>
     </div>
