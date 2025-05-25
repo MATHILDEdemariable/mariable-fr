@@ -93,7 +93,7 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
     
     // For préparatifs, handle both preparatifs_final and preparatifs_2 logic
     if (currentCategory === 'préparatifs') {
-      // Get all questions from both preparatifs_final and preparatifs_2
+      // Get all questions from both preparatifs_final and preparatifs_1
       const preparatifsQuestions = questions.filter(q => 
         q.categorie === 'preparatifs_final' || q.categorie === 'preparatifs_1'
       );
@@ -162,9 +162,29 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
     onSubmit(answers as PlanningFormValues, events);
   };
 
+  // Clean label text from any unwanted characters or encoding issues
+  const cleanLabel = (label: string): string => {
+    if (!label) return '';
+    // Remove any stray characters like 'o' at the end and trim whitespace
+    return label.trim().replace(/[^\w\s\-\(\)\/\?\.\,\:àáâäèéêëìíîïòóôöùúûüÿñç]/gi, '');
+  };
+
   // Render question input based on type
   const renderQuestionInput = (question: PlanningQuestion) => {
     const value = answers[question.option_name];
+    const cleanedLabel = cleanLabel(question.label);
+
+    // For type "fixe", just show the duration
+    if (question.type === 'fixe') {
+      return (
+        <div className="bg-gray-50 p-3 rounded-md">
+          <span className="text-sm text-gray-600">Activité fixe incluse</span>
+          {question.duree_minutes && (
+            <span className="ml-2 text-sm font-medium">({question.duree_minutes} min)</span>
+          )}
+        </div>
+      );
+    }
 
     switch (question.type) {
       case 'choix':
@@ -175,8 +195,8 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
           >
             {Array.isArray(question.options) && question.options.map((option: any, index: number) => {
               const optionValue = typeof option === 'string' ? option : option.valeur || option;
-              const optionLabel = typeof option === 'string' ? option : 
-                (option.label || `${option.valeur}${option.duree_minutes ? ` (${option.duree_minutes} min)` : ''}`);
+              const optionLabel = typeof option === 'string' ? cleanLabel(option) : 
+                cleanLabel(option.label || `${option.valeur}${option.duree_minutes ? ` (${option.duree_minutes} min)` : ''}`);
               
               return (
                 <div key={index} className="flex items-center space-x-2">
@@ -193,8 +213,8 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
           <div className="space-y-2">
             {Array.isArray(question.options) && question.options.map((option: any, index: number) => {
               const optionValue = typeof option === 'string' ? option : option.valeur || option;
-              const optionLabel = typeof option === 'string' ? option : 
-                (option.label || `${option.valeur}${option.duree_minutes ? ` (${option.duree_minutes} min)` : ''}`);
+              const optionLabel = typeof option === 'string' ? cleanLabel(option) : 
+                cleanLabel(option.label || `${option.valeur}${option.duree_minutes ? ` (${option.duree_minutes} min)` : ''}`);
               const checked = Array.isArray(value) && value.includes(optionValue);
 
               return (
@@ -260,12 +280,12 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
       <div className="space-y-8">
         {/* Préparatifs avant la 1ère cérémonie */}
         <div>
-          <h3 className="text-lg font-semibold mb-4">Préparatifs avant la 1ère cérémonie</h3>
+          <h3 className="text-lg font-semibold mb-4">Préparatifs avant la cérémonie</h3>
           <div className="space-y-6">
             {preparatifsQuestions.filter(q => isQuestionVisible(q)).map((question) => (
               <div key={question.id} className="space-y-3">
-                <Label className="text-base font-medium">{question.label}</Label>
-                {question.duree_minutes && (
+                <Label className="text-base font-medium">{cleanLabel(question.label)}</Label>
+                {question.duree_minutes && question.duree_minutes > 0 && (
                   <p className="text-sm text-muted-foreground">Durée prévue: {question.duree_minutes} minutes</p>
                 )}
                 {renderQuestionInput(question)}
@@ -284,8 +304,8 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
             <div className="space-y-6">
               {preparatifs2Questions.filter(q => isQuestionVisible(q)).map((question) => (
                 <div key={question.id} className="space-y-3">
-                  <Label className="text-base font-medium">{question.label}</Label>
-                  {question.duree_minutes && (
+                  <Label className="text-base font-medium">{cleanLabel(question.label)}</Label>
+                  {question.duree_minutes && question.duree_minutes > 0 && (
                     <p className="text-sm text-muted-foreground">Durée prévue: {question.duree_minutes} minutes</p>
                   )}
                   {renderQuestionInput(question)}
@@ -323,7 +343,7 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
         ) : (
           currentQuestions.map((question) => (
             <div key={question.id} className="space-y-3">
-              <Label className="text-base font-medium">{question.label}</Label>
+              <Label className="text-base font-medium">{cleanLabel(question.label)}</Label>
               {question.duree_minutes && question.duree_minutes > 0 && (
                 <p className="text-sm text-muted-foreground">Durée prévue: {question.duree_minutes} minutes</p>
               )}
