@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -154,7 +153,7 @@ const DetailedBudget: React.FC = () => {
           totalActual,
           totalDeposit,
           totalRemaining
-        }
+        } as any // Cast to any to satisfy Json type requirement
       };
 
       console.log('Saving budget data:', budgetPayload);
