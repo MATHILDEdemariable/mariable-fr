@@ -2,6 +2,7 @@
 import { addMinutes, parse } from "date-fns";
 import type { WeddingDaySchedule, WeddingEvent } from "../types";
 import { getCeremonyStart, getCeremonyDuration } from "./dateHelpers";
+import { PlanningEvent, PlanningFormValues } from "../types/planningTypes";
 
 interface GenerateScheduleProps {
   ceremonyTime: string;
@@ -181,4 +182,139 @@ export const generateSchedule = ({
       hasDancingParty: true
     }
   };
+};
+
+// New function to generate PlanningEvent[] from form answers
+export const generatePlanningEvents = (answers: Record<string, any>): PlanningEvent[] => {
+  const events: PlanningEvent[] = [];
+  let eventId = 0;
+  
+  // Parse ceremony time or default to 14:30
+  const ceremonyTime = answers.horaire_ceremonie_principale || "14:30";
+  const baseDate = new Date();
+  const startTime = parse(ceremonyTime, "HH:mm", baseDate);
+  
+  // Get ceremony type and duration
+  const ceremonyType = answers.type_ceremonie_principale || "laique";
+  const ceremonyDuration = ceremonyType === "religieuse" ? 90 : 60;
+  
+  // Add ceremony
+  events.push({
+    id: `event-${eventId++}`,
+    title: `Cérémonie ${ceremonyType}`,
+    time: ceremonyTime,
+    duration: ceremonyDuration,
+    category: "cérémonie",
+    isHighlight: true
+  });
+  
+  // Calculate next time slot
+  let currentTime = addMinutes(startTime, ceremonyDuration);
+  
+  // Add travel if different venues
+  if (answers.lieux_differents === "oui") {
+    const travelDuration = parseInt(answers.temps_de_trajet) || 30;
+    events.push({
+      id: `event-${eventId++}`,
+      title: "Trajet vers le lieu de réception",
+      time: currentTime.toTimeString().slice(0, 5),
+      duration: travelDuration,
+      category: "logistique"
+    });
+    currentTime = addMinutes(currentTime, travelDuration);
+  }
+  
+  // Add cocktail
+  const cocktailDuration = answers.format_cocktail === "long" ? 120 : 90;
+  events.push({
+    id: `event-${eventId++}`,
+    title: "Cocktail",
+    time: currentTime.toTimeString().slice(0, 5),
+    duration: cocktailDuration,
+    category: "cocktail"
+  });
+  currentTime = addMinutes(currentTime, cocktailDuration);
+  
+  // Add photos during cocktail if selected
+  if (answers.moment_photos === "pendant_cocktail") {
+    events.push({
+      id: `event-${eventId++}`,
+      title: "Séance photo de groupe",
+      time: addMinutes(currentTime, -30).toTimeString().slice(0, 5),
+      duration: 30,
+      category: "photos",
+      isHighlight: true
+    });
+  }
+  
+  // Add dinner
+  const dinnerDuration = parseInt(answers.duree_repas) || 180;
+  events.push({
+    id: `event-${eventId++}`,
+    title: "Repas",
+    time: currentTime.toTimeString().slice(0, 5),
+    duration: dinnerDuration,
+    category: "repas"
+  });
+  currentTime = addMinutes(currentTime, dinnerDuration);
+  
+  // Add evening activities if selected
+  if (answers.soiree && answers.soiree !== "pas_de_soiree") {
+    let soireeDuration = 240; // Default 4 hours
+    if (answers.soiree === "jusqu_a_2h") soireeDuration = 120;
+    else if (answers.soiree === "jusqu_a_4h") soireeDuration = 240;
+    else if (answers.soiree === "plus_de_4h") soireeDuration = 300;
+    
+    events.push({
+      id: `event-${eventId++}`,
+      title: "Soirée dansante",
+      time: currentTime.toTimeString().slice(0, 5),
+      duration: soireeDuration,
+      category: "soiree"
+    });
+  }
+  
+  // Add special moments if selected
+  if (answers.temps_forts && Array.isArray(answers.temps_forts)) {
+    answers.temps_forts.forEach((moment: string) => {
+      switch (moment) {
+        case "entree_maries":
+          events.push({
+            id: `event-${eventId++}`,
+            title: "Entrée des mariés",
+            time: addMinutes(currentTime, -dinnerDuration).toTimeString().slice(0, 5),
+            duration: 10,
+            category: "soiree",
+            isHighlight: true
+          });
+          break;
+        case "decoupe_dessert":
+          events.push({
+            id: `event-${eventId++}`,
+            title: "Découpe du gâteau",
+            time: addMinutes(currentTime, -30).toTimeString().slice(0, 5),
+            duration: 15,
+            category: "soiree",
+            isHighlight: true
+          });
+          break;
+        case "discours":
+          events.push({
+            id: `event-${eventId++}`,
+            title: "Discours",
+            time: addMinutes(currentTime, -120).toTimeString().slice(0, 5),
+            duration: 20,
+            category: "repas",
+            isHighlight: true
+          });
+          break;
+      }
+    });
+  }
+  
+  return events.sort((a, b) => {
+    const timeA = parse(a.time, "HH:mm", baseDate);
+    const timeB = parse(b.time, "HH:mm", baseDate);
+    return timeA.getTime() - timeB.getTime();
+  });
 };
