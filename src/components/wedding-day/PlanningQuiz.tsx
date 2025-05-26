@@ -165,8 +165,11 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
   // Clean label text from any unwanted characters or encoding issues
   const cleanLabel = (label: string): string => {
     if (!label) return '';
-    // Remove any stray characters like 'o' at the end and trim whitespace
-    return label.trim().replace(/[^\w\s\-\(\)\/\?\.\,\:àáâäèéêëìíîïòóôöùúûüÿñç]/gi, '');
+    // Remove any trailing 'o' characters and other unwanted characters, then trim
+    return label
+      .replace(/o+$/, '') // Remove trailing 'o' characters
+      .replace(/[^\w\s\-\(\)\/\?\.\,\:àáâäèéêëìíîïòóôöùúûüÿñç]/gi, '') // Remove special characters
+      .trim(); // Trim whitespace
   };
 
   // Render question input based on type
@@ -273,8 +276,10 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
   const renderPreparatifsSection = () => {
     const preparatifsQuestions = questions.filter(q => 
       q.categorie === 'preparatifs_final' || q.categorie === 'preparatifs_1'
-    );
-    const preparatifs2Questions = questions.filter(q => q.categorie === 'preparatifs_2');
+    ).filter(q => isQuestionVisible(q));
+    
+    const preparatifs2Questions = questions.filter(q => q.categorie === 'preparatifs_2')
+      .filter(q => isQuestionVisible(q));
     
     return (
       <div className="space-y-8">
@@ -282,7 +287,7 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
         <div>
           <h3 className="text-lg font-semibold mb-4">Préparatifs avant la cérémonie</h3>
           <div className="space-y-6">
-            {preparatifsQuestions.filter(q => isQuestionVisible(q)).map((question) => (
+            {preparatifsQuestions.map((question) => (
               <div key={question.id} className="space-y-3">
                 <Label className="text-base font-medium">{cleanLabel(question.label)}</Label>
                 {question.duree_minutes && question.duree_minutes > 0 && (
@@ -302,7 +307,7 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
               Choisissez les étapes de préparation à répéter avant votre deuxième cérémonie.
             </p>
             <div className="space-y-6">
-              {preparatifs2Questions.filter(q => isQuestionVisible(q)).map((question) => (
+              {preparatifs2Questions.map((question) => (
                 <div key={question.id} className="space-y-3">
                   <Label className="text-base font-medium">{cleanLabel(question.label)}</Label>
                   {question.duree_minutes && question.duree_minutes > 0 && (
