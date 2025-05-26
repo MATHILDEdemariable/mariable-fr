@@ -1,4 +1,3 @@
-
 import { addMinutes, parse } from "date-fns";
 import type { WeddingDaySchedule, WeddingEvent } from "../types";
 import { getCeremonyStart, getCeremonyDuration } from "./dateHelpers";
@@ -184,7 +183,7 @@ export const generateSchedule = ({
   };
 };
 
-// New function to generate PlanningEvent[] from form answers
+// Enhanced function to generate PlanningEvent[] from form answers with preparatifs integration
 export const generatePlanningEvents = (answers: Record<string, any>): PlanningEvent[] => {
   const events: PlanningEvent[] = [];
   let eventId = 0;
@@ -197,6 +196,72 @@ export const generatePlanningEvents = (answers: Record<string, any>): PlanningEv
   // Get ceremony type and duration
   const ceremonyType = answers.type_ceremonie_principale || "laique";
   const ceremonyDuration = ceremonyType === "religieuse" ? 90 : 60;
+  
+  // Start timeline 3 hours before ceremony for preparations
+  let currentTime = addMinutes(startTime, -180);
+  
+  // Add preparatifs events based on selected options
+  const preparatifsMapping = {
+    'coiffure': { title: 'Coiffure', duration: 60 },
+    'maquillage': { title: 'Maquillage', duration: 45 },
+    'habillage': { title: 'Habillage', duration: 30 },
+    'petit_dejeuner': { title: 'Petit-déjeuner', duration: 30 },
+    'photos_preparatifs': { title: 'Photos des préparatifs', duration: 15 }
+  };
+  
+  // Add selected preparatifs to timeline
+  Object.entries(preparatifsMapping).forEach(([key, prep]) => {
+    if (answers[key] === 'oui' || answers[key] === true) {
+      const prepStartTime = new Date(currentTime);
+      const prepEndTime = addMinutes(prepStartTime, prep.duration);
+      
+      events.push({
+        id: `event-${eventId++}`,
+        title: prep.title,
+        startTime: prepStartTime,
+        endTime: prepEndTime,
+        duration: prep.duration,
+        category: "préparatifs",
+        type: "preparation",
+        isHighlight: key === 'habillage' // Highlight the dressing moment
+      });
+      
+      currentTime = addMinutes(currentTime, prep.duration + 10); // Add 10min buffer between activities
+    }
+  });
+  
+  // Add preparatifs_2 if double ceremony and selected
+  if (answers.double_ceremonie === 'oui') {
+    const preparatifs2Mapping = {
+      'coiffure_2': { title: 'Retouche coiffure (2ème cérémonie)', duration: 30 },
+      'maquillage_2': { title: 'Retouche maquillage (2ème cérémonie)', duration: 30 },
+      'habillage_2': { title: 'Changement de tenue (2ème cérémonie)', duration: 45 }
+    };
+    
+    // Calculate timing for second ceremony preparations
+    const ceremony2Time = answers.heure_ceremonie_2 ? parse(answers.heure_ceremonie_2, "HH:mm", baseDate) : addMinutes(startTime, 120);
+    let prep2StartTime = addMinutes(ceremony2Time, -90); // Start 1.5h before second ceremony
+    
+    Object.entries(preparatifs2Mapping).forEach(([key, prep]) => {
+      if (answers[key] === 'oui' || answers[key] === true) {
+        const prepStartTime = new Date(prep2StartTime);
+        const prepEndTime = addMinutes(prepStartTime, prep.duration);
+        
+        events.push({
+          id: `event-${eventId++}`,
+          title: prep.title,
+          startTime: prepStartTime,
+          endTime: prepEndTime,
+          duration: prep.duration,
+          category: "préparatifs",
+          type: "preparation",
+          isHighlight: true
+        });
+        
+        prep2StartTime = addMinutes(prep2StartTime, prep.duration + 10);
+      }
+    });
+  }
   
   // Add ceremony
   const ceremonyStartTime = new Date(startTime);
@@ -214,7 +279,7 @@ export const generatePlanningEvents = (answers: Record<string, any>): PlanningEv
   });
   
   // Calculate next time slot
-  let currentTime = addMinutes(startTime, ceremonyDuration);
+  currentTime = addMinutes(startTime, ceremonyDuration);
   
   // Add travel if different venues
   if (answers.lieux_differents === "oui") {

@@ -54,7 +54,6 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
     try {
       setLoading(true);
       
-      // Enhanced query to get all planning questions with detailed logging
       const { data, error } = await supabase
         .from('planning_questions')
         .select('*')
@@ -71,32 +70,23 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
       }
 
       console.log('All loaded questions:', data);
-      
-      // Debug: Log questions by category
-      const questionsByCategory = data?.reduce((acc, q) => {
-        if (!acc[q.categorie]) acc[q.categorie] = [];
-        acc[q.categorie].push(q);
-        return acc;
-      }, {} as Record<string, PlanningQuestion[]>);
-      
-      console.log('Questions by category:', questionsByCategory);
-      
-      // Specifically log preparatifs questions
-      const preparatifsQuestions = data?.filter(q => 
-        q.categorie === 'preparatifs_final' || 
-        q.categorie === 'preparatifs_1' || 
-        q.categorie === 'preparatifs_2' ||
-        q.categorie === 'préparatifs'
-      );
-      
-      console.log('Preparatifs questions found:', preparatifsQuestions);
-
       setQuestions(data || []);
     } catch (error) {
       console.error('Error:', error);
     } finally {
       setLoading(false);
     }
+  };
+
+  // Enhanced label cleaning function that removes trailing characters and special chars
+  const cleanLabel = (label: string): string => {
+    if (!label) return '';
+    
+    return label
+      .replace(/o+$/, '') // Remove trailing 'o' characters
+      .replace(/[^\w\s\-\(\)\/\?\.\,\:àáâäèéêëìíîïòóôöùúûüÿñç]/gi, '') // Remove special characters
+      .replace(/\s+/g, ' ') // Replace multiple spaces with single space
+      .trim(); // Trim whitespace
   };
 
   // Get current category based on currentStep and availableCategories
@@ -107,32 +97,33 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
     return null;
   };
 
-  // Get questions for current category
+  // Get questions for current category with enhanced preparatifs logic
   const getCurrentQuestions = () => {
     const currentCategory = getCurrentCategory();
     if (!currentCategory) return [];
     
     let categoryQuestions = questions.filter(q => q.categorie === currentCategory);
     
-    // For préparatifs, handle multiple category logic
+    // Special handling for préparatifs step
     if (currentCategory === 'préparatifs') {
-      // Get all questions from preparatifs categories
+      // Get all preparatifs_final questions (always shown)
       const preparatifsBaseQuestions = questions.filter(q => 
-        q.categorie === 'preparatifs_final' || 
-        q.categorie === 'preparatifs_1' ||
-        q.categorie === 'préparatifs' // Include the base category too
+        q.categorie === 'preparatifs_final'
       );
       
-      const preparatifs2Questions = questions.filter(q => q.categorie === 'preparatifs_2');
+      // Get preparatifs_2 questions (only shown if double ceremony)
+      const preparatifs2Questions = questions.filter(q => 
+        q.categorie === 'preparatifs_2'
+      );
       
       console.log('Preparatifs base questions:', preparatifsBaseQuestions);
       console.log('Preparatifs 2 questions:', preparatifs2Questions);
       console.log('Double ceremony answer:', answers.double_ceremonie);
       
-      // Always show base preparatifs questions
+      // Always include base preparatifs questions
       categoryQuestions = [...preparatifsBaseQuestions];
       
-      // Only show preparatifs_2 questions if double_ceremonie = "oui"
+      // Add preparatifs_2 questions if double ceremony selected
       if (answers.double_ceremonie === "oui") {
         categoryQuestions = [...categoryQuestions, ...preparatifs2Questions];
       }
@@ -158,21 +149,13 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
     }));
   };
 
-  // Allow progression through all steps (all fields optional)
-  const canCompleteCurrentStep = () => {
-    return true; // All fields are now optional
-  };
-
   // Handle next step
   const handleNext = () => {
-    // Mark current step as completed
     onStepComplete(currentStep);
 
-    // Move to next step or submit if this is the last step
     if (currentStep < availableCategories.length - 1) {
       onStepChange(currentStep + 1);
     } else {
-      // This is the final step (Soirée), now we can submit
       handleSubmit();
     }
   };
@@ -184,34 +167,20 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
     }
   };
 
-  // Handle form submission (only after all steps completed)
+  // Handle form submission
   const handleSubmit = () => {
-    // Generate events from answers
     const events = generatePlanningEvents(answers);
-    
-    // Submit the form
     onSubmit(answers as PlanningFormValues, events);
   };
 
-  // Enhanced label cleaning function
-  const cleanLabel = (label: string): string => {
-    if (!label) return '';
-    
-    return label
-      .replace(/o+$/, '') // Remove trailing 'o' characters
-      .replace(/[^\w\s\-\(\)\/\?\.\,\:àáâäèéêëìíîïòóôöùúûüÿñç]/gi, '') // Remove special characters
-      .replace(/\s+/g, ' ') // Replace multiple spaces with single space
-      .trim(); // Trim whitespace
-  };
-
-  // Render question input based on type
+  // Render question input based on type with proper preparatifs handling
   const renderQuestionInput = (question: PlanningQuestion) => {
     const value = answers[question.option_name];
     const cleanedLabel = cleanLabel(question.label);
 
     console.log('Rendering question:', question.id, question.type, cleanedLabel);
 
-    // For type "fixe", show as read-only info with duration
+    // Handle 'fixe' type questions (show as info with duration)
     if (question.type === 'fixe') {
       return (
         <div className="bg-gray-50 p-4 rounded-md border">
@@ -229,6 +198,34 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
 
     switch (question.type) {
       case 'choix':
+        // For preparatifs, render as checkbox instead of radio
+        if (question.categorie === 'preparatifs_final' || question.categorie === 'preparatifs_2') {
+          const checked = value === 'oui' || value === true;
+          
+          return (
+            <div className="space-y-2">
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id={question.id}
+                  checked={checked}
+                  onCheckedChange={(isChecked) => {
+                    handleAnswerChange(question.option_name, isChecked ? 'oui' : 'non');
+                  }}
+                />
+                <Label htmlFor={question.id} className="text-base">
+                  {cleanedLabel}
+                </Label>
+              </div>
+              {question.duree_minutes && question.duree_minutes > 0 && (
+                <p className="text-sm text-blue-600 font-medium ml-6">
+                  Durée prévue: {question.duree_minutes} minutes
+                </p>
+              )}
+            </div>
+          );
+        }
+
+        // Regular radio group for other categories
         return (
           <div className="space-y-2">
             <RadioGroup
@@ -345,14 +342,10 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
     }
   };
 
-  // Render preparatifs section with enhanced logic
+  // Render preparatifs section with enhanced structure
   const renderPreparatifsSection = () => {
-    console.log('Rendering preparatifs section, answers:', answers);
-    
     const preparatifsBaseQuestions = questions.filter(q => 
-      q.categorie === 'preparatifs_final' || 
-      q.categorie === 'preparatifs_1' ||
-      q.categorie === 'préparatifs'
+      q.categorie === 'preparatifs_final'
     ).filter(q => isQuestionVisible(q));
     
     const preparatifs2Questions = questions.filter(q => q.categorie === 'preparatifs_2')
@@ -364,13 +357,12 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
     
     return (
       <div className="space-y-8">
-        {/* Préparatifs avant la 1ère cérémonie */}
+        {/* Préparatifs before first ceremony */}
         <div>
           <h3 className="text-lg font-semibold mb-4">Préparatifs avant la cérémonie</h3>
-          <div className="space-y-6">
+          <div className="space-y-4">
             {preparatifsBaseQuestions.map((question) => (
-              <div key={question.id} className="space-y-3">
-                <Label className="text-base font-medium">{cleanLabel(question.label)}</Label>
+              <div key={question.id} className="space-y-2">
                 {renderQuestionInput(question)}
               </div>
             ))}
@@ -380,17 +372,16 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
           </div>
         </div>
 
-        {/* Préparatifs avant la 2ème cérémonie - only if double ceremony */}
+        {/* Préparatifs before second ceremony - only if double ceremony */}
         {answers.double_ceremonie === "oui" && (
           <div>
             <h3 className="text-lg font-semibold mb-4 text-blue-600">Préparatifs avant la 2ème cérémonie</h3>
             <p className="text-sm text-blue-600 mb-4">
               Choisissez les étapes de préparation à répéter avant votre deuxième cérémonie.
             </p>
-            <div className="space-y-6">
+            <div className="space-y-4">
               {preparatifs2Questions.map((question) => (
-                <div key={question.id} className="space-y-3">
-                  <Label className="text-base font-medium">{cleanLabel(question.label)}</Label>
+                <div key={question.id} className="space-y-2">
                   {renderQuestionInput(question)}
                 </div>
               ))}
