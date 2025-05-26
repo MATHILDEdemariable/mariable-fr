@@ -53,6 +53,8 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
   const loadQuestions = async () => {
     try {
       setLoading(true);
+      
+      // Enhanced query to get all planning questions with detailed logging
       const { data, error } = await supabase
         .from('planning_questions')
         .select('*')
@@ -67,6 +69,27 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
         });
         return;
       }
+
+      console.log('All loaded questions:', data);
+      
+      // Debug: Log questions by category
+      const questionsByCategory = data?.reduce((acc, q) => {
+        if (!acc[q.categorie]) acc[q.categorie] = [];
+        acc[q.categorie].push(q);
+        return acc;
+      }, {} as Record<string, PlanningQuestion[]>);
+      
+      console.log('Questions by category:', questionsByCategory);
+      
+      // Specifically log preparatifs questions
+      const preparatifsQuestions = data?.filter(q => 
+        q.categorie === 'preparatifs_final' || 
+        q.categorie === 'preparatifs_1' || 
+        q.categorie === 'preparatifs_2' ||
+        q.categorie === 'préparatifs'
+      );
+      
+      console.log('Preparatifs questions found:', preparatifsQuestions);
 
       setQuestions(data || []);
     } catch (error) {
@@ -91,16 +114,23 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
     
     let categoryQuestions = questions.filter(q => q.categorie === currentCategory);
     
-    // For préparatifs, handle both preparatifs_final and preparatifs_2 logic
+    // For préparatifs, handle multiple category logic
     if (currentCategory === 'préparatifs') {
-      // Get all questions from both preparatifs_final and preparatifs_1
-      const preparatifsQuestions = questions.filter(q => 
-        q.categorie === 'preparatifs_final' || q.categorie === 'preparatifs_1'
+      // Get all questions from preparatifs categories
+      const preparatifsBaseQuestions = questions.filter(q => 
+        q.categorie === 'preparatifs_final' || 
+        q.categorie === 'preparatifs_1' ||
+        q.categorie === 'préparatifs' // Include the base category too
       );
+      
       const preparatifs2Questions = questions.filter(q => q.categorie === 'preparatifs_2');
       
-      // Always show preparatifs_final/preparatifs_1 questions
-      categoryQuestions = [...preparatifsQuestions];
+      console.log('Preparatifs base questions:', preparatifsBaseQuestions);
+      console.log('Preparatifs 2 questions:', preparatifs2Questions);
+      console.log('Double ceremony answer:', answers.double_ceremonie);
+      
+      // Always show base preparatifs questions
+      categoryQuestions = [...preparatifsBaseQuestions];
       
       // Only show preparatifs_2 questions if double_ceremonie = "oui"
       if (answers.double_ceremonie === "oui") {
@@ -121,6 +151,7 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
 
   // Handle answer change
   const handleAnswerChange = (questionOptionName: string, value: any) => {
+    console.log('Answer changed:', questionOptionName, value);
     setAnswers(prev => ({
       ...prev,
       [questionOptionName]: value
@@ -162,13 +193,14 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
     onSubmit(answers as PlanningFormValues, events);
   };
 
-  // Clean label text from any unwanted characters or encoding issues
+  // Enhanced label cleaning function
   const cleanLabel = (label: string): string => {
     if (!label) return '';
-    // Remove any trailing 'o' characters and other unwanted characters, then trim
+    
     return label
       .replace(/o+$/, '') // Remove trailing 'o' characters
       .replace(/[^\w\s\-\(\)\/\?\.\,\:àáâäèéêëìíîïòóôöùúûüÿñç]/gi, '') // Remove special characters
+      .replace(/\s+/g, ' ') // Replace multiple spaces with single space
       .trim(); // Trim whitespace
   };
 
@@ -177,14 +209,20 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
     const value = answers[question.option_name];
     const cleanedLabel = cleanLabel(question.label);
 
-    // For type "fixe", just show the duration
+    console.log('Rendering question:', question.id, question.type, cleanedLabel);
+
+    // For type "fixe", show as read-only info with duration
     if (question.type === 'fixe') {
       return (
-        <div className="bg-gray-50 p-3 rounded-md">
-          <span className="text-sm text-gray-600">Activité fixe incluse</span>
-          {question.duree_minutes && (
-            <span className="ml-2 text-sm font-medium">({question.duree_minutes} min)</span>
-          )}
+        <div className="bg-gray-50 p-4 rounded-md border">
+          <div className="flex justify-between items-center">
+            <span className="text-sm font-medium text-gray-700">Activité incluse automatiquement</span>
+            {question.duree_minutes && question.duree_minutes > 0 && (
+              <span className="text-sm font-semibold text-blue-600">
+                {question.duree_minutes} minutes
+              </span>
+            )}
+          </div>
         </div>
       );
     }
@@ -192,94 +230,137 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
     switch (question.type) {
       case 'choix':
         return (
-          <RadioGroup
-            value={value || ''}
-            onValueChange={(val) => handleAnswerChange(question.option_name, val)}
-          >
-            {Array.isArray(question.options) && question.options.map((option: any, index: number) => {
-              const optionValue = typeof option === 'string' ? option : option.valeur || option;
-              const optionLabel = typeof option === 'string' ? cleanLabel(option) : 
-                cleanLabel(option.label || `${option.valeur}${option.duree_minutes ? ` (${option.duree_minutes} min)` : ''}`);
-              
-              return (
-                <div key={index} className="flex items-center space-x-2">
-                  <RadioGroupItem value={optionValue} id={`${question.id}-${index}`} />
-                  <Label htmlFor={`${question.id}-${index}`}>{optionLabel}</Label>
-                </div>
-              );
-            })}
-          </RadioGroup>
+          <div className="space-y-2">
+            <RadioGroup
+              value={value || ''}
+              onValueChange={(val) => handleAnswerChange(question.option_name, val)}
+            >
+              {Array.isArray(question.options) && question.options.map((option: any, index: number) => {
+                const optionValue = typeof option === 'string' ? option : option.valeur || option;
+                const optionLabel = typeof option === 'string' ? cleanLabel(option) : 
+                  cleanLabel(option.label || `${option.valeur}${option.duree_minutes ? ` (${option.duree_minutes} min)` : ''}`);
+                
+                return (
+                  <div key={index} className="flex items-center space-x-2">
+                    <RadioGroupItem value={optionValue} id={`${question.id}-${index}`} />
+                    <Label htmlFor={`${question.id}-${index}`}>{optionLabel}</Label>
+                  </div>
+                );
+              })}
+            </RadioGroup>
+            {question.duree_minutes && question.duree_minutes > 0 && (
+              <p className="text-sm text-blue-600 font-medium">
+                Durée prévue: {question.duree_minutes} minutes
+              </p>
+            )}
+          </div>
         );
 
       case 'multi-choix':
         return (
           <div className="space-y-2">
-            {Array.isArray(question.options) && question.options.map((option: any, index: number) => {
-              const optionValue = typeof option === 'string' ? option : option.valeur || option;
-              const optionLabel = typeof option === 'string' ? cleanLabel(option) : 
-                cleanLabel(option.label || `${option.valeur}${option.duree_minutes ? ` (${option.duree_minutes} min)` : ''}`);
-              const checked = Array.isArray(value) && value.includes(optionValue);
+            <div className="space-y-2">
+              {Array.isArray(question.options) && question.options.map((option: any, index: number) => {
+                const optionValue = typeof option === 'string' ? option : option.valeur || option;
+                const optionLabel = typeof option === 'string' ? cleanLabel(option) : 
+                  cleanLabel(option.label || `${option.valeur}${option.duree_minutes ? ` (${option.duree_minutes} min)` : ''}`);
+                const checked = Array.isArray(value) && value.includes(optionValue);
 
-              return (
-                <div key={index} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={`${question.id}-${index}`}
-                    checked={checked}
-                    onCheckedChange={(isChecked) => {
-                      const currentValues = Array.isArray(value) ? value : [];
-                      const newValues = isChecked
-                        ? [...currentValues, optionValue]
-                        : currentValues.filter(v => v !== optionValue);
-                      handleAnswerChange(question.option_name, newValues);
-                    }}
-                  />
-                  <Label htmlFor={`${question.id}-${index}`}>{optionLabel}</Label>
-                </div>
-              );
-            })}
+                return (
+                  <div key={index} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={`${question.id}-${index}`}
+                      checked={checked}
+                      onCheckedChange={(isChecked) => {
+                        const currentValues = Array.isArray(value) ? value : [];
+                        const newValues = isChecked
+                          ? [...currentValues, optionValue]
+                          : currentValues.filter(v => v !== optionValue);
+                        handleAnswerChange(question.option_name, newValues);
+                      }}
+                    />
+                    <Label htmlFor={`${question.id}-${index}`}>{optionLabel}</Label>
+                  </div>
+                );
+              })}
+            </div>
+            {question.duree_minutes && question.duree_minutes > 0 && (
+              <p className="text-sm text-blue-600 font-medium">
+                Durée prévue: {question.duree_minutes} minutes
+              </p>
+            )}
           </div>
         );
 
       case 'time':
         return (
-          <Input
-            type="time"
-            value={value || ''}
-            onChange={(e) => handleAnswerChange(question.option_name, e.target.value)}
-            className="w-full max-w-[200px]"
-          />
+          <div className="space-y-2">
+            <Input
+              type="time"
+              value={value || ''}
+              onChange={(e) => handleAnswerChange(question.option_name, e.target.value)}
+              className="w-full max-w-[200px]"
+            />
+            {question.duree_minutes && question.duree_minutes > 0 && (
+              <p className="text-sm text-blue-600 font-medium">
+                Durée prévue: {question.duree_minutes} minutes
+              </p>
+            )}
+          </div>
         );
 
       case 'number':
         return (
-          <Input
-            type="number"
-            value={value || ''}
-            onChange={(e) => handleAnswerChange(question.option_name, e.target.value)}
-            className="w-full max-w-[200px]"
-          />
+          <div className="space-y-2">
+            <Input
+              type="number"
+              value={value || ''}
+              onChange={(e) => handleAnswerChange(question.option_name, e.target.value)}
+              className="w-full max-w-[200px]"
+            />
+            {question.duree_minutes && question.duree_minutes > 0 && (
+              <p className="text-sm text-blue-600 font-medium">
+                Durée prévue: {question.duree_minutes} minutes
+              </p>
+            )}
+          </div>
         );
 
       default:
         return (
-          <Input
-            type="text"
-            value={value || ''}
-            onChange={(e) => handleAnswerChange(question.option_name, e.target.value)}
-            className="w-full"
-          />
+          <div className="space-y-2">
+            <Input
+              type="text"
+              value={value || ''}
+              onChange={(e) => handleAnswerChange(question.option_name, e.target.value)}
+              className="w-full"
+            />
+            {question.duree_minutes && question.duree_minutes > 0 && (
+              <p className="text-sm text-blue-600 font-medium">
+                Durée prévue: {question.duree_minutes} minutes
+              </p>
+            )}
+          </div>
         );
     }
   };
 
-  // Render preparatifs section with custom structure
+  // Render preparatifs section with enhanced logic
   const renderPreparatifsSection = () => {
-    const preparatifsQuestions = questions.filter(q => 
-      q.categorie === 'preparatifs_final' || q.categorie === 'preparatifs_1'
+    console.log('Rendering preparatifs section, answers:', answers);
+    
+    const preparatifsBaseQuestions = questions.filter(q => 
+      q.categorie === 'preparatifs_final' || 
+      q.categorie === 'preparatifs_1' ||
+      q.categorie === 'préparatifs'
     ).filter(q => isQuestionVisible(q));
     
     const preparatifs2Questions = questions.filter(q => q.categorie === 'preparatifs_2')
       .filter(q => isQuestionVisible(q));
+    
+    console.log('Base preparatifs questions:', preparatifsBaseQuestions);
+    console.log('Preparatifs 2 questions:', preparatifs2Questions);
+    console.log('Should show preparatifs 2?', answers.double_ceremonie === "oui");
     
     return (
       <div className="space-y-8">
@@ -287,15 +368,15 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
         <div>
           <h3 className="text-lg font-semibold mb-4">Préparatifs avant la cérémonie</h3>
           <div className="space-y-6">
-            {preparatifsQuestions.map((question) => (
+            {preparatifsBaseQuestions.map((question) => (
               <div key={question.id} className="space-y-3">
                 <Label className="text-base font-medium">{cleanLabel(question.label)}</Label>
-                {question.duree_minutes && question.duree_minutes > 0 && (
-                  <p className="text-sm text-muted-foreground">Durée prévue: {question.duree_minutes} minutes</p>
-                )}
                 {renderQuestionInput(question)}
               </div>
             ))}
+            {preparatifsBaseQuestions.length === 0 && (
+              <p className="text-gray-500 italic">Aucune question de préparatifs trouvée.</p>
+            )}
           </div>
         </div>
 
@@ -310,12 +391,12 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
               {preparatifs2Questions.map((question) => (
                 <div key={question.id} className="space-y-3">
                   <Label className="text-base font-medium">{cleanLabel(question.label)}</Label>
-                  {question.duree_minutes && question.duree_minutes > 0 && (
-                    <p className="text-sm text-muted-foreground">Durée prévue: {question.duree_minutes} minutes</p>
-                  )}
                   {renderQuestionInput(question)}
                 </div>
               ))}
+              {preparatifs2Questions.length === 0 && (
+                <p className="text-gray-500 italic">Aucune question de préparatifs pour la 2ème cérémonie trouvée.</p>
+              )}
             </div>
           </div>
         )}
@@ -330,6 +411,9 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
   const currentQuestions = getCurrentQuestions();
   const currentCategory = getCurrentCategory();
   const isLastStep = currentStep === availableCategories.length - 1;
+
+  console.log('Current category:', currentCategory);
+  console.log('Current questions:', currentQuestions);
 
   return (
     <div className="space-y-6">
@@ -346,15 +430,19 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
         {currentCategory === 'préparatifs' ? (
           renderPreparatifsSection()
         ) : (
-          currentQuestions.map((question) => (
-            <div key={question.id} className="space-y-3">
-              <Label className="text-base font-medium">{cleanLabel(question.label)}</Label>
-              {question.duree_minutes && question.duree_minutes > 0 && (
-                <p className="text-sm text-muted-foreground">Durée prévue: {question.duree_minutes} minutes</p>
-              )}
-              {renderQuestionInput(question)}
-            </div>
-          ))
+          <>
+            {currentQuestions.map((question) => (
+              <div key={question.id} className="space-y-3">
+                <Label className="text-base font-medium">{cleanLabel(question.label)}</Label>
+                {renderQuestionInput(question)}
+              </div>
+            ))}
+            {currentQuestions.length === 0 && currentCategory && (
+              <p className="text-gray-500 italic">
+                Aucune question trouvée pour la catégorie "{currentCategory}".
+              </p>
+            )}
+          </>
         )}
       </div>
 
