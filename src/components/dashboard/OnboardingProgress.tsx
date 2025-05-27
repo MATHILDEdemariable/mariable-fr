@@ -67,7 +67,7 @@ const OnboardingProgress: React.FC = () => {
     },
     {
       icon: <Phone className="h-8 w-8" />,
-      title: "Réjoignez la communauté WhatsApp",
+      title: "Rejoignez la communauté WhatsApp",
       description: "Entraide entre futurs mariés",
       link: "https://chat.whatsapp.com/FXWrEnOVBxz7xz2yMPnuVo",
       completed: false,
@@ -101,12 +101,12 @@ const OnboardingProgress: React.FC = () => {
                 onClick={() => handleStepClick(step)}
               >
                 <div className={cn(
-                  "flex items-center justify-center rounded-full p-3 mb-2 transition-all",
+                  "flex items-center justify-center rounded-full p-3 mb-2 transition-all border-2",
                   step.current 
-                    ? "bg-wedding-olive text-white shadow-lg" 
+                    ? "bg-wedding-olive text-white shadow-lg border-wedding-olive" 
                     : step.completed 
-                      ? "bg-wedding-olive/80 text-white" 
-                      : "bg-gray-100 text-gray-400"
+                      ? "bg-wedding-olive/80 text-white border-wedding-olive/80" 
+                      : "bg-wedding-cream/50 text-wedding-olive border-wedding-olive/30 hover:bg-wedding-olive/10"
                 )}>
                   {step.icon}
                 </div>
@@ -115,7 +115,7 @@ const OnboardingProgress: React.FC = () => {
                 <span className={cn(
                   "text-xs font-medium text-center transition-all max-w-[90px]",
                   isMobile ? "hidden" : "block",
-                  step.current ? "text-wedding-olive" : "text-gray-500"
+                  step.current ? "text-wedding-olive font-semibold" : "text-gray-500"
                 )}>
                   {step.title}
                 </span>
@@ -125,7 +125,7 @@ const OnboardingProgress: React.FC = () => {
               {index < steps.length - 1 && (
                 <div className={cn(
                   "h-0.5 flex-grow mx-1 relative z-0",
-                  step.completed ? "bg-wedding-olive" : "bg-gray-200"
+                  step.completed ? "bg-wedding-olive" : "bg-wedding-cream/60"
                 )} />
               )}
             </React.Fragment>
@@ -133,7 +133,7 @@ const OnboardingProgress: React.FC = () => {
         </div>
       </div>
       
-      {/* Bottom claim banner - Changed from blue to wedding-olive color */}
+      {/* Bottom claim banner - using wedding-olive color */}
       <div className="bg-wedding-olive text-white rounded-full py-4 px-6 text-center my-6">
         <p className="text-xl font-serif">Moins de stress, plus d'amour.</p>
       </div>

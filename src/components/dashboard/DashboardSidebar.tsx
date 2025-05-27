@@ -14,6 +14,7 @@ import {
   CheckSquare
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { cn } from '@/lib/utils';
 
 interface DashboardSidebarProps {
   isReaderMode?: boolean;
@@ -75,7 +76,10 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
   };
   
   const isActive = (path: string) => {
-    return location.pathname === path;
+    if (path === '/dashboard') {
+      return location.pathname === path;
+    }
+    return location.pathname.startsWith(path);
   };
 
   return (
@@ -94,11 +98,13 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
                 e.preventDefault();
               }
             }}
-            className={`flex items-center px-3 py-2.5 text-sm font-medium rounded-md ${
+            className={cn(
+              "flex items-center px-3 py-2.5 text-sm font-medium rounded-md transition-colors",
               isActive(item.path)
-                ? 'bg-wedding-olive text-white'
-                : 'text-gray-600 hover:bg-gray-100'
-            } ${isReaderMode ? 'pointer-events-none opacity-70' : ''}`}
+                ? 'bg-wedding-olive text-white shadow-sm'
+                : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive',
+              isReaderMode ? 'pointer-events-none opacity-70' : ''
+            )}
           >
             {item.icon}
             <span className="ml-3">{item.label}</span>
