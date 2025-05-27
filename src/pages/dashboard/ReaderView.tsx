@@ -19,7 +19,11 @@ interface PublicProfile {
 
 interface DashboardData {
   profile: PublicProfile;
-  // Add other dashboard data as needed
+  progressData: Array<{
+    label: string;
+    completed: boolean;
+    percentage: number;
+  }>;
 }
 
 const ReaderView: React.FC = () => {
@@ -39,11 +43,11 @@ const ReaderView: React.FC = () => {
       try {
         console.log('Validating token:', token);
         
-        // Validate token and get user_id
-        const { data: tokenData, error: tokenError } = await supabase
+        // Validate token using the RPC function
+        const { data: tokenValidation, error: tokenError } = await supabase
           .rpc('validate_share_token', { token_value: token });
 
-        console.log('Token validation result:', tokenData, tokenError);
+        console.log('Token validation result:', tokenValidation, tokenError);
 
         if (tokenError) {
           console.error('Token validation error:', tokenError);
@@ -52,16 +56,16 @@ const ReaderView: React.FC = () => {
           return;
         }
 
-        if (!tokenData || tokenData.length === 0 || !tokenData[0].is_valid) {
+        if (!tokenValidation || tokenValidation.length === 0 || !tokenValidation[0].is_valid) {
           setError('Lien invalide ou expiré');
           setLoading(false);
           return;
         }
 
-        const userId = tokenData[0].user_id;
+        const userId = tokenValidation[0].user_id;
         console.log('Valid token for user:', userId);
 
-        // Fetch user profile
+        // Fetch user profile data
         const { data: profileData, error: profileError } = await supabase
           .from('profiles')
           .select('first_name, last_name, wedding_date, guest_count')
@@ -75,8 +79,18 @@ const ReaderView: React.FC = () => {
           return;
         }
 
+        // Mock progress data - in a real implementation, this would come from actual user data
+        const progressData = [
+          { label: 'Planning personnalisé', completed: false, percentage: 25 },
+          { label: 'Budget défini', completed: false, percentage: 40 },
+          { label: 'Prestataires contactés', completed: false, percentage: 60 },
+          { label: 'Wishlist créée', completed: false, percentage: 75 },
+          { label: 'Tâches planifiées', completed: false, percentage: 15 }
+        ];
+
         setDashboardData({
-          profile: profileData
+          profile: profileData,
+          progressData
         });
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
@@ -110,20 +124,10 @@ const ReaderView: React.FC = () => {
     );
   }
 
-  const { profile } = dashboardData!;
+  const { profile, progressData } = dashboardData!;
   const weddingDate = profile?.wedding_date ? new Date(profile.wedding_date) : null;
   const daysUntilWedding = weddingDate ? differenceInDays(weddingDate, new Date()) : null;
   const coupleName = [profile?.first_name, profile?.last_name].filter(Boolean).join(' ') || 'Le couple';
-
-  // Mock progress data - in a real implementation, this would come from the database
-  const progressData = [
-    { label: 'Planning personnalisé', completed: false, percentage: 25 },
-    { label: 'Budget défini', completed: false, percentage: 40 },
-    { label: 'Prestataires contactés', completed: false, percentage: 60 },
-    { label: 'Wishlist créée', completed: false, percentage: 75 },
-    { label: 'Tâches planifiées', completed: false, percentage: 15 }
-  ];
-
   const averageProgress = progressData.reduce((acc, item) => acc + item.percentage, 0) / progressData.length;
 
   return (

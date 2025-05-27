@@ -45,22 +45,45 @@ export const validateShareToken = async (token: string | null): Promise<{
 };
 
 /**
- * Sets the share token header for anonymous requests
+ * Generates a new share token for a user
  */
-export const setShareTokenHeader = (token: string) => {
-  // Use a custom header for share token
-  const customHeaders = {
-    'x-share-token': token
-  };
-  
-  // Set headers for auth and functions as needed
-  if (supabase.functions && typeof supabase.functions.setAuth === 'function') {
-    supabase.functions.setAuth(token);
+export const generateShareToken = async (userId: string): Promise<string | null> => {
+  try {
+    // Check if user already has an active token
+    const { data: existingToken, error: fetchError } = await supabase
+      .from('dashboard_share_tokens')
+      .select('token')
+      .eq('user_id', userId)
+      .eq('active', true)
+      .maybeSingle();
+    
+    if (fetchError && fetchError.code !== 'PGRST116') {
+      throw fetchError;
+    }
+    
+    if (existingToken?.token) {
+      return existingToken.token;
+    }
+    
+    // Generate new token
+    const { v4: uuidv4 } = await import('uuid');
+    const token = uuidv4();
+    
+    const { error: insertError } = await supabase
+      .from('dashboard_share_tokens')
+      .insert({
+        token,
+        user_id: userId,
+        expires_at: null, // Permanent token
+        description: 'Lien de partage public du tableau de bord',
+        active: true
+      });
+    
+    if (insertError) throw insertError;
+    
+    return token;
+  } catch (error) {
+    console.error('Error generating share token:', error);
+    return null;
   }
-  
-  // Add header to all requests as a fallback
-  (supabase as any).headers = {
-    ...(supabase as any).headers,
-    ...customHeaders
-  };
 };

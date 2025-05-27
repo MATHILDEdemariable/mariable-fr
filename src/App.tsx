@@ -128,10 +128,12 @@ const App = () => {
                 <Route path="/register" element={<Register />} />
                 <Route path="/auth/email-confirmation" element={<EmailConfirmation />} />
                 <Route path="/auth/callback" element={<Callback />} />
-                <Route path="/dashboard/*" element={<UserDashboard />} />
                 
-                {/* Public Reader View - accessible without authentication */}
+                {/* Public Reader View - MUST come before protected dashboard routes */}
                 <Route path="/dashboard/lecteur/:token" element={<ReaderView />} />
+                
+                {/* Protected Dashboard Routes */}
+                <Route path="/dashboard/*" element={<UserDashboard />} />
                 
                 {/* Redirect for old privacy policy route */}
                 <Route path="/politique-confidentialite" element={<Navigate to="/mentions-legales" replace />} />

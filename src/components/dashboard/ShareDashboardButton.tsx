@@ -25,20 +25,39 @@ const ShareDashboardButton = () => {
         throw new Error("Utilisateur non connecté");
       }
       
-      const token = uuidv4();
-      
-      // Insert permanent token (no expiry)
-      const { error } = await supabase
+      // Check if user already has an active token
+      const { data: existingTokens, error: fetchError } = await supabase
         .from('dashboard_share_tokens')
-        .insert({
-          token,
-          user_id: sessionData.session.user.id,
-          expires_at: null, // Make it permanent
-          description: 'Lien de partage public du tableau de bord',
-          active: true
-        });
+        .select('token')
+        .eq('user_id', sessionData.session.user.id)
+        .eq('active', true)
+        .maybeSingle();
       
-      if (error) throw error;
+      if (fetchError && fetchError.code !== 'PGRST116') {
+        throw fetchError;
+      }
+      
+      let token;
+      
+      if (existingTokens?.token) {
+        // Use existing token
+        token = existingTokens.token;
+      } else {
+        // Generate new token
+        token = uuidv4();
+        
+        const { error: insertError } = await supabase
+          .from('dashboard_share_tokens')
+          .insert({
+            token,
+            user_id: sessionData.session.user.id,
+            expires_at: null, // Permanent token
+            description: 'Lien de partage public du tableau de bord',
+            active: true
+          });
+        
+        if (insertError) throw insertError;
+      }
       
       const shareUrl = `${window.location.origin}/dashboard/lecteur/${token}`;
       setShareLink(shareUrl);
