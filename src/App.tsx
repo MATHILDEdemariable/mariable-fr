@@ -69,6 +69,7 @@ const helmetContext = {};
 
 import { ReaderModeProvider } from './contexts/ReaderModeContext';
 import ReaderView from './pages/dashboard/ReaderView';
+import AnalyticsProvider from './components/analytics/AnalyticsProvider';
 
 const App = () => {
   return(
@@ -79,88 +80,90 @@ const App = () => {
           <Toaster />
           <Sonner />
           <BrowserRouter>
-            <Routes>
-              {/* Make LandingPage the main route */}
-              <Route path="/" element={<LandingPage />} />
-              
-              {/* Old index page is now accessible via /home */}
-              <Route path="/home" element={<Index />} />
-              
-              {/* Redirect old landing page route to home */}
-              <Route path="/landing" element={<Navigate to="/" replace />} />
-              
-              {/* Professionals page */}
-              <Route path="/professionnels" element={<Professionnels />} />
-              
-              {/* Services pages */}
-              <Route path="/services/prestataires" element={<Prestataires />} />
-              <Route path="/services/planification" element={<Planification />} />
-              <Route path="/services/budget" element={<Budget />} />
-              <Route path="/services/conseils" element={<Conseils />} />
-              <Route path="/services/jour-j" element={<JourJ />} />
-              
-              {/* Checklist page */}
-              <Route path="/checklist-mariage" element={<ChecklistMariage />} />
-              
-              {/* Guide Mariable */}
-              <Route path="/guide-mariable" element={<GuideMariable />} />
-              <Route path="/guide-mariable-frame" element={<GuideMariableFrame />} />
-              <Route path="/login-frame" element={<LoginFrame />} />
-              
-              {/* About pages */}
-              <Route path="/about/histoire" element={<Histoire />} />
-              <Route path="/about/charte" element={<Charte />} />
-              <Route path="/about/temoignages" element={<Temoignages />} />
-              <Route path="/about/approche" element={<Approche />} />
-              
-              {/* Contact pages */}
-              <Route path="/contact/nous-contacter" element={<NousContacter />} />
-              <Route path="/contact/faq" element={<FAQ />} />
-              
-              {/* Legal pages */}
-              <Route path="/mentions-legales" element={<MentionsLegales />} />
-              <Route path="/cgv" element={<CGV />} />
-              
-              {/* Auth Routes */}
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/auth/email-confirmation" element={<EmailConfirmation />} />
-              <Route path="/auth/callback" element={<Callback />} />
-              <Route path="/dashboard/*" element={<UserDashboard />} />
-              <Route path="/dashboard/lecteur/:token" element={<ReaderView />} />
-              
-              {/* Redirect for old privacy policy route */}
-              <Route path="/politique-confidentialite" element={<Navigate to="/mentions-legales" replace />} />
-              
-              {/* Demo page */}
-              <Route path="/demo" element={<Demo />} />
-              {/* <Route path="/preview" element={<Preview />} /> */}
-              <Route path="/prestataire/:slug" element={<SinglePrestataire />} />
-              
-              {/* Moteur de recherche page - now accessible via /guide-mariable route as well */}
-              <Route path="/recherche" element={<MoteurRecherche />} />
-              <Route path="/guide-mariable" element={<MoteurRecherche />} />
-              
-              {/* Test Formulaire */}
-              <Route path="/test-formulaire" element={<TestFormulaire />} />
-              <Route path="/test-assistant-virtuel" element={<TestAssistantVirtuel />} />
-              <Route path="/assistant-v2" element={<WeddingAssistantV2 />} />
-              <Route path="/planning-personnalise" element={<PlanningPersonnalise />} />
-              <Route path="/planning-personnalise/resultats" element={<PlanningResultatsPersonnalises />} />
-              
-              {/* Import Airtable */}
-              <Route path="/import-airtable" element={<ImportAirtable />} />
-              
-              {/* Admin Routes */}
-              <Route path="/admin/prestataires" element={<AdminPrestataires />} />
-              
-              {/* Prestataire Routes */}
-              <Route path="/prestataire/tracking" element={<TrackingPage />} />
-              <Route path="/prestataire/contact" element={<ContactTracking />} />
-              
-              {/* Catch-all route */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+            <AnalyticsProvider>
+              <Routes>
+                {/* Make LandingPage the main route */}
+                <Route path="/" element={<LandingPage />} />
+                
+                {/* Old index page is now accessible via /home */}
+                <Route path="/home" element={<Index />} />
+                
+                {/* Redirect old landing page route to home */}
+                <Route path="/landing" element={<Navigate to="/" replace />} />
+                
+                {/* Professionals page */}
+                <Route path="/professionnels" element={<Professionnels />} />
+                
+                {/* Services pages */}
+                <Route path="/services/prestataires" element={<Prestataires />} />
+                <Route path="/services/planification" element={<Planification />} />
+                <Route path="/services/budget" element={<Budget />} />
+                <Route path="/services/conseils" element={<Conseils />} />
+                <Route path="/services/jour-j" element={<JourJ />} />
+                
+                {/* Checklist page */}
+                <Route path="/checklist-mariage" element={<ChecklistMariage />} />
+                
+                {/* Guide Mariable */}
+                <Route path="/guide-mariable" element={<GuideMariable />} />
+                <Route path="/guide-mariable-frame" element={<GuideMariableFrame />} />
+                <Route path="/login-frame" element={<LoginFrame />} />
+                
+                {/* About pages */}
+                <Route path="/about/histoire" element={<Histoire />} />
+                <Route path="/about/charte" element={<Charte />} />
+                <Route path="/about/temoignages" element={<Temoignages />} />
+                <Route path="/about/approche" element={<Approche />} />
+                
+                {/* Contact pages */}
+                <Route path="/contact/nous-contacter" element={<NousContacter />} />
+                <Route path="/contact/faq" element={<FAQ />} />
+                
+                {/* Legal pages */}
+                <Route path="/mentions-legales" element={<MentionsLegales />} />
+                <Route path="/cgv" element={<CGV />} />
+                
+                {/* Auth Routes */}
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/auth/email-confirmation" element={<EmailConfirmation />} />
+                <Route path="/auth/callback" element={<Callback />} />
+                <Route path="/dashboard/*" element={<UserDashboard />} />
+                <Route path="/dashboard/lecteur/:token" element={<ReaderView />} />
+                
+                {/* Redirect for old privacy policy route */}
+                <Route path="/politique-confidentialite" element={<Navigate to="/mentions-legales" replace />} />
+                
+                {/* Demo page */}
+                <Route path="/demo" element={<Demo />} />
+                {/* <Route path="/preview" element={<Preview />} /> */}
+                <Route path="/prestataire/:slug" element={<SinglePrestataire />} />
+                
+                {/* Moteur de recherche page - now accessible via /guide-mariable route as well */}
+                <Route path="/recherche" element={<MoteurRecherche />} />
+                <Route path="/guide-mariable" element={<MoteurRecherche />} />
+                
+                {/* Test Formulaire */}
+                <Route path="/test-formulaire" element={<TestFormulaire />} />
+                <Route path="/test-assistant-virtuel" element={<TestAssistantVirtuel />} />
+                <Route path="/assistant-v2" element={<WeddingAssistantV2 />} />
+                <Route path="/planning-personnalise" element={<PlanningPersonnalise />} />
+                <Route path="/planning-personnalise/resultats" element={<PlanningResultatsPersonnalises />} />
+                
+                {/* Import Airtable */}
+                <Route path="/import-airtable" element={<ImportAirtable />} />
+                
+                {/* Admin Routes */}
+                <Route path="/admin/prestataires" element={<AdminPrestataires />} />
+                
+                {/* Prestataire Routes */}
+                <Route path="/prestataire/tracking" element={<TrackingPage />} />
+                <Route path="/prestataire/contact" element={<ContactTracking />} />
+                
+                {/* Catch-all route */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </AnalyticsProvider>
           </BrowserRouter>
         </TooltipProvider>
       </ReaderModeProvider>
