@@ -929,6 +929,39 @@ export type Database = {
         }
         Relationships: []
       }
+      user_planning_responses: {
+        Row: {
+          completed_steps: string[] | null
+          created_at: string | null
+          generated_tasks: Json | null
+          id: string
+          progress_percentage: number | null
+          responses: Json
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          completed_steps?: string[] | null
+          created_at?: string | null
+          generated_tasks?: Json | null
+          id?: string
+          progress_percentage?: number | null
+          responses?: Json
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          completed_steps?: string[] | null
+          created_at?: string | null
+          generated_tasks?: Json | null
+          id?: string
+          progress_percentage?: number | null
+          responses?: Json
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_quiz_results: {
         Row: {
           categories: Json | null

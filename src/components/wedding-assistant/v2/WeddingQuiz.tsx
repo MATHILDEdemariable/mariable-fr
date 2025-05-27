@@ -1,557 +1,289 @@
-
 import React, { useState, useEffect } from 'react';
-import { QuizQuestion, UserAnswers, PlanningResult, QuizScoring, SECTION_ORDER, UserQuizResult } from './types';
-import { Button } from "@/components/ui/button";
-import { supabase } from '@/integrations/supabase/client';
-import { useNavigate } from 'react-router-dom';
-import { ArrowRight, CalendarIcon, ArrowLeft, CheckCircle } from 'lucide-react';
-import { Separator } from '@/components/ui/separator';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
+import { CheckCircle2, ArrowRight, ArrowLeft, Save } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
-import StepIndicator from './StepIndicator';
-import { useIsMobile } from '@/hooks/use-mobile';
-import { Json } from '@/integrations/supabase/types';
-import EmailCaptureForm from './EmailCaptureForm';
-import { generateTasksFromQuizResult } from './taskGenerator';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Link } from 'react-router-dom';
-import { Card, CardContent } from "@/components/ui/card";
+import { generateTasks } from './taskGenerator';
+import { generateQuizResult, saveQuizResult } from './types';
+import { usePersistentQuiz } from '@/hooks/usePersistentQuiz';
+import { useProgressTracking } from '@/hooks/useProgressTracking';
+
+const questions = [
+  {
+    id: 'wedding_size',
+    question: 'Quelle est la taille de votre mariage ?',
+    type: 'single',
+    options: ['Petit (moins de 50 invités)', 'Moyen (50-150 invités)', 'Grand (plus de 150 invités)'],
+  },
+  {
+    id: 'wedding_style',
+    question: 'Quel est le style de votre mariage ?',
+    type: 'multiple',
+    options: ['Romantique', 'Moderne', 'Champêtre', 'Bohème', 'Traditionnel'],
+  },
+  {
+    id: 'planning_progress',
+    question: 'Où en êtes-vous dans la planification de votre mariage ?',
+    type: 'scale',
+  },
+  {
+    id: 'budget_importance',
+    question: 'Quelle importance accordez-vous au budget ?',
+    type: 'scale',
+  },
+  {
+    id: 'stress_level',
+    question: 'Quel est votre niveau de stress actuel concernant le mariage ?',
+    type: 'scale',
+  },
+];
 
 const WeddingQuiz: React.FC = () => {
-  const [questions, setQuestions] = useState<QuizQuestion[]>([]);
-  const [scoringRules, setScoringRules] = useState<QuizScoring[]>([]);
-  const [currentSection, setCurrentSection] = useState<string>("");
-  const [userAnswers, setUserAnswers] = useState<UserAnswers>({});
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
-  const [result, setResult] = useState<PlanningResult | null>(null);
-  const [showResult, setShowResult] = useState(false);
-  const [showEmailCapture, setShowEmailCapture] = useState(false);
-  const navigate = useNavigate();
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [answers, setAnswers] = useState<Record<string, any>>({});
+  const [isCompleted, setIsCompleted] = useState(false);
+  const [result, setResult] = useState<any>(null);
   const { toast } = useToast();
-  const isMobile = useIsMobile();
-  
-  // Déterminer les sections distinctes pour l'indicateur d'étapes
-  const [sections, setSections] = useState<string[]>([]);
-  const [currentStep, setCurrentStep] = useState(1);
-  const [sectionsCompleted, setSectionsCompleted] = useState<{[key: string]: boolean}>({});
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  
+  const { quizData, saveQuizResponse } = usePersistentQuiz();
+  const { updateProgress } = useProgressTracking();
+
+  // Load existing responses
   useEffect(() => {
-    // Check if user is authenticated
-    const checkAuth = async () => {
-      const { data } = await supabase.auth.getUser();
-      setIsAuthenticated(!!data.user);
-    };
-    
-    checkAuth();
-    fetchQuizData();
-  }, []);
-  
-  // Effet pour mettre à jour currentStep en fonction de la section actuelle
+    if (quizData?.responses && Object.keys(quizData.responses).length > 0) {
+      setAnswers(quizData.responses);
+      if (quizData.completed) {
+        setIsCompleted(true);
+        // Load quiz result from localStorage or generate from responses
+        const savedResult = localStorage.getItem('quizResult');
+        if (savedResult) {
+          setResult(JSON.parse(savedResult));
+        }
+      }
+    }
+  }, [quizData]);
+
+  // Auto-save responses when answers change
   useEffect(() => {
-    if (currentSection && sections.length > 0) {
-      const sectionIndex = sections.indexOf(currentSection);
-      if (sectionIndex >= 0) {
-        setCurrentStep(sectionIndex + 1);
-      }
+    if (Object.keys(answers).length > 0) {
+      const timeoutId = setTimeout(() => {
+        saveQuizResponse(answers);
+      }, 1000); // Debounce by 1 second
+
+      return () => clearTimeout(timeoutId);
     }
-  }, [currentSection, sections]);
+  }, [answers, saveQuizResponse]);
 
-  const fetchQuizData = async () => {
-    setIsLoading(true);
-    try {
-      const { data: questionsData, error: questionsError } = await supabase
-        .from('quiz_questions')
-        .select('*')
-        .order('order_index', { ascending: true });
-      
-      if (questionsError) throw questionsError;
-      
-      const { data: scoringData, error: scoringError } = await supabase
-        .from('quiz_scoring')
-        .select('*');
-      
-      if (scoringError) throw scoringError;
-      
-      if (questionsData && questionsData.length > 0) {
-        // Convertir les données JSON en types appropriés
-        const formattedQuestions: QuizQuestion[] = questionsData.map(q => ({
-          ...q,
-          options: parseJsonArray<string>(q.options),
-          scores: parseJsonArray<number>(q.scores)
-        }));
-        
-        const formattedScoring: QuizScoring[] = scoringData?.map(s => ({
-          ...s,
-          objectives: parseJsonArray<string>(s.objectives),
-          categories: parseJsonArray<string>(s.categories)
-        })) || [];
-
-        // Trier les questions selon l'ordre prédéfini des sections
-        const sortedQuestions = sortQuestionsBySectionOrder(formattedQuestions);
-        
-        setQuestions(sortedQuestions);
-        setScoringRules(formattedScoring);
-        setCurrentSection(sortedQuestions[0].section);
-        
-        // Utiliser l'ordre prédéfini des sections au lieu de l'extraire des questions
-        const availableSections = SECTION_ORDER.filter(section => 
-          sortedQuestions.some(q => q.section === section)
-        );
-        setSections(availableSections);
-        
-        // Initialiser sections complétées
-        const initialSectionsCompleted: {[key: string]: boolean} = {};
-        availableSections.forEach(section => {
-          initialSectionsCompleted[section] = false;
-        });
-        setSectionsCompleted(initialSectionsCompleted);
-      }
-    } catch (error) {
-      console.error('Error fetching quiz data:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible de charger les questions du quiz.",
-        variant: "destructive"
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // Fonction pour trier les questions selon l'ordre prédéfini des sections
-  const sortQuestionsBySectionOrder = (questions: QuizQuestion[]): QuizQuestion[] => {
-    return [...questions].sort((a, b) => {
-      // D'abord, comparer selon l'ordre des sections
-      const sectionIndexA = SECTION_ORDER.indexOf(a.section);
-      const sectionIndexB = SECTION_ORDER.indexOf(b.section);
-      
-      if (sectionIndexA !== sectionIndexB) {
-        return sectionIndexA - sectionIndexB;
-      }
-      
-      // Ensuite, pour les questions de la même section, utiliser order_index
-      return a.order_index - b.order_index;
-    });
-  };
-
-  // Fonction utilitaire pour analyser le JSON de manière sécurisée
-  const parseJsonArray = <T,>(jsonValue: Json): T[] => {
-    if (Array.isArray(jsonValue)) {
-      return jsonValue as T[];
-    }
-    // Si la valeur n'est pas un tableau, renvoyer un tableau vide
-    return [];
-  };
-
-  const handleAnswer = (questionId: string, scoreIndex: number) => {
-    setUserAnswers(prev => ({
-      ...prev,
-      [questionId]: scoreIndex
-    }));
+  const handleAnswer = (questionId: string, answer: any) => {
+    const newAnswers = { ...answers, [questionId]: answer };
+    setAnswers(newAnswers);
   };
 
   const handleNext = () => {
-    // Si on est à la dernière question de la section actuelle
-    const currentSectionQuestions = questions.filter(q => q.section === currentSection);
-    const isLastQuestionInSection = 
-      currentSectionQuestions.findIndex(q => q.id === questions[currentQuestionIndex].id) === 
-      currentSectionQuestions.length - 1;
-    
-    if (isLastQuestionInSection) {
-      // Marquer cette section comme complétée
-      setSectionsCompleted(prev => ({
-        ...prev,
-        [currentSection]: true
-      }));
-      
-      // Trouver la prochaine section non complétée
-      const nextSectionIndex = sections.indexOf(currentSection) + 1;
-      
-      // Si nous avons atteint la dernière section
-      if (nextSectionIndex >= sections.length) {
-        calculateResult();
-        
-        // Si l'utilisateur est authentifié, montrer directement les résultats
-        // Sinon, afficher le formulaire de capture d'email
-        if (isAuthenticated) {
-          saveQuizResultAndGenerateTasks(null);
-          setShowResult(true);
-        } else {
-          setShowEmailCapture(true);
-        }
-      } else {
-        // Passer à la première question de la section suivante
-        const nextSection = sections[nextSectionIndex];
-        setCurrentSection(nextSection);
-        const nextSectionFirstQuestionIndex = questions.findIndex(q => q.section === nextSection);
-        setCurrentQuestionIndex(nextSectionFirstQuestionIndex);
-      }
+    if (currentQuestion < questions.length - 1) {
+      setCurrentQuestion(currentQuestion + 1);
     } else {
-      // Simplement passer à la question suivante dans la même section
-      setCurrentQuestionIndex(prevIndex => prevIndex + 1);
+      handleComplete();
     }
   };
 
   const handlePrevious = () => {
-    if (currentQuestionIndex > 0) {
-      const prevQuestion = questions[currentQuestionIndex - 1];
-      // Si la question précédente est d'une section différente
-      if (prevQuestion.section !== currentSection) {
-        setCurrentSection(prevQuestion.section);
-      }
-      setCurrentQuestionIndex(prevIndex => prevIndex - 1);
+    if (currentQuestion > 0) {
+      setCurrentQuestion(currentQuestion - 1);
     }
   };
 
-  const calculateResult = () => {
-    // Calculer le score total
-    let totalScore = 0;
-    let answeredCount = 0;
-    
-    Object.entries(userAnswers).forEach(([questionId, answerIndex]) => {
-      const question = questions.find(q => q.id === questionId);
-      if (question && question.scores[answerIndex] !== undefined) {
-        totalScore += question.scores[answerIndex];
-        answeredCount++;
-      }
-    });
-    
-    // Normaliser le score si nécessaire
-    const normalizedScore = answeredCount > 0 ? Math.round(totalScore / answeredCount * 10) : 0;
-    
-    // Trouver la règle de scoring applicable
-    const applicableRule = scoringRules.find(rule => 
-      normalizedScore >= rule.score_min && normalizedScore <= rule.score_max
-    );
-    
-    if (applicableRule) {
-      setResult({
-        score: normalizedScore,
-        status: applicableRule.status,
-        objectives: applicableRule.objectives,
-        categories: applicableRule.categories
-      });
-    } else {
-      setResult({
-        score: normalizedScore,
-        status: "Non défini",
-        objectives: ["Planifier votre mariage étape par étape"],
-        categories: ["Organisation générale"]
-      });
-    }
-  };
-
-  const handleStepClick = (stepIndex: number) => {
-    // Seulement permettre de naviguer vers des sections déjà complétées
-    const targetSection = sections[stepIndex - 1];
-    if (sectionsCompleted[targetSection] || targetSection === currentSection) {
-      setCurrentSection(targetSection);
-      // Trouver l'index de la première question de cette section
-      const firstQuestionIndex = questions.findIndex(q => q.section === targetSection);
-      if (firstQuestionIndex >= 0) {
-        setCurrentQuestionIndex(firstQuestionIndex);
-      }
-    }
-  };
-
-  // Déterminer le niveau en fonction du score
-  const getLevel = (score: number): string => {
-    if (score <= 3) return 'Début';
-    if (score <= 7) return 'Milieu';
-    return 'Fin';
-  };
-
-  // Fonction pour sauvegarder les résultats et générer des tâches
-  const saveQuizResultAndGenerateTasks = async (email: string | null) => {
-    if (!result) return;
-    
+  const handleComplete = async () => {
     try {
-      const { data: userData } = await supabase.auth.getUser();
-      const level = getLevel(result.score);
+      // Generate quiz result
+      const quizResult = generateQuizResult(answers);
+      setResult(quizResult);
       
-      // Préparer l'objet de résultat du quiz
-      const quizResult: UserQuizResult = {
-        user_id: userData?.user?.id,
-        email: email || userData?.user?.email || undefined,
-        score: result.score,
-        status: result.status,
-        level: level,
-        objectives: result.objectives,
-        categories: result.categories
-      };
+      // Save quiz result
+      await saveQuizResult(quizResult);
       
-      // Sauvegarder le résultat du quiz
-      const { data: savedResult, error: saveError } = await supabase
-        .from('user_quiz_results')
-        .insert(quizResult)
-        .select()
-        .single();
+      // Generate tasks
+      const generatedTasks = generateTasks(answers, quizResult);
       
-      if (saveError) {
-        throw saveError;
-      }
+      // Save everything to persistent storage
+      await saveQuizResponse(answers, generatedTasks);
       
-      if (userData?.user?.id) {
-        // Générer des tâches basées sur le résultat du quiz
-        const tasks = generateTasksFromQuizResult(result);
-        
-        // Ajouter l'ID utilisateur et l'ID du résultat du quiz à chaque tâche
-        const tasksWithIds = tasks.map(task => ({
-          ...task,
-          user_id: userData.user?.id,
-          quiz_result_id: savedResult.id
-        }));
-        
-        // Sauvegarder les tâches générées
-        const { error: tasksError } = await supabase
-          .from('generated_tasks')
-          .insert(tasksWithIds);
-        
-        if (tasksError) {
-          console.error('Error saving generated tasks:', tasksError);
-        }
-      }
+      // Update progress
+      await updateProgress('planning', true);
       
-      // Stocker le résultat dans localStorage pour permettre à d'autres pages d'y accéder
-      localStorage.setItem('quizResult', JSON.stringify(result));
+      setIsCompleted(true);
+      
+      toast({
+        title: "Questionnaire terminé!",
+        description: "Votre planning personnalisé a été généré avec succès."
+      });
       
     } catch (error) {
-      console.error('Error saving quiz result:', error);
+      console.error('Error completing quiz:', error);
       toast({
         title: "Erreur",
-        description: "Impossible de sauvegarder vos résultats.",
+        description: "Une erreur est survenue lors de la génération de votre planning.",
         variant: "destructive"
       });
     }
   };
 
-  // Gérer la soumission du formulaire de capture d'email
-  const handleEmailSubmit = async (data: { email: string; full_name?: string }) => {
-    await saveQuizResultAndGenerateTasks(data.email);
-    setShowEmailCapture(false);
-    setShowResult(true);
-  };
-
-  if (isLoading || questions.length === 0) {
+  if (isCompleted && result) {
     return (
-      <div className="py-8 text-center">
-        <p>Chargement du questionnaire...</p>
-      </div>
-    );
-  }
-
-  if (showEmailCapture && result) {
-    return (
-      <EmailCaptureForm 
-        quizResult={result} 
-        onComplete={handleEmailSubmit}
-      />
-    );
-  }
-
-  if (showResult && result) {
-    const level = getLevel(result.score);
-    
-    return (
-      <div className="max-w-2xl mx-auto py-4">
-        <ScrollArea className="h-[70vh]">
-          <div className="space-y-8">
-            <div className="text-center mb-6">
-              <h2 className="text-2xl font-serif mb-2">Votre niveau de préparation</h2>
-              <div className="inline-block bg-wedding-cream px-4 py-2 rounded-md">
-                <p className="text-xl font-semibold">{result.status}</p>
+      <div className="space-y-6">
+        <Card className="bg-gradient-to-r from-wedding-olive/10 to-wedding-cream/20">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-wedding-olive">
+              <CheckCircle2 className="h-6 w-6" />
+              Questionnaire terminé !
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-wedding-olive">{result.score}/10</div>
+                <div className="text-sm text-muted-foreground">Score</div>
               </div>
-              <div className="mt-4">
-                <p className="text-sm text-muted-foreground">Score: {result.score}/10</p>
-                <p className="text-sm font-medium mt-1">Niveau: {level}</p>
+              <div className="text-center">
+                <div className="text-lg font-medium">{result.level}</div>
+                <div className="text-sm text-muted-foreground">Niveau</div>
+              </div>
+              <div className="text-center">
+                <div className="text-lg font-medium">{result.status}</div>
+                <div className="text-sm text-muted-foreground">Statut</div>
               </div>
             </div>
-
-            <div className="space-y-6">
-              <h3 className="text-xl font-serif">Objectifs recommandés</h3>
-              {result.objectives.length > 0 ? (
-                <ul className="space-y-4">
-                  {result.objectives.map((objective, index) => (
-                    <li key={index} className="flex items-start gap-3">
-                      <div className="h-6 w-6 rounded-full bg-wedding-olive text-white flex items-center justify-center flex-shrink-0 mt-0.5">
-                        {index + 1}
-                      </div>
-                      <span>{objective}</span>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="text-muted-foreground">Aucun objectif spécifique n'a été trouvé pour votre niveau.</p>
-              )}
-            </div>
-
-            <Separator />
-
-            <div className="space-y-6">
-              <h3 className="text-xl font-serif">Catégories à prioriser</h3>
-              {result.categories.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {result.categories.map((category, index) => (
-                    <div key={index} className="border rounded-md p-4 bg-wedding-light/50 flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-wedding-olive flex-shrink-0 mt-0.5" />
-                      <p>{category}</p>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-muted-foreground">Aucune catégorie spécifique n'a été trouvée pour votre niveau.</p>
-              )}
-            </div>
-
-            <Separator />
             
-            <div className="space-y-6">
-              <h3 className="text-xl font-serif mb-2">Prêt à organiser votre mariage ?</h3>
-              <p className="text-muted-foreground">Accédez à des outils plus détaillés pour organiser votre grand jour :</p>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-                {isAuthenticated ? (
-                  <>
-                    <Link to="/dashboard/budget/calculator" className="border rounded-md p-4 bg-wedding-light/50 hover:bg-wedding-light text-center">
-                      <h4 className="font-medium mb-1">Calculer votre budget</h4>
-                      <p className="text-sm text-muted-foreground">Obtenez une estimation précise pour votre mariage</p>
-                    </Link>
-                    
-                    <Link to="/dashboard/tasks" className="border rounded-md p-4 bg-wedding-light/50 hover:bg-wedding-light text-center">
-                      <h4 className="font-medium mb-1">Voir votre checklist détaillée</h4>
-                      <p className="text-sm text-muted-foreground">Consultez les tâches générées pour vous</p>
-                    </Link>
-                  </>
-                ) : (
-                  <>
-                    <Link to="/register" className="border rounded-md p-4 bg-wedding-light/50 hover:bg-wedding-light text-center">
-                      <h4 className="font-medium mb-1">Calculer votre budget</h4>
-                      <p className="text-sm text-muted-foreground">Créez un compte pour obtenir une estimation précise</p>
-                    </Link>
-                    
-                    <Link to="/register" className="border rounded-md p-4 bg-wedding-light/50 hover:bg-wedding-light text-center">
-                      <h4 className="font-medium mb-1">Voir votre checklist détaillée</h4>
-                      <p className="text-sm text-muted-foreground">Accédez à votre planning personnalisé</p>
-                    </Link>
-                  </>
-                )}
-              </div>
-              
-              <div className="pt-4">
-                {isAuthenticated ? (
-                  <Button 
-                    asChild
-                    className="w-full bg-wedding-olive hover:bg-wedding-olive/90 flex items-center justify-center gap-2"
-                  >
-                    <Link to="/dashboard/tasks">
-                      <CalendarIcon size={18} />
-                      Consulter votre planning
-                      <ArrowRight size={16} />
-                    </Link>
-                  </Button>
-                ) : (
-                  <Button 
-                    asChild
-                    className="w-full bg-wedding-olive hover:bg-wedding-olive/90 flex items-center justify-center gap-2"
-                  >
-                    <Link to="/register">
-                      <CalendarIcon size={18} />
-                      Créer un compte gratuitement
-                      <ArrowRight size={16} />
-                    </Link>
-                  </Button>
-                )}
-              </div>
+            <p className="text-center text-muted-foreground mb-4">
+              Votre planning personnalisé est disponible dans l'onglet "Mon Planning"
+            </p>
+            
+            <div className="flex justify-center">
+              <Button 
+                onClick={() => {
+                  setIsCompleted(false);
+                  setCurrentQuestion(0);
+                }} 
+                variant="outline"
+              >
+                Modifier mes réponses
+              </Button>
             </div>
-          </div>
-        </ScrollArea>
+          </CardContent>
+        </Card>
       </div>
     );
   }
 
-  // Filtrer les questions pour la section actuelle
-  const currentSectionQuestions = questions.filter(q => q.section === currentSection);
-  const currentSectionQuestionIndex = currentSectionQuestions.findIndex(q => q.id === questions[currentQuestionIndex].id);
-  const currentQuestion = questions[currentQuestionIndex];
-
-  // Calculer le progrès global (basé sur toutes les questions)
-  const progressPercentage = ((currentQuestionIndex + 1) / questions.length) * 100;
+  const progress = ((currentQuestion + 1) / questions.length) * 100;
+  const currentQ = questions[currentQuestion];
 
   return (
-    <div className="max-w-2xl mx-auto py-4 space-y-6">
-      {/* Indicateur d'étapes */}
-      <StepIndicator 
-        currentStep={currentStep}
-        totalSteps={sections.length}
-        stepNames={!isMobile ? sections : undefined}
-        onStepClick={handleStepClick}
-        allowNavigation={true}
-      />
-
-      {/* Titre de la section */}
-      <div className="text-center mb-2">
-        <h2 className="text-xl font-serif">{currentSection}</h2>
-        <p className="text-sm text-muted-foreground">
-          Question {currentSectionQuestionIndex + 1} sur {currentSectionQuestions.length}
-        </p>
+    <div className="space-y-6">
+      <div className="space-y-2">
+        <div className="flex justify-between items-center">
+          <span className="text-sm text-muted-foreground">
+            Question {currentQuestion + 1} sur {questions.length}
+          </span>
+          <span className="text-sm font-medium">{Math.round(progress)}%</span>
+        </div>
+        <Progress value={progress} className="h-2" />
       </div>
 
-      {/* Barre de progression globale */}
-      <Progress value={progressPercentage} className="h-2" />
-      
-      {/* Question actuelle */}
-      <div className="bg-wedding-light/50 p-6 rounded-lg shadow-sm">
-        <p className="text-lg mb-4">{currentQuestion.question}</p>
-        
-        <RadioGroup 
-          value={userAnswers[currentQuestion.id]?.toString() || ""} 
-          onValueChange={(value) => handleAnswer(currentQuestion.id, parseInt(value))}
-          className="space-y-3"
-        >
-          {currentQuestion.options.map((option, index) => (
-            <div key={index} className="flex items-center space-x-2">
-              <RadioGroupItem 
-                value={index.toString()} 
-                id={`option-${currentQuestion.id}-${index}`} 
-              />
-              <Label 
-                htmlFor={`option-${currentQuestion.id}-${index}`}
-                className="text-base"
-              >
-                {option}
-              </Label>
+      <Card>
+        <CardHeader>
+          <CardTitle className="font-serif">{currentQ.question}</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {currentQ.type === 'single' && (
+            <div className="space-y-2">
+              {currentQ.options?.map((option) => (
+                <label key={option} className="flex items-center space-x-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name={currentQ.id}
+                    value={option}
+                    checked={answers[currentQ.id] === option}
+                    onChange={(e) => handleAnswer(currentQ.id, e.target.value)}
+                    className="text-wedding-olive"
+                  />
+                  <span>{option}</span>
+                </label>
+              ))}
             </div>
-          ))}
-        </RadioGroup>
-      </div>
-      
-      {/* Boutons navigation */}
-      <div className="flex justify-between pt-4">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={handlePrevious}
-          disabled={currentQuestionIndex === 0}
-          className="flex items-center gap-2"
-        >
-          <ArrowLeft size={16} />
-          Précédent
-        </Button>
-        
-        <Button
-          type="button"
-          onClick={handleNext}
-          disabled={userAnswers[currentQuestion.id] === undefined}
-          className="bg-wedding-olive hover:bg-wedding-olive/90 flex items-center gap-2"
-        >
-          {currentQuestionIndex === questions.length - 1 ? 'Terminer' : 'Suivant'}
-          <ArrowRight size={16} />
-        </Button>
-      </div>
+          )}
+
+          {currentQ.type === 'multiple' && (
+            <div className="space-y-2">
+              {currentQ.options?.map((option) => (
+                <label key={option} className="flex items-center space-x-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={answers[currentQ.id]?.includes(option) || false}
+                    onChange={(e) => {
+                      const current = answers[currentQ.id] || [];
+                      const newValue = e.target.checked
+                        ? [...current, option]
+                        : current.filter((item: string) => item !== option);
+                      handleAnswer(currentQ.id, newValue);
+                    }}
+                    className="text-wedding-olive"
+                  />
+                  <span>{option}</span>
+                </label>
+              ))}
+            </div>
+          )}
+
+          {currentQ.type === 'scale' && (
+            <div className="space-y-4">
+              <div className="flex justify-between text-sm text-muted-foreground">
+                <span>Pas du tout</span>
+                <span>Complètement</span>
+              </div>
+              <div className="flex space-x-2">
+                {[1, 2, 3, 4, 5].map((num) => (
+                  <button
+                    key={num}
+                    onClick={() => handleAnswer(currentQ.id, num)}
+                    className={`w-12 h-12 rounded-full border-2 transition-colors ${
+                      answers[currentQ.id] === num
+                        ? 'bg-wedding-olive border-wedding-olive text-white'
+                        : 'border-gray-300 hover:border-wedding-olive'
+                    }`}
+                  >
+                    {num}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div className="flex justify-between pt-4">
+            <Button
+              variant="outline"
+              onClick={handlePrevious}
+              disabled={currentQuestion === 0}
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Précédent
+            </Button>
+
+            <Button
+              onClick={handleNext}
+              disabled={!answers[currentQ.id]}
+              className="bg-wedding-olive hover:bg-wedding-olive/80"
+            >
+              {currentQuestion === questions.length - 1 ? 'Terminer' : 'Suivant'}
+              {currentQuestion === questions.length - 1 ? (
+                <CheckCircle2 className="h-4 w-4 ml-2" />
+              ) : (
+                <ArrowRight className="h-4 w-4 ml-2" />
+              )}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };

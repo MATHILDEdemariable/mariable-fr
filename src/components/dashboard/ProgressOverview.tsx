@@ -1,61 +1,32 @@
 
 import React from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { CheckCircle2, Circle, CheckSquare, Coins, Store, Calendar } from 'lucide-react';
 import { cn } from '@/lib/utils';
-
-interface ProgressItem {
-  label: string;
-  completed: boolean;
-  description?: string;
-  path: string;
-  icon: React.ReactNode;
-}
+import { useProgressTracking } from '@/hooks/useProgressTracking';
 
 const ProgressOverview: React.FC = () => {
   const navigate = useNavigate();
-  const location = useLocation();
+  const { progressItems, getProgressPercentage } = useProgressTracking();
 
-  // Define progress items matching sidebar order
-  const progressItems: ProgressItem[] = [
-    { 
-      label: 'Planning personnalisé', 
-      completed: location.pathname === '/dashboard/planning' || location.pathname.includes('/planning'), 
-      description: 'Créez votre planning sur mesure',
-      path: '/dashboard/planning',
-      icon: <CheckSquare className="h-4 w-4" />
-    },
-    { 
-      label: 'Budget défini', 
-      completed: location.pathname === '/dashboard/budget' || location.pathname.includes('/budget'), 
-      description: 'Établissez votre budget',
-      path: '/dashboard/budget',
-      icon: <Coins className="h-4 w-4" />
-    },
-    { 
-      label: 'Prestataires contactés', 
-      completed: location.pathname === '/dashboard/prestataires' || location.pathname.includes('/prestataires'), 
-      description: 'Trouvez vos prestataires',
-      path: '/dashboard/prestataires',
-      icon: <Store className="h-4 w-4" />
-    },
-    { 
-      label: 'Coordination Jour J', 
-      completed: location.pathname === '/dashboard/coordination' || location.pathname.includes('/coordination'), 
-      description: 'Organisez votre jour J',
-      path: '/dashboard/coordination',
-      icon: <Calendar className="h-4 w-4" />
+  const getIcon = (itemId: string) => {
+    switch (itemId) {
+      case 'planning': return <CheckSquare className="h-4 w-4" />;
+      case 'budget': return <Coins className="h-4 w-4" />;
+      case 'prestataires': return <Store className="h-4 w-4" />;
+      case 'coordination': return <Calendar className="h-4 w-4" />;
+      default: return <Circle className="h-4 w-4" />;
     }
-  ];
-
-  const completedCount = progressItems.filter(item => item.completed).length;
-  const progressPercentage = (completedCount / progressItems.length) * 100;
-
-  const handleItemClick = (item: ProgressItem) => {
-    navigate(item.path);
   };
+
+  const handleItemClick = (path: string) => {
+    navigate(path);
+  };
+
+  const progressPercentage = getProgressPercentage();
+  const completedCount = progressItems.filter(item => item.completed).length;
 
   return (
     <Card className="bg-gradient-to-br from-wedding-olive/5 to-wedding-cream/10">
@@ -70,16 +41,16 @@ const ProgressOverview: React.FC = () => {
             <span className="text-sm text-muted-foreground">
               {completedCount} sur {progressItems.length} sections complétées
             </span>
-            <span className="text-sm font-medium">{Math.round(progressPercentage)}%</span>
+            <span className="text-sm font-medium">{progressPercentage}%</span>
           </div>
           <Progress value={progressPercentage} className="h-2" />
         </div>
         
         <div className="space-y-2">
-          {progressItems.map((item, index) => (
+          {progressItems.map((item) => (
             <div 
-              key={index} 
-              onClick={() => handleItemClick(item)}
+              key={item.id} 
+              onClick={() => handleItemClick(item.path)}
               className={cn(
                 "flex items-center gap-3 py-2 px-3 rounded-lg cursor-pointer transition-all",
                 "hover:bg-wedding-olive/10 hover:shadow-sm",
@@ -92,7 +63,7 @@ const ProgressOverview: React.FC = () => {
                 ) : (
                   <Circle className="h-4 w-4 text-gray-400" />
                 )}
-                {item.icon}
+                {getIcon(item.id)}
               </div>
               <div className="flex-1">
                 <span className={cn(
@@ -101,9 +72,6 @@ const ProgressOverview: React.FC = () => {
                 )}>
                   {item.label}
                 </span>
-                {item.description && (
-                  <p className="text-xs text-muted-foreground">{item.description}</p>
-                )}
               </div>
               {item.completed && (
                 <div className="text-xs bg-wedding-olive/10 text-wedding-olive px-2 py-1 rounded">

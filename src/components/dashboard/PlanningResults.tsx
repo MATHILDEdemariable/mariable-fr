@@ -6,6 +6,7 @@ import { Progress } from "@/components/ui/progress";
 import { CheckCircle, Calendar, Download, ArrowRight } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { usePersistentQuiz } from '@/hooks/usePersistentQuiz';
 
 interface QuizResult {
   score: number;
@@ -30,10 +31,11 @@ const PlanningResults: React.FC = () => {
   const [generatedTasks, setGeneratedTasks] = useState<GeneratedTask[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
+  const { quizData } = usePersistentQuiz();
 
   useEffect(() => {
     loadPlanningData();
-  }, []);
+  }, [quizData]);
 
   const loadPlanningData = async () => {
     try {
@@ -65,24 +67,38 @@ const PlanningResults: React.FC = () => {
           });
         }
 
-        // Load generated tasks
-        const { data: tasks } = await supabase
-          .from('generated_tasks')
-          .select('*')
-          .eq('user_id', user.id)
-          .order('position', { ascending: true });
-
-        if (tasks) {
-          const mappedTasks: GeneratedTask[] = tasks.map(task => ({
-            id: task.id,
-            title: task.label, // Map label to title
+        // Load generated tasks from persistent quiz data or database
+        if (quizData?.generated_tasks && quizData.generated_tasks.length > 0) {
+          const mappedTasks: GeneratedTask[] = quizData.generated_tasks.map((task, index) => ({
+            id: task.id || `task-${index}`,
+            title: task.label || task.title,
             description: task.description || '',
             category: task.category,
             priority: task.priority as 'haute' | 'moyenne' | 'basse',
-            completed: task.completed,
-            position: task.position
+            completed: task.completed || false,
+            position: task.position || index
           }));
           setGeneratedTasks(mappedTasks);
+        } else {
+          // Fallback to database
+          const { data: tasks } = await supabase
+            .from('generated_tasks')
+            .select('*')
+            .eq('user_id', user.id)
+            .order('position', { ascending: true });
+
+          if (tasks) {
+            const mappedTasks: GeneratedTask[] = tasks.map(task => ({
+              id: task.id,
+              title: task.label,
+              description: task.description || '',
+              category: task.category,
+              priority: task.priority as 'haute' | 'moyenne' | 'basse',
+              completed: task.completed,
+              position: task.position
+            }));
+            setGeneratedTasks(mappedTasks);
+          }
         }
       }
     } catch (error) {
@@ -111,13 +127,15 @@ const PlanningResults: React.FC = () => {
         )
       );
 
-      // Update in database
+      // Update in database if task exists there
       const { error } = await supabase
         .from('generated_tasks')
         .update({ completed: newCompletedState })
         .eq('id', taskId);
 
-      if (error) throw error;
+      if (error && error.code !== 'PGRST116') {
+        console.error('Error updating task:', error);
+      }
 
     } catch (error) {
       console.error('Error updating task:', error);
