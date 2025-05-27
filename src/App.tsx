@@ -129,6 +129,8 @@ const App = () => {
                 <Route path="/auth/email-confirmation" element={<EmailConfirmation />} />
                 <Route path="/auth/callback" element={<Callback />} />
                 <Route path="/dashboard/*" element={<UserDashboard />} />
+                
+                {/* Public Reader View - accessible without authentication */}
                 <Route path="/dashboard/lecteur/:token" element={<ReaderView />} />
                 
                 {/* Redirect for old privacy policy route */}
@@ -136,7 +138,6 @@ const App = () => {
                 
                 {/* Demo page */}
                 <Route path="/demo" element={<Demo />} />
-                {/* <Route path="/preview" element={<Preview />} /> */}
                 <Route path="/prestataire/:slug" element={<SinglePrestataire />} />
                 
                 {/* Moteur de recherche page - now accessible via /guide-mariable route as well */}

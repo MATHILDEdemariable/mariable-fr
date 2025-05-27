@@ -8,7 +8,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/components/ui/use-toast';
-import { addDays } from 'date-fns';
 
 const ShareDashboardButton = () => {
   const [open, setOpen] = useState(false);
@@ -27,14 +26,14 @@ const ShareDashboardButton = () => {
       }
       
       const token = uuidv4();
-      const expiresAt = addDays(new Date(), 30); // 30 days validity
       
+      // Insert permanent token (no expiry)
       const { error } = await supabase
         .from('dashboard_share_tokens')
         .insert({
           token,
           user_id: sessionData.session.user.id,
-          expires_at: expiresAt.toISOString(),
+          expires_at: null, // Make it permanent
           description: 'Lien de partage public du tableau de bord',
           active: true
         });
@@ -46,7 +45,7 @@ const ShareDashboardButton = () => {
       
       toast({
         title: "Lien généré avec succès",
-        description: "Ce lien sera valide pendant 30 jours"
+        description: "Ce lien est permanent et restera valide"
       });
     } catch (error) {
       console.error('Erreur lors de la génération du lien:', error);
@@ -110,7 +109,7 @@ const ShareDashboardButton = () => {
           {!shareLink ? (
             <div className="space-y-4 py-2">
               <p className="text-sm text-muted-foreground">
-                Le lien généré sera valide pendant 30 jours et donnera accès à une version publique 
+                Le lien généré sera permanent et donnera accès à une version publique 
                 et mobile de votre tableau de bord.
               </p>
               
