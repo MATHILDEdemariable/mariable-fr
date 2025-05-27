@@ -36,6 +36,7 @@ export interface PlanningResult {
   status: string;
   objectives: string[];
   categories: string[];
+  level: string;
 }
 
 export interface QuizEmailCapture {
@@ -85,3 +86,61 @@ export const SECTION_ORDER = [
   "Invités",
   "Mariés"
 ];
+
+// Generate quiz result from answers
+export const generateQuizResult = (answers: Record<string, any>): PlanningResult => {
+  // Calculate score based on answers
+  let totalScore = 0;
+  const answerCount = Object.keys(answers).length;
+
+  Object.values(answers).forEach((answer) => {
+    if (typeof answer === 'number') {
+      totalScore += answer;
+    } else if (Array.isArray(answer)) {
+      totalScore += answer.length;
+    } else if (typeof answer === 'string') {
+      // For single choice answers, assign a score based on position
+      totalScore += 3; // Default score for string answers
+    }
+  });
+
+  const averageScore = answerCount > 0 ? Math.round(totalScore / answerCount) : 0;
+
+  // Determine level and status based on score
+  let level = '';
+  let status = '';
+  let objectives: string[] = [];
+  let categories: string[] = [];
+
+  if (averageScore <= 2) {
+    level = 'Débutant';
+    status = 'Début de planification';
+    objectives = ['Définir un budget', 'Créer une liste d\'invités', 'Choisir une date'];
+    categories = ['Budget', 'Organisation générale'];
+  } else if (averageScore <= 4) {
+    level = 'Intermédiaire';
+    status = 'Planification en cours';
+    objectives = ['Réserver les prestataires', 'Finaliser les détails', 'Organiser la coordination'];
+    categories = ['Prestataires', 'Réception', 'Cérémonie'];
+  } else {
+    level = 'Avancé';
+    status = 'Finalisation';
+    objectives = ['Coordination jour J', 'Derniers détails', 'Confirmation finale'];
+    categories = ['Coordination', 'Invités', 'Mariés'];
+  }
+
+  return {
+    score: averageScore,
+    status,
+    objectives,
+    categories,
+    level
+  };
+};
+
+// Save quiz result to database
+export const saveQuizResult = async (quizResult: PlanningResult): Promise<void> => {
+  // Store in localStorage for now
+  localStorage.setItem('quizResult', JSON.stringify(quizResult));
+  console.log('Quiz result saved:', quizResult);
+};

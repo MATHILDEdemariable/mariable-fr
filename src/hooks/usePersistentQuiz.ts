@@ -63,10 +63,14 @@ export const usePersistentQuiz = () => {
       if (error && error.code !== 'PGRST116') throw error;
 
       if (data) {
+        // Properly cast the JSON data to expected types
+        const responses = data.responses as Record<string, any> || {};
+        const generatedTasks = Array.isArray(data.generated_tasks) ? data.generated_tasks : [];
+        
         setQuizData({
-          responses: data.responses || {},
-          generated_tasks: data.generated_tasks || [],
-          completed: !!(data.generated_tasks && data.generated_tasks.length > 0)
+          responses,
+          generated_tasks: generatedTasks,
+          completed: generatedTasks.length > 0
         });
       }
     } catch (error) {

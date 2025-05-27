@@ -284,6 +284,40 @@ const generateTasksFromCategories = (categories: string[]): Omit<GeneratedTask, 
   return categoryTasks;
 };
 
+// Main function to generate tasks - this was missing the export!
+export function generateTasks(answers: Record<string, any>, result: PlanningResult): GeneratedTask[] {
+  let tasks: Omit<GeneratedTask, 'id' | 'user_id' | 'quiz_result_id'>[] = [];
+  
+  // Déterminer les tâches de base en fonction du statut/score
+  if (result.status.includes("Débutant") || result.score <= 3) {
+    tasks = [...beginnerTasks];
+  } else if (result.status.includes("Intermédiaire") || (result.score > 3 && result.score <= 7)) {
+    tasks = [...intermediateTasks];
+  } else {
+    tasks = [...advancedTasks];
+  }
+  
+  // Ajouter des tâches spécifiques basées sur les objectifs
+  const objectiveTasks = generateTasksFromObjectives(result.objectives);
+  tasks = [...tasks, ...objectiveTasks];
+  
+  // Ajouter des tâches spécifiques basées sur les catégories
+  const categoryTasks = generateTasksFromCategories(result.categories);
+  tasks = [...tasks, ...categoryTasks];
+  
+  // Mettre à jour les positions pour éviter les doublons
+  tasks = tasks.map((task, index) => ({
+    ...task,
+    position: index + 1
+  }));
+  
+  // Ajouter un ID unique à chaque tâche
+  return tasks.map(task => ({
+    ...task,
+    id: uuidv4(),
+  }));
+}
+
 // Fonction pour générer des tâches en fonction du score du quiz
 export function generateTasksFromQuizResult(result: PlanningResult): GeneratedTask[] {
   let tasks: Omit<GeneratedTask, 'id' | 'user_id' | 'quiz_result_id'>[] = [];
