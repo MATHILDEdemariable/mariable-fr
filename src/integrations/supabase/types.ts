@@ -725,6 +725,36 @@ export type Database = {
         }
         Relationships: []
       }
+      profiles: {
+        Row: {
+          created_at: string
+          first_name: string | null
+          guest_count: number | null
+          id: string
+          last_name: string | null
+          updated_at: string
+          wedding_date: string | null
+        }
+        Insert: {
+          created_at?: string
+          first_name?: string | null
+          guest_count?: number | null
+          id: string
+          last_name?: string | null
+          updated_at?: string
+          wedding_date?: string | null
+        }
+        Update: {
+          created_at?: string
+          first_name?: string | null
+          guest_count?: number | null
+          id?: string
+          last_name?: string | null
+          updated_at?: string
+          wedding_date?: string | null
+        }
+        Relationships: []
+      }
       projects: {
         Row: {
           budget: number | null

@@ -1,60 +1,52 @@
+
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { Share } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Share, Copy, Check } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { supabase } from '@/integrations/supabase/client';
 import { v4 as uuidv4 } from 'uuid';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/components/ui/use-toast';
-import { addDays, format } from 'date-fns';
+import { addDays } from 'date-fns';
 
 const ShareDashboardButton = () => {
   const [open, setOpen] = useState(false);
   const [shareLink, setShareLink] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
-  const [isTemporary, setIsTemporary] = useState(true);
-  const [description, setDescription] = useState('');
+  const [isCopied, setIsCopied] = useState(false);
   const { toast } = useToast();
 
   const generateToken = async () => {
     try {
       setIsGenerating(true);
       
-      // Get current user session
       const { data: sessionData } = await supabase.auth.getSession();
       if (!sessionData.session?.user?.id) {
         throw new Error("Utilisateur non connecté");
       }
       
-      // Générer un token unique
       const token = uuidv4();
+      const expiresAt = addDays(new Date(), 30); // 30 days validity
       
-      // Calculer la date d'expiration si temporaire (7 jours par défaut)
-      const expiresAt = isTemporary ? addDays(new Date(), 7) : null;
-      
-      // Insérer le token dans la base de données
       const { error } = await supabase
         .from('dashboard_share_tokens')
         .insert({
           token,
           user_id: sessionData.session.user.id,
-          expires_at: expiresAt ? expiresAt.toISOString() : null,
-          description: description || 'Lien de partage du tableau de bord'
+          expires_at: expiresAt.toISOString(),
+          description: 'Lien de partage public du tableau de bord',
+          active: true
         });
       
       if (error) throw error;
       
-      // Construire l'URL complète
       const shareUrl = `${window.location.origin}/dashboard/lecteur/${token}`;
       setShareLink(shareUrl);
       
       toast({
         title: "Lien généré avec succès",
-        description: isTemporary 
-          ? "Ce lien sera valide pendant 7 jours" 
-          : "Ce lien ne comporte pas de date d'expiration"
+        description: "Ce lien sera valide pendant 30 jours"
       });
     } catch (error) {
       console.error('Erreur lors de la génération du lien:', error);
@@ -68,13 +60,27 @@ const ShareDashboardButton = () => {
     }
   };
 
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(shareLink).then(() => {
+  const copyToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(shareLink);
+      setIsCopied(true);
       toast({
         title: "Copié !",
         description: "Le lien a été copié dans le presse-papier"
       });
-    });
+      setTimeout(() => setIsCopied(false), 2000);
+    } catch (error) {
+      toast({
+        title: "Erreur",
+        description: "Impossible de copier le lien",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const resetDialog = () => {
+    setShareLink('');
+    setIsCopied(false);
   };
 
   return (
@@ -89,74 +95,59 @@ const ShareDashboardButton = () => {
         Partager
       </Button>
       
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog open={open} onOpenChange={(isOpen) => {
+        setOpen(isOpen);
+        if (!isOpen) resetDialog();
+      }}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Partager votre tableau de bord</DialogTitle>
             <DialogDescription>
-              Créez un lien de partage en lecture seule pour permettre à d'autres personnes de voir votre tableau de bord sans pouvoir le modifier.
+              Créez un lien public en lecture seule pour permettre à d'autres personnes de voir votre avancement.
             </DialogDescription>
           </DialogHeader>
           
           {!shareLink ? (
             <div className="space-y-4 py-2">
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <Label htmlFor="temporary">Lien temporaire (7 jours)</Label>
-                  <p className="text-sm text-muted-foreground">
-                    Désactivez pour créer un lien permanent
-                  </p>
-                </div>
-                <Switch 
-                  id="temporary" 
-                  checked={isTemporary} 
-                  onCheckedChange={setIsTemporary} 
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="description">Description (optionnelle)</Label>
-                <Input 
-                  id="description" 
-                  placeholder="Par exemple: Pour mes prestataires" 
-                  value={description} 
-                  onChange={(e) => setDescription(e.target.value)} 
-                />
-              </div>
+              <p className="text-sm text-muted-foreground">
+                Le lien généré sera valide pendant 30 jours et donnera accès à une version publique 
+                et mobile de votre tableau de bord.
+              </p>
               
               <Button 
                 onClick={generateToken} 
                 className="w-full" 
                 disabled={isGenerating}
               >
-                {isGenerating ? "Génération..." : "Générer un lien de partage"}
+                {isGenerating ? "Génération..." : "Générer un lien public"}
               </Button>
             </div>
           ) : (
             <div className="space-y-4 py-2">
               <div className="space-y-2">
-                <Label htmlFor="share-link">Lien de partage</Label>
+                <Label htmlFor="share-link">Lien de partage public</Label>
                 <div className="flex items-center space-x-2">
                   <Input 
                     id="share-link" 
                     value={shareLink} 
                     readOnly 
-                    className="flex-1"
+                    className="flex-1 text-xs"
                   />
-                  <Button onClick={copyToClipboard} size="sm">
-                    Copier
+                  <Button 
+                    onClick={copyToClipboard} 
+                    size="sm"
+                    variant={isCopied ? "default" : "outline"}
+                  >
+                    {isCopied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
                   </Button>
                 </div>
-                <p className="text-sm text-muted-foreground">
-                  Ce lien donne accès en lecture seule à votre tableau de bord.
+                <p className="text-xs text-muted-foreground">
+                  Ce lien donne accès à une version publique et mobile de votre tableau de bord (lecture seule).
                 </p>
               </div>
               
               <Button 
-                onClick={() => {
-                  setShareLink('');
-                  setDescription('');
-                }} 
+                onClick={resetDialog} 
                 variant="outline" 
                 className="w-full"
               >
