@@ -1,52 +1,94 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { CheckCircle2, ArrowRight, ArrowLeft, Save } from 'lucide-react';
+import { CheckCircle2, ArrowRight, ArrowLeft } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import { generateTasks } from './taskGenerator';
 import { generateQuizResult, saveQuizResult } from './types';
 import { usePersistentQuiz } from '@/hooks/usePersistentQuiz';
 import { useProgressTracking } from '@/hooks/useProgressTracking';
+import { supabase } from '@/integrations/supabase/client';
 
-const questions = [
-  {
-    id: 'wedding_size',
-    question: 'Quelle est la taille de votre mariage ?',
-    type: 'single',
-    options: ['Petit (moins de 50 invités)', 'Moyen (50-150 invités)', 'Grand (plus de 150 invités)'],
-  },
-  {
-    id: 'wedding_style',
-    question: 'Quel est le style de votre mariage ?',
-    type: 'multiple',
-    options: ['Romantique', 'Moderne', 'Champêtre', 'Bohème', 'Traditionnel'],
-  },
-  {
-    id: 'planning_progress',
-    question: 'Où en êtes-vous dans la planification de votre mariage ?',
-    type: 'scale',
-  },
-  {
-    id: 'budget_importance',
-    question: 'Quelle importance accordez-vous au budget ?',
-    type: 'scale',
-  },
-  {
-    id: 'stress_level',
-    question: 'Quel est votre niveau de stress actuel concernant le mariage ?',
-    type: 'scale',
-  },
-];
+interface QuizQuestion {
+  id: string;
+  question: string;
+  options: string[];
+  section: string;
+  order_index: number;
+}
 
 const WeddingQuiz: React.FC = () => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<Record<string, any>>({});
   const [isCompleted, setIsCompleted] = useState(false);
   const [result, setResult] = useState<any>(null);
+  const [questions, setQuestions] = useState<QuizQuestion[]>([]);
+  const [loading, setLoading] = useState(true);
   const { toast } = useToast();
   const { quizData, saveQuizResponse } = usePersistentQuiz();
   const { updateProgress } = useProgressTracking();
+
+  // Load questions from Supabase
+  useEffect(() => {
+    const loadQuestions = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('quiz_questions')
+          .select('*')
+          .order('order_index', { ascending: true });
+
+        if (error) throw error;
+
+        if (data) {
+          const formattedQuestions = data.map(q => ({
+            id: q.id,
+            question: q.question,
+            options: Array.isArray(q.options) ? q.options as string[] : [],
+            section: q.section,
+            order_index: q.order_index
+          }));
+          setQuestions(formattedQuestions);
+        }
+      } catch (error) {
+        console.error('Error loading questions:', error);
+        toast({
+          title: "Erreur",
+          description: "Impossible de charger les questions du quiz",
+          variant: "destructive"
+        });
+        // Fallback to hardcoded questions
+        setQuestions([
+          {
+            id: 'wedding_size',
+            question: 'Quelle est la taille de votre mariage ?',
+            options: ['Petit (moins de 50 invités)', 'Moyen (50-150 invités)', 'Grand (plus de 150 invités)'],
+            section: 'Organisation Générale',
+            order_index: 1
+          },
+          {
+            id: 'wedding_style',
+            question: 'Quel est le style de votre mariage ?',
+            options: ['Romantique', 'Moderne', 'Champêtre', 'Bohème', 'Traditionnel'],
+            section: 'Organisation Générale',
+            order_index: 2
+          },
+          {
+            id: 'planning_progress',
+            question: 'Où en êtes-vous dans la planification de votre mariage ?',
+            options: ['Début', 'En cours', 'Avancé', 'Presque terminé', 'Finalisé'],
+            section: 'Organisation Générale',
+            order_index: 3
+          }
+        ]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadQuestions();
+  }, [toast]);
 
   // Load existing responses
   useEffect(() => {
@@ -54,7 +96,6 @@ const WeddingQuiz: React.FC = () => {
       setAnswers(quizData.responses);
       if (quizData.completed) {
         setIsCompleted(true);
-        // Load quiz result from localStorage or generate from responses
         const savedResult = localStorage.getItem('quizResult');
         if (savedResult) {
           setResult(JSON.parse(savedResult));
@@ -68,7 +109,7 @@ const WeddingQuiz: React.FC = () => {
     if (Object.keys(answers).length > 0) {
       const timeoutId = setTimeout(() => {
         saveQuizResponse(answers);
-      }, 1000); // Debounce by 1 second
+      }, 1000);
 
       return () => clearTimeout(timeoutId);
     }
@@ -95,20 +136,15 @@ const WeddingQuiz: React.FC = () => {
 
   const handleComplete = async () => {
     try {
-      // Generate quiz result
       const quizResult = generateQuizResult(answers);
       setResult(quizResult);
       
-      // Save quiz result
       await saveQuizResult(quizResult);
       
-      // Generate tasks
       const generatedTasks = generateTasks(answers, quizResult);
       
-      // Save everything to persistent storage
       await saveQuizResponse(answers, generatedTasks);
       
-      // Update progress
       await updateProgress('planning', true);
       
       setIsCompleted(true);
@@ -127,6 +163,23 @@ const WeddingQuiz: React.FC = () => {
       });
     }
   };
+
+  if (loading) {
+    return (
+      <div className="text-center py-8">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-wedding-olive mx-auto mb-4"></div>
+        <p>Chargement des questions...</p>
+      </div>
+    );
+  }
+
+  if (questions.length === 0) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-muted-foreground">Aucune question disponible pour le moment.</p>
+      </div>
+    );
+  }
 
   if (isCompleted && result) {
     return (
@@ -153,10 +206,6 @@ const WeddingQuiz: React.FC = () => {
                 <div className="text-sm text-muted-foreground">Statut</div>
               </div>
             </div>
-            
-            <p className="text-center text-muted-foreground mb-4">
-              Votre planning personnalisé est disponible dans l'onglet "Mon Planning"
-            </p>
             
             <div className="flex justify-center">
               <Button 
@@ -195,69 +244,21 @@ const WeddingQuiz: React.FC = () => {
           <CardTitle className="font-serif">{currentQ.question}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          {currentQ.type === 'single' && (
-            <div className="space-y-2">
-              {currentQ.options?.map((option) => (
-                <label key={option} className="flex items-center space-x-2 cursor-pointer">
-                  <input
-                    type="radio"
-                    name={currentQ.id}
-                    value={option}
-                    checked={answers[currentQ.id] === option}
-                    onChange={(e) => handleAnswer(currentQ.id, e.target.value)}
-                    className="text-wedding-olive"
-                  />
-                  <span>{option}</span>
-                </label>
-              ))}
-            </div>
-          )}
-
-          {currentQ.type === 'multiple' && (
-            <div className="space-y-2">
-              {currentQ.options?.map((option) => (
-                <label key={option} className="flex items-center space-x-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={answers[currentQ.id]?.includes(option) || false}
-                    onChange={(e) => {
-                      const current = answers[currentQ.id] || [];
-                      const newValue = e.target.checked
-                        ? [...current, option]
-                        : current.filter((item: string) => item !== option);
-                      handleAnswer(currentQ.id, newValue);
-                    }}
-                    className="text-wedding-olive"
-                  />
-                  <span>{option}</span>
-                </label>
-              ))}
-            </div>
-          )}
-
-          {currentQ.type === 'scale' && (
-            <div className="space-y-4">
-              <div className="flex justify-between text-sm text-muted-foreground">
-                <span>Pas du tout</span>
-                <span>Complètement</span>
-              </div>
-              <div className="flex space-x-2">
-                {[1, 2, 3, 4, 5].map((num) => (
-                  <button
-                    key={num}
-                    onClick={() => handleAnswer(currentQ.id, num)}
-                    className={`w-12 h-12 rounded-full border-2 transition-colors ${
-                      answers[currentQ.id] === num
-                        ? 'bg-wedding-olive border-wedding-olive text-white'
-                        : 'border-gray-300 hover:border-wedding-olive'
-                    }`}
-                  >
-                    {num}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
+          <div className="space-y-2">
+            {currentQ.options.map((option) => (
+              <label key={option} className="flex items-center space-x-2 cursor-pointer">
+                <input
+                  type="radio"
+                  name={currentQ.id}
+                  value={option}
+                  checked={answers[currentQ.id] === option}
+                  onChange={(e) => handleAnswer(currentQ.id, e.target.value)}
+                  className="text-wedding-olive"
+                />
+                <span>{option}</span>
+              </label>
+            ))}
+          </div>
 
           <div className="flex justify-between pt-4">
             <Button

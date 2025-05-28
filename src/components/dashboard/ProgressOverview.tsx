@@ -3,13 +3,13 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { CheckCircle2, Circle, CheckSquare, Coins, Store, Calendar } from 'lucide-react';
+import { CheckCircle2, Circle, CheckSquare, Coins, Store, Calendar, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useProgressTracking } from '@/hooks/useProgressTracking';
 
 const ProgressOverview: React.FC = () => {
   const navigate = useNavigate();
-  const { progressItems, getProgressPercentage } = useProgressTracking();
+  const { progressItems, getProgressPercentage, toggleProgress, loading } = useProgressTracking();
 
   const getIcon = (itemId: string) => {
     switch (itemId) {
@@ -21,9 +21,33 @@ const ProgressOverview: React.FC = () => {
     }
   };
 
-  const handleItemClick = (path: string) => {
+  const handleItemClick = (path: string, e: React.MouseEvent) => {
+    // Don't navigate if clicking on the checkbox area
+    if ((e.target as HTMLElement).closest('.progress-checkbox')) {
+      return;
+    }
     navigate(path);
   };
+
+  const handleToggleClick = (itemId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    toggleProgress(itemId);
+  };
+
+  if (loading) {
+    return (
+      <Card className="bg-gradient-to-br from-wedding-olive/5 to-wedding-cream/10">
+        <CardHeader>
+          <CardTitle className="text-lg font-serif flex items-center gap-2">
+            Votre avancement
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="flex justify-center py-8">
+          <Loader2 className="h-6 w-6 animate-spin text-wedding-olive" />
+        </CardContent>
+      </Card>
+    );
+  }
 
   const progressPercentage = getProgressPercentage();
   const completedCount = progressItems.filter(item => item.completed).length;
@@ -50,18 +74,21 @@ const ProgressOverview: React.FC = () => {
           {progressItems.map((item) => (
             <div 
               key={item.id} 
-              onClick={() => handleItemClick(item.path)}
+              onClick={(e) => handleItemClick(item.path, e)}
               className={cn(
                 "flex items-center gap-3 py-2 px-3 rounded-lg cursor-pointer transition-all",
                 "hover:bg-wedding-olive/10 hover:shadow-sm",
                 item.completed ? "bg-wedding-olive/5" : "hover:bg-gray-50"
               )}
             >
-              <div className="flex items-center gap-2">
+              <div 
+                className="progress-checkbox flex items-center gap-2 cursor-pointer"
+                onClick={(e) => handleToggleClick(item.id, e)}
+              >
                 {item.completed ? (
-                  <CheckCircle2 className="h-4 w-4 text-wedding-olive" />
+                  <CheckCircle2 className="h-5 w-5 text-wedding-olive hover:text-wedding-olive/80 transition-colors" />
                 ) : (
-                  <Circle className="h-4 w-4 text-gray-400" />
+                  <Circle className="h-5 w-5 text-gray-400 hover:text-wedding-olive transition-colors" />
                 )}
                 {getIcon(item.id)}
               </div>
