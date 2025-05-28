@@ -93,8 +93,6 @@ export type SerializablePlanningEvent = Omit<PlanningEvent, 'startTime' | 'endTi
   endTime: string;
 };
 
-export type PlanningFormValues = Record<string, any>;
-
 export type PlanningSection = {
   name: string;
   title: string;
@@ -328,7 +326,7 @@ export const generatePlanning = (
   // Add photos
   if (formData.photos_couple) {
     const duration = getDurationFromOption(formData.photos_couple, questions);
-    events.push(createEvent('couple_photos', 'Photos de couple', currentTime, duration));
+    events.push(createEvent('photos', 'Photos de couple', currentTime, duration));
     currentTime = new Date(currentTime.getTime() + duration * 60000);
   }
 
@@ -342,27 +340,28 @@ export const generatePlanning = (
   // Add dinner
   if (formData.repas_duree) {
     const duration = getDurationFromOption(formData.repas_duree, questions);
-    events.push(createEvent('dinner', 'Repas', currentTime, duration, true));
+    events.push(createEvent('repas', 'Repas', currentTime, duration, true));
     currentTime = new Date(currentTime.getTime() + duration * 60000);
   }
 
   // Add evening party if soirée questions are answered
   if (formData.soiree_duree) {
     const duration = getDurationFromOption(formData.soiree_duree, questions);
-    events.push(createEvent('party', 'Soirée dansante', currentTime, duration, true));
+    events.push(createEvent('soiree', 'Soirée dansante', currentTime, duration, true));
   }
 
   return events.sort((a, b) => a.startTime.getTime() - b.startTime.getTime());
 };
 
 // Helper functions
-const createEvent = (type: string, title: string, startTime: Date, duration: number, isHighlight = false): PlanningEvent => ({
-  id: `${type}-${Date.now()}-${Math.random()}`,
+const createEvent = (category: string, title: string, startTime: Date, duration: number, isHighlight = false): PlanningEvent => ({
+  id: `${category}-${Date.now()}-${Math.random()}`,
   title,
+  category,
   startTime: new Date(startTime),
   endTime: new Date(startTime.getTime() + duration * 60000),
   duration,
-  type,
+  type: category,
   isHighlight
 });
 
