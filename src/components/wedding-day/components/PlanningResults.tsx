@@ -4,6 +4,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { Button } from '@/components/ui/button';
 import { Download, RefreshCw } from 'lucide-react';
 import EnhancedDragDropTimeline from './EnhancedDragDropTimeline';
+import TeamTasksSection from './TeamTasksSection';
 import { usePlanning } from '../context/PlanningContext';
 import { useToast } from '@/components/ui/use-toast';
 import { exportPlanningJourJBrandedPDF } from '@/services/planningJourJBrandedExport';
@@ -125,44 +126,52 @@ export const PlanningResults: React.FC = () => {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="font-serif">Votre Planning Jour J</CardTitle>
-        <CardDescription>
-          Voici le planning optimisé pour votre journée de mariage. Vous pouvez réorganiser les événements, ajouter des étapes personnalisées et modifier les détails directement.
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="p-4 sm:p-6">
-        <div id="enhanced-timeline">
-          <EnhancedDragDropTimeline 
-            events={events} 
-            onEventsUpdate={handleEventsUpdate}
-          />
-        </div>
-      </CardContent>
-      <CardFooter className="flex flex-col sm:flex-row justify-between gap-4">
-        <Button variant="outline" onClick={handleReset} className="w-full sm:w-auto">
-          <RefreshCw className="h-4 w-4 mr-2" />
-          Modifier les informations
-        </Button>
-        <Button 
-          className="bg-wedding-olive hover:bg-wedding-olive/80 w-full sm:w-auto"
-          onClick={handleExportPDF}
-          disabled={exportLoading}
-        >
-          {exportLoading ? (
-            <>
-              <div className="h-4 w-4 border-2 border-wedding-olive border-t-transparent rounded-full animate-spin mr-2"></div>
-              Export en cours...
-            </>
-          ) : (
-            <>
-              <Download className="h-4 w-4 mr-2" />
-              Télécharger en PDF
-            </>
-          )}
-        </Button>
-      </CardFooter>
-    </Card>
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="lg:col-span-2">
+        <Card>
+          <CardHeader>
+            <CardTitle className="font-serif">Votre Planning Jour J</CardTitle>
+            <CardDescription>
+              Voici le planning optimisé pour votre journée de mariage. Vous pouvez réorganiser les événements, ajouter des étapes personnalisées et modifier les détails directement.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="p-4 sm:p-6">
+            <div id="enhanced-timeline">
+              <EnhancedDragDropTimeline 
+                events={events} 
+                onEventsUpdate={handleEventsUpdate}
+              />
+            </div>
+          </CardContent>
+          <CardFooter className="flex flex-col sm:flex-row justify-between gap-4">
+            <Button variant="outline" onClick={handleReset} className="w-full sm:w-auto">
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Modifier les informations
+            </Button>
+            <Button 
+              className="bg-wedding-olive hover:bg-wedding-olive/80 w-full sm:w-auto"
+              onClick={handleExportPDF}
+              disabled={exportLoading}
+            >
+              {exportLoading ? (
+                <>
+                  <div className="h-4 w-4 border-2 border-wedding-olive border-t-transparent rounded-full animate-spin mr-2"></div>
+                  Export en cours...
+                </>
+              ) : (
+                <>
+                  <Download className="h-4 w-4 mr-2" />
+                  Télécharger en PDF
+                </>
+              )}
+            </Button>
+          </CardFooter>
+        </Card>
+      </div>
+      
+      <div className="lg:col-span-1">
+        <TeamTasksSection />
+      </div>
+    </div>
   );
 };

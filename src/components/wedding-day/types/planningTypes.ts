@@ -107,7 +107,7 @@ export type PlanningData = {
 
 // Helper function to get duration from options
 const getDurationFromOption = (option: string, questions: PlanningQuestion[]): number => {
-  // Try to extract duration from the option text
+  // Extract duration from option text
   const durationMatch = option.match(/\((\d+)\s*minutes?\)/);
   if (durationMatch) {
     return parseInt(durationMatch[1]);
@@ -118,6 +118,9 @@ const getDurationFromOption = (option: string, questions: PlanningQuestion[]): n
   if (option.includes('maquillage')) return 45;
   if (option.includes('habillage')) return 30;
   if (option.includes('photo')) return 30;
+  if (option.includes('cocktail')) return 90;
+  if (option.includes('repas')) return 180;
+  if (option.includes('soirée')) return 240;
   
   return 30; // Default
 };
@@ -220,27 +223,27 @@ export const generatePlanning = (
   const isDualCeremony = formData.double_ceremonie === 'oui';
   
   // Generate preparation events
-  if (formData.preparatifs_coiffure) {
+  if (formData.preparatifs_coiffure && formData.preparatifs_coiffure !== 'Non') {
     const duration = getDurationFromOption(formData.preparatifs_coiffure, questions);
-    events.push(createEvent('preparation', 'Coiffure', currentTime, duration));
+    events.push(createEvent('preparation', 'Coiffure', currentTime, duration, 'preparatifs'));
     currentTime = new Date(currentTime.getTime() + duration * 60000);
   }
   
-  if (formData.preparatifs_maquillage) {
+  if (formData.preparatifs_maquillage && formData.preparatifs_maquillage !== 'Non') {
     const duration = getDurationFromOption(formData.preparatifs_maquillage, questions);
-    events.push(createEvent('preparation', 'Maquillage', currentTime, duration));
+    events.push(createEvent('preparation', 'Maquillage', currentTime, duration, 'preparatifs'));
     currentTime = new Date(currentTime.getTime() + duration * 60000);
   }
   
-  if (formData.preparatifs_habillage) {
+  if (formData.preparatifs_habillage && formData.preparatifs_habillage !== 'Non') {
     const duration = getDurationFromOption(formData.preparatifs_habillage, questions);
-    events.push(createEvent('preparation', 'Habillage', currentTime, duration));
+    events.push(createEvent('preparation', 'Habillage', currentTime, duration, 'preparatifs'));
     currentTime = new Date(currentTime.getTime() + duration * 60000);
   }
 
   // Add travel to ceremony if specified
   if (formData.trajet_depart_ceremonie && formData.trajet_depart_ceremonie > 0) {
-    events.push(createEvent('travel', 'Trajet vers la cérémonie', currentTime, formData.trajet_depart_ceremonie));
+    events.push(createEvent('travel', 'Trajet vers la cérémonie', currentTime, formData.trajet_depart_ceremonie, 'logistique'));
     currentTime = new Date(currentTime.getTime() + formData.trajet_depart_ceremonie * 60000);
   }
 
@@ -253,36 +256,36 @@ export const generatePlanning = (
       ceremonyStart.setHours(hours, minutes, 0, 0);
       
       const ceremonyDuration = getCeremonyDuration(formData.type_ceremonie_1 || 'civile');
-      events.push(createEvent('ceremony', `1ère cérémonie (${formData.type_ceremonie_1})`, ceremonyStart, ceremonyDuration, true));
+      events.push(createEvent('ceremony', `1ère cérémonie (${formData.type_ceremonie_1})`, ceremonyStart, ceremonyDuration, 'cérémonie', true));
       
       currentTime = new Date(ceremonyStart.getTime() + ceremonyDuration * 60000);
     }
     
     // Travel between ceremonies
     if (formData.trajet_2_ceremonie_1_arrivee_1 && formData.trajet_2_ceremonie_1_arrivee_1 > 0) {
-      events.push(createEvent('travel', 'Trajet après 1ère cérémonie', currentTime, formData.trajet_2_ceremonie_1_arrivee_1));
+      events.push(createEvent('travel', 'Trajet après 1ère cérémonie', currentTime, formData.trajet_2_ceremonie_1_arrivee_1, 'logistique'));
       currentTime = new Date(currentTime.getTime() + formData.trajet_2_ceremonie_1_arrivee_1 * 60000);
     }
     
     // Second ceremony preparation if needed
     if (formData.preparatifs_2_coiffure) {
-      events.push(createEvent('preparation', 'Retouche coiffure', currentTime, 30));
+      events.push(createEvent('preparation', 'Retouche coiffure', currentTime, 30, 'preparatifs'));
       currentTime = new Date(currentTime.getTime() + 30 * 60000);
     }
     
     if (formData.preparatifs_2_maquillage) {
-      events.push(createEvent('preparation', 'Retouche maquillage', currentTime, 30));
+      events.push(createEvent('preparation', 'Retouche maquillage', currentTime, 30, 'preparatifs'));
       currentTime = new Date(currentTime.getTime() + 30 * 60000);
     }
     
     if (formData.preparatifs_2_habillage) {
-      events.push(createEvent('preparation', 'Changement de tenue', currentTime, 45));
+      events.push(createEvent('preparation', 'Changement de tenue', currentTime, 45, 'preparatifs'));
       currentTime = new Date(currentTime.getTime() + 45 * 60000);
     }
     
     // Travel to second ceremony
     if (formData.trajet_3_depart_ceremonie_2 && formData.trajet_3_depart_ceremonie_2 > 0) {
-      events.push(createEvent('travel', 'Trajet vers 2ème cérémonie', currentTime, formData.trajet_3_depart_ceremonie_2));
+      events.push(createEvent('travel', 'Trajet vers 2ème cérémonie', currentTime, formData.trajet_3_depart_ceremonie_2, 'logistique'));
       currentTime = new Date(currentTime.getTime() + formData.trajet_3_depart_ceremonie_2 * 60000);
     }
     
@@ -293,14 +296,14 @@ export const generatePlanning = (
       ceremonyStart.setHours(hours, minutes, 0, 0);
       
       const ceremonyDuration = getCeremonyDuration(formData.type_ceremonie_2 || 'civile');
-      events.push(createEvent('ceremony', `2ème cérémonie (${formData.type_ceremonie_2})`, ceremonyStart, ceremonyDuration, true));
+      events.push(createEvent('ceremony', `2ème cérémonie (${formData.type_ceremonie_2})`, ceremonyStart, ceremonyDuration, 'cérémonie', true));
       
       currentTime = new Date(ceremonyStart.getTime() + ceremonyDuration * 60000);
     }
     
     // Travel after second ceremony
     if (formData.trajet_4_ceremonie_2_arrivee_2 && formData.trajet_4_ceremonie_2_arrivee_2 > 0) {
-      events.push(createEvent('travel', 'Trajet vers réception', currentTime, formData.trajet_4_ceremonie_2_arrivee_2));
+      events.push(createEvent('travel', 'Trajet vers réception', currentTime, formData.trajet_4_ceremonie_2_arrivee_2, 'logistique'));
       currentTime = new Date(currentTime.getTime() + formData.trajet_4_ceremonie_2_arrivee_2 * 60000);
     }
     
@@ -312,57 +315,81 @@ export const generatePlanning = (
       ceremonyStart.setHours(hours, minutes, 0, 0);
       
       const ceremonyDuration = getCeremonyDuration(formData.type_ceremonie_principale || 'civile');
-      events.push(createEvent('ceremony', `Cérémonie (${formData.type_ceremonie_principale})`, ceremonyStart, ceremonyDuration, true));
+      events.push(createEvent('ceremony', `Cérémonie (${formData.type_ceremonie_principale})`, ceremonyStart, ceremonyDuration, 'cérémonie', true));
       
       currentTime = new Date(ceremonyStart.getTime() + ceremonyDuration * 60000);
     }
     
     // Travel to reception if different location
     if (formData.trajet_ceremonie_reception && formData.trajet_ceremonie_reception > 0) {
-      events.push(createEvent('travel', 'Trajet vers la réception', currentTime, formData.trajet_ceremonie_reception));
+      events.push(createEvent('travel', 'Trajet vers la réception', currentTime, formData.trajet_ceremonie_reception, 'logistique'));
       currentTime = new Date(currentTime.getTime() + formData.trajet_ceremonie_reception * 60000);
     }
   }
 
-  // Add photos
-  if (formData.photos_couple) {
+  // Add photos section
+  if (formData.photos_couple && formData.photos_couple !== 'Non') {
     const duration = getDurationFromOption(formData.photos_couple, questions);
-    events.push(createEvent('photos', 'Photos de couple', currentTime, duration));
+    events.push(createEvent('photos', 'Photos de couple', currentTime, duration, 'photos'));
+    currentTime = new Date(currentTime.getTime() + duration * 60000);
+  }
+
+  if (formData.photos_groupe && formData.photos_groupe.length > 0) {
+    const duration = 30; // Default duration for group photos
+    events.push(createEvent('photos', 'Photos de groupe', currentTime, duration, 'photos'));
     currentTime = new Date(currentTime.getTime() + duration * 60000);
   }
 
   // Add cocktail
   if (formData.cocktail_duree) {
     const duration = getDurationFromOption(formData.cocktail_duree, questions);
-    events.push(createEvent('cocktail', 'Cocktail', currentTime, duration, true));
+    let cocktailTitle = 'Cocktail';
+    if (formData.cocktail_animations && formData.cocktail_animations.length > 0) {
+      cocktailTitle += ` (${formData.cocktail_animations.join(', ')})`;
+    }
+    events.push(createEvent('cocktail', cocktailTitle, currentTime, duration, 'cocktail', true));
     currentTime = new Date(currentTime.getTime() + duration * 60000);
   }
 
   // Add dinner
   if (formData.repas_duree) {
     const duration = getDurationFromOption(formData.repas_duree, questions);
-    events.push(createEvent('repas', 'Repas', currentTime, duration, true));
+    let repasTitle = 'Repas';
+    if (formData.repas_type) {
+      repasTitle = `Repas (${formData.repas_type})`;
+    }
+    if (formData.repas_animations && formData.repas_animations.length > 0) {
+      repasTitle += ` - ${formData.repas_animations.join(', ')}`;
+    }
+    events.push(createEvent('dinner', repasTitle, currentTime, duration, 'repas', true));
     currentTime = new Date(currentTime.getTime() + duration * 60000);
   }
 
-  // Add evening party if soirée questions are answered
+  // Add evening party
   if (formData.soiree_duree) {
     const duration = getDurationFromOption(formData.soiree_duree, questions);
-    events.push(createEvent('soiree', 'Soirée dansante', currentTime, duration, true));
+    let soireeTitle = 'Soirée';
+    if (formData.soiree_type) {
+      soireeTitle = `Soirée (${formData.soiree_type})`;
+    }
+    if (formData.soiree_animations && formData.soiree_animations.length > 0) {
+      soireeTitle += ` - ${formData.soiree_animations.join(', ')}`;
+    }
+    events.push(createEvent('party', soireeTitle, currentTime, duration, 'soiree', true));
   }
 
   return events.sort((a, b) => a.startTime.getTime() - b.startTime.getTime());
 };
 
 // Helper functions
-const createEvent = (category: string, title: string, startTime: Date, duration: number, isHighlight = false): PlanningEvent => ({
-  id: `${category}-${Date.now()}-${Math.random()}`,
+const createEvent = (type: string, title: string, startTime: Date, duration: number, category: string, isHighlight = false): PlanningEvent => ({
+  id: `${type}-${Date.now()}-${Math.random()}`,
   title,
   category,
   startTime: new Date(startTime),
   endTime: new Date(startTime.getTime() + duration * 60000),
   duration,
-  type: category,
+  type,
   isHighlight
 });
 
