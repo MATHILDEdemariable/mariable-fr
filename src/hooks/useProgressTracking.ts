@@ -2,7 +2,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/components/ui/use-toast';
 
 interface ProgressItem {
   id: string;
@@ -13,7 +12,6 @@ interface ProgressItem {
 
 export const useProgressTracking = () => {
   const location = useLocation();
-  const { toast } = useToast();
   const [progressItems, setProgressItems] = useState<ProgressItem[]>([
     { id: 'planning', label: 'Planning personnalisé', path: '/dashboard/planning', completed: false },
     { id: 'budget', label: 'Budget défini', path: '/dashboard/budget', completed: false },
@@ -34,74 +32,60 @@ export const useProgressTracking = () => {
       // Save to database
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
-        const updatedItems = progressItems.map(item => 
-          item.id === itemId ? { ...item, completed } : item
-        );
-        
-        const completedSteps = updatedItems
-          .filter(item => item.completed)
-          .map(item => item.id);
-
-        const progressPercentage = Math.round((completedSteps.length / progressItems.length) * 100);
-
         const { error } = await supabase
-          .from('user_planning_responses')
+          .from('user_progress')
           .upsert({
             user_id: user.id,
-            completed_steps: completedSteps,
-            progress_percentage: progressPercentage,
-            responses: {},
+            step_name: itemId,
+            is_complete: completed,
+            completed_at: completed ? new Date().toISOString() : null,
             updated_at: new Date().toISOString()
           }, {
-            onConflict: 'user_id'
+            onConflict: 'user_id,step_name'
           });
 
         if (error) {
-          console.error('Error updating progress:', error);
+          console.error('Progress update error:', error);
           // Revert local state on error
           loadProgress();
-          toast({
-            title: "Erreur",
-            description: "Impossible de sauvegarder votre progression",
-            variant: "destructive"
-          });
         }
       }
     } catch (error) {
-      console.error('Error updating progress:', error);
+      console.error('Progress update error:', error);
       // Revert local state on error
       loadProgress();
-      toast({
-        title: "Erreur",
-        description: "Impossible de sauvegarder votre progression",
-        variant: "destructive"
-      });
     }
-  }, [progressItems, toast]);
+  }, []);
 
   const loadProgress = useCallback(async () => {
     try {
       setLoading(true);
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
-        const { data } = await supabase
-          .from('user_planning_responses')
-          .select('completed_steps, progress_percentage')
-          .eq('user_id', user.id)
-          .maybeSingle();
+        const { data, error } = await supabase
+          .from('user_progress')
+          .select('step_name, is_complete')
+          .eq('user_id', user.id);
 
-        if (data?.completed_steps) {
+        if (error) {
+          console.error('Progress load error:', error);
+          return;
+        }
+
+        if (data) {
           setProgressItems(prev => 
-            prev.map(item => ({
-              ...item,
-              completed: Array.isArray(data.completed_steps) ? 
-                data.completed_steps.includes(item.id) : false
-            }))
+            prev.map(item => {
+              const progressData = data.find(d => d.step_name === item.id);
+              return {
+                ...item,
+                completed: progressData ? progressData.is_complete : false
+              };
+            })
           );
         }
       }
     } catch (error) {
-      console.error('Error loading progress:', error);
+      console.error('Progress load error:', error);
     } finally {
       setLoading(false);
     }

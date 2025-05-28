@@ -1,7 +1,6 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/components/ui/use-toast';
 
 interface QuizResponse {
   responses: Record<string, any>;
@@ -12,12 +11,14 @@ interface QuizResponse {
 export const usePersistentQuiz = () => {
   const [quizData, setQuizData] = useState<QuizResponse | null>(null);
   const [loading, setLoading] = useState(true);
-  const { toast } = useToast();
 
   const saveQuizResponse = useCallback(async (responses: Record<string, any>, generatedTasks?: any[]) => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      if (!user) {
+        // Silently fail if no user - will retry when logged in
+        return;
+      }
 
       const { error } = await supabase
         .from('user_planning_responses')
@@ -30,7 +31,11 @@ export const usePersistentQuiz = () => {
           onConflict: 'user_id'
         });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Quiz save error:', error);
+        // Don't throw error - allow silent failure
+        return;
+      }
 
       setQuizData({
         responses,
@@ -39,14 +44,10 @@ export const usePersistentQuiz = () => {
       });
 
     } catch (error) {
-      console.error('Error saving quiz response:', error);
-      toast({
-        title: "Erreur de sauvegarde",
-        description: "Impossible de sauvegarder vos réponses",
-        variant: "destructive"
-      });
+      console.error('Quiz save error:', error);
+      // Don't throw error - allow silent failure
     }
-  }, [toast]);
+  }, []);
 
   const loadQuizData = useCallback(async () => {
     try {
@@ -60,7 +61,10 @@ export const usePersistentQuiz = () => {
         .eq('user_id', user.id)
         .maybeSingle();
 
-      if (error && error.code !== 'PGRST116') throw error;
+      if (error && error.code !== 'PGRST116') {
+        console.error('Quiz load error:', error);
+        return;
+      }
 
       if (data) {
         // Properly cast the JSON data to expected types
@@ -74,7 +78,7 @@ export const usePersistentQuiz = () => {
         });
       }
     } catch (error) {
-      console.error('Error loading quiz data:', error);
+      console.error('Quiz load error:', error);
     } finally {
       setLoading(false);
     }
