@@ -56,6 +56,7 @@ export type PlanningQuestion = {
   id: string;
   categorie: string;
   label: string;
+  label_affichage_front?: string;
   type: 'choix' | 'number' | 'time' | 'multi-choix' | 'texte' | 'fixe';
   option_name: string;
   duree_minutes: number;
@@ -166,6 +167,7 @@ const getDefaultDuration = (optionName: string): number => {
   if (optionName.includes('repas')) return 180;
   if (optionName.includes('soiree')) return 240;
   if (optionName.includes('ceremonie')) return 60;
+  if (optionName.includes('trajet')) return 15;
   return 30; // Default
 };
 
@@ -251,36 +253,43 @@ export const generatePlanning = (
   formData: PlanningFormValues
 ): PlanningEvent[] => {
   const events: PlanningEvent[] = [];
-  let currentTime = new Date();
   
   // Set base time from ceremony
   const ceremonyTime = formData.heure_ceremonie_principale || formData.heure_ceremonie_1;
-  if (ceremonyTime) {
-    currentTime = parseTimeToDate(ceremonyTime);
-    // Start planning 3 hours before ceremony for preparation
-    currentTime = addMinutesToDate(currentTime, -180);
-  }
+  let currentTime = ceremonyTime ? parseTimeToDate(ceremonyTime) : new Date();
+  
+  // Start planning 3 hours before ceremony for preparation
+  currentTime = addMinutesToDate(currentTime, -180);
 
   const isDualCeremony = formData.double_ceremonie === 'oui';
   
-  // Generate events based on all form responses
-  Object.entries(formData).forEach(([key, value]) => {
-    if (!value || (Array.isArray(value) && value.length === 0)) return;
-    
-    const question = questions.find(q => q.option_name === key);
-    if (!question) return;
+  // Process all categories in logical order
+  const categoryOrder = [
+    'préparatifs_final',
+    'logistique', 
+    'cérémonie',
+    'photos',
+    'cocktail',
+    'repas',
+    'soiree'
+  ];
 
-    // Skip time and logical fields that are not actual activities
-    if (question.type === 'time' || key.includes('double_') || key.includes('type_')) return;
+  categoryOrder.forEach(category => {
+    const categoryQuestions = questions.filter(q => q.categorie === category);
     
-    const duration = getDurationFromQuestionOrOption(key, value, questions);
-    
-    // Create event based on question category and type
-    const event = createEventFromQuestion(question, value, currentTime, duration);
-    if (event) {
-      events.push(event);
-      currentTime = addMinutesToDate(currentTime, duration + 15); // Add 15min buffer between events
-    }
+    categoryQuestions.forEach(question => {
+      const value = formData[question.option_name];
+      if (!value || (Array.isArray(value) && value.length === 0)) return;
+      
+      // Skip time fields and logical fields that are not actual activities
+      if (question.type === 'time' || question.option_name.includes('double_') || question.option_name.includes('type_')) return;
+      
+      const event = createEventFromQuestion(question, value, currentTime, questions);
+      if (event) {
+        events.push(event);
+        currentTime = addMinutesToDate(currentTime, event.duration + 5); // Add 5min buffer
+      }
+    });
   });
 
   // Process ceremony events separately with proper timing
@@ -290,26 +299,39 @@ export const generatePlanning = (
     processSingleCeremony(events, formData, questions);
   }
 
+  // Process all logistics trajectory blocks
+  processLogisticsTrajectory(events, formData, questions);
+
   // Sort events by start time and recalculate timeline
   const sortedEvents = events.sort((a, b) => a.startTime.getTime() - b.startTime.getTime());
   return recalculateTimeline(sortedEvents);
 };
 
-// Helper function to create event from question
+// Enhanced helper function to create event from question
 const createEventFromQuestion = (
   question: PlanningQuestion,
   value: any,
   startTime: Date,
-  duration: number
+  questions: PlanningQuestion[]
 ): PlanningEvent | null => {
-  // Skip boolean and empty values
-  if (typeof value === 'boolean' || value === 'Non' || value === 'non') return null;
+  // Skip boolean and empty values, but include numeric values
+  if (typeof value === 'boolean' && !value) return null;
+  if (value === 'Non' || value === 'non') return null;
+  if (typeof value === 'number' && value <= 0) return null;
   
-  let title = question.label;
+  // Use label_affichage_front if available, otherwise fall back to label
+  let title = question.label_affichage_front || question.label;
   let category = question.categorie;
   
-  // Enhance title with selected options
-  if (Array.isArray(value)) {
+  // Get duration from the question or value
+  const duration = getDurationFromQuestionOrOption(question.option_name, value, questions);
+  
+  // For trajectory blocks, use the numeric value as duration in minutes
+  if (question.option_name.includes('trajet') && typeof value === 'number') {
+    // title already set from label_affichage_front
+  }
+  // Enhance title with selected options for non-trajectory blocks
+  else if (Array.isArray(value)) {
     title += ` (${value.join(', ')})`;
   } else if (typeof value === 'string' && value !== 'Oui' && value !== 'oui') {
     title += ` (${value})`;
@@ -324,6 +346,74 @@ const createEventFromQuestion = (
     duration,
     type: question.categorie,
     isHighlight: ['ceremonie', 'cocktail', 'repas', 'soiree'].includes(question.categorie)
+  };
+};
+
+// Process logistics trajectory blocks
+const processLogisticsTrajectory = (
+  events: PlanningEvent[],
+  formData: PlanningFormValues,
+  questions: PlanningQuestion[]
+) => {
+  const isDualCeremony = formData.double_ceremonie === 'oui';
+  
+  if (isDualCeremony) {
+    // Process dual ceremony trajectories
+    const trajectoryFields = [
+      'trajet_1_depart_ceremonie_1',
+      'trajet_2_ceremonie_1_arrivee_1', 
+      'trajet_3_depart_ceremonie_2',
+      'trajet_4_ceremonie_2_arrivee_2'
+    ];
+    
+    trajectoryFields.forEach(fieldName => {
+      const duration = formData[fieldName];
+      if (duration && typeof duration === 'number' && duration > 0) {
+        const question = questions.find(q => q.option_name === fieldName);
+        if (question) {
+          const trajectoryEvent = createTrajectoryEvent(question, duration);
+          if (trajectoryEvent) {
+            events.push(trajectoryEvent);
+          }
+        }
+      }
+    });
+  } else {
+    // Process single ceremony trajectories
+    const trajectoryFields = [
+      'trajet_depart_ceremonie',
+      'trajet_ceremonie_reception'
+    ];
+    
+    trajectoryFields.forEach(fieldName => {
+      const duration = formData[fieldName];
+      if (duration && typeof duration === 'number' && duration > 0) {
+        const question = questions.find(q => q.option_name === fieldName);
+        if (question) {
+          const trajectoryEvent = createTrajectoryEvent(question, duration);
+          if (trajectoryEvent) {
+            events.push(trajectoryEvent);
+          }
+        }
+      }
+    });
+  }
+};
+
+// Helper to create trajectory events
+const createTrajectoryEvent = (
+  question: PlanningQuestion,
+  duration: number
+): PlanningEvent => {
+  return {
+    id: `${question.option_name}-${Date.now()}-${Math.random()}`,
+    title: question.label_affichage_front || question.label,
+    category: 'logistique',
+    startTime: new Date(), // Will be recalculated in timeline
+    endTime: addMinutesToDate(new Date(), duration),
+    duration,
+    type: 'travel',
+    isHighlight: false
   };
 };
 
@@ -405,7 +495,7 @@ const recalculateTimeline = (events: PlanningEvent[]): PlanningEvent[] => {
     }
     
     updatedEvent.endTime = addMinutesToDate(updatedEvent.startTime, event.duration);
-    currentTime = addMinutesToDate(updatedEvent.endTime, 15); // 15min buffer
+    currentTime = addMinutesToDate(updatedEvent.endTime, 5); // 5min buffer
     
     return updatedEvent;
   });

@@ -257,6 +257,7 @@ export type Database = {
           duree_minutes: number | null
           id: string
           label: string
+          label_affichage_front: string | null
           option_name: string
           options: Json | null
           ordre_affichage: number
@@ -270,6 +271,7 @@ export type Database = {
           duree_minutes?: number | null
           id?: string
           label: string
+          label_affichage_front?: string | null
           option_name: string
           options?: Json | null
           ordre_affichage: number
@@ -283,6 +285,7 @@ export type Database = {
           duree_minutes?: number | null
           id?: string
           label?: string
+          label_affichage_front?: string | null
           option_name?: string
           options?: Json | null
           ordre_affichage?: number
