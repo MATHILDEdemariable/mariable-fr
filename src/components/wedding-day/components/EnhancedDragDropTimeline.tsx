@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import { addMinutes } from 'date-fns';
-import { PlanningEvent } from '../types/planningTypes';
+import { PlanningEvent, savePlanningResponses } from '../types/planningTypes';
 import { useToast } from '@/components/ui/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { usePlanning } from '../context/PlanningContext';
@@ -20,7 +20,7 @@ const EnhancedDragDropTimeline: React.FC<EnhancedDragDropTimelineProps> = ({
   onEventsUpdate 
 }) => {
   const [timelineEvents, setTimelineEvents] = useState<PlanningEvent[]>([]);
-  const { user } = usePlanning();
+  const { user, formData } = usePlanning();
   const { toast } = useToast();
 
   useEffect(() => {
@@ -114,29 +114,17 @@ const EnhancedDragDropTimeline: React.FC<EnhancedDragDropTimelineProps> = ({
     if (!user) return;
 
     try {
-      const serializableEvents = events.map(event => ({
-        ...event,
-        startTime: event.startTime.toISOString(),
-        endTime: event.endTime.toISOString()
-      }));
-
-      const { error } = await supabase
-        .from('planning_reponses_utilisateur')
-        .upsert({
-          user_id: user.id,
-          email: user.email || undefined,
-          planning_genere: serializableEvents,
-          reponses: {}
-        });
-
-      if (error) throw error;
+      await savePlanningResponses(
+        supabase,
+        user.id,
+        user.email || undefined,
+        formData || {},
+        events
+      );
     } catch (error) {
       console.error('Error saving planning:', error);
-      toast({
-        title: "Erreur de sauvegarde",
-        description: "Impossible de sauvegarder les modifications.",
-        variant: "destructive"
-      });
+      // Silent error handling - don't show error toast for save failures
+      // The timeline changes are still visible to the user
     }
   };
 

@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -26,7 +27,10 @@ export const PlanningResults: React.FC = () => {
           .order('date_creation', { ascending: false })
           .limit(1);
 
-        if (error) throw error;
+        if (error) {
+          console.error('Error loading saved planning:', error);
+          return; // Silent error handling
+        }
 
         if (data && data.length > 0) {
           const savedPlanning = data[0];
@@ -48,16 +52,12 @@ export const PlanningResults: React.FC = () => {
         }
       } catch (error) {
         console.error('Error loading saved planning:', error);
-        toast({
-          title: "Erreur de chargement",
-          description: "Impossible de charger votre planning sauvegardé.",
-          variant: "destructive"
-        });
+        // Silent error handling - don't show error toast
       }
     };
 
     loadSavedPlanning();
-  }, [user, setEvents, setFormData, toast]);
+  }, [user, setEvents, setFormData]);
 
   const handleReset = () => {
     setActiveTab("form");

@@ -1,3 +1,4 @@
+
 import { SupabaseClient } from '@supabase/supabase-js';
 
 export interface PlanningFormValues {
@@ -387,23 +388,47 @@ export const savePlanningResponses = async (
     endTime: event.endTime.toISOString()
   }));
 
-  const { data, error } = await supabase
-    .from('planning_reponses_utilisateur')
-    .upsert(
-      {
-        user_id: userId,
-        email: email,
-        reponses: responses || {},
-        planning_genere: serializedPlanning || []
-      },
-      {
-        onConflict: 'user_id'
-      }
-    );
+  try {
+    // First try to update existing record
+    const { data: existingData, error: selectError } = await supabase
+      .from('planning_reponses_utilisateur')
+      .select('id')
+      .eq('user_id', userId)
+      .maybeSingle();
 
-  if (error) {
+    if (selectError && selectError.code !== 'PGRST116') {
+      throw selectError;
+    }
+
+    if (existingData) {
+      // Update existing record
+      const { data, error } = await supabase
+        .from('planning_reponses_utilisateur')
+        .update({
+          email: email,
+          reponses: responses || {},
+          planning_genere: serializedPlanning || []
+        })
+        .eq('user_id', userId);
+
+      if (error) throw error;
+      return data;
+    } else {
+      // Insert new record
+      const { data, error } = await supabase
+        .from('planning_reponses_utilisateur')
+        .insert({
+          user_id: userId,
+          email: email,
+          reponses: responses || {},
+          planning_genere: serializedPlanning || []
+        });
+
+      if (error) throw error;
+      return data;
+    }
+  } catch (error: any) {
+    console.error('Error saving planning responses:', error);
     throw new Error(`Erreur lors de la sauvegarde: ${error.message}`);
   }
-
-  return data;
 };

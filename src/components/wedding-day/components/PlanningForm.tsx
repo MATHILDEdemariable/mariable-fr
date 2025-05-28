@@ -54,36 +54,34 @@ export const PlanningForm: React.FC = () => {
   };
 
   const handleFormSubmit = async (data: PlanningFormValues, generatedEvents: PlanningEvent[]) => {
+    console.log('Form submission with data:', data);
+    console.log('Generated events:', generatedEvents);
+    
     setFormData(data);
     setEvents(generatedEvents);
     setActiveTab("results");
     
-    // Save responses to Supabase if a user is logged in
+    // Save responses to Supabase if a user is logged in - silent save without blocking UI
     if (user) {
-      try {
-        setLoading(true);
-        await savePlanningResponses(
-          supabase, 
-          user.id, 
-          user.email || undefined, 
-          data, 
-          generatedEvents
-        );
-        
+      // Don't set loading state to avoid blocking UI
+      savePlanningResponses(
+        supabase, 
+        user.id, 
+        user.email || undefined, 
+        data, 
+        generatedEvents
+      ).then(() => {
+        console.log('Planning saved successfully');
+        // Only show success message, no error toasts for save failures
         toast({
           title: "Planning sauvegardé",
           description: "Votre planning a été généré et sauvegardé avec succès."
         });
-      } catch (error: any) {
+      }).catch((error) => {
         console.error("Error saving planning:", error);
-        toast({
-          title: "Erreur de sauvegarde",
-          description: "Une erreur est survenue lors de la sauvegarde du planning, mais vous pouvez toujours le visualiser et l'exporter.",
-          variant: "destructive"
-        });
-      } finally {
-        setLoading(false);
-      }
+        // Silent error handling - don't show error messages to user
+        // The planning is still generated and usable
+      });
     }
   };
 
