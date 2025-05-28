@@ -887,6 +887,42 @@ export type Database = {
         }
         Relationships: []
       }
+      team_tasks: {
+        Row: {
+          created_at: string
+          id: string
+          is_custom: boolean
+          phase: string
+          position: number
+          responsible_person: string | null
+          task_name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_custom?: boolean
+          phase: string
+          position?: number
+          responsible_person?: string | null
+          task_name: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_custom?: boolean
+          phase?: string
+          position?: number
+          responsible_person?: string | null
+          task_name?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       todos_planification: {
         Row: {
           category: string | null

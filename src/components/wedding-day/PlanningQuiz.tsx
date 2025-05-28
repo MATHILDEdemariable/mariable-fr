@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { Card, CardContent } from '@/components/ui/card';
@@ -32,7 +33,7 @@ interface PlanningQuizProps {
   stepLabels?: string[];
 }
 
-// Centralized categories configuration as single source of truth - reordered to put préparatifs after logistique
+// Centralized categories configuration - updated to include soirée as step 7
 const CATEGORIES_CONFIG = [
   { key: 'cérémonie', label: 'Cérémonie(s)', description: 'Informations sur votre/vos cérémonie(s) de mariage' },
   { key: 'logistique', label: 'Logistique', description: 'Temps de trajets et logistique' },
@@ -91,7 +92,6 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
   // Update available categories when form values change (for conditional logic)
   useEffect(() => {
     const baseCategories = CATEGORIES_CONFIG.map(cat => cat.key);
-    // No longer need to insert préparatifs_2 dynamically since it's integrated
     setAvailableCategories(baseCategories);
   }, [watchAllFields.double_ceremonie]);
   
@@ -488,13 +488,13 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
     );
   };
 
-  // Special renderer for logistics section with only pause question and conditional dual ceremony fields
+  // Enhanced logistics section with conditional travel time inputs for single ceremony
   const renderLogisticsSection = () => {
     const isDualCeremony = watchAllFields.double_ceremonie === 'oui';
     
     return (
       <div className="space-y-6">
-        {/* Only show the pause question from regular logistics questions */}
+        {/* Regular pause question */}
         {questions
           .filter(q => q.categorie === 'logistique' && q.option_name === 'pause_maries')
           .filter(q => isQuestionVisible(q, watchAllFields))
@@ -504,8 +504,60 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
             </div>
           ))}
         
-        {/* Conditional dual ceremony logistics */}
-        {isDualCeremony && (
+        {/* Conditional travel time inputs based on ceremony type */}
+        {!isDualCeremony ? (
+          /* Single ceremony travel inputs */
+          <fieldset className="border border-gray-200 rounded-lg p-4 space-y-4">
+            <legend className="text-lg font-medium px-2">Trajets pour votre mariage</legend>
+            
+            <FormField
+              control={form.control}
+              name="trajet_depart_ceremonie"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Trajet : point de départ ➝ cérémonie</FormLabel>
+                  <FormControl>
+                    <Input 
+                      type="number" 
+                      {...field}
+                      onChange={(e) => field.onChange(parseInt(e.target.value))}
+                      className="w-full max-w-[200px]"
+                      placeholder="Durée en minutes"
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Temps de trajet en minutes
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            
+            <FormField
+              control={form.control}
+              name="trajet_ceremonie_reception"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Trajet : cérémonie ➝ réception <span className="text-sm text-gray-500">(si différent)</span></FormLabel>
+                  <FormControl>
+                    <Input 
+                      type="number" 
+                      {...field}
+                      onChange={(e) => field.onChange(parseInt(e.target.value))}
+                      className="w-full max-w-[200px]"
+                      placeholder="Durée en minutes"
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Temps de trajet en minutes (laisser vide si même lieu)
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </fieldset>
+        ) : (
+          /* Dual ceremony travel inputs */
           <fieldset className="border border-gray-200 rounded-lg p-4 space-y-4">
             <legend className="text-lg font-medium px-2">Trajets pour double cérémonie</legend>
             
