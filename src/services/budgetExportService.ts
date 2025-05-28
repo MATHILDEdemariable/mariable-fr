@@ -1,17 +1,21 @@
 
 import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
+import 'jspdf-autotable';
+
+interface BudgetItem {
+  id: string;
+  name: string;
+  estimated: number;
+  actual: number;
+  deposit: number;
+  remaining: number;
+  payer?: string;
+  comment?: string;
+}
 
 interface BudgetCategory {
   name: string;
-  items: Array<{
-    id: string;
-    name: string;
-    estimated: number;
-    actual: number;
-    deposit: number;
-    remaining: number;
-  }>;
+  items: BudgetItem[];
   totalEstimated: number;
   totalActual: number;
   totalDeposit: number;
@@ -26,177 +30,119 @@ interface BudgetExportData {
   totalRemaining: number;
 }
 
-export const exportBudgetToPDF = async (data: BudgetExportData): Promise<boolean> => {
+export const exportBudgetToPDF = async (budgetData: BudgetExportData): Promise<boolean> => {
   try {
-    // Create temporary container for PDF content
-    const tempContainer = document.createElement('div');
-    tempContainer.style.position = 'absolute';
-    tempContainer.style.left = '-9999px';
-    tempContainer.style.top = '0';
-    tempContainer.style.width = '210mm'; // A4 width
-    tempContainer.style.backgroundColor = '#ffffff';
-    tempContainer.style.fontFamily = 'system-ui, -apple-system, sans-serif';
-    tempContainer.style.padding = '20mm';
-    tempContainer.style.boxSizing = 'border-box';
-
-    // Generate branded PDF content
-    tempContainer.innerHTML = generateBudgetContent(data);
-    document.body.appendChild(tempContainer);
-
-    // Wait for content to render
-    await new Promise(resolve => setTimeout(resolve, 100));
-
-    // Generate PDF using html2canvas and jsPDF
-    const canvas = await html2canvas(tempContainer, {
-      scale: 2,
-      useCORS: true,
-      allowTaint: true,
-      backgroundColor: '#ffffff',
-      width: tempContainer.scrollWidth,
-      height: tempContainer.scrollHeight
+    const doc = new jsPDF();
+    
+    // Set up the document
+    doc.setFontSize(20);
+    doc.text('Budget Détaillé de Mariage', 14, 22);
+    
+    doc.setFontSize(12);
+    doc.text(`Généré le ${new Date().toLocaleDateString('fr-FR')}`, 14, 32);
+    
+    let yPosition = 45;
+    
+    // Prepare data for the table
+    const tableData: any[] = [];
+    
+    budgetData.categories.forEach((category) => {
+      // Add category header
+      tableData.push([
+        { content: category.name, styles: { fontStyle: 'bold', fillColor: [240, 240, 240] } },
+        { content: category.totalEstimated.toFixed(2) + ' €', styles: { fontStyle: 'bold', fillColor: [240, 240, 240] } },
+        { content: category.totalActual.toFixed(2) + ' €', styles: { fontStyle: 'bold', fillColor: [240, 240, 240] } },
+        { content: category.totalDeposit.toFixed(2) + ' €', styles: { fontStyle: 'bold', fillColor: [240, 240, 240] } },
+        { content: category.totalRemaining.toFixed(2) + ' €', styles: { fontStyle: 'bold', fillColor: [240, 240, 240] } },
+        { content: '', styles: { fontStyle: 'bold', fillColor: [240, 240, 240] } },
+        { content: '', styles: { fontStyle: 'bold', fillColor: [240, 240, 240] } }
+      ]);
+      
+      // Add category items
+      category.items.forEach((item) => {
+        const comment = item.comment && item.comment.length > 20 
+          ? item.comment.substring(0, 20) + '...' 
+          : item.comment || '';
+          
+        tableData.push([
+          item.name || '',
+          (item.estimated || 0).toFixed(2) + ' €',
+          (item.actual || 0).toFixed(2) + ' €',
+          (item.deposit || 0).toFixed(2) + ' €',
+          (item.remaining || 0).toFixed(2) + ' €',
+          item.payer || '',
+          comment
+        ]);
+      });
     });
-
-    // Clean up temporary container
-    document.body.removeChild(tempContainer);
-
-    // Create PDF
-    const pdf = new jsPDF({
-      orientation: 'portrait',
-      unit: 'mm',
-      format: 'a4'
+    
+    // Add total row
+    tableData.push([
+      { content: 'TOTAL', styles: { fontStyle: 'bold', fillColor: [200, 200, 200] } },
+      { content: budgetData.totalEstimated.toFixed(2) + ' €', styles: { fontStyle: 'bold', fillColor: [200, 200, 200] } },
+      { content: budgetData.totalActual.toFixed(2) + ' €', styles: { fontStyle: 'bold', fillColor: [200, 200, 200] } },
+      { content: budgetData.totalDeposit.toFixed(2) + ' €', styles: { fontStyle: 'bold', fillColor: [200, 200, 200] } },
+      { content: budgetData.totalRemaining.toFixed(2) + ' €', styles: { fontStyle: 'bold', fillColor: [200, 200, 200] } },
+      { content: '', styles: { fontStyle: 'bold', fillColor: [200, 200, 200] } },
+      { content: '', styles: { fontStyle: 'bold', fillColor: [200, 200, 200] } }
+    ]);
+    
+    // Create the table
+    (doc as any).autoTable({
+      head: [['Élément', 'Estimé', 'Réel', 'Acompte', 'Reste', 'Qui paye ?', 'Note']],
+      body: tableData,
+      startY: yPosition,
+      theme: 'grid',
+      styles: {
+        fontSize: 8,
+        cellPadding: 2,
+      },
+      headStyles: {
+        fillColor: [127, 148, 116], // wedding-olive color
+        textColor: 255,
+        fontStyle: 'bold'
+      },
+      columnStyles: {
+        0: { cellWidth: 35 }, // Élément
+        1: { cellWidth: 20, halign: 'right' }, // Estimé
+        2: { cellWidth: 20, halign: 'right' }, // Réel
+        3: { cellWidth: 20, halign: 'right' }, // Acompte
+        4: { cellWidth: 20, halign: 'right' }, // Reste
+        5: { cellWidth: 25 }, // Qui paye ?
+        6: { cellWidth: 30 } // Note
+      },
+      margin: { left: 14, right: 14 },
     });
-
-    const imgData = canvas.toDataURL('image/png');
-    const imgWidth = 210; // A4 width in mm
-    const pageHeight = 297; // A4 height in mm
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-    if (imgHeight <= pageHeight) {
-      // Content fits on one page
-      pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
-    } else {
-      // Content needs multiple pages
-      let heightLeft = imgHeight;
-      let position = 0;
-
-      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
-
-      while (heightLeft >= 0) {
-        position = heightLeft - imgHeight;
-        pdf.addPage();
-        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
+    
+    // Add a summary section if there's space
+    const finalY = (doc as any).lastAutoTable.finalY + 20;
+    
+    if (finalY < doc.internal.pageSize.height - 60) {
+      doc.setFontSize(14);
+      doc.text('Résumé', 14, finalY);
+      
+      doc.setFontSize(10);
+      doc.text(`Budget total estimé: ${budgetData.totalEstimated.toFixed(2)} €`, 14, finalY + 12);
+      doc.text(`Coût réel total: ${budgetData.totalActual.toFixed(2)} €`, 14, finalY + 20);
+      doc.text(`Acomptes versés: ${budgetData.totalDeposit.toFixed(2)} €`, 14, finalY + 28);
+      doc.text(`Reste à payer: ${budgetData.totalRemaining.toFixed(2)} €`, 14, finalY + 36);
+      
+      const difference = budgetData.totalActual - budgetData.totalEstimated;
+      if (difference > 0) {
+        doc.setTextColor(255, 0, 0);
+        doc.text(`Dépassement de budget: +${difference.toFixed(2)} €`, 14, finalY + 44);
+      } else if (difference < 0) {
+        doc.setTextColor(0, 128, 0);
+        doc.text(`Économies réalisées: ${Math.abs(difference).toFixed(2)} €`, 14, finalY + 44);
       }
     }
-
-    // Generate filename
-    const date = new Date().toISOString().split('T')[0];
-    const filename = `budget-mariage-mariable-${date}.pdf`;
-
-    // Save PDF
-    pdf.save(filename);
+    
+    // Save the PDF
+    doc.save(`budget-detaille-${new Date().toISOString().split('T')[0]}.pdf`);
+    
     return true;
-
   } catch (error) {
-    console.error('Error generating budget PDF:', error);
+    console.error('Error generating PDF:', error);
     return false;
   }
-};
-
-const formatCurrency = (amount: number): string => {
-  return new Intl.NumberFormat('fr-FR', { 
-    style: 'currency', 
-    currency: 'EUR',
-    maximumFractionDigits: 0 
-  }).format(amount);
-};
-
-const generateBudgetContent = (data: BudgetExportData): string => {
-  const currentDate = new Date().toLocaleDateString('fr-FR');
-  
-  return `
-    <div style="min-height: 100%; display: flex; flex-direction: column;">
-      <!-- Header with Mariable branding -->
-      <div style="text-align: center; margin-bottom: 40px; padding-bottom: 20px; border-bottom: 3px solid #7F9474;">
-        <div style="font-size: 32px; font-weight: 700; color: #7F9474; font-family: serif; margin-bottom: 8px;">
-          Mariable
-        </div>
-        <div style="font-size: 18px; color: #948970; font-weight: 500;">
-          Budget de mariage détaillé
-        </div>
-      </div>
-
-      <!-- Budget summary -->
-      <div style="text-align: center; margin-bottom: 40px; padding: 20px; background-color: #f8f6f0; border-radius: 12px;">
-        <h1 style="font-size: 28px; font-weight: 700; color: #1A1F2C; margin: 0 0 12px 0; font-family: serif;">
-          Budget Total Estimé
-        </h1>
-        <p style="font-size: 32px; color: #7F9474; font-weight: 700; margin: 0;">
-          ${formatCurrency(data.totalEstimated)}
-        </p>
-      </div>
-
-      <!-- Budget table -->
-      <div style="flex: 1;">
-        <h2 style="font-size: 22px; font-weight: 600; color: #7F9474; margin-bottom: 24px; font-family: serif;">
-          Répartition détaillée
-        </h2>
-        
-        <!-- Table header -->
-        <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 12px; padding: 12px 16px; background-color: #7F9474; color: white; font-weight: 600; font-size: 14px; border-radius: 8px 8px 0 0;">
-          <div>Catégorie / Élément</div>
-          <div style="text-align: right;">Budget Estimé</div>
-          <div style="text-align: right;">Coût Réel</div>
-          <div style="text-align: right;">Acompte Versé</div>
-          <div style="text-align: right;">Reste à Payer</div>
-        </div>
-        
-        ${data.categories.map(category => `
-          <!-- Category row -->
-          <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 12px; padding: 12px 16px; background-color: #f8f6f0; font-weight: 600; border-left: 4px solid #7F9474;">
-            <div>${category.name}</div>
-            <div style="text-align: right;">${formatCurrency(category.totalEstimated)}</div>
-            <div style="text-align: right;">${formatCurrency(category.totalActual)}</div>
-            <div style="text-align: right;">${formatCurrency(category.totalDeposit)}</div>
-            <div style="text-align: right;">${formatCurrency(category.totalRemaining)}</div>
-          </div>
-          
-          ${category.items.filter(item => item.name).map(item => `
-            <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 12px; padding: 8px 16px; border-bottom: 1px solid #e5e7eb; font-size: 14px;">
-              <div style="padding-left: 20px;">${item.name}</div>
-              <div style="text-align: right;">${formatCurrency(item.estimated)}</div>
-              <div style="text-align: right;">${formatCurrency(item.actual)}</div>
-              <div style="text-align: right;">${formatCurrency(item.deposit)}</div>
-              <div style="text-align: right;">${formatCurrency(item.remaining)}</div>
-            </div>
-          `).join('')}
-        `).join('')}
-        
-        <!-- Total row -->
-        <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 12px; padding: 16px; background-color: #7F9474; color: white; font-weight: 700; font-size: 16px; border-radius: 0 0 8px 8px;">
-          <div>TOTAL</div>
-          <div style="text-align: right;">${formatCurrency(data.totalEstimated)}</div>
-          <div style="text-align: right;">${formatCurrency(data.totalActual)}</div>
-          <div style="text-align: right;">${formatCurrency(data.totalDeposit)}</div>
-          <div style="text-align: right;">${formatCurrency(data.totalRemaining)}</div>
-        </div>
-      </div>
-
-      <!-- Footer -->
-      <div style="margin-top: 40px; padding-top: 20px; border-top: 2px solid #e5e7eb; text-align: center;">
-        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #666;">
-          <div>
-            Généré le ${currentDate}
-          </div>
-          <div style="font-weight: 600; color: #7F9474;">
-            mariable.fr
-          </div>
-        </div>
-        <div style="margin-top: 12px; font-size: 11px; color: #999; text-align: center;">
-          Budget personnalisé créé avec Mariable - Votre partenaire pour un mariage réussi
-        </div>
-      </div>
-    </div>
-  `;
 };

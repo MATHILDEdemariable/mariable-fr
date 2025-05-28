@@ -3,11 +3,24 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
-import { Plus, Trash2, Save, Download } from 'lucide-react';
+import { Plus, Trash2, Save, Download, MessageSquare } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { exportBudgetToPDF } from '@/services/budgetExportService';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 
 // Type for budget category
 interface BudgetItem {
@@ -17,6 +30,8 @@ interface BudgetItem {
   actual: number;
   deposit: number;
   remaining: number;
+  payer: string;
+  comment: string;
 }
 
 interface BudgetCategory {
@@ -27,6 +42,17 @@ interface BudgetCategory {
   totalDeposit: number;
   totalRemaining: number;
 }
+
+// Payer options
+const PAYER_OPTIONS = [
+  'Marié·e 1',
+  'Marié·e 2',
+  'Famille Marié·e 1',
+  'Famille Marié·e 2',
+  'Partagé 50/50',
+  'Les deux familles',
+  'Autre'
+];
 
 // Default categories with proper initialization of all required properties
 const DEFAULT_CATEGORIES: BudgetCategory[] = [
@@ -66,11 +92,16 @@ const DetailedBudget: React.FC = () => {
         .single();
         
       if (error && error.code !== 'PGRST116') {
-        // PGRST116 means no rows returned
         throw error;
       }
       
-      return data;
+      return data || { 
+        breakdown: JSON.stringify({ categories: [] }),
+        total_budget: 0,
+        guests_count: 100,
+        region: 'paris',
+        season: 'summer'
+      };
     }
   });
 
@@ -78,13 +109,11 @@ const DetailedBudget: React.FC = () => {
   useEffect(() => {
     if (budgetData?.breakdown) {
       try {
-        // Check if breakdown contains the 'categories' property
         const breakdownData = typeof budgetData.breakdown === 'string' 
           ? JSON.parse(budgetData.breakdown) 
           : budgetData.breakdown;
 
         if (breakdownData && breakdownData.categories) {
-          // Make sure we initialize totals properly for each category
           const processedCategories = Array.isArray(breakdownData.categories) ? breakdownData.categories.map(cat => ({
             ...cat,
             totalEstimated: typeof cat.totalEstimated === 'number' ? cat.totalEstimated : 0,
@@ -96,19 +125,19 @@ const DetailedBudget: React.FC = () => {
               estimated: typeof item.estimated === 'number' ? item.estimated : 0,
               actual: typeof item.actual === 'number' ? item.actual : 0,
               deposit: typeof item.deposit === 'number' ? item.deposit : 0,
-              remaining: typeof item.remaining === 'number' ? item.remaining : 0
+              remaining: typeof item.remaining === 'number' ? item.remaining : 0,
+              payer: typeof item.payer === 'string' ? item.payer : '',
+              comment: typeof item.comment === 'string' ? item.comment : ''
             })) : []
           })) : DEFAULT_CATEGORIES;
           
           setCategories(processedCategories);
           
-          // Update totals with safe values
           setTotalEstimated(typeof breakdownData.totalEstimated === 'number' ? breakdownData.totalEstimated : 0);
           setTotalActual(typeof breakdownData.totalActual === 'number' ? breakdownData.totalActual : 0);
           setTotalDeposit(typeof breakdownData.totalDeposit === 'number' ? breakdownData.totalDeposit : 0);
           setTotalRemaining(typeof breakdownData.totalRemaining === 'number' ? breakdownData.totalRemaining : 0);
         } else {
-          // If no categories found, initialize with default categories
           setCategories(DEFAULT_CATEGORIES);
         }
       } catch (e) {
@@ -126,6 +155,14 @@ const DetailedBudget: React.FC = () => {
       const { data: userData } = await supabase.auth.getUser();
       if (!userData.user) throw new Error("User not authenticated");
 
+      const breakdownData = {
+        categories,
+        totalEstimated,
+        totalActual,
+        totalDeposit,
+        totalRemaining
+      };
+
       const { data, error } = await supabase
         .from('budgets_dashboard')
         .upsert({
@@ -136,13 +173,9 @@ const DetailedBudget: React.FC = () => {
           season: budgetData?.season || 'summer',
           service_level: budgetData?.service_level || 'standard',
           selected_vendors: budgetData?.selected_vendors || [],
-          breakdown: JSON.stringify({
-            categories,
-            totalEstimated,
-            totalActual,
-            totalDeposit,
-            totalRemaining
-          })
+          breakdown: breakdownData
+        }, {
+          onConflict: 'user_id'
         })
         .select();
 
@@ -226,7 +259,9 @@ const DetailedBudget: React.FC = () => {
       estimated: 0,
       actual: 0,
       deposit: 0,
-      remaining: 0
+      remaining: 0,
+      payer: '',
+      comment: ''
     };
     
     newCategories[categoryIndex].items.push(newItem);
@@ -241,18 +276,15 @@ const DetailedBudget: React.FC = () => {
     updateTotals(newCategories);
   };
 
-  // Update an item property (name, estimated, actual, etc.)
+  // Update an item property
   const handleItemChange = (categoryIndex: number, itemIndex: number, field: keyof BudgetItem, value: string | number) => {
     const newCategories = [...categories];
     const item = newCategories[categoryIndex].items[itemIndex];
     
-    // Update field value
-    if (field === 'name') {
-      item.name = value as string;
+    if (field === 'name' || field === 'payer' || field === 'comment') {
+      item[field] = value as string;
     } else {
-      // Fix: Convert string to number safely
       const numValue = typeof value === 'string' ? parseFloat(value) || 0 : value;
-      // Fix: Use type assertion to handle the TypeScript error
       (item[field] as number) = numValue;
       
       // Auto-calculate remaining amount
@@ -285,7 +317,6 @@ const DetailedBudget: React.FC = () => {
         categoryRemaining += item.remaining || 0;
       });
       
-      // Update category totals
       const updatedCategory = {
         ...category,
         totalEstimated: categoryEstimated,
@@ -294,7 +325,6 @@ const DetailedBudget: React.FC = () => {
         totalRemaining: categoryRemaining
       };
       
-      // Add to overall totals
       estimatedTotal += categoryEstimated;
       actualTotal += categoryActual;
       depositTotal += categoryDeposit;
@@ -303,7 +333,6 @@ const DetailedBudget: React.FC = () => {
       return updatedCategory;
     });
     
-    // Update state
     setCategories(categoriesWithTotals);
     setTotalEstimated(estimatedTotal);
     setTotalActual(actualTotal);
@@ -377,6 +406,8 @@ const DetailedBudget: React.FC = () => {
                 <th className="px-4 py-3 text-right font-medium">Coût Réel (€)</th>
                 <th className="px-4 py-3 text-right font-medium">Acompte Versé (€)</th>
                 <th className="px-4 py-3 text-right font-medium">Reste à Payer (€)</th>
+                <th className="px-4 py-3 text-center font-medium">Qui paye ?</th>
+                <th className="px-4 py-3 text-center font-medium">Note</th>
                 <th className="px-4 py-3 text-center font-medium">Actions</th>
               </tr>
             </thead>
@@ -398,6 +429,8 @@ const DetailedBudget: React.FC = () => {
                     <td className="px-4 py-2 text-right font-medium">
                       {(category.totalRemaining ?? 0).toFixed(2)}
                     </td>
+                    <td className="px-4 py-2 text-center">-</td>
+                    <td className="px-4 py-2 text-center">-</td>
                     <td className="px-4 py-2 text-center">
                       <Button 
                         variant="ghost" 
@@ -453,6 +486,51 @@ const DetailedBudget: React.FC = () => {
                       <td className="px-4 py-2 text-right">
                         {(item.remaining ?? 0).toFixed(2)}
                       </td>
+                      <td className="px-4 py-2">
+                        <Select
+                          value={item.payer || ''}
+                          onValueChange={(value) => handleItemChange(categoryIndex, itemIndex, 'payer', value)}
+                        >
+                          <SelectTrigger className="h-8 text-xs">
+                            <SelectValue placeholder="Qui paye ?" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {PAYER_OPTIONS.map((option) => (
+                              <SelectItem key={option} value={option}>
+                                {option}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </td>
+                      <td className="px-4 py-2 text-center">
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className={`h-8 w-8 p-0 ${item.comment ? 'text-wedding-olive' : 'text-gray-400'} hover:text-wedding-olive`}
+                            >
+                              <MessageSquare className="h-4 w-4" />
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-80">
+                            <div className="space-y-2">
+                              <h4 className="font-medium">Note pour {item.name || 'cet élément'}</h4>
+                              <Textarea
+                                value={item.comment || ''}
+                                onChange={(e) => handleItemChange(categoryIndex, itemIndex, 'comment', e.target.value)}
+                                placeholder="Ajoutez une note (optionnel, max 100 caractères)"
+                                className="min-h-[60px]"
+                                maxLength={100}
+                              />
+                              <div className="text-xs text-gray-500 text-right">
+                                {(item.comment || '').length}/100
+                              </div>
+                            </div>
+                          </PopoverContent>
+                        </Popover>
+                      </td>
                       <td className="px-4 py-2 text-center">
                         <Button
                           variant="ghost"
@@ -475,6 +553,8 @@ const DetailedBudget: React.FC = () => {
                 <td className="px-4 py-3 text-right">{(totalActual ?? 0).toFixed(2)}</td>
                 <td className="px-4 py-3 text-right">{(totalDeposit ?? 0).toFixed(2)}</td>
                 <td className="px-4 py-3 text-right">{(totalRemaining ?? 0).toFixed(2)}</td>
+                <td className="px-4 py-3"></td>
+                <td className="px-4 py-3"></td>
                 <td className="px-4 py-3"></td>
               </tr>
             </tbody>
