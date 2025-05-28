@@ -9,7 +9,7 @@ import { usePlanning } from '../context/PlanningContext';
 import { useToast } from '@/components/ui/use-toast';
 import { exportPlanningJourJBrandedPDF } from '@/services/planningJourJBrandedExport';
 import { supabase } from '@/integrations/supabase/client';
-import { PlanningEvent } from '../types/planningTypes';
+import { PlanningEvent, loadGeneratedPlanning } from '../types/planningTypes';
 
 export const PlanningResults: React.FC = () => {
   const { events, setEvents, setActiveTab, exportLoading, setExportLoading, user, setFormData, formData } = usePlanning();
@@ -21,6 +21,18 @@ export const PlanningResults: React.FC = () => {
       if (!user) return;
 
       try {
+        // First try to load from new generated_planning table
+        const { formData: savedFormData, events: savedEvents } = await loadGeneratedPlanning(supabase, user.id);
+        
+        if (savedEvents.length > 0) {
+          setEvents(savedEvents);
+          if (savedFormData) {
+            setFormData(savedFormData);
+          }
+          return;
+        }
+
+        // Fallback to legacy planning_reponses_utilisateur table
         const { data, error } = await supabase
           .from('planning_reponses_utilisateur')
           .select('*')

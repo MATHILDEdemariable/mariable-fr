@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import { addMinutes } from 'date-fns';
-import { PlanningEvent, savePlanningResponses } from '../types/planningTypes';
+import { PlanningEvent, saveGeneratedPlanning } from '../types/planningTypes';
 import { useToast } from '@/components/ui/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { usePlanning } from '../context/PlanningContext';
@@ -114,10 +114,10 @@ const EnhancedDragDropTimeline: React.FC<EnhancedDragDropTimelineProps> = ({
     if (!user) return;
 
     try {
-      await savePlanningResponses(
+      // Save to new generated_planning table
+      await saveGeneratedPlanning(
         supabase,
         user.id,
-        user.email || undefined,
         formData || {},
         events
       );

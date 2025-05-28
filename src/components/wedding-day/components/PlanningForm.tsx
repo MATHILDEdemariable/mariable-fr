@@ -3,7 +3,12 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import PlanningQuiz from '../PlanningQuiz';
 import PlanningStepIndicator from './PlanningStepIndicator';
-import { PlanningFormValues, PlanningEvent, savePlanningResponses } from '../types/planningTypes';
+import { 
+  PlanningFormValues, 
+  PlanningEvent, 
+  savePlanningResponses, 
+  saveGeneratedPlanning 
+} from '../types/planningTypes';
 import { usePlanning } from '../context/PlanningContext';
 import { useToast } from '@/components/ui/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -61,27 +66,30 @@ export const PlanningForm: React.FC = () => {
     setEvents(generatedEvents);
     setActiveTab("results");
     
-    // Save responses to Supabase if a user is logged in - silent save without blocking UI
+    // Save to both tables if user is logged in - silent save without blocking UI
     if (user) {
-      // Don't set loading state to avoid blocking UI
-      savePlanningResponses(
-        supabase, 
-        user.id, 
-        user.email || undefined, 
-        data, 
-        generatedEvents
-      ).then(() => {
-        console.log('Planning saved successfully');
-        // Only show success message, no error toasts for save failures
+      try {
+        // Save to new generated_planning table
+        await saveGeneratedPlanning(supabase, user.id, data, generatedEvents);
+        
+        // Also save to legacy planning_reponses_utilisateur table for backward compatibility
+        await savePlanningResponses(
+          supabase, 
+          user.id, 
+          user.email || undefined, 
+          data, 
+          generatedEvents
+        );
+        
         toast({
           title: "Planning sauvegardé",
           description: "Votre planning a été généré et sauvegardé avec succès."
         });
-      }).catch((error) => {
+      } catch (error) {
         console.error("Error saving planning:", error);
         // Silent error handling - don't show error messages to user
         // The planning is still generated and usable
-      });
+      }
     }
   };
 

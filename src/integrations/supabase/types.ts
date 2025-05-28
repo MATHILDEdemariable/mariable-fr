@@ -170,6 +170,33 @@ export type Database = {
         }
         Relationships: []
       }
+      generated_planning: {
+        Row: {
+          created_at: string
+          form_responses: Json
+          id: string
+          planning_blocks: Json
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          form_responses?: Json
+          id?: string
+          planning_blocks?: Json
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          form_responses?: Json
+          id?: string
+          planning_blocks?: Json
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       generated_tasks: {
         Row: {
           category: string
