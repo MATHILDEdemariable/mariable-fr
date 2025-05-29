@@ -1,65 +1,55 @@
-
+import React from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { HelmetProvider } from "react-helmet-async";
-import LandingPage from "./pages/LandingPage";
-import NotFound from "./pages/NotFound";
-import MentionsLegales from "./pages/MentionsLegales";
-import CGV from "./pages/CGV";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { HelmetProvider } from 'react-helmet-async';
+import { ReaderModeProvider } from '@/contexts/ReaderModeContext';
+import Index from "./pages/Index";
+import Demo from "./pages/Demo";
 import GuideMariable from "./pages/GuideMariable";
-import Professionnels from "./pages/Professionnels";
 import GuideMariableFrame from "./pages/GuideMariableFrame";
 import LoginFrame from "./pages/LoginFrame";
+import Login from "./pages/auth/Login";
+import Register from "./pages/auth/Register";
+import Callback from "./pages/auth/Callback";
+import EmailConfirmation from "./pages/auth/EmailConfirmation";
+import UserDashboard from "./pages/dashboard/UserDashboard";
+import ReaderView from "./pages/dashboard/ReaderView";
 import MoteurRecherche from "./pages/MoteurRecherche";
-import ImportAirtable from './pages/ImportAirtable';
-import TestAssistantVirtuel from "./pages/TestAssistantVirtuel";
-import WeddingAssistantV2 from "./pages/WeddingAssistantV2";
-import PlanningPersonnalise from "./pages/PlanningPersonnalise";
-import PlanningResultatsPersonnalises from "./pages/PlanningResultatsPersonnalises";
-import ChecklistMariage from "./pages/ChecklistMariage";
-import Index from "./pages/Index";
-
-// Services pages
-import Prestataires from "./pages/services/Prestataires";
+import Histoire from "./pages/about/Histoire";
+import Charte from "./pages/about/Charte";
+import Approche from "./pages/about/Approche";
+import Temoignages from "./pages/about/Temoignages";
+import NousContacter from "./pages/contact/NousContacter";
+import FAQ from "./pages/contact/FAQ";
 import Planification from "./pages/services/Planification";
 import Budget from "./pages/services/Budget";
 import Conseils from "./pages/services/Conseils";
+import Prestataires from "./pages/services/Prestataires";
 import JourJ from "./pages/services/JourJ";
-
-// About pages
-import Histoire from "./pages/about/Histoire";
-import Charte from "./pages/about/Charte";
-import Temoignages from "./pages/about/Temoignages";
-import Approche from "./pages/about/Approche";
-
-// Contact pages
-import NousContacter from "./pages/contact/NousContacter";
-import FAQ from "./pages/contact/FAQ";
-
-// Demo page
-import Demo from "./pages/Demo";
-import SinglePrestataire from "./pages/prestataire/slug";
+import Professionnels from "./pages/Professionnels";
+import NotFound from "./pages/NotFound";
+import FormAdmin from "./pages/admin/FormAdmin";
+import PrestataireAdmin from "./pages/admin/Prestataires";
+import ImportAirtable from "./pages/ImportAirtable";
+import ChecklistMariage from "./pages/ChecklistMariage";
+import PlanningPersonnalise from "./pages/PlanningPersonnalise";
+import PlanningResultatsPersonnalises from "./pages/PlanningResultatsPersonnalises";
+import WeddingAssistantV2 from "./pages/WeddingAssistantV2";
+import EmailCapture from "./pages/EmailCapture";
 import Preview from "./pages/Preview";
-
-// Auth and Dashboard pages
-import Login from "./pages/auth/Login";
-import Register from "./pages/auth/Register";
-import UserDashboard from "./pages/dashboard/UserDashboard";
-import EmailConfirmation from "./pages/auth/EmailConfirmation";
-import Callback from "./pages/auth/Callback";
-
-// Test Formulaire
 import TestFormulaire from "./pages/TestFormulaire";
-
-// Admin pages
-import AdminPrestataires from "./pages/admin/Prestataires";
-
-// Prestataire pages
-import TrackingPage from "./pages/prestataire/tracking";
-import ContactTracking from "./pages/prestataire/contact";
+import TestAssistantVirtuel from "./pages/TestAssistantVirtuel";
+import LandingPage from "./pages/LandingPage";
+import ServiceTemplate from "./pages/ServiceTemplate";
+import PrestatairePage from "./pages/prestataire/slug";
+import PrestataireContactPage from "./pages/prestataire/contact";
+import PrestataireTrackingPage from "./pages/prestataire/tracking";
+import MentionsLegales from "./pages/MentionsLegales";
+import CGV from "./pages/CGV";
+import Pricing from "./pages/Pricing";
 
 // Initialize the query client
 const queryClient = new QueryClient();
@@ -67,9 +57,7 @@ const queryClient = new QueryClient();
 // Create a helmetContext object to pass to HelmetProvider
 const helmetContext = {};
 
-import { ReaderModeProvider } from './contexts/ReaderModeContext';
-import ReaderView from './pages/dashboard/ReaderView';
-import AnalyticsProvider from './components/analytics/AnalyticsProvider';
+import { AnalyticsProvider } from './components/analytics/AnalyticsProvider';
 
 const App = () => {
   return(
@@ -140,7 +128,7 @@ const App = () => {
                 
                 {/* Demo page */}
                 <Route path="/demo" element={<Demo />} />
-                <Route path="/prestataire/:slug" element={<SinglePrestataire />} />
+                <Route path="/prestataire/:slug" element={<PrestatairePage />} />
                 
                 {/* Moteur de recherche page - now accessible via /guide-mariable route as well */}
                 <Route path="/recherche" element={<MoteurRecherche />} />
@@ -157,11 +145,12 @@ const App = () => {
                 <Route path="/import-airtable" element={<ImportAirtable />} />
                 
                 {/* Admin Routes */}
-                <Route path="/admin/prestataires" element={<AdminPrestataires />} />
+                <Route path="/admin/prestataires" element={<PrestataireAdmin />} />
+                <Route path="/admin/form" element={<FormAdmin />} />
                 
                 {/* Prestataire Routes */}
-                <Route path="/prestataire/tracking" element={<TrackingPage />} />
-                <Route path="/prestataire/contact" element={<ContactTracking />} />
+                <Route path="/prestataire/tracking" element={<PrestataireTrackingPage />} />
+                <Route path="/prestataire/contact" element={<PrestataireContactPage />} />
                 
                 {/* Catch-all route */}
                 <Route path="*" element={<NotFound />} />

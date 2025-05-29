@@ -1,16 +1,32 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Header from '@/components/Header';
 import ChatbotButton from '@/components/ChatbotButton';
 import SEO from '@/components/SEO';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, CheckCircle, Brain, Dumbbell, MessageCircle } from 'lucide-react';
+import { ArrowRight, CheckCircle, Brain, Users, MessageCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Index = () => {
+  const [displayedText, setDisplayedText] = useState('');
+  const fullText = 'Organisez votre mariage facilement. Profitez-en pleinement.';
+  
   useEffect(() => {
     window.scrollTo(0, 0);
+    
+    // Typing animation effect
+    let index = 0;
+    const timer = setInterval(() => {
+      if (index < fullText.length) {
+        setDisplayedText(fullText.slice(0, index + 1));
+        index++;
+      } else {
+        clearInterval(timer);
+      }
+    }, 50);
+    
+    return () => clearInterval(timer);
   }, []);
 
   return (
@@ -19,30 +35,38 @@ const Index = () => {
       <Header />
       
       <main className="flex-grow">
-        {/* Hero Section */}
-        <section className="relative py-20 md:py-28 bg-gradient-to-br from-wedding-cream/30 to-white">
-          <div className="container mx-auto px-4 text-center">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-wedding-olive mb-6 max-w-4xl mx-auto">
-              Organisez votre mariage facilement. Profitez-en pleinement.
-            </h1>
-            
-            <p className="text-lg md:text-xl text-gray-700 mb-8 max-w-2xl mx-auto">
-              Grâce au premier wedding planner de poche
-            </p>
-            
-            <div className="mb-8">
-              <Button asChild size="lg" className="bg-wedding-olive hover:bg-wedding-olive/90 text-white">
-                <Link to="/register">
-                  Découvrir <ArrowRight className="ml-2 h-5 w-5" />
-                </Link>
-              </Button>
-            </div>
-
-            {/* Reassurance Badge */}
-            <div className="inline-block bg-wedding-olive/10 px-6 py-3 rounded-full border border-wedding-olive/20">
-              <p className="text-sm font-medium text-wedding-olive">
-                Mieux qu'un wedding planner : c'est vous, avec les bons outils.
+        {/* Hero Section with background image */}
+        <section 
+          className="relative py-20 md:py-28 bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage: "url('/lovable-uploads/decf23d1-0575-4919-871d-1038551f5de9.png')"
+          }}
+        >
+          <div className="container mx-auto px-4">
+            <div className="max-w-2xl">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-wedding-olive mb-6">
+                {displayedText}
+                <span className="animate-pulse">|</span>
+              </h1>
+              
+              <p className="text-lg md:text-xl text-gray-700 mb-8">
+                Grâce au premier wedding planner de poche
               </p>
+              
+              <div className="mb-8">
+                <Button asChild size="lg" className="bg-wedding-olive hover:bg-wedding-olive/90 text-white">
+                  <Link to="/register">
+                    Découvrir <ArrowRight className="ml-2 h-5 w-5" />
+                  </Link>
+                </Button>
+              </div>
+
+              {/* Reassurance Badge */}
+              <div className="inline-block bg-wedding-olive/10 px-6 py-3 rounded-full border border-wedding-olive/20">
+                <p className="text-sm font-medium text-wedding-olive">
+                  Mieux qu'un wedding planner : c'est vous, avec les bons outils.
+                </p>
+              </div>
             </div>
           </div>
         </section>
@@ -69,7 +93,7 @@ const Index = () => {
                   </div>
                   
                   <div className="flex items-start gap-3">
-                    <Dumbbell className="h-6 w-6 text-wedding-olive mt-1 flex-shrink-0" />
+                    <Users className="h-6 w-6 text-wedding-olive mt-1 flex-shrink-0" />
                     <p className="text-gray-700">
                       La liberté de gérer vous-même
                     </p>
@@ -97,6 +121,10 @@ const Index = () => {
         <section className="py-16 md:py-20 bg-gray-50">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto">
+              <h2 className="text-2xl md:text-3xl font-serif text-wedding-olive mb-8 text-center">
+                Les services disponibles
+              </h2>
+              
               <div className="space-y-8">
                 <div className="flex items-start gap-4">
                   <CheckCircle className="h-6 w-6 text-green-600 mt-1 flex-shrink-0" />
@@ -129,7 +157,7 @@ const Index = () => {
                       Pour le jour J :
                     </h3>
                     <p className="text-gray-700">
-                      Un service <strong>de coordination sur-mesure</strong>
+                      Un service de coordination sur-mesure
                     </p>
                   </div>
                 </div>
@@ -144,8 +172,8 @@ const Index = () => {
                 </p>
                 
                 <Button asChild size="lg" className="bg-wedding-olive hover:bg-wedding-olive/90 text-white">
-                  <Link to="/register">
-                    Mariable, la plateforme au bon rapport qualité / prix <ArrowRight className="ml-2 h-5 w-5" />
+                  <Link to="/pricing">
+                    Consultez les tarifs <ArrowRight className="ml-2 h-5 w-5" />
                   </Link>
                 </Button>
               </div>
