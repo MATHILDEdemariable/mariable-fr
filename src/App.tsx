@@ -1,9 +1,10 @@
+
 import React from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { HelmetProvider } from 'react-helmet-async';
 import { ReaderModeProvider } from '@/contexts/ReaderModeContext';
 import Index from "./pages/Index";
@@ -57,7 +58,7 @@ const queryClient = new QueryClient();
 // Create a helmetContext object to pass to HelmetProvider
 const helmetContext = {};
 
-import { AnalyticsProvider } from './components/analytics/AnalyticsProvider';
+import AnalyticsProvider from './components/analytics/AnalyticsProvider';
 
 const App = () => {
   return(
@@ -88,6 +89,9 @@ const App = () => {
                 <Route path="/services/budget" element={<Budget />} />
                 <Route path="/services/conseils" element={<Conseils />} />
                 <Route path="/services/jour-j" element={<JourJ />} />
+                
+                {/* Pricing page */}
+                <Route path="/pricing" element={<Pricing />} />
                 
                 {/* Checklist page */}
                 <Route path="/checklist-mariage" element={<ChecklistMariage />} />
