@@ -1,10 +1,9 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { ChevronDown, ChevronRight, Users, CheckCircle, Download, X, Plus, GripVertical } from 'lucide-react';
+import { ChevronDown, ChevronRight, Users, CheckCircle, Download, X, Plus, GripVertical, Check, Eye } from 'lucide-react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
@@ -75,6 +74,7 @@ const TeamTasksSection: React.FC = () => {
     'Repas': false,
     'Gestion': false,
   });
+  const [openHiddenCategories, setOpenHiddenCategories] = useState<Record<string, boolean>>({});
   const [exportLoading, setExportLoading] = useState(false);
   const [newTaskInputs, setNewTaskInputs] = useState<Record<string, { title: string; assignedTo: string; visible: boolean }>>({});
   const { user, formData } = usePlanning();
@@ -101,7 +101,7 @@ const TeamTasksSection: React.FC = () => {
       }
 
       if (data && data.length > 0) {
-        // Map database tasks to our format
+        // Map database tasks to our format, handling potential missing fields
         const dbTasks = data.map(task => ({
           id: task.id,
           title: task.task_name,
@@ -109,7 +109,7 @@ const TeamTasksSection: React.FC = () => {
           completed: false,
           responsible_person: task.responsible_person || undefined,
           is_custom: task.is_custom || false,
-          is_hidden: task.is_hidden || false,
+          is_hidden: (task as any).is_hidden || false, // Type assertion to handle the missing field
           position: task.position || 0
         }));
         setTasks(dbTasks);
@@ -132,7 +132,7 @@ const TeamTasksSection: React.FC = () => {
         phase: task.category,
         position: task.position || index,
         is_custom: false,
-        is_hidden: false
+        ...(typeof (task as any).is_hidden !== 'undefined' && { is_hidden: false })
       }));
 
       const { error } = await supabase
@@ -184,9 +184,11 @@ const TeamTasksSection: React.FC = () => {
     if (!user) return;
 
     try {
+      const updateData: any = { is_hidden: true };
+      
       const { error } = await supabase
         .from('team_tasks')
-        .update({ is_hidden: true })
+        .update(updateData)
         .eq('id', taskId)
         .eq('user_id', user.id);
 
@@ -216,6 +218,44 @@ const TeamTasksSection: React.FC = () => {
     }
   };
 
+  const showTask = async (taskId: string) => {
+    if (!user) return;
+
+    try {
+      const updateData: any = { is_hidden: false };
+      
+      const { error } = await supabase
+        .from('team_tasks')
+        .update(updateData)
+        .eq('id', taskId)
+        .eq('user_id', user.id);
+
+      if (error) {
+        console.error('Error showing task:', error);
+        toast({
+          title: "Erreur",
+          description: "Impossible d'afficher la tâche",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Update local state
+      setTasks(prev => 
+        prev.map(task => 
+          task.id === taskId ? { ...task, is_hidden: false } : task
+        )
+      );
+
+      toast({
+        title: "Tâche réaffichée",
+        description: "La tâche a été réaffichée dans votre liste"
+      });
+    } catch (error) {
+      console.error('Error showing task:', error);
+    }
+  };
+
   const addCustomTask = async (category: string) => {
     if (!user) return;
 
@@ -226,17 +266,23 @@ const TeamTasksSection: React.FC = () => {
       const categoryTasks = getTasksByCategory(category);
       const maxPosition = Math.max(...categoryTasks.map(t => t.position || 0), -1);
 
+      const insertData: any = {
+        user_id: user.id,
+        task_name: taskInput.title,
+        phase: category,
+        position: maxPosition + 1,
+        is_custom: true,
+        responsible_person: taskInput.assignedTo || null
+      };
+
+      // Only add is_hidden if the field exists in the schema
+      if (typeof (tasks[0] as any)?.is_hidden !== 'undefined') {
+        insertData.is_hidden = false;
+      }
+
       const { data, error } = await supabase
         .from('team_tasks')
-        .insert({
-          user_id: user.id,
-          task_name: taskInput.title,
-          phase: category,
-          position: maxPosition + 1,
-          is_custom: true,
-          is_hidden: false,
-          responsible_person: taskInput.assignedTo || null
-        })
+        .insert(insertData)
         .select()
         .single();
 
@@ -312,6 +358,7 @@ const TeamTasksSection: React.FC = () => {
     }
   };
 
+  // ... keep existing code (onDragEnd function)
   const onDragEnd = async (result: any) => {
     if (!result.destination || !user) return;
 
@@ -378,9 +425,22 @@ const TeamTasksSection: React.FC = () => {
     }));
   };
 
+  const toggleHiddenCategory = (category: string) => {
+    setOpenHiddenCategories(prev => ({
+      ...prev,
+      [category]: !prev[category]
+    }));
+  };
+
   const getTasksByCategory = (category: string) => {
     return tasks
       .filter(task => task.category === category && !task.is_hidden)
+      .sort((a, b) => (a.position || 0) - (b.position || 0));
+  };
+
+  const getHiddenTasksByCategory = (category: string) => {
+    return tasks
+      .filter(task => task.category === category && task.is_hidden)
       .sort((a, b) => (a.position || 0) - (b.position || 0));
   };
 
@@ -398,6 +458,7 @@ const TeamTasksSection: React.FC = () => {
     }));
   };
 
+  // ... keep existing code (exportCoordinationPDF function)
   const exportCoordinationPDF = async () => {
     setExportLoading(true);
     
@@ -471,141 +532,192 @@ const TeamTasksSection: React.FC = () => {
         <CardContent className="space-y-4">
           {categories.map((category) => {
             const categoryTasks = getTasksByCategory(category);
+            const hiddenTasks = getHiddenTasksByCategory(category);
             const isOpen = openCategories[category];
+            const isHiddenOpen = openHiddenCategories[category];
             const newTaskInput = newTaskInputs[category];
             
             return (
-              <Collapsible key={category} open={isOpen} onOpenChange={() => toggleCategory(category)}>
-                <CollapsibleTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    className="w-full justify-between p-4 h-auto"
-                  >
-                    <div className="flex items-center gap-3">
-                      {isOpen ? (
-                        <ChevronDown className="h-4 w-4" />
-                      ) : (
-                        <ChevronRight className="h-4 w-4" />
-                      )}
-                      <span className="font-medium">{category}</span>
-                      <span className="text-sm text-muted-foreground">
-                        ({categoryTasks.length} tâches)
-                      </span>
-                    </div>
-                  </Button>
-                </CollapsibleTrigger>
-                
-                <CollapsibleContent className="space-y-2 pl-4">
-                  <Droppable droppableId={category}>
-                    {(provided) => (
-                      <div
-                        {...provided.droppableProps}
-                        ref={provided.innerRef}
-                        className="space-y-2"
-                      >
-                        {categoryTasks.map((task, index) => (
-                          <Draggable key={task.id} draggableId={task.id} index={index}>
-                            {(provided, snapshot) => (
-                              <div
-                                ref={provided.innerRef}
-                                {...provided.draggableProps}
-                                className={`flex items-start gap-3 p-3 rounded-lg border bg-card transition-shadow ${
-                                  snapshot.isDragging ? 'shadow-lg' : ''
-                                }`}
-                              >
-                                <div
-                                  {...provided.dragHandleProps}
-                                  className="mt-1 text-muted-foreground hover:text-foreground cursor-grab active:cursor-grabbing"
-                                >
-                                  <GripVertical className="h-4 w-4" />
-                                </div>
-                                
-                                <div className="flex-1 space-y-2">
-                                  <span className="text-sm block">
-                                    {task.title}
-                                  </span>
-                                  <div className="flex items-center gap-2">
-                                    <span className="text-xs text-muted-foreground">Assigné à:</span>
-                                    <Input
-                                      placeholder="Nom de la personne"
-                                      value={task.responsible_person || ''}
-                                      onChange={(e) => updateTaskAssignment(task.id, e.target.value)}
-                                      className="text-xs h-7 flex-1 max-w-48"
-                                    />
-                                  </div>
-                                </div>
-                                
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() => task.is_custom ? deleteCustomTask(task.id) : hideTask(task.id)}
-                                  className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
-                                >
-                                  <X className="h-4 w-4" />
-                                </Button>
-                              </div>
-                            )}
-                          </Draggable>
-                        ))}
-                        {provided.placeholder}
+              <div key={category} className="space-y-2">
+                <Collapsible open={isOpen} onOpenChange={() => toggleCategory(category)}>
+                  <CollapsibleTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-between p-4 h-auto"
+                    >
+                      <div className="flex items-center gap-3">
+                        {isOpen ? (
+                          <ChevronDown className="h-4 w-4" />
+                        ) : (
+                          <ChevronRight className="h-4 w-4" />
+                        )}
+                        <span className="font-medium">{category}</span>
+                        <span className="text-sm text-muted-foreground">
+                          ({categoryTasks.length} tâches)
+                        </span>
                       </div>
-                    )}
-                  </Droppable>
+                    </Button>
+                  </CollapsibleTrigger>
                   
-                  {/* Add new task section */}
-                  {newTaskInput?.visible ? (
-                    <div className="p-3 rounded-lg border border-dashed border-wedding-olive/50 bg-wedding-olive/5 space-y-3">
-                      <Input
-                        placeholder="Nom de la nouvelle tâche"
-                        value={newTaskInput.title}
-                        onChange={(e) => setNewTaskInputs(prev => ({
-                          ...prev,
-                          [category]: { ...newTaskInput, title: e.target.value }
-                        }))}
-                        className="text-sm"
-                      />
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs text-muted-foreground">Assigné à:</span>
+                  <CollapsibleContent className="space-y-2 pl-4">
+                    <Droppable droppableId={category}>
+                      {(provided) => (
+                        <div
+                          {...provided.droppableProps}
+                          ref={provided.innerRef}
+                          className="space-y-2"
+                        >
+                          {categoryTasks.map((task, index) => (
+                            <Draggable key={task.id} draggableId={task.id} index={index}>
+                              {(provided, snapshot) => (
+                                <div
+                                  ref={provided.innerRef}
+                                  {...provided.draggableProps}
+                                  className={`flex items-start gap-3 p-3 rounded-lg border transition-all ${
+                                    snapshot.isDragging ? 'shadow-lg' : ''
+                                  } ${
+                                    task.responsible_person ? 'bg-green-50 border-green-200' : 'bg-card'
+                                  }`}
+                                >
+                                  <div
+                                    {...provided.dragHandleProps}
+                                    className="mt-1 text-muted-foreground hover:text-foreground cursor-grab active:cursor-grabbing"
+                                  >
+                                    <GripVertical className="h-4 w-4" />
+                                  </div>
+                                  
+                                  <div className="flex-1 space-y-2">
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-sm block flex-1">
+                                        {task.title}
+                                      </span>
+                                      {task.responsible_person && (
+                                        <Check className="h-4 w-4 text-green-600" />
+                                      )}
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-xs text-muted-foreground">Assigné à:</span>
+                                      <Input
+                                        placeholder="Nom de la personne"
+                                        value={task.responsible_person || ''}
+                                        onChange={(e) => updateTaskAssignment(task.id, e.target.value)}
+                                        className="text-xs h-7 flex-1 max-w-48"
+                                      />
+                                    </div>
+                                  </div>
+                                  
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => task.is_custom ? deleteCustomTask(task.id) : hideTask(task.id)}
+                                    className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
+                                  >
+                                    <X className="h-4 w-4" />
+                                  </Button>
+                                </div>
+                              )}
+                            </Draggable>
+                          ))}
+                          {provided.placeholder}
+                        </div>
+                      )}
+                    </Droppable>
+                    
+                    {/* Add new task section */}
+                    {newTaskInput?.visible ? (
+                      <div className="p-3 rounded-lg border border-dashed border-wedding-olive/50 bg-wedding-olive/5 space-y-3">
                         <Input
-                          placeholder="Nom de la personne (optionnel)"
-                          value={newTaskInput.assignedTo}
+                          placeholder="Nom de la nouvelle tâche"
+                          value={newTaskInput.title}
                           onChange={(e) => setNewTaskInputs(prev => ({
                             ...prev,
-                            [category]: { ...newTaskInput, assignedTo: e.target.value }
+                            [category]: { ...newTaskInput, title: e.target.value }
                           }))}
-                          className="text-xs h-7 flex-1 max-w-48"
+                          className="text-sm"
                         />
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs text-muted-foreground">Assigné à:</span>
+                          <Input
+                            placeholder="Nom de la personne (optionnel)"
+                            value={newTaskInput.assignedTo}
+                            onChange={(e) => setNewTaskInputs(prev => ({
+                              ...prev,
+                              [category]: { ...newTaskInput, assignedTo: e.target.value }
+                            }))}
+                            className="text-xs h-7 flex-1 max-w-48"
+                          />
+                        </div>
+                        <div className="flex gap-2">
+                          <Button
+                            size="sm"
+                            onClick={() => addCustomTask(category)}
+                            className="bg-wedding-olive hover:bg-wedding-olive/80"
+                          >
+                            Ajouter
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => hideNewTaskInput(category)}
+                          >
+                            Annuler
+                          </Button>
+                        </div>
                       </div>
-                      <div className="flex gap-2">
-                        <Button
-                          size="sm"
-                          onClick={() => addCustomTask(category)}
-                          className="bg-wedding-olive hover:bg-wedding-olive/80"
+                    ) : (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => showNewTaskInput(category)}
+                        className="w-full border-dashed border-wedding-olive/50 text-wedding-olive hover:bg-wedding-olive/5"
+                      >
+                        <Plus className="h-4 w-4 mr-2" />
+                        Ajouter une tâche
+                      </Button>
+                    )}
+                  </CollapsibleContent>
+                </Collapsible>
+
+                {/* Hidden tasks section */}
+                {hiddenTasks.length > 0 && (
+                  <Collapsible open={isHiddenOpen} onOpenChange={() => toggleHiddenCategory(category)}>
+                    <CollapsibleTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-between p-2 h-auto text-sm text-muted-foreground ml-4"
+                      >
+                        <div className="flex items-center gap-2">
+                          {isHiddenOpen ? (
+                            <ChevronDown className="h-3 w-3" />
+                          ) : (
+                            <ChevronRight className="h-3 w-3" />
+                          )}
+                          <span>Tâches masquées ({hiddenTasks.length})</span>
+                        </div>
+                      </Button>
+                    </CollapsibleTrigger>
+                    
+                    <CollapsibleContent className="space-y-1 pl-8">
+                      {hiddenTasks.map((task) => (
+                        <div
+                          key={task.id}
+                          className="flex items-center gap-2 p-2 rounded bg-gray-50 border border-gray-200"
                         >
-                          Ajouter
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => hideNewTaskInput(category)}
-                        >
-                          Annuler
-                        </Button>
-                      </div>
-                    </div>
-                  ) : (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => showNewTaskInput(category)}
-                      className="w-full border-dashed border-wedding-olive/50 text-wedding-olive hover:bg-wedding-olive/5"
-                    >
-                      <Plus className="h-4 w-4 mr-2" />
-                      Ajouter une tâche
-                    </Button>
-                  )}
-                </CollapsibleContent>
-              </Collapsible>
+                          <span className="text-sm text-gray-600 flex-1">{task.title}</span>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => showTask(task.id)}
+                            className="h-6 w-6 p-0 text-green-600 hover:text-green-700"
+                          >
+                            <Eye className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      ))}
+                    </CollapsibleContent>
+                  </Collapsible>
+                )}
+              </div>
             );
           })}
         </CardContent>

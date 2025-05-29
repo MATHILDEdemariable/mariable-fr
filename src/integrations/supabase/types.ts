@@ -922,6 +922,7 @@ export type Database = {
           created_at: string
           id: string
           is_custom: boolean
+          is_hidden: boolean
           phase: string
           position: number
           responsible_person: string | null
@@ -933,6 +934,7 @@ export type Database = {
           created_at?: string
           id?: string
           is_custom?: boolean
+          is_hidden?: boolean
           phase: string
           position?: number
           responsible_person?: string | null
@@ -944,6 +946,7 @@ export type Database = {
           created_at?: string
           id?: string
           is_custom?: boolean
+          is_hidden?: boolean
           phase?: string
           position?: number
           responsible_person?: string | null
