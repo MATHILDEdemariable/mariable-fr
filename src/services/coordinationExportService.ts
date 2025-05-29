@@ -6,6 +6,8 @@ interface CoordinationTask {
   title: string;
   category: string;
   responsible_person?: string;
+  is_custom?: boolean;
+  is_hidden?: boolean;
 }
 
 interface ExportCoordinationOptions {
@@ -17,6 +19,9 @@ interface ExportCoordinationOptions {
 export const exportCoordinationToPDF = async (options: ExportCoordinationOptions): Promise<boolean> => {
   try {
     const { tasks, weddingDate, coupleNames } = options;
+    
+    // Filter out hidden tasks
+    const visibleTasks = tasks.filter(task => !task.is_hidden);
     
     const pdf = new jsPDF();
     
@@ -47,7 +52,7 @@ export const exportCoordinationToPDF = async (options: ExportCoordinationOptions
     let yPosition = 75;
     
     categories.forEach(category => {
-      const categoryTasks = tasks.filter(task => task.category === category);
+      const categoryTasks = visibleTasks.filter(task => task.category === category);
       
       if (categoryTasks.length === 0) return;
       
@@ -65,10 +70,11 @@ export const exportCoordinationToPDF = async (options: ExportCoordinationOptions
           yPosition = 20;
         }
         
-        // Task title
+        // Task title with custom indicator
         pdf.setFontSize(10);
         pdf.setTextColor(darkGray);
-        const taskLines = pdf.splitTextToSize(task.title, 120);
+        const taskText = task.is_custom ? `• ${task.title} (personnalisée)` : `• ${task.title}`;
+        const taskLines = pdf.splitTextToSize(taskText, 120);
         pdf.text(taskLines, 25, yPosition);
         
         // Assignment info
