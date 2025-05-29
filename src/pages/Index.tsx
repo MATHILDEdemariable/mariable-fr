@@ -5,7 +5,7 @@ import ChatbotButton from '@/components/ChatbotButton';
 import SEO from '@/components/SEO';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, CheckCircle, Brain, Users, MessageCircle } from 'lucide-react';
+import { ArrowRight, CheckCircle, Brain, Heart, MessageCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Index = () => {
@@ -35,16 +35,16 @@ const Index = () => {
       <Header />
       
       <main className="flex-grow">
-        {/* Hero Section with background image */}
+        {/* Hero Section with new background image */}
         <section 
           className="relative py-20 md:py-28 bg-cover bg-center bg-no-repeat"
           style={{
-            backgroundImage: "url('/lovable-uploads/decf23d1-0575-4919-871d-1038551f5de9.png')"
+            backgroundImage: "url('/lovable-uploads/16238829-fdfc-4fe2-ade8-9c49d79851b4.png')"
           }}
         >
           <div className="container mx-auto px-4">
             <div className="max-w-2xl">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-wedding-olive mb-6">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-black mb-6">
                 {displayedText}
                 <span className="animate-pulse">|</span>
               </h1>
@@ -75,7 +75,7 @@ const Index = () => {
         <section className="py-16 md:py-20 bg-white">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-serif text-wedding-olive mb-6 max-w-4xl mx-auto">
+              <h2 className="text-3xl md:text-4xl font-serif text-black mb-6 max-w-4xl mx-auto">
                 Vivez une expérience unique du premier jour de vos fiançailles jusqu'au jour J
               </h2>
               
@@ -93,7 +93,7 @@ const Index = () => {
                   </div>
                   
                   <div className="flex items-start gap-3">
-                    <Users className="h-6 w-6 text-wedding-olive mt-1 flex-shrink-0" />
+                    <Heart className="h-6 w-6 text-wedding-olive mt-1 flex-shrink-0" />
                     <p className="text-gray-700">
                       La liberté de gérer vous-même
                     </p>
@@ -121,7 +121,7 @@ const Index = () => {
         <section className="py-16 md:py-20 bg-gray-50">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto">
-              <h2 className="text-2xl md:text-3xl font-serif text-wedding-olive mb-8 text-center">
+              <h2 className="text-2xl md:text-3xl font-serif text-black mb-8 text-center">
                 Les services disponibles
               </h2>
               

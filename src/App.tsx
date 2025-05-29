@@ -71,14 +71,14 @@ const App = () => {
           <BrowserRouter>
             <AnalyticsProvider>
               <Routes>
-                {/* Make LandingPage the main route */}
-                <Route path="/" element={<LandingPage />} />
+                {/* Make Index page the main route */}
+                <Route path="/" element={<Index />} />
+                
+                {/* Move LandingPage to /landing route */}
+                <Route path="/landing" element={<LandingPage />} />
                 
                 {/* Old index page is now accessible via /home */}
                 <Route path="/home" element={<Index />} />
-                
-                {/* Redirect old landing page route to home */}
-                <Route path="/landing" element={<Navigate to="/" replace />} />
                 
                 {/* Professionals page */}
                 <Route path="/professionnels" element={<Professionnels />} />

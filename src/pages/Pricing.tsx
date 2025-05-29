@@ -26,7 +26,7 @@ const Pricing = () => {
         <section className="py-16 md:py-20 bg-white">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
-              <h1 className="text-4xl md:text-5xl font-serif text-wedding-olive mb-6">
+              <h1 className="text-4xl md:text-5xl font-serif text-black mb-6">
                 Les services
               </h1>
               <p className="text-lg text-gray-700 max-w-2xl mx-auto">
@@ -36,7 +36,7 @@ const Pricing = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
               {/* Organisation */}
-              <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300">
+              <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col">
                 <CardHeader className="text-center pb-8">
                   <CardTitle className="text-2xl font-serif mb-4">Organisation</CardTitle>
                   <div className="text-4xl font-bold text-wedding-olive mb-2">
@@ -44,8 +44,8 @@ const Pricing = () => {
                   </div>
                   <p className="text-sm text-gray-600">Gratuit</p>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-3">
+                <CardContent className="space-y-4 flex-grow flex flex-col">
+                  <div className="space-y-3 flex-grow">
                     <div className="flex items-start gap-3">
                       <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
                       <p className="text-sm text-gray-700">Accès à votre espace complet</p>
@@ -72,7 +72,7 @@ const Pricing = () => {
                     </div>
                   </div>
                   
-                  <div className="pt-6">
+                  <div className="pt-6 mt-auto">
                     <Button asChild className="w-full bg-gray-100 text-gray-800 hover:bg-gray-200 border border-gray-300">
                       <Link to="/register">
                         Créer un compte
@@ -83,7 +83,7 @@ const Pricing = () => {
               </Card>
 
               {/* Coordination Jour-J basique */}
-              <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300 border-2 border-wedding-olive">
+              <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300 border-2 border-wedding-olive flex flex-col">
                 <CardHeader className="text-center pb-8">
                   <CardTitle className="text-2xl font-serif mb-4">Coordination Jour-J basique</CardTitle>
                   <div className="text-4xl font-bold text-wedding-olive mb-2">
@@ -91,8 +91,8 @@ const Pricing = () => {
                   </div>
                   <p className="text-sm text-gray-600">Accessible après inscription</p>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-3">
+                <CardContent className="space-y-4 flex-grow flex flex-col">
+                  <div className="space-y-3 flex-grow">
                     <div className="flex items-start gap-3">
                       <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
                       <p className="text-sm text-gray-700">Un outil de coordination intelligent pour structurer la journée & déléguer</p>
@@ -111,10 +111,10 @@ const Pricing = () => {
                     </div>
                   </div>
                   
-                  <div className="pt-6">
+                  <div className="pt-6 mt-auto">
                     <Button asChild className="w-full bg-wedding-olive text-white hover:bg-wedding-olive/90">
                       <Link to="/register">
-                        Souscrire
+                        Créer votre compte
                       </Link>
                     </Button>
                   </div>
@@ -122,7 +122,7 @@ const Pricing = () => {
               </Card>
 
               {/* Coordination Jour-J complète */}
-              <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300">
+              <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col">
                 <CardHeader className="text-center pb-8">
                   <CardTitle className="text-2xl font-serif mb-4">Coordination Jour-J complète</CardTitle>
                   <div className="text-4xl font-bold text-wedding-olive mb-2">
@@ -130,8 +130,8 @@ const Pricing = () => {
                   </div>
                   <p className="text-sm text-gray-600">Payant</p>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-3">
+                <CardContent className="space-y-4 flex-grow flex flex-col">
+                  <div className="space-y-3 flex-grow">
                     <div className="flex items-start gap-3">
                       <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
                       <p className="text-sm text-gray-700">Un accompagnement plus personnalisé à la carte et selon vos besoins</p>
@@ -142,11 +142,11 @@ const Pricing = () => {
                     </div>
                   </div>
                   
-                  <div className="pt-6">
+                  <div className="pt-6 mt-auto">
                     <Button asChild className="w-full bg-gray-100 text-gray-800 hover:bg-gray-200 border border-gray-300">
-                      <Link to="/contact/nous-contacter">
-                        Souscrire
-                      </Link>
+                      <a href="https://gamma.app/docs/Jour-J-Votre-Mariage-Sans-Stress-dw8sq63nk0jwwgf" target="_blank" rel="noopener noreferrer">
+                        Consulter la brochure
+                      </a>
                     </Button>
                   </div>
                 </CardContent>
