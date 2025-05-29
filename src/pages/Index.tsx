@@ -10,21 +10,22 @@ import { Link } from 'react-router-dom';
 
 const Index = () => {
   const [displayedText, setDisplayedText] = useState('');
-  const fullText = 'Organisez votre mariage facilement. Profitez-en pleinement.';
+  const staticText = 'Organisez votre mariage facilement. ';
+  const typedText = 'Profitez-en pleinement.';
   
   useEffect(() => {
     window.scrollTo(0, 0);
     
-    // Typing animation effect
+    // Typing animation effect for "Profitez-en pleinement"
     let index = 0;
     const timer = setInterval(() => {
-      if (index < fullText.length) {
-        setDisplayedText(fullText.slice(0, index + 1));
+      if (index < typedText.length) {
+        setDisplayedText(typedText.slice(0, index + 1));
         index++;
       } else {
         clearInterval(timer);
       }
-    }, 50);
+    }, 100);
     
     return () => clearInterval(timer);
   }, []);
@@ -35,21 +36,29 @@ const Index = () => {
       <Header />
       
       <main className="flex-grow">
-        {/* Hero Section with new background image */}
+        {/* Hero Section with dark overlay */}
         <section 
-          className="relative py-20 md:py-28 bg-cover bg-center bg-no-repeat"
+          className="relative py-20 md:py-28 bg-cover bg-center bg-no-repeat bg-fixed"
           style={{
             backgroundImage: "url('/lovable-uploads/16238829-fdfc-4fe2-ade8-9c49d79851b4.png')"
           }}
         >
-          <div className="container mx-auto px-4">
+          {/* Dark overlay */}
+          <div className="absolute inset-0 bg-neutral-900/20"></div>
+          
+          <div className="container mx-auto px-4 relative z-10">
             <div className="max-w-2xl">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-black mb-6">
-                {displayedText}
-                <span className="animate-pulse">|</span>
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-white mb-6">
+                {staticText}
+                <span className="inline-block min-h-[1.2em]">
+                  {displayedText}
+                  {displayedText.length < typedText.length && (
+                    <span className="animate-pulse">|</span>
+                  )}
+                </span>
               </h1>
               
-              <p className="text-lg md:text-xl text-gray-700 mb-8">
+              <p className="text-lg md:text-xl text-white mb-8">
                 Grâce au premier wedding planner de poche
               </p>
               
@@ -62,8 +71,8 @@ const Index = () => {
               </div>
 
               {/* Reassurance Badge */}
-              <div className="inline-block bg-wedding-olive/10 px-6 py-3 rounded-full border border-wedding-olive/20">
-                <p className="text-sm font-medium text-wedding-olive">
+              <div className="inline-block bg-white/20 px-6 py-3 rounded-full border border-white/30 backdrop-blur-sm">
+                <p className="text-sm font-medium text-white">
                   Mieux qu'un wedding planner : c'est vous, avec les bons outils.
                 </p>
               </div>
