@@ -6,13 +6,14 @@ import { supabase } from '@/integrations/supabase/client';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import ProjectSummary from '@/components/dashboard/ProjectSummary';
 import VendorTracking from '@/components/dashboard/VendorTracking';
-import TasksList from '@/components/dashboard/TasksList';
+import ChecklistPage from './ChecklistPage';
 import CoordinationPage from './CoordinationPage';
 import WishlistPage from './WishlistPage';
 import BudgetPage from './BudgetPage';
 import PlanningPage from './PlanningPage';
 import DetailedBudget from '@/components/dashboard/DetailedBudget';
 import UserProfile from '@/components/dashboard/UserProfile';
+import AssistantPage from './AssistantPage';
 import { useToast } from '@/components/ui/use-toast';
 import DrinksCalculator from '@/components/drinks/DrinksCalculator';
 import BudgetCalculator from '@/components/dashboard/BudgetCalculator';
@@ -54,7 +55,7 @@ const UserDashboard: React.FC = () => {
         <Route path="/" element={<DashboardLayout />}>
           <Route index element={<ProjectSummary />} />
           <Route path="planning" element={<PlanningPage />} />
-          <Route path="tasks" element={<TasksList />} />
+          <Route path="tasks" element={<ChecklistPage />} />
           <Route path="budget" element={<BudgetPage />} />
           <Route path="budget/detailed" element={<DetailedBudget />} />
           <Route path="budget/calculator" element={<BudgetCalculator />} />
@@ -62,6 +63,7 @@ const UserDashboard: React.FC = () => {
           <Route path="wishlist" element={<WishlistPage />} />
           <Route path="coordination" element={<CoordinationPage />} />
           <Route path="drinks" element={<DrinksCalculator />} />
+          <Route path="assistant" element={<AssistantPage />} />
           <Route path="settings" element={<UserProfile />} />
           <Route path="*" element={<div>Page non trouvée</div>} />
         </Route>

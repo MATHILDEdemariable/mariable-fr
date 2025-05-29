@@ -857,6 +857,7 @@ export type Database = {
           id: string
           options: Json
           order_index: number
+          "ORDRE D'AFFICHAGE": number | null
           question: string
           scores: Json
           section: Database["public"]["Enums"]["quiz_section"]
@@ -866,7 +867,8 @@ export type Database = {
           created_at?: string
           id?: string
           options?: Json
-          order_index?: number
+          order_index: number
+          "ORDRE D'AFFICHAGE"?: number | null
           question: string
           scores?: Json
           section: Database["public"]["Enums"]["quiz_section"]
@@ -877,6 +879,7 @@ export type Database = {
           id?: string
           options?: Json
           order_index?: number
+          "ORDRE D'AFFICHAGE"?: number | null
           question?: string
           scores?: Json
           section?: Database["public"]["Enums"]["quiz_section"]

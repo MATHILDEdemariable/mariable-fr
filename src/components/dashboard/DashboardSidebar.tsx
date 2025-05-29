@@ -4,14 +4,14 @@ import { Link, useLocation } from 'react-router-dom';
 import { 
   LayoutDashboard, 
   Calendar, 
-  ListChecks, 
+  CheckSquare, 
   Coins, 
   Store, 
   Heart, 
   Settings,
   LogOut,
   Wine,
-  CheckSquare
+  MessageCircleQuestion
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
@@ -30,13 +30,13 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
       path: '/dashboard',
     },
     {
-      label: 'Planning',
-      icon: <CheckSquare className="h-4 w-4" />,
+      label: 'Initiation Mariage',
+      icon: <Calendar className="h-4 w-4" />,
       path: '/dashboard/planning',
     },
     {
-      label: 'Tâches',
-      icon: <ListChecks className="h-4 w-4" />,
+      label: 'Check-list',
+      icon: <CheckSquare className="h-4 w-4" />,
       path: '/dashboard/tasks',
     },
     {
@@ -63,6 +63,11 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
       label: 'Calculatrice de boisson',
       icon: <Wine className="h-4 w-4" />,
       path: '/dashboard/drinks',
+    },
+    {
+      label: 'Des questions ?',
+      icon: <MessageCircleQuestion className="h-4 w-4" />,
+      path: '/dashboard/assistant',
     },
     {
       label: 'Paramètres',
