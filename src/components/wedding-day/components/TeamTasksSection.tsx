@@ -14,7 +14,7 @@ interface TeamTask {
   title: string;
   category: string;
   completed: boolean;
-  assigned_to?: string;
+  responsible_person?: string;
 }
 
 const TEAM_TASKS: TeamTask[] = [
@@ -102,7 +102,7 @@ const TeamTasksSection: React.FC = () => {
           title: task.task_name,
           category: task.phase,
           completed: false, // Team tasks don't have completion status
-          assigned_to: task.assigned_to || undefined
+          responsible_person: task.responsible_person || undefined
         }));
         setTasks(dbTasks);
       } else {
@@ -146,7 +146,7 @@ const TeamTasksSection: React.FC = () => {
     try {
       const { error } = await supabase
         .from('team_tasks')
-        .update({ assigned_to: assignedTo || null })
+        .update({ responsible_person: assignedTo || null })
         .eq('id', taskId)
         .eq('user_id', user.id);
 
@@ -163,7 +163,7 @@ const TeamTasksSection: React.FC = () => {
       // Update local state
       setTasks(prev => 
         prev.map(task => 
-          task.id === taskId ? { ...task, assigned_to: assignedTo || undefined } : task
+          task.id === taskId ? { ...task, responsible_person: assignedTo || undefined } : task
         )
       );
     } catch (error) {
@@ -291,7 +291,7 @@ const TeamTasksSection: React.FC = () => {
                         <span className="text-xs text-muted-foreground">Assigné à:</span>
                         <Input
                           placeholder="Nom de la personne"
-                          value={task.assigned_to || ''}
+                          value={task.responsible_person || ''}
                           onChange={(e) => updateTaskAssignment(task.id, e.target.value)}
                           className="text-xs h-7 flex-1 max-w-48"
                         />

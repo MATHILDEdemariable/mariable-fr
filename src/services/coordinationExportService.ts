@@ -5,7 +5,7 @@ interface CoordinationTask {
   id: string;
   title: string;
   category: string;
-  assigned_to?: string;
+  responsible_person?: string;
 }
 
 interface ExportCoordinationOptions {
@@ -72,10 +72,10 @@ export const exportCoordinationToPDF = async (options: ExportCoordinationOptions
         pdf.text(taskLines, 25, yPosition);
         
         // Assignment info
-        if (task.assigned_to) {
+        if (task.responsible_person) {
           pdf.setFontSize(9);
           pdf.setTextColor(lightGray);
-          pdf.text(`Assigné à: ${task.assigned_to}`, 150, yPosition);
+          pdf.text(`Assigné à: ${task.responsible_person}`, 150, yPosition);
         } else {
           pdf.setFontSize(9);
           pdf.setTextColor(lightGray);
