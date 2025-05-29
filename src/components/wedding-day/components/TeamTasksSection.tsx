@@ -1,15 +1,20 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { ChevronDown, ChevronRight, Users, CheckCircle } from 'lucide-react';
+import { ChevronDown, ChevronRight, Users, CheckCircle, Download } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/components/ui/use-toast';
+import { usePlanning } from '../context/PlanningContext';
 
 interface TeamTask {
   id: string;
   title: string;
   category: string;
   completed: boolean;
+  assigned_to?: string;
 }
 
 const TEAM_TASKS: TeamTask[] = [
@@ -66,13 +71,104 @@ const TeamTasksSection: React.FC = () => {
     'Repas': false,
     'Gestion': false,
   });
+  const [exportLoading, setExportLoading] = useState(false);
+  const { user, formData } = usePlanning();
+  const { toast } = useToast();
 
-  const toggleTask = (taskId: string) => {
-    setTasks(prev => 
-      prev.map(task => 
-        task.id === taskId ? { ...task, completed: !task.completed } : task
-      )
-    );
+  // Load tasks from database on mount
+  useEffect(() => {
+    loadTasksFromDatabase();
+  }, [user]);
+
+  const loadTasksFromDatabase = async () => {
+    if (!user) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('team_tasks')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('position');
+
+      if (error) {
+        console.error('Error loading team tasks:', error);
+        return;
+      }
+
+      if (data && data.length > 0) {
+        // Map database tasks to our format
+        const dbTasks = data.map(task => ({
+          id: task.id,
+          title: task.task_name,
+          category: task.phase,
+          completed: false, // Team tasks don't have completion status
+          assigned_to: task.assigned_to || undefined
+        }));
+        setTasks(dbTasks);
+      } else {
+        // Initialize with default tasks if none exist
+        await initializeDefaultTasks();
+      }
+    } catch (error) {
+      console.error('Error loading team tasks:', error);
+    }
+  };
+
+  const initializeDefaultTasks = async () => {
+    if (!user) return;
+
+    try {
+      const tasksToInsert = TEAM_TASKS.map((task, index) => ({
+        user_id: user.id,
+        task_name: task.title,
+        phase: task.category,
+        position: index,
+        is_custom: false
+      }));
+
+      const { error } = await supabase
+        .from('team_tasks')
+        .insert(tasksToInsert);
+
+      if (error) {
+        console.error('Error initializing team tasks:', error);
+      } else {
+        loadTasksFromDatabase();
+      }
+    } catch (error) {
+      console.error('Error initializing team tasks:', error);
+    }
+  };
+
+  const updateTaskAssignment = async (taskId: string, assignedTo: string) => {
+    if (!user) return;
+
+    try {
+      const { error } = await supabase
+        .from('team_tasks')
+        .update({ assigned_to: assignedTo || null })
+        .eq('id', taskId)
+        .eq('user_id', user.id);
+
+      if (error) {
+        console.error('Error updating task assignment:', error);
+        toast({
+          title: "Erreur",
+          description: "Impossible de sauvegarder l'assignation",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Update local state
+      setTasks(prev => 
+        prev.map(task => 
+          task.id === taskId ? { ...task, assigned_to: assignedTo || undefined } : task
+        )
+      );
+    } catch (error) {
+      console.error('Error updating task assignment:', error);
+    }
   };
 
   const toggleCategory = (category: string) => {
@@ -86,25 +182,78 @@ const TeamTasksSection: React.FC = () => {
     return tasks.filter(task => task.category === category);
   };
 
-  const getCompletedCount = (category: string) => {
-    const categoryTasks = getTasksByCategory(category);
-    return categoryTasks.filter(task => task.completed).length;
+  const exportCoordinationPDF = async () => {
+    setExportLoading(true);
+    
+    try {
+      toast({
+        title: "Export PDF en cours",
+        description: "Préparation de votre fiche de coordination..."
+      });
+
+      // Dynamic import for PDF export
+      const { exportCoordinationToPDF } = await import('@/services/coordinationExportService');
+      
+      const success = await exportCoordinationToPDF({
+        tasks,
+        weddingDate: formData?.date_mariage ? new Date(formData.date_mariage).toLocaleDateString('fr-FR') : undefined,
+        coupleNames: formData?.nom_couple || "Votre mariage"
+      });
+      
+      if (success) {
+        toast({
+          title: "Export réussi",
+          description: "Votre fiche de coordination a été exportée en PDF"
+        });
+      } else {
+        toast({
+          title: "Erreur d'export",
+          description: "Une erreur s'est produite lors de l'export en PDF",
+          variant: "destructive"
+        });
+      }
+    } catch (error) {
+      console.error("Erreur lors de l'export PDF:", error);
+      toast({
+        title: "Erreur d'export",
+        description: "Une erreur s'est produite lors de l'export en PDF",
+        variant: "destructive"
+      });
+    } finally {
+      setExportLoading(false);
+    }
   };
 
   const categories = ['Préparatifs', 'Cérémonie', 'Cocktail', 'Repas', 'Gestion'];
 
   return (
     <Card>
-      <CardHeader>
+      <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle className="font-serif flex items-center gap-2">
           <Users className="h-5 w-5 text-wedding-olive" />
           Équipe de coordination
         </CardTitle>
+        <Button
+          onClick={exportCoordinationPDF}
+          disabled={exportLoading}
+          className="bg-wedding-olive hover:bg-wedding-olive/80"
+        >
+          {exportLoading ? (
+            <>
+              <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+              Export...
+            </>
+          ) : (
+            <>
+              <Download className="h-4 w-4 mr-2" />
+              Exporter en PDF
+            </>
+          )}
+        </Button>
       </CardHeader>
       <CardContent className="space-y-4">
         {categories.map((category) => {
           const categoryTasks = getTasksByCategory(category);
-          const completedCount = getCompletedCount(category);
           const isOpen = openCategories[category];
           
           return (
@@ -122,7 +271,7 @@ const TeamTasksSection: React.FC = () => {
                     )}
                     <span className="font-medium">{category}</span>
                     <span className="text-sm text-muted-foreground">
-                      ({completedCount}/{categoryTasks.length})
+                      ({categoryTasks.length} tâches)
                     </span>
                   </div>
                 </Button>
@@ -132,23 +281,22 @@ const TeamTasksSection: React.FC = () => {
                 {categoryTasks.map((task) => (
                   <div
                     key={task.id}
-                    className="flex items-start gap-3 p-3 rounded-lg border bg-card hover:bg-accent cursor-pointer transition-colors"
-                    onClick={() => toggleTask(task.id)}
+                    className="flex items-start gap-3 p-3 rounded-lg border bg-card"
                   >
-                    <button
-                      className={`mt-0.5 h-5 w-5 rounded border-2 flex items-center justify-center ${
-                        task.completed
-                          ? 'bg-wedding-olive border-wedding-olive text-white'
-                          : 'border-gray-300 hover:border-wedding-olive'
-                      }`}
-                    >
-                      {task.completed && <CheckCircle className="h-3 w-3" />}
-                    </button>
-                    <span className={`text-sm flex-1 ${
-                      task.completed ? 'line-through text-muted-foreground' : ''
-                    }`}>
-                      {task.title}
-                    </span>
+                    <div className="flex-1 space-y-2">
+                      <span className="text-sm block">
+                        {task.title}
+                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-muted-foreground">Assigné à:</span>
+                        <Input
+                          placeholder="Nom de la personne"
+                          value={task.assigned_to || ''}
+                          onChange={(e) => updateTaskAssignment(task.id, e.target.value)}
+                          className="text-xs h-7 flex-1 max-w-48"
+                        />
+                      </div>
+                    </div>
                   </div>
                 ))}
               </CollapsibleContent>
