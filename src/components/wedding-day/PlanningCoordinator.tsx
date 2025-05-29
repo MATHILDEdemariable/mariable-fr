@@ -6,6 +6,7 @@ import { PlanningProvider, usePlanning } from './context/PlanningContext';
 import { PlanningForm } from './components/PlanningForm';
 import { PlanningResults } from './components/PlanningResults';
 import AdviceSidebar from './components/AdviceSidebar';
+import TeamTasksSection from './components/TeamTasksSection';
 
 interface PlanningCoordinatorProps {
   user?: User | null;
@@ -23,7 +24,7 @@ const PlanningCoordinatorContent: React.FC = () => {
         </div>
         
         <Tabs defaultValue="form" value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-3 mb-6">
+          <TabsList className="grid w-full grid-cols-4 mb-6">
             <TabsTrigger 
               value="form"
               className="data-[state=active]:bg-wedding-olive data-[state=active]:text-white"
@@ -36,6 +37,12 @@ const PlanningCoordinatorContent: React.FC = () => {
               className="data-[state=active]:bg-wedding-olive data-[state=active]:text-white"
             >
               Planning
+            </TabsTrigger>
+            <TabsTrigger 
+              value="coordination"
+              className="data-[state=active]:bg-wedding-olive data-[state=active]:text-white"
+            >
+              Coordination
             </TabsTrigger>
             <TabsTrigger 
               value="advice"
@@ -51,6 +58,12 @@ const PlanningCoordinatorContent: React.FC = () => {
           
           <TabsContent value="results">
             <PlanningResults />
+          </TabsContent>
+          
+          <TabsContent value="coordination">
+            <div className="w-full">
+              <TeamTasksSection />
+            </div>
           </TabsContent>
           
           <TabsContent value="advice" className="lg:hidden">

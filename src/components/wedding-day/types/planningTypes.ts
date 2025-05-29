@@ -1,4 +1,3 @@
-
 import { SupabaseClient } from '@supabase/supabase-js';
 
 export interface PlanningFormValues {
@@ -263,7 +262,7 @@ export const generatePlanning = (
 
   const isDualCeremony = formData.double_ceremonie === 'oui';
   
-  // Process all categories in logical order
+  // Process all categories in logical order with enhanced handling
   const categoryOrder = [
     'préparatifs_final',
     'logistique', 
@@ -275,19 +274,26 @@ export const generatePlanning = (
   ];
 
   categoryOrder.forEach(category => {
-    const categoryQuestions = questions.filter(q => q.categorie === category);
+    const categoryQuestions = questions
+      .filter(q => q.categorie === category)
+      .sort((a, b) => a.ordre_affichage - b.ordre_affichage);
     
     categoryQuestions.forEach(question => {
       const value = formData[question.option_name];
       if (!value || (Array.isArray(value) && value.length === 0)) return;
       
       // Skip time fields and logical fields that are not actual activities
-      if (question.type === 'time' || question.option_name.includes('double_') || question.option_name.includes('type_')) return;
+      if (question.type === 'time' || 
+          question.option_name.includes('double_') || 
+          question.option_name.includes('type_') ||
+          question.type === 'fixe') return;
       
       const event = createEventFromQuestion(question, value, currentTime, questions);
       if (event) {
         events.push(event);
-        currentTime = addMinutesToDate(currentTime, event.duration + 5); // Add 5min buffer
+        // Add buffer time between events based on category
+        const bufferTime = getBufferTime(category);
+        currentTime = addMinutesToDate(event.endTime, bufferTime);
       }
     });
   });
@@ -302,9 +308,23 @@ export const generatePlanning = (
   // Process all logistics trajectory blocks
   processLogisticsTrajectory(events, formData, questions);
 
-  // Sort events by start time and recalculate timeline
+  // Sort events by start time and recalculate timeline with proper spacing
   const sortedEvents = events.sort((a, b) => a.startTime.getTime() - b.startTime.getTime());
   return recalculateTimeline(sortedEvents);
+};
+
+// Helper to get buffer time between events based on category
+const getBufferTime = (category: string): number => {
+  switch (category) {
+    case 'préparatifs_final': return 5;
+    case 'logistique': return 0; // No buffer for travel
+    case 'cérémonie': return 15;
+    case 'photos': return 10;
+    case 'cocktail': return 5;
+    case 'repas': return 10;
+    case 'soiree': return 0;
+    default: return 5;
+  }
 };
 
 // Enhanced helper function to create event from question
@@ -337,6 +357,10 @@ const createEventFromQuestion = (
     title += ` (${value})`;
   }
   
+  // Determine if this is a highlight event
+  const isHighlight = ['ceremonie', 'cocktail', 'repas', 'soiree'].includes(category) ||
+                     question.option_name.includes('ceremonie');
+  
   return {
     id: `${question.option_name}-${Date.now()}-${Math.random()}`,
     title,
@@ -344,9 +368,33 @@ const createEventFromQuestion = (
     startTime: new Date(startTime),
     endTime: addMinutesToDate(startTime, duration),
     duration,
-    type: question.categorie,
-    isHighlight: ['ceremonie', 'cocktail', 'repas', 'soiree'].includes(question.categorie)
+    type: getEventType(question.option_name, category),
+    isHighlight,
+    notes: getEventNotes(question, value)
   };
+};
+
+// Helper to determine event type for proper icon display
+const getEventType = (optionName: string, category: string): string => {
+  if (optionName.includes('trajet')) return 'travel';
+  if (optionName.includes('coiffure') || optionName.includes('maquillage') || optionName.includes('habillage')) return 'preparation';
+  if (optionName.includes('ceremonie')) return 'ceremony';
+  if (optionName.includes('photos')) return 'photos';
+  if (optionName.includes('cocktail')) return 'cocktail';
+  if (optionName.includes('repas')) return 'repas';
+  if (optionName.includes('soiree')) return 'soiree';
+  return category;
+};
+
+// Helper to add contextual notes to events
+const getEventNotes = (question: PlanningQuestion, value: any): string | undefined => {
+  if (typeof value === 'number' && question.option_name.includes('trajet')) {
+    return `Durée estimée: ${value} minutes`;
+  }
+  if (Array.isArray(value) && value.length > 0) {
+    return `Inclut: ${value.join(', ')}`;
+  }
+  return undefined;
 };
 
 // Process logistics trajectory blocks
@@ -479,13 +527,27 @@ const processDualCeremony = (
   }
 };
 
-// Recalculate timeline to ensure proper sequence
+// Recalculate timeline to ensure proper sequence with intelligent spacing
 const recalculateTimeline = (events: PlanningEvent[]): PlanningEvent[] => {
   if (events.length === 0) return [];
   
-  let currentTime = events[0]?.startTime || new Date();
+  // Find ceremony time as anchor point
+  const ceremonyEvent = events.find(e => e.type === 'ceremony');
+  let currentTime = ceremonyEvent?.startTime || events[0]?.startTime || new Date();
   
-  return events.map((event, index) => {
+  // Sort events and ensure preparation events happen before ceremony
+  const preparationEvents = events.filter(e => e.category === 'préparatifs_final');
+  const ceremonyEvents = events.filter(e => e.category === 'cérémonie');
+  const otherEvents = events.filter(e => !['préparatifs_final', 'cérémonie'].includes(e.category));
+  
+  // Start with preparations 3 hours before ceremony
+  if (ceremonyEvent && preparationEvents.length > 0) {
+    currentTime = addMinutesToDate(ceremonyEvent.startTime, -180);
+  }
+  
+  const orderedEvents = [...preparationEvents, ...ceremonyEvents, ...otherEvents];
+  
+  return orderedEvents.map((event, index) => {
     const updatedEvent = { ...event };
     
     if (index === 0) {
@@ -495,7 +557,10 @@ const recalculateTimeline = (events: PlanningEvent[]): PlanningEvent[] => {
     }
     
     updatedEvent.endTime = addMinutesToDate(updatedEvent.startTime, event.duration);
-    currentTime = addMinutesToDate(updatedEvent.endTime, 5); // 5min buffer
+    
+    // Calculate next start time with appropriate buffer
+    const bufferTime = getBufferTime(event.category);
+    currentTime = addMinutesToDate(updatedEvent.endTime, bufferTime);
     
     return updatedEvent;
   });
