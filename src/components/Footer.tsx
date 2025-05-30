@@ -5,7 +5,7 @@ import { Instagram, Mail } from 'lucide-react';
 
 const Footer = () => {
   return (
-    <footer className="py-8 bg-white text-wedding-black">
+    <footer className="py-8 bg-white text-wedding-black" role="contentinfo" aria-label="Pied de page">
       <div className="container px-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           <div>
@@ -23,13 +23,15 @@ const Footer = () => {
           </div>
           
           <div className="mt-4 sm:mt-0">
-            <h3 className="font-serif text-base mb-2 md:mb-3">Liens Rapides</h3>
+            <h3 className="font-serif text-base mb-2 md:mb-3">Planifier mon mariage</h3>
             <ul className="space-y-1 text-xs md:text-sm">
-              <li><Link to="/" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Accueil</Link></li>
-              <li><Link to="/recherche" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Notre guide de prestataires</Link></li>
-              <li><Link to="/services/planification" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Planification</Link></li>
-              <li><Link to="/services/budget" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Budget</Link></li>
-              <li><Link to="/services/conseils" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Conseils</Link></li>
+              <li><Link to="/dashboard" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Mon tableau de bord</Link></li>
+              <li><Link to="/checklist-mariage" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Check-list</Link></li>
+              <li><Link to="/pricing" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Tarifs</Link></li>
+              <li><Link to="/recherche" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Trouver un prestataire</Link></li>
+              <li><Link to="/services/jour-j" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Coordination du jour J</Link></li>
+              <li><Link to="/services/budget" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Calculateur de budget</Link></li>
+              <li><Link to="/services/conseils" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Conseils de professionnels</Link></li>
             </ul>
           </div>
           
@@ -52,13 +54,18 @@ const Footer = () => {
                   mathilde@mariable.fr
                 </a>
               </li>
+              <li>
+                <Link to="/professionnels" className="text-wedding-black/70 hover:text-wedding-black transition-colors">
+                  Espace Pro (accès dédié aux prestataires)
+                </Link>
+              </li>
             </ul>
           </div>
         </div>
         
         <div className="mt-6 md:mt-8 pt-4 border-t border-wedding-black/10 flex flex-col md:flex-row justify-between items-center">
           <p className="text-xs text-wedding-black/70 mb-3 md:mb-0 text-center md:text-left">
-            © 2025 Mariable - Tous droits réservés
+            © 2025 Mariable – Tous droits réservés. | Conçu avec joie pour les couples modernes 💍
           </p>
           <div className="flex gap-4 text-xs">
             <Link to="/mentions-legales" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Mentions Légales</Link>

@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import Header from '@/components/Header';
 import ChatbotButton from '@/components/ChatbotButton';
@@ -38,7 +37,7 @@ const Index = () => {
       <main className="flex-grow">
         {/* Hero Section with dark overlay */}
         <section 
-          className="relative py-20 md:py-28 bg-cover bg-center bg-no-repeat bg-fixed"
+          className="relative py-20 md:py-28 bg-cover bg-center bg-no-repeat"
           style={{
             backgroundImage: "url('/lovable-uploads/16238829-fdfc-4fe2-ade8-9c49d79851b4.png')"
           }}
@@ -48,7 +47,7 @@ const Index = () => {
           
           <div className="container mx-auto px-4 relative z-10">
             <div className="max-w-2xl">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-white mb-6">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-white font-bold mb-6">
                 {staticText}
                 <span className="inline-block min-h-[1.2em]">
                   {displayedText}
@@ -58,7 +57,7 @@ const Index = () => {
                 </span>
               </h1>
               
-              <p className="text-lg md:text-xl text-white mb-8">
+              <p className="text-lg md:text-xl text-white font-semibold mb-8">
                 Grâce au premier wedding planner de poche
               </p>
               
@@ -72,7 +71,7 @@ const Index = () => {
 
               {/* Reassurance Badge */}
               <div className="inline-block bg-white/20 px-6 py-3 rounded-full border border-white/30 backdrop-blur-sm">
-                <p className="text-sm font-medium text-white">
+                <p className="text-sm font-bold text-white">
                   Mieux qu'un wedding planner : c'est vous, avec les bons outils.
                 </p>
               </div>
