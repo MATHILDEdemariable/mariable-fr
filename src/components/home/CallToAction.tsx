@@ -5,9 +5,9 @@ import { Link } from 'react-router-dom';
 
 const CallToAction = () => {
   return (
-    <section className="bg-wedding-cream py-20">
+    <section className="bg-wedding-light py-20">
       <div className="container mx-auto px-4 text-center">
-        <h2 className="text-3xl md:text-4xl font-serif text-wedding-olive mb-4">
+        <h2 className="text-3xl md:text-4xl font-serif text-gray-800 mb-4">
           Prêt à commencer l'organisation de votre mariage ?
         </h2>
         <p className="text-lg md:text-xl text-gray-700 max-w-2xl mx-auto mb-10">
@@ -17,7 +17,8 @@ const CallToAction = () => {
           <Button 
             asChild
             size="lg" 
-            className="bg-wedding-olive hover:bg-wedding-olive/80 text-white font-medium shadow-md"
+            variant="wedding"
+            className="font-medium"
           >
             <Link to="/register">
               Je découvre Mariable
@@ -27,7 +28,7 @@ const CallToAction = () => {
             asChild
             size="lg" 
             variant="outline" 
-            className="border-wedding-olive text-wedding-olive hover:bg-wedding-olive/10"
+            className="border-wedding-olive-border text-gray-700 hover:bg-wedding-light/50"
           >
             <Link to="/login">
               Dites oui à la simplicité

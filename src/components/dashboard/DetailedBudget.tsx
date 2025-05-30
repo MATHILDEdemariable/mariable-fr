@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -464,7 +463,7 @@ const DetailedBudget: React.FC = () => {
         <div className="flex gap-2">
           <Button 
             onClick={handleSaveBudget} 
-            className="bg-wedding-olive hover:bg-wedding-olive/90"
+            variant="wedding"
             disabled={updateBudgetMutation.isPending}
           >
             {updateBudgetMutation.isPending ? (
@@ -483,7 +482,7 @@ const DetailedBudget: React.FC = () => {
           <Button 
             onClick={handleExportPDF}
             variant="outline"
-            className="bg-wedding-olive/10 hover:bg-wedding-olive/20 text-wedding-olive"
+            className="bg-wedding-light/50 hover:bg-wedding-light border-wedding-olive-border text-gray-700"
             disabled={isExporting}
           >
             {isExporting ? (
@@ -504,7 +503,7 @@ const DetailedBudget: React.FC = () => {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-gray-50 border-y">
+              <tr className="bg-wedding-light border-y border-wedding-olive-border">
                 <th className="px-4 py-3 text-left font-medium">Catégorie / Élément</th>
                 <th className="px-4 py-3 text-right font-medium">Budget Estimé (€)</th>
                 <th className="px-4 py-3 text-right font-medium">Coût Réel (€)</th>
@@ -517,7 +516,7 @@ const DetailedBudget: React.FC = () => {
               {categories.map((category, categoryIndex) => (
                 <React.Fragment key={`category-${categoryIndex}`}>
                   {/* Category row */}
-                  <tr className="bg-wedding-cream/20 border-t">
+                  <tr className="bg-wedding-light/30 border-t border-wedding-olive-border">
                     <td className="px-4 py-2 font-medium text-base">{category.name}</td>
                     <td className="px-4 py-2 text-right font-medium">
                       {category.totalEstimated.toFixed(2)}
@@ -536,7 +535,7 @@ const DetailedBudget: React.FC = () => {
                         variant="ghost" 
                         size="sm"
                         onClick={() => handleAddItem(categoryIndex)}
-                        className="h-8 text-wedding-olive hover:text-wedding-olive/70"
+                        className="h-8 text-gray-700 hover:text-gray-900 hover:bg-wedding-light"
                       >
                         <Plus className="h-4 w-4 mr-1" />
                         <span>Ajouter</span>
@@ -546,13 +545,13 @@ const DetailedBudget: React.FC = () => {
                   
                   {/* Items rows */}
                   {category.items.map((item, itemIndex) => (
-                    <tr key={item.id} className="hover:bg-gray-50/50 border-t border-gray-100">
+                    <tr key={item.id} className="hover:bg-wedding-light/20 border-t border-gray-100">
                       <td className="px-4 py-2">
                         <Input
                           type="text"
                           value={item.name || ''}
                           onChange={(e) => handleItemChange(categoryIndex, itemIndex, 'name', e.target.value)}
-                          className="h-8 border-gray-200"
+                          className="h-8 border-wedding-olive-border"
                           placeholder="Nom de l'élément"
                         />
                       </td>
@@ -561,7 +560,7 @@ const DetailedBudget: React.FC = () => {
                           type="number"
                           value={item.estimated || ''}
                           onChange={(e) => handleItemChange(categoryIndex, itemIndex, 'estimated', e.target.value)}
-                          className="h-8 text-right border-gray-200"
+                          className="h-8 text-right border-wedding-olive-border"
                           placeholder="0.00"
                           step="0.01"
                         />
@@ -571,7 +570,7 @@ const DetailedBudget: React.FC = () => {
                           type="number"
                           value={item.actual || ''}
                           onChange={(e) => handleItemChange(categoryIndex, itemIndex, 'actual', e.target.value)}
-                          className="h-8 text-right border-gray-200"
+                          className="h-8 text-right border-wedding-olive-border"
                           placeholder="0.00"
                           step="0.01"
                         />
@@ -581,7 +580,7 @@ const DetailedBudget: React.FC = () => {
                           type="number"
                           value={item.deposit || ''}
                           onChange={(e) => handleItemChange(categoryIndex, itemIndex, 'deposit', e.target.value)}
-                          className="h-8 text-right border-gray-200"
+                          className="h-8 text-right border-wedding-olive-border"
                           placeholder="0.00"
                           step="0.01"
                         />
@@ -605,7 +604,7 @@ const DetailedBudget: React.FC = () => {
               ))}
               
               {/* Totals row */}
-              <tr className="border-t-2 border-t-wedding-olive/50 font-semibold">
+              <tr className="border-t-2 border-t-wedding-olive-border/70 font-semibold bg-wedding-light/40">
                 <td className="px-4 py-3">TOTAL</td>
                 <td className="px-4 py-3 text-right">{totalEstimated.toFixed(2)}</td>
                 <td className="px-4 py-3 text-right">{totalActual.toFixed(2)}</td>

@@ -55,12 +55,13 @@ export default {
 				},
 				wedding: {
 					green: '#1a5d40',
-					light: '#f1f7f3',
+					light: '#f8f5f2',
 					cream: '#f8f6f0',
 					black: '#000000',
 					white: '#ffffff',
 					gold: '#d4af37',
-					olive: '#7F9474'
+					olive: '#d9d4cf',
+					'olive-border': '#d9d4cf'
 				},
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
