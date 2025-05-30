@@ -10,12 +10,12 @@ interface SEOProps {
 }
 
 const SEO: React.FC<SEOProps> = ({ 
-  title = "MARIABLE - Planifiez votre mariage simplement",
-  description = "Organisez votre mariage sans stress avec MARIABLE : trouvez les meilleurs prestataires de qualité, planifiez chaque étape, gérez facilement votre budget.",
+  title = "Le premier wedding planner de poche – Mariable",
+  description = "Mariable est la solution clé en main pour organiser votre mariage. Profitez pleinement de votre journée grâce à un outil simple, personnalisé et sans charge mentale.",
   image = "/lovable-uploads/23541521-b6ff-4175-a8c8-5017e5b19312.png",
   canonical
 }) => {
-  const fullTitle = title === "MARIABLE - Planifiez votre mariage simplement" ? title : `${title} – MARIABLE`;
+  const fullTitle = title === "Le premier wedding planner de poche – Mariable" ? title : `${title} – Mariable`;
   const siteUrl = "https://www.mariable.fr";
 
   return (

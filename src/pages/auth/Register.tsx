@@ -12,6 +12,7 @@ import Header from '@/components/Header';
 import { supabase } from '@/integrations/supabase/client';
 import { Session } from '@supabase/supabase-js';
 import SEO from '@/components/SEO';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 const Register = () => {
   const [email, setEmail] = useState('');
@@ -21,6 +22,7 @@ const Register = () => {
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [session, setSession] = useState<Session | null>(null);
+  const [showEmailAlert, setShowEmailAlert] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
   
@@ -97,8 +99,13 @@ const Register = () => {
         return;
       }
       
-      // Rediriger vers la page de confirmation d'email
-      navigate('/auth/email-confirmation');
+      // Afficher l'alerte pour vérifier les mails indésirables
+      setShowEmailAlert(true);
+      
+      // Rediriger vers la page de confirmation d'email après un délai
+      setTimeout(() => {
+        navigate('/auth/email-confirmation');
+      }, 3000);
       
     } catch (error: any) {
       console.error('Registration error:', error);
@@ -121,6 +128,15 @@ const Register = () => {
       <Header />
       
       <main className="container max-w-md mx-auto py-12 px-4">
+        {showEmailAlert && (
+          <Alert className="mb-6 border-wedding-olive bg-wedding-olive/10">
+            <Mail className="h-4 w-4" />
+            <AlertDescription className="text-sm">
+              <strong>N'oubliez pas de regarder dans vos mails indésirables pour le mail de confirmation !</strong>
+            </AlertDescription>
+          </Alert>
+        )}
+        
         <Card className="w-full">
           <CardHeader className="space-y-1">
             <CardTitle className="text-2xl font-serif text-center">Inscription</CardTitle>

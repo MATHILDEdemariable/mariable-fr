@@ -29,7 +29,6 @@ import Planification from "./pages/services/Planification";
 import Budget from "./pages/services/Budget";
 import Conseils from "./pages/services/Conseils";
 import Prestataires from "./pages/services/Prestataires";
-import JourJ from "./pages/services/JourJ";
 import Professionnels from "./pages/Professionnels";
 import NotFound from "./pages/NotFound";
 import FormAdmin from "./pages/admin/FormAdmin";
@@ -88,7 +87,6 @@ const App = () => {
                 <Route path="/services/planification" element={<Planification />} />
                 <Route path="/services/budget" element={<Budget />} />
                 <Route path="/services/conseils" element={<Conseils />} />
-                <Route path="/services/jour-j" element={<JourJ />} />
                 
                 {/* Pricing page */}
                 <Route path="/pricing" element={<Pricing />} />
