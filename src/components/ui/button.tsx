@@ -23,7 +23,7 @@ const buttonVariants = cva(
           "bg-[#44ef6a] text-[#fff] hover:bg-[#44ef6a]/90",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
-        wedding: "bg-wedding-light text-gray-700 border border-wedding-olive-border hover:shadow-md hover:border-gray-400 transition-all duration-200",
+        wedding: "bg-wedding-olive hover:bg-wedding-olive/90 text-white",
       },
       size: {
         default: "h-10 px-4 py-2",
