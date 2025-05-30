@@ -40,9 +40,9 @@ const Pricing = () => {
                 <CardHeader className="text-center pb-8">
                   <CardTitle className="text-2xl font-serif mb-4">Organisation</CardTitle>
                   <div className="text-4xl font-bold text-wedding-olive mb-2">
-                    0€<span className="text-lg font-normal text-gray-600">/mois</span>
+                    Gratuit
                   </div>
-                  <p className="text-sm text-gray-600">Gratuit</p>
+                  <p className="text-sm text-gray-600">Accessible après inscription</p>
                 </CardHeader>
                 <CardContent className="space-y-4 flex-grow flex flex-col">
                   <div className="space-y-3 flex-grow">
@@ -121,12 +121,12 @@ const Pricing = () => {
                 </CardContent>
               </Card>
 
-              {/* Coordination Jour-J complète */}
+              {/* Coordination Jour-J premium */}
               <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col">
                 <CardHeader className="text-center pb-8">
-                  <CardTitle className="text-2xl font-serif mb-4">Coordination Jour-J complète</CardTitle>
+                  <CardTitle className="text-2xl font-serif mb-4">Coordination Jour-J premium</CardTitle>
                   <div className="text-4xl font-bold text-wedding-olive mb-2">
-                    200-500€
+                    À partir de 30€
                   </div>
                   <p className="text-sm text-gray-600">Payant</p>
                 </CardHeader>

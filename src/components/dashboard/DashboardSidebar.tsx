@@ -11,7 +11,9 @@ import {
   Settings,
   LogOut,
   Wine,
-  MessageCircleQuestion
+  MessageCircleQuestion,
+  MessageSquare,
+  Users
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
@@ -70,6 +72,18 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
       path: '/dashboard/assistant',
     },
     {
+      label: 'CHATGPT Mariage',
+      icon: <MessageSquare className="h-4 w-4" />,
+      path: 'https://chatgpt.com/g/g-67b5d482dd208191ae458763db0bb08c-mariable',
+      external: true,
+    },
+    {
+      label: 'Accès à la communauté WhatsApp',
+      icon: <Users className="h-4 w-4" />,
+      path: 'https://chat.whatsapp.com/Gc5zeFsJYdDKTqsQqEOTzf',
+      external: true,
+    },
+    {
       label: 'Paramètres',
       icon: <Settings className="h-4 w-4" />,
       path: '/dashboard/settings',
@@ -94,30 +108,59 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
       </div>
       
       <nav className="py-4 px-3 space-y-1">
-        {navigationItems.map((item) => (
-          <Link
-            key={item.path}
-            to={isReaderMode ? '#' : item.path}
-            onClick={(e) => {
-              if (isReaderMode) {
-                e.preventDefault();
-              }
-            }}
-            className={cn(
-              "flex items-center px-3 py-2.5 text-sm font-medium rounded-md transition-colors",
-              isActive(item.path)
-                ? 'bg-wedding-olive text-white shadow-sm'
-                : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive',
-              isReaderMode ? 'pointer-events-none opacity-70' : ''
-            )}
-          >
-            {item.icon}
-            <span className="ml-3">{item.label}</span>
-            {isReaderMode && item.path !== '/dashboard' && (
-              <span className="ml-auto text-xs text-gray-400">(Lecture seule)</span>
-            )}
-          </Link>
-        ))}
+        {navigationItems.map((item) => {
+          if (item.external) {
+            return (
+              <a
+                key={item.path}
+                href={isReaderMode ? '#' : item.path}
+                target={isReaderMode ? undefined : "_blank"}
+                rel={isReaderMode ? undefined : "noopener noreferrer"}
+                onClick={(e) => {
+                  if (isReaderMode) {
+                    e.preventDefault();
+                  }
+                }}
+                className={cn(
+                  "flex items-center px-3 py-2.5 text-sm font-medium rounded-md transition-colors",
+                  'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive',
+                  isReaderMode ? 'pointer-events-none opacity-70' : ''
+                )}
+              >
+                {item.icon}
+                <span className="ml-3">{item.label}</span>
+                {isReaderMode && (
+                  <span className="ml-auto text-xs text-gray-400">(Lecture seule)</span>
+                )}
+              </a>
+            );
+          }
+
+          return (
+            <Link
+              key={item.path}
+              to={isReaderMode ? '#' : item.path}
+              onClick={(e) => {
+                if (isReaderMode) {
+                  e.preventDefault();
+                }
+              }}
+              className={cn(
+                "flex items-center px-3 py-2.5 text-sm font-medium rounded-md transition-colors",
+                isActive(item.path)
+                  ? 'bg-wedding-olive text-white shadow-sm'
+                  : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive',
+                isReaderMode ? 'pointer-events-none opacity-70' : ''
+              )}
+            >
+              {item.icon}
+              <span className="ml-3">{item.label}</span>
+              {isReaderMode && item.path !== '/dashboard' && (
+                <span className="ml-auto text-xs text-gray-400">(Lecture seule)</span>
+              )}
+            </Link>
+          );
+        })}
       </nav>
       
       <div className="mt-auto px-3 py-2">
