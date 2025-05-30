@@ -3,10 +3,10 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { SendHorizontal, MapPin, Calendar, Briefcase, Building, HelpCircle, Users, Search, ExternalLink, RefreshCw, BookOpen } from 'lucide-react';
+import { SendHorizontal, MapPin, Calendar, Briefcase, Building, HelpCircle, Users, Search, ExternalLink, RefreshCw, BookOpen, Calculator, CheckSquare, HeadphonesIcon } from 'lucide-react';
 import { Message as MessageType, VendorRecommendation } from '@/types';
 import Message from './Message';
-import { sendMessage, getInitialOptions, getLocationOptions, handleOptionSelected } from '@/services/chatService';
+import { sendMessage, getInitialOptions, getLocationOptions, handleOptionSelected, getHomeGuideOptions } from '@/services/chatService';
 import { v4 as uuidv4 } from 'uuid';
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate, Link } from 'react-router-dom';
@@ -17,13 +17,15 @@ interface ChatInterfaceProps {
   onFirstMessage?: () => void;
   initialMessage?: string;
   guidedModeOnly?: boolean;
+  isHomeGuide?: boolean;
 }
 
 const ChatInterface: React.FC<ChatInterfaceProps> = ({ 
   isSimpleInput = false, 
   onFirstMessage,
   initialMessage,
-  guidedModeOnly = false
+  guidedModeOnly = false,
+  isHomeGuide = false
 }) => {
   const [messages, setMessages] = useState<MessageType[]>([]);
   const [recommendations, setRecommendations] = useState<Record<string, VendorRecommendation[]>>({});
@@ -56,8 +58,17 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
           timestamp: new Date()
         }
       ]);
+    } else if (isHomeGuide) {
+      const welcomeMessage: MessageType = {
+        id: 'welcome',
+        role: 'assistant',
+        content: "Bonjour ! Je suis votre guide interactif Mariable. Comment puis-je vous aider à découvrir nos outils ?",
+        timestamp: new Date()
+      };
+      setMessages([welcomeMessage]);
+      setCurrentStep(1);
     }
-  }, [isSimpleInput]);
+  }, [isSimpleInput, isHomeGuide]);
 
   useEffect(() => {
     if (inputRef.current) {
@@ -77,7 +88,13 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   }, [initialMessage, isSimpleInput]);
 
   useEffect(() => {
-    if (currentStep === 1) {
+    if (isHomeGuide && currentStep === 1) {
+      const homeOptions = getHomeGuideOptions();
+      setOptionButtons(homeOptions);
+      setActionButtons([]);
+      setShowResetButton(false);
+    }
+    else if (currentStep === 1 && !isHomeGuide) {
       const initialOptions = getInitialOptions();
       setOptionButtons(initialOptions);
       setActionButtons([]);
@@ -124,7 +141,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       setOptionButtons([]);
       setShowResetButton(true);
     }
-  }, [currentStep, conversationContext]);
+  }, [currentStep, conversationContext, isHomeGuide]);
 
   const scrollToBottom = () => {
     setTimeout(() => {
@@ -137,23 +154,34 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const handleReset = () => {
     setMessages([]);
     setRecommendations({});
-    setCurrentStep(1);
+    setCurrentStep(isHomeGuide ? 1 : 1);
     setConversationContext({});
     setInputValue('');
     
-    const initialOptions = getInitialOptions();
-    setOptionButtons(initialOptions);
+    if (isHomeGuide) {
+      const homeOptions = getHomeGuideOptions();
+      setOptionButtons(homeOptions);
+      const resetMessage: MessageType = {
+        id: uuidv4(),
+        role: 'assistant',
+        content: "Bonjour ! Je suis votre guide interactif Mariable. Comment puis-je vous aider à découvrir nos outils ?",
+        timestamp: new Date()
+      };
+      setMessages([resetMessage]);
+    } else {
+      const initialOptions = getInitialOptions();
+      setOptionButtons(initialOptions);
+      const resetMessage: MessageType = {
+        id: uuidv4(),
+        role: 'assistant',
+        content: "Je vous écoute, quel est votre besoin ?",
+        timestamp: new Date()
+      };
+      setMessages([resetMessage]);
+    }
+    
     setActionButtons([]);
     setShowResetButton(false);
-    
-    const resetMessage: MessageType = {
-      id: uuidv4(),
-      role: 'assistant',
-      content: "Je vous écoute, quel est votre besoin ?",
-      timestamp: new Date()
-    };
-    
-    setMessages(prev => [...prev, resetMessage]);
   };
 
   const handleNoRecommendationsFound = () => {
@@ -192,34 +220,117 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         navigate(option.value);
         return;
       }
-      
-      const { response, updatedContext, nextStep, noRecommendationsFound } = await handleOptionSelected(
-        option.value, 
-        currentStep, 
-        conversationContext
-      );
-      
-      setConversationContext(updatedContext);
-      
-      setCurrentStep(nextStep);
-      
-      const assistantMessage: MessageType = {
-        id: uuidv4(),
-        role: 'assistant',
-        content: response.message,
-        timestamp: new Date()
-      };
-      
-      setMessages(prev => [...prev, assistantMessage]);
-      
-      if (response.recommendations && response.recommendations.length > 0) {
-        setRecommendations(prev => ({
-          ...prev,
-          [assistantMessage.id]: response.recommendations || []
-        }));
+
+      if (isHomeGuide) {
+        // Handle home guide specific options
+        let assistantMessage: MessageType;
+        let buttons: {text: string, value: string, icon?: React.ReactNode, link?: string, newTab?: boolean}[] = [];
+
+        switch (option.value) {
+          case "budget":
+            assistantMessage = {
+              id: uuidv4(),
+              role: 'assistant',
+              content: "Parfait ! Voici les outils pour gérer votre budget mariage :",
+              timestamp: new Date()
+            };
+            buttons = [
+              { text: "Calculateur de budget", value: "budget-calc", icon: <Calculator className="h-4 w-4" />, link: "/services/budget" },
+              { text: "Tableau de bord budget", value: "dashboard-budget", icon: <Calculator className="h-4 w-4" />, link: "/dashboard/budget" }
+            ];
+            break;
+          case "planning":
+            assistantMessage = {
+              id: uuidv4(),
+              role: 'assistant',
+              content: "Excellent ! Voici comment planifier votre mariage étape par étape :",
+              timestamp: new Date()
+            };
+            buttons = [
+              { text: "Mon planning personnalisé", value: "dashboard-planning", icon: <Calendar className="h-4 w-4" />, link: "/dashboard/planning" },
+              { text: "Check-list complète", value: "checklist", icon: <CheckSquare className="h-4 w-4" />, link: "/checklist-mariage" }
+            ];
+            break;
+          case "prestataire":
+            assistantMessage = {
+              id: uuidv4(),
+              role: 'assistant',
+              content: "Super ! Voici comment trouver les meilleurs prestataires :",
+              timestamp: new Date()
+            };
+            buttons = [
+              { text: "Rechercher un prestataire", value: "search", icon: <Search className="h-4 w-4" />, link: "/recherche" },
+              { text: "Mes prestataires", value: "dashboard-vendors", icon: <Briefcase className="h-4 w-4" />, link: "/dashboard/prestataires" }
+            ];
+            break;
+          case "support":
+            assistantMessage = {
+              id: uuidv4(),
+              role: 'assistant',
+              content: "Je suis là pour vous aider ! Voici vos options de support :",
+              timestamp: new Date()
+            };
+            buttons = [
+              { text: "Assistant virtuel", value: "assistant", icon: <HeadphonesIcon className="h-4 w-4" />, link: "/dashboard/assistant" },
+              { text: "Nous contacter", value: "contact", icon: <Users className="h-4 w-4" />, link: "/contact/nous-contacter" },
+              { text: "FAQ", value: "faq", icon: <HelpCircle className="h-4 w-4" />, link: "/contact/faq" }
+            ];
+            break;
+          case "compte":
+            assistantMessage = {
+              id: uuidv4(),
+              role: 'assistant',
+              content: "Créez votre compte pour accéder à tous les outils Mariable :",
+              timestamp: new Date()
+            };
+            buttons = [
+              { text: "Créer mon compte", value: "register", icon: <Users className="h-4 w-4" />, link: "/register" },
+              { text: "Découvrir les tarifs", value: "pricing", icon: <Calculator className="h-4 w-4" />, link: "/pricing" }
+            ];
+            break;
+          default:
+            assistantMessage = {
+              id: uuidv4(),
+              role: 'assistant',
+              content: "Comment puis-je vous aider davantage ?",
+              timestamp: new Date()
+            };
+        }
+
+        setMessages(prev => [...prev, assistantMessage]);
+        setActionButtons(buttons);
         setShowResetButton(true);
-      } else if (noRecommendationsFound) {
-        handleNoRecommendationsFound();
+        setOptionButtons([]);
+        
+      } else {
+        // Original functionality for non-home guide
+        const { response, updatedContext, nextStep, noRecommendationsFound } = await handleOptionSelected(
+          option.value, 
+          currentStep, 
+          conversationContext
+        );
+        
+        setConversationContext(updatedContext);
+        setCurrentStep(nextStep);
+        
+        const assistantMessage: MessageType = {
+          id: uuidv4(),
+          role: 'assistant',
+          content: response.message,
+          timestamp: new Date()
+        };
+        
+        setMessages(prev => [...prev, assistantMessage]);
+        
+        if (response.recommendations && response.recommendations.length > 0) {
+          setRecommendations(prev => ({
+            ...prev,
+            [assistantMessage.id]: response.recommendations || []
+          }));
+          setShowResetButton(true);
+        } else if (noRecommendationsFound) {
+          handleNoRecommendationsFound();
+        }
       }
       
     } catch (error) {
@@ -367,7 +478,9 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   return (
     <div className="w-full h-[450px] sm:h-[500px] flex flex-col bg-white rounded-xl overflow-hidden">
       <div className="p-2 md:p-4 bg-white border-b flex items-center justify-center">
-        <p className="text-center text-base font-serif text-wedding-black">Mathilde de Mariable, votre wedding planner</p>
+        <p className="text-center text-base font-serif text-wedding-black">
+          {isHomeGuide ? "Guide interactif Mariable" : "Mathilde de Mariable, votre wedding planner"}
+        </p>
       </div>
       
       <div className="flex-grow p-0 relative overflow-hidden">
@@ -387,7 +500,9 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
               <div className="flex w-full justify-start mb-3">
                 <Card className="chat-bubble-assistant p-2 md:p-3">
                   <CardContent className="p-0">
-                    <p className="typing-dots text-sm">Mathilde réfléchit</p>
+                    <p className="typing-dots text-sm">
+                      {isHomeGuide ? "Guide en cours..." : "Mathilde réfléchit"}
+                    </p>
                   </CardContent>
                 </Card>
               </div>
@@ -461,7 +576,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         </ScrollArea>
       </div>
       
-      {!guidedModeOnly && (
+      {!guidedModeOnly && !isHomeGuide && (
         <div className="p-2 md:p-3 border-t bg-white">
           <form onSubmit={handleSubmit} className="flex w-full gap-2">
             <Input

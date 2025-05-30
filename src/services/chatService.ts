@@ -1,14 +1,23 @@
-
 import React from 'react';
 import { VendorRecommendation, Message as MessageType } from '@/types';
 import { v4 as uuidv4 } from 'uuid';
-import { Briefcase, Calendar, Building, HelpCircle, Home, Users, ExternalLink, BookOpen, MapPin } from 'lucide-react';
+import { Briefcase, Calendar, Building, HelpCircle, Home, Users, ExternalLink, BookOpen, MapPin, Calculator, CheckSquare, HeadphonesIcon } from 'lucide-react';
 
 export const getInitialOptions = () => {
   return [
     { text: "Je cherche un lieu", value: "lieu", icon: React.createElement(Home, { className: "h-4 w-4" }) },
     { text: "Je cherche un prestataire", value: "prestataire", icon: React.createElement(Briefcase, { className: "h-4 w-4" }) },
     { text: "Je ne sais pas par où commencer", value: "aide", icon: React.createElement(HelpCircle, { className: "h-4 w-4" }) }
+  ];
+};
+
+export const getHomeGuideOptions = () => {
+  return [
+    { text: "Je veux estimer mon budget", value: "budget", icon: React.createElement(Calculator, { className: "h-4 w-4" }) },
+    { text: "Je veux planifier ma journée", value: "planning", icon: React.createElement(Calendar, { className: "h-4 w-4" }) },
+    { text: "Je veux trouver un prestataire", value: "prestataire", icon: React.createElement(Briefcase, { className: "h-4 w-4" }) },
+    { text: "J'ai besoin de support", value: "support", icon: React.createElement(HeadphonesIcon, { className: "h-4 w-4" }) },
+    { text: "Je veux créer mon compte", value: "compte", icon: React.createElement(Users, { className: "h-4 w-4" }) }
   ];
 };
 
@@ -44,6 +53,27 @@ export const sendMessage = async (messages: MessageType[]): Promise<{
     return {
       message: "Bonjour et félicitations pour votre mariage! Je suis Mathilde de Mariable, votre wedding planner digital. Dites-moi tout, je vais vous aider à trouver les meilleurs prestataires selon vos envies.",
     };
+  }
+  
+  // Questions floues - reformulation automatique
+  const vagueQuestions = [
+    { keywords: ["aide", "aidez", "help"], response: "Je comprends que vous cherchez de l'aide. Voulez-vous plutôt : planifier votre mariage, estimer votre budget, ou trouver des prestataires ?" },
+    { keywords: ["mariage", "organiser", "organisation"], response: "Pour organiser votre mariage, je peux vous aider avec : votre planning personnalisé, votre budget, ou la recherche de prestataires. Que préférez-vous ?" },
+    { keywords: ["budget", "prix", "coût", "combien"], response: "Pour votre budget mariage, consultez notre calculateur interactif → /services/budget ou accédez à votre tableau de bord budget → /dashboard/budget" },
+    { keywords: ["planning", "planifier", "étapes"], response: "Découvrez votre planning personnalisé ici → /dashboard/planning ou consultez notre check-list complète → /checklist-mariage" },
+    { keywords: ["prestataire", "photographe", "traiteur", "dj", "lieu"], response: "Trouvez les meilleurs prestataires vérifiés ici → /recherche ou gérez vos contacts prestataires → /dashboard/prestataires" }
+  ];
+
+  for (const vague of vagueQuestions) {
+    if (vague.keywords.some(keyword => lastUserMessage.toLowerCase().includes(keyword))) {
+      return {
+        message: vague.response,
+        actionButtons: [
+          { text: "Voir mon tableau de bord", action: "link", link: "/dashboard" },
+          { text: "Créer mon compte", action: "link", link: "/register" }
+        ]
+      };
+    }
   }
   
   // Si l'utilisateur demande de l'aide ou des conseils

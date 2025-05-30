@@ -23,7 +23,7 @@ const ChatbotButton = () => {
               <div className="bg-wedding-olive p-3 flex justify-between items-center text-white">
                 <div className="flex items-center gap-2">
                   <MessageCircle size={20} />
-                  <h3 className="text-sm font-medium">Chat avec Mathilde</h3>
+                  <h3 className="text-sm font-medium">Guide Mariable</h3>
                 </div>
                 <Button 
                   variant="ghost" 
@@ -37,8 +37,9 @@ const ChatbotButton = () => {
               <div className="flex-grow overflow-hidden">
                 <ChatInterface 
                   isSimpleInput={false}
-                  initialMessage="Comment puis-je vous aider à organiser votre mariage ?"
+                  initialMessage=""
                   guidedModeOnly={true}
+                  isHomeGuide={true}
                 />
               </div>
             </div>
