@@ -60,12 +60,13 @@ const DEFAULT_CATEGORIES: BudgetCategory[] = [
 const DetailedBudget: React.FC = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const [categories, setCategories] = useState<BudgetCategory[]>([]);
+  const [categories, setCategories] = useState<BudgetCategory[]>(DEFAULT_CATEGORIES);
   const [totalEstimated, setTotalEstimated] = useState(0);
   const [totalActual, setTotalActual] = useState(0);
   const [totalDeposit, setTotalDeposit] = useState(0);
   const [totalRemaining, setTotalRemaining] = useState(0);
   const [isExporting, setIsExporting] = useState(false);
+  const [saveTimeouts, setSaveTimeouts] = useState<{ [key: string]: NodeJS.Timeout }>({});
   
   // Fetch detailed budget data from Supabase
   const { data: budgetDetailsData, isLoading: isLoadingDetails } = useQuery({
@@ -105,36 +106,38 @@ const DetailedBudget: React.FC = () => {
     }
   });
 
-  // Save individual budget item mutation
+  // Save individual budget item mutation with proper error handling
   const saveBudgetItemMutation = useMutation({
     mutationFn: async ({ item, categoryName }: { item: BudgetItem; categoryName: string }) => {
       const { data: userData } = await supabase.auth.getUser();
       if (!userData.user) throw new Error("User not authenticated");
 
+      const itemData = {
+        user_id: userData.user.id,
+        category_name: categoryName,
+        item_id: item.id,
+        item_name: item.name,
+        estimated: Number(item.estimated) || 0,
+        actual: Number(item.actual) || 0,
+        deposit: Number(item.deposit) || 0,
+        remaining: Number(item.remaining) || 0
+      };
+
       const { data, error } = await supabase
         .from('budgets_detail')
-        .upsert({
-          user_id: userData.user.id,
-          category_name: categoryName,
-          item_id: item.id,
-          item_name: item.name,
-          estimated: item.estimated,
-          actual: item.actual,
-          deposit: item.deposit,
-          remaining: item.remaining
+        .upsert(itemData, {
+          onConflict: 'user_id,item_id'
         })
         .select();
 
       if (error) throw error;
       return data;
     },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['budgetDetails'] });
+    },
     onError: (error) => {
       console.error("Error saving budget item:", error);
-      toast({
-        title: "Erreur de sauvegarde",
-        description: "Impossible de sauvegarder l'élément.",
-        variant: "destructive",
-      });
     }
   });
 
@@ -165,6 +168,12 @@ const DetailedBudget: React.FC = () => {
     }
   });
 
+  // Function to calculate remaining amount
+  const calculateRemaining = (estimated: number, actual: number, deposit: number): number => {
+    const baseAmount = Math.max(estimated, actual);
+    return baseAmount - deposit;
+  };
+
   // Function to calculate totals from categories
   const calculateTotalsFromCategories = useCallback((updatedCategories: BudgetCategory[]) => {
     let estimatedTotal = 0;
@@ -179,10 +188,10 @@ const DetailedBudget: React.FC = () => {
       let categoryRemaining = 0;
       
       category.items.forEach(item => {
-        categoryEstimated += item.estimated || 0;
-        categoryActual += item.actual || 0;
-        categoryDeposit += item.deposit || 0;
-        categoryRemaining += item.remaining || 0;
+        categoryEstimated += Number(item.estimated) || 0;
+        categoryActual += Number(item.actual) || 0;
+        categoryDeposit += Number(item.deposit) || 0;
+        categoryRemaining += Number(item.remaining) || 0;
       });
       
       const updatedCategory = {
@@ -211,7 +220,7 @@ const DetailedBudget: React.FC = () => {
 
   // Load data from database when component mounts or data changes
   useEffect(() => {
-    if (budgetDetailsData) {
+    if (budgetDetailsData && budgetDetailsData.length > 0) {
       // Group items by category
       const categoriesMap = new Map<string, BudgetItem[]>();
       
@@ -220,13 +229,19 @@ const DetailedBudget: React.FC = () => {
           categoriesMap.set(dbItem.category_name, []);
         }
         
+        const remaining = calculateRemaining(
+          Number(dbItem.estimated) || 0,
+          Number(dbItem.actual) || 0,
+          Number(dbItem.deposit) || 0
+        );
+        
         categoriesMap.get(dbItem.category_name)?.push({
           id: dbItem.item_id,
           name: dbItem.item_name,
           estimated: Number(dbItem.estimated) || 0,
           actual: Number(dbItem.actual) || 0,
           deposit: Number(dbItem.deposit) || 0,
-          remaining: Number(dbItem.remaining) || 0
+          remaining: remaining
         });
       });
       
@@ -239,48 +254,12 @@ const DetailedBudget: React.FC = () => {
       const updatedCategories = calculateTotalsFromCategories(loadedCategories);
       setCategories(updatedCategories);
       
-    } else if (budgetData?.breakdown) {
-      // Fallback to old format if no detailed data exists
-      try {
-        const breakdownData = typeof budgetData.breakdown === 'string' 
-          ? JSON.parse(budgetData.breakdown) 
-          : budgetData.breakdown;
-
-        if (breakdownData && breakdownData.categories) {
-          const processedCategories = Array.isArray(breakdownData.categories) ? breakdownData.categories.map(cat => ({
-            ...cat,
-            totalEstimated: typeof cat.totalEstimated === 'number' ? cat.totalEstimated : 0,
-            totalActual: typeof cat.totalActual === 'number' ? cat.totalActual : 0,
-            totalDeposit: typeof cat.totalDeposit === 'number' ? cat.totalDeposit : 0,
-            totalRemaining: typeof cat.totalRemaining === 'number' ? cat.totalRemaining : 0,
-            items: Array.isArray(cat.items) ? cat.items.map(item => ({
-              ...item,
-              estimated: typeof item.estimated === 'number' ? item.estimated : 0,
-              actual: typeof item.actual === 'number' ? item.actual : 0,
-              deposit: typeof item.deposit === 'number' ? item.deposit : 0,
-              remaining: typeof item.remaining === 'number' ? item.remaining : 0
-            })) : []
-          })) : DEFAULT_CATEGORIES;
-          
-          const updatedCategories = calculateTotalsFromCategories(processedCategories);
-          setCategories(updatedCategories);
-          
-          // Set global totals
-          setTotalEstimated(typeof breakdownData.totalEstimated === 'number' ? breakdownData.totalEstimated : 0);
-          setTotalActual(typeof breakdownData.totalActual === 'number' ? breakdownData.totalActual : 0);
-          setTotalDeposit(typeof breakdownData.totalDeposit === 'number' ? breakdownData.totalDeposit : 0);
-          setTotalRemaining(typeof breakdownData.totalRemaining === 'number' ? breakdownData.totalRemaining : 0);
-        } else {
-          setCategories(DEFAULT_CATEGORIES);
-        }
-      } catch (e) {
-        console.error("Error parsing budget data:", e);
-        setCategories(DEFAULT_CATEGORIES);
-      }
     } else {
-      setCategories(DEFAULT_CATEGORIES);
+      // Initialize with empty categories
+      const updatedCategories = calculateTotalsFromCategories(DEFAULT_CATEGORIES);
+      setCategories(updatedCategories);
     }
-  }, [budgetDetailsData, budgetData, calculateTotalsFromCategories]);
+  }, [budgetDetailsData, calculateTotalsFromCategories]);
 
   // Update budget data in Supabase (legacy format for compatibility)
   const updateBudgetMutation = useMutation({
@@ -411,8 +390,36 @@ const DetailedBudget: React.FC = () => {
     setCategories(updatedCategories);
   };
 
+  // Debounced save function
+  const debouncedSave = useCallback((item: BudgetItem, categoryName: string) => {
+    const timeoutKey = item.id;
+    
+    // Clear existing timeout
+    if (saveTimeouts[timeoutKey]) {
+      clearTimeout(saveTimeouts[timeoutKey]);
+    }
+    
+    // Set new timeout
+    const newTimeout = setTimeout(() => {
+      if (item.name.trim() || item.estimated || item.actual || item.deposit) {
+        saveBudgetItemMutation.mutate({ item, categoryName });
+      }
+      
+      setSaveTimeouts(prev => {
+        const updated = { ...prev };
+        delete updated[timeoutKey];
+        return updated;
+      });
+    }, 1000); // Save after 1 second of inactivity
+    
+    setSaveTimeouts(prev => ({
+      ...prev,
+      [timeoutKey]: newTimeout
+    }));
+  }, [saveBudgetItemMutation, saveTimeouts]);
+
   // Update an item property with automatic saving
-  const handleItemChange = async (categoryIndex: number, itemIndex: number, field: keyof BudgetItem, value: string | number) => {
+  const handleItemChange = useCallback((categoryIndex: number, itemIndex: number, field: keyof BudgetItem, value: string | number) => {
     const newCategories = [...categories];
     const item = newCategories[categoryIndex].items[itemIndex];
     const categoryName = newCategories[categoryIndex].name;
@@ -426,22 +433,16 @@ const DetailedBudget: React.FC = () => {
       
       // Auto-calculate remaining amount
       if (field === 'estimated' || field === 'actual' || field === 'deposit') {
-        item.remaining = (item.estimated > item.actual ? item.estimated : item.actual) - item.deposit;
+        item.remaining = calculateRemaining(item.estimated, item.actual, item.deposit);
       }
     }
     
     const updatedCategories = calculateTotalsFromCategories(newCategories);
     setCategories(updatedCategories);
     
-    // Auto-save to database (debounced by user input)
-    if (item.name.trim() || item.estimated || item.actual || item.deposit) {
-      try {
-        await saveBudgetItemMutation.mutateAsync({ item, categoryName });
-      } catch (error) {
-        console.error("Auto-save failed:", error);
-      }
-    }
-  };
+    // Debounced save to database
+    debouncedSave(item, categoryName);
+  }, [categories, calculateTotalsFromCategories, debouncedSave]);
 
   // Save budget to database
   const handleSaveBudget = () => {
@@ -519,16 +520,16 @@ const DetailedBudget: React.FC = () => {
                   <tr className="bg-wedding-cream/20 border-t">
                     <td className="px-4 py-2 font-medium text-base">{category.name}</td>
                     <td className="px-4 py-2 text-right font-medium">
-                      {(category.totalEstimated ?? 0).toFixed(2)}
+                      {category.totalEstimated.toFixed(2)}
                     </td>
                     <td className="px-4 py-2 text-right font-medium">
-                      {(category.totalActual ?? 0).toFixed(2)}
+                      {category.totalActual.toFixed(2)}
                     </td>
                     <td className="px-4 py-2 text-right font-medium">
-                      {(category.totalDeposit ?? 0).toFixed(2)}
+                      {category.totalDeposit.toFixed(2)}
                     </td>
                     <td className="px-4 py-2 text-right font-medium">
-                      {(category.totalRemaining ?? 0).toFixed(2)}
+                      {category.totalRemaining.toFixed(2)}
                     </td>
                     <td className="px-4 py-2 text-center">
                       <Button 
@@ -562,6 +563,7 @@ const DetailedBudget: React.FC = () => {
                           onChange={(e) => handleItemChange(categoryIndex, itemIndex, 'estimated', e.target.value)}
                           className="h-8 text-right border-gray-200"
                           placeholder="0.00"
+                          step="0.01"
                         />
                       </td>
                       <td className="px-4 py-2">
@@ -571,6 +573,7 @@ const DetailedBudget: React.FC = () => {
                           onChange={(e) => handleItemChange(categoryIndex, itemIndex, 'actual', e.target.value)}
                           className="h-8 text-right border-gray-200"
                           placeholder="0.00"
+                          step="0.01"
                         />
                       </td>
                       <td className="px-4 py-2">
@@ -580,10 +583,11 @@ const DetailedBudget: React.FC = () => {
                           onChange={(e) => handleItemChange(categoryIndex, itemIndex, 'deposit', e.target.value)}
                           className="h-8 text-right border-gray-200"
                           placeholder="0.00"
+                          step="0.01"
                         />
                       </td>
                       <td className="px-4 py-2 text-right">
-                        {(item.remaining ?? 0).toFixed(2)}
+                        {item.remaining.toFixed(2)}
                       </td>
                       <td className="px-4 py-2 text-center">
                         <Button
@@ -603,10 +607,10 @@ const DetailedBudget: React.FC = () => {
               {/* Totals row */}
               <tr className="border-t-2 border-t-wedding-olive/50 font-semibold">
                 <td className="px-4 py-3">TOTAL</td>
-                <td className="px-4 py-3 text-right">{(totalEstimated ?? 0).toFixed(2)}</td>
-                <td className="px-4 py-3 text-right">{(totalActual ?? 0).toFixed(2)}</td>
-                <td className="px-4 py-3 text-right">{(totalDeposit ?? 0).toFixed(2)}</td>
-                <td className="px-4 py-3 text-right">{(totalRemaining ?? 0).toFixed(2)}</td>
+                <td className="px-4 py-3 text-right">{totalEstimated.toFixed(2)}</td>
+                <td className="px-4 py-3 text-right">{totalActual.toFixed(2)}</td>
+                <td className="px-4 py-3 text-right">{totalDeposit.toFixed(2)}</td>
+                <td className="px-4 py-3 text-right">{totalRemaining.toFixed(2)}</td>
                 <td className="px-4 py-3"></td>
               </tr>
             </tbody>
