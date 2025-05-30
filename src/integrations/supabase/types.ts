@@ -80,6 +80,48 @@ export type Database = {
           },
         ]
       }
+      budgets_detail: {
+        Row: {
+          actual: number | null
+          category_name: string
+          created_at: string
+          deposit: number | null
+          estimated: number | null
+          id: string
+          item_id: string
+          item_name: string
+          remaining: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          actual?: number | null
+          category_name: string
+          created_at?: string
+          deposit?: number | null
+          estimated?: number | null
+          id?: string
+          item_id: string
+          item_name: string
+          remaining?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          actual?: number | null
+          category_name?: string
+          created_at?: string
+          deposit?: number | null
+          estimated?: number | null
+          id?: string
+          item_id?: string
+          item_name?: string
+          remaining?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       coordination_parameters: {
         Row: {
           created_at: string

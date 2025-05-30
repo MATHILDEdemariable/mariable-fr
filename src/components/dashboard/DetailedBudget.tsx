@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -28,6 +28,21 @@ interface BudgetCategory {
   totalRemaining: number;
 }
 
+// Type for database budget detail item
+interface BudgetDetailDB {
+  id: string;
+  user_id: string;
+  category_name: string;
+  item_id: string;
+  item_name: string;
+  estimated: number;
+  actual: number;
+  deposit: number;
+  remaining: number;
+  created_at: string;
+  updated_at: string;
+}
+
 // Default categories with proper initialization of all required properties
 const DEFAULT_CATEGORIES: BudgetCategory[] = [
   { name: 'Lieu de réception', items: [], totalEstimated: 0, totalActual: 0, totalDeposit: 0, totalRemaining: 0 },
@@ -52,8 +67,25 @@ const DetailedBudget: React.FC = () => {
   const [totalRemaining, setTotalRemaining] = useState(0);
   const [isExporting, setIsExporting] = useState(false);
   
-  // Fetch budget data from Supabase
-  const { data: budgetData, isLoading } = useQuery({
+  // Fetch detailed budget data from Supabase
+  const { data: budgetDetailsData, isLoading: isLoadingDetails } = useQuery({
+    queryKey: ['budgetDetails'],
+    queryFn: async () => {
+      const { data: userData } = await supabase.auth.getUser();
+      if (!userData.user) throw new Error("User not authenticated");
+      
+      const { data, error } = await supabase
+        .from('budgets_detail')
+        .select('*')
+        .eq('user_id', userData.user.id);
+        
+      if (error) throw error;
+      return data as BudgetDetailDB[];
+    }
+  });
+
+  // Fetch budget data from Supabase for fallback
+  const { data: budgetData } = useQuery({
     queryKey: ['budgetDashboard'],
     queryFn: async () => {
       const { data: userData } = await supabase.auth.getUser();
@@ -66,7 +98,6 @@ const DetailedBudget: React.FC = () => {
         .single();
         
       if (error && error.code !== 'PGRST116') {
-        // PGRST116 means no rows returned
         throw error;
       }
       
@@ -74,17 +105,148 @@ const DetailedBudget: React.FC = () => {
     }
   });
 
-  // Initialize categories once budget data is loaded
+  // Save individual budget item mutation
+  const saveBudgetItemMutation = useMutation({
+    mutationFn: async ({ item, categoryName }: { item: BudgetItem; categoryName: string }) => {
+      const { data: userData } = await supabase.auth.getUser();
+      if (!userData.user) throw new Error("User not authenticated");
+
+      const { data, error } = await supabase
+        .from('budgets_detail')
+        .upsert({
+          user_id: userData.user.id,
+          category_name: categoryName,
+          item_id: item.id,
+          item_name: item.name,
+          estimated: item.estimated,
+          actual: item.actual,
+          deposit: item.deposit,
+          remaining: item.remaining
+        })
+        .select();
+
+      if (error) throw error;
+      return data;
+    },
+    onError: (error) => {
+      console.error("Error saving budget item:", error);
+      toast({
+        title: "Erreur de sauvegarde",
+        description: "Impossible de sauvegarder l'élément.",
+        variant: "destructive",
+      });
+    }
+  });
+
+  // Delete budget item mutation
+  const deleteBudgetItemMutation = useMutation({
+    mutationFn: async (itemId: string) => {
+      const { data: userData } = await supabase.auth.getUser();
+      if (!userData.user) throw new Error("User not authenticated");
+
+      const { error } = await supabase
+        .from('budgets_detail')
+        .delete()
+        .eq('user_id', userData.user.id)
+        .eq('item_id', itemId);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['budgetDetails'] });
+    },
+    onError: (error) => {
+      console.error("Error deleting budget item:", error);
+      toast({
+        title: "Erreur de suppression",
+        description: "Impossible de supprimer l'élément.",
+        variant: "destructive",
+      });
+    }
+  });
+
+  // Function to calculate totals from categories
+  const calculateTotalsFromCategories = useCallback((updatedCategories: BudgetCategory[]) => {
+    let estimatedTotal = 0;
+    let actualTotal = 0;
+    let depositTotal = 0;
+    let remainingTotal = 0;
+    
+    const categoriesWithTotals = updatedCategories.map(category => {
+      let categoryEstimated = 0;
+      let categoryActual = 0;
+      let categoryDeposit = 0;
+      let categoryRemaining = 0;
+      
+      category.items.forEach(item => {
+        categoryEstimated += item.estimated || 0;
+        categoryActual += item.actual || 0;
+        categoryDeposit += item.deposit || 0;
+        categoryRemaining += item.remaining || 0;
+      });
+      
+      const updatedCategory = {
+        ...category,
+        totalEstimated: categoryEstimated,
+        totalActual: categoryActual,
+        totalDeposit: categoryDeposit,
+        totalRemaining: categoryRemaining
+      };
+      
+      estimatedTotal += categoryEstimated;
+      actualTotal += categoryActual;
+      depositTotal += categoryDeposit;
+      remainingTotal += categoryRemaining;
+      
+      return updatedCategory;
+    });
+    
+    setTotalEstimated(estimatedTotal);
+    setTotalActual(actualTotal);
+    setTotalDeposit(depositTotal);
+    setTotalRemaining(remainingTotal);
+    
+    return categoriesWithTotals;
+  }, []);
+
+  // Load data from database when component mounts or data changes
   useEffect(() => {
-    if (budgetData?.breakdown) {
+    if (budgetDetailsData) {
+      // Group items by category
+      const categoriesMap = new Map<string, BudgetItem[]>();
+      
+      budgetDetailsData.forEach(dbItem => {
+        if (!categoriesMap.has(dbItem.category_name)) {
+          categoriesMap.set(dbItem.category_name, []);
+        }
+        
+        categoriesMap.get(dbItem.category_name)?.push({
+          id: dbItem.item_id,
+          name: dbItem.item_name,
+          estimated: Number(dbItem.estimated) || 0,
+          actual: Number(dbItem.actual) || 0,
+          deposit: Number(dbItem.deposit) || 0,
+          remaining: Number(dbItem.remaining) || 0
+        });
+      });
+      
+      // Create categories with loaded data
+      const loadedCategories = DEFAULT_CATEGORIES.map(defaultCategory => ({
+        ...defaultCategory,
+        items: categoriesMap.get(defaultCategory.name) || []
+      }));
+      
+      const updatedCategories = calculateTotalsFromCategories(loadedCategories);
+      setCategories(updatedCategories);
+      
+    } else if (budgetData?.breakdown) {
+      // Fallback to old format if no detailed data exists
       try {
-        // Check if breakdown contains the 'categories' property
         const breakdownData = typeof budgetData.breakdown === 'string' 
           ? JSON.parse(budgetData.breakdown) 
           : budgetData.breakdown;
 
         if (breakdownData && breakdownData.categories) {
-          // Make sure we initialize totals properly for each category
           const processedCategories = Array.isArray(breakdownData.categories) ? breakdownData.categories.map(cat => ({
             ...cat,
             totalEstimated: typeof cat.totalEstimated === 'number' ? cat.totalEstimated : 0,
@@ -100,15 +262,15 @@ const DetailedBudget: React.FC = () => {
             })) : []
           })) : DEFAULT_CATEGORIES;
           
-          setCategories(processedCategories);
+          const updatedCategories = calculateTotalsFromCategories(processedCategories);
+          setCategories(updatedCategories);
           
-          // Update totals with safe values
+          // Set global totals
           setTotalEstimated(typeof breakdownData.totalEstimated === 'number' ? breakdownData.totalEstimated : 0);
           setTotalActual(typeof breakdownData.totalActual === 'number' ? breakdownData.totalActual : 0);
           setTotalDeposit(typeof breakdownData.totalDeposit === 'number' ? breakdownData.totalDeposit : 0);
           setTotalRemaining(typeof breakdownData.totalRemaining === 'number' ? breakdownData.totalRemaining : 0);
         } else {
-          // If no categories found, initialize with default categories
           setCategories(DEFAULT_CATEGORIES);
         }
       } catch (e) {
@@ -118,9 +280,9 @@ const DetailedBudget: React.FC = () => {
     } else {
       setCategories(DEFAULT_CATEGORIES);
     }
-  }, [budgetData]);
+  }, [budgetDetailsData, budgetData, calculateTotalsFromCategories]);
 
-  // Update budget data in Supabase
+  // Update budget data in Supabase (legacy format for compatibility)
   const updateBudgetMutation = useMutation({
     mutationFn: async () => {
       const { data: userData } = await supabase.auth.getUser();
@@ -230,29 +392,36 @@ const DetailedBudget: React.FC = () => {
     };
     
     newCategories[categoryIndex].items.push(newItem);
-    setCategories(newCategories);
+    const updatedCategories = calculateTotalsFromCategories(newCategories);
+    setCategories(updatedCategories);
   };
 
   // Remove an item from a category
-  const handleRemoveItem = (categoryIndex: number, itemIndex: number) => {
+  const handleRemoveItem = async (categoryIndex: number, itemIndex: number) => {
     const newCategories = [...categories];
+    const itemToRemove = newCategories[categoryIndex].items[itemIndex];
+    
+    // Delete from database if item has data
+    if (itemToRemove.name || itemToRemove.estimated || itemToRemove.actual || itemToRemove.deposit) {
+      await deleteBudgetItemMutation.mutateAsync(itemToRemove.id);
+    }
+    
     newCategories[categoryIndex].items.splice(itemIndex, 1);
-    setCategories(newCategories);
-    updateTotals(newCategories);
+    const updatedCategories = calculateTotalsFromCategories(newCategories);
+    setCategories(updatedCategories);
   };
 
-  // Update an item property (name, estimated, actual, etc.)
-  const handleItemChange = (categoryIndex: number, itemIndex: number, field: keyof BudgetItem, value: string | number) => {
+  // Update an item property with automatic saving
+  const handleItemChange = async (categoryIndex: number, itemIndex: number, field: keyof BudgetItem, value: string | number) => {
     const newCategories = [...categories];
     const item = newCategories[categoryIndex].items[itemIndex];
+    const categoryName = newCategories[categoryIndex].name;
     
     // Update field value
     if (field === 'name') {
       item.name = value as string;
     } else {
-      // Fix: Convert string to number safely
       const numValue = typeof value === 'string' ? parseFloat(value) || 0 : value;
-      // Fix: Use type assertion to handle the TypeScript error
       (item[field] as number) = numValue;
       
       // Auto-calculate remaining amount
@@ -261,54 +430,17 @@ const DetailedBudget: React.FC = () => {
       }
     }
     
-    setCategories(newCategories);
-    updateTotals(newCategories);
-  };
-
-  // Update totals for all categories and overall totals
-  const updateTotals = (updatedCategories: BudgetCategory[]) => {
-    let estimatedTotal = 0;
-    let actualTotal = 0;
-    let depositTotal = 0;
-    let remainingTotal = 0;
+    const updatedCategories = calculateTotalsFromCategories(newCategories);
+    setCategories(updatedCategories);
     
-    const categoriesWithTotals = updatedCategories.map(category => {
-      let categoryEstimated = 0;
-      let categoryActual = 0;
-      let categoryDeposit = 0;
-      let categoryRemaining = 0;
-      
-      category.items.forEach(item => {
-        categoryEstimated += item.estimated || 0;
-        categoryActual += item.actual || 0;
-        categoryDeposit += item.deposit || 0;
-        categoryRemaining += item.remaining || 0;
-      });
-      
-      // Update category totals
-      const updatedCategory = {
-        ...category,
-        totalEstimated: categoryEstimated,
-        totalActual: categoryActual,
-        totalDeposit: categoryDeposit,
-        totalRemaining: categoryRemaining
-      };
-      
-      // Add to overall totals
-      estimatedTotal += categoryEstimated;
-      actualTotal += categoryActual;
-      depositTotal += categoryDeposit;
-      remainingTotal += categoryRemaining;
-      
-      return updatedCategory;
-    });
-    
-    // Update state
-    setCategories(categoriesWithTotals);
-    setTotalEstimated(estimatedTotal);
-    setTotalActual(actualTotal);
-    setTotalDeposit(depositTotal);
-    setTotalRemaining(remainingTotal);
+    // Auto-save to database (debounced by user input)
+    if (item.name.trim() || item.estimated || item.actual || item.deposit) {
+      try {
+        await saveBudgetItemMutation.mutateAsync({ item, categoryName });
+      } catch (error) {
+        console.error("Auto-save failed:", error);
+      }
+    }
   };
 
   // Save budget to database
@@ -316,7 +448,7 @@ const DetailedBudget: React.FC = () => {
     updateBudgetMutation.mutate();
   };
 
-  if (isLoading) {
+  if (isLoadingDetails) {
     return (
       <div className="text-center py-12">
         <p>Chargement du budget détaillé...</p>
