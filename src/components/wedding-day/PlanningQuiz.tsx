@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useReducer } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -46,6 +46,9 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
   const [formData, setFormData] = useState<PlanningFormValues>({});
   const [questions, setQuestions] = useState<PlanningQuestion[]>([]);
   const [loading, setLoading] = useState(true);
+  
+  // Add useReducer to force re-renders when needed
+  const [, forceUpdate] = useReducer(x => x + 1, 0);
 
   useEffect(() => {
     const loadQuestions = async () => {
@@ -62,9 +65,10 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
     loadQuestions();
   }, []);
 
-  // Forcer le re-render quand formData change
+  // Enhanced logging for formData changes
   useEffect(() => {
     console.log('FormData updated:', formData);
+    console.log('Double ceremony status:', formData.double_ceremonie);
   }, [formData]);
 
   const getCurrentStepQuestions = () => {
@@ -72,7 +76,7 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
     let categoryQuestions = questions.filter(q => q.categorie === currentCategory);
     
     console.log(`Getting questions for category: ${currentCategory}`);
-    console.log('All category questions:', categoryQuestions.map(q => q.option_name));
+    console.log('All category questions:', categoryQuestions.map(q => ({ name: q.option_name, visible_si: q.visible_si })));
     console.log('Current formData:', formData);
     
     // Logique spéciale pour les cérémonies - éviter la duplication
@@ -132,20 +136,21 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
       });
     }
     
-    // Appliquer les autres conditions de visibilité avec debug
+    // Appliquer les autres conditions de visibilité avec debug amélioré
     const visibleQuestions = categoryQuestions.filter(q => {
       // Pour les catégories spéciales (cérémonie, logistique), on a déjà filtré
       if (currentCategory === 'cérémonie' || 
           (currentCategory === 'logistique' && q.option_name.includes('trajet'))) {
+        console.log(`Question ${q.option_name}: using special category logic - visible`);
         return true;
       }
       
       const isVisible = isQuestionVisible(q, formData);
-      console.log(`Question ${q.option_name}: visible=${isVisible}, visible_si:`, q.visible_si);
+      console.log(`Question ${q.option_name}: visible=${isVisible}, visible_si:`, q.visible_si, 'FormData check:', formData);
       return isVisible;
     }).sort((a, b) => a.ordre_affichage - b.ordre_affichage);
     
-    console.log('Final visible questions:', visibleQuestions.map(q => q.option_name));
+    console.log('Final visible questions:', visibleQuestions.map(q => ({ name: q.option_name, order: q.ordre_affichage })));
     return visibleQuestions;
   };
 
@@ -156,7 +161,14 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
         ...prev,
         [fieldName]: value
       };
-      console.log('New formData:', newData);
+      console.log('New formData after update:', newData);
+      
+      // Force re-render after critical updates (like double_ceremonie)
+      if (fieldName === 'double_ceremonie') {
+        console.log('Critical field updated, forcing re-render');
+        setTimeout(() => forceUpdate(), 10);
+      }
+      
       return newData;
     });
   };
@@ -181,8 +193,13 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
   const renderQuestion = (question: PlanningQuestion) => {
     const value = formData[question.option_name];
     
-    // Debug log pour chaque question rendue
-    console.log('Rendering question:', question.option_name, 'Visible:', isQuestionVisible(question, formData), 'Value:', value);
+    // Enhanced debug log pour chaque question rendue
+    console.log('Rendering question:', {
+      name: question.option_name,
+      visible: isQuestionVisible(question, formData),
+      value: value,
+      visible_si: question.visible_si
+    });
 
     switch (question.type) {
       case 'choix':
