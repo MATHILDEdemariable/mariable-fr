@@ -62,13 +62,23 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
     loadQuestions();
   }, []);
 
+  // Forcer le re-render quand formData change
+  useEffect(() => {
+    console.log('FormData updated:', formData);
+  }, [formData]);
+
   const getCurrentStepQuestions = () => {
     const currentCategory = STEP_CATEGORIES[currentStep];
     let categoryQuestions = questions.filter(q => q.categorie === currentCategory);
     
+    console.log(`Getting questions for category: ${currentCategory}`);
+    console.log('All category questions:', categoryQuestions.map(q => q.option_name));
+    console.log('Current formData:', formData);
+    
     // Logique spéciale pour les cérémonies - éviter la duplication
     if (currentCategory === 'cérémonie') {
       const isDualCeremony = formData.double_ceremonie === 'oui';
+      console.log('isDualCeremony:', isDualCeremony, 'double_ceremonie value:', formData.double_ceremonie);
       
       categoryQuestions = categoryQuestions.filter(q => {
         // Toujours montrer la question principale double_ceremonie
@@ -118,16 +128,27 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
       });
     }
     
-    // Appliquer les autres conditions de visibilité
-    return categoryQuestions.filter(q => isQuestionVisible(q, formData))
-                           .sort((a, b) => a.ordre_affichage - b.ordre_affichage);
+    // Appliquer les autres conditions de visibilité avec debug
+    const visibleQuestions = categoryQuestions.filter(q => {
+      const isVisible = isQuestionVisible(q, formData);
+      console.log(`Question ${q.option_name}: visible=${isVisible}, visible_si:`, q.visible_si);
+      return isVisible;
+    }).sort((a, b) => a.ordre_affichage - b.ordre_affichage);
+    
+    console.log('Final visible questions:', visibleQuestions.map(q => q.option_name));
+    return visibleQuestions;
   };
 
   const updateFormData = (fieldName: string, value: any) => {
-    setFormData(prev => ({
-      ...prev,
-      [fieldName]: value
-    }));
+    console.log(`Updating ${fieldName} to:`, value);
+    setFormData(prev => {
+      const newData = {
+        ...prev,
+        [fieldName]: value
+      };
+      console.log('New formData:', newData);
+      return newData;
+    });
   };
 
   const handleMultiSelectChange = (fieldName: string, value: string, checked: boolean) => {
@@ -149,6 +170,9 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
 
   const renderQuestion = (question: PlanningQuestion) => {
     const value = formData[question.option_name];
+    
+    // Debug log pour chaque question rendue
+    console.log('Rendering question:', question.option_name, 'Visible:', isQuestionVisible(question, formData), 'Value:', value);
 
     switch (question.type) {
       case 'choix':

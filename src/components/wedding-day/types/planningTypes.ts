@@ -244,25 +244,36 @@ export const isQuestionVisible = (
   
   try {
     const conditions = question.visible_si as any;
+    console.log(`Checking visibility for ${question.option_name}:`, {
+      conditions,
+      formValues,
+      questionLabel: question.label
+    });
     
     // Handle different condition formats
     if (typeof conditions === 'object') {
       for (const [field, expectedValue] of Object.entries(conditions)) {
         const currentValue = formValues[field];
+        console.log(`  Condition: ${field} should be ${expectedValue}, current value: ${currentValue}`);
+        
         if (Array.isArray(expectedValue)) {
           // Multiple possible values
           if (!expectedValue.includes(currentValue)) {
+            console.log(`  ❌ Failed: ${currentValue} not in [${expectedValue.join(', ')}]`);
             return false;
           }
         } else {
           // Single expected value
           if (currentValue !== expectedValue) {
+            console.log(`  ❌ Failed: ${currentValue} !== ${expectedValue}`);
             return false;
           }
         }
+        console.log(`  ✅ Passed: ${field} condition met`);
       }
     }
     
+    console.log(`✅ All conditions passed for ${question.option_name}`);
     return true;
   } catch (error) {
     console.warn('Error evaluating question visibility:', error);
