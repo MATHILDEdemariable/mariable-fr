@@ -264,6 +264,12 @@ export const isQuestionVisible = (
           }
         } else {
           // Single expected value
+          // Special handling for "non" conditions when the field is undefined
+          if (expectedValue === 'non' && (currentValue === undefined || currentValue === null || currentValue === '')) {
+            console.log(`  ✅ Passed: ${field} is empty/undefined, treating as "non"`);
+            continue;
+          }
+          
           if (currentValue !== expectedValue) {
             console.log(`  ❌ Failed: ${currentValue} !== ${expectedValue}`);
             return false;

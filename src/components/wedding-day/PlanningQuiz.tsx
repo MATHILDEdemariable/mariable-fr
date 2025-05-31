@@ -105,10 +105,14 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
     // Logique spéciale pour la logistique - trajets conditionnels
     if (currentCategory === 'logistique') {
       const isDualCeremony = formData.double_ceremonie === 'oui';
+      console.log('Logistique - isDualCeremony:', isDualCeremony);
       
       categoryQuestions = categoryQuestions.filter(q => {
-        // Pause mariés et autres questions non-trajet
-        if (!q.option_name.includes('trajet')) return true;
+        // Questions non-trajet (comme pause_maries)
+        if (!q.option_name.includes('trajet')) {
+          // Appliquer les conditions de visibilité normales
+          return isQuestionVisible(q, formData);
+        }
         
         // Pour une seule cérémonie
         if (!isDualCeremony) {
@@ -121,7 +125,7 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
           return q.option_name === 'trajet_1_depart_ceremonie_1' || 
                  q.option_name === 'trajet_2_ceremonie_1_arrivee_1' ||
                  q.option_name === 'trajet_3_depart_ceremonie_2' || 
-                 q.option_name === 'trajet_4_ceremonie_2_arrivee_2';
+                 q.option_name === 'trajet_4_ceremonie_2_reception';
         }
         
         return false;
@@ -130,6 +134,12 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
     
     // Appliquer les autres conditions de visibilité avec debug
     const visibleQuestions = categoryQuestions.filter(q => {
+      // Pour les catégories spéciales (cérémonie, logistique), on a déjà filtré
+      if (currentCategory === 'cérémonie' || 
+          (currentCategory === 'logistique' && q.option_name.includes('trajet'))) {
+        return true;
+      }
+      
       const isVisible = isQuestionVisible(q, formData);
       console.log(`Question ${q.option_name}: visible=${isVisible}, visible_si:`, q.visible_si);
       return isVisible;
