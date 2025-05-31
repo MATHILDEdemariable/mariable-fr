@@ -284,7 +284,10 @@ export const generatePlanning = (
 
   let planningCurrentTime = preparationStartTime;
 
+  // Process categories except ceremonies (handle ceremonies separately)
   categoryOrder.forEach(category => {
+    if (category === 'cérémonie') return; // Skip - handle separately
+    
     const categoryQuestions = questions
       .filter(q => q.categorie === category)
       .sort((a, b) => a.ordre_affichage - b.ordre_affichage);
@@ -293,29 +296,10 @@ export const generatePlanning = (
       const value = formData[question.option_name];
       if (!value || (Array.isArray(value) && value.length === 0)) return;
       
-      // Special handling for different question types
-      if (question.type === 'time') {
-        // Time fields define when something starts, not duration
-        if (question.option_name.includes('ceremonie')) {
-          const ceremonyStartTime = parseTimeToDate(value as string);
-          const ceremonyDuration = getCeremonyDuration(formData.type_ceremonie_principale || 'civile');
-          
-          events.push({
-            id: `ceremony-${Date.now()}-${Math.random()}`,
-            title: `Cérémonie ${formData.type_ceremonie_principale || 'civile'}`,
-            category: 'cérémonie',
-            startTime: ceremonyStartTime,
-            endTime: addMinutesToDate(ceremonyStartTime, ceremonyDuration),
-            duration: ceremonyDuration,
-            type: 'ceremony',
-            isHighlight: true
-          });
-          
-          // Update planning time to after ceremony
-          planningCurrentTime = addMinutesToDate(ceremonyStartTime, ceremonyDuration);
-        }
-        return;
-      }
+      // Skip boolean false values but include true values and numeric values
+      if (typeof value === 'boolean' && !value) return;
+      if (value === 'Non' || value === 'non') return;
+      if (typeof value === 'number' && value <= 0) return;
       
       // Skip logical fields that are not actual activities
       if (question.option_name.includes('double_') || 
@@ -332,31 +316,65 @@ export const generatePlanning = (
     });
   });
 
+  // Handle ceremonies separately with proper logic
+  if (isDualCeremony) {
+    // Dual ceremony logic
+    if (formData.heure_ceremonie_1 && formData.type_ceremonie_1) {
+      const ceremony1Start = parseTimeToDate(formData.heure_ceremonie_1);
+      const ceremony1Duration = getCeremonyDuration(formData.type_ceremonie_1);
+      
+      events.push({
+        id: `ceremony1-${Date.now()}`,
+        title: `1ère cérémonie (${formData.type_ceremonie_1})`,
+        category: 'cérémonie',
+        startTime: ceremony1Start,
+        endTime: addMinutesToDate(ceremony1Start, ceremony1Duration),
+        duration: ceremony1Duration,
+        type: 'ceremony',
+        isHighlight: true
+      });
+    }
+    
+    if (formData.heure_ceremonie_2 && formData.type_ceremonie_2) {
+      const ceremony2Start = parseTimeToDate(formData.heure_ceremonie_2);
+      const ceremony2Duration = getCeremonyDuration(formData.type_ceremonie_2);
+      
+      events.push({
+        id: `ceremony2-${Date.now()}`,
+        title: `2ème cérémonie (${formData.type_ceremonie_2})`,
+        category: 'cérémonie',
+        startTime: ceremony2Start,
+        endTime: addMinutesToDate(ceremony2Start, ceremony2Duration),
+        duration: ceremony2Duration,
+        type: 'ceremony',
+        isHighlight: true
+      });
+    }
+  } else {
+    // Single ceremony logic
+    if (formData.heure_ceremonie_principale && formData.type_ceremonie_principale) {
+      const ceremonyStart = parseTimeToDate(formData.heure_ceremonie_principale);
+      const ceremonyDuration = getCeremonyDuration(formData.type_ceremonie_principale);
+      
+      events.push({
+        id: `ceremony-main-${Date.now()}`,
+        title: `Cérémonie ${formData.type_ceremonie_principale}`,
+        category: 'cérémonie',
+        startTime: ceremonyStart,
+        endTime: addMinutesToDate(ceremonyStart, ceremonyDuration),
+        duration: ceremonyDuration,
+        type: 'ceremony',
+        isHighlight: true
+      });
+    }
+  }
+
   // Process logistics specifically for trajectory fields
   processLogisticsTrajectory(events, formData, questions, planningCurrentTime);
-
-  // Process dual ceremony if needed
-  if (isDualCeremony) {
-    processDualCeremony(events, formData, questions);
-  }
 
   // Sort events by start time and recalculate timeline with proper spacing
   const sortedEvents = events.sort((a, b) => a.startTime.getTime() - b.startTime.getTime());
   return recalculateTimeline(sortedEvents);
-};
-
-// Helper to get buffer time between events based on category
-const getBufferTime = (category: string): number => {
-  switch (category) {
-    case 'préparatifs_final': return 5;
-    case 'logistique': return 0; // No buffer for travel
-    case 'cérémonie': return 15;
-    case 'photos': return 10;
-    case 'cocktail': return 5;
-    case 'repas': return 10;
-    case 'soiree': return 0;
-    default: return 5;
-  }
 };
 
 // Enhanced helper function to create event from question
@@ -366,6 +384,12 @@ const createEventFromQuestion = (
   startTime: Date,
   questions: PlanningQuestion[]
 ): PlanningEvent | null => {
+  // Skip ceremony time and type questions - handled separately
+  if (question.option_name.includes('ceremonie') && 
+      (question.option_name.includes('heure_') || question.option_name.includes('type_'))) {
+    return null;
+  }
+  
   // Skip boolean false values but include true values and numeric values
   if (typeof value === 'boolean' && !value) return null;
   if (value === 'Non' || value === 'non') return null;
