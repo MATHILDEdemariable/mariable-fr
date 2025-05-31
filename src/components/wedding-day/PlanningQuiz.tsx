@@ -64,10 +64,63 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
 
   const getCurrentStepQuestions = () => {
     const currentCategory = STEP_CATEGORIES[currentStep];
-    return questions.filter(q => 
-      q.categorie === currentCategory && 
-      isQuestionVisible(q, formData)
-    ).sort((a, b) => a.ordre_affichage - b.ordre_affichage);
+    let categoryQuestions = questions.filter(q => q.categorie === currentCategory);
+    
+    // Logique spéciale pour les cérémonies - éviter la duplication
+    if (currentCategory === 'cérémonie') {
+      const isDualCeremony = formData.double_ceremonie === 'oui';
+      
+      categoryQuestions = categoryQuestions.filter(q => {
+        // Toujours montrer la question principale double_ceremonie
+        if (q.option_name === 'double_ceremonie') return true;
+        
+        // Pour une seule cérémonie
+        if (!isDualCeremony) {
+          return q.option_name === 'heure_ceremonie_principale' || 
+                 q.option_name === 'type_ceremonie_principale';
+        }
+        
+        // Pour deux cérémonies
+        if (isDualCeremony) {
+          return q.option_name === 'heure_ceremonie_1' || 
+                 q.option_name === 'type_ceremonie_1' ||
+                 q.option_name === 'heure_ceremonie_2' || 
+                 q.option_name === 'type_ceremonie_2';
+        }
+        
+        return false;
+      });
+    }
+    
+    // Logique spéciale pour la logistique - trajets conditionnels
+    if (currentCategory === 'logistique') {
+      const isDualCeremony = formData.double_ceremonie === 'oui';
+      
+      categoryQuestions = categoryQuestions.filter(q => {
+        // Pause mariés et autres questions non-trajet
+        if (!q.option_name.includes('trajet')) return true;
+        
+        // Pour une seule cérémonie
+        if (!isDualCeremony) {
+          return q.option_name === 'trajet_depart_ceremonie' || 
+                 q.option_name === 'trajet_ceremonie_reception';
+        }
+        
+        // Pour deux cérémonies
+        if (isDualCeremony) {
+          return q.option_name === 'trajet_1_depart_ceremonie_1' || 
+                 q.option_name === 'trajet_2_ceremonie_1_arrivee_1' ||
+                 q.option_name === 'trajet_3_depart_ceremonie_2' || 
+                 q.option_name === 'trajet_4_ceremonie_2_arrivee_2';
+        }
+        
+        return false;
+      });
+    }
+    
+    // Appliquer les autres conditions de visibilité
+    return categoryQuestions.filter(q => isQuestionVisible(q, formData))
+                           .sort((a, b) => a.ordre_affichage - b.ordre_affichage);
   };
 
   const updateFormData = (fieldName: string, value: any) => {
@@ -156,6 +209,7 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
             value={value as number || ''}
             onChange={(e) => updateFormData(question.option_name, parseInt(e.target.value) || 0)}
             min="0"
+            placeholder={question.option_name.includes('trajet') ? 'Durée en minutes' : ''}
           />
         );
 

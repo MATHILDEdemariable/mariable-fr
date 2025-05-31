@@ -156,11 +156,11 @@ const getDurationFromQuestionOrOption = (
   return getDefaultDuration(questionOptionName);
 };
 
-// Default durations based on category/type
+// Default durations based on category/type - with improved durations
 const getDefaultDuration = (optionName: string): number => {
   if (optionName.includes('coiffure')) return 60;
-  if (optionName.includes('maquillage')) return 45;
-  if (optionName.includes('habillage')) return 30;
+  if (optionName.includes('maquillage')) return 45; // Temps suggéré pour maquillage
+  if (optionName.includes('habillage')) return 30; // Temps suggéré pour habillage
   if (optionName.includes('photos')) return 30;
   if (optionName.includes('cocktail')) return 90;
   if (optionName.includes('repas')) return 180;
@@ -277,61 +277,92 @@ export const generatePlanning = (
 ): PlanningEvent[] => {
   const events: PlanningEvent[] = [];
   
-  // Set base time from ceremony
-  const ceremonyTime = formData.heure_ceremonie_principale || formData.heure_ceremonie_1;
+  // Determine ceremony configuration
+  const isDualCeremony = formData.double_ceremonie === 'oui';
+  
+  // Set base time from ceremony (prioritize first ceremony if dual)
+  const ceremonyTime = isDualCeremony 
+    ? (formData.heure_ceremonie_1 || formData.heure_ceremonie_principale)
+    : formData.heure_ceremonie_principale;
+    
   let currentTime = ceremonyTime ? parseTimeToDate(ceremonyTime) : new Date();
   
   // Start planning 3 hours before ceremony for preparation
   let preparationStartTime = addMinutesToDate(currentTime, -180);
+  let planningCurrentTime = preparationStartTime;
 
-  const isDualCeremony = formData.double_ceremonie === 'oui';
-  
-  // Process all categories in logical order with enhanced handling
+  // Process categories in logical order (excluding ceremonies - handle separately)
   const categoryOrder = [
     'préparatifs_final',
-    'logistique', 
-    'cérémonie',
     'photos',
     'cocktail',
     'repas',
     'soiree'
   ];
 
-  let planningCurrentTime = preparationStartTime;
+  // 1. HANDLE PRÉPARATIFS with suggested durations
+  const preparationQuestions = questions
+    .filter(q => q.categorie === 'préparatifs_final')
+    .sort((a, b) => a.ordre_affichage - b.ordre_affichage);
 
-  // Process categories except ceremonies (handle ceremonies separately)
-  categoryOrder.forEach(category => {
-    if (category === 'cérémonie') return; // Skip - handle separately
+  preparationQuestions.forEach(question => {
+    const value = formData[question.option_name];
+    if (!value || (typeof value === 'boolean' && !value)) return;
     
-    const categoryQuestions = questions
-      .filter(q => q.categorie === category)
-      .sort((a, b) => a.ordre_affichage - b.ordre_affichage);
-    
-    categoryQuestions.forEach(question => {
-      const value = formData[question.option_name];
-      if (!value || (Array.isArray(value) && value.length === 0)) return;
-      
-      // Skip boolean false values but include true values and numeric values
-      if (typeof value === 'boolean' && !value) return;
-      if (value === 'Non' || value === 'non') return;
-      if (typeof value === 'number' && value <= 0) return;
-      
-      // Skip logical fields that are not actual activities
-      if (question.option_name.includes('double_') || 
-          question.option_name.includes('type_') ||
-          question.type === 'fixe') return;
-      
-      const event = createEventFromQuestion(question, value, planningCurrentTime, questions);
-      if (event) {
-        events.push(event);
-        // Add buffer time between events based on category
-        const bufferTime = getBufferTime(category);
-        planningCurrentTime = addMinutesToDate(event.endTime, bufferTime);
-      }
-    });
+    const event = createEventFromQuestion(question, value, planningCurrentTime, questions);
+    if (event) {
+      events.push(event);
+      const bufferTime = getBufferTime('préparatifs_final');
+      planningCurrentTime = addMinutesToDate(event.endTime, bufferTime);
+    }
   });
 
-  // Handle ceremonies separately with corrected logic to avoid duplication
+  // 2. HANDLE LOGISTICS/TRAJETS based on ceremony type
+  if (isDualCeremony) {
+    // Pour deux cérémonies: 4 trajets possibles
+    const trajectoryFields = [
+      'trajet_1_depart_ceremonie_1',
+      'trajet_2_ceremonie_1_arrivee_1', 
+      'trajet_3_depart_ceremonie_2',
+      'trajet_4_ceremonie_2_arrivee_2'
+    ];
+    
+    trajectoryFields.forEach(fieldName => {
+      const duration = formData[fieldName];
+      if (duration && typeof duration === 'number' && duration > 0) {
+        const question = questions.find(q => q.option_name === fieldName);
+        if (question) {
+          const trajectoryEvent = createTrajectoryEvent(question, duration, planningCurrentTime);
+          if (trajectoryEvent) {
+            events.push(trajectoryEvent);
+            planningCurrentTime = trajectoryEvent.endTime;
+          }
+        }
+      }
+    });
+  } else {
+    // Pour une seule cérémonie: 2 trajets
+    const trajectoryFields = [
+      'trajet_depart_ceremonie',
+      'trajet_ceremonie_reception'
+    ];
+    
+    trajectoryFields.forEach(fieldName => {
+      const duration = formData[fieldName];
+      if (duration && typeof duration === 'number' && duration > 0) {
+        const question = questions.find(q => q.option_name === fieldName);
+        if (question) {
+          const trajectoryEvent = createTrajectoryEvent(question, duration, planningCurrentTime);
+          if (trajectoryEvent) {
+            events.push(trajectoryEvent);
+            planningCurrentTime = trajectoryEvent.endTime;
+          }
+        }
+      }
+    });
+  }
+
+  // 3. HANDLE CEREMONIES separately to avoid duplication
   if (isDualCeremony) {
     // Dual ceremony logic
     if (formData.heure_ceremonie_1 && formData.type_ceremonie_1) {
@@ -384,8 +415,29 @@ export const generatePlanning = (
     }
   }
 
-  // Process logistics specifically for trajectory fields
-  processLogisticsTrajectory(events, formData, questions, planningCurrentTime);
+  // 4. HANDLE OTHER CATEGORIES (photos, cocktail, repas, soiree)
+  categoryOrder.forEach(category => {
+    const categoryQuestions = questions
+      .filter(q => q.categorie === category)
+      .sort((a, b) => a.ordre_affichage - b.ordre_affichage);
+    
+    categoryQuestions.forEach(question => {
+      const value = formData[question.option_name];
+      if (!value || (Array.isArray(value) && value.length === 0)) return;
+      
+      // Skip boolean false values but include true values and numeric values
+      if (typeof value === 'boolean' && !value) return;
+      if (value === 'Non' || value === 'non') return;
+      if (typeof value === 'number' && value <= 0) return;
+      
+      const event = createEventFromQuestion(question, value, planningCurrentTime, questions);
+      if (event) {
+        events.push(event);
+        const bufferTime = getBufferTime(category);
+        planningCurrentTime = addMinutesToDate(event.endTime, bufferTime);
+      }
+    });
+  });
 
   // Sort events by start time and recalculate timeline with proper spacing
   const sortedEvents = events.sort((a, b) => a.startTime.getTime() - b.startTime.getTime());
@@ -405,6 +457,11 @@ const createEventFromQuestion = (
     return null;
   }
   
+  // Skip trajectory questions - handled separately
+  if (question.option_name.includes('trajet')) {
+    return null;
+  }
+  
   // Skip boolean false values but include true values and numeric values
   if (typeof value === 'boolean' && !value) return null;
   if (value === 'Non' || value === 'non') return null;
@@ -414,15 +471,11 @@ const createEventFromQuestion = (
   let title = question.label_affichage_front || question.label;
   let category = question.categorie;
   
-  // Get duration from the question or value
+  // Get duration from the question or value - with enhanced defaults for preparations
   const duration = getDurationFromQuestionOrOption(question.option_name, value, questions);
   
-  // For trajectory and logistics blocks, use the numeric value as duration in minutes
-  if (question.option_name.includes('trajet') && typeof value === 'number') {
-    // title already set from label_affichage_front
-  }
   // For pause mariés
-  else if (question.option_name.includes('pause') && typeof value === 'string') {
+  if (question.option_name.includes('pause') && typeof value === 'string') {
     title = `Pause mariés (${value})`;
   }
   // Enhance title with selected options for non-trajectory blocks
@@ -449,6 +502,25 @@ const createEventFromQuestion = (
   };
 };
 
+// Helper to create trajectory events with proper timing
+const createTrajectoryEvent = (
+  question: PlanningQuestion,
+  duration: number,
+  startTime: Date
+): PlanningEvent => {
+  return {
+    id: `${question.option_name}-${Date.now()}-${Math.random()}`,
+    title: question.label_affichage_front || question.label,
+    category: 'logistique',
+    startTime: new Date(startTime),
+    endTime: addMinutesToDate(startTime, duration),
+    duration,
+    type: 'travel',
+    isHighlight: false,
+    notes: `Durée: ${duration} minutes`
+  };
+};
+
 // Helper to determine event type for proper icon display
 const getEventType = (optionName: string, category: string): string => {
   if (optionName.includes('trajet')) return 'travel';
@@ -470,117 +542,14 @@ const getEventNotes = (question: PlanningQuestion, value: any): string | undefin
   if (Array.isArray(value) && value.length > 0) {
     return `Inclut: ${value.join(', ')}`;
   }
+  // Add suggested duration notes for preparations
+  if (question.option_name.includes('maquillage')) {
+    return 'Durée suggérée: 45 minutes';
+  }
+  if (question.option_name.includes('habillage')) {
+    return 'Durée suggérée: 30 minutes';
+  }
   return undefined;
-};
-
-// Process logistics trajectory blocks with correct timing
-const processLogisticsTrajectory = (
-  events: PlanningEvent[],
-  formData: PlanningFormValues,
-  questions: PlanningQuestion[],
-  currentTime: Date
-) => {
-  const isDualCeremony = formData.double_ceremonie === 'oui';
-  
-  if (isDualCeremony) {
-    // Process dual ceremony trajectories
-    const trajectoryFields = [
-      'trajet_1_depart_ceremonie_1',
-      'trajet_2_ceremonie_1_arrivee_1', 
-      'trajet_3_depart_ceremonie_2',
-      'trajet_4_ceremonie_2_arrivee_2'
-    ];
-    
-    trajectoryFields.forEach(fieldName => {
-      const duration = formData[fieldName];
-      if (duration && typeof duration === 'number' && duration > 0) {
-        const question = questions.find(q => q.option_name === fieldName);
-        if (question) {
-          const trajectoryEvent = createTrajectoryEvent(question, duration, currentTime);
-          if (trajectoryEvent) {
-            events.push(trajectoryEvent);
-          }
-        }
-      }
-    });
-  } else {
-    // Process single ceremony trajectories
-    const trajectoryFields = [
-      'trajet_depart_ceremonie',
-      'trajet_ceremonie_reception'
-    ];
-    
-    trajectoryFields.forEach(fieldName => {
-      const duration = formData[fieldName];
-      if (duration && typeof duration === 'number' && duration > 0) {
-        const question = questions.find(q => q.option_name === fieldName);
-        if (question) {
-          const trajectoryEvent = createTrajectoryEvent(question, duration, currentTime);
-          if (trajectoryEvent) {
-            events.push(trajectoryEvent);
-          }
-        }
-      }
-    });
-  }
-};
-
-// Helper to create trajectory events with proper timing
-const createTrajectoryEvent = (
-  question: PlanningQuestion,
-  duration: number,
-  startTime: Date
-): PlanningEvent => {
-  return {
-    id: `${question.option_name}-${Date.now()}-${Math.random()}`,
-    title: question.label_affichage_front || question.label,
-    category: 'logistique',
-    startTime: new Date(startTime),
-    endTime: addMinutesToDate(startTime, duration),
-    duration,
-    type: 'travel',
-    isHighlight: false,
-    notes: `Durée: ${duration} minutes`
-  };
-};
-
-// Process dual ceremony
-const processDualCeremony = (
-  events: PlanningEvent[],
-  formData: PlanningFormValues,
-  questions: PlanningQuestion[]
-) => {
-  if (formData.heure_ceremonie_1) {
-    const ceremony1Start = parseTimeToDate(formData.heure_ceremonie_1);
-    const ceremony1Duration = getCeremonyDuration(formData.type_ceremonie_1 || 'civile');
-    
-    events.push({
-      id: `ceremony1-${Date.now()}`,
-      title: `1ère cérémonie (${formData.type_ceremonie_1 || 'civile'})`,
-      category: 'cérémonie',
-      startTime: ceremony1Start,
-      endTime: addMinutesToDate(ceremony1Start, ceremony1Duration),
-      duration: ceremony1Duration,
-      type: 'ceremony',
-      isHighlight: true
-    });
-  }
-  
-  if (formData.heure_ceremonie_2) {
-    const ceremony2Start = parseTimeToDate(formData.heure_ceremonie_2);
-    const ceremony2Duration = getCeremonyDuration(formData.type_ceremonie_2 || 'civile');
-    
-    events.push({
-      id: `ceremony2-${Date.now()}`,
-      title: `2ème cérémonie (${formData.type_ceremonie_2 || 'civile'})`,
-      category: 'cérémonie',
-      startTime: ceremony2Start,
-      endTime: addMinutesToDate(ceremony2Start, ceremony2Duration),
-      duration: ceremony2Duration,
-      type: 'ceremony',
-      isHighlight: true
-    });
-  }
 };
 
 // Recalculate timeline to ensure proper sequence with intelligent spacing
@@ -607,8 +576,8 @@ const recalculateTimeline = (events: PlanningEvent[]): PlanningEvent[] => {
   
   const orderedEvents = [
     ...preparationEvents, 
-    ...ceremonyEvents, 
     ...logisticsEvents,
+    ...ceremonyEvents, 
     ...photoEvents,
     ...cocktailEvents,
     ...mealEvents,
