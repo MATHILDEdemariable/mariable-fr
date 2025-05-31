@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import { addMinutes } from 'date-fns';
@@ -30,19 +29,59 @@ const EnhancedDragDropTimeline: React.FC<EnhancedDragDropTimelineProps> = ({
   const recalculateTimeline = (reorderedEvents: PlanningEvent[]): PlanningEvent[] => {
     if (reorderedEvents.length === 0) return [];
     
+    // Find the earliest start time to use as base, or use first event's start time
     let currentTime = reorderedEvents[0]?.startTime || new Date();
+    
+    // For ceremonies, try to preserve their original timing as anchor points
+    const ceremonyEvents = reorderedEvents.filter(e => e.category === 'cérémonie' || e.type === 'ceremony');
+    if (ceremonyEvents.length > 0) {
+      // Use the first ceremony as time anchor
+      const firstCeremony = ceremonyEvents[0];
+      const ceremonyIndex = reorderedEvents.findIndex(e => e.id === firstCeremony.id);
+      
+      // Calculate preparation time (start 3 hours before ceremony)
+      const preparationStartTime = addMinutes(firstCeremony.startTime, -180);
+      currentTime = preparationStartTime;
+    }
+    
+    // Get appropriate buffer time between events based on category
+    const getBufferTime = (event: PlanningEvent, nextEvent?: PlanningEvent): number => {
+      // No buffer for travel/logistics
+      if (event.category === 'logistique' || event.type === 'travel') return 0;
+      
+      // Special buffers for different transitions
+      if (event.category === 'préparatifs_final') return 5;
+      if (event.category === 'cérémonie') return 15;
+      if (event.category === 'photos') return 10;
+      if (event.category === 'cocktail') return 5;
+      if (event.category === 'repas') return 10;
+      
+      return 5; // Default buffer
+    };
     
     return reorderedEvents.map((event, index) => {
       const updatedEvent = { ...event };
       
-      if (index === 0) {
-        updatedEvent.startTime = currentTime;
-      } else {
-        updatedEvent.startTime = new Date(currentTime);
+      // For ceremony events, try to preserve their specified times
+      if (event.category === 'cérémonie' && event.startTime) {
+        // Keep ceremony at its original time if it makes sense in sequence
+        const potentialCeremonyTime = event.startTime;
+        if (index === 0 || potentialCeremonyTime >= currentTime) {
+          updatedEvent.startTime = potentialCeremonyTime;
+          updatedEvent.endTime = addMinutes(potentialCeremonyTime, event.duration);
+          currentTime = updatedEvent.endTime;
+          return updatedEvent;
+        }
       }
       
+      // For all other events, calculate sequential timing
+      updatedEvent.startTime = new Date(currentTime);
       updatedEvent.endTime = addMinutes(updatedEvent.startTime, event.duration);
-      currentTime = updatedEvent.endTime;
+      
+      // Calculate next start time with appropriate buffer
+      const nextEvent = reorderedEvents[index + 1];
+      const bufferTime = getBufferTime(event, nextEvent);
+      currentTime = addMinutes(updatedEvent.endTime, bufferTime);
       
       return updatedEvent;
     });
@@ -83,13 +122,15 @@ const EnhancedDragDropTimeline: React.FC<EnhancedDragDropTimelineProps> = ({
       event.id === updatedEvent.id ? updatedEvent : event
     );
     
-    setTimelineEvents(updatedEvents);
+    // Recalculate timeline after individual event update
+    const recalculatedEvents = recalculateTimeline(updatedEvents);
+    setTimelineEvents(recalculatedEvents);
     
     if (onEventsUpdate) {
-      onEventsUpdate(updatedEvents);
+      onEventsUpdate(recalculatedEvents);
     }
 
-    saveToDatabase(updatedEvents);
+    saveToDatabase(recalculatedEvents);
   };
 
   const handleDeleteEvent = (eventId: string) => {
@@ -136,23 +177,25 @@ const EnhancedDragDropTimeline: React.FC<EnhancedDragDropTimelineProps> = ({
 
     if (sourceIndex === destinationIndex) return;
 
+    // Reorder the events array
     const reorderedEvents = Array.from(timelineEvents);
     const [movedEvent] = reorderedEvents.splice(sourceIndex, 1);
     reorderedEvents.splice(destinationIndex, 0, movedEvent);
 
-    const updatedEvents = recalculateTimeline(reorderedEvents);
+    // Recalculate all times in the new order
+    const recalculatedEvents = recalculateTimeline(reorderedEvents);
     
-    setTimelineEvents(updatedEvents);
+    setTimelineEvents(recalculatedEvents);
     
     if (onEventsUpdate) {
-      onEventsUpdate(updatedEvents);
+      onEventsUpdate(recalculatedEvents);
     }
 
-    saveToDatabase(updatedEvents);
+    saveToDatabase(recalculatedEvents);
 
     toast({
-      title: "Planning mis à jour",
-      description: "Les modifications ont été sauvegardées automatiquement."
+      title: "Planning réorganisé",
+      description: "Les horaires ont été recalculés automatiquement pour maintenir une séquence logique.",
     });
   };
 
