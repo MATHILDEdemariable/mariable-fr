@@ -186,6 +186,21 @@ const addMinutesToDate = (date: Date, minutes: number): Date => {
   return new Date(date.getTime() + minutes * 60000);
 };
 
+// Get appropriate buffer time between events based on category
+const getBufferTime = (category: string): number => {
+  switch (category) {
+    case 'préparatifs_final': return 5;
+    case 'cérémonie': return 15;
+    case 'logistique': return 0; // No buffer for travel/logistics
+    case 'photos': return 10;
+    case 'cocktail': return 5;
+    case 'repas': return 10;
+    case 'soiree': return 5;
+    case 'personnalisé': return 5;
+    default: return 5; // Default buffer
+  }
+};
+
 export const fetchPlanningQuestions = async (
   supabase: SupabaseClient
 ): Promise<PlanningData> => {
@@ -316,7 +331,7 @@ export const generatePlanning = (
     });
   });
 
-  // Handle ceremonies separately with proper logic
+  // Handle ceremonies separately with corrected logic to avoid duplication
   if (isDualCeremony) {
     // Dual ceremony logic
     if (formData.heure_ceremonie_1 && formData.type_ceremonie_1) {
