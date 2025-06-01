@@ -1,5 +1,25 @@
 import { SupabaseClient } from '@supabase/supabase-js';
 
+export type PlanningCategory = 
+  | 'préparatifs_final' 
+  | 'préparatifs_final_1' 
+  | 'préparatifs_final_2'
+  | 'logistique' 
+  | 'logistique_trajet_depart' 
+  | 'logistique_trajet_retour'
+  | 'logistique_trajet_1' 
+  | 'logistique_trajet_2' 
+  | 'logistique_trajet_3' 
+  | 'logistique_trajet_4'
+  | 'cérémonie' 
+  | 'cérémonie_1' 
+  | 'cérémonie_2'
+  | 'photos' 
+  | 'cocktail' 
+  | 'repas' 
+  | 'soiree'
+  | 'personnalisé';
+
 export interface PlanningFormValues {
   // Ceremony fields
   double_ceremonie?: string;
@@ -795,26 +815,6 @@ export const savePlanningResponses = async (
     throw new Error(`Erreur lors de la sauvegarde: ${error.message}`);
   }
 };
-
-export type PlanningCategory = 
-  | 'cérémonie' 
-  | 'préparatifs_final' 
-  | 'photos' 
-  | 'cocktail' 
-  | 'repas' 
-  | 'soiree' 
-  | 'logistique'
-  | 'personnalisé'
-  | 'préparatifs_final_1'
-  | 'préparatifs_final_2'
-  | 'cérémonie_1'
-  | 'cérémonie_2'
-  | 'logistique_trajet_1'
-  | 'logistique_trajet_2'
-  | 'logistique_trajet_3'
-  | 'logistique_trajet_4'
-  | 'logistique_trajet_depart'
-  | 'logistique_trajet_retour';
 
 export type PlanningType = 
   | 'ceremony' 

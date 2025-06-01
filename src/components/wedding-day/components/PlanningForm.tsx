@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { usePlanning } from '../context/PlanningContext';
-import { PlanningQuiz } from '../PlanningQuiz';
+import PlanningQuiz from '../PlanningQuiz';
 import { convertFormValuesToFormData, type PlanningFormValues } from './FormDataConverter';
 
 const PlanningForm: React.FC = () => {
