@@ -94,15 +94,17 @@ export const PlanningForm: React.FC = () => {
   };
 
   return (
-    <Card>
-      <CardHeader className="px-4 sm:px-6">
-        <CardTitle className="font-serif text-lg sm:text-xl">Configurez votre jour J</CardTitle>
-        <CardDescription className="text-sm sm:text-base">
+    <Card className="w-full">
+      <CardHeader className="px-3 sm:px-6 py-4 sm:py-6">
+        <CardTitle className="font-serif text-base sm:text-lg md:text-xl">
+          Configurez votre jour J
+        </CardTitle>
+        <CardDescription className="text-xs sm:text-sm md:text-base leading-relaxed">
           Répondez aux questions suivantes pour générer automatiquement le planning optimisé de votre journée de mariage.
         </CardDescription>
         
         {/* Step indicator - mobile responsive */}
-        <div className="mt-4">
+        <div className="mt-3 sm:mt-4">
           <PlanningStepIndicator
             currentStep={currentStep}
             totalSteps={availableCategories.length}
@@ -113,7 +115,7 @@ export const PlanningForm: React.FC = () => {
           />
         </div>
       </CardHeader>
-      <CardContent className="px-4 sm:px-6">
+      <CardContent className="px-3 sm:px-6 py-4 sm:py-6">
         <PlanningQuiz 
           onSubmit={handleFormSubmit}
           currentStep={currentStep}
