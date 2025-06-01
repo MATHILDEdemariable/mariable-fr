@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -582,10 +581,18 @@ const TeamTasksSection: React.FC = () => {
       // Dynamic import for PDF export
       const { exportCoordinationToPDF } = await import('@/services/coordinationExportService');
       
+      // Helper function to safely convert formData values to strings
+      const getStringValue = (value: string | string[] | undefined): string | undefined => {
+        if (Array.isArray(value)) {
+          return value.length > 0 ? value[0] : undefined;
+        }
+        return value;
+      };
+      
       const success = await exportCoordinationToPDF({
         tasks: tasks.filter(t => !t.is_hidden),
-        weddingDate: formData?.date_mariage ? new Date(formData.date_mariage).toLocaleDateString('fr-FR') : undefined,
-        coupleNames: formData?.nom_couple || "Votre mariage"
+        weddingDate: formData?.date_mariage ? new Date(getStringValue(formData.date_mariage) || '').toLocaleDateString('fr-FR') : undefined,
+        coupleNames: getStringValue(formData?.nom_couple) || "Votre mariage"
       });
       
       if (success) {

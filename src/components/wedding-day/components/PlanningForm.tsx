@@ -44,7 +44,7 @@ const PlanningForm: React.FC = () => {
             </div>
           </div>
         ) : (
-          <PlanningQuiz onQuizComplete={handleQuizComplete} />
+          <PlanningQuiz onComplete={handleQuizComplete} />
         )}
       </CardContent>
     </Card>
