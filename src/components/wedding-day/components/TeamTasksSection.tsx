@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -8,8 +9,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
-import { useToast } from '@/components/ui/use-toast';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { usePlanning } from '../context/PlanningContext';
+import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import { 
   Users, 
   Plus, 
@@ -23,7 +27,13 @@ import {
   Calendar,
   MapPin,
   Download,
-  Share2
+  Share2,
+  GripVertical,
+  Check,
+  ChevronDown,
+  ChevronRight,
+  Eye,
+  X
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -387,15 +397,12 @@ const TeamTasksSection: React.FC = () => {
       if (!userData.user) return;
 
       const taskData = {
-        title: newTask.title,
-        description: newTask.description,
-        assignee_id: newTask.assignee_id,
-        due_date: newTask.due_date || null,
-        priority: newTask.priority,
-        category: newTask.category,
-        status: 'pending',
-        wedding_id: userData.user.id,
-        created_by: userData.user.id
+        user_id: userData.user.id,
+        task_name: newTask.title,
+        phase: newTask.category,
+        position: 0,
+        is_custom: true,
+        responsible_person: newTask.assignee_id
       };
 
       const { error } = await supabase
@@ -418,7 +425,7 @@ const TeamTasksSection: React.FC = () => {
         category: 'general'
       });
       setIsCreateDialogOpen(false);
-      fetchTasks();
+      loadTasksFromDatabase();
     } catch (error) {
       console.error('Error creating task:', error);
       toast({
@@ -453,7 +460,7 @@ const TeamTasksSection: React.FC = () => {
         description: "Les modifications ont été sauvegardées."
       });
 
-      fetchTasks();
+      loadTasksFromDatabase();
     } catch (error) {
       console.error('Error updating task:', error);
       toast({
@@ -464,7 +471,7 @@ const TeamTasksSection: React.FC = () => {
     }
   };
 
-  const onDragEnd = async (result: any) => {
+  const onDragEnd = async (result: DropResult) => {
     if (!result.destination || !user) return;
 
     const { source, destination } = result;

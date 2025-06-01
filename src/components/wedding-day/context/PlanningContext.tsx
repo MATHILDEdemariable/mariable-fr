@@ -47,6 +47,7 @@ export const PlanningProvider: React.FC<PlanningProviderProps> = ({ children, us
         type: 'choix',
         categorie: 'cérémonie',
         label: 'Double cérémonie',
+        duree_minutes: 0,
         ordre_affichage: 1,
         visible_si: null,
         options: ['oui', 'non']
