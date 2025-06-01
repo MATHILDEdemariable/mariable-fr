@@ -95,22 +95,25 @@ export const PlanningForm: React.FC = () => {
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle className="font-serif">Configurez votre jour J</CardTitle>
-        <CardDescription>
+      <CardHeader className="px-4 sm:px-6">
+        <CardTitle className="font-serif text-lg sm:text-xl">Configurez votre jour J</CardTitle>
+        <CardDescription className="text-sm sm:text-base">
           Répondez aux questions suivantes pour générer automatiquement le planning optimisé de votre journée de mariage.
         </CardDescription>
         
-        <PlanningStepIndicator
-          currentStep={currentStep}
-          totalSteps={availableCategories.length}
-          stepLabels={stepLabels}
-          completedSteps={completedSteps}
-          onStepClick={handleStepChange}
-          allowNavigation={true}
-        />
+        {/* Step indicator - mobile responsive */}
+        <div className="mt-4">
+          <PlanningStepIndicator
+            currentStep={currentStep}
+            totalSteps={availableCategories.length}
+            stepLabels={stepLabels}
+            completedSteps={completedSteps}
+            onStepClick={handleStepChange}
+            allowNavigation={true}
+          />
+        </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="px-4 sm:px-6">
         <PlanningQuiz 
           onSubmit={handleFormSubmit}
           currentStep={currentStep}

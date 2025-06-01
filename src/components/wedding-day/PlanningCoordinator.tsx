@@ -22,13 +22,16 @@ const PlanningCoordinatorContent: React.FC = () => {
         <div className="mb-6">
           <h1 className="text-2xl font-serif text-wedding-olive mb-4">Générateur de Planning Jour J</h1>
           
-          {/* Note explicative */}
-          <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-            <p className="text-sm text-blue-800">
-              <strong>3 façons de créer votre planning :</strong> 
-              ① Répondez au quizz pour obtenir en automatique un planning de déroulé jour-j personnalisé
-              ② Créer ou modifier votre planning étape par étape 
-              ③ Coordonnez et déléguez les tâches à votre équipe
+          {/* Note explicative avec tons verts */}
+          <div className="mb-6 p-4 bg-wedding-olive/10 rounded-lg border border-wedding-olive/20">
+            <p className="text-sm text-wedding-olive">
+              <strong className="text-wedding-olive">3 façons de créer votre planning :</strong>
+              <br />
+              <span className="block mt-2">① Répondez au quizz pour obtenir en automatique un planning de déroulé jour-j personnalisé</span>
+              <br />
+              <span className="block">② Créer ou modifier votre planning étape par étape</span> 
+              <br />
+              <span className="block">③ Coordonnez et déléguez les tâches à votre équipe</span>
             </p>
           </div>
         </div>
@@ -37,20 +40,20 @@ const PlanningCoordinatorContent: React.FC = () => {
           <TabsList className="grid w-full grid-cols-3 mb-6">
             <TabsTrigger 
               value="form"
-              className="data-[state=active]:bg-wedding-olive data-[state=active]:text-white"
+              className="data-[state=active]:bg-wedding-olive data-[state=active]:text-white text-xs sm:text-sm"
             >
               1. Formulaire
             </TabsTrigger>
             <TabsTrigger 
               value="results" 
               disabled={activeTab === "form" && !setActiveTab}
-              className="data-[state=active]:bg-wedding-olive data-[state=active]:text-white"
+              className="data-[state=active]:bg-wedding-olive data-[state=active]:text-white text-xs sm:text-sm"
             >
               2. Planning
             </TabsTrigger>
             <TabsTrigger 
               value="coordination"
-              className="data-[state=active]:bg-wedding-olive data-[state=active]:text-white"
+              className="data-[state=active]:bg-wedding-olive data-[state=active]:text-white text-xs sm:text-sm"
             >
               3. Coordination
             </TabsTrigger>

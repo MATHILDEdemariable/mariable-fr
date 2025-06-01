@@ -54,11 +54,11 @@ const EditableEventCard: React.FC<EditableEventCardProps> = ({
   };
 
   return (
-    <Card className={`transition-all duration-200 ${isDragging ? 'opacity-50 rotate-2' : ''} ${event.isHighlight ? 'border-wedding-olive border-2' : ''}`}>
+    <Card className={`transition-all duration-200 ${isDragging ? 'opacity-50 rotate-2' : ''} ${event.isHighlight ? 'border-wedding-olive border-2' : 'border-gray-200'}`}>
       <CardContent className="p-4">
         <div className="flex items-start justify-between">
           <div className="flex-1">
-            <div className="flex items-center gap-2 mb-2">
+            <div className="flex items-center gap-3 mb-2">
               <div {...dragHandleProps} className="cursor-grab active:cursor-grabbing">
                 <div className="w-2 h-8 bg-gray-300 rounded-sm flex flex-col justify-center gap-0.5">
                   <div className="w-full h-0.5 bg-gray-400 rounded"></div>
@@ -67,25 +67,12 @@ const EditableEventCard: React.FC<EditableEventCardProps> = ({
                 </div>
               </div>
               
-              <div className="flex-1">
-                {isEditing ? (
-                  <Input
-                    value={editedTitle}
-                    onChange={(e) => setEditedTitle(e.target.value)}
-                    className="text-lg font-medium"
-                    autoFocus
-                  />
-                ) : (
-                  <h4 
-                    className="text-lg font-medium cursor-pointer hover:bg-gray-50 p-1 rounded"
-                    onDoubleClick={() => setIsEditing(true)}
-                  >
-                    {event.title}
-                  </h4>
-                )}
+              {/* HEURE en gros */}
+              <div className="text-2xl font-bold text-wedding-olive">
+                {formatTime(event.startTime)}
               </div>
               
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1 ml-auto">
                 {!isEditing ? (
                   <>
                     <Button
@@ -130,10 +117,29 @@ const EditableEventCard: React.FC<EditableEventCardProps> = ({
               </div>
             </div>
             
-            <div className="text-sm text-muted-foreground mb-2">
-              {formatTime(event.startTime)} - {formatTime(event.endTime)}
+            {/* INTITULÉ */}
+            <div className="mb-3">
               {isEditing ? (
-                <div className="flex items-center gap-2 mt-2">
+                <Input
+                  value={editedTitle}
+                  onChange={(e) => setEditedTitle(e.target.value)}
+                  className="text-lg font-semibold"
+                  autoFocus
+                />
+              ) : (
+                <h4 
+                  className="text-lg font-semibold text-gray-800 cursor-pointer hover:bg-gray-50 p-1 rounded"
+                  onDoubleClick={() => setIsEditing(true)}
+                >
+                  {event.title}
+                </h4>
+              )}
+            </div>
+            
+            {/* DURÉE */}
+            <div className="text-sm text-gray-600 mb-3">
+              {isEditing ? (
+                <div className="flex items-center gap-2">
                   <span>Durée:</span>
                   <Input
                     type="number"
@@ -145,45 +151,38 @@ const EditableEventCard: React.FC<EditableEventCardProps> = ({
                   <span>min</span>
                 </div>
               ) : (
-                <span className="ml-2">({event.duration} min)</span>
+                <span className="font-medium">Durée: {event.duration} min</span>
               )}
             </div>
             
-            {isEditing ? (
-              <Textarea
-                value={editedNotes}
-                onChange={(e) => setEditedNotes(e.target.value)}
-                placeholder="Notes (optionnel)"
-                className="mt-2"
-                rows={2}
-              />
-            ) : (
-              event.notes && (
-                <p className="text-sm text-gray-600 mt-2 cursor-pointer hover:bg-gray-50 p-1 rounded" onDoubleClick={() => setIsEditing(true)}>
-                  {event.notes}
-                </p>
-              )
+            {/* Notes optionnelles */}
+            {(isEditing || event.notes) && (
+              <div className="mt-3">
+                {isEditing ? (
+                  <Textarea
+                    value={editedNotes}
+                    onChange={(e) => setEditedNotes(e.target.value)}
+                    placeholder="Notes (optionnel)"
+                    rows={2}
+                  />
+                ) : (
+                  event.notes && (
+                    <p className="text-sm text-gray-600 cursor-pointer hover:bg-gray-50 p-1 rounded" onDoubleClick={() => setIsEditing(true)}>
+                      {event.notes}
+                    </p>
+                  )
+                )}
+              </div>
             )}
             
-            <div className="flex gap-2 mt-2">
-              <span className={`inline-block px-2 py-1 text-xs rounded ${
-                event.category === 'cérémonie' ? 'bg-pink-100 text-pink-800' :
-                event.category === 'préparatifs_final' ? 'bg-purple-100 text-purple-800' :
-                event.category === 'photos' ? 'bg-blue-100 text-blue-800' :
-                event.category === 'cocktail' ? 'bg-orange-100 text-orange-800' :
-                event.category === 'repas' ? 'bg-green-100 text-green-800' :
-                event.category === 'soiree' ? 'bg-yellow-100 text-yellow-800' :
-                event.category === 'logistique' ? 'bg-gray-100 text-gray-800' :
-                'bg-blue-100 text-blue-800'
-              }`}>
-                {event.category}
-              </span>
-              {isCustom && (
+            {/* Badge pour les éléments personnalisés uniquement */}
+            {isCustom && (
+              <div className="mt-3">
                 <span className="inline-block px-2 py-1 text-xs rounded bg-indigo-100 text-indigo-800">
                   Personnalisé
                 </span>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         </div>
       </CardContent>
