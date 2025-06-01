@@ -5,13 +5,27 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { usePlanning } from '../context/PlanningContext';
 import PlanningQuiz from '../PlanningQuiz';
 import { convertFormValuesToFormData, type PlanningFormValues } from './FormDataConverter';
+import { PlanningEvent } from '../types/planningTypes';
 
 const PlanningForm: React.FC = () => {
   const { formData, setFormData, setActiveTab } = usePlanning();
   const [localLoading, setLocalLoading] = useState(false);
+  const [currentStep, setCurrentStep] = useState(0);
+  const [completedSteps, setCompletedSteps] = useState<number[]>([]);
 
-  const handleQuizComplete = async (values: PlanningFormValues) => {
+  const stepLabels = [
+    'Cérémonie',
+    'Logistique',
+    'Préparatifs final',
+    'Photos',
+    'Cocktail',
+    'Repas',
+    'Soirée'
+  ];
+
+  const handleQuizSubmit = async (values: PlanningFormValues, events: PlanningEvent[]) => {
     console.log('Quiz completed with values:', values);
+    console.log('Generated events:', events);
     setLocalLoading(true);
     
     try {
@@ -30,6 +44,14 @@ const PlanningForm: React.FC = () => {
     }
   };
 
+  const handleStepChange = (step: number) => {
+    setCurrentStep(step);
+  };
+
+  const handleStepComplete = (step: number) => {
+    setCompletedSteps(prev => [...prev.filter(s => s !== step), step]);
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -44,7 +66,13 @@ const PlanningForm: React.FC = () => {
             </div>
           </div>
         ) : (
-          <PlanningQuiz onComplete={handleQuizComplete} />
+          <PlanningQuiz 
+            onSubmit={handleQuizSubmit}
+            currentStep={currentStep}
+            onStepChange={handleStepChange}
+            onStepComplete={handleStepComplete}
+            stepLabels={stepLabels}
+          />
         )}
       </CardContent>
     </Card>
