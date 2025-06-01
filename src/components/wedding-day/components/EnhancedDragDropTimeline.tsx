@@ -5,7 +5,7 @@ import { PlanningEvent, saveGeneratedPlanning } from '../types/planningTypes';
 import { useToast } from '@/components/ui/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { usePlanning } from '../context/PlanningContext';
-import EditableTimelineEvent from './EditableTimelineEvent';
+import EditableEventCard from './EditableEventCard';
 import CustomBlockDialog from './CustomBlockDialog';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -26,18 +26,19 @@ const EnhancedDragDropTimeline: React.FC<EnhancedDragDropTimelineProps> = ({
     setTimelineEvents(events);
   }, [events]);
 
-  const recalculateTimeline = (reorderedEvents: PlanningEvent[]): PlanningEvent[] => {
-    if (reorderedEvents.length === 0) return [];
+  // Recalculate timeline function
+  const recalculateTimeline = (events: PlanningEvent[]): PlanningEvent[] => {
+    if (events.length === 0) return [];
     
     // Find the earliest start time to use as base, or use first event's start time
-    let currentTime = reorderedEvents[0]?.startTime || new Date();
+    let currentTime = events[0]?.startTime || new Date();
     
     // For ceremonies, try to preserve their original timing as anchor points
-    const ceremonyEvents = reorderedEvents.filter(e => e.category === 'cérémonie' || e.type === 'ceremony');
+    const ceremonyEvents = events.filter(e => e.category === 'cérémonie' || e.type === 'ceremony');
     if (ceremonyEvents.length > 0) {
       // Use the first ceremony as time anchor
       const firstCeremony = ceremonyEvents[0];
-      const ceremonyIndex = reorderedEvents.findIndex(e => e.id === firstCeremony.id);
+      const ceremonyIndex = events.findIndex(e => e.id === firstCeremony.id);
       
       // Calculate preparation time (start 3 hours before ceremony)
       const preparationStartTime = addMinutes(firstCeremony.startTime, -180);
@@ -59,7 +60,7 @@ const EnhancedDragDropTimeline: React.FC<EnhancedDragDropTimelineProps> = ({
       return 5; // Default buffer
     };
     
-    return reorderedEvents.map((event, index) => {
+    return events.map((event, index) => {
       const updatedEvent = { ...event };
       
       // For ceremony events, try to preserve their specified times
@@ -79,7 +80,7 @@ const EnhancedDragDropTimeline: React.FC<EnhancedDragDropTimelineProps> = ({
       updatedEvent.endTime = addMinutes(updatedEvent.startTime, event.duration);
       
       // Calculate next start time with appropriate buffer
-      const nextEvent = reorderedEvents[index + 1];
+      const nextEvent = events[index + 1];
       const bufferTime = getBufferTime(event, nextEvent);
       currentTime = addMinutes(updatedEvent.endTime, bufferTime);
       
@@ -131,6 +132,11 @@ const EnhancedDragDropTimeline: React.FC<EnhancedDragDropTimelineProps> = ({
     }
 
     saveToDatabase(recalculatedEvents);
+    
+    toast({
+      title: "Étape modifiée",
+      description: "Les modifications ont été sauvegardées."
+    });
   };
 
   const handleDeleteEvent = (eventId: string) => {
@@ -221,7 +227,7 @@ const EnhancedDragDropTimeline: React.FC<EnhancedDragDropTimelineProps> = ({
                       ref={provided.innerRef}
                       {...provided.draggableProps}
                     >
-                      <EditableTimelineEvent
+                      <EditableEventCard
                         event={event}
                         onUpdate={handleUpdateEvent}
                         onDelete={event.type === 'custom' ? handleDeleteEvent : undefined}

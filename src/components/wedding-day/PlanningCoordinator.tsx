@@ -20,35 +20,39 @@ const PlanningCoordinatorContent: React.FC = () => {
       {/* Main content area */}
       <div className="flex-1 space-y-6">
         <div className="mb-6">
-          <h1 className="text-2xl font-serif text-wedding-olive">Générateur de Planning Jour J</h1>
+          <h1 className="text-2xl font-serif text-wedding-olive mb-4">Générateur de Planning Jour J</h1>
+          
+          {/* Note explicative */}
+          <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+            <p className="text-sm text-blue-800">
+              <strong>3 façons de créer votre planning :</strong> 
+              ① Répondez au quizz pour obtenir en automatique un planning de déroulé jour-j personnalisé
+              ② Créer ou modifier votre planning étape par étape 
+              ③ Coordonnez et déléguez les tâches à votre équipe
+            </p>
+          </div>
         </div>
         
         <Tabs defaultValue="form" value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-4 mb-6">
+          <TabsList className="grid w-full grid-cols-3 mb-6">
             <TabsTrigger 
               value="form"
               className="data-[state=active]:bg-wedding-olive data-[state=active]:text-white"
             >
-              Formulaire
+              1. Formulaire
             </TabsTrigger>
             <TabsTrigger 
               value="results" 
               disabled={activeTab === "form" && !setActiveTab}
               className="data-[state=active]:bg-wedding-olive data-[state=active]:text-white"
             >
-              Planning
+              2. Planning
             </TabsTrigger>
             <TabsTrigger 
               value="coordination"
               className="data-[state=active]:bg-wedding-olive data-[state=active]:text-white"
             >
-              Coordination
-            </TabsTrigger>
-            <TabsTrigger 
-              value="advice"
-              className="data-[state=active]:bg-wedding-olive data-[state=active]:text-white lg:hidden"
-            >
-              Conseils
+              3. Coordination
             </TabsTrigger>
           </TabsList>
           
@@ -63,12 +67,6 @@ const PlanningCoordinatorContent: React.FC = () => {
           <TabsContent value="coordination">
             <div className="w-full">
               <TeamTasksSection />
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="advice" className="lg:hidden">
-            <div className="w-full">
-              <AdviceSidebar />
             </div>
           </TabsContent>
         </Tabs>
