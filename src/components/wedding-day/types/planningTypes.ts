@@ -795,3 +795,33 @@ export const savePlanningResponses = async (
     throw new Error(`Erreur lors de la sauvegarde: ${error.message}`);
   }
 };
+
+export type PlanningCategory = 
+  | 'cérémonie' 
+  | 'préparatifs_final' 
+  | 'photos' 
+  | 'cocktail' 
+  | 'repas' 
+  | 'soiree' 
+  | 'logistique'
+  | 'personnalisé'
+  | 'préparatifs_final_1'
+  | 'préparatifs_final_2'
+  | 'cérémonie_1'
+  | 'cérémonie_2'
+  | 'logistique_trajet_1'
+  | 'logistique_trajet_2'
+  | 'logistique_trajet_3'
+  | 'logistique_trajet_4'
+  | 'logistique_trajet_depart'
+  | 'logistique_trajet_retour';
+
+export type PlanningType = 
+  | 'ceremony' 
+  | 'preparation' 
+  | 'travel' 
+  | 'couple_photos' 
+  | 'cocktail' 
+  | 'dinner' 
+  | 'party' 
+  | 'custom';

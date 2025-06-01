@@ -13,7 +13,7 @@ import { User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 
 interface FormData {
-  [key: string]: string | undefined;
+  [key: string]: string | number | undefined;
   heure_ceremonie?: string;
   type_ceremonie?: string;
   double_ceremonie?: string;
@@ -24,8 +24,8 @@ interface FormData {
   preparatifs_coiffure?: string;
   preparatifs_maquillage?: string;
   preparatifs_habillage?: string;
-  trajet_depart_ceremonie?: string;
-  trajet_retour_ceremonie?: string;
+  trajet_depart_ceremonie?: string | number;
+  trajet_retour_ceremonie?: string | number;
   photos_groupe?: string;
   cocktail?: string;
   repas?: string;
@@ -257,134 +257,134 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode; user?: User
   }, [formData]);
 
   const generatePlanning = (formData: FormData): PlanningEvent[] => {
-  console.log('Generating planning with formData:', formData);
-  
-  const events: PlanningEvent[] = [];
-  let currentTime = new Date();
-  
-  // Détecter si double cérémonie
-  const isDualCeremony = formData.double_ceremonie === 'oui';
-  console.log('Is dual ceremony:', isDualCeremony);
-  
-  // Définir l'ordre des catégories selon le nombre de cérémonies
-  let categoryOrder: string[];
-  
-  if (isDualCeremony) {
-    categoryOrder = [
-      'préparatifs_final_1',
-      'logistique_trajet_1',
-      'cérémonie_1',
-      'logistique_trajet_2',
-      'logistique_trajet_3',
-      'préparatifs_final_2',
-      'logistique_trajet_4',
-      'cérémonie_2',
-      'photos',
-      'cocktail',
-      'repas',
-      'soiree'
-    ];
-  } else {
-    categoryOrder = [
-      'préparatifs_final',
-      'logistique_trajet_depart',
-      'cérémonie',
-      'logistique_trajet_retour',
-      'photos',
-      'cocktail',
-      'repas',
-      'soiree'
-    ];
-  }
-  
-  // Set start time based on first ceremony
-  const firstCeremonyTime = isDualCeremony ? formData.heure_ceremonie_1 : formData.heure_ceremonie;
-  if (firstCeremonyTime) {
-    const [hours, minutes] = firstCeremonyTime.split(':').map(Number);
-    currentTime = new Date();
-    currentTime.setHours(hours, minutes, 0, 0);
-    // Start 3 hours before ceremony for preparations
-    currentTime = addMinutes(currentTime, -180);
-  }
-
-  // Create events based on form data
-  Object.entries(formData).forEach(([key, value]) => {
-    if (value && typeof value === 'string' && value !== 'non') {
-      const question = planningQuestions.find(q => q.option_name === key);
-      if (question) {
-        const event: PlanningEvent = {
-          id: uuidv4(),
-          title: question.label,
-          category: question.categorie as any,
-          startTime: new Date(currentTime),
-          endTime: addMinutes(currentTime, question.duree_minutes),
-          duration: question.duree_minutes,
-          type: getEventType(question.categorie),
-          isHighlight: isHighlightEvent(question.categorie),
-          notes: value !== 'oui' ? value : undefined
-        };
-
-        // Assigner les bonnes catégories selon le contexte
-        if (isDualCeremony) {
-          // Logique pour double cérémonie
-          if (key === 'preparatifs_coiffure_1' || key === 'preparatifs_maquillage_1' || key === 'preparatifs_habillage_1') {
-            event.category = 'préparatifs_final_1';
-          } else if (key === 'preparatifs_coiffure_2' || key === 'preparatifs_maquillage_2' || key === 'preparatifs_habillage_2') {
-            event.category = 'préparatifs_final_2';
-          } else if (key === 'trajet_1_depart_ceremonie_1') {
-            event.category = 'logistique_trajet_1';
-          } else if (key === 'trajet_2_ceremonie_1_arrivee_1') {
-            event.category = 'logistique_trajet_2';
-          } else if (key === 'trajet_3_arrivee_1_depart_2') {
-            event.category = 'logistique_trajet_3';
-          } else if (key === 'trajet_4_depart_ceremonie_2') {
-            event.category = 'logistique_trajet_4';
-          } else if (key === 'heure_ceremonie_1' || key === 'type_ceremonie_1') {
-            event.category = 'cérémonie_1';
-          } else if (key === 'heure_ceremonie_2' || key === 'type_ceremonie_2') {
-            event.category = 'cérémonie_2';
-          }
-        } else {
-          // Logique pour cérémonie unique
-          if (key === 'preparatifs_coiffure' || key === 'preparatifs_maquillage' || key === 'preparatifs_habillage') {
-            event.category = 'préparatifs_final';
-          } else if (key === 'trajet_depart_ceremonie') {
-            event.category = 'logistique_trajet_depart';
-          } else if (key === 'trajet_retour_ceremonie') {
-            event.category = 'logistique_trajet_retour';
-          } else if (key === 'heure_ceremonie' || key === 'type_ceremonie') {
-            event.category = 'cérémonie';
-          }
-        }
-
-        events.push(event);
-      }
-    }
-  });
-
-  // Sort events by category order
-  events.sort((a, b) => {
-    const aIndex = categoryOrder.indexOf(a.category);
-    const bIndex = categoryOrder.indexOf(b.category);
-    return aIndex - bIndex;
-  });
-
-  // Recalculate times based on sorted order
-  events.forEach((event, index) => {
-    if (index === 0) {
-      // Keep the start time for first event
-      event.startTime = currentTime;
+    console.log('Generating planning with formData:', formData);
+    
+    const events: PlanningEvent[] = [];
+    let currentTime = new Date();
+    
+    // Détecter si double cérémonie
+    const isDualCeremony = formData.double_ceremonie === 'oui';
+    console.log('Is dual ceremony:', isDualCeremony);
+    
+    // Définir l'ordre des catégories selon le nombre de cérémonies
+    let categoryOrder: string[];
+    
+    if (isDualCeremony) {
+      categoryOrder = [
+        'préparatifs_final_1',
+        'logistique_trajet_1',
+        'cérémonie_1',
+        'logistique_trajet_2',
+        'logistique_trajet_3',
+        'préparatifs_final_2',
+        'logistique_trajet_4',
+        'cérémonie_2',
+        'photos',
+        'cocktail',
+        'repas',
+        'soiree'
+      ];
     } else {
-      // Start after previous event with 5 minute buffer
-      const previousEvent = events[index - 1];
-      event.startTime = addMinutes(previousEvent.endTime, 5);
+      categoryOrder = [
+        'préparatifs_final',
+        'logistique_trajet_depart',
+        'cérémonie',
+        'logistique_trajet_retour',
+        'photos',
+        'cocktail',
+        'repas',
+        'soiree'
+      ];
     }
-    event.endTime = addMinutes(event.startTime, event.duration);
-  });
+    
+    // Set start time based on first ceremony
+    const firstCeremonyTime = isDualCeremony ? formData.heure_ceremonie_1 : formData.heure_ceremonie;
+    if (firstCeremonyTime) {
+      const [hours, minutes] = firstCeremonyTime.split(':').map(Number);
+      currentTime = new Date();
+      currentTime.setHours(hours, minutes, 0, 0);
+      // Start 3 hours before ceremony for preparations
+      currentTime = addMinutes(currentTime, -180);
+    }
 
-  console.log('Generated events:', events);
-  return events;
-};
+    // Create events based on form data
+    Object.entries(formData).forEach(([key, value]) => {
+      if (value && (typeof value === 'string' || typeof value === 'number') && value !== 'non') {
+        const question = planningQuestions.find(q => q.option_name === key);
+        if (question) {
+          const event: PlanningEvent = {
+            id: uuidv4(),
+            title: question.label,
+            category: question.categorie as PlanningCategory,
+            startTime: new Date(currentTime),
+            endTime: addMinutes(currentTime, question.duree_minutes),
+            duration: question.duree_minutes,
+            type: getEventType(question.categorie),
+            isHighlight: isHighlightEvent(question.categorie),
+            notes: typeof value === 'string' && value !== 'oui' ? value : undefined
+          };
+
+          // Assigner les bonnes catégories selon le contexte
+          if (isDualCeremony) {
+            // Logique pour double cérémonie
+            if (key === 'preparatifs_coiffure_1' || key === 'preparatifs_maquillage_1' || key === 'preparatifs_habillage_1') {
+              event.category = 'préparatifs_final_1';
+            } else if (key === 'preparatifs_coiffure_2' || key === 'preparatifs_maquillage_2' || key === 'preparatifs_habillage_2') {
+              event.category = 'préparatifs_final_2';
+            } else if (key === 'trajet_1_depart_ceremonie_1') {
+              event.category = 'logistique_trajet_1';
+            } else if (key === 'trajet_2_ceremonie_1_arrivee_1') {
+              event.category = 'logistique_trajet_2';
+            } else if (key === 'trajet_3_arrivee_1_depart_2') {
+              event.category = 'logistique_trajet_3';
+            } else if (key === 'trajet_4_depart_ceremonie_2') {
+              event.category = 'logistique_trajet_4';
+            } else if (key === 'heure_ceremonie_1' || key === 'type_ceremonie_1') {
+              event.category = 'cérémonie_1';
+            } else if (key === 'heure_ceremonie_2' || key === 'type_ceremonie_2') {
+              event.category = 'cérémonie_2';
+            }
+          } else {
+            // Logique pour cérémonie unique
+            if (key === 'preparatifs_coiffure' || key === 'preparatifs_maquillage' || key === 'preparatifs_habillage') {
+              event.category = 'préparatifs_final';
+            } else if (key === 'trajet_depart_ceremonie') {
+              event.category = 'logistique_trajet_depart';
+            } else if (key === 'trajet_retour_ceremonie') {
+              event.category = 'logistique_trajet_retour';
+            } else if (key === 'heure_ceremonie' || key === 'type_ceremonie') {
+              event.category = 'cérémonie';
+            }
+          }
+
+          events.push(event);
+        }
+      }
+    });
+
+    // Sort events by category order
+    events.sort((a, b) => {
+      const aIndex = categoryOrder.indexOf(a.category);
+      const bIndex = categoryOrder.indexOf(b.category);
+      return aIndex - bIndex;
+    });
+
+    // Recalculate times based on sorted order
+    events.forEach((event, index) => {
+      if (index === 0) {
+        // Keep the start time for first event
+        event.startTime = currentTime;
+      } else {
+        // Start after previous event with 5 minute buffer
+        const previousEvent = events[index - 1];
+        event.startTime = addMinutes(previousEvent.endTime, 5);
+      }
+      event.endTime = addMinutes(event.startTime, event.duration);
+    });
+
+    console.log('Generated events:', events);
+    return events;
+  };
 
   const savePlanningToDatabase = async (planning: PlanningEvent[]) => {
     if (!user) {

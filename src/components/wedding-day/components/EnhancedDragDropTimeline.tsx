@@ -114,7 +114,7 @@ const EnhancedDragDropTimeline: React.FC<EnhancedDragDropTimelineProps> = ({
     
     toast({
       title: "Étape ajoutée",
-      description: `"${block.title}" a été ajoutée à votre planning.`
+      description: `"${block.title}" a été ajoutée à votre planning."
     });
   };
 
