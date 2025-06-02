@@ -73,7 +73,8 @@ export const useWeddingQuiz = () => {
         const transformedOptions: QuizOption[] = options.map((option: any, index: number) => ({
           id: `${q.id}-${index}`,
           text: option,
-          score: scores[index] || 1
+          score: typeof scores[index] === 'number' ? scores[index] : 
+                typeof scores[index] === 'string' ? parseInt(scores[index], 10) || 1 : 1
         }));
 
         return {
@@ -91,8 +92,10 @@ export const useWeddingQuiz = () => {
         status: level.status,
         score_min: level.score_min,
         score_max: level.score_max,
-        categories: Array.isArray(level.categories) ? level.categories : [],
-        objectives: Array.isArray(level.objectives) ? level.objectives : []
+        categories: Array.isArray(level.categories) ? 
+          level.categories.map(cat => typeof cat === 'string' ? cat : String(cat)) : [],
+        objectives: Array.isArray(level.objectives) ? 
+          level.objectives.map(obj => typeof obj === 'string' ? obj : String(obj)) : []
       }));
 
       setQuestions(transformedQuestions);
