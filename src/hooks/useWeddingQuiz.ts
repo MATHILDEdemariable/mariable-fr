@@ -1,37 +1,29 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
 
 export interface QuizQuestion {
   id: string;
-  question_text: string;
-  question_order: number;
-  category: string;
+  question: string;
+  order_index: number;
+  section: string;
   options: QuizOption[];
 }
 
 export interface QuizOption {
   id: string;
-  option_text: string;
-  option_order: number;
-  score_value: number;
+  text: string;
+  score: number;
 }
 
 export interface QuizLevel {
   id: string;
-  level_name: string;
-  level_status: string;
-  min_score: number;
-  max_score: number;
-  description: string;
-  objectives: QuizObjective[];
-}
-
-export interface QuizObjective {
-  id: string;
-  objective_text: string;
-  objective_order: number;
+  status: string;
+  score_min: number;
+  score_max: number;
+  categories: string[];
+  objectives: string[];
 }
 
 export interface QuizAnswer {
@@ -60,70 +52,47 @@ export const useWeddingQuiz = () => {
       // Fetch questions with options and scoring
       const { data: questionsData, error: questionsError } = await supabase
         .from('quiz_questions')
-        .select(`
-          id,
-          question_text,
-          question_order,
-          category,
-          quiz_options (
-            id,
-            option_text,
-            option_order,
-            quiz_scoring (
-              score_value
-            )
-          )
-        `)
-        .order('question_order');
+        .select('*')
+        .order('order_index');
 
       if (questionsError) throw questionsError;
 
-      // Fetch levels with objectives
-      const { data: levelsData, error: levelsError } = await supabase
-        .from('quiz_levels')
-        .select(`
-          id,
-          level_name,
-          level_status,
-          min_score,
-          max_score,
-          description,
-          quiz_objectives (
-            id,
-            objective_text,
-            objective_order
-          )
-        `)
-        .order('min_score');
+      // Fetch scoring levels
+      const { data: scoringData, error: scoringError } = await supabase
+        .from('quiz_scoring')
+        .select('*')
+        .order('score_min');
 
-      if (levelsError) throw levelsError;
+      if (scoringError) throw scoringError;
 
       // Transform questions data
-      const transformedQuestions: QuizQuestion[] = (questionsData || []).map(q => ({
-        id: q.id,
-        question_text: q.question_text,
-        question_order: q.question_order,
-        category: q.category || '',
-        options: (q.quiz_options || [])
-          .map(opt => ({
-            id: opt.id,
-            option_text: opt.option_text,
-            option_order: opt.option_order,
-            score_value: opt.quiz_scoring?.[0]?.score_value || 0
-          }))
-          .sort((a, b) => a.option_order - b.option_order)
-      }));
+      const transformedQuestions: QuizQuestion[] = (questionsData || []).map(q => {
+        const options = Array.isArray(q.options) ? q.options : [];
+        const scores = Array.isArray(q.scores) ? q.scores : [];
+        
+        const transformedOptions: QuizOption[] = options.map((option: any, index: number) => ({
+          id: `${q.id}-${index}`,
+          text: option,
+          score: scores[index] || 1
+        }));
 
-      // Transform levels data
-      const transformedLevels: QuizLevel[] = (levelsData || []).map(level => ({
+        return {
+          id: q.id,
+          question: q.question,
+          order_index: q.order_index,
+          section: q.section || '',
+          options: transformedOptions
+        };
+      });
+
+      // Transform scoring data to levels
+      const transformedLevels: QuizLevel[] = (scoringData || []).map(level => ({
         id: level.id,
-        level_name: level.level_name,
-        level_status: level.level_status,
-        min_score: level.min_score,
-        max_score: level.max_score,
-        description: level.description || '',
-        objectives: (level.quiz_objectives || [])
-          .sort((a, b) => a.objective_order - b.objective_order)
+        status: level.status,
+        score_min: level.score_min,
+        score_max: level.score_max,
+        categories: Array.isArray(level.categories) ? level.categories : [],
+        objectives: Array.isArray(level.objectives) ? level.objectives : []
       }));
 
       setQuestions(transformedQuestions);
@@ -143,7 +112,7 @@ export const useWeddingQuiz = () => {
 
   const calculateResults = (answers: Record<string, QuizAnswer>): QuizResults => {
     const totalScore = Object.values(answers).reduce((sum, answer) => sum + answer.score, 0);
-    const level = levels.find(l => totalScore >= l.min_score && totalScore <= l.max_score) || null;
+    const level = levels.find(l => totalScore >= l.score_min && totalScore <= l.score_max) || null;
     
     return {
       totalScore,
@@ -169,10 +138,11 @@ export const useWeddingQuiz = () => {
         .from('user_quiz_results')
         .upsert({
           user_id: user.id,
-          answers: results.answers,
-          total_score: results.totalScore,
-          level_achieved: results.level?.level_name || null,
-          completed_at: new Date().toISOString()
+          score: results.totalScore,
+          level: results.level?.status || '',
+          status: results.level?.status || '',
+          categories: results.level?.categories || [],
+          objectives: results.level?.objectives || []
         });
 
       if (error) throw error;

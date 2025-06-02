@@ -22,7 +22,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
     <Card className={`border-wedding-olive/20 ${className}`}>
       <CardHeader className="pb-4">
         <CardTitle className="text-lg md:text-xl font-serif text-center">
-          {question.question_text}
+          {question.question}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -31,7 +31,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
           onValueChange={(optionId) => {
             const option = question.options.find(opt => opt.id === optionId);
             if (option) {
-              onOptionSelect(optionId, option.score_value);
+              onOptionSelect(optionId, option.score);
             }
           }}
           className="space-y-3"
@@ -50,7 +50,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
                 htmlFor={option.id}
                 className="flex-grow cursor-pointer text-sm md:text-base leading-relaxed"
               >
-                {option.option_text}
+                {option.text}
               </Label>
             </div>
           ))}

@@ -60,15 +60,11 @@ export const QuizResults: React.FC<QuizResultsProps> = ({
           </div>
           
           <Badge variant="outline" className="bg-wedding-olive text-white border-wedding-olive px-4 py-1 text-base">
-            {results.level.level_name}
+            Niveau {results.level.status}
           </Badge>
           
           <p className="text-lg font-medium text-gray-800">
-            {results.level.level_status}
-          </p>
-          
-          <p className="text-muted-foreground leading-relaxed">
-            {results.level.description}
+            {results.level.status}
           </p>
         </CardContent>
       </Card>
@@ -84,11 +80,11 @@ export const QuizResults: React.FC<QuizResultsProps> = ({
           </CardHeader>
           <CardContent>
             <ul className="space-y-3">
-              {results.level.objectives.map((objective) => (
-                <li key={objective.id} className="flex items-start gap-3">
+              {results.level.objectives.map((objective, index) => (
+                <li key={index} className="flex items-start gap-3">
                   <div className="h-2 w-2 rounded-full bg-wedding-olive mt-2 flex-shrink-0" />
                   <span className="text-sm md:text-base leading-relaxed">
-                    {objective.objective_text}
+                    {objective}
                   </span>
                 </li>
               ))}
