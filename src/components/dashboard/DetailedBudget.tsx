@@ -260,7 +260,7 @@ const DetailedBudget: React.FC = () => {
     }
   }, [budgetDetailsData, calculateTotalsFromCategories]);
 
-  // Updated updateBudgetMutation with proper error handling
+  // Updated updateBudgetMutation with proper JSON serialization
   const updateBudgetMutation = useMutation({
     mutationFn: async () => {
       const { data: userData } = await supabase.auth.getUser();
@@ -278,6 +278,29 @@ const DetailedBudget: React.FC = () => {
           throw fetchError;
         }
 
+        // Serialize the breakdown data to JSON-compatible format
+        const breakdownData = {
+          categories: categories.map(category => ({
+            name: category.name,
+            items: category.items.map(item => ({
+              id: item.id,
+              name: item.name,
+              estimated: item.estimated,
+              actual: item.actual,
+              deposit: item.deposit,
+              remaining: item.remaining
+            })),
+            totalEstimated: category.totalEstimated,
+            totalActual: category.totalActual,
+            totalDeposit: category.totalDeposit,
+            totalRemaining: category.totalRemaining
+          })),
+          totalEstimated,
+          totalActual,
+          totalDeposit,
+          totalRemaining
+        };
+
         const budgetPayload = {
           user_id: userData.user.id,
           total_budget: totalEstimated,
@@ -286,13 +309,7 @@ const DetailedBudget: React.FC = () => {
           season: budgetData?.season || 'basse',
           service_level: budgetData?.service_level || 'premium',
           selected_vendors: budgetData?.selected_vendors || [],
-          breakdown: {
-            categories,
-            totalEstimated,
-            totalActual,
-            totalDeposit,
-            totalRemaining
-          }
+          breakdown: breakdownData as any // Cast to any to satisfy Json type
         };
 
         if (existingData?.id) {
