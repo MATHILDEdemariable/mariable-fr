@@ -1,4 +1,5 @@
 
+
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
@@ -11,6 +12,7 @@ interface BudgetCategory {
     actual: number;
     deposit: number;
     remaining: number;
+    payment_note?: string;
   }>;
   totalEstimated: number;
   totalActual: number;
@@ -144,42 +146,46 @@ const generateBudgetContent = (data: BudgetExportData): string => {
         </h2>
         
         <!-- Table header -->
-        <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 12px; padding: 12px 16px; background-color: #7F9474; color: white; font-weight: 600; font-size: 14px; border-radius: 8px 8px 0 0;">
+        <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1.5fr; gap: 12px; padding: 12px 16px; background-color: #7F9474; color: white; font-weight: 600; font-size: 14px; border-radius: 8px 8px 0 0;">
           <div>Catégorie / Élément</div>
           <div style="text-align: right;">Budget Estimé</div>
           <div style="text-align: right;">Coût Réel</div>
           <div style="text-align: right;">Acompte Versé</div>
           <div style="text-align: right;">Reste à Payer</div>
+          <div style="text-align: center;">Commentaire</div>
         </div>
         
         ${data.categories.map(category => `
           <!-- Category row -->
-          <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 12px; padding: 12px 16px; background-color: #f8f6f0; font-weight: 600; border-left: 4px solid #7F9474;">
+          <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1.5fr; gap: 12px; padding: 12px 16px; background-color: #f8f6f0; font-weight: 600; border-left: 4px solid #7F9474;">
             <div>${category.name}</div>
             <div style="text-align: right;">${formatCurrency(category.totalEstimated)}</div>
             <div style="text-align: right;">${formatCurrency(category.totalActual)}</div>
             <div style="text-align: right;">${formatCurrency(category.totalDeposit)}</div>
             <div style="text-align: right;">${formatCurrency(category.totalRemaining)}</div>
+            <div style="text-align: center;">-</div>
           </div>
           
           ${category.items.filter(item => item.name).map(item => `
-            <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 12px; padding: 8px 16px; border-bottom: 1px solid #e5e7eb; font-size: 14px;">
+            <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1.5fr; gap: 12px; padding: 8px 16px; border-bottom: 1px solid #e5e7eb; font-size: 14px;">
               <div style="padding-left: 20px;">${item.name}</div>
               <div style="text-align: right;">${formatCurrency(item.estimated)}</div>
               <div style="text-align: right;">${formatCurrency(item.actual)}</div>
               <div style="text-align: right;">${formatCurrency(item.deposit)}</div>
               <div style="text-align: right;">${formatCurrency(item.remaining)}</div>
+              <div style="text-align: center; font-size: 12px;">${item.payment_note || '-'}</div>
             </div>
           `).join('')}
         `).join('')}
         
         <!-- Total row -->
-        <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 12px; padding: 16px; background-color: #7F9474; color: white; font-weight: 700; font-size: 16px; border-radius: 0 0 8px 8px;">
+        <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1.5fr; gap: 12px; padding: 16px; background-color: #7F9474; color: white; font-weight: 700; font-size: 16px; border-radius: 0 0 8px 8px;">
           <div>TOTAL</div>
           <div style="text-align: right;">${formatCurrency(data.totalEstimated)}</div>
           <div style="text-align: right;">${formatCurrency(data.totalActual)}</div>
           <div style="text-align: right;">${formatCurrency(data.totalDeposit)}</div>
           <div style="text-align: right;">${formatCurrency(data.totalRemaining)}</div>
+          <div style="text-align: center;">-</div>
         </div>
       </div>
 

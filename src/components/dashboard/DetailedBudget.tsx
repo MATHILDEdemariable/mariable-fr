@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -16,6 +17,7 @@ interface BudgetItem {
   actual: number;
   deposit: number;
   remaining: number;
+  payment_note: string;
 }
 
 interface BudgetCategory {
@@ -38,6 +40,7 @@ interface BudgetDetailDB {
   actual: number;
   deposit: number;
   remaining: number;
+  payment_note: string;
   created_at: string;
   updated_at: string;
 }
@@ -119,7 +122,8 @@ const DetailedBudget: React.FC = () => {
         estimated: Number(item.estimated) || 0,
         actual: Number(item.actual) || 0,
         deposit: Number(item.deposit) || 0,
-        remaining: Number(item.remaining) || 0
+        remaining: Number(item.remaining) || 0,
+        payment_note: item.payment_note || ''
       };
 
       const { data, error } = await supabase
@@ -240,7 +244,8 @@ const DetailedBudget: React.FC = () => {
           estimated: Number(dbItem.estimated) || 0,
           actual: Number(dbItem.actual) || 0,
           deposit: Number(dbItem.deposit) || 0,
-          remaining: remaining
+          remaining: remaining,
+          payment_note: dbItem.payment_note || ''
         });
       });
       
@@ -288,7 +293,8 @@ const DetailedBudget: React.FC = () => {
               estimated: item.estimated,
               actual: item.actual,
               deposit: item.deposit,
-              remaining: item.remaining
+              remaining: item.remaining,
+              payment_note: item.payment_note
             })),
             totalEstimated: category.totalEstimated,
             totalActual: category.totalActual,
@@ -413,7 +419,8 @@ const DetailedBudget: React.FC = () => {
       estimated: 0,
       actual: 0,
       deposit: 0,
-      remaining: 0
+      remaining: 0,
+      payment_note: ''
     };
     
     newCategories[categoryIndex].items.push(newItem);
@@ -471,8 +478,8 @@ const DetailedBudget: React.FC = () => {
     const categoryName = newCategories[categoryIndex].name;
     
     // Update field value
-    if (field === 'name') {
-      item.name = value as string;
+    if (field === 'name' || field === 'payment_note') {
+      item[field] = value as string;
     } else {
       const numValue = typeof value === 'string' ? parseFloat(value) || 0 : value;
       (item[field] as number) = numValue;
@@ -556,6 +563,7 @@ const DetailedBudget: React.FC = () => {
                 <th className="px-4 py-3 text-right font-medium">Coût Réel (€)</th>
                 <th className="px-4 py-3 text-right font-medium">Acompte Versé (€)</th>
                 <th className="px-4 py-3 text-right font-medium">Reste à Payer (€)</th>
+                <th className="px-4 py-3 text-center font-medium">Commentaire</th>
                 <th className="px-4 py-3 text-center font-medium">Actions</th>
               </tr>
             </thead>
@@ -577,6 +585,7 @@ const DetailedBudget: React.FC = () => {
                     <td className="px-4 py-2 text-right font-medium">
                       {category.totalRemaining.toFixed(2)}
                     </td>
+                    <td className="px-4 py-2 text-center"></td>
                     <td className="px-4 py-2 text-center">
                       <Button 
                         variant="ghost" 
@@ -635,6 +644,15 @@ const DetailedBudget: React.FC = () => {
                       <td className="px-4 py-2 text-right">
                         {item.remaining.toFixed(2)}
                       </td>
+                      <td className="px-4 py-2">
+                        <Input
+                          type="text"
+                          value={item.payment_note || ''}
+                          onChange={(e) => handleItemChange(categoryIndex, itemIndex, 'payment_note', e.target.value)}
+                          className="h-8 border-gray-200"
+                          placeholder="Ex: Mariée, Marié, Parents..."
+                        />
+                      </td>
                       <td className="px-4 py-2 text-center">
                         <Button
                           variant="ghost"
@@ -657,6 +675,7 @@ const DetailedBudget: React.FC = () => {
                 <td className="px-4 py-3 text-right">{totalActual.toFixed(2)}</td>
                 <td className="px-4 py-3 text-right">{totalDeposit.toFixed(2)}</td>
                 <td className="px-4 py-3 text-right">{totalRemaining.toFixed(2)}</td>
+                <td className="px-4 py-3"></td>
                 <td className="px-4 py-3"></td>
               </tr>
             </tbody>

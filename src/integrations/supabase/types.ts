@@ -90,6 +90,7 @@ export type Database = {
           id: string
           item_id: string
           item_name: string
+          payment_note: string | null
           remaining: number | null
           updated_at: string
           user_id: string
@@ -103,6 +104,7 @@ export type Database = {
           id?: string
           item_id: string
           item_name: string
+          payment_note?: string | null
           remaining?: number | null
           updated_at?: string
           user_id: string
@@ -116,6 +118,7 @@ export type Database = {
           id?: string
           item_id?: string
           item_name?: string
+          payment_note?: string | null
           remaining?: number | null
           updated_at?: string
           user_id?: string
