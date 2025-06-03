@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -50,6 +49,7 @@ import PrestataireTrackingPage from "./pages/prestataire/tracking";
 import MentionsLegales from "./pages/MentionsLegales";
 import CGV from "./pages/CGV";
 import Pricing from "./pages/Pricing";
+import ReservationJourM from "./pages/ReservationJourM";
 
 // Initialize the query client
 const queryClient = new QueryClient();
