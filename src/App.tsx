@@ -91,6 +91,9 @@ const App = () => {
                 {/* Pricing page */}
                 <Route path="/pricing" element={<Pricing />} />
                 
+                {/* Reservation Le Jour M */}
+                <Route path="/reservation-jour-m" element={<ReservationJourM />} />
+                
                 {/* Checklist page */}
                 <Route path="/checklist-mariage" element={<ChecklistMariage />} />
                 
