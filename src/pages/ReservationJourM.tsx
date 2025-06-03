@@ -10,6 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Calendar, MapPin, Users, Heart } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 const ReservationJourM = () => {
   const [formData, setFormData] = useState({
@@ -39,8 +40,33 @@ const ReservationJourM = () => {
     setIsSubmitting(true);
 
     try {
-      // Simulate form submission
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      console.log('Envoi de la demande de réservation:', formData);
+      
+      const { data, error } = await supabase
+        .from('jour_m_reservations')
+        .insert([
+          {
+            first_name: formData.firstName,
+            last_name: formData.lastName,
+            email: formData.email,
+            phone: formData.phone,
+            partner_name: formData.partnerName || null,
+            wedding_date: formData.weddingDate,
+            wedding_location: formData.weddingLocation,
+            guest_count: parseInt(formData.guestCount),
+            budget: formData.budget || null,
+            current_organization: formData.currentOrganization,
+            specific_needs: formData.specificNeeds || null,
+            hear_about_us: formData.hearAboutUs || null
+          }
+        ]);
+
+      if (error) {
+        console.error('Erreur Supabase:', error);
+        throw error;
+      }
+
+      console.log('Demande enregistrée avec succès:', data);
       
       toast({
         title: "Demande envoyée avec succès !",
@@ -63,6 +89,7 @@ const ReservationJourM = () => {
         hearAboutUs: ''
       });
     } catch (error) {
+      console.error('Erreur lors de l\'envoi:', error);
       toast({
         title: "Erreur",
         description: "Une erreur est survenue. Veuillez réessayer.",
@@ -92,7 +119,7 @@ const ReservationJourM = () => {
               </h1>
             </div>
             <p className="text-xl text-gray-700 mb-4">
-              Coordination Jour J – Orchestré
+              Un jour J orchestré
             </p>
             <div className="inline-flex items-center gap-4 bg-wedding-olive/10 px-6 py-3 rounded-lg">
               <span className="text-2xl font-bold text-wedding-olive">750 € TTC</span>

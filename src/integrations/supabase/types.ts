@@ -295,6 +295,60 @@ export type Database = {
           },
         ]
       }
+      jour_m_reservations: {
+        Row: {
+          budget: string | null
+          created_at: string
+          current_organization: string
+          email: string
+          first_name: string
+          guest_count: number
+          hear_about_us: string | null
+          id: string
+          last_name: string
+          partner_name: string | null
+          phone: string
+          specific_needs: string | null
+          updated_at: string
+          wedding_date: string
+          wedding_location: string
+        }
+        Insert: {
+          budget?: string | null
+          created_at?: string
+          current_organization: string
+          email: string
+          first_name: string
+          guest_count: number
+          hear_about_us?: string | null
+          id?: string
+          last_name: string
+          partner_name?: string | null
+          phone: string
+          specific_needs?: string | null
+          updated_at?: string
+          wedding_date: string
+          wedding_location: string
+        }
+        Update: {
+          budget?: string | null
+          created_at?: string
+          current_organization?: string
+          email?: string
+          first_name?: string
+          guest_count?: number
+          hear_about_us?: string | null
+          id?: string
+          last_name?: string
+          partner_name?: string | null
+          phone?: string
+          specific_needs?: string | null
+          updated_at?: string
+          wedding_date?: string
+          wedding_location?: string
+        }
+        Relationships: []
+      }
       planning_questions: {
         Row: {
           categorie: string
