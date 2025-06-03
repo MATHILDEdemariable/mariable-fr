@@ -6,7 +6,7 @@ import {
   HeaderDropdownMenu,
   HeaderDropdownItem,
 } from "./HeaderDropdown";
-import { User2, Menu as MenuIcon } from "lucide-react";
+import { User2, Menu as MenuIcon, LogIn } from "lucide-react";
 import { Drawer, DrawerContent } from "./ui/drawer";
 import { useIsMobile } from "../hooks/use-mobile";
 import { supabase } from '@/integrations/supabase/client';
@@ -128,6 +128,17 @@ export default function Header() {
         {/* Desktop: Menus à droite, centrés */}
         <nav className="hidden md:flex flex-1 justify-end items-center gap-4 md:gap-6">
           <Menus isLoggedIn={isLoggedIn} />
+          
+          {/* Bouton de connexion explicite pour les utilisateurs non connectés */}
+          {!isLoggedIn && (
+            <Link 
+              to="/login"
+              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-wedding-olive hover:bg-wedding-olive/10 rounded-md transition-colors"
+            >
+              <LogIn className="h-4 w-4" />
+              <span>Se connecter</span>
+            </Link>
+          )}
         </nav>
 
         {/* Mobile: Burger menu à droite */}
@@ -157,6 +168,18 @@ export default function Header() {
               <div className="py-3 grid gap-4">
                 <nav className="flex flex-col gap-1">
                   <Menus onClick={() => setDrawerOpen(false)} isLoggedIn={isLoggedIn} />
+                  
+                  {/* Bouton de connexion dans le menu mobile */}
+                  {!isLoggedIn && (
+                    <Link 
+                      to="/login"
+                      onClick={() => setDrawerOpen(false)}
+                      className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-wedding-olive hover:bg-wedding-olive/10 rounded-md transition-colors mx-2"
+                    >
+                      <LogIn className="h-5 w-5" />
+                      <span>Se connecter</span>
+                    </Link>
+                  )}
                 </nav>
               </div>
             </DrawerContent>

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { 
@@ -13,7 +12,8 @@ import {
   Wine,
   MessageCircleQuestion,
   MessageSquare,
-  Users
+  Users,
+  Crown
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
@@ -84,6 +84,12 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
       external: true,
     },
     {
+      label: 'Upgrade / Premium',
+      icon: <Crown className="h-4 w-4" />,
+      path: '/pricing',
+      premium: true,
+    },
+    {
       label: 'Paramètres',
       icon: <Settings className="h-4 w-4" />,
       path: '/dashboard/settings',
@@ -149,12 +155,19 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
                 "flex items-center px-3 py-2.5 text-sm font-medium rounded-md transition-colors",
                 isActive(item.path)
                   ? 'bg-wedding-olive text-white shadow-sm'
+                  : item.premium
+                  ? 'text-wedding-olive font-semibold hover:bg-wedding-olive/20 border border-wedding-olive/30'
                   : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive',
                 isReaderMode ? 'pointer-events-none opacity-70' : ''
               )}
             >
               {item.icon}
               <span className="ml-3">{item.label}</span>
+              {item.premium && !isReaderMode && (
+                <span className="ml-auto text-xs bg-wedding-olive text-white px-2 py-0.5 rounded-full">
+                  PREMIUM
+                </span>
+              )}
               {isReaderMode && item.path !== '/dashboard' && (
                 <span className="ml-auto text-xs text-gray-400">(Lecture seule)</span>
               )}
