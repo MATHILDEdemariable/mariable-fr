@@ -8,7 +8,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { Calendar, MapPin, Users, Heart } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Calendar, MapPin, Users, Heart, Upload, FileText, Phone, Mail } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -25,7 +26,21 @@ const ReservationJourM = () => {
     budget: '',
     currentOrganization: '',
     specificNeeds: '',
-    hearAboutUs: ''
+    hearAboutUs: '',
+    documentsLinks: '',
+    prestatairePhotographe: '',
+    prestataireDJ: '',
+    prestataireTraiteur: '',
+    prestataireFleuriste: '',
+    prestataireMaquillage: '',
+    prestataireAutres: '',
+    deroulementMariage: '',
+    contactNom: '',
+    contactTelephone: '',
+    contactRole: '',
+    contactCommentaire: '',
+    servicePresencePhysique: false,
+    servicePresence2Jours: false
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -35,6 +50,10 @@ const ReservationJourM = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  const handleCheckboxChange = (name: string, checked: boolean) => {
+    setFormData(prev => ({ ...prev, [name]: checked }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -42,6 +61,27 @@ const ReservationJourM = () => {
     try {
       console.log('Envoi de la demande de réservation:', formData);
       
+      // Préparer les données pour la base
+      const prestataireData = {
+        photographe: formData.prestatairePhotographe,
+        dj_musique: formData.prestataireDJ,
+        traiteur: formData.prestataireTraiteur,
+        fleuriste: formData.prestataireFleuriste,
+        maquillage_coiffure: formData.prestataireMaquillage,
+        autres: formData.prestataireAutres
+      };
+
+      const contactJourJ = {
+        nom: formData.contactNom,
+        telephone: formData.contactTelephone,
+        role: formData.contactRole,
+        commentaire: formData.contactCommentaire
+      };
+
+      const servicesSouhaites = [];
+      if (formData.servicePresencePhysique) servicesSouhaites.push('presence_physique');
+      if (formData.servicePresence2Jours) servicesSouhaites.push('presence_2_jours');
+
       const { data, error } = await supabase
         .from('jour_m_reservations')
         .insert([
@@ -57,7 +97,12 @@ const ReservationJourM = () => {
             budget: formData.budget || null,
             current_organization: formData.currentOrganization,
             specific_needs: formData.specificNeeds || null,
-            hear_about_us: formData.hearAboutUs || null
+            hear_about_us: formData.hearAboutUs || null,
+            documents_links: formData.documentsLinks || null,
+            prestataires_reserves: prestataireData,
+            deroulement_mariage: formData.deroulementMariage || null,
+            contact_jour_j: contactJourJ,
+            services_souhaites: servicesSouhaites
           }
         ]);
 
@@ -86,7 +131,21 @@ const ReservationJourM = () => {
         budget: '',
         currentOrganization: '',
         specificNeeds: '',
-        hearAboutUs: ''
+        hearAboutUs: '',
+        documentsLinks: '',
+        prestatairePhotographe: '',
+        prestataireDJ: '',
+        prestataireTraiteur: '',
+        prestataireFleuriste: '',
+        prestataireMaquillage: '',
+        prestataireAutres: '',
+        deroulementMariage: '',
+        contactNom: '',
+        contactTelephone: '',
+        contactRole: '',
+        contactCommentaire: '',
+        servicePresencePhysique: false,
+        servicePresence2Jours: false
       });
     } catch (error) {
       console.error('Erreur lors de l\'envoi:', error);
@@ -103,7 +162,7 @@ const ReservationJourM = () => {
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <Helmet>
-        <title>Réservation Le Jour M | Mariable</title>
+        <title>Demande de réservation – Coordination Jour M | Mariable</title>
         <meta name="description" content="Réservez votre service de coordination Le Jour M pour un mariage parfaitement orchestré" />
       </Helmet>
       
@@ -115,15 +174,15 @@ const ReservationJourM = () => {
             <div className="flex items-center justify-center gap-2 mb-4">
               <span className="text-2xl">💎</span>
               <h1 className="text-4xl md:text-5xl font-serif text-black">
-                Le Jour M
+                Demande de réservation – Coordination Jour M
               </h1>
             </div>
             <p className="text-xl text-gray-700 mb-4">
               Un jour J orchestré
             </p>
             <div className="inline-flex items-center gap-4 bg-wedding-olive/10 px-6 py-3 rounded-lg">
-              <span className="text-2xl font-bold text-wedding-olive">750 € TTC</span>
-              <span className="text-sm text-gray-600">(au lieu de 1 000 € - offre de lancement)</span>
+              <span className="text-2xl font-bold text-wedding-olive">550 € TTC</span>
+              <span className="text-sm text-gray-600">(au lieu de 1000 € - offre de lancement)</span>
             </div>
           </div>
 
@@ -137,74 +196,77 @@ const ReservationJourM = () => {
               </p>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-8">
                 {/* Informations personnelles */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="firstName">Prénom *</Label>
-                    <Input
-                      id="firstName"
-                      name="firstName"
-                      value={formData.firstName}
-                      onChange={handleInputChange}
-                      required
-                      className="mt-1"
-                    />
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold border-b pb-2">Informations personnelles</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="firstName">Prénom *</Label>
+                      <Input
+                        id="firstName"
+                        name="firstName"
+                        value={formData.firstName}
+                        onChange={handleInputChange}
+                        required
+                        className="mt-1"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="lastName">Nom *</Label>
+                      <Input
+                        id="lastName"
+                        name="lastName"
+                        value={formData.lastName}
+                        onChange={handleInputChange}
+                        required
+                        className="mt-1"
+                      />
+                    </div>
                   </div>
-                  <div>
-                    <Label htmlFor="lastName">Nom *</Label>
-                    <Input
-                      id="lastName"
-                      name="lastName"
-                      value={formData.lastName}
-                      onChange={handleInputChange}
-                      required
-                      className="mt-1"
-                    />
-                  </div>
-                </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="email">Email *</Label>
-                    <Input
-                      id="email"
-                      name="email"
-                      type="email"
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      required
-                      className="mt-1"
-                    />
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="email">Email *</Label>
+                      <Input
+                        id="email"
+                        name="email"
+                        type="email"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        required
+                        className="mt-1"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="phone">Téléphone *</Label>
+                      <Input
+                        id="phone"
+                        name="phone"
+                        type="tel"
+                        value={formData.phone}
+                        onChange={handleInputChange}
+                        required
+                        className="mt-1"
+                      />
+                    </div>
                   </div>
-                  <div>
-                    <Label htmlFor="phone">Téléphone *</Label>
-                    <Input
-                      id="phone"
-                      name="phone"
-                      type="tel"
-                      value={formData.phone}
-                      onChange={handleInputChange}
-                      required
-                      className="mt-1"
-                    />
-                  </div>
-                </div>
 
-                <div>
-                  <Label htmlFor="partnerName">Nom de votre partenaire</Label>
-                  <Input
-                    id="partnerName"
-                    name="partnerName"
-                    value={formData.partnerName}
-                    onChange={handleInputChange}
-                    className="mt-1"
-                  />
+                  <div>
+                    <Label htmlFor="partnerName">Nom de votre partenaire</Label>
+                    <Input
+                      id="partnerName"
+                      name="partnerName"
+                      value={formData.partnerName}
+                      onChange={handleInputChange}
+                      className="mt-1"
+                    />
+                  </div>
                 </div>
 
                 {/* Informations mariage */}
-                <div className="border-t pt-6">
-                  <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold border-b pb-2 flex items-center gap-2">
                     <Heart className="h-5 w-5 text-wedding-olive" />
                     Informations sur votre mariage
                   </h3>
@@ -237,7 +299,7 @@ const ReservationJourM = () => {
                     </div>
                   </div>
 
-                  <div className="mt-4">
+                  <div>
                     <Label htmlFor="weddingLocation">Lieu du mariage (ville/région) *</Label>
                     <Input
                       id="weddingLocation"
@@ -250,7 +312,7 @@ const ReservationJourM = () => {
                     />
                   </div>
 
-                  <div className="mt-4">
+                  <div>
                     <Label htmlFor="budget">Budget global approximatif</Label>
                     <Input
                       id="budget"
@@ -263,9 +325,232 @@ const ReservationJourM = () => {
                   </div>
                 </div>
 
+                {/* Documents à envoyer */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold border-b pb-2 flex items-center gap-2">
+                    <FileText className="h-5 w-5 text-wedding-olive" />
+                    Documents à envoyer
+                  </h3>
+                  
+                  <div className="bg-blue-50 p-4 rounded-lg">
+                    <p className="text-sm text-blue-800 mb-2">
+                      Merci de nous transmettre les documents déjà en votre possession pour faciliter la coordination soit par mail 
+                      (transfert à l'adresse <strong>mathilde@mariable.fr</strong>) soit via ce formulaire :
+                    </p>
+                    <ul className="text-xs text-blue-700 list-disc list-inside space-y-1">
+                      <li>Planning prévisionnel (même brouillon)</li>
+                      <li>Liste des prestataires</li>
+                      <li>Devis & contrats si disponibles</li>
+                      <li>Plan de table ou plan de salle si disponible</li>
+                      <li>Liste des rôles attribués aux témoins / proches</li>
+                      <li>Moodboard / inspirations / éléments de déco</li>
+                      <li>Autres documents utiles (discours, playlists, checklists…)</li>
+                    </ul>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="documentsLinks">Lien Google Drive ou autre plateforme de partage</Label>
+                    <Input
+                      id="documentsLinks"
+                      name="documentsLinks"
+                      value={formData.documentsLinks}
+                      onChange={handleInputChange}
+                      className="mt-1"
+                      placeholder="https://drive.google.com/..."
+                    />
+                  </div>
+                </div>
+
+                {/* Prestataires déjà réservés */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold border-b pb-2">Prestataires déjà réservés</h3>
+                  <p className="text-sm text-gray-600">
+                    Merci de nous indiquer les prestataires déjà confirmés (et ceux manquants) :
+                  </p>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="prestatairePhotographe">Photographe</Label>
+                      <Input
+                        id="prestatairePhotographe"
+                        name="prestatairePhotographe"
+                        value={formData.prestatairePhotographe}
+                        onChange={handleInputChange}
+                        className="mt-1"
+                        placeholder="Nom du photographe ou 'À trouver'"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="prestataireDJ">DJ / Musique</Label>
+                      <Input
+                        id="prestataireDJ"
+                        name="prestataireDJ"
+                        value={formData.prestataireDJ}
+                        onChange={handleInputChange}
+                        className="mt-1"
+                        placeholder="Nom du DJ ou 'À trouver'"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="prestataireTraiteur">Traiteur</Label>
+                      <Input
+                        id="prestataireTraiteur"
+                        name="prestataireTraiteur"
+                        value={formData.prestataireTraiteur}
+                        onChange={handleInputChange}
+                        className="mt-1"
+                        placeholder="Nom du traiteur ou 'À trouver'"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="prestataireFleuriste">Fleuriste</Label>
+                      <Input
+                        id="prestataireFleuriste"
+                        name="prestataireFleuriste"
+                        value={formData.prestataireFleuriste}
+                        onChange={handleInputChange}
+                        className="mt-1"
+                        placeholder="Nom du fleuriste ou 'À trouver'"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="prestataireMaquillage">Maquilleuse / Coiffeuse</Label>
+                      <Input
+                        id="prestataireMaquillage"
+                        name="prestataireMaquillage"
+                        value={formData.prestataireMaquillage}
+                        onChange={handleInputChange}
+                        className="mt-1"
+                        placeholder="Nom de la maquilleuse ou 'À trouver'"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="prestataireAutres">Autres prestataires</Label>
+                      <Input
+                        id="prestataireAutres"
+                        name="prestataireAutres"
+                        value={formData.prestataireAutres}
+                        onChange={handleInputChange}
+                        className="mt-1"
+                        placeholder="Ex: Officiant, animateur..."
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Déroulé global du mariage */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold border-b pb-2 flex items-center gap-2">
+                    <MapPin className="h-5 w-5 text-wedding-olive" />
+                    Déroulé global du mariage
+                  </h3>
+                  
+                  <div>
+                    <Label htmlFor="deroulementMariage">
+                      Indiquez ici les grandes étapes prévues du jour J (facultatif mais très utile)
+                    </Label>
+                    <Textarea
+                      id="deroulementMariage"
+                      name="deroulementMariage"
+                      value={formData.deroulementMariage}
+                      onChange={handleInputChange}
+                      className="mt-1"
+                      rows={5}
+                      placeholder="Ex: 14h - Cérémonie civile à la mairie, 16h - Cérémonie religieuse à l'église, 17h - Cocktail au château, 20h - Dîner, 22h - Ouverture de bal..."
+                    />
+                  </div>
+                </div>
+
+                {/* Personne de contact */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold border-b pb-2 flex items-center gap-2">
+                    <Phone className="h-5 w-5 text-wedding-olive" />
+                    Personne de contact (autre que les mariés)
+                  </h3>
+                  <p className="text-sm text-gray-600">
+                    Pour le jour J = relai logistique
+                  </p>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="contactNom">Nom</Label>
+                      <Input
+                        id="contactNom"
+                        name="contactNom"
+                        value={formData.contactNom}
+                        onChange={handleInputChange}
+                        className="mt-1"
+                        placeholder="Prénom et nom"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="contactTelephone">Téléphone</Label>
+                      <Input
+                        id="contactTelephone"
+                        name="contactTelephone"
+                        value={formData.contactTelephone}
+                        onChange={handleInputChange}
+                        className="mt-1"
+                        placeholder="06 12 34 56 78"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="contactRole">Rôle</Label>
+                      <Input
+                        id="contactRole"
+                        name="contactRole"
+                        value={formData.contactRole}
+                        onChange={handleInputChange}
+                        className="mt-1"
+                        placeholder="Ex: témoin principal, frère, amie coordinatrice..."
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="contactCommentaire">Commentaire (si besoin)</Label>
+                      <Input
+                        id="contactCommentaire"
+                        name="contactCommentaire"
+                        value={formData.contactCommentaire}
+                        onChange={handleInputChange}
+                        className="mt-1"
+                        placeholder="Informations supplémentaires"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Services souhaités */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold border-b pb-2">Services souhaités</h3>
+                  
+                  <div className="space-y-3">
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        id="servicePresencePhysique"
+                        checked={formData.servicePresencePhysique}
+                        onCheckedChange={(checked) => handleCheckboxChange('servicePresencePhysique', checked as boolean)}
+                      />
+                      <Label htmlFor="servicePresencePhysique" className="text-sm">
+                        Présence physique le jour J de 11h à 21h (+200€)
+                      </Label>
+                    </div>
+                    
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        id="servicePresence2Jours"
+                        checked={formData.servicePresence2Jours}
+                        onCheckedChange={(checked) => handleCheckboxChange('servicePresence2Jours', checked as boolean)}
+                      />
+                      <Label htmlFor="servicePresence2Jours" className="text-sm">
+                        Présence physique 2 jours (nous contacter pour devis)
+                      </Label>
+                    </div>
+                  </div>
+                </div>
+
                 {/* Organisation actuelle */}
-                <div className="border-t pt-6">
-                  <h3 className="text-lg font-semibold mb-4">
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold border-b pb-2">
                     Votre organisation actuelle
                   </h3>
                   
@@ -285,7 +570,7 @@ const ReservationJourM = () => {
                     />
                   </div>
 
-                  <div className="mt-4">
+                  <div>
                     <Label htmlFor="specificNeeds">
                       Besoins spécifiques ou points d'attention particuliers
                     </Label>
@@ -302,7 +587,8 @@ const ReservationJourM = () => {
                 </div>
 
                 {/* Comment nous avez-vous connus */}
-                <div className="border-t pt-6">
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold border-b pb-2">Comment nous avez-vous connus</h3>
                   <div>
                     <Label htmlFor="hearAboutUs">Comment avez-vous entendu parler de Mariable ?</Label>
                     <Input
@@ -320,10 +606,9 @@ const ReservationJourM = () => {
                   <div className="bg-wedding-olive/10 p-4 rounded-lg mb-6">
                     <h4 className="font-semibold mb-2">Prochaines étapes :</h4>
                     <ul className="text-sm space-y-1">
-                      <li>• Nous vous recontacterons dans les 24h</li>
-                      <li>• Planification d'un appel de découverte (15-20 min)</li>
-                      <li>• Envoi d'un devis personnalisé</li>
-                      <li>• Signature du contrat et début de la coordination</li>
+                      <li>• Nous vous recontactons sous 24h</li>
+                      <li>• Appel découverte</li>
+                      <li>• Lancement de la coordination après validation</li>
                     </ul>
                   </div>
 
