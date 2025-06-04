@@ -8,7 +8,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { Calendar, MapPin, Users, Heart } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Calendar, MapPin, Users, Heart, Upload, FileText, Phone, CheckSquare } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -25,14 +26,63 @@ const ReservationJourM = () => {
     budget: '',
     currentOrganization: '',
     specificNeeds: '',
-    hearAboutUs: ''
+    hearAboutUs: '',
+    // Nouveaux champs
+    deroulementMariage: '',
+    documentsLinks: '',
+    uploadedFiles: [],
+    prestataireReserves: {
+      photographe: '',
+      dj_musique: '',
+      traiteur: '',
+      fleuriste: '',
+      maquilleuse_coiffeuse: '',
+      autre: ''
+    },
+    contactJourJ: {
+      nom: '',
+      telephone: '',
+      role: '',
+      commentaire: ''
+    },
+    servicesSouhaites: []
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    
+    if (name.startsWith('prestataires.')) {
+      const prestataireType = name.split('.')[1];
+      setFormData(prev => ({
+        ...prev,
+        prestataireReserves: {
+          ...prev.prestataireReserves,
+          [prestataireType]: value
+        }
+      }));
+    } else if (name.startsWith('contact.')) {
+      const contactField = name.split('.')[1];
+      setFormData(prev => ({
+        ...prev,
+        contactJourJ: {
+          ...prev.contactJourJ,
+          [contactField]: value
+        }
+      }));
+    } else {
+      setFormData(prev => ({ ...prev, [name]: value }));
+    }
+  };
+
+  const handleServiceChange = (service: string, checked: boolean) => {
+    setFormData(prev => ({
+      ...prev,
+      servicesSouhaites: checked 
+        ? [...prev.servicesSouhaites, service]
+        : prev.servicesSouhaites.filter(s => s !== service)
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -57,7 +107,13 @@ const ReservationJourM = () => {
             budget: formData.budget || null,
             current_organization: formData.currentOrganization,
             specific_needs: formData.specificNeeds || null,
-            hear_about_us: formData.hearAboutUs || null
+            hear_about_us: formData.hearAboutUs || null,
+            deroulement_mariage: formData.deroulementMariage || null,
+            documents_links: formData.documentsLinks || null,
+            uploaded_files: formData.uploadedFiles,
+            prestataires_reserves: formData.prestataireReserves,
+            contact_jour_j: formData.contactJourJ,
+            services_souhaites: formData.servicesSouhaites
           }
         ]);
 
@@ -86,7 +142,25 @@ const ReservationJourM = () => {
         budget: '',
         currentOrganization: '',
         specificNeeds: '',
-        hearAboutUs: ''
+        hearAboutUs: '',
+        deroulementMariage: '',
+        documentsLinks: '',
+        uploadedFiles: [],
+        prestataireReserves: {
+          photographe: '',
+          dj_musique: '',
+          traiteur: '',
+          fleuriste: '',
+          maquilleuse_coiffeuse: '',
+          autre: ''
+        },
+        contactJourJ: {
+          nom: '',
+          telephone: '',
+          role: '',
+          commentaire: ''
+        },
+        servicesSouhaites: []
       });
     } catch (error) {
       console.error('Erreur lors de l\'envoi:', error);
@@ -100,11 +174,16 @@ const ReservationJourM = () => {
     }
   };
 
+  const servicesOptions = [
+    'Présence physique le jour J',
+    'Présence physique 2 jours'
+  ];
+
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <Helmet>
-        <title>Réservation Le Jour M | Mariable</title>
-        <meta name="description" content="Réservez votre service de coordination Le Jour M pour un mariage parfaitement orchestré" />
+        <title>Demande de réservation – Coordination Jour M | Mariable</title>
+        <meta name="description" content="Demande de réservation pour notre service de coordination Le Jour M" />
       </Helmet>
       
       <Header />
@@ -115,7 +194,7 @@ const ReservationJourM = () => {
             <div className="flex items-center justify-center gap-2 mb-4">
               <span className="text-2xl">💎</span>
               <h1 className="text-4xl md:text-5xl font-serif text-black">
-                Le Jour M
+                Demande de réservation – Coordination Jour M
               </h1>
             </div>
             <p className="text-xl text-gray-700 mb-4">
@@ -130,82 +209,89 @@ const ReservationJourM = () => {
           <Card className="shadow-lg">
             <CardHeader>
               <CardTitle className="text-2xl font-serif text-center">
-                Formulaire de réservation
+                Formulaire de demande de réservation
               </CardTitle>
               <p className="text-center text-gray-600">
-                Remplissez ce formulaire pour réserver votre service de coordination
+                Remplissez ce formulaire pour faire votre demande de réservation
               </p>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-8">
                 {/* Informations personnelles */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="firstName">Prénom *</Label>
-                    <Input
-                      id="firstName"
-                      name="firstName"
-                      value={formData.firstName}
-                      onChange={handleInputChange}
-                      required
-                      className="mt-1"
-                    />
+                <div className="border-b pb-6">
+                  <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                    <Heart className="h-5 w-5 text-wedding-olive" />
+                    Informations personnelles
+                  </h3>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="firstName">Prénom *</Label>
+                      <Input
+                        id="firstName"
+                        name="firstName"
+                        value={formData.firstName}
+                        onChange={handleInputChange}
+                        required
+                        className="mt-1"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="lastName">Nom *</Label>
+                      <Input
+                        id="lastName"
+                        name="lastName"
+                        value={formData.lastName}
+                        onChange={handleInputChange}
+                        required
+                        className="mt-1"
+                      />
+                    </div>
                   </div>
-                  <div>
-                    <Label htmlFor="lastName">Nom *</Label>
-                    <Input
-                      id="lastName"
-                      name="lastName"
-                      value={formData.lastName}
-                      onChange={handleInputChange}
-                      required
-                      className="mt-1"
-                    />
-                  </div>
-                </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="email">Email *</Label>
-                    <Input
-                      id="email"
-                      name="email"
-                      type="email"
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      required
-                      className="mt-1"
-                    />
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                    <div>
+                      <Label htmlFor="email">Email *</Label>
+                      <Input
+                        id="email"
+                        name="email"
+                        type="email"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        required
+                        className="mt-1"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="phone">Téléphone *</Label>
+                      <Input
+                        id="phone"
+                        name="phone"
+                        type="tel"
+                        value={formData.phone}
+                        onChange={handleInputChange}
+                        required
+                        className="mt-1"
+                      />
+                    </div>
                   </div>
-                  <div>
-                    <Label htmlFor="phone">Téléphone *</Label>
-                    <Input
-                      id="phone"
-                      name="phone"
-                      type="tel"
-                      value={formData.phone}
-                      onChange={handleInputChange}
-                      required
-                      className="mt-1"
-                    />
-                  </div>
-                </div>
 
-                <div>
-                  <Label htmlFor="partnerName">Nom de votre partenaire</Label>
-                  <Input
-                    id="partnerName"
-                    name="partnerName"
-                    value={formData.partnerName}
-                    onChange={handleInputChange}
-                    className="mt-1"
-                  />
+                  <div className="mt-4">
+                    <Label htmlFor="partnerName">Nom de votre partenaire</Label>
+                    <Input
+                      id="partnerName"
+                      name="partnerName"
+                      value={formData.partnerName}
+                      onChange={handleInputChange}
+                      className="mt-1"
+                    />
+                  </div>
                 </div>
 
                 {/* Informations mariage */}
-                <div className="border-t pt-6">
+                <div className="border-b pb-6">
                   <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-                    <Heart className="h-5 w-5 text-wedding-olive" />
+                    <Calendar className="h-5 w-5 text-wedding-olive" />
                     Informations sur votre mariage
                   </h3>
                   
@@ -263,8 +349,245 @@ const ReservationJourM = () => {
                   </div>
                 </div>
 
+                {/* Documents à envoyer */}
+                <div className="border-b pb-6">
+                  <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                    <FileText className="h-5 w-5 text-wedding-olive" />
+                    📎 Documents à envoyer
+                  </h3>
+                  
+                  <div className="bg-blue-50 p-4 rounded-lg mb-4">
+                    <p className="text-sm text-blue-800 mb-2">
+                      Merci de nous transmettre les documents déjà en votre possession pour faciliter la coordination soit via le formulaire soit par mail à l'adresse 
+                      <strong> mathilde@mariable.fr</strong>
+                    </p>
+                  </div>
+
+                  <div className="mb-4">
+                    <Label htmlFor="documentsLinks">📤 Liens Google Drive / Pinterest ou autres</Label>
+                    <Textarea
+                      id="documentsLinks"
+                      name="documentsLinks"
+                      value={formData.documentsLinks}
+                      onChange={handleInputChange}
+                      className="mt-1"
+                      rows={3}
+                      placeholder="Insérez ici vos liens Google Drive, Pinterest ou autres partages..."
+                    />
+                  </div>
+
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <h4 className="font-medium mb-2">Documents utiles :</h4>
+                    <ul className="text-sm space-y-1 text-gray-700">
+                      <li>• Planning prévisionnel (même brouillon)</li>
+                      <li>• Liste des prestataires</li>
+                      <li>• Devis & contrats si disponibles</li>
+                      <li>• Plan de table ou plan de salle si disponible</li>
+                      <li>• Liste des rôles attribués aux témoins / proches</li>
+                      <li>• Moodboard / inspirations / éléments de déco</li>
+                      <li>• Autres documents utiles (discours, playlists, checklists…)</li>
+                    </ul>
+                  </div>
+                </div>
+
+                {/* Prestataires déjà réservés */}
+                <div className="border-b pb-6">
+                  <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                    <Users className="h-5 w-5 text-wedding-olive" />
+                    📌 Prestataires déjà réservés
+                  </h3>
+                  
+                  <p className="text-sm text-gray-600 mb-4">
+                    Merci de nous indiquer les prestataires déjà confirmés (et ceux manquants) :
+                  </p>
+
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="prestataires.photographe">Photographe</Label>
+                      <Input
+                        id="prestataires.photographe"
+                        name="prestataires.photographe"
+                        value={formData.prestataireReserves.photographe}
+                        onChange={handleInputChange}
+                        className="mt-1"
+                        placeholder="Nom du photographe ou 'À trouver'"
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="prestataires.dj_musique">DJ / Musique</Label>
+                      <Input
+                        id="prestataires.dj_musique"
+                        name="prestataires.dj_musique"
+                        value={formData.prestataireReserves.dj_musique}
+                        onChange={handleInputChange}
+                        className="mt-1"
+                        placeholder="Nom du DJ/musicien ou 'À trouver'"
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="prestataires.traiteur">Traiteur</Label>
+                      <Input
+                        id="prestataires.traiteur"
+                        name="prestataires.traiteur"
+                        value={formData.prestataireReserves.traiteur}
+                        onChange={handleInputChange}
+                        className="mt-1"
+                        placeholder="Nom du traiteur ou 'À trouver'"
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="prestataires.fleuriste">Fleuriste</Label>
+                      <Input
+                        id="prestataires.fleuriste"
+                        name="prestataires.fleuriste"
+                        value={formData.prestataireReserves.fleuriste}
+                        onChange={handleInputChange}
+                        className="mt-1"
+                        placeholder="Nom du fleuriste ou 'À trouver'"
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="prestataires.maquilleuse_coiffeuse">Maquilleuse / Coiffeuse</Label>
+                      <Input
+                        id="prestataires.maquilleuse_coiffeuse"
+                        name="prestataires.maquilleuse_coiffeuse"
+                        value={formData.prestataireReserves.maquilleuse_coiffeuse}
+                        onChange={handleInputChange}
+                        className="mt-1"
+                        placeholder="Nom de la maquilleuse/coiffeuse ou 'À trouver'"
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="prestataires.autre">Autres prestataires</Label>
+                      <Textarea
+                        id="prestataires.autre"
+                        name="prestataires.autre"
+                        value={formData.prestataireReserves.autre}
+                        onChange={handleInputChange}
+                        className="mt-1"
+                        rows={3}
+                        placeholder="Autres prestataires (décorateur, videographe, etc.)"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Déroulé global du mariage */}
+                <div className="border-b pb-6">
+                  <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                    <MapPin className="h-5 w-5 text-wedding-olive" />
+                    🗺️ Déroulé global du mariage (si vous en avez un)
+                  </h3>
+                  
+                  <div>
+                    <Label htmlFor="deroulementMariage">Planning prévisionnel</Label>
+                    <Textarea
+                      id="deroulementMariage"
+                      name="deroulementMariage"
+                      value={formData.deroulementMariage}
+                      onChange={handleInputChange}
+                      className="mt-1"
+                      rows={5}
+                      placeholder="Indiquez ici les grandes étapes prévues du jour J : heure de cérémonies, animations, lieu... (facultatif mais très utile)"
+                    />
+                  </div>
+                </div>
+
+                {/* Personne de contact */}
+                <div className="border-b pb-6">
+                  <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                    <Phone className="h-5 w-5 text-wedding-olive" />
+                    📞 Personne de contact (autre que les mariés)
+                  </h3>
+                  
+                  <p className="text-sm text-gray-600 mb-4">
+                    Pour le jour J = relai logistique
+                  </p>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="contact.nom">Nom</Label>
+                      <Input
+                        id="contact.nom"
+                        name="contact.nom"
+                        value={formData.contactJourJ.nom}
+                        onChange={handleInputChange}
+                        className="mt-1"
+                        placeholder="Nom de la personne"
+                      />
+                    </div>
+                    
+                    <div>
+                      <Label htmlFor="contact.telephone">Téléphone</Label>
+                      <Input
+                        id="contact.telephone"
+                        name="contact.telephone"
+                        type="tel"
+                        value={formData.contactJourJ.telephone}
+                        onChange={handleInputChange}
+                        className="mt-1"
+                        placeholder="06 XX XX XX XX"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                    <div>
+                      <Label htmlFor="contact.role">Rôle</Label>
+                      <Input
+                        id="contact.role"
+                        name="contact.role"
+                        value={formData.contactJourJ.role}
+                        onChange={handleInputChange}
+                        className="mt-1"
+                        placeholder="Ex: témoin principal, frère, amie coordinatrice..."
+                      />
+                    </div>
+                    
+                    <div>
+                      <Label htmlFor="contact.commentaire">Commentaire (si besoin)</Label>
+                      <Input
+                        id="contact.commentaire"
+                        name="contact.commentaire"
+                        value={formData.contactJourJ.commentaire}
+                        onChange={handleInputChange}
+                        className="mt-1"
+                        placeholder="Informations complémentaires"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Services souhaités */}
+                <div className="border-b pb-6">
+                  <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                    <CheckSquare className="h-5 w-5 text-wedding-olive" />
+                    ✅ Services souhaités (à cocher)
+                  </h3>
+                  
+                  <div className="space-y-3">
+                    {servicesOptions.map((service) => (
+                      <div key={service} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={service}
+                          checked={formData.servicesSouhaites.includes(service)}
+                          onCheckedChange={(checked) => handleServiceChange(service, checked as boolean)}
+                        />
+                        <Label htmlFor={service} className="text-sm font-normal">
+                          {service}
+                        </Label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
                 {/* Organisation actuelle */}
-                <div className="border-t pt-6">
+                <div className="border-b pb-6">
                   <h3 className="text-lg font-semibold mb-4">
                     Votre organisation actuelle
                   </h3>
@@ -302,7 +625,7 @@ const ReservationJourM = () => {
                 </div>
 
                 {/* Comment nous avez-vous connus */}
-                <div className="border-t pt-6">
+                <div className="border-b pb-6">
                   <div>
                     <Label htmlFor="hearAboutUs">Comment avez-vous entendu parler de Mariable ?</Label>
                     <Input
@@ -316,7 +639,7 @@ const ReservationJourM = () => {
                   </div>
                 </div>
 
-                <div className="border-t pt-6">
+                <div>
                   <div className="bg-wedding-olive/10 p-4 rounded-lg mb-6">
                     <h4 className="font-semibold mb-2">Prochaines étapes :</h4>
                     <ul className="text-sm space-y-1">
