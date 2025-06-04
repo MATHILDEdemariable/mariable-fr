@@ -298,11 +298,8 @@ export type Database = {
       jour_m_reservations: {
         Row: {
           budget: string | null
-          contact_jour_j: Json | null
           created_at: string
           current_organization: string
-          deroulement_mariage: string | null
-          documents_links: string | null
           email: string
           first_name: string
           guest_count: number
@@ -311,21 +308,15 @@ export type Database = {
           last_name: string
           partner_name: string | null
           phone: string
-          prestataires_reserves: Json | null
-          services_souhaites: Json | null
           specific_needs: string | null
           updated_at: string
-          uploaded_files: Json | null
           wedding_date: string
           wedding_location: string
         }
         Insert: {
           budget?: string | null
-          contact_jour_j?: Json | null
           created_at?: string
           current_organization: string
-          deroulement_mariage?: string | null
-          documents_links?: string | null
           email: string
           first_name: string
           guest_count: number
@@ -334,21 +325,15 @@ export type Database = {
           last_name: string
           partner_name?: string | null
           phone: string
-          prestataires_reserves?: Json | null
-          services_souhaites?: Json | null
           specific_needs?: string | null
           updated_at?: string
-          uploaded_files?: Json | null
           wedding_date: string
           wedding_location: string
         }
         Update: {
           budget?: string | null
-          contact_jour_j?: Json | null
           created_at?: string
           current_organization?: string
-          deroulement_mariage?: string | null
-          documents_links?: string | null
           email?: string
           first_name?: string
           guest_count?: number
@@ -357,11 +342,8 @@ export type Database = {
           last_name?: string
           partner_name?: string | null
           phone?: string
-          prestataires_reserves?: Json | null
-          services_souhaites?: Json | null
           specific_needs?: string | null
           updated_at?: string
-          uploaded_files?: Json | null
           wedding_date?: string
           wedding_location?: string
         }
