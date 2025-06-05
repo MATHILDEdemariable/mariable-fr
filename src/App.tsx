@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -32,6 +33,7 @@ import Professionnels from "./pages/Professionnels";
 import NotFound from "./pages/NotFound";
 import FormAdmin from "./pages/admin/FormAdmin";
 import PrestataireAdmin from "./pages/admin/Prestataires";
+import ReservationsJourM from "./pages/admin/ReservationsJourM";
 import ImportAirtable from "./pages/ImportAirtable";
 import ChecklistMariage from "./pages/ChecklistMariage";
 import PlanningPersonnalise from "./pages/PlanningPersonnalise";
