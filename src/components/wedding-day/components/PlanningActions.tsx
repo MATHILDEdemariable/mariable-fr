@@ -1,65 +1,97 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Download, Share2, FileText } from 'lucide-react';
+import { Download, RefreshCw } from 'lucide-react';
 import { usePlanning } from '../context/PlanningContext';
+import { useToast } from '@/components/ui/use-toast';
+import { exportPlanningJourJBrandedPDF } from '@/services/planningJourJBrandedExport';
 
-const PlanningActions: React.FC = () => {
-  const { planning } = usePlanning();
-  const [localExportLoading, setLocalExportLoading] = useState(false);
+export const PlanningActions: React.FC = () => {
+  const { events, formData, setFormData, setEvents, setActiveTab, exportLoading, setExportLoading } = usePlanning();
+  const { toast } = useToast();
 
+  const handleReset = () => {
+    setFormData(null);
+    setEvents([]);
+    setActiveTab("form");
+  };
+  
   const handleExportPDF = async () => {
-    if (!planning || planning.length === 0) return;
+    if (!events.length) return;
     
-    setLocalExportLoading(true);
+    setExportLoading(true);
+    
     try {
-      // TODO: Implement PDF export functionality
-      console.log('Exporting planning to PDF...');
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate export
+      toast({
+        title: "Export PDF en cours",
+        description: "Préparation de votre planning personnalisé..."
+      });
+      
+      // Use the new branded PDF export service
+      const success = await exportPlanningJourJBrandedPDF({
+        events,
+        weddingDate: formData?.date_mariage ? new Date(formData.date_mariage).toLocaleDateString('fr-FR') : undefined,
+        coupleNames: formData?.nom_couple || "Votre mariage"
+      });
+      
+      if (success) {
+        toast({
+          title: "Export réussi",
+          description: "Votre planning Jour J a été exporté en PDF avec le design Mariable"
+        });
+      } else {
+        toast({
+          title: "Erreur d'export",
+          description: "Une erreur s'est produite lors de l'export en PDF",
+          variant: "destructive"
+        });
+      }
     } catch (error) {
-      console.error('Error exporting PDF:', error);
+      console.error("Erreur lors de l'export PDF:", error);
+      toast({
+        title: "Erreur d'export",
+        description: "Une erreur s'est produite lors de l'export en PDF",
+        variant: "destructive"
+      });
     } finally {
-      setLocalExportLoading(false);
+      setExportLoading(false);
     }
   };
 
-  const handleShare = async () => {
-    if (!planning || planning.length === 0) return;
-    
-    try {
-      // TODO: Implement share functionality
-      console.log('Sharing planning...');
-    } catch (error) {
-      console.error('Error sharing planning:', error);
-    }
-  };
-
-  if (!planning || planning.length === 0) {
+  // Only show actions when we have events
+  if (!events.length) {
     return null;
   }
 
   return (
-    <div className="flex gap-2">
+    <div className="flex flex-wrap gap-2">
       <Button
         variant="outline"
-        onClick={handleExportPDF}
-        disabled={localExportLoading}
         className="flex items-center gap-2"
+        onClick={handleReset}
       >
-        <Download className="h-4 w-4" />
-        {localExportLoading ? 'Export...' : 'Exporter PDF'}
+        <RefreshCw className="h-4 w-4" />
+        Recommencer
       </Button>
       
       <Button
         variant="outline"
-        onClick={handleShare}
-        className="flex items-center gap-2"
+        className="bg-wedding-olive/10 hover:bg-wedding-olive/20 text-wedding-olive flex items-center gap-2"
+        onClick={handleExportPDF}
+        disabled={exportLoading}
       >
-        <Share2 className="h-4 w-4" />
-        Partager
+        {exportLoading ? (
+          <>
+            <div className="h-4 w-4 border-2 border-wedding-olive border-t-transparent rounded-full animate-spin"></div>
+            Export...
+          </>
+        ) : (
+          <>
+            <Download className="h-4 w-4" />
+            Exporter en PDF
+          </>
+        )}
       </Button>
     </div>
   );
 };
-
-export default PlanningActions;

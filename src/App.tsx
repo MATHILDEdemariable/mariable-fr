@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -50,6 +49,7 @@ import PrestataireTrackingPage from "./pages/prestataire/tracking";
 import MentionsLegales from "./pages/MentionsLegales";
 import CGV from "./pages/CGV";
 import Pricing from "./pages/Pricing";
+import ReservationJourM from "./pages/ReservationJourM";
 
 // Initialize the query client
 const queryClient = new QueryClient();
@@ -90,6 +90,9 @@ const App = () => {
                 
                 {/* Pricing page */}
                 <Route path="/pricing" element={<Pricing />} />
+                
+                {/* Reservation Le Jour M */}
+                <Route path="/reservation-jour-m" element={<ReservationJourM />} />
                 
                 {/* Checklist page */}
                 <Route path="/checklist-mariage" element={<ChecklistMariage />} />

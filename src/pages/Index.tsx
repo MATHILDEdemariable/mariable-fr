@@ -117,7 +117,7 @@ const Index = () => {
               </div>
 
               <Button asChild size="lg" className="bg-wedding-olive hover:bg-wedding-olive/90 text-white">
-                <Link to="/register">
+                <Link to="/pricing">
                   Organisez mieux, dépensez moins <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
               </Button>

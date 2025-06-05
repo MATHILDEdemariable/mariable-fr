@@ -1,42 +1,13 @@
-
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Badge } from '@/components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { useToast } from '@/hooks/use-toast';
+import { ChevronDown, ChevronRight, Users, CheckCircle, Download, X, Plus, GripVertical, Check, Eye } from 'lucide-react';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/components/ui/use-toast';
 import { usePlanning } from '../context/PlanningContext';
-import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
-import { 
-  Users, 
-  Plus, 
-  Edit2, 
-  Trash2, 
-  CheckCircle, 
-  Clock, 
-  AlertCircle,
-  Phone,
-  Mail,
-  Calendar,
-  MapPin,
-  Download,
-  Share2,
-  GripVertical,
-  Check,
-  ChevronDown,
-  ChevronRight,
-  Eye,
-  X
-} from 'lucide-react';
-import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
 
 interface TeamTask {
   id: string;
@@ -106,8 +77,6 @@ const TeamTasksSection: React.FC = () => {
   const [openHiddenCategories, setOpenHiddenCategories] = useState<Record<string, boolean>>({});
   const [exportLoading, setExportLoading] = useState(false);
   const [newTaskInputs, setNewTaskInputs] = useState<Record<string, { title: string; assignedTo: string; visible: boolean }>>({});
-  const [newTask, setNewTask] = useState({ title: '', description: '', assignee_id: '', due_date: '', priority: 'medium', category: 'general' });
-  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const { user, formData } = usePlanning();
   const { toast } = useToast();
 
@@ -389,89 +358,8 @@ const TeamTasksSection: React.FC = () => {
     }
   };
 
-  const handleCreateTask = async () => {
-    if (!newTask.title.trim() || !newTask.assignee_id) return;
-
-    try {
-      const { data: userData } = await supabase.auth.getUser();
-      if (!userData.user) return;
-
-      const taskData = {
-        user_id: userData.user.id,
-        task_name: newTask.title,
-        phase: newTask.category,
-        position: 0,
-        is_custom: true,
-        responsible_person: newTask.assignee_id
-      };
-
-      const { error } = await supabase
-        .from('team_tasks')
-        .insert([taskData]);
-
-      if (error) throw error;
-
-      toast({
-        title: "Tâche créée",
-        description: "La tâche a été assignée avec succès."
-      });
-
-      setNewTask({
-        title: '',
-        description: '',
-        assignee_id: '',
-        due_date: '',
-        priority: 'medium',
-        category: 'general'
-      });
-      setIsCreateDialogOpen(false);
-      loadTasksFromDatabase();
-    } catch (error) {
-      console.error('Error creating task:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible de créer la tâche.",
-        variant: "destructive"
-      });
-    }
-  };
-
-  const handleUpdateTask = async (taskId: string, updates: Partial<TeamTask>) => {
-    try {
-      // Convert any number values to strings if needed
-      const sanitizedUpdates = Object.entries(updates).reduce((acc, [key, value]) => {
-        if (key === 'assignee_id' && typeof value === 'number') {
-          acc[key] = value.toString();
-        } else {
-          acc[key] = value;
-        }
-        return acc;
-      }, {} as any);
-
-      const { error } = await supabase
-        .from('team_tasks')
-        .update(sanitizedUpdates)
-        .eq('id', taskId);
-
-      if (error) throw error;
-
-      toast({
-        title: "Tâche mise à jour",
-        description: "Les modifications ont été sauvegardées."
-      });
-
-      loadTasksFromDatabase();
-    } catch (error) {
-      console.error('Error updating task:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible de mettre à jour la tâche.",
-        variant: "destructive"
-      });
-    }
-  };
-
-  const onDragEnd = async (result: DropResult) => {
+  // ... keep existing code (onDragEnd function)
+  const onDragEnd = async (result: any) => {
     if (!result.destination || !user) return;
 
     const { source, destination } = result;
@@ -570,6 +458,7 @@ const TeamTasksSection: React.FC = () => {
     }));
   };
 
+  // ... keep existing code (exportCoordinationPDF function)
   const exportCoordinationPDF = async () => {
     setExportLoading(true);
     
