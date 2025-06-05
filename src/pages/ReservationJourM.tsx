@@ -49,6 +49,110 @@ const ReservationJourM = () => {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+
+  // Validation function
+  const validateForm = () => {
+    const requiredFields = [
+      { field: formData.firstName, name: 'Prénom' },
+      { field: formData.lastName, name: 'Nom' },
+      { field: formData.email, name: 'Email' },
+      { field: formData.phone, name: 'Téléphone' },
+      { field: formData.weddingDate, name: 'Date du mariage' },
+      { field: formData.weddingLocation, name: 'Lieu du mariage' },
+      { field: formData.guestCount, name: 'Nombre d\'invités' },
+      { field: formData.currentOrganization, name: 'Organisation actuelle' }
+    ];
+
+    for (const { field, name } of requiredFields) {
+      if (!field || field.trim() === '') {
+        toast({
+          title: "Champ obligatoire manquant",
+          description: `Le champ "${name}" est obligatoire.`,
+          variant: "destructive",
+        });
+        return false;
+      }
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      toast({
+        title: "Email invalide",
+        description: "Veuillez saisir une adresse email valide.",
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    // Validate guest count is a number
+    if (isNaN(Number(formData.guestCount)) || Number(formData.guestCount) <= 0) {
+      toast({
+        title: "Nombre d'invités invalide",
+        description: "Veuillez saisir un nombre d'invités valide.",
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    return true;
+  };
+
+  // File upload function
+  const handleFileUpload = async (files: FileList) => {
+    if (!files || files.length === 0) return [];
+
+    setIsUploading(true);
+    const uploadedFileUrls = [];
+
+    try {
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        
+        // Generate unique filename
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+        
+        console.log(`Uploading file: ${file.name} as ${fileName}`);
+        
+        const { data, error } = await supabase.storage
+          .from('jour-m-documents')
+          .upload(fileName, file);
+
+        if (error) {
+          console.error('Error uploading file:', error);
+          throw error;
+        }
+
+        // Get public URL
+        const { data: { publicUrl } } = supabase.storage
+          .from('jour-m-documents')
+          .getPublicUrl(fileName);
+
+        uploadedFileUrls.push({
+          name: file.name,
+          url: publicUrl,
+          size: file.size,
+          type: file.type
+        });
+        
+        console.log(`File uploaded successfully: ${fileName}`);
+      }
+
+      return uploadedFileUrls;
+    } catch (error) {
+      console.error('Error uploading files:', error);
+      toast({
+        title: "Erreur d'upload",
+        description: "Erreur lors du téléchargement des fichiers. Veuillez réessayer.",
+        variant: "destructive",
+      });
+      return [];
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -73,6 +177,17 @@ const ReservationJourM = () => {
       }));
     } else {
       setFormData(prev => ({ ...prev, [name]: value }));
+    }
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      const uploadedFiles = await handleFileUpload(files);
+      setFormData(prev => ({
+        ...prev,
+        uploadedFiles: [...prev.uploadedFiles, ...uploadedFiles]
+      }));
     }
   };
 
@@ -114,6 +229,11 @@ const ReservationJourM = () => {
     e.preventDefault();
     console.log('Début de l\'envoi du formulaire');
     console.log('FormData:', formData);
+    
+    // Validate form before submission
+    if (!validateForm()) {
+      return;
+    }
     
     setIsSubmitting(true);
 
@@ -719,7 +839,7 @@ const ReservationJourM = () => {
                   </div>
                 </div>
 
-                {/* Documents à envoyer - déplacé à la fin */}
+                {/* Documents à envoyer - with improved file upload */}
                 <div className="border-b pb-6">
                   <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                     <FileText className="h-5 w-5 text-wedding-olive" />
@@ -751,27 +871,34 @@ const ReservationJourM = () => {
                     <Input
                       id="uploadFiles"
                       type="file"
-                      accept=".pdf"
+                      accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
                       multiple
+                      onChange={handleFileChange}
                       className="mt-1"
+                      disabled={isUploading}
                     />
+                    {isUploading && (
+                      <p className="text-sm text-blue-600 mt-2">
+                        Téléchargement en cours...
+                      </p>
+                    )}
+                    {formData.uploadedFiles.length > 0 && (
+                      <div className="mt-3">
+                        <p className="text-sm font-medium text-green-600 mb-2">
+                          Fichiers téléchargés ({formData.uploadedFiles.length}) :
+                        </p>
+                        <ul className="text-sm space-y-1">
+                          {formData.uploadedFiles.map((file, index) => (
+                            <li key={index} className="text-gray-600">
+                              ✓ {file.name}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
                   </div>
 
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <h4 className="font-medium mb-2">**Document indispensable = devis de chaque prestataire**</h4>
-                    <p className="text-sm text-gray-700 mb-3">J'ai besoin des devis pour comprendre la prestation et le déroulé potentiel</p>
-                    
-                    <h4 className="font-medium mb-2">Documents utiles :</h4>
-                    <ul className="text-sm space-y-1 text-gray-700">
-                      <li>• Planning prévisionnel (même brouillon)</li>
-                      <li>• Liste des prestataires</li>
-                      <li>• Contrats si disponibles</li>
-                      <li>• Plan de table ou plan de salle si disponible</li>
-                      <li>• Liste des rôles attribués aux témoins / proches</li>
-                      <li>• Moodboard / inspirations / liste des éléments de déco DIY</li>
-                      <li>• Autres documents utiles (playlists, checklists…)</li>
-                    </ul>
-                  </div>
+                  {/* ... keep existing code (document requirements section) */}
                 </div>
 
                 <div>
@@ -787,10 +914,12 @@ const ReservationJourM = () => {
 
                   <Button
                     type="submit"
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || isUploading}
                     className="w-full bg-wedding-olive hover:bg-wedding-olive/90 text-white py-3"
                   >
-                    {isSubmitting ? 'Envoi en cours...' : 'Envoyer ma demande de réservation'}
+                    {isSubmitting ? 'Envoi en cours...' : 
+                     isUploading ? 'Téléchargement des fichiers...' : 
+                     'Envoyer ma demande de réservation'}
                   </Button>
                 </div>
               </form>

@@ -301,6 +301,7 @@ export type Database = {
           contact_jour_j: Json | null
           created_at: string
           current_organization: string
+          delegation_tasks: string | null
           deroulement_mariage: string | null
           documents_links: string | null
           email: string
@@ -324,6 +325,7 @@ export type Database = {
           contact_jour_j?: Json | null
           created_at?: string
           current_organization: string
+          delegation_tasks?: string | null
           deroulement_mariage?: string | null
           documents_links?: string | null
           email: string
@@ -347,6 +349,7 @@ export type Database = {
           contact_jour_j?: Json | null
           created_at?: string
           current_organization?: string
+          delegation_tasks?: string | null
           deroulement_mariage?: string | null
           documents_links?: string | null
           email?: string
