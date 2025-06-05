@@ -112,39 +112,52 @@ const ReservationJourM = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('Début de l\'envoi du formulaire');
+    console.log('FormData:', formData);
+    
     setIsSubmitting(true);
 
     try {
-      console.log('Envoi de la demande de réservation:', formData);
+      console.log('Tentative d\'insertion dans Supabase...');
+      
+      // Prepare data with correct field names matching the database schema
+      const insertData = {
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        email: formData.email,
+        phone: formData.phone,
+        partner_name: formData.partnerFirstName, // Note: keeping as partner_name to match existing schema
+        wedding_date: formData.weddingDate,
+        wedding_location: formData.weddingLocation,
+        guest_count: formData.guestCount ? parseInt(formData.guestCount) : null,
+        budget: formData.budget || null,
+        current_organization: formData.currentOrganization,
+        deroulement_mariage: formData.deroulementMariage || null,
+        delegation_tasks: formData.delegationTasks || null,
+        specific_needs: formData.specificNeeds || null,
+        hear_about_us: formData.hearAboutUs || null,
+        documents_links: formData.documentsLinks || null,
+        uploaded_files: formData.uploadedFiles,
+        prestataires_reserves: formData.prestataireReserves,
+        contact_jour_j: formData.contactsJourJ,
+        services_souhaites: formData.servicesSouhaites
+      };
+
+      console.log('Données préparées pour insertion:', insertData);
       
       const { data, error } = await supabase
         .from('jour_m_reservations')
-        .insert([
-          {
-            first_name: formData.firstName,
-            last_name: formData.lastName,
-            email: formData.email,
-            phone: formData.phone,
-            partner_name: formData.partnerFirstName,
-            wedding_date: formData.weddingDate,
-            wedding_location: formData.weddingLocation,
-            guest_count: parseInt(formData.guestCount),
-            budget: formData.budget || null,
-            current_organization: formData.currentOrganization,
-            deroulement_mariage: formData.deroulementMariage || null,
-            delegation_tasks: formData.delegationTasks || null,
-            specific_needs: formData.specificNeeds || null,
-            hear_about_us: formData.hearAboutUs || null,
-            documents_links: formData.documentsLinks || null,
-            uploaded_files: formData.uploadedFiles,
-            prestataires_reserves: formData.prestataireReserves,
-            contact_jour_j: formData.contactsJourJ,
-            services_souhaites: formData.servicesSouhaites
-          }
-        ]);
+        .insert([insertData]);
+
+      console.log('Réponse Supabase:', { data, error });
 
       if (error) {
-        console.error('Erreur Supabase:', error);
+        console.error('Erreur Supabase détaillée:', {
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          code: error.code
+        });
         throw error;
       }
 
@@ -189,11 +202,31 @@ const ReservationJourM = () => {
         }],
         servicesSouhaites: []
       });
+
+      console.log('Formulaire réinitialisé avec succès');
+
     } catch (error) {
-      console.error('Erreur lors de l\'envoi:', error);
+      console.error('Erreur complète lors de l\'envoi:', error);
+      
+      let errorMessage = "Une erreur est survenue. Veuillez réessayer.";
+      
+      if (error instanceof Error) {
+        if (error.message.includes('guest_count')) {
+          errorMessage = "Erreur avec le nombre d'invités. Veuillez vérifier que c'est un nombre valide.";
+        } else if (error.message.includes('email')) {
+          errorMessage = "Erreur avec l'adresse email. Veuillez vérifier le format.";
+        } else if (error.message.includes('wedding_date')) {
+          errorMessage = "Erreur avec la date du mariage. Veuillez vérifier le format de date.";
+        } else if (error.message.includes('required')) {
+          errorMessage = "Certains champs obligatoires sont manquants.";
+        } else {
+          errorMessage = `Erreur technique: ${error.message}`;
+        }
+      }
+      
       toast({
         title: "Erreur",
-        description: "Une erreur est survenue. Veuillez réessayer.",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
