@@ -28,12 +28,12 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <HelmetProvider>
-      <AnalyticsProvider>
-        <ReaderModeProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
+      <ReaderModeProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <AnalyticsProvider>
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/contact" element={<Contact />} />
@@ -51,10 +51,10 @@ const App = () => (
                 <Route path="/admin" element={<Admin />} />
                 <Route path="/admin/jour-m" element={<JourMReservations />} />
               </Routes>
-            </BrowserRouter>
-          </TooltipProvider>
-        </ReaderModeProvider>
-      </AnalyticsProvider>
+            </AnalyticsProvider>
+          </BrowserRouter>
+        </TooltipProvider>
+      </ReaderModeProvider>
     </HelmetProvider>
   </QueryClientProvider>
 );
