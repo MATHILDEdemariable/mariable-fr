@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import Header from '@/components/Header';
@@ -34,11 +35,11 @@ const Pricing = () => {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl mx-auto mb-16">
-              {/* Bloc 1 - Organisation & Coordination en autonomie */}
+              {/* Bloc 1 - Le Planner Mariable */}
               <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col">
                 <CardHeader className="text-center pb-6">
                   <CardTitle className="text-xl font-serif mb-4">
-                    Organisation & Coordination en autonomie
+                    📱Le Planner Mariable
                   </CardTitle>
                   <div className="text-3xl font-bold text-wedding-olive mb-2">
                     Gratuit
@@ -49,7 +50,7 @@ const Pricing = () => {
                   <div className="space-y-3 flex-grow">
                     <div className="flex items-start gap-3">
                       <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Accès à votre espace personnel (dashboard)</p>
+                      <p className="text-sm text-gray-700">Accès à votre espace personnel (tableau de bord)</p>
                     </div>
                     <div className="flex items-start gap-3">
                       <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
@@ -57,11 +58,15 @@ const Pricing = () => {
                     </div>
                     <div className="flex items-start gap-3">
                       <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Calculatrice de budget & modèle de suivi du budget téléchargeable</p>
+                      <p className="text-sm text-gray-700">Calculatrice de budget</p>
                     </div>
                     <div className="flex items-start gap-3">
                       <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Accès la sélection de prestataire</p>
+                      <p className="text-sm text-gray-700">Modèle de suivi budgetaire en ligne & téléchargeables</p>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                      <p className="text-sm text-gray-700">Accès à la sélection de prestataire Mariable</p>
                     </div>
                     <div className="flex items-start gap-3">
                       <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
@@ -69,11 +74,11 @@ const Pricing = () => {
                     </div>
                     <div className="flex items-start gap-3">
                       <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Outils d'aide à la coordination jour-j</p>
+                      <p className="text-sm text-gray-700">Outils d'aide à la coordination jour J</p>
                     </div>
                     <div className="flex items-start gap-3">
                       <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Export Pdf</p>
+                      <p className="text-sm text-gray-700">Compilation de conseils opérationnels</p>
                     </div>
                     <div className="flex items-start gap-3">
                       <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
@@ -103,10 +108,9 @@ const Pricing = () => {
               {/* Bloc 2 - Le Point M */}
               <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col">
                 <CardHeader className="text-center pb-6">
-                  <div className="flex items-center justify-center gap-2 mb-2">
-                    <span className="text-lg">💡</span>
-                    <CardTitle className="text-xl font-serif">Le Point M</CardTitle>
-                  </div>
+                  <CardTitle className="text-xl font-serif mb-4">
+                    💬 Le Point M
+                  </CardTitle>
                   <div className="text-3xl font-bold text-wedding-olive mb-2">
                     30 € TTC
                   </div>
@@ -136,7 +140,7 @@ const Pricing = () => {
                     </div>
                     <div className="flex items-start gap-3">
                       <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Optimisation du planning jour J</p>
+                      <p className="text-sm text-gray-700">Optimisation du planning Jour J</p>
                     </div>
                     <div className="flex items-start gap-3">
                       <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
@@ -145,10 +149,6 @@ const Pricing = () => {
                     <div className="flex items-start gap-3">
                       <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
                       <p className="text-sm text-gray-700">Envoi d'un compte-rendu clair & actionnable</p>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Création d'un document PDF clair, modifiable, partageable & imprimable</p>
                     </div>
                   </div>
 
@@ -179,16 +179,15 @@ const Pricing = () => {
                   </span>
                 </div>
                 <CardHeader className="text-center pb-6 pt-8">
-                  <div className="flex items-center justify-center gap-2 mb-2">
-                    <span className="text-lg">💎</span>
-                    <CardTitle className="text-xl font-serif">Le Jour M</CardTitle>
-                  </div>
+                  <CardTitle className="text-xl font-serif mb-4">
+                    🕊️ Le Jour M
+                  </CardTitle>
                   <div className="text-3xl font-bold text-wedding-olive mb-1">
                     750 € TTC
                   </div>
                   <p className="text-sm text-gray-600">Un jour J orchestré</p>
                   <p className="text-xs text-gray-500 line-through mt-1">au lieu de 1 000 €</p>
-                  <p className="text-xs text-wedding-olive font-medium">offre de lancement</p>
+                  <p className="text-xs text-wedding-olive font-medium">prix lancement</p>
                 </CardHeader>
                 <CardContent className="space-y-4 flex-grow flex flex-col">
                   <div className="space-y-3 flex-grow">
@@ -199,29 +198,30 @@ const Pricing = () => {
                     <div className="flex items-start gap-3">
                       <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
                       <div className="text-sm text-gray-700">
-                        <p className="font-medium mb-1">Création d'une application mobile personnalisée avec :</p>
+                        <p className="font-medium mb-1">Création de votre application mobile personnalisée avec :</p>
                         <ul className="text-xs space-y-1 ml-4">
-                          <li>→ Planning jour J interactif</li>
-                          <li>→ Rôles & horaires des proches</li>
-                          <li>→ Plan des lieux, trajets GPS, moodboard</li>
+                          <li>→ Planning Jour J interactif</li>
+                          <li>→ Rôles et gestion des proches</li>
+                          <li>→ Espace document : Fiche logistique / plans des lieux / Moodboard</li>
+                          <li>→ Espace contact prestataires</li>
                         </ul>
                       </div>
                     </div>
                     <div className="flex items-start gap-3">
                       <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Coordination en amont avec les prestataires</p>
+                      <p className="text-sm text-gray-700">Création d'un groupe WhatsApp avec vos proches qui vous aident dans l'organisation</p>
                     </div>
                     <div className="flex items-start gap-3">
                       <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Création d'un groupe WhatsApp avec vos parties prenantes</p>
+                      <p className="text-sm text-gray-700">Notifications en temps réel de J-3 à J+1 sur Whatsapp</p>
                     </div>
                     <div className="flex items-start gap-3">
                       <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Documents récapitulatifs prêts à diffuser</p>
+                      <p className="text-sm text-gray-700">Support client via une hotline Mariable dédiée 7J/7 jusqu'au Jour-J</p>
                     </div>
                     <div className="flex items-start gap-3">
                       <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Présence physique sur place le jour J (10h-21h)</p>
+                      <p className="text-sm text-gray-700">Présence de 5h le Jour-J</p>
                     </div>
                   </div>
 
@@ -229,7 +229,7 @@ const Pricing = () => {
                     <div className="flex items-center gap-2 mb-4">
                       <span className="text-lg">🕊️</span>
                       <p className="text-sm font-medium text-gray-700">
-                        Arrivez comme un invité à votre mariage
+                        Arrivez comme un invité à votre mariage !
                       </p>
                     </div>
                   </div>
