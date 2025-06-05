@@ -6,12 +6,12 @@ import {
   HeaderDropdownMenu,
   HeaderDropdownItem,
 } from "./HeaderDropdown";
-import { User2, Menu as MenuIcon, LogIn } from "lucide-react";
+import { User2, Menu as MenuIcon } from "lucide-react";
 import { Drawer, DrawerContent } from "./ui/drawer";
 import { useIsMobile } from "../hooks/use-mobile";
 import { supabase } from '@/integrations/supabase/client';
 
-// Nouveau logo joint
+// Logo
 const LOGO_URL = "/lovable-uploads/a13321ac-adeb-489a-911e-3a88b1411ac2.png";
 
 const HeaderLogo = () => (
@@ -30,35 +30,43 @@ const HeaderLogo = () => (
 function Menus({ onClick, isLoggedIn }: { onClick?: () => void, isLoggedIn?: boolean }) {
   return (
     <>
-      {/* Show this menu only when user is not logged in */}
-      {!isLoggedIn && (
-        <>
-          {/* Futurs mariés - En premier */}
-          <HeaderDropdown
-            label="Futurs mariés"
-            href="/dashboard"
-            onClick={onClick}
-          />
-          
-          {/* Professionnels - En second */}
-          <HeaderDropdown 
-            label="Professionnels"
-            href="/professionnels"
-            onClick={onClick}
-          />
-        </>
-      )}
-
-      {/* Show this menu when user is logged in */}
-      {isLoggedIn && (
-        <HeaderDropdown
-          label="Mon compte"
-          href="/dashboard"
-          onClick={onClick}
-        />
-      )}
+      {/* Futurs mariés - Toujours visible avec contenu conditionnel */}
+      <HeaderDropdown label="Futurs mariés">
+        <HeaderDropdownMenu>
+          {isLoggedIn ? (
+            <HeaderDropdownItem
+              label="Mon tableau de bord"
+              description="Accéder à votre espace personnel"
+              to="/dashboard"
+              onClick={onClick}
+            />
+          ) : (
+            <>
+              <HeaderDropdownItem
+                label="Créer un compte"
+                description="Rejoindre Mariable et organiser votre mariage"
+                to="/register"
+                onClick={onClick}
+              />
+              <HeaderDropdownItem
+                label="Se connecter"
+                description="Accéder à votre compte existant"
+                to="/login"
+                onClick={onClick}
+              />
+            </>
+          )}
+        </HeaderDropdownMenu>
+      </HeaderDropdown>
       
-      {/* À propos Dropdown - Sans témoignages, en dernier */}
+      {/* Professionnels - En second */}
+      <HeaderDropdown 
+        label="Professionnels"
+        href="/professionnels"
+        onClick={onClick}
+      />
+      
+      {/* À propos Dropdown - En dernier */}
       <HeaderDropdown label="À propos">
         <HeaderDropdownMenu>
           <HeaderDropdownItem
@@ -128,17 +136,6 @@ export default function Header() {
         {/* Desktop: Menus à droite, centrés */}
         <nav className="hidden md:flex flex-1 justify-end items-center gap-4 md:gap-6">
           <Menus isLoggedIn={isLoggedIn} />
-          
-          {/* Bouton de connexion explicite pour les utilisateurs non connectés */}
-          {!isLoggedIn && (
-            <Link 
-              to="/login"
-              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-wedding-olive hover:bg-wedding-olive/10 rounded-md transition-colors"
-            >
-              <LogIn className="h-4 w-4" />
-              <span>Se connecter</span>
-            </Link>
-          )}
         </nav>
 
         {/* Mobile: Burger menu à droite */}
@@ -168,18 +165,6 @@ export default function Header() {
               <div className="py-3 grid gap-4">
                 <nav className="flex flex-col gap-1">
                   <Menus onClick={() => setDrawerOpen(false)} isLoggedIn={isLoggedIn} />
-                  
-                  {/* Bouton de connexion dans le menu mobile */}
-                  {!isLoggedIn && (
-                    <Link 
-                      to="/login"
-                      onClick={() => setDrawerOpen(false)}
-                      className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-wedding-olive hover:bg-wedding-olive/10 rounded-md transition-colors mx-2"
-                    >
-                      <LogIn className="h-5 w-5" />
-                      <span>Se connecter</span>
-                    </Link>
-                  )}
                 </nav>
               </div>
             </DrawerContent>

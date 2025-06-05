@@ -16,58 +16,58 @@ const PlanningCoordinatorContent: React.FC = () => {
   const { activeTab, setActiveTab } = usePlanning();
   
   return (
-    <div className="flex flex-col lg:flex-row gap-6 max-w-7xl mx-auto">
+    <div className="flex flex-col xl:flex-row gap-4 sm:gap-6 w-full">
       {/* Main content area */}
-      <div className="flex-1 space-y-6">
-        <div className="mb-6">
-          <h1 className="text-2xl font-serif text-wedding-olive mb-4">Générateur de Planning Jour J</h1>
+      <div className="flex-1 space-y-4 sm:space-y-6 min-w-0">
+        <div className="mb-4 sm:mb-6">
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-serif text-wedding-olive mb-3 sm:mb-4">Générateur de Planning Jour J</h1>
           
           {/* Note explicative avec tons verts */}
-          <div className="mb-6 p-4 bg-wedding-olive/10 rounded-lg border border-wedding-olive/20">
-            <p className="text-sm text-wedding-olive">
-              <strong className="text-wedding-olive">3 façons de créer votre planning :</strong>
-              <br />
-              <span className="block mt-2">① Répondez au quizz pour obtenir en automatique un planning de déroulé jour-j personnalisé</span>
-              <br />
-              <span className="block">② Créer ou modifier votre planning étape par étape</span> 
-              <br />
-              <span className="block">③ Coordonnez et déléguez les tâches à votre équipe</span>
+          <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-wedding-olive/10 rounded-lg border border-wedding-olive/20">
+            <p className="text-xs sm:text-sm text-wedding-olive leading-relaxed">
+              <strong className="text-wedding-olive block sm:inline">3 façons de créer votre planning :</strong>
+              <span className="block mt-1 sm:mt-2">① Répondez au quizz pour obtenir en automatique un planning de déroulé jour-j personnalisé</span>
+              <span className="block mt-1">② Créer ou modifier votre planning étape par étape</span> 
+              <span className="block mt-1">③ Coordonnez et déléguez les tâches à votre équipe</span>
             </p>
           </div>
         </div>
         
-        <Tabs defaultValue="form" value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-3 mb-6">
+        <Tabs defaultValue="form" value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="grid w-full grid-cols-3 mb-4 sm:mb-6 h-auto">
             <TabsTrigger 
               value="form"
-              className="data-[state=active]:bg-wedding-olive data-[state=active]:text-white text-xs sm:text-sm"
+              className="data-[state=active]:bg-wedding-olive data-[state=active]:text-white text-xs sm:text-sm px-2 py-2 sm:py-2.5"
             >
-              1. Formulaire
+              <span className="hidden sm:inline">1. Formulaire</span>
+              <span className="sm:hidden">1. Form</span>
             </TabsTrigger>
             <TabsTrigger 
               value="results" 
               disabled={activeTab === "form" && !setActiveTab}
-              className="data-[state=active]:bg-wedding-olive data-[state=active]:text-white text-xs sm:text-sm"
+              className="data-[state=active]:bg-wedding-olive data-[state=active]:text-white text-xs sm:text-sm px-2 py-2 sm:py-2.5"
             >
-              2. Planning
+              <span className="hidden sm:inline">2. Planning</span>
+              <span className="sm:hidden">2. Plan</span>
             </TabsTrigger>
             <TabsTrigger 
               value="coordination"
-              className="data-[state=active]:bg-wedding-olive data-[state=active]:text-white text-xs sm:text-sm"
+              className="data-[state=active]:bg-wedding-olive data-[state=active]:text-white text-xs sm:text-sm px-2 py-2 sm:py-2.5"
             >
-              3. Coordination
+              <span className="hidden sm:inline">3. Coordination</span>
+              <span className="sm:hidden">3. Coord</span>
             </TabsTrigger>
           </TabsList>
           
-          <TabsContent value="form">
+          <TabsContent value="form" className="mt-0">
             <PlanningForm />
           </TabsContent>
           
-          <TabsContent value="results">
+          <TabsContent value="results" className="mt-0">
             <PlanningResults />
           </TabsContent>
           
-          <TabsContent value="coordination">
+          <TabsContent value="coordination" className="mt-0">
             <div className="w-full">
               <TeamTasksSection />
             </div>
@@ -77,7 +77,7 @@ const PlanningCoordinatorContent: React.FC = () => {
       
       {/* Right sidebar - only show on desktop and when on planning tab */}
       {activeTab === "results" && (
-        <div className="hidden lg:block w-80 flex-shrink-0">
+        <div className="hidden xl:block w-80 flex-shrink-0">
           <div className="sticky top-6">
             <AdviceSidebar />
           </div>
