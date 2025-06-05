@@ -12,6 +12,7 @@ import { Calendar, Search, Eye, Download, Filter, Users, MapPin, Phone, Mail, Ex
 import { toast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import JourMReservationDetail from '@/components/admin/JourMReservationDetail';
+import { Json } from '@/integrations/supabase/types';
 
 interface JourMReservation {
   id: string;
@@ -30,10 +31,10 @@ interface JourMReservation {
   specific_needs?: string;
   hear_about_us?: string;
   documents_links?: string;
-  uploaded_files?: any[];
-  prestataires_reserves?: any;
-  contact_jour_j?: any[];
-  services_souhaites?: string[];
+  uploaded_files?: Json;
+  prestataires_reserves?: Json;
+  contact_jour_j?: Json;
+  services_souhaites?: Json;
   status: string;
   admin_notes?: string;
   processed_at?: string;
@@ -101,8 +102,16 @@ const JourMReservations = () => {
 
       if (error) throw error;
       
-      setReservations(data || []);
-      setFilteredReservations(data || []);
+      const typedData = data?.map(row => ({
+        ...row,
+        uploaded_files: row.uploaded_files as Json,
+        prestataires_reserves: row.prestataires_reserves as Json,
+        contact_jour_j: row.contact_jour_j as Json,
+        services_souhaites: row.services_souhaites as Json,
+      })) || [];
+      
+      setReservations(typedData);
+      setFilteredReservations(typedData);
     } catch (error) {
       console.error('Error loading reservations:', error);
       toast({

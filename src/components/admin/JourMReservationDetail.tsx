@@ -11,6 +11,7 @@ import {
   X, Calendar, MapPin, Users, Heart, Phone, Mail, 
   FileText, Download, ExternalLink, Edit, Save, User
 } from 'lucide-react';
+import { Json } from '@/integrations/supabase/types';
 
 interface JourMReservation {
   id: string;
@@ -29,10 +30,10 @@ interface JourMReservation {
   specific_needs?: string;
   hear_about_us?: string;
   documents_links?: string;
-  uploaded_files?: any[];
-  prestataires_reserves?: any;
-  contact_jour_j?: any[];
-  services_souhaites?: string[];
+  uploaded_files?: Json;
+  prestataires_reserves?: Json;
+  contact_jour_j?: Json;
+  services_souhaites?: Json;
   status: string;
   admin_notes?: string;
   processed_at?: string;
@@ -92,6 +93,31 @@ const JourMReservationDetail: React.FC<Props> = ({ reservation, onClose, onStatu
 
   const formatDateTime = (dateString: string) => {
     return new Date(dateString).toLocaleString('fr-FR');
+  };
+
+  // Helper functions to safely handle Json types
+  const getContactJourJ = () => {
+    if (!reservation.contact_jour_j) return [];
+    if (Array.isArray(reservation.contact_jour_j)) return reservation.contact_jour_j;
+    return [];
+  };
+
+  const getServicesSouhaites = () => {
+    if (!reservation.services_souhaites) return [];
+    if (Array.isArray(reservation.services_souhaites)) return reservation.services_souhaites;
+    return [];
+  };
+
+  const getUploadedFiles = () => {
+    if (!reservation.uploaded_files) return [];
+    if (Array.isArray(reservation.uploaded_files)) return reservation.uploaded_files;
+    return [];
+  };
+
+  const getPrestatairesReserves = () => {
+    if (!reservation.prestataires_reserves) return {};
+    if (typeof reservation.prestataires_reserves === 'object') return reservation.prestataires_reserves;
+    return {};
   };
 
   return (
@@ -225,14 +251,14 @@ const JourMReservationDetail: React.FC<Props> = ({ reservation, onClose, onStatu
             )}
 
             {/* Service Providers */}
-            {reservation.prestataires_reserves && (
+            {Object.keys(getPrestatairesReserves()).length > 0 && (
               <Card>
                 <CardHeader>
                   <CardTitle>Prestataires réservés</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
-                    {Object.entries(reservation.prestataires_reserves).map(([key, value]) => {
+                    {Object.entries(getPrestatairesReserves()).map(([key, value]) => {
                       if (!value) return null;
                       return (
                         <div key={key} className="flex justify-between">
@@ -249,7 +275,7 @@ const JourMReservationDetail: React.FC<Props> = ({ reservation, onClose, onStatu
             )}
 
             {/* Day-of Contacts */}
-            {reservation.contact_jour_j && reservation.contact_jour_j.length > 0 && (
+            {getContactJourJ().length > 0 && (
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
@@ -259,7 +285,7 @@ const JourMReservationDetail: React.FC<Props> = ({ reservation, onClose, onStatu
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {reservation.contact_jour_j.map((contact, index) => (
+                    {getContactJourJ().map((contact: any, index) => (
                       <div key={index} className="border-l-4 border-wedding-olive pl-4">
                         <div className="grid grid-cols-2 gap-2">
                           <div>
@@ -391,14 +417,14 @@ const JourMReservationDetail: React.FC<Props> = ({ reservation, onClose, onStatu
             </Card>
 
             {/* Services Requested */}
-            {reservation.services_souhaites && reservation.services_souhaites.length > 0 && (
+            {getServicesSouhaites().length > 0 && (
               <Card>
                 <CardHeader>
                   <CardTitle>Services souhaités</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2">
-                    {reservation.services_souhaites.map((service, index) => (
+                    {getServicesSouhaites().map((service: any, index) => (
                       <div key={index} className="flex items-center gap-2">
                         <div className="w-2 h-2 bg-wedding-olive rounded-full"></div>
                         <span className="text-sm">{service}</span>
@@ -427,13 +453,13 @@ const JourMReservationDetail: React.FC<Props> = ({ reservation, onClose, onStatu
                   </div>
                 )}
 
-                {reservation.uploaded_files && reservation.uploaded_files.length > 0 && (
+                {getUploadedFiles().length > 0 && (
                   <div>
                     <h4 className="text-sm font-medium text-gray-600 mb-2">
-                      Fichiers uploadés ({reservation.uploaded_files.length})
+                      Fichiers uploadés ({getUploadedFiles().length})
                     </h4>
                     <div className="space-y-2">
-                      {reservation.uploaded_files.map((file, index) => (
+                      {getUploadedFiles().map((file: any, index) => (
                         <div
                           key={index}
                           className="flex items-center justify-between p-3 border rounded-md"
@@ -462,8 +488,7 @@ const JourMReservationDetail: React.FC<Props> = ({ reservation, onClose, onStatu
                   </div>
                 )}
 
-                {(!reservation.uploaded_files || reservation.uploaded_files.length === 0) &&
-                 !reservation.documents_links && (
+                {getUploadedFiles().length === 0 && !reservation.documents_links && (
                   <p className="text-sm text-gray-500 text-center py-4">
                     Aucun document fourni
                   </p>
