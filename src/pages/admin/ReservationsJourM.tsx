@@ -6,34 +6,24 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Search, Filter, Download, Eye, Edit, Calendar, Users, MapPin } from 'lucide-react';
+import { Search, Filter, Download, Eye, Calendar, Users, MapPin } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import ReservationDetailModal from '@/components/admin/ReservationDetailModal';
 import ReservationMetrics from '@/components/admin/ReservationMetrics';
+import { Database } from '@/integrations/supabase/types';
 
-interface Reservation {
-  id: string;
-  first_name: string;
-  last_name: string;
-  email: string;
-  phone: string;
-  partner_name: string;
-  wedding_date: string;
-  wedding_location: string;
-  guest_count: number;
-  budget: string;
-  status: string;
-  created_at: string;
-  services_souhaites: any[];
-  specific_needs: string;
+// Use the actual database type
+type JourMReservation = Database['public']['Tables']['jour_m_reservations']['Row'];
+
+interface Reservation extends JourMReservation {
+  // Type assertions for Json fields to make them more usable
+  services_souhaites: string[];
+  contact_jour_j: any;
+  prestataires_reserves: any;
   uploaded_files: any[];
-  admin_notes: string;
-  processed_by: string;
-  processed_at: string;
 }
 
 const ReservationsJourM: React.FC = () => {
@@ -78,7 +68,21 @@ const ReservationsJourM: React.FC = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setReservations(data || []);
+      
+      // Transform the data to match our interface
+      const transformedData: Reservation[] = (data || []).map(item => ({
+        ...item,
+        services_souhaites: Array.isArray(item.services_souhaites) 
+          ? item.services_souhaites as string[]
+          : [],
+        contact_jour_j: item.contact_jour_j || {},
+        prestataires_reserves: item.prestataires_reserves || {},
+        uploaded_files: Array.isArray(item.uploaded_files) 
+          ? item.uploaded_files as any[]
+          : []
+      }));
+      
+      setReservations(transformedData);
     } catch (error) {
       console.error('Erreur lors du chargement des réservations:', error);
       toast({
@@ -338,7 +342,7 @@ const ReservationsJourM: React.FC = () => {
                     </div>
                   </TableCell>
                   <TableCell>
-                    {getStatusBadge(reservation.status)}
+                    {getStatusBadge(reservation.status || 'nouveau')}
                   </TableCell>
                   <TableCell>
                     {format(new Date(reservation.created_at), 'dd/MM/yyyy', { locale: fr })}
@@ -353,7 +357,7 @@ const ReservationsJourM: React.FC = () => {
                         <Eye className="h-4 w-4" />
                       </Button>
                       <Select
-                        value={reservation.status}
+                        value={reservation.status || 'nouveau'}
                         onValueChange={(value) => updateReservationStatus(reservation.id, value)}
                       >
                         <SelectTrigger className="w-32">

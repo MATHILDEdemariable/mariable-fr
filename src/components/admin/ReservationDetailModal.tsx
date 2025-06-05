@@ -10,31 +10,17 @@ import { Download, FileText, Calendar, MapPin, Users, Phone, Mail, Heart, Dollar
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
+import { Database } from '@/integrations/supabase/types';
 
-interface Reservation {
-  id: string;
-  first_name: string;
-  last_name: string;
-  email: string;
-  phone: string;
-  partner_name: string;
-  wedding_date: string;
-  wedding_location: string;
-  guest_count: number;
-  budget: string;
-  status: string;
-  created_at: string;
-  services_souhaites: any[];
-  specific_needs: string;
-  uploaded_files: any[];
-  admin_notes: string;
-  current_organization: string;
-  deroulement_mariage: string;
-  delegation_tasks: string;
-  hear_about_us: string;
+// Use the same interface as in the main page
+type JourMReservation = Database['public']['Tables']['jour_m_reservations']['Row'];
+
+interface Reservation extends JourMReservation {
+  services_souhaites: string[];
   contact_jour_j: any;
   prestataires_reserves: any;
+  uploaded_files: any[];
 }
 
 interface ReservationDetailModalProps {
