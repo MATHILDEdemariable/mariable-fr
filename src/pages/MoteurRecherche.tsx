@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { Search, MapPin, Star, Euro } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { VendorFilter } from '@/types/vendorFilters';
 
 const MoteurRecherche = () => {
   const [searchTerm, setSearchTerm] = useState('');
