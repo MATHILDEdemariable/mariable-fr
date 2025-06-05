@@ -154,6 +154,7 @@ const App = () => {
                 {/* Admin Routes */}
                 <Route path="/admin/prestataires" element={<PrestataireAdmin />} />
                 <Route path="/admin/form" element={<FormAdmin />} />
+                <Route path="/admin/reservations-jour-m" element={<ReservationsJourM />} />
                 
                 {/* Prestataire Routes */}
                 <Route path="/prestataire/tracking" element={<PrestataireTrackingPage />} />
