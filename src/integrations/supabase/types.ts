@@ -297,6 +297,7 @@ export type Database = {
       }
       jour_m_reservations: {
         Row: {
+          admin_notes: string | null
           budget: string | null
           contact_jour_j: Json | null
           created_at: string
@@ -313,14 +314,18 @@ export type Database = {
           partner_name: string | null
           phone: string
           prestataires_reserves: Json | null
+          processed_at: string | null
+          processed_by: string | null
           services_souhaites: Json | null
           specific_needs: string | null
+          status: string | null
           updated_at: string
           uploaded_files: Json | null
           wedding_date: string
           wedding_location: string
         }
         Insert: {
+          admin_notes?: string | null
           budget?: string | null
           contact_jour_j?: Json | null
           created_at?: string
@@ -337,14 +342,18 @@ export type Database = {
           partner_name?: string | null
           phone: string
           prestataires_reserves?: Json | null
+          processed_at?: string | null
+          processed_by?: string | null
           services_souhaites?: Json | null
           specific_needs?: string | null
+          status?: string | null
           updated_at?: string
           uploaded_files?: Json | null
           wedding_date: string
           wedding_location: string
         }
         Update: {
+          admin_notes?: string | null
           budget?: string | null
           contact_jour_j?: Json | null
           created_at?: string
@@ -361,8 +370,11 @@ export type Database = {
           partner_name?: string | null
           phone?: string
           prestataires_reserves?: Json | null
+          processed_at?: string | null
+          processed_by?: string | null
           services_souhaites?: Json | null
           specific_needs?: string | null
+          status?: string | null
           updated_at?: string
           uploaded_files?: Json | null
           wedding_date?: string
