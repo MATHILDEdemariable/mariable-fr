@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import Header from '@/components/Header';
@@ -204,7 +203,13 @@ const ReservationJourM = () => {
 
   const servicesOptions = [
     'Présence physique le jour J',
-    'Présence physique 2 jours'
+    'Présence physique 2 jours',
+    'Heure supplémentaire (+30€)',
+    'Installation décoration (+200€)',
+    'RDV visite technique (+200€)',
+    'Présence J-1 ou J+1 (+200€)',
+    'Documentation imprimée (+20€)',
+    'Mariage +180 personnes (+200€)'
   ];
 
   const roleOptions = ['Témoin', 'Mère', 'Père', 'Frère', 'Sœur', 'Ami(e)', 'Autre'];
@@ -690,7 +695,7 @@ const ReservationJourM = () => {
                   
                   <div className="bg-blue-50 p-4 rounded-lg mb-4">
                     <p className="text-sm text-blue-800 mb-2">
-                      Merci de nous transmettre les documents déjà en votre possession pour faciliter la coordination soit via le formulaire soit par mail à l'adresse 
+                      Merci de nous transmettre les documents déjà en votre possession pour faciliter la coordination. Si c'est plus simple pour vous, vous pouvez aussi nous transférer vos mails avec pièces jointes des prestataires directement à l'adresse 
                       <strong> mathilde@mariable.fr</strong>
                     </p>
                   </div>
@@ -720,15 +725,18 @@ const ReservationJourM = () => {
                   </div>
 
                   <div className="bg-gray-50 p-4 rounded-lg">
+                    <h4 className="font-medium mb-2">**Document indispensable = devis de chaque prestataire**</h4>
+                    <p className="text-sm text-gray-700 mb-3">J'ai besoin des devis pour comprendre la prestation et le déroulé potentiel</p>
+                    
                     <h4 className="font-medium mb-2">Documents utiles :</h4>
                     <ul className="text-sm space-y-1 text-gray-700">
                       <li>• Planning prévisionnel (même brouillon)</li>
                       <li>• Liste des prestataires</li>
-                      <li>• Devis & contrats si disponibles</li>
+                      <li>• Contrats si disponibles</li>
                       <li>• Plan de table ou plan de salle si disponible</li>
                       <li>• Liste des rôles attribués aux témoins / proches</li>
-                      <li>• Moodboard / inspirations / éléments de déco</li>
-                      <li>• Autres documents utiles (discours, playlists, checklists…)</li>
+                      <li>• Moodboard / inspirations / liste des éléments de déco DIY</li>
+                      <li>• Autres documents utiles (playlists, checklists…)</li>
                     </ul>
                   </div>
                 </div>

@@ -253,7 +253,7 @@ const Pricing = () => {
                     Comment ça marche ?
                   </h2>
                   <p className="text-lg text-gray-700 mb-2">
-                    Le processus de coordination "Le Jour M" en 5 étapes
+                    Le processus de coordination "Le Jour M" en 8 étapes
                   </p>
                 </div>
 
@@ -269,10 +269,10 @@ const Pricing = () => {
                           <div className="bg-white p-6 rounded-lg shadow-md">
                             <h3 className="text-xl font-semibold mb-3 flex items-center justify-end gap-2">
                               <Mail className="h-5 w-5 text-wedding-olive" />
-                              Transfert des infos par mail
+                              📧 Transfert des infos via le formulaire
                             </h3>
                             <p className="text-gray-600">
-                              Vous nous envoyez tous vos documents, plannings et informations de mariage par email.
+                              Vous nous envoyez tous vos documents, plannings et informations de mariage via le formulaire.
                             </p>
                           </div>
                         </div>
@@ -296,7 +296,7 @@ const Pricing = () => {
                           <div className="bg-white p-6 rounded-lg shadow-md">
                             <h3 className="text-xl font-semibold mb-3 flex items-center gap-2">
                               <Phone className="h-5 w-5 text-wedding-olive" />
-                              Rendez-vous téléphonique ou visio
+                              📞 Rendez-vous téléphonique ou visio
                             </h3>
                             <p className="text-gray-600">
                               Échange personnalisé pour comprendre vos besoins et affiner l'organisation.
@@ -311,7 +311,7 @@ const Pricing = () => {
                           <div className="bg-white p-6 rounded-lg shadow-md">
                             <h3 className="text-xl font-semibold mb-3 flex items-center justify-end gap-2">
                               <Smartphone className="h-5 w-5 text-wedding-olive" />
-                              Création de l'app & du WhatsApp
+                              📱 Création de l'app & du WhatsApp
                             </h3>
                             <p className="text-gray-600">
                               Développement de votre application mobile personnalisée et création du groupe WhatsApp.
@@ -338,10 +338,10 @@ const Pricing = () => {
                           <div className="bg-white p-6 rounded-lg shadow-md">
                             <h3 className="text-xl font-semibold mb-3 flex items-center gap-2">
                               <Users className="h-5 w-5 text-wedding-olive" />
-                              Coordination
+                              👥 Partagez les accès à vos proches et laissez-vous guider par l'app
                             </h3>
                             <p className="text-gray-600">
-                              Coordination avec tous vos prestataires et briefing de votre équipe.
+                              Vos proches reçoivent l'accès à l'application et peuvent suivre le planning et leurs tâches.
                             </p>
                           </div>
                         </div>
@@ -352,11 +352,11 @@ const Pricing = () => {
                         <div className="md:w-1/2 text-right">
                           <div className="bg-white p-6 rounded-lg shadow-md">
                             <h3 className="text-xl font-semibold mb-3 flex items-center justify-end gap-2">
-                              <Calendar className="h-5 w-5 text-wedding-olive" />
-                              Profitez
+                              <Phone className="h-5 w-5 text-wedding-olive" />
+                              📞 Utilisez la hotline si besoin jusqu'au jour J pour toutes questions
                             </h3>
                             <p className="text-gray-600">
-                              Vivez votre mariage sereinement, tout est organisé et coordonné pour vous.
+                              Support client dédié disponible 7J/7 pour répondre à toutes vos questions.
                             </p>
                           </div>
                         </div>
@@ -366,6 +366,27 @@ const Pricing = () => {
                           </div>
                         </div>
                         <div className="md:w-1/2"></div>
+                      </div>
+
+                      {/* Étape 6 */}
+                      <div className="flex flex-col md:flex-row items-center gap-8">
+                        <div className="md:w-1/2"></div>
+                        <div className="relative z-10">
+                          <div className="w-12 h-12 bg-wedding-olive rounded-full flex items-center justify-center text-white font-bold text-lg">
+                            6
+                          </div>
+                        </div>
+                        <div className="md:w-1/2">
+                          <div className="bg-white p-6 rounded-lg shadow-md">
+                            <h3 className="text-xl font-semibold mb-3 flex items-center gap-2">
+                              <Calendar className="h-5 w-5 text-wedding-olive" />
+                              👰🤵 Laissez le manager Mariable gérer pour vous & profitez
+                            </h3>
+                            <p className="text-gray-600">
+                              Vivez votre mariage sereinement, tout est organisé et coordonné pour vous.
+                            </p>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -387,6 +408,36 @@ const Pricing = () => {
 
                 <div className="max-w-4xl mx-auto">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <Card className="shadow-md hover:shadow-lg transition-shadow">
+                      <CardContent className="p-6">
+                        <div className="flex items-center justify-between mb-4">
+                          <div className="flex items-center gap-3">
+                            <span className="text-2xl">⏰</span>
+                            <h3 className="text-lg font-semibold">Heure supplémentaire</h3>
+                          </div>
+                          <span className="text-xl font-bold text-wedding-olive">+30€</span>
+                        </div>
+                        <p className="text-sm text-gray-600">
+                          Extension de la présence du coordinateur pour les mariages nécessitant plus de temps
+                        </p>
+                      </CardContent>
+                    </Card>
+
+                    <Card className="shadow-md hover:shadow-lg transition-shadow">
+                      <CardContent className="p-6">
+                        <div className="flex items-center justify-between mb-4">
+                          <div className="flex items-center gap-3">
+                            <span className="text-2xl">🎨</span>
+                            <h3 className="text-lg font-semibold">Installation décoration</h3>
+                          </div>
+                          <span className="text-xl font-bold text-wedding-olive">+200€</span>
+                        </div>
+                        <p className="text-sm text-gray-600">
+                          Installation et mise en place de votre décoration selon vos souhaits
+                        </p>
+                      </CardContent>
+                    </Card>
+
                     <Card className="shadow-md hover:shadow-lg transition-shadow">
                       <CardContent className="p-6">
                         <div className="flex items-center justify-between mb-4">
