@@ -11,7 +11,7 @@ import { Drawer, DrawerContent } from "./ui/drawer";
 import { useIsMobile } from "../hooks/use-mobile";
 import { supabase } from '@/integrations/supabase/client';
 
-// Logo
+// Nouveau logo joint
 const LOGO_URL = "/lovable-uploads/a13321ac-adeb-489a-911e-3a88b1411ac2.png";
 
 const HeaderLogo = () => (
@@ -30,43 +30,35 @@ const HeaderLogo = () => (
 function Menus({ onClick, isLoggedIn }: { onClick?: () => void, isLoggedIn?: boolean }) {
   return (
     <>
-      {/* Futurs mariés - Toujours visible avec contenu conditionnel */}
-      <HeaderDropdown label="Futurs mariés">
-        <HeaderDropdownMenu>
-          {isLoggedIn ? (
-            <HeaderDropdownItem
-              label="Mon tableau de bord"
-              description="Accéder à votre espace personnel"
-              to="/dashboard"
-              onClick={onClick}
-            />
-          ) : (
-            <>
-              <HeaderDropdownItem
-                label="Créer un compte"
-                description="Rejoindre Mariable et organiser votre mariage"
-                to="/register"
-                onClick={onClick}
-              />
-              <HeaderDropdownItem
-                label="Se connecter"
-                description="Accéder à votre compte existant"
-                to="/login"
-                onClick={onClick}
-              />
-            </>
-          )}
-        </HeaderDropdownMenu>
-      </HeaderDropdown>
+      {/* Show this menu only when user is not logged in */}
+      {!isLoggedIn && (
+        <>
+          {/* Futurs mariés - En premier */}
+          <HeaderDropdown
+            label="Futurs mariés"
+            href="/dashboard"
+            onClick={onClick}
+          />
+          
+          {/* Professionnels - En second */}
+          <HeaderDropdown 
+            label="Professionnels"
+            href="/professionnels"
+            onClick={onClick}
+          />
+        </>
+      )}
+
+      {/* Show this menu when user is logged in */}
+      {isLoggedIn && (
+        <HeaderDropdown
+          label="Mon compte"
+          href="/dashboard"
+          onClick={onClick}
+        />
+      )}
       
-      {/* Professionnels - En second */}
-      <HeaderDropdown 
-        label="Professionnels"
-        href="/professionnels"
-        onClick={onClick}
-      />
-      
-      {/* À propos Dropdown - En dernier */}
+      {/* À propos Dropdown - Sans témoignages, en dernier */}
       <HeaderDropdown label="À propos">
         <HeaderDropdownMenu>
           <HeaderDropdownItem

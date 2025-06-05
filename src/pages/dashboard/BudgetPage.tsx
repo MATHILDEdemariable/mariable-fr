@@ -46,30 +46,29 @@ const BudgetPage: React.FC = () => {
         <meta name="description" content="Gérez le budget de votre mariage" />
       </Helmet>
 
-      <div className="space-y-4 sm:space-y-6 w-full">
+      <div className="space-y-6">
         <div className="flex justify-between items-center">
-          <h1 className="text-2xl sm:text-3xl font-serif text-wedding-olive">Budget de Mariage</h1>
+          <h1 className="text-3xl font-serif text-wedding-olive">Budget de Mariage</h1>
         </div>
 
-        <Tabs defaultValue="summary" value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="mb-4 sm:mb-6 grid w-full grid-cols-1 sm:grid-cols-3 bg-wedding-cream/10 h-auto">
-            <TabsTrigger value="summary" className="flex items-center gap-2 data-[state=active]:bg-wedding-cream/30 data-[state=active]:text-wedding-olive text-xs sm:text-sm py-2 sm:py-2.5">
-              <PieChart className="h-3 w-3 sm:h-4 sm:w-4" />
+        <Tabs defaultValue="summary" value={activeTab} onValueChange={setActiveTab}>
+          <TabsList className="mb-6 grid w-full grid-cols-1 sm:grid-cols-3 bg-wedding-cream/10">
+            <TabsTrigger value="summary" className="flex items-center gap-2 data-[state=active]:bg-wedding-cream/30 data-[state=active]:text-wedding-olive">
+              <PieChart className="h-4 w-4" />
               <span>Résumé</span>
             </TabsTrigger>
-            <TabsTrigger value="detailed" className="flex items-center gap-2 data-[state=active]:bg-wedding-cream/30 data-[state=active]:text-wedding-olive text-xs sm:text-sm py-2 sm:py-2.5">
-              <BarChart className="h-3 w-3 sm:h-4 sm:w-4" />
-              <span className="hidden sm:inline">Budget Détaillé</span>
-              <span className="sm:hidden">Détaillé</span>
+            <TabsTrigger value="detailed" className="flex items-center gap-2 data-[state=active]:bg-wedding-cream/30 data-[state=active]:text-wedding-olive">
+              <BarChart className="h-4 w-4" />
+              <span>Budget Détaillé</span>
             </TabsTrigger>
-            <TabsTrigger value="calculator" className="flex items-center gap-2 data-[state=active]:bg-wedding-cream/30 data-[state=active]:text-wedding-olive text-xs sm:text-sm py-2 sm:py-2.5">
-              <Calculator className="h-3 w-3 sm:h-4 sm:w-4" />
+            <TabsTrigger value="calculator" className="flex items-center gap-2 data-[state=active]:bg-wedding-cream/30 data-[state=active]:text-wedding-olive">
+              <Calculator className="h-4 w-4" />
               <span>Calculatrice</span>
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="summary">
-            <div className="bg-white p-3 sm:p-6 rounded-lg shadow-sm">
+            <div className="bg-white p-6 rounded-lg shadow-sm">
               <BudgetSummary />
             </div>
           </TabsContent>

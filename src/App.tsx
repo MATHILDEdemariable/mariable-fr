@@ -1,131 +1,169 @@
-import React, { Suspense } from "react";
+
+import React from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { HelmetProvider } from 'react-helmet-async';
-import { Loader2 } from "lucide-react";
-import AnalyticsProvider from "./components/analytics/AnalyticsProvider";
-import { ReaderModeProvider } from "./contexts/ReaderModeContext";
+import { ReaderModeProvider } from '@/contexts/ReaderModeContext';
+import Index from "./pages/Index";
+import Demo from "./pages/Demo";
+import GuideMariable from "./pages/GuideMariable";
+import GuideMariableFrame from "./pages/GuideMariableFrame";
+import LoginFrame from "./pages/LoginFrame";
+import Login from "./pages/auth/Login";
+import Register from "./pages/auth/Register";
+import Callback from "./pages/auth/Callback";
+import EmailConfirmation from "./pages/auth/EmailConfirmation";
+import UserDashboard from "./pages/dashboard/UserDashboard";
+import ReaderView from "./pages/dashboard/ReaderView";
+import MoteurRecherche from "./pages/MoteurRecherche";
+import Histoire from "./pages/about/Histoire";
+import Charte from "./pages/about/Charte";
+import Approche from "./pages/about/Approche";
+import Temoignages from "./pages/about/Temoignages";
+import NousContacter from "./pages/contact/NousContacter";
+import FAQ from "./pages/contact/FAQ";
+import Planification from "./pages/services/Planification";
+import Budget from "./pages/services/Budget";
+import Conseils from "./pages/services/Conseils";
+import Prestataires from "./pages/services/Prestataires";
+import Professionnels from "./pages/Professionnels";
+import NotFound from "./pages/NotFound";
+import FormAdmin from "./pages/admin/FormAdmin";
+import PrestataireAdmin from "./pages/admin/Prestataires";
+import ImportAirtable from "./pages/ImportAirtable";
+import ChecklistMariage from "./pages/ChecklistMariage";
+import PlanningPersonnalise from "./pages/PlanningPersonnalise";
+import PlanningResultatsPersonnalises from "./pages/PlanningResultatsPersonnalises";
+import WeddingAssistantV2 from "./pages/WeddingAssistantV2";
+import EmailCapture from "./pages/EmailCapture";
+import Preview from "./pages/Preview";
+import TestFormulaire from "./pages/TestFormulaire";
+import TestAssistantVirtuel from "./pages/TestAssistantVirtuel";
+import LandingPage from "./pages/LandingPage";
+import ServiceTemplate from "./pages/ServiceTemplate";
+import PrestatairePage from "./pages/prestataire/slug";
+import PrestataireContactPage from "./pages/prestataire/contact";
+import PrestataireTrackingPage from "./pages/prestataire/tracking";
+import MentionsLegales from "./pages/MentionsLegales";
+import CGV from "./pages/CGV";
+import Pricing from "./pages/Pricing";
 
-// Lazy load all components
-const Index = React.lazy(() => import("./pages/Index"));
-const Contact = React.lazy(() => import("./pages/contact/NousContacter"));
-const Coordination = React.lazy(() => import("./pages/services/Planification"));
-const Legal = React.lazy(() => import("./pages/MentionsLegales"));
-const Mariage = React.lazy(() => import("./pages/services/Prestataires"));
-const Mentions = React.lazy(() => import("./pages/MentionsLegales"));
-const NotFound = React.lazy(() => import("./pages/NotFound"));
-const Politique = React.lazy(() => import("./pages/CGV"));
-const Prestations = React.lazy(() => import("./pages/services/Prestataires"));
-const Reservation = React.lazy(() => import("./pages/ReservationJourM"));
-const ReservationJourM = React.lazy(() => import("./pages/ReservationJourM"));
-const Team = React.lazy(() => import("./pages/about/Histoire"));
-const Valeurs = React.lazy(() => import("./pages/about/Charte"));
-const Admin = React.lazy(() => import("./pages/admin/FormAdmin"));
-const JourMReservations = React.lazy(() => import("./pages/admin/JourMReservations"));
-
-// Authentication pages
-const Login = React.lazy(() => import("./pages/auth/Login"));
-const Register = React.lazy(() => import("./pages/auth/Register"));
-const Callback = React.lazy(() => import("./pages/auth/Callback"));
-
-// Dashboard and main pages
-const UserDashboard = React.lazy(() => import("./pages/dashboard/UserDashboard"));
-const Pricing = React.lazy(() => import("./pages/Pricing"));
-const MoteurRecherche = React.lazy(() => import("./pages/MoteurRecherche"));
-const ChecklistMariage = React.lazy(() => import("./pages/ChecklistMariage"));
-const PlanningPersonnalise = React.lazy(() => import("./pages/PlanningPersonnalise"));
-
-// Services pages
-const Budget = React.lazy(() => import("./pages/services/Budget"));
-const Planification = React.lazy(() => import("./pages/services/Planification"));
-const Conseils = React.lazy(() => import("./pages/services/Conseils"));
-
-// Prestataire pages
-const SinglePrestataire = React.lazy(() => import("./pages/prestataire/slug"));
-
-// Test pages
-const TestAssistantVirtuel = React.lazy(() => import("./pages/TestAssistantVirtuel"));
-const WeddingAssistantV2 = React.lazy(() => import("./pages/WeddingAssistantV2"));
-
-// Loading fallback component
-const LoadingFallback = () => (
-  <div className="min-h-screen flex items-center justify-center bg-wedding-cream/10">
-    <div className="text-center">
-      <Loader2 className="h-12 w-12 animate-spin text-wedding-olive mx-auto mb-4" />
-      <p className="text-muted-foreground">Chargement...</p>
-    </div>
-  </div>
-);
-
+// Initialize the query client
 const queryClient = new QueryClient();
 
-const App = () => (
+// Create a helmetContext object to pass to HelmetProvider
+const helmetContext = {};
+
+import AnalyticsProvider from './components/analytics/AnalyticsProvider';
+
+const App = () => {
+  return(
   <QueryClientProvider client={queryClient}>
-    <HelmetProvider>
+    <HelmetProvider context={helmetContext}>
       <ReaderModeProvider>
         <TooltipProvider>
           <Toaster />
           <Sonner />
           <BrowserRouter>
             <AnalyticsProvider>
-              <Suspense fallback={<LoadingFallback />}>
-                <Routes>
-                  {/* Main pages */}
-                  <Route path="/" element={<Index />} />
-                  <Route path="/pricing" element={<Pricing />} />
-                  <Route path="/recherche" element={<MoteurRecherche />} />
-                  <Route path="/checklist-mariage" element={<ChecklistMariage />} />
-                  <Route path="/planning-personnalise" element={<PlanningPersonnalise />} />
-                  
-                  {/* Authentication routes */}
-                  <Route path="/login" element={<Login />} />
-                  <Route path="/register" element={<Register />} />
-                  <Route path="/auth/callback" element={<Callback />} />
-                  
-                  {/* Dashboard routes */}
-                  <Route path="/dashboard/*" element={<UserDashboard />} />
-                  
-                  {/* Services routes */}
-                  <Route path="/services/budget" element={<Budget />} />
-                  <Route path="/services/prestataires" element={<Prestations />} />
-                  <Route path="/services/planification" element={<Planification />} />
-                  <Route path="/services/conseils" element={<Conseils />} />
-                  
-                  {/* Prestataire routes */}
-                  <Route path="/prestataire/:slug" element={<SinglePrestataire />} />
-                  
-                  {/* Test pages */}
-                  <Route path="/test-assistant" element={<TestAssistantVirtuel />} />
-                  <Route path="/assistant-v2" element={<WeddingAssistantV2 />} />
-                  
-                  {/* Existing routes from original App.tsx */}
-                  <Route path="/contact" element={<Contact />} />
-                  <Route path="/coordination" element={<Coordination />} />
-                  <Route path="/legal" element={<Legal />} />
-                  <Route path="/mariage" element={<Mariage />} />
-                  <Route path="/mentions" element={<Mentions />} />
-                  <Route path="/politique" element={<Politique />} />
-                  <Route path="/prestations" element={<Prestations />} />
-                  <Route path="/reservation" element={<Reservation />} />
-                  <Route path="/reservation-jour-m" element={<ReservationJourM />} />
-                  <Route path="/team" element={<Team />} />
-                  <Route path="/valeurs" element={<Valeurs />} />
-                  <Route path="/admin" element={<Admin />} />
-                  <Route path="/admin/jour-m" element={<JourMReservations />} />
-                  
-                  {/* 404 route - must be last */}
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </Suspense>
+              <Routes>
+                {/* Make Index page the main route */}
+                <Route path="/" element={<Index />} />
+                
+                {/* Move LandingPage to /landing route */}
+                <Route path="/landing" element={<LandingPage />} />
+                
+                {/* Old index page is now accessible via /home */}
+                <Route path="/home" element={<Index />} />
+                
+                {/* Professionals page */}
+                <Route path="/professionnels" element={<Professionnels />} />
+                
+                {/* Services pages */}
+                <Route path="/services/prestataires" element={<Prestataires />} />
+                <Route path="/services/planification" element={<Planification />} />
+                <Route path="/services/budget" element={<Budget />} />
+                <Route path="/services/conseils" element={<Conseils />} />
+                
+                {/* Pricing page */}
+                <Route path="/pricing" element={<Pricing />} />
+                
+                {/* Checklist page */}
+                <Route path="/checklist-mariage" element={<ChecklistMariage />} />
+                
+                {/* Guide Mariable */}
+                <Route path="/guide-mariable" element={<GuideMariable />} />
+                <Route path="/guide-mariable-frame" element={<GuideMariableFrame />} />
+                <Route path="/login-frame" element={<LoginFrame />} />
+                
+                {/* About pages */}
+                <Route path="/about/histoire" element={<Histoire />} />
+                <Route path="/about/charte" element={<Charte />} />
+                <Route path="/about/temoignages" element={<Temoignages />} />
+                <Route path="/about/approche" element={<Approche />} />
+                
+                {/* Contact pages */}
+                <Route path="/contact/nous-contacter" element={<NousContacter />} />
+                <Route path="/contact/faq" element={<FAQ />} />
+                
+                {/* Legal pages */}
+                <Route path="/mentions-legales" element={<MentionsLegales />} />
+                <Route path="/cgv" element={<CGV />} />
+                
+                {/* Auth Routes */}
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/auth/email-confirmation" element={<EmailConfirmation />} />
+                <Route path="/auth/callback" element={<Callback />} />
+                
+                {/* Public Reader View - MUST come before protected dashboard routes */}
+                <Route path="/dashboard/lecteur/:token" element={<ReaderView />} />
+                
+                {/* Protected Dashboard Routes */}
+                <Route path="/dashboard/*" element={<UserDashboard />} />
+                
+                {/* Redirect for old privacy policy route */}
+                <Route path="/politique-confidentialite" element={<Navigate to="/mentions-legales" replace />} />
+                
+                {/* Demo page */}
+                <Route path="/demo" element={<Demo />} />
+                <Route path="/prestataire/:slug" element={<PrestatairePage />} />
+                
+                {/* Moteur de recherche page - now accessible via /guide-mariable route as well */}
+                <Route path="/recherche" element={<MoteurRecherche />} />
+                <Route path="/guide-mariable" element={<MoteurRecherche />} />
+                
+                {/* Test Formulaire */}
+                <Route path="/test-formulaire" element={<TestFormulaire />} />
+                <Route path="/test-assistant-virtuel" element={<TestAssistantVirtuel />} />
+                <Route path="/assistant-v2" element={<WeddingAssistantV2 />} />
+                <Route path="/planning-personnalise" element={<PlanningPersonnalise />} />
+                <Route path="/planning-personnalise/resultats" element={<PlanningResultatsPersonnalises />} />
+                
+                {/* Import Airtable */}
+                <Route path="/import-airtable" element={<ImportAirtable />} />
+                
+                {/* Admin Routes */}
+                <Route path="/admin/prestataires" element={<PrestataireAdmin />} />
+                <Route path="/admin/form" element={<FormAdmin />} />
+                
+                {/* Prestataire Routes */}
+                <Route path="/prestataire/tracking" element={<PrestataireTrackingPage />} />
+                <Route path="/prestataire/contact" element={<PrestataireContactPage />} />
+                
+                {/* Catch-all route */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
             </AnalyticsProvider>
           </BrowserRouter>
         </TooltipProvider>
       </ReaderModeProvider>
     </HelmetProvider>
   </QueryClientProvider>
-);
+  );
+};
 
 export default App;

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -13,7 +12,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { VendorFilter } from '@/types/vendorFilters';
+import { VendorFilter } from '@/pages/MoteurRecherche';
 import VenueExtraFilters from '@/components/search/VenueExtraFilters';
 
 type PrestataireCategorie = Database['public']['Enums']['prestataire_categorie'];

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import { addMinutes } from 'date-fns';
@@ -8,6 +9,7 @@ import { usePlanning } from '../context/PlanningContext';
 import EditableEventCard from './EditableEventCard';
 import CustomBlockDialog from './CustomBlockDialog';
 import { v4 as uuidv4 } from 'uuid';
+import { convertFormDataToFormValues, type PlanningFormData } from './FormDataConverter';
 
 interface EnhancedDragDropTimelineProps {
   events: PlanningEvent[];
@@ -158,14 +160,17 @@ const EnhancedDragDropTimeline: React.FC<EnhancedDragDropTimelineProps> = ({
   };
 
   const saveToDatabase = async (events: PlanningEvent[]) => {
-    if (!user) return;
+    if (!user || !formData) return;
 
     try {
+      // Convert FormData to FormValues for compatibility
+      const formValues = convertFormDataToFormValues(formData);
+      
       // Save to new generated_planning table
       await saveGeneratedPlanning(
         supabase,
         user.id,
-        formData || {},
+        formValues,
         events
       );
     } catch (error) {
@@ -201,7 +206,7 @@ const EnhancedDragDropTimeline: React.FC<EnhancedDragDropTimelineProps> = ({
 
     toast({
       title: "Planning réorganisé",
-      description: "Les horaires ont été recalculés automatiquement pour maintenir une séquence logique.",
+      description: "Les horaires ont été recalculés automatiquement pour maintenir une séquence logique."
     });
   };
 

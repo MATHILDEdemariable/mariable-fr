@@ -204,7 +204,7 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
     switch (question.type) {
       case 'choix':
         return (
-          <div className="space-y-2 sm:space-y-3">
+          <div className="space-y-3">
             <RadioGroup
               value={value as string || ''}
               onValueChange={(newValue) => updateFormData(question.option_name, newValue)}
@@ -214,12 +214,7 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
                 return (
                   <div key={optionValue} className="flex items-center space-x-2">
                     <RadioGroupItem value={optionValue} id={`${question.id}-${optionValue}`} />
-                    <Label 
-                      htmlFor={`${question.id}-${optionValue}`}
-                      className="text-sm sm:text-base leading-relaxed cursor-pointer"
-                    >
-                      {optionValue}
-                    </Label>
+                    <Label htmlFor={`${question.id}-${optionValue}`}>{optionValue}</Label>
                   </div>
                 );
               })}
@@ -229,7 +224,7 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
 
       case 'multi-choix':
         return (
-          <div className="space-y-2 sm:space-y-3">
+          <div className="space-y-3">
             {question.options?.map((option) => {
               const optionValue = typeof option === 'string' ? option : option.valeur;
               const isChecked = (value as string[] || []).includes(optionValue);
@@ -242,12 +237,7 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
                       handleMultiSelectChange(question.option_name, optionValue, checked === true)
                     }
                   />
-                  <Label 
-                    htmlFor={`${question.id}-${optionValue}`}
-                    className="text-sm sm:text-base leading-relaxed cursor-pointer"
-                  >
-                    {optionValue}
-                  </Label>
+                  <Label htmlFor={`${question.id}-${optionValue}`}>{optionValue}</Label>
                 </div>
               );
             })}
@@ -260,7 +250,6 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
             type="time"
             value={value as string || ''}
             onChange={(e) => updateFormData(question.option_name, e.target.value)}
-            className="w-full sm:w-auto"
           />
         );
 
@@ -272,7 +261,6 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
             onChange={(e) => updateFormData(question.option_name, parseInt(e.target.value) || 0)}
             min="0"
             placeholder={question.option_name.includes('trajet') ? 'Durée en minutes' : ''}
-            className="w-full sm:w-auto"
           />
         );
 
@@ -282,7 +270,6 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
             type="text"
             value={value as string || ''}
             onChange={(e) => updateFormData(question.option_name, e.target.value)}
-            className="w-full"
           />
         );
 
@@ -336,24 +323,22 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
   const isLastStep = currentStep === STEP_CATEGORIES.length - 1;
 
   return (
-    <div className="space-y-4 sm:space-y-6">
+    <div className="space-y-6">
       <Card>
-        <CardHeader className="px-3 sm:px-6 py-3 sm:py-4">
-          <CardTitle className="font-serif text-sm sm:text-base md:text-lg">
+        <CardHeader>
+          <CardTitle className="font-serif">
             {stepLabels[currentStep]} ({currentStep + 1}/{STEP_CATEGORIES.length})
           </CardTitle>
         </CardHeader>
-        <CardContent className="px-3 sm:px-6 py-4 sm:py-6 space-y-4 sm:space-y-6">
+        <CardContent className="space-y-6">
           {currentQuestions.length === 0 ? (
-            <div className="text-center py-6 sm:py-8">
-              <p className="text-muted-foreground text-sm sm:text-base">
-                Aucune question pour cette étape.
-              </p>
+            <div className="text-center py-8">
+              <p className="text-muted-foreground">Aucune question pour cette étape.</p>
             </div>
           ) : (
             currentQuestions.map((question) => (
-              <div key={question.id} className="space-y-2 sm:space-y-3">
-                <Label className="text-sm sm:text-base font-medium leading-relaxed block">
+              <div key={question.id} className="space-y-2">
+                <Label className="text-base font-medium">
                   {question.label_affichage_front || question.label}
                 </Label>
                 {renderQuestion(question)}
@@ -361,12 +346,11 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
             ))
           )}
 
-          <div className="flex flex-col sm:flex-row justify-between gap-3 sm:gap-0 pt-4 sm:pt-6">
+          <div className="flex justify-between pt-6">
             <Button
               variant="outline"
               onClick={handlePrevious}
               disabled={currentStep === 0}
-              className="w-full sm:w-auto order-2 sm:order-1"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
               Précédent
@@ -375,7 +359,7 @@ const PlanningQuiz: React.FC<PlanningQuizProps> = ({
             <Button
               onClick={handleNext}
               disabled={!canProceed()}
-              className="bg-wedding-olive hover:bg-wedding-olive/80 w-full sm:w-auto order-1 sm:order-2"
+              className="bg-wedding-olive hover:bg-wedding-olive/80"
             >
               {isLastStep ? (
                 <>

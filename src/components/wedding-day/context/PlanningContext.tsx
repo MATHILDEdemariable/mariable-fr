@@ -1,59 +1,78 @@
 
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { User } from '@supabase/supabase-js';
-import { PlanningFormValues, PlanningEvent, SerializablePlanningEvent } from '../types/planningTypes';
+import { PlanningEvent, PlanningQuestion, generatePlanning as generatePlanningFromTypes } from '../types/planningTypes';
+import { convertFormDataToFormValues, type PlanningFormData, type PlanningFormValues } from '../components/FormDataConverter';
 
-type PlanningContextType = {
-  formData: PlanningFormValues | null;
-  setFormData: React.Dispatch<React.SetStateAction<PlanningFormValues | null>>;
-  events: PlanningEvent[];
-  setEvents: React.Dispatch<React.SetStateAction<PlanningEvent[]>>;
-  loading: boolean;
-  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
-  exportLoading: boolean;
-  setExportLoading: React.Dispatch<React.SetStateAction<boolean>>;
+interface PlanningContextType {
+  user: User | null;
+  formData: PlanningFormData | null;
+  planning: PlanningEvent[];
   activeTab: string;
-  setActiveTab: React.Dispatch<React.SetStateAction<string>>;
-  user: User | null | undefined;
-};
+  setFormData: (data: PlanningFormData) => void;
+  setPlanning: (events: PlanningEvent[]) => void;
+  setActiveTab: (tab: string) => void;
+  generatePlanning: (data: PlanningFormData) => PlanningEvent[];
+}
 
 const PlanningContext = createContext<PlanningContextType | undefined>(undefined);
 
-export const PlanningProvider: React.FC<{ children: ReactNode, user?: User | null }> = ({ 
-  children, 
-  user 
-}) => {
-  const [formData, setFormData] = useState<PlanningFormValues | null>(null);
-  const [events, setEvents] = useState<PlanningEvent[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [exportLoading, setExportLoading] = useState<boolean>(false);
-  const [activeTab, setActiveTab] = useState<string>("form");
+export const usePlanning = () => {
+  const context = useContext(PlanningContext);
+  if (!context) {
+    throw new Error('usePlanning must be used within a PlanningProvider');
+  }
+  return context;
+};
+
+interface PlanningProviderProps {
+  children: ReactNode;
+  user: User | null;
+}
+
+export const PlanningProvider: React.FC<PlanningProviderProps> = ({ children, user }) => {
+  const [formData, setFormData] = useState<PlanningFormData | null>(null);
+  const [planning, setPlanning] = useState<PlanningEvent[]>([]);
+  const [activeTab, setActiveTab] = useState('form');
+
+  const generatePlanning = (data: PlanningFormData): PlanningEvent[] => {
+    // Convert FormData to FormValues for compatibility with generatePlanningFromTypes
+    const formValues = convertFormDataToFormValues(data);
+    
+    // Mock questions array - in real implementation, this would come from the database
+    const mockQuestions: PlanningQuestion[] = [
+      {
+        id: '1',
+        option_name: 'double_ceremonie',
+        type: 'choix',
+        categorie: 'cérémonie',
+        label: 'Double cérémonie',
+        duree_minutes: 0,
+        ordre_affichage: 1,
+        visible_si: null,
+        options: ['oui', 'non']
+      }
+    ];
+    
+    const generatedEvents = generatePlanningFromTypes(mockQuestions, formValues);
+    setPlanning(generatedEvents);
+    return generatedEvents;
+  };
 
   return (
     <PlanningContext.Provider
       value={{
+        user,
         formData,
-        setFormData,
-        events,
-        setEvents,
-        loading,
-        setLoading,
-        exportLoading,
-        setExportLoading,
+        planning,
         activeTab,
+        setFormData,
+        setPlanning,
         setActiveTab,
-        user: user || null
+        generatePlanning
       }}
     >
       {children}
     </PlanningContext.Provider>
   );
-};
-
-export const usePlanning = (): PlanningContextType => {
-  const context = useContext(PlanningContext);
-  if (context === undefined) {
-    throw new Error('usePlanning must be used within a PlanningProvider');
-  }
-  return context;
 };

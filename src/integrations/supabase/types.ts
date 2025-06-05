@@ -90,7 +90,6 @@ export type Database = {
           id: string
           item_id: string
           item_name: string
-          payment_note: string | null
           remaining: number | null
           updated_at: string
           user_id: string
@@ -104,7 +103,6 @@ export type Database = {
           id?: string
           item_id: string
           item_name: string
-          payment_note?: string | null
           remaining?: number | null
           updated_at?: string
           user_id: string
@@ -118,7 +116,6 @@ export type Database = {
           id?: string
           item_id?: string
           item_name?: string
-          payment_note?: string | null
           remaining?: number | null
           updated_at?: string
           user_id?: string
@@ -294,93 +291,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
-      }
-      jour_m_reservations: {
-        Row: {
-          admin_notes: string | null
-          budget: string | null
-          contact_jour_j: Json | null
-          created_at: string
-          current_organization: string
-          delegation_tasks: string | null
-          deroulement_mariage: string | null
-          documents_links: string | null
-          email: string
-          first_name: string
-          guest_count: number
-          hear_about_us: string | null
-          id: string
-          last_name: string
-          partner_name: string | null
-          phone: string
-          prestataires_reserves: Json | null
-          processed_at: string | null
-          processed_by: string | null
-          services_souhaites: Json | null
-          specific_needs: string | null
-          status: string | null
-          updated_at: string
-          uploaded_files: Json | null
-          wedding_date: string
-          wedding_location: string
-        }
-        Insert: {
-          admin_notes?: string | null
-          budget?: string | null
-          contact_jour_j?: Json | null
-          created_at?: string
-          current_organization: string
-          delegation_tasks?: string | null
-          deroulement_mariage?: string | null
-          documents_links?: string | null
-          email: string
-          first_name: string
-          guest_count: number
-          hear_about_us?: string | null
-          id?: string
-          last_name: string
-          partner_name?: string | null
-          phone: string
-          prestataires_reserves?: Json | null
-          processed_at?: string | null
-          processed_by?: string | null
-          services_souhaites?: Json | null
-          specific_needs?: string | null
-          status?: string | null
-          updated_at?: string
-          uploaded_files?: Json | null
-          wedding_date: string
-          wedding_location: string
-        }
-        Update: {
-          admin_notes?: string | null
-          budget?: string | null
-          contact_jour_j?: Json | null
-          created_at?: string
-          current_organization?: string
-          delegation_tasks?: string | null
-          deroulement_mariage?: string | null
-          documents_links?: string | null
-          email?: string
-          first_name?: string
-          guest_count?: number
-          hear_about_us?: string | null
-          id?: string
-          last_name?: string
-          partner_name?: string | null
-          phone?: string
-          prestataires_reserves?: Json | null
-          processed_at?: string | null
-          processed_by?: string | null
-          services_souhaites?: Json | null
-          specific_needs?: string | null
-          status?: string | null
-          updated_at?: string
-          uploaded_files?: Json | null
-          wedding_date?: string
-          wedding_location?: string
-        }
-        Relationships: []
       }
       planning_questions: {
         Row: {

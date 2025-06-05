@@ -1,137 +1,163 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Check } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { CheckCircle } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Pricing = () => {
-  const navigate = useNavigate();
-
-  const plans = [
-    {
-      name: "Gratuit",
-      price: "0€",
-      description: "Pour commencer votre planification",
-      features: [
-        "Checklist de mariage",
-        "Calculatrice budget basique",
-        "Recherche de prestataires",
-        "Support communautaire"
-      ],
-      cta: "Commencer gratuitement",
-      highlighted: false
-    },
-    {
-      name: "Premium",
-      price: "29€/mois",
-      description: "Pour une planification complète",
-      features: [
-        "Tout du plan gratuit",
-        "Tableau de bord complet",
-        "Gestion budget avancée",
-        "Suivi prestataires",
-        "Planning détaillé",
-        "Support prioritaire"
-      ],
-      cta: "Essayer Premium",
-      highlighted: true
-    },
-    {
-      name: "Coordination Jour J",
-      price: "Sur devis",
-      description: "Pour une journée sereine",
-      features: [
-        "Coordination complète",
-        "Planning minute par minute",
-        "Hotline jour J",
-        "Gestion des prestataires",
-        "Assistance sur site"
-      ],
-      cta: "Demander un devis",
-      highlighted: false
-    }
-  ];
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   return (
-    <>
+    <div className="min-h-screen flex flex-col bg-white">
       <Helmet>
         <title>Tarifs | Mariable</title>
-        <meta name="description" content="Découvrez nos offres pour organiser votre mariage selon vos besoins et votre budget." />
+        <meta name="description" content="Découvrez nos tarifs et choisissez le service qui vous correspond" />
       </Helmet>
-
+      
       <Header />
       
-      <main className="container mx-auto px-4 py-12">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-serif mb-4">Nos offres</h1>
-          <p className="text-xl text-muted-foreground">
-            Choisissez l'accompagnement qui vous correspond
-          </p>
-        </div>
+      <main className="flex-grow">
+        <section className="py-16 md:py-20 bg-white">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-12">
+              <h1 className="text-4xl md:text-5xl font-serif text-black mb-6">
+                Les services
+              </h1>
+              <p className="text-lg text-gray-700 max-w-2xl mx-auto">
+                Choisissez le niveau d'accompagnement qui vous correspond
+              </p>
+            </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          {plans.map((plan, index) => (
-            <Card key={index} className={`relative ${plan.highlighted ? 'border-wedding-olive shadow-lg scale-105' : ''}`}>
-              {plan.highlighted && (
-                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                  <span className="bg-wedding-olive text-white px-4 py-1 rounded-full text-sm font-medium">
-                    Populaire
-                  </span>
-                </div>
-              )}
-              
-              <CardHeader className="text-center">
-                <CardTitle className="text-2xl">{plan.name}</CardTitle>
-                <div className="text-3xl font-bold text-wedding-olive">{plan.price}</div>
-                <CardDescription>{plan.description}</CardDescription>
-              </CardHeader>
-              
-              <CardContent className="space-y-4">
-                <ul className="space-y-3">
-                  {plan.features.map((feature, featureIndex) => (
-                    <li key={featureIndex} className="flex items-center gap-2">
-                      <Check className="h-4 w-4 text-wedding-olive flex-shrink-0" />
-                      <span className="text-sm">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-                
-                <Button 
-                  className={`w-full ${plan.highlighted ? 'bg-wedding-olive hover:bg-wedding-olive/90' : ''}`}
-                  variant={plan.highlighted ? 'default' : 'outline'}
-                  onClick={() => {
-                    if (plan.name === "Gratuit") {
-                      navigate('/register');
-                    } else if (plan.name === "Premium") {
-                      navigate('/register');
-                    } else {
-                      navigate('/contact');
-                    }
-                  }}
-                >
-                  {plan.cta}
-                </Button>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+              {/* Organisation */}
+              <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col">
+                <CardHeader className="text-center pb-8">
+                  <CardTitle className="text-2xl font-serif mb-4">Organisation</CardTitle>
+                  <div className="text-4xl font-bold text-wedding-olive mb-2">
+                    Gratuit
+                  </div>
+                  <p className="text-sm text-gray-600">Accessible après inscription</p>
+                </CardHeader>
+                <CardContent className="space-y-4 flex-grow flex flex-col">
+                  <div className="space-y-3 flex-grow">
+                    <div className="flex items-start gap-3">
+                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                      <p className="text-sm text-gray-700">Accès à votre espace complet</p>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                      <p className="text-sm text-gray-700">Prestataires vérifiés</p>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                      <p className="text-sm text-gray-700">Suivi budget</p>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                      <p className="text-sm text-gray-700">Planning sur-mesure</p>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                      <p className="text-sm text-gray-700">Budget estimatif</p>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                      <p className="text-sm text-gray-700">Assistant virtuel</p>
+                    </div>
+                  </div>
+                  
+                  <div className="pt-6 mt-auto">
+                    <Button asChild className="w-full bg-gray-100 text-gray-800 hover:bg-gray-200 border border-gray-300">
+                      <Link to="/register">
+                        Créer un compte
+                      </Link>
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
 
-        <div className="text-center mt-12">
-          <p className="text-muted-foreground mb-4">
-            Des questions sur nos offres ?
-          </p>
-          <Button variant="outline" onClick={() => navigate('/contact')}>
-            Nous contacter
-          </Button>
-        </div>
+              {/* Coordination Jour-J basique */}
+              <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300 border-2 border-wedding-olive flex flex-col">
+                <CardHeader className="text-center pb-8">
+                  <CardTitle className="text-2xl font-serif mb-4">Coordination Jour-J basique</CardTitle>
+                  <div className="text-4xl font-bold text-wedding-olive mb-2">
+                    Gratuit
+                  </div>
+                  <p className="text-sm text-gray-600">Accessible après inscription</p>
+                </CardHeader>
+                <CardContent className="space-y-4 flex-grow flex flex-col">
+                  <div className="space-y-3 flex-grow">
+                    <div className="flex items-start gap-3">
+                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                      <p className="text-sm text-gray-700">Un outil de coordination intelligent pour structurer la journée & déléguer</p>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                      <p className="text-sm text-gray-700">Générateur de planning jour J</p>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                      <p className="text-sm text-gray-700">Checklist coordination</p>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                      <p className="text-sm text-gray-700">Export PDF</p>
+                    </div>
+                  </div>
+                  
+                  <div className="pt-6 mt-auto">
+                    <Button asChild className="w-full bg-wedding-olive text-white hover:bg-wedding-olive/90">
+                      <Link to="/register">
+                        Créer votre compte
+                      </Link>
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Coordination Jour-J premium */}
+              <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col">
+                <CardHeader className="text-center pb-8">
+                  <CardTitle className="text-2xl font-serif mb-4">Coordination Jour-J premium</CardTitle>
+                  <div className="text-4xl font-bold text-wedding-olive mb-2">
+                    À partir de 30€
+                  </div>
+                  <p className="text-sm text-gray-600">Payant</p>
+                </CardHeader>
+                <CardContent className="space-y-4 flex-grow flex flex-col">
+                  <div className="space-y-3 flex-grow">
+                    <div className="flex items-start gap-3">
+                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                      <p className="text-sm text-gray-700">Un accompagnement plus personnalisé à la carte et selon vos besoins</p>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                      <p className="text-sm text-gray-700">Services détaillés disponibles dans la brochure</p>
+                    </div>
+                  </div>
+                  
+                  <div className="pt-6 mt-auto">
+                    <Button asChild className="w-full bg-gray-100 text-gray-800 hover:bg-gray-200 border border-gray-300">
+                      <a href="https://gamma.app/docs/Jour-J-Votre-Mariage-Sans-Stress-dw8sq63nk0jwwgf" target="_blank" rel="noopener noreferrer">
+                        Consulter la brochure
+                      </a>
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </section>
       </main>
-
+      
       <Footer />
-    </>
+    </div>
   );
 };
 

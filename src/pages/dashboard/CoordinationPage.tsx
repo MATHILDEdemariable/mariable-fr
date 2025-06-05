@@ -35,15 +35,15 @@ const CoordinationPage = () => {
         <meta name="description" content="Générateur de planning personnalisé pour votre jour J" />
       </Helmet>
       
-      <div className="space-y-4 sm:space-y-6 w-full">
+      <div className="space-y-6 max-w-5xl mx-auto">
         {!user ? (
           <Card>
-            <CardContent className="p-3 sm:p-4 md:p-6 text-center">
-              <h2 className="text-base sm:text-lg md:text-xl font-serif mb-2">Connectez-vous pour profiter de toutes les fonctionnalités</h2>
-              <p className="text-gray-600 text-sm sm:text-base mb-3 sm:mb-4">
+            <CardContent className="p-6 text-center">
+              <h2 className="text-xl font-serif mb-2">Connectez-vous pour profiter de toutes les fonctionnalités</h2>
+              <p className="text-gray-600">
                 Pour sauvegarder votre planning et y accéder ultérieurement, veuillez vous connecter ou créer un compte.
               </p>
-              <p className="text-xs sm:text-sm">
+              <p className="text-sm mt-4">
                 Vous pouvez tout de même générer un planning sans vous connecter, mais il ne sera pas sauvegardé.
               </p>
             </CardContent>
