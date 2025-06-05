@@ -20,8 +20,6 @@ import Reservation from "./pages/ReservationJourM";
 import ReservationJourM from "./pages/ReservationJourM";
 import Team from "./pages/about/Histoire";
 import Valeurs from "./pages/about/Charte";
-import Blog from "./pages/Blog";
-import Article from "./pages/Article";
 import Admin from "./pages/admin/FormAdmin";
 import JourMReservations from "./pages/admin/JourMReservations";
 
@@ -50,8 +48,6 @@ const App = () => (
                 <Route path="/reservation-jour-m" element={<ReservationJourM />} />
                 <Route path="/team" element={<Team />} />
                 <Route path="/valeurs" element={<Valeurs />} />
-                <Route path="/blog" element={<Blog />} />
-                <Route path="/article/:slug" element={<Article />} />
                 <Route path="/admin" element={<Admin />} />
                 <Route path="/admin/jour-m" element={<JourMReservations />} />
               </Routes>
