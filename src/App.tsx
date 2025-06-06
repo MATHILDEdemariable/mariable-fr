@@ -25,9 +25,6 @@ import Approche from "./pages/about/Approche";
 import Temoignages from "./pages/about/Temoignages";
 import NousContacter from "./pages/contact/NousContacter";
 import FAQ from "./pages/contact/FAQ";
-import Planification from "./pages/services/Planification";
-import Budget from "./pages/services/Budget";
-import Conseils from "./pages/services/Conseils";
 import Prestataires from "./pages/services/Prestataires";
 import Professionnels from "./pages/Professionnels";
 import NotFound from "./pages/NotFound";
@@ -52,6 +49,7 @@ import MentionsLegales from "./pages/MentionsLegales";
 import CGV from "./pages/CGV";
 import Pricing from "./pages/Pricing";
 import ReservationJourM from "./pages/ReservationJourM";
+import Budget from "./pages/services/Budget";
 
 // Initialize the query client
 const queryClient = new QueryClient();
@@ -86,9 +84,7 @@ const App = () => {
                 
                 {/* Services pages */}
                 <Route path="/services/prestataires" element={<Prestataires />} />
-                <Route path="/services/planification" element={<Planification />} />
                 <Route path="/services/budget" element={<Budget />} />
-                <Route path="/services/conseils" element={<Conseils />} />
                 
                 {/* Pricing page */}
                 <Route path="/pricing" element={<Pricing />} />
@@ -137,16 +133,21 @@ const App = () => {
                 <Route path="/demo" element={<Demo />} />
                 <Route path="/prestataire/:slug" element={<PrestatairePage />} />
                 
-                {/* Moteur de recherche page - now accessible via /guide-mariable route as well */}
-                <Route path="/recherche" element={<MoteurRecherche />} />
+                {/* Moteur de recherche page - now accessible via /selection (renamed from /recherche) */}
+                <Route path="/selection" element={<MoteurRecherche />} />
                 <Route path="/guide-mariable" element={<MoteurRecherche />} />
+                
+                {/* Redirect old /recherche URL to new /selection URL */}
+                <Route path="/recherche" element={<Navigate to="/selection" replace />} />
+                
+                {/* Planning personnalisé */}
+                <Route path="/planning-personnalise" element={<PlanningPersonnalise />} />
+                <Route path="/planning-personnalise/resultats" element={<PlanningResultatsPersonnalises />} />
                 
                 {/* Test Formulaire */}
                 <Route path="/test-formulaire" element={<TestFormulaire />} />
                 <Route path="/test-assistant-virtuel" element={<TestAssistantVirtuel />} />
                 <Route path="/assistant-v2" element={<WeddingAssistantV2 />} />
-                <Route path="/planning-personnalise" element={<PlanningPersonnalise />} />
-                <Route path="/planning-personnalise/resultats" element={<PlanningResultatsPersonnalises />} />
                 
                 {/* Import Airtable */}
                 <Route path="/import-airtable" element={<ImportAirtable />} />

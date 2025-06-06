@@ -27,11 +27,11 @@ const Footer = () => {
             <ul className="space-y-1 text-xs md:text-sm">
               <li><Link to="/dashboard" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Mon tableau de bord</Link></li>
               <li><Link to="/checklist-mariage" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Check-list</Link></li>
+              <li><Link to="/planning-personnalise" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Planning personnalisé</Link></li>
               <li><Link to="/pricing" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Tarifs</Link></li>
-              <li><Link to="/recherche" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Trouver un prestataire</Link></li>
+              <li><Link to="/selection" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Trouver un prestataire</Link></li>
               <li><Link to="/register" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Coordination du jour J</Link></li>
               <li><Link to="/services/budget" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Calculateur de budget</Link></li>
-              <li><Link to="/services/conseils" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Conseils de professionnels</Link></li>
             </ul>
           </div>
           

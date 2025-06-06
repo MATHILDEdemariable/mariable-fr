@@ -2,7 +2,7 @@
 import React from 'react';
 import Header from '@/components/Header';
 import { Link } from 'react-router-dom';
-import { Instagram, Mail, Linkedin, FileDown, CheckCircle } from 'lucide-react';
+import { Instagram, Mail, Linkedin, FileDown, CheckCircle, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ProfessionalRegistrationForm from '@/components/forms/ProfessionalRegistrationForm';
 import SEO from '@/components/SEO';
@@ -102,6 +102,20 @@ const Professionnels = () => {
                   </div>
                 </div>
               </div>
+              
+              {/* Bouton "Voir la sélection" ajouté ici */}
+              <div className="pt-4">
+                <Button 
+                  asChild
+                  variant="outline"
+                  className="border-wedding-olive/30 text-wedding-olive hover:bg-wedding-olive/10"
+                >
+                  <Link to="/selection" className="flex items-center gap-2">
+                    <Search className="h-4 w-4" />
+                    Voir la sélection
+                  </Link>
+                </Button>
+              </div>
             </div>
           </div>
           
@@ -134,9 +148,9 @@ const Professionnels = () => {
               <ul className="space-y-2 text-sm">
                 <li><Link to="/" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Accueil</Link></li>
                 <li><Link to="/services/prestataires" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Prestataires</Link></li>
-                <li><Link to="/services/planification" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Planification</Link></li>
+                <li><Link to="/planning-personnalise" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Planning personnalisé</Link></li>
                 <li><Link to="/services/budget" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Budget</Link></li>
-                <li><Link to="/services/conseils" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Conseils</Link></li>
+                <li><Link to="/selection" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Sélection</Link></li>
               </ul>
             </div>
             

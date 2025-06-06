@@ -19,7 +19,7 @@ const PrestataireContent = () => {
         <div className="flex flex-wrap gap-3">
           <Button 
             className="bg-wedding-olive hover:bg-wedding-olive/90"
-            onClick={() => navigate('/recherche')}
+            onClick={() => navigate('/selection')}
           >
             <Search className="mr-2 h-4 w-4" />
             Trouver des prestataires
@@ -27,10 +27,10 @@ const PrestataireContent = () => {
           <Button 
             variant="outline"
             className="border-wedding-olive/30 text-wedding-olive hover:bg-wedding-olive/10"
-            onClick={() => navigate('/services/planification')}
+            onClick={() => navigate('/planning-personnalise')}
           >
             <BookOpen className="mr-2 h-4 w-4" />
-            Planifier mon mariage
+            Planning personnalisé
           </Button>
         </div>
       </div>
@@ -72,7 +72,7 @@ const PrestataireContent = () => {
             Découvrez les plus beaux lieux de mariage : châteaux, domaines, salles atypiques, fermes rénovées...
           </p>
           <div className="pl-7">
-            <Link to="/recherche?category=lieu" className="text-sm text-wedding-olive hover:underline">
+            <Link to="/selection?category=lieu" className="text-sm text-wedding-olive hover:underline">
               Voir les lieux de réception →
             </Link>
           </div>
@@ -87,7 +87,7 @@ const PrestataireContent = () => {
             Immortalisez vos moments précieux avec nos photographes de mariage professionnels.
           </p>
           <div className="pl-7">
-            <Link to="/recherche?category=photo" className="text-sm text-wedding-olive hover:underline">
+            <Link to="/selection?category=photo" className="text-sm text-wedding-olive hover:underline">
               Voir les photographes →
             </Link>
           </div>
@@ -102,7 +102,7 @@ const PrestataireContent = () => {
             Offrez un festin mémorable avec les meilleurs traiteurs mariage sélectionnés pour leur savoir-faire.
           </p>
           <div className="pl-7">
-            <Link to="/recherche?category=traiteur" className="text-sm text-wedding-olive hover:underline">
+            <Link to="/selection?category=traiteur" className="text-sm text-wedding-olive hover:underline">
               Voir les traiteurs →
             </Link>
           </div>
@@ -117,7 +117,7 @@ const PrestataireContent = () => {
             Faites vibrer votre soirée avec les meilleurs DJ et groupes musicaux pour votre mariage.
           </p>
           <div className="pl-7">
-            <Link to="/recherche?category=musique" className="text-sm text-wedding-olive hover:underline">
+            <Link to="/selection?category=musique" className="text-sm text-wedding-olive hover:underline">
               Voir les DJ et musiciens →
             </Link>
           </div>
@@ -149,7 +149,7 @@ const PrestataireContent = () => {
         <div className="flex flex-wrap gap-3">
           <Button 
             className="bg-wedding-olive hover:bg-wedding-olive/90"
-            onClick={() => navigate('/recherche')}
+            onClick={() => navigate('/selection')}
           >
             <Search className="mr-2 h-4 w-4" />
             Rechercher des prestataires
@@ -157,10 +157,10 @@ const PrestataireContent = () => {
           <Button 
             variant="outline"
             className="border-wedding-olive/30 text-wedding-olive hover:bg-wedding-olive/10"
-            onClick={() => navigate('/services/planification')}
+            onClick={() => navigate('/planning-personnalise')}
           >
             <BookOpen className="mr-2 h-4 w-4" />
-            Consulter la checklist mariage
+            Planning personnalisé
           </Button>
         </div>
       </div>
