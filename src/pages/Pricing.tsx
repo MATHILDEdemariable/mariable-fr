@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import Header from '@/components/Header';
@@ -164,50 +163,19 @@ const Pricing = () => {
                       </table>
                     </div>
                     
-                    {/* Citations et boutons pour chaque formule - alignement parfait */}
-                    <div className="bg-white">
-                      <div className="grid grid-cols-1 md:grid-cols-4 border-t">
-                        {/* Colonne vide pour la première colonne */}
-                        <div className="p-6 border-r hidden md:block"></div>
-                        
-                        {/* Colonne Libre */}
-                        <div className="p-6 text-center border-r">
-                          <p className="text-sm text-gray-700 italic mb-4">
-                            "Je fais tout moi-même, mais je veux faciliter la coordination"
-                          </p>
-                          <Button asChild className="bg-wedding-olive hover:bg-wedding-olive/90 text-white">
-                            <Link to="/demo-jour-m">
-                              Voir une démo
-                            </Link>
-                          </Button>
-                        </div>
-                        
-                        {/* Colonne Sereine */}
-                        <div className="p-6 text-center border-r bg-gray-100">
-                          <p className="text-sm text-gray-700 italic mb-4">
-                            "Je peux gérer mais je veux réduire la charge mentale"
-                          </p>
-                          <Button 
-                            onClick={scrollToCommentCaMarche}
-                            className="bg-wedding-olive hover:bg-wedding-olive/90 text-white"
-                          >
-                            En savoir plus
-                          </Button>
-                        </div>
-                        
-                        {/* Colonne Privilège */}
-                        <div className="p-6 text-center">
-                          <p className="text-sm text-gray-700 italic mb-4">
-                            "Je veux déléguer et profiter comme les invités"
-                          </p>
-                          <Button 
-                            onClick={scrollToCommentCaMarche}
-                            className="bg-wedding-olive hover:bg-wedding-olive/90 text-white"
-                          >
-                            En savoir plus
-                          </Button>
-                        </div>
-                      </div>
+                    {/* Boutons simplifiés */}
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
+                      <Button asChild className="bg-wedding-olive hover:bg-wedding-olive/90 text-white">
+                        <Link to="/demo-jour-m">
+                          Voir une démo
+                        </Link>
+                      </Button>
+                      <Button 
+                        onClick={scrollToCommentCaMarche}
+                        className="bg-wedding-olive hover:bg-wedding-olive/90 text-white"
+                      >
+                        En savoir plus
+                      </Button>
                     </div>
                   </div>
                 </div>
@@ -464,14 +432,14 @@ const Pricing = () => {
                         <p className="text-sm text-gray-600">
                           Supplément pour la coordination de mariages de plus de 180 invités nécessitant une logistique renforcée
                         </p>
-                      </CardContent>
-                    </Card>
-                  </div>
+                      </Card>
+                    </div>
 
-                  <div className="text-center mt-8">
-                    <p className="text-sm text-gray-600">
-                      Ces options peuvent être ajoutées lors de votre réservation ou discutées pendant l'audit initial.
-                    </p>
+                    <div className="text-center mt-8">
+                      <p className="text-sm text-gray-600">
+                        Ces options peuvent être ajoutées lors de votre réservation ou discutées pendant l'audit initial.
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>

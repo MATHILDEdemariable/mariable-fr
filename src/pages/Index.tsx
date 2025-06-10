@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import Header from '@/components/Header';
 import ChatbotButton from '@/components/ChatbotButton';
@@ -31,6 +30,13 @@ const Index = () => {
     return () => clearInterval(timer);
   }, []);
 
+  const scrollToServices = () => {
+    const servicesSection = document.getElementById('services-section');
+    if (servicesSection) {
+      servicesSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <SEO />
@@ -59,23 +65,14 @@ const Index = () => {
                 </span>
               </h1>
               
-              <p className="text-lg md:text-xl text-white font-semibold mb-8">
-                Grâce au premier wedding planner de poche
-              </p>
-              
               <div className="mb-8">
-                <Button asChild size="lg" className="bg-wedding-olive hover:bg-wedding-olive/90 text-white">
-                  <Link to="/register">
-                    Découvrir <ArrowRight className="ml-2 h-5 w-5" />
-                  </Link>
+                <Button 
+                  onClick={scrollToServices}
+                  size="lg" 
+                  className="bg-wedding-olive hover:bg-wedding-olive/90 text-white"
+                >
+                  Mieux qu'un wedding planner, c'est vous avec les bons outils <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
-              </div>
-
-              {/* Reassurance Badge */}
-              <div className="inline-block bg-white/20 px-6 py-3 rounded-full border border-white/30 backdrop-blur-sm">
-                <p className="text-sm font-bold text-white">
-                  Mieux qu'un wedding planner : c'est vous, avec les bons outils.
-                </p>
               </div>
             </div>
           </div>
@@ -85,13 +82,13 @@ const Index = () => {
         <section className="py-16 md:py-20 bg-white">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-serif text-black mb-6 max-w-4xl mx-auto">
-                MARIABLE TRANSFORME L'ORGANISATION DE VOTRE MARIAGE EN UNE ORGANISATION SIMPLE & AGRÉABLE
+              <h2 className="text-3xl md:text-4xl font-serif text-black mb-6 max-w-4xl mx-auto lowercase font-bold" style={{ fontFamily: 'Playfair Display, serif' }}>
+                Le premier wedding planner de poche
               </h2>
               
               <div className="max-w-3xl mx-auto mb-8">
                 <p className="text-lg text-gray-700 mb-6">
-                  Vivez une expérience unique
+                  Transformez l'organisation de votre mariage en une expérience <span className="underline font-bold">simple</span> & <span className="underline font-bold">agréable</span>.
                 </p>
                 
                 <div className="grid md:grid-cols-3 gap-6 text-left">
@@ -119,7 +116,7 @@ const Index = () => {
               </div>
 
               <Button asChild size="lg" className="bg-wedding-olive hover:bg-wedding-olive/90 text-white">
-                <Link to="/pricing">
+                <Link to="/register">
                   Organisez mieux, dépensez moins <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
               </Button>
@@ -128,7 +125,7 @@ const Index = () => {
         </section>
 
         {/* Services Section - Moved from Pricing */}
-        <section className="py-16 md:py-20 bg-gray-50">
+        <section id="services-section" className="py-16 md:py-20 bg-gray-50">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-serif text-black mb-6">
