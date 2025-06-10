@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import Header from '@/components/Header';
@@ -443,8 +444,8 @@ const Pricing = () => {
                         <p className="text-sm text-gray-600">
                           Supplément pour la coordination de mariages de plus de 180 invités nécessitant une logistique renforcée
                         </p>
-                      </Card>
-                    </div>
+                      </CardContent>
+                    </Card>
 
                     <div className="text-center mt-8">
                       <p className="text-sm text-gray-600">
