@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import Header from '@/components/Header';
@@ -17,6 +16,13 @@ const Pricing = () => {
     const formulesSection = document.getElementById('formules-jour-m');
     if (formulesSection) {
       formulesSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const scrollToCommentCaMarche = () => {
+    const commentSection = document.getElementById('comment-ca-marche');
+    if (commentSection) {
+      commentSection.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
@@ -197,7 +203,7 @@ const Pricing = () => {
                     📅 Le Jour M
                   </CardTitle>
                   <div className="text-3xl font-bold text-wedding-olive mb-1">
-                    Dès 50€ TTC
+                    Dès 49€ TTC
                   </div>
                   <p className="text-sm text-gray-600">Le jour de votre mariage orchestré, sans friction</p>
                 </CardHeader>
@@ -386,39 +392,53 @@ const Pricing = () => {
                       </table>
                     </div>
                     
-                    {/* Descriptions des formules */}
+                    {/* Citations et boutons pour chaque formule */}
                     <div className="grid grid-cols-1 md:grid-cols-3 border-t">
+                      {/* Colonne Libre */}
                       <div className="p-6 text-center border-r">
-                        <p className="text-sm text-gray-700 italic">
+                        <p className="text-sm text-gray-700 italic mb-4">
                           "Je fais tout moi-même, mais je veux faciliter la coordination"
                         </p>
+                        <Button asChild className="bg-wedding-olive hover:bg-wedding-olive/90 text-white">
+                          <Link to="/demo-jour-m">
+                            Voir une démo
+                          </Link>
+                        </Button>
                       </div>
+                      
+                      {/* Colonne Sereine */}
                       <div className="p-6 text-center border-r bg-gray-100">
-                        <p className="text-sm text-gray-700 italic">
+                        <p className="text-sm text-gray-700 italic mb-4">
                           "Je peux gérer mais je veux réduire la charge mentale"
                         </p>
+                        <Button 
+                          onClick={scrollToCommentCaMarche}
+                          className="bg-wedding-olive hover:bg-wedding-olive/90 text-white"
+                        >
+                          En savoir plus
+                        </Button>
                       </div>
+                      
+                      {/* Colonne Privilège */}
                       <div className="p-6 text-center">
-                        <p className="text-sm text-gray-700 italic">
+                        <p className="text-sm text-gray-700 italic mb-4">
                           "Je veux déléguer et profiter comme les invités"
                         </p>
+                        <Button 
+                          onClick={scrollToCommentCaMarche}
+                          className="bg-wedding-olive hover:bg-wedding-olive/90 text-white"
+                        >
+                          En savoir plus
+                        </Button>
                       </div>
                     </div>
-                  </div>
-
-                  <div className="text-center mt-8">
-                    <Button asChild className="bg-wedding-olive hover:bg-wedding-olive/90 text-white px-8 py-3">
-                      <Link to="/reservation-jour-m">
-                        Faire une demande de réservation
-                      </Link>
-                    </Button>
                   </div>
                 </div>
               </div>
             </section>
 
             {/* Section Comment ça marche */}
-            <section className="py-16 bg-gray-50 rounded-xl mb-16">
+            <section id="comment-ca-marche" className="py-16 bg-gray-50 rounded-xl mb-16">
               <div className="container mx-auto px-4">
                 <div className="text-center mb-12">
                   <h2 className="text-3xl md:text-4xl font-serif text-black mb-4">
