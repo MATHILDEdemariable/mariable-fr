@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import Header from '@/components/Header';
 import ChatbotButton from '@/components/ChatbotButton';
@@ -55,11 +56,11 @@ const Index = () => {
           
           <div className="container mx-auto px-4 relative z-10">
             <div className="max-w-3xl">
-              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold mb-4" style={{ fontFamily: 'Playfair Display, serif' }}>
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif text-white font-bold mb-4" style={{ fontFamily: 'Playfair Display, serif' }}>
                 Profitez pleinement de votre mariage.
               </h1>
               
-              <p className="text-xl sm:text-2xl md:text-3xl font-serif text-white mb-8" style={{ fontFamily: 'Playfair Display, serif' }}>
+              <p className="text-xl sm:text-2xl font-serif text-white mb-8" style={{ fontFamily: 'Playfair Display, serif' }}>
                 <span className="inline-block min-h-[1.2em]">
                   {displayedText}
                   {displayedText.length < typedText.length && (
