@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import Header from '@/components/Header';
 import ChatbotButton from '@/components/ChatbotButton';
@@ -55,7 +56,7 @@ const Index = () => {
           
           <div className="container mx-auto px-4 relative z-10">
             <div className="max-w-2xl">
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-serif text-white font-bold mb-6">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-serif text-white font-bold mb-6 capitalize">
                 {staticText}
                 <span className="inline-block min-h-[1.2em]">
                   {displayedText}
@@ -69,9 +70,13 @@ const Index = () => {
                 <Button 
                   onClick={scrollToServices}
                   size="lg" 
-                  className="bg-wedding-olive hover:bg-wedding-olive/90 text-white w-full sm:w-auto text-sm sm:text-base px-6 sm:px-8 py-3 sm:py-4"
+                  className="bg-wedding-olive hover:bg-wedding-olive/90 text-white w-full sm:w-auto 
+                           text-xs px-4 py-2 
+                           sm:text-sm sm:px-6 sm:py-3 
+                           md:text-base md:px-8 md:py-4
+                           max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg"
                 >
-                  Organisez mieux, profitez plus <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
+                  Organisez mieux, profitez plus <ArrowRight className="ml-2 h-3 w-3 sm:h-4 sm:w-4 md:h-5 md:w-5" />
                 </Button>
               </div>
             </div>
@@ -82,7 +87,7 @@ const Index = () => {
         <section className="py-16 md:py-20 bg-white">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif text-black mb-6 max-w-4xl mx-auto lowercase font-bold" style={{ fontFamily: 'Playfair Display, serif' }}>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif text-black mb-6 max-w-4xl mx-auto font-bold capitalize" style={{ fontFamily: 'Playfair Display, serif' }}>
                 Le premier wedding planner de poche
               </h2>
               
@@ -126,7 +131,7 @@ const Index = () => {
 
               <Button asChild size="lg" className="bg-wedding-olive hover:bg-wedding-olive/90 text-white">
                 <Link to="/register">
-                  Organisez mieux, dépensez moins <ArrowRight className="ml-2 h-5 w-5" />
+                  Découvrir Mariable <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
               </Button>
             </div>
@@ -137,7 +142,7 @@ const Index = () => {
         <section id="services-section" className="py-16 md:py-20 bg-gray-50">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-serif text-black mb-6">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif text-black mb-6 font-bold capitalize">
                 Transformez l'organisation de votre mariage en une expérience simple & agréable.
               </h2>
               <p className="text-lg text-gray-700 max-w-2xl mx-auto">
@@ -362,7 +367,7 @@ const Index = () => {
         {/* Final CTA Section */}
         <section className="py-16 md:py-20 bg-wedding-olive text-white">
           <div className="container mx-auto px-4 text-center">
-            <h2 className="text-3xl md:text-4xl font-serif mb-4">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif mb-4 font-bold capitalize">
               Et si vous disiez "oui" à la simplicité ?
             </h2>
             <p className="text-lg mb-8 max-w-2xl mx-auto">
