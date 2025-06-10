@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import Header from '@/components/Header';
 import ChatbotButton from '@/components/ChatbotButton';
@@ -55,7 +56,7 @@ const Index = () => {
           
           <div className="container mx-auto px-4 relative z-10">
             <div className="max-w-2xl">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-white font-bold mb-6">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-serif text-white font-bold mb-6">
                 {staticText}
                 <span className="inline-block min-h-[1.2em]">
                   {displayedText}
@@ -69,9 +70,9 @@ const Index = () => {
                 <Button 
                   onClick={scrollToServices}
                   size="lg" 
-                  className="bg-wedding-olive hover:bg-wedding-olive/90 text-white"
+                  className="bg-wedding-olive hover:bg-wedding-olive/90 text-white w-full sm:w-auto text-sm sm:text-base px-6 sm:px-8 py-3 sm:py-4"
                 >
-                  Mieux qu'un wedding planner, c'est vous avec les bons outils <ArrowRight className="ml-2 h-5 w-5" />
+                  Mieux qu'un wedding planner, c'est vous avec les bons outils <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
                 </Button>
               </div>
             </div>
@@ -82,7 +83,7 @@ const Index = () => {
         <section className="py-16 md:py-20 bg-white">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-serif text-black mb-6 max-w-4xl mx-auto lowercase font-bold" style={{ fontFamily: 'Playfair Display, serif' }}>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif text-black mb-6 max-w-4xl mx-auto lowercase font-bold" style={{ fontFamily: 'Playfair Display, serif' }}>
                 Le premier wedding planner de poche
               </h2>
               

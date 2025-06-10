@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import Header from '@/components/Header';
@@ -33,7 +32,7 @@ const Pricing = () => {
         <section className="py-16 md:py-20 bg-white">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
-              <h1 className="text-4xl md:text-5xl font-serif text-black mb-6">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif text-black mb-6">
                 Formules Jour-M
               </h1>
               <p className="text-lg text-gray-700 max-w-2xl mx-auto">
@@ -42,43 +41,43 @@ const Pricing = () => {
             </div>
 
             {/* Section Formules Jour-M */}
-            <section className="py-16 bg-gray-50 rounded-xl mb-16">
+            <section className="py-8 md:py-16 bg-gray-50 rounded-xl mb-16">
               <div className="container mx-auto px-4">
                 <div className="max-w-6xl mx-auto mb-8">
                   {/* Tableau comparatif */}
                   <div className="bg-white rounded-lg shadow-lg overflow-hidden">
                     <div className="overflow-x-auto">
-                      <table className="w-full">
+                      <table className="w-full min-w-[600px]">
                         <thead>
                           <tr className="bg-wedding-olive text-white">
-                            <th className="px-6 py-4 text-left font-semibold">Fonctionnalité</th>
-                            <th className="px-6 py-4 text-center font-semibold">Libre</th>
-                            <th className="px-6 py-4 text-center font-semibold bg-wedding-olive/90">Sereine</th>
-                            <th className="px-6 py-4 text-center font-semibold">Privilège</th>
+                            <th className="px-3 sm:px-6 py-4 text-left font-semibold text-sm sm:text-base">Fonctionnalité</th>
+                            <th className="px-3 sm:px-6 py-4 text-center font-semibold text-sm sm:text-base">Libre</th>
+                            <th className="px-3 sm:px-6 py-4 text-center font-semibold text-sm sm:text-base bg-wedding-olive/90">Sereine</th>
+                            <th className="px-3 sm:px-6 py-4 text-center font-semibold text-sm sm:text-base">Privilège</th>
                           </tr>
                         </thead>
                         <tbody>
                           <tr className="border-b bg-gray-50">
-                            <td className="px-6 py-4 font-medium text-gray-900">Prix (TTC)</td>
-                            <td className="px-6 py-4 text-center font-bold text-wedding-olive">49€</td>
-                            <td className="px-6 py-4 text-center font-bold text-wedding-olive bg-gray-100">149€</td>
-                            <td className="px-6 py-4 text-center font-bold text-wedding-olive">799€</td>
+                            <td className="px-3 sm:px-6 py-4 font-medium text-gray-900 text-sm sm:text-base">Prix (TTC)</td>
+                            <td className="px-3 sm:px-6 py-4 text-center font-bold text-wedding-olive text-sm sm:text-base">49€</td>
+                            <td className="px-3 sm:px-6 py-4 text-center font-bold text-wedding-olive bg-gray-100 text-sm sm:text-base">149€</td>
+                            <td className="px-3 sm:px-6 py-4 text-center font-bold text-wedding-olive text-sm sm:text-base">799€</td>
                           </tr>
                           <tr className="border-b">
-                            <td className="px-6 py-4 font-medium text-gray-900">App personnalisée</td>
-                            <td className="px-6 py-4 text-center">
+                            <td className="px-3 sm:px-6 py-4 font-medium text-gray-900 text-sm sm:text-base">App personnalisée</td>
+                            <td className="px-3 sm:px-6 py-4 text-center">
                               <div className="flex flex-col items-center">
                                 <X className="h-5 w-5 text-red-500 mb-1" />
                                 <span className="text-sm text-gray-600">(vierge)</span>
                               </div>
                             </td>
-                            <td className="px-6 py-4 text-center bg-gray-100">
+                            <td className="px-3 sm:px-6 py-4 text-center bg-gray-100">
                               <div className="flex flex-col items-center">
                                 <CheckCircle className="h-5 w-5 text-green-500 mb-1" />
                                 <span className="text-sm text-gray-600">Pré-remplie</span>
                               </div>
                             </td>
-                            <td className="px-6 py-4 text-center">
+                            <td className="px-3 sm:px-6 py-4 text-center">
                               <div className="flex flex-col items-center">
                                 <CheckCircle className="h-5 w-5 text-green-500 mb-1" />
                                 <span className="text-sm text-gray-600">Pré-remplie</span>
@@ -86,20 +85,20 @@ const Pricing = () => {
                             </td>
                           </tr>
                           <tr className="border-b">
-                            <td className="px-6 py-4 font-medium text-gray-900">Checklists & planning</td>
-                            <td className="px-6 py-4 text-center">
+                            <td className="px-3 sm:px-6 py-4 font-medium text-gray-900 text-sm sm:text-base">Checklists & planning</td>
+                            <td className="px-3 sm:px-6 py-4 text-center">
                               <div className="flex flex-col items-center">
                                 <CheckCircle className="h-5 w-5 text-green-500 mb-1" />
                                 <span className="text-sm text-gray-600">Modifiable</span>
                               </div>
                             </td>
-                            <td className="px-6 py-4 text-center bg-gray-100">
+                            <td className="px-3 sm:px-6 py-4 text-center bg-gray-100">
                               <div className="flex flex-col items-center">
                                 <CheckCircle className="h-5 w-5 text-green-500 mb-1" />
                                 <span className="text-sm text-gray-600">Modifiable</span>
                               </div>
                             </td>
-                            <td className="px-6 py-4 text-center">
+                            <td className="px-3 sm:px-6 py-4 text-center">
                               <div className="flex flex-col items-center">
                                 <CheckCircle className="h-5 w-5 text-green-500 mb-1" />
                                 <span className="text-sm text-gray-600">Modifiable</span>
@@ -107,29 +106,29 @@ const Pricing = () => {
                             </td>
                           </tr>
                           <tr className="border-b">
-                            <td className="px-6 py-4 font-medium text-gray-900">Notifications et rappels en temps réel de J-3 à J+1</td>
-                            <td className="px-6 py-4 text-center">
+                            <td className="px-3 sm:px-6 py-4 font-medium text-gray-900 text-sm sm:text-base">Notifications et rappels en temps réel de J-3 à J+1</td>
+                            <td className="px-3 sm:px-6 py-4 text-center">
                               <X className="h-5 w-5 text-red-500 mx-auto" />
                             </td>
-                            <td className="px-6 py-4 text-center bg-gray-100">
+                            <td className="px-3 sm:px-6 py-4 text-center bg-gray-100">
                               <CheckCircle className="h-5 w-5 text-green-500 mx-auto" />
                             </td>
-                            <td className="px-6 py-4 text-center">
+                            <td className="px-3 sm:px-6 py-4 text-center">
                               <CheckCircle className="h-5 w-5 text-green-500 mx-auto" />
                             </td>
                           </tr>
                           <tr className="border-b">
-                            <td className="px-6 py-4 font-medium text-gray-900">Support client via une hotline Mariable dédiée 7J/7 jusqu'au Jour-J</td>
-                            <td className="px-6 py-4 text-center">
+                            <td className="px-3 sm:px-6 py-4 font-medium text-gray-900 text-sm sm:text-base">Support client via une hotline Mariable dédiée 7J/7 jusqu'au Jour-J</td>
+                            <td className="px-3 sm:px-6 py-4 text-center">
                               <X className="h-5 w-5 text-red-500 mx-auto" />
                             </td>
-                            <td className="px-6 py-4 text-center bg-gray-100">
+                            <td className="px-3 sm:px-6 py-4 text-center bg-gray-100">
                               <div className="flex flex-col items-center">
                                 <CheckCircle className="h-5 w-5 text-green-500 mb-1" />
                                 <span className="text-sm text-gray-600">(option +50€)</span>
                               </div>
                             </td>
-                            <td className="px-6 py-4 text-center">
+                            <td className="px-3 sm:px-6 py-4 text-center">
                               <div className="flex flex-col items-center">
                                 <CheckCircle className="h-5 w-5 text-green-500 mb-1" />
                                 <span className="text-sm text-gray-600">incluse</span>
@@ -137,26 +136,26 @@ const Pricing = () => {
                             </td>
                           </tr>
                           <tr className="border-b">
-                            <td className="px-6 py-4 font-medium text-gray-900">Coordination prestataires en amont (J-15)</td>
-                            <td className="px-6 py-4 text-center">
+                            <td className="px-3 sm:px-6 py-4 font-medium text-gray-900 text-sm sm:text-base">Coordination prestataires en amont (J-15)</td>
+                            <td className="px-3 sm:px-6 py-4 text-center">
                               <X className="h-5 w-5 text-red-500 mx-auto" />
                             </td>
-                            <td className="px-6 py-4 text-center bg-gray-100">
+                            <td className="px-3 sm:px-6 py-4 text-center bg-gray-100">
                               <X className="h-5 w-5 text-red-500 mx-auto" />
                             </td>
-                            <td className="px-6 py-4 text-center">
+                            <td className="px-3 sm:px-6 py-4 text-center">
                               <CheckCircle className="h-5 w-5 text-green-500 mx-auto" />
                             </td>
                           </tr>
                           <tr className="border-b">
-                            <td className="px-6 py-4 font-medium text-gray-900">Présence physique le jour J</td>
-                            <td className="px-6 py-4 text-center">
+                            <td className="px-3 sm:px-6 py-4 font-medium text-gray-900 text-sm sm:text-base">Présence physique le jour J</td>
+                            <td className="px-3 sm:px-6 py-4 text-center">
                               <X className="h-5 w-5 text-red-500 mx-auto" />
                             </td>
-                            <td className="px-6 py-4 text-center bg-gray-100">
+                            <td className="px-3 sm:px-6 py-4 text-center bg-gray-100">
                               <X className="h-5 w-5 text-red-500 mx-auto" />
                             </td>
-                            <td className="px-6 py-4 text-center">
+                            <td className="px-3 sm:px-6 py-4 text-center">
                               <CheckCircle className="h-5 w-5 text-green-500 mx-auto" />
                             </td>
                           </tr>
@@ -166,14 +165,14 @@ const Pricing = () => {
                     
                     {/* Boutons simplifiés */}
                     <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8 p-6">
-                      <Button asChild className="bg-wedding-olive hover:bg-wedding-olive/90 text-white">
+                      <Button asChild className="bg-wedding-olive hover:bg-wedding-olive/90 text-white w-full sm:w-auto">
                         <Link to="/demo-jour-m">
                           Voir une démo
                         </Link>
                       </Button>
                       <Button 
                         onClick={scrollToCommentCaMarche}
-                        className="bg-wedding-olive hover:bg-wedding-olive/90 text-white"
+                        className="bg-wedding-olive hover:bg-wedding-olive/90 text-white w-full sm:w-auto"
                       >
                         En savoir plus
                       </Button>
@@ -332,6 +331,17 @@ const Pricing = () => {
               </div>
             </section>
 
+            {/* Bouton CTA Réserver */}
+            <section className="py-8 bg-white text-center">
+              <div className="container mx-auto px-4">
+                <Button asChild size="lg" className="bg-wedding-olive hover:bg-wedding-olive/90 text-white">
+                  <Link to="/reservation-jour-m">
+                    Réserver
+                  </Link>
+                </Button>
+              </div>
+            </section>
+
             {/* Nouvelle section Options supplémentaires */}
             <section className="py-16 bg-white">
               <div className="container mx-auto px-4">
@@ -455,3 +465,5 @@ const Pricing = () => {
 };
 
 export default Pricing;
+
+</edits_to_apply>
