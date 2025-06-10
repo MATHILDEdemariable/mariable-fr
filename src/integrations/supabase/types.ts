@@ -9,30 +9,6 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      admin_access_tokens: {
-        Row: {
-          created_at: string | null
-          expires_at: string | null
-          id: string
-          is_active: boolean | null
-          token: string
-        }
-        Insert: {
-          created_at?: string | null
-          expires_at?: string | null
-          id?: string
-          is_active?: boolean | null
-          token: string
-        }
-        Update: {
-          created_at?: string | null
-          expires_at?: string | null
-          id?: string
-          is_active?: boolean | null
-          token?: string
-        }
-        Relationships: []
-      }
       admin_users: {
         Row: {
           created_at: string
@@ -754,7 +730,6 @@ export type Database = {
           created_at: string
           filename: string | null
           id: string
-          is_cover: boolean | null
           ordre: number | null
           prestataire_id: string
           principale: boolean | null
@@ -766,7 +741,6 @@ export type Database = {
           created_at?: string
           filename?: string | null
           id?: string
-          is_cover?: boolean | null
           ordre?: number | null
           prestataire_id: string
           principale?: boolean | null
@@ -778,7 +752,6 @@ export type Database = {
           created_at?: string
           filename?: string | null
           id?: string
-          is_cover?: boolean | null
           ordre?: number | null
           prestataire_id?: string
           principale?: boolean | null
@@ -810,7 +783,6 @@ export type Database = {
           email: string | null
           featured: boolean | null
           first_price_package: number | null
-          first_price_package_description: string | null
           hebergement_inclus: boolean | null
           id: string
           latitude: number | null
@@ -825,20 +797,12 @@ export type Database = {
           responsable_bio: string | null
           responsable_nom: string | null
           second_price_package: number | null
-          second_price_package_description: string | null
-          show_brochures: boolean | null
-          show_contact_form: boolean | null
-          show_description: boolean | null
-          show_photos: boolean | null
-          show_prices: boolean | null
-          show_responsable: boolean | null
           siret: string | null
           site_web: string | null
           slug: string | null
           styles: Json | null
           telephone: string | null
           third_price_package: number | null
-          third_price_package_description: string | null
           updated_at: string
           ville: string | null
           visible: boolean | null
@@ -858,7 +822,6 @@ export type Database = {
           email?: string | null
           featured?: boolean | null
           first_price_package?: number | null
-          first_price_package_description?: string | null
           hebergement_inclus?: boolean | null
           id?: string
           latitude?: number | null
@@ -873,20 +836,12 @@ export type Database = {
           responsable_bio?: string | null
           responsable_nom?: string | null
           second_price_package?: number | null
-          second_price_package_description?: string | null
-          show_brochures?: boolean | null
-          show_contact_form?: boolean | null
-          show_description?: boolean | null
-          show_photos?: boolean | null
-          show_prices?: boolean | null
-          show_responsable?: boolean | null
           siret?: string | null
           site_web?: string | null
           slug?: string | null
           styles?: Json | null
           telephone?: string | null
           third_price_package?: number | null
-          third_price_package_description?: string | null
           updated_at?: string
           ville?: string | null
           visible?: boolean | null
@@ -906,7 +861,6 @@ export type Database = {
           email?: string | null
           featured?: boolean | null
           first_price_package?: number | null
-          first_price_package_description?: string | null
           hebergement_inclus?: boolean | null
           id?: string
           latitude?: number | null
@@ -921,20 +875,12 @@ export type Database = {
           responsable_bio?: string | null
           responsable_nom?: string | null
           second_price_package?: number | null
-          second_price_package_description?: string | null
-          show_brochures?: boolean | null
-          show_contact_form?: boolean | null
-          show_description?: boolean | null
-          show_photos?: boolean | null
-          show_prices?: boolean | null
-          show_responsable?: boolean | null
           siret?: string | null
           site_web?: string | null
           slug?: string | null
           styles?: Json | null
           telephone?: string | null
           third_price_package?: number | null
-          third_price_package_description?: string | null
           updated_at?: string
           ville?: string | null
           visible?: boolean | null

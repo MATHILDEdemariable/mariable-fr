@@ -1,105 +1,75 @@
 
-import React from "react";
-import { Link } from "react-router-dom";
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { Instagram, Mail } from 'lucide-react';
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-900 text-white py-12">
-      <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+    <footer className="py-8 bg-white text-wedding-black" role="contentinfo" aria-label="Pied de page">
+      <div className="container px-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           <div>
-            <h3 className="text-lg font-semibold mb-4">Mariable</h3>
-            <p className="text-gray-300">
-              Votre plateforme de planification de mariage personnalisée.
+            <div className="flex items-center gap-2 mb-4">
+              <img src="/lovable-uploads/c5ca128d-6c6f-4f09-a990-f6f16d47e231.png" alt="Mariable Logo" className="h-10 md:h-12 w-auto" />
+            </div>
+            <p className="mb-3 text-wedding-black/70 text-xs md:text-sm">
+              Mariable est la référence des mariages modernes & élégants.
             </p>
+            <div className="flex gap-4">
+              <a href="https://www.instagram.com/mariable.fr/" aria-label="Instagram" target="_blank" rel="noopener noreferrer" className="text-wedding-black hover:text-wedding-black/70 transition-colors">
+                <Instagram size={18} />
+              </a>
+            </div>
           </div>
           
-          <div>
-            <h4 className="text-lg font-semibold mb-4">Services</h4>
-            <ul className="space-y-2">
-              <li>
-                <Link to="/services/budget" className="text-gray-300 hover:text-white transition-colors">
-                  Calculateur de budget
-                </Link>
-              </li>
-              <li>
-                <Link to="/services/prestataires" className="text-gray-300 hover:text-white transition-colors">
-                  Recherche prestataires
-                </Link>
-              </li>
-              <li>
-                <Link to="/planning-personnalise" className="text-gray-300 hover:text-white transition-colors">
-                  Planning personnalisé
-                </Link>
-              </li>
+          <div className="mt-4 sm:mt-0">
+            <h3 className="font-serif text-base mb-2 md:mb-3">Planifier mon mariage</h3>
+            <ul className="space-y-1 text-xs md:text-sm">
+              <li><Link to="/dashboard" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Mon tableau de bord</Link></li>
+              <li><Link to="/checklist-mariage" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Check-list</Link></li>
+              <li><Link to="/planning-personnalise" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Planning personnalisé</Link></li>
+              <li><Link to="/pricing" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Tarifs</Link></li>
+              <li><Link to="/selection" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Trouver un prestataire</Link></li>
+              <li><Link to="/register" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Coordination du jour J</Link></li>
+              <li><Link to="/services/budget" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Calculateur de budget</Link></li>
             </ul>
           </div>
           
-          <div>
-            <h4 className="text-lg font-semibold mb-4">À propos</h4>
-            <ul className="space-y-2">
-              <li>
-                <Link to="/about/histoire" className="text-gray-300 hover:text-white transition-colors">
-                  Notre histoire
-                </Link>
-              </li>
-              <li>
-                <Link to="/about/approche" className="text-gray-300 hover:text-white transition-colors">
-                  Notre approche
-                </Link>
-              </li>
-              <li>
-                <Link to="/about/temoignages" className="text-gray-300 hover:text-white transition-colors">
-                  Témoignages
-                </Link>
-              </li>
+          <div className="mt-4 sm:mt-0">
+            <h3 className="font-serif text-base mb-2 md:mb-3">À Propos</h3>
+            <ul className="space-y-1 text-xs md:text-sm">
+              <li><Link to="/about/histoire" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Notre Histoire</Link></li>
+              <li><Link to="/about/approche" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Notre Approche</Link></li>
+              <li><Link to="/about/charte" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Notre Charte</Link></li>
+              <li><Link to="/contact/nous-contacter" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Nous Contacter</Link></li>
             </ul>
           </div>
           
-          <div>
-            <h4 className="text-lg font-semibold mb-4">Contact</h4>
-            <ul className="space-y-2">
-              <li>
-                <Link to="/contact/nous-contacter" className="text-gray-300 hover:text-white transition-colors">
-                  Nous contacter
-                </Link>
+          <div className="mt-4 lg:mt-0">
+            <h3 className="font-serif text-base mb-2 md:mb-3">Contact</h3>
+            <ul className="space-y-2 text-xs md:text-sm">
+              <li className="flex items-center">
+                <Mail className="mr-2 h-4 w-4 text-wedding-black shrink-0" />
+                <a href="mailto:mathilde@mariable.fr" className="text-wedding-black/70 hover:text-wedding-black transition-colors">
+                  mathilde@mariable.fr
+                </a>
               </li>
               <li>
-                <Link to="/contact/faq" className="text-gray-300 hover:text-white transition-colors">
-                  FAQ
-                </Link>
-              </li>
-              <li>
-                <Link to="/professionnels" className="text-gray-300 hover:text-white transition-colors">
-                  Espace professionnel
+                <Link to="/professionnels" className="text-wedding-black/70 hover:text-wedding-black transition-colors">
+                  Espace Pro (accès dédié aux prestataires)
                 </Link>
               </li>
             </ul>
           </div>
         </div>
         
-        <div className="border-t border-gray-700 mt-8 pt-8">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="flex space-x-6 mb-4 md:mb-0">
-              <Link to="/mentions-legales" className="text-gray-300 hover:text-white transition-colors">
-                Mentions légales
-              </Link>
-              <Link to="/cgv" className="text-gray-300 hover:text-white transition-colors">
-                CGV
-              </Link>
-            </div>
-            
-            <div className="flex space-x-4 text-sm">
-              <p className="text-gray-300">
-                © 2024 Mariable. Tous droits réservés.
-              </p>
-              <div className="hidden md:block text-gray-500">|</div>
-              <div className="flex space-x-4">
-                <Link to="/admin/access" className="text-gray-400 hover:text-gray-300 transition-colors text-xs">
-                  Admin
-                </Link>
-              </div>
-            </div>
+        <div className="mt-6 md:mt-8 pt-4 border-t border-wedding-black/10 flex flex-col md:flex-row justify-between items-center">
+          <p className="text-xs text-wedding-black/70 mb-3 md:mb-0 text-center md:text-left">
+            © 2025 Mariable – Tous droits réservés. | Conçu avec joie pour les couples modernes 💍
+          </p>
+          <div className="flex gap-4 text-xs">
+            <Link to="/mentions-legales" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Mentions Légales</Link>
+            <Link to="/cgv" className="text-wedding-black/70 hover:text-wedding-black transition-colors">CGV</Link>
           </div>
         </div>
       </div>
