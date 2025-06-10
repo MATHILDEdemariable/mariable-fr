@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import Header from '@/components/Header';
 import ChatbotButton from '@/components/ChatbotButton';
@@ -11,13 +10,13 @@ import { Link } from 'react-router-dom';
 
 const Index = () => {
   const [displayedText, setDisplayedText] = useState('');
-  const staticText = 'Organisez votre mariage facilement. ';
-  const typedText = 'Profitez-en pleinement.';
+  const staticText = 'Profitez pleinement de votre mariage. ';
+  const typedText = 'Organisez-le facilement, vous-même.';
   
   useEffect(() => {
     window.scrollTo(0, 0);
     
-    // Typing animation effect for "Profitez-en pleinement"
+    // Typing animation effect for "Organisez-le facilement, vous-même."
     let index = 0;
     const timer = setInterval(() => {
       if (index < typedText.length) {
@@ -72,7 +71,7 @@ const Index = () => {
                   size="lg" 
                   className="bg-wedding-olive hover:bg-wedding-olive/90 text-white w-full sm:w-auto text-sm sm:text-base px-6 sm:px-8 py-3 sm:py-4"
                 >
-                  Mieux qu'un wedding planner, c'est vous avec les bons outils <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
+                  Organisez mieux, profitez plus <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
                 </Button>
               </div>
             </div>
@@ -89,29 +88,38 @@ const Index = () => {
               
               <div className="max-w-3xl mx-auto mb-8">
                 <p className="text-lg text-gray-700 mb-6">
-                  Transformez l'organisation de votre mariage en une expérience <span className="underline font-bold">simple</span> & <span className="underline font-bold">agréable</span>.
+                  Un outil en ligne pensé pour les couples qui veulent tout organiser eux-mêmes – sans stress, sans perte de temps, sans galère.
                 </p>
                 
                 <div className="grid md:grid-cols-3 gap-6 text-left">
                   <div className="flex items-start gap-3">
-                    <Brain className="h-6 w-6 text-wedding-olive mt-1 flex-shrink-0" />
-                    <p className="text-gray-700">
-                      L'expertise, les outils et les bonnes adresses d'un professionnel de l'événementiel
-                    </p>
+                    <span className="text-2xl">🧠</span>
+                    <div>
+                      <h3 className="font-medium mb-2">Expertise incluse</h3>
+                      <p className="text-gray-700">
+                        Les bonnes adresses et les bons outils d'un professionnel.
+                      </p>
+                    </div>
                   </div>
                   
                   <div className="flex items-start gap-3">
-                    <Heart className="h-6 w-6 text-wedding-olive mt-1 flex-shrink-0" />
-                    <p className="text-gray-700">
-                      La liberté de gérer vous-même
-                    </p>
+                    <span className="text-2xl">🛠️</span>
+                    <div>
+                      <h3 className="font-medium mb-2">Autonomie complète</h3>
+                      <p className="text-gray-700">
+                        Organisez tout à votre rythme, selon vos règles.
+                      </p>
+                    </div>
                   </div>
                   
                   <div className="flex items-start gap-3">
-                    <MessageCircle className="h-6 w-6 text-wedding-olive mt-1 flex-shrink-0" />
-                    <p className="text-gray-700">
-                      Un service client si vous en avez besoin
-                    </p>
+                    <span className="text-2xl">🤝</span>
+                    <div>
+                      <h3 className="font-medium mb-2">Assistance à la demande</h3>
+                      <p className="text-gray-700">
+                        Service client si vous en avez besoin. Pas de pression, pas de coût inutile.
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -130,7 +138,7 @@ const Index = () => {
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-serif text-black mb-6">
-                Les services
+                Transformez l'organisation de votre mariage en une expérience simple & agréable.
               </h2>
               <p className="text-lg text-gray-700 max-w-2xl mx-auto">
                 Choisissez le niveau d'accompagnement qui vous correspond
