@@ -12,13 +12,6 @@ const Pricing = () => {
     window.scrollTo(0, 0);
   }, []);
 
-  const scrollToFormules = () => {
-    const formulesSection = document.getElementById('formules-jour-m');
-    if (formulesSection) {
-      formulesSection.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
   const scrollToCommentCaMarche = () => {
     const commentSection = document.getElementById('comment-ca-marche');
     if (commentSection) {
@@ -40,238 +33,16 @@ const Pricing = () => {
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
               <h1 className="text-4xl md:text-5xl font-serif text-black mb-6">
-                Les services
+                Formules Jour-M
               </h1>
               <p className="text-lg text-gray-700 max-w-2xl mx-auto">
                 Choisissez le niveau d'accompagnement qui vous correspond
               </p>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl mx-auto mb-16">
-              {/* Bloc 1 - Le Planner Mariable */}
-              <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col">
-                <CardHeader className="text-center pb-6">
-                  <CardTitle className="text-xl font-serif mb-4">
-                    📱Le Planner Mariable
-                  </CardTitle>
-                  <div className="text-3xl font-bold text-wedding-olive mb-2">
-                    Gratuit
-                  </div>
-                  <p className="text-sm text-gray-600">Accessible après inscription</p>
-                </CardHeader>
-                <CardContent className="space-y-4 flex-grow flex flex-col">
-                  <div className="space-y-3 flex-grow">
-                    <div className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Accès à votre espace personnel (tableau de bord)</p>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Check list</p>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Calculatrice de budget</p>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Modèle de suivi budgétaire en ligne & téléchargeables</p>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Accès à la sélection de prestataire Mariable</p>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Générateur de planning Jour J</p>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Outils d'aide à la coordination jour J</p>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Compilation de conseils opérationnels</p>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">ChatGPT Mariable</p>
-                    </div>
-                  </div>
-
-                  <div className="pt-4 border-t">
-                    <div className="flex items-center gap-2 mb-4">
-                      <span className="text-lg">🖥️</span>
-                      <p className="text-sm font-medium text-gray-700">
-                        Vous gérez votre mariage de A à Z avec des outils simples et efficaces.
-                      </p>
-                    </div>
-                  </div>
-                  
-                  <div className="pt-4 mt-auto">
-                    <Button asChild className="w-full bg-wedding-olive text-white hover:bg-wedding-olive/90">
-                      <Link to="/register">
-                        S'inscrire
-                      </Link>
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Bloc 2 - Mariable ++ */}
-              <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col">
-                <CardHeader className="text-center pb-6">
-                  <CardTitle className="text-xl font-serif mb-4">
-                    💬 Mariable ++
-                  </CardTitle>
-                  <div className="text-3xl font-bold text-wedding-olive mb-2">
-                    9,90€ / mois TTC
-                  </div>
-                  <p className="text-sm text-gray-600">(offre de lancement, puis 14,90€)</p>
-                  <div className="flex items-center justify-center gap-2 mt-2">
-                    <Smartphone className="h-4 w-4 text-gray-500" />
-                    <p className="text-xs text-gray-500">📱 Disponible avec WhatsApp</p>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-4 flex-grow flex flex-col">
-                  <div className="space-y-3 flex-grow">
-                    <div className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Support 7J/7J : Messages texte illimités + messages vocaux autorisés</p>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Réponse rapide &lt;24H</p>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Soutien émotionnel</p>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Analyse de votre organisation</p>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Relecture de votre planning & checklists</p>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Accompagnement pour votre planification</p>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Relecture des documents techniques</p>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Aide à la prise de décision</p>
-                    </div>
-                  </div>
-
-                  <div className="pt-4 border-t">
-                    <div className="flex items-center gap-2 mb-4">
-                      <span className="text-lg">💡</span>
-                      <p className="text-sm font-medium text-gray-700">
-                        Comme une consultation de médecin… mais pour votre mariage et en abonnement mensuel !
-                      </p>
-                    </div>
-                    <p className="text-xs text-gray-600 mb-4">
-                      +10€ pour une consultation téléphone ou visio de 30min / mois.
-                    </p>
-                  </div>
-                  
-                  <div className="pt-4 mt-auto">
-                    <Button asChild className="w-full bg-gray-100 text-gray-800 hover:bg-gray-200 border border-gray-300">
-                      <Link to="/paiement">
-                        Souscrire
-                      </Link>
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Bloc 3 - Le Jour M */}
-              <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300 border-2 border-wedding-olive flex flex-col relative">
-                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                  <span className="bg-wedding-olive text-white px-4 py-1 rounded-full text-sm font-medium">
-                    PREMIUM
-                  </span>
-                </div>
-                <CardHeader className="text-center pb-6 pt-8">
-                  <CardTitle className="text-xl font-serif mb-4">
-                    📅 Le Jour M
-                  </CardTitle>
-                  <div className="text-3xl font-bold text-wedding-olive mb-1">
-                    Dès 49€ TTC
-                  </div>
-                  <p className="text-sm text-gray-600">Le jour de votre mariage orchestré, sans friction</p>
-                </CardHeader>
-                <CardContent className="space-y-4 flex-grow flex flex-col">
-                  <div className="space-y-3 flex-grow">
-                    <div className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">App personnalisée avec planning intelligent</p>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Rôles et tâches attribuées aux proches</p>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Espace document : fiche logistique, moodboard, plans</p>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Carnet de contacts prestataires intégré</p>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Notifications & rappels automatiques (selon formule choisie)</p>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Support disponible selon votre formule (hotline téléphonique ou présence)</p>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Option présence terrain – Formule Privilège</p>
-                    </div>
-                  </div>
-
-                  <div className="pt-4 border-t">
-                    <div className="flex items-center gap-2 mb-4">
-                      <span className="text-lg">🎯</span>
-                      <p className="text-sm font-medium text-gray-700">
-                        Profitez de votre journée en choisissant votre niveau de coordination - à vous de décider.
-                      </p>
-                    </div>
-                  </div>
-                  
-                  <div className="pt-4 mt-auto">
-                    <Button 
-                      onClick={scrollToFormules}
-                      className="w-full bg-wedding-olive text-white hover:bg-wedding-olive/90"
-                    >
-                      Choisir une formule
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
             {/* Section Formules Jour-M */}
-            <section id="formules-jour-m" className="py-16 bg-gray-50 rounded-xl mb-16">
+            <section className="py-16 bg-gray-50 rounded-xl mb-16">
               <div className="container mx-auto px-4">
-                <div className="text-center mb-12">
-                  <h2 className="text-3xl md:text-4xl font-serif text-black mb-4">
-                    Formules Jour-M
-                  </h2>
-                  <p className="text-lg text-gray-700 mb-2">
-                    Choisissez le niveau d'accompagnement qui vous correspond
-                  </p>
-                </div>
-
                 <div className="max-w-6xl mx-auto mb-8">
                   {/* Tableau comparatif */}
                   <div className="bg-white rounded-lg shadow-lg overflow-hidden">
@@ -392,44 +163,49 @@ const Pricing = () => {
                       </table>
                     </div>
                     
-                    {/* Citations et boutons pour chaque formule */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 border-t">
-                      {/* Colonne Libre */}
-                      <div className="p-6 text-center border-r">
-                        <p className="text-sm text-gray-700 italic mb-4">
-                          "Je fais tout moi-même, mais je veux faciliter la coordination"
-                        </p>
-                        <Button asChild className="bg-wedding-olive hover:bg-wedding-olive/90 text-white">
-                          <Link to="/demo-jour-m">
-                            Voir une démo
-                          </Link>
-                        </Button>
-                      </div>
-                      
-                      {/* Colonne Sereine */}
-                      <div className="p-6 text-center border-r bg-gray-100">
-                        <p className="text-sm text-gray-700 italic mb-4">
-                          "Je peux gérer mais je veux réduire la charge mentale"
-                        </p>
-                        <Button 
-                          onClick={scrollToCommentCaMarche}
-                          className="bg-wedding-olive hover:bg-wedding-olive/90 text-white"
-                        >
-                          En savoir plus
-                        </Button>
-                      </div>
-                      
-                      {/* Colonne Privilège */}
-                      <div className="p-6 text-center">
-                        <p className="text-sm text-gray-700 italic mb-4">
-                          "Je veux déléguer et profiter comme les invités"
-                        </p>
-                        <Button 
-                          onClick={scrollToCommentCaMarche}
-                          className="bg-wedding-olive hover:bg-wedding-olive/90 text-white"
-                        >
-                          En savoir plus
-                        </Button>
+                    {/* Citations et boutons pour chaque formule - alignement parfait */}
+                    <div className="bg-white">
+                      <div className="grid grid-cols-1 md:grid-cols-4 border-t">
+                        {/* Colonne vide pour la première colonne */}
+                        <div className="p-6 border-r hidden md:block"></div>
+                        
+                        {/* Colonne Libre */}
+                        <div className="p-6 text-center border-r">
+                          <p className="text-sm text-gray-700 italic mb-4">
+                            "Je fais tout moi-même, mais je veux faciliter la coordination"
+                          </p>
+                          <Button asChild className="bg-wedding-olive hover:bg-wedding-olive/90 text-white">
+                            <Link to="/demo-jour-m">
+                              Voir une démo
+                            </Link>
+                          </Button>
+                        </div>
+                        
+                        {/* Colonne Sereine */}
+                        <div className="p-6 text-center border-r bg-gray-100">
+                          <p className="text-sm text-gray-700 italic mb-4">
+                            "Je peux gérer mais je veux réduire la charge mentale"
+                          </p>
+                          <Button 
+                            onClick={scrollToCommentCaMarche}
+                            className="bg-wedding-olive hover:bg-wedding-olive/90 text-white"
+                          >
+                            En savoir plus
+                          </Button>
+                        </div>
+                        
+                        {/* Colonne Privilège */}
+                        <div className="p-6 text-center">
+                          <p className="text-sm text-gray-700 italic mb-4">
+                            "Je veux déléguer et profiter comme les invités"
+                          </p>
+                          <Button 
+                            onClick={scrollToCommentCaMarche}
+                            className="bg-wedding-olive hover:bg-wedding-olive/90 text-white"
+                          >
+                            En savoir plus
+                          </Button>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -709,3 +485,5 @@ const Pricing = () => {
 };
 
 export default Pricing;
+
+</edits_to_apply>
