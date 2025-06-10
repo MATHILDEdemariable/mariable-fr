@@ -54,27 +54,31 @@ const Index = () => {
           <div className="absolute inset-0 bg-neutral-900/20"></div>
           
           <div className="container mx-auto px-4 relative z-10">
-            <div className="max-w-2xl">
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-serif text-white font-bold mb-6 capitalize" style={{ fontFamily: 'Playfair Display, serif' }}>
-                {staticText}
+            <div className="max-w-3xl">
+              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold mb-4" style={{ fontFamily: 'Playfair Display, serif' }}>
+                Profitez pleinement de votre mariage.
+              </h1>
+              
+              <p className="text-xl sm:text-2xl md:text-3xl font-serif text-white mb-8" style={{ fontFamily: 'Playfair Display, serif' }}>
                 <span className="inline-block min-h-[1.2em]">
                   {displayedText}
                   {displayedText.length < typedText.length && (
                     <span className="animate-pulse">|</span>
                   )}
                 </span>
-              </h1>
+              </p>
               
               <div className="mb-8 flex justify-center sm:justify-start">
                 <Button 
                   onClick={scrollToServices}
                   size="lg" 
                   className="bg-wedding-olive hover:bg-wedding-olive/90 text-white 
-                           w-fit mx-auto sm:mx-0 max-w-[220px] sm:max-w-none
-                           text-sm px-4 py-2 
+                           w-full max-w-[280px] sm:w-auto sm:max-w-none
+                           text-sm px-4 py-3 
                            sm:text-base sm:px-8 sm:py-4"
                 >
-                  Organisez mieux, profitez plus <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
+                  <span className="truncate">Organisez mieux, profitez plus</span>
+                  <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
                 </Button>
               </div>
             </div>
@@ -85,7 +89,7 @@ const Index = () => {
         <section className="py-16 md:py-20 bg-white">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
-              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-serif text-black mb-6 max-w-4xl mx-auto capitalize" style={{ fontFamily: 'Playfair Display, serif' }}>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif text-black mb-6 max-w-4xl mx-auto" style={{ fontFamily: 'Playfair Display, serif' }}>
                 Le premier wedding planner de poche
               </h2>
               
@@ -140,7 +144,7 @@ const Index = () => {
         <section id="services-section" className="py-16 md:py-20 bg-gray-50">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
-              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-serif text-black mb-6 capitalize" style={{ fontFamily: 'Playfair Display, serif' }}>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif text-black mb-6" style={{ fontFamily: 'Playfair Display, serif' }}>
                 Transformez l'organisation de votre mariage en une expérience simple & agréable.
               </h2>
               <p className="text-lg text-gray-700 max-w-2xl mx-auto">
@@ -365,7 +369,7 @@ const Index = () => {
         {/* Final CTA Section */}
         <section className="py-16 md:py-20 bg-wedding-olive text-white">
           <div className="container mx-auto px-4 text-center">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-serif mb-4 capitalize" style={{ fontFamily: 'Playfair Display, serif' }}>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif mb-4" style={{ fontFamily: 'Playfair Display, serif' }}>
               Et si vous disiez "oui" à la simplicité ?
             </h2>
             <p className="text-lg mb-8 max-w-2xl mx-auto">
