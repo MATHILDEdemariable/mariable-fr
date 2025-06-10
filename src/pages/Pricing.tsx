@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import Header from '@/components/Header';
@@ -485,5 +486,3 @@ const Pricing = () => {
 };
 
 export default Pricing;
-
-</edits_to_apply>
