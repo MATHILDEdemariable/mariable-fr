@@ -7,7 +7,8 @@ const WeddingToolsSection = () => {
   return (
     <section className="py-10 md:py-16 bg-white">
       <div className="container px-4">
-        <h2 className="text-2xl md:text-3xl font-serif mb-8 text-center">Comment Mariable facilite l'organisation de votre mariage ?
+        <h2 className="text-2xl md:text-3xl font-serif mb-8 text-center">
+          Transformez l'organisation de votre mariage en une expérience simple & agréable.
         </h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
