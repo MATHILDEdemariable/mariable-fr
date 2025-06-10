@@ -14,16 +14,16 @@ import { toast } from '@/hooks/use-toast';
 
 const ReservationJourM = () => {
   const [formData, setFormData] = useState({
-    nom: '',
-    prenom: '',
+    first_name: '',
+    last_name: '',
     email: '',
-    telephone: '',
-    date_mariage: '',
-    lieu_mariage: '',
-    nombre_invites: '',
+    phone: '',
+    wedding_date: '',
+    wedding_location: '',
+    guest_count: '',
     services_souhaites: [] as string[],
     budget: '',
-    message: ''
+    current_organization: ''
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -51,18 +51,18 @@ const ReservationJourM = () => {
 
     try {
       const { error } = await supabase
-        .from('reservations_jour_m')
+        .from('jour_m_reservations')
         .insert([{
-          nom: formData.nom,
-          prenom: formData.prenom,
+          first_name: formData.first_name,
+          last_name: formData.last_name,
           email: formData.email,
-          telephone: formData.telephone,
-          date_mariage: formData.date_mariage,
-          lieu_mariage: formData.lieu_mariage,
-          nombre_invites: parseInt(formData.nombre_invites) || null,
+          phone: formData.phone,
+          wedding_date: formData.wedding_date,
+          wedding_location: formData.wedding_location,
+          guest_count: parseInt(formData.guest_count) || 0,
           services_souhaites: formData.services_souhaites,
           budget: formData.budget,
-          message: formData.message
+          current_organization: formData.current_organization
         }]);
 
       if (error) throw error;
@@ -74,16 +74,16 @@ const ReservationJourM = () => {
 
       // Reset form
       setFormData({
-        nom: '',
-        prenom: '',
+        first_name: '',
+        last_name: '',
         email: '',
-        telephone: '',
-        date_mariage: '',
-        lieu_mariage: '',
-        nombre_invites: '',
+        phone: '',
+        wedding_date: '',
+        wedding_location: '',
+        guest_count: '',
         services_souhaites: [],
         budget: '',
-        message: ''
+        current_organization: ''
       });
 
     } catch (error) {
@@ -99,10 +99,10 @@ const ReservationJourM = () => {
   };
 
   const servicesOptions = [
-    'Sereine (149€)',
-    'Sereine + Hotline (199€)', 
-    'Privilège (799€)',
-    'Options supplémentaires (€ selon besoin)'
+    'Sereine',
+    'Sereine + Hotline', 
+    'Privilège',
+    'Options supplémentaires'
   ];
 
   return (
@@ -133,21 +133,21 @@ const ReservationJourM = () => {
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="nom">Nom *</Label>
+                    <Label htmlFor="first_name">Prénom *</Label>
                     <Input
-                      id="nom"
-                      name="nom"
-                      value={formData.nom}
+                      id="first_name"
+                      name="first_name"
+                      value={formData.first_name}
                       onChange={handleInputChange}
                       required
                     />
                   </div>
                   <div>
-                    <Label htmlFor="prenom">Prénom *</Label>
+                    <Label htmlFor="last_name">Nom *</Label>
                     <Input
-                      id="prenom"
-                      name="prenom"
-                      value={formData.prenom}
+                      id="last_name"
+                      name="last_name"
+                      value={formData.last_name}
                       onChange={handleInputChange}
                       required
                     />
@@ -167,12 +167,12 @@ const ReservationJourM = () => {
                 </div>
 
                 <div>
-                  <Label htmlFor="telephone">Téléphone *</Label>
+                  <Label htmlFor="phone">Téléphone *</Label>
                   <Input
-                    id="telephone"
-                    name="telephone"
+                    id="phone"
+                    name="phone"
                     type="tel"
-                    value={formData.telephone}
+                    value={formData.phone}
                     onChange={handleInputChange}
                     required
                   />
@@ -180,23 +180,23 @@ const ReservationJourM = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="date_mariage">Date du mariage *</Label>
+                    <Label htmlFor="wedding_date">Date du mariage *</Label>
                     <Input
-                      id="date_mariage"
-                      name="date_mariage"
+                      id="wedding_date"
+                      name="wedding_date"
                       type="date"
-                      value={formData.date_mariage}
+                      value={formData.wedding_date}
                       onChange={handleInputChange}
                       required
                     />
                   </div>
                   <div>
-                    <Label htmlFor="nombre_invites">Nombre d'invités</Label>
+                    <Label htmlFor="guest_count">Nombre d'invités</Label>
                     <Input
-                      id="nombre_invites"
-                      name="nombre_invites"
+                      id="guest_count"
+                      name="guest_count"
                       type="number"
-                      value={formData.nombre_invites}
+                      value={formData.guest_count}
                       onChange={handleInputChange}
                       placeholder="Ex: 80"
                     />
@@ -204,11 +204,11 @@ const ReservationJourM = () => {
                 </div>
 
                 <div>
-                  <Label htmlFor="lieu_mariage">Lieu du mariage</Label>
+                  <Label htmlFor="wedding_location">Lieu du mariage</Label>
                   <Input
-                    id="lieu_mariage"
-                    name="lieu_mariage"
-                    value={formData.lieu_mariage}
+                    id="wedding_location"
+                    name="wedding_location"
+                    value={formData.wedding_location}
                     onChange={handleInputChange}
                     placeholder="Ville ou région"
                   />
@@ -244,11 +244,11 @@ const ReservationJourM = () => {
                 </div>
 
                 <div>
-                  <Label htmlFor="message">Message</Label>
+                  <Label htmlFor="current_organization">Message</Label>
                   <Textarea
-                    id="message"
-                    name="message"
-                    value={formData.message}
+                    id="current_organization"
+                    name="current_organization"
+                    value={formData.current_organization}
                     onChange={handleInputChange}
                     placeholder="Parlez-nous de votre projet, vos attentes particulières..."
                     rows={4}
