@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -49,15 +50,14 @@ import CGV from "./pages/CGV";
 import Pricing from "./pages/Pricing";
 import ReservationJourM from "./pages/ReservationJourM";
 import Budget from "./pages/services/Budget";
-import Paiement from '@/pages/Paiement';
+import Paiement from './pages/Paiement';
+import AnalyticsProvider from './components/analytics/AnalyticsProvider';
 
 // Initialize the query client
 const queryClient = new QueryClient();
 
 // Create a helmetContext object to pass to HelmetProvider
 const helmetContext = {};
-
-import AnalyticsProvider from './components/analytics/AnalyticsProvider';
 
 const App = () => {
   return(
@@ -88,6 +88,9 @@ const App = () => {
                 
                 {/* Pricing page */}
                 <Route path="/pricing" element={<Pricing />} />
+                
+                {/* Payment page */}
+                <Route path="/paiement" element={<Paiement />} />
                 
                 {/* Reservation Le Jour M */}
                 <Route path="/reservation-jour-m" element={<ReservationJourM />} />
@@ -163,7 +166,6 @@ const App = () => {
                 
                 {/* Catch-all route */}
                 <Route path="*" element={<NotFound />} />
-                <Route path="/paiement" element={<Paiement />} />
               </Routes>
             </AnalyticsProvider>
           </Router>
@@ -175,5 +177,3 @@ const App = () => {
 };
 
 export default App;
-
-</edits_to_apply>
