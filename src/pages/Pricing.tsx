@@ -5,7 +5,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { CheckCircle, Mail, Phone, Smartphone, Users, Calendar } from 'lucide-react';
+import { CheckCircle, Mail, Phone, Smartphone, Users, Calendar, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Pricing = () => {
@@ -177,8 +177,8 @@ const Pricing = () => {
                   
                   <div className="pt-4 mt-auto">
                     <Button asChild className="w-full bg-gray-100 text-gray-800 hover:bg-gray-200 border border-gray-300">
-                      <Link to="/contact/nous-contacter">
-                        Envoyer une demande
+                      <Link to="/paiement">
+                        Souscrire
                       </Link>
                     </Button>
                   </div>
@@ -194,30 +194,42 @@ const Pricing = () => {
                 </div>
                 <CardHeader className="text-center pb-6 pt-8">
                   <CardTitle className="text-xl font-serif mb-4">
-                    🎯 Le Jour M
+                    📅 Le Jour M
                   </CardTitle>
                   <div className="text-3xl font-bold text-wedding-olive mb-1">
                     Dès 50€ TTC
                   </div>
-                  <p className="text-sm text-gray-600">Une app pour orchestrer votre Jour J</p>
+                  <p className="text-sm text-gray-600">Le jour de votre mariage orchestré, sans friction</p>
                 </CardHeader>
                 <CardContent className="space-y-4 flex-grow flex flex-col">
                   <div className="space-y-3 flex-grow">
                     <div className="flex items-start gap-3">
-                      <span className="text-wedding-olive text-lg">→</span>
-                      <p className="text-sm text-gray-700">Planning Jour-J</p>
+                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                      <p className="text-sm text-gray-700">App personnalisée avec planning intelligent</p>
                     </div>
                     <div className="flex items-start gap-3">
-                      <span className="text-wedding-olive text-lg">→</span>
-                      <p className="text-sm text-gray-700">Rôles et gestion des proches</p>
+                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                      <p className="text-sm text-gray-700">Rôles et tâches attribuées aux proches</p>
                     </div>
                     <div className="flex items-start gap-3">
-                      <span className="text-wedding-olive text-lg">→</span>
-                      <p className="text-sm text-gray-700">Espace document : fiche logistique, plans des lieux, moodboard</p>
+                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                      <p className="text-sm text-gray-700">Espace document : fiche logistique, moodboard, plans</p>
                     </div>
                     <div className="flex items-start gap-3">
-                      <span className="text-wedding-olive text-lg">→</span>
-                      <p className="text-sm text-gray-700">Espace contact prestataires</p>
+                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                      <p className="text-sm text-gray-700">Carnet de contacts prestataires intégré</p>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                      <p className="text-sm text-gray-700">Notifications & rappels automatiques (selon formule choisie)</p>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                      <p className="text-sm text-gray-700">Support disponible selon votre formule (hotline téléphonique ou présence)</p>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                      <p className="text-sm text-gray-700">Option présence terrain – Formule Privilège</p>
                     </div>
                   </div>
 
@@ -225,7 +237,7 @@ const Pricing = () => {
                     <div className="flex items-center gap-2 mb-4">
                       <span className="text-lg">🎯</span>
                       <p className="text-sm font-medium text-gray-700">
-                        Déléguez facilement & profitez pleinement de votre journée.
+                        Profitez de votre journée en choisissant votre niveau de coordination - à vous de décider.
                       </p>
                     </div>
                   </div>
@@ -235,79 +247,166 @@ const Pricing = () => {
                       onClick={scrollToFormules}
                       className="w-full bg-wedding-olive text-white hover:bg-wedding-olive/90"
                     >
-                      Découvrir les formules
+                      Choisir une formule
                     </Button>
                   </div>
                 </CardContent>
               </Card>
             </div>
 
-            {/* Nouvelle section Les formules du Jour-M */}
+            {/* Section Formules Jour-M */}
             <section id="formules-jour-m" className="py-16 bg-gray-50 rounded-xl mb-16">
               <div className="container mx-auto px-4">
                 <div className="text-center mb-12">
                   <h2 className="text-3xl md:text-4xl font-serif text-black mb-4">
-                    Les formules du Jour-J
+                    Formules Jour-M
                   </h2>
                   <p className="text-lg text-gray-700 mb-2">
                     Choisissez le niveau d'accompagnement qui vous correspond
                   </p>
                 </div>
 
-                <div className="max-w-6xl mx-auto">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    {/* Formule Libre */}
-                    <Card className="shadow-md hover:shadow-lg transition-shadow bg-white">
-                      <CardHeader className="text-center pb-4">
-                        <div className="text-2xl font-bold text-wedding-olive mb-2">50€</div>
-                        <CardTitle className="text-lg font-serif mb-2">Formule Libre</CardTitle>
-                        <p className="text-sm font-medium text-gray-800">Votre mariage, vos règles</p>
-                        <p className="text-xs text-gray-600 italic">Pour les couples autonomes</p>
-                      </CardHeader>
-                      <CardContent className="text-center">
-                        <p className="text-sm text-gray-700">
-                          Application vierge - Vous pilotez tout
+                <div className="max-w-6xl mx-auto mb-8">
+                  {/* Tableau comparatif */}
+                  <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+                    <div className="overflow-x-auto">
+                      <table className="w-full">
+                        <thead>
+                          <tr className="bg-wedding-olive text-white">
+                            <th className="px-6 py-4 text-left font-semibold">Fonctionnalité</th>
+                            <th className="px-6 py-4 text-center font-semibold">Libre</th>
+                            <th className="px-6 py-4 text-center font-semibold bg-wedding-olive/90">Sereine</th>
+                            <th className="px-6 py-4 text-center font-semibold">Privilège</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr className="border-b bg-gray-50">
+                            <td className="px-6 py-4 font-medium text-gray-900">Prix (TTC)</td>
+                            <td className="px-6 py-4 text-center font-bold text-wedding-olive">49€</td>
+                            <td className="px-6 py-4 text-center font-bold text-wedding-olive bg-gray-100">149€</td>
+                            <td className="px-6 py-4 text-center font-bold text-wedding-olive">799€</td>
+                          </tr>
+                          <tr className="border-b">
+                            <td className="px-6 py-4 font-medium text-gray-900">App personnalisée</td>
+                            <td className="px-6 py-4 text-center">
+                              <div className="flex flex-col items-center">
+                                <X className="h-5 w-5 text-red-500 mb-1" />
+                                <span className="text-sm text-gray-600">(vierge)</span>
+                              </div>
+                            </td>
+                            <td className="px-6 py-4 text-center bg-gray-100">
+                              <div className="flex flex-col items-center">
+                                <CheckCircle className="h-5 w-5 text-green-500 mb-1" />
+                                <span className="text-sm text-gray-600">Pré-remplie</span>
+                              </div>
+                            </td>
+                            <td className="px-6 py-4 text-center">
+                              <div className="flex flex-col items-center">
+                                <CheckCircle className="h-5 w-5 text-green-500 mb-1" />
+                                <span className="text-sm text-gray-600">Pré-remplie</span>
+                              </div>
+                            </td>
+                          </tr>
+                          <tr className="border-b">
+                            <td className="px-6 py-4 font-medium text-gray-900">Checklists & planning</td>
+                            <td className="px-6 py-4 text-center">
+                              <div className="flex flex-col items-center">
+                                <CheckCircle className="h-5 w-5 text-green-500 mb-1" />
+                                <span className="text-sm text-gray-600">Modifiable</span>
+                              </div>
+                            </td>
+                            <td className="px-6 py-4 text-center bg-gray-100">
+                              <div className="flex flex-col items-center">
+                                <CheckCircle className="h-5 w-5 text-green-500 mb-1" />
+                                <span className="text-sm text-gray-600">Modifiable</span>
+                              </div>
+                            </td>
+                            <td className="px-6 py-4 text-center">
+                              <div className="flex flex-col items-center">
+                                <CheckCircle className="h-5 w-5 text-green-500 mb-1" />
+                                <span className="text-sm text-gray-600">Modifiable</span>
+                              </div>
+                            </td>
+                          </tr>
+                          <tr className="border-b">
+                            <td className="px-6 py-4 font-medium text-gray-900">Notifications et rappels en temps réel de J-3 à J+1</td>
+                            <td className="px-6 py-4 text-center">
+                              <X className="h-5 w-5 text-red-500 mx-auto" />
+                            </td>
+                            <td className="px-6 py-4 text-center bg-gray-100">
+                              <CheckCircle className="h-5 w-5 text-green-500 mx-auto" />
+                            </td>
+                            <td className="px-6 py-4 text-center">
+                              <CheckCircle className="h-5 w-5 text-green-500 mx-auto" />
+                            </td>
+                          </tr>
+                          <tr className="border-b">
+                            <td className="px-6 py-4 font-medium text-gray-900">Support client via une hotline Mariable dédiée 7J/7 jusqu'au Jour-J</td>
+                            <td className="px-6 py-4 text-center">
+                              <X className="h-5 w-5 text-red-500 mx-auto" />
+                            </td>
+                            <td className="px-6 py-4 text-center bg-gray-100">
+                              <div className="flex flex-col items-center">
+                                <CheckCircle className="h-5 w-5 text-green-500 mb-1" />
+                                <span className="text-sm text-gray-600">(option +50€)</span>
+                              </div>
+                            </td>
+                            <td className="px-6 py-4 text-center">
+                              <div className="flex flex-col items-center">
+                                <CheckCircle className="h-5 w-5 text-green-500 mb-1" />
+                                <span className="text-sm text-gray-600">incluse</span>
+                              </div>
+                            </td>
+                          </tr>
+                          <tr className="border-b">
+                            <td className="px-6 py-4 font-medium text-gray-900">Coordination prestataires en amont (J-15)</td>
+                            <td className="px-6 py-4 text-center">
+                              <X className="h-5 w-5 text-red-500 mx-auto" />
+                            </td>
+                            <td className="px-6 py-4 text-center bg-gray-100">
+                              <X className="h-5 w-5 text-red-500 mx-auto" />
+                            </td>
+                            <td className="px-6 py-4 text-center">
+                              <CheckCircle className="h-5 w-5 text-green-500 mx-auto" />
+                            </td>
+                          </tr>
+                          <tr className="border-b">
+                            <td className="px-6 py-4 font-medium text-gray-900">Présence physique le jour J</td>
+                            <td className="px-6 py-4 text-center">
+                              <X className="h-5 w-5 text-red-500 mx-auto" />
+                            </td>
+                            <td className="px-6 py-4 text-center bg-gray-100">
+                              <X className="h-5 w-5 text-red-500 mx-auto" />
+                            </td>
+                            <td className="px-6 py-4 text-center">
+                              <CheckCircle className="h-5 w-5 text-green-500 mx-auto" />
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    
+                    {/* Descriptions des formules */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 border-t">
+                      <div className="p-6 text-center border-r">
+                        <p className="text-sm text-gray-700 italic">
+                          "Je fais tout moi-même, mais je veux faciliter la coordination"
                         </p>
-                      </CardContent>
-                    </Card>
-
-                    {/* Formule Sereine */}
-                    <Card className="shadow-md hover:shadow-lg transition-shadow bg-white border-2 border-wedding-olive relative">
-                      <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                        <span className="bg-wedding-olive text-white px-3 py-1 rounded-full text-xs font-medium">
-                          POPULAIRE
-                        </span>
                       </div>
-                      <CardHeader className="text-center pb-4 pt-6">
-                        <div className="text-2xl font-bold text-wedding-olive mb-2">149€</div>
-                        <CardTitle className="text-lg font-serif mb-2">Formule Sereine</CardTitle>
-                        <p className="text-sm font-medium text-gray-800">Guidés sans être dirigés</p>
-                        <p className="text-xs text-gray-600 italic">Pour la tranquillité d'esprit</p>
-                      </CardHeader>
-                      <CardContent className="text-center">
-                        <p className="text-sm text-gray-700">
-                          Application guidée + système de notification - Vous gardez le contrôle sans charge mentale
+                      <div className="p-6 text-center border-r bg-gray-100">
+                        <p className="text-sm text-gray-700 italic">
+                          "Je peux gérer mais je veux réduire la charge mentale"
                         </p>
-                      </CardContent>
-                    </Card>
-
-                    {/* Formule Privilège */}
-                    <Card className="shadow-md hover:shadow-lg transition-shadow bg-white">
-                      <CardHeader className="text-center pb-4">
-                        <div className="text-2xl font-bold text-wedding-olive mb-2">799€</div>
-                        <CardTitle className="text-lg font-serif mb-2">Formule Privilège</CardTitle>
-                        <p className="text-sm font-medium text-gray-800">Les mariés sont des invités</p>
-                        <p className="text-xs text-gray-600 italic">Pour l'expérience premium</p>
-                      </CardHeader>
-                      <CardContent className="text-center">
-                        <p className="text-sm text-gray-700">
-                          Application + présence terrain - Vous déléguez le jour J
+                      </div>
+                      <div className="p-6 text-center">
+                        <p className="text-sm text-gray-700 italic">
+                          "Je veux déléguer et profiter comme les invités"
                         </p>
-                      </CardContent>
-                    </Card>
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="text-center">
+                  <div className="text-center mt-8">
                     <Button asChild className="bg-wedding-olive hover:bg-wedding-olive/90 text-white px-8 py-3">
                       <Link to="/reservation-jour-m">
                         Faire une demande de réservation

@@ -1,10 +1,9 @@
-
 import React from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { HelmetProvider } from 'react-helmet-async';
 import { ReaderModeProvider } from '@/contexts/ReaderModeContext';
 import Index from "./pages/Index";
@@ -50,6 +49,7 @@ import CGV from "./pages/CGV";
 import Pricing from "./pages/Pricing";
 import ReservationJourM from "./pages/ReservationJourM";
 import Budget from "./pages/services/Budget";
+import Paiement from '@/pages/Paiement';
 
 // Initialize the query client
 const queryClient = new QueryClient();
@@ -67,7 +67,7 @@ const App = () => {
         <TooltipProvider>
           <Toaster />
           <Sonner />
-          <BrowserRouter>
+          <Router>
             <AnalyticsProvider>
               <Routes>
                 {/* Make Index page the main route */}
@@ -163,9 +163,10 @@ const App = () => {
                 
                 {/* Catch-all route */}
                 <Route path="*" element={<NotFound />} />
+                <Route path="/paiement" element={<Paiement />} />
               </Routes>
             </AnalyticsProvider>
-          </BrowserRouter>
+          </Router>
         </TooltipProvider>
       </ReaderModeProvider>
     </HelmetProvider>
@@ -174,3 +175,5 @@ const App = () => {
 };
 
 export default App;
+
+</edits_to_apply>
