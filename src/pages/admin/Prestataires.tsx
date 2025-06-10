@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -7,6 +6,7 @@ import PrestatairesAdmin from "@/components/admin/FormPrestataires";
 import { Database } from "@/integrations/supabase/types";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/toaster";
+import AdminAccess from "@/components/admin/AdminAccess";
 
 type SupabaseAdminUser = Database["public"]["Tables"]["admin_users"]["Row"];
 
@@ -15,8 +15,18 @@ const AdminPrestataires = () => {
   const [session, setSession] = useState<Session | null>(null);
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null); 
   const [isLoading, setIsLoading] = useState(true);
+  const [hasSimpleAccess, setHasSimpleAccess] = useState(false);
 
   useEffect(() => {
+    // Check simple access first
+    const simpleAccess = localStorage.getItem('admin_access');
+    if (simpleAccess === 'granted') {
+      setHasSimpleAccess(true);
+      setIsLoading(false);
+      return;
+    }
+
+    // Otherwise check Supabase auth
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, newSession) => {
@@ -64,6 +74,10 @@ const AdminPrestataires = () => {
     }
   };
 
+  const handleSimpleAccessGranted = () => {
+    setHasSimpleAccess(true);
+  };
+
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -72,25 +86,48 @@ const AdminPrestataires = () => {
     );
   }
 
+  // Show admin access form if no access
+  if (!hasSimpleAccess && !isAdmin) {
+    return <AdminAccess onAccessGranted={handleSimpleAccessGranted} />;
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center px-4">
-      {isAdmin ? (
-        <div className="w-full max-w-7xl">
-          <h1 className="text-2xl font-bold mb-4 text-center mt-12">Administration des Prestataires</h1>
-          <p className="text-lg text-center mb-6">
-            Gérez votre base de prestataires depuis cette interface.
-          </p>
-          <PrestatairesAdmin />
-          <Toaster />
+      <div className="w-full max-w-7xl">
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <h1 className="text-2xl font-bold mb-4 text-center mt-12">Administration des Prestataires</h1>
+            <p className="text-lg text-center mb-6">
+              Gérez votre base de prestataires depuis cette interface.
+            </p>
+          </div>
+          <div className="flex gap-2">
+            <button
+              onClick={() => navigate('/admin/form-admin')}
+              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+            >
+              Questions
+            </button>
+            <button
+              onClick={() => navigate('/admin/reservations-jour-m')}
+              className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors"
+            >
+              Réservations Jour M
+            </button>
+            <button
+              onClick={() => {
+                localStorage.removeItem('admin_access');
+                navigate('/');
+              }}
+              className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
+            >
+              Déconnexion
+            </button>
+          </div>
         </div>
-      ) : (
-        <div className="text-center p-8 border rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-4">Accès restreint</h2>
-          <p className="text-muted-foreground">
-            Vous devez être connecté avec un compte administrateur pour accéder à cette page.
-          </p>
-        </div>
-      )}
+        <PrestatairesAdmin />
+        <Toaster />
+      </div>
     </div>
   );
 };
