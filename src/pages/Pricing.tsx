@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import Header from '@/components/Header';
@@ -164,7 +165,7 @@ const Pricing = () => {
                     </div>
                     
                     {/* Boutons simplifiés */}
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8 p-6">
                       <Button asChild className="bg-wedding-olive hover:bg-wedding-olive/90 text-white">
                         <Link to="/demo-jour-m">
                           Voir une démo
@@ -432,14 +433,14 @@ const Pricing = () => {
                         <p className="text-sm text-gray-600">
                           Supplément pour la coordination de mariages de plus de 180 invités nécessitant une logistique renforcée
                         </p>
-                      </Card>
-                    </div>
+                      </CardContent>
+                    </Card>
+                  </div>
 
-                    <div className="text-center mt-8">
-                      <p className="text-sm text-gray-600">
-                        Ces options peuvent être ajoutées lors de votre réservation ou discutées pendant l'audit initial.
-                      </p>
-                    </div>
+                  <div className="text-center mt-8">
+                    <p className="text-sm text-gray-600">
+                      Ces options peuvent être ajoutées lors de votre réservation ou discutées pendant l'audit initial.
+                    </p>
                   </div>
                 </div>
               </div>
