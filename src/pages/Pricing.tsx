@@ -443,14 +443,14 @@ const Pricing = () => {
                         <p className="text-sm text-gray-600">
                           Supplément pour la coordination de mariages de plus de 180 invités nécessitant une logistique renforcée
                         </p>
-                      </CardContent>
-                    </Card>
-                  </div>
+                      </Card>
+                    </div>
 
-                  <div className="text-center mt-8">
-                    <p className="text-sm text-gray-600">
-                      Ces options peuvent être ajoutées lors de votre réservation ou discutées pendant l'audit initial.
-                    </p>
+                    <div className="text-center mt-8">
+                      <p className="text-sm text-gray-600">
+                        Ces options peuvent être ajoutées lors de votre réservation ou discutées pendant l'audit initial.
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -465,5 +465,3 @@ const Pricing = () => {
 };
 
 export default Pricing;
-
-</edits_to_apply>
