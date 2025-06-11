@@ -24,11 +24,6 @@ import {
   ResponsiveContainer, PieChart as RechartsPieChart, Pie, Cell, Legend
 } from 'recharts';
 import { exportDashboardToPDF } from '@/services/pdfExportService';
-import { 
-  formatBudgetForDashboard, 
-  DashboardBudgetData, 
-  CalculatorBudgetData 
-} from '@/utils/budgetDataUtils';
 
 // Types pour la calculatrice de budget
 type Step = 1 | 2 | 3 | 4 | 5;
@@ -170,72 +165,6 @@ const Budget = () => {
     }
   };
 
-  // Adapted save function to use dashboard format
-  const saveBudgetToDatabase = async (budgetData: DashboardBudgetData) => {
-    try {
-      const { data: userData } = await supabase.auth.getUser();
-      if (!userData.user) {
-        console.log("User not authenticated for budget save");
-        return;
-      }
-
-      // Check if record already exists
-      const { data: existingData, error: fetchError } = await supabase
-        .from('budgets_dashboard')
-        .select('id')
-        .eq('user_id', userData.user.id)
-        .maybeSingle();
-
-      if (fetchError && fetchError.code !== 'PGRST116') {
-        throw fetchError;
-      }
-
-      const budgetPayload = {
-        user_id: userData.user.id,
-        total_budget: budgetData.totalEstimated,
-        guests_count: guestsCount,
-        region: region,
-        season: season,
-        service_level: serviceLevel,
-        selected_vendors: selectedVendors,
-        breakdown: {
-          ...budgetData,
-          source: 'calculator',
-          lastUpdated: new Date().toISOString(),
-          metadata: {
-            region,
-            guests_count: guestsCount,
-            season,
-            service_level: serviceLevel,
-            selected_vendors: selectedVendors
-          }
-        } as any
-      };
-
-      if (existingData?.id) {
-        const { error } = await supabase
-          .from('budgets_dashboard')
-          .update(budgetPayload)
-          .eq('id', existingData.id);
-        if (error) throw error;
-      } else {
-        const { error } = await supabase
-          .from('budgets_dashboard')
-          .insert(budgetPayload);
-        if (error) throw error;
-      }
-
-      toast({
-        title: "Budget sauvegardé",
-        description: "Votre estimation a été sauvegardée et sera visible dans votre dashboard.",
-      });
-
-    } catch (error) {
-      console.error("Error saving budget:", error);
-      // Don't show error toast - save silently fails but data remains visible
-    }
-  };
-
   // Calculer la répartition pour le mode "budget connu"
   const calculateKnownBudgetAllocation = () => {
     const totalBudget = parseFloat(knownBudget) || 0;
@@ -353,23 +282,10 @@ const Budget = () => {
       color: BUDGET_COLORS['autres']
     });
     
-    const calculatorData: CalculatorBudgetData = {
+    setBudgetEstimate({
       total: total + otherExpenses,
-      breakdown,
-      source: 'calculator',
-      metadata: {
-        region,
-        guests_count: guestsCount,
-        season,
-        service_level: serviceLevel
-      }
-    };
-    
-    setBudgetEstimate(calculatorData);
-    
-    // Convert to dashboard format and save
-    const dashboardData = formatBudgetForDashboard(calculatorData);
-    saveBudgetToDatabase(dashboardData);
+      breakdown
+    });
   };
 
   // Handler pour le bouton de calculateur de boissons
