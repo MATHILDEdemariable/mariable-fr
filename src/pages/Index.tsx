@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import Header from '@/components/Header';
 import ChatbotButton from '@/components/ChatbotButton';
@@ -162,12 +163,12 @@ const Index = () => {
                       Le Planner Mariable
                     </CardTitle>
                   </div>
+                  <p className="text-xl font-medium text-gray-700 mb-4">
+                    Un tableau de bord
+                  </p>
                   <div className="text-3xl font-bold text-wedding-olive mb-2">
                     Gratuit
                   </div>
-                  <p className="text-sm font-medium text-gray-700 mb-3">
-                    Vous gérez votre mariage de A à Z avec des outils simples et efficaces.
-                  </p>
                   <p className="text-sm text-gray-600">Accessible après inscription</p>
                 </CardHeader>
                 <CardContent className="space-y-4 flex-grow flex flex-col">
@@ -216,6 +217,9 @@ const Index = () => {
                         S'inscrire
                       </Link>
                     </Button>
+                    <p className="text-sm text-gray-600 italic text-center mt-4">
+                      Vous gérez votre mariage de A à Z avec les bons outils
+                    </p>
                   </div>
                 </CardContent>
               </Card>
@@ -229,12 +233,12 @@ const Index = () => {
                       Accompagnement Mariable
                     </CardTitle>
                   </div>
+                  <p className="text-xl font-medium text-gray-700 mb-4">
+                    Une ligne directe WhatsApp avec une experte
+                  </p>
                   <div className="text-3xl font-bold text-wedding-olive mb-2">
                     9,90€ / mois TTC
                   </div>
-                  <p className="text-sm font-medium text-gray-700 mb-3">
-                    Ligne directe avec une experte mariage – sur WhatsApp
-                  </p>
                   <p className="text-sm text-gray-600">(offre de lancement, puis 14,90€)</p>
                 </CardHeader>
                 <CardContent className="space-y-4 flex-grow flex flex-col">
@@ -287,6 +291,9 @@ const Index = () => {
                         Souscrire
                       </Link>
                     </Button>
+                    <p className="text-sm text-gray-600 italic text-center mt-4">
+                      Besoin d'un avis, une question spécifique ? Bénéficiez de conseils illimités
+                    </p>
                   </div>
                 </CardContent>
               </Card>
@@ -305,12 +312,12 @@ const Index = () => {
                       Le Jour M
                     </CardTitle>
                   </div>
+                  <p className="text-xl font-medium text-gray-700 mb-4">
+                    Une application en ligne collaborative pour coordonner votre journée de mariage
+                  </p>
                   <div className="text-3xl font-bold text-wedding-olive mb-2">
                     Dès 49€ TTC
                   </div>
-                  <p className="text-sm font-medium text-gray-700 mb-3">
-                    Profitez de votre journée en choisissant votre niveau de coordination - à vous de décider.
-                  </p>
                   <p className="text-sm text-gray-600">Le jour de votre mariage orchestré, sans friction</p>
                 </CardHeader>
                 <CardContent className="space-y-4 flex-grow flex flex-col">
@@ -351,6 +358,9 @@ const Index = () => {
                         Choisir une formule
                       </Link>
                     </Button>
+                    <p className="text-sm text-gray-600 italic text-center mt-4">
+                      Profitez de votre journée
+                    </p>
                   </div>
                 </CardContent>
               </Card>
