@@ -5,7 +5,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { CheckCircle, Mail, Phone, Smartphone, Users, Calendar, X } from 'lucide-react';
+import { CheckCircle, Mail, Phone, Smartphone, Users, Calendar, X, ArrowLeft, Clock, Palette, Building, FileText, CreditCard } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Pricing = () => {
@@ -20,6 +20,10 @@ const Pricing = () => {
     }
   };
 
+  const handleReservationClick = () => {
+    window.scrollTo(0, 0);
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <Helmet>
@@ -32,6 +36,16 @@ const Pricing = () => {
       <main className="flex-grow">
         <section className="py-16 md:py-20 bg-white">
           <div className="container mx-auto px-4">
+            {/* Back button */}
+            <div className="mb-8">
+              <Button asChild variant="ghost" className="text-wedding-olive hover:text-wedding-olive/80">
+                <Link to="/" className="flex items-center gap-2">
+                  <ArrowLeft className="h-4 w-4" />
+                  Retour
+                </Link>
+              </Button>
+            </div>
+
             <div className="text-center mb-12">
               <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif text-black mb-6">
                 Formules Jour-M
@@ -65,11 +79,11 @@ const Pricing = () => {
                             <td className="px-3 sm:px-6 py-4 text-center font-bold text-wedding-olive text-sm sm:text-base">799€</td>
                           </tr>
                           <tr className="border-b">
-                            <td className="px-3 sm:px-6 py-4 font-medium text-gray-900 text-sm sm:text-base">App personnalisée</td>
+                            <td className="px-3 sm:px-6 py-4 font-medium text-gray-900 text-sm sm:text-base">Application personnalisée</td>
                             <td className="px-3 sm:px-6 py-4 text-center">
                               <div className="flex flex-col items-center">
-                                <X className="h-5 w-5 text-red-500 mb-1" />
-                                <span className="text-sm text-gray-600">(vierge)</span>
+                                <CheckCircle className="h-5 w-5 text-green-500 mb-1" />
+                                <span className="text-sm text-gray-600">à remplir vous-même</span>
                               </div>
                             </td>
                             <td className="px-3 sm:px-6 py-4 text-center bg-gray-100">
@@ -183,6 +197,129 @@ const Pricing = () => {
               </div>
             </section>
 
+            {/* Nouvelle section Formules détails */}
+            <section className="py-16 bg-white mb-16">
+              <div className="container mx-auto px-4">
+                <div className="text-center mb-12">
+                  <h2 className="text-3xl md:text-4xl font-serif text-black mb-4">
+                    Formules détails
+                  </h2>
+                  <p className="text-lg text-gray-700">
+                    Découvrez en détail chacune de nos formules d'accompagnement
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+                  {/* Formule Libre */}
+                  <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <CardHeader className="text-center pb-6">
+                      <CardTitle className="text-2xl font-serif mb-4 text-wedding-olive">
+                        Formule Libre
+                      </CardTitle>
+                      <div className="text-4xl font-bold text-wedding-olive mb-2">
+                        49€ TTC
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-gray-700 mb-6">
+                        Pour les couples autonomes qui souhaitent une application personnalisée simple à remplir eux-mêmes, avec tous les outils nécessaires pour organiser leur jour J.
+                      </p>
+                      <div className="space-y-3">
+                        <div className="flex items-center gap-2">
+                          <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
+                          <span className="text-sm">Application mobile personnalisée</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
+                          <span className="text-sm">Planning et checklists modifiables</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
+                          <span className="text-sm">Outils de coordination jour J</span>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Formule Sereine */}
+                  <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300 border-2 border-wedding-olive">
+                    <CardHeader className="text-center pb-6">
+                      <CardTitle className="text-2xl font-serif mb-4 text-wedding-olive">
+                        Formule Sereine
+                      </CardTitle>
+                      <div className="text-4xl font-bold text-wedding-olive mb-2">
+                        149€ TTC
+                      </div>
+                      <span className="bg-wedding-olive text-white px-3 py-1 rounded-full text-sm">
+                        RECOMMANDÉE
+                      </span>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-gray-700 mb-6">
+                        Pour les couples qui veulent être accompagnés avec une application pré-remplie et des notifications intelligentes pour ne rien oublier.
+                      </p>
+                      <div className="space-y-3">
+                        <div className="flex items-center gap-2">
+                          <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
+                          <span className="text-sm">Tout de la formule Libre</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
+                          <span className="text-sm">Application pré-remplie</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
+                          <span className="text-sm">Notifications en temps réel J-3 à J+1</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
+                          <span className="text-sm">Hotline support (option +50€)</span>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Formule Privilège */}
+                  <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <CardHeader className="text-center pb-6">
+                      <CardTitle className="text-2xl font-serif mb-4 text-wedding-olive">
+                        Formule Privilège
+                      </CardTitle>
+                      <div className="text-4xl font-bold text-wedding-olive mb-2">
+                        799€ TTC
+                      </div>
+                      <span className="bg-gray-800 text-white px-3 py-1 rounded-full text-sm">
+                        PREMIUM
+                      </span>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-gray-700 mb-6">
+                        Pour les couples qui veulent un accompagnement complet avec présence physique et coordination totale de leur mariage.
+                      </p>
+                      <div className="space-y-3">
+                        <div className="flex items-center gap-2">
+                          <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
+                          <span className="text-sm">Tout de la formule Sereine</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
+                          <span className="text-sm">Hotline support incluse</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
+                          <span className="text-sm">Coordination prestataires J-15</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
+                          <span className="text-sm">Présence physique le jour J</span>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
+            </section>
+
             {/* Section Comment ça marche */}
             <section id="comment-ca-marche" className="py-16 bg-gray-50 rounded-xl mb-16">
               <div className="container mx-auto px-4">
@@ -207,7 +344,7 @@ const Pricing = () => {
                           <div className="bg-white p-6 rounded-lg shadow-md">
                             <h3 className="text-xl font-semibold mb-3 flex items-center justify-end gap-2">
                               <Mail className="h-5 w-5 text-wedding-olive" />
-                              📧 Transfert des infos via le formulaire
+                              Transfert des infos via le formulaire
                             </h3>
                             <p className="text-gray-600">
                               Vous nous envoyez tous vos documents, plannings et informations de mariage via le formulaire.
@@ -234,7 +371,7 @@ const Pricing = () => {
                           <div className="bg-white p-6 rounded-lg shadow-md">
                             <h3 className="text-xl font-semibold mb-3 flex items-center gap-2">
                               <Phone className="h-5 w-5 text-wedding-olive" />
-                              📞 Rendez-vous téléphonique ou visio
+                              Rendez-vous téléphonique ou visio
                             </h3>
                             <p className="text-gray-600">
                               Échange personnalisé pour comprendre vos besoins et affiner l'organisation.
@@ -249,7 +386,7 @@ const Pricing = () => {
                           <div className="bg-white p-6 rounded-lg shadow-md">
                             <h3 className="text-xl font-semibold mb-3 flex items-center justify-end gap-2">
                               <Smartphone className="h-5 w-5 text-wedding-olive" />
-                              📱 Création de l'app & du WhatsApp
+                              Création de l'application & du WhatsApp
                             </h3>
                             <p className="text-gray-600">
                               Développement de votre application mobile personnalisée et création du groupe WhatsApp.
@@ -276,7 +413,7 @@ const Pricing = () => {
                           <div className="bg-white p-6 rounded-lg shadow-md">
                             <h3 className="text-xl font-semibold mb-3 flex items-center gap-2">
                               <Users className="h-5 w-5 text-wedding-olive" />
-                              👥 Partagez les accès à vos proches et laissez-vous guider par l'app
+                              Partagez les accès à vos proches et laissez-vous guider par l'application
                             </h3>
                             <p className="text-gray-600">
                               Vos proches reçoivent l'accès à l'application et peuvent suivre le planning et leurs tâches.
@@ -291,7 +428,7 @@ const Pricing = () => {
                           <div className="bg-white p-6 rounded-lg shadow-md">
                             <h3 className="text-xl font-semibold mb-3 flex items-center justify-end gap-2">
                               <Phone className="h-5 w-5 text-wedding-olive" />
-                              📞 Utilisez la hotline si besoin jusqu'au jour J pour toutes questions
+                              Utilisez la hotline si besoin jusqu'au jour J pour toutes questions
                             </h3>
                             <p className="text-gray-600">
                               Support client dédié disponible 7J/7 pour répondre à toutes vos questions.
@@ -318,7 +455,7 @@ const Pricing = () => {
                           <div className="bg-white p-6 rounded-lg shadow-md">
                             <h3 className="text-xl font-semibold mb-3 flex items-center gap-2">
                               <Calendar className="h-5 w-5 text-wedding-olive" />
-                              👰🤵 Laissez le manager Mariable gérer pour vous & profitez
+                              Laissez le manager Mariable gérer pour vous & profitez
                             </h3>
                             <p className="text-gray-600">
                               Vivez votre mariage sereinement, tout est organisé et coordonné pour vous.
@@ -335,7 +472,12 @@ const Pricing = () => {
             {/* Bouton CTA Réserver */}
             <section className="py-8 bg-white text-center">
               <div className="container mx-auto px-4">
-                <Button asChild size="lg" className="bg-wedding-olive hover:bg-wedding-olive/90 text-white">
+                <Button 
+                  asChild 
+                  size="lg" 
+                  className="bg-wedding-olive hover:bg-wedding-olive/90 text-white"
+                  onClick={handleReservationClick}
+                >
                   <Link to="/reservation-jour-m">
                     Réserver
                   </Link>
@@ -361,7 +503,7 @@ const Pricing = () => {
                       <CardContent className="p-6">
                         <div className="flex items-center justify-between mb-4">
                           <div className="flex items-center gap-3">
-                            <span className="text-2xl">⏰</span>
+                            <Clock className="h-6 w-6 text-wedding-olive" />
                             <h3 className="text-lg font-semibold">Heure supplémentaire</h3>
                           </div>
                           <span className="text-xl font-bold text-wedding-olive">+30€</span>
@@ -376,7 +518,7 @@ const Pricing = () => {
                       <CardContent className="p-6">
                         <div className="flex items-center justify-between mb-4">
                           <div className="flex items-center gap-3">
-                            <span className="text-2xl">🎨</span>
+                            <Palette className="h-6 w-6 text-wedding-olive" />
                             <h3 className="text-lg font-semibold">Installation décoration</h3>
                           </div>
                           <span className="text-xl font-bold text-wedding-olive">+200€</span>
@@ -391,7 +533,7 @@ const Pricing = () => {
                       <CardContent className="p-6">
                         <div className="flex items-center justify-between mb-4">
                           <div className="flex items-center gap-3">
-                            <span className="text-2xl">🏛️</span>
+                            <Building className="h-6 w-6 text-wedding-olive" />
                             <h3 className="text-lg font-semibold">RDV visite technique</h3>
                           </div>
                           <span className="text-xl font-bold text-wedding-olive">+200€</span>
@@ -406,7 +548,7 @@ const Pricing = () => {
                       <CardContent className="p-6">
                         <div className="flex items-center justify-between mb-4">
                           <div className="flex items-center gap-3">
-                            <span className="text-2xl">📅</span>
+                            <Calendar className="h-6 w-6 text-wedding-olive" />
                             <h3 className="text-lg font-semibold">Présence J-1 ou J+1</h3>
                           </div>
                           <span className="text-xl font-bold text-wedding-olive">+200€</span>
@@ -421,7 +563,7 @@ const Pricing = () => {
                       <CardContent className="p-6">
                         <div className="flex items-center justify-between mb-4">
                           <div className="flex items-center gap-3">
-                            <span className="text-2xl">📄</span>
+                            <FileText className="h-6 w-6 text-wedding-olive" />
                             <h3 className="text-lg font-semibold">Documentation imprimée</h3>
                           </div>
                           <span className="text-xl font-bold text-wedding-olive">+20€</span>
@@ -436,7 +578,7 @@ const Pricing = () => {
                       <CardContent className="p-6">
                         <div className="flex items-center justify-between mb-4">
                           <div className="flex items-center gap-3">
-                            <span className="text-2xl">👥</span>
+                            <Users className="h-6 w-6 text-wedding-olive" />
                             <h3 className="text-lg font-semibold">Mariage +180 personnes</h3>
                           </div>
                           <span className="text-xl font-bold text-wedding-olive">+200€</span>

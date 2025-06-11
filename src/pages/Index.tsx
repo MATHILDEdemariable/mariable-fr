@@ -6,7 +6,7 @@ import SEO from '@/components/SEO';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowRight, CheckCircle, Brain, Heart, MessageCircle, Smartphone, Mail, Phone } from 'lucide-react';
+import { ArrowRight, CheckCircle, Brain, Handshake, MessageCircle, Smartphone, Mail, Phone, Settings, Lightbulb, Users, Calendar } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Index = () => {
@@ -101,7 +101,7 @@ const Index = () => {
                 
                 <div className="grid md:grid-cols-3 gap-6 text-left">
                   <div className="flex items-start gap-3">
-                    <span className="text-2xl">🧠</span>
+                    <Brain className="h-6 w-6 text-wedding-olive flex-shrink-0 mt-0.5" />
                     <div>
                       <h3 className="font-medium mb-2">Expertise incluse</h3>
                       <p className="text-gray-700">
@@ -111,7 +111,7 @@ const Index = () => {
                   </div>
                   
                   <div className="flex items-start gap-3">
-                    <span className="text-2xl">🛠️</span>
+                    <Settings className="h-6 w-6 text-wedding-olive flex-shrink-0 mt-0.5" />
                     <div>
                       <h3 className="font-medium mb-2">Autonomie complète</h3>
                       <p className="text-gray-700">
@@ -121,7 +121,7 @@ const Index = () => {
                   </div>
                   
                   <div className="flex items-start gap-3">
-                    <span className="text-2xl">🤝</span>
+                    <Handshake className="h-6 w-6 text-wedding-olive flex-shrink-0 mt-0.5" />
                     <div>
                       <h3 className="font-medium mb-2">Assistance à la demande</h3>
                       <p className="text-gray-700">
@@ -157,8 +157,9 @@ const Index = () => {
               {/* Bloc 1 - Le Planner Mariable */}
               <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col">
                 <CardHeader className="text-center pb-6">
-                  <CardTitle className="text-xl font-serif mb-4">
-                    📱Le Planner Mariable
+                  <CardTitle className="text-xl font-serif mb-4 flex items-center justify-center gap-2">
+                    <Smartphone className="h-6 w-6 text-wedding-olive" />
+                    Le Planner Mariable
                   </CardTitle>
                   <div className="text-3xl font-bold text-wedding-olive mb-2">
                     Gratuit
@@ -207,7 +208,7 @@ const Index = () => {
 
                   <div className="pt-4 border-t">
                     <div className="flex items-center gap-2 mb-4">
-                      <span className="text-lg">🖥️</span>
+                      <Settings className="h-5 w-5 text-wedding-olive" />
                       <p className="text-sm font-medium text-gray-700">
                         Vous gérez votre mariage de A à Z avec des outils simples et efficaces.
                       </p>
@@ -227,8 +228,9 @@ const Index = () => {
               {/* Bloc 2 - Mariable ++ */}
               <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col">
                 <CardHeader className="text-center pb-6">
-                  <CardTitle className="text-xl font-serif mb-4">
-                    💬 Mariable ++
+                  <CardTitle className="text-xl font-serif mb-4 flex items-center justify-center gap-2">
+                    <MessageCircle className="h-6 w-6 text-wedding-olive" />
+                    Mariable ++
                   </CardTitle>
                   <div className="text-3xl font-bold text-wedding-olive mb-2">
                     9,90€ / mois TTC
@@ -236,7 +238,7 @@ const Index = () => {
                   <p className="text-sm text-gray-600">(offre de lancement, puis 14,90€)</p>
                   <div className="flex items-center justify-center gap-2 mt-2">
                     <Smartphone className="h-4 w-4 text-gray-500" />
-                    <p className="text-xs text-gray-500">📱 Disponible avec WhatsApp</p>
+                    <p className="text-xs text-gray-500">Disponible avec WhatsApp</p>
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-4 flex-grow flex flex-col">
@@ -277,7 +279,7 @@ const Index = () => {
 
                   <div className="pt-4 border-t">
                     <div className="flex items-center gap-2 mb-4">
-                      <span className="text-lg">💡</span>
+                      <Lightbulb className="h-5 w-5 text-wedding-olive" />
                       <p className="text-sm font-medium text-gray-700">
                         Comme une consultation de médecin… mais pour votre mariage et en abonnement mensuel !
                       </p>
@@ -305,8 +307,9 @@ const Index = () => {
                   </span>
                 </div>
                 <CardHeader className="text-center pb-6 pt-8">
-                  <CardTitle className="text-xl font-serif mb-4">
-                    📅 Le Jour M
+                  <CardTitle className="text-xl font-serif mb-4 flex items-center justify-center gap-2">
+                    <Calendar className="h-6 w-6 text-wedding-olive" />
+                    Le Jour M
                   </CardTitle>
                   <div className="text-3xl font-bold text-wedding-olive mb-1">
                     Dès 49€ TTC
@@ -317,7 +320,7 @@ const Index = () => {
                   <div className="space-y-3 flex-grow">
                     <div className="flex items-start gap-3">
                       <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">App personnalisée avec planning intelligent</p>
+                      <p className="text-sm text-gray-700">Application personnalisée avec planning intelligent</p>
                     </div>
                     <div className="flex items-start gap-3">
                       <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
@@ -347,7 +350,7 @@ const Index = () => {
 
                   <div className="pt-4 border-t">
                     <div className="flex items-center gap-2 mb-4">
-                      <span className="text-lg">🎯</span>
+                      <Users className="h-5 w-5 text-wedding-olive" />
                       <p className="text-sm font-medium text-gray-700">
                         Profitez de votre journée en choisissant votre niveau de coordination - à vous de décider.
                       </p>
