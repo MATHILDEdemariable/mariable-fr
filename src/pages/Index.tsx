@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import Header from '@/components/Header';
 import ChatbotButton from '@/components/ChatbotButton';
@@ -5,7 +6,7 @@ import SEO from '@/components/SEO';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowRight, CheckCircle, Brain, Handshake, MessageCircle, Smartphone, Mail, Phone, Settings, Lightbulb, Users, Calendar } from 'lucide-react';
+import { ArrowRight, Check, Brain, Handshake, MessageCircle, Smartphone, Mail, Phone, Settings, Lightbulb, Users, Calendar } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Index = () => {
@@ -153,7 +154,7 @@ const Index = () => {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl mx-auto mb-16">
-              {/* Bloc 1 - Le Planner Mariable */}
+              {/* Card 1 - Le Planner Mariable */}
               <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col">
                 <CardHeader className="text-center pb-4">
                   <div className="flex items-center justify-center gap-2 mb-4">
@@ -162,68 +163,59 @@ const Index = () => {
                       Le Planner Mariable
                     </CardTitle>
                   </div>
-                  <p className="text-lg font-medium text-gray-700 mb-4">
-                    Un tableau de bord
+                  <p className="text-lg font-medium text-gray-700 mb-6">
+                    Un tableau de bord pour bien démarrer
                   </p>
-                  <div className="text-3xl font-bold text-wedding-olive mb-2">
-                    Gratuit
-                  </div>
-                  <p className="text-sm text-gray-600">Accessible après inscription</p>
                 </CardHeader>
                 <CardContent className="space-y-4 flex-grow flex flex-col">
                   <div className="space-y-3 flex-grow">
                     <div className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Accès à votre espace personnel (tableau de bord)</p>
+                      <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                      <p className="text-sm text-gray-700">Accès à votre espace personnel</p>
                     </div>
                     <div className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Check list</p>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Calculatrice de budget</p>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Modèle de suivi budgétaire en ligne & téléchargeables</p>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                      <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
                       <p className="text-sm text-gray-700">Accès à la sélection de prestataire Mariable</p>
                     </div>
                     <div className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                      <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                      <p className="text-sm text-gray-700">Check list & Calculatrice de budget</p>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                      <p className="text-sm text-gray-700">Modèle de suivi budgétaire en ligne & téléchargeable</p>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
                       <p className="text-sm text-gray-700">Générateur de planning Jour J</p>
                     </div>
                     <div className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Outils d'aide à la coordination jour J</p>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                      <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
                       <p className="text-sm text-gray-700">Compilation de conseils opérationnels</p>
                     </div>
                     <div className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                      <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
                       <p className="text-sm text-gray-700">ChatGPT Mariable</p>
                     </div>
                   </div>
                   
                   <div className="pt-4 mt-auto">
+                    <div className="text-3xl font-bold text-wedding-olive mb-4 text-center">
+                      0€ / mois
+                    </div>
                     <Button asChild className="w-full bg-wedding-olive text-white hover:bg-wedding-olive/90">
                       <Link to="/register">
-                        S'inscrire
+                        S'inscrire gratuitement
                       </Link>
                     </Button>
                     <p className="text-sm text-gray-600 italic text-center mt-4">
-                      Vous gérez votre mariage de A à Z avec les bons outils
+                      Planifiez sans engagement, à votre rythme.
                     </p>
                   </div>
                 </CardContent>
               </Card>
 
-              {/* Bloc 2 - Accompagnement Mariable */}
+              {/* Card 2 - Accompagnement Mariable */}
               <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col">
                 <CardHeader className="text-center pb-4">
                   <div className="flex items-center justify-center gap-2 mb-4">
@@ -232,66 +224,63 @@ const Index = () => {
                       Accompagnement Mariable
                     </CardTitle>
                   </div>
-                  <p className="text-lg font-medium text-gray-700 mb-4">
-                    Une ligne directe WhatsApp avec une experte
+                  <p className="text-lg font-medium text-gray-700 mb-6">
+                    Une ligne directe avec une experte mariage
                   </p>
-                  <div className="text-3xl font-bold text-wedding-olive mb-2">
-                    9,90€ / mois TTC
-                  </div>
-                  <p className="text-sm text-gray-600">(offre de lancement, puis 14,90€)</p>
                 </CardHeader>
                 <CardContent className="space-y-4 flex-grow flex flex-col">
                   <div className="space-y-3 flex-grow">
                     <div className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Messages illimités sur WhatsApp avec Mathilde</p>
+                      <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                      <p className="text-sm text-gray-700">Messages illimités avec Mathilde sur WhatsApp</p>
                     </div>
                     <div className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Disponible 7j/7h de 9h à 22h - Réponse rapide &lt;3h garantie</p>
+                      <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                      <p className="text-sm text-gray-700">Disponible 7j/7 de 9h à 22h</p>
                     </div>
                     <div className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Conseils personnalisés à chaque étape de l'organisation</p>
+                      <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                      <p className="text-sm text-gray-700">Conseils personnalisés à chaque étape</p>
                     </div>
                     <div className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Soutien émotionnel et prise de recul</p>
+                      <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                      <p className="text-sm text-gray-700">Soutien émotionnel & prise de recul</p>
                     </div>
                     <div className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                      <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
                       <p className="text-sm text-gray-700">Relecture de vos plannings & documents</p>
                     </div>
                     <div className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Aide à la prise de décision & arbitrages</p>
+                      <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                      <p className="text-sm text-gray-700">Aide à la prise de décision & arbitrage</p>
                     </div>
                     <div className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Une vraie personne, votre alliée de l'organisation parfaite</p>
+                      <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                      <p className="text-sm text-gray-700">Une vraie personne, votre alliée experte</p>
                     </div>
-                  </div>
-
-                  <div className="pt-4 border-t">
-                    <p className="text-xs text-gray-600 mb-4">
-                      +10€ pour une consultation visio ou téléphone de 30 min / mois.
-                    </p>
                   </div>
                   
                   <div className="pt-4 mt-auto">
+                    <div className="text-3xl font-bold text-wedding-olive mb-2 text-center">
+                      9,90€/mois TTC
+                    </div>
+                    <p className="text-sm text-gray-600 text-center mb-2">(offre de lancement)</p>
+                    <p className="text-xs text-gray-600 text-center mb-4">
+                      +10€ si vous souhaitez une visio mensuelle
+                    </p>
                     <Button asChild className="w-full bg-gray-100 text-gray-800 hover:bg-gray-200 border border-gray-300">
                       <Link to="/paiement">
-                        Souscrire
+                        Bénéficier de conseils illimités
                       </Link>
                     </Button>
                     <p className="text-sm text-gray-600 italic text-center mt-4">
-                      Besoin d'un avis, une question spécifique ? Bénéficiez de conseils illimités
+                      Vous n'organisez plus seuls. On avance ensemble.
                     </p>
                   </div>
                 </CardContent>
               </Card>
 
-              {/* Bloc 3 - Le Jour M */}
+              {/* Card 3 - Le Jour M */}
               <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300 border-2 border-wedding-olive flex flex-col relative">
                 <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                   <span className="bg-wedding-olive text-white px-4 py-1 rounded-full text-sm font-medium">
@@ -305,53 +294,61 @@ const Index = () => {
                       Le Jour M
                     </CardTitle>
                   </div>
-                  <p className="text-lg font-medium text-gray-700 mb-4">
-                    Une application en ligne collaborative pour coordonner votre journée de mariage
+                  <p className="text-lg font-medium text-gray-700 mb-6">
+                    Une application collaborative pour coordonner votre grand jour
                   </p>
-                  <div className="text-3xl font-bold text-wedding-olive mb-2">
-                    Dès 49€ TTC
-                  </div>
                 </CardHeader>
                 <CardContent className="space-y-4 flex-grow flex flex-col">
                   <div className="space-y-3 flex-grow">
                     <div className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Application personnalisée avec planning intelligent</p>
+                      <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                      <p className="text-sm text-gray-700">Application personnalisée à partager</p>
                     </div>
                     <div className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Rôles et tâches attribuées aux proches</p>
+                      <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                      <p className="text-sm text-gray-700">Accessible par toute votre équipe</p>
                     </div>
                     <div className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Espace document : fiche logistique, moodboard, plans</p>
+                      <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                      <p className="text-sm text-gray-700">Planning intelligent</p>
                     </div>
                     <div className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Carnet de contacts prestataires intégré</p>
+                      <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                      <p className="text-sm text-gray-700">Rôles et tâches à déléguer</p>
                     </div>
                     <div className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Notifications & rappels automatiques (selon formule choisie)</p>
+                      <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                      <p className="text-sm text-gray-700">Espace documents : plans, moodboard</p>
                     </div>
                     <div className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Support disponible selon votre formule (hotline téléphonique ou présence)</p>
+                      <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                      <p className="text-sm text-gray-700">Carnet de contacts intégré</p>
                     </div>
                     <div className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Option présence terrain – Formule Privilège</p>
+                      <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                      <p className="text-sm text-gray-700">Notifications & rappels automatiques (selon formule)</p>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                      <p className="text-sm text-gray-700">Vos proches reçoivent leurs instructions directement</p>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                      <p className="text-sm text-gray-700">Support en option : hotline ou présence terrain</p>
                     </div>
                   </div>
                   
                   <div className="pt-4 mt-auto">
+                    <div className="text-3xl font-bold text-wedding-olive mb-4 text-center">
+                      Dès 49€ TTC
+                    </div>
                     <Button asChild className="w-full bg-wedding-olive text-white hover:bg-wedding-olive/90">
                       <Link to="/pricing">
-                        Choisir une formule
+                        Choisir ma formule Jour M
                       </Link>
                     </Button>
                     <p className="text-sm text-gray-600 italic text-center mt-4">
-                      Profitez de votre journée
+                      Vous pilotez avec votre équipe pour mieux profiter de votre journée.
                     </p>
                   </div>
                 </CardContent>
