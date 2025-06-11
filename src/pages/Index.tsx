@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import Header from '@/components/Header';
 import ChatbotButton from '@/components/ChatbotButton';
@@ -157,13 +156,13 @@ const Index = () => {
               {/* Bloc 1 - Le Planner Mariable */}
               <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col">
                 <CardHeader className="text-center pb-4">
-                  <div className="flex items-center justify-center gap-2 mb-2">
+                  <div className="flex items-center justify-center gap-2 mb-4">
                     <Smartphone className="h-6 w-6 text-wedding-olive" />
-                    <CardTitle className="text-xl font-serif">
+                    <CardTitle className="text-2xl font-bold">
                       Le Planner Mariable
                     </CardTitle>
                   </div>
-                  <p className="text-xl font-medium text-gray-700 mb-4">
+                  <p className="text-lg font-medium text-gray-700 mb-4">
                     Un tableau de bord
                   </p>
                   <div className="text-3xl font-bold text-wedding-olive mb-2">
@@ -227,13 +226,13 @@ const Index = () => {
               {/* Bloc 2 - Accompagnement Mariable */}
               <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col">
                 <CardHeader className="text-center pb-4">
-                  <div className="flex items-center justify-center gap-2 mb-2">
+                  <div className="flex items-center justify-center gap-2 mb-4">
                     <MessageCircle className="h-6 w-6 text-wedding-olive" />
-                    <CardTitle className="text-xl font-serif">
+                    <CardTitle className="text-2xl font-bold">
                       Accompagnement Mariable
                     </CardTitle>
                   </div>
-                  <p className="text-xl font-medium text-gray-700 mb-4">
+                  <p className="text-lg font-medium text-gray-700 mb-4">
                     Une ligne directe WhatsApp avec une experte
                   </p>
                   <div className="text-3xl font-bold text-wedding-olive mb-2">
@@ -242,12 +241,6 @@ const Index = () => {
                   <p className="text-sm text-gray-600">(offre de lancement, puis 14,90€)</p>
                 </CardHeader>
                 <CardContent className="space-y-4 flex-grow flex flex-col">
-                  <div className="mb-4">
-                    <p className="text-sm text-gray-700">
-                      Vous avez une question ? Un doute ? Un besoin d'avis ? Écrivez à Mathilde sur WhatsApp à tout moment. Elle vous répond rapidement, avec bienveillance et professionnalisme.
-                    </p>
-                  </div>
-                  
                   <div className="space-y-3 flex-grow">
                     <div className="flex items-start gap-3">
                       <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
@@ -306,19 +299,18 @@ const Index = () => {
                   </span>
                 </div>
                 <CardHeader className="text-center pb-4 pt-8">
-                  <div className="flex items-center justify-center gap-2 mb-2">
+                  <div className="flex items-center justify-center gap-2 mb-4">
                     <Calendar className="h-6 w-6 text-wedding-olive" />
-                    <CardTitle className="text-xl font-serif">
+                    <CardTitle className="text-2xl font-bold">
                       Le Jour M
                     </CardTitle>
                   </div>
-                  <p className="text-xl font-medium text-gray-700 mb-4">
+                  <p className="text-lg font-medium text-gray-700 mb-4">
                     Une application en ligne collaborative pour coordonner votre journée de mariage
                   </p>
                   <div className="text-3xl font-bold text-wedding-olive mb-2">
                     Dès 49€ TTC
                   </div>
-                  <p className="text-sm text-gray-600">Le jour de votre mariage orchestré, sans friction</p>
                 </CardHeader>
                 <CardContent className="space-y-4 flex-grow flex flex-col">
                   <div className="space-y-3 flex-grow">
