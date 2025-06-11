@@ -5,13 +5,20 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { CheckCircle, Mail, Phone, Smartphone, Users, Calendar, X, ArrowLeft, Clock, Palette, Building, FileText, CreditCard, ChevronDown } from 'lucide-react';
+import { CheckCircle, Mail, Phone, Smartphone, Users, Calendar, X, ArrowLeft, Clock, Palette, Building, FileText, CreditCard, ChevronDown, Play } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Pricing = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  const scrollToDemo = () => {
+    const demoSection = document.getElementById('demo-section');
+    if (demoSection) {
+      demoSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   const scrollToCommentCaMarche = () => {
     const commentSection = document.getElementById('comment-ca-marche');
@@ -198,10 +205,11 @@ const Pricing = () => {
                     
                     {/* Boutons mis à jour avec Réserver */}
                     <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8 p-6">
-                      <Button asChild className="bg-wedding-olive hover:bg-wedding-olive/90 text-white w-full sm:w-auto">
-                        <Link to="/demo-jour-m">
-                          Voir une démo
-                        </Link>
+                      <Button 
+                        onClick={scrollToDemo}
+                        className="bg-wedding-olive hover:bg-wedding-olive/90 text-white w-full sm:w-auto"
+                      >
+                        Voir une démo
                       </Button>
                       <Button 
                         onClick={scrollToCommentCaMarche}
@@ -215,6 +223,32 @@ const Pricing = () => {
                         </Link>
                       </Button>
                     </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* Section Démo */}
+            <section id="demo-section" className="py-16 bg-white mb-16">
+              <div className="container mx-auto px-4">
+                <div className="text-center mb-12">
+                  <h2 className="text-3xl md:text-4xl font-serif text-black mb-4">
+                    Démo
+                  </h2>
+                  <p className="text-lg text-gray-700">
+                    Découvrez comment fonctionne notre service Jour-M
+                  </p>
+                </div>
+
+                <div className="max-w-4xl mx-auto">
+                  <div className="relative w-full" style={{ paddingBottom: '56.25%', height: 0 }}>
+                    <iframe
+                      src="https://www.loom.com/embed/8d66cb2771e945e09aca2294b99a9393?sid=37c88597-2418-4613-9e40-2da03097c2b7"
+                      frameBorder="0"
+                      allowFullScreen
+                      className="absolute top-0 left-0 w-full h-full rounded-lg shadow-lg"
+                      title="Démo Mariable Jour-M"
+                    ></iframe>
                   </div>
                 </div>
               </div>
