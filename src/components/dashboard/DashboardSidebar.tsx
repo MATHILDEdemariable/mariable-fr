@@ -1,6 +1,7 @@
+
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Calendar, ListChecks, Wallet2, Users, CircleDollarSign, Cog6Tooth, Crown, BarChart } from 'lucide-react';
+import { Home, Calendar, ListChecks, Wallet2, Users, CircleDollarSign, Settings, Crown, BarChart, Heart } from 'lucide-react';
 import { useDashboardContext } from '@/contexts/DashboardContext';
 import { cn } from '@/lib/utils';
 
@@ -59,7 +60,7 @@ const DashboardSidebar = ({ isCollapsed }: DashboardSidebarProps) => {
     },
     {
       name: 'Assistant',
-      icon: Cog6Tooth,
+      icon: Settings,
       href: '/assistant',
     },
     {
