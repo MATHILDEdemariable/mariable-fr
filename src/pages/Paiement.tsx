@@ -1,22 +1,48 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { Link } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { CheckCircle, CreditCard, Shield, Clock } from 'lucide-react';
+import { CheckCircle, CreditCard, Shield, Clock, ArrowLeft } from 'lucide-react';
 
 const Paiement = () => {
+  const [isLoading, setIsLoading] = useState(false);
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
+  const handlePayment = () => {
+    // Basic form validation
+    const email = (document.getElementById('email') as HTMLInputElement).value;
+    const name = (document.getElementById('name') as HTMLInputElement).value;
+    const phone = (document.getElementById('phone') as HTMLInputElement).value;
+    const weddingDate = (document.getElementById('wedding-date') as HTMLInputElement).value;
+    
+    if (!email || !name || !phone || !weddingDate) {
+      alert('Veuillez remplir tous les champs obligatoires');
+      return;
+    }
+    
+    setIsLoading(true);
+    
+    // Redirect to Stripe payment
+    window.open('https://buy.stripe.com/7sY5kE5M6aZY13L03Y8bS02', '_blank');
+    
+    // Reset loading state after a brief delay
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <Helmet>
-        <title>Paiement Mariable ++ | Mariable</title>
-        <meta name="description" content="Souscrivez à Mariable ++ pour bénéficier d'un accompagnement personnalisé pour votre mariage" />
+        <title>Paiement Accompagnement Mariable | Mariable</title>
+        <meta name="description" content="Souscrivez à l'accompagnement Mariable pour bénéficier d'un accompagnement personnalisé pour votre mariage" />
       </Helmet>
       
       <Header />
@@ -25,9 +51,19 @@ const Paiement = () => {
         <section className="py-16 md:py-20 bg-white">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto">
+              {/* Back button */}
+              <div className="mb-8">
+                <Button asChild variant="ghost" className="p-0 h-auto hover:bg-transparent">
+                  <Link to="/" className="flex items-center gap-2 text-gray-600 hover:text-gray-800">
+                    <ArrowLeft className="h-5 w-5" />
+                    <span>Retour</span>
+                  </Link>
+                </Button>
+              </div>
+
               <div className="text-center mb-12">
                 <h1 className="text-4xl md:text-5xl font-serif text-black mb-6">
-                  Souscrire à Mariable ++
+                  Souscrire à l'accompagnement Mariable
                 </h1>
                 <p className="text-lg text-gray-700 max-w-2xl mx-auto">
                   Bénéficiez d'un accompagnement personnalisé pour votre mariage avec notre service premium
@@ -39,13 +75,12 @@ const Paiement = () => {
                 <Card className="shadow-lg">
                   <CardHeader>
                     <CardTitle className="text-2xl font-serif text-center">
-                      💬 Mariable ++
+                      Accompagnement Mariable
                     </CardTitle>
                     <div className="text-center">
                       <div className="text-4xl font-bold text-wedding-olive mb-2">
                         9,90€ / mois TTC
                       </div>
-                      <p className="text-sm text-gray-600">(offre de lancement, puis 14,90€)</p>
                       <p className="text-sm text-wedding-olive font-medium mt-2">📱 Disponible avec WhatsApp</p>
                     </div>
                   </CardHeader>
@@ -93,9 +128,6 @@ const Paiement = () => {
                           Comme une consultation de médecin… mais pour votre mariage et en abonnement mensuel !
                         </p>
                       </div>
-                      <p className="text-xs text-gray-600">
-                        +10€ pour une consultation téléphone ou visio de 30min / mois.
-                      </p>
                     </div>
                   </CardContent>
                 </Card>
@@ -175,8 +207,12 @@ const Paiement = () => {
                         <span className="text-2xl font-bold text-wedding-olive">9,90€ TTC</span>
                       </div>
                       
-                      <Button className="w-full bg-wedding-olive hover:bg-wedding-olive/90 text-white py-3 text-lg">
-                        Souscrire maintenant
+                      <Button 
+                        onClick={handlePayment}
+                        disabled={isLoading}
+                        className="w-full bg-wedding-olive hover:bg-wedding-olive/90 text-white py-3 text-lg"
+                      >
+                        {isLoading ? 'Redirection en cours...' : 'Souscrire maintenant'}
                       </Button>
                     </div>
 
