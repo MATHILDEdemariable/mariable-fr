@@ -1,131 +1,200 @@
 
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Calendar, ListChecks, Wallet2, Users, CircleDollarSign, Settings, Crown, BarChart, Heart } from 'lucide-react';
-import { useDashboardContext } from '@/contexts/DashboardContext';
+import { 
+  LayoutDashboard, 
+  Calendar, 
+  CheckSquare, 
+  Coins, 
+  Store, 
+  Heart, 
+  Settings,
+  LogOut,
+  Wine,
+  MessageCircleQuestion,
+  MessageSquare,
+  Users,
+  Crown
+} from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
 
 interface DashboardSidebarProps {
-  isCollapsed: boolean;
+  isReaderMode?: boolean;
 }
 
-const DashboardSidebar = ({ isCollapsed }: DashboardSidebarProps) => {
-  const { activeItem, setActiveItem } = useDashboardContext();
+const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = false }) => {
   const location = useLocation();
-
-  const handleItemClick = (name: string) => {
-    setActiveItem(name);
+  
+  const navigationItems = [
+    {
+      label: 'Tableau de bord',
+      icon: <LayoutDashboard className="h-4 w-4" />,
+      path: '/dashboard',
+    },
+    {
+      label: 'Initiation Mariage',
+      icon: <Calendar className="h-4 w-4" />,
+      path: '/dashboard/planning',
+    },
+    {
+      label: 'Check-list',
+      icon: <CheckSquare className="h-4 w-4" />,
+      path: '/dashboard/tasks',
+    },
+    {
+      label: 'Budget',
+      icon: <Coins className="h-4 w-4" />,
+      path: '/dashboard/budget',
+    },
+    {
+      label: 'Prestataires',
+      icon: <Store className="h-4 w-4" />,
+      path: '/dashboard/prestataires',
+    },
+    {
+      label: 'Wishlist',
+      icon: <Heart className="h-4 w-4" />,
+      path: '/dashboard/wishlist',
+    },
+    {
+      label: 'Coordination Jour J',
+      icon: <Calendar className="h-4 w-4" />,
+      path: '/dashboard/coordination',
+    },
+    {
+      label: 'Calculatrice de boisson',
+      icon: <Wine className="h-4 w-4" />,
+      path: '/dashboard/drinks',
+    },
+    {
+      label: 'Des questions ?',
+      icon: <MessageCircleQuestion className="h-4 w-4" />,
+      path: '/dashboard/assistant',
+    },
+    {
+      label: 'CHATGPT Mariage',
+      icon: <MessageSquare className="h-4 w-4" />,
+      path: 'https://chatgpt.com/g/g-684071f00100819199b7b11839db48d4-assistant-mariage-by-mariable',
+      external: true,
+    },
+    {
+      label: 'Accès à la communauté WhatsApp',
+      icon: <Users className="h-4 w-4" />,
+      path: 'https://chat.whatsapp.com/Gc5zeFsJYdDKTqsQqEOTzf',
+      external: true,
+    },
+    {
+      label: 'Upgrade / Premium',
+      icon: <Crown className="h-4 w-4" />,
+      path: '/pricing',
+      premium: true,
+    },
+    {
+      label: 'Paramètres',
+      icon: <Settings className="h-4 w-4" />,
+      path: '/dashboard/settings',
+    },
+  ];
+  
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+  };
+  
+  const isActive = (path: string) => {
+    if (path === '/dashboard') {
+      return location.pathname === path;
+    }
+    return location.pathname.startsWith(path);
   };
 
-  const menuItems = [
-    {
-      name: 'Résumé du projet',
-      icon: Home,
-      href: '/',
-    },
-    {
-      name: 'Planning',
-      icon: Calendar,
-      href: '/planning',
-    },
-    {
-      name: 'Checklist',
-      icon: ListChecks,
-      href: '/tasks',
-    },
-    {
-      name: 'Budget',
-      icon: Wallet2,
-      href: '/budget',
-    },
-    {
-      name: 'Prestataires',
-      icon: Users,
-      href: '/prestataires',
-    },
-    {
-      name: 'Liste de souhaits',
-      icon: Heart,
-      href: '/wishlist',
-    },
-    {
-      name: 'Coordination Jour J',
-      icon: BarChart,
-      href: '/coordination',
-    },
-    {
-      name: 'Calculateur de boissons',
-      icon: CircleDollarSign,
-      href: '/drinks',
-    },
-    {
-      name: 'Assistant',
-      icon: Settings,
-      href: '/assistant',
-    },
-    {
-      name: 'Journée mariage premium',
-      icon: Crown,
-      href: '/pricing',
-      isExternal: true,
-      badge: 'Premium',
-      className: 'bg-gradient-to-r from-yellow-400 to-orange-500 text-white hover:from-yellow-500 hover:to-orange-600'
-    }
-  ];
-
   return (
-    <div className={cn(
-      "flex flex-col w-full h-full bg-secondary border-r border-muted",
-      isCollapsed ? "w-20" : "w-60"
-    )}>
-      <div className="flex flex-col flex-grow p-4">
-        <nav className="flex flex-col space-y-1">
-          {menuItems.map((item) => (
-            <React.Fragment key={item.name}>
-              {item.isExternal ? (
-                <a
-                  href={item.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={cn(
-                    "flex items-center justify-between py-2 px-3 rounded-md font-medium transition-colors hover:bg-accent hover:text-accent-foreground",
-                    activeItem === item.name ? "bg-accent text-accent-foreground" : "text-muted-foreground",
-                    item.className
-                  )}
-                  onClick={() => handleItemClick(item.name)}
-                >
-                  <div className="flex items-center space-x-2">
-                    <item.icon className="h-4 w-4" />
-                    {!isCollapsed && <span>{item.name}</span>}
-                  </div>
-                  {item.badge && !isCollapsed && (
-                    <span className="ml-2 px-2 py-0.5 text-xs font-semibold rounded-md bg-secondary text-secondary-foreground">
-                      {item.badge}
-                    </span>
-                  )}
-                </a>
-              ) : (
-                <Link
-                  to={item.href}
-                  className={cn(
-                    "flex items-center space-x-2 py-2 px-3 rounded-md font-medium transition-colors hover:bg-accent hover:text-accent-foreground",
-                    activeItem === item.name ? "bg-accent text-accent-foreground" : "text-muted-foreground"
-                  )}
-                  onClick={() => handleItemClick(item.name)}
-                >
-                  <item.icon className="h-4 w-4" />
-                  {!isCollapsed && <span>{item.name}</span>}
-                </Link>
+    <div className="h-full min-h-screen bg-white border-r border-gray-200">
+      <div className="flex items-center px-4 sm:px-6 py-3 sm:py-4">
+        <span className="font-bold text-lg sm:text-xl">Mon espace</span>
+      </div>
+      
+      <nav className="py-2 sm:py-4 px-2 sm:px-3 space-y-1">
+        {navigationItems.map((item) => {
+          if (item.external) {
+            return (
+              <a
+                key={item.path}
+                href={isReaderMode ? '#' : item.path}
+                target={isReaderMode ? undefined : "_blank"}
+                rel={isReaderMode ? undefined : "noopener noreferrer"}
+                onClick={(e) => {
+                  if (isReaderMode) {
+                    e.preventDefault();
+                  }
+                }}
+                className={cn(
+                  "flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors",
+                  'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive',
+                  isReaderMode ? 'pointer-events-none opacity-70' : ''
+                )}
+              >
+                {item.icon}
+                <span className="ml-2 sm:ml-3 leading-tight">{item.label}</span>
+                {isReaderMode && (
+                  <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>
+                )}
+              </a>
+            );
+          }
+
+          return (
+            <Link
+              key={item.path}
+              to={isReaderMode ? '#' : item.path}
+              onClick={(e) => {
+                if (isReaderMode) {
+                  e.preventDefault();
+                }
+              }}
+              className={cn(
+                "flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors",
+                isActive(item.path)
+                  ? 'bg-wedding-olive text-white shadow-sm'
+                  : item.premium
+                  ? 'text-wedding-olive font-semibold hover:bg-wedding-olive/20 border border-wedding-olive/30'
+                  : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive',
+                isReaderMode ? 'pointer-events-none opacity-70' : ''
               )}
-            </React.Fragment>
-          ))}
-        </nav>
+            >
+              {item.icon}
+              <span className="ml-2 sm:ml-3 leading-tight">{item.label}</span>
+              {item.premium && !isReaderMode && (
+                <span className="ml-auto text-xs bg-wedding-olive text-white px-1.5 sm:px-2 py-0.5 rounded-full hidden sm:inline">
+                  PREMIUM
+                </span>
+              )}
+              {isReaderMode && item.path !== '/dashboard' && (
+                <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>
+              )}
+            </Link>
+          );
+        })}
+      </nav>
+      
+      <div className="mt-auto px-2 sm:px-3 py-2">
+        <button 
+          onClick={handleLogout} 
+          className="flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md text-gray-600 hover:bg-gray-100 w-full justify-start"
+          disabled={isReaderMode}
+        >
+          <LogOut className="h-4 w-4" />
+          <span className="ml-2 sm:ml-3">Déconnexion</span>
+        </button>
       </div>
-      <div className="p-4">
-        <Link to="/dashboard/settings" className="text-sm text-muted-foreground hover:text-accent-foreground">
-          Paramètres du profil
-        </Link>
-      </div>
+      
+      {isReaderMode && (
+        <div className="px-2 sm:px-3 py-4 mt-auto border-t border-gray-200">
+          <div className="bg-wedding-olive/10 p-3 rounded-md text-xs text-gray-700">
+            Vous êtes en mode lecture seule. Les modifications ne sont pas possibles dans ce mode.
+          </div>
+        </div>
+      )}
     </div>
   );
 };

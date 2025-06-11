@@ -155,7 +155,7 @@ const Index = () => {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl mx-auto mb-16">
               {/* Card 1 - Le Planner Mariable */}
-              <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col">
+              <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col h-full">
                 <div className="flex flex-col h-full">
                   {/* Title/Subtitle Section - Fixed Height */}
                   <div className="min-h-[120px] flex flex-col justify-start text-center p-6 pb-0">
@@ -204,7 +204,7 @@ const Index = () => {
                     </div>
                   </div>
                   
-                  {/* Price/CTA Section - Fixed at Bottom */}
+                  {/* Price/CTA Section - Pushed to Bottom */}
                   <div className="mt-auto p-6 pt-6">
                     <div className="text-3xl font-bold text-wedding-olive mb-4 text-center">
                       Gratuit
@@ -222,7 +222,7 @@ const Index = () => {
               </Card>
 
               {/* Card 2 - Accompagnement Mariable */}
-              <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col">
+              <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col h-full">
                 <div className="flex flex-col h-full">
                   {/* Title/Subtitle Section - Fixed Height */}
                   <div className="min-h-[120px] flex flex-col justify-start text-center p-6 pb-0">
@@ -271,7 +271,7 @@ const Index = () => {
                     </div>
                   </div>
                   
-                  {/* Price/CTA Section - Fixed at Bottom */}
+                  {/* Price/CTA Section - Pushed to Bottom */}
                   <div className="mt-auto p-6 pt-6">
                     <div className="text-3xl font-bold text-wedding-olive mb-4 text-center">
                       9,90€/mois TTC
@@ -289,7 +289,7 @@ const Index = () => {
               </Card>
 
               {/* Card 3 - Le Jour M */}
-              <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300 border-2 border-wedding-olive flex flex-col relative">
+              <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300 border-2 border-wedding-olive flex flex-col h-full relative">
                 <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                   <span className="bg-wedding-olive text-white px-4 py-1 rounded-full text-sm font-medium">
                     PREMIUM
@@ -351,7 +351,7 @@ const Index = () => {
                     </div>
                   </div>
                   
-                  {/* Price/CTA Section - Fixed at Bottom */}
+                  {/* Price/CTA Section - Pushed to Bottom */}
                   <div className="mt-auto p-6 pt-6">
                     <div className="text-3xl font-bold text-wedding-olive mb-4 text-center">
                       Dès 49€ TTC

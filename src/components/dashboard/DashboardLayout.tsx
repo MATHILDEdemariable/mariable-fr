@@ -44,7 +44,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                     ${(isMobile && !sidebarVisible) ? '-translate-x-full' : 'translate-x-0'}`}
           style={{ width: isMobile ? '280px' : '250px' }}
         >
-          <DashboardSidebar isCollapsed={false} />
+          <DashboardSidebar isReaderMode={isReaderMode} />
         </div>
 
         {/* Main content area - better mobile spacing */}
