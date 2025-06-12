@@ -25,6 +25,10 @@ import {
 } from 'recharts';
 import { exportDashboardToPDF } from '@/services/pdfExportService';
 
+// Import des utilitaires budget
+import { formatBudgetForDashboard } from '@/utils/budgetDataUtils';
+import { BudgetEstimate } from '@/types/budgetTypes';
+
 // Types pour la calculatrice de budget
 type Step = 1 | 2 | 3 | 4 | 5;
 type Region = string;
@@ -38,11 +42,6 @@ interface BudgetLine {
   amount: number;
   basePrice: number;
   color: string;
-}
-
-interface BudgetEstimate {
-  total: number;
-  breakdown: BudgetLine[];
 }
 
 // Budget allocation percentages for "known budget" mode
@@ -156,6 +155,90 @@ const Budget = () => {
     }).format(amount);
   };
 
+  // Fonction améliorée pour enregistrer en base avec le bon format
+  const saveBudgetToDatabase = async (estimate: BudgetEstimate, mode: string) => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (user) {
+        console.log("Sauvegarde du budget:", estimate);
+        
+        const metadata = {
+          region: region || 'France',
+          season: season || 'basse',
+          guestsCount: guestsCount || 100,
+          serviceLevel: serviceLevel || 'premium',
+          calculatorMode: mode
+        };
+
+        // Formatter les données pour le dashboard
+        const dashboardData = formatBudgetForDashboard(estimate, metadata);
+        
+        // Préparer les données pour la base
+        const breakdownJson = estimate.breakdown.map(item => ({
+          name: item.name,
+          amount: item.amount,
+          basePrice: item.basePrice,
+          color: item.color
+        }));
+        
+        const { data: projects } = await supabase
+          .from('projects')
+          .select('id')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false })
+          .limit(1);
+          
+        const projectId = projects && projects.length > 0 ? projects[0].id : null;
+        
+        // Supprimer les anciens enregistrements pour cet utilisateur
+        await supabase
+          .from('budgets_dashboard')
+          .delete()
+          .eq('user_id', user.id);
+          
+        // Insérer le nouveau budget
+        const { error } = await supabase
+          .from('budgets_dashboard')
+          .insert({
+            user_id: user.id,
+            project_id: projectId,
+            region: metadata.region,
+            season: metadata.season,
+            guests_count: metadata.guestsCount,
+            service_level: metadata.serviceLevel,
+            selected_vendors: mode === 'known' ? selectedCategories : selectedVendors,
+            total_budget: estimate.total,
+            breakdown: breakdownJson
+          });
+        
+        if (error) {
+          throw error;
+        }
+        
+        console.log("Budget sauvegardé avec succès");
+        
+        toast({
+          title: "Budget enregistré",
+          description: "Votre estimation budgétaire a été enregistrée et sera visible dans votre dashboard"
+        });
+        
+        // Rediriger vers le dashboard après un délai
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 2000);
+        
+      }
+    } catch (error) {
+      console.error("Erreur lors de l'enregistrement du budget:", error);
+      toast({
+        title: "Erreur",
+        description: "Impossible d'enregistrer votre budget",
+        variant: "destructive"
+      });
+    }
+  };
+
   // Gérer la sélection du mode calculatrice
   const handleModeSelection = (mode: CalculatorMode) => {
     setCalculatorMode(mode);
@@ -212,28 +295,9 @@ const Budget = () => {
     
     setBudgetEstimate(finalBudgetEstimate);
     setShowEstimate(true);
-  };
-
-  // Progression des étapes
-  const getStepProgress = () => {
-    if (showEstimate) return 100;
-    return (currentStep / 4) * 100;
-  };
-
-  // Gérer la navigation entre étapes
-  const goToNextStep = () => {
-    if (currentStep < 4) {
-      setCurrentStep(prevStep => (prevStep + 1) as Step);
-    } else {
-      calculateBudget();
-      setShowEstimate(true);
-    }
-  };
-
-  const goToPreviousStep = () => {
-    if (currentStep > 1) {
-      setCurrentStep(prevStep => (prevStep - 1) as Step);
-    }
+    
+    // Enregistrer dans Supabase
+    saveBudgetToDatabase(finalBudgetEstimate, 'known');
   };
 
   // Calculer le budget basé sur les sélections
@@ -282,124 +346,15 @@ const Budget = () => {
       color: BUDGET_COLORS['autres']
     });
     
-    setBudgetEstimate({
+    const finalBudgetEstimate = {
       total: total + otherExpenses,
       breakdown
-    });
-  };
-
-  // Handler pour le bouton de calculateur de boissons
-  const handleDrinksCalculatorClick = async () => {
-    try {
-      const { data } = await supabase.auth.getSession();
-      if (data.session) {
-        navigate('/dashboard/drinks');
-      } else {
-        navigate('/register');
-      }
-    } catch (error) {
-      console.error("Erreur lors de la vérification de l'authentification:", error);
-      navigate('/register');
-    }
-  };
-
-  // Handler pour l'export direct
-  const handleDirectExport = async () => {
-    if (!showEstimate || !budgetEstimate.breakdown.length) {
-      toast({
-        title: "Erreur",
-        description: "Aucune estimation disponible pour l'exportation",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    setIsExporting(true);
-
-    try {
-      // Créer un conteneur temporaire avec les données du budget
-      const tempContainer = document.createElement('div');
-      tempContainer.id = 'budget-export-content';
-      tempContainer.className = 'p-8 bg-white';
-      tempContainer.innerHTML = `
-        <div class="text-center mb-8">
-          <h1 class="text-2xl font-bold mb-4">Estimation Budgétaire - Mariable</h1>
-          <p class="text-xl text-gray-600">Budget total estimé: ${formatCurrency(budgetEstimate.total)}</p>
-        </div>
-        <div class="space-y-4">
-          <h2 class="text-lg font-semibold mb-4">Répartition détaillée:</h2>
-          ${budgetEstimate.breakdown.map(item => `
-            <div class="flex justify-between items-center py-2 border-b">
-              <span>${item.name}</span>
-              <span class="font-medium">${formatCurrency(item.amount)}</span>
-            </div>
-          `).join('')}
-        </div>
-        ${calculatorMode === 'unknown' ? `
-          <div class="mt-8 space-y-2">
-            <h3 class="text-lg font-semibold">Paramètres utilisés:</h3>
-            <p>Région: ${region}</p>
-            <p>Nombre d'invités: ${guestsCount}</p>
-            <p>Saison: ${season === 'haute' ? 'Haute saison' : 'Basse saison'}</p>
-            <p>Niveau de prestation: ${serviceLevel}</p>
-          </div>
-        ` : ''}
-      `;
-      
-      document.body.appendChild(tempContainer);
-
-      const success = await exportDashboardToPDF(
-        'budget-export-content',
-        `estimation-budget-mariable-${new Date().toISOString().split('T')[0]}.pdf`,
-        'portrait',
-        'Estimation Budgétaire Mariable'
-      );
-
-      document.body.removeChild(tempContainer);
-
-      if (success) {
-        toast({
-          title: "Export réussi",
-          description: "Votre estimation budgétaire a été exportée en PDF",
-        });
-      } else {
-        throw new Error('Export PDF failed');
-      }
-    } catch (error) {
-      console.error("Erreur lors de l'export PDF:", error);
-      
-      // Fallback vers CSV
-      try {
-        let csvContent = "Catégorie,Montant\n";
-        budgetEstimate.breakdown.forEach(item => {
-          csvContent += `"${item.name}","${item.amount}"\n`;
-        });
-        csvContent += `"TOTAL","${budgetEstimate.total}"\n`;
-
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-        const link = document.createElement('a');
-        const url = URL.createObjectURL(blob);
-        link.setAttribute('href', url);
-        link.setAttribute('download', `estimation-budget-mariable-${new Date().toISOString().split('T')[0]}.csv`);
-        link.style.visibility = 'hidden';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-
-        toast({
-          title: "Export CSV réussi",
-          description: "Le PDF n'était pas disponible, votre estimation a été exportée au format CSV",
-        });
-      } catch (csvError) {
-        toast({
-          title: "Erreur d'export",
-          description: "Impossible d'exporter le fichier. Veuillez réessayer.",
-          variant: "destructive"
-        });
-      }
-    } finally {
-      setIsExporting(false);
-    }
+    };
+    
+    setBudgetEstimate(finalBudgetEstimate);
+    
+    // Enregistrer dans Supabase
+    saveBudgetToDatabase(finalBudgetEstimate, 'unknown');
   };
 
   // Obtenir le nom lisible d'un type de prestataire
@@ -432,6 +387,28 @@ const Budget = () => {
         ? prev.filter(c => c !== category) 
         : [...prev, category]
     );
+  };
+
+  // Progression des étapes
+  const getStepProgress = () => {
+    if (showEstimate) return 100;
+    return (currentStep / 4) * 100;
+  };
+
+  // Gérer la navigation entre étapes
+  const goToNextStep = () => {
+    if (currentStep < 4) {
+      setCurrentStep(prevStep => (prevStep + 1) as Step);
+    } else {
+      calculateBudget();
+      setShowEstimate(true);
+    }
+  };
+
+  const goToPreviousStep = () => {
+    if (currentStep > 1) {
+      setCurrentStep(prevStep => (prevStep - 1) as Step);
+    }
   };
 
   // Rendu du choix de mode initial
@@ -852,6 +829,120 @@ const Budget = () => {
         </div>
       </div>
     );
+  };
+
+  // Handler pour le bouton de calculateur de boissons
+  const handleDrinksCalculatorClick = async () => {
+    try {
+      const { data } = await supabase.auth.getSession();
+      if (data.session) {
+        navigate('/dashboard/drinks');
+      } else {
+        navigate('/register');
+      }
+    } catch (error) {
+      console.error("Erreur lors de la vérification de l'authentification:", error);
+      navigate('/register');
+    }
+  };
+
+  // Handler pour l'export direct
+  const handleDirectExport = async () => {
+    if (!showEstimate || !budgetEstimate.breakdown.length) {
+      toast({
+        title: "Erreur",
+        description: "Aucune estimation disponible pour l'exportation",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsExporting(true);
+
+    try {
+      // Créer un conteneur temporaire avec les données du budget
+      const tempContainer = document.createElement('div');
+      tempContainer.id = 'budget-export-content';
+      tempContainer.className = 'p-8 bg-white';
+      tempContainer.innerHTML = `
+        <div class="text-center mb-8">
+          <h1 class="text-2xl font-bold mb-4">Estimation Budgétaire - Mariable</h1>
+          <p class="text-xl text-gray-600">Budget total estimé: ${formatCurrency(budgetEstimate.total)}</p>
+        </div>
+        <div class="space-y-4">
+          <h2 class="text-lg font-semibold mb-4">Répartition détaillée:</h2>
+          ${budgetEstimate.breakdown.map(item => `
+            <div class="flex justify-between items-center py-2 border-b">
+              <span>${item.name}</span>
+              <span class="font-medium">${formatCurrency(item.amount)}</span>
+            </div>
+          `).join('')}
+        </div>
+        ${calculatorMode === 'unknown' ? `
+          <div class="mt-8 space-y-2">
+            <h3 class="text-lg font-semibold">Paramètres utilisés:</h3>
+            <p>Région: ${region}</p>
+            <p>Nombre d'invités: ${guestsCount}</p>
+            <p>Saison: ${season === 'haute' ? 'Haute saison' : 'Basse saison'}</p>
+            <p>Niveau de prestation: ${serviceLevel}</p>
+          </div>
+        ` : ''}
+      `;
+      
+      document.body.appendChild(tempContainer);
+
+      const success = await exportDashboardToPDF(
+        'budget-export-content',
+        `estimation-budget-mariable-${new Date().toISOString().split('T')[0]}.pdf`,
+        'portrait',
+        'Estimation Budgétaire Mariable'
+      );
+
+      document.body.removeChild(tempContainer);
+
+      if (success) {
+        toast({
+          title: "Export réussi",
+          description: "Votre estimation budgétaire a été exportée en PDF",
+        });
+      } else {
+        throw new Error('Export PDF failed');
+      }
+    } catch (error) {
+      console.error("Erreur lors de l'export PDF:", error);
+      
+      // Fallback vers CSV
+      try {
+        let csvContent = "Catégorie,Montant\n";
+        budgetEstimate.breakdown.forEach(item => {
+          csvContent += `"${item.name}","${item.amount}"\n`;
+        });
+        csvContent += `"TOTAL","${budgetEstimate.total}"\n`;
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', `estimation-budget-mariable-${new Date().toISOString().split('T')[0]}.csv`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        toast({
+          title: "Export CSV réussi",
+          description: "Le PDF n'était pas disponible, votre estimation a été exportée au format CSV",
+        });
+      } catch (csvError) {
+        toast({
+          title: "Erreur d'export",
+          description: "Impossible d'exporter le fichier. Veuillez réessayer.",
+          variant: "destructive"
+        });
+      }
+    } finally {
+      setIsExporting(false);
+    }
   };
 
   // Obtain the navigate helper to use for redirects
