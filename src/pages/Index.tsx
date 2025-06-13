@@ -141,7 +141,7 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Services Section - Redesigned */}
+        {/* Services Section - Réorganisé avec nouvel ordre */}
         <section id="services-section" className="py-16 md:py-20 bg-gray-50">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
@@ -154,10 +154,9 @@ const Index = () => {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl mx-auto mb-16">
-              {/* Card 1 - Le Planner Mariable */}
+              {/* Card 1 - Le Planner Mariable (gauche) */}
               <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col h-full">
                 <div className="flex flex-col h-full">
-                  {/* Title/Subtitle Section - Fixed Height */}
                   <div className="min-h-[120px] flex flex-col justify-start text-center p-6 pb-0">
                     <div className="flex items-center justify-center gap-2 mb-4">
                       <Smartphone className="h-6 w-6 text-wedding-olive" />
@@ -170,7 +169,6 @@ const Index = () => {
                     </p>
                   </div>
                   
-                  {/* Features Section - Flexible Height */}
                   <div className="flex-grow px-6 mt-6">
                     <div className="space-y-3">
                       <div className="flex items-start gap-3">
@@ -204,7 +202,6 @@ const Index = () => {
                     </div>
                   </div>
                   
-                  {/* Price/CTA Section - Pushed to Bottom */}
                   <div className="mt-auto p-6 pt-6">
                     <div className="text-3xl font-bold text-wedding-olive mb-4 text-center">
                       Gratuit
@@ -221,74 +218,7 @@ const Index = () => {
                 </div>
               </Card>
 
-              {/* Card 2 - Accompagnement Mariable */}
-              <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col h-full">
-                <div className="flex flex-col h-full">
-                  {/* Title/Subtitle Section - Fixed Height */}
-                  <div className="min-h-[120px] flex flex-col justify-start text-center p-6 pb-0">
-                    <div className="flex items-center justify-center gap-2 mb-4">
-                      <MessageCircle className="h-6 w-6 text-wedding-olive" />
-                      <CardTitle className="text-2xl font-bold">
-                        Accompagnement Mariable
-                      </CardTitle>
-                    </div>
-                    <p className="text-lg font-medium text-gray-700">
-                      Une ligne directe avec une experte mariage
-                    </p>
-                  </div>
-                  
-                  {/* Features Section - Flexible Height */}
-                  <div className="flex-grow px-6 mt-6">
-                    <div className="space-y-3">
-                      <div className="flex items-start gap-3">
-                        <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                        <p className="text-sm text-gray-700">Messages illimités avec Mathilde sur WhatsApp</p>
-                      </div>
-                      <div className="flex items-start gap-3">
-                        <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                        <p className="text-sm text-gray-700">Disponible 7j/7 de 9h à 22h</p>
-                      </div>
-                      <div className="flex items-start gap-3">
-                        <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                        <p className="text-sm text-gray-700">Conseils personnalisés à chaque étape</p>
-                      </div>
-                      <div className="flex items-start gap-3">
-                        <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                        <p className="text-sm text-gray-700">Soutien émotionnel & prise de recul</p>
-                      </div>
-                      <div className="flex items-start gap-3">
-                        <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                        <p className="text-sm text-gray-700">Relecture de vos plannings & documents</p>
-                      </div>
-                      <div className="flex items-start gap-3">
-                        <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                        <p className="text-sm text-gray-700">Aide à la prise de décision & arbitrage</p>
-                      </div>
-                      <div className="flex items-start gap-3">
-                        <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                        <p className="text-sm text-gray-700">Une vraie personne, votre alliée experte</p>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  {/* Price/CTA Section - Pushed to Bottom */}
-                  <div className="mt-auto p-6 pt-6">
-                    <div className="text-3xl font-bold text-wedding-olive mb-4 text-center">
-                      9,90€/mois TTC
-                    </div>
-                    <Button asChild className="w-full bg-gray-100 text-gray-800 hover:bg-gray-200 border border-gray-300">
-                      <Link to="/paiement">
-                        Bénéficier de conseils illimités
-                      </Link>
-                    </Button>
-                    <p className="text-sm text-gray-600 italic text-center mt-4">
-                      Vous n'organisez plus seuls. On avance ensemble.
-                    </p>
-                  </div>
-                </div>
-              </Card>
-
-              {/* Card 3 - Le Jour M */}
+              {/* Card 2 - Le Jour M (milieu avec badge PREMIUM) */}
               <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300 border-2 border-wedding-olive flex flex-col h-full relative">
                 <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                   <span className="bg-wedding-olive text-white px-4 py-1 rounded-full text-sm font-medium">
@@ -296,7 +226,6 @@ const Index = () => {
                   </span>
                 </div>
                 <div className="flex flex-col h-full">
-                  {/* Title/Subtitle Section - Fixed Height */}
                   <div className="min-h-[120px] flex flex-col justify-start text-center p-6 pb-0 pt-8">
                     <div className="flex items-center justify-center gap-2 mb-4">
                       <Calendar className="h-6 w-6 text-wedding-olive" />
@@ -305,11 +234,10 @@ const Index = () => {
                       </CardTitle>
                     </div>
                     <p className="text-lg font-medium text-gray-700">
-                      Une application collaborative pour coordonner votre grand jour
+                      Une application en ligne collaborative
                     </p>
                   </div>
                   
-                  {/* Features Section - Flexible Height */}
                   <div className="flex-grow px-6 mt-6">
                     <div className="space-y-3">
                       <div className="flex items-start gap-3">
@@ -351,7 +279,6 @@ const Index = () => {
                     </div>
                   </div>
                   
-                  {/* Price/CTA Section - Pushed to Bottom */}
                   <div className="mt-auto p-6 pt-6">
                     <div className="text-3xl font-bold text-wedding-olive mb-4 text-center">
                       Dès 49€ TTC
@@ -362,7 +289,71 @@ const Index = () => {
                       </Link>
                     </Button>
                     <p className="text-sm text-gray-600 italic text-center mt-4">
-                      Vous pilotez avec votre équipe pour mieux profiter de votre journée.
+                      Coordonner votre grand jour pour mieux profiter
+                    </p>
+                  </div>
+                </div>
+              </Card>
+
+              {/* Card 3 - Accompagnement Mariable (droite) */}
+              <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col h-full">
+                <div className="flex flex-col h-full">
+                  <div className="min-h-[120px] flex flex-col justify-start text-center p-6 pb-0">
+                    <div className="flex items-center justify-center gap-2 mb-4">
+                      <MessageCircle className="h-6 w-6 text-wedding-olive" />
+                      <CardTitle className="text-2xl font-bold">
+                        Accompagnement Mariable
+                      </CardTitle>
+                    </div>
+                    <p className="text-lg font-medium text-gray-700">
+                      Une ligne directe
+                    </p>
+                  </div>
+                  
+                  <div className="flex-grow px-6 mt-6">
+                    <div className="space-y-3">
+                      <div className="flex items-start gap-3">
+                        <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                        <p className="text-sm text-gray-700">Messages illimités avec Mathilde sur WhatsApp</p>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                        <p className="text-sm text-gray-700">Disponible 7j/7 de 9h à 22h</p>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                        <p className="text-sm text-gray-700">Conseils personnalisés à chaque étape</p>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                        <p className="text-sm text-gray-700">Soutien émotionnel & prise de recul</p>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                        <p className="text-sm text-gray-700">Relecture de vos plannings & documents</p>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                        <p className="text-sm text-gray-700">Aide à la prise de décision & arbitrage</p>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                        <p className="text-sm text-gray-700">Une vraie personne, votre alliée experte</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-auto p-6 pt-6">
+                    <div className="text-3xl font-bold text-wedding-olive mb-4 text-center">
+                      9,90€/mois TTC
+                    </div>
+                    <Button asChild className="w-full bg-gray-100 text-gray-800 hover:bg-gray-200 border border-gray-300">
+                      <Link to="/paiement">
+                        Bénéficier de conseils illimités
+                      </Link>
+                    </Button>
+                    <p className="text-sm text-gray-600 italic text-center mt-4">
+                      Vous n'organisez plus seuls. On avance ensemble.
                     </p>
                   </div>
                 </div>

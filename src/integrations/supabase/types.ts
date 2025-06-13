@@ -406,6 +406,54 @@ export type Database = {
         }
         Relationships: []
       }
+      paiement_accompagnement: {
+        Row: {
+          created_at: string
+          date_mariage: string
+          devise: string | null
+          email: string
+          id: string
+          montant: number | null
+          nom_complet: string
+          notes: string | null
+          statut: string
+          stripe_payment_id: string | null
+          stripe_subscription_id: string | null
+          telephone_whatsapp: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          date_mariage: string
+          devise?: string | null
+          email: string
+          id?: string
+          montant?: number | null
+          nom_complet: string
+          notes?: string | null
+          statut?: string
+          stripe_payment_id?: string | null
+          stripe_subscription_id?: string | null
+          telephone_whatsapp: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          date_mariage?: string
+          devise?: string | null
+          email?: string
+          id?: string
+          montant?: number | null
+          nom_complet?: string
+          notes?: string | null
+          statut?: string
+          stripe_payment_id?: string | null
+          stripe_subscription_id?: string | null
+          telephone_whatsapp?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       planning_questions: {
         Row: {
           categorie: string

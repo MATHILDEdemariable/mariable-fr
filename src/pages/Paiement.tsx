@@ -7,35 +7,129 @@ import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CheckCircle, CreditCard, Shield, Clock, ArrowLeft } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 const Paiement = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  const handlePayment = () => {
-    // Basic form validation
+  const validateForm = () => {
     const email = (document.getElementById('email') as HTMLInputElement).value;
     const name = (document.getElementById('name') as HTMLInputElement).value;
     const phone = (document.getElementById('phone') as HTMLInputElement).value;
     const weddingDate = (document.getElementById('wedding-date') as HTMLInputElement).value;
-    
+
     if (!email || !name || !phone || !weddingDate) {
-      alert('Veuillez remplir tous les champs obligatoires');
-      return;
+      toast({
+        title: "Erreur",
+        description: "Veuillez remplir tous les champs obligatoires",
+        variant: "destructive",
+      });
+      return null;
     }
-    
-    setIsLoading(true);
-    
-    // Redirect to Stripe payment
-    window.open('https://buy.stripe.com/7sY5kE5M6aZY13L03Y8bS02', '_blank');
-    
-    // Reset loading state after a brief delay
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 2000);
+
+    // Validation email simple
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      toast({
+        title: "Erreur",
+        description: "Veuillez saisir une adresse email valide",
+        variant: "destructive",
+      });
+      return null;
+    }
+
+    return { email, name, phone, weddingDate };
+  };
+
+  const clearForm = () => {
+    (document.getElementById('email') as HTMLInputElement).value = '';
+    (document.getElementById('name') as HTMLInputElement).value = '';
+    (document.getElementById('phone') as HTMLInputElement).value = '';
+    (document.getElementById('wedding-date') as HTMLInputElement).value = '';
+  };
+
+  const saveToDatabase = async (formData: { email: string; name: string; phone: string; weddingDate: string }) => {
+    try {
+      const { error } = await supabase
+        .from('paiement_accompagnement')
+        .insert({
+          email: formData.email,
+          nom_complet: formData.name,
+          telephone_whatsapp: formData.phone,
+          date_mariage: formData.weddingDate,
+          statut: 'en_attente',
+          montant: 9.90,
+          devise: 'EUR'
+        });
+
+      if (error) {
+        console.error('Erreur lors de la sauvegarde:', error);
+        throw error;
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Erreur lors de la sauvegarde:', error);
+      return false;
+    }
+  };
+
+  const handlePayment = async () => {
+    const formData = validateForm();
+    if (!formData) return;
+
+    setIsSaving(true);
+
+    try {
+      // Sauvegarder en base de données
+      const saveSuccess = await saveToDatabase(formData);
+      
+      if (!saveSuccess) {
+        toast({
+          title: "Erreur",
+          description: "Une erreur est survenue lors de la sauvegarde. Veuillez réessayer.",
+          variant: "destructive",
+        });
+        setIsSaving(false);
+        return;
+      }
+
+      // Afficher message de succès
+      toast({
+        title: "Informations sauvegardées",
+        description: "Vos informations ont été enregistrées avec succès. Redirection vers le paiement...",
+      });
+
+      // Vider le formulaire
+      clearForm();
+
+      setIsSaving(false);
+      setIsLoading(true);
+      
+      // Redirection vers Stripe
+      window.open('https://buy.stripe.com/7sY5kE5M6aZY13L03Y8bS02', '_blank');
+      
+      // Reset loading state après un délai
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 2000);
+
+    } catch (error) {
+      console.error('Erreur:', error);
+      toast({
+        title: "Erreur",
+        description: "Une erreur inattendue est survenue. Veuillez réessayer.",
+        variant: "destructive",
+      });
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -144,7 +238,7 @@ const Paiement = () => {
                     <div className="space-y-4">
                       <div>
                         <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                          Adresse email
+                          Adresse email *
                         </label>
                         <input
                           type="email"
@@ -153,12 +247,13 @@ const Paiement = () => {
                           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-wedding-olive focus:border-transparent"
                           placeholder="votre@email.com"
                           required
+                          disabled={isSaving || isLoading}
                         />
                       </div>
 
                       <div>
                         <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
-                          Nom complet
+                          Nom complet *
                         </label>
                         <input
                           type="text"
@@ -167,12 +262,13 @@ const Paiement = () => {
                           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-wedding-olive focus:border-transparent"
                           placeholder="Votre nom complet"
                           required
+                          disabled={isSaving || isLoading}
                         />
                       </div>
 
                       <div>
                         <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
-                          Numéro de téléphone WhatsApp
+                          Numéro de téléphone WhatsApp *
                         </label>
                         <input
                           type="tel"
@@ -181,6 +277,7 @@ const Paiement = () => {
                           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-wedding-olive focus:border-transparent"
                           placeholder="+33 6 12 34 56 78"
                           required
+                          disabled={isSaving || isLoading}
                         />
                         <p className="text-xs text-gray-600 mt-1">
                           Ce numéro sera utilisé pour vous contacter via WhatsApp
@@ -189,7 +286,7 @@ const Paiement = () => {
 
                       <div>
                         <label htmlFor="wedding-date" className="block text-sm font-medium text-gray-700 mb-2">
-                          Date de mariage prévue
+                          Date de mariage prévue *
                         </label>
                         <input
                           type="date"
@@ -197,6 +294,7 @@ const Paiement = () => {
                           name="wedding-date"
                           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-wedding-olive focus:border-transparent"
                           required
+                          disabled={isSaving || isLoading}
                         />
                       </div>
                     </div>
@@ -209,10 +307,10 @@ const Paiement = () => {
                       
                       <Button 
                         onClick={handlePayment}
-                        disabled={isLoading}
+                        disabled={isSaving || isLoading}
                         className="w-full bg-wedding-olive hover:bg-wedding-olive/90 text-white py-3 text-lg"
                       >
-                        {isLoading ? 'Redirection en cours...' : 'Souscrire maintenant'}
+                        {isSaving ? 'Sauvegarde en cours...' : isLoading ? 'Redirection en cours...' : 'Souscrire maintenant'}
                       </Button>
                     </div>
 
