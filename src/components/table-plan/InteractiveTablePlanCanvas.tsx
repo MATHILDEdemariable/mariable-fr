@@ -1,7 +1,6 @@
 
 import React, { useEffect, useRef } from "react";
 import { Canvas, Rect, Circle as FabricCircle, Group, Text as FabricText } from "fabric";
-import { useToast } from "@/hooks/use-toast";
 import type { TableItem, GuestItem } from "./TablePlanCanvas";
 
 interface InteractiveTablePlanCanvasProps {
@@ -21,19 +20,13 @@ const InteractiveTablePlanCanvas: React.FC<InteractiveTablePlanCanvasProps> = ({
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fabricRef = useRef<Canvas | null>(null);
-  const { toast } = useToast();
-
-  // List of all guests currently assigned (name -> guest object)
-  const assignedGuests = guests.filter(g => g.assignedTableId);
-  const parkingGuests = guests.filter(g => !g.assignedTableId);
 
   // Pour garder ref sur objets invités pour déplacement
   const guestObjRefs = useRef<Record<string, any>>({});
 
+  // Initialize canvas once
   useEffect(() => {
     if (!canvasRef.current) return;
-
-    if (fabricRef.current) fabricRef.current.dispose();
 
     const fabricCanvas = new Canvas(canvasRef.current, {
       width: CANVAS_WIDTH,
@@ -42,6 +35,22 @@ const InteractiveTablePlanCanvas: React.FC<InteractiveTablePlanCanvasProps> = ({
       selection: true,
     });
     fabricRef.current = fabricCanvas;
+
+    return () => {
+      fabricRef.current?.dispose();
+    };
+  }, []); // Empty dependency array ensures this runs only once
+
+  // Redraw canvas content when data changes
+  useEffect(() => {
+    const fabricCanvas = fabricRef.current;
+    if (!fabricCanvas) return;
+
+    // Clear previous objects
+    fabricCanvas.remove(...fabricCanvas.getObjects());
+
+    const assignedGuests = guests.filter(g => g.assignedTableId);
+    const parkingGuests = guests.filter(g => !g.assignedTableId);
     guestObjRefs.current = {};
 
     // ZONE PARKING À GAUCHE (pour invités non assignés)
@@ -195,6 +204,8 @@ const InteractiveTablePlanCanvas: React.FC<InteractiveTablePlanCanvasProps> = ({
       });
     });
 
+    fabricCanvas.renderAll();
+
     // INTERACTIONS - suppression via touche Del/Suppr
     const handleKeydown = (ev: KeyboardEvent) => {
       if (["Delete", "Backspace"].includes(ev.key) && fabricCanvas.getActiveObject()) {
@@ -231,11 +242,9 @@ const InteractiveTablePlanCanvas: React.FC<InteractiveTablePlanCanvasProps> = ({
     document.addEventListener("keydown", handleKeydown);
 
     return () => {
-      fabricCanvas.dispose();
       document.removeEventListener("keydown", handleKeydown);
     };
-  // eslint-disable-next-line
-  }, [guests, tables]);
+  }, [guests, tables, setGuests, setTables, setSelectedObjectId]);
 
   return (
     <div className="relative">
