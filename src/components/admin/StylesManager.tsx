@@ -18,13 +18,20 @@ const STYLES_LISTE = [
   "Minimaliste",
 ];
 
+function asStringArray(arr: any): string[] {
+  // Handles undefined/null/non-array gracefully, and ensures only string values, converting others to string
+  if (!Array.isArray(arr)) return [];
+  return arr.map((v) => typeof v === "string" ? v : String(v)).filter(Boolean);
+}
+
 const StylesManager: React.FC<{ prestataire: Prestataire | null }> = ({ prestataire }) => {
   const { isSaving, saveField } = usePrestataireAutoSave(prestataire);
-  // styles est censé être un tableau (jsonb)
-  const [styles, setStyles] = useState<string[]>(Array.isArray(prestataire?.styles) ? prestataire?.styles : []);
+
+  // Always ensure styles is an array of strings
+  const [styles, setStyles] = useState<string[]>(asStringArray(prestataire?.styles));
 
   useEffect(() => {
-    setStyles(Array.isArray(prestataire?.styles) ? prestataire.styles : []);
+    setStyles(asStringArray(prestataire?.styles));
   }, [prestataire]);
 
   const toggleStyle = (style: string) => {
@@ -43,7 +50,10 @@ const StylesManager: React.FC<{ prestataire: Prestataire | null }> = ({ prestata
       <h3 className="mb-2 font-semibold">Styles</h3>
       <div className="flex flex-wrap gap-2">
         {STYLES_LISTE.map((style) => (
-          <label key={style} className={`flex items-center gap-2 px-2 py-1 rounded bg-gray-100 cursor-pointer ${styles.includes(style) ? "font-bold border border-primary" : ""}`}>
+          <label
+            key={style}
+            className={`flex items-center gap-2 px-2 py-1 rounded bg-gray-100 cursor-pointer ${styles.includes(style) ? "font-bold border border-primary" : ""}`}
+          >
             <input
               type="checkbox"
               checked={styles.includes(style)}
