@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { 
@@ -14,7 +13,8 @@ import {
   MessageCircleQuestion,
   MessageSquare,
   Users,
-  Crown
+  Crown,
+  Table
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
@@ -89,6 +89,11 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
       icon: <Crown className="h-4 w-4" />,
       path: '/pricing',
       premium: true,
+    },
+    {
+      label: 'Plan de table',
+      icon: <Table className="h-4 w-4" />,
+      path: '/dashboard/table-plan',
     },
     {
       label: 'Paramètres',

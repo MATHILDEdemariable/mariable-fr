@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
@@ -18,6 +17,7 @@ import { useToast } from '@/components/ui/use-toast';
 import DrinksCalculator from '@/components/drinks/DrinksCalculator';
 import BudgetCalculator from '@/components/dashboard/BudgetCalculator';
 import { useReaderMode } from '@/contexts/ReaderModeContext';
+import TablePlanPage from './TablePlanPage';
 
 const UserDashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -65,6 +65,7 @@ const UserDashboard: React.FC = () => {
           <Route path="drinks" element={<DrinksCalculator />} />
           <Route path="assistant" element={<AssistantPage />} />
           <Route path="settings" element={<UserProfile />} />
+          <Route path="table-plan" element={<TablePlanPage />} />
           <Route path="*" element={<div>Page non trouvée</div>} />
         </Route>
       </Routes>
