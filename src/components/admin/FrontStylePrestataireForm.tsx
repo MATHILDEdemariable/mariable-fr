@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Prestataire } from "./types";
 import { supabase } from "@/integrations/supabase/client";
@@ -6,6 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { generateUniqueSlug } from "@/utils/generateUniqueSlug";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 
 // Allowed values for categorie and region enums.
 const PRESTATAIRE_CATEGORIES = [
@@ -51,6 +54,19 @@ const DEFAULT_PRESTATAIRE: Partial<Prestataire> = {
   email: "",
   telephone: "",
   site_web: "",
+  show_prices: true,
+  first_price_package_name: "",
+  first_price_package: null,
+  first_price_package_description: "",
+  second_price_package_name: "",
+  second_price_package: null,
+  second_price_package_description: "",
+  third_price_package_name: "",
+  third_price_package: null,
+  third_price_package_description: "",
+  fourth_price_package_name: "",
+  fourth_price_package: null,
+  fourth_price_package_description: "",
 };
 
 const FrontStylePrestataireForm: React.FC<{
@@ -85,11 +101,16 @@ const FrontStylePrestataireForm: React.FC<{
       }));
       return;
     }
+    
+    const numericFields = [
+      "capacite_invites", "prix_minimum", "prix_a_partir_de", "prix_par_personne",
+      "first_price_package", "second_price_package", "third_price_package", "fourth_price_package"
+    ];
+
     setFields((prev) => ({
       ...prev,
-      [name]:
-        name === "capacite_invites" || name === "prix_minimum" || name === "prix_a_partir_de" || name === "prix_par_personne"
-          ? value === "" ? null : Number(value)
+      [name]: numericFields.includes(name)
+          ? (value === "" ? null : Number(value))
           : value,
     }));
   };
@@ -215,14 +236,70 @@ const FrontStylePrestataireForm: React.FC<{
         </div>
       </div>
       <label className="block font-medium">Description</label>
-      <textarea
+      <Textarea
         name="description"
         value={fields.description ?? ""}
         onChange={handleChange}
         className="w-full border rounded min-h-[80px] p-2"
       />
 
-      {/* TODO: Section Formules de prix (à améliorer) */}
+      <div className="border-t pt-6 mt-6">
+        <h3 className="text-lg font-medium mb-4">Formules & Prix</h3>
+        <div className="flex items-center space-x-2 mb-4">
+            <Switch
+                id="show_prices"
+                checked={fields.show_prices ?? true}
+                onCheckedChange={(checked) =>
+                    setFields((prev) => ({ ...prev, show_prices: checked }))
+                }
+            />
+            <label htmlFor="show_prices">Afficher les prix sur la page</label>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+            {/* Package 1 */}
+            <div className="space-y-3 p-4 border rounded-lg">
+                <h4 className="font-semibold">Formule 1</h4>
+                <label className="block font-medium">Nom</label>
+                <Input name="first_price_package_name" value={fields.first_price_package_name ?? ''} onChange={handleChange} />
+                <label className="block font-medium">Prix</label>
+                <Input type="number" name="first_price_package" value={fields.first_price_package ?? ''} onChange={handleChange} />
+                <label className="block font-medium">Description</label>
+                <Textarea name="first_price_package_description" value={fields.first_price_package_description ?? ''} onChange={handleChange} className="min-h-[80px]" />
+            </div>
+            {/* Package 2 */}
+            <div className="space-y-3 p-4 border rounded-lg">
+                <h4 className="font-semibold">Formule 2</h4>
+                <label className="block font-medium">Nom</label>
+                <Input name="second_price_package_name" value={fields.second_price_package_name ?? ''} onChange={handleChange} />
+                <label className="block font-medium">Prix</label>
+                <Input type="number" name="second_price_package" value={fields.second_price_package ?? ''} onChange={handleChange} />
+                <label className="block font-medium">Description</label>
+                <Textarea name="second_price_package_description" value={fields.second_price_package_description ?? ''} onChange={handleChange} className="min-h-[80px]" />
+            </div>
+            {/* Package 3 */}
+            <div className="space-y-3 p-4 border rounded-lg">
+                <h4 className="font-semibold">Formule 3</h4>
+                <label className="block font-medium">Nom</label>
+                <Input name="third_price_package_name" value={fields.third_price_package_name ?? ''} onChange={handleChange} />
+                <label className="block font-medium">Prix</label>
+                <Input type="number" name="third_price_package" value={fields.third_price_package ?? ''} onChange={handleChange} />
+                <label className="block font-medium">Description</label>
+                <Textarea name="third_price_package_description" value={fields.third_price_package_description ?? ''} onChange={handleChange} className="min-h-[80px]" />
+            </div>
+            {/* Package 4 */}
+            <div className="space-y-3 p-4 border rounded-lg">
+                <h4 className="font-semibold">Formule 4</h4>
+                <label className="block font-medium">Nom</label>
+                <Input name="fourth_price_package_name" value={fields.fourth_price_package_name ?? ''} onChange={handleChange} />
+                <label className="block font-medium">Prix</label>
+                <Input type="number" name="fourth_price_package" value={fields.fourth_price_package ?? ''} onChange={handleChange} />
+                <label className="block font-medium">Description</label>
+                <Textarea name="fourth_price_package_description" value={fields.fourth_price_package_description ?? ''} onChange={handleChange} className="min-h-[80px]" />
+            </div>
+        </div>
+    </div>
+
+
       {/* TODO: Section galerie photos & documents (utiliser components existants, ex: PhotoManager, BrochureManager) */}
 
       <div className="flex gap-4 pt-2 justify-between">

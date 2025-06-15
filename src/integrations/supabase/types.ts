@@ -923,6 +923,9 @@ export type Database = {
           first_price_package: number | null
           first_price_package_description: string | null
           first_price_package_name: string | null
+          fourth_price_package: number | null
+          fourth_price_package_description: string | null
+          fourth_price_package_name: string | null
           hebergement_inclus: boolean | null
           id: string
           latitude: number | null
@@ -974,6 +977,9 @@ export type Database = {
           first_price_package?: number | null
           first_price_package_description?: string | null
           first_price_package_name?: string | null
+          fourth_price_package?: number | null
+          fourth_price_package_description?: string | null
+          fourth_price_package_name?: string | null
           hebergement_inclus?: boolean | null
           id?: string
           latitude?: number | null
@@ -1025,6 +1031,9 @@ export type Database = {
           first_price_package?: number | null
           first_price_package_description?: string | null
           first_price_package_name?: string | null
+          fourth_price_package?: number | null
+          fourth_price_package_description?: string | null
+          fourth_price_package_name?: string | null
           hebergement_inclus?: boolean | null
           id?: string
           latitude?: number | null

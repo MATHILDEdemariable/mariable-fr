@@ -29,8 +29,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import slugify from '@/utils/slugify';
-
+import { generateUniqueSlug } from '@/utils/generateUniqueSlug';
 
 type PrestataireCategorie =
   Database["public"]["Enums"]["prestataire_categorie"];
@@ -202,6 +201,7 @@ const ProfessionalRegistrationForm = () => {
     setIsSubmitting(true);
 
     try {
+      const slug = await generateUniqueSlug(values.nom);
       // Insérer le prestataire dans la base de données
       const { data: prestataire, error: insertError } = await supabase
         .from("prestataires_rows")
@@ -225,7 +225,7 @@ const ProfessionalRegistrationForm = () => {
           first_price_package: null,
           second_price_package: null,
           third_price_package: null,
-          slug: slugify(values.nom)
+          slug: slug
         })
         .select("id")
         .single();
