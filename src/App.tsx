@@ -1,5 +1,4 @@
 
-
 import React from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -54,6 +53,7 @@ import Budget from "./pages/services/Budget";
 import Paiement from './pages/Paiement';
 import DemoJourM from './pages/DemoJourM';
 import AnalyticsProvider from './components/analytics/AnalyticsProvider';
+import Accompagnement from './pages/Accompagnement';
 
 // Initialize the query client
 const queryClient = new QueryClient();
@@ -93,6 +93,9 @@ const App = () => {
                 
                 {/* Payment page */}
                 <Route path="/paiement" element={<Paiement />} />
+                
+                {/* Post-Payment Accompagnement page */}
+                <Route path="/accompagnement" element={<Accompagnement />} />
                 
                 {/* Demo Jour M page */}
                 <Route path="/demo-jour-m" element={<DemoJourM />} />
