@@ -11,6 +11,8 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
+import { Link, useNavigate } from 'react-router-dom';
+import { ArrowLeft } from 'lucide-react';
 
 const ReservationJourM = () => {
   const [formData, setFormData] = useState({
@@ -99,6 +101,7 @@ const ReservationJourM = () => {
   };
 
   const servicesOptions = [
+    'Libre',
     'Sereine',
     'Sereine + Hotline', 
     'Privilège',
@@ -114,10 +117,18 @@ const ReservationJourM = () => {
       
       <Header />
       
-      <main className="flex-grow py-16">
+      <main className="flex-grow py-8">
         <div className="container mx-auto px-4 max-w-2xl">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl md:text-4xl font-serif text-black mb-4">
+          <div className="flex items-center gap-4 mb-4">
+            <Button asChild variant="outline" size="sm">
+              <Link to="/demo-jour-m">
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Retour
+              </Link>
+            </Button>
+          </div>
+          <div className="text-center mb-4">
+            <h1 className="text-3xl md:text-4xl font-serif text-black mb-2">
               Demande de réservation Jour-M
             </h1>
             <p className="text-lg text-gray-700">
@@ -130,8 +141,8 @@ const ReservationJourM = () => {
               <CardTitle>Informations de contact</CardTitle>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <form onSubmit={handleSubmit} className="space-y-5">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div>
                     <Label htmlFor="first_name">Prénom *</Label>
                     <Input
@@ -178,7 +189,7 @@ const ReservationJourM = () => {
                   />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div>
                     <Label htmlFor="wedding_date">Date du mariage *</Label>
                     <Input
@@ -216,7 +227,7 @@ const ReservationJourM = () => {
 
                 <div>
                   <Label className="text-base font-medium">Services souhaités *</Label>
-                  <div className="mt-3 space-y-3">
+                  <div className="mt-2 space-y-2">
                     {servicesOptions.map((service) => (
                       <div key={service} className="flex items-center space-x-2">
                         <Checkbox
@@ -251,7 +262,7 @@ const ReservationJourM = () => {
                     value={formData.current_organization}
                     onChange={handleInputChange}
                     placeholder="Parlez-nous de votre projet, vos attentes particulières..."
-                    rows={4}
+                    rows={3}
                   />
                 </div>
 

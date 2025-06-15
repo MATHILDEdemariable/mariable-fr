@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import Header from '@/components/Header';
@@ -92,7 +91,7 @@ const Pricing = () => {
                           <tr className="bg-wedding-olive text-white">
                             <th className="px-3 sm:px-6 py-4 text-left font-semibold text-sm sm:text-base">Fonctionnalité</th>
                             <th className="px-3 sm:px-6 py-4 text-center font-semibold text-sm sm:text-base">Libre</th>
-                            <th className="px-3 sm:px-6 py-4 text-center font-semibold text-sm sm:text-base bg-wedding-olive/90">Sereine</th>
+                            <th className="px-3 sm:px-6 py-4 text-center font-semibold text-sm sm:text-base">Sereine</th>
                             <th className="px-3 sm:px-6 py-4 text-center font-semibold text-sm sm:text-base">Privilège</th>
                           </tr>
                         </thead>
@@ -262,7 +261,14 @@ const Pricing = () => {
                     Comment ça marche ?
                   </h2>
                   <p className="text-lg text-gray-700 mb-2">
-                    Le processus de coordination "Le Jour M" en 8 étapes
+                    <span>Le processus de coordination <b>"Le Jour M"</b> en 6 étapes
+                    <br />
+                    <span className="inline-block mt-2 text-wedding-olive font-semibold">Applicable uniquement aux formules Sereine &amp; Privilège</span>
+                    </span>
+                  </p>
+                  <p className="text-xs text-gray-500 mt-2">
+                    Pour la formule "Libre" : vous gérez tout de manière autonome grâce à l'application ({' '}
+                    <Link to="/demo-jour-m" className="underline text-wedding-olive hover:text-wedding-olive/70">voir la démo</Link> )
                   </p>
                 </div>
 
@@ -377,7 +383,7 @@ const Pricing = () => {
                         <div className="md:w-1/2"></div>
                       </div>
 
-                      {/* Étape 6 */}
+                      {/* Étape 6 - Ajout précision selon formule */}
                       <div className="flex flex-col md:flex-row items-center gap-8">
                         <div className="md:w-1/2"></div>
                         <div className="relative z-10">
@@ -392,7 +398,8 @@ const Pricing = () => {
                               Laissez le manager Mariable gérer pour vous & profitez
                             </h3>
                             <p className="text-gray-600">
-                              Vivez votre mariage sereinement, tout est organisé et coordonné pour vous.
+                              <span className="font-semibold text-wedding-olive">Formules Sereine &amp; Privilège :</span> Vivez votre mariage sereinement, un manager Mariable organise et coordonne tout pour vous.<br />
+                              <span className="mt-2 block font-semibold text-wedding-olive">Formule Libre :</span> Vous conservez la main sur la gestion et la coordination, l'app devient votre assistant personnel autonome.
                             </p>
                           </div>
                         </div>
