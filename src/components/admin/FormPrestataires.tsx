@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,6 +18,7 @@ import { Search, Plus, Filter } from "lucide-react";
 import PrestataireModal from "./PrestataireModal";
 import PrestataireEditForm from "./PrestataireEditForm";
 import { useDebounce } from "@/hooks/use-debounce";
+import FrontStylePrestataireEditModal from "./FrontStylePrestataireEditModal";
 
 const PrestatairesAdmin = () => {
   const [prestataires, setPrestataires] = useState<Prestataire[]>([]);
@@ -29,6 +29,9 @@ const PrestatairesAdmin = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [filteredPrestataires, setFilteredPrestataires] = useState<Prestataire[]>([]);
+  const [frontEditOpen, setFrontEditOpen] = useState(false);
+  const [editMode, setEditMode] = useState<"edit"|"add"|"">("");
+  const [frontEditSelected, setFrontEditSelected] = useState<Prestataire | null>(null);
   
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
@@ -117,8 +120,9 @@ const PrestatairesAdmin = () => {
   };
 
   const handleEdit = (presta: Prestataire) => {
-    setSelected(presta);
-    setEditDialogOpen(true);
+    setFrontEditSelected(presta);
+    setEditMode("edit");
+    setFrontEditOpen(true);
   };
   
   const handleView = (presta: Prestataire) => {
@@ -152,9 +156,9 @@ const PrestatairesAdmin = () => {
   };
   
   const handleAddNew = () => {
-    setSelected(null);
-    setMode("add");
-    setEditDialogOpen(true);
+    setFrontEditSelected(null);
+    setEditMode("add");
+    setFrontEditOpen(true);
   };
 
   const handleHref = (slug: string) => {
@@ -283,6 +287,14 @@ const PrestatairesAdmin = () => {
           setEditDialogOpen(false);
           fetchPrestataires();
         }}
+      />
+      
+      <FrontStylePrestataireEditModal
+        open={frontEditOpen}
+        onClose={() => setFrontEditOpen(false)}
+        prestataire={editMode === "edit" ? frontEditSelected : null}
+        onSuccess={fetchPrestataires}
+        isCreating={editMode === "add"}
       />
     </div>
   );
