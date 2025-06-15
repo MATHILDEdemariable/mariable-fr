@@ -15,7 +15,10 @@ type PriceField =
   | "second_price_package_description"
   | "third_price_package_name"
   | "third_price_package"
-  | "third_price_package_description";
+  | "third_price_package_description"
+  | "fourth_price_package_name"
+  | "fourth_price_package"
+  | "fourth_price_package_description";
 
 const priceFields: Array<{
   key: PriceField;
@@ -32,6 +35,9 @@ const priceFields: Array<{
   { key: "third_price_package_name", label: "Nom formule 3" },
   { key: "third_price_package", label: "Prix formule 3", type: "number" },
   { key: "third_price_package_description", label: "Description formule 3" },
+  { key: "fourth_price_package_name", label: "Nom formule 4" },
+  { key: "fourth_price_package", label: "Prix formule 4", type: "number" },
+  { key: "fourth_price_package_description", label: "Description formule 4" },
 ];
 
 const PricingPackagesForm: React.FC<{ prestataire: Prestataire | null }> = ({ prestataire }) => {
@@ -47,6 +53,9 @@ const PricingPackagesForm: React.FC<{ prestataire: Prestataire | null }> = ({ pr
     third_price_package_name: prestataire?.third_price_package_name || "",
     third_price_package: prestataire?.third_price_package ?? "",
     third_price_package_description: prestataire?.third_price_package_description || "",
+    fourth_price_package_name: prestataire?.fourth_price_package_name || "",
+    fourth_price_package: prestataire?.fourth_price_package ?? "",
+    fourth_price_package_description: prestataire?.fourth_price_package_description || "",
   });
 
   useEffect(() => {
@@ -60,6 +69,9 @@ const PricingPackagesForm: React.FC<{ prestataire: Prestataire | null }> = ({ pr
       third_price_package_name: prestataire?.third_price_package_name || "",
       third_price_package: prestataire?.third_price_package ?? "",
       third_price_package_description: prestataire?.third_price_package_description || "",
+      fourth_price_package_name: prestataire?.fourth_price_package_name || "",
+      fourth_price_package: prestataire?.fourth_price_package ?? "",
+      fourth_price_package_description: prestataire?.fourth_price_package_description || "",
     });
   }, [prestataire]);
 

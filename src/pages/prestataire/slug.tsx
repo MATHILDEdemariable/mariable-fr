@@ -199,6 +199,13 @@ const SinglePrestataire = () => {
             description: vendor.third_price_package_description || "",
           });
         }
+        if (vendor.fourth_price_package_name && vendor.fourth_price_package) {
+          newPackages.push({
+            name: vendor.fourth_price_package_name,
+            basePrice: vendor.fourth_price_package,
+            description: vendor.fourth_price_package_description || "",
+          });
+        }
       }
 
       setPackages(newPackages);
@@ -567,7 +574,7 @@ const SinglePrestataire = () => {
               </div>
               {vendor && vendor.prestataires_brochures && vendor.prestataires_brochures.length > 0 && (
                 <div className="space-y-4">
-                  <h2 className="text-xl font-serif">Brochures</h2>
+                  <h2 className="text-xl font-serif">Documents utiles</h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {vendor.prestataires_brochures.map((brochure) =>
                       brochure.url ? (
@@ -579,13 +586,11 @@ const SinglePrestataire = () => {
                               className="p-4 block"
                               rel="noopener noreferrer"
                             >
-                              Télécharger la brochure
+                              {brochure.filename || "Télécharger le document"}
                             </a>
                           </p>
                         </Card>
-                      ) : (
-                        <p>Aucune brochure disponible pour ce prestataire.</p>
-                      )
+                      ) : null
                     )}
                   </div>
                 </div>
