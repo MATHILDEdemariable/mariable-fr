@@ -65,6 +65,13 @@ function Menus({ onClick, isLoggedIn }: { onClick?: () => void, isLoggedIn?: boo
         href="/professionnels"
         onClick={onClick}
       />
+
+      {/* Blog - Ajouté ici */}
+      <HeaderDropdown 
+        label="Blog"
+        href="/blog"
+        onClick={onClick}
+      />
       
       {/* À propos Dropdown - En dernier */}
       <HeaderDropdown label="À propos">

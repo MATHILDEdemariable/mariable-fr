@@ -3,28 +3,72 @@ import React from 'react';
 import { BlogPost } from '@/types/blog';
 import { Button } from '@/components/ui/button';
 import { ArrowDown } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const BlogPostCard: React.FC<{ post: BlogPost }> = ({ post }) => {
+  const title = post.h1_title || post.title;
+  const letters = Array.from(title);
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.03 },
+    },
+  };
+
+  const letterVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+    },
+  };
+
   return (
     <section 
         className="h-screen w-screen flex flex-col items-center justify-center relative snap-start"
         style={{
-            backgroundImage: `url(${post.background_image_url})`,
+            backgroundImage: post.background_image_url ? `url(${post.background_image_url})` : 'none',
+            backgroundColor: post.background_image_url ? 'transparent' : '#7F9474', // Fallback color
             backgroundSize: 'cover',
             backgroundPosition: 'center',
         }}
     >
         <div className="absolute inset-0 bg-black bg-opacity-50" />
-        <div className="relative z-10 text-white text-center p-8 max-w-3xl">
-            <h1 className="text-4xl md:text-6xl font-bold mb-4">
-                {post.h1_title || post.title}
-            </h1>
-            <p className="text-xl md:text-2xl mb-8">
+        <div className="relative z-10 text-white text-center p-8 max-w-3xl flex flex-col items-center">
+            <motion.h1
+                className="text-4xl md:text-6xl font-bold mb-4 flex flex-wrap justify-center"
+                variants={containerVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.5 }}
+            >
+                {letters.map((letter, index) => (
+                    <motion.span key={index} variants={letterVariants}>
+                        {letter === ' ' ? '\u00A0' : letter}
+                    </motion.span>
+                ))}
+            </motion.h1>
+            <motion.p 
+              className="text-xl md:text-2xl mb-8"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: letters.length * 0.03 + 0.3, duration: 0.5 }}
+            >
                 {post.subtitle}
-            </p>
-            <Button>
-                Lire l'article
-            </Button>
+            </motion.p>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: letters.length * 0.03 + 0.5, duration: 0.5 }}
+            >
+                <Button>
+                    Lire l'article
+                </Button>
+            </motion.div>
         </div>
         <div className="absolute bottom-8 text-white animate-bounce">
             <ArrowDown size={32} />
