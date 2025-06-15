@@ -4,6 +4,7 @@ import { BlogPost } from '@/types/blog';
 import { Button } from '@/components/ui/button';
 import { ArrowDown } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 
 const BlogPostCard: React.FC<{ post: BlogPost }> = ({ post }) => {
   const title = post.h1_title || post.title;
@@ -65,9 +66,11 @@ const BlogPostCard: React.FC<{ post: BlogPost }> = ({ post }) => {
               viewport={{ once: true }}
               transition={{ delay: letters.length * 0.03 + 0.5, duration: 0.5 }}
             >
-                <Button>
-                    Lire l'article
-                </Button>
+                <Link to={`/blog/${post.slug}`}>
+                    <Button>
+                        Lire l'article
+                    </Button>
+                </Link>
             </motion.div>
         </div>
         <div className="absolute bottom-8 text-white animate-bounce">

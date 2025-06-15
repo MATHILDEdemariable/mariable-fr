@@ -1,4 +1,3 @@
-
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -19,13 +18,14 @@ import {
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { toast } from "sonner";
 import { useMutation } from "@tanstack/react-query";
+import ImageUploader from "./ImageUploader";
 
 const formSchema = z.object({
   title: z.string().min(1, "Le titre est requis."),
   subtitle: z.string().optional(),
   slug: z.string().min(1, "Le slug est requis."),
   content: z.string().optional(),
-  background_image_url: z.string().url("URL invalide.").optional().or(z.literal('')),
+  background_image_url: z.string().optional(),
   meta_title: z.string().optional(),
   meta_description: z.string().optional(),
   h1_title: z.string().optional(),
@@ -192,9 +192,12 @@ const BlogPostForm: React.FC<{ post: BlogPost | null; onSuccess: () => void }> =
           name="background_image_url"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>URL de l'image de fond</FormLabel>
+              <FormLabel>Image de fond</FormLabel>
               <FormControl>
-                <Input placeholder="https://exemple.com/image.jpg" {...field} />
+                <ImageUploader 
+                  onUpload={(url) => setValue("background_image_url", url, { shouldValidate: true })}
+                  initialUrl={field.value}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
