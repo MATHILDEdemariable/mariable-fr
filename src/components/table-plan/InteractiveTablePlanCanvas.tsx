@@ -1,8 +1,8 @@
-
 import React, { useEffect, useRef } from "react";
 import { Canvas, Rect, Group, Circle, Text as FabricText } from "fabric";
 import { Button } from "@/components/ui/button";
 import { exportDashboardToPDF } from "@/services/pdfExportService";
+import { useToast } from "@/hooks/use-toast";
 
 interface InteractiveTablePlanCanvasProps {
   guests: string[];
@@ -10,7 +10,6 @@ interface InteractiveTablePlanCanvasProps {
   tables: string[];
   tableSeats: Record<string, number>;
   onDropGuest: (guest: string, table: string) => void;
-  dragGuestRef: React.MutableRefObject<string | null>;
 }
 
 const tableColors = [
@@ -20,13 +19,12 @@ const tableColors = [
 const CANVAS_ID = "plan-table-canvas-container";
 
 const InteractiveTablePlanCanvas: React.FC<InteractiveTablePlanCanvasProps> = ({
-  guests, assignments, tables, tableSeats, onDropGuest, dragGuestRef,
+  guests, assignments, tables, tableSeats, onDropGuest,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fabricRef = useRef<Canvas | null>(null);
-
-  // Util: detect guest drag over a table in the canvas (hit test)
   const tableGroupsRef = useRef<{ [key: string]: Group }>({});
+  const { toast } = useToast();
 
   useEffect(() => {
     if (!canvasRef.current) return;
@@ -156,21 +154,23 @@ const InteractiveTablePlanCanvas: React.FC<InteractiveTablePlanCanvasProps> = ({
     if (canvasDom) {
       canvasDom.ondragover = (e) => {
         e.preventDefault();
-        // Optional: highlight tables here using clientX/clientY
+        // Optionnel : highlight, non fait ici (bonus possible)
       };
       canvasDom.ondrop = (e) => {
         e.preventDefault();
-        if (!dragGuestRef.current) return;
-        // Map mouse coords to table
+        // Récupérer l’invité depuis dataTransfer
+        const guest = e.dataTransfer.getData("text/plain");
+        if (!guest) return;
+        // Convertir les coords 
         const rect = canvasDom.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
-        // Hit test all table groups
+        // Hit test tables
+        let dropped = false;
         for (const table of tables) {
           const g = tableGroupsRef.current[table];
           if (!g) continue;
           if (g.left != null && g.top != null) {
-            // Fabric.js bounding box
             const gx = g.left as number;
             const gy = g.top as number;
             const width = 110;
@@ -181,12 +181,37 @@ const InteractiveTablePlanCanvas: React.FC<InteractiveTablePlanCanvasProps> = ({
               y >= gy &&
               y <= gy + height
             ) {
-              // Drop guest here
-              onDropGuest(dragGuestRef.current, table);
+              // Vérifier capacité:
+              const nbAssigned = guests.filter(gst => assignments[gst] === table).length;
+              const nbMax = tableSeats[table] || 8;
+              if (nbAssigned >= nbMax) {
+                toast({
+                  title: "Table complète",
+                  description: "Cette table a atteint sa capacité maximale.",
+                  variant: "destructive",
+                });
+              } else {
+                onDropGuest(guest, table);
+                // Optionnel: toast de succès léger
+                toast({
+                  title: "Ajouté !",
+                  description: `${guest} assigné à ${table}`,
+                  variant: "success",
+                });
+              }
               fabricCanvas && fabricCanvas.renderAll();
+              dropped = true;
               break;
             }
           }
+        }
+        if (!dropped) {
+          // Option: toast d'échec
+          toast({
+            title: "Aucune table sélectionnée",
+            description: "Déposez l'invité sur une table.",
+            variant: "destructive",
+          });
         }
       };
       // Clean up on unmount
@@ -200,7 +225,7 @@ const InteractiveTablePlanCanvas: React.FC<InteractiveTablePlanCanvasProps> = ({
       fabricCanvas.dispose();
     };
     // eslint-disable-next-line
-  }, [tables, guests, assignments, tableSeats, dragGuestRef, onDropGuest]);
+  }, [tables, guests, assignments, tableSeats, onDropGuest, toast]);
 
   // Export PDF
   const handleExport = async () => {
@@ -230,7 +255,14 @@ const InteractiveTablePlanCanvas: React.FC<InteractiveTablePlanCanvasProps> = ({
       </div>
       <Button
         variant="wedding"
-        onClick={handleExport}
+        onClick={async () => {
+          await exportDashboardToPDF(
+            CANVAS_ID,
+            "plan_de_table.pdf",
+            "landscape",
+            "Plan de table"
+          );
+        }}
         className="mt-4 w-full"
       >
         Exporter ce plan (PDF)
@@ -240,4 +272,3 @@ const InteractiveTablePlanCanvas: React.FC<InteractiveTablePlanCanvasProps> = ({
 };
 
 export default InteractiveTablePlanCanvas;
-

@@ -5,15 +5,14 @@ import clsx from "clsx";
 interface DraggableGuestListProps {
   guests: string[];
   assignments: Record<string, string>;
-  onDragStart: (guest: string) => void;
+  // onDragStart supprimé - on utilise event natif HTML5
 }
 
 const DraggableGuestList: React.FC<DraggableGuestListProps> = ({
   guests,
   assignments,
-  onDragStart,
 }) => {
-  // Only show unassigned guests for drag
+  // Seulement les invités non assignés
   const unassigned = guests.filter((g) => !assignments[g]);
 
   if (unassigned.length === 0) {
@@ -24,6 +23,16 @@ const DraggableGuestList: React.FC<DraggableGuestListProps> = ({
     );
   }
 
+  // Dragstart: met l'invité dans dataTransfer
+  const handleDragStart = (event: React.DragEvent<HTMLDivElement>, guest: string) => {
+    event.dataTransfer.setData("text/plain", guest);
+    // Visuel: mark drag
+    event.currentTarget.style.opacity = "0.6";
+  };
+  const handleDragEnd = (event: React.DragEvent<HTMLDivElement>) => {
+    event.currentTarget.style.opacity = "";
+  };
+
   return (
     <div className="">
       <div className="font-semibold mb-2 px-2">Invités à placer</div>
@@ -32,7 +41,8 @@ const DraggableGuestList: React.FC<DraggableGuestListProps> = ({
           <div
             key={guest}
             draggable
-            onDragStart={() => onDragStart(guest)}
+            onDragStart={(e) => handleDragStart(e, guest)}
+            onDragEnd={handleDragEnd}
             className={clsx(
               "bg-gray-200 hover:bg-wedding-olive/70 text-gray-700 px-3 py-1 rounded cursor-grab shadow text-xs transition border border-gray-300",
               "active:scale-95"
@@ -49,4 +59,3 @@ const DraggableGuestList: React.FC<DraggableGuestListProps> = ({
 };
 
 export default DraggableGuestList;
-

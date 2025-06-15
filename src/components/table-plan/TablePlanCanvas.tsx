@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from "react";
 import GuestListInput from "./GuestListInput";
 import GuestTableAssignment from "./GuestTableAssignment";
@@ -21,33 +20,22 @@ const TablePlanCanvas: React.FC = () => {
     "Table 2": DEFAULT_SEATS,
   });
 
-  // Add a guest by drag start (used for DnD data)
-  const currentDragGuest = useRef<string | null>(null);
+  // Suppression de currentDragGuest
 
   const handleAssign = (guest: string, table: string) => {
     setAssignments((prev) => ({ ...prev, [guest]: table }));
   };
 
-  // Handle drop on table (canvas) from sidebar
-  const handleGuestDragStart = (guest: string) => {
-    currentDragGuest.current = guest;
-  };
-
+  // Nouveau: drop géré via guest transmis par dataTransfer
   const handleDropOnTable = (guest: string, table: string) => {
-    // Only assign if seat available
-    const countAtTable = Object.values(assignments).filter(
-      (t) => t === table
-    ).length;
+    const countAtTable = Object.values(assignments).filter((t) => t === table).length;
     if (countAtTable < (tableSeats[table] || DEFAULT_SEATS)) {
       setAssignments((prev) => ({ ...prev, [guest]: table }));
     } else {
-      // Optionally show a toast: "Table complète!"
-      alert("Cette table est déjà pleine.");
+      // Feedback toast géré dans le canvas!
     }
-    currentDragGuest.current = null;
   };
 
-  // Update table list and propagate seat counts
   const handleTableChange = (newTables: string[]) => {
     setTables(newTables);
     setTableSeats((prev) => {
@@ -55,7 +43,6 @@ const TablePlanCanvas: React.FC = () => {
       newTables.forEach((t) => {
         if (!(t in next)) next[t] = DEFAULT_SEATS;
       });
-      // Remove seats for deleted tables
       Object.keys(next).forEach((t) => {
         if (!newTables.includes(t)) delete next[t];
       });
@@ -63,7 +50,6 @@ const TablePlanCanvas: React.FC = () => {
     });
   };
 
-  // Adjust seats for a table
   const handleTableSeatChange = (table: string, seats: number) => {
     setTableSeats((prev) => ({
       ...prev,
@@ -107,7 +93,6 @@ const TablePlanCanvas: React.FC = () => {
         <DraggableGuestList
           guests={guests}
           assignments={assignments}
-          onDragStart={handleGuestDragStart}
         />
       </div>
       {/* RIGHT: Canvas */}
@@ -118,7 +103,6 @@ const TablePlanCanvas: React.FC = () => {
           tables={tables}
           tableSeats={tableSeats}
           onDropGuest={handleDropOnTable}
-          dragGuestRef={currentDragGuest}
         />
       </div>
     </div>
@@ -126,4 +110,3 @@ const TablePlanCanvas: React.FC = () => {
 };
 
 export default TablePlanCanvas;
-
