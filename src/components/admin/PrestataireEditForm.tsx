@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { 
   Dialog, 
@@ -60,7 +59,22 @@ const PrestataireEditForm: React.FC<EditFormProps> = ({
     styles: [],
     siret: '',
     categorie_lieu: '',
-    slug: ''
+    slug: '',
+    first_price_package_name: '',
+    first_price_package: undefined,
+    first_price_package_description: '',
+    second_price_package_name: '',
+    second_price_package: undefined,
+    second_price_package_description: '',
+    third_price_package_name: '',
+    third_price_package: undefined,
+    third_price_package_description: '',
+    show_prices: true,
+    show_contact_form: true,
+    show_photos: true,
+    show_brochures: true,
+    show_responsable: true,
+    show_description: true,
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -101,7 +115,22 @@ const PrestataireEditForm: React.FC<EditFormProps> = ({
         styles: [],
         siret: '',
         categorie_lieu: '',
-        slug: ''
+        slug: '',
+        first_price_package_name: '',
+        first_price_package: undefined,
+        first_price_package_description: '',
+        second_price_package_name: '',
+        second_price_package: undefined,
+        second_price_package_description: '',
+        third_price_package_name: '',
+        third_price_package: undefined,
+        third_price_package_description: '',
+        show_prices: true,
+        show_contact_form: true,
+        show_photos: true,
+        show_brochures: true,
+        show_responsable: true,
+        show_description: true,
       });
       setStylesList([]);
     }
@@ -434,6 +463,62 @@ const PrestataireEditForm: React.FC<EditFormProps> = ({
           
           <Separator className="my-4" />
           
+          <div>
+            <h3 className="text-lg font-medium mb-4">Prix & Formules</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {/* Package 1 */}
+              <div className="space-y-2 p-4 border rounded-md bg-gray-50">
+                <h4 className="font-semibold text-center mb-2">Formule 1</h4>
+                <div className="space-y-1">
+                  <Label htmlFor="first_price_package_name">Nom de la formule</Label>
+                  <Input id="first_price_package_name" name="first_price_package_name" value={formData.first_price_package_name || ''} onChange={handleInputChange} placeholder="Ex: Formule Essentielle"/>
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="first_price_package">Prix (€)</Label>
+                  <Input id="first_price_package" name="first_price_package" type="number" value={formData.first_price_package || ''} onChange={handleNumberChange} />
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="first_price_package_description">Description</Label>
+                  <Textarea id="first_price_package_description" name="first_price_package_description" value={formData.first_price_package_description || ''} onChange={handleInputChange} rows={3} />
+                </div>
+              </div>
+              {/* Package 2 */}
+              <div className="space-y-2 p-4 border rounded-md bg-gray-50">
+                <h4 className="font-semibold text-center mb-2">Formule 2</h4>
+                <div className="space-y-1">
+                  <Label htmlFor="second_price_package_name">Nom de la formule</Label>
+                  <Input id="second_price_package_name" name="second_price_package_name" value={formData.second_price_package_name || ''} onChange={handleInputChange} placeholder="Ex: Formule Premium"/>
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="second_price_package">Prix (€)</Label>
+                  <Input id="second_price_package" name="second_price_package" type="number" value={formData.second_price_package || ''} onChange={handleNumberChange} />
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="second_price_package_description">Description</Label>
+                  <Textarea id="second_price_package_description" name="second_price_package_description" value={formData.second_price_package_description || ''} onChange={handleInputChange} rows={3} />
+                </div>
+              </div>
+              {/* Package 3 */}
+              <div className="space-y-2 p-4 border rounded-md bg-gray-50">
+                <h4 className="font-semibold text-center mb-2">Formule 3</h4>
+                <div className="space-y-1">
+                  <Label htmlFor="third_price_package_name">Nom de la formule</Label>
+                  <Input id="third_price_package_name" name="third_price_package_name" value={formData.third_price_package_name || ''} onChange={handleInputChange} placeholder="Ex: Formule Luxe"/>
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="third_price_package">Prix (€)</Label>
+                  <Input id="third_price_package" name="third_price_package" type="number" value={formData.third_price_package || ''} onChange={handleNumberChange} />
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="third_price_package_description">Description</Label>
+                  <Textarea id="third_price_package_description" name="third_price_package_description" value={formData.third_price_package_description || ''} onChange={handleInputChange} rows={3} />
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <Separator className="my-4" />
+          
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-4">
               <h3 className="text-lg font-medium">Styles</h3>
@@ -470,42 +555,49 @@ const PrestataireEditForm: React.FC<EditFormProps> = ({
             </div>
             
             <div className="space-y-4">
-              <h3 className="text-lg font-medium">Options</h3>
+              <h3 className="text-lg font-medium">Options d'affichage & Statut</h3>
               
-              <div className="flex items-center space-x-2">
-                <Switch
-                  id="visible"
-                  checked={formData.visible || false}
-                  onCheckedChange={(checked) => handleCheckboxChange('visible', checked)}
-                />
-                <Label htmlFor="visible">Visible sur le site</Label>
-              </div>
-              
-              <div className="flex items-center space-x-2">
-                <Switch
-                  id="featured"
-                  checked={formData.featured || false}
-                  onCheckedChange={(checked) => handleCheckboxChange('featured', checked)}
-                />
-                <Label htmlFor="featured">Mettre en avant</Label>
-              </div>
-              
-              <div className="flex items-center space-x-2">
-                <Switch
-                  id="hebergement_inclus"
-                  checked={formData.hebergement_inclus || false}
-                  onCheckedChange={(checked) => handleCheckboxChange('hebergement_inclus', checked)}
-                />
-                <Label htmlFor="hebergement_inclus">Hébergement inclus</Label>
-              </div>
-              
-              <div className="flex items-center space-x-2">
-                <Switch
-                  id="partner"
-                  checked={formData.partner || false}
-                  onCheckedChange={(checked) => handleCheckboxChange('partner', checked)}
-                />
-                <Label htmlFor="partner">Partenaire</Label>
+              <div className="grid grid-cols-2 gap-4 p-4 border rounded-md bg-gray-50">
+                <div className="flex items-center space-x-2">
+                  <Switch id="visible" checked={formData.visible === true} onCheckedChange={(checked) => handleCheckboxChange('visible', checked)} />
+                  <Label htmlFor="visible">Visible sur le site</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Switch id="featured" checked={formData.featured === true} onCheckedChange={(checked) => handleCheckboxChange('featured', checked)} />
+                  <Label htmlFor="featured">Mettre en avant</Label>
+                </div>
+                 <div className="flex items-center space-x-2">
+                  <Switch id="partner" checked={formData.partner === true} onCheckedChange={(checked) => handleCheckboxChange('partner', checked)} />
+                  <Label htmlFor="partner">Partenaire</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Switch id="hebergement_inclus" checked={formData.hebergement_inclus === true} onCheckedChange={(checked) => handleCheckboxChange('hebergement_inclus', checked)} />
+                  <Label htmlFor="hebergement_inclus">Hébergement inclus</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Switch id="show_description" checked={formData.show_description === true} onCheckedChange={(checked) => handleCheckboxChange('show_description', checked)} />
+                  <Label htmlFor="show_description">Afficher description</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Switch id="show_prices" checked={formData.show_prices === true} onCheckedChange={(checked) => handleCheckboxChange('show_prices', checked)} />
+                  <Label htmlFor="show_prices">Afficher prix</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Switch id="show_contact_form" checked={formData.show_contact_form === true} onCheckedChange={(checked) => handleCheckboxChange('show_contact_form', checked)} />
+                  <Label htmlFor="show_contact_form">Afficher form. contact</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Switch id="show_photos" checked={formData.show_photos === true} onCheckedChange={(checked) => handleCheckboxChange('show_photos', checked)} />
+                  <Label htmlFor="show_photos">Afficher photos</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Switch id="show_brochures" checked={formData.show_brochures === true} onCheckedChange={(checked) => handleCheckboxChange('show_brochures', checked)} />
+                  <Label htmlFor="show_brochures">Afficher brochures</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Switch id="show_responsable" checked={formData.show_responsable === true} onCheckedChange={(checked) => handleCheckboxChange('show_responsable', checked)} />
+                  <Label htmlFor="show_responsable">Afficher responsable</Label>
+                </div>
               </div>
             </div>
           </div>

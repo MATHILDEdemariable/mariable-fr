@@ -859,6 +859,7 @@ export type Database = {
           featured: boolean | null
           first_price_package: number | null
           first_price_package_description: string | null
+          first_price_package_name: string | null
           hebergement_inclus: boolean | null
           id: string
           latitude: number | null
@@ -874,6 +875,7 @@ export type Database = {
           responsable_nom: string | null
           second_price_package: number | null
           second_price_package_description: string | null
+          second_price_package_name: string | null
           show_brochures: boolean | null
           show_contact_form: boolean | null
           show_description: boolean | null
@@ -887,6 +889,7 @@ export type Database = {
           telephone: string | null
           third_price_package: number | null
           third_price_package_description: string | null
+          third_price_package_name: string | null
           updated_at: string
           ville: string | null
           visible: boolean | null
@@ -907,6 +910,7 @@ export type Database = {
           featured?: boolean | null
           first_price_package?: number | null
           first_price_package_description?: string | null
+          first_price_package_name?: string | null
           hebergement_inclus?: boolean | null
           id?: string
           latitude?: number | null
@@ -922,6 +926,7 @@ export type Database = {
           responsable_nom?: string | null
           second_price_package?: number | null
           second_price_package_description?: string | null
+          second_price_package_name?: string | null
           show_brochures?: boolean | null
           show_contact_form?: boolean | null
           show_description?: boolean | null
@@ -935,6 +940,7 @@ export type Database = {
           telephone?: string | null
           third_price_package?: number | null
           third_price_package_description?: string | null
+          third_price_package_name?: string | null
           updated_at?: string
           ville?: string | null
           visible?: boolean | null
@@ -955,6 +961,7 @@ export type Database = {
           featured?: boolean | null
           first_price_package?: number | null
           first_price_package_description?: string | null
+          first_price_package_name?: string | null
           hebergement_inclus?: boolean | null
           id?: string
           latitude?: number | null
@@ -970,6 +977,7 @@ export type Database = {
           responsable_nom?: string | null
           second_price_package?: number | null
           second_price_package_description?: string | null
+          second_price_package_name?: string | null
           show_brochures?: boolean | null
           show_contact_form?: boolean | null
           show_description?: boolean | null
@@ -983,6 +991,7 @@ export type Database = {
           telephone?: string | null
           third_price_package?: number | null
           third_price_package_description?: string | null
+          third_price_package_name?: string | null
           updated_at?: string
           ville?: string | null
           visible?: boolean | null
