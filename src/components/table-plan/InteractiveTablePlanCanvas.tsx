@@ -1,272 +1,274 @@
+
 import React, { useEffect, useRef } from "react";
-import { Canvas, Rect, Group, Circle, Text as FabricText } from "fabric";
-import { Button } from "@/components/ui/button";
-import { exportDashboardToPDF } from "@/services/pdfExportService";
+import { Canvas, Rect, Circle as FabricCircle, Group, Text as FabricText } from "fabric";
 import { useToast } from "@/hooks/use-toast";
+import type { TableItem, GuestItem } from "./TablePlanCanvas";
 
 interface InteractiveTablePlanCanvasProps {
-  guests: string[];
-  assignments: Record<string, string>;
-  tables: string[];
-  tableSeats: Record<string, number>;
-  onDropGuest: (guest: string, table: string) => void;
+  guests: GuestItem[];
+  tables: TableItem[];
+  setGuests: (g: GuestItem[]) => void;
+  setTables: (t: TableItem[]) => void;
+  selectedObjectId: string | null;
+  setSelectedObjectId: (id: string | null) => void;
 }
 
-const tableColors = [
-  "#7E9B6B", "#E1B382", "#E07A5F", "#3D405B", "#81B29A", "#F4F1DE", "#22223B", "#9A8C98"
-];
-
-const CANVAS_ID = "plan-table-canvas-container";
+const CANVAS_WIDTH = 700;
+const CANVAS_HEIGHT = 500;
 
 const InteractiveTablePlanCanvas: React.FC<InteractiveTablePlanCanvasProps> = ({
-  guests, assignments, tables, tableSeats, onDropGuest,
+  guests, tables, setGuests, setTables, selectedObjectId, setSelectedObjectId,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fabricRef = useRef<Canvas | null>(null);
-  const tableGroupsRef = useRef<{ [key: string]: Group }>({});
   const { toast } = useToast();
+
+  // List of all guests currently assigned (name -> guest object)
+  const assignedGuests = guests.filter(g => g.assignedTableId);
+  const parkingGuests = guests.filter(g => !g.assignedTableId);
+
+  // Pour garder ref sur objets invités pour déplacement
+  // { [name]: FabricObject }
+  const guestObjRefs = useRef<Record<string, any>>({});
 
   useEffect(() => {
     if (!canvasRef.current) return;
-    if (fabricRef.current) {
-      fabricRef.current.dispose();
-    }
+
+    // Nettoyer s'il y avait un canvas
+    if (fabricRef.current) fabricRef.current.dispose();
+
+    // Créer le canvas fabric
     const fabricCanvas = new Canvas(canvasRef.current, {
-      width: 700,
-      height: 500,
+      width: CANVAS_WIDTH,
+      height: CANVAS_HEIGHT,
       backgroundColor: "#f5f5f5",
       selection: true,
     });
     fabricRef.current = fabricCanvas;
-    tableGroupsRef.current = {};
+    guestObjRefs.current = {};
 
-    // --- Table rendering ---
-    tables.forEach((table, idx) => {
-      const color = tableColors[idx % tableColors.length];
-      const seats = tableSeats[table] || 8;
-
-      const t = new Rect({
-        left: 100 + idx * 170,
-        top: 130,
-        width: 110,
-        height: 60,
-        fill: color,
-        rx: 16,
-        ry: 16,
-        stroke: "#222",
-        strokeWidth: 2,
-        hasControls: true,
-        hasBorders: true,
+    // ZONE PARKING À GAUCHE (pour invités non assignés, y = distribué)
+    parkingGuests.forEach((guest, ix) => {
+      const y = 70 + ix * 38;
+      const x = 22;
+      const circle = new FabricCircle({
+        left: x,
+        top: y,
+        radius: 15,
+        fill: "#FFFED2",
+        stroke: "#888", strokeWidth: 1.2,
+        hasBorders: false,
+        hasControls: false,
         selectable: true,
+        name: guest.name,
       });
-
-      // Label (Table name)
-      const label = new FabricText(table, {
-        left: t.left! + t.width!/2,
-        top: t.top! + 18,
-        fontSize: 17,
-        fill: "#fff",
-        fontWeight: "bold",
-        originX: "center", originY: "center"
-      });
-
-      // Places (show assigned/total)
-      const numAss = guests.filter(g => assignments[g] === table).length;
-      const placeLabel = new FabricText(
-        `(${numAss}/${seats} places)`,
+      const label = new FabricText(
+        guest.name.length > 9 ? guest.name.slice(0, 8) + "…" : guest.name,
         {
-          left: t.left! + t.width!/2,
-          top: t.top! + t.height! - 14,
+          left: x + 0,
+          top: y + 33,
+          fontSize: 13,
+          fill: "#444",
+          originX: "center",
+          originY: "top",
+        }
+      );
+      const group = new Group([circle, label], {
+        left: x,
+        top: y,
+        selectable: true,
+        name: guest.name,
+        id: guest.name,
+        objectCaching: false,
+      });
+      guestObjRefs.current[guest.name] = group;
+      fabricCanvas.add(group);
+
+      // Drag end/desaffichage
+      group.on("moving", (e: any) => {
+        // Si dans la zone des tables, tenter placement à la volée
+        // Si relâché loin du parking, assigner avec table detection plus bas
+      });
+
+      group.on("mousedown", () => {
+        setSelectedObjectId(guest.name);
+      });
+    });
+
+    // RENDU DES TABLES
+    tables.forEach((table, idx) => {
+      // Rectangle ou ronde
+      let tableShape;
+      if (table.type === "rectangle") {
+        tableShape = new Rect({
+          left: table.left,
+          top: table.top,
+          width: 120,
+          height: 62,
+          fill: "#7E9B6B",
+          rx: 16,
+          ry: 16,
+          stroke: "#1e3321",
+          strokeWidth: 2.3,
+        });
+      } else {
+        tableShape = new FabricCircle({
+          left: table.left + 14,
+          top: table.top + 14,
+          radius: 40,
+          fill: "#DAFFE4",
+          stroke: "#41794b",
+          strokeWidth: 2.3,
+        });
+      }
+
+      // Label table
+      const label = new FabricText(table.name, {
+        left: (table.type === "rectangle") ? (table.left + 60) : (table.left + 54),
+        top: (table.type === "rectangle") ? (table.top + 20) : (table.top + 25),
+        fontSize: 16,
+        fill: "#395d2d",
+        fontWeight: "bold",
+        originX: "center",
+        originY: "center",
+      });
+
+      // Label nombre de places
+      const info = new FabricText(
+        table.type === "rectangle"
+          ? `${assignedGuests.filter(g => g.assignedTableId === table.id).length}/${table.seats}`
+          : `${assignedGuests.filter(g => g.assignedTableId === table.id).length}/${table.seats}`,
+        {
+          left: (table.type === "rectangle") ? (table.left + 60) : (table.left + 54),
+          top: (table.type === "rectangle") ? (table.top + 57) : (table.top + 70),
           fontSize: 11,
-          fill: "#fff",
-          originX: "center", originY: "center"
+          fill: "#15643a",
+          originX: "center",
+          originY: "center",
         }
       );
 
-      // Table group (used for drop detection)
-      const g = new Group([t, label, placeLabel], {
-        left: t.left,
-        top: t.top,
+      // Group Fabric
+      const tableGroup = new Group([tableShape, label, info], {
+        left: table.left,
+        top: table.top,
+        selectable: true,
+        name: table.id,
+        id: table.id,
+        objectCaching: false,
       });
-      g.set("name", table);
-      fabricCanvas.add(g);
-      tableGroupsRef.current[table] = g;
+      tableGroup.on("mousedown", () => setSelectedObjectId(table.id));
+      fabricCanvas.add(tableGroup);
     });
 
-    // Draw guests on tables: as circles + names
+    // RENDU INVITÉS ASSIGNÉS SUR LES TABLES
     tables.forEach((table, idx) => {
-      const assigned = guests.filter(g => assignments[g] === table);
-      const seats = tableSeats[table] || 8;
-      assigned.forEach((guest, i) => {
-        // Arrange in a semicircle above table (simple visual)
-        const angle = (i - (seats-1)/2) * (Math.PI / seats);
-        const centerX = 100 + idx * 170 + 55;
-        const centerY = 130 + 9;
-        const radius = 55;
-        const x = centerX + Math.cos(angle) * radius;
-        const y = centerY - 33 + Math.sin(angle)*9;
-
-        // Seat circle
-        const circle = new Circle({
-          left: x - 13, top: y - 13,
-          radius: 13,
-          fill: "#FFFED2",
-          stroke: "#444", strokeWidth: 1.3,
+      const assigned = assignedGuests.filter(g => g.assignedTableId === table.id);
+      const nSeats = table.seats;
+      assigned.forEach((guest, seatIndex) => {
+        // Placement en arc ou cercle selon forme
+        let seatX = 0; let seatY = 0;
+        if (table.type === "rectangle") {
+          // Répartition semi-circulaire au-dessus
+          const angle = (seatIndex - (nSeats - 1) / 2) * (Math.PI / (nSeats));
+          seatX = table.left + 60 + Math.cos(angle) * 50;
+          seatY = table.top - 20 + Math.sin(angle) * 8;
+        } else {
+          // Ronde : distribution sur cercle autour du centre
+          const angle = ((2 * Math.PI) / nSeats) * seatIndex - Math.PI / 2;
+          seatX = table.left + 54 + Math.cos(angle) * 52;
+          seatY = table.top + 54 + Math.sin(angle) * 52;
+        }
+        const circle = new FabricCircle({
+          left: seatX - 12,
+          top: seatY - 12,
+          radius: 12,
+          fill: "#FFEEDD",
+          stroke: "#888",
+          strokeWidth: 1.2,
+          hasBorders: false,
+          hasControls: false,
+          selectable: true,
+          name: guest.name,
         });
-        // Name label (shorten long names)
-        const nameText = new FabricText(
-          guest.length > 9 ? guest.slice(0, 8) + '…' : guest,
+        const label = new FabricText(
+          guest.name.length > 7 ? guest.name.slice(0, 6) + "…" : guest.name,
           {
-            left: x, top: y+16,
-            fontSize: 11,
-            fill: "#444",
-            originX: "center", originY: "top"
+            left: seatX,
+            top: seatY + 14,
+            fontSize: 10,
+            fill: "#333",
+            originX: "center",
+            originY: "top",
           }
         );
-        fabricCanvas.add(circle);
-        fabricCanvas.add(nameText);
-      });
-      // Draw available seats if not full (empty slots, faded)
-      for(let i=assigned.length; i<seats; i++) {
-        const angle = (i - (seats-1)/2) * (Math.PI / seats);
-        const centerX = 100 + idx * 170 + 55;
-        const centerY = 130 + 9;
-        const radius = 55;
-        const x = centerX + Math.cos(angle) * radius;
-        const y = centerY - 33 + Math.sin(angle)*9;
-        const circle = new Circle({
-          left: x - 13, top: y - 13,
-          radius: 13,
-          fill: "#eeeeee",
-          stroke: "#bbb", strokeWidth: 1.1,
-          opacity: 0.5,
+        const group = new Group([circle, label], {
+          left: seatX - 7,
+          top: seatY - 15,
+          selectable: true,
+          name: guest.name,
+          id: guest.name,
+          objectCaching: false,
         });
-        fabricCanvas.add(circle);
-      }
+        group.on("mousedown", () => setSelectedObjectId(guest.name));
+        // Drag pour remettre le guest en parking
+        group.on("mouseup", () => {
+          // Si drag ending hors table, le remettre au parking
+          // Ici simplification: double clic ou touche del pour enlever (plus facile)
+        });
+        fabricCanvas.add(group);
+      });
     });
 
-    fabricCanvas.setDimensions({ width: 700, height: 500 });
-    fabricCanvas.renderAll();
+    // INTERACTIONS - suppression via touche Del/Suppr
+    const handleKeydown = (ev: KeyboardEvent) => {
+      if (["Delete", "Backspace"].includes(ev.key) && (fabricCanvas.getActiveObject())) {
+        const obj = fabricCanvas.getActiveObject();
+        // Si table
+        if (tables.some(t => t.id === obj?.name)) {
+          setTables(ts => ts.filter(t => t.id !== obj.name));
+        }
+        // Si guest en parking
+        else if (parkingGuests.some(g => g.name === obj?.name)) {
+          setGuests(gs => gs.filter(g => g.name !== obj.name));
+        }
+        // Si guest sur table
+        else if (assignedGuests.some(g => g.name === obj?.name)) {
+          setGuests(gs => gs.map(g =>
+            g.name === obj.name ? { ...g, assignedTableId: undefined, x: 28, y: 60 + 38 * gs.length } : g
+          ));
+        }
+        setSelectedObjectId(null);
+        fabricCanvas.discardActiveObject();
+        fabricCanvas.renderAll();
+      }
+    };
+    document.addEventListener("keydown", handleKeydown);
 
-    // --- Native DOM Drag & Drop events for the canvas ---
-    // (Invisible overlay for capturing events)
-    const canvasDom = canvasRef.current;
-    if (canvasDom) {
-      canvasDom.ondragover = (e) => {
-        e.preventDefault();
-        // Optionnel : highlight, non fait ici (bonus possible)
-      };
-      canvasDom.ondrop = (e) => {
-        e.preventDefault();
-        // Récupérer l’invité depuis dataTransfer
-        const guest = e.dataTransfer.getData("text/plain");
-        if (!guest) return;
-        // Convertir les coords 
-        const rect = canvasDom.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        // Hit test tables
-        let dropped = false;
-        for (const table of tables) {
-          const g = tableGroupsRef.current[table];
-          if (!g) continue;
-          if (g.left != null && g.top != null) {
-            const gx = g.left as number;
-            const gy = g.top as number;
-            const width = 110;
-            const height = 60;
-            if (
-              x >= gx &&
-              x <= gx + width &&
-              y >= gy &&
-              y <= gy + height
-            ) {
-              // Vérifier capacité:
-              const nbAssigned = guests.filter(gst => assignments[gst] === table).length;
-              const nbMax = tableSeats[table] || 8;
-              if (nbAssigned >= nbMax) {
-                toast({
-                  title: "Table complète",
-                  description: "Cette table a atteint sa capacité maximale.",
-                  variant: "destructive",
-                });
-              } else {
-                onDropGuest(guest, table);
-                // Optionnel: toast de succès léger
-                toast({
-                  title: "Ajouté !",
-                  description: `${guest} assigné à ${table}`,
-                  variant: "success",
-                });
-              }
-              fabricCanvas && fabricCanvas.renderAll();
-              dropped = true;
-              break;
-            }
-          }
-        }
-        if (!dropped) {
-          // Option: toast d'échec
-          toast({
-            title: "Aucune table sélectionnée",
-            description: "Déposez l'invité sur une table.",
-            variant: "destructive",
-          });
-        }
-      };
-      // Clean up on unmount
-      return () => {
-        canvasDom.ondragover = null;
-        canvasDom.ondrop = null;
-        fabricCanvas.dispose();
-      };
-    }
+    // Clean up
     return () => {
       fabricCanvas.dispose();
+      document.removeEventListener("keydown", handleKeydown);
     };
-    // eslint-disable-next-line
-  }, [tables, guests, assignments, tableSeats, onDropGuest, toast]);
-
-  // Export PDF
-  const handleExport = async () => {
-    await exportDashboardToPDF(
-      CANVAS_ID,
-      "plan_de_table.pdf",
-      "landscape",
-      "Plan de table"
-    );
-  };
+  // eslint-disable-next-line
+  }, [guests, tables]);
 
   return (
-    <div>
-      <div id={CANVAS_ID} className="flex flex-col gap-2 items-center bg-white shadow-lg rounded p-3 border">
-        <canvas 
-          ref={canvasRef} 
-          width={700} 
-          height={500} 
-          className="border"
-          tabIndex={0}
-          aria-label="Canvas plan de table"
-        />
-        <div className="text-xs text-gray-500 mt-2">
-          Faites glisser les invités vers une table.<br/>
-          Faites vos modifications puis cliquez pour exporter en PDF.
-        </div>
+    <div className="relative">
+      <canvas
+        ref={canvasRef}
+        width={CANVAS_WIDTH}
+        height={CANVAS_HEIGHT}
+        tabIndex={0}
+        aria-label="Canvas plan de table"
+        style={{ background: "#f5f5f5", outline: "none" }}
+      />
+      <div className="absolute top-2 left-2 text-sm text-gray-500 bg-white px-2 py-1 rounded shadow border">
+        <b>Conseils :</b> Sélectionnez une table ou un invité, puis supprimez avec la touche <kbd>Suppr</kbd> ou le bouton «Supprimer».
+        <br />
+        Faites glisser les invités (parking à gauche) sur les tables.<br />
+        Ajoutez des tables avec la barre d’outils.
       </div>
-      <Button
-        variant="wedding"
-        onClick={async () => {
-          await exportDashboardToPDF(
-            CANVAS_ID,
-            "plan_de_table.pdf",
-            "landscape",
-            "Plan de table"
-          );
-        }}
-        className="mt-4 w-full"
-      >
-        Exporter ce plan (PDF)
-      </Button>
     </div>
   );
 };

@@ -1,108 +1,125 @@
-import React, { useState, useRef } from "react";
+
+import React, { useState } from "react";
 import GuestListInput from "./GuestListInput";
 import GuestTableAssignment from "./GuestTableAssignment";
 import InteractiveTablePlanCanvas from "./InteractiveTablePlanCanvas";
-import DraggableGuestList from "./DraggableGuestList";
+import TablePlanToolbar from "./TablePlanToolbar";
 
-interface TableMeta {
+export type TableShape = "rectangle" | "round";
+
+export interface TableItem {
+  id: string;
   name: string;
-  seats: number; // Number of seats for this table
+  type: TableShape;
+  seats: number;
+  left: number;
+  top: number;
 }
 
-const DEFAULT_SEATS = 8;
+export interface GuestItem {
+  name: string;
+  x: number;
+  y: number;
+  assignedTableId?: string;
+}
+
+const DEFAULT_RECT_SEATS = 8;
+const DEFAULT_ROUND_SEATS = 8;
 
 const TablePlanCanvas: React.FC = () => {
-  const [guests, setGuests] = useState<string[]>([]);
-  const [tables, setTables] = useState<string[]>(["Table 1", "Table 2"]);
-  const [assignments, setAssignments] = useState<Record<string, string>>({});
-  const [tableSeats, setTableSeats] = useState<Record<string, number>>({
-    "Table 1": DEFAULT_SEATS,
-    "Table 2": DEFAULT_SEATS,
-  });
-
-  // Suppression de currentDragGuest
-
-  const handleAssign = (guest: string, table: string) => {
-    setAssignments((prev) => ({ ...prev, [guest]: table }));
-  };
-
-  // Nouveau: drop géré via guest transmis par dataTransfer
-  const handleDropOnTable = (guest: string, table: string) => {
-    const countAtTable = Object.values(assignments).filter((t) => t === table).length;
-    if (countAtTable < (tableSeats[table] || DEFAULT_SEATS)) {
-      setAssignments((prev) => ({ ...prev, [guest]: table }));
-    } else {
-      // Feedback toast géré dans le canvas!
+  const [guests, setGuests] = useState<GuestItem[]>([]);
+  const [tables, setTables] = useState<TableItem[]>([
+    {
+      id: "table1",
+      name: "Table 1",
+      type: "rectangle",
+      seats: DEFAULT_RECT_SEATS,
+      left: 140,
+      top: 120,
+    },
+    {
+      id: "table2",
+      name: "Table 2",
+      type: "rectangle",
+      seats: DEFAULT_RECT_SEATS,
+      left: 400,
+      top: 120,
     }
-  };
+  ]);
+  const [selectedObjectId, setSelectedObjectId] = useState<string | null>(null);
 
-  const handleTableChange = (newTables: string[]) => {
-    setTables(newTables);
-    setTableSeats((prev) => {
-      const next = { ...prev };
-      newTables.forEach((t) => {
-        if (!(t in next)) next[t] = DEFAULT_SEATS;
-      });
-      Object.keys(next).forEach((t) => {
-        if (!newTables.includes(t)) delete next[t];
-      });
-      return next;
-    });
-  };
-
-  const handleTableSeatChange = (table: string, seats: number) => {
-    setTableSeats((prev) => ({
+  // Ajoute table rectangulaire
+  const handleAddRectangleTable = () => {
+    setTables(prev => [
       ...prev,
-      [table]: seats,
-    }));
+      {
+        id: `table${prev.length + 1}_${Math.random().toString(36).slice(2,8)}`,
+        name: `Table ${prev.length + 1}`,
+        type: "rectangle",
+        seats: DEFAULT_RECT_SEATS,
+        left: 180 + prev.length * 110,
+        top: 150 + prev.length * 30,
+      }
+    ]);
+  };
+
+  // Ajoute table ronde
+  const handleAddRoundTable = () => {
+    setTables(prev => [
+      ...prev,
+      {
+        id: `table${prev.length + 1}_${Math.random().toString(36).slice(2,8)}`,
+        name: `Ronde ${prev.length + 1}`,
+        type: "round",
+        seats: DEFAULT_ROUND_SEATS,
+        left: 220 + prev.length * 130,
+        top: 145 + prev.length * 45,
+      }
+    ]);
+  };
+
+  // Suppression d'objet sélectionné (table ou invité)
+  const handleDeleteSelected = () => {
+    if (!selectedObjectId) return;
+    setTables(tables => tables.filter(t => t.id !== selectedObjectId));
+    setGuests(guests => guests.filter(g => g.name !== selectedObjectId));
+    setSelectedObjectId(null);
+  };
+
+  // Ajout/MAJ invités via input
+  const handleGuestsChange = (list: string[]) => {
+    // Ajoute tout invité inexistant à la zone parking, préserve X/Y si déjà là
+    setGuests(old =>
+      list.map((n, ix) => {
+        const existing = old.find(g => g.name === n);
+        return existing
+          ? existing
+          : { name: n, x: 28, y: 80 + ix * 40 };
+      })
+    );
   };
 
   return (
     <div className="w-full flex flex-col md:flex-row gap-4">
-      {/* LEFT: Input, Table assignment, Draggable */}
+      {/* LEFT: Input, Table assignment */}
       <div className="w-full md:w-1/3 flex flex-col gap-3">
-        <GuestListInput guests={guests} onChange={setGuests} />
-        <GuestTableAssignment
-          guests={guests}
-          assignments={assignments}
-          onAssign={handleAssign}
-          tables={tables}
-          onTableChange={handleTableChange}
-        />
-        {/* Contrôler le nombre de places/table */}
-        <div className="mb-2 max-w-md p-2 bg-white rounded border shadow-sm">
-          <div className="font-semibold mb-1 text-sm">Places par table :</div>
-          {tables.map((t) => (
-            <div key={t} className="flex gap-2 items-center mb-1">
-              <div className="text-xs w-[78px] truncate">{t}</div>
-              <input
-                type="number"
-                min={1}
-                max={24}
-                value={tableSeats[t] ?? DEFAULT_SEATS}
-                onChange={(e) =>
-                  handleTableSeatChange(t, Math.max(1, parseInt(e.target.value) || DEFAULT_SEATS))
-                }
-                className="w-12 border rounded px-1 py-0.5 text-xs ring-0"
-              />{" "}
-              <span className="text-xs text-gray-400">places</span>
-            </div>
-          ))}
-        </div>
-        {/* Liste drag & drop */}
-        <DraggableGuestList
-          guests={guests}
-          assignments={assignments}
+        <GuestListInput guests={guests.map(g => g.name)} onChange={handleGuestsChange} />
+        {/* Ici, GuestTableAssignment peut devenir optionnel ou en lecture seule */}
+        <TablePlanToolbar
+          onAddRectangle={handleAddRectangleTable}
+          onAddRound={handleAddRoundTable}
+          onDelete={handleDeleteSelected}
         />
       </div>
       {/* RIGHT: Canvas */}
       <div className="flex-1 flex items-center justify-center min-h-[500px]">
         <InteractiveTablePlanCanvas
           guests={guests}
-          assignments={assignments}
           tables={tables}
-          tableSeats={tableSeats}
-          onDropGuest={handleDropOnTable}
+          setGuests={setGuests}
+          setTables={setTables}
+          selectedObjectId={selectedObjectId}
+          setSelectedObjectId={setSelectedObjectId}
         />
       </div>
     </div>
