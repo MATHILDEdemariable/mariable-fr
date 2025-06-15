@@ -17,6 +17,9 @@ export interface PrestatairePhoto {
 
 // Export the type for use in admin components
 export type Prestataire = Database["public"]["Tables"]["prestataires_rows"]["Row"] & {
+  fourth_price_package_name?: string | null;
+  fourth_price_package?: number | null;
+  fourth_price_package_description?: string | null;
   prestataires_photos_preprod?: Database["public"]["Tables"]["prestataires_photos_preprod"]["Row"][];
   prestataires_brochures?: Database["public"]["Tables"]["prestataires_brochures_preprod"]["Row"][];
   prestataires_meta?: Array<{
@@ -32,4 +35,8 @@ export type Prestataire = Database["public"]["Tables"]["prestataires_rows"]["Row
   }>;
 };
 
-export type PrestataireInsert = Database["public"]["Tables"]["prestataires_rows"]["Insert"];
+export type PrestataireInsert = Database["public"]["Tables"]["prestataires_rows"]["Insert"] & {
+  fourth_price_package_name?: string | null;
+  fourth_price_package?: number | null;
+  fourth_price_package_description?: string | null;
+};
