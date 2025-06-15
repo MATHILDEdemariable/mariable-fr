@@ -11,28 +11,23 @@ import {
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { Database } from "@/integrations/supabase/types";
 import { Prestataire } from "./types";
 import FeaturedImage from "@/components/ui/featured-image";
-import { Search, Plus, Filter } from "lucide-react";
-import PrestataireModal from "./PrestataireModal";
-import PrestataireEditForm from "./PrestataireEditForm";
+import { Search, Plus } from "lucide-react";
 import { useDebounce } from "@/hooks/use-debounce";
 import FrontStylePrestataireEditModal from "./FrontStylePrestataireEditModal";
 
 const PrestatairesAdmin = () => {
   const [prestataires, setPrestataires] = useState<Prestataire[]>([]);
-  const [selected, setSelected] = useState<Prestataire | null>(null);
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const [mode, setMode] = useState<"edit" | "add">("add");
   const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [filteredPrestataires, setFilteredPrestataires] = useState<Prestataire[]>([]);
   const [frontEditOpen, setFrontEditOpen] = useState(false);
-  const [editMode, setEditMode] = useState<"edit"|"add"|"">("");
-  const [frontEditSelected, setFrontEditSelected] = useState<Prestataire | null>(null);
-  
+  const [editMode, setEditMode] = useState<"edit" | "add" | "">("");
+  const [frontEditSelected, setFrontEditSelected] = useState<Prestataire | null>(
+    null
+  );
+
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
   const fetchPrestataires = async () => {
@@ -124,13 +119,7 @@ const PrestatairesAdmin = () => {
     setEditMode("edit");
     setFrontEditOpen(true);
   };
-  
-  const handleView = (presta: Prestataire) => {
-    setSelected(presta);
-    setMode("edit");
-    setDialogOpen(true);
-  };
-  
+
   const handlePublish = async (presta: Prestataire) => {
     try {
       const { error } = await supabase
@@ -154,7 +143,35 @@ const PrestatairesAdmin = () => {
       toast.error("Une erreur est survenue");
     }
   };
-  
+
+  const handleFeature = async (presta: Prestataire) => {
+    try {
+      const { error } = await supabase
+        .from("prestataires_rows")
+        .update({ featured: !presta.featured })
+        .eq("id", presta.id);
+
+      if (error) {
+        toast.error("Erreur lors de la modification de la mise en avant");
+        console.error("Erreur mise à jour 'featured':", error);
+        return;
+      }
+
+      toast.success(
+        presta.featured
+          ? "Prestataire retiré de la mise en avant"
+          : "Prestataire mis en avant avec succès"
+      );
+      fetchPrestataires();
+    } catch (err) {
+      console.error(
+        "Erreur lors de la modification de la mise en avant:",
+        err
+      );
+      toast.error("Une erreur est survenue");
+    }
+  };
+
   const handleAddNew = () => {
     setFrontEditSelected(null);
     setEditMode("add");
@@ -192,10 +209,6 @@ const PrestatairesAdmin = () => {
         <div className="flex justify-center items-center p-10">
           <p>Chargement des prestataires...</p>
         </div>
-      ) : filteredPrestataires.length === 0 ? (
-        <div className="text-center py-10 border rounded-md bg-gray-50">
-          <p className="text-gray-500">Aucun prestataire trouvé</p>
-        </div>
       ) : (
         <div className="overflow-x-auto">
           <Table>
@@ -217,21 +230,31 @@ const PrestatairesAdmin = () => {
                     <FeaturedImage presta={presta} />
                   </TableCell>
                   <TableCell className="font-medium">{presta.nom}</TableCell>
-                  <TableCell>{presta.categorie || "Non spécifiée"}</TableCell>
+                  <TableCell>
+                    {presta.categorie || "Non spécifiée"}
+                  </TableCell>
                   <TableCell>{presta.ville || "Non spécifiée"}</TableCell>
                   <TableCell className="text-center">
-                    <span className={`inline-block w-3 h-3 rounded-full ${presta.visible ? 'bg-green-500' : 'bg-red-500'}`}></span>
+                    <span
+                      className={`inline-block w-3 h-3 rounded-full ${
+                        presta.visible ? "bg-green-500" : "bg-red-500"
+                      }`}
+                    ></span>
                   </TableCell>
                   <TableCell className="text-center">
-                    <span className={`inline-block w-3 h-3 rounded-full ${presta.featured ? 'bg-purple-500' : 'bg-gray-300'}`}></span>
+                    <span
+                      className={`inline-block w-3 h-3 rounded-full ${
+                        presta.featured ? "bg-purple-500" : "bg-gray-300"
+                      }`}
+                    ></span>
                   </TableCell>
                   <TableCell className="space-x-2 flex flex-wrap justify-end gap-2">
                     <Button
                       size="sm"
-                      variant="outline"
-                      onClick={() => handleView(presta)}
+                      variant={presta.featured ? "secondary" : "outline"}
+                      onClick={() => handleFeature(presta)}
                     >
-                      Visualiser
+                      {presta.featured ? "En avant ✨" : "Mettre en avant"}
                     </Button>
                     {presta.slug && (
                       <Button
@@ -271,29 +294,14 @@ const PrestatairesAdmin = () => {
         </div>
       )}
 
-      {dialogOpen && selected && (
-        <PrestataireModal
-          isOpen={dialogOpen}
-          onClose={() => setDialogOpen(false)}
-          vendor={selected}
-        />
-      )}
-      
-      <PrestataireEditForm
-        isOpen={editDialogOpen}
-        onClose={() => setEditDialogOpen(false)}
-        prestataire={selected}
-        onSuccess={() => {
-          setEditDialogOpen(false);
-          fetchPrestataires();
-        }}
-      />
-      
       <FrontStylePrestataireEditModal
         open={frontEditOpen}
         onClose={() => setFrontEditOpen(false)}
         prestataire={editMode === "edit" ? frontEditSelected : null}
-        onSuccess={fetchPrestataires}
+        onSuccess={() => {
+          setFrontEditOpen(false);
+          fetchPrestataires();
+        }}
         isCreating={editMode === "add"}
       />
     </div>
