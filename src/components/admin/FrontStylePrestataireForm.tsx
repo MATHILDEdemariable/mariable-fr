@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
 
 interface FrontStylePrestataireFormProps {
   prestataire: Prestataire | null;
@@ -13,11 +14,41 @@ interface FrontStylePrestataireFormProps {
   isCreating?: boolean;
 }
 
+// Allowed values for categorie and region enums.
+const PRESTATAIRE_CATEGORIES = [
+  "Lieu de réception",
+  "Traiteur",
+  "Photographe",
+  "Vidéaste",
+  "Coordination",
+  "DJ",
+  "Fleuriste",
+  "Robe de mariée",
+  "Décoration"
+] as const;
+
+const PRESTATAIRE_REGIONS = [
+  "Île-de-France",
+  "Auvergne-Rhône-Alpes",
+  "Bourgogne-Franche-Comté",
+  "Bretagne",
+  "Centre-Val de Loire",
+  "Corse",
+  "Grand Est",
+  "Hauts-de-France",
+  "Normandie",
+  "Nouvelle-Aquitaine",
+  "Occitanie",
+  "Pays de la Loire",
+  "Provence-Alpes-Côte d'Azur"
+] as const;
+
+// Fix default values: don't assign "" to enum fields, use undefined.
 const DEFAULT_PRESTATAIRE: Partial<Prestataire> = {
   nom: "",
-  categorie: "",
+  categorie: undefined,
   ville: "",
-  region: "",
+  region: undefined,
   capacite_invites: null,
   prix_minimum: null,
   prix_a_partir_de: null,
@@ -36,8 +67,23 @@ const FrontStylePrestataireForm: React.FC<FrontStylePrestataireFormProps> = ({
   const [isSaving, setIsSaving] = useState(false);
 
   // Field update util
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
+    // For 'categorie' and 'region', use undefined if empty, else valid value
+    if (name === "categorie") {
+      setFields((prev) => ({
+        ...prev,
+        categorie: value === "" ? undefined : (value as Prestataire["categorie"]), // safe due to select options
+      }));
+      return;
+    }
+    if (name === "region") {
+      setFields((prev) => ({
+        ...prev,
+        region: value === "" ? undefined : (value as Prestataire["region"]),
+      }));
+      return;
+    }
     setFields((prev) => ({
       ...prev,
       [name]:
@@ -51,27 +97,36 @@ const FrontStylePrestataireForm: React.FC<FrontStylePrestataireFormProps> = ({
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSaving(true);
-    if (!fields.nom || !fields.categorie) {
+
+    // Validate required fields
+    const nom = (fields.nom ?? "").toString().trim();
+    // categorie and region: must be a value from enum, not undefined
+    const categorie = fields.categorie;
+    if (!nom || !categorie) {
       toast.error("Merci de renseigner nom et catégorie");
       setIsSaving(false);
       return;
     }
+
+    // Construct payload strictly according to API type (must not contain null on enums, only undefined or a valid value)
+    const payload: any = {
+      ...fields,
+      nom,
+      categorie,
+      region: fields.region ?? undefined,
+      styles: Array.isArray(fields.styles) ? fields.styles : [],
+    };
+
     try {
       let result;
       if (isCreating) {
         // Ajout nouveau
-        result = await supabase.from("prestataires_rows").insert([{
-          ...fields,
-          styles: Array.isArray(fields.styles) ? fields.styles : [],
-        }]);
+        result = await supabase.from("prestataires_rows").insert([payload]);
         if (result.error) throw result.error;
         toast.success("Prestataire ajouté");
       } else {
         // Edition existant
-        result = await supabase.from("prestataires_rows").update({
-          ...fields,
-          styles: Array.isArray(fields.styles) ? fields.styles : [],
-        }).eq("id", prestataire?.id);
+        result = await supabase.from("prestataires_rows").update(payload).eq("id", prestataire?.id);
         if (result.error) throw result.error;
         toast.success("Modifié !");
       }
@@ -93,13 +148,34 @@ const FrontStylePrestataireForm: React.FC<FrontStylePrestataireFormProps> = ({
           <Input name="nom" value={fields.nom ?? ""} onChange={handleChange} required />
 
           <label className="block font-medium">Catégorie</label>
-          <Input name="categorie" value={fields.categorie ?? ""} onChange={handleChange} required />
+          <select
+            name="categorie"
+            value={fields.categorie ?? ""}
+            onChange={handleChange}
+            required
+            className="w-full border rounded px-3 py-2"
+          >
+            <option value="">Choisir une catégorie</option>
+            {PRESTATAIRE_CATEGORIES.map((cat) => (
+              <option key={cat} value={cat}>{cat}</option>
+            ))}
+          </select>
 
           <label className="block font-medium">Ville</label>
           <Input name="ville" value={fields.ville ?? ""} onChange={handleChange} />
 
           <label className="block font-medium">Région</label>
-          <Input name="region" value={fields.region ?? ""} onChange={handleChange} />
+          <select
+            name="region"
+            value={fields.region ?? ""}
+            onChange={handleChange}
+            className="w-full border rounded px-3 py-2"
+          >
+            <option value="">Choisir une région</option>
+            {PRESTATAIRE_REGIONS.map((reg) => (
+              <option key={reg} value={reg}>{reg}</option>
+            ))}
+          </select>
 
           <label className="block font-medium">Capacité (si lieu)</label>
           <Input type="number" name="capacite_invites" value={fields.capacite_invites ?? ""} onChange={handleChange} />
@@ -135,8 +211,9 @@ const FrontStylePrestataireForm: React.FC<FrontStylePrestataireFormProps> = ({
       {/* TODO: Section galerie photos & documents (utiliser components existants, ex: PhotoManager, BrochureManager) */}
 
       <div className="flex gap-4 pt-2 justify-between">
-        <Button variant="outline" type="button" onClick={onClose}>Annuler</Button>
-        <Button type="submit" loading={isSaving}>
+        <Button variant="outline" type="button" onClick={onClose} disabled={isSaving}>Annuler</Button>
+        <Button type="submit" disabled={isSaving}>
+          {isSaving && <Loader2 className="animate-spin mr-2 inline" size={18} />}
           {isCreating ? "Ajouter" : "Sauvegarder"}
         </Button>
       </div>
