@@ -1,7 +1,7 @@
-
 import React, { useState } from "react";
 import GuestListInput from "./GuestListInput";
 import GuestTableAssignment from "./GuestTableAssignment";
+import InteractiveTablePlanCanvas from "./InteractiveTablePlanCanvas";
 
 function exportAssignmentsToCSV(
   guests: string[],
@@ -33,6 +33,7 @@ const TablePlanCanvas: React.FC = () => {
     setAssignments((prev) => ({ ...prev, [guest]: table }));
   };
 
+  // Pour le PDF, on exporte le canvas + la liste courante d'assignation
   return (
     <div className="w-full flex flex-col md:flex-row gap-4">
       <div className="w-full md:w-1/3">
@@ -44,18 +45,15 @@ const TablePlanCanvas: React.FC = () => {
           tables={tables}
           onTableChange={setTables}
         />
-        <button
-          onClick={() => exportAssignmentsToCSV(guests, assignments)}
-          className="mt-4 bg-wedding-olive text-white px-4 py-2 rounded hover:bg-wedding-olive/90 text-sm w-full"
-        >
-          Exporter liste assignée (CSV)
-        </button>
+        {/* Le bouton export PDF */}
+        <InteractiveTablePlanCanvas
+          guests={guests}
+          assignments={assignments}
+          tables={tables}
+        />
       </div>
-      <div className="flex-1 flex items-center justify-center min-h-[500px] bg-muted rounded border border-dashed border-gray-300 text-gray-500">
-        <span>
-          {/* Placeholder: ici viendra le canevas visuel (tables, chaises...). */}
-          Canevas interactif et agencement graphique à venir ici.
-        </span>
+      <div className="flex-1 flex items-center justify-center min-h-[500px]">
+        {/* Le canevas interactif est géré via InteractiveTablePlanCanvas */}
       </div>
     </div>
   );
