@@ -1,6 +1,6 @@
 
 import React from "react";
-import TabbedEditForm from "./TabbedEditForm";
+import UnifiedPrestataireEditForm from "./UnifiedPrestataireEditForm";
 import { Prestataire } from "./types";
 
 interface EditFormProps {
@@ -19,9 +19,12 @@ const PrestataireEditForm: React.FC<EditFormProps> = ({
   if (!isOpen) return null;
   return (
     <div className="fixed inset-0 bg-black/40 z-50 flex justify-center items-center">
-      <div className="bg-white rounded-lg shadow-lg max-w-3xl w-full p-6">
-        <TabbedEditForm prestataire={prestataire} onClose={onClose} onSuccess={onSuccess} />
-        <button onClick={onClose} className="absolute top-4 right-4">✕</button>
+      <div className="bg-white rounded-lg shadow-lg max-w-3xl w-full p-6 relative overflow-y-auto max-h-[98vh]">
+        <UnifiedPrestataireEditForm 
+          prestataire={prestataire}
+          onClose={onClose}
+          onSuccess={onSuccess}
+        />
       </div>
     </div>
   );
