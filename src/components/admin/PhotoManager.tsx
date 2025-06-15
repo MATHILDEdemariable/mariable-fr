@@ -32,6 +32,7 @@ const PhotoManager: React.FC<PhotoManagerProps> = ({ prestataire, onUpdate }) =>
     setIsUploading(true);
 
     const files = Array.from(e.target.files);
+    const newPhotos: Database["public"]["Tables"]["prestataires_photos_preprod"]["Row"][] = [];
 
     for (const file of files) {
       const filePath = `${prestataire.id}/${uuidv4()}-${file.name}`;
@@ -49,24 +50,34 @@ const PhotoManager: React.FC<PhotoManagerProps> = ({ prestataire, onUpdate }) =>
       const newPhotoData = {
         prestataire_id: prestataire.id,
         url: publicUrl,
-        ordre: photos.length,
-        principale: photos.length === 0,
+        ordre: photos.length + newPhotos.length,
+        principale: photos.length + newPhotos.length === 0,
         filename: file.name,
         size: file.size,
         type: file.type,
       };
 
-      const { error: insertError } = await supabase.from("prestataires_photos_preprod").insert([newPhotoData]);
+      const { data: insertedPhoto, error: insertError } = await supabase
+        .from("prestataires_photos_preprod")
+        .insert([newPhotoData])
+        .select()
+        .single();
 
       if (insertError) {
         toast.error(`Erreur DB: ${insertError.message}`);
         await supabase.storage.from("prestataires-photos").remove([filePath]);
+      } else if (insertedPhoto) {
+        newPhotos.push(insertedPhoto);
       }
     }
 
+    if (newPhotos.length > 0) {
+      setPhotos(prev => [...prev, ...newPhotos]);
+      toast.success(`${newPhotos.length} photo(s) ajoutée(s)`);
+    }
+
     setIsUploading(false);
-    toast.success(`${files.length} photo(s) ajoutée(s)`);
-    onUpdate();
+    // onUpdate(); // Ne pas appeler pour éviter la fermeture du modal
   };
 
   const handleDelete = async (photoId: string, photoUrl: string) => {
@@ -82,8 +93,9 @@ const PhotoManager: React.FC<PhotoManagerProps> = ({ prestataire, onUpdate }) =>
       toast.error(`Erreur DB: ${dbError.message}`);
       return;
     }
+    setPhotos(prevPhotos => prevPhotos.filter(p => p.id !== photoId));
     toast.success("Photo supprimée.");
-    onUpdate();
+    // onUpdate(); // Ne pas appeler pour éviter la fermeture du modal
   };
 
   const handleSetPrimary = async (photoId: string) => {
@@ -98,25 +110,28 @@ const PhotoManager: React.FC<PhotoManagerProps> = ({ prestataire, onUpdate }) =>
       toast.error("Erreur: " + setError.message);
       return;
     }
+    setPhotos(prevPhotos => prevPhotos.map(p => ({ ...p, principale: p.id === photoId })));
     toast.success("Photo principale définie.");
-    onUpdate();
+    // onUpdate(); // Ne pas appeler pour éviter la fermeture du modal
   };
 
   const onDragEnd = async (result: DropResult) => {
     if (!result.destination) return;
+    const originalPhotos = [...photos];
     const items = Array.from(photos);
     const [reorderedItem] = items.splice(result.source.index, 1);
     items.splice(result.destination.index, 0, reorderedItem);
 
-    setPhotos(items);
+    const updatedPhotos = items.map((photo, index) => ({...photo, ordre: index}));
+    setPhotos(updatedPhotos);
 
-    const updatePromises = items.map((photo, index) =>
-      supabase.from("prestataires_photos_preprod").update({ ordre: index }).eq("id", photo.id)
+    const updatePromises = updatedPhotos.map((photo) =>
+      supabase.from("prestataires_photos_preprod").update({ ordre: photo.ordre }).eq("id", photo.id)
     );
     const results = await Promise.all(updatePromises);
     if (results.some(res => res.error)) {
       toast.error("Erreur lors de la mise à jour de l'ordre.");
-      onUpdate();
+      setPhotos(originalPhotos); // Rétablir en cas d'erreur
     } else {
       toast.success("Ordre des photos mis à jour.");
     }
