@@ -1,6 +1,6 @@
 
 import React, { useEffect, useRef } from "react";
-import { fabric } from "fabric";
+import { Canvas, Rect, Group, Circle, Text as FabricText } from "fabric";
 import { Button } from "@/components/ui/button";
 import { exportDashboardToPDF } from "@/services/pdfExportService";
 
@@ -21,7 +21,7 @@ const InteractiveTablePlanCanvas: React.FC<InteractiveTablePlanCanvasProps> = ({
   guests, assignments, tables
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const fabricRef = useRef<fabric.Canvas | null>(null);
+  const fabricRef = useRef<Canvas | null>(null);
 
   // Mount Fabric.js canvas
   useEffect(() => {
@@ -29,7 +29,7 @@ const InteractiveTablePlanCanvas: React.FC<InteractiveTablePlanCanvasProps> = ({
     if (fabricRef.current) {
       fabricRef.current.dispose();
     }
-    const fabricCanvas = new fabric.Canvas(canvasRef.current, {
+    const fabricCanvas = new Canvas(canvasRef.current, {
       width: 700,
       height: 500,
       backgroundColor: "#f5f5f5",
@@ -42,7 +42,7 @@ const InteractiveTablePlanCanvas: React.FC<InteractiveTablePlanCanvasProps> = ({
       const groupName = table;
       const color = tableColors[idx % tableColors.length];
       // Add table shape
-      const t = new fabric.Rect({
+      const t = new Rect({
         left: 100 + idx * 170,
         top: 130,
         width: 110,
@@ -58,7 +58,7 @@ const InteractiveTablePlanCanvas: React.FC<InteractiveTablePlanCanvasProps> = ({
         selectable: true,
       });
       // Ajout du label
-      const label = new fabric.Text(table, {
+      const label = new FabricText(table, {
         left: t.left! + t.width!/2,
         top: t.top! + t.height!/2,
         fontSize: 17,
@@ -66,7 +66,7 @@ const InteractiveTablePlanCanvas: React.FC<InteractiveTablePlanCanvasProps> = ({
         fontWeight: "bold",
         originX: "center", originY: "center"
       });
-      const g = new fabric.Group([t, label], {
+      const g = new Group([t, label], {
         left: t.left,
         top: t.top,
         name: groupName
@@ -88,14 +88,14 @@ const InteractiveTablePlanCanvas: React.FC<InteractiveTablePlanCanvasProps> = ({
         const x = centerX + Math.cos(angle) * 55;
         const y = centerY + offsetY;
 
-        const circle = new fabric.Circle({
+        const circle = new Circle({
           left: x - 14, // rayon invité
           top: y - 14,
           radius: 14,
           fill: "#FFFED2",
           stroke: "#444", strokeWidth: 1.5,
         });
-        const nameText = new fabric.Text(guest, {
+        const nameText = new FabricText(guest, {
           left: x,
           top: y+18,
           fontSize: 11,
