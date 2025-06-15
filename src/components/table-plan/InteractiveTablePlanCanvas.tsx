@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef } from "react";
 import { Canvas, Rect, Group, Circle, Text as FabricText } from "fabric";
 import { Button } from "@/components/ui/button";
@@ -41,7 +40,7 @@ const InteractiveTablePlanCanvas: React.FC<InteractiveTablePlanCanvasProps> = ({
     tables.forEach((table, idx) => {
       const groupName = table;
       const color = tableColors[idx % tableColors.length];
-      // Add table shape
+
       const t = new Rect({
         left: 100 + idx * 170,
         top: 130,
@@ -54,7 +53,6 @@ const InteractiveTablePlanCanvas: React.FC<InteractiveTablePlanCanvasProps> = ({
         strokeWidth: 2,
         hasControls: true,
         hasBorders: true,
-        name: groupName,
         selectable: true,
       });
       // Ajout du label
@@ -69,8 +67,8 @@ const InteractiveTablePlanCanvas: React.FC<InteractiveTablePlanCanvasProps> = ({
       const g = new Group([t, label], {
         left: t.left,
         top: t.top,
-        name: groupName
       });
+      g.set("name", groupName);
       fabricCanvas.add(g);
     });
 
@@ -111,7 +109,7 @@ const InteractiveTablePlanCanvas: React.FC<InteractiveTablePlanCanvasProps> = ({
     fabricCanvas.setDimensions({ width: 700, height: 500 });
     fabricCanvas.renderAll();
 
-    // Clean up
+    // Clean up on unmount
     return () => {
       fabricCanvas.dispose();
     };
