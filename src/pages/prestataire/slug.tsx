@@ -69,10 +69,8 @@ const SinglePrestataire = () => {
   const [vendorId, setVendorId] = useState<string>("");
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [guests, setGuests] = useState<number>(100);
-  const [packages, setPackages] = useState<Package[]>(DEFAULT_PACKAGES);
-  const [selectedPackage, setSelectedPackage] = useState<Package>(
-    DEFAULT_PACKAGES[0]
-  );
+  const [packages, setPackages] = useState<Package[]>([]);
+  const [selectedPackage, setSelectedPackage] = useState<Package | null>(null);
   const [open, setOpen] = useState(false);
   const [openContact, setOpenContact] = useState(false);
 
@@ -177,88 +175,38 @@ const SinglePrestataire = () => {
 
   useEffect(() => {
     if (vendor) {
-      if (vendor.prix_a_partir_de) {
-        // Pour les traiteurs, on utilise plutôt le prix par personne
-        if (vendor.categorie === "Traiteur" && vendor.prix_par_personne) {
-          const basePrice = vendor.prix_par_personne;
-          const newPackages = [
-            {
-              name: "Menu Standard",
-              basePrice: basePrice,
-              description: "Menu basique",
-            },
-            {
-              name: "Menu Premium",
-              basePrice: basePrice * 1.4,
-              description: "Menu intermédiaire",
-            },
-            {
-              name: "Menu Gastronomique",
-              basePrice: basePrice * 1.8,
-              description: "Menu complet",
-            },
-          ];
-          setPackages(newPackages);
-          setSelectedPackage(newPackages[0]);
-        } else {
-          const basePrice = vendor.prix_a_partir_de;
-          const newPackages = [
-            {
-              name: "Classique",
-              basePrice: basePrice,
-              description: "Formule de base",
-            },
-            {
-              name: "Premium",
-              basePrice: basePrice * 1.4,
-              description: "Formule intermédiaire",
-            },
-            {
-              name: "Luxe",
-              basePrice: basePrice * 1.8,
-              description: "Formule complète",
-            },
-          ];
-          setPackages(newPackages);
-          setSelectedPackage(newPackages[0]);
+      const newPackages: Package[] = [];
+
+      if (vendor.show_prices) {
+        if (vendor.first_price_package_name && vendor.first_price_package) {
+          newPackages.push({
+            name: vendor.first_price_package_name,
+            basePrice: vendor.first_price_package,
+            description: vendor.first_price_package_description || "",
+          });
+        }
+        if (vendor.second_price_package_name && vendor.second_price_package) {
+          newPackages.push({
+            name: vendor.second_price_package_name,
+            basePrice: vendor.second_price_package,
+            description: vendor.second_price_package_description || "",
+          });
+        }
+        if (vendor.third_price_package_name && vendor.third_price_package) {
+          newPackages.push({
+            name: vendor.third_price_package_name,
+            basePrice: vendor.third_price_package,
+            description: vendor.third_price_package_description || "",
+          });
         }
       }
-      const hasAllThreePrices = vendor.prestataires_meta && [
-        "first_price_package",
-        "second_price_package",
-        "third_price_package",
-      ].every((key) =>
-        vendor.prestataires_meta.some((meta) => meta.meta_key === key)
-      );
 
-      if (hasAllThreePrices && vendor.prestataires_meta) {
-        const getMetaValue = (key: string) => {
-          const meta = vendor.prestataires_meta?.find(
-            (meta) => meta.meta_key === key
-          );
-          return meta ? parseFloat(meta.meta_value || "0") : 0;
-        };
+      setPackages(newPackages);
 
-        const newPackages = [
-          {
-            name: "Classique",
-            basePrice: getMetaValue("first_price_package"),
-            description: "Formule de base",
-          },
-          {
-            name: "Premium",
-            basePrice: getMetaValue("second_price_package"),
-            description: "Formule intermédiaire",
-          },
-          {
-            name: "Luxe",
-            basePrice: getMetaValue("third_price_package"),
-            description: "Formule complète",
-          },
-        ];
-
-        setPackages(newPackages);
+      if (newPackages.length > 0) {
         setSelectedPackage(newPackages[0]);
+      } else {
+        setSelectedPackage(null);
       }
     }
   }, [vendor]);
@@ -267,7 +215,7 @@ const SinglePrestataire = () => {
   useEffect(() => {
     if (vendor?.categorie === "Traiteur") {
       // Mise à jour de la formule sélectionnée pour forcer le recalcul des prix
-      setSelectedPackage((prev) => ({ ...prev }));
+      setSelectedPackage((prev) => (prev ? { ...prev } : null));
     }
   }, [guests, vendor?.categorie]);
 
@@ -292,6 +240,9 @@ const SinglePrestataire = () => {
   };
 
   const calculateTotal = () => {
+    if (!selectedPackage) {
+      return { basePrice: 0, total: 0 };
+    }
     const basePrice = selectedPackage.basePrice;
 
     // Calcul spécifique pour les traiteurs (prix par personne × nombre d'invités)
@@ -303,7 +254,7 @@ const SinglePrestataire = () => {
     // Removed 4% commission calculation
     return {
       basePrice: calculatedBasePrice,
-      total: calculatedBasePrice
+      total: calculatedBasePrice,
     };
   };
 
@@ -554,32 +505,36 @@ const SinglePrestataire = () => {
                 </p>
               </Card>
 
-              <div className="space-y-4">
-                <h2 className="text-xl font-serif">
-                  {vendor.categorie === "Traiteur"
-                    ? "Nos menus"
-                    : "Nos formules"}
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {packages.map((pkg, index) => (
-                    <Card
-                      key={index}
-                      className={`p-4 ${
-                        index === 1 ? "border-wedding-olive" : ""
-                      }`}
-                    >
-                      <h3 className="font-medium mb-2">{pkg.name}</h3>
-                      <p className="text-sm text-muted-foreground mb-4">
-                        {pkg.description}
-                      </p>
-                      <p className="font-medium">
-                        {Math.round(pkg.basePrice)}€
-                        {vendor.categorie === "Traiteur" ? "/pers" : ""}
-                      </p>
-                    </Card>
-                  ))}
+              {packages.length > 0 && (
+                <div className="space-y-4">
+                  <h2 className="text-xl font-serif">
+                    {vendor.categorie === "Traiteur"
+                      ? "Nos menus"
+                      : "Nos formules"}
+                  </h2>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {packages.map((pkg) => (
+                      <Card
+                        key={pkg.name}
+                        className={`p-4 ${
+                          selectedPackage?.name === pkg.name
+                            ? "border-wedding-olive"
+                            : ""
+                        }`}
+                      >
+                        <h3 className="font-medium mb-2">{pkg.name}</h3>
+                        <p className="text-sm text-muted-foreground mb-4">
+                          {pkg.description}
+                        </p>
+                        <p className="font-medium">
+                          {Math.round(pkg.basePrice)}€
+                          {vendor.categorie === "Traiteur" ? "/pers" : ""}
+                        </p>
+                      </Card>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
               <div className="space-y-4">
                 <h2 className="text-xl font-serif">Galerie photo</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -677,45 +632,49 @@ const SinglePrestataire = () => {
                   />
                 </div>
 
-                <div className="mt-4">
-                  <Label>
-                    {vendor.categorie === "Traiteur" ? "Menu" : "Formule"}
-                  </Label>
-                  <RadioGroup
-                    value={selectedPackage.name}
-                    onValueChange={(value) =>
-                      setSelectedPackage(
-                        packages.find((p) => p.name === value) || packages[0]
-                      )
-                    }
-                    className="mt-2"
-                  >
-                    {packages.map((pkg) => (
-                      <div
-                        key={pkg.name}
-                        className="flex items-center space-x-2"
+                {packages.length > 0 && (
+                  <>
+                    <div className="mt-4">
+                      <Label>
+                        {vendor.categorie === "Traiteur" ? "Menu" : "Formule"}
+                      </Label>
+                      <RadioGroup
+                        value={selectedPackage?.name || ""}
+                        onValueChange={(value) =>
+                          setSelectedPackage(
+                            packages.find((p) => p.name === value) || null
+                          )
+                        }
+                        className="mt-2"
                       >
-                        <RadioGroupItem value={pkg.name} id={pkg.name} />
-                        <Label htmlFor={pkg.name}>{pkg.name}</Label>
-                      </div>
-                    ))}
-                  </RadioGroup>
-                </div>
+                        {packages.map((pkg) => (
+                          <div
+                            key={pkg.name}
+                            className="flex items-center space-x-2"
+                          >
+                            <RadioGroupItem value={pkg.name} id={pkg.name} />
+                            <Label htmlFor={pkg.name}>{pkg.name}</Label>
+                          </div>
+                        ))}
+                      </RadioGroup>
+                    </div>
 
-                <div className="mt-6 border-t pt-4 space-y-2">
-                  <div className="flex justify-between">
-                    <span>
-                      {vendor.categorie === "Traiteur"
-                        ? `Prix du menu (${guests} pers.)`
-                        : "Prix de base"}
-                    </span>
-                    <span>{Math.round(prices.basePrice)}€</span>
-                  </div>
-                  <div className="flex justify-between font-medium text-lg border-t pt-2">
-                    <span>Total</span>
-                    <span>{Math.round(prices.total)}€</span>
-                  </div>
-                </div>
+                    <div className="mt-6 border-t pt-4 space-y-2">
+                      <div className="flex justify-between">
+                        <span>
+                          {vendor.categorie === "Traiteur"
+                            ? `Prix du menu (${guests} pers.)`
+                            : "Prix de base"}
+                        </span>
+                        <span>{Math.round(prices.basePrice)}€</span>
+                      </div>
+                      <div className="flex justify-between font-medium text-lg border-t pt-2">
+                        <span>Total</span>
+                        <span>{Math.round(prices.total)}€</span>
+                      </div>
+                    </div>
+                  </>
+                )}
                  <Button
                   variant="outline"
                   className="w-full mt-4"
@@ -742,7 +701,7 @@ const SinglePrestataire = () => {
                 <Button
                   id="button-rdv"
                   className="w-full mt-4 bg-wedding-olive hover:bg-wedding-olive/90"
-                  disabled={hasCurrentRDV}
+                  disabled={hasCurrentRDV || !selectedPackage}
                   onClick={checkCurrentRDV}
                 >
                   Prendre RDV
