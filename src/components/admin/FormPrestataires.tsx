@@ -256,15 +256,14 @@ const PrestatairesAdmin = () => {
                     >
                       {presta.featured ? "En avant ✨" : "Mettre en avant"}
                     </Button>
-                    {presta.slug && (
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => handleHref(presta.slug || "")}
-                      >
-                        Aperçu
-                      </Button>
-                    )}
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleHref(presta.slug!)}
+                      disabled={!presta.slug}
+                    >
+                      Aperçu
+                    </Button>
                     <Button
                       size="sm"
                       variant={presta.visible ? "destructive" : "default"}

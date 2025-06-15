@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Prestataire } from "./types";
 import { supabase } from "@/integrations/supabase/client";
@@ -6,13 +5,7 @@ import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
-
-interface FrontStylePrestataireFormProps {
-  prestataire: Prestataire | null;
-  onClose: () => void;
-  onSuccess: () => void;
-  isCreating?: boolean;
-}
+import slugify from "@/utils/slugify";
 
 // Allowed values for categorie and region enums.
 const PRESTATAIRE_CATEGORIES = [
@@ -55,9 +48,17 @@ const DEFAULT_PRESTATAIRE: Partial<Prestataire> = {
   description: "",
   styles: [],
   prix_par_personne: null,
+  email: "",
+  telephone: "",
+  site_web: "",
 };
 
-const FrontStylePrestataireForm: React.FC<FrontStylePrestataireFormProps> = ({
+const FrontStylePrestataireForm: React.FC<{
+  prestataire: Prestataire | null;
+  onClose: () => void;
+  onSuccess: () => void;
+  isCreating?: boolean;
+}> = ({
   prestataire,
   onClose,
   onSuccess,
@@ -116,6 +117,10 @@ const FrontStylePrestataireForm: React.FC<FrontStylePrestataireFormProps> = ({
       region: fields.region ?? undefined,
       styles: Array.isArray(fields.styles) ? fields.styles : [],
     };
+
+    if (isCreating || !payload.slug) {
+      payload.slug = slugify(nom);
+    }
 
     try {
       let result;
@@ -177,10 +182,19 @@ const FrontStylePrestataireForm: React.FC<FrontStylePrestataireFormProps> = ({
             ))}
           </select>
 
+          <label className="block font-medium">Email</label>
+          <Input type="email" name="email" value={fields.email ?? ""} onChange={handleChange} />
+
           <label className="block font-medium">Capacité (si lieu)</label>
           <Input type="number" name="capacite_invites" value={fields.capacite_invites ?? ""} onChange={handleChange} />
         </div>
         <div className="flex-1 space-y-3">
+          <label className="block font-medium">Téléphone</label>
+          <Input type="tel" name="telephone" value={fields.telephone ?? ""} onChange={handleChange} />
+
+          <label className="block font-medium">Site Web</label>
+          <Input type="url" name="site_web" value={fields.site_web ?? ""} onChange={handleChange} />
+
           <label className="block font-medium">Prix minimum</label>
           <Input type="number" name="prix_minimum" value={fields.prix_minimum ?? ""} onChange={handleChange} />
           <label className="block font-medium">Prix à partir de</label>

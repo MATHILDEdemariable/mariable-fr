@@ -3,6 +3,7 @@ import { useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Prestataire } from "../types";
+import slugify from "@/utils/slugify";
 
 export function usePrestataireAutoSave(prestataire: Prestataire | null, onSaved?: (p: Prestataire) => void) {
   const [isSaving, setIsSaving] = useState(false);
@@ -17,6 +18,11 @@ export function usePrestataireAutoSave(prestataire: Prestataire | null, onSaved?
 
       // Construction du patch
       const patch: Partial<Prestataire> = { [field]: value };
+
+      // Si le nom est modifié, on met à jour le slug aussi
+      if (field === 'nom' && value) {
+        patch.slug = slugify(value);
+      }
 
       const { data, error } = await supabase
         .from("prestataires_rows")

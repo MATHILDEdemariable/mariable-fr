@@ -4,38 +4,43 @@ import { Prestataire } from "./types";
 import { Input } from "@/components/ui/input";
 import { usePrestataireAutoSave } from "./hooks/usePrestataireAutoSave";
 
-// Étape 1: Définir le type pour les champs de base autorisés
-type BasicField = "nom" | "ville" | "region" | "description";
+type BasicField = "nom" | "ville" | "region" | "description" | "email" | "telephone" | "site_web";
 
 const FIELD_MAP: Array<{ key: BasicField; label: string; type?: string }> = [
   { key: "nom", label: "Nom" },
   { key: "ville", label: "Ville" },
   { key: "region", label: "Région" },
+  { key: "email", label: "Email", type: "email" },
+  { key: "telephone", label: "Téléphone", type: "tel" },
+  { key: "site_web", label: "Site Web", type: "url" },
   { key: "description", label: "Description" },
 ];
 
 const BasicInfoForm: React.FC<{ prestataire: Prestataire | null }> = ({ prestataire }) => {
-  // Étape 2: Adapter le draft et tous les usages à BasicField
   const [draft, setDraft] = useState<Record<BasicField, string>>({
     nom: prestataire?.nom || "",
     ville: prestataire?.ville || "",
     region: prestataire?.region || "",
     description: prestataire?.description || "",
+    email: prestataire?.email || "",
+    telephone: prestataire?.telephone || "",
+    site_web: prestataire?.site_web || "",
   });
 
-  // Synchronise le draft si changement de props
   React.useEffect(() => {
     setDraft({
       nom: prestataire?.nom || "",
       ville: prestataire?.ville || "",
       region: prestataire?.region || "",
       description: prestataire?.description || "",
+      email: prestataire?.email || "",
+      telephone: prestataire?.telephone || "",
+      site_web: prestataire?.site_web || "",
     });
   }, [prestataire]);
 
   const { isSaving, saveField } = usePrestataireAutoSave(prestataire);
 
-  // La clé utilisée est toujours un BasicField 
   const handleChange = (key: BasicField, value: string) => {
     setDraft((d) => ({ ...d, [key]: value }));
     saveField(key, value);
@@ -44,12 +49,13 @@ const BasicInfoForm: React.FC<{ prestataire: Prestataire | null }> = ({ prestata
   return (
     <div className="space-y-3">
       <h3 className="mb-2 font-semibold">Informations</h3>
-      {FIELD_MAP.map(({ key, label }) => (
+      {FIELD_MAP.map(({ key, label, type }) => (
         <div key={key} className="flex flex-col gap-1">
           <label className="text-sm font-medium">{label}</label>
           <Input
             value={draft[key]}
             placeholder={label}
+            type={type || "text"}
             onChange={(e) => handleChange(key, e.target.value)}
             className="max-w-xl"
             disabled={!prestataire}
@@ -63,4 +69,3 @@ const BasicInfoForm: React.FC<{ prestataire: Prestataire | null }> = ({ prestata
   );
 };
 export default BasicInfoForm;
-
