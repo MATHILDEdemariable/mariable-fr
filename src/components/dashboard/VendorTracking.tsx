@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { 
   Card, 
@@ -157,7 +158,7 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
       }
       
       const { error } = await supabase
-        .from('vendors_tracking')
+        .from('vendors_tracking_preprod')
         .update(updates)
         .eq('id', id);
         
@@ -197,7 +198,7 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
     
     try {
       const { error } = await supabase
-        .from('vendors_tracking')
+        .from('vendors_tracking_preprod')
         .delete()
         .eq('id', vendorToDelete);
         
