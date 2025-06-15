@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
-import slugify from "@/utils/slugify";
+import { generateUniqueSlug } from "@/utils/generateUniqueSlug";
 
 // Allowed values for categorie and region enums.
 const PRESTATAIRE_CATEGORIES = [
@@ -52,25 +52,6 @@ const DEFAULT_PRESTATAIRE: Partial<Prestataire> = {
   telephone: "",
   site_web: "",
 };
-
-// Générateur de slug unique (identique à la logique du hook)
-async function generateUniqueSlug(nom: string): Promise<string> {
-  let baseSlug = slugify(nom) || "prestataire";
-  let uniqueSlug = baseSlug;
-  let i = 1;
-  while (true) {
-    const { data, error } = await supabase
-      .from("prestataires_rows")
-      .select("id")
-      .eq("slug", uniqueSlug);
-
-    if (!data || data.length === 0) {
-      return uniqueSlug;
-    }
-    i += 1;
-    uniqueSlug = `${baseSlug}-${i}`;
-  }
-}
 
 const FrontStylePrestataireForm: React.FC<{
   prestataire: Prestataire | null;
@@ -137,20 +118,23 @@ const FrontStylePrestataireForm: React.FC<{
       styles: Array.isArray(fields.styles) ? fields.styles : [],
     };
 
-    if (isCreating || !payload.slug) {
-      payload.slug = await generateUniqueSlug(nom);
+    const originalName = isCreating ? '' : (prestataire?.nom || '');
+    const slugIsMissing = !payload.slug;
+
+    if (nom && (nom !== originalName || slugIsMissing)) {
+        payload.slug = await generateUniqueSlug(nom, isCreating ? undefined : prestataire?.id);
     }
 
     try {
       let result;
       if (isCreating) {
         // Ajout nouveau
-        result = await supabase.from("prestataires_rows").insert([payload]);
+        result = await supabase.from("prestataires_rows").insert([payload]).select().single();
         if (result.error) throw result.error;
         toast.success("Prestataire ajouté");
       } else {
         // Edition existant
-        result = await supabase.from("prestataires_rows").update(payload).eq("id", prestataire?.id);
+        result = await supabase.from("prestataires_rows").update(payload).eq("id", prestataire?.id).select().single();
         if (result.error) throw result.error;
         toast.success("Modifié !");
       }
@@ -162,8 +146,6 @@ const FrontStylePrestataireForm: React.FC<{
     setIsSaving(false);
   };
 
-  // Réutiliser pour select, uploads, etc. Ici on fait simple : input texte, select, textarea, number
-  // Formule de prix simplifiée, à détailler plus tard si besoin
   return (
     <form onSubmit={handleSave} className="space-y-6">
       <div className="flex flex-col gap-4 md:flex-row md:gap-8">

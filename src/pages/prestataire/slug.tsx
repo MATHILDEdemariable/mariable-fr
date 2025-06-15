@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useSearchParams, useParams } from "react-router-dom";
+import { useSearchParams, useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Database } from "@/integrations/supabase/types";
@@ -20,6 +20,7 @@ import {
   CalendarCheck,
   Euro,
   MessageSquare,
+  ArrowLeft,
 } from "lucide-react";
 import {
   Popover,
@@ -66,6 +67,7 @@ const DEFAULT_PACKAGES: Package[] = [
 
 const SinglePrestataire = () => {
   const { slug } = useParams();
+  const navigate = useNavigate();
   const [vendorId, setVendorId] = useState<string>("");
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [guests, setGuests] = useState<number>(100);
@@ -456,6 +458,10 @@ const SinglePrestataire = () => {
         </div>
 
         <div className="container max-w-6xl px-4 py-8">
+          <Button variant="outline" onClick={() => navigate(-1)} className="mb-4">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Retour
+          </Button>
           <div className="flex flex-col lg:flex-row gap-8">
             <div className="flex-grow space-y-6">
               <div>
@@ -708,7 +714,7 @@ const SinglePrestataire = () => {
                 <Button
                   id="button-rdv"
                   className="w-full mt-4 bg-wedding-olive hover:bg-wedding-olive/90"
-                  disabled={hasCurrentRDV || !selectedPackage}
+                  disabled={hasCurrentRDV}
                   onClick={checkCurrentRDV}
                 >
                   Prendre RDV
