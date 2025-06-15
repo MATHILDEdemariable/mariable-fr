@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Prestataire } from "./types";
 import { supabase } from "@/integrations/supabase/client";
@@ -7,8 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { generateUniqueSlug } from "@/utils/generateUniqueSlug";
-import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
 
 // Allowed values for categorie and region enums.
 const PRESTATAIRE_CATEGORIES = [
