@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -55,6 +54,8 @@ import DemoJourM from './pages/DemoJourM';
 import AnalyticsProvider from './components/analytics/AnalyticsProvider';
 import Accompagnement from './pages/Accompagnement';
 import SitemapPage from "./pages/Sitemap";
+import BlogPage from "./pages/Blog";
+import AdminBlog from "./pages/admin/Blog";
 
 // Initialize the query client
 const queryClient = new QueryClient();
@@ -78,6 +79,9 @@ const App = () => {
                 
                 {/* Move LandingPage to /landing route */}
                 <Route path="/landing" element={<LandingPage />} />
+                
+                {/* Blog page */}
+                <Route path="/blog" element={<BlogPage />} />
                 
                 {/* Old index page is now accessible via /home */}
                 <Route path="/home" element={<Index />} />
@@ -166,6 +170,7 @@ const App = () => {
                 
                 {/* Admin Routes */}
                 <Route path="/admin/prestataires" element={<PrestataireAdmin />} />
+                <Route path="/admin/blog" element={<AdminBlog />} />
                 <Route path="/admin/form" element={<FormAdmin />} />
                 <Route path="/admin/reservations-jour-m" element={<ReservationsJourM />} />
                 

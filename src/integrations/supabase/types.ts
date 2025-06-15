@@ -51,6 +51,69 @@ export type Database = {
         }
         Relationships: []
       }
+      blog_posts: {
+        Row: {
+          background_image_url: string | null
+          category: string | null
+          content: string | null
+          created_at: string
+          featured: boolean
+          h1_title: string | null
+          h2_titles: Json | null
+          id: string
+          meta_description: string | null
+          meta_title: string | null
+          order_index: number
+          published_at: string | null
+          slug: string
+          status: Database["public"]["Enums"]["blog_status"]
+          subtitle: string | null
+          tags: Json | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          background_image_url?: string | null
+          category?: string | null
+          content?: string | null
+          created_at?: string
+          featured?: boolean
+          h1_title?: string | null
+          h2_titles?: Json | null
+          id?: string
+          meta_description?: string | null
+          meta_title?: string | null
+          order_index?: number
+          published_at?: string | null
+          slug: string
+          status?: Database["public"]["Enums"]["blog_status"]
+          subtitle?: string | null
+          tags?: Json | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          background_image_url?: string | null
+          category?: string | null
+          content?: string | null
+          created_at?: string
+          featured?: boolean
+          h1_title?: string | null
+          h2_titles?: Json | null
+          id?: string
+          meta_description?: string | null
+          meta_title?: string | null
+          order_index?: number
+          published_at?: string | null
+          slug?: string
+          status?: Database["public"]["Enums"]["blog_status"]
+          subtitle?: string | null
+          tags?: Json | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       budgets_dashboard: {
         Row: {
           breakdown: Json
@@ -1601,6 +1664,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      is_admin: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
       is_valid_share_token: {
         Args: { token_value: string }
         Returns: boolean
@@ -1614,6 +1681,7 @@ export type Database = {
       }
     }
     Enums: {
+      blog_status: "draft" | "published"
       input_type: "select" | "input" | "checkbox"
       prestataire_categorie:
         | "Lieu de réception"
@@ -1768,6 +1836,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      blog_status: ["draft", "published"],
       input_type: ["select", "input", "checkbox"],
       prestataire_categorie: [
         "Lieu de réception",
