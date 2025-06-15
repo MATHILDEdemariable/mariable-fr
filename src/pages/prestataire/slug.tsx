@@ -104,29 +104,7 @@ const SinglePrestataire = () => {
         .from("prestataires_rows")
         .select("*, prestataires_photos_preprod(*)")
         .eq("slug", slug)
-        .single();
-
-      if (data) {
-        const prestataireData = data as unknown as Prestataire;
-        
-        // Add prestataires_meta property to data
-        const { data: metas } = await supabase
-          .from("prestataires_meta")
-          .select("*")
-          .eq("prestataire_id", prestataireData.id);
-
-        prestataireData.prestataires_meta = metas || [];
-        
-        // Add prestataires_brochures property to data
-        const { data: brochures } = await supabase
-          .from("prestataires_brochures_preprod")
-          .select("*")
-          .eq("prestataire_id", prestataireData.id);
-
-        prestataireData.prestataires_brochures = brochures || [];
-        
-        return prestataireData;
-      }
+        .maybeSingle();
 
       if (error) {
         toast({
@@ -135,7 +113,31 @@ const SinglePrestataire = () => {
         });
         throw new Error(error.message);
       }
-      return null;
+
+      // If no match or multiple, warn frontend.
+      if (!data) {
+        toast({
+          description: `Ce prestataire n'existe pas ou a été supprimé.`,
+          variant: "destructive",
+        });
+        return null;
+      }
+
+      const prestataireData = data as unknown as Prestataire;
+
+      const { data: metas } = await supabase
+        .from("prestataires_meta")
+        .select("*")
+        .eq("prestataire_id", prestataireData.id);
+      prestataireData.prestataires_meta = metas || [];
+
+      const { data: brochures } = await supabase
+        .from("prestataires_brochures_preprod")
+        .select("*")
+        .eq("prestataire_id", prestataireData.id);
+      prestataireData.prestataires_brochures = brochures || [];
+
+      return prestataireData;
     },
     enabled: !!slug,
   });

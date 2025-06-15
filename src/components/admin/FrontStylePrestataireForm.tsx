@@ -53,6 +53,25 @@ const DEFAULT_PRESTATAIRE: Partial<Prestataire> = {
   site_web: "",
 };
 
+// Générateur de slug unique (identique à la logique du hook)
+async function generateUniqueSlug(nom: string): Promise<string> {
+  let baseSlug = slugify(nom) || "prestataire";
+  let uniqueSlug = baseSlug;
+  let i = 1;
+  while (true) {
+    const { data, error } = await supabase
+      .from("prestataires_rows")
+      .select("id")
+      .eq("slug", uniqueSlug);
+
+    if (!data || data.length === 0) {
+      return uniqueSlug;
+    }
+    i += 1;
+    uniqueSlug = `${baseSlug}-${i}`;
+  }
+}
+
 const FrontStylePrestataireForm: React.FC<{
   prestataire: Prestataire | null;
   onClose: () => void;
@@ -119,7 +138,7 @@ const FrontStylePrestataireForm: React.FC<{
     };
 
     if (isCreating || !payload.slug) {
-      payload.slug = slugify(nom);
+      payload.slug = await generateUniqueSlug(nom);
     }
 
     try {
