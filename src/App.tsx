@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -56,6 +57,7 @@ import Accompagnement from './pages/Accompagnement';
 import SitemapPage from "./pages/Sitemap";
 import BlogPage from "./pages/Blog";
 import AdminBlog from "./pages/admin/Blog";
+import BlogArticlePage from './pages/BlogArticle';
 
 // Initialize the query client
 const queryClient = new QueryClient();
@@ -82,6 +84,7 @@ const App = () => {
                 
                 {/* Blog page */}
                 <Route path="/blog" element={<BlogPage />} />
+                <Route path="/blog/:slug" element={<BlogArticlePage />} />
                 
                 {/* Old index page is now accessible via /home */}
                 <Route path="/home" element={<Index />} />
