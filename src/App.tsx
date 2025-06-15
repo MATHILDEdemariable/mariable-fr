@@ -54,6 +54,7 @@ import Paiement from './pages/Paiement';
 import DemoJourM from './pages/DemoJourM';
 import AnalyticsProvider from './components/analytics/AnalyticsProvider';
 import Accompagnement from './pages/Accompagnement';
+import SitemapPage from "./pages/Sitemap";
 
 // Initialize the query client
 const queryClient = new QueryClient();
@@ -171,6 +172,9 @@ const App = () => {
                 {/* Prestataire Routes */}
                 <Route path="/prestataire/tracking" element={<PrestataireTrackingPage />} />
                 <Route path="/prestataire/contact" element={<PrestataireContactPage />} />
+
+                {/* Sitemap Route */}
+                <Route path="/sitemap.xml" element={<SitemapPage />} />
                 
                 {/* Catch-all route */}
                 <Route path="*" element={<NotFound />} />
