@@ -4,7 +4,10 @@ import { Prestataire } from "./types";
 import { Input } from "@/components/ui/input";
 import { usePrestataireAutoSave } from "./hooks/usePrestataireAutoSave";
 
-const FIELD_MAP: Array<{ key: keyof Prestataire; label: string; type?: string }> = [
+// Étape 1: Définir le type pour les champs de base autorisés
+type BasicField = "nom" | "ville" | "region" | "description";
+
+const FIELD_MAP: Array<{ key: BasicField; label: string; type?: string }> = [
   { key: "nom", label: "Nom" },
   { key: "ville", label: "Ville" },
   { key: "region", label: "Région" },
@@ -12,14 +15,15 @@ const FIELD_MAP: Array<{ key: keyof Prestataire; label: string; type?: string }>
 ];
 
 const BasicInfoForm: React.FC<{ prestataire: Prestataire | null }> = ({ prestataire }) => {
-  const [draft, setDraft] = useState({
+  // Étape 2: Adapter le draft et tous les usages à BasicField
+  const [draft, setDraft] = useState<Record<BasicField, string>>({
     nom: prestataire?.nom || "",
     ville: prestataire?.ville || "",
     region: prestataire?.region || "",
     description: prestataire?.description || "",
   });
 
-  // Permet de synchroniser le draft si changement de props
+  // Synchronise le draft si changement de props
   React.useEffect(() => {
     setDraft({
       nom: prestataire?.nom || "",
@@ -31,10 +35,10 @@ const BasicInfoForm: React.FC<{ prestataire: Prestataire | null }> = ({ prestata
 
   const { isSaving, saveField } = usePrestataireAutoSave(prestataire);
 
-  // Gestion du changement de champ
-  const handleChange = (key: keyof typeof draft, value: string) => {
+  // La clé utilisée est toujours un BasicField 
+  const handleChange = (key: BasicField, value: string) => {
     setDraft((d) => ({ ...d, [key]: value }));
-    saveField(key as keyof Prestataire, value);
+    saveField(key, value);
   };
 
   return (
@@ -59,3 +63,4 @@ const BasicInfoForm: React.FC<{ prestataire: Prestataire | null }> = ({ prestata
   );
 };
 export default BasicInfoForm;
+
