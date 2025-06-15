@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -10,17 +11,22 @@ import { usePersistentQuiz } from '@/hooks/usePersistentQuiz';
 import { useProgressTracking } from '@/hooks/useProgressTracking';
 import { supabase } from '@/integrations/supabase/client';
 
+interface QuizOption {
+  text: string;
+  score: number;
+}
+
 interface QuizQuestion {
   id: string;
   question: string;
-  options: string[];
+  options: QuizOption[];
   section: string;
   order_index: number;
 }
 
 const WeddingQuiz: React.FC = () => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [answers, setAnswers] = useState<Record<string, any>>({});
+  const [answers, setAnswers] = useState<Record<string, { answer: string, score: number }>>({});
   const [isCompleted, setIsCompleted] = useState(false);
   const [result, setResult] = useState<any>(null);
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
@@ -41,14 +47,23 @@ const WeddingQuiz: React.FC = () => {
         if (error) throw error;
 
         if (data) {
-          const formattedQuestions = data.map(q => ({
-            id: q.id,
-            question: q.question,
-            options: Array.isArray(q.options) ? q.options as string[] : [],
-            section: q.section,
-            order_index: q.order_index
-          }));
-          setQuestions(formattedQuestions);
+          const formattedQuestions = data.map(q => {
+            const options = Array.isArray(q.options) ? q.options : [];
+            const scores = Array.isArray(q.scores) ? q.scores : [];
+            const formattedOptions: QuizOption[] = options.map((option: any, index: number) => ({
+              text: String(option),
+              score: Number(scores[index]) || 1
+            }));
+
+            return {
+              id: q.id,
+              question: q.question,
+              options: formattedOptions,
+              section: q.section,
+              order_index: q.order_index
+            };
+          });
+          setQuestions(formattedQuestions as QuizQuestion[]);
         }
       } catch (error) {
         console.error('Error loading questions:', error);
@@ -57,21 +72,37 @@ const WeddingQuiz: React.FC = () => {
           {
             id: 'wedding_size',
             question: 'Quelle est la taille de votre mariage ?',
-            options: ['Petit (moins de 50 invités)', 'Moyen (50-150 invités)', 'Grand (plus de 150 invités)'],
+            options: [
+              { text: 'Petit (moins de 50 invités)', score: 1 },
+              { text: 'Moyen (50-150 invités)', score: 2 },
+              { text: 'Grand (plus de 150 invités)', score: 3 }
+            ],
             section: 'Organisation Générale',
             order_index: 1
           },
           {
             id: 'wedding_style',
             question: 'Quel est le style de votre mariage ?',
-            options: ['Romantique', 'Moderne', 'Champêtre', 'Bohème', 'Traditionnel'],
+            options: [
+              { text: 'Romantique', score: 1 },
+              { text: 'Moderne', score: 2 },
+              { text: 'Champêtre', score: 3 },
+              { text: 'Bohème', score: 4 },
+              { text: 'Traditionnel', score: 5 }
+            ],
             section: 'Organisation Générale',
             order_index: 2
           },
           {
             id: 'planning_progress',
             question: 'Où en êtes-vous dans la planification de votre mariage ?',
-            options: ['Début', 'En cours', 'Avancé', 'Presque terminé', 'Finalisé'],
+            options: [
+              { text: 'Début', score: 1 },
+              { text: 'En cours', score: 3 },
+              { text: 'Avancé', score: 5 },
+              { text: 'Presque terminé', score: 8 },
+              { text: 'Finalisé', score: 10 }
+            ],
             section: 'Organisation Générale',
             order_index: 3
           }
@@ -82,12 +113,12 @@ const WeddingQuiz: React.FC = () => {
     };
 
     loadQuestions();
-  }, [toast]);
+  }, []);
 
   // Load existing responses
   useEffect(() => {
     if (quizData?.responses && Object.keys(quizData.responses).length > 0) {
-      setAnswers(quizData.responses);
+      setAnswers(quizData.responses as Record<string, { answer: string, score: number }>);
       if (quizData.completed) {
         setIsCompleted(true);
         const savedResult = localStorage.getItem('quizResult');
@@ -113,8 +144,8 @@ const WeddingQuiz: React.FC = () => {
     }
   }, [answers, saveQuizResponse]);
 
-  const handleAnswer = (questionId: string, answer: any) => {
-    const newAnswers = { ...answers, [questionId]: answer };
+  const handleAnswer = (questionId: string, answer: string, score: number) => {
+    const newAnswers = { ...answers, [questionId]: { answer, score } };
     setAnswers(newAnswers);
   };
 
@@ -134,7 +165,7 @@ const WeddingQuiz: React.FC = () => {
 
   const handleComplete = async () => {
     try {
-      const quizResult = generateQuizResult(answers);
+      const quizResult = await generateQuizResult(answers);
       setResult(quizResult);
       
       // Save quiz result
@@ -167,7 +198,7 @@ const WeddingQuiz: React.FC = () => {
       
       // Still mark as completed even if save failed
       setIsCompleted(true);
-      const quizResult = generateQuizResult(answers);
+      const quizResult = await generateQuizResult(answers);
       setResult(quizResult);
     }
   };
@@ -254,16 +285,16 @@ const WeddingQuiz: React.FC = () => {
         <CardContent className="space-y-4">
           <div className="space-y-2">
             {currentQ.options.map((option) => (
-              <label key={option} className="flex items-center space-x-2 cursor-pointer">
+              <label key={option.text} className="flex items-center space-x-2 cursor-pointer">
                 <input
                   type="radio"
                   name={currentQ.id}
-                  value={option}
-                  checked={answers[currentQ.id] === option}
-                  onChange={(e) => handleAnswer(currentQ.id, e.target.value)}
+                  value={option.text}
+                  checked={answers[currentQ.id]?.answer === option.text}
+                  onChange={() => handleAnswer(currentQ.id, option.text, option.score)}
                   className="text-wedding-olive"
                 />
-                <span>{option}</span>
+                <span>{option.text}</span>
               </label>
             ))}
           </div>

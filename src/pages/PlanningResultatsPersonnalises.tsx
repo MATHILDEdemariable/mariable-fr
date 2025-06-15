@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import Header from '@/components/Header';
@@ -142,8 +141,8 @@ const PlanningResultatsPersonnalises: React.FC = () => {
                     <p className="text-xl font-semibold">{result.status}</p>
                   </div>
                   <div className="mt-4">
-                    <p className="text-sm text-muted-foreground">Score: {result.score}/10</p>
-                    <p className="text-sm font-medium mt-1">Niveau: {level}</p>
+                    <p className="text-sm text-muted-foreground">Score: {result.score}</p>
+                    <p className="text-sm font-medium mt-1">Niveau: {result.level}</p>
                   </div>
                 </div>
 

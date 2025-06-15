@@ -1,4 +1,4 @@
-
+import { supabase } from '@/integrations/supabase/client';
 import { Json } from "@/integrations/supabase/types";
 
 export interface QuizQuestion {
@@ -20,7 +20,7 @@ export interface QuizScoring {
 }
 
 export interface UserAnswers {
-  [questionId: string]: number;
+  [questionId: string]: { answer: string, score: number };
 }
 
 export interface WeddingFAQ {
@@ -88,25 +88,42 @@ export const SECTION_ORDER = [
 ];
 
 // Generate quiz result from answers
-export const generateQuizResult = (answers: Record<string, any>): PlanningResult => {
-  // Calculate score based on answers
+export const generateQuizResult = async (answers: Record<string, { answer: string; score: number }>): Promise<PlanningResult> => {
   let totalScore = 0;
-  const answerCount = Object.keys(answers).length;
-
   Object.values(answers).forEach((answer) => {
-    if (typeof answer === 'number') {
-      totalScore += answer;
-    } else if (Array.isArray(answer)) {
-      totalScore += answer.length;
-    } else if (typeof answer === 'string') {
-      // For single choice answers, assign a score based on position
-      totalScore += 3; // Default score for string answers
-    }
+    totalScore += answer.score;
   });
 
-  const averageScore = answerCount > 0 ? Math.round(totalScore / answerCount) : 0;
+  try {
+    const { data: scoringLevels, error } = await supabase
+      .from('quiz_scoring')
+      .select('*')
+      .order('score_min');
 
-  // Determine level and status based on score
+    if (error) {
+      console.error('Error fetching quiz scoring:', error);
+      throw error;
+    }
+    
+    const levelData = scoringLevels.find(l => totalScore >= l.score_min && totalScore <= l.score_max);
+
+    if (levelData) {
+      return {
+        score: totalScore,
+        status: levelData.status,
+        objectives: Array.isArray(levelData.objectives) ? levelData.objectives.map(String) : [],
+        categories: Array.isArray(levelData.categories) ? levelData.categories.map(String) : [],
+        level: levelData.status,
+      };
+    }
+  } catch(e) {
+    console.error('Failed to generate results from Supabase, using fallback', e);
+  }
+
+  // Fallback hardcoded logic
+  console.warn('Using fallback quiz result generation logic.');
+  const answerCount = Object.keys(answers).length;
+  const averageScore = answerCount > 0 ? Math.round(totalScore / answerCount) : 0;
   let level = '';
   let status = '';
   let objectives: string[] = [];
