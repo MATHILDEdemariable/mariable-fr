@@ -204,19 +204,23 @@ const InteractiveTablePlanCanvas: React.FC<InteractiveTablePlanCanvasProps> = ({
         const objectId = obj?.get("objectId");
 
         if (objectType === "table") {
-          setTables((curTables) => curTables.filter(t => t.id !== objectId));
+          // Remove table by ID
+          const newTables = tables.filter(t => t.id !== objectId);
+          setTables(newTables);
         }
         else if (objectType === "guest") {
-          setGuests((curGuests) => curGuests.filter(g => g.name !== objectId));
+          // Remove guest by name
+          const newGuests = guests.filter(g => g.name !== objectId);
+          setGuests(newGuests);
         }
         else if (objectType === "guest-assigned") {
-          setGuests((curGuests) =>
-            curGuests.map(g =>
-              g.name === objectId
-                ? { ...g, assignedTableId: undefined, x: 28, y: 60 + 38 * curGuests.length }
-                : g
-            )
+          // Move guest back to parking zone
+          const newGuests = guests.map(g =>
+            g.name === objectId
+              ? { ...g, assignedTableId: undefined, x: 28, y: 60 + 38 * guests.length }
+              : g
           );
+          setGuests(newGuests);
         }
 
         setSelectedObjectId(null);
