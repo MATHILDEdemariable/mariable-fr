@@ -17,18 +17,8 @@ export interface PrestatairePhoto {
 
 // Export the type for use in admin components
 export type Prestataire = Database["public"]["Tables"]["prestataires_rows"]["Row"] & {
-  prestataires_photos_preprod?: Array<{
-    id: string;
-    url: string;
-    principale?: boolean;
-    ordre?: number;
-  }>;
-  prestataires_brochures?: Array<{
-    id: string;
-    url: string;
-    filename?: string;
-    type?: string;
-  }>;
+  prestataires_photos_preprod?: Database["public"]["Tables"]["prestataires_photos_preprod"]["Row"][];
+  prestataires_brochures?: Database["public"]["Tables"]["prestataires_brochures_preprod"]["Row"][];
   prestataires_meta?: Array<{
     id: number;
     meta_key?: string;
