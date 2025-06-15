@@ -28,16 +28,13 @@ const InteractiveTablePlanCanvas: React.FC<InteractiveTablePlanCanvasProps> = ({
   const parkingGuests = guests.filter(g => !g.assignedTableId);
 
   // Pour garder ref sur objets invités pour déplacement
-  // { [name]: FabricObject }
   const guestObjRefs = useRef<Record<string, any>>({});
 
   useEffect(() => {
     if (!canvasRef.current) return;
 
-    // Nettoyer s'il y avait un canvas
     if (fabricRef.current) fabricRef.current.dispose();
 
-    // Créer le canvas fabric
     const fabricCanvas = new Canvas(canvasRef.current, {
       width: CANVAS_WIDTH,
       height: CANVAS_HEIGHT,
@@ -47,7 +44,7 @@ const InteractiveTablePlanCanvas: React.FC<InteractiveTablePlanCanvasProps> = ({
     fabricRef.current = fabricCanvas;
     guestObjRefs.current = {};
 
-    // ZONE PARKING À GAUCHE (pour invités non assignés, y = distribué)
+    // ZONE PARKING À GAUCHE (pour invités non assignés)
     parkingGuests.forEach((guest, ix) => {
       const y = 70 + ix * 38;
       const x = 22;
@@ -60,7 +57,6 @@ const InteractiveTablePlanCanvas: React.FC<InteractiveTablePlanCanvasProps> = ({
         hasBorders: false,
         hasControls: false,
         selectable: true,
-        name: guest.name,
       });
       const label = new FabricText(
         guest.name.length > 9 ? guest.name.slice(0, 8) + "…" : guest.name,
@@ -77,18 +73,12 @@ const InteractiveTablePlanCanvas: React.FC<InteractiveTablePlanCanvasProps> = ({
         left: x,
         top: y,
         selectable: true,
-        name: guest.name,
-        id: guest.name,
         objectCaching: false,
-      });
+      }) as any;
+      group.set("objectType", "guest");
+      group.set("objectId", guest.name);
       guestObjRefs.current[guest.name] = group;
       fabricCanvas.add(group);
-
-      // Drag end/desaffichage
-      group.on("moving", (e: any) => {
-        // Si dans la zone des tables, tenter placement à la volée
-        // Si relâché loin du parking, assigner avec table detection plus bas
-      });
 
       group.on("mousedown", () => {
         setSelectedObjectId(guest.name);
@@ -96,8 +86,7 @@ const InteractiveTablePlanCanvas: React.FC<InteractiveTablePlanCanvasProps> = ({
     });
 
     // RENDU DES TABLES
-    tables.forEach((table, idx) => {
-      // Rectangle ou ronde
+    tables.forEach((table) => {
       let tableShape;
       if (table.type === "rectangle") {
         tableShape = new Rect({
@@ -122,7 +111,6 @@ const InteractiveTablePlanCanvas: React.FC<InteractiveTablePlanCanvasProps> = ({
         });
       }
 
-      // Label table
       const label = new FabricText(table.name, {
         left: (table.type === "rectangle") ? (table.left + 60) : (table.left + 54),
         top: (table.type === "rectangle") ? (table.top + 20) : (table.top + 25),
@@ -133,11 +121,8 @@ const InteractiveTablePlanCanvas: React.FC<InteractiveTablePlanCanvasProps> = ({
         originY: "center",
       });
 
-      // Label nombre de places
       const info = new FabricText(
-        table.type === "rectangle"
-          ? `${assignedGuests.filter(g => g.assignedTableId === table.id).length}/${table.seats}`
-          : `${assignedGuests.filter(g => g.assignedTableId === table.id).length}/${table.seats}`,
+        `${assignedGuests.filter(g => g.assignedTableId === table.id).length}/${table.seats}`,
         {
           left: (table.type === "rectangle") ? (table.left + 60) : (table.left + 54),
           top: (table.type === "rectangle") ? (table.top + 57) : (table.top + 70),
@@ -148,33 +133,29 @@ const InteractiveTablePlanCanvas: React.FC<InteractiveTablePlanCanvasProps> = ({
         }
       );
 
-      // Group Fabric
       const tableGroup = new Group([tableShape, label, info], {
         left: table.left,
         top: table.top,
         selectable: true,
-        name: table.id,
-        id: table.id,
         objectCaching: false,
-      });
+      }) as any;
+      tableGroup.set("objectType", "table");
+      tableGroup.set("objectId", table.id);
       tableGroup.on("mousedown", () => setSelectedObjectId(table.id));
       fabricCanvas.add(tableGroup);
     });
 
     // RENDU INVITÉS ASSIGNÉS SUR LES TABLES
-    tables.forEach((table, idx) => {
+    tables.forEach((table) => {
       const assigned = assignedGuests.filter(g => g.assignedTableId === table.id);
       const nSeats = table.seats;
       assigned.forEach((guest, seatIndex) => {
-        // Placement en arc ou cercle selon forme
-        let seatX = 0; let seatY = 0;
+        let seatX = 0, seatY = 0;
         if (table.type === "rectangle") {
-          // Répartition semi-circulaire au-dessus
           const angle = (seatIndex - (nSeats - 1) / 2) * (Math.PI / (nSeats));
           seatX = table.left + 60 + Math.cos(angle) * 50;
           seatY = table.top - 20 + Math.sin(angle) * 8;
         } else {
-          // Ronde : distribution sur cercle autour du centre
           const angle = ((2 * Math.PI) / nSeats) * seatIndex - Math.PI / 2;
           seatX = table.left + 54 + Math.cos(angle) * 52;
           seatY = table.top + 54 + Math.sin(angle) * 52;
@@ -189,7 +170,6 @@ const InteractiveTablePlanCanvas: React.FC<InteractiveTablePlanCanvasProps> = ({
           hasBorders: false,
           hasControls: false,
           selectable: true,
-          name: guest.name,
         });
         const label = new FabricText(
           guest.name.length > 7 ? guest.name.slice(0, 6) + "…" : guest.name,
@@ -206,38 +186,39 @@ const InteractiveTablePlanCanvas: React.FC<InteractiveTablePlanCanvasProps> = ({
           left: seatX - 7,
           top: seatY - 15,
           selectable: true,
-          name: guest.name,
-          id: guest.name,
           objectCaching: false,
-        });
+        }) as any;
+        group.set("objectType", "guest-assigned");
+        group.set("objectId", guest.name);
         group.on("mousedown", () => setSelectedObjectId(guest.name));
-        // Drag pour remettre le guest en parking
-        group.on("mouseup", () => {
-          // Si drag ending hors table, le remettre au parking
-          // Ici simplification: double clic ou touche del pour enlever (plus facile)
-        });
         fabricCanvas.add(group);
       });
     });
 
     // INTERACTIONS - suppression via touche Del/Suppr
     const handleKeydown = (ev: KeyboardEvent) => {
-      if (["Delete", "Backspace"].includes(ev.key) && (fabricCanvas.getActiveObject())) {
-        const obj = fabricCanvas.getActiveObject();
-        // Si table
-        if (tables.some(t => t.id === obj?.name)) {
-          setTables(ts => ts.filter(t => t.id !== obj.name));
+      if (["Delete", "Backspace"].includes(ev.key) && fabricCanvas.getActiveObject()) {
+        const obj = fabricCanvas.getActiveObject() as any;
+        // Retrieve type/id
+        const objectType = obj?.get("objectType");
+        const objectId = obj?.get("objectId");
+
+        if (objectType === "table") {
+          setTables((curTables) => curTables.filter(t => t.id !== objectId));
         }
-        // Si guest en parking
-        else if (parkingGuests.some(g => g.name === obj?.name)) {
-          setGuests(gs => gs.filter(g => g.name !== obj.name));
+        else if (objectType === "guest") {
+          setGuests((curGuests) => curGuests.filter(g => g.name !== objectId));
         }
-        // Si guest sur table
-        else if (assignedGuests.some(g => g.name === obj?.name)) {
-          setGuests(gs => gs.map(g =>
-            g.name === obj.name ? { ...g, assignedTableId: undefined, x: 28, y: 60 + 38 * gs.length } : g
-          ));
+        else if (objectType === "guest-assigned") {
+          setGuests((curGuests) =>
+            curGuests.map(g =>
+              g.name === objectId
+                ? { ...g, assignedTableId: undefined, x: 28, y: 60 + 38 * curGuests.length }
+                : g
+            )
+          );
         }
+
         setSelectedObjectId(null);
         fabricCanvas.discardActiveObject();
         fabricCanvas.renderAll();
@@ -245,7 +226,6 @@ const InteractiveTablePlanCanvas: React.FC<InteractiveTablePlanCanvasProps> = ({
     };
     document.addEventListener("keydown", handleKeydown);
 
-    // Clean up
     return () => {
       fabricCanvas.dispose();
       document.removeEventListener("keydown", handleKeydown);
