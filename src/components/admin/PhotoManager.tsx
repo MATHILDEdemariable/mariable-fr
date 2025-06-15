@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Loader2, Trash2, Star, GripVertical } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
 import { DragDropContext, Droppable, Draggable, DropResult } from "react-beautiful-dnd";
+import { Database } from "@/integrations/supabase/types";
 
 interface PhotoManagerProps {
   prestataire: Prestataire | null;

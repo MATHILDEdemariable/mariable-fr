@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Prestataire } from "./types";
 import BasicInfoForm from "./BasicInfoForm";
@@ -53,12 +52,12 @@ const UnifiedPrestataireEditForm: React.FC<UnifiedPrestataireEditFormProps> = ({
 
       {/* Photos */}
       <section className="bg-muted rounded-lg p-4 mb-2">
-        <PhotoManager prestataire={prestataire} />
+        <PhotoManager prestataire={prestataire} onUpdate={onSuccess} />
       </section>
 
       {/* Brochures */}
       <section className="bg-muted rounded-lg p-4 mb-2">
-        <BrochureManager prestataire={prestataire} />
+        <BrochureManager prestataire={prestataire} onUpdate={onSuccess} />
       </section>
 
       <div className="flex justify-end gap-3 pt-2 sticky bottom-2 bg-white/70 z-20">

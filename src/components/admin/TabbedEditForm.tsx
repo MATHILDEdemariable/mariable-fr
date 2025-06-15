@@ -46,10 +46,10 @@ const TabbedEditForm: React.FC<TabbedEditFormProps> = ({ prestataire, onClose, o
         <DisplayOptionsForm prestataire={prestataire} />
       </TabsContent>
       <TabsContent value="photos">
-        <PhotoManager prestataire={prestataire} />
+        <PhotoManager prestataire={prestataire} onUpdate={onSuccess} />
       </TabsContent>
       <TabsContent value="brochures">
-        <BrochureManager prestataire={prestataire} />
+        <BrochureManager prestataire={prestataire} onUpdate={onSuccess} />
       </TabsContent>
     </Tabs>
   );
