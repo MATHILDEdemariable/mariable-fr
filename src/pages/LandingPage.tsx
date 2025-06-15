@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
@@ -16,6 +15,7 @@ import {
 import { Card, CardContent } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { supabase } from '@/integrations/supabase/client';
+import SEO from '@/components/SEO';
 
 // Composant pour l'effet machine à écrire du titre principal
 const TypewriterEffect = ({ text }: { text: string }) => {
@@ -220,12 +220,29 @@ const LandingPage = () => {
     }
   ];
 
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": faqItems.map(item => ({
+      "@type": "Question",
+      "name": item.question,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": item.answer
+      }
+    }))
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-white">
-      <Helmet>
-        <title>Mariable - Assistant virtuel pour l'organisation de votre mariage</title>
-        <meta name="description" content="Organisez votre mariage sans stress avec Mariable, l'assistant virtuel qui s'occupe de tout." />
-      </Helmet>
+      <SEO
+        title="Mariable - Assistant virtuel pour l'organisation de votre mariage"
+        description="Organisez votre mariage sans stress avec Mariable, l'assistant virtuel qui s'occupe de tout."
+      >
+        <script type="application/ld+json">
+          {JSON.stringify(faqSchema)}
+        </script>
+      </SEO>
 
       <Header />
 
