@@ -218,7 +218,7 @@ const ProfessionalRegistrationForm = () => {
           description: values.description || null,
           accord_referencement: values.accord_referencement,
           accord_cgv: values.accord_cgv,
-          visible: false, // Le prestataire n'est pas visible par défaut
+          visible: false,
           featured: false,
           description_more: null,
           partner: false,
@@ -227,7 +227,7 @@ const ProfessionalRegistrationForm = () => {
           third_price_package: null,
           slug: slug
         })
-        .select("id")
+        .select("*")
         .single();
 
       if (insertError) throw insertError;
@@ -235,6 +235,21 @@ const ProfessionalRegistrationForm = () => {
       // Si un fichier a été sélectionné, le télécharger
       if (selectedFile && prestataire) {
         await uploadBrochure(prestataire.id);
+      }
+
+      // Envoyer notification email
+      try {
+        const { error: notifyError } = await supabase.functions.invoke('notifyNewProfessional', {
+          body: { record: prestataire }
+        });
+        
+        if (notifyError) {
+          console.error('Erreur notification email:', notifyError);
+          // Ne pas bloquer l'inscription si l'email échoue
+        }
+      } catch (emailError) {
+        console.error('Erreur lors de l\'envoi de la notification:', emailError);
+        // Ne pas bloquer l'inscription si l'email échoue
       }
 
       toast({
