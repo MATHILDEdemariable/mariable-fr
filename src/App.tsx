@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -58,6 +57,7 @@ import SitemapPage from "./pages/Sitemap";
 import BlogPage from "./pages/Blog";
 import AdminBlog from "./pages/admin/Blog";
 import BlogArticlePage from './pages/BlogArticle';
+import FormulaireProfessionnels from "./pages/admin/FormulaireProfessionnels";
 
 // Initialize the query client
 const queryClient = new QueryClient();
@@ -175,6 +175,7 @@ const App = () => {
                 <Route path="/admin/prestataires" element={<PrestataireAdmin />} />
                 <Route path="/admin/blog" element={<AdminBlog />} />
                 <Route path="/admin/form" element={<FormAdmin />} />
+                <Route path="/admin/formulaires-professionnels" element={<FormulaireProfessionnels />} />
                 <Route path="/admin/reservations-jour-m" element={<ReservationsJourM />} />
                 
                 {/* Prestataire Routes */}
