@@ -597,7 +597,9 @@ export type Database = {
           capacite_invites: number | null
           categorie: Database["public"]["Enums"]["prestataire_categorie"] | null
           categorie_lieu: string | null
+          commentaires_internes: string | null
           created_at: string
+          date_derniere_contact: string | null
           description: string | null
           email: string | null
           hebergement_inclus: boolean | null
@@ -614,8 +616,10 @@ export type Database = {
           responsable_nom: string | null
           siret: string | null
           site_web: string | null
+          status_crm: Database["public"]["Enums"]["prestataire_status"] | null
           styles: Json | null
           telephone: string | null
+          timeline_actions: Json | null
           updated_at: string
           ville: string | null
           visible: boolean | null
@@ -629,7 +633,9 @@ export type Database = {
             | Database["public"]["Enums"]["prestataire_categorie"]
             | null
           categorie_lieu?: string | null
+          commentaires_internes?: string | null
           created_at?: string
+          date_derniere_contact?: string | null
           description?: string | null
           email?: string | null
           hebergement_inclus?: boolean | null
@@ -646,8 +652,10 @@ export type Database = {
           responsable_nom?: string | null
           siret?: string | null
           site_web?: string | null
+          status_crm?: Database["public"]["Enums"]["prestataire_status"] | null
           styles?: Json | null
           telephone?: string | null
+          timeline_actions?: Json | null
           updated_at?: string
           ville?: string | null
           visible?: boolean | null
@@ -661,7 +669,9 @@ export type Database = {
             | Database["public"]["Enums"]["prestataire_categorie"]
             | null
           categorie_lieu?: string | null
+          commentaires_internes?: string | null
           created_at?: string
+          date_derniere_contact?: string | null
           description?: string | null
           email?: string | null
           hebergement_inclus?: boolean | null
@@ -678,8 +688,10 @@ export type Database = {
           responsable_nom?: string | null
           siret?: string | null
           site_web?: string | null
+          status_crm?: Database["public"]["Enums"]["prestataire_status"] | null
           styles?: Json | null
           telephone?: string | null
+          timeline_actions?: Json | null
           updated_at?: string
           ville?: string | null
           visible?: boolean | null
@@ -1069,6 +1081,44 @@ export type Database = {
           visible?: boolean | null
         }
         Relationships: []
+      }
+      prestataires_timeline: {
+        Row: {
+          created_at: string
+          date_action: string
+          description: string
+          id: string
+          prestataire_id: string | null
+          type_action: string
+          utilisateur: string | null
+        }
+        Insert: {
+          created_at?: string
+          date_action?: string
+          description: string
+          id?: string
+          prestataire_id?: string | null
+          type_action: string
+          utilisateur?: string | null
+        }
+        Update: {
+          created_at?: string
+          date_action?: string
+          description?: string
+          id?: string
+          prestataire_id?: string | null
+          type_action?: string
+          utilisateur?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "prestataires_timeline_prestataire_id_fkey"
+            columns: ["prestataire_id"]
+            isOneToOne: false
+            referencedRelation: "prestataires"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
@@ -1702,6 +1752,16 @@ export type Database = {
         | "Fleuriste"
         | "Robe de mariée"
         | "Décoration"
+      prestataire_status:
+        | "acquisition"
+        | "verification"
+        | "a_valider"
+        | "valide"
+        | "en_attente"
+        | "actif"
+        | "inactif"
+        | "blackliste"
+        | "exclu"
       quiz_section:
         | "Organisation Générale"
         | "Réception"
@@ -1857,6 +1917,17 @@ export const Constants = {
         "Fleuriste",
         "Robe de mariée",
         "Décoration",
+      ],
+      prestataire_status: [
+        "acquisition",
+        "verification",
+        "a_valider",
+        "valide",
+        "en_attente",
+        "actif",
+        "inactif",
+        "blackliste",
+        "exclu",
       ],
       quiz_section: [
         "Organisation Générale",

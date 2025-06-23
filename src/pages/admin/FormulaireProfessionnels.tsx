@@ -6,7 +6,7 @@ import { Session } from "@supabase/supabase-js";
 import { Database } from "@/integrations/supabase/types";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/toaster";
-import FormulaireProfessionnelsAdmin from "@/components/admin/FormulaireProfessionnelsAdmin";
+import FormulaireProfessionnelsCRM from "@/components/admin/FormulaireProfessionnelsCRM";
 import AdminPasswordProtection from "@/components/admin/AdminPasswordProtection";
 
 type SupabaseAdminUser = Database["public"]["Tables"]["admin_users"]["Row"];
@@ -78,11 +78,11 @@ const AdminFormulaireProfessionnels = () => {
       <div className="min-h-screen flex items-center justify-center px-4">
         {isAdmin ? (
           <div className="w-full max-w-7xl">
-            <h1 className="text-2xl font-bold mb-4 text-center mt-12">Administration des Formulaires Professionnels</h1>
+            <h1 className="text-2xl font-bold mb-4 text-center mt-12">CRM - Gestion des Formulaires Professionnels</h1>
             <p className="text-lg text-center mb-6">
-              Gérez et examinez les candidatures des professionnels depuis cette interface.
+              Interface CRM complète pour gérer vos prestataires et leur cycle de vie commercial.
             </p>
-            <FormulaireProfessionnelsAdmin />
+            <FormulaireProfessionnelsCRM />
             <Toaster />
           </div>
         ) : (
