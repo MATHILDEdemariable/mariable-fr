@@ -10,7 +10,7 @@ const SearchBar = () => {
   const navigate = useNavigate();
 
   const handleSearch = () => {
-    navigate(`/recherche?q=${encodeURIComponent(searchQuery)}`);
+    navigate(`/selection?q=${encodeURIComponent(searchQuery)}`);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {

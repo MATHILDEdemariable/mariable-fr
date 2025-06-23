@@ -1,9 +1,8 @@
 
-import React, { useState } from 'react';
-import { Input } from '@/components/ui/input';
+import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Search, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,41 +11,26 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 interface BlogSearchAndFiltersProps {
-  onSearchChange: (search: string) => void;
   onCategoryFilter: (category: string | null) => void;
   onTagFilter: (tag: string | null) => void;
   selectedCategory: string | null;
   selectedTag: string | null;
   availableCategories: string[];
   availableTags: string[];
-  searchTerm: string;
 }
 
 const BlogSearchAndFilters: React.FC<BlogSearchAndFiltersProps> = ({
-  onSearchChange,
   onCategoryFilter,
   onTagFilter,
   selectedCategory,
   selectedTag,
   availableCategories,
   availableTags,
-  searchTerm,
 }) => {
   return (
     <div className="fixed top-20 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b shadow-sm">
       <div className="max-w-4xl mx-auto p-4">
-        <div className="flex flex-col md:flex-row gap-4 items-center">
-          {/* Barre de recherche */}
-          <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-            <Input
-              placeholder="Rechercher dans les articles..."
-              value={searchTerm}
-              onChange={(e) => onSearchChange(e.target.value)}
-              className="pl-10"
-            />
-          </div>
-
+        <div className="flex flex-col md:flex-row gap-4 items-center justify-center">
           {/* Filtres par catégorie */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
