@@ -1,4 +1,5 @@
-import React, { useEffect } from "react";
+
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -19,6 +20,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { toast } from "sonner";
 import { useMutation } from "@tanstack/react-query";
 import ImageUploader from "./ImageUploader";
+import { Badge } from "@/components/ui/badge";
+import { X } from "lucide-react";
 
 const formSchema = z.object({
   title: z.string().min(1, "Le titre est requis."),
@@ -30,6 +33,8 @@ const formSchema = z.object({
   meta_description: z.string().optional(),
   h1_title: z.string().optional(),
   status: z.enum(["draft", "published"]),
+  category: z.string().optional(),
+  tags: z.array(z.string()).optional(),
 });
 
 type BlogPostFormValues = z.infer<typeof formSchema>;
@@ -46,6 +51,9 @@ const slugify = (text: string) =>
     .replace(/--+/g, '-');
 
 const BlogPostForm: React.FC<{ post: BlogPost | null; onSuccess: () => void }> = ({ post, onSuccess }) => {
+  const [newTag, setNewTag] = useState("");
+  const [tags, setTags] = useState<string[]>([]);
+
   const form = useForm<BlogPostFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -58,6 +66,8 @@ const BlogPostForm: React.FC<{ post: BlogPost | null; onSuccess: () => void }> =
       meta_description: "",
       h1_title: "",
       status: "draft",
+      category: "",
+      tags: [],
     },
   });
 
@@ -80,6 +90,13 @@ const BlogPostForm: React.FC<{ post: BlogPost | null; onSuccess: () => void }> =
 
   useEffect(() => {
     if (post) {
+      // Gérer les tags depuis la base de données
+      const postTags = Array.isArray(post.tags) 
+        ? post.tags.filter(tag => typeof tag === 'string') as string[]
+        : [];
+      
+      setTags(postTags);
+      
       reset({
         title: post.title,
         subtitle: post.subtitle ?? "",
@@ -90,8 +107,11 @@ const BlogPostForm: React.FC<{ post: BlogPost | null; onSuccess: () => void }> =
         meta_description: post.meta_description ?? "",
         h1_title: post.h1_title ?? "",
         status: post.status,
+        category: post.category ?? "",
+        tags: postTags,
       });
     } else {
+      setTags([]);
       reset({
         title: "",
         subtitle: "",
@@ -102,14 +122,32 @@ const BlogPostForm: React.FC<{ post: BlogPost | null; onSuccess: () => void }> =
         meta_description: "",
         h1_title: "",
         status: "draft",
+        category: "",
+        tags: [],
       });
     }
   }, [post, reset]);
+
+  const addTag = () => {
+    if (newTag.trim() && !tags.includes(newTag.trim())) {
+      const updatedTags = [...tags, newTag.trim()];
+      setTags(updatedTags);
+      setValue("tags", updatedTags);
+      setNewTag("");
+    }
+  };
+
+  const removeTag = (tagToRemove: string) => {
+    const updatedTags = tags.filter(tag => tag !== tagToRemove);
+    setTags(updatedTags);
+    setValue("tags", updatedTags);
+  };
 
   const mutation = useMutation({
     mutationFn: async (values: BlogPostFormValues) => {
       const dataToSubmit: BlogPostInsert | BlogPostUpdate = {
         ...values,
+        tags: tags, // Utiliser les tags du state
         published_at: values.status === "published" && (!post || !post.published_at)
             ? new Date().toISOString()
             : post?.published_at,
@@ -174,6 +212,46 @@ const BlogPostForm: React.FC<{ post: BlogPost | null; onSuccess: () => void }> =
             </FormItem>
           )}
         />
+        <FormField
+          control={control}
+          name="category"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Catégorie</FormLabel>
+              <FormControl>
+                <Input placeholder="Ex: Tendances, Conseils, DIY..." {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <div className="space-y-2">
+          <Label>Tags/Thèmes</Label>
+          <div className="flex gap-2">
+            <Input
+              placeholder="Ajouter un tag..."
+              value={newTag}
+              onChange={(e) => setNewTag(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
+            />
+            <Button type="button" onClick={addTag} variant="outline">
+              Ajouter
+            </Button>
+          </div>
+          {tags.length > 0 && (
+            <div className="flex flex-wrap gap-2 mt-2">
+              {tags.map((tag) => (
+                <Badge key={tag} variant="secondary" className="cursor-pointer">
+                  {tag}
+                  <X 
+                    className="h-3 w-3 ml-1" 
+                    onClick={() => removeTag(tag)}
+                  />
+                </Badge>
+              ))}
+            </div>
+          )}
+        </div>
         <FormField
           control={control}
           name="content"

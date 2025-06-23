@@ -7,6 +7,7 @@ import { Database } from "@/integrations/supabase/types";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/toaster";
 import FormulaireProfessionnelsAdmin from "@/components/admin/FormulaireProfessionnelsAdmin";
+import AdminPasswordProtection from "@/components/admin/AdminPasswordProtection";
 
 type SupabaseAdminUser = Database["public"]["Tables"]["admin_users"]["Row"];
 
@@ -73,25 +74,27 @@ const AdminFormulaireProfessionnels = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4">
-      {isAdmin ? (
-        <div className="w-full max-w-7xl">
-          <h1 className="text-2xl font-bold mb-4 text-center mt-12">Administration des Formulaires Professionnels</h1>
-          <p className="text-lg text-center mb-6">
-            Gérez et examinez les candidatures des professionnels depuis cette interface.
-          </p>
-          <FormulaireProfessionnelsAdmin />
-          <Toaster />
-        </div>
-      ) : (
-        <div className="text-center p-8 border rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-4">Accès restreint</h2>
-          <p className="text-muted-foreground">
-            Vous devez être connecté avec un compte administrateur pour accéder à cette page.
-          </p>
-        </div>
-      )}
-    </div>
+    <AdminPasswordProtection>
+      <div className="min-h-screen flex items-center justify-center px-4">
+        {isAdmin ? (
+          <div className="w-full max-w-7xl">
+            <h1 className="text-2xl font-bold mb-4 text-center mt-12">Administration des Formulaires Professionnels</h1>
+            <p className="text-lg text-center mb-6">
+              Gérez et examinez les candidatures des professionnels depuis cette interface.
+            </p>
+            <FormulaireProfessionnelsAdmin />
+            <Toaster />
+          </div>
+        ) : (
+          <div className="text-center p-8 border rounded-lg shadow-md">
+            <h2 className="text-xl font-semibold mb-4">Accès restreint</h2>
+            <p className="text-muted-foreground">
+              Vous devez être connecté avec un compte administrateur pour accéder à cette page.
+            </p>
+          </div>
+        )}
+      </div>
+    </AdminPasswordProtection>
   );
 };
 
