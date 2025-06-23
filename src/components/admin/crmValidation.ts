@@ -55,16 +55,16 @@ export const validateAndCastStatus = (value: string): PrestataireCrmStatus | nul
   return null;
 };
 
-export const validateAndCastRegion = (value: string): PrestataireRegion => {
+export const validateAndCastRegion = (value: string): string | null => {
   if (validRegionValues.includes(value)) {
-    return value as PrestataireRegion;
+    return value;
   }
   return null;
 };
 
-export const validateAndCastCategorie = (value: string): PrestataireCategorie => {
+export const validateAndCastCategorie = (value: string): string | null => {
   if (validCategorieValues.includes(value)) {
-    return value as PrestataireCategorie;
+    return value;
   }
   return null;
 };
