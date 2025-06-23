@@ -3,21 +3,22 @@ import React, { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { BlogPost } from '@/types/blog';
-import SEO from '@/components/SEO';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
 import BlogPostCard from '@/components/blog/BlogPostCard';
 import BlogSearchAndFilters from '@/components/blog/BlogSearchAndFilters';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
+import { Button } from '@/components/ui/button';
 
-const fetchBlogPosts = async (): Promise<BlogPost[]> => {
+const fetchPublishedBlogPosts = async (): Promise<BlogPost[]> => {
   const { data, error } = await supabase
-    .from('blog_posts')
-    .select('*')
+    .from("blog_posts")
+    .select("*")
     .eq('status', 'published')
-    .order('published_at', { ascending: false });
+    .order("order_index", { ascending: true })
+    .order("published_at", { ascending: false });
 
   if (error) {
-    console.error('Error fetching blog posts:', error);
+    console.error("Error fetching published blog posts:", error);
     throw new Error(error.message);
   }
 
@@ -25,162 +26,115 @@ const fetchBlogPosts = async (): Promise<BlogPost[]> => {
 };
 
 const BlogPage = () => {
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [selectedTag, setSelectedTag] = useState<string | null>(null);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+    const [selectedTag, setSelectedTag] = useState<string | null>(null);
 
-  const { data: posts, isLoading, error } = useQuery({
-    queryKey: ['blog_posts'],
-    queryFn: fetchBlogPosts,
-  });
+    const { data: posts, isLoading, error } = useQuery({
+        queryKey: ['published_blog_posts'],
+        queryFn: fetchPublishedBlogPosts,
+    });
 
-  // Extract unique categories and tags
-  const { availableCategories, availableTags } = useMemo(() => {
-    if (!posts) return { availableCategories: [], availableTags: [] };
+    // Extraire les catégories et tags disponibles
+    const availableCategories = useMemo(() => {
+        if (!posts) return [];
+        const categories = posts
+            .map(post => post.category)
+            .filter(Boolean)
+            .filter((category, index, arr) => arr.indexOf(category) === index);
+        return categories;
+    }, [posts]);
 
-    const categories = new Set<string>();
-    const tags = new Set<string>();
+    const availableTags = useMemo(() => {
+        if (!posts) return [];
+        const allTags = posts
+            .flatMap(post => {
+                // Gérer le type Json[] de Supabase
+                if (Array.isArray(post.tags)) {
+                    return post.tags.filter(tag => typeof tag === 'string') as string[];
+                }
+                return [];
+            })
+            .filter(Boolean)
+            .filter((tag, index, arr) => arr.indexOf(tag) === index);
+        return allTags;
+    }, [posts]);
 
-    posts.forEach(post => {
-      if (post.category) {
-        categories.add(post.category);
-      }
-      if (post.tags && Array.isArray(post.tags)) {
-        post.tags.forEach(tag => {
-          if (typeof tag === 'string') {
-            tags.add(tag);
-          }
+    // Filtrer les posts selon les critères de recherche
+    const filteredPosts = useMemo(() => {
+        if (!posts) return [];
+        
+        return posts.filter(post => {
+            // Filtre par terme de recherche
+            const matchesSearch = !searchTerm || 
+                post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                (post.subtitle && post.subtitle.toLowerCase().includes(searchTerm.toLowerCase())) ||
+                (post.content && post.content.toLowerCase().includes(searchTerm.toLowerCase()));
+            
+            // Filtre par catégorie
+            const matchesCategory = !selectedCategory || post.category === selectedCategory;
+            
+            // Filtre par tag - gérer le type Json[]
+            const matchesTag = !selectedTag || 
+                (Array.isArray(post.tags) && 
+                 post.tags.some(tag => typeof tag === 'string' && tag === selectedTag));
+            
+            return matchesSearch && matchesCategory && matchesTag;
         });
-      }
-    });
+    }, [posts, searchTerm, selectedCategory, selectedTag]);
 
-    return {
-      availableCategories: Array.from(categories).sort(),
-      availableTags: Array.from(tags).sort()
-    };
-  }, [posts]);
+    if (isLoading) {
+        return <div className="h-screen w-screen flex items-center justify-center">Chargement du blog...</div>
+    }
 
-  // Filter posts based on selected filters
-  const filteredPosts = useMemo(() => {
-    if (!posts) return [];
+    if (error) {
+        return <div className="h-screen w-screen flex items-center justify-center">Erreur de chargement du blog.</div>
+    }
 
-    return posts.filter(post => {
-      const matchesCategory = !selectedCategory || post.category === selectedCategory;
-      const matchesTag = !selectedTag || (
-        post.tags && 
-        Array.isArray(post.tags) && 
-        post.tags.some(tag => typeof tag === 'string' && tag === selectedTag)
-      );
-
-      return matchesCategory && matchesTag;
-    });
-  }, [posts, selectedCategory, selectedTag]);
-
-  if (error) {
     return (
-      <div className="min-h-screen flex flex-col">
-        <SEO 
-          title="Blog - Mariable"
-          description="Découvrez nos conseils et inspirations pour votre mariage"
-        />
-        <Header />
-        <main className="flex-1 flex items-center justify-center">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold mb-4">Erreur de chargement</h1>
-            <p className="text-muted-foreground">Impossible de charger les articles du blog.</p>
-          </div>
-        </main>
-        <Footer />
-      </div>
-    );
-  }
-
-  return (
-    <div className="min-h-screen flex flex-col">
-      <SEO 
-        title="Blog - Mariable"
-        description="Découvrez nos conseils et inspirations pour votre mariage"
-      />
-      <Header />
-      
-      <main className="flex-1">
-        {/* Hero Section */}
-        <section className="bg-gradient-to-br from-wedding-light via-white to-wedding-sage/20 py-16">
-          <div className="max-w-4xl mx-auto px-4 text-center">
-            <h1 className="text-4xl md:text-5xl font-bold text-wedding-olive mb-6">
-              Blog Mariable
-            </h1>
-            <p className="text-lg text-wedding-dark/80 max-w-2xl mx-auto">
-              Découvrez nos conseils d'experts, inspirations et tendances pour organiser le mariage de vos rêves
-            </p>
-          </div>
-        </section>
-
-        {/* Filtres */}
-        <BlogSearchAndFilters
-          onCategoryFilter={setSelectedCategory}
-          onTagFilter={setSelectedTag}
-          selectedCategory={selectedCategory}
-          selectedTag={selectedTag}
-          availableCategories={availableCategories}
-          availableTags={availableTags}
-        />
-
-        {/* Articles */}
-        <section className="py-12 pt-32">
-          <div className="max-w-6xl mx-auto px-4">
-            {isLoading ? (
-              <div className="flex justify-center items-center py-12">
-                <div className="text-center">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-wedding-olive mx-auto mb-4"></div>
-                  <p className="text-muted-foreground">Chargement des articles...</p>
-                </div>
-              </div>
-            ) : filteredPosts.length === 0 ? (
-              <div className="text-center py-12">
-                <h2 className="text-2xl font-semibold mb-4">
-                  {selectedCategory || selectedTag ? 'Aucun article trouvé' : 'Aucun article publié'}
-                </h2>
-                <p className="text-muted-foreground mb-6">
-                  {selectedCategory || selectedTag 
-                    ? 'Essayez de modifier vos filtres pour voir plus d\'articles.'
-                    : 'Revenez bientôt pour découvrir nos premiers articles !'
-                  }
-                </p>
-                {(selectedCategory || selectedTag) && (
-                  <div className="flex gap-2 justify-center">
-                    {selectedCategory && (
-                      <button
-                        onClick={() => setSelectedCategory(null)}
-                        className="px-4 py-2 bg-wedding-olive text-white rounded-md hover:bg-wedding-olive/90 transition-colors"
-                      >
-                        Effacer le filtre catégorie
-                      </button>
-                    )}
-                    {selectedTag && (
-                      <button
-                        onClick={() => setSelectedTag(null)}
-                        className="px-4 py-2 bg-wedding-olive text-white rounded-md hover:bg-wedding-olive/90 transition-colors"
-                      >
-                        Effacer le filtre thème
-                      </button>
-                    )}
-                  </div>
+        <>
+            <Header />
+            <BlogSearchAndFilters
+                onSearchChange={setSearchTerm}
+                onCategoryFilter={setSelectedCategory}
+                onTagFilter={setSelectedTag}
+                selectedCategory={selectedCategory}
+                selectedTag={selectedTag}
+                availableCategories={availableCategories}
+                availableTags={availableTags}
+                searchTerm={searchTerm}
+            />
+            <main className="h-screen w-full snap-y snap-mandatory overflow-y-scroll overflow-x-hidden" style={{ paddingTop: '120px' }}>
+                {filteredPosts && filteredPosts.length > 0 ? (
+                    filteredPosts.map(post => <BlogPostCard key={post.id} post={post} />)
+                ) : (
+                    <div className="h-screen w-screen flex items-center justify-center snap-start">
+                        <div className="text-center">
+                            <p className="text-xl mb-4">
+                                {searchTerm || selectedCategory || selectedTag 
+                                    ? "Aucun article ne correspond à vos critères de recherche." 
+                                    : "Aucun article à afficher pour le moment."
+                                }
+                            </p>
+                            {(searchTerm || selectedCategory || selectedTag) && (
+                                <Button 
+                                    onClick={() => {
+                                        setSearchTerm('');
+                                        setSelectedCategory(null);
+                                        setSelectedTag(null);
+                                    }}
+                                    variant="outline"
+                                >
+                                    Effacer les filtres
+                                </Button>
+                            )}
+                        </div>
+                    </div>
                 )}
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {filteredPosts.map((post) => (
-                  <BlogPostCard key={post.id} post={post} />
-                ))}
-              </div>
-            )}
-          </div>
-        </section>
-      </main>
-
-      <Footer />
-    </div>
-  );
+            </main>
+            <Footer />
+        </>
+    );
 };
 
 export default BlogPage;

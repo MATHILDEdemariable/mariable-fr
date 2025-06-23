@@ -35,7 +35,6 @@ const formSchema = z.object({
   status: z.enum(["draft", "published"]),
   category: z.string().optional(),
   tags: z.array(z.string()).optional(),
-  created_at: z.string().optional(),
 });
 
 type BlogPostFormValues = z.infer<typeof formSchema>;
@@ -50,11 +49,6 @@ const slugify = (text: string) =>
     .replace(/\s+/g, '-')
     .replace(/[^\w-]+/g, '')
     .replace(/--+/g, '-');
-
-const formatDateForInput = (dateString: string | null) => {
-  if (!dateString) return new Date().toISOString().slice(0, 16);
-  return new Date(dateString).toISOString().slice(0, 16);
-};
 
 const BlogPostForm: React.FC<{ post: BlogPost | null; onSuccess: () => void }> = ({ post, onSuccess }) => {
   const [newTag, setNewTag] = useState("");
@@ -74,7 +68,6 @@ const BlogPostForm: React.FC<{ post: BlogPost | null; onSuccess: () => void }> =
       status: "draft",
       category: "",
       tags: [],
-      created_at: formatDateForInput(null),
     },
   });
 
@@ -116,7 +109,6 @@ const BlogPostForm: React.FC<{ post: BlogPost | null; onSuccess: () => void }> =
         status: post.status,
         category: post.category ?? "",
         tags: postTags,
-        created_at: formatDateForInput(post.created_at),
       });
     } else {
       setTags([]);
@@ -132,7 +124,6 @@ const BlogPostForm: React.FC<{ post: BlogPost | null; onSuccess: () => void }> =
         status: "draft",
         category: "",
         tags: [],
-        created_at: formatDateForInput(null),
       });
     }
   }, [post, reset]);
@@ -157,7 +148,6 @@ const BlogPostForm: React.FC<{ post: BlogPost | null; onSuccess: () => void }> =
       const dataToSubmit: BlogPostInsert | BlogPostUpdate = {
         ...values,
         tags: tags, // Utiliser les tags du state
-        created_at: values.created_at ? new Date(values.created_at).toISOString() : undefined,
         published_at: values.status === "published" && (!post || !post.published_at)
             ? new Date().toISOString()
             : post?.published_at,
@@ -204,22 +194,6 @@ const BlogPostForm: React.FC<{ post: BlogPost | null; onSuccess: () => void }> =
               <FormLabel>Slug (URL)</FormLabel>
               <FormControl>
                 <Input placeholder="titre-de-l-article" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={control}
-          name="created_at"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Date de création</FormLabel>
-              <FormControl>
-                <Input 
-                  type="datetime-local" 
-                  {...field} 
-                />
               </FormControl>
               <FormMessage />
             </FormItem>
