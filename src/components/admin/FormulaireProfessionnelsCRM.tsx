@@ -28,6 +28,14 @@ import { toast } from 'sonner';
 import FormulaireProfessionnelDetailModal from './FormulaireProfessionnelDetailModal';
 import TimelineModal from './TimelineModal';
 import ContactModal from './ContactModal';
+import { 
+  validateAndCastStatus,
+  validateAndCastRegion,
+  validateAndCastCategorie,
+  validStatusValues,
+  validRegionValues,
+  validCategorieValues
+} from './crmValidation';
 
 type FormulaireProfessionnel = Database['public']['Tables']['prestataires']['Row'];
 type PrestataireCrmStatus = Database['public']['Enums']['prestataire_status'];
@@ -44,17 +52,6 @@ const statusOptions: { value: PrestataireCrmStatus; label: string; color: string
   { value: 'inactif', label: 'Inactif', color: 'bg-gray-100 text-gray-800' },
   { value: 'blackliste', label: 'Blacklisté', color: 'bg-red-100 text-red-800' },
   { value: 'exclu', label: 'Exclu', color: 'bg-red-200 text-red-900' },
-];
-
-const regionOptions = [
-  'Île-de-France', 'Auvergne-Rhône-Alpes', 'Bourgogne-Franche-Comté', 'Bretagne',
-  'Centre-Val de Loire', 'Corse', 'Grand Est', 'Hauts-de-France', 'Normandie',
-  'Nouvelle-Aquitaine', 'Occitanie', 'Pays de la Loire', 'Provence-Alpes-Côte d\'Azur'
-];
-
-const categorieOptions = [
-  'Lieu de réception', 'Traiteur', 'Photographe', 'Vidéaste', 'Coordination',
-  'DJ', 'Fleuriste', 'Robe de mariée', 'Décoration'
 ];
 
 const FormulaireProfessionnelsCRM = () => {
@@ -88,15 +85,24 @@ const FormulaireProfessionnelsCRM = () => {
       }
 
       if (statusFilter) {
-        query = query.eq('status_crm', statusFilter);
+        const validatedStatus = validateAndCastStatus(statusFilter);
+        if (validatedStatus) {
+          query = query.eq('status_crm', validatedStatus);
+        }
       }
 
       if (regionFilter) {
-        query = query.eq('region', regionFilter);
+        const validatedRegion = validateAndCastRegion(regionFilter);
+        if (validatedRegion) {
+          query = query.eq('region', validatedRegion);
+        }
       }
 
       if (categorieFilter) {
-        query = query.eq('categorie', categorieFilter);
+        const validatedCategorie = validateAndCastCategorie(categorieFilter);
+        if (validatedCategorie) {
+          query = query.eq('categorie', validatedCategorie);
+        }
       }
 
       const { data, error, count } = await query
@@ -132,9 +138,26 @@ const FormulaireProfessionnelsCRM = () => {
 
   const handleSave = async (id: string) => {
     try {
+      // Valider les données avant la sauvegarde
+      const updateData: Partial<FormulaireProfessionnel> = {};
+      
+      if (editValues.status_crm) {
+        const validatedStatus = validateAndCastStatus(editValues.status_crm);
+        if (validatedStatus) {
+          updateData.status_crm = validatedStatus;
+        } else {
+          toast.error('Statut CRM invalide');
+          return;
+        }
+      }
+      
+      if (editValues.commentaires_internes !== undefined) {
+        updateData.commentaires_internes = editValues.commentaires_internes;
+      }
+
       const { error } = await supabase
         .from('prestataires')
-        .update(editValues)
+        .update(updateData)
         .eq('id', id);
 
       if (error) throw error;
@@ -259,7 +282,7 @@ const FormulaireProfessionnelsCRM = () => {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="">Toutes les régions</SelectItem>
-            {regionOptions.map(region => (
+            {validRegionValues.map(region => (
               <SelectItem key={region} value={region}>
                 {region}
               </SelectItem>
@@ -273,7 +296,7 @@ const FormulaireProfessionnelsCRM = () => {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="">Toutes les catégories</SelectItem>
-            {categorieOptions.map(categorie => (
+            {validCategorieValues.map(categorie => (
               <SelectItem key={categorie} value={categorie}>
                 {categorie}
               </SelectItem>
@@ -366,7 +389,12 @@ const FormulaireProfessionnelsCRM = () => {
                     {editingId === formulaire.id ? (
                       <Select 
                         value={editValues.status_crm || formulaire.status_crm || 'acquisition'} 
-                        onValueChange={(value) => setEditValues({...editValues, status_crm: value as PrestataireCrmStatus})}
+                        onValueChange={(value) => {
+                          const validatedStatus = validateAndCastStatus(value);
+                          if (validatedStatus) {
+                            setEditValues({...editValues, status_crm: validatedStatus});
+                          }
+                        }}
                       >
                         <SelectTrigger className="w-32">
                           <SelectValue />
