@@ -18,7 +18,7 @@ const validStatusValues: PrestataireCrmStatus[] = [
   'exclu'
 ];
 
-// Region validation
+// Region validation - utilisant les valeurs directement puisque le type enum n'existe pas encore
 const validRegionValues: string[] = [
   'Île-de-France',
   'Auvergne-Rhône-Alpes',
@@ -35,7 +35,7 @@ const validRegionValues: string[] = [
   'Provence-Alpes-Côte d\'Azur'
 ];
 
-// Categorie validation
+// Categorie validation - utilisant les valeurs directement
 const validCategorieValues: string[] = [
   'Lieu de réception',
   'Traiteur',
