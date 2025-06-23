@@ -7,6 +7,7 @@ import BlogPostCard from '@/components/blog/BlogPostCard';
 import BlogSearchAndFilters from '@/components/blog/BlogSearchAndFilters';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import { Button } from '@/components/ui/button';
 
 const fetchPublishedBlogPosts = async (): Promise<BlogPost[]> => {
   const { data, error } = await supabase
@@ -47,7 +48,13 @@ const BlogPage = () => {
     const availableTags = useMemo(() => {
         if (!posts) return [];
         const allTags = posts
-            .flatMap(post => Array.isArray(post.tags) ? post.tags : [])
+            .flatMap(post => {
+                // Gérer le type Json[] de Supabase
+                if (Array.isArray(post.tags)) {
+                    return post.tags.filter(tag => typeof tag === 'string') as string[];
+                }
+                return [];
+            })
             .filter(Boolean)
             .filter((tag, index, arr) => arr.indexOf(tag) === index);
         return allTags;
@@ -67,9 +74,10 @@ const BlogPage = () => {
             // Filtre par catégorie
             const matchesCategory = !selectedCategory || post.category === selectedCategory;
             
-            // Filtre par tag
+            // Filtre par tag - gérer le type Json[]
             const matchesTag = !selectedTag || 
-                (Array.isArray(post.tags) && post.tags.includes(selectedTag));
+                (Array.isArray(post.tags) && 
+                 post.tags.some(tag => typeof tag === 'string' && tag === selectedTag));
             
             return matchesSearch && matchesCategory && matchesTag;
         });
