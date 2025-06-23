@@ -2,8 +2,6 @@
 import { Database } from '@/integrations/supabase/types';
 
 type PrestataireCrmStatus = Database['public']['Enums']['prestataire_status'];
-type PrestataireRegion = Database['public']['Enums']['prestataire_region'] | null;
-type PrestataireCategorie = Database['public']['Enums']['prestataire_categorie'] | null;
 
 // Status validation
 const validStatusValues: PrestataireCrmStatus[] = [

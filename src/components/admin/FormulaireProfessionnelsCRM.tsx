@@ -30,8 +30,8 @@ import TimelineModal from './TimelineModal';
 import ContactModal from './ContactModal';
 import { 
   validateAndCastStatus,
-  validateAndCastRegion,
-  validateAndCastCategorie,
+  isValidRegion,
+  isValidCategorie,
   validStatusValues,
   validRegionValues,
   validCategorieValues
@@ -91,18 +91,12 @@ const FormulaireProfessionnelsCRM = () => {
         }
       }
 
-      if (regionFilter) {
-        const validatedRegion = validateAndCastRegion(regionFilter);
-        if (validatedRegion) {
-          query = query.eq('region', validatedRegion);
-        }
+      if (regionFilter && isValidRegion(regionFilter)) {
+        query = query.eq('region', regionFilter);
       }
 
-      if (categorieFilter) {
-        const validatedCategorie = validateAndCastCategorie(categorieFilter);
-        if (validatedCategorie) {
-          query = query.eq('categorie', validatedCategorie);
-        }
+      if (categorieFilter && isValidCategorie(categorieFilter)) {
+        query = query.eq('categorie', categorieFilter);
       }
 
       const { data, error, count } = await query
