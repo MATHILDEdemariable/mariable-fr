@@ -92,11 +92,13 @@ const FormulaireProfessionnelsCRM = () => {
       }
 
       if (regionFilter && isValidRegion(regionFilter)) {
-        query = query.eq('region', regionFilter);
+        // Cast to the proper type expected by the database
+        query = query.eq('region', regionFilter as any);
       }
 
       if (categorieFilter && isValidCategorie(categorieFilter)) {
-        query = query.eq('categorie', categorieFilter);
+        // Cast to the proper type expected by the database  
+        query = query.eq('categorie', categorieFilter as any);
       }
 
       const { data, error, count } = await query
