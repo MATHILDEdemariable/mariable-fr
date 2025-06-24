@@ -52,7 +52,7 @@ const ReservationJourM = () => {
     setIsSubmitting(true);
 
     try {
-      const { data: reservation, error } = await supabase
+      const { error } = await supabase
         .from('jour_m_reservations')
         .insert([{
           first_name: formData.first_name,
@@ -65,26 +65,9 @@ const ReservationJourM = () => {
           services_souhaites: formData.services_souhaites,
           budget: formData.budget,
           current_organization: formData.current_organization
-        }])
-        .select("*")
-        .single();
+        }]);
 
       if (error) throw error;
-
-      // Envoyer notification email
-      try {
-        const { error: notifyError } = await supabase.functions.invoke('notifyNewReservationJourM', {
-          body: { record: reservation }
-        });
-        
-        if (notifyError) {
-          console.error('Erreur notification email:', notifyError);
-          // Ne pas bloquer la réservation si l'email échoue
-        }
-      } catch (emailError) {
-        console.error('Erreur lors de l\'envoi de la notification:', emailError);
-        // Ne pas bloquer la réservation si l'email échoue
-      }
 
       toast({
         title: "Demande envoyée !",

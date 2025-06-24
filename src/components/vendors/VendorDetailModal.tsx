@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { 
   Dialog, 
@@ -10,7 +9,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Database } from '@/integrations/supabase/types';
-import { X, MapPin, Euro, Mail, Phone, Globe, Download, ChevronLeft, ChevronRight, Users } from 'lucide-react';
+import { X, MapPin, Euro, Mail, Phone, Globe, Download, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
@@ -178,16 +177,6 @@ const VendorDetailModal: React.FC<VendorDetailModalProps> = ({ isOpen, onClose, 
                     : "Prix sur demande"}
               </p>
             </div>
-            
-            {vendor.capacite_invites && (
-              <div>
-                <h3 className="font-medium mb-2">Capacité</h3>
-                <p className="text-sm flex items-center">
-                  <Users className="h-4 w-4 mr-1" />
-                  Jusqu'à {vendor.capacite_invites} invités
-                </p>
-              </div>
-            )}
             
             {vendor.responsable_nom && (
               <div>

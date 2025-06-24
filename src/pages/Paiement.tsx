@@ -57,7 +57,7 @@ const Paiement = () => {
 
   const saveToDatabase = async (formData: { email: string; name: string; phone: string; weddingDate: string }) => {
     try {
-      const { data: subscription, error } = await supabase
+      const { error } = await supabase
         .from('paiement_accompagnement')
         .insert({
           email: formData.email,
@@ -67,28 +67,11 @@ const Paiement = () => {
           statut: 'en_attente',
           montant: 9.90,
           devise: 'EUR'
-        })
-        .select("*")
-        .single();
+        });
 
       if (error) {
         console.error('Erreur lors de la sauvegarde:', error);
         throw error;
-      }
-
-      // Envoyer notification email
-      try {
-        const { error: notifyError } = await supabase.functions.invoke('notifyNewAccompagnement', {
-          body: { record: subscription }
-        });
-        
-        if (notifyError) {
-          console.error('Erreur notification email:', notifyError);
-          // Ne pas bloquer la souscription si l'email échoue
-        }
-      } catch (emailError) {
-        console.error('Erreur lors de l\'envoi de la notification:', emailError);
-        // Ne pas bloquer la souscription si l'email échoue
       }
 
       return true;

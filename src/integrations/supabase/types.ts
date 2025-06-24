@@ -212,63 +212,6 @@ export type Database = {
         }
         Relationships: []
       }
-      coordination_documents: {
-        Row: {
-          assigned_to: string | null
-          category: string | null
-          coordination_id: string
-          created_at: string
-          description: string | null
-          file_size: number | null
-          file_type: string | null
-          file_url: string
-          id: string
-          title: string
-          updated_at: string
-        }
-        Insert: {
-          assigned_to?: string | null
-          category?: string | null
-          coordination_id: string
-          created_at?: string
-          description?: string | null
-          file_size?: number | null
-          file_type?: string | null
-          file_url: string
-          id?: string
-          title: string
-          updated_at?: string
-        }
-        Update: {
-          assigned_to?: string | null
-          category?: string | null
-          coordination_id?: string
-          created_at?: string
-          description?: string | null
-          file_size?: number | null
-          file_type?: string | null
-          file_url?: string
-          id?: string
-          title?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "coordination_documents_assigned_to_fkey"
-            columns: ["assigned_to"]
-            isOneToOne: false
-            referencedRelation: "coordination_team"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "coordination_documents_coordination_id_fkey"
-            columns: ["coordination_id"]
-            isOneToOne: false
-            referencedRelation: "wedding_coordination"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       coordination_parameters: {
         Row: {
           created_at: string
@@ -295,132 +238,6 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
-      }
-      coordination_planning: {
-        Row: {
-          assigned_to: string | null
-          category: string
-          coordination_id: string
-          created_at: string
-          description: string | null
-          duration: number | null
-          end_time: string | null
-          id: string
-          is_ai_generated: boolean | null
-          position: number | null
-          priority: string | null
-          start_time: string | null
-          status: string | null
-          title: string
-          updated_at: string
-        }
-        Insert: {
-          assigned_to?: string | null
-          category?: string
-          coordination_id: string
-          created_at?: string
-          description?: string | null
-          duration?: number | null
-          end_time?: string | null
-          id?: string
-          is_ai_generated?: boolean | null
-          position?: number | null
-          priority?: string | null
-          start_time?: string | null
-          status?: string | null
-          title: string
-          updated_at?: string
-        }
-        Update: {
-          assigned_to?: string | null
-          category?: string
-          coordination_id?: string
-          created_at?: string
-          description?: string | null
-          duration?: number | null
-          end_time?: string | null
-          id?: string
-          is_ai_generated?: boolean | null
-          position?: number | null
-          priority?: string | null
-          start_time?: string | null
-          status?: string | null
-          title?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "coordination_planning_assigned_to_fkey"
-            columns: ["assigned_to"]
-            isOneToOne: false
-            referencedRelation: "coordination_team"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "coordination_planning_coordination_id_fkey"
-            columns: ["coordination_id"]
-            isOneToOne: false
-            referencedRelation: "wedding_coordination"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      coordination_team: {
-        Row: {
-          coordination_id: string
-          created_at: string
-          email: string | null
-          id: string
-          name: string
-          notes: string | null
-          phone: string | null
-          prestataire_id: string | null
-          role: string
-          type: string
-          updated_at: string
-        }
-        Insert: {
-          coordination_id: string
-          created_at?: string
-          email?: string | null
-          id?: string
-          name: string
-          notes?: string | null
-          phone?: string | null
-          prestataire_id?: string | null
-          role: string
-          type?: string
-          updated_at?: string
-        }
-        Update: {
-          coordination_id?: string
-          created_at?: string
-          email?: string | null
-          id?: string
-          name?: string
-          notes?: string | null
-          phone?: string | null
-          prestataire_id?: string | null
-          role?: string
-          type?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "coordination_team_coordination_id_fkey"
-            columns: ["coordination_id"]
-            isOneToOne: false
-            referencedRelation: "wedding_coordination"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "coordination_team_prestataire_id_fkey"
-            columns: ["prestataire_id"]
-            isOneToOne: false
-            referencedRelation: "prestataires"
-            referencedColumns: ["id"]
-          },
-        ]
       }
       couple_formulaire: {
         Row: {
@@ -780,9 +597,7 @@ export type Database = {
           capacite_invites: number | null
           categorie: Database["public"]["Enums"]["prestataire_categorie"] | null
           categorie_lieu: string | null
-          commentaires_internes: string | null
           created_at: string
-          date_derniere_contact: string | null
           description: string | null
           email: string | null
           hebergement_inclus: boolean | null
@@ -799,10 +614,8 @@ export type Database = {
           responsable_nom: string | null
           siret: string | null
           site_web: string | null
-          status_crm: Database["public"]["Enums"]["prestataire_status"] | null
           styles: Json | null
           telephone: string | null
-          timeline_actions: Json | null
           updated_at: string
           ville: string | null
           visible: boolean | null
@@ -816,9 +629,7 @@ export type Database = {
             | Database["public"]["Enums"]["prestataire_categorie"]
             | null
           categorie_lieu?: string | null
-          commentaires_internes?: string | null
           created_at?: string
-          date_derniere_contact?: string | null
           description?: string | null
           email?: string | null
           hebergement_inclus?: boolean | null
@@ -835,10 +646,8 @@ export type Database = {
           responsable_nom?: string | null
           siret?: string | null
           site_web?: string | null
-          status_crm?: Database["public"]["Enums"]["prestataire_status"] | null
           styles?: Json | null
           telephone?: string | null
-          timeline_actions?: Json | null
           updated_at?: string
           ville?: string | null
           visible?: boolean | null
@@ -852,9 +661,7 @@ export type Database = {
             | Database["public"]["Enums"]["prestataire_categorie"]
             | null
           categorie_lieu?: string | null
-          commentaires_internes?: string | null
           created_at?: string
-          date_derniere_contact?: string | null
           description?: string | null
           email?: string | null
           hebergement_inclus?: boolean | null
@@ -871,10 +678,8 @@ export type Database = {
           responsable_nom?: string | null
           siret?: string | null
           site_web?: string | null
-          status_crm?: Database["public"]["Enums"]["prestataire_status"] | null
           styles?: Json | null
           telephone?: string | null
-          timeline_actions?: Json | null
           updated_at?: string
           ville?: string | null
           visible?: boolean | null
@@ -1264,44 +1069,6 @@ export type Database = {
           visible?: boolean | null
         }
         Relationships: []
-      }
-      prestataires_timeline: {
-        Row: {
-          created_at: string
-          date_action: string
-          description: string
-          id: string
-          prestataire_id: string | null
-          type_action: string
-          utilisateur: string | null
-        }
-        Insert: {
-          created_at?: string
-          date_action?: string
-          description: string
-          id?: string
-          prestataire_id?: string | null
-          type_action: string
-          utilisateur?: string | null
-        }
-        Update: {
-          created_at?: string
-          date_action?: string
-          description?: string
-          id?: string
-          prestataire_id?: string | null
-          type_action?: string
-          utilisateur?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "prestataires_timeline_prestataire_id_fkey"
-            columns: ["prestataire_id"]
-            isOneToOne: false
-            referencedRelation: "prestataires"
-            referencedColumns: ["id"]
-          },
-        ]
       }
       profiles: {
         Row: {
@@ -1871,39 +1638,6 @@ export type Database = {
           },
         ]
       }
-      wedding_coordination: {
-        Row: {
-          created_at: string
-          description: string | null
-          id: string
-          title: string
-          updated_at: string
-          user_id: string
-          wedding_date: string | null
-          wedding_location: string | null
-        }
-        Insert: {
-          created_at?: string
-          description?: string | null
-          id?: string
-          title?: string
-          updated_at?: string
-          user_id: string
-          wedding_date?: string | null
-          wedding_location?: string | null
-        }
-        Update: {
-          created_at?: string
-          description?: string | null
-          id?: string
-          title?: string
-          updated_at?: string
-          user_id?: string
-          wedding_date?: string | null
-          wedding_location?: string | null
-        }
-        Relationships: []
-      }
       wedding_faq: {
         Row: {
           answer: string
@@ -1968,16 +1702,6 @@ export type Database = {
         | "Fleuriste"
         | "Robe de mariée"
         | "Décoration"
-      prestataire_status:
-        | "acquisition"
-        | "verification"
-        | "a_valider"
-        | "valide"
-        | "en_attente"
-        | "actif"
-        | "inactif"
-        | "blackliste"
-        | "exclu"
       quiz_section:
         | "Organisation Générale"
         | "Réception"
@@ -2133,17 +1857,6 @@ export const Constants = {
         "Fleuriste",
         "Robe de mariée",
         "Décoration",
-      ],
-      prestataire_status: [
-        "acquisition",
-        "verification",
-        "a_valider",
-        "valide",
-        "en_attente",
-        "actif",
-        "inactif",
-        "blackliste",
-        "exclu",
       ],
       quiz_section: [
         "Organisation Générale",

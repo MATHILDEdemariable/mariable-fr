@@ -1,7 +1,11 @@
 
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import HeaderDropdown from "./HeaderDropdown";
+import {
+  HeaderDropdown,
+  HeaderDropdownMenu,
+  HeaderDropdownItem,
+} from "./HeaderDropdown";
 import { User2, Menu as MenuIcon } from "lucide-react";
 import { Drawer, DrawerContent } from "./ui/drawer";
 import { useIsMobile } from "../hooks/use-mobile";
@@ -23,40 +27,81 @@ const HeaderLogo = () => (
   </Link>
 );
 
-function Menus({ onClick, isLoggedIn, userEmail }: { onClick?: () => void, isLoggedIn?: boolean, userEmail?: string }) {
-  if (isLoggedIn) {
-    return (
-      <div className="flex items-center gap-4 md:gap-6">
-        {/* Navigation simple pour utilisateurs connectés */}
-        <Link to="/dashboard" className="text-gray-700 hover:text-wedding-olive transition-colors">
-          Dashboard
-        </Link>
-        <Link to="/blog" className="text-gray-700 hover:text-wedding-olive transition-colors">
-          Blog
-        </Link>
-        <Link to="/professionnels" className="text-gray-700 hover:text-wedding-olive transition-colors">
-          Professionnels
-        </Link>
-        <HeaderDropdown userEmail={userEmail} />
-      </div>
-    );
-  }
-
+function Menus({ onClick, isLoggedIn }: { onClick?: () => void, isLoggedIn?: boolean }) {
   return (
     <>
-      {/* Navigation pour utilisateurs non connectés */}
-      <Link to="/register" className="text-gray-700 hover:text-wedding-olive transition-colors" onClick={onClick}>
-        Futurs mariés
-      </Link>
-      <Link to="/professionnels" className="text-gray-700 hover:text-wedding-olive transition-colors" onClick={onClick}>
-        Professionnels
-      </Link>
-      <Link to="/blog" className="text-gray-700 hover:text-wedding-olive transition-colors" onClick={onClick}>
-        Blog
-      </Link>
-      <Link to="/contact/nous-contacter" className="text-gray-700 hover:text-wedding-olive transition-colors" onClick={onClick}>
-        Contact
-      </Link>
+      {/* Futurs mariés - Toujours visible avec contenu conditionnel */}
+      <HeaderDropdown label="Futurs mariés">
+        <HeaderDropdownMenu>
+          {isLoggedIn ? (
+            <HeaderDropdownItem
+              label="Mon tableau de bord"
+              description="Accéder à votre espace personnel"
+              to="/dashboard"
+              onClick={onClick}
+            />
+          ) : (
+            <>
+              <HeaderDropdownItem
+                label="Créer un compte"
+                description="Rejoindre Mariable et organiser votre mariage"
+                to="/register"
+                onClick={onClick}
+              />
+              <HeaderDropdownItem
+                label="Se connecter"
+                description="Accéder à votre compte existant"
+                to="/login"
+                onClick={onClick}
+              />
+            </>
+          )}
+        </HeaderDropdownMenu>
+      </HeaderDropdown>
+      
+      {/* Professionnels - En second */}
+      <HeaderDropdown 
+        label="Professionnels"
+        href="/professionnels"
+        onClick={onClick}
+      />
+
+      {/* Blog - Ajouté ici */}
+      <HeaderDropdown 
+        label="Blog"
+        href="/blog"
+        onClick={onClick}
+      />
+      
+      {/* À propos Dropdown - En dernier */}
+      <HeaderDropdown label="À propos">
+        <HeaderDropdownMenu>
+          <HeaderDropdownItem
+            label="Notre histoire"
+            description="Découvrez comment Mariable est né d'une passion"
+            to="/about/histoire"
+            onClick={onClick}
+          />
+          <HeaderDropdownItem
+            label="Notre charte"
+            description="Une méthode innovante et personnalisée pour organiser votre mariage"
+            to="/about/charte"
+            onClick={onClick}
+          />
+          <HeaderDropdownItem
+            label="Nous contacter"
+            description="Discutez avec notre équipe pour toutes vos questions"
+            to="/contact/nous-contacter"
+            onClick={onClick}
+          />
+          <HeaderDropdownItem
+            label="FAQ"
+            description="Réponses aux questions fréquemment posées"
+            to="/contact/faq"
+            onClick={onClick}
+          />
+        </HeaderDropdownMenu>
+      </HeaderDropdown>
     </>
   );
 }
@@ -65,26 +110,22 @@ export default function Header() {
   const isMobile = useIsMobile();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userEmail, setUserEmail] = useState<string | undefined>();
 
   // Check if user is logged in
   useEffect(() => {
     const checkAuth = async () => {
       const { data } = await supabase.auth.getSession();
       setIsLoggedIn(!!data.session);
-      setUserEmail(data.session?.user?.email);
     };
 
     checkAuth();
 
     // Set up a listener for auth state changes
-    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: authListener } = supabase.auth.onAuthStateChange((event) => {
       if (event === 'SIGNED_IN') {
         setIsLoggedIn(true);
-        setUserEmail(session?.user?.email);
       } else if (event === 'SIGNED_OUT') {
         setIsLoggedIn(false);
-        setUserEmail(undefined);
       }
     });
 
@@ -101,7 +142,7 @@ export default function Header() {
 
         {/* Desktop: Menus à droite, centrés */}
         <nav className="hidden md:flex flex-1 justify-end items-center gap-4 md:gap-6">
-          <Menus isLoggedIn={isLoggedIn} userEmail={userEmail} />
+          <Menus isLoggedIn={isLoggedIn} />
         </nav>
 
         {/* Mobile: Burger menu à droite */}
@@ -130,7 +171,7 @@ export default function Header() {
               </div>
               <div className="py-3 grid gap-4">
                 <nav className="flex flex-col gap-1">
-                  <Menus onClick={() => setDrawerOpen(false)} isLoggedIn={isLoggedIn} userEmail={userEmail} />
+                  <Menus onClick={() => setDrawerOpen(false)} isLoggedIn={isLoggedIn} />
                 </nav>
               </div>
             </DrawerContent>
