@@ -11,10 +11,13 @@ import { BriefContextProvider } from "@/components/wedding-assistant/BriefContex
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import LandingPage from "@/pages/LandingPage";
 import BlogPage from "@/pages/Blog";
+import Login from "@/pages/auth/Login";
+import Register from "@/pages/auth/Register";
 import MonJourM from "@/pages/MonJourM";
 import MonJourMPlanning from "@/pages/MonJourMPlanning";
 import MonJourMEquipe from "@/pages/MonJourMEquipe";
 import MonJourMDocuments from "@/pages/MonJourMDocuments";
+import UserDashboard from "@/pages/dashboard/UserDashboard";
 
 const queryClient = new QueryClient();
 
@@ -30,8 +33,10 @@ const App = () => (
                 <Sonner />
                 <Routes>
                   <Route path="/" element={<LandingPage />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/register" element={<Register />} />
                   <Route path="/blog" element={<BlogPage />} />
-                  <Route path="/dashboard" element={<DashboardLayout />} />
+                  <Route path="/dashboard/*" element={<UserDashboard />} />
                   
                   {/* Mon Jour-M Routes */}
                   <Route path="/mon-jour-m" element={<MonJourM />}>
