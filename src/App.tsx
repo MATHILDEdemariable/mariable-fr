@@ -24,10 +24,10 @@ const App = () => (
       <TooltipProvider>
         <ReaderModeProvider>
           <BriefContextProvider>
-            <AnalyticsProvider>
-              <Toaster />
-              <Sonner />
-              <BrowserRouter>
+            <BrowserRouter>
+              <AnalyticsProvider>
+                <Toaster />
+                <Sonner />
                 <Routes>
                   <Route path="/" element={<LandingPage />} />
                   <Route path="/blog" element={<BlogPage />} />
@@ -40,8 +40,8 @@ const App = () => (
                     <Route path="documents" element={<MonJourMDocuments />} />
                   </Route>
                 </Routes>
-              </BrowserRouter>
-            </AnalyticsProvider>
+              </AnalyticsProvider>
+            </BrowserRouter>
           </BriefContextProvider>
         </ReaderModeProvider>
       </TooltipProvider>
