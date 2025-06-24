@@ -6,7 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Plus, Clock, User, Sparkles, GripVertical, Trash2 } from 'lucide-react';
+import { Plus, Clock, User, Sparkles, GripVertical, Trash2, Calendar } from 'lucide-react';
 import { useCoordination } from '@/hooks/useCoordination';
 import { useToast } from '@/hooks/use-toast';
 import type { CoordinationPlanning } from '@/types/coordination';

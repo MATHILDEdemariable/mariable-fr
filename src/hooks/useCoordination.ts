@@ -73,7 +73,14 @@ export const useCoordination = () => {
       .order('created_at');
 
     if (error) throw error;
-    setTeamMembers(data || []);
+    
+    // Convertir les données avec le bon typage
+    const typedMembers: CoordinationTeamMember[] = (data || []).map(member => ({
+      ...member,
+      type: member.type as 'person' | 'vendor'
+    }));
+    
+    setTeamMembers(typedMembers);
   };
 
   const fetchPlanningItems = async (coordinationId: string) => {
@@ -84,7 +91,15 @@ export const useCoordination = () => {
       .order('position');
 
     if (error) throw error;
-    setPlanningItems(data || []);
+    
+    // Convertir les données avec le bon typage
+    const typedItems: CoordinationPlanning[] = (data || []).map(item => ({
+      ...item,
+      status: item.status as 'todo' | 'in_progress' | 'completed',
+      priority: item.priority as 'low' | 'medium' | 'high'
+    }));
+    
+    setPlanningItems(typedItems);
   };
 
   const fetchDocuments = async (coordinationId: string) => {
@@ -121,8 +136,15 @@ export const useCoordination = () => {
       .single();
 
     if (error) throw error;
-    setTeamMembers(prev => [...prev, data]);
-    return data;
+    
+    // Typer correctement la nouvelle donnée
+    const typedMember: CoordinationTeamMember = {
+      ...data,
+      type: data.type as 'person' | 'vendor'
+    };
+    
+    setTeamMembers(prev => [...prev, typedMember]);
+    return typedMember;
   };
 
   const addPlanningItem = async (item: Omit<CoordinationPlanning, 'id' | 'created_at' | 'updated_at'>) => {
@@ -133,8 +155,16 @@ export const useCoordination = () => {
       .single();
 
     if (error) throw error;
-    setPlanningItems(prev => [...prev, data]);
-    return data;
+    
+    // Typer correctement la nouvelle donnée
+    const typedItem: CoordinationPlanning = {
+      ...data,
+      status: data.status as 'todo' | 'in_progress' | 'completed',
+      priority: data.priority as 'low' | 'medium' | 'high'
+    };
+    
+    setPlanningItems(prev => [...prev, typedItem]);
+    return typedItem;
   };
 
   const updatePlanningItem = async (id: string, updates: Partial<CoordinationPlanning>) => {
@@ -146,8 +176,16 @@ export const useCoordination = () => {
       .single();
 
     if (error) throw error;
-    setPlanningItems(prev => prev.map(item => item.id === id ? data : item));
-    return data;
+    
+    // Typer correctement la donnée mise à jour
+    const typedItem: CoordinationPlanning = {
+      ...data,
+      status: data.status as 'todo' | 'in_progress' | 'completed',
+      priority: data.priority as 'low' | 'medium' | 'high'
+    };
+    
+    setPlanningItems(prev => prev.map(item => item.id === id ? typedItem : item));
+    return typedItem;
   };
 
   const deletePlanningItem = async (id: string) => {
