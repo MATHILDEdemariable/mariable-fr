@@ -7,6 +7,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { HelmetProvider } from 'react-helmet-async';
 import { ReaderModeProvider } from '@/contexts/ReaderModeContext';
+import AnalyticsProvider from './components/analytics/AnalyticsProvider';
 import Index from "./pages/Index";
 import Demo from "./pages/Demo";
 import GuideMariable from "./pages/GuideMariable";
@@ -52,7 +53,6 @@ import ReservationJourM from "./pages/ReservationJourM";
 import Budget from "./pages/services/Budget";
 import Paiement from './pages/Paiement';
 import DemoJourM from './pages/DemoJourM';
-import AnalyticsProvider from './components/analytics/AnalyticsProvider';
 import Accompagnement from './pages/Accompagnement';
 import SitemapPage from "./pages/Sitemap";
 import BlogPage from "./pages/Blog";
@@ -60,139 +60,146 @@ import AdminBlog from "./pages/admin/Blog";
 import BlogArticlePage from './pages/BlogArticle';
 
 // Initialize the query client
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 // Create a helmetContext object to pass to HelmetProvider
 const helmetContext = {};
 
-const App = () => {
-  return(
-  <QueryClientProvider client={queryClient}>
-    <HelmetProvider context={helmetContext}>
-      <ReaderModeProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <Router>
-            <AnalyticsProvider>
-              <Routes>
-                {/* Make Index page the main route */}
-                <Route path="/" element={<Index />} />
-                
-                {/* Move LandingPage to /landing route */}
-                <Route path="/landing" element={<LandingPage />} />
-                
-                {/* Blog page */}
-                <Route path="/blog" element={<BlogPage />} />
-                <Route path="/blog/:slug" element={<BlogArticlePage />} />
-                
-                {/* Old index page is now accessible via /home */}
-                <Route path="/home" element={<Index />} />
-                
-                {/* Professionals page */}
-                <Route path="/professionnels" element={<Professionnels />} />
-                
-                {/* Services pages */}
-                <Route path="/services/prestataires" element={<Prestataires />} />
-                <Route path="/services/budget" element={<Budget />} />
-                
-                {/* Pricing page */}
-                <Route path="/pricing" element={<Pricing />} />
-                
-                {/* Payment page */}
-                <Route path="/paiement" element={<Paiement />} />
-                
-                {/* Post-Payment Accompagnement page */}
-                <Route path="/accompagnement" element={<Accompagnement />} />
-                
-                {/* Demo Jour M page */}
-                <Route path="/demo-jour-m" element={<DemoJourM />} />
-                
-                {/* Reservation Le Jour M */}
-                <Route path="/reservation-jour-m" element={<ReservationJourM />} />
-                
-                {/* Checklist page */}
-                <Route path="/checklist-mariage" element={<ChecklistMariage />} />
-                
-                {/* Guide Mariable */}
-                <Route path="/guide-mariable" element={<GuideMariable />} />
-                <Route path="/guide-mariable-frame" element={<GuideMariableFrame />} />
-                <Route path="/login-frame" element={<LoginFrame />} />
-                
-                {/* About pages */}
-                <Route path="/about/histoire" element={<Histoire />} />
-                <Route path="/about/charte" element={<Charte />} />
-                <Route path="/about/temoignages" element={<Temoignages />} />
-                <Route path="/about/approche" element={<Approche />} />
-                
-                {/* Contact pages */}
-                <Route path="/contact/nous-contacter" element={<NousContacter />} />
-                <Route path="/contact/faq" element={<FAQ />} />
-                
-                {/* Legal pages */}
-                <Route path="/mentions-legales" element={<MentionsLegales />} />
-                <Route path="/cgv" element={<CGV />} />
-                
-                {/* Auth Routes */}
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/auth/email-confirmation" element={<EmailConfirmation />} />
-                <Route path="/auth/callback" element={<Callback />} />
-                
-                {/* Public Reader View - MUST come before protected dashboard routes */}
-                <Route path="/dashboard/lecteur/:token" element={<ReaderView />} />
-                
-                {/* Protected Dashboard Routes */}
-                <Route path="/dashboard/*" element={<UserDashboard />} />
-                
-                {/* Redirect for old privacy policy route */}
-                <Route path="/politique-confidentialite" element={<Navigate to="/mentions-legales" replace />} />
-                
-                {/* Demo page */}
-                <Route path="/demo" element={<Demo />} />
-                <Route path="/prestataire/:slug" element={<PrestatairePage />} />
-                
-                {/* Moteur de recherche page - now accessible via /selection (renamed from /recherche) */}
-                <Route path="/selection" element={<MoteurRecherche />} />
-                <Route path="/guide-mariable" element={<MoteurRecherche />} />
-                
-                {/* Redirect old /recherche URL to new /selection URL */}
-                <Route path="/recherche" element={<Navigate to="/selection" replace />} />
-                
-                {/* Planning personnalisé */}
-                <Route path="/planning-personnalise" element={<PlanningPersonnalise />} />
-                <Route path="/planning-personnalise/resultats" element={<PlanningResultatsPersonnalises />} />
-                
-                {/* Test Formulaire */}
-                <Route path="/test-formulaire" element={<TestFormulaire />} />
-                <Route path="/test-assistant-virtuel" element={<TestAssistantVirtuel />} />
-                <Route path="/assistant-v2" element={<WeddingAssistantV2 />} />
-                
-                {/* Import Airtable */}
-                <Route path="/import-airtable" element={<ImportAirtable />} />
-                
-                {/* Admin Routes */}
-                <Route path="/admin/prestataires" element={<PrestataireAdmin />} />
-                <Route path="/admin/blog" element={<AdminBlog />} />
-                <Route path="/admin/form" element={<FormAdmin />} />
-                <Route path="/admin/reservations-jour-m" element={<ReservationsJourM />} />
-                
-                {/* Prestataire Routes */}
-                <Route path="/prestataire/tracking" element={<PrestataireTrackingPage />} />
-                <Route path="/prestataire/contact" element={<PrestataireContactPage />} />
+const App: React.FC = () => {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <HelmetProvider context={helmetContext}>
+        <ReaderModeProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <Router>
+              <AnalyticsProvider>
+                <Routes>
+                  {/* Make Index page the main route */}
+                  <Route path="/" element={<Index />} />
+                  
+                  {/* Move LandingPage to /landing route */}
+                  <Route path="/landing" element={<LandingPage />} />
+                  
+                  {/* Blog page */}
+                  <Route path="/blog" element={<BlogPage />} />
+                  <Route path="/blog/:slug" element={<BlogArticlePage />} />
+                  
+                  {/* Old index page is now accessible via /home */}
+                  <Route path="/home" element={<Index />} />
+                  
+                  {/* Professionals page */}
+                  <Route path="/professionnels" element={<Professionnels />} />
+                  
+                  {/* Services pages */}
+                  <Route path="/services/prestataires" element={<Prestataires />} />
+                  <Route path="/services/budget" element={<Budget />} />
+                  
+                  {/* Pricing page */}
+                  <Route path="/pricing" element={<Pricing />} />
+                  
+                  {/* Payment page */}
+                  <Route path="/paiement" element={<Paiement />} />
+                  
+                  {/* Post-Payment Accompagnement page */}
+                  <Route path="/accompagnement" element={<Accompagnement />} />
+                  
+                  {/* Demo Jour M page */}
+                  <Route path="/demo-jour-m" element={<DemoJourM />} />
+                  
+                  {/* Reservation Le Jour M */}
+                  <Route path="/reservation-jour-m" element={<ReservationJourM />} />
+                  
+                  {/* Checklist page */}
+                  <Route path="/checklist-mariage" element={<ChecklistMariage />} />
+                  
+                  {/* Guide Mariable */}
+                  <Route path="/guide-mariable" element={<GuideMariable />} />
+                  <Route path="/guide-mariable-frame" element={<GuideMariableFrame />} />
+                  <Route path="/login-frame" element={<LoginFrame />} />
+                  
+                  {/* About pages */}
+                  <Route path="/about/histoire" element={<Histoire />} />
+                  <Route path="/about/charte" element={<Charte />} />
+                  <Route path="/about/temoignages" element={<Temoignages />} />
+                  <Route path="/about/approche" element={<Approche />} />
+                  
+                  {/* Contact pages */}
+                  <Route path="/contact/nous-contacter" element={<NousContacter />} />
+                  <Route path="/contact/faq" element={<FAQ />} />
+                  
+                  {/* Legal pages */}
+                  <Route path="/mentions-legales" element={<MentionsLegales />} />
+                  <Route path="/cgv" element={<CGV />} />
+                  
+                  {/* Auth Routes */}
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/register" element={<Register />} />
+                  <Route path="/auth/email-confirmation" element={<EmailConfirmation />} />
+                  <Route path="/auth/callback" element={<Callback />} />
+                  
+                  {/* Public Reader View - MUST come before protected dashboard routes */}
+                  <Route path="/dashboard/lecteur/:token" element={<ReaderView />} />
+                  
+                  {/* Protected Dashboard Routes */}
+                  <Route path="/dashboard/*" element={<UserDashboard />} />
+                  
+                  {/* Redirect for old privacy policy route */}
+                  <Route path="/politique-confidentialite" element={<Navigate to="/mentions-legales" replace />} />
+                  
+                  {/* Demo page */}
+                  <Route path="/demo" element={<Demo />} />
+                  <Route path="/prestataire/:slug" element={<PrestatairePage />} />
+                  
+                  {/* Moteur de recherche page - now accessible via /selection (renamed from /recherche) */}
+                  <Route path="/selection" element={<MoteurRecherche />} />
+                  <Route path="/guide-mariable" element={<MoteurRecherche />} />
+                  
+                  {/* Redirect old /recherche URL to new /selection URL */}
+                  <Route path="/recherche" element={<Navigate to="/selection" replace />} />
+                  
+                  {/* Planning personnalisé */}
+                  <Route path="/planning-personnalise" element={<PlanningPersonnalise />} />
+                  <Route path="/planning-personnalise/resultats" element={<PlanningResultatsPersonnalises />} />
+                  
+                  {/* Test Formulaire */}
+                  <Route path="/test-formulaire" element={<TestFormulaire />} />
+                  <Route path="/test-assistant-virtuel" element={<TestAssistantVirtuel />} />
+                  <Route path="/assistant-v2" element={<WeddingAssistantV2 />} />
+                  
+                  {/* Import Airtable */}
+                  <Route path="/import-airtable" element={<ImportAirtable />} />
+                  
+                  {/* Admin Routes */}
+                  <Route path="/admin/prestataires" element={<PrestataireAdmin />} />
+                  <Route path="/admin/blog" element={<AdminBlog />} />
+                  <Route path="/admin/form" element={<FormAdmin />} />
+                  <Route path="/admin/reservations-jour-m" element={<ReservationsJourM />} />
+                  
+                  {/* Prestataire Routes */}
+                  <Route path="/prestataire/tracking" element={<PrestataireTrackingPage />} />
+                  <Route path="/prestataire/contact" element={<PrestataireContactPage />} />
 
-                {/* Sitemap Route */}
-                <Route path="/sitemap.xml" element={<SitemapPage />} />
-                
-                {/* Catch-all route */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </AnalyticsProvider>
-          </Router>
-        </TooltipProvider>
-      </ReaderModeProvider>
-    </HelmetProvider>
-  </QueryClientProvider>
+                  {/* Sitemap Route */}
+                  <Route path="/sitemap.xml" element={<SitemapPage />} />
+                  
+                  {/* Catch-all route */}
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </AnalyticsProvider>
+            </Router>
+          </TooltipProvider>
+        </ReaderModeProvider>
+      </HelmetProvider>
+    </QueryClientProvider>
   );
 };
 
