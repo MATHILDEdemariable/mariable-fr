@@ -26,7 +26,6 @@ const fetchPublishedBlogPosts = async (): Promise<BlogPost[]> => {
 };
 
 const BlogPage = () => {
-    const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
     const [selectedTag, setSelectedTag] = useState<string | null>(null);
 
@@ -65,12 +64,6 @@ const BlogPage = () => {
         if (!posts) return [];
         
         return posts.filter(post => {
-            // Filtre par terme de recherche
-            const matchesSearch = !searchTerm || 
-                post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                (post.subtitle && post.subtitle.toLowerCase().includes(searchTerm.toLowerCase())) ||
-                (post.content && post.content.toLowerCase().includes(searchTerm.toLowerCase()));
-            
             // Filtre par catégorie
             const matchesCategory = !selectedCategory || post.category === selectedCategory;
             
@@ -79,9 +72,9 @@ const BlogPage = () => {
                 (Array.isArray(post.tags) && 
                  post.tags.some(tag => typeof tag === 'string' && tag === selectedTag));
             
-            return matchesSearch && matchesCategory && matchesTag;
+            return matchesCategory && matchesTag;
         });
-    }, [posts, searchTerm, selectedCategory, selectedTag]);
+    }, [posts, selectedCategory, selectedTag]);
 
     if (isLoading) {
         return <div className="h-screen w-screen flex items-center justify-center">Chargement du blog...</div>
@@ -95,14 +88,14 @@ const BlogPage = () => {
         <>
             <Header />
             <BlogSearchAndFilters
-                onSearchChange={setSearchTerm}
+                onSearchChange={() => {}} // No-op since we removed search
                 onCategoryFilter={setSelectedCategory}
                 onTagFilter={setSelectedTag}
                 selectedCategory={selectedCategory}
                 selectedTag={selectedTag}
                 availableCategories={availableCategories}
                 availableTags={availableTags}
-                searchTerm={searchTerm}
+                searchTerm="" // Always empty since we removed search
             />
             <main className="h-screen w-full snap-y snap-mandatory overflow-y-scroll overflow-x-hidden" style={{ paddingTop: '120px' }}>
                 {filteredPosts && filteredPosts.length > 0 ? (
@@ -111,15 +104,14 @@ const BlogPage = () => {
                     <div className="h-screen w-screen flex items-center justify-center snap-start">
                         <div className="text-center">
                             <p className="text-xl mb-4">
-                                {searchTerm || selectedCategory || selectedTag 
-                                    ? "Aucun article ne correspond à vos critères de recherche." 
+                                {selectedCategory || selectedTag 
+                                    ? "Aucun article ne correspond à vos critères de filtrage." 
                                     : "Aucun article à afficher pour le moment."
                                 }
                             </p>
-                            {(searchTerm || selectedCategory || selectedTag) && (
+                            {(selectedCategory || selectedTag) && (
                                 <Button 
                                     onClick={() => {
-                                        setSearchTerm('');
                                         setSelectedCategory(null);
                                         setSelectedTag(null);
                                     }}

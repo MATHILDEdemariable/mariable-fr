@@ -1,9 +1,8 @@
 
-import React, { useState } from 'react';
-import { Input } from '@/components/ui/input';
+import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Search, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,38 +22,25 @@ interface BlogSearchAndFiltersProps {
 }
 
 const BlogSearchAndFilters: React.FC<BlogSearchAndFiltersProps> = ({
-  onSearchChange,
   onCategoryFilter,
   onTagFilter,
   selectedCategory,
   selectedTag,
   availableCategories,
   availableTags,
-  searchTerm,
 }) => {
   return (
-    <div className="fixed top-20 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b shadow-sm">
+    <div className="fixed top-20 left-0 right-0 z-40 bg-white/95 backdrop-blur-sm border-b shadow-sm">
       <div className="max-w-4xl mx-auto p-4">
-        <div className="flex flex-col md:flex-row gap-4 items-center">
-          {/* Barre de recherche */}
-          <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-            <Input
-              placeholder="Rechercher dans les articles..."
-              value={searchTerm}
-              onChange={(e) => onSearchChange(e.target.value)}
-              className="pl-10"
-            />
-          </div>
-
+        <div className="flex flex-col md:flex-row gap-4 items-center justify-center">
           {/* Filtres par catégorie */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="whitespace-nowrap">
+              <Button variant="outline" className="whitespace-nowrap bg-white">
                 {selectedCategory || 'Toutes les catégories'}
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent>
+            <DropdownMenuContent className="bg-white z-50">
               <DropdownMenuItem onClick={() => onCategoryFilter(null)}>
                 Toutes les catégories
               </DropdownMenuItem>
@@ -72,11 +58,11 @@ const BlogSearchAndFilters: React.FC<BlogSearchAndFiltersProps> = ({
           {/* Filtres par tags */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="whitespace-nowrap">
+              <Button variant="outline" className="whitespace-nowrap bg-white">
                 {selectedTag || 'Tous les thèmes'}
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="max-h-60 overflow-auto">
+            <DropdownMenuContent className="max-h-60 overflow-auto bg-white z-50">
               <DropdownMenuItem onClick={() => onTagFilter(null)}>
                 Tous les thèmes
               </DropdownMenuItem>
@@ -92,20 +78,22 @@ const BlogSearchAndFilters: React.FC<BlogSearchAndFiltersProps> = ({
           </DropdownMenu>
 
           {/* Badges des filtres actifs */}
-          <div className="flex gap-2">
-            {selectedCategory && (
-              <Badge variant="secondary" className="cursor-pointer" onClick={() => onCategoryFilter(null)}>
-                {selectedCategory}
-                <X className="h-3 w-3 ml-1" />
-              </Badge>
-            )}
-            {selectedTag && (
-              <Badge variant="secondary" className="cursor-pointer" onClick={() => onTagFilter(null)}>
-                {selectedTag}
-                <X className="h-3 w-3 ml-1" />
-              </Badge>
-            )}
-          </div>
+          {(selectedCategory || selectedTag) && (
+            <div className="flex gap-2">
+              {selectedCategory && (
+                <Badge variant="secondary" className="cursor-pointer" onClick={() => onCategoryFilter(null)}>
+                  {selectedCategory}
+                  <X className="h-3 w-3 ml-1" />
+                </Badge>
+              )}
+              {selectedTag && (
+                <Badge variant="secondary" className="cursor-pointer" onClick={() => onTagFilter(null)}>
+                  {selectedTag}
+                  <X className="h-3 w-3 ml-1" />
+                </Badge>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>

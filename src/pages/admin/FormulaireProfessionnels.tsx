@@ -75,24 +75,30 @@ const AdminFormulaireProfessionnels = () => {
 
   return (
     <AdminPasswordProtection>
-      <div className="min-h-screen flex items-center justify-center px-4">
-        {isAdmin ? (
-          <div className="w-full max-w-7xl">
-            <h1 className="text-2xl font-bold mb-4 text-center mt-12">CRM - Gestion des Formulaires Professionnels</h1>
-            <p className="text-lg text-center mb-6">
-              Interface CRM complète pour gérer vos prestataires et leur cycle de vie commercial.
-            </p>
-            <FormulaireProfessionnelsCRM />
-            <Toaster />
-          </div>
-        ) : (
-          <div className="text-center p-8 border rounded-lg shadow-md">
-            <h2 className="text-xl font-semibold mb-4">Accès restreint</h2>
-            <p className="text-muted-foreground">
-              Vous devez être connecté avec un compte administrateur pour accéder à cette page.
-            </p>
-          </div>
-        )}
+      <div className="min-h-screen bg-gray-50">
+        <div className="container mx-auto px-4 py-8">
+          {isAdmin ? (
+            <>
+              <div className="mb-8">
+                <h1 className="text-3xl font-bold text-gray-900 mb-2">CRM - Gestion des Formulaires Professionnels</h1>
+                <p className="text-lg text-gray-600">
+                  Interface CRM complète pour gérer vos prestataires et leur cycle de vie commercial.
+                </p>
+              </div>
+              <FormulaireProfessionnelsCRM />
+            </>
+          ) : (
+            <div className="flex items-center justify-center min-h-screen">
+              <div className="text-center p-8 border rounded-lg shadow-md bg-white">
+                <h2 className="text-xl font-semibold mb-4">Accès restreint</h2>
+                <p className="text-muted-foreground">
+                  Vous devez être connecté avec un compte administrateur pour accéder à cette page.
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+        <Toaster />
       </div>
     </AdminPasswordProtection>
   );
