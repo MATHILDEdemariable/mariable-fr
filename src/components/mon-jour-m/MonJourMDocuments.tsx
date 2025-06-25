@@ -333,7 +333,10 @@ const MonJourMDocuments: React.FC = () => {
 
               <div className="flex gap-2">
                 <Button
-                  onClick={() => document.querySelector('input[type="file"]')?.click()}
+                  onClick={() => {
+                    const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+                    fileInput?.click();
+                  }}
                   disabled={uploadingFile}
                 >
                   {uploadingFile ? 'Téléchargement...' : 'Télécharger'}

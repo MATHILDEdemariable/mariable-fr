@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, Sparkles, Clock, CheckCircle2, Circle, User } from 'lucide-react';
+import { Plus, Sparkles, Clock, CheckCircle2, Circle, User, Calendar } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
@@ -85,7 +85,23 @@ const MonJourMPlanning: React.FC = () => {
       return;
     }
 
-    setTasks(data || []);
+    // Filtrer et mapper les données pour correspondre à notre interface
+    const mappedData = (data || []).map((item: any) => ({
+      id: item.id,
+      title: item.title,
+      description: item.description,
+      start_time: item.start_time,
+      end_time: item.end_time,
+      duration: item.duration || 0,
+      category: item.category || 'general',
+      position: item.position || 0,
+      assigned_to: item.assigned_to,
+      status: (['todo', 'in_progress', 'completed'].includes(item.status) ? item.status : 'todo') as 'todo' | 'in_progress' | 'completed',
+      priority: (['low', 'medium', 'high'].includes(item.priority) ? item.priority : 'medium') as 'low' | 'medium' | 'high',
+      is_ai_generated: item.is_ai_generated || false
+    }));
+
+    setTasks(mappedData);
   };
 
   const loadTeamMembers = async (coordId: string) => {

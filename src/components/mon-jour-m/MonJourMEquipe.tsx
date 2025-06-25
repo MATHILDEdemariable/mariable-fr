@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -75,7 +74,19 @@ const MonJourMEquipe: React.FC = () => {
       return;
     }
 
-    setTeamMembers(data || []);
+    // Filtrer et mapper les données pour correspondre à notre interface
+    const mappedData = (data || []).map((item: any) => ({
+      id: item.id,
+      name: item.name,
+      role: item.role,
+      email: item.email,
+      phone: item.phone,
+      type: (item.type === 'vendor' ? 'vendor' : 'person') as 'person' | 'vendor',
+      prestataire_id: item.prestataire_id,
+      notes: item.notes
+    }));
+
+    setTeamMembers(mappedData);
   };
 
   const setupRealtimeSubscription = () => {
