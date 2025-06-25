@@ -211,6 +211,46 @@ const MonJourMPlanning: React.FC = () => {
     };
   };
 
+  const updateTask = async (taskId: string, taskData: Partial<PlanningTask>) => {
+    if (!coordinationId) return;
+
+    console.log('📝 Updating task:', taskId, taskData);
+    
+    try {
+      // Convertir assigned_to en format compatible avec Supabase
+      const supabaseTaskData: any = { ...taskData };
+      if (taskData.assigned_to !== undefined) {
+        // Convertir le tableau en format JSONB pour Supabase
+        supabaseTaskData.assigned_to = taskData.assigned_to;
+      }
+
+      const { error } = await supabase
+        .from('coordination_planning')
+        .update(supabaseTaskData)
+        .eq('id', taskId)
+        .eq('coordination_id', coordinationId);
+
+      if (error) {
+        console.error('❌ Error updating task:', error);
+        throw error;
+      }
+
+      console.log('✅ Task updated successfully');
+      toast({
+        title: "Tâche modifiée",
+        description: "La tâche a été mise à jour avec succès"
+      });
+    } catch (error) {
+      console.error('❌ Error updating task:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de modifier la tâche",
+        variant: "destructive"
+      });
+      throw error;
+    }
+  };
+
   const addTask = async () => {
     if (!coordinationId || !newTask.title.trim()) {
       toast({
@@ -258,39 +298,6 @@ const MonJourMPlanning: React.FC = () => {
         description: "Impossible d'ajouter la tâche",
         variant: "destructive"
       });
-    }
-  };
-
-  const updateTask = async (taskId: string, taskData: Partial<PlanningTask>) => {
-    if (!coordinationId) return;
-
-    console.log('📝 Updating task:', taskId, taskData);
-    
-    try {
-      const { error } = await supabase
-        .from('coordination_planning')
-        .update(taskData)
-        .eq('id', taskId)
-        .eq('coordination_id', coordinationId);
-
-      if (error) {
-        console.error('❌ Error updating task:', error);
-        throw error;
-      }
-
-      console.log('✅ Task updated successfully');
-      toast({
-        title: "Tâche modifiée",
-        description: "La tâche a été mise à jour avec succès"
-      });
-    } catch (error) {
-      console.error('❌ Error updating task:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible de modifier la tâche",
-        variant: "destructive"
-      });
-      throw error;
     }
   };
 
