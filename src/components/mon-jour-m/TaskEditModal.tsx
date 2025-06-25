@@ -58,7 +58,6 @@ const TaskEditModal: React.FC<TaskEditModalProps> = ({
     category: 'general',
     priority: 'medium' as 'low' | 'medium' | 'high',
     start_time: '',
-    end_time: '',
     assigned_to: [] as string[]
   });
   const [isSaving, setIsSaving] = useState(false);
@@ -75,10 +74,6 @@ const TaskEditModal: React.FC<TaskEditModalProps> = ({
           hour: '2-digit', 
           minute: '2-digit' 
         }) : '',
-        end_time: task.end_time ? new Date(task.end_time).toLocaleTimeString('fr-FR', { 
-          hour: '2-digit', 
-          minute: '2-digit' 
-        }) : '',
         assigned_to: Array.isArray(task.assigned_to) ? task.assigned_to : (task.assigned_to ? [task.assigned_to] : [])
       });
     } else {
@@ -89,11 +84,28 @@ const TaskEditModal: React.FC<TaskEditModalProps> = ({
         category: 'general',
         priority: 'medium',
         start_time: '',
-        end_time: '',
         assigned_to: []
       });
     }
   }, [task]);
+
+  // Calculer automatiquement l'heure de fin
+  const calculateEndTime = (startTime: string, durationMinutes: number): string => {
+    if (!startTime) return '';
+    
+    try {
+      const start = new Date(`2024-01-01T${startTime}:00`);
+      const end = new Date(start.getTime() + durationMinutes * 60000);
+      return end.toLocaleTimeString('fr-FR', { 
+        hour: '2-digit', 
+        minute: '2-digit' 
+      });
+    } catch {
+      return '';
+    }
+  };
+
+  const displayedEndTime = calculateEndTime(formData.start_time, formData.duration);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -109,11 +121,9 @@ const TaskEditModal: React.FC<TaskEditModalProps> = ({
         priority: formData.priority,
         assigned_to: formData.assigned_to,
         start_time: formData.start_time ? `2024-01-01T${formData.start_time}:00` : undefined,
-        end_time: formData.end_time ? `2024-01-01T${formData.end_time}:00` : undefined,
       };
 
       await onSave(taskData);
-      onClose();
     } catch (error) {
       console.error('Error saving task:', error);
     } finally {
@@ -174,7 +184,7 @@ const TaskEditModal: React.FC<TaskEditModalProps> = ({
             />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label htmlFor="duration">Durée (minutes)</Label>
               <Input
@@ -194,16 +204,11 @@ const TaskEditModal: React.FC<TaskEditModalProps> = ({
                 value={formData.start_time}
                 onChange={(e) => setFormData(prev => ({ ...prev, start_time: e.target.value }))}
               />
-            </div>
-
-            <div>
-              <Label htmlFor="end_time">Heure de fin</Label>
-              <Input
-                id="end_time"
-                type="time"
-                value={formData.end_time}
-                onChange={(e) => setFormData(prev => ({ ...prev, end_time: e.target.value }))}
-              />
+              {displayedEndTime && (
+                <p className="text-sm text-gray-600 mt-1">
+                  Heure de fin calculée : {displayedEndTime}
+                </p>
+              )}
             </div>
           </div>
 

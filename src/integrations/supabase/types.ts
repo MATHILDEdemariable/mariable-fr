@@ -298,7 +298,7 @@ export type Database = {
       }
       coordination_planning: {
         Row: {
-          assigned_to: string | null
+          assigned_to: Json | null
           category: string
           coordination_id: string
           created_at: string
@@ -315,7 +315,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
-          assigned_to?: string | null
+          assigned_to?: Json | null
           category?: string
           coordination_id: string
           created_at?: string
@@ -332,7 +332,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
-          assigned_to?: string | null
+          assigned_to?: Json | null
           category?: string
           coordination_id?: string
           created_at?: string
@@ -349,13 +349,6 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "coordination_planning_assigned_to_fkey"
-            columns: ["assigned_to"]
-            isOneToOne: false
-            referencedRelation: "coordination_team"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "coordination_planning_coordination_id_fkey"
             columns: ["coordination_id"]
