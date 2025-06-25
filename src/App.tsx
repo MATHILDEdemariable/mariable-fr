@@ -19,7 +19,9 @@ import UserDashboard from "./pages/dashboard/UserDashboard";
 import JourMVue from "./pages/JourMVue";
 import MonJourM from "./pages/MonJourM";
 import Login from "./pages/auth/Login";
+import Register from "./pages/auth/Register";
 import Pricing from "./pages/Pricing";
+import Paiement from "./pages/Paiement";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogArticle";
 import Contact from "./pages/contact/NousContacter";
@@ -27,6 +29,12 @@ import MentionsLegales from "./pages/MentionsLegales";
 import Prestataires from "./pages/services/Prestataires";
 import Prestataire from "./pages/prestataire/slug";
 import EmailConfirmation from "./pages/auth/EmailConfirmation";
+
+// Import admin pages
+import AdminBlog from "./pages/admin/Blog";
+import AdminPrestataires from "./pages/admin/Prestataires";
+import AdminForm from "./pages/admin/FormAdmin";
+import AdminReservationsJourM from "./pages/admin/ReservationsJourM";
 
 const queryClient = new QueryClient();
 
@@ -54,10 +62,12 @@ function App() {
 
                   {/* Auth routes */}
                   <Route path="/login" element={<Login />} />
+                  <Route path="/register" element={<Register />} />
                   <Route path="/email-confirmation" element={<EmailConfirmation />} />
 
                   {/* Static routes */}
                   <Route path="/pricing" element={<Pricing />} />
+                  <Route path="/paiement" element={<Paiement />} />
                   <Route path="/blog" element={<Blog />} />
                   <Route path="/blog/:slug" element={<BlogPost />} />
                   <Route path="/contact" element={<Contact />} />
@@ -66,6 +76,12 @@ function App() {
                   {/* Prestataires routes */}
                   <Route path="/prestataires" element={<Prestataires />} />
                   <Route path="/prestataires/:slug" element={<Prestataire />} />
+
+                  {/* Admin routes */}
+                  <Route path="/admin/blog" element={<AdminBlog />} />
+                  <Route path="/admin/prestataires" element={<AdminPrestataires />} />
+                  <Route path="/admin/form" element={<AdminForm />} />
+                  <Route path="/admin/reservations-jour-m" element={<AdminReservationsJourM />} />
                   
                   <Route path="*" element={<NotFound />} />
                 </Routes>

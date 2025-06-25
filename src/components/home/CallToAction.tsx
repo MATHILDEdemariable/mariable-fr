@@ -29,7 +29,7 @@ const CallToAction = () => {
             variant="outline" 
             className="border-wedding-olive text-wedding-olive hover:bg-wedding-olive/10"
           >
-            <Link to="/login">
+            <Link to="/paiement">
               Dites oui à la simplicité
             </Link>
           </Button>
