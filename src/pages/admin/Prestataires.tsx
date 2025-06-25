@@ -4,9 +4,12 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Session } from "@supabase/supabase-js";
 import PrestatairesAdmin from "@/components/admin/FormPrestataires";
+import PrestataireCRMFilters from "@/components/admin/PrestataireCRMFilters";
 import { Database } from "@/integrations/supabase/types";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/toaster";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 type SupabaseAdminUser = Database["public"]["Tables"]["admin_users"]["Row"];
 
@@ -15,6 +18,12 @@ const AdminPrestataires = () => {
   const [session, setSession] = useState<Session | null>(null);
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null); 
   const [isLoading, setIsLoading] = useState(true);
+  const [crmFilters, setCrmFilters] = useState({
+    statusCrm: '',
+    search: '',
+    category: '',
+    region: ''
+  });
 
   useEffect(() => {
     const {
@@ -64,6 +73,22 @@ const AdminPrestataires = () => {
     }
   };
 
+  const handleFilterChange = (key: string, value: string) => {
+    setCrmFilters(prev => ({
+      ...prev,
+      [key]: value
+    }));
+  };
+
+  const handleResetFilters = () => {
+    setCrmFilters({
+      statusCrm: '',
+      search: '',
+      category: '',
+      region: ''
+    });
+  };
+
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -73,14 +98,61 @@ const AdminPrestataires = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4">
+    <div className="p-6">
       {isAdmin ? (
-        <div className="w-full max-w-7xl">
-          <h1 className="text-2xl font-bold mb-4 text-center mt-12">Administration des Prestataires</h1>
-          <p className="text-lg text-center mb-6">
-            Gérez votre base de prestataires depuis cette interface.
-          </p>
-          <PrestatairesAdmin />
+        <div className="space-y-6">
+          <div>
+            <h1 className="text-3xl font-serif text-wedding-black mb-2">
+              Gestion des Prestataires
+            </h1>
+            <p className="text-gray-600">
+              Gérez votre base de prestataires et suivez vos contacts CRM
+            </p>
+          </div>
+
+          <Tabs defaultValue="management" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="management">Gestion Prestataires</TabsTrigger>
+              <TabsTrigger value="crm">Suivi CRM</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="management" className="space-y-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Base de données des prestataires</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <PrestatairesAdmin />
+                </CardContent>
+              </Card>
+            </TabsContent>
+            
+            <TabsContent value="crm" className="space-y-4">
+              <PrestataireCRMFilters
+                filters={crmFilters}
+                onFilterChange={handleFilterChange}
+                onReset={handleResetFilters}
+              />
+              
+              <Card>
+                <CardHeader>
+                  <CardTitle>Suivi CRM des prestataires</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-center py-8 text-gray-500">
+                    <p>Interface CRM en cours de développement</p>
+                    <p className="text-sm mt-2">
+                      Filtres appliqués : {Object.values(crmFilters).filter(Boolean).length > 0 
+                        ? Object.entries(crmFilters).filter(([_, value]) => value).map(([key, value]) => `${key}: ${value}`).join(', ')
+                        : 'Aucun filtre actif'
+                      }
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
+          
           <Toaster />
         </div>
       ) : (

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import Header from '@/components/Header';
@@ -9,10 +8,11 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
-import { Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Check, X, Phone, Users, FileText, Bell, Headphones, UserCheck, MapPin } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { ArrowLeft, Check, X, Phone, Users, FileText, Bell, Headphones, UserCheck, MapPin, Eye } from 'lucide-react';
 
 const ReservationJourM = () => {
   const [formData, setFormData] = useState({
@@ -161,6 +161,66 @@ const ReservationJourM = () => {
     }
   ];
 
+  const FormulasModal = () => (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="outline" className="w-full flex items-center gap-2">
+          <Eye className="h-4 w-4" />
+          Voir les formules
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>Nos formules Jour-M</DialogTitle>
+        </DialogHeader>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b">
+                <th className="text-left p-3 font-medium">Fonctionnalité</th>
+                {pricingData.map((plan) => (
+                  <th key={plan.title} className="text-center p-3 font-medium min-w-[120px]">
+                    <div className="font-semibold">{plan.title}</div>
+                    <div className="text-lg font-bold text-wedding-olive">{plan.price}</div>
+                    {plan.subtitle && <div className="text-xs text-gray-500">{plan.subtitle}</div>}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {pricingData[0].features.map((feature, index) => (
+                <tr key={index} className="border-b hover:bg-gray-50">
+                  <td className="p-3 text-left">
+                    <div className="flex items-start gap-2">
+                      <feature.icon className="h-4 w-4 mt-0.5 text-wedding-olive flex-shrink-0" />
+                      <span className="text-xs">{feature.text}</span>
+                    </div>
+                  </td>
+                  {pricingData.map((plan) => (
+                    <td key={plan.title} className="p-3 text-center">
+                      <div className="flex flex-col items-center">
+                        {plan.features[index].included ? (
+                          <Check className="h-5 w-5 text-green-500" />
+                        ) : (
+                          <X className="h-5 w-5 text-red-500" />
+                        )}
+                        {plan.features[index].note && (
+                          <span className="text-xs text-gray-500 mt-1 text-center">
+                            {plan.features[index].note}
+                          </span>
+                        )}
+                      </div>
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <Helmet>
@@ -172,7 +232,7 @@ const ReservationJourM = () => {
       
       <main className="flex-grow py-8">
         <div className="container mx-auto px-4">
-          <div className="flex items-center gap-4 mb-4">
+          <div className="flex items-center gap-4 mb-6">
             <Button asChild variant="outline" size="sm">
               <Link to="/">
                 <ArrowLeft className="h-4 w-4 mr-2" />
@@ -190,16 +250,17 @@ const ReservationJourM = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-7xl mx-auto">
+          {/* Desktop Layout */}
+          <div className="hidden lg:grid lg:grid-cols-2 gap-12 max-w-7xl mx-auto">
             {/* Formulaire à gauche */}
-            <div className="order-2 lg:order-1">
-              <Card className="border-2 border-red-500">
+            <div>
+              <Card className="shadow-lg">
                 <CardHeader>
                   <CardTitle>Informations de contact</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <form onSubmit={handleSubmit} className="space-y-5">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <Label htmlFor="first_name">Prénom *</Label>
                         <Input
@@ -246,7 +307,7 @@ const ReservationJourM = () => {
                       />
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <Label htmlFor="wedding_date">Date du mariage *</Label>
                         <Input
@@ -284,22 +345,25 @@ const ReservationJourM = () => {
 
                     <div>
                       <Label className="text-base font-medium mb-3 block">Services souhaités *</Label>
+                      <div className="mb-4">
+                        <FormulasModal />
+                      </div>
                       <RadioGroup value={formData.selected_formula} onValueChange={handleFormulaChange}>
                         <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="gratuite" id="gratuite" />
-                          <Label htmlFor="gratuite">Version gratuite (Inscrivez-vous)</Label>
+                          <RadioGroupItem value="gratuite" id="mobile-gratuite" />
+                          <Label htmlFor="mobile-gratuite">Version gratuite (Inscrivez-vous)</Label>
                         </div>
                         <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="libre" id="libre" />
-                          <Label htmlFor="libre">Formule Libre (49€)</Label>
+                          <RadioGroupItem value="libre" id="mobile-libre" />
+                          <Label htmlFor="mobile-libre">Formule Libre (49€)</Label>
                         </div>
                         <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="sereine" id="sereine" />
-                          <Label htmlFor="sereine">Formule Sereine (149€)</Label>
+                          <RadioGroupItem value="sereine" id="mobile-sereine" />
+                          <Label htmlFor="mobile-sereine">Formule Sereine (149€)</Label>
                         </div>
                         <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="privilege" id="privilege" />
-                          <Label htmlFor="privilege">Formule Privilège (799€)</Label>
+                          <RadioGroupItem value="privilege" id="mobile-privilege" />
+                          <Label htmlFor="mobile-privilege">Formule Privilège (799€)</Label>
                         </div>
                       </RadioGroup>
                     </div>
@@ -340,8 +404,8 @@ const ReservationJourM = () => {
             </div>
 
             {/* Tableau des formules à droite */}
-            <div className="order-1 lg:order-2">
-              <Card className="border-2 border-blue-500">
+            <div>
+              <Card className="shadow-lg">
                 <CardHeader>
                   <CardTitle className="text-center">Nos formules Jour-M</CardTitle>
                   <p className="text-center text-gray-600">Choisissez votre niveau de sérénité</p>
@@ -397,6 +461,157 @@ const ReservationJourM = () => {
                 </CardContent>
               </Card>
             </div>
+          </div>
+
+          {/* Mobile Layout */}
+          <div className="lg:hidden max-w-2xl mx-auto space-y-6">
+            <Card className="shadow-lg">
+              <CardHeader>
+                <CardTitle>Informations de contact</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleSubmit} className="space-y-5">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="first_name">Prénom *</Label>
+                      <Input
+                        id="first_name"
+                        name="first_name"
+                        value={formData.first_name}
+                        onChange={handleInputChange}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="last_name">Nom *</Label>
+                      <Input
+                        id="last_name"
+                        name="last_name"
+                        value={formData.last_name}
+                        onChange={handleInputChange}
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="email">Email *</Label>
+                    <Input
+                      id="email"
+                      name="email"
+                      type="email"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="phone">Téléphone *</Label>
+                    <Input
+                      id="phone"
+                      name="phone"
+                      type="tel"
+                      value={formData.phone}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="wedding_date">Date du mariage *</Label>
+                      <Input
+                        id="wedding_date"
+                        name="wedding_date"
+                        type="date"
+                        value={formData.wedding_date}
+                        onChange={handleInputChange}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="guest_count">Nombre d'invités</Label>
+                      <Input
+                        id="guest_count"
+                        name="guest_count"
+                        type="number"
+                        value={formData.guest_count}
+                        onChange={handleInputChange}
+                        placeholder="Ex: 80"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="wedding_location">Lieu du mariage</Label>
+                    <Input
+                      id="wedding_location"
+                      name="wedding_location"
+                      value={formData.wedding_location}
+                      onChange={handleInputChange}
+                      placeholder="Ville ou région"
+                    />
+                  </div>
+
+                  <div>
+                    <Label className="text-base font-medium mb-3 block">Services souhaités *</Label>
+                    <div className="mb-4">
+                      <FormulasModal />
+                    </div>
+                    <RadioGroup value={formData.selected_formula} onValueChange={handleFormulaChange}>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="gratuite" id="mobile-gratuite" />
+                        <Label htmlFor="mobile-gratuite">Version gratuite (Inscrivez-vous)</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="libre" id="mobile-libre" />
+                        <Label htmlFor="mobile-libre">Formule Libre (49€)</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="sereine" id="mobile-sereine" />
+                        <Label htmlFor="mobile-sereine">Formule Sereine (149€)</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="privilege" id="mobile-privilege" />
+                        <Label htmlFor="mobile-privilege">Formule Privilège (799€)</Label>
+                      </div>
+                    </RadioGroup>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="budget">Budget approximatif</Label>
+                    <Input
+                      id="budget"
+                      name="budget"
+                      value={formData.budget}
+                      onChange={handleInputChange}
+                      placeholder="Ex: 15 000€"
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="current_organization">Message</Label>
+                    <Textarea
+                      id="current_organization"
+                      name="current_organization"
+                      value={formData.current_organization}
+                      onChange={handleInputChange}
+                      placeholder="Parlez-nous de votre projet, vos attentes particulières..."
+                      rows={3}
+                    />
+                  </div>
+
+                  <Button 
+                    type="submit" 
+                    className="w-full bg-wedding-olive hover:bg-wedding-olive/90"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? 'Envoi en cours...' : 'Envoyer ma demande'}
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </main>
