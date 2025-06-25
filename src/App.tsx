@@ -59,6 +59,13 @@ import BlogPage from "./pages/Blog";
 import AdminBlog from "./pages/admin/Blog";
 import BlogArticlePage from './pages/BlogArticle';
 
+// Import des nouvelles pages Mon Jour-M
+import MonJourM from "./pages/MonJourM";
+import MonJourMPlanningPage from "./pages/MonJourMPlanning";
+import MonJourMEquipePage from "./pages/MonJourMEquipe";
+import MonJourMDocumentsPage from "./pages/MonJourMDocuments";
+import JourMVue from "./pages/JourMVue";
+
 // Initialize the query client
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -151,6 +158,15 @@ const App: React.FC = () => {
                   
                   {/* Protected Dashboard Routes */}
                   <Route path="/dashboard/*" element={<UserDashboard />} />
+                  
+                  {/* Mon Jour-M Routes - Nouvelles routes indépendantes */}
+                  <Route path="/mon-jour-m" element={<MonJourM />} />
+                  <Route path="/mon-jour-m/planning" element={<MonJourMPlanningPage />} />
+                  <Route path="/mon-jour-m/equipe" element={<MonJourMEquipePage />} />
+                  <Route path="/mon-jour-m/documents" element={<MonJourMDocumentsPage />} />
+                  
+                  {/* Vue publique partagée Mon Jour-M */}
+                  <Route path="/jour-m-vue/:token" element={<JourMVue />} />
                   
                   {/* Redirect for old privacy policy route */}
                   <Route path="/politique-confidentialite" element={<Navigate to="/mentions-legales" replace />} />

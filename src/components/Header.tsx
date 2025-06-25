@@ -34,12 +34,20 @@ function Menus({ onClick, isLoggedIn }: { onClick?: () => void, isLoggedIn?: boo
       <HeaderDropdown label="Futurs mariés">
         <HeaderDropdownMenu>
           {isLoggedIn ? (
-            <HeaderDropdownItem
-              label="Mon tableau de bord"
-              description="Accéder à votre espace personnel"
-              to="/dashboard"
-              onClick={onClick}
-            />
+            <>
+              <HeaderDropdownItem
+                label="Mon tableau de bord"
+                description="Accéder à votre espace personnel"
+                to="/dashboard"
+                onClick={onClick}
+              />
+              <HeaderDropdownItem
+                label="Mon Jour-M"
+                description="Coordonnez tous les détails de votre mariage"
+                to="/mon-jour-m"
+                onClick={onClick}
+              />
+            </>
           ) : (
             <>
               <HeaderDropdownItem
