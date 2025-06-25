@@ -1,222 +1,119 @@
-
-import React from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AnalyticsProvider } from "@/components/analytics/AnalyticsProvider";
 import { HelmetProvider } from 'react-helmet-async';
 import { ReaderModeProvider } from '@/contexts/ReaderModeContext';
-import AnalyticsProvider from './components/analytics/AnalyticsProvider';
+
+// Import pages
 import Index from "./pages/Index";
-import Demo from "./pages/Demo";
-import GuideMariable from "./pages/GuideMariable";
-import GuideMariableFrame from "./pages/GuideMariableFrame";
-import LoginFrame from "./pages/LoginFrame";
-import Login from "./pages/auth/Login";
-import Register from "./pages/auth/Register";
-import Callback from "./pages/auth/Callback";
-import EmailConfirmation from "./pages/auth/EmailConfirmation";
-import UserDashboard from "./pages/dashboard/UserDashboard";
-import ReaderView from "./pages/dashboard/ReaderView";
 import MoteurRecherche from "./pages/MoteurRecherche";
-import Histoire from "./pages/about/Histoire";
-import Charte from "./pages/about/Charte";
-import Approche from "./pages/about/Approche";
-import Temoignages from "./pages/about/Temoignages";
-import NousContacter from "./pages/contact/NousContacter";
-import FAQ from "./pages/contact/FAQ";
-import Prestataires from "./pages/services/Prestataires";
-import Professionnels from "./pages/Professionnels";
-import NotFound from "./pages/NotFound";
-import FormAdmin from "./pages/admin/FormAdmin";
-import PrestataireAdmin from "./pages/admin/Prestataires";
-import ReservationsJourM from "./pages/admin/ReservationsJourM";
-import ImportAirtable from "./pages/ImportAirtable";
-import ChecklistMariage from "./pages/ChecklistMariage";
 import PlanningPersonnalise from "./pages/PlanningPersonnalise";
 import PlanningResultatsPersonnalises from "./pages/PlanningResultatsPersonnalises";
-import WeddingAssistantV2 from "./pages/WeddingAssistantV2";
-import EmailCapture from "./pages/EmailCapture";
-import Preview from "./pages/Preview";
-import TestFormulaire from "./pages/TestFormulaire";
-import TestAssistantVirtuel from "./pages/TestAssistantVirtuel";
-import LandingPage from "./pages/LandingPage";
-import ServiceTemplate from "./pages/ServiceTemplate";
-import PrestatairePage from "./pages/prestataire/slug";
-import PrestataireContactPage from "./pages/prestataire/contact";
-import PrestataireTrackingPage from "./pages/prestataire/tracking";
-import MentionsLegales from "./pages/MentionsLegales";
-import CGV from "./pages/CGV";
-import Pricing from "./pages/Pricing";
+import NotFound from "./pages/NotFound";
 import ReservationJourM from "./pages/ReservationJourM";
-import Budget from "./pages/services/Budget";
-import Paiement from './pages/Paiement';
-import DemoJourM from './pages/DemoJourM';
-import Accompagnement from './pages/Accompagnement';
-import SitemapPage from "./pages/Sitemap";
-import BlogPage from "./pages/Blog";
-import AdminBlog from "./pages/admin/Blog";
-import BlogArticlePage from './pages/BlogArticle';
-
-// Import des nouvelles pages Mon Jour-M
-import MonJourM from "./pages/MonJourM";
-import MonJourMPlanningPage from "./pages/MonJourMPlanning";
-import MonJourMEquipePage from "./pages/MonJourMEquipe";
-import MonJourMDocumentsPage from "./pages/MonJourMDocuments";
+import UserDashboard from "./pages/dashboard/UserDashboard";
 import JourMVue from "./pages/JourMVue";
+import MonJourM from "./pages/MonJourM";
+import Login from "./pages/Login";
+import Pricing from "./pages/Pricing";
+import Blog from "./pages/Blog";
+import BlogPost from "./pages/BlogPost";
+import Contact from "./pages/Contact";
+import Confidentialite from "./pages/Confidentialite";
+import ConditionsGenerales from "./pages/ConditionsGenerales";
+import MentionsLegales from "./pages/MentionsLegales";
+import BlogCategory from "./pages/BlogCategory";
+import BlogSearch from "./pages/BlogSearch";
+import Prestataires from "./pages/Prestataires";
+import Prestataire from "./pages/Prestataire";
+import Search from "./pages/Search";
+import Subscribe from "./pages/Subscribe";
+import Account from "./pages/dashboard/Account";
+import Billing from "./pages/dashboard/Billing";
+import Notifications from "./pages/dashboard/Notifications";
+import Security from "./pages/dashboard/Security";
+import Error from "./pages/Error";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
+import EmailConfirmation from "./pages/EmailConfirmation";
+import Logout from "./pages/Logout";
 
-// Initialize the query client
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: 1,
-      refetchOnWindowFocus: false,
-    },
-  },
-});
+const queryClient = new QueryClient();
 
-// Create a helmetContext object to pass to HelmetProvider
-const helmetContext = {};
-
-const App: React.FC = () => {
+function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <HelmetProvider context={helmetContext}>
-        <ReaderModeProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <Router>
-              <AnalyticsProvider>
+      <HelmetProvider>
+        <AnalyticsProvider>
+          <ReaderModeProvider>
+            <TooltipProvider>
+              <Toaster />
+              <Sonner />
+              <BrowserRouter>
                 <Routes>
-                  {/* Make Index page the main route */}
                   <Route path="/" element={<Index />} />
-                  
-                  {/* Move LandingPage to /landing route */}
-                  <Route path="/landing" element={<LandingPage />} />
-                  
-                  {/* Blog page */}
-                  <Route path="/blog" element={<BlogPage />} />
-                  <Route path="/blog/:slug" element={<BlogArticlePage />} />
-                  
-                  {/* Old index page is now accessible via /home */}
-                  <Route path="/home" element={<Index />} />
-                  
-                  {/* Professionals page */}
-                  <Route path="/professionnels" element={<Professionnels />} />
-                  
-                  {/* Services pages */}
-                  <Route path="/services/prestataires" element={<Prestataires />} />
-                  <Route path="/services/budget" element={<Budget />} />
-                  
-                  {/* Pricing page */}
-                  <Route path="/pricing" element={<Pricing />} />
-                  
-                  {/* Payment page */}
-                  <Route path="/paiement" element={<Paiement />} />
-                  
-                  {/* Post-Payment Accompagnement page */}
-                  <Route path="/accompagnement" element={<Accompagnement />} />
-                  
-                  {/* Demo Jour M page */}
-                  <Route path="/demo-jour-m" element={<DemoJourM />} />
-                  
-                  {/* Reservation Le Jour M */}
+                  <Route path="/moteur-recherche" element={<MoteurRecherche />} />
+                  <Route path="/planning-personnalise" element={<PlanningPersonnalise />} />
+                  <Route path="/planning-resultats-personnalises" element={<PlanningResultatsPersonnalises />} />
                   <Route path="/reservation-jour-m" element={<ReservationJourM />} />
-                  
-                  {/* Checklist page */}
-                  <Route path="/checklist-mariage" element={<ChecklistMariage />} />
-                  
-                  {/* Guide Mariable */}
-                  <Route path="/guide-mariable" element={<GuideMariable />} />
-                  <Route path="/guide-mariable-frame" element={<GuideMariableFrame />} />
-                  <Route path="/login-frame" element={<LoginFrame />} />
-                  
-                  {/* About pages */}
-                  <Route path="/about/histoire" element={<Histoire />} />
-                  <Route path="/about/charte" element={<Charte />} />
-                  <Route path="/about/temoignages" element={<Temoignages />} />
-                  <Route path="/about/approche" element={<Approche />} />
-                  
-                  {/* Contact pages */}
-                  <Route path="/contact/nous-contacter" element={<NousContacter />} />
-                  <Route path="/contact/faq" element={<FAQ />} />
-                  
-                  {/* Legal pages */}
-                  <Route path="/mentions-legales" element={<MentionsLegales />} />
-                  <Route path="/cgv" element={<CGV />} />
-                  
-                  {/* Auth Routes */}
-                  <Route path="/login" element={<Login />} />
-                  <Route path="/register" element={<Register />} />
-                  <Route path="/auth/email-confirmation" element={<EmailConfirmation />} />
-                  <Route path="/auth/callback" element={<Callback />} />
-                  
-                  {/* Public Reader View - MUST come before protected dashboard routes */}
-                  <Route path="/dashboard/lecteur/:token" element={<ReaderView />} />
-                  
-                  {/* Protected Dashboard Routes */}
                   <Route path="/dashboard/*" element={<UserDashboard />} />
-                  
-                  {/* Mon Jour-M Routes - Nouvelles routes indépendantes */}
-                  <Route path="/mon-jour-m" element={<MonJourM />} />
-                  <Route path="/mon-jour-m/planning" element={<MonJourMPlanningPage />} />
-                  <Route path="/mon-jour-m/equipe" element={<MonJourMEquipePage />} />
-                  <Route path="/mon-jour-m/documents" element={<MonJourMDocumentsPage />} />
-                  
-                  {/* Vue publique partagée Mon Jour-M */}
                   <Route path="/jour-m-vue/:token" element={<JourMVue />} />
                   
-                  {/* Redirect for old privacy policy route */}
-                  <Route path="/politique-confidentialite" element={<Navigate to="/mentions-legales" replace />} />
-                  
-                  {/* Demo page */}
-                  <Route path="/demo" element={<Demo />} />
-                  <Route path="/prestataire/:slug" element={<PrestatairePage />} />
-                  
-                  {/* Moteur de recherche page - now accessible via /selection (renamed from /recherche) */}
-                  <Route path="/selection" element={<MoteurRecherche />} />
-                  <Route path="/guide-mariable" element={<MoteurRecherche />} />
-                  
-                  {/* Redirect old /recherche URL to new /selection URL */}
-                  <Route path="/recherche" element={<Navigate to="/selection" replace />} />
-                  
-                  {/* Planning personnalisé */}
-                  <Route path="/planning-personnalise" element={<PlanningPersonnalise />} />
-                  <Route path="/planning-personnalise/resultats" element={<PlanningResultatsPersonnalises />} />
-                  
-                  {/* Test Formulaire */}
-                  <Route path="/test-formulaire" element={<TestFormulaire />} />
-                  <Route path="/test-assistant-virtuel" element={<TestAssistantVirtuel />} />
-                  <Route path="/assistant-v2" element={<WeddingAssistantV2 />} />
-                  
-                  {/* Import Airtable */}
-                  <Route path="/import-airtable" element={<ImportAirtable />} />
-                  
-                  {/* Admin Routes */}
-                  <Route path="/admin/prestataires" element={<PrestataireAdmin />} />
-                  <Route path="/admin/blog" element={<AdminBlog />} />
-                  <Route path="/admin/form" element={<FormAdmin />} />
-                  <Route path="/admin/reservations-jour-m" element={<ReservationsJourM />} />
-                  
-                  {/* Prestataire Routes */}
-                  <Route path="/prestataire/tracking" element={<PrestataireTrackingPage />} />
-                  <Route path="/prestataire/contact" element={<PrestataireContactPage />} />
+                  {/* Mon Jour-M routes */}
+                  <Route path="/mon-jour-m" element={<MonJourM />} />
+                  <Route path="/mon-jour-m/planning" element={<MonJourM />} />
+                  <Route path="/mon-jour-m/equipe" element={<MonJourM />} />
+                  <Route path="/mon-jour-m/documents" element={<MonJourM />} />
 
-                  {/* Sitemap Route */}
-                  <Route path="/sitemap.xml" element={<SitemapPage />} />
+                  {/* Auth routes */}
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/logout" element={<Logout />} />
+                  <Route path="/forgot-password" element={<ForgotPassword />} />
+                  <Route path="/reset-password" element={<ResetPassword />} />
+                  <Route path="/email-confirmation" element={<EmailConfirmation />} />
+
+                  {/* Dashboard routes */}
+                  <Route path="/dashboard/account" element={<Account />} />
+                  <Route path="/dashboard/billing" element={<Billing />} />
+                  <Route path="/dashboard/notifications" element={<Notifications />} />
+                  <Route path="/dashboard/security" element={<Security />} />
+
+                  {/* Static routes */}
+                  <Route path="/pricing" element={<Pricing />} />
+                  <Route path="/blog" element={<Blog />} />
+                  <Route path="/blog/:slug" element={<BlogPost />} />
+                  <Route path="/blog/category/:category" element={<BlogCategory />} />
+		              <Route path="/blog/search/:searchTerm" element={<BlogSearch />} />
+                  <Route path="/contact" element={<Contact />} />
+                  <Route path="/confidentialite" element={<Confidentialite />} />
+                  <Route path="/conditions-generales" element={<ConditionsGenerales />} />
+                  <Route path="/mentions-legales" element={<MentionsLegales />} />
+
+                  {/* Prestataires routes */}
+                  <Route path="/prestataires" element={<Prestataires />} />
+                  <Route path="/prestataires/:slug" element={<Prestataire />} />
+
+                  {/* Search route */}
+                  <Route path="/search/:searchTerm" element={<Search />} />
+
+                  {/* Subscribe route */}
+                  <Route path="/subscribe/:email" element={<Subscribe />} />
+
+                  {/* Error route */}
+                  <Route path="/error" element={<Error />} />
                   
-                  {/* Catch-all route */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>
-              </AnalyticsProvider>
-            </Router>
-          </TooltipProvider>
-        </ReaderModeProvider>
+              </BrowserRouter>
+            </TooltipProvider>
+          </ReaderModeProvider>
+        </AnalyticsProvider>
       </HelmetProvider>
     </QueryClientProvider>
   );
-};
+}
 
 export default App;

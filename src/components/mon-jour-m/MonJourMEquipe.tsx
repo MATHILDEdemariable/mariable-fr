@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -9,6 +10,7 @@ import { Plus, Users, User, Building, Phone, Mail, Edit, Trash2 } from 'lucide-r
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { useDebounce } from '@/hooks/use-debounce';
 
 interface TeamMember {
   id: string;
@@ -26,7 +28,7 @@ const MonJourMEquipe: React.FC = () => {
   const [coordinationId, setCoordinationId] = useState<string | null>(null);
   const [showAddMember, setShowAddMember] = useState(false);
   const [editingMember, setEditingMember] = useState<TeamMember | null>(null);
-  const [newMember, setNewMember] = useState({
+  const [formData, setFormData] = useState({
     name: '',
     role: '',
     email: '',
@@ -35,6 +37,9 @@ const MonJourMEquipe: React.FC = () => {
     notes: ''
   });
   const { toast } = useToast();
+
+  // Debounce pour éviter les bugs de saisie
+  const debouncedFormData = useDebounce(formData, 300);
 
   useEffect(() => {
     initializeData();
@@ -45,6 +50,8 @@ const MonJourMEquipe: React.FC = () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
+
+      console.log('🚀 Initializing team data for user:', user.id);
 
       // Récupérer la coordination
       const { data: coordination } = await supabase
@@ -58,11 +65,13 @@ const MonJourMEquipe: React.FC = () => {
         await loadTeamMembers(coordination.id);
       }
     } catch (error) {
-      console.error('Error initializing data:', error);
+      console.error('❌ Error initializing data:', error);
     }
   };
 
   const loadTeamMembers = async (coordId: string) => {
+    console.log('📥 Loading team members for coordination:', coordId);
+    
     const { data, error } = await supabase
       .from('coordination_team')
       .select('*')
@@ -70,9 +79,11 @@ const MonJourMEquipe: React.FC = () => {
       .order('created_at');
 
     if (error) {
-      console.error('Error loading team members:', error);
+      console.error('❌ Error loading team members:', error);
       return;
     }
+
+    console.log('✅ Loaded team members:', data);
 
     // Filtrer et mapper les données pour correspondre à notre interface
     const mappedData = (data || []).map((item: any) => ({
@@ -112,32 +123,54 @@ const MonJourMEquipe: React.FC = () => {
     };
   };
 
+  const resetForm = () => {
+    setFormData({
+      name: '',
+      role: '',
+      email: '',
+      phone: '',
+      type: 'person',
+      notes: ''
+    });
+  };
+
   const addMember = async () => {
-    if (!coordinationId || !newMember.name.trim() || !newMember.role.trim()) {
+    if (!coordinationId || !formData.name.trim()) {
       toast({
         title: "Erreur",
-        description: "Nom et rôle sont obligatoires",
+        description: "Le nom est obligatoire",
         variant: "destructive"
       });
       return;
     }
+
+    if (!formData.type) {
+      toast({
+        title: "Erreur",
+        description: "Le type (Personne/Prestataire) est obligatoire",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    console.log('➕ Adding member:', formData);
 
     try {
       const { error } = await supabase
         .from('coordination_team')
         .insert({
           coordination_id: coordinationId,
-          name: newMember.name,
-          role: newMember.role,
-          email: newMember.email || null,
-          phone: newMember.phone || null,
-          type: newMember.type,
-          notes: newMember.notes || null
+          name: formData.name,
+          role: formData.role || 'Membre',
+          email: formData.email || null,
+          phone: formData.phone || null,
+          type: formData.type,
+          notes: formData.notes || null
         });
 
       if (error) throw error;
 
-      setNewMember({ name: '', role: '', email: '', phone: '', type: 'person', notes: '' });
+      resetForm();
       setShowAddMember(false);
       
       toast({
@@ -145,7 +178,7 @@ const MonJourMEquipe: React.FC = () => {
         description: "Le nouveau membre a été ajouté à l'équipe"
       });
     } catch (error) {
-      console.error('Error adding member:', error);
+      console.error('❌ Error adding member:', error);
       toast({
         title: "Erreur",
         description: "Impossible d'ajouter le membre",
@@ -156,6 +189,8 @@ const MonJourMEquipe: React.FC = () => {
 
   const updateMember = async () => {
     if (!editingMember) return;
+
+    console.log('✏️ Updating member:', editingMember);
 
     try {
       const { error } = await supabase
@@ -179,7 +214,7 @@ const MonJourMEquipe: React.FC = () => {
         description: "Les informations ont été mises à jour"
       });
     } catch (error) {
-      console.error('Error updating member:', error);
+      console.error('❌ Error updating member:', error);
       toast({
         title: "Erreur",
         description: "Impossible de modifier le membre",
@@ -189,6 +224,8 @@ const MonJourMEquipe: React.FC = () => {
   };
 
   const deleteMember = async (memberId: string) => {
+    console.log('🗑️ Deleting member:', memberId);
+    
     try {
       const { error } = await supabase
         .from('coordination_team')
@@ -202,7 +239,7 @@ const MonJourMEquipe: React.FC = () => {
         description: "Le membre a été retiré de l'équipe"
       });
     } catch (error) {
-      console.error('Error deleting member:', error);
+      console.error('❌ Error deleting member:', error);
       toast({
         title: "Erreur",
         description: "Impossible de supprimer le membre",
@@ -211,153 +248,36 @@ const MonJourMEquipe: React.FC = () => {
     }
   };
 
-  const rolePresets = [
-    'Témoin',
-    'Demoiselle d\'honneur',
-    'Garçon d\'honneur',
-    'Père de la mariée',
-    'Mère de la mariée',
-    'Père du marié',
-    'Mère du marié',
-    'Photographe',
-    'Vidéaste',
-    'DJ/Musicien',
-    'Fleuriste',
-    'Traiteur',
-    'Wedding Planner',
-    'Officiant',
-    'Coiffeur/Maquilleur'
-  ];
-
-  const MemberForm = ({ 
-    member, 
-    onSave, 
-    onCancel 
-  }: { 
-    member: any, 
-    onSave: () => void, 
-    onCancel: () => void 
-  }) => (
-    <div className="space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium mb-1">Nom *</label>
-          <Input
-            value={member.name}
-            onChange={(e) => {
-              if (editingMember) {
-                setEditingMember({ ...editingMember, name: e.target.value });
-              } else {
-                setNewMember({ ...newMember, name: e.target.value });
-              }
-            }}
-            placeholder="Nom de la personne"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">Rôle *</label>
-          <Select 
-            value={member.role} 
-            onValueChange={(value) => {
-              if (editingMember) {
-                setEditingMember({ ...editingMember, role: value });
-              } else {
-                setNewMember({ ...newMember, role: value });
-              }
-            }}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Sélectionner un rôle" />
-            </SelectTrigger>
-            <SelectContent>
-              {rolePresets.map((role) => (
-                <SelectItem key={role} value={role}>{role}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium mb-1">Email</label>
-          <Input
-            type="email"
-            value={member.email || ''}
-            onChange={(e) => {
-              if (editingMember) {
-                setEditingMember({ ...editingMember, email: e.target.value });
-              } else {
-                setNewMember({ ...newMember, email: e.target.value });
-              }
-            }}
-            placeholder="email@exemple.com"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">Téléphone</label>
-          <Input
-            value={member.phone || ''}
-            onChange={(e) => {
-              if (editingMember) {
-                setEditingMember({ ...editingMember, phone: e.target.value });
-              } else {
-                setNewMember({ ...newMember, phone: e.target.value });
-              }
-            }}
-            placeholder="06 12 34 56 78"
-          />
-        </div>
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium mb-1">Type</label>
-        <Select 
-          value={member.type} 
-          onValueChange={(value: 'person' | 'vendor') => {
-            if (editingMember) {
-              setEditingMember({ ...editingMember, type: value });
-            } else {
-              setNewMember({ ...newMember, type: value });
-            }
-          }}
-        >
-          <SelectTrigger>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="person">Personne</SelectItem>
-            <SelectItem value="vendor">Prestataire</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium mb-1">Notes</label>
-        <Textarea
-          value={member.notes || ''}
-          onChange={(e) => {
-            if (editingMember) {
-              setEditingMember({ ...editingMember, notes: e.target.value });
-            } else {
-              setNewMember({ ...newMember, notes: e.target.value });
-            }
-          }}
-          placeholder="Notes et informations complémentaires"
-          rows={3}
-        />
-      </div>
-
-      <div className="flex gap-2">
-        <Button onClick={onSave}>
-          {editingMember ? 'Modifier' : 'Ajouter'}
-        </Button>
-        <Button variant="outline" onClick={onCancel}>
-          Annuler
-        </Button>
-      </div>
-    </div>
-  );
+  // Options de rôles selon le type
+  const getSubRoleOptions = (type: 'person' | 'vendor') => {
+    if (type === 'person') {
+      return [
+        'Témoin',
+        'Demoiselle d\'honneur',
+        'Garçon d\'honneur',
+        'Père de la mariée',
+        'Mère de la mariée',
+        'Père du marié',
+        'Mère du marié',
+        'Famille',
+        'Ami(e)',
+        'Autre'
+      ];
+    } else {
+      return [
+        'Photographe',
+        'Vidéaste',
+        'DJ/Musicien',
+        'Fleuriste',
+        'Traiteur',
+        'Wedding Planner',
+        'Officiant',
+        'Coiffeur/Maquilleur',
+        'Décorateur',
+        'Autre prestataire'
+      ];
+    }
+  };
 
   const people = teamMembers.filter(m => m.type === 'person');
   const vendors = teamMembers.filter(m => m.type === 'vendor');
@@ -382,11 +302,92 @@ const MonJourMEquipe: React.FC = () => {
             <DialogHeader>
               <DialogTitle>Ajouter un membre d'équipe</DialogTitle>
             </DialogHeader>
-            <MemberForm 
-              member={newMember}
-              onSave={addMember}
-              onCancel={() => setShowAddMember(false)}
-            />
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-1">Nom *</label>
+                  <Input
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    placeholder="Nom de la personne"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Type *</label>
+                  <Select 
+                    value={formData.type} 
+                    onValueChange={(value: 'person' | 'vendor') => setFormData({ ...formData, type: value, role: '' })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Sélectionner un type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="person">👤 Personne</SelectItem>
+                      <SelectItem value="vendor">🏢 Prestataire</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1">Rôle spécifique</label>
+                <Select 
+                  value={formData.role} 
+                  onValueChange={(value) => setFormData({ ...formData, role: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Sélectionner un rôle (optionnel)" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {getSubRoleOptions(formData.type).map((role) => (
+                      <SelectItem key={role} value={role}>{role}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-1">Email</label>
+                  <Input
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    placeholder="email@exemple.com"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Téléphone</label>
+                  <Input
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    placeholder="06 12 34 56 78"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1">Notes</label>
+                <Textarea
+                  value={formData.notes}
+                  onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                  placeholder="Notes et informations complémentaires"
+                  rows={3}
+                />
+              </div>
+
+              <div className="flex gap-2">
+                <Button onClick={addMember}>
+                  Ajouter
+                </Button>
+                <Button variant="outline" onClick={() => {
+                  resetForm();
+                  setShowAddMember(false);
+                }}>
+                  Annuler
+                </Button>
+              </div>
+            </div>
           </DialogContent>
         </Dialog>
       </div>
@@ -407,9 +408,11 @@ const MonJourMEquipe: React.FC = () => {
                   <div className="flex justify-between items-start mb-3">
                     <div>
                       <h3 className="font-medium">{member.name}</h3>
-                      <Badge variant="outline" className="mt-1">
-                        {member.role}
-                      </Badge>
+                      {member.role && (
+                        <Badge variant="outline" className="mt-1">
+                          {member.role}
+                        </Badge>
+                      )}
                     </div>
                     <div className="flex gap-1">
                       <Button
@@ -478,9 +481,11 @@ const MonJourMEquipe: React.FC = () => {
                   <div className="flex justify-between items-start mb-3">
                     <div>
                       <h3 className="font-medium">{member.name}</h3>
-                      <Badge variant="outline" className="mt-1 bg-blue-50 text-blue-700">
-                        {member.role}
-                      </Badge>
+                      {member.role && (
+                        <Badge variant="outline" className="mt-1 bg-blue-50 text-blue-700">
+                          {member.role}
+                        </Badge>
+                      )}
                     </div>
                     <div className="flex gap-1">
                       <Button
@@ -540,11 +545,89 @@ const MonJourMEquipe: React.FC = () => {
             <DialogTitle>Modifier le membre</DialogTitle>
           </DialogHeader>
           {editingMember && (
-            <MemberForm 
-              member={editingMember}
-              onSave={updateMember}
-              onCancel={() => setEditingMember(null)}
-            />
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-1">Nom *</label>
+                  <Input
+                    value={editingMember.name}
+                    onChange={(e) => setEditingMember({ ...editingMember, name: e.target.value })}
+                    placeholder="Nom de la personne"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Type *</label>
+                  <Select 
+                    value={editingMember.type} 
+                    onValueChange={(value: 'person' | 'vendor') => setEditingMember({ ...editingMember, type: value })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="person">👤 Personne</SelectItem>
+                      <SelectItem value="vendor">🏢 Prestataire</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1">Rôle spécifique</label>
+                <Select 
+                  value={editingMember.role} 
+                  onValueChange={(value) => setEditingMember({ ...editingMember, role: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Sélectionner un rôle" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {getSubRoleOptions(editingMember.type).map((role) => (
+                      <SelectItem key={role} value={role}>{role}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-1">Email</label>
+                  <Input
+                    type="email"
+                    value={editingMember.email || ''}
+                    onChange={(e) => setEditingMember({ ...editingMember, email: e.target.value })}
+                    placeholder="email@exemple.com"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Téléphone</label>
+                  <Input
+                    value={editingMember.phone || ''}
+                    onChange={(e) => setEditingMember({ ...editingMember, phone: e.target.value })}
+                    placeholder="06 12 34 56 78"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1">Notes</label>
+                <Textarea
+                  value={editingMember.notes || ''}
+                  onChange={(e) => setEditingMember({ ...editingMember, notes: e.target.value })}
+                  placeholder="Notes et informations complémentaires"
+                  rows={3}
+                />
+              </div>
+
+              <div className="flex gap-2">
+                <Button onClick={updateMember}>
+                  Modifier
+                </Button>
+                <Button variant="outline" onClick={() => setEditingMember(null)}>
+                  Annuler
+                </Button>
+              </div>
+            </div>
           )}
         </DialogContent>
       </Dialog>

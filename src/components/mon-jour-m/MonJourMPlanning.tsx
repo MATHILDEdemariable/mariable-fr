@@ -56,6 +56,8 @@ const MonJourMPlanning: React.FC = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
+      console.log('🚀 Initializing planning data for user:', user.id);
+
       // Récupérer la coordination
       const { data: coordination } = await supabase
         .from('wedding_coordination')
@@ -64,16 +66,39 @@ const MonJourMPlanning: React.FC = () => {
         .single();
 
       if (coordination) {
+        console.log('✅ Found coordination:', coordination.id);
         setCoordinationId(coordination.id);
         await loadTasks(coordination.id);
         await loadTeamMembers(coordination.id);
+      } else {
+        console.log('⚠️ No coordination found, creating one...');
+        // Créer une coordination si elle n'existe pas
+        const { data: newCoordination, error } = await supabase
+          .from('wedding_coordination')
+          .insert({
+            user_id: user.id,
+            title: 'Mon Mariage'
+          })
+          .select()
+          .single();
+
+        if (error) {
+          console.error('❌ Error creating coordination:', error);
+          return;
+        }
+
+        console.log('✅ Created new coordination:', newCoordination.id);
+        setCoordinationId(newCoordination.id);
+        await loadTeamMembers(newCoordination.id);
       }
     } catch (error) {
-      console.error('Error initializing data:', error);
+      console.error('❌ Error initializing data:', error);
     }
   };
 
   const loadTasks = async (coordId: string) => {
+    console.log('📥 Loading tasks for coordination:', coordId);
+    
     const { data, error } = await supabase
       .from('coordination_planning')
       .select('*')
@@ -81,9 +106,11 @@ const MonJourMPlanning: React.FC = () => {
       .order('position');
 
     if (error) {
-      console.error('Error loading tasks:', error);
+      console.error('❌ Error loading tasks:', error);
       return;
     }
+
+    console.log('✅ Loaded tasks:', data);
 
     // Filtrer et mapper les données pour correspondre à notre interface
     const mappedData = (data || []).map((item: any) => ({
@@ -105,16 +132,19 @@ const MonJourMPlanning: React.FC = () => {
   };
 
   const loadTeamMembers = async (coordId: string) => {
+    console.log('👥 Loading team members for coordination:', coordId);
+    
     const { data, error } = await supabase
       .from('coordination_team')
       .select('id, name, role')
       .eq('coordination_id', coordId);
 
     if (error) {
-      console.error('Error loading team members:', error);
+      console.error('❌ Error loading team members:', error);
       return;
     }
 
+    console.log('✅ Loaded team members:', data);
     setTeamMembers(data || []);
   };
 
@@ -142,7 +172,16 @@ const MonJourMPlanning: React.FC = () => {
   };
 
   const addTask = async () => {
-    if (!coordinationId || !newTask.title.trim()) return;
+    if (!coordinationId || !newTask.title.trim()) {
+      toast({
+        title: "Erreur",
+        description: "Le titre de la tâche est obligatoire",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    console.log('➕ Adding task:', newTask);
 
     try {
       const { error } = await supabase
@@ -159,8 +198,12 @@ const MonJourMPlanning: React.FC = () => {
           is_ai_generated: false
         });
 
-      if (error) throw error;
+      if (error) {
+        console.error('❌ Error adding task:', error);
+        throw error;
+      }
 
+      console.log('✅ Task added successfully');
       setNewTask({ title: '', description: '', duration: 30, category: 'general', priority: 'medium' });
       setShowAddTask(false);
       
@@ -169,7 +212,7 @@ const MonJourMPlanning: React.FC = () => {
         description: "La nouvelle tâche a été ajoutée au planning"
       });
     } catch (error) {
-      console.error('Error adding task:', error);
+      console.error('❌ Error adding task:', error);
       toast({
         title: "Erreur",
         description: "Impossible d'ajouter la tâche",
@@ -179,6 +222,8 @@ const MonJourMPlanning: React.FC = () => {
   };
 
   const updateTaskStatus = async (taskId: string, status: 'todo' | 'in_progress' | 'completed') => {
+    console.log('📝 Updating task status:', taskId, status);
+    
     try {
       const { error } = await supabase
         .from('coordination_planning')
@@ -186,12 +231,15 @@ const MonJourMPlanning: React.FC = () => {
         .eq('id', taskId);
 
       if (error) throw error;
+      console.log('✅ Task status updated');
     } catch (error) {
-      console.error('Error updating task status:', error);
+      console.error('❌ Error updating task status:', error);
     }
   };
 
   const assignTask = async (taskId: string, assignedTo: string) => {
+    console.log('👤 Assigning task:', taskId, 'to:', assignedTo);
+    
     try {
       const { error } = await supabase
         .from('coordination_planning')
@@ -199,8 +247,9 @@ const MonJourMPlanning: React.FC = () => {
         .eq('id', taskId);
 
       if (error) throw error;
+      console.log('✅ Task assigned successfully');
     } catch (error) {
-      console.error('Error assigning task:', error);
+      console.error('❌ Error assigning task:', error);
     }
   };
 
@@ -226,8 +275,9 @@ const MonJourMPlanning: React.FC = () => {
           .update({ position: update.position })
           .eq('id', update.id);
       }
+      console.log('✅ Tasks reordered successfully');
     } catch (error) {
-      console.error('Error reordering tasks:', error);
+      console.error('❌ Error reordering tasks:', error);
     }
   };
 
@@ -254,10 +304,26 @@ const MonJourMPlanning: React.FC = () => {
         duration: 45,
         category: "ceremonie",
         priority: "high" as const
+      },
+      {
+        title: "Cocktail",
+        description: "Vin d'honneur avec les invités",
+        duration: 90,
+        category: "reception",
+        priority: "medium" as const
       }
     ];
 
-    if (!coordinationId) return;
+    if (!coordinationId) {
+      toast({
+        title: "Erreur",
+        description: "Impossible de générer des tâches pour le moment",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    console.log('🤖 Generating AI tasks...');
 
     try {
       const tasksToInsert = aiTasks.map((task, index) => ({
@@ -278,12 +344,13 @@ const MonJourMPlanning: React.FC = () => {
 
       if (error) throw error;
 
+      console.log('✅ AI tasks generated successfully');
       toast({
         title: "Planning généré !",
         description: "L'IA a ajouté des tâches suggérées à votre planning"
       });
     } catch (error) {
-      console.error('Error generating AI tasks:', error);
+      console.error('❌ Error generating AI tasks:', error);
       toast({
         title: "Erreur",
         description: "Impossible de générer le planning IA",

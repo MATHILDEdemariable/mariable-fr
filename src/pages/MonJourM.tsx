@@ -27,13 +27,6 @@ const MonJourM: React.FC = () => {
     checkAuth();
   }, [navigate, location.pathname, toast]);
 
-  // Rediriger vers planning par défaut
-  useEffect(() => {
-    if (location.pathname === '/mon-jour-m') {
-      navigate('/mon-jour-m/planning', { replace: true });
-    }
-  }, [location.pathname, navigate]);
-
   return (
     <>
       <Helmet>

@@ -2,12 +2,14 @@
 import React, { useState, useEffect } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Share2, Calendar, Users, FileText, Sparkles } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 import Header from '@/components/Header';
+import MonJourMPlanningContent from './MonJourMPlanning';
+import MonJourMEquipeContent from './MonJourMEquipe';
+import MonJourMDocumentsContent from './MonJourMDocuments';
 
 interface MonJourMLayoutProps {
   children?: React.ReactNode;
@@ -122,6 +124,17 @@ const MonJourMLayout: React.FC<MonJourMLayoutProps> = ({ children }) => {
     }
   };
 
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case 'equipe':
+        return <MonJourMEquipeContent />;
+      case 'documents':
+        return <MonJourMDocumentsContent />;
+      default:
+        return <MonJourMPlanningContent />;
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
@@ -172,7 +185,7 @@ const MonJourMLayout: React.FC<MonJourMLayoutProps> = ({ children }) => {
           </TabsList>
 
           <div className="min-h-[600px]">
-            {children || <Outlet />}
+            {renderTabContent()}
           </div>
         </Tabs>
       </div>
