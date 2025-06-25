@@ -1,133 +1,150 @@
 
 import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Sparkles, Plus, RefreshCw } from 'lucide-react';
-import { useToast } from '@/components/ui/use-toast';
-import { supabase } from '@/integrations/supabase/client';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Clock, Users, Camera, Utensils, Heart, Sparkles } from 'lucide-react';
 
-interface AISuggestion {
+interface TaskSuggestion {
+  id: string;
   title: string;
   description: string;
   duration: number;
   category: string;
   priority: 'low' | 'medium' | 'high';
+  icon: React.ReactNode;
 }
 
 interface AISuggestionsModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAddSuggestions: (suggestions: AISuggestion[]) => void;
-  coordinationId: string | null;
+  onAddSuggestions: (tasks: Omit<TaskSuggestion, 'id' | 'icon'>[]) => void;
 }
+
+const taskSuggestions: TaskSuggestion[] = [
+  {
+    id: '1',
+    title: 'Préparation des mariés',
+    description: 'Coiffure, maquillage et habillage des mariés',
+    duration: 120,
+    category: 'preparation',
+    priority: 'high',
+    icon: <Heart className="h-4 w-4" />
+  },
+  {
+    id: '2',
+    title: 'Accueil des invités',
+    description: 'Accueil et placement des invités avant la cérémonie',
+    duration: 30,
+    category: 'ceremonie',
+    priority: 'medium',
+    icon: <Users className="h-4 w-4" />
+  },
+  {
+    id: '3',
+    title: 'Cérémonie civile',
+    description: 'Cérémonie de mariage civil',
+    duration: 45,
+    category: 'ceremonie',
+    priority: 'high',
+    icon: <Heart className="h-4 w-4" />
+  },
+  {
+    id: '4',
+    title: 'Photos de couple',
+    description: 'Séance photo des mariés après la cérémonie',
+    duration: 60,
+    category: 'photos',
+    priority: 'medium',
+    icon: <Camera className="h-4 w-4" />
+  },
+  {
+    id: '5',
+    title: 'Photos de famille',
+    description: 'Photos avec les familles et témoins',
+    duration: 45,
+    category: 'photos',
+    priority: 'medium',
+    icon: <Camera className="h-4 w-4" />
+  },
+  {
+    id: '6',
+    title: 'Cocktail',
+    description: 'Vin d\'honneur avec les invités',
+    duration: 90,
+    category: 'reception',
+    priority: 'medium',
+    icon: <Utensils className="h-4 w-4" />
+  },
+  {
+    id: '7',
+    title: 'Dîner de mariage',
+    description: 'Repas principal avec les invités',
+    duration: 120,
+    category: 'reception',
+    priority: 'high',
+    icon: <Utensils className="h-4 w-4" />
+  },
+  {
+    id: '8',
+    title: 'Ouverture du bal',
+    description: 'Première danse des mariés',
+    duration: 15,
+    category: 'reception',
+    priority: 'medium',
+    icon: <Heart className="h-4 w-4" />
+  },
+  {
+    id: '9',
+    title: 'Animation soirée',
+    description: 'Musique et animation pour la soirée dansante',
+    duration: 180,
+    category: 'reception',
+    priority: 'low',
+    icon: <Users className="h-4 w-4" />
+  },
+  {
+    id: '10',
+    title: 'Préparation du lieu',
+    description: 'Installation et décoration du lieu de réception',
+    duration: 60,
+    category: 'preparation',
+    priority: 'medium',
+    icon: <Heart className="h-4 w-4" />
+  }
+];
 
 const AISuggestionsModal: React.FC<AISuggestionsModalProps> = ({
   isOpen,
   onClose,
-  onAddSuggestions,
-  coordinationId
+  onAddSuggestions
 }) => {
-  const [suggestions, setSuggestions] = useState<AISuggestion[]>([]);
-  const [selectedSuggestions, setSelectedSuggestions] = useState<Set<number>>(new Set());
-  const [isGenerating, setIsGenerating] = useState(false);
-  const { toast } = useToast();
+  const [selectedTasks, setSelectedTasks] = useState<string[]>([]);
 
-  const generateAISuggestions = async () => {
-    if (!coordinationId) return;
-    
-    setIsGenerating(true);
-    
-    try {
-      console.log('🤖 Generating AI suggestions for coordination:', coordinationId);
-      
-      // Récupérer les tâches existantes pour éviter les doublons
-      const { data: existingTasks } = await supabase
-        .from('coordination_planning')
-        .select('title, category')
-        .eq('coordination_id', coordinationId);
-
-      const existingTaskTitles = existingTasks?.map(t => t.title.toLowerCase()) || [];
-      
-      // Appeler la fonction Edge pour générer des suggestions
-      const { data, error } = await supabase.functions.invoke('generate-wedding-tasks', {
-        body: { 
-          coordinationId,
-          existingTasks: existingTaskTitles
-        }
-      });
-
-      if (error) {
-        console.error('Error calling AI function:', error);
-        throw error;
-      }
-
-      if (data?.suggestions) {
-        console.log('✨ Generated suggestions:', data.suggestions);
-        setSuggestions(data.suggestions);
-        setSelectedSuggestions(new Set()); // Reset selection
-      } else {
-        throw new Error('No suggestions returned from AI');
-      }
-    } catch (error) {
-      console.error('❌ Error generating AI suggestions:', error);
-      toast({
-        title: "Erreur IA",
-        description: "Impossible de générer des suggestions. Essayez avec les suggestions par défaut.",
-        variant: "destructive"
-      });
-      
-      // Fallback vers des suggestions statiques en cas d'erreur
-      const fallbackSuggestions: AISuggestion[] = [
-        {
-          title: "Accueil des invités",
-          description: "Accueillir et orienter les invités à leur arrivée",
-          duration: 30,
-          category: "ceremonie",
-          priority: "high"
-        },
-        {
-          title: "Photos de couple",
-          description: "Séance photo privée des mariés",
-          duration: 45,
-          category: "photos",
-          priority: "medium"
-        },
-        {
-          title: "Cocktail de bienvenue",
-          description: "Service du cocktail et amuse-bouches",
-          duration: 60,
-          category: "reception",
-          priority: "medium"
-        }
-      ];
-      
-      setSuggestions(fallbackSuggestions);
-    } finally {
-      setIsGenerating(false);
-    }
-  };
-
-  const toggleSuggestion = (index: number) => {
-    const newSelected = new Set(selectedSuggestions);
-    if (newSelected.has(index)) {
-      newSelected.delete(index);
-    } else {
-      newSelected.add(index);
-    }
-    setSelectedSuggestions(newSelected);
+  const handleTaskToggle = (taskId: string) => {
+    setSelectedTasks(prev => 
+      prev.includes(taskId)
+        ? prev.filter(id => id !== taskId)
+        : [...prev, taskId]
+    );
   };
 
   const handleAddSelected = () => {
-    const selectedItems = suggestions.filter((_, index) => selectedSuggestions.has(index));
-    if (selectedItems.length > 0) {
-      onAddSuggestions(selectedItems);
-      toast({
-        title: "Tâches ajoutées",
-        description: `${selectedItems.length} tâche(s) ajoutée(s) à votre planning`
-      });
-      onClose();
-    }
+    const tasksToAdd = taskSuggestions
+      .filter(task => selectedTasks.includes(task.id))
+      .map(({ id, icon, ...task }) => task);
+    
+    onAddSuggestions(tasksToAdd);
+    setSelectedTasks([]);
+    onClose();
   };
 
   const getPriorityColor = (priority: string) => {
@@ -139,26 +156,15 @@ const AISuggestionsModal: React.FC<AISuggestionsModalProps> = ({
     }
   };
 
-  const getCategoryIcon = (category: string) => {
-    const icons: Record<string, string> = {
-      'ceremonie': '💒',
-      'reception': '🍽️',
-      'photos': '📸',
-      'musique': '🎵',
-      'fleurs': '💐',
-      'transport': '🚗',
-      'preparation': '💄',
-      'coordination': '📋',
-      'general': '📝'
-    };
-    return icons[category] || '📝';
-  };
-
-  React.useEffect(() => {
-    if (isOpen && suggestions.length === 0) {
-      generateAISuggestions();
+  const getCategoryLabel = (category: string) => {
+    switch (category) {
+      case 'preparation': return 'Préparation';
+      case 'ceremonie': return 'Cérémonie';
+      case 'photos': return 'Photos';
+      case 'reception': return 'Réception';
+      default: return 'Général';
     }
-  }, [isOpen]);
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -166,96 +172,73 @@ const AISuggestionsModal: React.FC<AISuggestionsModalProps> = ({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-purple-600" />
-            Suggestions IA pour votre planning
+            Suggestions de tâches IA
           </DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4">
-          {/* Actions */}
-          <div className="flex justify-between items-center">
-            <Button
-              onClick={generateAISuggestions}
-              disabled={isGenerating}
-              variant="outline"
-              className="flex items-center gap-2"
-            >
-              {isGenerating ? (
-                <RefreshCw className="h-4 w-4 animate-spin" />
-              ) : (
-                <Sparkles className="h-4 w-4" />
-              )}
-              {isGenerating ? 'Génération...' : 'Générer d\'autres tâches'}
-            </Button>
+          <p className="text-gray-600 text-sm">
+            Sélectionnez les tâches que vous souhaitez ajouter à votre planning :
+          </p>
 
-            {selectedSuggestions.size > 0 && (
-              <Button onClick={handleAddSelected} className="flex items-center gap-2">
-                <Plus className="h-4 w-4" />
-                Ajouter sélectionnées ({selectedSuggestions.size})
-              </Button>
-            )}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {taskSuggestions.map((task) => (
+              <Card key={task.id} className={`cursor-pointer transition-all ${
+                selectedTasks.includes(task.id) 
+                  ? 'ring-2 ring-purple-400 bg-purple-50' 
+                  : 'hover:shadow-md'
+              }`}>
+                <CardContent className="p-4">
+                  <div className="flex items-start gap-3">
+                    <Checkbox
+                      checked={selectedTasks.includes(task.id)}
+                      onCheckedChange={() => handleTaskToggle(task.id)}
+                      className="mt-1"
+                    />
+                    
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        {task.icon}
+                        <h3 className="font-medium">{task.title}</h3>
+                      </div>
+                      
+                      <p className="text-sm text-gray-600 mb-3">
+                        {task.description}
+                      </p>
+                      
+                      <div className="flex items-center gap-2 text-xs">
+                        <Badge variant="outline" className="flex items-center gap-1">
+                          <Clock className="h-3 w-3" />
+                          {task.duration} min
+                        </Badge>
+                        <Badge className={getPriorityColor(task.priority)}>
+                          {task.priority === 'high' ? 'Élevée' : 
+                           task.priority === 'medium' ? 'Moyenne' : 'Faible'}
+                        </Badge>
+                        <Badge variant="secondary">
+                          {getCategoryLabel(task.category)}
+                        </Badge>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
           </div>
-
-          {/* Loading State */}
-          {isGenerating && suggestions.length === 0 && (
-            <div className="flex items-center justify-center py-12">
-              <div className="text-center">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mx-auto mb-4"></div>
-                <p className="text-gray-600">L'IA génère des suggestions personnalisées...</p>
-              </div>
-            </div>
-          )}
-
-          {/* Suggestions Grid */}
-          {suggestions.length > 0 && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {suggestions.map((suggestion, index) => (
-                <div
-                  key={index}
-                  className={`p-4 border rounded-lg cursor-pointer transition-all ${
-                    selectedSuggestions.has(index)
-                      ? 'border-purple-500 bg-purple-50'
-                      : 'border-gray-200 hover:border-gray-300 hover:shadow-sm'
-                  }`}
-                  onClick={() => toggleSuggestion(index)}
-                >
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="flex items-center gap-2">
-                      <span className="text-lg">{getCategoryIcon(suggestion.category)}</span>
-                      <h3 className="font-medium">{suggestion.title}</h3>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      {selectedSuggestions.has(index) && (
-                        <div className="w-4 h-4 bg-purple-600 rounded-full flex items-center justify-center">
-                          <Plus className="h-2 w-2 text-white" />
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  <p className="text-sm text-gray-600 mb-3">{suggestion.description}</p>
-
-                  <div className="flex items-center gap-2 text-xs">
-                    <Badge variant="outline">{suggestion.duration} min</Badge>
-                    <Badge className={getPriorityColor(suggestion.priority)}>
-                      {suggestion.priority === 'high' ? 'Élevée' : 
-                       suggestion.priority === 'medium' ? 'Moyenne' : 'Faible'}
-                    </Badge>
-                    <span className="text-gray-500 capitalize">{suggestion.category}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Empty State */}
-          {!isGenerating && suggestions.length === 0 && (
-            <div className="text-center py-12 text-gray-500">
-              <Sparkles className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <p className="text-lg mb-2">Aucune suggestion disponible</p>
-              <p className="text-sm">Cliquez sur "Générer d'autres tâches" pour obtenir des suggestions IA</p>
-            </div>
-          )}
         </div>
+
+        <DialogFooter>
+          <Button variant="outline" onClick={onClose}>
+            Annuler
+          </Button>
+          <Button 
+            onClick={handleAddSelected}
+            disabled={selectedTasks.length === 0}
+            className="bg-purple-600 hover:bg-purple-700"
+          >
+            Ajouter {selectedTasks.length} tâche{selectedTasks.length > 1 ? 's' : ''}
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -5,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Upload, FileText, Download, Eye, Trash2, Folder, Search, AlertCircle } from 'lucide-react';
+import { Upload, FileText, Download, Eye, Trash2, Folder, Search } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -44,7 +45,6 @@ const MonJourMDocuments: React.FC = () => {
   });
   const [uploadingFile, setUploadingFile] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [uploadProgress, setUploadProgress] = useState<string>('');
   const { toast } = useToast();
 
   const categories = [
@@ -60,24 +60,6 @@ const MonJourMDocuments: React.FC = () => {
     { value: 'flowers', label: 'Fleurs', icon: '💐' }
   ];
 
-  // Tailles de fichier maximales (en bytes)
-  const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
-  const ALLOWED_TYPES = [
-    'application/pdf',
-    'application/msword',
-    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-    'image/jpeg',
-    'image/jpg',
-    'image/png',
-    'image/gif',
-    'video/mp4',
-    'video/quicktime',
-    'audio/mpeg',
-    'audio/wav',
-    'application/vnd.ms-excel',
-    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-  ];
-
   useEffect(() => {
     initializeData();
     setupRealtimeSubscription();
@@ -88,8 +70,6 @@ const MonJourMDocuments: React.FC = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      console.log('🔧 Initializing documents for user:', user.id);
-
       // Récupérer la coordination
       const { data: coordination } = await supabase
         .from('wedding_coordination')
@@ -99,20 +79,15 @@ const MonJourMDocuments: React.FC = () => {
 
       if (coordination) {
         setCoordinationId(coordination.id);
-        console.log('📋 Coordination found:', coordination.id);
         await loadDocuments(coordination.id);
         await loadTeamMembers(coordination.id);
-      } else {
-        console.log('⚠️ No coordination found for user');
       }
     } catch (error) {
-      console.error('❌ Error initializing data:', error);
+      console.error('Error initializing data:', error);
     }
   };
 
   const loadDocuments = async (coordId: string) => {
-    console.log('📂 Loading documents for coordination:', coordId);
-    
     const { data, error } = await supabase
       .from('coordination_documents')
       .select('*')
@@ -120,11 +95,10 @@ const MonJourMDocuments: React.FC = () => {
       .order('created_at', { ascending: false });
 
     if (error) {
-      console.error('❌ Error loading documents:', error);
+      console.error('Error loading documents:', error);
       return;
     }
 
-    console.log('✅ Documents loaded:', data?.length || 0);
     setDocuments(data || []);
   };
 
@@ -165,48 +139,10 @@ const MonJourMDocuments: React.FC = () => {
     };
   };
 
-  const validateFile = (file: File): string | null => {
-    console.log('🔍 Validating file:', {
-      name: file.name,
-      size: file.size,
-      type: file.type
-    });
-
-    // Vérifier la taille
-    if (file.size > MAX_FILE_SIZE) {
-      return `Le fichier est trop volumineux. Taille maximum : ${MAX_FILE_SIZE / (1024 * 1024)}MB`;
-    }
-
-    // Vérifier le type MIME
-    if (!ALLOWED_TYPES.includes(file.type)) {
-      return `Type de fichier non autorisé : ${file.type}. Types autorisés : PDF, Word, Excel, Images, Vidéos MP4, Audio.`;
-    }
-
-    console.log('✅ File validation passed');
-    return null;
-  };
-
   const handleFileSelection = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      console.log('📁 File selected:', file.name);
-      
-      // Valider le fichier
-      const validationError = validateFile(file);
-      if (validationError) {
-        toast({
-          title: "Fichier invalide",
-          description: validationError,
-          variant: "destructive"
-        });
-        
-        // Reset l'input
-        event.target.value = '';
-        return;
-      }
-
       setSelectedFile(file);
-      
       // Auto-remplir le titre avec le nom du fichier si vide
       if (!newDocument.title.trim()) {
         const fileName = file.name.split('.')[0]; // Enlever l'extension
@@ -235,46 +171,38 @@ const MonJourMDocuments: React.FC = () => {
     }
 
     setUploadingFile(true);
-    setUploadProgress('Préparation du fichier...');
 
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('User not authenticated');
 
-      console.log('📤 Starting file upload for user:', user.id);
-
-      // Créer un nom de fichier unique et sécurisé
+      // Créer un nom de fichier unique
       const timestamp = Date.now();
-      const sanitizedFileName = selectedFile.name.replace(/[^a-zA-Z0-9.-]/g, '_');
-      const fileName = `${timestamp}-${sanitizedFileName}`;
+      const fileExtension = selectedFile.name.split('.').pop();
+      const fileName = `${timestamp}-${selectedFile.name}`;
       const filePath = `${user.id}/${fileName}`;
 
-      console.log('📍 Upload path:', filePath);
-      setUploadProgress('Upload du fichier vers le serveur...');
+      console.log('Uploading file:', filePath);
 
       // Upload du fichier vers Supabase Storage
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('wedding-documents')
         .upload(filePath, selectedFile, {
           cacheControl: '3600',
-          upsert: false,
-          duplex: 'half' // Important pour éviter les erreurs de stream
+          upsert: false
         });
 
       if (uploadError) {
-        console.error('❌ Upload error:', uploadError);
-        throw new Error(`Erreur d'upload: ${uploadError.message}`);
+        console.error('Upload error:', uploadError);
+        throw uploadError;
       }
 
-      console.log('✅ File uploaded successfully:', uploadData);
-      setUploadProgress('Enregistrement des métadonnées...');
+      console.log('File uploaded successfully:', uploadData);
 
       // Obtenir l'URL publique du fichier
       const { data: urlData } = supabase.storage
         .from('wedding-documents')
         .getPublicUrl(filePath);
-
-      console.log('🔗 Public URL generated:', urlData.publicUrl);
 
       // Insérer les métadonnées du document dans la base
       const { error: dbError } = await supabase
@@ -293,22 +221,13 @@ const MonJourMDocuments: React.FC = () => {
         });
 
       if (dbError) {
-        console.error('❌ Database error:', dbError);
-        
-        // Essayer de supprimer le fichier uploadé en cas d'erreur DB
-        try {
-          await supabase.storage
-            .from('wedding-documents')
-            .remove([filePath]);
-          console.log('🗑️ Cleaned up uploaded file after DB error');
-        } catch (cleanupError) {
-          console.error('⚠️ Failed to cleanup file:', cleanupError);
-        }
-        
-        throw new Error(`Erreur de base de données: ${dbError.message}`);
+        console.error('Database error:', dbError);
+        // Essayer de supprimer le fichier uploadé en cas d'erreur
+        await supabase.storage
+          .from('wedding-documents')
+          .remove([filePath]);
+        throw dbError;
       }
-
-      console.log('✅ Document metadata saved successfully');
 
       // Réinitialiser le formulaire
       setNewDocument({ title: '', description: '', category: 'general', assigned_to: '' });
@@ -323,17 +242,15 @@ const MonJourMDocuments: React.FC = () => {
         title: "Document ajouté",
         description: "Le document a été téléchargé avec succès"
       });
-
     } catch (error) {
-      console.error('❌ Error uploading document:', error);
+      console.error('Error uploading document:', error);
       toast({
-        title: "Erreur d'upload",
-        description: error.message || "Impossible de télécharger le document",
+        title: "Erreur",
+        description: `Impossible de télécharger le document: ${error.message}`,
         variant: "destructive"
       });
     } finally {
       setUploadingFile(false);
-      setUploadProgress('');
     }
   };
 
@@ -466,20 +383,13 @@ const MonJourMDocuments: React.FC = () => {
                   type="file"
                   onChange={handleFileSelection}
                   disabled={uploadingFile}
-                  accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif,.mp4,.mov,.mp3,.wav,.xls,.xlsx"
+                  accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif,.mp4,.mp3,.xls,.xlsx"
                 />
                 {selectedFile && (
-                  <div className="mt-2 p-2 bg-green-50 border border-green-200 rounded">
-                    <p className="text-sm text-green-800">
-                      ✅ Fichier sélectionné: {selectedFile.name} ({formatFileSize(selectedFile.size)})
-                    </p>
-                  </div>
+                  <p className="text-sm text-gray-600 mt-1">
+                    Fichier sélectionné: {selectedFile.name} ({formatFileSize(selectedFile.size)})
+                  </p>
                 )}
-                
-                <div className="mt-2 text-xs text-gray-500">
-                  <p>Taille max: 50MB</p>
-                  <p>Types autorisés: PDF, Word, Excel, Images, Vidéos MP4, Audio</p>
-                </div>
               </div>
 
               <div>
@@ -488,7 +398,6 @@ const MonJourMDocuments: React.FC = () => {
                   value={newDocument.title}
                   onChange={(e) => setNewDocument({ ...newDocument, title: e.target.value })}
                   placeholder="Nom du document"
-                  disabled={uploadingFile}
                 />
               </div>
               
@@ -499,18 +408,13 @@ const MonJourMDocuments: React.FC = () => {
                   onChange={(e) => setNewDocument({ ...newDocument, description: e.target.value })}
                   placeholder="Description du document"
                   rows={3}
-                  disabled={uploadingFile}
                 />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-1">Catégorie</label>
-                  <Select 
-                    value={newDocument.category} 
-                    onValueChange={(value) => setNewDocument({ ...newDocument, category: value })}
-                    disabled={uploadingFile}
-                  >
+                  <Select value={newDocument.category} onValueChange={(value) => setNewDocument({ ...newDocument, category: value })}>
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
@@ -526,11 +430,7 @@ const MonJourMDocuments: React.FC = () => {
 
                 <div>
                   <label className="block text-sm font-medium mb-1">Assigner à</label>
-                  <Select 
-                    value={newDocument.assigned_to} 
-                    onValueChange={(value) => setNewDocument({ ...newDocument, assigned_to: value })}
-                    disabled={uploadingFile}
-                  >
+                  <Select value={newDocument.assigned_to} onValueChange={(value) => setNewDocument({ ...newDocument, assigned_to: value })}>
                     <SelectTrigger>
                       <SelectValue placeholder="Optionnel" />
                     </SelectTrigger>
@@ -546,16 +446,6 @@ const MonJourMDocuments: React.FC = () => {
                 </div>
               </div>
 
-              {/* Progress indicator */}
-              {uploadingFile && (
-                <div className="bg-blue-50 p-3 rounded-md">
-                  <div className="flex items-center gap-2">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-                    <span className="text-sm text-blue-800">{uploadProgress}</span>
-                  </div>
-                </div>
-              )}
-
               <div className="flex gap-2">
                 <Button
                   onClick={handleFileUpload}
@@ -563,11 +453,7 @@ const MonJourMDocuments: React.FC = () => {
                 >
                   {uploadingFile ? 'Téléchargement...' : 'Télécharger'}
                 </Button>
-                <Button 
-                  variant="outline" 
-                  onClick={() => setShowAddDocument(false)}
-                  disabled={uploadingFile}
-                >
+                <Button variant="outline" onClick={() => setShowAddDocument(false)}>
                   Annuler
                 </Button>
               </div>
@@ -575,16 +461,6 @@ const MonJourMDocuments: React.FC = () => {
           </DialogContent>
         </Dialog>
       </div>
-
-      {/* Storage bucket info for debugging */}
-      {process.env.NODE_ENV === 'development' && (
-        <div className="bg-gray-50 p-3 rounded-md text-xs text-gray-600">
-          <div className="flex items-center gap-2">
-            <AlertCircle className="h-4 w-4" />
-            <span>Debug Info - Bucket: wedding-documents | Coordination: {coordinationId}</span>
-          </div>
-        </div>
-      )}
 
       {/* Filtres et recherche */}
       <div className="flex flex-col md:flex-row gap-4">
