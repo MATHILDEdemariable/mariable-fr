@@ -11,20 +11,26 @@ interface AnalyticsProviderProps {
 
 const AnalyticsProvider: React.FC<AnalyticsProviderProps> = ({ 
   children, 
-  showDebugConsole = process.env.NODE_ENV === 'development' 
+  showDebugConsole = false // Désactivé par défaut pour éviter les erreurs
 }) => {
   const location = useLocation();
 
   useEffect(() => {
-    // Track page view on route change
-    const pageTitle = document.title;
-    trackPageView(location.pathname, pageTitle);
+    try {
+      // Track page view on route change
+      const pageTitle = document.title;
+      trackPageView(location.pathname, pageTitle);
+    } catch (error) {
+      console.warn('Erreur lors du tracking de page:', error);
+    }
   }, [location]);
 
   return (
     <>
       {children}
-      {showDebugConsole && <AnalyticsDebugConsole />}
+      {showDebugConsole && process.env.NODE_ENV === 'development' && (
+        <AnalyticsDebugConsole />
+      )}
     </>
   );
 };

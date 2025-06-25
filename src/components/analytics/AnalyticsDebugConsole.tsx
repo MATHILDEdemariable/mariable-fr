@@ -23,58 +23,88 @@ interface AnalyticsEvent {
 const AnalyticsDebugConsole: React.FC = () => {
   const [events, setEvents] = useState<AnalyticsEvent[]>([]);
   const [isVisible, setIsVisible] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
-    // Intercepter les événements dataLayer pour le debug
-    const originalPush = window.dataLayer?.push;
-    if (originalPush) {
-      window.dataLayer.push = function(...args) {
-        const eventData = args[0];
-        if (eventData && typeof eventData === 'object') {
-          setEvents(prev => [...prev, {
-            timestamp: Date.now(),
-            type: 'GTM',
-            event: eventData.event || 'unknown',
-            data: eventData
-          }]);
-        }
-        return originalPush.apply(this, args);
-      };
-    }
+    // Only initialize if we're in the browser and debugging is needed
+    if (typeof window === 'undefined') return;
 
-    // Intercepter gtag pour le debug
-    const originalGtag = window.gtag;
-    if (originalGtag) {
-      window.gtag = function(...args) {
-        if (args[0] === 'event') {
-          setEvents(prev => [...prev, {
-            timestamp: Date.now(),
-            type: 'GA4',
-            event: args[1] || 'unknown',
-            data: args[2] || {}
-          }]);
-        }
-        return originalGtag.apply(this, args);
-      };
+    try {
+      // Initialize dataLayer safely if it doesn't exist
+      if (!window.dataLayer) {
+        window.dataLayer = [];
+      }
+
+      // Intercepter les événements dataLayer pour le debug seulement si dataLayer existe
+      if (window.dataLayer && typeof window.dataLayer.push === 'function') {
+        const originalPush = window.dataLayer.push;
+        window.dataLayer.push = function(...args) {
+          try {
+            const eventData = args[0];
+            if (eventData && typeof eventData === 'object') {
+              setEvents(prev => [...prev, {
+                timestamp: Date.now(),
+                type: 'GTM',
+                event: eventData.event || 'unknown',
+                data: eventData
+              }]);
+            }
+            return originalPush.apply(this, args);
+          } catch (error) {
+            console.warn('Error intercepting dataLayer push:', error);
+            return originalPush.apply(this, args);
+          }
+        };
+      }
+
+      // Intercepter gtag pour le debug seulement s'il existe
+      if (window.gtag && typeof window.gtag === 'function') {
+        const originalGtag = window.gtag;
+        window.gtag = function(...args) {
+          try {
+            if (args[0] === 'event') {
+              setEvents(prev => [...prev, {
+                timestamp: Date.now(),
+                type: 'GA4',
+                event: args[1] || 'unknown',
+                data: args[2] || {}
+              }]);
+            }
+            return originalGtag.apply(this, args);
+          } catch (error) {
+            console.warn('Error intercepting gtag:', error);
+            return originalGtag.apply(this, args);
+          }
+        };
+      }
+
+      setIsInitialized(true);
+    } catch (error) {
+      console.warn('Error initializing analytics debug console:', error);
+      setIsInitialized(false);
     }
   }, []);
 
   const testEvents = () => {
-    // Test quelques événements
-    trackPageView('/debug', 'Analytics Debug Console');
-    trackUserLogin('test');
-    trackWeddingToolUsage('debug_console', 'test');
-    
-    sendGTMEvent({
-      event: 'test_event',
-      test_parameter: 'test_value',
-      timestamp: Date.now()
-    });
-    
-    sendGA4Event('test_custom_event', {
-      custom_parameter: 'test_value',
-      event_category: 'debug'
-    });
+    try {
+      // Test quelques événements
+      trackPageView('/debug', 'Analytics Debug Console');
+      trackUserLogin('test');
+      trackWeddingToolUsage('debug_console', 'test');
+      
+      sendGTMEvent({
+        event: 'test_event',
+        test_parameter: 'test_value',
+        timestamp: Date.now()
+      });
+      
+      sendGA4Event('test_custom_event', {
+        custom_parameter: 'test_value',
+        event_category: 'debug'
+      });
+    } catch (error) {
+      console.warn('Error testing analytics events:', error);
+    }
   };
 
   const clearEvents = () => {
@@ -94,7 +124,7 @@ const AnalyticsDebugConsole: React.FC = () => {
           size="sm"
           className="bg-white shadow-lg"
         >
-          Debug Analytics
+          Debug Analytics {isInitialized ? '✓' : '⚠️'}
         </Button>
       </div>
     );
@@ -125,6 +155,12 @@ const AnalyticsDebugConsole: React.FC = () => {
           </div>
         </CardHeader>
         <CardContent className="pt-0">
+          {!isInitialized && (
+            <div className="text-xs text-amber-600 mb-2 p-2 bg-amber-50 rounded">
+              ⚠️ Analytics non initialisé - certaines fonctions peuvent ne pas fonctionner
+            </div>
+          )}
+          
           <ScrollArea className="h-64">
             {events.length === 0 ? (
               <p className="text-sm text-muted-foreground text-center py-4">
@@ -157,6 +193,7 @@ const AnalyticsDebugConsole: React.FC = () => {
             <p>GTM ID: GTM-MDB72FP3</p>
             <p>GA4 ID: G-CDL9YV3ZNK</p>
             <p>Total événements: {events.length}</p>
+            <p>Status: {isInitialized ? 'Initialisé' : 'Non initialisé'}</p>
           </div>
         </CardContent>
       </Card>
