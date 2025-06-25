@@ -25,8 +25,6 @@ import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogArticle";
 import Contact from "./pages/contact/NousContacter";
 import MentionsLegales from "./pages/MentionsLegales";
-import BlogCategory from "./pages/BlogCategory";
-import BlogSearch from "./pages/BlogSearch";
 import Prestataires from "./pages/services/Prestataires";
 import Prestataire from "./pages/prestataire/slug";
 import EmailConfirmation from "./pages/auth/EmailConfirmation";
@@ -63,8 +61,6 @@ function App() {
                   <Route path="/pricing" element={<Pricing />} />
                   <Route path="/blog" element={<Blog />} />
                   <Route path="/blog/:slug" element={<BlogPost />} />
-                  <Route path="/blog/category/:category" element={<BlogCategory />} />
-		              <Route path="/blog/search/:searchTerm" element={<BlogSearch />} />
                   <Route path="/contact" element={<Contact />} />
                   <Route path="/mentions-legales" element={<MentionsLegales />} />
 
