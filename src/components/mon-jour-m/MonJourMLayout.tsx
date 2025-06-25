@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { Share2, Calendar, Users, FileText, Sparkles } from 'lucide-react';
+import { Share2, Calendar, Users, FileText } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 import Header from '@/components/Header';
@@ -139,10 +139,6 @@ const MonJourMLayout: React.FC<MonJourMLayoutProps> = ({ children }) => {
             >
               <Share2 className="h-4 w-4" />
               Partager
-            </Button>
-            <Button className="flex items-center gap-2 bg-wedding-olive hover:bg-wedding-olive/90">
-              <Sparkles className="h-4 w-4" />
-              Assistant IA
             </Button>
           </div>
         </div>

@@ -64,16 +64,25 @@ const TaskEditModal: React.FC<TaskEditModalProps> = ({
 
   useEffect(() => {
     if (task) {
+      // Fix timezone issue by properly extracting time from ISO string
+      let startTimeValue = '';
+      if (task.start_time) {
+        try {
+          const date = new Date(task.start_time);
+          // Extract time in HH:MM format without timezone conversion
+          startTimeValue = task.start_time.substring(11, 16); // Extract HH:MM from ISO string
+        } catch (error) {
+          console.error('Error parsing start_time:', error);
+        }
+      }
+
       setFormData({
         title: task.title || '',
         description: task.description || '',
         duration: task.duration || 30,
         category: task.category || 'general',
         priority: task.priority || 'medium',
-        start_time: task.start_time ? new Date(task.start_time).toLocaleTimeString('fr-FR', { 
-          hour: '2-digit', 
-          minute: '2-digit' 
-        }) : '',
+        start_time: startTimeValue,
         assigned_to: Array.isArray(task.assigned_to) ? task.assigned_to : (task.assigned_to ? [task.assigned_to] : [])
       });
     } else {
@@ -94,9 +103,12 @@ const TaskEditModal: React.FC<TaskEditModalProps> = ({
     if (!startTime) return '';
     
     try {
-      const start = new Date(`2024-01-01T${startTime}:00`);
-      const end = new Date(start.getTime() + durationMinutes * 60000);
-      return end.toLocaleTimeString('fr-FR', { 
+      const [hours, minutes] = startTime.split(':').map(Number);
+      const startDate = new Date();
+      startDate.setHours(hours, minutes, 0, 0);
+      
+      const endDate = new Date(startDate.getTime() + durationMinutes * 60000);
+      return endDate.toLocaleTimeString('fr-FR', { 
         hour: '2-digit', 
         minute: '2-digit' 
       });
@@ -120,8 +132,13 @@ const TaskEditModal: React.FC<TaskEditModalProps> = ({
         category: formData.category,
         priority: formData.priority,
         assigned_to: formData.assigned_to,
-        start_time: formData.start_time ? `2024-01-01T${formData.start_time}:00` : undefined,
       };
+
+      // Only add start_time if provided
+      if (formData.start_time) {
+        const today = new Date().toISOString().split('T')[0];
+        taskData.start_time = `${today}T${formData.start_time}:00`;
+      }
 
       await onSave(taskData);
     } catch (error) {

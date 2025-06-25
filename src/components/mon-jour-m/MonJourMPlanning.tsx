@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -39,6 +38,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import ErrorBoundary from './ErrorBoundary';
 import TaskEditModal from './TaskEditModal';
+import AISuggestionsModal from './AISuggestionsModal';
 
 interface PlanningTask {
   id: string;
@@ -71,12 +71,14 @@ const MonJourMPlanning: React.FC = () => {
     description: '',
     duration: 30,
     category: 'general',
-    priority: 'medium' as 'low' | 'medium' | 'high'
+    priority: 'medium' as 'low' | 'medium' | 'high',
+    start_time: ''
   });
   const [showAddTask, setShowAddTask] = useState(false);
   const [editingTask, setEditingTask] = useState<PlanningTask | null>(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState<string | null>(null);
+  const [showAISuggestions, setShowAISuggestions] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -244,9 +246,13 @@ const MonJourMPlanning: React.FC = () => {
     if (!startTime) return '';
     
     try {
-      const start = new Date(`2024-01-01T${startTime}:00`);
-      const end = new Date(start.getTime() + durationMinutes * 60000);
-      return end.toLocaleTimeString('fr-FR', { 
+      // Parse the time string (HH:MM format)
+      const [hours, minutes] = startTime.split(':').map(Number);
+      const startDate = new Date();
+      startDate.setHours(hours, minutes, 0, 0);
+      
+      const endDate = new Date(startDate.getTime() + durationMinutes * 60000);
+      return endDate.toLocaleTimeString('fr-FR', { 
         hour: '2-digit', 
         minute: '2-digit' 
       });
@@ -255,26 +261,27 @@ const MonJourMPlanning: React.FC = () => {
     }
   };
 
-  // Calculer les heures automatiquement lors du drag & drop
-  const calculateTimesFromPosition = (position: number, durationMinutes: number): { start_time: string; end_time: string } => {
+  // Recalculer toutes les heures de manière séquentielle
+  const recalculateSequentialTimes = (tasksList: PlanningTask[]): PlanningTask[] => {
+    if (tasksList.length === 0) return tasksList;
+
     // Heure de début de référence : 9h00
-    const baseHour = 9;
-    const baseMinute = 0;
-    
-    // Calculer l'heure de début en fonction de la position (chaque position = +15 minutes d'intervalle)
-    const intervalMinutes = 15;
-    const totalMinutesFromBase = position * intervalMinutes;
-    
-    const startHour = baseHour + Math.floor(totalMinutesFromBase / 60);
-    const startMinute = baseMinute + (totalMinutesFromBase % 60);
-    
-    const startTime = `${startHour.toString().padStart(2, '0')}:${startMinute.toString().padStart(2, '0')}`;
-    const endTime = calculateEndTime(startTime, durationMinutes);
-    
-    return {
-      start_time: `2024-01-01T${startTime}:00`,
-      end_time: `2024-01-01T${endTime}:00`
-    };
+    let currentTime = new Date();
+    currentTime.setHours(9, 0, 0, 0);
+
+    return tasksList.map((task, index) => {
+      const startTime = new Date(currentTime);
+      const endTime = new Date(startTime.getTime() + task.duration * 60000);
+      
+      // Préparer la prochaine heure de début (fin de la tâche actuelle)
+      currentTime = new Date(endTime);
+      
+      return {
+        ...task,
+        start_time: startTime.toISOString(),
+        end_time: endTime.toISOString()
+      };
+    });
   };
 
   const updateTask = async (taskId: string, taskData: Partial<PlanningTask>) => {
@@ -286,17 +293,28 @@ const MonJourMPlanning: React.FC = () => {
       // Convertir assigned_to en format compatible avec Supabase
       const supabaseTaskData: any = { ...taskData };
       if (taskData.assigned_to !== undefined) {
-        // Le format JSONB est maintenant supporté
         supabaseTaskData.assigned_to = taskData.assigned_to;
       }
 
-      // Calculer automatiquement l'heure de fin si une heure de début est fournie
+      // Fix timezone issue: if start_time is provided, ensure it's in the correct format
       if (taskData.start_time && taskData.duration) {
-        const startTimeString = taskData.start_time.includes('T') 
-          ? new Date(taskData.start_time).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
-          : taskData.start_time;
+        let startTimeString: string;
+        
+        if (taskData.start_time.includes('T')) {
+          // It's already an ISO string, extract time part
+          const date = new Date(taskData.start_time);
+          startTimeString = date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+        } else {
+          // It's a time string (HH:MM)
+          startTimeString = taskData.start_time;
+        }
+        
+        // Create proper ISO strings for storage
+        const today = new Date().toISOString().split('T')[0];
+        supabaseTaskData.start_time = `${today}T${startTimeString}:00`;
+        
         const endTime = calculateEndTime(startTimeString, taskData.duration);
-        supabaseTaskData.end_time = `2024-01-01T${endTime}:00`;
+        supabaseTaskData.end_time = `${today}T${endTime}:00`;
       }
 
       const { error } = await supabase
@@ -316,7 +334,6 @@ const MonJourMPlanning: React.FC = () => {
         description: "La tâche a été mise à jour avec succès"
       });
       
-      // Recharger les tâches pour avoir les données à jour
       await loadTasks(coordinationId);
     } catch (error) {
       console.error('❌ Error updating task:', error);
@@ -342,19 +359,30 @@ const MonJourMPlanning: React.FC = () => {
     console.log('➕ Adding task:', newTask);
 
     try {
+      const taskData: any = {
+        coordination_id: coordinationId,
+        title: newTask.title,
+        description: newTask.description,
+        duration: newTask.duration,
+        category: newTask.category,
+        priority: newTask.priority,
+        position: tasks.length,
+        status: 'todo',
+        is_ai_generated: false
+      };
+
+      // Add start_time and end_time if provided
+      if (newTask.start_time) {
+        const today = new Date().toISOString().split('T')[0];
+        taskData.start_time = `${today}T${newTask.start_time}:00`;
+        
+        const endTime = calculateEndTime(newTask.start_time, newTask.duration);
+        taskData.end_time = `${today}T${endTime}:00`;
+      }
+
       const { error } = await supabase
         .from('coordination_planning')
-        .insert({
-          coordination_id: coordinationId,
-          title: newTask.title,
-          description: newTask.description,
-          duration: newTask.duration,
-          category: newTask.category,
-          priority: newTask.priority,
-          position: tasks.length,
-          status: 'todo',
-          is_ai_generated: false
-        });
+        .insert(taskData);
 
       if (error) {
         console.error('❌ Error adding task:', error);
@@ -362,7 +390,7 @@ const MonJourMPlanning: React.FC = () => {
       }
 
       console.log('✅ Task added successfully');
-      setNewTask({ title: '', description: '', duration: 30, category: 'general', priority: 'medium' });
+      setNewTask({ title: '', description: '', duration: 30, category: 'general', priority: 'medium', start_time: '' });
       setShowAddTask(false);
       
       toast({
@@ -370,7 +398,6 @@ const MonJourMPlanning: React.FC = () => {
         description: "La nouvelle tâche a été ajoutée au planning"
       });
       
-      // Recharger les tâches pour avoir les données à jour
       await loadTasks(coordinationId);
     } catch (error) {
       console.error('❌ Error adding task:', error);
@@ -405,7 +432,6 @@ const MonJourMPlanning: React.FC = () => {
         description: "La tâche a été supprimée avec succès"
       });
       
-      // Recharger les tâches pour avoir les données à jour
       await loadTasks(coordinationId);
     } catch (error) {
       console.error('❌ Error deleting task:', error);
@@ -457,20 +483,20 @@ const MonJourMPlanning: React.FC = () => {
     const [movedTask] = reorderedTasks.splice(sourceIndex, 1);
     reorderedTasks.splice(destinationIndex, 0, movedTask);
 
+    // Recalcul séquentiel des horaires
+    const tasksWithNewTimes = recalculateSequentialTimes(reorderedTasks);
+    
     // Mettre à jour immédiatement l'état local pour une UX fluide
-    setTasks(reorderedTasks);
+    setTasks(tasksWithNewTimes);
 
     try {
-      // Mettre à jour toutes les positions et calculer les nouvelles heures
-      const updates = reorderedTasks.map((task, index) => {
-        const times = calculateTimesFromPosition(index, task.duration);
-        return {
-          id: task.id,
-          position: index,
-          start_time: times.start_time,
-          end_time: times.end_time
-        };
-      });
+      // Mettre à jour toutes les positions et les horaires
+      const updates = tasksWithNewTimes.map((task, index) => ({
+        id: task.id,
+        position: index,
+        start_time: task.start_time,
+        end_time: task.end_time
+      }));
 
       // Mettre à jour en batch
       for (const update of updates) {
@@ -486,7 +512,7 @@ const MonJourMPlanning: React.FC = () => {
       
       console.log('✅ Tasks reordered and times updated successfully');
       
-      // Recharger les tâches pour avoir les données à jour avec les nouvelles heures
+      // Recharger les tâches pour avoir les données à jour
       await loadTasks(coordinationId);
     } catch (error) {
       console.error('❌ Error reordering tasks:', error);
@@ -495,68 +521,23 @@ const MonJourMPlanning: React.FC = () => {
     }
   };
 
-  const generateAITasks = async () => {
-    const aiTasks = [
-      {
-        title: "Préparation des mariés",
-        description: "Coiffure, maquillage et habillage",
-        duration: 120,
-        category: "preparation",
-        priority: "high" as const
-      },
-      {
-        title: "Photos de couple",
-        description: "Séance photo des mariés",
-        duration: 60,
-        category: "photos",
-        priority: "medium" as const
-      },
-      {
-        title: "Cérémonie",
-        description: "Cérémonie de mariage",
-        duration: 45,
-        category: "ceremonie",
-        priority: "high" as const
-      },
-      {
-        title: "Cocktail",
-        description: "Vin d'honneur avec les invités",
-        duration: 90,
-        category: "reception",
-        priority: "medium" as const
-      }
-    ];
+  const handleAddAISuggestions = async (suggestions: any[]) => {
+    if (!coordinationId) return;
 
-    if (!coordinationId) {
-      toast({
-        title: "Erreur",
-        description: "Impossible de générer des tâches pour le moment",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    console.log('🤖 Generating AI tasks...');
+    console.log('🤖 Adding AI suggestions:', suggestions);
 
     try {
-      const tasksToInsert = aiTasks.map((task, index) => {
-        const position = tasks.length + index;
-        const times = calculateTimesFromPosition(position, task.duration);
-        
-        return {
-          coordination_id: coordinationId,
-          title: task.title,
-          description: task.description,
-          duration: task.duration,
-          category: task.category,
-          priority: task.priority,
-          position: position,
-          status: 'todo',
-          is_ai_generated: true,
-          start_time: times.start_time,
-          end_time: times.end_time
-        };
-      });
+      const tasksToInsert = suggestions.map((suggestion, index) => ({
+        coordination_id: coordinationId,
+        title: suggestion.title,
+        description: suggestion.description,
+        duration: suggestion.duration,
+        category: suggestion.category,
+        priority: suggestion.priority,
+        position: tasks.length + index,
+        status: 'todo',
+        is_ai_generated: true
+      }));
 
       const { error } = await supabase
         .from('coordination_planning')
@@ -564,19 +545,18 @@ const MonJourMPlanning: React.FC = () => {
 
       if (error) throw error;
 
-      console.log('✅ AI tasks generated successfully');
+      console.log('✅ AI suggestions added successfully');
       toast({
-        title: "Planning généré !",
-        description: "L'IA a ajouté des tâches suggérées à votre planning"
+        title: "Tâches ajoutées !",
+        description: `${suggestions.length} tâche${suggestions.length > 1 ? 's' : ''} suggérée${suggestions.length > 1 ? 's' : ''} ajoutée${suggestions.length > 1 ? 's' : ''} à votre planning`
       });
       
-      // Recharger les tâches pour avoir les données à jour
       await loadTasks(coordinationId);
     } catch (error) {
-      console.error('❌ Error generating AI tasks:', error);
+      console.error('❌ Error adding AI suggestions:', error);
       toast({
         title: "Erreur",
-        description: "Impossible de générer le planning IA",
+        description: "Impossible d'ajouter les suggestions",
         variant: "destructive"
       });
     }
@@ -762,8 +742,8 @@ const MonJourMPlanning: React.FC = () => {
             Ajouter une tâche
           </Button>
           <Button 
-            onClick={generateAITasks}
-            className="flex items-center gap-2 bg-wedding-olive hover:bg-wedding-olive/90"
+            onClick={() => setShowAISuggestions(true)}
+            className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700"
           >
             <Sparkles className="h-4 w-4" />
             Générer avec IA
@@ -788,7 +768,7 @@ const MonJourMPlanning: React.FC = () => {
               value={newTask.description}
               onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
             />
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div>
                 <label className="block text-sm font-medium mb-1">Durée (minutes)</label>
                 <Input
@@ -796,6 +776,19 @@ const MonJourMPlanning: React.FC = () => {
                   value={newTask.duration}
                   onChange={(e) => setNewTask({ ...newTask, duration: parseInt(e.target.value) || 0 })}
                 />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Heure de début</label>
+                <Input
+                  type="time"
+                  value={newTask.start_time}
+                  onChange={(e) => setNewTask({ ...newTask, start_time: e.target.value })}
+                />
+                {newTask.start_time && newTask.duration && (
+                  <p className="text-xs text-gray-600 mt-1">
+                    Fin: {calculateEndTime(newTask.start_time, newTask.duration)}
+                  </p>
+                )}
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">Catégorie</label>
@@ -862,6 +855,13 @@ const MonJourMPlanning: React.FC = () => {
         task={editingTask}
         teamMembers={teamMembers}
         onSave={handleSaveTask}
+      />
+
+      {/* Modal suggestions IA */}
+      <AISuggestionsModal
+        isOpen={showAISuggestions}
+        onClose={() => setShowAISuggestions(false)}
+        onAddSuggestions={handleAddAISuggestions}
       />
 
       {/* Dialog de confirmation de suppression */}
