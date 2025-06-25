@@ -1,9 +1,10 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AnalyticsProvider } from "@/components/analytics/AnalyticsProvider";
+import AnalyticsProvider from "@/components/analytics/AnalyticsProvider";
 import { HelmetProvider } from 'react-helmet-async';
 import { ReaderModeProvider } from '@/contexts/ReaderModeContext';
 
@@ -17,18 +18,18 @@ import ReservationJourM from "./pages/ReservationJourM";
 import UserDashboard from "./pages/dashboard/UserDashboard";
 import JourMVue from "./pages/JourMVue";
 import MonJourM from "./pages/MonJourM";
-import Login from "./pages/Login";
+import Login from "./pages/auth/Login";
 import Pricing from "./pages/Pricing";
 import Blog from "./pages/Blog";
-import BlogPost from "./pages/BlogPost";
-import Contact from "./pages/Contact";
+import BlogPost from "./pages/BlogArticle";
+import Contact from "./pages/contact/NousContacter";
 import Confidentialite from "./pages/Confidentialite";
 import ConditionsGenerales from "./pages/ConditionsGenerales";
 import MentionsLegales from "./pages/MentionsLegales";
 import BlogCategory from "./pages/BlogCategory";
 import BlogSearch from "./pages/BlogSearch";
-import Prestataires from "./pages/Prestataires";
-import Prestataire from "./pages/Prestataire";
+import Prestataires from "./pages/services/Prestataires";
+import Prestataire from "./pages/prestataire/slug";
 import Search from "./pages/Search";
 import Subscribe from "./pages/Subscribe";
 import Account from "./pages/dashboard/Account";
@@ -38,7 +39,7 @@ import Security from "./pages/dashboard/Security";
 import Error from "./pages/Error";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
-import EmailConfirmation from "./pages/EmailConfirmation";
+import EmailConfirmation from "./pages/auth/EmailConfirmation";
 import Logout from "./pages/Logout";
 
 const queryClient = new QueryClient();
@@ -64,9 +65,6 @@ function App() {
                   
                   {/* Mon Jour-M routes */}
                   <Route path="/mon-jour-m" element={<MonJourM />} />
-                  <Route path="/mon-jour-m/planning" element={<MonJourM />} />
-                  <Route path="/mon-jour-m/equipe" element={<MonJourM />} />
-                  <Route path="/mon-jour-m/documents" element={<MonJourM />} />
 
                   {/* Auth routes */}
                   <Route path="/login" element={<Login />} />
