@@ -30,8 +30,7 @@ import Prestataires from "./pages/services/Prestataires";
 import Prestataire from "./pages/prestataire/slug";
 import EmailConfirmation from "./pages/auth/EmailConfirmation";
 
-// Import admin pages and layout
-import AdminLayout from "./components/admin/AdminLayout";
+// Import admin pages
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminBlog from "./pages/admin/Blog";
 import AdminPrestataires from "./pages/admin/Prestataires";
@@ -79,14 +78,12 @@ function App() {
                   <Route path="/prestataires" element={<Prestataires />} />
                   <Route path="/prestataires/:slug" element={<Prestataire />} />
 
-                  {/* Admin routes with layout */}
-                  <Route path="/admin" element={<AdminLayout />}>
-                    <Route path="dashboard" element={<AdminDashboard />} />
-                    <Route path="blog" element={<AdminBlog />} />
-                    <Route path="prestataires" element={<AdminPrestataires />} />
-                    <Route path="form" element={<AdminForm />} />
-                    <Route path="reservations-jour-m" element={<AdminReservationsJourM />} />
-                  </Route>
+                  {/* Admin routes */}
+                  <Route path="/admin/dashboard" element={<AdminDashboard />} />
+                  <Route path="/admin/blog" element={<AdminBlog />} />
+                  <Route path="/admin/prestataires" element={<AdminPrestataires />} />
+                  <Route path="/admin/form" element={<AdminForm />} />
+                  <Route path="/admin/reservations-jour-m" element={<AdminReservationsJourM />} />
                   
                   <Route path="*" element={<NotFound />} />
                 </Routes>

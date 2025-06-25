@@ -106,6 +106,10 @@ const Footer = () => {
                       <Settings className="h-3 w-3" />
                       Dashboard Admin
                     </Link></li>
+                    <li><Link to="/admin/blog" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Gestion Blog</Link></li>
+                    <li><Link to="/admin/prestataires" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Gestion Prestataires</Link></li>
+                    <li><Link to="/admin/form" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Gestion Formulaires</Link></li>
+                    <li><Link to="/admin/reservations-jour-m" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Réservations Jour-M</Link></li>
                   </ul>
                 </li>
               )}

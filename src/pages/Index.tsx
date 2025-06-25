@@ -1,173 +1,388 @@
 
-import React from 'react';
-import { Helmet } from 'react-helmet-async';
+import React, { useEffect, useState } from 'react';
 import Header from '@/components/Header';
+import ChatbotButton from '@/components/ChatbotButton';
+import SEO from '@/components/SEO';
 import Footer from '@/components/Footer';
-import HeroSection from '@/components/home/HeroSection';
-import FeaturesSection from '@/components/home/FeaturesSection';
-import ToolsSection from '@/components/home/ToolsSection';
-import CallToAction from '@/components/home/CallToAction';
-import WeddingToolsSection from '@/components/home/WeddingToolsSection';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { ArrowRight, Check, Brain, Handshake, MessageCircle, Smartphone, Mail, Phone, Settings, Lightbulb, Users, Calendar } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { Calendar, CheckSquare, Coins, Users, Heart, Calculator } from 'lucide-react';
 
 const Index = () => {
+  const [displayedText, setDisplayedText] = useState('');
+  const staticText = 'Profitez pleinement de votre mariage. ';
+  const typedText = 'Organisez-le facilement, vous-même.';
+  
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    
+    // Typing animation effect for "Organisez-le facilement, vous-même."
+    let index = 0;
+    const timer = setInterval(() => {
+      if (index < typedText.length) {
+        setDisplayedText(typedText.slice(0, index + 1));
+        index++;
+      } else {
+        clearInterval(timer);
+      }
+    }, 100);
+    
+    return () => clearInterval(timer);
+  }, []);
+
+  const scrollToServices = () => {
+    const servicesSection = document.getElementById('services-section');
+    if (servicesSection) {
+      servicesSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
-    <div className="min-h-screen flex flex-col">
-      <Helmet>
-        <title>Mariable - Planifiez votre mariage moderne avec élégance</title>
-        <meta name="description" content="Planifiez votre mariage avec Mariable, la plateforme moderne pour organiser votre jour J. Planning personnalisé, prestataires sélectionnés et coordination jour J." />
-        <meta name="keywords" content="mariage, wedding planner, planning mariage, prestataires mariage, coordination jour J" />
-        <meta property="og:title" content="Mariable - Planifiez votre mariage moderne avec élégance" />
-        <meta property="og:description" content="La plateforme moderne pour organiser votre mariage de A à Z" />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://mariable.fr" />
-      </Helmet>
-      
+    <div className="min-h-screen flex flex-col bg-white">
+      <SEO />
       <Header />
       
       <main className="flex-grow">
-        <HeroSection />
-        
-        {/* Section Outils Mariable */}
-        <section className="py-16 bg-gray-50">
-          <div className="container mx-auto px-4">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-serif text-black mb-4">
-                Les outils Mariable pour votre mariage
-              </h2>
-              <p className="text-lg text-gray-700 max-w-2xl mx-auto">
-                Découvrez nos outils gratuits pour planifier et organiser votre mariage sereinement
+        {/* Hero Section with dark overlay */}
+        <section 
+          className="relative py-20 md:py-28 bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage: "url('/lovable-uploads/16238829-fdfc-4fe2-ade8-9c49d79851b4.png')"
+          }}
+        >
+          {/* Dark overlay */}
+          <div className="absolute inset-0 bg-neutral-900/20"></div>
+          
+          <div className="container mx-auto px-4 relative z-10">
+            <div className="max-w-3xl">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif text-white font-bold mb-4" style={{ fontFamily: 'Playfair Display, serif' }}>
+                Profitez pleinement de votre mariage.
+              </h1>
+              
+              <p className="text-xl sm:text-2xl font-serif text-white mb-8" style={{ fontFamily: 'Playfair Display, serif' }}>
+                <span className="inline-block min-h-[1.2em]">
+                  {displayedText}
+                  {displayedText.length < typedText.length && (
+                    <span className="animate-pulse">|</span>
+                  )}
+                </span>
               </p>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-              <div className="bg-white p-6 rounded-lg shadow-sm border hover:shadow-md transition-shadow">
-                <Calendar className="h-12 w-12 text-wedding-olive mb-4" />
-                <h3 className="text-xl font-semibold mb-3">Planning personnalisé</h3>
-                <p className="text-gray-600 mb-4">
-                  Créez votre planning de mariage étape par étape avec nos conseils d'experts
-                </p>
-                <Button asChild variant="outline" className="w-full">
-                  <Link to="/planning-personnalise">Créer mon planning</Link>
-                </Button>
-              </div>
               
-              <div className="bg-white p-6 rounded-lg shadow-sm border hover:shadow-md transition-shadow">
-                <CheckSquare className="h-12 w-12 text-wedding-olive mb-4" />
-                <h3 className="text-xl font-semibold mb-3">Check-list interactive</h3>
-                <p className="text-gray-600 mb-4">
-                  Ne rien oublier avec notre check-list complète et personnalisable
-                </p>
-                <Button asChild variant="outline" className="w-full">
-                  <Link to="/dashboard/tasks">Voir la check-list</Link>
-                </Button>
-              </div>
-              
-              <div className="bg-white p-6 rounded-lg shadow-sm border hover:shadow-md transition-shadow">
-                <Coins className="h-12 w-12 text-wedding-olive mb-4" />
-                <h3 className="text-xl font-semibold mb-3">Gestion du budget</h3>
-                <p className="text-gray-600 mb-4">
-                  Suivez et optimisez votre budget mariage en temps réel
-                </p>
-                <Button asChild variant="outline" className="w-full">
-                  <Link to="/dashboard/budget">Gérer mon budget</Link>
-                </Button>
-              </div>
-              
-              <div className="bg-white p-6 rounded-lg shadow-sm border hover:shadow-md transition-shadow">
-                <Users className="h-12 w-12 text-wedding-olive mb-4" />
-                <h3 className="text-xl font-semibold mb-3">Sélection prestataires</h3>
-                <p className="text-gray-600 mb-4">
-                  Trouvez les meilleurs prestataires près de chez vous
-                </p>
-                <Button asChild variant="outline" className="w-full">
-                  <Link to="/prestataires">Voir les prestataires</Link>
-                </Button>
-              </div>
-              
-              <div className="bg-white p-6 rounded-lg shadow-sm border hover:shadow-md transition-shadow">
-                <Heart className="h-12 w-12 text-wedding-olive mb-4" />
-                <h3 className="text-xl font-semibold mb-3">Wishlist mariage</h3>
-                <p className="text-gray-600 mb-4">
-                  Collectez vos inspirations et créez votre univers unique
-                </p>
-                <Button asChild variant="outline" className="w-full">
-                  <Link to="/dashboard/wishlist">Ma wishlist</Link>
-                </Button>
-              </div>
-              
-              <div className="bg-white p-6 rounded-lg shadow-sm border hover:shadow-md transition-shadow">
-                <Calculator className="h-12 w-12 text-wedding-olive mb-4" />
-                <h3 className="text-xl font-semibold mb-3">Calculateur de boissons</h3>
-                <p className="text-gray-600 mb-4">
-                  Calculez précisément les quantités de boissons nécessaires
-                </p>
-                <Button asChild variant="outline" className="w-full">
-                  <Link to="/dashboard/drinks">Calculer les boissons</Link>
+              <div className="mb-8 flex justify-center sm:justify-start">
+                <Button 
+                  onClick={scrollToServices}
+                  size="lg" 
+                  className="bg-wedding-olive hover:bg-wedding-olive/90 text-white 
+                           w-full max-w-[280px] sm:w-auto sm:max-w-none
+                           text-sm px-4 py-3 
+                           sm:text-base sm:px-8 sm:py-4"
+                >
+                  <span className="truncate">Organisez mieux, profitez plus</span>
+                  <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
                 </Button>
               </div>
             </div>
           </div>
         </section>
 
-        <FeaturesSection />
-        <ToolsSection />
-        <WeddingToolsSection />
-        
-        {/* Section Coordination Jour J */}
-        <section className="py-16 bg-gradient-to-br from-wedding-olive/5 to-white">
-          <div className="container mx-auto px-4 text-center">
-            <div className="max-w-4xl mx-auto">
-              <h2 className="text-3xl md:text-4xl font-serif text-black mb-6">
-                Coordination Jour J - Vivez votre mariage sereinement
+        {/* Feature Section */}
+        <section className="py-16 md:py-20 bg-white">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-12">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif text-black mb-6 max-w-4xl mx-auto" style={{ fontFamily: 'Playfair Display, serif' }}>
+                Le premier wedding planner de poche
               </h2>
-              <p className="text-lg text-gray-700 mb-8 leading-relaxed">
-                Confiez-nous la coordination de votre jour J pour profiter pleinement de votre mariage. 
-                Nos experts s'occupent de tout : planning détaillé, coordination des prestataires, 
-                gestion des imprévus et assistance complète.
-              </p>
               
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-                <div className="text-center">
-                  <div className="bg-wedding-olive/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Calendar className="h-8 w-8 text-wedding-olive" />
-                  </div>
-                  <h3 className="font-semibold mb-2">Planning détaillé</h3>
-                  <p className="text-gray-600 text-sm">Organisation minute par minute de votre journée</p>
-                </div>
+              <div className="max-w-3xl mx-auto mb-8">
+                <p className="text-lg text-gray-700 mb-6">
+                  Une application en ligne pensée pour les couples qui veulent tout organiser eux-mêmes – sans stress, sans perte de temps, sans galère.
+                </p>
                 
-                <div className="text-center">
-                  <div className="bg-wedding-olive/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Users className="h-8 w-8 text-wedding-olive" />
+                <div className="grid md:grid-cols-3 gap-6 text-left">
+                  <div className="flex items-start gap-3">
+                    <Brain className="h-6 w-6 text-wedding-olive flex-shrink-0 mt-0.5" />
+                    <div>
+                      <h3 className="font-medium mb-2">Expertise incluse</h3>
+                      <p className="text-gray-700">
+                        Les bonnes adresses et les bons outils d'un professionnel.
+                      </p>
+                    </div>
                   </div>
-                  <h3 className="font-semibold mb-2">Coordination prestataires</h3>
-                  <p className="text-gray-600 text-sm">Liaison avec tous vos prestataires</p>
-                </div>
-                
-                <div className="text-center">
-                  <div className="bg-wedding-olive/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Heart className="h-8 w-8 text-wedding-olive" />
+                  
+                  <div className="flex items-start gap-3">
+                    <Settings className="h-6 w-6 text-wedding-olive flex-shrink-0 mt-0.5" />
+                    <div>
+                      <h3 className="font-medium mb-2">Autonomie complète</h3>
+                      <p className="text-gray-700">
+                        Organisez tout à votre rythme, selon vos règles.
+                      </p>
+                    </div>
                   </div>
-                  <h3 className="font-semibold mb-2">Sérénité totale</h3>
-                  <p className="text-gray-600 text-sm">Profitez de votre mariage sans stress</p>
+                  
+                  <div className="flex items-start gap-3">
+                    <Handshake className="h-6 w-6 text-wedding-olive flex-shrink-0 mt-0.5" />
+                    <div>
+                      <h3 className="font-medium mb-2">Assistance à la demande</h3>
+                      <p className="text-gray-700">
+                        Service client si vous en avez besoin. Pas de pression, pas de coût inutile.
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
-              
-              <Button asChild size="lg" className="bg-wedding-olive hover:bg-wedding-olive/90 text-white px-8 py-3">
-                <Link to="/reservation-jour-m">
-                  Choisir ma formule Jour M
+
+              <Button asChild size="lg" className="bg-wedding-olive hover:bg-wedding-olive/90 text-white">
+                <Link to="/register">
+                  Découvrir Mariable <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
               </Button>
             </div>
           </div>
         </section>
-        
-        <CallToAction />
+
+        {/* Services Section - Réorganisé avec nouvel ordre */}
+        <section id="services-section" className="py-16 md:py-20 bg-gray-50">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-12">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif text-black mb-6" style={{ fontFamily: 'Playfair Display, serif' }}>
+                Transformez l'organisation de votre mariage en une expérience simple & agréable.
+              </h2>
+              <p className="text-lg text-gray-700 max-w-2xl mx-auto">
+                Choisissez le niveau d'accompagnement qui vous correspond
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl mx-auto mb-16">
+              {/* Card 1 - Le Planner Mariable (gauche) */}
+              <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col h-full">
+                <div className="flex flex-col h-full">
+                  <div className="min-h-[120px] flex flex-col justify-start text-center p-6 pb-0">
+                    <div className="flex items-center justify-center gap-2 mb-4">
+                      <Smartphone className="h-6 w-6 text-wedding-olive" />
+                      <CardTitle className="text-2xl font-bold">
+                        Le Planner Mariable
+                      </CardTitle>
+                    </div>
+                    <p className="text-lg font-medium text-gray-700">
+                      Un tableau de bord pour bien démarrer
+                    </p>
+                  </div>
+                  
+                  <div className="flex-grow px-6 mt-6">
+                    <div className="space-y-3">
+                      <div className="flex items-start gap-3">
+                        <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                        <p className="text-sm text-gray-700">Accès à votre espace personnel</p>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                        <p className="text-sm text-gray-700">Accès à la sélection de prestataire Mariable</p>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                        <p className="text-sm text-gray-700">Check list & Calculatrice de budget</p>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                        <p className="text-sm text-gray-700">Modèle de suivi budgétaire en ligne & téléchargeable</p>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                        <p className="text-sm text-gray-700">Générateur de planning Jour J</p>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                        <p className="text-sm text-gray-700">Compilation de conseils opérationnels</p>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                        <p className="text-sm text-gray-700">ChatGPT Mariable</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-auto p-6 pt-6">
+                    <div className="text-3xl font-bold text-wedding-olive mb-4 text-center">
+                      Gratuit
+                    </div>
+                    <Button asChild className="w-full bg-wedding-olive text-white hover:bg-wedding-olive/90">
+                      <Link to="/register">
+                        S'inscrire gratuitement
+                      </Link>
+                    </Button>
+                    <p className="text-sm text-gray-600 italic text-center mt-4">
+                      Planifiez sans engagement, à votre rythme.
+                    </p>
+                  </div>
+                </div>
+              </Card>
+
+              {/* Card 2 - Le Jour M (milieu avec badge PREMIUM) */}
+              <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300 border-2 border-wedding-olive flex flex-col h-full relative">
+                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                  <span className="bg-wedding-olive text-white px-4 py-1 rounded-full text-sm font-medium">
+                    PREMIUM
+                  </span>
+                </div>
+                <div className="flex flex-col h-full">
+                  <div className="min-h-[120px] flex flex-col justify-start text-center p-6 pb-0 pt-8">
+                    <div className="flex items-center justify-center gap-2 mb-4">
+                      <Calendar className="h-6 w-6 text-wedding-olive" />
+                      <CardTitle className="text-2xl font-bold">
+                        Le Jour M
+                      </CardTitle>
+                    </div>
+                    <p className="text-lg font-medium text-gray-700">
+                      Une application en ligne collaborative
+                    </p>
+                  </div>
+                  
+                  <div className="flex-grow px-6 mt-6">
+                    <div className="space-y-3">
+                      <div className="flex items-start gap-3">
+                        <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                        <p className="text-sm text-gray-700">Application personnalisée à partager</p>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                        <p className="text-sm text-gray-700">Accessible par toute votre équipe</p>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                        <p className="text-sm text-gray-700">Planning intelligent</p>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                        <p className="text-sm text-gray-700">Rôles et tâches à déléguer</p>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                        <p className="text-sm text-gray-700">Espace documents : plans, moodboard</p>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                        <p className="text-sm text-gray-700">Carnet de contacts intégré</p>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                        <p className="text-sm text-gray-700">Notifications & rappels automatiques (selon formule)</p>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                        <p className="text-sm text-gray-700">Vos proches reçoivent leurs instructions directement</p>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                        <p className="text-sm text-gray-700">Support en option : hotline ou présence terrain</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-auto p-6 pt-6">
+                    <div className="text-3xl font-bold text-wedding-olive mb-4 text-center">
+                      Dès 49€ TTC
+                    </div>
+                    <Button asChild className="w-full bg-wedding-olive text-white hover:bg-wedding-olive/90">
+                      <Link to="/pricing">
+                        Choisir ma formule Jour M
+                      </Link>
+                    </Button>
+                    <p className="text-sm text-gray-600 italic text-center mt-4">
+                      Coordonner votre grand jour pour mieux profiter
+                    </p>
+                  </div>
+                </div>
+              </Card>
+
+              {/* Card 3 - Accompagnement Mariable (droite) */}
+              <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col h-full">
+                <div className="flex flex-col h-full">
+                  <div className="min-h-[120px] flex flex-col justify-start text-center p-6 pb-0">
+                    <div className="flex items-center justify-center gap-2 mb-4">
+                      <MessageCircle className="h-6 w-6 text-wedding-olive" />
+                      <CardTitle className="text-2xl font-bold">
+                        Accompagnement Mariable
+                      </CardTitle>
+                    </div>
+                    <p className="text-lg font-medium text-gray-700">
+                      Une ligne directe
+                    </p>
+                  </div>
+                  
+                  <div className="flex-grow px-6 mt-6">
+                    <div className="space-y-3">
+                      <div className="flex items-start gap-3">
+                        <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                        <p className="text-sm text-gray-700">Messages illimités avec Mathilde sur WhatsApp</p>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                        <p className="text-sm text-gray-700">Disponible 7j/7 de 9h à 22h</p>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                        <p className="text-sm text-gray-700">Conseils personnalisés à chaque étape</p>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                        <p className="text-sm text-gray-700">Soutien émotionnel & prise de recul</p>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                        <p className="text-sm text-gray-700">Relecture de vos plannings & documents</p>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                        <p className="text-sm text-gray-700">Aide à la prise de décision & arbitrage</p>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                        <p className="text-sm text-gray-700">Une vraie personne, votre alliée experte</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-auto p-6 pt-6">
+                    <div className="text-3xl font-bold text-wedding-olive mb-4 text-center">
+                      9,90€/mois TTC
+                    </div>
+                    <Button asChild className="w-full bg-gray-100 text-gray-800 hover:bg-gray-200 border border-gray-300">
+                      <Link to="/paiement">
+                        Bénéficier de conseils illimités
+                      </Link>
+                    </Button>
+                    <p className="text-sm text-gray-600 italic text-center mt-4">
+                      Vous n'organisez plus seuls. On avance ensemble.
+                    </p>
+                  </div>
+                </div>
+              </Card>
+            </div>
+          </div>
+        </section>
+
+        {/* Final CTA Section */}
+        <section className="py-16 md:py-20 bg-wedding-olive text-white">
+          <div className="container mx-auto px-4 text-center">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif mb-4" style={{ fontFamily: 'Playfair Display, serif' }}>
+              Et si vous disiez "oui" à la simplicité ?
+            </h2>
+            <p className="text-lg mb-8 max-w-2xl mx-auto">
+              Posez vos questions ou réservez un conseil personnalisé.
+            </p>
+            
+            <Button asChild size="lg" className="bg-white text-wedding-olive hover:bg-white/90">
+              <Link to="/contact/nous-contacter">
+                Contactez Mathilde <ArrowRight className="ml-2 h-5 w-5" />
+              </Link>
+            </Button>
+          </div>
+        </section>
       </main>
       
       <Footer />
+      <ChatbotButton />
     </div>
   );
 };
