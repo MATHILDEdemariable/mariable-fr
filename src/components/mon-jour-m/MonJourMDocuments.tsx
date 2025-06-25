@@ -11,7 +11,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
-interface Document {
+interface DocumentItem {
   id: string;
   title: string;
   description?: string;
@@ -31,7 +31,7 @@ interface TeamMember {
 }
 
 const MonJourMDocuments: React.FC = () => {
-  const [documents, setDocuments] = useState<Document[]>([]);
+  const [documents, setDocuments] = useState<DocumentItem[]>([]);
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [coordinationId, setCoordinationId] = useState<string | null>(null);
   const [showAddDocument, setShowAddDocument] = useState(false);
@@ -235,7 +235,7 @@ const MonJourMDocuments: React.FC = () => {
       setShowAddDocument(false);
       
       // Réinitialiser l'input file
-      const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+      const fileInput = window.document.querySelector('input[type="file"]') as HTMLInputElement;
       if (fileInput) fileInput.value = '';
       
       toast({
@@ -254,7 +254,7 @@ const MonJourMDocuments: React.FC = () => {
     }
   };
 
-  const deleteDocument = async (document: Document) => {
+  const deleteDocument = async (document: DocumentItem) => {
     try {
       // Supprimer le fichier du storage si le chemin existe
       if (document.file_path) {
@@ -290,7 +290,7 @@ const MonJourMDocuments: React.FC = () => {
     }
   };
 
-  const downloadDocument = async (document: Document) => {
+  const downloadDocument = async (document: DocumentItem) => {
     try {
       if (document.file_path) {
         // Télécharger depuis Supabase Storage
@@ -302,12 +302,12 @@ const MonJourMDocuments: React.FC = () => {
 
         // Créer un lien de téléchargement
         const url = URL.createObjectURL(data);
-        const a = document.createElement('a');
+        const a = window.document.createElement('a');
         a.href = url;
         a.download = document.title;
-        document.body.appendChild(a);
+        window.document.body.appendChild(a);
         a.click();
-        document.body.removeChild(a);
+        window.document.body.removeChild(a);
         URL.revokeObjectURL(url);
       } else {
         // Fallback sur l'URL publique

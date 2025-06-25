@@ -253,15 +253,24 @@ const MonJourMPlanning: React.FC = () => {
           description: "La tâche a été mise à jour avec succès"
         });
       } else {
-        // Création d'une nouvelle tâche
+        // Création d'une nouvelle tâche - s'assurer que tous les champs requis sont présents
         const newPosition = tasks.length;
         
         const { error } = await supabase
           .from('coordination_planning')
           .insert({
             coordination_id: coordinationId,
+            title: taskData.title || 'Nouvelle tâche', // S'assurer que le titre existe
+            description: taskData.description,
+            duration: taskData.duration || 30,
+            category: taskData.category || 'general',
+            priority: taskData.priority || 'medium',
+            status: taskData.status || 'todo',
             position: newPosition,
-            ...taskData
+            assigned_to: taskData.assigned_to || [],
+            is_ai_generated: taskData.is_ai_generated || false,
+            start_time: taskData.start_time,
+            end_time: taskData.end_time
           });
 
         if (error) throw error;
@@ -341,7 +350,7 @@ const MonJourMPlanning: React.FC = () => {
         category: suggestion.category,
         priority: suggestion.priority,
         position: startPosition + index,
-        status: 'todo',
+        status: 'todo' as const,
         is_ai_generated: true
       }));
 
