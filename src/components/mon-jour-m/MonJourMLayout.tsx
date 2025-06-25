@@ -1,6 +1,5 @@
 
 import React, { useState, useEffect } from 'react';
-import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Share2, Calendar, Users, FileText, Sparkles } from 'lucide-react';
@@ -16,24 +15,10 @@ interface MonJourMLayoutProps {
 }
 
 const MonJourMLayout: React.FC<MonJourMLayoutProps> = ({ children }) => {
-  const navigate = useNavigate();
-  const location = useLocation();
   const { toast } = useToast();
   const [shareToken, setShareToken] = useState<string | null>(null);
   const [coordination, setCoordination] = useState<any>(null);
-
-  // Déterminer l'onglet actif basé sur l'URL
-  const getActiveTab = () => {
-    if (location.pathname.includes('/equipe')) return 'equipe';
-    if (location.pathname.includes('/documents')) return 'documents';
-    return 'planning';
-  };
-
-  const [activeTab, setActiveTab] = useState(getActiveTab());
-
-  useEffect(() => {
-    setActiveTab(getActiveTab());
-  }, [location.pathname]);
+  const [activeTab, setActiveTab] = useState('planning');
 
   useEffect(() => {
     initializeCoordination();
@@ -81,11 +66,6 @@ const MonJourMLayout: React.FC<MonJourMLayoutProps> = ({ children }) => {
     } catch (error) {
       console.error('Error initializing coordination:', error);
     }
-  };
-
-  const handleTabChange = (value: string) => {
-    setActiveTab(value);
-    navigate(`/mon-jour-m/${value}`);
   };
 
   const generateShareLink = async () => {
@@ -168,7 +148,7 @@ const MonJourMLayout: React.FC<MonJourMLayoutProps> = ({ children }) => {
         </div>
 
         {/* Navigation par onglets */}
-        <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-3 mb-6">
             <TabsTrigger value="planning" className="flex items-center gap-2">
               <Calendar className="h-4 w-4" />
@@ -184,9 +164,9 @@ const MonJourMLayout: React.FC<MonJourMLayoutProps> = ({ children }) => {
             </TabsTrigger>
           </TabsList>
 
-          <div className="min-h-[600px]">
+          <TabsContent value={activeTab} className="min-h-[600px]">
             {renderTabContent()}
-          </div>
+          </TabsContent>
         </Tabs>
       </div>
     </div>

@@ -5,11 +5,39 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, Sparkles, Clock, CheckCircle2, Circle, User, Calendar } from 'lucide-react';
+import { 
+  Plus, 
+  Sparkles, 
+  Clock, 
+  CheckCircle2, 
+  Circle, 
+  User, 
+  Calendar, 
+  Edit2, 
+  Trash2,
+  MoreHorizontal
+} from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import ErrorBoundary from './ErrorBoundary';
+import TaskEditModal from './TaskEditModal';
 
 interface PlanningTask {
   id: string;
@@ -20,7 +48,7 @@ interface PlanningTask {
   duration: number;
   category: string;
   position: number;
-  assigned_to?: string;
+  assigned_to?: string[];
   status: 'todo' | 'in_progress' | 'completed';
   priority: 'low' | 'medium' | 'high';
   is_ai_generated: boolean;
@@ -45,6 +73,9 @@ const MonJourMPlanning: React.FC = () => {
     priority: 'medium' as 'low' | 'medium' | 'high'
   });
   const [showAddTask, setShowAddTask] = useState(false);
+  const [editingTask, setEditingTask] = useState<PlanningTask | null>(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [taskToDelete, setTaskToDelete] = useState<string | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -131,7 +162,7 @@ const MonJourMPlanning: React.FC = () => {
       duration: item.duration || 0,
       category: item.category || 'general',
       position: item.position || 0,
-      assigned_to: item.assigned_to,
+      assigned_to: item.assigned_to ? (Array.isArray(item.assigned_to) ? item.assigned_to : [item.assigned_to]) : [],
       status: (['todo', 'in_progress', 'completed'].includes(item.status) ? item.status : 'todo') as 'todo' | 'in_progress' | 'completed',
       priority: (['low', 'medium', 'high'].includes(item.priority) ? item.priority : 'medium') as 'low' | 'medium' | 'high',
       is_ai_generated: item.is_ai_generated || false
@@ -230,35 +261,94 @@ const MonJourMPlanning: React.FC = () => {
     }
   };
 
-  const updateTaskStatus = async (taskId: string, status: 'todo' | 'in_progress' | 'completed') => {
-    console.log('📝 Updating task status:', taskId, status);
+  const updateTask = async (taskId: string, taskData: Partial<PlanningTask>) => {
+    if (!coordinationId) return;
+
+    console.log('📝 Updating task:', taskId, taskData);
     
     try {
       const { error } = await supabase
         .from('coordination_planning')
-        .update({ status })
-        .eq('id', taskId);
+        .update(taskData)
+        .eq('id', taskId)
+        .eq('coordination_id', coordinationId);
 
-      if (error) throw error;
-      console.log('✅ Task status updated');
+      if (error) {
+        console.error('❌ Error updating task:', error);
+        throw error;
+      }
+
+      console.log('✅ Task updated successfully');
+      toast({
+        title: "Tâche modifiée",
+        description: "La tâche a été mise à jour avec succès"
+      });
     } catch (error) {
-      console.error('❌ Error updating task status:', error);
+      console.error('❌ Error updating task:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de modifier la tâche",
+        variant: "destructive"
+      });
+      throw error;
     }
   };
 
-  const assignTask = async (taskId: string, assignedTo: string) => {
-    console.log('👤 Assigning task:', taskId, 'to:', assignedTo);
+  const deleteTask = async (taskId: string) => {
+    if (!coordinationId) return;
+
+    console.log('🗑️ Deleting task:', taskId);
     
     try {
       const { error } = await supabase
         .from('coordination_planning')
-        .update({ assigned_to: assignedTo || null })
-        .eq('id', taskId);
+        .delete()
+        .eq('id', taskId)
+        .eq('coordination_id', coordinationId);
 
-      if (error) throw error;
-      console.log('✅ Task assigned successfully');
+      if (error) {
+        console.error('❌ Error deleting task:', error);
+        throw error;
+      }
+
+      console.log('✅ Task deleted successfully');
+      toast({
+        title: "Tâche supprimée",
+        description: "La tâche a été supprimée avec succès"
+      });
     } catch (error) {
-      console.error('❌ Error assigning task:', error);
+      console.error('❌ Error deleting task:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de supprimer la tâche",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const updateTaskStatus = async (taskId: string, status: 'todo' | 'in_progress' | 'completed') => {
+    await updateTask(taskId, { status });
+  };
+
+  const handleEditTask = (task: PlanningTask) => {
+    setEditingTask(task);
+    setShowEditModal(true);
+  };
+
+  const handleSaveTask = async (taskData: Partial<PlanningTask>) => {
+    if (editingTask) {
+      await updateTask(editingTask.id, taskData);
+    }
+  };
+
+  const handleDeleteTask = async (taskId: string) => {
+    setTaskToDelete(taskId);
+  };
+
+  const confirmDeleteTask = async () => {
+    if (taskToDelete) {
+      await deleteTask(taskToDelete);
+      setTaskToDelete(null);
     }
   };
 
@@ -388,6 +478,29 @@ const MonJourMPlanning: React.FC = () => {
     }
   };
 
+  const formatTime = (timeString?: string) => {
+    if (!timeString) return '';
+    try {
+      return new Date(timeString).toLocaleTimeString('fr-FR', { 
+        hour: '2-digit', 
+        minute: '2-digit' 
+      });
+    } catch {
+      return '';
+    }
+  };
+
+  const getAssigneeNames = (assignedTo?: string[]) => {
+    if (!assignedTo || assignedTo.length === 0) return 'Non assigné';
+    
+    const names = assignedTo.map(id => {
+      const member = teamMembers.find(m => m.id === id);
+      return member ? member.name : 'Inconnu';
+    });
+    
+    return names.join(', ');
+  };
+
   if (isLoading) {
     return (
       <div className="space-y-6">
@@ -411,65 +524,7 @@ const MonJourMPlanning: React.FC = () => {
     <ErrorBoundary fallback={
       <div className="space-y-4">
         {tasks.map((task) => (
-          <div key={task.id} className="p-4 border rounded-lg bg-white shadow-sm">
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-2">
-                  <button onClick={() => updateTaskStatus(task.id, task.status === 'completed' ? 'todo' : 'completed')}>
-                    {getStatusIcon(task.status)}
-                  </button>
-                  <h3 className={`font-medium ${task.status === 'completed' ? 'line-through text-gray-500' : ''}`}>
-                    {task.title}
-                  </h3>
-                  {task.is_ai_generated && (
-                    <Badge variant="secondary" className="text-xs">
-                      <Sparkles className="h-3 w-3 mr-1" />
-                      IA
-                    </Badge>
-                  )}
-                </div>
-                
-                {task.description && (
-                  <p className="text-sm text-gray-600 mb-2">{task.description}</p>
-                )}
-                
-                <div className="flex items-center gap-2 text-xs text-gray-500">
-                  <Badge variant="outline">{task.duration} min</Badge>
-                  <Badge className={getPriorityColor(task.priority)}>
-                    {task.priority === 'high' ? 'Élevée' : task.priority === 'medium' ? 'Moyenne' : 'Faible'}
-                  </Badge>
-                  <span className="capitalize">{task.category}</span>
-                </div>
-              </div>
-              
-              <div className="flex flex-col gap-2">
-                <Select value={task.assigned_to || 'unassigned'} onValueChange={(value) => assignTask(task.id, value === 'unassigned' ? '' : value)}>
-                  <SelectTrigger className="w-32">
-                    <SelectValue placeholder="Assigner">
-                      {task.assigned_to ? (
-                        <div className="flex items-center gap-1">
-                          <User className="h-3 w-3" />
-                          <span className="truncate">
-                            {teamMembers.find(m => m.id === task.assigned_to)?.name || 'Assigné'}
-                          </span>
-                        </div>
-                      ) : (
-                        'Non assigné'
-                      )}
-                    </SelectValue>
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="unassigned">Non assigné</SelectItem>
-                    {teamMembers.map((member) => (
-                      <SelectItem key={member.id} value={member.id}>
-                        {member.name} ({member.role})
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          </div>
+          <TaskCard key={task.id} task={task} />
         ))}
       </div>
     }>
@@ -484,65 +539,9 @@ const MonJourMPlanning: React.FC = () => {
                       ref={provided.innerRef}
                       {...provided.draggableProps}
                       {...provided.dragHandleProps}
-                      className={`p-4 border rounded-lg bg-white ${snapshot.isDragging ? 'shadow-lg' : 'shadow-sm'} ${task.is_ai_generated ? 'border-l-4 border-l-purple-400' : ''}`}
+                      className={`${snapshot.isDragging ? 'shadow-lg' : ''}`}
                     >
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-2">
-                            <button onClick={() => updateTaskStatus(task.id, task.status === 'completed' ? 'todo' : 'completed')}>
-                              {getStatusIcon(task.status)}
-                            </button>
-                            <h3 className={`font-medium ${task.status === 'completed' ? 'line-through text-gray-500' : ''}`}>
-                              {task.title}
-                            </h3>
-                            {task.is_ai_generated && (
-                              <Badge variant="secondary" className="text-xs">
-                                <Sparkles className="h-3 w-3 mr-1" />
-                                IA
-                              </Badge>
-                            )}
-                          </div>
-                          
-                          {task.description && (
-                            <p className="text-sm text-gray-600 mb-2">{task.description}</p>
-                          )}
-                          
-                          <div className="flex items-center gap-2 text-xs text-gray-500">
-                            <Badge variant="outline">{task.duration} min</Badge>
-                            <Badge className={getPriorityColor(task.priority)}>
-                              {task.priority === 'high' ? 'Élevée' : task.priority === 'medium' ? 'Moyenne' : 'Faible'}
-                            </Badge>
-                            <span className="capitalize">{task.category}</span>
-                          </div>
-                        </div>
-                        
-                        <div className="flex flex-col gap-2">
-                          <Select value={task.assigned_to || 'unassigned'} onValueChange={(value) => assignTask(task.id, value === 'unassigned' ? '' : value)}>
-                            <SelectTrigger className="w-32">
-                              <SelectValue placeholder="Assigner">
-                                {task.assigned_to ? (
-                                  <div className="flex items-center gap-1">
-                                    <User className="h-3 w-3" />
-                                    <span className="truncate">
-                                      {teamMembers.find(m => m.id === task.assigned_to)?.name || 'Assigné'}
-                                    </span>
-                                  </div>
-                                ) : (
-                                  'Non assigné'
-                                )}
-                              </SelectValue>
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="unassigned">Non assigné</SelectItem>
-                              {teamMembers.map((member) => (
-                                <SelectItem key={member.id} value={member.id}>
-                                  {member.name} ({member.role})
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      </div>
+                      <TaskCard task={task} />
                     </div>
                   )}
                 </Draggable>
@@ -553,6 +552,74 @@ const MonJourMPlanning: React.FC = () => {
         </Droppable>
       </DragDropContext>
     </ErrorBoundary>
+  );
+
+  const TaskCard = ({ task }: { task: PlanningTask }) => (
+    <div className={`p-4 border rounded-lg bg-white shadow-sm ${task.is_ai_generated ? 'border-l-4 border-l-purple-400' : ''}`}>
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex-1">
+          <div className="flex items-center gap-2 mb-2">
+            <button onClick={() => updateTaskStatus(task.id, task.status === 'completed' ? 'todo' : 'completed')}>
+              {getStatusIcon(task.status)}
+            </button>
+            <h3 className={`font-medium ${task.status === 'completed' ? 'line-through text-gray-500' : ''}`}>
+              {task.title}
+              {(task.start_time || task.end_time) && (
+                <span className="ml-2 text-sm text-gray-600">
+                  ({formatTime(task.start_time)} - {formatTime(task.end_time)})
+                </span>
+              )}
+            </h3>
+            {task.is_ai_generated && (
+              <Badge variant="secondary" className="text-xs">
+                <Sparkles className="h-3 w-3 mr-1" />
+                IA
+              </Badge>
+            )}
+          </div>
+          
+          {task.description && (
+            <p className="text-sm text-gray-600 mb-2">{task.description}</p>
+          )}
+          
+          <div className="flex items-center gap-2 text-xs text-gray-500">
+            <Badge variant="outline">{task.duration} min</Badge>
+            <Badge className={getPriorityColor(task.priority)}>
+              {task.priority === 'high' ? 'Élevée' : task.priority === 'medium' ? 'Moyenne' : 'Faible'}
+            </Badge>
+            <span className="capitalize">{task.category}</span>
+          </div>
+
+          {task.assigned_to && task.assigned_to.length > 0 && (
+            <div className="mt-2 flex items-center gap-1 text-xs text-gray-600">
+              <User className="h-3 w-3" />
+              <span>Assigné à: {getAssigneeNames(task.assigned_to)}</span>
+            </div>
+          )}
+        </div>
+        
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={() => handleEditTask(task)}>
+              <Edit2 className="h-4 w-4 mr-2" />
+              Modifier
+            </DropdownMenuItem>
+            <DropdownMenuItem 
+              onClick={() => handleDeleteTask(task.id)}
+              className="text-destructive"
+            >
+              <Trash2 className="h-4 w-4 mr-2" />
+              Supprimer
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+    </div>
   );
 
   return (
@@ -663,6 +730,33 @@ const MonJourMPlanning: React.FC = () => {
           )}
         </CardContent>
       </Card>
+
+      {/* Modal d'édition */}
+      <TaskEditModal
+        isOpen={showEditModal}
+        onClose={() => setShowEditModal(false)}
+        task={editingTask}
+        teamMembers={teamMembers}
+        onSave={handleSaveTask}
+      />
+
+      {/* Dialog de confirmation de suppression */}
+      <AlertDialog open={!!taskToDelete} onOpenChange={() => setTaskToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmer la suppression</AlertDialogTitle>
+            <AlertDialogDescription>
+              Êtes-vous sûr de vouloir supprimer cette tâche ? Cette action ne peut pas être annulée.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annuler</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDeleteTask} className="bg-destructive text-destructive-foreground">
+              Supprimer
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
