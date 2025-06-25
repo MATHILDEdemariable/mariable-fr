@@ -31,6 +31,7 @@ import Prestataire from "./pages/prestataire/slug";
 import EmailConfirmation from "./pages/auth/EmailConfirmation";
 
 // Import admin pages
+import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminBlog from "./pages/admin/Blog";
 import AdminPrestataires from "./pages/admin/Prestataires";
 import AdminForm from "./pages/admin/FormAdmin";
@@ -78,6 +79,7 @@ function App() {
                   <Route path="/prestataires/:slug" element={<Prestataire />} />
 
                   {/* Admin routes */}
+                  <Route path="/admin/dashboard" element={<AdminDashboard />} />
                   <Route path="/admin/blog" element={<AdminBlog />} />
                   <Route path="/admin/prestataires" element={<AdminPrestataires />} />
                   <Route path="/admin/form" element={<AdminForm />} />

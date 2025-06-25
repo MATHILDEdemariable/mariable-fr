@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Instagram, Mail, Settings } from 'lucide-react';
+import { Instagram, Mail, Settings, Shield } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
 const Footer = () => {
@@ -98,10 +98,14 @@ const Footer = () => {
               {isAdmin && (
                 <li className="pt-2 border-t border-wedding-black/10">
                   <div className="flex items-center gap-2 mb-2">
-                    <Settings className="h-4 w-4 text-wedding-olive" />
+                    <Shield className="h-4 w-4 text-wedding-olive" />
                     <span className="font-medium text-wedding-olive">Administration</span>
                   </div>
                   <ul className="space-y-1 ml-6">
+                    <li><Link to="/admin/dashboard" className="text-wedding-black/70 hover:text-wedding-black transition-colors flex items-center gap-1">
+                      <Settings className="h-3 w-3" />
+                      Dashboard Admin
+                    </Link></li>
                     <li><Link to="/admin/blog" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Gestion Blog</Link></li>
                     <li><Link to="/admin/prestataires" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Gestion Prestataires</Link></li>
                     <li><Link to="/admin/form" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Gestion Formulaires</Link></li>
