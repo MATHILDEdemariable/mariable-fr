@@ -29,6 +29,7 @@ interface PlanningTask {
   status: 'todo' | 'in_progress' | 'completed';
   priority: 'low' | 'medium' | 'high';
   is_ai_generated: boolean;
+  is_simultaneous?: boolean; // Nouvelle propriété pour gérer les tâches simultanées
 }
 
 const MonJourMPlanning: React.FC = () => {
@@ -96,6 +97,7 @@ const MonJourMPlanning: React.FC = () => {
       assigned_to: Array.isArray(task.assigned_to) ? task.assigned_to : []
     }));
 
+    console.log('Loaded tasks:', formattedTasks);
     setTasks(formattedTasks);
   };
 
@@ -136,39 +138,59 @@ const MonJourMPlanning: React.FC = () => {
     };
   };
 
-  // Fonction corrigée pour calculer les heures séquentielles
+  // Fonction améliorée pour calculer les heures de manière plus dynamique
   const recalculateSequentialTimes = (updatedTasks: PlanningTask[]) => {
-    console.log('Recalculating sequential times...');
+    console.log('🔄 Recalculating sequential times...');
     
     // Trier les tâches par position
     const sortedTasks = [...updatedTasks].sort((a, b) => a.position - b.position);
-    let currentTime: Date | null = null;
+    let currentSequentialTime: Date | null = null;
     
     const recalculatedTasks = sortedTasks.map((task, index) => {
-      // Si la tâche a déjà une heure de début définie, l'utiliser comme référence
-      if (task.start_time) {
+      console.log(`Processing task ${index}: "${task.title}"`);
+      
+      // Si la tâche a une heure de début personnalisée ET qu'elle n'est pas marquée comme simultanée
+      if (task.start_time && !task.is_simultaneous) {
         const taskStartTime = new Date(task.start_time);
-        console.log(`Task "${task.title}" has custom start time:`, taskStartTime.toLocaleTimeString());
-        
-        // Calculer l'heure de fin basée sur la durée
         const endTime = new Date(taskStartTime.getTime() + task.duration * 60000);
-        currentTime = endTime; // Mettre à jour la référence pour les tâches suivantes
+        
+        console.log(`✅ Task "${task.title}" has custom start time: ${taskStartTime.toLocaleTimeString()}`);
+        
+        // Cette tâche devient la nouvelle référence pour la séquence
+        currentSequentialTime = endTime;
         
         return {
           ...task,
-          start_time: task.start_time, // Conserver l'heure personnalisée
+          start_time: taskStartTime.toISOString(),
           end_time: endTime.toISOString()
         };
       }
       
-      // Pour les tâches sans heure définie, utiliser la séquence
-      if (currentTime) {
-        const startTime = new Date(currentTime);
+      // Si la tâche est marquée comme simultanée, utiliser l'heure de début de la tâche précédente
+      if (task.is_simultaneous && index > 0) {
+        const previousTask = sortedTasks[index - 1];
+        if (previousTask.start_time) {
+          const simultaneousStartTime = new Date(previousTask.start_time);
+          const simultaneousEndTime = new Date(simultaneousStartTime.getTime() + task.duration * 60000);
+          
+          console.log(`⏰ Task "${task.title}" is simultaneous, starts at: ${simultaneousStartTime.toLocaleTimeString()}`);
+          
+          return {
+            ...task,
+            start_time: simultaneousStartTime.toISOString(),
+            end_time: simultaneousEndTime.toISOString()
+          };
+        }
+      }
+      
+      // Pour les tâches séquentielles normales
+      if (currentSequentialTime) {
+        const startTime = new Date(currentSequentialTime);
         const endTime = new Date(startTime.getTime() + task.duration * 60000);
         
-        console.log(`Task "${task.title}" calculated time:`, startTime.toLocaleTimeString(), '-', endTime.toLocaleTimeString());
+        console.log(`📅 Task "${task.title}" sequential time: ${startTime.toLocaleTimeString()} - ${endTime.toLocaleTimeString()}`);
         
-        currentTime = endTime;
+        currentSequentialTime = endTime;
         
         return {
           ...task,
@@ -177,15 +199,19 @@ const MonJourMPlanning: React.FC = () => {
         };
       }
       
-      // Première tâche sans heure définie, ne pas forcer d'heure
+      // Première tâche ou pas de référence temporelle
+      console.log(`⚪ Task "${task.title}" has no time reference`);
       return task;
     });
     
+    console.log('✨ Time recalculation completed');
     return recalculatedTasks;
   };
 
   const handleDragEnd = async (result: any) => {
     if (!result.destination || !coordinationId) return;
+
+    console.log('🎯 Drag ended:', result);
 
     const items = Array.from(tasks);
     const [reorderedItem] = items.splice(result.source.index, 1);
@@ -197,11 +223,13 @@ const MonJourMPlanning: React.FC = () => {
       position: index
     }));
 
-    // Recalculer les heures en préservant les heures personnalisées
+    console.log('📋 Updated task positions:', updatedTasks.map(t => ({ title: t.title, position: t.position })));
+
+    // Recalculer les heures en temps réel
     const tasksWithTimes = recalculateSequentialTimes(updatedTasks);
     setTasks(tasksWithTimes);
 
-    // Sauvegarder en base
+    // Sauvegarder en base avec gestion d'erreur améliorée
     try {
       const updates = tasksWithTimes.map(task => ({
         id: task.id,
@@ -210,8 +238,10 @@ const MonJourMPlanning: React.FC = () => {
         end_time: task.end_time
       }));
 
+      console.log('💾 Saving updates to database...');
+      
       for (const update of updates) {
-        await supabase
+        const { error } = await supabase
           .from('coordination_planning')
           .update({
             position: update.position,
@@ -219,14 +249,24 @@ const MonJourMPlanning: React.FC = () => {
             end_time: update.end_time
           })
           .eq('id', update.id);
+          
+        if (error) {
+          console.error(`Error updating task ${update.id}:`, error);
+          throw error;
+        }
       }
+      
+      console.log('✅ All updates saved successfully');
     } catch (error) {
-      console.error('Error updating task order:', error);
+      console.error('❌ Error updating task order:', error);
       toast({
         title: "Erreur",
         description: "Impossible de sauvegarder l'ordre des tâches",
         variant: "destructive"
       });
+      
+      // Recharger les tâches depuis la base pour revenir à l'état cohérent
+      await loadTasks(coordinationId);
     }
   };
 
@@ -234,7 +274,7 @@ const MonJourMPlanning: React.FC = () => {
     if (!coordinationId) return;
 
     try {
-      console.log('Saving task with data:', taskData);
+      console.log('💾 Saving task with data:', taskData);
       
       if (selectedTask) {
         // Mise à jour d'une tâche existante
@@ -284,7 +324,7 @@ const MonJourMPlanning: React.FC = () => {
       setShowTaskModal(false);
       setSelectedTask(null);
     } catch (error) {
-      console.error('Error saving task:', error);
+      console.error('❌ Error saving task:', error);
       toast({
         title: "Erreur",
         description: "Impossible de sauvegarder la tâche",
@@ -453,11 +493,11 @@ const MonJourMPlanning: React.FC = () => {
                           ref={provided.innerRef}
                           {...provided.draggableProps}
                           className={`p-4 border rounded-lg bg-white shadow-sm hover:shadow-md transition-shadow ${
-                            snapshot.isDragging ? 'shadow-lg' : ''
+                            snapshot.isDragging ? 'shadow-lg ring-2 ring-blue-300' : ''
                           }`}
                         >
                           <div className="flex items-start gap-4">
-                            <div {...provided.dragHandleProps} className="mt-1">
+                            <div {...provided.dragHandleProps} className="mt-1 cursor-grab active:cursor-grabbing">
                               <GripVertical className="h-4 w-4 text-gray-400" />
                             </div>
                             
@@ -483,6 +523,11 @@ const MonJourMPlanning: React.FC = () => {
                                     <Badge variant="secondary" className="bg-purple-100 text-purple-700">
                                       <Sparkles className="h-3 w-3 mr-1" />
                                       IA
+                                    </Badge>
+                                  )}
+                                  {task.is_simultaneous && (
+                                    <Badge variant="outline" className="bg-orange-50 text-orange-700">
+                                      Simultané
                                     </Badge>
                                   )}
                                 </div>
@@ -571,6 +616,7 @@ const MonJourMPlanning: React.FC = () => {
         isOpen={showAIModal}
         onClose={() => setShowAIModal(false)}
         onAddSuggestions={handleAddAISuggestions}
+        coordinationId={coordinationId}
       />
     </div>
   );

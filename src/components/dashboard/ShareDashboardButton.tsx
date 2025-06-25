@@ -1,93 +1,78 @@
 
 import React, { useState } from 'react';
-import { Button } from "@/components/ui/button";
-import { Share, Copy, Check } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { supabase } from '@/integrations/supabase/client';
-import { v4 as uuidv4 } from 'uuid';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Share2, Copy, Check } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
+import { generateShareToken } from '@/utils/tokenUtils';
+import { supabase } from '@/integrations/supabase/client';
 
-const ShareDashboardButton = () => {
-  const [open, setOpen] = useState(false);
-  const [shareLink, setShareLink] = useState('');
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [isCopied, setIsCopied] = useState(false);
+const ShareDashboardButton: React.FC = () => {
+  const [shareUrl, setShareUrl] = useState<string>('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
   const { toast } = useToast();
 
-  const generateToken = async () => {
+  const generateShareUrl = async () => {
+    setIsLoading(true);
     try {
-      setIsGenerating(true);
-      
-      const { data: sessionData } = await supabase.auth.getSession();
-      if (!sessionData.session?.user?.id) {
-        throw new Error("Utilisateur non connecté");
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast({
+          title: "Erreur",
+          description: "Vous devez être connecté pour partager votre tableau de bord",
+          variant: "destructive"
+        });
+        return;
       }
+
+      console.log('Generating share token for user:', user.id);
+      const token = await generateShareToken(user.id);
       
-      // Check if user already has an active token
-      const { data: existingTokens, error: fetchError } = await supabase
-        .from('dashboard_share_tokens')
-        .select('token')
-        .eq('user_id', sessionData.session.user.id)
-        .eq('active', true)
-        .maybeSingle();
-      
-      if (fetchError && fetchError.code !== 'PGRST116') {
-        throw fetchError;
+      if (!token) {
+        toast({
+          title: "Erreur",
+          description: "Impossible de générer le lien de partage",
+          variant: "destructive"
+        });
+        return;
       }
+
+      const baseUrl = window.location.origin;
+      const fullShareUrl = `${baseUrl}/jour-m-vue/${token}`;
       
-      let token;
-      
-      if (existingTokens?.token) {
-        // Use existing token
-        token = existingTokens.token;
-      } else {
-        // Generate new token
-        token = uuidv4();
-        
-        const { error: insertError } = await supabase
-          .from('dashboard_share_tokens')
-          .insert({
-            token,
-            user_id: sessionData.session.user.id,
-            expires_at: null, // Permanent token
-            description: 'Lien de partage public du tableau de bord',
-            active: true
-          });
-        
-        if (insertError) throw insertError;
-      }
-      
-      const shareUrl = `${window.location.origin}/dashboard/lecteur/${token}`;
-      setShareLink(shareUrl);
+      console.log('Generated share URL:', fullShareUrl);
+      setShareUrl(fullShareUrl);
       
       toast({
-        title: "Lien généré avec succès",
-        description: "Ce lien est permanent et restera valide"
+        title: "Lien généré",
+        description: "Votre lien de partage a été créé avec succès"
       });
     } catch (error) {
-      console.error('Erreur lors de la génération du lien:', error);
+      console.error('Error generating share URL:', error);
       toast({
         title: "Erreur",
-        description: "Impossible de générer le lien de partage",
+        description: "Une erreur s'est produite lors de la génération du lien",
         variant: "destructive"
       });
     } finally {
-      setIsGenerating(false);
+      setIsLoading(false);
     }
   };
 
   const copyToClipboard = async () => {
     try {
-      await navigator.clipboard.writeText(shareLink);
-      setIsCopied(true);
+      await navigator.clipboard.writeText(shareUrl);
+      setCopied(true);
       toast({
         title: "Copié !",
-        description: "Le lien a été copié dans le presse-papier"
+        description: "Le lien a été copié dans le presse-papiers"
       });
-      setTimeout(() => setIsCopied(false), 2000);
+      setTimeout(() => setCopied(false), 2000);
     } catch (error) {
+      console.error('Error copying to clipboard:', error);
       toast({
         title: "Erreur",
         description: "Impossible de copier le lien",
@@ -96,86 +81,71 @@ const ShareDashboardButton = () => {
     }
   };
 
-  const resetDialog = () => {
-    setShareLink('');
-    setIsCopied(false);
+  const handleDialogOpen = (open: boolean) => {
+    setDialogOpen(open);
+    if (open && !shareUrl) {
+      generateShareUrl();
+    }
   };
 
   return (
-    <>
-      <Button 
-        onClick={() => setOpen(true)} 
-        variant="outline" 
-        size="sm" 
-        className="flex items-center gap-2"
-      >
-        <Share className="h-4 w-4" />
-        Partager
-      </Button>
-      
-      <Dialog open={open} onOpenChange={(isOpen) => {
-        setOpen(isOpen);
-        if (!isOpen) resetDialog();
-      }}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Partager votre tableau de bord</DialogTitle>
-            <DialogDescription>
-              Créez un lien public en lecture seule pour permettre à d'autres personnes de voir votre avancement.
-            </DialogDescription>
-          </DialogHeader>
+    <Dialog open={dialogOpen} onOpenChange={handleDialogOpen}>
+      <DialogTrigger asChild>
+        <Button variant="outline" className="flex items-center gap-2">
+          <Share2 className="h-4 w-4" />
+          Partager
+        </Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Partager votre planning de mariage</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-4">
+          <p className="text-sm text-gray-600">
+            Partagez votre planning avec votre équipe, votre famille ou vos prestataires. 
+            Le lien permet d'accéder à une version en lecture seule de votre planning.
+          </p>
           
-          {!shareLink ? (
-            <div className="space-y-4 py-2">
-              <p className="text-sm text-muted-foreground">
-                Le lien généré sera permanent et donnera accès à une version publique 
-                et mobile de votre tableau de bord.
-              </p>
-              
-              <Button 
-                onClick={generateToken} 
-                className="w-full" 
-                disabled={isGenerating}
-              >
-                {isGenerating ? "Génération..." : "Générer un lien public"}
-              </Button>
+          {isLoading ? (
+            <div className="flex items-center justify-center py-4">
+              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
+              <span className="ml-2 text-sm text-gray-600">Génération du lien...</span>
             </div>
-          ) : (
-            <div className="space-y-4 py-2">
-              <div className="space-y-2">
-                <Label htmlFor="share-link">Lien de partage public</Label>
-                <div className="flex items-center space-x-2">
-                  <Input 
-                    id="share-link" 
-                    value={shareLink} 
-                    readOnly 
-                    className="flex-1 text-xs"
-                  />
-                  <Button 
-                    onClick={copyToClipboard} 
-                    size="sm"
-                    variant={isCopied ? "default" : "outline"}
-                  >
-                    {isCopied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                  </Button>
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Ce lien donne accès à une version publique et mobile de votre tableau de bord (lecture seule).
-                </p>
+          ) : shareUrl ? (
+            <div className="space-y-3">
+              <div className="flex gap-2">
+                <Input
+                  value={shareUrl}
+                  readOnly
+                  className="flex-1"
+                />
+                <Button
+                  onClick={copyToClipboard}
+                  size="sm"
+                  variant="outline"
+                  className="flex items-center gap-1"
+                >
+                  {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                  {copied ? 'Copié' : 'Copier'}
+                </Button>
               </div>
               
-              <Button 
-                onClick={resetDialog} 
-                variant="outline" 
-                className="w-full"
-              >
-                Générer un nouveau lien
-              </Button>
+              <div className="bg-blue-50 p-3 rounded-md">
+                <p className="text-sm text-blue-800">
+                  <strong>Note :</strong> Ce lien permet un accès en lecture seule à votre planning. 
+                  Les visiteurs pourront voir vos tâches, votre équipe et vos documents, mais ne pourront pas les modifier.
+                </p>
+              </div>
             </div>
+          ) : (
+            <Button onClick={generateShareUrl} className="w-full">
+              <Share2 className="h-4 w-4 mr-2" />
+              Générer le lien de partage
+            </Button>
           )}
-        </DialogContent>
-      </Dialog>
-    </>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 };
 
