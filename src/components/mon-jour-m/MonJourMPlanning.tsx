@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -10,6 +9,7 @@ import { Plus, Sparkles, Clock, CheckCircle2, Circle, User, Calendar } from 'luc
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
+import ErrorBoundary from './ErrorBoundary';
 
 interface PlanningTask {
   id: string;
@@ -36,6 +36,7 @@ const MonJourMPlanning: React.FC = () => {
   const [tasks, setTasks] = useState<PlanningTask[]>([]);
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [coordinationId, setCoordinationId] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [newTask, setNewTask] = useState({
     title: '',
     description: '',
@@ -53,6 +54,7 @@ const MonJourMPlanning: React.FC = () => {
 
   const initializeData = async () => {
     try {
+      setIsLoading(true);
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
@@ -68,11 +70,12 @@ const MonJourMPlanning: React.FC = () => {
       if (coordination) {
         console.log('✅ Found coordination:', coordination.id);
         setCoordinationId(coordination.id);
-        await loadTasks(coordination.id);
-        await loadTeamMembers(coordination.id);
+        await Promise.all([
+          loadTasks(coordination.id),
+          loadTeamMembers(coordination.id)
+        ]);
       } else {
         console.log('⚠️ No coordination found, creating one...');
-        // Créer une coordination si elle n'existe pas
         const { data: newCoordination, error } = await supabase
           .from('wedding_coordination')
           .insert({
@@ -93,6 +96,13 @@ const MonJourMPlanning: React.FC = () => {
       }
     } catch (error) {
       console.error('❌ Error initializing data:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de charger les données",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -112,7 +122,6 @@ const MonJourMPlanning: React.FC = () => {
 
     console.log('✅ Loaded tasks:', data);
 
-    // Filtrer et mapper les données pour correspondre à notre interface
     const mappedData = (data || []).map((item: any) => ({
       id: item.id,
       title: item.title,
@@ -243,7 +252,7 @@ const MonJourMPlanning: React.FC = () => {
     try {
       const { error } = await supabase
         .from('coordination_planning')
-        .update({ assigned_to: assignedTo })
+        .update({ assigned_to: assignedTo || null })
         .eq('id', taskId);
 
       if (error) throw error;
@@ -256,11 +265,15 @@ const MonJourMPlanning: React.FC = () => {
   const handleDragEnd = async (result: DropResult) => {
     if (!result.destination) return;
 
-    const reorderedTasks = Array.from(tasks);
-    const [movedTask] = reorderedTasks.splice(result.source.index, 1);
-    reorderedTasks.splice(result.destination.index, 0, movedTask);
+    const sourceIndex = result.source.index;
+    const destinationIndex = result.destination.index;
 
-    // Mettre à jour les positions
+    if (sourceIndex === destinationIndex) return;
+
+    const reorderedTasks = Array.from(tasks);
+    const [movedTask] = reorderedTasks.splice(sourceIndex, 1);
+    reorderedTasks.splice(destinationIndex, 0, movedTask);
+
     const updates = reorderedTasks.map((task, index) => ({
       id: task.id,
       position: index
@@ -282,7 +295,6 @@ const MonJourMPlanning: React.FC = () => {
   };
 
   const generateAITasks = async () => {
-    // Simulation de génération IA (à remplacer par vraie IA plus tard)
     const aiTasks = [
       {
         title: "Préparation des mariés",
@@ -375,6 +387,173 @@ const MonJourMPlanning: React.FC = () => {
       default: return <Circle className="h-4 w-4 text-gray-400" />;
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <div className="h-6 bg-gray-200 rounded w-48 mb-2"></div>
+            <div className="h-4 bg-gray-200 rounded w-96"></div>
+          </div>
+        </div>
+        <Card>
+          <CardContent className="py-12 text-center">
+            <Calendar className="h-12 w-12 mx-auto mb-4 opacity-50" />
+            <p className="text-lg mb-2">Chargement du planning...</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  const DragDropTimeline = () => (
+    <ErrorBoundary fallback={
+      <div className="space-y-4">
+        {tasks.map((task) => (
+          <div key={task.id} className="p-4 border rounded-lg bg-white shadow-sm">
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-2">
+                  <button onClick={() => updateTaskStatus(task.id, task.status === 'completed' ? 'todo' : 'completed')}>
+                    {getStatusIcon(task.status)}
+                  </button>
+                  <h3 className={`font-medium ${task.status === 'completed' ? 'line-through text-gray-500' : ''}`}>
+                    {task.title}
+                  </h3>
+                  {task.is_ai_generated && (
+                    <Badge variant="secondary" className="text-xs">
+                      <Sparkles className="h-3 w-3 mr-1" />
+                      IA
+                    </Badge>
+                  )}
+                </div>
+                
+                {task.description && (
+                  <p className="text-sm text-gray-600 mb-2">{task.description}</p>
+                )}
+                
+                <div className="flex items-center gap-2 text-xs text-gray-500">
+                  <Badge variant="outline">{task.duration} min</Badge>
+                  <Badge className={getPriorityColor(task.priority)}>
+                    {task.priority === 'high' ? 'Élevée' : task.priority === 'medium' ? 'Moyenne' : 'Faible'}
+                  </Badge>
+                  <span className="capitalize">{task.category}</span>
+                </div>
+              </div>
+              
+              <div className="flex flex-col gap-2">
+                <Select value={task.assigned_to || 'unassigned'} onValueChange={(value) => assignTask(task.id, value === 'unassigned' ? '' : value)}>
+                  <SelectTrigger className="w-32">
+                    <SelectValue placeholder="Assigner">
+                      {task.assigned_to ? (
+                        <div className="flex items-center gap-1">
+                          <User className="h-3 w-3" />
+                          <span className="truncate">
+                            {teamMembers.find(m => m.id === task.assigned_to)?.name || 'Assigné'}
+                          </span>
+                        </div>
+                      ) : (
+                        'Non assigné'
+                      )}
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="unassigned">Non assigné</SelectItem>
+                    {teamMembers.map((member) => (
+                      <SelectItem key={member.id} value={member.id}>
+                        {member.name} ({member.role})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    }>
+      <DragDropContext onDragEnd={handleDragEnd}>
+        <Droppable droppableId="tasks">
+          {(provided) => (
+            <div {...provided.droppableProps} ref={provided.innerRef} className="space-y-4">
+              {tasks.map((task, index) => (
+                <Draggable key={task.id} draggableId={task.id} index={index}>
+                  {(provided, snapshot) => (
+                    <div
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}
+                      className={`p-4 border rounded-lg bg-white ${snapshot.isDragging ? 'shadow-lg' : 'shadow-sm'} ${task.is_ai_generated ? 'border-l-4 border-l-purple-400' : ''}`}
+                    >
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-2">
+                            <button onClick={() => updateTaskStatus(task.id, task.status === 'completed' ? 'todo' : 'completed')}>
+                              {getStatusIcon(task.status)}
+                            </button>
+                            <h3 className={`font-medium ${task.status === 'completed' ? 'line-through text-gray-500' : ''}`}>
+                              {task.title}
+                            </h3>
+                            {task.is_ai_generated && (
+                              <Badge variant="secondary" className="text-xs">
+                                <Sparkles className="h-3 w-3 mr-1" />
+                                IA
+                              </Badge>
+                            )}
+                          </div>
+                          
+                          {task.description && (
+                            <p className="text-sm text-gray-600 mb-2">{task.description}</p>
+                          )}
+                          
+                          <div className="flex items-center gap-2 text-xs text-gray-500">
+                            <Badge variant="outline">{task.duration} min</Badge>
+                            <Badge className={getPriorityColor(task.priority)}>
+                              {task.priority === 'high' ? 'Élevée' : task.priority === 'medium' ? 'Moyenne' : 'Faible'}
+                            </Badge>
+                            <span className="capitalize">{task.category}</span>
+                          </div>
+                        </div>
+                        
+                        <div className="flex flex-col gap-2">
+                          <Select value={task.assigned_to || 'unassigned'} onValueChange={(value) => assignTask(task.id, value === 'unassigned' ? '' : value)}>
+                            <SelectTrigger className="w-32">
+                              <SelectValue placeholder="Assigner">
+                                {task.assigned_to ? (
+                                  <div className="flex items-center gap-1">
+                                    <User className="h-3 w-3" />
+                                    <span className="truncate">
+                                      {teamMembers.find(m => m.id === task.assigned_to)?.name || 'Assigné'}
+                                    </span>
+                                  </div>
+                                ) : (
+                                  'Non assigné'
+                                )}
+                              </SelectValue>
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="unassigned">Non assigné</SelectItem>
+                              {teamMembers.map((member) => (
+                                <SelectItem key={member.id} value={member.id}>
+                                  {member.name} ({member.role})
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </Draggable>
+              ))}
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
+      </DragDropContext>
+    </ErrorBoundary>
+  );
 
   return (
     <div className="space-y-6">
@@ -473,85 +652,7 @@ const MonJourMPlanning: React.FC = () => {
           <CardTitle>Timeline du jour J</CardTitle>
         </CardHeader>
         <CardContent>
-          <DragDropContext onDragEnd={handleDragEnd}>
-            <Droppable droppableId="tasks">
-              {(provided) => (
-                <div {...provided.droppableProps} ref={provided.innerRef} className="space-y-4">
-                  {tasks.map((task, index) => (
-                    <Draggable key={task.id} draggableId={task.id} index={index}>
-                      {(provided, snapshot) => (
-                        <div
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                          className={`p-4 border rounded-lg bg-white ${snapshot.isDragging ? 'shadow-lg' : 'shadow-sm'} ${task.is_ai_generated ? 'border-l-4 border-l-purple-400' : ''}`}
-                        >
-                          <div className="flex items-start justify-between gap-4">
-                            <div className="flex-1">
-                              <div className="flex items-center gap-2 mb-2">
-                                <button onClick={() => updateTaskStatus(task.id, task.status === 'completed' ? 'todo' : 'completed')}>
-                                  {getStatusIcon(task.status)}
-                                </button>
-                                <h3 className={`font-medium ${task.status === 'completed' ? 'line-through text-gray-500' : ''}`}>
-                                  {task.title}
-                                </h3>
-                                {task.is_ai_generated && (
-                                  <Badge variant="secondary" className="text-xs">
-                                    <Sparkles className="h-3 w-3 mr-1" />
-                                    IA
-                                  </Badge>
-                                )}
-                              </div>
-                              
-                              {task.description && (
-                                <p className="text-sm text-gray-600 mb-2">{task.description}</p>
-                              )}
-                              
-                              <div className="flex items-center gap-2 text-xs text-gray-500">
-                                <Badge variant="outline">{task.duration} min</Badge>
-                                <Badge className={getPriorityColor(task.priority)}>
-                                  {task.priority === 'high' ? 'Élevée' : task.priority === 'medium' ? 'Moyenne' : 'Faible'}
-                                </Badge>
-                                <span className="capitalize">{task.category}</span>
-                              </div>
-                            </div>
-                            
-                            <div className="flex flex-col gap-2">
-                              <Select value={task.assigned_to || ''} onValueChange={(value) => assignTask(task.id, value)}>
-                                <SelectTrigger className="w-32">
-                                  <SelectValue placeholder="Assigner">
-                                    {task.assigned_to ? (
-                                      <div className="flex items-center gap-1">
-                                        <User className="h-3 w-3" />
-                                        <span className="truncate">
-                                          {teamMembers.find(m => m.id === task.assigned_to)?.name || 'Assigné'}
-                                        </span>
-                                      </div>
-                                    ) : (
-                                      'Non assigné'
-                                    )}
-                                  </SelectValue>
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="">Non assigné</SelectItem>
-                                  {teamMembers.map((member) => (
-                                    <SelectItem key={member.id} value={member.id}>
-                                      {member.name} ({member.role})
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                    </Draggable>
-                  ))}
-                  {provided.placeholder}
-                </div>
-              )}
-            </Droppable>
-          </DragDropContext>
+          <DragDropTimeline />
 
           {tasks.length === 0 && (
             <div className="text-center py-12 text-gray-500">
