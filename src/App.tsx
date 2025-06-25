@@ -1,5 +1,4 @@
 
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -35,12 +34,12 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <HelmetProvider>
-        <AnalyticsProvider>
-          <ReaderModeProvider>
-            <TooltipProvider>
-              <Toaster />
-              <Sonner />
-              <BrowserRouter>
+        <ReaderModeProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <AnalyticsProvider>
                 <Routes>
                   <Route path="/" element={<Index />} />
                   <Route path="/moteur-recherche" element={<MoteurRecherche />} />
@@ -70,14 +69,13 @@ function App() {
                   
                   <Route path="*" element={<NotFound />} />
                 </Routes>
-              </BrowserRouter>
-            </TooltipProvider>
-          </ReaderModeProvider>
-        </AnalyticsProvider>
+              </AnalyticsProvider>
+            </BrowserRouter>
+          </TooltipProvider>
+        </ReaderModeProvider>
       </HelmetProvider>
     </QueryClientProvider>
   );
 }
 
 export default App;
-
