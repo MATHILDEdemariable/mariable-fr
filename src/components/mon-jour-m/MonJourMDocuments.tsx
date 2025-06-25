@@ -16,6 +16,7 @@ interface Document {
   title: string;
   description?: string;
   file_url: string;
+  file_path?: string;
   file_type?: string;
   file_size?: number;
   category: string;
@@ -43,6 +44,7 @@ const MonJourMDocuments: React.FC = () => {
     assigned_to: ''
   });
   const [uploadingFile, setUploadingFile] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const { toast } = useToast();
 
   const categories = [
@@ -137,9 +139,27 @@ const MonJourMDocuments: React.FC = () => {
     };
   };
 
-  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelection = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (!file || !coordinationId) return;
+    if (file) {
+      setSelectedFile(file);
+      // Auto-remplir le titre avec le nom du fichier si vide
+      if (!newDocument.title.trim()) {
+        const fileName = file.name.split('.')[0]; // Enlever l'extension
+        setNewDocument(prev => ({ ...prev, title: fileName }));
+      }
+    }
+  };
+
+  const handleFileUpload = async () => {
+    if (!selectedFile || !coordinationId) {
+      toast({
+        title: "Erreur",
+        description: "Veuillez sélectionner un fichier",
+        variant: "destructive"
+      });
+      return;
+    }
 
     if (!newDocument.title.trim()) {
       toast({
@@ -153,26 +173,70 @@ const MonJourMDocuments: React.FC = () => {
     setUploadingFile(true);
 
     try {
-      // Simuler l'upload - en production, utiliser Supabase Storage
-      const mockFileUrl = `https://example.com/files/${file.name}`;
-      
-      const { error } = await supabase
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('User not authenticated');
+
+      // Créer un nom de fichier unique
+      const timestamp = Date.now();
+      const fileExtension = selectedFile.name.split('.').pop();
+      const fileName = `${timestamp}-${selectedFile.name}`;
+      const filePath = `${user.id}/${fileName}`;
+
+      console.log('Uploading file:', filePath);
+
+      // Upload du fichier vers Supabase Storage
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('wedding-documents')
+        .upload(filePath, selectedFile, {
+          cacheControl: '3600',
+          upsert: false
+        });
+
+      if (uploadError) {
+        console.error('Upload error:', uploadError);
+        throw uploadError;
+      }
+
+      console.log('File uploaded successfully:', uploadData);
+
+      // Obtenir l'URL publique du fichier
+      const { data: urlData } = supabase.storage
+        .from('wedding-documents')
+        .getPublicUrl(filePath);
+
+      // Insérer les métadonnées du document dans la base
+      const { error: dbError } = await supabase
         .from('coordination_documents')
         .insert({
           coordination_id: coordinationId,
           title: newDocument.title,
           description: newDocument.description,
-          file_url: mockFileUrl,
-          file_type: file.type,
-          file_size: file.size,
+          file_url: urlData.publicUrl,
+          file_path: filePath,
+          file_type: selectedFile.type,
+          file_size: selectedFile.size,
+          mime_type: selectedFile.type,
           category: newDocument.category,
           assigned_to: newDocument.assigned_to || null
         });
 
-      if (error) throw error;
+      if (dbError) {
+        console.error('Database error:', dbError);
+        // Essayer de supprimer le fichier uploadé en cas d'erreur
+        await supabase.storage
+          .from('wedding-documents')
+          .remove([filePath]);
+        throw dbError;
+      }
 
+      // Réinitialiser le formulaire
       setNewDocument({ title: '', description: '', category: 'general', assigned_to: '' });
+      setSelectedFile(null);
       setShowAddDocument(false);
+      
+      // Réinitialiser l'input file
+      const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+      if (fileInput) fileInput.value = '';
       
       toast({
         title: "Document ajouté",
@@ -182,7 +246,7 @@ const MonJourMDocuments: React.FC = () => {
       console.error('Error uploading document:', error);
       toast({
         title: "Erreur",
-        description: "Impossible de télécharger le document",
+        description: `Impossible de télécharger le document: ${error.message}`,
         variant: "destructive"
       });
     } finally {
@@ -190,14 +254,27 @@ const MonJourMDocuments: React.FC = () => {
     }
   };
 
-  const deleteDocument = async (documentId: string) => {
+  const deleteDocument = async (document: Document) => {
     try {
-      const { error } = await supabase
+      // Supprimer le fichier du storage si le chemin existe
+      if (document.file_path) {
+        const { error: storageError } = await supabase.storage
+          .from('wedding-documents')
+          .remove([document.file_path]);
+          
+        if (storageError) {
+          console.error('Error deleting file from storage:', storageError);
+          // Continuer quand même pour supprimer l'entrée de la base
+        }
+      }
+
+      // Supprimer l'entrée de la base de données
+      const { error: dbError } = await supabase
         .from('coordination_documents')
         .delete()
-        .eq('id', documentId);
+        .eq('id', document.id);
 
-      if (error) throw error;
+      if (dbError) throw dbError;
       
       toast({
         title: "Document supprimé",
@@ -208,6 +285,39 @@ const MonJourMDocuments: React.FC = () => {
       toast({
         title: "Erreur",
         description: "Impossible de supprimer le document",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const downloadDocument = async (document: Document) => {
+    try {
+      if (document.file_path) {
+        // Télécharger depuis Supabase Storage
+        const { data, error } = await supabase.storage
+          .from('wedding-documents')
+          .download(document.file_path);
+
+        if (error) throw error;
+
+        // Créer un lien de téléchargement
+        const url = URL.createObjectURL(data);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = document.title;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      } else {
+        // Fallback sur l'URL publique
+        window.open(document.file_url, '_blank');
+      }
+    } catch (error) {
+      console.error('Error downloading document:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de télécharger le document",
         variant: "destructive"
       });
     }
@@ -268,6 +378,21 @@ const MonJourMDocuments: React.FC = () => {
             </DialogHeader>
             <div className="space-y-4">
               <div>
+                <label className="block text-sm font-medium mb-1">Fichier *</label>
+                <Input
+                  type="file"
+                  onChange={handleFileSelection}
+                  disabled={uploadingFile}
+                  accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif,.mp4,.mp3,.xls,.xlsx"
+                />
+                {selectedFile && (
+                  <p className="text-sm text-gray-600 mt-1">
+                    Fichier sélectionné: {selectedFile.name} ({formatFileSize(selectedFile.size)})
+                  </p>
+                )}
+              </div>
+
+              <div>
                 <label className="block text-sm font-medium mb-1">Titre *</label>
                 <Input
                   value={newDocument.title}
@@ -321,23 +446,10 @@ const MonJourMDocuments: React.FC = () => {
                 </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium mb-1">Fichier *</label>
-                <Input
-                  type="file"
-                  onChange={handleFileUpload}
-                  disabled={uploadingFile}
-                  accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif,.mp4,.mp3,.xls,.xlsx"
-                />
-              </div>
-
               <div className="flex gap-2">
                 <Button
-                  onClick={() => {
-                    const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
-                    fileInput?.click();
-                  }}
-                  disabled={uploadingFile}
+                  onClick={handleFileUpload}
+                  disabled={uploadingFile || !selectedFile || !newDocument.title.trim()}
                 >
                   {uploadingFile ? 'Téléchargement...' : 'Télécharger'}
                 </Button>
@@ -406,16 +518,16 @@ const MonJourMDocuments: React.FC = () => {
                 </div>
                 
                 <div className="flex gap-1">
-                  <Button variant="ghost" size="sm">
+                  <Button variant="ghost" size="sm" onClick={() => window.open(document.file_url, '_blank')}>
                     <Eye className="h-4 w-4" />
                   </Button>
-                  <Button variant="ghost" size="sm">
+                  <Button variant="ghost" size="sm" onClick={() => downloadDocument(document)}>
                     <Download className="h-4 w-4" />
                   </Button>
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => deleteDocument(document.id)}
+                    onClick={() => deleteDocument(document)}
                     className="text-red-600 hover:text-red-800"
                   >
                     <Trash2 className="h-4 w-4" />

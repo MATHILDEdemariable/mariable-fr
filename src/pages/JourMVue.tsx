@@ -3,9 +3,10 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Calendar, Users, FileText, Clock, CheckCircle2, Circle, User, Building, Mail, Phone } from 'lucide-react';
+import { Calendar, Users, FileText, Clock, CheckCircle2, Circle, User, Building, Mail, Phone, AlertCircle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { validateShareToken } from '@/utils/tokenUtils';
 
 interface WeddingData {
   coordination: any;
@@ -21,23 +22,26 @@ const JourMVue: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    console.log('JourMVue component mounted with token:', token);
     if (token) {
       loadSharedData(token);
       setupRealtimeSubscription(token);
+    } else {
+      setError('Token de partage manquant');
+      setLoading(false);
     }
   }, [token]);
 
   const loadSharedData = async (shareToken: string) => {
+    console.log('Loading shared data for token:', shareToken);
+    
     try {
-      // Valider le token et récupérer l'user_id
-      const { data: tokenData, error: tokenError } = await supabase
-        .from('dashboard_share_tokens')
-        .select('user_id')
-        .eq('token', shareToken)
-        .eq('active', true)
-        .single();
-
-      if (tokenError || !tokenData) {
+      // Utiliser la fonction utilitaire pour valider le token
+      const { isValid, userId } = await validateShareToken(shareToken);
+      
+      console.log('Token validation result:', { isValid, userId });
+      
+      if (!isValid || !userId) {
         setError('Token de partage invalide ou expiré');
         setLoading(false);
         return;
@@ -47,8 +51,10 @@ const JourMVue: React.FC = () => {
       const { data: coordination, error: coordError } = await supabase
         .from('wedding_coordination')
         .select('*')
-        .eq('user_id', tokenData.user_id)
+        .eq('user_id', userId)
         .single();
+
+      console.log('Coordination data:', coordination, 'Error:', coordError);
 
       if (coordError || !coordination) {
         setError('Données de mariage non trouvées');
@@ -57,35 +63,50 @@ const JourMVue: React.FC = () => {
       }
 
       // Récupérer les tâches
-      const { data: tasks } = await supabase
+      const { data: tasks, error: tasksError } = await supabase
         .from('coordination_planning')
         .select('*')
         .eq('coordination_id', coordination.id)
         .order('position');
 
+      if (tasksError) {
+        console.error('Error loading tasks:', tasksError);
+      }
+
       // Récupérer l'équipe
-      const { data: teamMembers } = await supabase
+      const { data: teamMembers, error: teamError } = await supabase
         .from('coordination_team')
         .select('*')
         .eq('coordination_id', coordination.id)
         .order('created_at');
 
+      if (teamError) {
+        console.error('Error loading team:', teamError);
+      }
+
       // Récupérer les documents (titres seulement pour la vue publique)
-      const { data: documents } = await supabase
+      const { data: documents, error: docsError } = await supabase
         .from('coordination_documents')
         .select('id, title, category, created_at')
         .eq('coordination_id', coordination.id)
         .order('created_at', { ascending: false });
 
-      setWeddingData({
+      if (docsError) {
+        console.error('Error loading documents:', docsError);
+      }
+
+      const weddingDataResult = {
         coordination,
         tasks: tasks || [],
         teamMembers: teamMembers || [],
         documents: documents || []
-      });
+      };
+
+      console.log('Final wedding data:', weddingDataResult);
+      setWeddingData(weddingDataResult);
     } catch (error) {
       console.error('Error loading shared data:', error);
-      setError('Erreur lors du chargement des données');
+      setError(`Erreur lors du chargement des données: ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -102,6 +123,7 @@ const JourMVue: React.FC = () => {
           table: 'coordination_planning'
         },
         () => {
+          console.log('Real-time update received for planning');
           if (token) loadSharedData(token);
         }
       )
@@ -113,6 +135,7 @@ const JourMVue: React.FC = () => {
           table: 'coordination_team'
         },
         () => {
+          console.log('Real-time update received for team');
           if (token) loadSharedData(token);
         }
       )
@@ -121,6 +144,22 @@ const JourMVue: React.FC = () => {
     return () => {
       supabase.removeChannel(channel);
     };
+  };
+
+  const formatTime = (timeString?: string) => {
+    if (!timeString) return '';
+    
+    try {
+      const date = new Date(timeString);
+      return date.toLocaleTimeString('fr-FR', {
+        hour: '2-digit',
+        minute: '2-digit',
+        timeZone: 'Europe/Paris'
+      });
+    } catch (error) {
+      console.error('Error formatting time:', error);
+      return '';
+    }
   };
 
   const getStatusIcon = (status: string) => {
@@ -154,9 +193,15 @@ const JourMVue: React.FC = () => {
   if (error || !weddingData) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
+        <div className="text-center max-w-md mx-auto p-6">
+          <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
           <h1 className="text-2xl font-bold text-gray-800 mb-2">Accès impossible</h1>
-          <p className="text-gray-600">{error || 'Données non trouvées'}</p>
+          <p className="text-gray-600 mb-4">{error || 'Données non trouvées'}</p>
+          <div className="bg-gray-100 p-4 rounded-lg text-left text-sm">
+            <p className="font-medium text-gray-800 mb-2">Informations de débogage :</p>
+            <p className="text-gray-600">Token: {token || 'Non fourni'}</p>
+            <p className="text-gray-600">URL: {window.location.href}</p>
+          </div>
         </div>
       </div>
     );
@@ -240,14 +285,32 @@ const JourMVue: React.FC = () => {
                             </div>
                           </div>
                           
-                          {task.assigned_to && (
-                            <div className="text-right">
-                              <Badge variant="secondary">
-                                <User className="h-3 w-3 mr-1" />
-                                {teamMembers.find(m => m.id === task.assigned_to)?.name}
-                              </Badge>
-                            </div>
-                          )}
+                          <div className="text-right">
+                            {task.start_time && (
+                              <div className="text-sm font-medium mb-2">
+                                {formatTime(task.start_time)}
+                                {task.end_time && (
+                                  <span className="text-gray-500 ml-1">
+                                    - {formatTime(task.end_time)}
+                                  </span>
+                                )}
+                              </div>
+                            )}
+                            
+                            {task.assigned_to && Array.isArray(task.assigned_to) && task.assigned_to.length > 0 && (
+                              <div className="flex flex-wrap gap-1">
+                                {task.assigned_to.map((memberId: string) => {
+                                  const member = teamMembers.find(m => m.id === memberId);
+                                  return member ? (
+                                    <Badge key={memberId} variant="secondary">
+                                      <User className="h-3 w-3 mr-1" />
+                                      {member.name}
+                                    </Badge>
+                                  ) : null;
+                                })}
+                              </div>
+                            )}
+                          </div>
                         </div>
                       </div>
                     ))}

@@ -219,10 +219,12 @@ export type Database = {
           coordination_id: string
           created_at: string
           description: string | null
+          file_path: string | null
           file_size: number | null
           file_type: string | null
           file_url: string
           id: string
+          mime_type: string | null
           title: string
           updated_at: string
         }
@@ -232,10 +234,12 @@ export type Database = {
           coordination_id: string
           created_at?: string
           description?: string | null
+          file_path?: string | null
           file_size?: number | null
           file_type?: string | null
           file_url: string
           id?: string
+          mime_type?: string | null
           title: string
           updated_at?: string
         }
@@ -245,10 +249,12 @@ export type Database = {
           coordination_id?: string
           created_at?: string
           description?: string | null
+          file_path?: string | null
           file_size?: number | null
           file_type?: string | null
           file_url?: string
           id?: string
+          mime_type?: string | null
           title?: string
           updated_at?: string
         }

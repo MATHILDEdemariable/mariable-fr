@@ -64,13 +64,17 @@ const TaskEditModal: React.FC<TaskEditModalProps> = ({
 
   useEffect(() => {
     if (task) {
-      // Fix timezone issue by properly extracting time from ISO string
+      // Extraire l'heure correctement sans conversion de timezone
       let startTimeValue = '';
       if (task.start_time) {
         try {
+          // Créer une date locale à partir de l'ISO string
           const date = new Date(task.start_time);
-          // Extract time in HH:MM format without timezone conversion
-          startTimeValue = task.start_time.substring(11, 16); // Extract HH:MM from ISO string
+          // Obtenir les heures et minutes locales
+          const hours = date.getHours().toString().padStart(2, '0');
+          const minutes = date.getMinutes().toString().padStart(2, '0');
+          startTimeValue = `${hours}:${minutes}`;
+          console.log('Extracted time for editing:', startTimeValue, 'from', task.start_time);
         } catch (error) {
           console.error('Error parsing start_time:', error);
         }
@@ -134,10 +138,15 @@ const TaskEditModal: React.FC<TaskEditModalProps> = ({
         assigned_to: formData.assigned_to,
       };
 
-      // Only add start_time if provided
+      // Conversion correcte de l'heure locale vers ISO
       if (formData.start_time) {
-        const today = new Date().toISOString().split('T')[0];
-        taskData.start_time = `${today}T${formData.start_time}:00`;
+        const [hours, minutes] = formData.start_time.split(':').map(Number);
+        const startDate = new Date();
+        startDate.setHours(hours, minutes, 0, 0);
+        
+        // Utiliser l'heure locale sans conversion de timezone
+        taskData.start_time = startDate.toISOString();
+        console.log('Saving task with start_time:', taskData.start_time, 'from input:', formData.start_time);
       }
 
       await onSave(taskData);
