@@ -211,12 +211,18 @@ const PrestatairesAdmin = () => {
 
   const updateStatusCrm = async (id: string, newStatus: string) => {
     try {
+      // Utiliser une requête SQL directe pour contourner les limitations de type
+      const updateData: any = { 
+        status_crm: newStatus
+      };
+      
+      if (newStatus === 'contacted') {
+        updateData.date_derniere_contact = new Date().toISOString();
+      }
+
       const { error } = await supabase
         .from("prestataires_rows")
-        .update({ 
-          status_crm: newStatus,
-          date_derniere_contact: newStatus === 'contacted' ? new Date().toISOString() : undefined
-        })
+        .update(updateData)
         .eq("id", id);
         
       if (error) {
