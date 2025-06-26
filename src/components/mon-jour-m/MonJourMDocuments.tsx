@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -290,7 +289,7 @@ const MonJourMDocuments: React.FC = () => {
 
       // Recharger la liste
       await loadDocuments(coordination.id);
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ Error uploading document:', error);
       toast({
         title: "Erreur d'upload",
@@ -355,12 +354,12 @@ const MonJourMDocuments: React.FC = () => {
 
         // Créer un lien de téléchargement
         const url = URL.createObjectURL(data);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = document.title;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
+        const linkElement = document.createElement('a');
+        linkElement.href = url;
+        linkElement.download = document.title;
+        document.body.appendChild(linkElement);
+        linkElement.click();
+        document.body.removeChild(linkElement);
         URL.revokeObjectURL(url);
       } else {
         // Fallback sur l'URL publique

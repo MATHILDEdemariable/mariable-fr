@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -83,7 +82,12 @@ const MonJourMPlanning: React.FC = () => {
       }
 
       console.log('✅ Loaded tasks:', data);
-      setTasks(data || []);
+      // Mapper les données avec le bon typage pour assigned_to
+      const mappedTasks = (data || []).map((task: any) => ({
+        ...task,
+        assigned_to: Array.isArray(task.assigned_to) ? task.assigned_to : []
+      }));
+      setTasks(mappedTasks);
     } catch (error) {
       console.error('❌ Error in loadTasks:', error);
       toast({
