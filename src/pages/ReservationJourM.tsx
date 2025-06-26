@@ -346,25 +346,23 @@ const ReservationJourM = () => {
                     <div>
                       <div className="flex items-center justify-between mb-3">
                         <Label className="text-base font-medium">Services souhaités *</Label>
-                        {/* Bouton modal pour mobile */}
-                        <div className="lg:hidden">
-                          <Dialog>
-                            <DialogTrigger asChild>
-                              <Button variant="outline" size="sm">
-                                <Eye className="h-4 w-4 mr-2" />
-                                Voir les formules
-                              </Button>
-                            </DialogTrigger>
-                            <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
-                              <DialogHeader>
-                                <DialogTitle>Nos formules Jour-M</DialogTitle>
-                              </DialogHeader>
-                              <div className="mt-4">
-                                <FormulasTable />
-                              </div>
-                            </DialogContent>
-                          </Dialog>
-                        </div>
+                        {/* Bouton modal pour toutes les tailles d'écran */}
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button variant="outline" size="sm">
+                              <Eye className="h-4 w-4 mr-2" />
+                              Voir les formules
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+                            <DialogHeader>
+                              <DialogTitle>Nos formules Jour-M</DialogTitle>
+                            </DialogHeader>
+                            <div className="mt-4">
+                              <FormulasTable />
+                            </div>
+                          </DialogContent>
+                        </Dialog>
                       </div>
                       
                       <RadioGroup value={formData.selected_formula} onValueChange={handleFormulaChange}>
