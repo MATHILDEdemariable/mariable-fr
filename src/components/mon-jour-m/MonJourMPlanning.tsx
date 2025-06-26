@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -219,7 +220,7 @@ const MonJourMPlanning: React.FC = () => {
           status: formData.status,
           assigned_to: formData.assigned_to && formData.assigned_to.length > 0 ? formData.assigned_to : null,
           position: tasks.length,
-          is_ai_generated: false  // Ajout de la propriété manquante
+          is_ai_generated: false
         })
         .select()
         .single();
@@ -232,7 +233,8 @@ const MonJourMPlanning: React.FC = () => {
           ? data.assigned_to.map(id => String(id))
           : data.assigned_to 
             ? [String(data.assigned_to)]
-            : []
+            : [],
+        is_ai_generated: data.is_ai_generated || false
       };
       
       setTasks(prev => [...prev, newTask]);
@@ -268,7 +270,8 @@ const MonJourMPlanning: React.FC = () => {
           duration: taskData.duration || 30,
           category: taskData.category,
           priority: taskData.priority,
-          assigned_to: taskData.assigned_to && taskData.assigned_to.length > 0 ? taskData.assigned_to : null
+          assigned_to: taskData.assigned_to && taskData.assigned_to.length > 0 ? taskData.assigned_to : null,
+          is_ai_generated: taskData.is_ai_generated || false
         })
         .eq('id', editingTask.id);
 
@@ -359,7 +362,7 @@ const MonJourMPlanning: React.FC = () => {
           status: 'todo',
           duration: suggestion.duration,
           position: tasks.length,
-          is_ai_generated: true  // Ajout de la propriété manquante
+          is_ai_generated: true
         })
         .select()
         .single();
@@ -368,7 +371,8 @@ const MonJourMPlanning: React.FC = () => {
 
       const newTask: PlanningTask = {
         ...data,
-        assigned_to: []
+        assigned_to: [],
+        is_ai_generated: true
       };
       
       setTasks(prev => [...prev, newTask]);
