@@ -1,15 +1,23 @@
+
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { ArrowLeft, Calendar, FileText, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface MonJourMLayoutProps {
   children?: React.ReactNode;
 }
 
 const MonJourMLayout: React.FC<MonJourMLayoutProps> = ({ children }) => {
+  const location = useLocation();
+
+  const getActiveTab = () => {
+    if (location.pathname.includes('/equipe')) return 'equipe';
+    if (location.pathname.includes('/documents')) return 'documents';
+    return 'planning';
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="bg-white border-b border-gray-200">
@@ -27,22 +35,22 @@ const MonJourMLayout: React.FC<MonJourMLayoutProps> = ({ children }) => {
             </div>
           </div>
 
-          <Tabs defaultValue="planning" className="w-full">
+          <Tabs value={getActiveTab()} className="w-full">
             <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="planning" className="flex items-center gap-2" asChild>
-                <Link to="/mon-jour-m/planning">
+              <TabsTrigger value="planning" asChild>
+                <Link to="/mon-jour-m/planning" className="flex items-center gap-2">
                   <Calendar className="h-4 w-4" />
                   Planning
                 </Link>
               </TabsTrigger>
-              <TabsTrigger value="equipe" className="flex items-center gap-2" asChild>
-                <Link to="/mon-jour-m/equipe">
+              <TabsTrigger value="equipe" asChild>
+                <Link to="/mon-jour-m/equipe" className="flex items-center gap-2">
                   <Users className="h-4 w-4" />
                   Équipe
                 </Link>
               </TabsTrigger>
-              <TabsTrigger value="documents" className="flex items-center gap-2" asChild>
-                <Link to="/mon-jour-m/documents">
+              <TabsTrigger value="documents" asChild>
+                <Link to="/mon-jour-m/documents" className="flex items-center gap-2">
                   <FileText className="h-4 w-4" />
                   Documents
                 </Link>

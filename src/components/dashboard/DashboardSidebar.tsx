@@ -58,6 +58,12 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
       path: '/dashboard/wishlist',
     },
     {
+      label: 'Jour M',
+      icon: <Calendar className="h-4 w-4" />,
+      path: '/mon-jour-m',
+      jourM: true,
+    },
+    {
       label: 'Coordination Jour J',
       icon: <Calendar className="h-4 w-4" />,
       path: '/dashboard/coordination',
@@ -104,6 +110,9 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
   const isActive = (path: string) => {
     if (path === '/dashboard') {
       return location.pathname === path;
+    }
+    if (path === '/mon-jour-m') {
+      return location.pathname.startsWith('/mon-jour-m');
     }
     return location.pathname.startsWith(path);
   };
@@ -158,6 +167,8 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
                   ? 'bg-wedding-olive text-white shadow-sm'
                   : item.premium
                   ? 'text-wedding-olive font-semibold hover:bg-wedding-olive/20 border border-wedding-olive/30'
+                  : item.jourM
+                  ? 'text-wedding-olive font-semibold hover:bg-wedding-olive/20 border border-wedding-olive/20'
                   : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive',
                 isReaderMode ? 'pointer-events-none opacity-70' : ''
               )}
@@ -167,6 +178,11 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
               {item.premium && !isReaderMode && (
                 <span className="ml-auto text-xs bg-wedding-olive text-white px-1.5 sm:px-2 py-0.5 rounded-full hidden sm:inline">
                   PREMIUM
+                </span>
+              )}
+              {item.jourM && !isReaderMode && (
+                <span className="ml-auto text-xs bg-wedding-olive text-white px-1.5 sm:px-2 py-0.5 rounded-full hidden sm:inline">
+                  NOUVEAU
                 </span>
               )}
               {isReaderMode && item.path !== '/dashboard' && (

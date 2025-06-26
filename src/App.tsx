@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import AnalyticsProvider from "@/components/analytics/AnalyticsProvider";
 import { HelmetProvider } from 'react-helmet-async';
 import { ReaderModeProvider } from '@/contexts/ReaderModeContext';
@@ -18,6 +18,9 @@ import ReservationJourM from "./pages/ReservationJourM";
 import UserDashboard from "./pages/dashboard/UserDashboard";
 import JourMVue from "./pages/JourMVue";
 import MonJourM from "./pages/MonJourM";
+import MonJourMPlanningPage from "./pages/MonJourMPlanning";
+import MonJourMEquipePage from "./pages/MonJourMEquipe";
+import MonJourMDocumentsPage from "./pages/MonJourMDocuments";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import Pricing from "./pages/Pricing";
@@ -60,7 +63,10 @@ function App() {
                   <Route path="/jour-m-vue/:token" element={<JourMVue />} />
                   
                   {/* Mon Jour-M routes */}
-                  <Route path="/mon-jour-m" element={<MonJourM />} />
+                  <Route path="/mon-jour-m" element={<Navigate to="/mon-jour-m/planning" replace />} />
+                  <Route path="/mon-jour-m/planning" element={<MonJourMPlanningPage />} />
+                  <Route path="/mon-jour-m/equipe" element={<MonJourMEquipePage />} />
+                  <Route path="/mon-jour-m/documents" element={<MonJourMDocumentsPage />} />
 
                   {/* Auth routes */}
                   <Route path="/login" element={<Login />} />
