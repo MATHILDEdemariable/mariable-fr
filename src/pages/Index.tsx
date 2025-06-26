@@ -1,8 +1,9 @@
+
 import React, { useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { CheckCircle, Calendar, Users, MessageSquare, Heart, Star, ArrowRight, Sparkles, Shield, Clock } from 'lucide-react';
+import { CheckCircle, Calendar, Users, MessageSquare, Heart, Star, ArrowRight, Sparkles, Shield, Clock, Coins } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
