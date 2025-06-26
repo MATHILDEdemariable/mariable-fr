@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -343,28 +342,28 @@ const MonJourMDocuments: React.FC = () => {
     }
   };
 
-  const downloadDocument = async (document: DocumentItem) => {
+  const downloadDocument = async (documentItem: DocumentItem) => {
     try {
-      if (document.file_path) {
+      if (documentItem.file_path) {
         // Télécharger depuis Supabase Storage
         const { data, error } = await supabase.storage
           .from('wedding-documents')
-          .download(document.file_path);
+          .download(documentItem.file_path);
 
         if (error) throw error;
 
         // Créer un lien de téléchargement
         const url = URL.createObjectURL(data);
-        const a = document.createElement('a');
+        const a = window.document.createElement('a');
         a.href = url;
-        a.download = document.title;
-        document.body.appendChild(a);
+        a.download = documentItem.title;
+        window.document.body.appendChild(a);
         a.click();
-        document.body.removeChild(a);
+        window.document.body.removeChild(a);
         URL.revokeObjectURL(url);
       } else {
         // Fallback sur l'URL publique
-        window.open(document.file_url, '_blank');
+        window.open(documentItem.file_url, '_blank');
       }
     } catch (error) {
       console.error('❌ Error downloading document:', error);

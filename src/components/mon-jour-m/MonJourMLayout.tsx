@@ -1,101 +1,59 @@
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { ArrowLeft, Calendar, FileText, Users } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
-import React, { useState } from 'react';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { Card, CardContent } from '@/components/ui/card';
-import { Calendar, Users, FileText, Settings } from 'lucide-react';
-import MonJourMPlanningContent from './MonJourMPlanning';
-import MonJourMEquipeContent from './MonJourMEquipe';
-import MonJourMDocumentsContent from './MonJourMDocuments';
-import { useWeddingCoordination } from '@/hooks/useWeddingCoordination';
+interface MonJourMLayoutProps {
+  children?: React.ReactNode;
+}
 
-const MonJourMLayout: React.FC = () => {
-  const [activeTab, setActiveTab] = useState('planning');
-  const { coordination, isLoading } = useWeddingCoordination();
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-wedding-olive mx-auto mb-4"></div>
-          <p className="text-gray-600">Initialisation de votre espace Mon Jour-M...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!coordination) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <Card className="max-w-md mx-auto">
-          <CardContent className="p-6 text-center">
-            <h2 className="text-xl font-semibold mb-2">Erreur d'initialisation</h2>
-            <p className="text-gray-600 mb-4">
-              Impossible d'initialiser votre espace Mon Jour-M
-            </p>
-            <p className="text-sm text-gray-500">
-              Veuillez actualiser la page ou nous contacter si le problème persiste.
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
+const MonJourMLayout: React.FC<MonJourMLayoutProps> = ({ children }) => {
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* En-tête */}
-      <div className="bg-white shadow-sm border-b">
-        <div className="container mx-auto px-4 py-6">
-          <div className="text-center">
-            <h1 className="text-3xl font-serif text-wedding-black mb-2">
-              {coordination.title}
-            </h1>
-            <p className="text-gray-600">
-              Organisez et coordonnez tous les détails de votre mariage
-            </p>
-            {coordination.wedding_date && (
-              <p className="text-sm text-wedding-olive font-medium mt-2">
-                {new Date(coordination.wedding_date).toLocaleDateString('fr-FR', {
-                  weekday: 'long',
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric'
-                })}
-              </p>
-            )}
+      <div className="bg-white border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between py-4">
+            <div className="flex items-center space-x-4">
+              <Button variant="ghost" size="sm" asChild>
+                <Link to="/dashboard" className="flex items-center gap-2">
+                  <ArrowLeft className="h-4 w-4" />
+                  Retour au Dashboard
+                </Link>
+              </Button>
+              <div className="h-6 w-px bg-gray-300" />
+              <h1 className="text-2xl font-semibold text-gray-900">Mon Jour-M</h1>
+            </div>
           </div>
+
+          <Tabs defaultValue="planning" className="w-full">
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="planning" className="flex items-center gap-2" asChild>
+                <Link to="/mon-jour-m/planning">
+                  <Calendar className="h-4 w-4" />
+                  Planning
+                </Link>
+              </TabsTrigger>
+              <TabsTrigger value="equipe" className="flex items-center gap-2" asChild>
+                <Link to="/mon-jour-m/equipe">
+                  <Users className="h-4 w-4" />
+                  Équipe
+                </Link>
+              </TabsTrigger>
+              <TabsTrigger value="documents" className="flex items-center gap-2" asChild>
+                <Link to="/mon-jour-m/documents">
+                  <FileText className="h-4 w-4" />
+                  Documents
+                </Link>
+              </TabsTrigger>
+            </TabsList>
+
+            <div className="mt-6">
+              {children}
+            </div>
+          </Tabs>
         </div>
-      </div>
-
-      <div className="container mx-auto px-4 py-6 max-w-6xl">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-6">
-            <TabsTrigger value="planning" className="flex items-center gap-2">
-              <Calendar className="h-4 w-4" />
-              Planning
-            </TabsTrigger>
-            <TabsTrigger value="equipe" className="flex items-center gap-2">
-              <Users className="h-4 w-4" />
-              Équipe
-            </TabsTrigger>
-            <TabsTrigger value="documents" className="flex items-center gap-2">
-              <FileText className="h-4 w-4" />
-              Documents
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="planning">
-            <MonJourMPlanningContent />
-          </TabsContent>
-
-          <TabsContent value="equipe">
-            <MonJourMEquipeContent />
-          </TabsContent>
-
-          <TabsContent value="documents">
-            <MonJourMDocumentsContent />
-          </TabsContent>
-        </Tabs>
       </div>
     </div>
   );

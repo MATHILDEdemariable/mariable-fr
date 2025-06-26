@@ -83,7 +83,18 @@ const MonJourMPlanning: React.FC = () => {
       }
 
       console.log('✅ Loaded tasks:', data);
-      setTasks(data || []);
+      
+      // Convertir les données pour correspondre à l'interface PlanningTask
+      const formattedTasks: PlanningTask[] = (data || []).map(task => ({
+        ...task,
+        assigned_to: Array.isArray(task.assigned_to) 
+          ? task.assigned_to.map(id => String(id))
+          : task.assigned_to 
+            ? [String(task.assigned_to)]
+            : []
+      }));
+      
+      setTasks(formattedTasks);
     } catch (error) {
       console.error('❌ Error in loadTasks:', error);
       toast({

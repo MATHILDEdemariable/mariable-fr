@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
@@ -67,10 +66,7 @@ export const useWeddingCoordination = () => {
       console.log('✅ Created new coordination:', newCoordination.id);
       setCoordination(newCoordination);
       
-      toast({
-        title: "Coordination initialisée",
-        description: "Votre espace Mon Jour-M est prêt !",
-      });
+      // Suppression du toast automatique qui s'affichait en permanence
 
       return newCoordination;
     } catch (error) {
