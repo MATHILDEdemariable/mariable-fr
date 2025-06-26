@@ -636,7 +636,13 @@ export const MonJourMProvider: React.FC<{ children: ReactNode }> = ({ children }
           filter: `coordination_id=eq.${coordination.id}`
         },
         (payload) => {
-          console.log('📨 Planning change received:', payload.eventType, payload.new?.id);
+          console.log('📨 Planning change received:', payload.eventType);
+          
+          // Vérification de type pour payload.new
+          if (payload.new && typeof payload.new === 'object' && payload.new !== null && 'id' in payload.new) {
+            console.log('📨 Planning item ID:', payload.new.id);
+          }
+          
           // Recharger seulement si ce n'est pas notre propre modification
           setTimeout(() => {
             loadTasks(coordination.id);
@@ -658,7 +664,13 @@ export const MonJourMProvider: React.FC<{ children: ReactNode }> = ({ children }
           filter: `coordination_id=eq.${coordination.id}`
         },
         (payload) => {
-          console.log('📨 Team change received:', payload.eventType, payload.new?.id);
+          console.log('📨 Team change received:', payload.eventType);
+          
+          // Vérification de type pour payload.new
+          if (payload.new && typeof payload.new === 'object' && payload.new !== null && 'id' in payload.new) {
+            console.log('📨 Team member ID:', payload.new.id);
+          }
+          
           // Recharger seulement si ce n'est pas notre propre modification
           setTimeout(() => {
             loadTeamMembers(coordination.id);
