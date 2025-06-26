@@ -6,9 +6,10 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Calendar, Clock, CheckCircle2, Circle, User, RefreshCw, Edit, Trash2 } from 'lucide-react';
+import { Plus, Calendar, Clock, CheckCircle2, Circle, User, RefreshCw, Edit, Trash2, Sparkles } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useMonJourM } from '@/contexts/MonJourMContext';
+import AISuggestionsModal from './AISuggestionsModal';
 
 interface PlanningTask {
   id: string;
@@ -39,6 +40,7 @@ const MonJourMPlanning: React.FC = () => {
 
   const [showAddTask, setShowAddTask] = useState(false);
   const [editingTask, setEditingTask] = useState<PlanningTask | null>(null);
+  const [showAISuggestions, setShowAISuggestions] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
@@ -76,8 +78,12 @@ const MonJourMPlanning: React.FC = () => {
   };
 
   const handleAddTask = async () => {
-    if (!formData.title.trim()) return;
+    if (!formData.title.trim()) {
+      console.error('Task title is required');
+      return;
+    }
 
+    console.log('Attempting to add task:', formData);
     const success = await addTask({
       title: formData.title,
       description: formData.description,
@@ -106,7 +112,9 @@ const MonJourMPlanning: React.FC = () => {
   };
 
   const handleDeleteTask = async (taskId: string) => {
-    await deleteTask(taskId);
+    if (window.confirm('Êtes-vous sûr de vouloir supprimer cette tâche ?')) {
+      await deleteTask(taskId);
+    }
   };
 
   const toggleTaskStatus = async (task: PlanningTask) => {
@@ -118,13 +126,18 @@ const MonJourMPlanning: React.FC = () => {
     if (!timeString) return '';
     
     try {
-      const date = new Date(timeString);
-      return date.toLocaleTimeString('fr-FR', {
-        hour: '2-digit',
-        minute: '2-digit'
-      });
+      if (timeString.includes('T')) {
+        const date = new Date(timeString);
+        return date.toLocaleTimeString('fr-FR', {
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+      } else {
+        // Si c'est déjà au format HH:MM
+        return timeString;
+      }
     } catch (error) {
-      return '';
+      return timeString;
     }
   };
 
@@ -142,6 +155,22 @@ const MonJourMPlanning: React.FC = () => {
       case 'medium': return 'bg-yellow-100 text-yellow-800';
       case 'low': return 'bg-green-100 text-green-800';
       default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const handleAISuggestion = async (suggestion: { title: string; description: string; category: string; priority: string; duration: number }) => {
+    const success = await addTask({
+      title: suggestion.title,
+      description: suggestion.description,
+      category: suggestion.category,
+      priority: suggestion.priority,
+      status: 'todo',
+      duration: suggestion.duration,
+      assigned_to: []
+    });
+
+    if (success) {
+      setShowAISuggestions(false);
     }
   };
 
@@ -167,7 +196,7 @@ const MonJourMPlanning: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* En-tête avec bouton refresh */}
+      {/* En-tête avec boutons */}
       <div className="flex flex-col md:flex-row gap-4 justify-between items-start">
         <div>
           <h2 className="text-2xl font-semibold mb-2">Planning du jour J</h2>
@@ -184,6 +213,16 @@ const MonJourMPlanning: React.FC = () => {
           >
             <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
             Actualiser
+          </Button>
+
+          <Button
+            onClick={() => setShowAISuggestions(true)}
+            variant="outline"
+            size="sm"
+            className="flex items-center gap-2 bg-gradient-to-r from-purple-50 to-pink-50 border-purple-200 hover:from-purple-100 hover:to-pink-100"
+          >
+            <Sparkles className="h-4 w-4 text-purple-600" />
+            Générer avec l'IA
           </Button>
 
           <Dialog open={showAddTask} onOpenChange={setShowAddTask}>
@@ -296,7 +335,7 @@ const MonJourMPlanning: React.FC = () => {
                 </div>
 
                 <div className="flex gap-2">
-                  <Button onClick={handleAddTask}>
+                  <Button onClick={handleAddTask} disabled={!formData.title.trim()}>
                     Ajouter la tâche
                   </Button>
                   <Button variant="outline" onClick={() => {
@@ -365,14 +404,15 @@ const MonJourMPlanning: React.FC = () => {
                           </div>
                         </div>
 
-                        <div className="flex items-center gap-2 mt-2 text-xs">
-                          {task.start_time && (
-                            <div className="flex items-center gap-1">
-                              <Clock className="h-3 w-3" />
-                              <span>{formatTime(task.start_time)}</span>
-                              {task.end_time && (
-                                <span>- {formatTime(task.end_time)}</span>
-                              )}
+                        <div className="flex items-center gap-2 mt-2 text-xs flex-wrap">
+                          {(task.start_time || task.end_time) && (
+                            <div className="flex items-center gap-1 bg-blue-50 px-2 py-1 rounded">
+                              <Clock className="h-3 w-3 text-blue-600" />
+                              <span className="text-blue-700">
+                                {task.start_time && formatTime(task.start_time)}
+                                {task.start_time && task.end_time && ' - '}
+                                {task.end_time && formatTime(task.end_time)}
+                              </span>
                             </div>
                           )}
                           
@@ -380,7 +420,7 @@ const MonJourMPlanning: React.FC = () => {
                           <Badge className={getPriorityColor(task.priority)}>
                             {task.priority === 'high' ? 'Élevée' : task.priority === 'medium' ? 'Moyenne' : 'Faible'}
                           </Badge>
-                          <span className="capitalize text-gray-500">{task.category}</span>
+                          <Badge variant="secondary" className="capitalize">{task.category}</Badge>
                         </div>
 
                         {task.assigned_to && Array.isArray(task.assigned_to) && task.assigned_to.length > 0 && (
@@ -412,7 +452,7 @@ const MonJourMPlanning: React.FC = () => {
         </Card>
       )}
 
-      {/* Modal d'édition */}
+      {/* Modal d'édition de tâche */}
       {editingTask && (
         <Dialog open={!!editingTask} onOpenChange={() => setEditingTask(null)}>
           <DialogContent className="max-w-2xl">
@@ -529,6 +569,14 @@ const MonJourMPlanning: React.FC = () => {
           </DialogContent>
         </Dialog>
       )}
+
+      {/* Modal de suggestions IA */}
+      <AISuggestionsModal
+        isOpen={showAISuggestions}
+        onClose={() => setShowAISuggestions(false)}
+        onSelectSuggestion={handleAISuggestion}
+        coordination={coordination}
+      />
     </div>
   );
 };

@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
@@ -82,40 +83,48 @@ export const MonJourMProvider: React.FC<{ children: ReactNode }> = ({ children }
     console.log('🧹 Cache cleared for user:', userId);
   }, [getCacheKeys]);
 
-  // Fonction pour nettoyer tout le cache Mon Jour-M
-  const clearAllCache = useCallback(() => {
-    const keys = Object.keys(localStorage);
-    keys.forEach(key => {
-      if (key.startsWith('monjourm_')) {
-        localStorage.removeItem(key);
-      }
-    });
-    console.log('🧹 All Mon Jour-M cache cleared');
-  }, []);
-
-  // Surveiller les changements d'utilisateur
+  // Surveiller les changements d'utilisateur avec initialisation immédiate
   useEffect(() => {
-    const checkUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      const newUserId = user?.id || null;
-      
-      if (currentUserId !== newUserId) {
-        console.log('👤 User changed from', currentUserId, 'to', newUserId);
+    let mounted = true;
+
+    const initializeUser = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        const newUserId = user?.id || null;
         
-        // Reset state when user changes
-        setCoordination(null);
-        setTasks([]);
-        setTeamMembers([]);
-        setIsInitialized(false);
-        
-        setCurrentUserId(newUserId);
+        if (!mounted) return;
+
+        if (currentUserId !== newUserId) {
+          console.log('👤 User changed from', currentUserId, 'to', newUserId);
+          
+          // Reset state when user changes
+          setCoordination(null);
+          setTasks([]);
+          setTeamMembers([]);
+          setIsInitialized(false);
+          
+          setCurrentUserId(newUserId);
+          
+          // Initialiser immédiatement pour le nouvel utilisateur
+          if (newUserId) {
+            setTimeout(() => {
+              if (mounted) {
+                initializeForUser(newUserId);
+              }
+            }, 100);
+          }
+        }
+      } catch (error) {
+        console.error('Error checking user:', error);
       }
     };
 
-    checkUser();
+    initializeUser();
 
     // Écouter les changements d'auth
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (!mounted) return;
+      
       const newUserId = session?.user?.id || null;
       if (currentUserId !== newUserId) {
         console.log('👤 Auth state changed, user:', newUserId);
@@ -127,52 +136,75 @@ export const MonJourMProvider: React.FC<{ children: ReactNode }> = ({ children }
         setIsInitialized(false);
         
         setCurrentUserId(newUserId);
+        
+        // Initialiser immédiatement pour le nouvel utilisateur
+        if (newUserId) {
+          setTimeout(() => {
+            if (mounted) {
+              initializeForUser(newUserId);
+            }
+          }, 100);
+        }
       }
     });
 
     return () => {
+      mounted = false;
       subscription?.unsubscribe();
     };
   }, [currentUserId]);
 
-  // Load from cache on mount or user change
-  useEffect(() => {
-    if (!currentUserId) return;
-
+  // Nouvelle fonction d'initialisation pour un utilisateur spécifique
+  const initializeForUser = useCallback(async (userId: string) => {
+    if (isInitializing) return;
+    
     try {
-      const cacheKeys = getCacheKeys(currentUserId);
+      setIsInitializing(true);
+      console.log('🚀 Initializing for user:', userId);
+
+      // Charger depuis le cache d'abord
+      const cacheKeys = getCacheKeys(userId);
       const cachedCoordination = localStorage.getItem(cacheKeys.coordination);
       const cachedTasks = localStorage.getItem(cacheKeys.tasks);
       const cachedTeamMembers = localStorage.getItem(cacheKeys.teamMembers);
 
       if (cachedCoordination) {
         const parsed = JSON.parse(cachedCoordination);
-        // Vérifier que la coordination cached appartient bien à l'utilisateur actuel
-        if (parsed.user_id === currentUserId) {
+        if (parsed.user_id === userId) {
           setCoordination(parsed);
-          console.log('📥 Loaded coordination from cache for user:', currentUserId);
-        } else {
-          localStorage.removeItem(cacheKeys.coordination);
+          console.log('📥 Loaded coordination from cache');
         }
       }
       if (cachedTasks) {
         setTasks(JSON.parse(cachedTasks));
-        console.log('📥 Loaded tasks from cache for user:', currentUserId);
+        console.log('📥 Loaded tasks from cache');
       }
       if (cachedTeamMembers) {
         setTeamMembers(JSON.parse(cachedTeamMembers));
-        console.log('📥 Loaded team members from cache for user:', currentUserId);
+        console.log('📥 Loaded team members from cache');
+      }
+
+      // Initialiser ou récupérer la coordination
+      const activeCoordination = await initializeCoordination();
+      
+      if (activeCoordination) {
+        // Charger les données depuis la base
+        await Promise.all([
+          loadTasks(activeCoordination.id),
+          loadTeamMembers(activeCoordination.id)
+        ]);
+        
+        setIsInitialized(true);
+        console.log('✅ User initialization complete');
       }
     } catch (error) {
-      console.error('❌ Error loading cache for user:', currentUserId, error);
-      // En cas d'erreur, nettoyer le cache de cet utilisateur
-      if (currentUserId) {
-        clearUserCache(currentUserId);
-      }
+      console.error('❌ Error initializing user:', error);
+    } finally {
+      setIsInitializing(false);
     }
-  }, [currentUserId, getCacheKeys, clearUserCache]);
+  }, [isInitializing, getCacheKeys]);
 
-  // Cache coordination with user-specific key
+  // Cache avec clés spécifiques à l'utilisateur
   useEffect(() => {
     if (coordination && currentUserId) {
       const cacheKeys = getCacheKeys(currentUserId);
@@ -181,18 +213,16 @@ export const MonJourMProvider: React.FC<{ children: ReactNode }> = ({ children }
     }
   }, [coordination, currentUserId, getCacheKeys]);
 
-  // Cache tasks with user-specific key
   useEffect(() => {
-    if (tasks.length > 0 && currentUserId) {
+    if (tasks.length >= 0 && currentUserId) {
       const cacheKeys = getCacheKeys(currentUserId);
       localStorage.setItem(cacheKeys.tasks, JSON.stringify(tasks));
       console.log('💾 Tasks cached for user:', currentUserId, tasks.length, 'tasks');
     }
   }, [tasks, currentUserId, getCacheKeys]);
 
-  // Cache team members with user-specific key
   useEffect(() => {
-    if (teamMembers.length > 0 && currentUserId) {
+    if (teamMembers.length >= 0 && currentUserId) {
       const cacheKeys = getCacheKeys(currentUserId);
       localStorage.setItem(cacheKeys.teamMembers, JSON.stringify(teamMembers));
       console.log('💾 Team members cached for user:', currentUserId, teamMembers.length, 'members');
@@ -200,10 +230,7 @@ export const MonJourMProvider: React.FC<{ children: ReactNode }> = ({ children }
   }, [teamMembers, currentUserId, getCacheKeys]);
 
   const initializeCoordination = useCallback(async (): Promise<WeddingCoordination | null> => {
-    if (isInitializing || isInitialized) return coordination;
-
     try {
-      setIsInitializing(true);
       const { data: { user } } = await supabase.auth.getUser();
       
       if (!user) {
@@ -213,7 +240,7 @@ export const MonJourMProvider: React.FC<{ children: ReactNode }> = ({ children }
 
       console.log('🚀 Initializing coordination for user:', user.id);
 
-      // Vérifier si une coordination existe déjà - STRICTEMENT pour cet utilisateur
+      // Vérifier si une coordination existe déjà
       const { data: existingCoordinations, error: fetchError } = await supabase
         .from('wedding_coordination')
         .select('*')
@@ -228,38 +255,21 @@ export const MonJourMProvider: React.FC<{ children: ReactNode }> = ({ children }
       let activeCoordination: WeddingCoordination;
 
       if (existingCoordinations && existingCoordinations.length > 0) {
-        // Prendre la première coordination (la plus récente) pour CET utilisateur
         activeCoordination = existingCoordinations[0];
-        console.log('✅ Found existing coordination for user:', user.id, 'coordination:', activeCoordination.id);
+        console.log('✅ Found existing coordination:', activeCoordination.id);
 
-        // Supprimer les doublons s'il y en a pour CET utilisateur
+        // Supprimer les doublons s'il y en a
         if (existingCoordinations.length > 1) {
-          console.log('🧹 Cleaning up duplicate coordinations for user:', user.id);
+          console.log('🧹 Cleaning up duplicate coordinations');
           const duplicateIds = existingCoordinations.slice(1).map(c => c.id);
           
-          // Supprimer les tâches des doublons
-          await supabase
-            .from('coordination_planning')
-            .delete()
-            .in('coordination_id', duplicateIds);
-          
-          // Supprimer les membres d'équipe des doublons
-          await supabase
-            .from('coordination_team')
-            .delete()
-            .in('coordination_id', duplicateIds);
-          
-          // Supprimer les coordinations dupliquées
-          await supabase
-            .from('wedding_coordination')
-            .delete()
-            .in('id', duplicateIds);
-          
-          console.log('✅ Cleaned up duplicates for user:', user.id);
+          await supabase.from('coordination_planning').delete().in('coordination_id', duplicateIds);
+          await supabase.from('coordination_team').delete().in('coordination_id', duplicateIds);
+          await supabase.from('wedding_coordination').delete().in('id', duplicateIds);
         }
       } else {
-        // Créer une nouvelle coordination pour CET utilisateur
-        console.log('🆕 Creating new coordination for user:', user.id);
+        // Créer une nouvelle coordination
+        console.log('🆕 Creating new coordination');
         const { data: newCoordination, error: createError } = await supabase
           .from('wedding_coordination')
           .insert({
@@ -276,11 +286,10 @@ export const MonJourMProvider: React.FC<{ children: ReactNode }> = ({ children }
         }
 
         activeCoordination = newCoordination;
-        console.log('✅ Created new coordination for user:', user.id, 'coordination:', activeCoordination.id);
+        console.log('✅ Created new coordination:', activeCoordination.id);
       }
 
       setCoordination(activeCoordination);
-      setIsInitialized(true);
       return activeCoordination;
     } catch (error) {
       console.error('❌ Error initializing coordination:', error);
@@ -290,10 +299,8 @@ export const MonJourMProvider: React.FC<{ children: ReactNode }> = ({ children }
         variant: "destructive",
       });
       return null;
-    } finally {
-      setIsInitializing(false);
     }
-  }, [coordination, isInitializing, isInitialized, toast]);
+  }, [toast]);
 
   const loadTasks = useCallback(async (coordId: string) => {
     if (!coordId) return;
@@ -393,6 +400,11 @@ export const MonJourMProvider: React.FC<{ children: ReactNode }> = ({ children }
   const addTask = useCallback(async (taskData: Omit<PlanningTask, 'id'>): Promise<boolean> => {
     if (!coordination?.id) {
       console.error('❌ No coordination available for adding task');
+      toast({
+        title: "Erreur",
+        description: "Aucune coordination active trouvée",
+        variant: "destructive"
+      });
       return false;
     }
 
@@ -419,7 +431,12 @@ export const MonJourMProvider: React.FC<{ children: ReactNode }> = ({ children }
 
       if (error) {
         console.error('❌ Error adding task:', error);
-        throw error;
+        toast({
+          title: "Erreur",
+          description: `Impossible d'ajouter la tâche: ${error.message}`,
+          variant: "destructive"
+        });
+        return false;
       }
 
       // Mise à jour immédiate de l'état local
@@ -544,6 +561,11 @@ export const MonJourMProvider: React.FC<{ children: ReactNode }> = ({ children }
   const addTeamMember = useCallback(async (memberData: Omit<TeamMember, 'id'>): Promise<boolean> => {
     if (!coordination?.id) {
       console.error('❌ No coordination available for adding member');
+      toast({
+        title: "Erreur",
+        description: "Aucune coordination active trouvée",
+        variant: "destructive"
+      });
       return false;
     }
 
@@ -566,7 +588,12 @@ export const MonJourMProvider: React.FC<{ children: ReactNode }> = ({ children }
 
       if (error) {
         console.error('❌ Error adding member:', error);
-        throw error;
+        toast({
+          title: "Erreur",
+          description: `Impossible d'ajouter le membre: ${error.message}`,
+          variant: "destructive"
+        });
+        return false;
       }
 
       // Mise à jour immédiate de l'état local
@@ -687,28 +714,11 @@ export const MonJourMProvider: React.FC<{ children: ReactNode }> = ({ children }
     }
   }, [toast]);
 
-  // Initialisation automatique au montage quand l'utilisateur est disponible
-  useEffect(() => {
-    if (currentUserId && !isInitialized && !isInitializing) {
-      console.log('🔄 Auto-initializing for user:', currentUserId);
-      initializeCoordination();
-    }
-  }, [currentUserId, initializeCoordination, isInitialized, isInitializing]);
-
-  // Chargement des données quand la coordination est disponible
-  useEffect(() => {
-    if (coordination?.id && isInitialized && currentUserId) {
-      console.log('🔄 Loading data for initialized coordination:', coordination.id, 'user:', currentUserId);
-      loadTasks(coordination.id);
-      loadTeamMembers(coordination.id);
-    }
-  }, [coordination?.id, isInitialized, currentUserId, loadTasks, loadTeamMembers]);
-
-  // Subscription temps réel persistante
+  // Subscriptions temps réel optimisées
   useEffect(() => {
     if (!coordination?.id || !isInitialized || !currentUserId) return;
 
-    console.log('🔗 Setting up persistent realtime subscriptions for coordination:', coordination.id, 'user:', currentUserId);
+    console.log('🔗 Setting up realtime subscriptions for coordination:', coordination.id);
 
     const planningChannel = supabase
       .channel(`coordination-planning-${coordination.id}`)
@@ -723,20 +733,11 @@ export const MonJourMProvider: React.FC<{ children: ReactNode }> = ({ children }
         (payload) => {
           console.log('📨 Planning change received:', payload.eventType);
           
-          // Vérification de type pour payload.new
-          if (payload.new && typeof payload.new === 'object' && payload.new !== null && 'id' in payload.new) {
-            console.log('📨 Planning item ID:', payload.new.id);
-          }
-          
-          // Recharger seulement si ce n'est pas notre propre modification
-          setTimeout(() => {
-            loadTasks(coordination.id);
-          }, 100);
+          // Recharger immédiatement
+          loadTasks(coordination.id);
         }
       )
-      .subscribe((status) => {
-        console.log('📡 Planning subscription status:', status);
-      });
+      .subscribe();
 
     const teamChannel = supabase
       .channel(`coordination-team-${coordination.id}`)
@@ -751,23 +752,14 @@ export const MonJourMProvider: React.FC<{ children: ReactNode }> = ({ children }
         (payload) => {
           console.log('📨 Team change received:', payload.eventType);
           
-          // Vérification de type pour payload.new
-          if (payload.new && typeof payload.new === 'object' && payload.new !== null && 'id' in payload.new) {
-            console.log('📨 Team member ID:', payload.new.id);
-          }
-          
-          // Recharger seulement si ce n'est pas notre propre modification
-          setTimeout(() => {
-            loadTeamMembers(coordination.id);
-          }, 100);
+          // Recharger immédiatement
+          loadTeamMembers(coordination.id);
         }
       )
-      .subscribe((status) => {
-        console.log('📡 Team subscription status:', status);
-      });
+      .subscribe();
 
     return () => {
-      console.log('🔌 Cleaning up persistent realtime subscriptions');
+      console.log('🔌 Cleaning up realtime subscriptions');
       supabase.removeChannel(planningChannel);
       supabase.removeChannel(teamChannel);
     };

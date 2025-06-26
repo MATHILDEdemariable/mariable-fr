@@ -66,8 +66,12 @@ const MonJourMEquipe: React.FC = () => {
   };
 
   const handleAddMember = async () => {
-    if (!formData.name.trim()) return;
+    if (!formData.name.trim()) {
+      console.error('Member name is required');
+      return;
+    }
 
+    console.log('Attempting to add member:', formData);
     const success = await addTeamMember({
       name: formData.name,
       role: formData.role || 'Membre',
@@ -93,7 +97,9 @@ const MonJourMEquipe: React.FC = () => {
   };
 
   const handleDeleteMember = async (memberId: string) => {
-    await deleteTeamMember(memberId);
+    if (window.confirm('Êtes-vous sûr de vouloir supprimer ce membre ?')) {
+      await deleteTeamMember(memberId);
+    }
   };
 
   const getSubRoleOptions = (type: 'person' | 'vendor') => {
@@ -256,7 +262,7 @@ const MonJourMEquipe: React.FC = () => {
                 </div>
 
                 <div className="flex gap-2">
-                  <Button onClick={handleAddMember}>
+                  <Button onClick={handleAddMember} disabled={!formData.name.trim()}>
                     Ajouter
                   </Button>
                   <Button variant="outline" onClick={() => {
