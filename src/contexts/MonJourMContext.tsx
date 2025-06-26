@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
@@ -26,6 +25,7 @@ export interface PlanningTask {
   status: string;
   assigned_to?: string[];
   position?: number;
+  is_ai_generated?: boolean;
 }
 
 interface TeamMember {
@@ -424,7 +424,8 @@ export const MonJourMProvider: React.FC<{ children: ReactNode }> = ({ children }
           priority: taskData.priority,
           status: taskData.status,
           assigned_to: taskData.assigned_to && taskData.assigned_to.length > 0 ? taskData.assigned_to : null,
-          position: tasks.length
+          position: tasks.length,
+          is_ai_generated: taskData.is_ai_generated || false
         })
         .select()
         .single();
@@ -487,7 +488,8 @@ export const MonJourMProvider: React.FC<{ children: ReactNode }> = ({ children }
           category: task.category,
           priority: task.priority,
           status: task.status,
-          assigned_to: task.assigned_to && task.assigned_to.length > 0 ? task.assigned_to : null
+          assigned_to: task.assigned_to && task.assigned_to.length > 0 ? task.assigned_to : null,
+          is_ai_generated: task.is_ai_generated || false
         })
         .eq('id', task.id);
 
