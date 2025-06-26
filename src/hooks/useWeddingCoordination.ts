@@ -21,6 +21,8 @@ export const useWeddingCoordination = () => {
   const { toast } = useToast();
 
   const initializeCoordination = useCallback(async () => {
+    if (isInitializing || coordination) return coordination;
+
     try {
       setIsInitializing(true);
       const { data: { user } } = await supabase.auth.getUser();
@@ -29,46 +31,52 @@ export const useWeddingCoordination = () => {
         throw new Error('Utilisateur non authentifié');
       }
 
-      console.log('🚀 Initializing coordination for user:', user.id);
+      console.log('🚀 useWeddingCoordination: Initializing coordination for user:', user.id);
 
-      // Vérifier si une coordination existe déjà
-      const { data: existingCoordination, error: fetchError } = await supabase
+      // Vérifier si une coordination existe déjà - prendre la plus récente
+      const { data: existingCoordinations, error: fetchError } = await supabase
         .from('wedding_coordination')
         .select('*')
         .eq('user_id', user.id)
-        .single();
+        .order('created_at', { ascending: false })
+        .limit(1);
 
-      if (fetchError && fetchError.code !== 'PGRST116') { // PGRST116 = pas de résultat
+      if (fetchError) {
+        console.error('❌ Error fetching coordination:', fetchError);
         throw fetchError;
       }
 
-      if (existingCoordination) {
-        console.log('✅ Found existing coordination:', existingCoordination.id);
-        setCoordination(existingCoordination);
-        return existingCoordination;
+      let activeCoordination: WeddingCoordination;
+
+      if (existingCoordinations && existingCoordinations.length > 0) {
+        activeCoordination = existingCoordinations[0];
+        console.log('✅ useWeddingCoordination: Found existing coordination:', activeCoordination.id);
+      } else {
+        // Créer une nouvelle coordination
+        console.log('🆕 useWeddingCoordination: Creating new coordination...');
+        const { data: newCoordination, error: createError } = await supabase
+          .from('wedding_coordination')
+          .insert({
+            user_id: user.id,
+            title: 'Mon Mariage',
+            description: 'Organisation de mon mariage'
+          })
+          .select()
+          .single();
+
+        if (createError) {
+          console.error('❌ Error creating coordination:', createError);
+          throw createError;
+        }
+
+        activeCoordination = newCoordination;
+        console.log('✅ useWeddingCoordination: Created new coordination:', activeCoordination.id);
       }
 
-      // Créer une nouvelle coordination
-      console.log('🆕 Creating new coordination...');
-      const { data: newCoordination, error: createError } = await supabase
-        .from('wedding_coordination')
-        .insert({
-          user_id: user.id,
-          title: 'Mon Mariage',
-          description: 'Organisation de mon mariage'
-        })
-        .select()
-        .single();
-
-      if (createError) {
-        throw createError;
-      }
-
-      console.log('✅ Created new coordination:', newCoordination.id);
-      setCoordination(newCoordination);
-      return newCoordination;
+      setCoordination(activeCoordination);
+      return activeCoordination;
     } catch (error) {
-      console.error('❌ Error initializing coordination:', error);
+      console.error('❌ useWeddingCoordination: Error initializing coordination:', error);
       toast({
         title: "Erreur d'initialisation",
         description: "Impossible d'initialiser votre espace Mon Jour-M",
@@ -78,7 +86,7 @@ export const useWeddingCoordination = () => {
     } finally {
       setIsInitializing(false);
     }
-  }, [toast]);
+  }, [coordination, isInitializing, toast]);
 
   const refreshCoordination = useCallback(async () => {
     if (!coordination) return;
@@ -94,9 +102,9 @@ export const useWeddingCoordination = () => {
       if (error) throw error;
       
       setCoordination(data);
-      console.log('🔄 Coordination refreshed');
+      console.log('🔄 useWeddingCoordination: Coordination refreshed');
     } catch (error) {
-      console.error('❌ Error refreshing coordination:', error);
+      console.error('❌ useWeddingCoordination: Error refreshing coordination:', error);
       toast({
         title: "Erreur",
         description: "Impossible de rafraîchir les données",
@@ -108,19 +116,23 @@ export const useWeddingCoordination = () => {
   }, [coordination, toast]);
 
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        setIsLoading(true);
-        await initializeCoordination();
-      } catch (error) {
-        console.error('Error in useWeddingCoordination:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+    if (!coordination && !isInitializing) {
+      const initialize = async () => {
+        try {
+          setIsLoading(true);
+          await initializeCoordination();
+        } catch (error) {
+          console.error('useWeddingCoordination: Initialization failed:', error);
+        } finally {
+          setIsLoading(false);
+        }
+      };
 
-    loadData();
-  }, [initializeCoordination]);
+      initialize();
+    } else if (coordination) {
+      setIsLoading(false);
+    }
+  }, [coordination, isInitializing, initializeCoordination]);
 
   return {
     coordination,
