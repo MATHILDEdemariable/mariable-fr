@@ -9,10 +9,11 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Check, X, Phone, Users, FileText, Bell, Headphones, UserCheck, MapPin } from 'lucide-react';
+import { ArrowLeft, Check, X, Phone, Users, FileText, Bell, Headphones, UserCheck, MapPin, Eye } from 'lucide-react';
 
 const ReservationJourM = () => {
   const [formData, setFormData] = useState({
@@ -161,6 +162,65 @@ const ReservationJourM = () => {
     }
   ];
 
+  // Component pour le tableau des formules
+  const FormulasTable = () => (
+    <Card className="shadow-lg">
+      <CardHeader>
+        <CardTitle className="text-center">Nos formules Jour-M</CardTitle>
+        <p className="text-center text-gray-600">Choisissez votre niveau de sérénité</p>
+      </CardHeader>
+      <CardContent className="p-0">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b bg-gray-50">
+                <th className="text-left p-3 font-medium">Fonctionnalité</th>
+                {pricingData.map((plan) => (
+                  <th key={plan.title} className="text-center p-3 font-medium min-w-[120px]">
+                    <div className="font-semibold">{plan.title}</div>
+                    <div className="text-lg font-bold text-wedding-olive">{plan.price}</div>
+                    {plan.subtitle && <div className="text-xs text-gray-500">{plan.subtitle}</div>}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {pricingData[0].features.map((feature, index) => (
+                <tr key={index} className="border-b hover:bg-gray-50">
+                  <td className="p-3 text-left">
+                    <div className="flex items-start gap-2">
+                      <feature.icon className="h-4 w-4 mt-0.5 text-wedding-olive flex-shrink-0" />
+                      <span className="text-xs">{feature.text}</span>
+                    </div>
+                  </td>
+                  {pricingData.map((plan) => (
+                    <td key={plan.title} className="p-3 text-center">
+                      <div className="flex flex-col items-center">
+                        {plan.features[index].included ? (
+                          <Check className="h-5 w-5 text-green-500" />
+                        ) : (
+                          <X className="h-5 w-5 text-red-500" />
+                        )}
+                        {plan.features[index].note && (
+                          <span className="text-xs text-gray-500 mt-1 text-center">
+                            {plan.features[index].note}
+                          </span>
+                        )}
+                      </div>
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div className="p-4 bg-gray-50 text-center text-sm text-gray-600">
+          💡 Des options supplémentaires sont disponibles (visite technique, impression papier, hotline dédiée, etc.)
+        </div>
+      </CardContent>
+    </Card>
+  );
+
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <Helmet>
@@ -171,8 +231,8 @@ const ReservationJourM = () => {
       <Header />
       
       <main className="flex-grow py-8">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center gap-4 mb-4">
+        <div className="container mx-auto px-4 max-w-6xl">
+          <div className="flex items-center gap-4 mb-6">
             <Button asChild variant="outline" size="sm">
               <Link to="/">
                 <ArrowLeft className="h-4 w-4 mr-2" />
@@ -190,10 +250,11 @@ const ReservationJourM = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-7xl mx-auto">
-            {/* Formulaire à gauche */}
+          {/* Layout Desktop/Mobile */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Formulaire */}
             <div className="order-2 lg:order-1">
-              <Card className="border-2 border-red-500">
+              <Card className="shadow-lg">
                 <CardHeader>
                   <CardTitle>Informations de contact</CardTitle>
                 </CardHeader>
@@ -283,7 +344,29 @@ const ReservationJourM = () => {
                     </div>
 
                     <div>
-                      <Label className="text-base font-medium mb-3 block">Services souhaités *</Label>
+                      <div className="flex items-center justify-between mb-3">
+                        <Label className="text-base font-medium">Services souhaités *</Label>
+                        {/* Bouton modal pour mobile */}
+                        <div className="lg:hidden">
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              <Button variant="outline" size="sm">
+                                <Eye className="h-4 w-4 mr-2" />
+                                Voir les formules
+                              </Button>
+                            </DialogTrigger>
+                            <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+                              <DialogHeader>
+                                <DialogTitle>Nos formules Jour-M</DialogTitle>
+                              </DialogHeader>
+                              <div className="mt-4">
+                                <FormulasTable />
+                              </div>
+                            </DialogContent>
+                          </Dialog>
+                        </div>
+                      </div>
+                      
                       <RadioGroup value={formData.selected_formula} onValueChange={handleFormulaChange}>
                         <div className="flex items-center space-x-2">
                           <RadioGroupItem value="gratuite" id="gratuite" />
@@ -339,63 +422,9 @@ const ReservationJourM = () => {
               </Card>
             </div>
 
-            {/* Tableau des formules à droite */}
-            <div className="order-1 lg:order-2">
-              <Card className="border-2 border-blue-500">
-                <CardHeader>
-                  <CardTitle className="text-center">Nos formules Jour-M</CardTitle>
-                  <p className="text-center text-gray-600">Choisissez votre niveau de sérénité</p>
-                </CardHeader>
-                <CardContent className="p-0">
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
-                      <thead>
-                        <tr className="border-b">
-                          <th className="text-left p-3 font-medium">Fonctionnalité</th>
-                          {pricingData.map((plan) => (
-                            <th key={plan.title} className="text-center p-3 font-medium min-w-[120px]">
-                              <div className="font-semibold">{plan.title}</div>
-                              <div className="text-lg font-bold text-wedding-olive">{plan.price}</div>
-                              {plan.subtitle && <div className="text-xs text-gray-500">{plan.subtitle}</div>}
-                            </th>
-                          ))}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {pricingData[0].features.map((feature, index) => (
-                          <tr key={index} className="border-b hover:bg-gray-50">
-                            <td className="p-3 text-left">
-                              <div className="flex items-start gap-2">
-                                <feature.icon className="h-4 w-4 mt-0.5 text-wedding-olive flex-shrink-0" />
-                                <span className="text-xs">{feature.text}</span>
-                              </div>
-                            </td>
-                            {pricingData.map((plan) => (
-                              <td key={plan.title} className="p-3 text-center">
-                                <div className="flex flex-col items-center">
-                                  {plan.features[index].included ? (
-                                    <Check className="h-5 w-5 text-green-500" />
-                                  ) : (
-                                    <X className="h-5 w-5 text-red-500" />
-                                  )}
-                                  {plan.features[index].note && (
-                                    <span className="text-xs text-gray-500 mt-1 text-center">
-                                      {plan.features[index].note}
-                                    </span>
-                                  )}
-                                </div>
-                              </td>
-                            ))}
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                  <div className="p-4 bg-gray-50 text-center text-sm text-gray-600">
-                    💡 Des options supplémentaires sont disponibles (visite technique, impression papier, hotline dédiée, etc.)
-                  </div>
-                </CardContent>
-              </Card>
+            {/* Tableau des formules - Desktop seulement */}
+            <div className="order-1 lg:order-2 hidden lg:block">
+              <FormulasTable />
             </div>
           </div>
         </div>

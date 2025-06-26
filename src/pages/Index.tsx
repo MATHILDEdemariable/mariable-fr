@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import Header from '@/components/Header';
 import ChatbotButton from '@/components/ChatbotButton';
@@ -284,7 +283,7 @@ const Index = () => {
                       Dès 49€ TTC
                     </div>
                     <Button asChild className="w-full bg-wedding-olive text-white hover:bg-wedding-olive/90">
-                      <Link to="/pricing">
+                      <Link to="/reservation-jour-m">
                         Choisir ma formule Jour M
                       </Link>
                     </Button>

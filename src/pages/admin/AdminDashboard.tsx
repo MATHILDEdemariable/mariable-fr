@@ -11,12 +11,10 @@ import {
   Users, 
   FileText, 
   Calendar, 
-  Settings, 
   BarChart3,
-  Mail,
-  Heart,
   Shield
 } from 'lucide-react';
+import AdminLayout from '@/components/admin/AdminLayout';
 
 const ADMIN_PASSWORD = 'Alain1987!';
 
@@ -125,9 +123,9 @@ const AdminDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
+    <AdminLayout>
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-serif text-wedding-black">Dashboard Admin</h1>
             <p className="text-gray-600 mt-2">Tableau de bord administrateur</p>
@@ -138,7 +136,7 @@ const AdminDashboard = () => {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <Card>
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
@@ -188,9 +186,12 @@ const AdminDashboard = () => {
           </Card>
         </div>
 
-        {/* Admin Navigation */}
+        {/* Admin Navigation Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/admin/reservations-jour-m')}>
+          <Card 
+            className="hover:shadow-lg transition-shadow cursor-pointer" 
+            onClick={() => navigate('/admin/reservations-jour-m')}
+          >
             <CardHeader>
               <CardTitle className="flex items-center gap-3">
                 <Calendar className="h-6 w-6 text-wedding-olive" />
@@ -205,11 +206,14 @@ const AdminDashboard = () => {
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/admin/prestataires')}>
+          <Card 
+            className="hover:shadow-lg transition-shadow cursor-pointer" 
+            onClick={() => navigate('/admin/prestataires')}
+          >
             <CardHeader>
               <CardTitle className="flex items-center gap-3">
                 <Users className="h-6 w-6 text-wedding-olive" />
-                Prestataires CRM
+                CRM Prestataires
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -220,7 +224,10 @@ const AdminDashboard = () => {
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/admin/blog')}>
+          <Card 
+            className="hover:shadow-lg transition-shadow cursor-pointer" 
+            onClick={() => navigate('/admin/blog')}
+          >
             <CardHeader>
               <CardTitle className="flex items-center gap-3">
                 <FileText className="h-6 w-6 text-wedding-olive" />
@@ -234,57 +241,9 @@ const AdminDashboard = () => {
               </Button>
             </CardContent>
           </Card>
-
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/admin/form')}>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-3">
-                <Settings className="h-6 w-6 text-wedding-olive" />
-                Formulaires
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-gray-600">Gérer les questions des formulaires</p>
-              <Button className="mt-4 w-full bg-wedding-olive hover:bg-wedding-olive/80">
-                Accéder
-              </Button>
-            </CardContent>
-          </Card>
-
-          <Card className="hover:shadow-lg transition-shadow">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-3">
-                <Mail className="h-6 w-6 text-wedding-olive" />
-                Souscriptions
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-gray-600">Voir les clics "souscrire maintenant"</p>
-              <Button className="mt-4 w-full bg-wedding-olive hover:bg-wedding-olive/80" disabled>
-                Bientôt disponible
-              </Button>
-            </CardContent>
-          </Card>
-
-          <Card className="hover:shadow-lg transition-shadow">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-3">
-                <Heart className="h-6 w-6 text-wedding-olive" />
-                Mariable
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-gray-600">Tableau de bord principal</p>
-              <Button 
-                className="mt-4 w-full bg-wedding-olive hover:bg-wedding-olive/80"
-                onClick={() => navigate('/')}
-              >
-                Retour au site
-              </Button>
-            </CardContent>
-          </Card>
         </div>
       </div>
-    </div>
+    </AdminLayout>
   );
 };
 

@@ -7,6 +7,7 @@ import PrestatairesAdmin from "@/components/admin/FormPrestataires";
 import { Database } from "@/integrations/supabase/types";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/toaster";
+import AdminLayout from "@/components/admin/AdminLayout";
 
 type SupabaseAdminUser = Database["public"]["Tables"]["admin_users"]["Row"];
 
@@ -17,6 +18,13 @@ const AdminPrestataires = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    // Check if admin is already authenticated
+    const adminAuth = sessionStorage.getItem('admin_authenticated');
+    if (adminAuth !== 'true') {
+      navigate('/admin/dashboard');
+      return;
+    }
+
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, newSession) => {
@@ -66,32 +74,38 @@ const AdminPrestataires = () => {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <p>Chargement...</p>
-      </div>
+      <AdminLayout>
+        <div className="flex justify-center items-center h-64">
+          <p>Chargement...</p>
+        </div>
+      </AdminLayout>
     );
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4">
-      {isAdmin ? (
-        <div className="w-full max-w-7xl">
-          <h1 className="text-2xl font-bold mb-4 text-center mt-12">Administration des Prestataires</h1>
-          <p className="text-lg text-center mb-6">
+    <AdminLayout>
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-2xl font-bold text-wedding-black">CRM Prestataires</h1>
+          <p className="text-gray-600 mt-2">
             Gérez votre base de prestataires depuis cette interface.
           </p>
+        </div>
+        
+        {isAdmin ? (
           <PrestatairesAdmin />
-          <Toaster />
-        </div>
-      ) : (
-        <div className="text-center p-8 border rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-4">Accès restreint</h2>
-          <p className="text-muted-foreground">
-            Vous devez être connecté avec un compte administrateur pour accéder à cette page.
-          </p>
-        </div>
-      )}
-    </div>
+        ) : (
+          <div className="text-center p-8 border rounded-lg shadow-md">
+            <h2 className="text-xl font-semibold mb-4">Accès restreint</h2>
+            <p className="text-muted-foreground">
+              Vous devez être connecté avec un compte administrateur pour accéder à cette page.
+            </p>
+          </div>
+        )}
+        
+        <Toaster />
+      </div>
+    </AdminLayout>
   );
 };
 
