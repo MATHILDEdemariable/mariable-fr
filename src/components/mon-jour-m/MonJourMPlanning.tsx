@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,7 +7,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { Plus, Calendar, Clock, CheckCircle2, Circle, User, RefreshCw, Edit, Trash2, Sparkles } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { useMonJourM } from '@/contexts/MonJourMContext';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/components/ui/use-toast';
 import AISuggestionsModal from './AISuggestionsModal';
 
 interface PlanningTask {
@@ -24,23 +25,37 @@ interface PlanningTask {
   position?: number;
 }
 
-const MonJourMPlanning: React.FC = () => {
-  const { 
-    coordination, 
-    tasks, 
-    teamMembers, 
-    isLoading, 
-    isInitializing, 
-    refreshData, 
-    addTask, 
-    updateTask, 
-    deleteTask 
-  } = useMonJourM();
+interface WeddingCoordination {
+  id: string;
+  title: string;
+  description?: string;
+  wedding_date?: string;
+  wedding_location?: string;
+  user_id: string;
+  created_at: string;
+  updated_at: string;
+}
 
+interface TeamMember {
+  id: string;
+  name: string;
+  role: string;
+  email?: string;
+  phone?: string;
+  type: 'person' | 'vendor';
+  prestataire_id?: string;
+  notes?: string;
+}
+
+const MonJourMPlanning: React.FC = () => {
+  const { toast } = useToast();
+  const [coordination, setCoordination] = useState<WeddingCoordination | null>(null);
+  const [tasks, setTasks] = useState<PlanningTask[]>([]);
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [showAddTask, setShowAddTask] = useState(false);
   const [editingTask, setEditingTask] = useState<PlanningTask | null>(null);
   const [showAISuggestions, setShowAISuggestions] = useState(false);
-  const [isRefreshing, setIsRefreshing] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -53,12 +68,131 @@ const MonJourMPlanning: React.FC = () => {
     assigned_to: [] as string[]
   });
 
-  const handleRefresh = async () => {
-    setIsRefreshing(true);
+  // Initialisation simple
+  useEffect(() => {
+    initializeData();
+  }, []);
+
+  const initializeData = async () => {
     try {
-      await refreshData();
+      setIsLoading(true);
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        toast({
+          title: "Erreur",
+          description: "Vous devez être connecté",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Récupérer ou créer la coordination
+      let { data: coordinations, error: coordError } = await supabase
+        .from('wedding_coordination')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
+      if (coordError) throw coordError;
+
+      let activeCoordination: WeddingCoordination;
+
+      if (coordinations && coordinations.length > 0) {
+        activeCoordination = coordinations[0];
+      } else {
+        const { data: newCoordination, error: createError } = await supabase
+          .from('wedding_coordination')
+          .insert({
+            user_id: user.id,
+            title: 'Mon Mariage',
+            description: 'Organisation de mon mariage'
+          })
+          .select()
+          .single();
+
+        if (createError) throw createError;
+        activeCoordination = newCoordination;
+      }
+
+      setCoordination(activeCoordination);
+
+      // Charger les tâches et l'équipe
+      await Promise.all([
+        loadTasks(activeCoordination.id),
+        loadTeamMembers(activeCoordination.id)
+      ]);
+
+    } catch (error) {
+      console.error('Erreur initialisation:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de charger les données",
+        variant: "destructive"
+      });
     } finally {
-      setIsRefreshing(false);
+      setIsLoading(false);
+    }
+  };
+
+  const loadTasks = async (coordId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('coordination_planning')
+        .select('*')
+        .eq('coordination_id', coordId)
+        .order('position');
+
+      if (error) throw error;
+
+      const formattedTasks: PlanningTask[] = (data || []).map(task => ({
+        ...task,
+        assigned_to: Array.isArray(task.assigned_to) 
+          ? task.assigned_to.map(id => String(id))
+          : task.assigned_to 
+            ? [String(task.assigned_to)]
+            : []
+      }));
+      
+      setTasks(formattedTasks);
+    } catch (error) {
+      console.error('Erreur chargement tâches:', error);
+    }
+  };
+
+  const loadTeamMembers = async (coordId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('coordination_team')
+        .select('*')
+        .eq('coordination_id', coordId)
+        .order('created_at');
+
+      if (error) throw error;
+
+      const mappedData = (data || []).map((item: any) => ({
+        id: item.id,
+        name: item.name,
+        role: item.role,
+        email: item.email,
+        phone: item.phone,
+        type: (item.type === 'vendor' ? 'vendor' : 'person') as 'person' | 'vendor',
+        prestataire_id: item.prestataire_id,
+        notes: item.notes
+      }));
+
+      setTeamMembers(mappedData);
+    } catch (error) {
+      console.error('Erreur chargement équipe:', error);
+    }
+  };
+
+  const refreshData = async () => {
+    if (coordination?.id) {
+      await Promise.all([
+        loadTasks(coordination.id),
+        loadTeamMembers(coordination.id)
+      ]);
     }
   };
 
@@ -77,48 +211,183 @@ const MonJourMPlanning: React.FC = () => {
   };
 
   const handleAddTask = async () => {
-    if (!formData.title.trim()) {
-      console.error('Task title is required');
-      return;
-    }
+    if (!formData.title.trim() || !coordination?.id) return;
 
-    console.log('Attempting to add task:', formData);
-    const success = await addTask({
-      title: formData.title,
-      description: formData.description,
-      start_time: formData.start_time,
-      end_time: formData.end_time,
-      duration: formData.duration,
-      category: formData.category,
-      priority: formData.priority,
-      status: formData.status,
-      assigned_to: formData.assigned_to
-    });
+    try {
+      const { data, error } = await supabase
+        .from('coordination_planning')
+        .insert({
+          coordination_id: coordination.id,
+          title: formData.title,
+          description: formData.description || null,
+          start_time: formData.start_time || null,
+          end_time: formData.end_time || null,
+          duration: formData.duration || 30,
+          category: formData.category,
+          priority: formData.priority,
+          status: formData.status,
+          assigned_to: formData.assigned_to && formData.assigned_to.length > 0 ? formData.assigned_to : null,
+          position: tasks.length
+        })
+        .select()
+        .single();
 
-    if (success) {
+      if (error) throw error;
+
+      const newTask: PlanningTask = {
+        ...data,
+        assigned_to: Array.isArray(data.assigned_to) 
+          ? data.assigned_to.map(id => String(id))
+          : data.assigned_to 
+            ? [String(data.assigned_to)]
+            : []
+      };
+      
+      setTasks(prev => [...prev, newTask]);
       resetForm();
       setShowAddTask(false);
+      
+      toast({
+        title: "Tâche ajoutée",
+        description: "La nouvelle tâche a été ajoutée au planning"
+      });
+
+    } catch (error) {
+      console.error('Erreur ajout tâche:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible d'ajouter la tâche",
+        variant: "destructive"
+      });
     }
   };
 
   const handleUpdateTask = async () => {
     if (!editingTask) return;
 
-    const success = await updateTask(editingTask);
-    if (success) {
+    try {
+      const { error } = await supabase
+        .from('coordination_planning')
+        .update({
+          title: editingTask.title,
+          description: editingTask.description || null,
+          start_time: editingTask.start_time || null,
+          end_time: editingTask.end_time || null,
+          duration: editingTask.duration || 30,
+          category: editingTask.category,
+          priority: editingTask.priority,
+          status: editingTask.status,
+          assigned_to: editingTask.assigned_to && editingTask.assigned_to.length > 0 ? editingTask.assigned_to : null
+        })
+        .eq('id', editingTask.id);
+
+      if (error) throw error;
+
+      setTasks(prev => prev.map(t => t.id === editingTask.id ? editingTask : t));
       setEditingTask(null);
+      
+      toast({
+        title: "Tâche modifiée",
+        description: "Les informations ont été mises à jour"
+      });
+
+    } catch (error) {
+      console.error('Erreur modification tâche:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de modifier la tâche",
+        variant: "destructive"
+      });
     }
   };
 
   const handleDeleteTask = async (taskId: string) => {
-    if (window.confirm('Êtes-vous sûr de vouloir supprimer cette tâche ?')) {
-      await deleteTask(taskId);
+    if (!window.confirm('Êtes-vous sûr de vouloir supprimer cette tâche ?')) return;
+
+    try {
+      const { error } = await supabase
+        .from('coordination_planning')
+        .delete()
+        .eq('id', taskId);
+
+      if (error) throw error;
+      
+      setTasks(prev => prev.filter(t => t.id !== taskId));
+      
+      toast({
+        title: "Tâche supprimée",
+        description: "La tâche a été retirée du planning"
+      });
+
+    } catch (error) {
+      console.error('Erreur suppression tâche:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de supprimer la tâche",
+        variant: "destructive"
+      });
     }
   };
 
   const toggleTaskStatus = async (task: PlanningTask) => {
     const newStatus = task.status === 'completed' ? 'todo' : 'completed';
-    await updateTask({ ...task, status: newStatus });
+    const updatedTask = { ...task, status: newStatus };
+    
+    try {
+      const { error } = await supabase
+        .from('coordination_planning')
+        .update({ status: newStatus })
+        .eq('id', task.id);
+
+      if (error) throw error;
+      
+      setTasks(prev => prev.map(t => t.id === task.id ? updatedTask : t));
+    } catch (error) {
+      console.error('Erreur changement statut:', error);
+    }
+  };
+
+  const handleAISuggestion = async (suggestion: { title: string; description: string; category: string; priority: string; duration: number }) => {
+    if (!coordination?.id) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('coordination_planning')
+        .insert({
+          coordination_id: coordination.id,
+          title: suggestion.title,
+          description: suggestion.description,
+          category: suggestion.category,
+          priority: suggestion.priority,
+          status: 'todo',
+          duration: suggestion.duration,
+          position: tasks.length
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      const newTask: PlanningTask = {
+        ...data,
+        assigned_to: []
+      };
+      
+      setTasks(prev => [...prev, newTask]);
+      
+      toast({
+        title: "Suggestion ajoutée",
+        description: "La tâche suggérée a été ajoutée au planning"
+      });
+
+    } catch (error) {
+      console.error('Erreur ajout suggestion:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible d'ajouter la suggestion",
+        variant: "destructive"
+      });
+    }
   };
 
   const formatTime = (timeString?: string) => {
@@ -132,7 +401,6 @@ const MonJourMPlanning: React.FC = () => {
           minute: '2-digit'
         });
       } else {
-        // Si c'est déjà au format HH:MM
         return timeString;
       }
     } catch (error) {
@@ -157,41 +425,11 @@ const MonJourMPlanning: React.FC = () => {
     }
   };
 
-  const handleAISuggestion = async (suggestion: { title: string; description: string; category: string; priority: string; duration: number }) => {
-    console.log('Adding AI suggestion:', suggestion);
-    const success = await addTask({
-      title: suggestion.title,
-      description: suggestion.description,
-      category: suggestion.category,
-      priority: suggestion.priority,
-      status: 'todo',
-      duration: suggestion.duration,
-      assigned_to: []
-    });
-
-    if (success) {
-      console.log('AI suggestion added successfully');
-    } else {
-      console.error('Failed to add AI suggestion');
-    }
-  };
-
-  if (isInitializing) {
+  if (isLoading) {
     return (
       <div className="flex justify-center items-center p-12">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-wedding-olive"></div>
-        <span className="ml-3">Initialisation de votre espace...</span>
-      </div>
-    );
-  }
-
-  if (!coordination) {
-    return (
-      <div className="text-center py-12 text-gray-500">
-        <p>Impossible d'initialiser votre espace Mon Jour-M</p>
-        <Button onClick={handleRefresh} className="mt-4" variant="outline">
-          Réessayer
-        </Button>
+        <span className="ml-3">Chargement...</span>
       </div>
     );
   }
@@ -207,13 +445,12 @@ const MonJourMPlanning: React.FC = () => {
         
         <div className="flex gap-2">
           <Button
-            onClick={handleRefresh}
+            onClick={refreshData}
             variant="outline"
             size="sm"
-            disabled={isRefreshing}
             className="flex items-center gap-2"
           >
-            <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+            <RefreshCw className="h-4 w-4" />
             Actualiser
           </Button>
 
@@ -353,106 +590,99 @@ const MonJourMPlanning: React.FC = () => {
         </div>
       </div>
 
-      {isLoading ? (
-        <div className="flex justify-center items-center p-8">
-          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-wedding-olive"></div>
-          <span className="ml-3">Chargement du planning...</span>
-        </div>
-      ) : (
-        <Card>
-          <CardHeader>
-            <CardTitle>Timeline du jour J</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {tasks.length > 0 ? (
-              <div className="space-y-4">
-                {tasks.map((task) => (
-                  <div key={task.id} className="p-4 border rounded-lg bg-white shadow-sm hover:shadow-md transition-shadow">
-                    <div className="flex items-start gap-4">
-                      <button
-                        onClick={() => toggleTaskStatus(task)}
-                        className="mt-1"
-                      >
-                        {getStatusIcon(task.status)}
-                      </button>
+      <Card>
+        <CardHeader>
+          <CardTitle>Timeline du jour J</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {tasks.length > 0 ? (
+            <div className="space-y-4">
+              {tasks.map((task) => (
+                <div key={task.id} className="p-4 border rounded-lg bg-white shadow-sm hover:shadow-md transition-shadow">
+                  <div className="flex items-start gap-4">
+                    <button
+                      onClick={() => toggleTaskStatus(task)}
+                      className="mt-1"
+                    >
+                      {getStatusIcon(task.status)}
+                    </button>
 
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-start justify-between">
-                          <div className="flex-1">
-                            <h3 className={`font-medium ${task.status === 'completed' ? 'line-through text-gray-500' : ''}`}>
-                              {task.title}
-                            </h3>
-                            {task.description && (
-                              <p className="text-sm text-gray-600 mt-1">{task.description}</p>
-                            )}
-                          </div>
-
-                          <div className="flex items-center gap-1 ml-4">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => setEditingTask(task)}
-                            >
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleDeleteTask(task.id)}
-                              className="text-red-600 hover:text-red-800"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </div>
-
-                        <div className="flex items-center gap-2 mt-2 text-xs flex-wrap">
-                          {(task.start_time || task.end_time) && (
-                            <div className="flex items-center gap-1 bg-blue-50 px-2 py-1 rounded">
-                              <Clock className="h-3 w-3 text-blue-600" />
-                              <span className="text-blue-700">
-                                {task.start_time && formatTime(task.start_time)}
-                                {task.start_time && task.end_time && ' - '}
-                                {task.end_time && formatTime(task.end_time)}
-                              </span>
-                            </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <h3 className={`font-medium ${task.status === 'completed' ? 'line-through text-gray-500' : ''}`}>
+                            {task.title}
+                          </h3>
+                          {task.description && (
+                            <p className="text-sm text-gray-600 mt-1">{task.description}</p>
                           )}
-                          
-                          <Badge variant="outline">{task.duration} min</Badge>
-                          <Badge className={getPriorityColor(task.priority)}>
-                            {task.priority === 'high' ? 'Élevée' : task.priority === 'medium' ? 'Moyenne' : 'Faible'}
-                          </Badge>
-                          <Badge variant="secondary" className="capitalize">{task.category}</Badge>
                         </div>
 
-                        {task.assigned_to && Array.isArray(task.assigned_to) && task.assigned_to.length > 0 && (
-                          <div className="flex flex-wrap gap-1 mt-2">
-                            {task.assigned_to.map((memberId: string) => {
-                              const member = teamMembers.find(m => m.id === memberId);
-                              return member ? (
-                                <Badge key={memberId} variant="secondary">
-                                  <User className="h-3 w-3 mr-1" />
-                                  {member.name}
-                                </Badge>
-                              ) : null;
-                            })}
+                        <div className="flex items-center gap-1 ml-4">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setEditingTask(task)}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleDeleteTask(task.id)}
+                            className="text-red-600 hover:text-red-800"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2 mt-2 text-xs flex-wrap">
+                        {(task.start_time || task.end_time) && (
+                          <div className="flex items-center gap-1 bg-blue-50 px-2 py-1 rounded">
+                            <Clock className="h-3 w-3 text-blue-600" />
+                            <span className="text-blue-700">
+                              {task.start_time && formatTime(task.start_time)}
+                              {task.start_time && task.end_time && ' - '}
+                              {task.end_time && formatTime(task.end_time)}
+                            </span>
                           </div>
                         )}
+                        
+                        <Badge variant="outline">{task.duration} min</Badge>
+                        <Badge className={getPriorityColor(task.priority)}>
+                          {task.priority === 'high' ? 'Élevée' : task.priority === 'medium' ? 'Moyenne' : 'Faible'}
+                        </Badge>
+                        <Badge variant="secondary" className="capitalize">{task.category}</Badge>
                       </div>
+
+                      {task.assigned_to && Array.isArray(task.assigned_to) && task.assigned_to.length > 0 && (
+                        <div className="flex flex-wrap gap-1 mt-2">
+                          {task.assigned_to.map((memberId: string) => {
+                            const member = teamMembers.find(m => m.id === memberId);
+                            return member ? (
+                              <Badge key={memberId} variant="secondary">
+                                <User className="h-3 w-3 mr-1" />
+                                {member.name}
+                              </Badge>
+                            ) : null;
+                          })}
+                        </div>
+                      )}
                     </div>
                   </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-12 text-gray-500">
-                <Calendar className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <p className="text-lg mb-2">Aucune tâche planifiée</p>
-                <p className="text-sm">Commencez par ajouter votre première tâche au planning</p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      )}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12 text-gray-500">
+              <Calendar className="h-12 w-12 mx-auto mb-4 opacity-50" />
+              <p className="text-lg mb-2">Aucune tâche planifiée</p>
+              <p className="text-sm">Commencez par ajouter votre première tâche au planning</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       {/* Modal d'édition de tâche */}
       {editingTask && (

@@ -1,14 +1,15 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Users, User, Building, Phone, Mail, Edit, Trash2, RefreshCw } from 'lucide-react';
+import { Plus, Users, Phone, Mail, Edit, Trash2, User } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { useMonJourM } from '@/contexts/MonJourMContext';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/components/ui/use-toast';
 
 interface TeamMember {
   id: string;
@@ -21,21 +22,24 @@ interface TeamMember {
   notes?: string;
 }
 
-const MonJourMEquipe: React.FC = () => {
-  const { 
-    coordination, 
-    teamMembers, 
-    isLoading, 
-    isInitializing, 
-    refreshData, 
-    addTeamMember, 
-    updateTeamMember, 
-    deleteTeamMember 
-  } = useMonJourM();
+interface WeddingCoordination {
+  id: string;
+  title: string;
+  description?: string;
+  wedding_date?: string;
+  wedding_location?: string;
+  user_id: string;
+  created_at: string;
+  updated_at: string;
+}
 
+const MonJourMEquipe: React.FC = () => {
+  const { toast } = useToast();
+  const [coordination, setCoordination] = useState<WeddingCoordination | null>(null);
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [showAddMember, setShowAddMember] = useState(false);
   const [editingMember, setEditingMember] = useState<TeamMember | null>(null);
-  const [isRefreshing, setIsRefreshing] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     role: '',
@@ -45,12 +49,92 @@ const MonJourMEquipe: React.FC = () => {
     notes: ''
   });
 
-  const handleRefresh = async () => {
-    setIsRefreshing(true);
+  // Initialisation simple
+  useEffect(() => {
+    initializeData();
+  }, []);
+
+  const initializeData = async () => {
     try {
-      await refreshData();
+      setIsLoading(true);
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        toast({
+          title: "Erreur",
+          description: "Vous devez être connecté",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Récupérer ou créer la coordination
+      let { data: coordinations, error: coordError } = await supabase
+        .from('wedding_coordination')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
+      if (coordError) throw coordError;
+
+      let activeCoordination: WeddingCoordination;
+
+      if (coordinations && coordinations.length > 0) {
+        activeCoordination = coordinations[0];
+      } else {
+        const { data: newCoordination, error: createError } = await supabase
+          .from('wedding_coordination')
+          .insert({
+            user_id: user.id,
+            title: 'Mon Mariage',
+            description: 'Organisation de mon mariage'
+          })
+          .select()
+          .single();
+
+        if (createError) throw createError;
+        activeCoordination = newCoordination;
+      }
+
+      setCoordination(activeCoordination);
+      await loadTeamMembers(activeCoordination.id);
+
+    } catch (error) {
+      console.error('Erreur initialisation:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de charger les données",
+        variant: "destructive"
+      });
     } finally {
-      setIsRefreshing(false);
+      setIsLoading(false);
+    }
+  };
+
+  const loadTeamMembers = async (coordId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('coordination_team')
+        .select('*')
+        .eq('coordination_id', coordId)
+        .order('created_at');
+
+      if (error) throw error;
+
+      const mappedData = (data || []).map((item: any) => ({
+        id: item.id,
+        name: item.name,
+        role: item.role,
+        email: item.email,
+        phone: item.phone,
+        type: (item.type === 'vendor' ? 'vendor' : 'person') as 'person' | 'vendor',
+        prestataire_id: item.prestataire_id,
+        notes: item.notes
+      }));
+
+      setTeamMembers(mappedData);
+    } catch (error) {
+      console.error('Erreur chargement équipe:', error);
     }
   };
 
@@ -66,169 +150,166 @@ const MonJourMEquipe: React.FC = () => {
   };
 
   const handleAddMember = async () => {
-    if (!formData.name.trim()) {
-      console.error('Member name is required');
-      return;
-    }
+    if (!formData.name.trim() || !coordination?.id) return;
 
-    console.log('Attempting to add member:', formData);
-    const success = await addTeamMember({
-      name: formData.name,
-      role: formData.role || 'Membre',
-      email: formData.email,
-      phone: formData.phone,
-      type: formData.type,
-      notes: formData.notes
-    });
+    try {
+      const { data, error } = await supabase
+        .from('coordination_team')
+        .insert({
+          coordination_id: coordination.id,
+          name: formData.name,
+          role: formData.role || 'Membre',
+          email: formData.email || null,
+          phone: formData.phone || null,
+          type: formData.type,
+          notes: formData.notes || null
+        })
+        .select()
+        .single();
 
-    if (success) {
+      if (error) throw error;
+
+      const newMember: TeamMember = {
+        id: data.id,
+        name: data.name,
+        role: data.role,
+        email: data.email,
+        phone: data.phone,
+        type: data.type as 'person' | 'vendor',
+        prestataire_id: data.prestataire_id,
+        notes: data.notes
+      };
+      
+      setTeamMembers(prev => [...prev, newMember]);
       resetForm();
       setShowAddMember(false);
+      
+      toast({
+        title: "Membre ajouté",
+        description: "Le nouveau membre a été ajouté à l'équipe"
+      });
+
+    } catch (error) {
+      console.error('Erreur ajout membre:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible d'ajouter le membre",
+        variant: "destructive"
+      });
     }
   };
 
   const handleUpdateMember = async () => {
     if (!editingMember) return;
 
-    const success = await updateTeamMember(editingMember);
-    if (success) {
+    try {
+      const { error } = await supabase
+        .from('coordination_team')
+        .update({
+          name: editingMember.name,
+          role: editingMember.role,
+          email: editingMember.email || null,
+          phone: editingMember.phone || null,
+          type: editingMember.type,
+          notes: editingMember.notes || null
+        })
+        .eq('id', editingMember.id);
+
+      if (error) throw error;
+
+      setTeamMembers(prev => prev.map(m => m.id === editingMember.id ? editingMember : m));
       setEditingMember(null);
+      
+      toast({
+        title: "Membre modifié",
+        description: "Les informations ont été mises à jour"
+      });
+
+    } catch (error) {
+      console.error('Erreur modification membre:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de modifier le membre",
+        variant: "destructive"
+      });
     }
   };
 
   const handleDeleteMember = async (memberId: string) => {
-    if (window.confirm('Êtes-vous sûr de vouloir supprimer ce membre ?')) {
-      await deleteTeamMember(memberId);
+    if (!window.confirm('Êtes-vous sûr de vouloir supprimer ce membre ?')) return;
+
+    try {
+      const { error } = await supabase
+        .from('coordination_team')
+        .delete()
+        .eq('id', memberId);
+
+      if (error) throw error;
+      
+      setTeamMembers(prev => prev.filter(m => m.id !== memberId));
+      
+      toast({
+        title: "Membre supprimé",
+        description: "Le membre a été retiré de l'équipe"
+      });
+
+    } catch (error) {
+      console.error('Erreur suppression membre:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de supprimer le membre",
+        variant: "destructive"
+      });
     }
   };
 
-  const getSubRoleOptions = (type: 'person' | 'vendor') => {
-    if (type === 'person') {
-      return [
-        'Témoin',
-        'Demoiselle d\'honneur',
-        'Garçon d\'honneur',
-        'Père de la mariée',
-        'Mère de la mariée',
-        'Père du marié',
-        'Mère du marié',
-        'Famille',
-        'Ami(e)',
-        'Autre'
-      ];
-    } else {
-      return [
-        'Photographe',
-        'Vidéaste',
-        'DJ/Musicien',
-        'Fleuriste',
-        'Traiteur',
-        'Wedding Planner',
-        'Officiant',
-        'Coiffeur/Maquilleur',
-        'Décorateur',
-        'Autre prestataire'
-      ];
-    }
-  };
-
-  if (isInitializing) {
+  if (isLoading) {
     return (
       <div className="flex justify-center items-center p-12">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-wedding-olive"></div>
-        <span className="ml-3">Initialisation de votre espace...</span>
+        <span className="ml-3">Chargement...</span>
       </div>
     );
   }
-
-  if (!coordination) {
-    return (
-      <div className="text-center py-12 text-gray-500">
-        <p>Impossible d'initialiser votre espace Mon Jour-M</p>
-        <Button onClick={handleRefresh} className="mt-4" variant="outline">
-          Réessayer
-        </Button>
-      </div>
-    );
-  }
-
-  const people = teamMembers.filter(m => m.type === 'person');
-  const vendors = teamMembers.filter(m => m.type === 'vendor');
 
   return (
     <div className="space-y-6">
-      {/* En-tête avec bouton refresh */}
+      {/* En-tête avec boutons */}
       <div className="flex flex-col md:flex-row gap-4 justify-between items-start">
         <div>
-          <h2 className="text-2xl font-semibold mb-2">Équipe & Prestataires</h2>
-          <p className="text-gray-600">Gérez toutes les personnes impliquées dans votre mariage</p>
+          <h2 className="text-2xl font-semibold mb-2">Équipe du jour J</h2>
+          <p className="text-gray-600">Gérez votre équipe et vos prestataires</p>
         </div>
         
         <div className="flex gap-2">
-          <Button
-            onClick={handleRefresh}
-            variant="outline"
-            size="sm"
-            disabled={isRefreshing}
-            className="flex items-center gap-2"
-          >
-            <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
-            Actualiser
-          </Button>
-
           <Dialog open={showAddMember} onOpenChange={setShowAddMember}>
             <DialogTrigger asChild>
               <Button className="flex items-center gap-2">
                 <Plus className="h-4 w-4" />
-                Ajouter une personne
+                Ajouter un membre
               </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="max-w-2xl">
               <DialogHeader>
-                <DialogTitle>Ajouter un membre d'équipe</DialogTitle>
+                <DialogTitle>Ajouter un membre à l'équipe</DialogTitle>
               </DialogHeader>
               <div className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Nom *</label>
-                    <Input
-                      value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      placeholder="Nom de la personne"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Type *</label>
-                    <Select 
-                      value={formData.type} 
-                      onValueChange={(value: 'person' | 'vendor') => setFormData({ ...formData, type: value, role: '' })}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Sélectionner un type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="person">👤 Personne</SelectItem>
-                        <SelectItem value="vendor">🏢 Prestataire</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Nom *</label>
+                  <Input
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    placeholder="Nom du membre"
+                  />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-1">Rôle spécifique</label>
-                  <Select 
-                    value={formData.role} 
-                    onValueChange={(value) => setFormData({ ...formData, role: value })}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Sélectionner un rôle (optionnel)" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {getSubRoleOptions(formData.type).map((role) => (
-                        <SelectItem key={role} value={role}>{role}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <label className="block text-sm font-medium mb-1">Rôle</label>
+                  <Input
+                    value={formData.role}
+                    onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+                    placeholder="Rôle ou fonction"
+                  />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -238,17 +319,31 @@ const MonJourMEquipe: React.FC = () => {
                       type="email"
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      placeholder="email@exemple.com"
+                      placeholder="Email de contact"
                     />
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-1">Téléphone</label>
                     <Input
+                      type="tel"
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      placeholder="06 12 34 56 78"
+                      placeholder="Numéro de téléphone"
                     />
                   </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-1">Type</label>
+                  <Select value={formData.type} onValueChange={(value: 'person' | 'vendor') => setFormData({ ...formData, type: value })}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="person">Personne</SelectItem>
+                      <SelectItem value="vendor">Prestataire</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 <div>
@@ -256,14 +351,14 @@ const MonJourMEquipe: React.FC = () => {
                   <Textarea
                     value={formData.notes}
                     onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                    placeholder="Notes et informations complémentaires"
+                    placeholder="Notes additionnelles"
                     rows={3}
                   />
                 </div>
 
                 <div className="flex gap-2">
                   <Button onClick={handleAddMember} disabled={!formData.name.trim()}>
-                    Ajouter
+                    Ajouter le membre
                   </Button>
                   <Button variant="outline" onClick={() => {
                     resetForm();
@@ -278,196 +373,105 @@ const MonJourMEquipe: React.FC = () => {
         </div>
       </div>
 
-      {isLoading ? (
-        <div className="flex justify-center items-center p-8">
-          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-wedding-olive"></div>
-          <span className="ml-3">Chargement de l'équipe...</span>
-        </div>
-      ) : (
-        <div className="space-y-6">
-          {/* Section Personnes */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <User className="h-5 w-5" />
-                Personnes ({people.length})
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {people.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {people.map((member) => (
-                    <div key={member.id} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
-                      <div className="flex justify-between items-start mb-3">
-                        <div>
-                          <h3 className="font-medium">{member.name}</h3>
-                          {member.role && (
-                            <Badge variant="outline" className="mt-1">
-                              {member.role}
-                            </Badge>
-                          )}
-                        </div>
-                        <div className="flex gap-1">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => setEditingMember(member)}
-                          >
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleDeleteMember(member.id)}
-                            className="text-red-600 hover:text-red-800"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
-                      
-                      <div className="space-y-1 text-sm text-gray-600">
-                        {member.email && (
-                          <div className="flex items-center gap-2">
-                            <Mail className="h-4 w-4" />
-                            <span className="truncate">{member.email}</span>
-                          </div>
-                        )}
-                        {member.phone && (
-                          <div className="flex items-center gap-2">
-                            <Phone className="h-4 w-4" />
-                            <span>{member.phone}</span>
-                          </div>
-                        )}
-                      </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>Membres de l'équipe</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {teamMembers.length > 0 ? (
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {teamMembers.map((member) => (
+                <Card key={member.id} className="p-4">
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex items-center gap-2">
+                      <User className="h-5 w-5 text-gray-400" />
+                      <h3 className="font-medium">{member.name}</h3>
                     </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-8 text-gray-500">
-                  <User className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                  <p>Aucune personne dans l'équipe</p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Section Prestataires */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Building className="h-5 w-5" />
-                Prestataires ({vendors.length})
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {vendors.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {vendors.map((member) => (
-                    <div key={member.id} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
-                      <div className="flex justify-between items-start mb-3">
-                        <div>
-                          <h3 className="font-medium">{member.name}</h3>
-                          <Badge variant="outline" className="mt-1 bg-blue-50 text-blue-700">
-                            {member.role}
-                          </Badge>
-                        </div>
-                        <div className="flex gap-1">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => setEditingMember(member)}
-                          >
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleDeleteMember(member.id)}
-                            className="text-red-600 hover:text-red-800"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
-                      
-                      <div className="space-y-1 text-sm text-gray-600">
-                        {member.email && (
-                          <div className="flex items-center gap-2">
-                            <Mail className="h-4 w-4" />
-                            <span className="truncate">{member.email}</span>
-                          </div>
-                        )}
-                        {member.phone && (
-                          <div className="flex items-center gap-2">
-                            <Phone className="h-4 w-4" />
-                            <span>{member.phone}</span>
-                          </div>
-                        )}
-                      </div>
+                    <div className="flex items-center gap-1">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setEditingMember(member)}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleDeleteMember(member.id)}
+                        className="text-red-600 hover:text-red-800"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
                     </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-8 text-gray-500">
-                  <Building className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                  <p>Aucun prestataire dans l'équipe</p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-      )}
+                  </div>
 
-      {/* Modal d'édition */}
+                  <div className="space-y-2">
+                    {member.role && (
+                      <p className="text-sm text-gray-600">{member.role}</p>
+                    )}
+                    
+                    {member.email && (
+                      <div className="flex items-center gap-2 text-sm">
+                        <Mail className="h-3 w-3 text-gray-400" />
+                        <span>{member.email}</span>
+                      </div>
+                    )}
+                    
+                    {member.phone && (
+                      <div className="flex items-center gap-2 text-sm">
+                        <Phone className="h-3 w-3 text-gray-400" />
+                        <span>{member.phone}</span>
+                      </div>
+                    )}
+
+                    <div className="flex gap-1 mt-2">
+                      <Badge variant={member.type === 'vendor' ? 'default' : 'secondary'}>
+                        {member.type === 'vendor' ? 'Prestataire' : 'Personne'}
+                      </Badge>
+                    </div>
+
+                    {member.notes && (
+                      <p className="text-xs text-gray-500 mt-2">{member.notes}</p>
+                    )}
+                  </div>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12 text-gray-500">
+              <Users className="h-12 w-12 mx-auto mb-4 opacity-50" />
+              <p className="text-lg mb-2">Aucun membre dans l'équipe</p>
+              <p className="text-sm">Commencez par ajouter votre premier membre</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Modal d'édition de membre */}
       {editingMember && (
         <Dialog open={!!editingMember} onOpenChange={() => setEditingMember(null)}>
-          <DialogContent>
+          <DialogContent className="max-w-2xl">
             <DialogHeader>
               <DialogTitle>Modifier le membre</DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium mb-1">Nom *</label>
-                  <Input
-                    value={editingMember.name}
-                    onChange={(e) => setEditingMember({ ...editingMember, name: e.target.value })}
-                    placeholder="Nom de la personne"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">Type *</label>
-                  <Select 
-                    value={editingMember.type} 
-                    onValueChange={(value: 'person' | 'vendor') => setEditingMember({ ...editingMember, type: value })}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="person">👤 Personne</SelectItem>
-                      <SelectItem value="vendor">🏢 Prestataire</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Nom *</label>
+                <Input
+                  value={editingMember.name}
+                  onChange={(e) => setEditingMember({ ...editingMember, name: e.target.value })}
+                  placeholder="Nom du membre"
+                />
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-1">Rôle spécifique</label>
-                <Select 
-                  value={editingMember.role} 
-                  onValueChange={(value) => setEditingMember({ ...editingMember, role: value })}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Sélectionner un rôle" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {getSubRoleOptions(editingMember.type).map((role) => (
-                      <SelectItem key={role} value={role}>{role}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <label className="block text-sm font-medium mb-1">Rôle</label>
+                <Input
+                  value={editingMember.role || ''}
+                  onChange={(e) => setEditingMember({ ...editingMember, role: e.target.value })}
+                  placeholder="Rôle ou fonction"
+                />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -477,17 +481,31 @@ const MonJourMEquipe: React.FC = () => {
                     type="email"
                     value={editingMember.email || ''}
                     onChange={(e) => setEditingMember({ ...editingMember, email: e.target.value })}
-                    placeholder="email@exemple.com"
+                    placeholder="Email de contact"
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1">Téléphone</label>
                   <Input
+                    type="tel"
                     value={editingMember.phone || ''}
                     onChange={(e) => setEditingMember({ ...editingMember, phone: e.target.value })}
-                    placeholder="06 12 34 56 78"
+                    placeholder="Numéro de téléphone"
                   />
                 </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1">Type</label>
+                <Select value={editingMember.type} onValueChange={(value: 'person' | 'vendor') => setEditingMember({ ...editingMember, type: value })}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="person">Personne</SelectItem>
+                    <SelectItem value="vendor">Prestataire</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
               <div>
@@ -495,7 +513,7 @@ const MonJourMEquipe: React.FC = () => {
                 <Textarea
                   value={editingMember.notes || ''}
                   onChange={(e) => setEditingMember({ ...editingMember, notes: e.target.value })}
-                  placeholder="Notes et informations complémentaires"
+                  placeholder="Notes additionnelles"
                   rows={3}
                 />
               </div>
