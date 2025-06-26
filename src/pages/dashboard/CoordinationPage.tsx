@@ -93,7 +93,7 @@ const CoordinationPage = () => {
                   <CardTitle>Coordination d'Équipe</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <TeamTasksSection user={user} />
+                  <TeamTasksSection />
                 </CardContent>
               </Card>
             </TabsContent>

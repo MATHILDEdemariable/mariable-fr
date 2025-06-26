@@ -218,7 +218,8 @@ const MonJourMPlanning: React.FC = () => {
           priority: formData.priority,
           status: formData.status,
           assigned_to: formData.assigned_to && formData.assigned_to.length > 0 ? formData.assigned_to : null,
-          position: tasks.length
+          position: tasks.length,
+          is_ai_generated: false  // Ajout de la propriété manquante
         })
         .select()
         .single();
@@ -357,7 +358,8 @@ const MonJourMPlanning: React.FC = () => {
           priority: suggestion.priority,
           status: 'todo',
           duration: suggestion.duration,
-          position: tasks.length
+          position: tasks.length,
+          is_ai_generated: true  // Ajout de la propriété manquante
         })
         .select()
         .single();
