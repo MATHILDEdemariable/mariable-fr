@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
@@ -64,56 +63,141 @@ export const MonJourMProvider: React.FC<{ children: ReactNode }> = ({ children }
   const [isLoading, setIsLoading] = useState(false);
   const [isInitializing, setIsInitializing] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const { toast } = useToast();
 
-  // Cache keys
-  const CACHE_KEYS = {
-    coordination: 'monjourm_coordination',
-    tasks: 'monjourm_tasks',
-    teamMembers: 'monjourm_team_members'
-  };
+  // Fonction pour obtenir les clés de cache spécifiques à l'utilisateur
+  const getCacheKeys = useCallback((userId: string) => ({
+    coordination: `monjourm_coordination_${userId}`,
+    tasks: `monjourm_tasks_${userId}`,
+    teamMembers: `monjourm_team_members_${userId}`
+  }), []);
 
-  // Load from cache on mount
+  // Fonction pour nettoyer le cache d'un utilisateur spécifique
+  const clearUserCache = useCallback((userId: string) => {
+    const cacheKeys = getCacheKeys(userId);
+    localStorage.removeItem(cacheKeys.coordination);
+    localStorage.removeItem(cacheKeys.tasks);
+    localStorage.removeItem(cacheKeys.teamMembers);
+    console.log('🧹 Cache cleared for user:', userId);
+  }, [getCacheKeys]);
+
+  // Fonction pour nettoyer tout le cache Mon Jour-M
+  const clearAllCache = useCallback(() => {
+    const keys = Object.keys(localStorage);
+    keys.forEach(key => {
+      if (key.startsWith('monjourm_')) {
+        localStorage.removeItem(key);
+      }
+    });
+    console.log('🧹 All Mon Jour-M cache cleared');
+  }, []);
+
+  // Surveiller les changements d'utilisateur
   useEffect(() => {
+    const checkUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      const newUserId = user?.id || null;
+      
+      if (currentUserId !== newUserId) {
+        console.log('👤 User changed from', currentUserId, 'to', newUserId);
+        
+        // Reset state when user changes
+        setCoordination(null);
+        setTasks([]);
+        setTeamMembers([]);
+        setIsInitialized(false);
+        
+        setCurrentUserId(newUserId);
+      }
+    };
+
+    checkUser();
+
+    // Écouter les changements d'auth
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      const newUserId = session?.user?.id || null;
+      if (currentUserId !== newUserId) {
+        console.log('👤 Auth state changed, user:', newUserId);
+        
+        // Reset state when user changes
+        setCoordination(null);
+        setTasks([]);
+        setTeamMembers([]);
+        setIsInitialized(false);
+        
+        setCurrentUserId(newUserId);
+      }
+    });
+
+    return () => {
+      subscription?.unsubscribe();
+    };
+  }, [currentUserId]);
+
+  // Load from cache on mount or user change
+  useEffect(() => {
+    if (!currentUserId) return;
+
     try {
-      const cachedCoordination = localStorage.getItem(CACHE_KEYS.coordination);
-      const cachedTasks = localStorage.getItem(CACHE_KEYS.tasks);
-      const cachedTeamMembers = localStorage.getItem(CACHE_KEYS.teamMembers);
+      const cacheKeys = getCacheKeys(currentUserId);
+      const cachedCoordination = localStorage.getItem(cacheKeys.coordination);
+      const cachedTasks = localStorage.getItem(cacheKeys.tasks);
+      const cachedTeamMembers = localStorage.getItem(cacheKeys.teamMembers);
 
       if (cachedCoordination) {
-        setCoordination(JSON.parse(cachedCoordination));
+        const parsed = JSON.parse(cachedCoordination);
+        // Vérifier que la coordination cached appartient bien à l'utilisateur actuel
+        if (parsed.user_id === currentUserId) {
+          setCoordination(parsed);
+          console.log('📥 Loaded coordination from cache for user:', currentUserId);
+        } else {
+          localStorage.removeItem(cacheKeys.coordination);
+        }
       }
       if (cachedTasks) {
         setTasks(JSON.parse(cachedTasks));
+        console.log('📥 Loaded tasks from cache for user:', currentUserId);
       }
       if (cachedTeamMembers) {
         setTeamMembers(JSON.parse(cachedTeamMembers));
+        console.log('📥 Loaded team members from cache for user:', currentUserId);
       }
     } catch (error) {
-      console.error('❌ Error loading cache:', error);
+      console.error('❌ Error loading cache for user:', currentUserId, error);
+      // En cas d'erreur, nettoyer le cache de cet utilisateur
+      if (currentUserId) {
+        clearUserCache(currentUserId);
+      }
     }
-  }, []);
+  }, [currentUserId, getCacheKeys, clearUserCache]);
 
-  // Cache coordination
+  // Cache coordination with user-specific key
   useEffect(() => {
-    if (coordination) {
-      localStorage.setItem(CACHE_KEYS.coordination, JSON.stringify(coordination));
+    if (coordination && currentUserId) {
+      const cacheKeys = getCacheKeys(currentUserId);
+      localStorage.setItem(cacheKeys.coordination, JSON.stringify(coordination));
+      console.log('💾 Coordination cached for user:', currentUserId);
     }
-  }, [coordination]);
+  }, [coordination, currentUserId, getCacheKeys]);
 
-  // Cache tasks
+  // Cache tasks with user-specific key
   useEffect(() => {
-    if (tasks.length > 0) {
-      localStorage.setItem(CACHE_KEYS.tasks, JSON.stringify(tasks));
+    if (tasks.length > 0 && currentUserId) {
+      const cacheKeys = getCacheKeys(currentUserId);
+      localStorage.setItem(cacheKeys.tasks, JSON.stringify(tasks));
+      console.log('💾 Tasks cached for user:', currentUserId, tasks.length, 'tasks');
     }
-  }, [tasks]);
+  }, [tasks, currentUserId, getCacheKeys]);
 
-  // Cache team members
+  // Cache team members with user-specific key
   useEffect(() => {
-    if (teamMembers.length > 0) {
-      localStorage.setItem(CACHE_KEYS.teamMembers, JSON.stringify(teamMembers));
+    if (teamMembers.length > 0 && currentUserId) {
+      const cacheKeys = getCacheKeys(currentUserId);
+      localStorage.setItem(cacheKeys.teamMembers, JSON.stringify(teamMembers));
+      console.log('💾 Team members cached for user:', currentUserId, teamMembers.length, 'members');
     }
-  }, [teamMembers]);
+  }, [teamMembers, currentUserId, getCacheKeys]);
 
   const initializeCoordination = useCallback(async (): Promise<WeddingCoordination | null> => {
     if (isInitializing || isInitialized) return coordination;
@@ -129,7 +213,7 @@ export const MonJourMProvider: React.FC<{ children: ReactNode }> = ({ children }
 
       console.log('🚀 Initializing coordination for user:', user.id);
 
-      // Vérifier si une coordination existe déjà - STRICTEMENT UNE SEULE
+      // Vérifier si une coordination existe déjà - STRICTEMENT pour cet utilisateur
       const { data: existingCoordinations, error: fetchError } = await supabase
         .from('wedding_coordination')
         .select('*')
@@ -144,13 +228,13 @@ export const MonJourMProvider: React.FC<{ children: ReactNode }> = ({ children }
       let activeCoordination: WeddingCoordination;
 
       if (existingCoordinations && existingCoordinations.length > 0) {
-        // Prendre la première coordination (la plus récente)
+        // Prendre la première coordination (la plus récente) pour CET utilisateur
         activeCoordination = existingCoordinations[0];
-        console.log('✅ Found existing coordination:', activeCoordination.id);
+        console.log('✅ Found existing coordination for user:', user.id, 'coordination:', activeCoordination.id);
 
-        // Supprimer les doublons s'il y en a
+        // Supprimer les doublons s'il y en a pour CET utilisateur
         if (existingCoordinations.length > 1) {
-          console.log('🧹 Cleaning up duplicate coordinations...');
+          console.log('🧹 Cleaning up duplicate coordinations for user:', user.id);
           const duplicateIds = existingCoordinations.slice(1).map(c => c.id);
           
           // Supprimer les tâches des doublons
@@ -171,11 +255,11 @@ export const MonJourMProvider: React.FC<{ children: ReactNode }> = ({ children }
             .delete()
             .in('id', duplicateIds);
           
-          console.log('✅ Cleaned up duplicates');
+          console.log('✅ Cleaned up duplicates for user:', user.id);
         }
       } else {
-        // Créer une nouvelle coordination
-        console.log('🆕 Creating new coordination...');
+        // Créer une nouvelle coordination pour CET utilisateur
+        console.log('🆕 Creating new coordination for user:', user.id);
         const { data: newCoordination, error: createError } = await supabase
           .from('wedding_coordination')
           .insert({
@@ -192,7 +276,7 @@ export const MonJourMProvider: React.FC<{ children: ReactNode }> = ({ children }
         }
 
         activeCoordination = newCoordination;
-        console.log('✅ Created new coordination:', activeCoordination.id);
+        console.log('✅ Created new coordination for user:', user.id, 'coordination:', activeCoordination.id);
       }
 
       setCoordination(activeCoordination);
@@ -603,27 +687,28 @@ export const MonJourMProvider: React.FC<{ children: ReactNode }> = ({ children }
     }
   }, [toast]);
 
-  // Initialisation automatique au montage
+  // Initialisation automatique au montage quand l'utilisateur est disponible
   useEffect(() => {
-    if (!isInitialized && !isInitializing) {
+    if (currentUserId && !isInitialized && !isInitializing) {
+      console.log('🔄 Auto-initializing for user:', currentUserId);
       initializeCoordination();
     }
-  }, [initializeCoordination, isInitialized, isInitializing]);
+  }, [currentUserId, initializeCoordination, isInitialized, isInitializing]);
 
   // Chargement des données quand la coordination est disponible
   useEffect(() => {
-    if (coordination?.id && isInitialized) {
-      console.log('🔄 Loading data for initialized coordination:', coordination.id);
+    if (coordination?.id && isInitialized && currentUserId) {
+      console.log('🔄 Loading data for initialized coordination:', coordination.id, 'user:', currentUserId);
       loadTasks(coordination.id);
       loadTeamMembers(coordination.id);
     }
-  }, [coordination?.id, isInitialized, loadTasks, loadTeamMembers]);
+  }, [coordination?.id, isInitialized, currentUserId, loadTasks, loadTeamMembers]);
 
   // Subscription temps réel persistante
   useEffect(() => {
-    if (!coordination?.id || !isInitialized) return;
+    if (!coordination?.id || !isInitialized || !currentUserId) return;
 
-    console.log('🔗 Setting up persistent realtime subscriptions for coordination:', coordination.id);
+    console.log('🔗 Setting up persistent realtime subscriptions for coordination:', coordination.id, 'user:', currentUserId);
 
     const planningChannel = supabase
       .channel(`coordination-planning-${coordination.id}`)
@@ -686,7 +771,7 @@ export const MonJourMProvider: React.FC<{ children: ReactNode }> = ({ children }
       supabase.removeChannel(planningChannel);
       supabase.removeChannel(teamChannel);
     };
-  }, [coordination?.id, isInitialized, loadTasks, loadTeamMembers]);
+  }, [coordination?.id, isInitialized, currentUserId, loadTasks, loadTeamMembers]);
 
   const value: MonJourMContextType = {
     coordination,
