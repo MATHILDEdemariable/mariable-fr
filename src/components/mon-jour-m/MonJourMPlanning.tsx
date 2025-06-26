@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,10 +7,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Plus, Calendar, Clock, CheckCircle2, Circle, User, RefreshCw, Edit, Trash2 } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/components/ui/use-toast';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { useWeddingCoordination } from '@/hooks/useWeddingCoordination';
+import { useMonJourM } from '@/contexts/MonJourMContext';
 
 interface PlanningTask {
   id: string;
@@ -26,19 +24,21 @@ interface PlanningTask {
   position?: number;
 }
 
-interface TeamMember {
-  id: string;
-  name: string;
-  role: string;
-}
-
 const MonJourMPlanning: React.FC = () => {
-  const { coordination, isLoading: coordinationLoading, refreshCoordination } = useWeddingCoordination();
-  const [tasks, setTasks] = useState<PlanningTask[]>([]);
-  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+  const { 
+    coordination, 
+    tasks, 
+    teamMembers, 
+    isLoading, 
+    isInitializing, 
+    refreshData, 
+    addTask, 
+    updateTask, 
+    deleteTask 
+  } = useMonJourM();
+
   const [showAddTask, setShowAddTask] = useState(false);
   const [editingTask, setEditingTask] = useState<PlanningTask | null>(null);
-  const [isLoadingTasks, setIsLoadingTasks] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
@@ -51,115 +51,11 @@ const MonJourMPlanning: React.FC = () => {
     status: 'todo',
     assigned_to: [] as string[]
   });
-  const { toast } = useToast();
-
-  useEffect(() => {
-    if (coordination?.id) {
-      loadTasks(coordination.id);
-      loadTeamMembers(coordination.id);
-      setupRealtimeSubscription();
-    }
-  }, [coordination?.id]);
-
-  const loadTasks = async (coordId: string) => {
-    console.log('📥 Loading tasks for coordination:', coordId);
-    setIsLoadingTasks(true);
-    
-    try {
-      const { data, error } = await supabase
-        .from('coordination_planning')
-        .select('*')
-        .eq('coordination_id', coordId)
-        .order('position');
-
-      if (error) {
-        console.error('❌ Error loading tasks:', error);
-        toast({
-          title: "Erreur",
-          description: "Impossible de charger le planning",
-          variant: "destructive"
-        });
-        return;
-      }
-
-      console.log('✅ Loaded tasks:', data);
-      
-      // Convertir les données pour correspondre à l'interface PlanningTask
-      const formattedTasks: PlanningTask[] = (data || []).map(task => ({
-        ...task,
-        assigned_to: Array.isArray(task.assigned_to) 
-          ? task.assigned_to.map(id => String(id))
-          : task.assigned_to 
-            ? [String(task.assigned_to)]
-            : []
-      }));
-      
-      setTasks(formattedTasks);
-    } catch (error) {
-      console.error('❌ Error in loadTasks:', error);
-      toast({
-        title: "Erreur",
-        description: "Une erreur est survenue lors du chargement",
-        variant: "destructive"
-      });
-    } finally {
-      setIsLoadingTasks(false);
-    }
-  };
-
-  const loadTeamMembers = async (coordId: string) => {
-    const { data, error } = await supabase
-      .from('coordination_team')
-      .select('id, name, role')
-      .eq('coordination_id', coordId);
-
-    if (error) {
-      console.error('Error loading team members:', error);
-      return;
-    }
-
-    setTeamMembers(data || []);
-  };
-
-  const setupRealtimeSubscription = () => {
-    const channel = supabase
-      .channel('coordination-planning-changes')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'coordination_planning'
-        },
-        () => {
-          if (coordination?.id) {
-            loadTasks(coordination.id);
-          }
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  };
 
   const handleRefresh = async () => {
-    if (!coordination?.id) return;
-    
     setIsRefreshing(true);
     try {
-      await Promise.all([
-        refreshCoordination(),
-        loadTasks(coordination.id),
-        loadTeamMembers(coordination.id)
-      ]);
-      toast({
-        title: "Données actualisées",
-        description: "Le planning a été rechargé avec succès"
-      });
-    } catch (error) {
-      console.error('Error refreshing:', error);
+      await refreshData();
     } finally {
       setIsRefreshing(false);
     }
@@ -179,154 +75,43 @@ const MonJourMPlanning: React.FC = () => {
     });
   };
 
-  const addTask = async () => {
-    if (!coordination?.id || !formData.title.trim()) {
-      toast({
-        title: "Erreur",
-        description: "Le titre est obligatoire",
-        variant: "destructive"
-      });
-      return;
-    }
+  const handleAddTask = async () => {
+    if (!formData.title.trim()) return;
 
-    console.log('➕ Adding task:', formData);
+    const success = await addTask({
+      title: formData.title,
+      description: formData.description,
+      start_time: formData.start_time,
+      end_time: formData.end_time,
+      duration: formData.duration,
+      category: formData.category,
+      priority: formData.priority,
+      status: formData.status,
+      assigned_to: formData.assigned_to
+    });
 
-    try {
-      const { error } = await supabase
-        .from('coordination_planning')
-        .insert({
-          coordination_id: coordination.id,
-          title: formData.title,
-          description: formData.description || null,
-          start_time: formData.start_time || null,
-          end_time: formData.end_time || null,
-          duration: formData.duration,
-          category: formData.category,
-          priority: formData.priority,
-          status: formData.status,
-          assigned_to: formData.assigned_to.length > 0 ? formData.assigned_to : null,
-          position: tasks.length
-        });
-
-      if (error) throw error;
-
+    if (success) {
       resetForm();
       setShowAddTask(false);
-      
-      toast({
-        title: "Tâche ajoutée",
-        description: "La nouvelle tâche a été ajoutée au planning"
-      });
-
-      // Recharger la liste
-      await loadTasks(coordination.id);
-    } catch (error) {
-      console.error('❌ Error adding task:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible d'ajouter la tâche",
-        variant: "destructive"
-      });
     }
   };
 
-  const updateTask = async () => {
+  const handleUpdateTask = async () => {
     if (!editingTask) return;
 
-    console.log('✏️ Updating task:', editingTask);
-
-    try {
-      const { error } = await supabase
-        .from('coordination_planning')
-        .update({
-          title: editingTask.title,
-          description: editingTask.description || null,
-          start_time: editingTask.start_time || null,
-          end_time: editingTask.end_time || null,
-          duration: editingTask.duration,
-          category: editingTask.category,
-          priority: editingTask.priority,
-          status: editingTask.status,
-          assigned_to: editingTask.assigned_to && editingTask.assigned_to.length > 0 ? editingTask.assigned_to : null
-        })
-        .eq('id', editingTask.id);
-
-      if (error) throw error;
-
+    const success = await updateTask(editingTask);
+    if (success) {
       setEditingTask(null);
-      
-      toast({
-        title: "Tâche modifiée",
-        description: "Les informations ont été mises à jour"
-      });
-
-      // Recharger la liste
-      if (coordination?.id) {
-        await loadTasks(coordination.id);
-      }
-    } catch (error) {
-      console.error('❌ Error updating task:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible de modifier la tâche",
-        variant: "destructive"
-      });
     }
   };
 
-  const deleteTask = async (taskId: string) => {
-    console.log('🗑️ Deleting task:', taskId);
-    
-    try {
-      const { error } = await supabase
-        .from('coordination_planning')
-        .delete()
-        .eq('id', taskId);
-
-      if (error) throw error;
-      
-      toast({
-        title: "Tâche supprimée",
-        description: "La tâche a été retirée du planning"
-      });
-
-      // Recharger la liste
-      if (coordination?.id) {
-        await loadTasks(coordination.id);
-      }
-    } catch (error) {
-      console.error('❌ Error deleting task:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible de supprimer la tâche",
-        variant: "destructive"
-      });
-    }
+  const handleDeleteTask = async (taskId: string) => {
+    await deleteTask(taskId);
   };
 
   const toggleTaskStatus = async (task: PlanningTask) => {
     const newStatus = task.status === 'completed' ? 'todo' : 'completed';
-    
-    try {
-      const { error } = await supabase
-        .from('coordination_planning')
-        .update({ status: newStatus })
-        .eq('id', task.id);
-
-      if (error) throw error;
-
-      // Recharger la liste
-      if (coordination?.id) {
-        await loadTasks(coordination.id);
-      }
-    } catch (error) {
-      console.error('Error toggling task status:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible de changer l'état de la tâche",
-        variant: "destructive"
-      });
-    }
+    await updateTask({ ...task, status: newStatus });
   };
 
   const formatTime = (timeString?: string) => {
@@ -360,7 +145,7 @@ const MonJourMPlanning: React.FC = () => {
     }
   };
 
-  if (coordinationLoading) {
+  if (isInitializing) {
     return (
       <div className="flex justify-center items-center p-12">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-wedding-olive"></div>
@@ -373,7 +158,7 @@ const MonJourMPlanning: React.FC = () => {
     return (
       <div className="text-center py-12 text-gray-500">
         <p>Impossible d'initialiser votre espace Mon Jour-M</p>
-        <Button onClick={refreshCoordination} className="mt-4" variant="outline">
+        <Button onClick={handleRefresh} className="mt-4" variant="outline">
           Réessayer
         </Button>
       </div>
@@ -511,7 +296,7 @@ const MonJourMPlanning: React.FC = () => {
                 </div>
 
                 <div className="flex gap-2">
-                  <Button onClick={addTask}>
+                  <Button onClick={handleAddTask}>
                     Ajouter la tâche
                   </Button>
                   <Button variant="outline" onClick={() => {
@@ -527,7 +312,7 @@ const MonJourMPlanning: React.FC = () => {
         </div>
       </div>
 
-      {isLoadingTasks ? (
+      {isLoading ? (
         <div className="flex justify-center items-center p-8">
           <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-wedding-olive"></div>
           <span className="ml-3">Chargement du planning...</span>
@@ -572,7 +357,7 @@ const MonJourMPlanning: React.FC = () => {
                             <Button
                               variant="ghost"
                               size="sm"
-                              onClick={() => deleteTask(task.id)}
+                              onClick={() => handleDeleteTask(task.id)}
                               className="text-red-600 hover:text-red-800"
                             >
                               <Trash2 className="h-4 w-4" />
@@ -733,7 +518,7 @@ const MonJourMPlanning: React.FC = () => {
               </div>
 
               <div className="flex gap-2">
-                <Button onClick={updateTask}>
+                <Button onClick={handleUpdateTask}>
                   Sauvegarder
                 </Button>
                 <Button variant="outline" onClick={() => setEditingTask(null)}>

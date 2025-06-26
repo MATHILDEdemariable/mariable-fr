@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,10 +7,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Plus, Users, User, Building, Phone, Mail, Edit, Trash2, RefreshCw } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/components/ui/use-toast';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { useWeddingCoordination } from '@/hooks/useWeddingCoordination';
+import { useMonJourM } from '@/contexts/MonJourMContext';
 
 interface TeamMember {
   id: string;
@@ -24,11 +22,19 @@ interface TeamMember {
 }
 
 const MonJourMEquipe: React.FC = () => {
-  const { coordination, isLoading: coordinationLoading, refreshCoordination } = useWeddingCoordination();
-  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+  const { 
+    coordination, 
+    teamMembers, 
+    isLoading, 
+    isInitializing, 
+    refreshData, 
+    addTeamMember, 
+    updateTeamMember, 
+    deleteTeamMember 
+  } = useMonJourM();
+
   const [showAddMember, setShowAddMember] = useState(false);
   const [editingMember, setEditingMember] = useState<TeamMember | null>(null);
-  const [isLoadingTeam, setIsLoadingTeam] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -38,99 +44,11 @@ const MonJourMEquipe: React.FC = () => {
     type: 'person' as 'person' | 'vendor',
     notes: ''
   });
-  const { toast } = useToast();
-
-  useEffect(() => {
-    if (coordination?.id) {
-      loadTeamMembers(coordination.id);
-      setupRealtimeSubscription();
-    }
-  }, [coordination?.id]);
-
-  const loadTeamMembers = async (coordId: string) => {
-    console.log('📥 Loading team members for coordination:', coordId);
-    setIsLoadingTeam(true);
-    
-    try {
-      const { data, error } = await supabase
-        .from('coordination_team')
-        .select('*')
-        .eq('coordination_id', coordId)
-        .order('created_at');
-
-      if (error) {
-        console.error('❌ Error loading team members:', error);
-        toast({
-          title: "Erreur",
-          description: "Impossible de charger l'équipe",
-          variant: "destructive"
-        });
-        return;
-      }
-
-      console.log('✅ Loaded team members:', data);
-      const mappedData = (data || []).map((item: any) => ({
-        id: item.id,
-        name: item.name,
-        role: item.role,
-        email: item.email,
-        phone: item.phone,
-        type: (item.type === 'vendor' ? 'vendor' : 'person') as 'person' | 'vendor',
-        prestataire_id: item.prestataire_id,
-        notes: item.notes
-      }));
-
-      setTeamMembers(mappedData);
-    } catch (error) {
-      console.error('❌ Error in loadTeamMembers:', error);
-      toast({
-        title: "Erreur",
-        description: "Une erreur est survenue lors du chargement",
-        variant: "destructive"
-      });
-    } finally {
-      setIsLoadingTeam(false);
-    }
-  };
-
-  const setupRealtimeSubscription = () => {
-    const channel = supabase
-      .channel('coordination-team-changes')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'coordination_team'
-        },
-        () => {
-          if (coordination?.id) {
-            loadTeamMembers(coordination.id);
-          }
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  };
 
   const handleRefresh = async () => {
-    if (!coordination?.id) return;
-    
     setIsRefreshing(true);
     try {
-      await Promise.all([
-        refreshCoordination(),
-        loadTeamMembers(coordination.id)
-      ]);
-      toast({
-        title: "Données actualisées",
-        description: "L'équipe a été rechargée avec succès"
-      });
-    } catch (error) {
-      console.error('Error refreshing:', error);
+      await refreshData();
     } finally {
       setIsRefreshing(false);
     }
@@ -147,122 +65,35 @@ const MonJourMEquipe: React.FC = () => {
     });
   };
 
-  const addMember = async () => {
-    if (!coordination?.id || !formData.name.trim()) {
-      toast({
-        title: "Erreur",
-        description: "Le nom est obligatoire",
-        variant: "destructive"
-      });
-      return;
-    }
+  const handleAddMember = async () => {
+    if (!formData.name.trim()) return;
 
-    console.log('➕ Adding member:', formData);
+    const success = await addTeamMember({
+      name: formData.name,
+      role: formData.role || 'Membre',
+      email: formData.email,
+      phone: formData.phone,
+      type: formData.type,
+      notes: formData.notes
+    });
 
-    try {
-      const { error } = await supabase
-        .from('coordination_team')
-        .insert({
-          coordination_id: coordination.id,
-          name: formData.name,
-          role: formData.role || 'Membre',
-          email: formData.email || null,
-          phone: formData.phone || null,
-          type: formData.type,
-          notes: formData.notes || null
-        });
-
-      if (error) throw error;
-
+    if (success) {
       resetForm();
       setShowAddMember(false);
-      
-      toast({
-        title: "Membre ajouté",
-        description: "Le nouveau membre a été ajouté à l'équipe"
-      });
-
-      // Recharger la liste
-      await loadTeamMembers(coordination.id);
-    } catch (error) {
-      console.error('❌ Error adding member:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible d'ajouter le membre",
-        variant: "destructive"
-      });
     }
   };
 
-  const updateMember = async () => {
+  const handleUpdateMember = async () => {
     if (!editingMember) return;
 
-    console.log('✏️ Updating member:', editingMember);
-
-    try {
-      const { error } = await supabase
-        .from('coordination_team')
-        .update({
-          name: editingMember.name,
-          role: editingMember.role,
-          email: editingMember.email || null,
-          phone: editingMember.phone || null,
-          type: editingMember.type,
-          notes: editingMember.notes || null
-        })
-        .eq('id', editingMember.id);
-
-      if (error) throw error;
-
+    const success = await updateTeamMember(editingMember);
+    if (success) {
       setEditingMember(null);
-      
-      toast({
-        title: "Membre modifié",
-        description: "Les informations ont été mises à jour"
-      });
-
-      // Recharger la liste
-      if (coordination?.id) {
-        await loadTeamMembers(coordination.id);
-      }
-    } catch (error) {
-      console.error('❌ Error updating member:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible de modifier le membre",
-        variant: "destructive"
-      });
     }
   };
 
-  const deleteMember = async (memberId: string) => {
-    console.log('🗑️ Deleting member:', memberId);
-    
-    try {
-      const { error } = await supabase
-        .from('coordination_team')
-        .delete()
-        .eq('id', memberId);
-
-      if (error) throw error;
-      
-      toast({
-        title: "Membre supprimé",
-        description: "Le membre a été retiré de l'équipe"
-      });
-
-      // Recharger la liste
-      if (coordination?.id) {
-        await loadTeamMembers(coordination.id);
-      }
-    } catch (error) {
-      console.error('❌ Error deleting member:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible de supprimer le membre",
-        variant: "destructive"
-      });
-    }
+  const handleDeleteMember = async (memberId: string) => {
+    await deleteTeamMember(memberId);
   };
 
   const getSubRoleOptions = (type: 'person' | 'vendor') => {
@@ -295,7 +126,7 @@ const MonJourMEquipe: React.FC = () => {
     }
   };
 
-  if (coordinationLoading) {
+  if (isInitializing) {
     return (
       <div className="flex justify-center items-center p-12">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-wedding-olive"></div>
@@ -308,7 +139,7 @@ const MonJourMEquipe: React.FC = () => {
     return (
       <div className="text-center py-12 text-gray-500">
         <p>Impossible d'initialiser votre espace Mon Jour-M</p>
-        <Button onClick={refreshCoordination} className="mt-4" variant="outline">
+        <Button onClick={handleRefresh} className="mt-4" variant="outline">
           Réessayer
         </Button>
       </div>
@@ -425,7 +256,7 @@ const MonJourMEquipe: React.FC = () => {
                 </div>
 
                 <div className="flex gap-2">
-                  <Button onClick={addMember}>
+                  <Button onClick={handleAddMember}>
                     Ajouter
                   </Button>
                   <Button variant="outline" onClick={() => {
@@ -441,7 +272,7 @@ const MonJourMEquipe: React.FC = () => {
         </div>
       </div>
 
-      {isLoadingTeam ? (
+      {isLoading ? (
         <div className="flex justify-center items-center p-8">
           <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-wedding-olive"></div>
           <span className="ml-3">Chargement de l'équipe...</span>
@@ -481,7 +312,7 @@ const MonJourMEquipe: React.FC = () => {
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => deleteMember(member.id)}
+                            onClick={() => handleDeleteMember(member.id)}
                             className="text-red-600 hover:text-red-800"
                           >
                             <Trash2 className="h-4 w-4" />
@@ -546,7 +377,7 @@ const MonJourMEquipe: React.FC = () => {
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => deleteMember(member.id)}
+                            onClick={() => handleDeleteMember(member.id)}
                             className="text-red-600 hover:text-red-800"
                           >
                             <Trash2 className="h-4 w-4" />
@@ -664,7 +495,7 @@ const MonJourMEquipe: React.FC = () => {
               </div>
 
               <div className="flex gap-2">
-                <Button onClick={updateMember}>
+                <Button onClick={handleUpdateMember}>
                   Sauvegarder
                 </Button>
                 <Button variant="outline" onClick={() => setEditingMember(null)}>
