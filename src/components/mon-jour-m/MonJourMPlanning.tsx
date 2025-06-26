@@ -16,16 +16,18 @@ interface PlanningTask {
   id: string;
   title: string;
   description?: string;
-  start_time: string;
-  end_time: string;
-  duration: number;
+  start_time?: string;
+  end_time?: string;
+  duration?: number;
   category: string;
-  assigned_to: string[];
+  assigned_to?: string[];
   status: string;
-  position: number;
-  is_ai_generated: boolean;
+  position?: number;
+  priority?: string;
+  is_ai_generated?: boolean;
   coordination_id: string;
   created_at: string;
+  updated_at: string;
 }
 
 interface TeamMember {
@@ -73,7 +75,7 @@ const MonJourMPlanning: React.FC = () => {
     
     try {
       const { data, error } = await supabase
-        .from('coordination_tasks')
+        .from('coordination_planning')
         .select('*')
         .eq('coordination_id', coordId)
         .order('position', { ascending: true });
@@ -92,8 +94,9 @@ const MonJourMPlanning: React.FC = () => {
       // Conversion des données pour correspondre au type PlanningTask
       const convertedTasks = (data || []).map(task => ({
         ...task,
-        assigned_to: Array.isArray(task.assigned_to) ? task.assigned_to : 
-                    typeof task.assigned_to === 'string' ? [task.assigned_to] : []
+        start_time: task.start_time ? new Date(task.start_time).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : '',
+        end_time: task.end_time ? new Date(task.end_time).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : '',
+        assigned_to: task.assigned_to ? (Array.isArray(task.assigned_to) ? task.assigned_to : [task.assigned_to]) : []
       }));
       setTasks(convertedTasks);
     } catch (error) {
@@ -150,43 +153,55 @@ const MonJourMPlanning: React.FC = () => {
   };
 
   const handleAddTask = async () => {
-    if (!coordination?.id || !newTask.title.trim() || !newTask.start_time || !newTask.end_time) {
+    if (!coordination?.id || !newTask.title.trim()) {
       toast({
         title: "Erreur",
-        description: "Veuillez remplir tous les champs obligatoires",
+        description: "Veuillez saisir au moins le titre",
         variant: "destructive"
       });
       return;
     }
 
-    const duration = calculateDuration(newTask.start_time, newTask.end_time);
-    
-    if (duration <= 0) {
-      toast({
-        title: "Erreur",
-        description: "L'heure de fin doit être postérieure à l'heure de début",
-        variant: "destructive"
-      });
-      return;
+    let duration = 0;
+    let startTimeFormatted = null;
+    let endTimeFormatted = null;
+
+    if (newTask.start_time && newTask.end_time) {
+      duration = calculateDuration(newTask.start_time, newTask.end_time);
+      
+      if (duration <= 0) {
+        toast({
+          title: "Erreur",
+          description: "L'heure de fin doit être postérieure à l'heure de début",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Convertir les heures en timestamps
+      const today = new Date().toISOString().split('T')[0];
+      startTimeFormatted = `${today}T${newTask.start_time}:00`;
+      endTimeFormatted = `${today}T${newTask.end_time}:00`;
     }
 
     try {
       console.log('➕ Adding new task:', newTask);
       
       const { error } = await supabase
-        .from('coordination_tasks')
+        .from('coordination_planning')
         .insert({
           coordination_id: coordination.id,
           title: newTask.title,
-          description: newTask.description,
-          start_time: newTask.start_time,
-          end_time: newTask.end_time,
+          description: newTask.description || null,
+          start_time: startTimeFormatted,
+          end_time: endTimeFormatted,
           duration: duration,
           category: newTask.category,
-          assigned_to: newTask.assigned_to,
-          status: 'pending',
+          assigned_to: newTask.assigned_to.length > 0 ? newTask.assigned_to : null,
+          status: 'todo',
           position: tasks.length,
-          is_ai_generated: false
+          is_ai_generated: false,
+          priority: 'medium'
         });
 
       if (error) throw error;
@@ -221,11 +236,11 @@ const MonJourMPlanning: React.FC = () => {
   };
 
   const toggleTaskStatus = async (taskId: string, currentStatus: string) => {
-    const newStatus = currentStatus === 'completed' ? 'pending' : 'completed';
+    const newStatus = currentStatus === 'completed' ? 'todo' : 'completed';
     
     try {
       const { error } = await supabase
-        .from('coordination_tasks')
+        .from('coordination_planning')
         .update({ status: newStatus })
         .eq('id', taskId);
 
@@ -248,7 +263,7 @@ const MonJourMPlanning: React.FC = () => {
   const deleteTask = async (taskId: string) => {
     try {
       const { error } = await supabase
-        .from('coordination_tasks')
+        .from('coordination_planning')
         .delete()
         .eq('id', taskId);
 
@@ -350,7 +365,7 @@ const MonJourMPlanning: React.FC = () => {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium mb-1">Heure de début *</label>
+                    <label className="block text-sm font-medium mb-1">Heure de début</label>
                     <Input
                       type="time"
                       value={newTask.start_time}
@@ -359,7 +374,7 @@ const MonJourMPlanning: React.FC = () => {
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-medium mb-1">Heure de fin *</label>
+                    <label className="block text-sm font-medium mb-1">Heure de fin</label>
                     <Input
                       type="time"
                       value={newTask.end_time}
@@ -433,16 +448,18 @@ const MonJourMPlanning: React.FC = () => {
                       )}
                       
                       <div className="flex flex-wrap gap-2 mt-2">
-                        <Badge variant="outline" className="flex items-center gap-1">
-                          <Clock className="h-3 w-3" />
-                          {task.start_time} - {task.end_time}
-                        </Badge>
+                        {task.start_time && task.end_time && (
+                          <Badge variant="outline" className="flex items-center gap-1">
+                            <Clock className="h-3 w-3" />
+                            {task.start_time} - {task.end_time}
+                          </Badge>
+                        )}
                         
                         <Badge className={getCategoryStyle(task.category)}>
                           {categories.find(c => c.value === task.category)?.label}
                         </Badge>
                         
-                        {task.assigned_to.length > 0 && (
+                        {task.assigned_to && task.assigned_to.length > 0 && (
                           <Badge variant="secondary">
                             {task.assigned_to.length} assigné(s)
                           </Badge>
