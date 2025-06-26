@@ -1,149 +1,73 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { Button } from '@/components/ui/button';
-import { Share2, Calendar, Users, FileText } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/components/ui/use-toast';
-import Header from '@/components/Header';
+import { Card, CardContent } from '@/components/ui/card';
+import { Calendar, Users, FileText, Settings } from 'lucide-react';
 import MonJourMPlanningContent from './MonJourMPlanning';
 import MonJourMEquipeContent from './MonJourMEquipe';
 import MonJourMDocumentsContent from './MonJourMDocuments';
+import { useWeddingCoordination } from '@/hooks/useWeddingCoordination';
 
-interface MonJourMLayoutProps {
-  children?: React.ReactNode;
-}
-
-const MonJourMLayout: React.FC<MonJourMLayoutProps> = ({ children }) => {
-  const { toast } = useToast();
-  const [shareToken, setShareToken] = useState<string | null>(null);
-  const [coordination, setCoordination] = useState<any>(null);
+const MonJourMLayout: React.FC = () => {
   const [activeTab, setActiveTab] = useState('planning');
+  const { coordination, isLoading } = useWeddingCoordination();
 
-  useEffect(() => {
-    initializeCoordination();
-  }, []);
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-wedding-olive mx-auto mb-4"></div>
+          <p className="text-gray-600">Initialisation de votre espace Mon Jour-M...</p>
+        </div>
+      </div>
+    );
+  }
 
-  const initializeCoordination = async () => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      // Récupérer ou créer la coordination
-      let { data: existingCoordination } = await supabase
-        .from('wedding_coordination')
-        .select('*')
-        .eq('user_id', user.id)
-        .single();
-
-      if (!existingCoordination) {
-        const { data: newCoordination, error } = await supabase
-          .from('wedding_coordination')
-          .insert({
-            user_id: user.id,
-            title: 'Mon Mariage'
-          })
-          .select()
-          .single();
-
-        if (error) throw error;
-        existingCoordination = newCoordination;
-      }
-
-      setCoordination(existingCoordination);
-
-      // Récupérer le token de partage existant
-      const { data: shareTokenData } = await supabase
-        .from('dashboard_share_tokens')
-        .select('token')
-        .eq('user_id', user.id)
-        .eq('active', true)
-        .single();
-
-      if (shareTokenData) {
-        setShareToken(shareTokenData.token);
-      }
-    } catch (error) {
-      console.error('Error initializing coordination:', error);
-    }
-  };
-
-  const generateShareLink = async () => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      const token = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-      
-      const { error } = await supabase
-        .from('dashboard_share_tokens')
-        .upsert({
-          user_id: user.id,
-          token,
-          active: true,
-          description: 'Mon Jour-M Share'
-        });
-
-      if (error) throw error;
-
-      setShareToken(token);
-      const shareUrl = `${window.location.origin}/jour-m-vue/${token}`;
-      
-      await navigator.clipboard.writeText(shareUrl);
-      toast({
-        title: "Lien copié !",
-        description: "Le lien de partage a été copié dans votre presse-papiers"
-      });
-    } catch (error) {
-      console.error('Error generating share link:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible de générer le lien de partage",
-        variant: "destructive"
-      });
-    }
-  };
-
-  const renderTabContent = () => {
-    switch (activeTab) {
-      case 'equipe':
-        return <MonJourMEquipeContent />;
-      case 'documents':
-        return <MonJourMDocumentsContent />;
-      default:
-        return <MonJourMPlanningContent />;
-    }
-  };
+  if (!coordination) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <Card className="max-w-md mx-auto">
+          <CardContent className="p-6 text-center">
+            <h2 className="text-xl font-semibold mb-2">Erreur d'initialisation</h2>
+            <p className="text-gray-600 mb-4">
+              Impossible d'initialiser votre espace Mon Jour-M
+            </p>
+            <p className="text-sm text-gray-500">
+              Veuillez actualiser la page ou nous contacter si le problème persiste.
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
-      
-      <div className="container mx-auto px-4 py-6 max-w-7xl">
-        {/* En-tête avec titre et actions */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-          <div>
+      {/* En-tête */}
+      <div className="bg-white shadow-sm border-b">
+        <div className="container mx-auto px-4 py-6">
+          <div className="text-center">
             <h1 className="text-3xl font-serif text-wedding-black mb-2">
-              Mon Jour-M
+              {coordination.title}
             </h1>
             <p className="text-gray-600">
               Organisez et coordonnez tous les détails de votre mariage
             </p>
-          </div>
-          
-          <div className="flex gap-2">
-            <Button 
-              variant="outline" 
-              onClick={generateShareLink}
-              className="flex items-center gap-2"
-            >
-              <Share2 className="h-4 w-4" />
-              Partager
-            </Button>
+            {coordination.wedding_date && (
+              <p className="text-sm text-wedding-olive font-medium mt-2">
+                {new Date(coordination.wedding_date).toLocaleDateString('fr-FR', {
+                  weekday: 'long',
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })}
+              </p>
+            )}
           </div>
         </div>
+      </div>
 
-        {/* Navigation par onglets */}
+      <div className="container mx-auto px-4 py-6 max-w-6xl">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-3 mb-6">
             <TabsTrigger value="planning" className="flex items-center gap-2">
@@ -160,8 +84,16 @@ const MonJourMLayout: React.FC<MonJourMLayoutProps> = ({ children }) => {
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value={activeTab} className="min-h-[600px]">
-            {renderTabContent()}
+          <TabsContent value="planning">
+            <MonJourMPlanningContent />
+          </TabsContent>
+
+          <TabsContent value="equipe">
+            <MonJourMEquipeContent />
+          </TabsContent>
+
+          <TabsContent value="documents">
+            <MonJourMDocumentsContent />
           </TabsContent>
         </Tabs>
       </div>

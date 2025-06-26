@@ -2,19 +2,15 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Clock, CheckCircle2, Circle, AlertCircle, Sparkles, GripVertical } from 'lucide-react';
+import { Plus, Calendar, Clock, CheckCircle2, Circle, User, RefreshCw, Edit, Trash2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
-import TaskEditModal from './TaskEditModal';
-import AISuggestionsModal from './AISuggestionsModal';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-
-interface TeamMember {
-  id: string;
-  name: string;
-  role: string;
-}
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { useWeddingCoordination } from '@/hooks/useWeddingCoordination';
 
 interface PlanningTask {
   id: string;
@@ -22,81 +18,82 @@ interface PlanningTask {
   description?: string;
   start_time?: string;
   end_time?: string;
-  duration: number;
+  duration?: number;
   category: string;
-  position: number;
+  priority: string;
+  status: string;
   assigned_to?: string[];
-  status: 'todo' | 'in_progress' | 'completed';
-  priority: 'low' | 'medium' | 'high';
-  is_ai_generated: boolean;
+  position?: number;
+}
+
+interface TeamMember {
+  id: string;
+  name: string;
+  role: string;
 }
 
 const MonJourMPlanning: React.FC = () => {
+  const { coordination, isLoading: coordinationLoading, refreshCoordination } = useWeddingCoordination();
   const [tasks, setTasks] = useState<PlanningTask[]>([]);
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
-  const [coordinationId, setCoordinationId] = useState<string | null>(null);
-  const [selectedTask, setSelectedTask] = useState<PlanningTask | null>(null);
-  const [showTaskModal, setShowTaskModal] = useState(false);
-  const [showAIModal, setShowAIModal] = useState(false);
+  const [showAddTask, setShowAddTask] = useState(false);
+  const [editingTask, setEditingTask] = useState<PlanningTask | null>(null);
+  const [isLoadingTasks, setIsLoadingTasks] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [formData, setFormData] = useState({
+    title: '',
+    description: '',
+    start_time: '',
+    end_time: '',
+    duration: 30,
+    category: 'general',
+    priority: 'medium',
+    status: 'todo',
+    assigned_to: [] as string[]
+  });
   const { toast } = useToast();
 
   useEffect(() => {
-    initializeData();
-    setupRealtimeSubscription();
-  }, []);
-
-  const initializeData = async () => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      // Récupérer ou créer la coordination
-      let { data: coordination } = await supabase
-        .from('wedding_coordination')
-        .select('id')
-        .eq('user_id', user.id)
-        .single();
-
-      if (!coordination) {
-        const { data: newCoordination, error } = await supabase
-          .from('wedding_coordination')
-          .insert({
-            user_id: user.id,
-            title: 'Mon Mariage'
-          })
-          .select()
-          .single();
-
-        if (error) throw error;
-        coordination = newCoordination;
-      }
-
-      setCoordinationId(coordination.id);
-      await loadTasks(coordination.id);
-      await loadTeamMembers(coordination.id);
-    } catch (error) {
-      console.error('Error initializing data:', error);
+    if (coordination?.id) {
+      loadTasks(coordination.id);
+      loadTeamMembers(coordination.id);
+      setupRealtimeSubscription();
     }
-  };
+  }, [coordination?.id]);
 
   const loadTasks = async (coordId: string) => {
-    const { data, error } = await supabase
-      .from('coordination_planning')
-      .select('*')
-      .eq('coordination_id', coordId)
-      .order('position');
+    console.log('📥 Loading tasks for coordination:', coordId);
+    setIsLoadingTasks(true);
+    
+    try {
+      const { data, error } = await supabase
+        .from('coordination_planning')
+        .select('*')
+        .eq('coordination_id', coordId)
+        .order('position');
 
-    if (error) {
-      console.error('Error loading tasks:', error);
-      return;
+      if (error) {
+        console.error('❌ Error loading tasks:', error);
+        toast({
+          title: "Erreur",
+          description: "Impossible de charger le planning",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      console.log('✅ Loaded tasks:', data);
+      setTasks(data || []);
+    } catch (error) {
+      console.error('❌ Error in loadTasks:', error);
+      toast({
+        title: "Erreur",
+        description: "Une erreur est survenue lors du chargement",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoadingTasks(false);
     }
-
-    const formattedTasks = (data || []).map((task: any) => ({
-      ...task,
-      assigned_to: Array.isArray(task.assigned_to) ? task.assigned_to : []
-    }));
-
-    setTasks(formattedTasks);
   };
 
   const loadTeamMembers = async (coordId: string) => {
@@ -124,8 +121,8 @@ const MonJourMPlanning: React.FC = () => {
           table: 'coordination_planning'
         },
         () => {
-          if (coordinationId) {
-            loadTasks(coordinationId);
+          if (coordination?.id) {
+            loadTasks(coordination.id);
           }
         }
       )
@@ -136,164 +133,139 @@ const MonJourMPlanning: React.FC = () => {
     };
   };
 
-  // Fonction corrigée pour calculer les heures séquentielles
-  const recalculateSequentialTimes = (updatedTasks: PlanningTask[]) => {
-    console.log('Recalculating sequential times...');
+  const handleRefresh = async () => {
+    if (!coordination?.id) return;
     
-    // Trier les tâches par position
-    const sortedTasks = [...updatedTasks].sort((a, b) => a.position - b.position);
-    let currentTime: Date | null = null;
-    
-    const recalculatedTasks = sortedTasks.map((task, index) => {
-      // Si la tâche a déjà une heure de début définie, l'utiliser comme référence
-      if (task.start_time) {
-        const taskStartTime = new Date(task.start_time);
-        console.log(`Task "${task.title}" has custom start time:`, taskStartTime.toLocaleTimeString());
-        
-        // Calculer l'heure de fin basée sur la durée
-        const endTime = new Date(taskStartTime.getTime() + task.duration * 60000);
-        currentTime = endTime; // Mettre à jour la référence pour les tâches suivantes
-        
-        return {
-          ...task,
-          start_time: task.start_time, // Conserver l'heure personnalisée
-          end_time: endTime.toISOString()
-        };
-      }
-      
-      // Pour les tâches sans heure définie, utiliser la séquence
-      if (currentTime) {
-        const startTime = new Date(currentTime);
-        const endTime = new Date(startTime.getTime() + task.duration * 60000);
-        
-        console.log(`Task "${task.title}" calculated time:`, startTime.toLocaleTimeString(), '-', endTime.toLocaleTimeString());
-        
-        currentTime = endTime;
-        
-        return {
-          ...task,
-          start_time: startTime.toISOString(),
-          end_time: endTime.toISOString()
-        };
-      }
-      
-      // Première tâche sans heure définie, ne pas forcer d'heure
-      return task;
+    setIsRefreshing(true);
+    try {
+      await Promise.all([
+        refreshCoordination(),
+        loadTasks(coordination.id),
+        loadTeamMembers(coordination.id)
+      ]);
+      toast({
+        title: "Données actualisées",
+        description: "Le planning a été rechargé avec succès"
+      });
+    } catch (error) {
+      console.error('Error refreshing:', error);
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
+
+  const resetForm = () => {
+    setFormData({
+      title: '',
+      description: '',
+      start_time: '',
+      end_time: '',
+      duration: 30,
+      category: 'general',
+      priority: 'medium',
+      status: 'todo',
+      assigned_to: []
     });
-    
-    return recalculatedTasks;
   };
 
-  const handleDragEnd = async (result: any) => {
-    if (!result.destination || !coordinationId) return;
-
-    const items = Array.from(tasks);
-    const [reorderedItem] = items.splice(result.source.index, 1);
-    items.splice(result.destination.index, 0, reorderedItem);
-
-    // Mettre à jour les positions
-    const updatedTasks = items.map((task, index) => ({
-      ...task,
-      position: index
-    }));
-
-    // Recalculer les heures en préservant les heures personnalisées
-    const tasksWithTimes = recalculateSequentialTimes(updatedTasks);
-    setTasks(tasksWithTimes);
-
-    // Sauvegarder en base
-    try {
-      const updates = tasksWithTimes.map(task => ({
-        id: task.id,
-        position: task.position,
-        start_time: task.start_time,
-        end_time: task.end_time
-      }));
-
-      for (const update of updates) {
-        await supabase
-          .from('coordination_planning')
-          .update({
-            position: update.position,
-            start_time: update.start_time,
-            end_time: update.end_time
-          })
-          .eq('id', update.id);
-      }
-    } catch (error) {
-      console.error('Error updating task order:', error);
+  const addTask = async () => {
+    if (!coordination?.id || !formData.title.trim()) {
       toast({
         title: "Erreur",
-        description: "Impossible de sauvegarder l'ordre des tâches",
+        description: "Le titre est obligatoire",
         variant: "destructive"
       });
+      return;
     }
-  };
 
-  const handleSaveTask = async (taskData: Partial<PlanningTask>) => {
-    if (!coordinationId) return;
+    console.log('➕ Adding task:', formData);
 
     try {
-      console.log('Saving task with data:', taskData);
+      const { error } = await supabase
+        .from('coordination_planning')
+        .insert({
+          coordination_id: coordination.id,
+          title: formData.title,
+          description: formData.description || null,
+          start_time: formData.start_time || null,
+          end_time: formData.end_time || null,
+          duration: formData.duration,
+          category: formData.category,
+          priority: formData.priority,
+          status: formData.status,
+          assigned_to: formData.assigned_to.length > 0 ? formData.assigned_to : null,
+          position: tasks.length
+        });
+
+      if (error) throw error;
+
+      resetForm();
+      setShowAddTask(false);
       
-      if (selectedTask) {
-        // Mise à jour d'une tâche existante
-        const { error } = await supabase
-          .from('coordination_planning')
-          .update({
-            ...taskData,
-            updated_at: new Date().toISOString()
-          })
-          .eq('id', selectedTask.id);
+      toast({
+        title: "Tâche ajoutée",
+        description: "La nouvelle tâche a été ajoutée au planning"
+      });
 
-        if (error) throw error;
-
-        toast({
-          title: "Tâche mise à jour",
-          description: "La tâche a été mise à jour avec succès"
-        });
-      } else {
-        // Création d'une nouvelle tâche - s'assurer que tous les champs requis sont présents
-        const newPosition = tasks.length;
-        
-        const { error } = await supabase
-          .from('coordination_planning')
-          .insert({
-            coordination_id: coordinationId,
-            title: taskData.title || 'Nouvelle tâche', // S'assurer que le titre existe
-            description: taskData.description,
-            duration: taskData.duration || 30,
-            category: taskData.category || 'general',
-            priority: taskData.priority || 'medium',
-            status: taskData.status || 'todo',
-            position: newPosition,
-            assigned_to: taskData.assigned_to || [],
-            is_ai_generated: taskData.is_ai_generated || false,
-            start_time: taskData.start_time,
-            end_time: taskData.end_time
-          });
-
-        if (error) throw error;
-
-        toast({
-          title: "Tâche créée",
-          description: "La nouvelle tâche a été ajoutée avec succès"
-        });
-      }
-
-      setShowTaskModal(false);
-      setSelectedTask(null);
+      // Recharger la liste
+      await loadTasks(coordination.id);
     } catch (error) {
-      console.error('Error saving task:', error);
+      console.error('❌ Error adding task:', error);
       toast({
         title: "Erreur",
-        description: "Impossible de sauvegarder la tâche",
+        description: "Impossible d'ajouter la tâche",
         variant: "destructive"
       });
     }
   };
 
-  const handleDeleteTask = async (taskId: string) => {
+  const updateTask = async () => {
+    if (!editingTask) return;
+
+    console.log('✏️ Updating task:', editingTask);
+
+    try {
+      const { error } = await supabase
+        .from('coordination_planning')
+        .update({
+          title: editingTask.title,
+          description: editingTask.description || null,
+          start_time: editingTask.start_time || null,
+          end_time: editingTask.end_time || null,
+          duration: editingTask.duration,
+          category: editingTask.category,
+          priority: editingTask.priority,
+          status: editingTask.status,
+          assigned_to: editingTask.assigned_to && editingTask.assigned_to.length > 0 ? editingTask.assigned_to : null
+        })
+        .eq('id', editingTask.id);
+
+      if (error) throw error;
+
+      setEditingTask(null);
+      
+      toast({
+        title: "Tâche modifiée",
+        description: "Les informations ont été mises à jour"
+      });
+
+      // Recharger la liste
+      if (coordination?.id) {
+        await loadTasks(coordination.id);
+      }
+    } catch (error) {
+      console.error('❌ Error updating task:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de modifier la tâche",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const deleteTask = async (taskId: string) => {
+    console.log('🗑️ Deleting task:', taskId);
+    
     try {
       const { error } = await supabase
         .from('coordination_planning')
@@ -304,10 +276,15 @@ const MonJourMPlanning: React.FC = () => {
       
       toast({
         title: "Tâche supprimée",
-        description: "La tâche a été supprimée avec succès"
+        description: "La tâche a été retirée du planning"
       });
+
+      // Recharger la liste
+      if (coordination?.id) {
+        await loadTasks(coordination.id);
+      }
     } catch (error) {
-      console.error('Error deleting task:', error);
+      console.error('❌ Error deleting task:', error);
       toast({
         title: "Erreur",
         description: "Impossible de supprimer la tâche",
@@ -316,7 +293,7 @@ const MonJourMPlanning: React.FC = () => {
     }
   };
 
-  const handleToggleTaskStatus = async (task: PlanningTask) => {
+  const toggleTaskStatus = async (task: PlanningTask) => {
     const newStatus = task.status === 'completed' ? 'todo' : 'completed';
     
     try {
@@ -326,49 +303,16 @@ const MonJourMPlanning: React.FC = () => {
         .eq('id', task.id);
 
       if (error) throw error;
+
+      // Recharger la liste
+      if (coordination?.id) {
+        await loadTasks(coordination.id);
+      }
     } catch (error) {
-      console.error('Error updating task status:', error);
+      console.error('Error toggling task status:', error);
       toast({
         title: "Erreur",
-        description: "Impossible de mettre à jour le statut de la tâche",
-        variant: "destructive"
-      });
-    }
-  };
-
-  const handleAddAISuggestions = async (suggestions: any[]) => {
-    if (!coordinationId) return;
-
-    try {
-      const startPosition = tasks.length;
-      
-      const tasksToInsert = suggestions.map((suggestion, index) => ({
-        coordination_id: coordinationId,
-        title: suggestion.title,
-        description: suggestion.description,
-        duration: suggestion.duration,
-        category: suggestion.category,
-        priority: suggestion.priority,
-        position: startPosition + index,
-        status: 'todo' as const,
-        is_ai_generated: true
-      }));
-
-      const { error } = await supabase
-        .from('coordination_planning')
-        .insert(tasksToInsert);
-
-      if (error) throw error;
-
-      toast({
-        title: "Tâches ajoutées",
-        description: `${suggestions.length} tâche(s) ajoutée(s) avec succès`
-      });
-    } catch (error) {
-      console.error('Error adding AI suggestions:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible d'ajouter les suggestions IA",
+        description: "Impossible de changer l'état de la tâche",
         variant: "destructive"
       });
     }
@@ -379,14 +323,11 @@ const MonJourMPlanning: React.FC = () => {
     
     try {
       const date = new Date(timeString);
-      // Utiliser toLocaleTimeString avec les options françaises pour éviter les problèmes de timezone
       return date.toLocaleTimeString('fr-FR', {
         hour: '2-digit',
-        minute: '2-digit',
-        timeZone: 'Europe/Paris' // Forcer le fuseau horaire français
+        minute: '2-digit'
       });
     } catch (error) {
-      console.error('Error formatting time:', error);
       return '';
     }
   };
@@ -408,170 +349,390 @@ const MonJourMPlanning: React.FC = () => {
     }
   };
 
+  if (coordinationLoading) {
+    return (
+      <div className="flex justify-center items-center p-12">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-wedding-olive"></div>
+        <span className="ml-3">Initialisation de votre espace...</span>
+      </div>
+    );
+  }
+
+  if (!coordination) {
+    return (
+      <div className="text-center py-12 text-gray-500">
+        <p>Impossible d'initialiser votre espace Mon Jour-M</p>
+        <Button onClick={refreshCoordination} className="mt-4" variant="outline">
+          Réessayer
+        </Button>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
+      {/* En-tête avec bouton refresh */}
       <div className="flex flex-col md:flex-row gap-4 justify-between items-start">
         <div>
           <h2 className="text-2xl font-semibold mb-2">Planning du jour J</h2>
-          <p className="text-gray-600">Organisez le déroulement de votre mariage minute par minute</p>
+          <p className="text-gray-600">Organisez et coordonnez tous les détails de votre mariage</p>
         </div>
         
         <div className="flex gap-2">
-          <Button 
-            onClick={() => setShowAIModal(true)}
-            className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700"
-          >
-            <Sparkles className="h-4 w-4" />
-            Générer avec IA
-          </Button>
-          <Button 
-            onClick={() => {
-              setSelectedTask(null);
-              setShowTaskModal(true);
-            }}
+          <Button
+            onClick={handleRefresh}
+            variant="outline"
+            size="sm"
+            disabled={isRefreshing}
             className="flex items-center gap-2"
           >
-            <Plus className="h-4 w-4" />
-            Ajouter une tâche
+            <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+            Actualiser
           </Button>
+
+          <Dialog open={showAddTask} onOpenChange={setShowAddTask}>
+            <DialogTrigger asChild>
+              <Button className="flex items-center gap-2">
+                <Plus className="h-4 w-4" />
+                Ajouter une tâche
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl">
+              <DialogHeader>
+                <DialogTitle>Ajouter une tâche au planning</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium mb-1">Titre *</label>
+                  <Input
+                    value={formData.title}
+                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                    placeholder="Titre de la tâche"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-1">Description</label>
+                  <Textarea
+                    value={formData.description}
+                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                    placeholder="Description détaillée de la tâche"
+                    rows={3}
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Heure de début</label>
+                    <Input
+                      type="time"
+                      value={formData.start_time}
+                      onChange={(e) => setFormData({ ...formData, start_time: e.target.value })}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Heure de fin</label>
+                    <Input
+                      type="time"
+                      value={formData.end_time}
+                      onChange={(e) => setFormData({ ...formData, end_time: e.target.value })}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Durée (min)</label>
+                    <Input
+                      type="number"
+                      value={formData.duration}
+                      onChange={(e) => setFormData({ ...formData, duration: parseInt(e.target.value) || 30 })}
+                      min="1"
+                      max="1440"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Catégorie</label>
+                    <Select value={formData.category} onValueChange={(value) => setFormData({ ...formData, category: value })}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="general">Général</SelectItem>
+                        <SelectItem value="ceremony">Cérémonie</SelectItem>
+                        <SelectItem value="reception">Réception</SelectItem>
+                        <SelectItem value="photos">Photos</SelectItem>
+                        <SelectItem value="music">Musique</SelectItem>
+                        <SelectItem value="catering">Traiteur</SelectItem>
+                        <SelectItem value="decoration">Décoration</SelectItem>
+                        <SelectItem value="transport">Transport</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Priorité</label>
+                    <Select value={formData.priority} onValueChange={(value) => setFormData({ ...formData, priority: value })}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="low">Faible</SelectItem>
+                        <SelectItem value="medium">Moyenne</SelectItem>
+                        <SelectItem value="high">Élevée</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Statut</label>
+                    <Select value={formData.status} onValueChange={(value) => setFormData({ ...formData, status: value })}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="todo">À faire</SelectItem>
+                        <SelectItem value="in_progress">En cours</SelectItem>
+                        <SelectItem value="completed">Terminé</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                <div className="flex gap-2">
+                  <Button onClick={addTask}>
+                    Ajouter la tâche
+                  </Button>
+                  <Button variant="outline" onClick={() => {
+                    resetForm();
+                    setShowAddTask(false);
+                  }}>
+                    Annuler
+                  </Button>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Timeline du jour J</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <DragDropContext onDragEnd={handleDragEnd}>
-            <Droppable droppableId="planning-tasks">
-              {(provided) => (
-                <div {...provided.droppableProps} ref={provided.innerRef} className="space-y-3">
-                  {tasks.map((task, index) => (
-                    <Draggable key={task.id} draggableId={task.id} index={index}>
-                      {(provided, snapshot) => (
-                        <div
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                          className={`p-4 border rounded-lg bg-white shadow-sm hover:shadow-md transition-shadow ${
-                            snapshot.isDragging ? 'shadow-lg' : ''
-                          }`}
-                        >
-                          <div className="flex items-start gap-4">
-                            <div {...provided.dragHandleProps} className="mt-1">
-                              <GripVertical className="h-4 w-4 text-gray-400" />
-                            </div>
-                            
-                            <div className="flex items-center gap-2 min-w-0 flex-1">
-                              <button onClick={() => handleToggleTaskStatus(task)}>
-                                {getStatusIcon(task.status)}
-                              </button>
-                              
-                              <div className="flex-1 min-w-0">
-                                <h3 className={`font-medium ${task.status === 'completed' ? 'line-through text-gray-500' : ''}`}>
-                                  {task.title}
-                                </h3>
-                                {task.description && (
-                                  <p className="text-sm text-gray-600 mt-1">{task.description}</p>
-                                )}
-                                <div className="flex items-center gap-2 mt-2 text-xs text-gray-500">
-                                  <Badge variant="outline">{task.duration} min</Badge>
-                                  <Badge className={getPriorityColor(task.priority)}>
-                                    {task.priority === 'high' ? 'Élevée' : task.priority === 'medium' ? 'Moyenne' : 'Faible'}
-                                  </Badge>
-                                  <span className="capitalize">{task.category}</span>
-                                  {task.is_ai_generated && (
-                                    <Badge variant="secondary" className="bg-purple-100 text-purple-700">
-                                      <Sparkles className="h-3 w-3 mr-1" />
-                                      IA
-                                    </Badge>
-                                  )}
-                                </div>
-                              </div>
-                            </div>
-                            
-                            <div className="text-right">
-                              {task.start_time && (
-                                <div className="text-sm font-medium">
-                                  {formatTime(task.start_time)}
-                                  {task.end_time && (
-                                    <span className="text-gray-500 ml-1">
-                                      - {formatTime(task.end_time)}
-                                    </span>
-                                  )}
-                                </div>
-                              )}
-                              
-                              {task.assigned_to && task.assigned_to.length > 0 && (
-                                <div className="mt-1">
-                                  {task.assigned_to.map((memberId) => {
-                                    const member = teamMembers.find(m => m.id === memberId);
-                                    return member ? (
-                                      <Badge key={memberId} variant="secondary" className="text-xs">
-                                        {member.name}
-                                      </Badge>
-                                    ) : null;
-                                  })}
-                                </div>
-                              )}
-                              
-                              <div className="mt-2 flex gap-1">
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() => {
-                                    setSelectedTask(task);
-                                    setShowTaskModal(true);
-                                  }}
-                                >
-                                  Modifier
-                                </Button>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() => handleDeleteTask(task.id)}
-                                  className="text-red-600 hover:text-red-800"
-                                >
-                                  Supprimer
-                                </Button>
-                              </div>
-                            </div>
+      {isLoadingTasks ? (
+        <div className="flex justify-center items-center p-8">
+          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-wedding-olive"></div>
+          <span className="ml-3">Chargement du planning...</span>
+        </div>
+      ) : (
+        <Card>
+          <CardHeader>
+            <CardTitle>Timeline du jour J</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {tasks.length > 0 ? (
+              <div className="space-y-4">
+                {tasks.map((task) => (
+                  <div key={task.id} className="p-4 border rounded-lg bg-white shadow-sm hover:shadow-md transition-shadow">
+                    <div className="flex items-start gap-4">
+                      <button
+                        onClick={() => toggleTaskStatus(task)}
+                        className="mt-1"
+                      >
+                        {getStatusIcon(task.status)}
+                      </button>
+
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <h3 className={`font-medium ${task.status === 'completed' ? 'line-through text-gray-500' : ''}`}>
+                              {task.title}
+                            </h3>
+                            {task.description && (
+                              <p className="text-sm text-gray-600 mt-1">{task.description}</p>
+                            )}
+                          </div>
+
+                          <div className="flex items-center gap-1 ml-4">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => setEditingTask(task)}
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => deleteTask(task.id)}
+                              className="text-red-600 hover:text-red-800"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
                           </div>
                         </div>
-                      )}
-                    </Draggable>
-                  ))}
-                  {provided.placeholder}
+
+                        <div className="flex items-center gap-2 mt-2 text-xs">
+                          {task.start_time && (
+                            <div className="flex items-center gap-1">
+                              <Clock className="h-3 w-3" />
+                              <span>{formatTime(task.start_time)}</span>
+                              {task.end_time && (
+                                <span>- {formatTime(task.end_time)}</span>
+                              )}
+                            </div>
+                          )}
+                          
+                          <Badge variant="outline">{task.duration} min</Badge>
+                          <Badge className={getPriorityColor(task.priority)}>
+                            {task.priority === 'high' ? 'Élevée' : task.priority === 'medium' ? 'Moyenne' : 'Faible'}
+                          </Badge>
+                          <span className="capitalize text-gray-500">{task.category}</span>
+                        </div>
+
+                        {task.assigned_to && Array.isArray(task.assigned_to) && task.assigned_to.length > 0 && (
+                          <div className="flex flex-wrap gap-1 mt-2">
+                            {task.assigned_to.map((memberId: string) => {
+                              const member = teamMembers.find(m => m.id === memberId);
+                              return member ? (
+                                <Badge key={memberId} variant="secondary">
+                                  <User className="h-3 w-3 mr-1" />
+                                  {member.name}
+                                </Badge>
+                              ) : null;
+                            })}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-12 text-gray-500">
+                <Calendar className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                <p className="text-lg mb-2">Aucune tâche planifiée</p>
+                <p className="text-sm">Commencez par ajouter votre première tâche au planning</p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Modal d'édition */}
+      {editingTask && (
+        <Dialog open={!!editingTask} onOpenChange={() => setEditingTask(null)}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>Modifier la tâche</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">Titre *</label>
+                <Input
+                  value={editingTask.title}
+                  onChange={(e) => setEditingTask({ ...editingTask, title: e.target.value })}
+                  placeholder="Titre de la tâche"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1">Description</label>
+                <Textarea
+                  value={editingTask.description || ''}
+                  onChange={(e) => setEditingTask({ ...editingTask, description: e.target.value })}
+                  placeholder="Description détaillée de la tâche"
+                  rows={3}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-1">Heure de début</label>
+                  <Input
+                    type="time"
+                    value={editingTask.start_time || ''}
+                    onChange={(e) => setEditingTask({ ...editingTask, start_time: e.target.value })}
+                  />
                 </div>
-              )}
-            </Droppable>
-          </DragDropContext>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Heure de fin</label>
+                  <Input
+                    type="time"
+                    value={editingTask.end_time || ''}
+                    onChange={(e) => setEditingTask({ ...editingTask, end_time: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Durée (min)</label>
+                  <Input
+                    type="number"
+                    value={editingTask.duration || 30}
+                    onChange={(e) => setEditingTask({ ...editingTask, duration: parseInt(e.target.value) || 30 })}
+                    min="1"
+                    max="1440"
+                  />
+                </div>
+              </div>
 
-          {tasks.length === 0 && (
-            <div className="text-center py-12 text-gray-500">
-              <Clock className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <p className="text-lg mb-2">Aucune tâche planifiée</p>
-              <p className="text-sm">Commencez par ajouter vos premières tâches ou utilisez l'IA pour générer un planning</p>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-1">Catégorie</label>
+                  <Select value={editingTask.category} onValueChange={(value) => setEditingTask({ ...editingTask, category: value })}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="general">Général</SelectItem>
+                      <SelectItem value="ceremony">Cérémonie</SelectItem>
+                      <SelectItem value="reception">Réception</SelectItem>
+                      <SelectItem value="photos">Photos</SelectItem>
+                      <SelectItem value="music">Musique</SelectItem>
+                      <SelectItem value="catering">Traiteur</SelectItem>
+                      <SelectItem value="decoration">Décoration</SelectItem>
+                      <SelectItem value="transport">Transport</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-1">Priorité</label>
+                  <Select value={editingTask.priority} onValueChange={(value) => setEditingTask({ ...editingTask, priority: value })}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="low">Faible</SelectItem>
+                      <SelectItem value="medium">Moyenne</SelectItem>
+                      <SelectItem value="high">Élevée</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-1">Statut</label>
+                  <Select value={editingTask.status} onValueChange={(value) => setEditingTask({ ...editingTask, status: value })}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="todo">À faire</SelectItem>
+                      <SelectItem value="in_progress">En cours</SelectItem>
+                      <SelectItem value="completed">Terminé</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="flex gap-2">
+                <Button onClick={updateTask}>
+                  Sauvegarder
+                </Button>
+                <Button variant="outline" onClick={() => setEditingTask(null)}>
+                  Annuler
+                </Button>
+              </div>
             </div>
-          )}
-        </CardContent>
-      </Card>
-
-      <TaskEditModal
-        isOpen={showTaskModal}
-        onClose={() => {
-          setShowTaskModal(false);
-          setSelectedTask(null);
-        }}
-        task={selectedTask}
-        teamMembers={teamMembers}
-        onSave={handleSaveTask}
-      />
-
-      <AISuggestionsModal
-        isOpen={showAIModal}
-        onClose={() => setShowAIModal(false)}
-        onAddSuggestions={handleAddAISuggestions}
-      />
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 };

@@ -6,10 +6,11 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Upload, FileText, Download, Eye, Trash2, Folder, Search } from 'lucide-react';
+import { Upload, FileText, Download, Eye, Trash2, Folder, Search, RefreshCw } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { useWeddingCoordination } from '@/hooks/useWeddingCoordination';
 
 interface DocumentItem {
   id: string;
@@ -31,12 +32,14 @@ interface TeamMember {
 }
 
 const MonJourMDocuments: React.FC = () => {
+  const { coordination, isLoading: coordinationLoading, refreshCoordination } = useWeddingCoordination();
   const [documents, setDocuments] = useState<DocumentItem[]>([]);
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
-  const [coordinationId, setCoordinationId] = useState<string | null>(null);
   const [showAddDocument, setShowAddDocument] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState('');
+  const [isLoadingDocuments, setIsLoadingDocuments] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [newDocument, setNewDocument] = useState({
     title: '',
     description: '',
@@ -61,45 +64,46 @@ const MonJourMDocuments: React.FC = () => {
   ];
 
   useEffect(() => {
-    initializeData();
-    setupRealtimeSubscription();
-  }, []);
-
-  const initializeData = async () => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      // Récupérer la coordination
-      const { data: coordination } = await supabase
-        .from('wedding_coordination')
-        .select('id')
-        .eq('user_id', user.id)
-        .single();
-
-      if (coordination) {
-        setCoordinationId(coordination.id);
-        await loadDocuments(coordination.id);
-        await loadTeamMembers(coordination.id);
-      }
-    } catch (error) {
-      console.error('Error initializing data:', error);
+    if (coordination?.id) {
+      loadDocuments(coordination.id);
+      loadTeamMembers(coordination.id);
+      setupRealtimeSubscription();
     }
-  };
+  }, [coordination?.id]);
 
   const loadDocuments = async (coordId: string) => {
-    const { data, error } = await supabase
-      .from('coordination_documents')
-      .select('*')
-      .eq('coordination_id', coordId)
-      .order('created_at', { ascending: false });
+    console.log('📥 Loading documents for coordination:', coordId);
+    setIsLoadingDocuments(true);
+    
+    try {
+      const { data, error } = await supabase
+        .from('coordination_documents')
+        .select('*')
+        .eq('coordination_id', coordId)
+        .order('created_at', { ascending: false });
 
-    if (error) {
-      console.error('Error loading documents:', error);
-      return;
+      if (error) {
+        console.error('❌ Error loading documents:', error);
+        toast({
+          title: "Erreur",
+          description: "Impossible de charger les documents",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      console.log('✅ Loaded documents:', data);
+      setDocuments(data || []);
+    } catch (error) {
+      console.error('❌ Error in loadDocuments:', error);
+      toast({
+        title: "Erreur",
+        description: "Une erreur est survenue lors du chargement",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoadingDocuments(false);
     }
-
-    setDocuments(data || []);
   };
 
   const loadTeamMembers = async (coordId: string) => {
@@ -127,8 +131,8 @@ const MonJourMDocuments: React.FC = () => {
           table: 'coordination_documents'
         },
         () => {
-          if (coordinationId) {
-            loadDocuments(coordinationId);
+          if (coordination?.id) {
+            loadDocuments(coordination.id);
           }
         }
       )
@@ -139,9 +143,40 @@ const MonJourMDocuments: React.FC = () => {
     };
   };
 
+  const handleRefresh = async () => {
+    if (!coordination?.id) return;
+    
+    setIsRefreshing(true);
+    try {
+      await Promise.all([
+        refreshCoordination(),
+        loadDocuments(coordination.id),
+        loadTeamMembers(coordination.id)
+      ]);
+      toast({
+        title: "Données actualisées",
+        description: "Les documents ont été rechargés avec succès"
+      });
+    } catch (error) {
+      console.error('Error refreshing:', error);
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
+
   const handleFileSelection = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      // Vérifier la taille du fichier (limite à 10MB)
+      if (file.size > 10 * 1024 * 1024) {
+        toast({
+          title: "Fichier trop volumineux",
+          description: "La taille du fichier ne peut pas dépasser 10MB",
+          variant: "destructive"
+        });
+        return;
+      }
+
       setSelectedFile(file);
       // Auto-remplir le titre avec le nom du fichier si vide
       if (!newDocument.title.trim()) {
@@ -152,7 +187,7 @@ const MonJourMDocuments: React.FC = () => {
   };
 
   const handleFileUpload = async () => {
-    if (!selectedFile || !coordinationId) {
+    if (!selectedFile || !coordination?.id) {
       toast({
         title: "Erreur",
         description: "Veuillez sélectionner un fichier",
@@ -170,6 +205,16 @@ const MonJourMDocuments: React.FC = () => {
       return;
     }
 
+    // Vérifier la limite de 4 documents
+    if (documents.length >= 4) {
+      toast({
+        title: "Limite atteinte",
+        description: "Vous ne pouvez avoir que 4 documents maximum",
+        variant: "destructive"
+      });
+      return;
+    }
+
     setUploadingFile(true);
 
     try {
@@ -182,7 +227,7 @@ const MonJourMDocuments: React.FC = () => {
       const fileName = `${timestamp}-${selectedFile.name}`;
       const filePath = `${user.id}/${fileName}`;
 
-      console.log('Uploading file:', filePath);
+      console.log('📤 Uploading file:', filePath);
 
       // Upload du fichier vers Supabase Storage
       const { data: uploadData, error: uploadError } = await supabase.storage
@@ -193,11 +238,11 @@ const MonJourMDocuments: React.FC = () => {
         });
 
       if (uploadError) {
-        console.error('Upload error:', uploadError);
-        throw uploadError;
+        console.error('❌ Upload error:', uploadError);
+        throw new Error(`Erreur d'upload: ${uploadError.message}`);
       }
 
-      console.log('File uploaded successfully:', uploadData);
+      console.log('✅ File uploaded successfully:', uploadData);
 
       // Obtenir l'URL publique du fichier
       const { data: urlData } = supabase.storage
@@ -208,7 +253,7 @@ const MonJourMDocuments: React.FC = () => {
       const { error: dbError } = await supabase
         .from('coordination_documents')
         .insert({
-          coordination_id: coordinationId,
+          coordination_id: coordination.id,
           title: newDocument.title,
           description: newDocument.description,
           file_url: urlData.publicUrl,
@@ -221,12 +266,12 @@ const MonJourMDocuments: React.FC = () => {
         });
 
       if (dbError) {
-        console.error('Database error:', dbError);
+        console.error('❌ Database error:', dbError);
         // Essayer de supprimer le fichier uploadé en cas d'erreur
         await supabase.storage
           .from('wedding-documents')
           .remove([filePath]);
-        throw dbError;
+        throw new Error(`Erreur de base de données: ${dbError.message}`);
       }
 
       // Réinitialiser le formulaire
@@ -235,18 +280,21 @@ const MonJourMDocuments: React.FC = () => {
       setShowAddDocument(false);
       
       // Réinitialiser l'input file
-      const fileInput = window.document.querySelector('input[type="file"]') as HTMLInputElement;
+      const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
       if (fileInput) fileInput.value = '';
       
       toast({
         title: "Document ajouté",
         description: "Le document a été téléchargé avec succès"
       });
+
+      // Recharger la liste
+      await loadDocuments(coordination.id);
     } catch (error) {
-      console.error('Error uploading document:', error);
+      console.error('❌ Error uploading document:', error);
       toast({
-        title: "Erreur",
-        description: `Impossible de télécharger le document: ${error.message}`,
+        title: "Erreur d'upload",
+        description: error.message || "Impossible de télécharger le document",
         variant: "destructive"
       });
     } finally {
@@ -263,7 +311,7 @@ const MonJourMDocuments: React.FC = () => {
           .remove([document.file_path]);
           
         if (storageError) {
-          console.error('Error deleting file from storage:', storageError);
+          console.error('❌ Error deleting file from storage:', storageError);
           // Continuer quand même pour supprimer l'entrée de la base
         }
       }
@@ -280,8 +328,13 @@ const MonJourMDocuments: React.FC = () => {
         title: "Document supprimé",
         description: "Le document a été supprimé avec succès"
       });
+
+      // Recharger la liste
+      if (coordination?.id) {
+        await loadDocuments(coordination.id);
+      }
     } catch (error) {
-      console.error('Error deleting document:', error);
+      console.error('❌ Error deleting document:', error);
       toast({
         title: "Erreur",
         description: "Impossible de supprimer le document",
@@ -302,19 +355,19 @@ const MonJourMDocuments: React.FC = () => {
 
         // Créer un lien de téléchargement
         const url = URL.createObjectURL(data);
-        const a = window.document.createElement('a');
+        const a = document.createElement('a');
         a.href = url;
         a.download = document.title;
-        window.document.body.appendChild(a);
+        document.body.appendChild(a);
         a.click();
-        window.document.body.removeChild(a);
+        document.body.removeChild(a);
         URL.revokeObjectURL(url);
       } else {
         // Fallback sur l'URL publique
         window.open(document.file_url, '_blank');
       }
     } catch (error) {
-      console.error('Error downloading document:', error);
+      console.error('❌ Error downloading document:', error);
       toast({
         title: "Erreur",
         description: "Impossible de télécharger le document",
@@ -356,110 +409,144 @@ const MonJourMDocuments: React.FC = () => {
     count: documents.filter(doc => doc.category === category.value).length
   }));
 
+  if (coordinationLoading) {
+    return (
+      <div className="flex justify-center items-center p-12">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-wedding-olive"></div>
+        <span className="ml-3">Initialisation de votre espace...</span>
+      </div>
+    );
+  }
+
+  if (!coordination) {
+    return (
+      <div className="text-center py-12 text-gray-500">
+        <p>Impossible d'initialiser votre espace Mon Jour-M</p>
+        <Button onClick={refreshCoordination} className="mt-4" variant="outline">
+          Réessayer
+        </Button>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
-      {/* En-tête */}
+      {/* En-tête avec bouton refresh */}
       <div className="flex flex-col md:flex-row gap-4 justify-between items-start">
         <div>
           <h2 className="text-2xl font-semibold mb-2">Documents</h2>
-          <p className="text-gray-600">Centralisez tous vos documents de mariage</p>
+          <p className="text-gray-600">Centralisez tous vos documents de mariage (max 4)</p>
+          <p className="text-sm text-gray-500">Actuellement: {documents.length}/4 documents</p>
         </div>
         
-        <Dialog open={showAddDocument} onOpenChange={setShowAddDocument}>
-          <DialogTrigger asChild>
-            <Button className="flex items-center gap-2">
-              <Upload className="h-4 w-4" />
-              Ajouter un document
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Ajouter un document</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium mb-1">Fichier *</label>
-                <Input
-                  type="file"
-                  onChange={handleFileSelection}
-                  disabled={uploadingFile}
-                  accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif,.mp4,.mp3,.xls,.xlsx"
-                />
-                {selectedFile && (
-                  <p className="text-sm text-gray-600 mt-1">
-                    Fichier sélectionné: {selectedFile.name} ({formatFileSize(selectedFile.size)})
-                  </p>
-                )}
-              </div>
+        <div className="flex gap-2">
+          <Button
+            onClick={handleRefresh}
+            variant="outline"
+            size="sm"
+            disabled={isRefreshing}
+            className="flex items-center gap-2"
+          >
+            <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+            Actualiser
+          </Button>
 
-              <div>
-                <label className="block text-sm font-medium mb-1">Titre *</label>
-                <Input
-                  value={newDocument.title}
-                  onChange={(e) => setNewDocument({ ...newDocument, title: e.target.value })}
-                  placeholder="Nom du document"
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium mb-1">Description</label>
-                <Textarea
-                  value={newDocument.description}
-                  onChange={(e) => setNewDocument({ ...newDocument, description: e.target.value })}
-                  placeholder="Description du document"
-                  rows={3}
-                />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Dialog open={showAddDocument} onOpenChange={setShowAddDocument}>
+            <DialogTrigger asChild>
+              <Button className="flex items-center gap-2" disabled={documents.length >= 4}>
+                <Upload className="h-4 w-4" />
+                Ajouter un document
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Ajouter un document</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium mb-1">Catégorie</label>
-                  <Select value={newDocument.category} onValueChange={(value) => setNewDocument({ ...newDocument, category: value })}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {categories.map((category) => (
-                        <SelectItem key={category.value} value={category.value}>
-                          {category.icon} {category.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <label className="block text-sm font-medium mb-1">Fichier *</label>
+                  <Input
+                    type="file"
+                    onChange={handleFileSelection}
+                    disabled={uploadingFile}
+                    accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif,.mp4,.mp3,.xls,.xlsx"
+                  />
+                  {selectedFile && (
+                    <p className="text-sm text-gray-600 mt-1">
+                      Fichier sélectionné: {selectedFile.name} ({formatFileSize(selectedFile.size)})
+                    </p>
+                  )}
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-1">Assigner à</label>
-                  <Select value={newDocument.assigned_to} onValueChange={(value) => setNewDocument({ ...newDocument, assigned_to: value })}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Optionnel" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="">Non assigné</SelectItem>
-                      {teamMembers.map((member) => (
-                        <SelectItem key={member.id} value={member.id}>
-                          {member.name} ({member.role})
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <label className="block text-sm font-medium mb-1">Titre *</label>
+                  <Input
+                    value={newDocument.title}
+                    onChange={(e) => setNewDocument({ ...newDocument, title: e.target.value })}
+                    placeholder="Nom du document"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium mb-1">Description</label>
+                  <Textarea
+                    value={newDocument.description}
+                    onChange={(e) => setNewDocument({ ...newDocument, description: e.target.value })}
+                    placeholder="Description du document"
+                    rows={3}
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Catégorie</label>
+                    <Select value={newDocument.category} onValueChange={(value) => setNewDocument({ ...newDocument, category: value })}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {categories.map((category) => (
+                          <SelectItem key={category.value} value={category.value}>
+                            {category.icon} {category.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Assigner à</label>
+                    <Select value={newDocument.assigned_to} onValueChange={(value) => setNewDocument({ ...newDocument, assigned_to: value })}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Optionnel" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="">Non assigné</SelectItem>
+                        {teamMembers.map((member) => (
+                          <SelectItem key={member.id} value={member.id}>
+                            {member.name} ({member.role})
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                <div className="flex gap-2">
+                  <Button
+                    onClick={handleFileUpload}
+                    disabled={uploadingFile || !selectedFile || !newDocument.title.trim()}
+                  >
+                    {uploadingFile ? 'Téléchargement...' : 'Télécharger'}
+                  </Button>
+                  <Button variant="outline" onClick={() => setShowAddDocument(false)}>
+                    Annuler
+                  </Button>
                 </div>
               </div>
-
-              <div className="flex gap-2">
-                <Button
-                  onClick={handleFileUpload}
-                  disabled={uploadingFile || !selectedFile || !newDocument.title.trim()}
-                >
-                  {uploadingFile ? 'Téléchargement...' : 'Télécharger'}
-                </Button>
-                <Button variant="outline" onClick={() => setShowAddDocument(false)}>
-                  Annuler
-                </Button>
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog>
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
 
       {/* Filtres et recherche */}
@@ -501,68 +588,75 @@ const MonJourMDocuments: React.FC = () => {
         </Select>
       </div>
 
-      {/* Liste des documents */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filteredDocuments.map((document) => (
-          <Card key={document.id} className="hover:shadow-md transition-shadow">
-            <CardContent className="p-4">
-              <div className="flex items-start justify-between mb-3">
-                <div className="flex items-center gap-2">
-                  <span className="text-2xl">{getFileIcon(document.file_type)}</span>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-medium truncate">{document.title}</h3>
-                    <p className="text-xs text-gray-500">
-                      {formatFileSize(document.file_size)}
-                    </p>
+      {isLoadingDocuments ? (
+        <div className="flex justify-center items-center p-8">
+          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-wedding-olive"></div>
+          <span className="ml-3">Chargement des documents...</span>
+        </div>
+      ) : (
+        /* Liste des documents */
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {filteredDocuments.map((document) => (
+            <Card key={document.id} className="hover:shadow-md transition-shadow">
+              <CardContent className="p-4">
+                <div className="flex items-start justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <span className="text-2xl">{getFileIcon(document.file_type)}</span>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-medium truncate">{document.title}</h3>
+                      <p className="text-xs text-gray-500">
+                        {formatFileSize(document.file_size)}
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex gap-1">
+                    <Button variant="ghost" size="sm" onClick={() => window.open(document.file_url, '_blank')}>
+                      <Eye className="h-4 w-4" />
+                    </Button>
+                    <Button variant="ghost" size="sm" onClick={() => downloadDocument(document)}>
+                      <Download className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => deleteDocument(document)}
+                      className="text-red-600 hover:text-red-800"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
                   </div>
                 </div>
-                
-                <div className="flex gap-1">
-                  <Button variant="ghost" size="sm" onClick={() => window.open(document.file_url, '_blank')}>
-                    <Eye className="h-4 w-4" />
-                  </Button>
-                  <Button variant="ghost" size="sm" onClick={() => downloadDocument(document)}>
-                    <Download className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => deleteDocument(document)}
-                    className="text-red-600 hover:text-red-800"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
 
-              {document.description && (
-                <p className="text-sm text-gray-600 mb-3 line-clamp-2">
-                  {document.description}
-                </p>
-              )}
-
-              <div className="flex flex-wrap gap-2 mb-3">
-                <Badge variant="outline">
-                  {categories.find(c => c.value === document.category)?.icon}
-                  {categories.find(c => c.value === document.category)?.label}
-                </Badge>
-                
-                {document.assigned_to && (
-                  <Badge variant="secondary">
-                    {teamMembers.find(m => m.id === document.assigned_to)?.name}
-                  </Badge>
+                {document.description && (
+                  <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                    {document.description}
+                  </p>
                 )}
-              </div>
 
-              <p className="text-xs text-gray-400">
-                Ajouté le {new Date(document.created_at).toLocaleDateString('fr-FR')}
-              </p>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+                <div className="flex flex-wrap gap-2 mb-3">
+                  <Badge variant="outline">
+                    {categories.find(c => c.value === document.category)?.icon}
+                    {categories.find(c => c.value === document.category)?.label}
+                  </Badge>
+                  
+                  {document.assigned_to && (
+                    <Badge variant="secondary">
+                      {teamMembers.find(m => m.id === document.assigned_to)?.name}
+                    </Badge>
+                  )}
+                </div>
 
-      {filteredDocuments.length === 0 && (
+                <p className="text-xs text-gray-400">
+                  Ajouté le {new Date(document.created_at).toLocaleDateString('fr-FR')}
+                </p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
+
+      {filteredDocuments.length === 0 && !isLoadingDocuments && (
         <div className="text-center py-12 text-gray-500">
           <FileText className="h-12 w-12 mx-auto mb-4 opacity-50" />
           <p className="text-lg mb-2">
