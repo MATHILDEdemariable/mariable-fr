@@ -5,8 +5,9 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Calendar, Clock, CheckCircle2, Circle, User, RefreshCw, Edit, Trash2, Sparkles } from 'lucide-react';
+import { Plus, Calendar, Clock, CheckCircle2, Circle, User, RefreshCw, Edit, Trash2, Sparkles, GripVertical } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 import AISuggestionsModal from './AISuggestionsModal';
@@ -56,6 +57,7 @@ const MonJourMPlanning: React.FC = () => {
   const [showAddTask, setShowAddTask] = useState(false);
   const [editingTask, setEditingTask] = useState<PlanningTask | null>(null);
   const [showAISuggestions, setShowAISuggestions] = useState(false);
+  const [startingTime, setStartingTime] = useState('09:00');
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -394,18 +396,99 @@ const MonJourMPlanning: React.FC = () => {
     if (!timeString) return '';
     
     try {
+      // Si c'est un timestamp complet
       if (timeString.includes('T')) {
         const date = new Date(timeString);
         return date.toLocaleTimeString('fr-FR', {
           hour: '2-digit',
           minute: '2-digit'
         });
-      } else {
+      }
+      // Si c'est déjà au format HH:MM
+      if (timeString.match(/^\d{2}:\d{2}$/)) {
         return timeString;
       }
+      // Autres formats
+      const date = new Date(`1970-01-01T${timeString}`);
+      return date.toLocaleTimeString('fr-FR', {
+        hour: '2-digit',
+        minute: '2-digit'
+      });
     } catch (error) {
       return timeString;
     }
+  };
+
+  const calculateTimesFromPosition = (tasksArray: PlanningTask[], startTime: string = startingTime) => {
+    let currentTime = new Date(`1970-01-01T${startTime}:00`);
+    
+    return tasksArray.map((task, index) => {
+      const taskStartTime = currentTime.toTimeString().substring(0, 5);
+      currentTime.setMinutes(currentTime.getMinutes() + (task.duration || 30));
+      const taskEndTime = currentTime.toTimeString().substring(0, 5);
+      
+      return {
+        ...task,
+        start_time: taskStartTime,
+        end_time: taskEndTime,
+        position: index
+      };
+    });
+  };
+
+  const handleDragEnd = async (result: DropResult) => {
+    if (!result.destination) return;
+
+    const items = Array.from(tasks);
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
+
+    // Recalculer les horaires
+    const updatedTasks = calculateTimesFromPosition(items, startingTime);
+    setTasks(updatedTasks);
+
+    // Mettre à jour en base
+    try {
+      for (const task of updatedTasks) {
+        await supabase
+          .from('coordination_planning')
+          .update({
+            position: task.position,
+            start_time: task.start_time,
+            end_time: task.end_time
+          })
+          .eq('id', task.id);
+      }
+      
+      toast({
+        title: "Planning mis à jour",
+        description: "L'ordre et les horaires ont été actualisés"
+      });
+    } catch (error) {
+      console.error('Erreur mise à jour positions:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de mettre à jour l'ordre",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleStartTimeChange = (newStartTime: string) => {
+    setStartingTime(newStartTime);
+    const updatedTasks = calculateTimesFromPosition(tasks, newStartTime);
+    setTasks(updatedTasks);
+    
+    // Mettre à jour en base
+    updatedTasks.forEach(async (task) => {
+      await supabase
+        .from('coordination_planning')
+        .update({
+          start_time: task.start_time,
+          end_time: task.end_time
+        })
+        .eq('id', task.id);
+    });
   };
 
   const getStatusIcon = (status: string) => {
@@ -444,6 +527,16 @@ const MonJourMPlanning: React.FC = () => {
         </div>
         
         <div className="flex gap-2">
+          <div className="flex items-center gap-2">
+            <label className="text-sm font-medium">Heure de début:</label>
+            <Input
+              type="time"
+              value={startingTime}
+              onChange={(e) => handleStartTimeChange(e.target.value)}
+              className="w-32"
+            />
+          </div>
+
           <Button
             onClick={refreshData}
             variant="outline"
@@ -596,84 +689,108 @@ const MonJourMPlanning: React.FC = () => {
         </CardHeader>
         <CardContent>
           {tasks.length > 0 ? (
-            <div className="space-y-4">
-              {tasks.map((task) => (
-                <div key={task.id} className="p-4 border rounded-lg bg-white shadow-sm hover:shadow-md transition-shadow">
-                  <div className="flex items-start gap-4">
-                    <button
-                      onClick={() => toggleTaskStatus(task)}
-                      className="mt-1"
-                    >
-                      {getStatusIcon(task.status)}
-                    </button>
-
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <h3 className={`font-medium ${task.status === 'completed' ? 'line-through text-gray-500' : ''}`}>
-                            {task.title}
-                          </h3>
-                          {task.description && (
-                            <p className="text-sm text-gray-600 mt-1">{task.description}</p>
-                          )}
-                        </div>
-
-                        <div className="flex items-center gap-1 ml-4">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => setEditingTask(task)}
+            <DragDropContext onDragEnd={handleDragEnd}>
+              <Droppable droppableId="tasks">
+                {(provided) => (
+                  <div
+                    {...provided.droppableProps}
+                    ref={provided.innerRef}
+                    className="space-y-4"
+                  >
+                    {tasks.map((task, index) => (
+                      <Draggable key={task.id} draggableId={task.id} index={index}>
+                        {(provided, snapshot) => (
+                          <div
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            className={`p-4 border rounded-lg bg-white shadow-sm hover:shadow-md transition-shadow ${
+                              snapshot.isDragging ? 'shadow-lg' : ''
+                            }`}
                           >
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleDeleteTask(task.id)}
-                            className="text-red-600 hover:text-red-800"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
+                            <div className="flex items-start gap-4">
+                              <div
+                                {...provided.dragHandleProps}
+                                className="mt-1 cursor-grab active:cursor-grabbing"
+                              >
+                                <GripVertical className="h-5 w-5 text-gray-400" />
+                              </div>
 
-                      <div className="flex items-center gap-2 mt-2 text-xs flex-wrap">
-                        {(task.start_time || task.end_time) && (
-                          <div className="flex items-center gap-1 bg-blue-50 px-2 py-1 rounded">
-                            <Clock className="h-3 w-3 text-blue-600" />
-                            <span className="text-blue-700">
-                              {task.start_time && formatTime(task.start_time)}
-                              {task.start_time && task.end_time && ' - '}
-                              {task.end_time && formatTime(task.end_time)}
-                            </span>
+                              <button
+                                onClick={() => toggleTaskStatus(task)}
+                                className="mt-1"
+                              >
+                                {getStatusIcon(task.status)}
+                              </button>
+
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-start justify-between">
+                                  <div className="flex-1">
+                                    <h3 className={`font-medium ${task.status === 'completed' ? 'line-through text-gray-500' : ''}`}>
+                                      {task.title}
+                                    </h3>
+                                    {task.description && (
+                                      <p className="text-sm text-gray-600 mt-1">{task.description}</p>
+                                    )}
+                                  </div>
+
+                                  <div className="flex items-center gap-1 ml-4">
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() => setEditingTask(task)}
+                                    >
+                                      <Edit className="h-4 w-4" />
+                                    </Button>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() => handleDeleteTask(task.id)}
+                                      className="text-red-600 hover:text-red-800"
+                                    >
+                                      <Trash2 className="h-4 w-4" />
+                                    </Button>
+                                  </div>
+                                </div>
+
+                                <div className="flex items-center gap-2 mt-2 text-xs flex-wrap">
+                                  <div className="flex items-center gap-1 bg-blue-50 px-2 py-1 rounded">
+                                    <Clock className="h-3 w-3 text-blue-600" />
+                                    <span className="text-blue-700 font-medium">
+                                      {formatTime(task.start_time)} - {formatTime(task.end_time)}
+                                    </span>
+                                  </div>
+                                  
+                                  <Badge variant="outline">{task.duration} min</Badge>
+                                  <Badge className={getPriorityColor(task.priority)}>
+                                    {task.priority === 'high' ? 'Élevée' : task.priority === 'medium' ? 'Moyenne' : 'Faible'}
+                                  </Badge>
+                                  <Badge variant="secondary" className="capitalize">{task.category}</Badge>
+                                </div>
+
+                                {task.assigned_to && Array.isArray(task.assigned_to) && task.assigned_to.length > 0 && (
+                                  <div className="flex flex-wrap gap-1 mt-2">
+                                    {task.assigned_to.map((memberId: string) => {
+                                      const member = teamMembers.find(m => m.id === memberId);
+                                      return member ? (
+                                        <Badge key={memberId} variant="secondary">
+                                          <User className="h-3 w-3 mr-1" />
+                                          {member.name}
+                                        </Badge>
+                                      ) : null;
+                                    })}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
                           </div>
                         )}
-                        
-                        <Badge variant="outline">{task.duration} min</Badge>
-                        <Badge className={getPriorityColor(task.priority)}>
-                          {task.priority === 'high' ? 'Élevée' : task.priority === 'medium' ? 'Moyenne' : 'Faible'}
-                        </Badge>
-                        <Badge variant="secondary" className="capitalize">{task.category}</Badge>
-                      </div>
-
-                      {task.assigned_to && Array.isArray(task.assigned_to) && task.assigned_to.length > 0 && (
-                        <div className="flex flex-wrap gap-1 mt-2">
-                          {task.assigned_to.map((memberId: string) => {
-                            const member = teamMembers.find(m => m.id === memberId);
-                            return member ? (
-                              <Badge key={memberId} variant="secondary">
-                                <User className="h-3 w-3 mr-1" />
-                                {member.name}
-                              </Badge>
-                            ) : null;
-                          })}
-                        </div>
-                      )}
-                    </div>
+                      </Draggable>
+                    ))}
+                    {provided.placeholder}
                   </div>
-                </div>
-              ))}
-            </div>
+                )}
+              </Droppable>
+            </DragDropContext>
           ) : (
             <div className="text-center py-12 text-gray-500">
               <Calendar className="h-12 w-12 mx-auto mb-4 opacity-50" />
