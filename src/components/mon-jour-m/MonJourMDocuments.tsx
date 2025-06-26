@@ -218,20 +218,33 @@ const MonJourMDocuments: React.FC = () => {
         fileData = await handleFileUpload(formData.file);
       }
 
+      // Préparer les données pour l'insertion
+      const insertData: any = {
+        coordination_id: coordination.id,
+        title: formData.title,
+        description: formData.description || null,
+        category: formData.category,
+        assigned_to: formData.assigned_to || null,
+      };
+
+      // Ajouter les données du fichier seulement si elles existent
+      if (fileData && Object.keys(fileData).length > 0) {
+        Object.assign(insertData, fileData);
+      } else {
+        // Si pas de fichier, on définit file_url comme une chaîne vide plutôt que null
+        insertData.file_url = '';
+      }
+
       const { data, error } = await supabase
         .from('coordination_documents')
-        .insert({
-          coordination_id: coordination.id,
-          title: formData.title,
-          description: formData.description || null,
-          category: formData.category,
-          assigned_to: formData.assigned_to || null,
-          ...fileData
-        })
+        .insert(insertData)
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Erreur insertion document:', error);
+        throw error;
+      }
 
       setDocuments(prev => [data, ...prev]);
       resetForm();
@@ -470,7 +483,7 @@ const MonJourMDocuments: React.FC = () => {
                       <h3 className="font-medium line-clamp-2">{document.title}</h3>
                     </div>
                     <div className="flex items-center gap-1">
-                      {document.file_url && (
+                      {document.file_url && document.file_url !== '' && (
                         <Button
                           variant="ghost"
                           size="sm"
