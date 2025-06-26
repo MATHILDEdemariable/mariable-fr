@@ -14,7 +14,7 @@ import {
   MessageCircleQuestion,
   MessageSquare,
   Users,
-  Crown
+  Lightbulb
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
@@ -64,8 +64,8 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
       jourM: true,
     },
     {
-      label: 'Coordination Jour J',
-      icon: <Calendar className="h-4 w-4" />,
+      label: 'Conseils Jour M',
+      icon: <Lightbulb className="h-4 w-4" />,
       path: '/dashboard/coordination',
     },
     {
@@ -91,12 +91,6 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
       external: true,
     },
     {
-      label: 'Upgrade / Premium',
-      icon: <Crown className="h-4 w-4" />,
-      path: '/pricing',
-      premium: true,
-    },
-    {
       label: 'Paramètres',
       icon: <Settings className="h-4 w-4" />,
       path: '/dashboard/settings',
@@ -104,7 +98,15 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
   ];
   
   const handleLogout = async () => {
-    await supabase.auth.signOut();
+    try {
+      await supabase.auth.signOut();
+      // Redirection vers la page d'accueil après déconnexion
+      window.location.href = '/';
+    } catch (error) {
+      console.error('Erreur lors de la déconnexion:', error);
+      // En cas d'erreur, rediriger quand même vers l'accueil
+      window.location.href = '/';
+    }
   };
   
   const isActive = (path: string) => {
@@ -165,8 +167,6 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
                 "flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors",
                 isActive(item.path)
                   ? 'bg-wedding-olive text-white shadow-sm'
-                  : item.premium
-                  ? 'text-wedding-olive font-semibold hover:bg-wedding-olive/20 border border-wedding-olive/30'
                   : item.jourM
                   ? 'text-wedding-olive font-semibold hover:bg-wedding-olive/20 border border-wedding-olive/20'
                   : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive',
@@ -175,11 +175,6 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
             >
               {item.icon}
               <span className="ml-2 sm:ml-3 leading-tight">{item.label}</span>
-              {item.premium && !isReaderMode && (
-                <span className="ml-auto text-xs bg-wedding-olive text-white px-1.5 sm:px-2 py-0.5 rounded-full hidden sm:inline">
-                  PREMIUM
-                </span>
-              )}
               {item.jourM && !isReaderMode && (
                 <span className="ml-auto text-xs bg-wedding-olive text-white px-1.5 sm:px-2 py-0.5 rounded-full hidden sm:inline">
                   NOUVEAU
