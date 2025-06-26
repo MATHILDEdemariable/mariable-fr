@@ -14,7 +14,7 @@ interface WeddingCoordination {
   updated_at: string;
 }
 
-interface PlanningTask {
+export interface PlanningTask {
   id: string;
   title: string;
   description?: string;
