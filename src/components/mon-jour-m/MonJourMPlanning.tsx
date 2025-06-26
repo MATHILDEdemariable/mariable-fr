@@ -92,11 +92,17 @@ const MonJourMPlanning: React.FC = () => {
 
       console.log('✅ Loaded tasks:', data);
       // Conversion des données pour correspondre au type PlanningTask
-      const convertedTasks = (data || []).map(task => ({
+      const convertedTasks: PlanningTask[] = (data || []).map(task => ({
         ...task,
-        start_time: task.start_time ? new Date(task.start_time).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : '',
-        end_time: task.end_time ? new Date(task.end_time).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : '',
-        assigned_to: task.assigned_to ? (Array.isArray(task.assigned_to) ? task.assigned_to : [task.assigned_to]) : []
+        description: task.description || undefined,
+        duration: task.duration || undefined,
+        start_time: task.start_time ? new Date(task.start_time).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : undefined,
+        end_time: task.end_time ? new Date(task.end_time).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : undefined,
+        assigned_to: task.assigned_to ? 
+          (Array.isArray(task.assigned_to) ? 
+            task.assigned_to.map(item => String(item)) : 
+            [String(task.assigned_to)]
+          ) : undefined
       }));
       setTasks(convertedTasks);
     } catch (error) {
