@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -13,7 +14,6 @@ import { fr } from 'date-fns/locale';
 import ReservationDetailModal from '@/components/admin/ReservationDetailModal';
 import ReservationMetrics from '@/components/admin/ReservationMetrics';
 import { Database } from '@/integrations/supabase/types';
-import AdminLayout from '@/components/admin/AdminLayout';
 
 // Use the actual database type
 type JourMReservation = Database['public']['Tables']['jour_m_reservations']['Row'];
@@ -221,182 +221,180 @@ const ReservationsJourM: React.FC = () => {
   }
 
   return (
-    <AdminLayout>
-      <div className="container mx-auto p-6 space-y-6">
-        {/* En-tête */}
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold">Réservations Jour M</h1>
-            <p className="text-muted-foreground">Gestion des demandes de coordination</p>
-          </div>
-          <Button onClick={exportToCSV} className="flex items-center gap-2">
-            <Download className="h-4 w-4" />
-            Exporter CSV
-          </Button>
+    <div className="container mx-auto p-6 space-y-6">
+      {/* En-tête */}
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-bold">Réservations Jour M</h1>
+          <p className="text-muted-foreground">Gestion des demandes de coordination</p>
         </div>
-
-        {/* Métriques */}
-        <ReservationMetrics reservations={reservations} />
-
-        {/* Filtres */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Filter className="h-5 w-5" />
-              Filtres
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div className="relative">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Rechercher par nom, email, lieu..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Statut" />
-                </SelectTrigger>
-                <SelectContent>
-                  {statusOptions.map(option => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Select value={dateFilter} onValueChange={setDateFilter}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Période" />
-                </SelectTrigger>
-                <SelectContent>
-                  {dateFilterOptions.map(option => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <div className="text-sm text-muted-foreground flex items-center">
-                {filteredReservations.length} résultat(s)
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Tableau des réservations */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Liste des réservations</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Couple</TableHead>
-                  <TableHead>Date de mariage</TableHead>
-                  <TableHead>Lieu</TableHead>
-                  <TableHead>Invités</TableHead>
-                  <TableHead>Statut</TableHead>
-                  <TableHead>Date de demande</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredReservations.map((reservation) => (
-                  <TableRow key={reservation.id}>
-                    <TableCell>
-                      <div>
-                        <div className="font-medium">
-                          {reservation.first_name} {reservation.last_name}
-                        </div>
-                        <div className="text-sm text-muted-foreground">
-                          {reservation.email}
-                        </div>
-                        {reservation.partner_name && (
-                          <div className="text-sm text-muted-foreground">
-                            & {reservation.partner_name}
-                          </div>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <Calendar className="h-4 w-4 text-muted-foreground" />
-                        {format(new Date(reservation.wedding_date), 'dd/MM/yyyy', { locale: fr })}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <MapPin className="h-4 w-4 text-muted-foreground" />
-                        {reservation.wedding_location}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <Users className="h-4 w-4 text-muted-foreground" />
-                        {reservation.guest_count}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      {getStatusBadge(reservation.status || 'nouveau')}
-                    </TableCell>
-                    <TableCell>
-                      {format(new Date(reservation.created_at), 'dd/MM/yyyy', { locale: fr })}
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => openDetailModal(reservation)}
-                        >
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                        <Select
-                          value={reservation.status || 'nouveau'}
-                          onValueChange={(value) => updateReservationStatus(reservation.id, value)}
-                        >
-                          <SelectTrigger className="w-32">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="nouveau">Nouveau</SelectItem>
-                            <SelectItem value="en_cours">En cours</SelectItem>
-                            <SelectItem value="traite">Traité</SelectItem>
-                            <SelectItem value="annule">Annulé</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-            
-            {filteredReservations.length === 0 && (
-              <div className="text-center py-8 text-muted-foreground">
-                Aucune réservation trouvée
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Modal de détail */}
-        {selectedReservation && (
-          <ReservationDetailModal
-            reservation={selectedReservation}
-            isOpen={isDetailModalOpen}
-            onClose={() => setIsDetailModalOpen(false)}
-            onUpdate={fetchReservations}
-          />
-        )}
+        <Button onClick={exportToCSV} className="flex items-center gap-2">
+          <Download className="h-4 w-4" />
+          Exporter CSV
+        </Button>
       </div>
-    </AdminLayout>
+
+      {/* Métriques */}
+      <ReservationMetrics reservations={reservations} />
+
+      {/* Filtres */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Filter className="h-5 w-5" />
+            Filtres
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Rechercher par nom, email, lieu..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger>
+                <SelectValue placeholder="Statut" />
+              </SelectTrigger>
+              <SelectContent>
+                {statusOptions.map(option => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select value={dateFilter} onValueChange={setDateFilter}>
+              <SelectTrigger>
+                <SelectValue placeholder="Période" />
+              </SelectTrigger>
+              <SelectContent>
+                {dateFilterOptions.map(option => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <div className="text-sm text-muted-foreground flex items-center">
+              {filteredReservations.length} résultat(s)
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Tableau des réservations */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Liste des réservations</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Couple</TableHead>
+                <TableHead>Date de mariage</TableHead>
+                <TableHead>Lieu</TableHead>
+                <TableHead>Invités</TableHead>
+                <TableHead>Statut</TableHead>
+                <TableHead>Date de demande</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredReservations.map((reservation) => (
+                <TableRow key={reservation.id}>
+                  <TableCell>
+                    <div>
+                      <div className="font-medium">
+                        {reservation.first_name} {reservation.last_name}
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        {reservation.email}
+                      </div>
+                      {reservation.partner_name && (
+                        <div className="text-sm text-muted-foreground">
+                          & {reservation.partner_name}
+                        </div>
+                      )}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <Calendar className="h-4 w-4 text-muted-foreground" />
+                      {format(new Date(reservation.wedding_date), 'dd/MM/yyyy', { locale: fr })}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <MapPin className="h-4 w-4 text-muted-foreground" />
+                      {reservation.wedding_location}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <Users className="h-4 w-4 text-muted-foreground" />
+                      {reservation.guest_count}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    {getStatusBadge(reservation.status || 'nouveau')}
+                  </TableCell>
+                  <TableCell>
+                    {format(new Date(reservation.created_at), 'dd/MM/yyyy', { locale: fr })}
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => openDetailModal(reservation)}
+                      >
+                        <Eye className="h-4 w-4" />
+                      </Button>
+                      <Select
+                        value={reservation.status || 'nouveau'}
+                        onValueChange={(value) => updateReservationStatus(reservation.id, value)}
+                      >
+                        <SelectTrigger className="w-32">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="nouveau">Nouveau</SelectItem>
+                          <SelectItem value="en_cours">En cours</SelectItem>
+                          <SelectItem value="traite">Traité</SelectItem>
+                          <SelectItem value="annule">Annulé</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+          
+          {filteredReservations.length === 0 && (
+            <div className="text-center py-8 text-muted-foreground">
+              Aucune réservation trouvée
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Modal de détail */}
+      {selectedReservation && (
+        <ReservationDetailModal
+          reservation={selectedReservation}
+          isOpen={isDetailModalOpen}
+          onClose={() => setIsDetailModalOpen(false)}
+          onUpdate={fetchReservations}
+        />
+      )}
+    </div>
   );
 };
 
