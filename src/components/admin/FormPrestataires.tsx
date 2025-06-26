@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,11 +10,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Prestataire } from "./types";
 import FeaturedImage from "@/components/ui/featured-image";
-import { Search, Plus } from "lucide-react";
+import { Search, Plus, Filter } from "lucide-react";
 import { useDebounce } from "@/hooks/use-debounce";
 import FrontStylePrestataireEditModal from "./FrontStylePrestataireEditModal";
 
@@ -24,9 +26,12 @@ const PrestatairesAdmin = () => {
   const [filteredPrestataires, setFilteredPrestataires] = useState<Prestataire[]>([]);
   const [frontEditOpen, setFrontEditOpen] = useState(false);
   const [editMode, setEditMode] = useState<"edit" | "add" | "">("");
-  const [frontEditSelected, setFrontEditSelected] = useState<Prestataire | null>(
-    null
-  );
+  const [frontEditSelected, setFrontEditSelected] = useState<Prestataire | null>(null);
+
+  // Nouveaux filtres
+  const [categoryFilter, setCategoryFilter] = useState<string>('all');
+  const [cityFilter, setCityFilter] = useState<string>('all');
+  const [visibilityFilter, setVisibilityFilter] = useState<string>('all');
 
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
@@ -79,17 +84,39 @@ const PrestatairesAdmin = () => {
   }, []);
 
   useEffect(() => {
+    let filtered = prestataires;
+
+    // Filtre par recherche
     if (debouncedSearchTerm) {
-      const filtered = prestataires.filter(presta => 
+      filtered = filtered.filter(presta => 
         presta.nom.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
         presta.ville?.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
         presta.categorie?.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
       );
-      setFilteredPrestataires(filtered);
-    } else {
-      setFilteredPrestataires(prestataires);
     }
-  }, [debouncedSearchTerm, prestataires]);
+
+    // Filtre par catégorie
+    if (categoryFilter !== 'all') {
+      filtered = filtered.filter(presta => presta.categorie === categoryFilter);
+    }
+
+    // Filtre par ville
+    if (cityFilter !== 'all') {
+      filtered = filtered.filter(presta => presta.ville === cityFilter);
+    }
+
+    // Filtre par visibilité
+    if (visibilityFilter !== 'all') {
+      const isVisible = visibilityFilter === 'visible';
+      filtered = filtered.filter(presta => presta.visible === isVisible);
+    }
+
+    setFilteredPrestataires(filtered);
+  }, [debouncedSearchTerm, prestataires, categoryFilter, cityFilter, visibilityFilter]);
+
+  // Obtenir les valeurs uniques pour les filtres
+  const uniqueCategories = [...new Set(prestataires.map(p => p.categorie).filter(Boolean))];
+  const uniqueCities = [...new Set(prestataires.map(p => p.ville).filter(Boolean))];
 
   const handleDelete = async (id: string) => {
     if (window.confirm("Êtes-vous sûr de vouloir supprimer ce prestataire ?")) {
@@ -182,19 +209,63 @@ const PrestatairesAdmin = () => {
     window.open(`/prestataire/${slug}`, "_blank");
   };
 
+  const updateStatusCrm = async (id: string, newStatus: string) => {
+    try {
+      const { error } = await supabase
+        .from("prestataires_rows")
+        .update({ 
+          status_crm: newStatus,
+          date_derniere_contact: newStatus === 'contacted' ? new Date().toISOString() : undefined
+        })
+        .eq("id", id);
+        
+      if (error) {
+        toast.error("Erreur lors de la mise à jour du statut");
+        console.error("Erreur statut CRM:", error);
+        return;
+      }
+      
+      toast.success("Statut CRM mis à jour");
+      fetchPrestataires();
+    } catch (err) {
+      console.error("Erreur lors de la mise à jour du statut:", err);
+      toast.error("Une erreur est survenue");
+    }
+  };
+
+  const formatDate = (dateString: string | null) => {
+    if (!dateString) return "Jamais contacté";
+    return new Date(dateString).toLocaleDateString('fr-FR');
+  };
+
+  const getStatusLabel = (status: string) => {
+    const statusMap: { [key: string]: string } = {
+      'acquisition': 'Acquisition',
+      'contacted': 'Contacté',
+      'in_progress': 'En cours',
+      'relance_1': 'Relance 1',
+      'relance_2': 'Relance 2',
+      'called': 'Appelé',
+      'waiting': 'En attente',
+      'other': 'Autre'
+    };
+    return statusMap[status] || status;
+  };
+
   return (
     <div className="p-4 bg-white rounded-lg shadow">
-      <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
-        <div className="relative w-full sm:w-96">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-          <Input
-            placeholder="Rechercher un prestataire..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10 w-full"
-          />
-        </div>
-        <div className="flex gap-3 w-full sm:w-auto">
+      <div className="flex flex-col space-y-4 mb-6">
+        {/* Première ligne : Recherche et bouton ajouter */}
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+          <div className="relative w-full sm:w-96">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+            <Input
+              placeholder="Rechercher un prestataire..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 w-full"
+            />
+          </div>
           <Button 
             onClick={handleAddNew} 
             className="flex items-center gap-2 w-full sm:w-auto"
@@ -202,6 +273,53 @@ const PrestatairesAdmin = () => {
             <Plus size={18} />
             Ajouter un prestataire
           </Button>
+        </div>
+
+        {/* Deuxième ligne : Filtres */}
+        <div className="flex flex-col sm:flex-row gap-3 items-center">
+          <div className="flex items-center gap-2">
+            <Filter size={18} className="text-gray-500" />
+            <span className="text-sm font-medium text-gray-700">Filtres :</span>
+          </div>
+          
+          <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+            <SelectTrigger className="w-full sm:w-[180px]">
+              <SelectValue placeholder="Catégorie" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Toutes les catégories</SelectItem>
+              {uniqueCategories.map((category) => (
+                <SelectItem key={category} value={category}>
+                  {category}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Select value={cityFilter} onValueChange={setCityFilter}>
+            <SelectTrigger className="w-full sm:w-[180px]">
+              <SelectValue placeholder="Ville" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Toutes les villes</SelectItem>
+              {uniqueCities.map((city) => (
+                <SelectItem key={city} value={city}>
+                  {city}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Select value={visibilityFilter} onValueChange={setVisibilityFilter}>
+            <SelectTrigger className="w-full sm:w-[180px]">
+              <SelectValue placeholder="Visibilité" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Tous</SelectItem>
+              <SelectItem value="visible">Visibles</SelectItem>
+              <SelectItem value="hidden">Masqués</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
@@ -220,6 +338,8 @@ const PrestatairesAdmin = () => {
                 <TableHead>Ville</TableHead>
                 <TableHead className="text-center">Visible</TableHead>
                 <TableHead className="text-center">Mis en avant</TableHead>
+                <TableHead className="text-center">Statut CRM</TableHead>
+                <TableHead className="text-center">Dernier contact</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -247,6 +367,29 @@ const PrestatairesAdmin = () => {
                         presta.featured ? "bg-purple-500" : "bg-gray-300"
                       }`}
                     ></span>
+                  </TableCell>
+                  <TableCell className="text-center">
+                    <Select 
+                      value={presta.status_crm || 'acquisition'} 
+                      onValueChange={(value) => updateStatusCrm(presta.id, value)}
+                    >
+                      <SelectTrigger className="w-[120px]">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="acquisition">Acquisition</SelectItem>
+                        <SelectItem value="contacted">Contacté</SelectItem>
+                        <SelectItem value="in_progress">En cours</SelectItem>
+                        <SelectItem value="relance_1">Relance 1</SelectItem>
+                        <SelectItem value="relance_2">Relance 2</SelectItem>
+                        <SelectItem value="called">Appelé</SelectItem>
+                        <SelectItem value="waiting">En attente</SelectItem>
+                        <SelectItem value="other">Autre</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </TableCell>
+                  <TableCell className="text-center text-sm">
+                    {formatDate(presta.date_derniere_contact)}
                   </TableCell>
                   <TableCell className="space-x-2 flex flex-wrap justify-end gap-2">
                     <Button

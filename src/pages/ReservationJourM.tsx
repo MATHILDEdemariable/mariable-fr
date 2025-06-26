@@ -231,7 +231,7 @@ const ReservationJourM = () => {
       <Header />
       
       <main className="flex-grow py-8">
-        <div className="container mx-auto px-4 max-w-6xl">
+        <div className="container mx-auto px-4 max-w-4xl">
           <div className="flex items-center gap-4 mb-6">
             <Button asChild variant="outline" size="sm">
               <Link to="/">
@@ -250,180 +250,172 @@ const ReservationJourM = () => {
             </p>
           </div>
 
-          {/* Layout Desktop/Mobile */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Formulaire */}
-            <div className="order-2 lg:order-1">
-              <Card className="shadow-lg">
-                <CardHeader>
-                  <CardTitle>Informations de contact</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <form onSubmit={handleSubmit} className="space-y-5">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      <div>
-                        <Label htmlFor="first_name">Prénom *</Label>
-                        <Input
-                          id="first_name"
-                          name="first_name"
-                          value={formData.first_name}
-                          onChange={handleInputChange}
-                          required
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="last_name">Nom *</Label>
-                        <Input
-                          id="last_name"
-                          name="last_name"
-                          value={formData.last_name}
-                          onChange={handleInputChange}
-                          required
-                        />
-                      </div>
-                    </div>
-
+          {/* Formulaire centré */}
+          <div className="max-w-2xl mx-auto">
+            <Card className="shadow-lg">
+              <CardHeader>
+                <CardTitle>Informations de contact</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleSubmit} className="space-y-5">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <div>
-                      <Label htmlFor="email">Email *</Label>
+                      <Label htmlFor="first_name">Prénom *</Label>
                       <Input
-                        id="email"
-                        name="email"
-                        type="email"
-                        value={formData.email}
+                        id="first_name"
+                        name="first_name"
+                        value={formData.first_name}
                         onChange={handleInputChange}
                         required
                       />
                     </div>
-
                     <div>
-                      <Label htmlFor="phone">Téléphone *</Label>
+                      <Label htmlFor="last_name">Nom *</Label>
                       <Input
-                        id="phone"
-                        name="phone"
-                        type="tel"
-                        value={formData.phone}
+                        id="last_name"
+                        name="last_name"
+                        value={formData.last_name}
                         onChange={handleInputChange}
                         required
                       />
                     </div>
+                  </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      <div>
-                        <Label htmlFor="wedding_date">Date du mariage *</Label>
-                        <Input
-                          id="wedding_date"
-                          name="wedding_date"
-                          type="date"
-                          value={formData.wedding_date}
-                          onChange={handleInputChange}
-                          required
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="guest_count">Nombre d'invités</Label>
-                        <Input
-                          id="guest_count"
-                          name="guest_count"
-                          type="number"
-                          value={formData.guest_count}
-                          onChange={handleInputChange}
-                          placeholder="Ex: 80"
-                        />
-                      </div>
-                    </div>
+                  <div>
+                    <Label htmlFor="email">Email *</Label>
+                    <Input
+                      id="email"
+                      name="email"
+                      type="email"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
 
+                  <div>
+                    <Label htmlFor="phone">Téléphone *</Label>
+                    <Input
+                      id="phone"
+                      name="phone"
+                      type="tel"
+                      value={formData.phone}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <div>
-                      <Label htmlFor="wedding_location">Lieu du mariage</Label>
+                      <Label htmlFor="wedding_date">Date du mariage *</Label>
                       <Input
-                        id="wedding_location"
-                        name="wedding_location"
-                        value={formData.wedding_location}
+                        id="wedding_date"
+                        name="wedding_date"
+                        type="date"
+                        value={formData.wedding_date}
                         onChange={handleInputChange}
-                        placeholder="Ville ou région"
+                        required
                       />
                     </div>
-
                     <div>
-                      <div className="flex items-center justify-between mb-3">
-                        <Label className="text-base font-medium">Services souhaités *</Label>
-                        {/* Bouton modal pour toutes les tailles d'écran */}
-                        <Dialog>
-                          <DialogTrigger asChild>
-                            <Button variant="outline" size="sm">
-                              <Eye className="h-4 w-4 mr-2" />
-                              Voir les formules
-                            </Button>
-                          </DialogTrigger>
-                          <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
-                            <DialogHeader>
-                              <DialogTitle>Nos formules Jour-M</DialogTitle>
-                            </DialogHeader>
-                            <div className="mt-4">
-                              <FormulasTable />
-                            </div>
-                          </DialogContent>
-                        </Dialog>
-                      </div>
-                      
-                      <RadioGroup value={formData.selected_formula} onValueChange={handleFormulaChange}>
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="gratuite" id="gratuite" />
-                          <Label htmlFor="gratuite">Version gratuite (Inscrivez-vous)</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="libre" id="libre" />
-                          <Label htmlFor="libre">Formule Libre (49€)</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="sereine" id="sereine" />
-                          <Label htmlFor="sereine">Formule Sereine (149€)</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="privilege" id="privilege" />
-                          <Label htmlFor="privilege">Formule Privilège (799€)</Label>
-                        </div>
-                      </RadioGroup>
-                    </div>
-
-                    <div>
-                      <Label htmlFor="budget">Budget approximatif</Label>
+                      <Label htmlFor="guest_count">Nombre d'invités</Label>
                       <Input
-                        id="budget"
-                        name="budget"
-                        value={formData.budget}
+                        id="guest_count"
+                        name="guest_count"
+                        type="number"
+                        value={formData.guest_count}
                         onChange={handleInputChange}
-                        placeholder="Ex: 15 000€"
+                        placeholder="Ex: 80"
                       />
                     </div>
+                  </div>
 
-                    <div>
-                      <Label htmlFor="current_organization">Message</Label>
-                      <Textarea
-                        id="current_organization"
-                        name="current_organization"
-                        value={formData.current_organization}
-                        onChange={handleInputChange}
-                        placeholder="Parlez-nous de votre projet, vos attentes particulières..."
-                        rows={3}
-                      />
+                  <div>
+                    <Label htmlFor="wedding_location">Lieu du mariage</Label>
+                    <Input
+                      id="wedding_location"
+                      name="wedding_location"
+                      value={formData.wedding_location}
+                      onChange={handleInputChange}
+                      placeholder="Ville ou région"
+                    />
+                  </div>
+
+                  <div>
+                    <div className="flex items-center justify-between mb-3">
+                      <Label className="text-base font-medium">Services souhaités *</Label>
+                      {/* Bouton modal pour toutes les tailles d'écran */}
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button variant="outline" size="sm">
+                            <Eye className="h-4 w-4 mr-2" />
+                            Voir les formules
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+                          <DialogHeader>
+                            <DialogTitle>Nos formules Jour-M</DialogTitle>
+                          </DialogHeader>
+                          <div className="mt-4">
+                            <FormulasTable />
+                          </div>
+                        </DialogContent>
+                      </Dialog>
                     </div>
+                    
+                    <RadioGroup value={formData.selected_formula} onValueChange={handleFormulaChange}>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="gratuite" id="gratuite" />
+                        <Label htmlFor="gratuite">Version gratuite (Inscrivez-vous)</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="libre" id="libre" />
+                        <Label htmlFor="libre">Formule Libre (49€)</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="sereine" id="sereine" />
+                        <Label htmlFor="sereine">Formule Sereine (149€)</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="privilege" id="privilege" />
+                        <Label htmlFor="privilege">Formule Privilège (799€)</Label>
+                      </div>
+                    </RadioGroup>
+                  </div>
 
-                    <Button 
-                      type="submit" 
-                      className="w-full bg-wedding-olive hover:bg-wedding-olive/90"
-                      disabled={isSubmitting}
-                    >
-                      {isSubmitting ? 'Envoi en cours...' : 'Envoyer ma demande'}
-                    </Button>
-                  </form>
-                </CardContent>
-              </Card>
-            </div>
+                  <div>
+                    <Label htmlFor="budget">Budget approximatif</Label>
+                    <Input
+                      id="budget"
+                      name="budget"
+                      value={formData.budget}
+                      onChange={handleInputChange}
+                      placeholder="Ex: 15 000€"
+                    />
+                  </div>
 
-            {/* Tableau des formules - Desktop seulement */}
-            <div className="order-1 lg:order-2 hidden lg:block">
-              <FormulasTable />
-            </div>
+                  <div>
+                    <Label htmlFor="current_organization">Message</Label>
+                    <Textarea
+                      id="current_organization"
+                      name="current_organization"
+                      value={formData.current_organization}
+                      onChange={handleInputChange}
+                      placeholder="Parlez-nous de votre projet, vos attentes particulières..."
+                      rows={3}
+                    />
+                  </div>
+
+                  <Button 
+                    type="submit" 
+                    className="w-full bg-wedding-olive hover:bg-wedding-olive/90"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? 'Envoi en cours...' : 'Envoyer ma demande'}
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </main>
