@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { ArrowLeft, Calendar, FileText, Users } from 'lucide-react';
+import { ArrowLeft, Calendar, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
@@ -14,7 +14,6 @@ const MonJourMLayout: React.FC<MonJourMLayoutProps> = ({ children }) => {
 
   const getActiveTab = () => {
     if (location.pathname.includes('/equipe')) return 'equipe';
-    if (location.pathname.includes('/documents')) return 'documents';
     return 'planning';
   };
 
@@ -36,7 +35,7 @@ const MonJourMLayout: React.FC<MonJourMLayoutProps> = ({ children }) => {
           </div>
 
           <Tabs value={getActiveTab()} className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
+            <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="planning" asChild>
                 <Link to="/mon-jour-m/planning" className="flex items-center gap-2">
                   <Calendar className="h-4 w-4" />
@@ -47,12 +46,6 @@ const MonJourMLayout: React.FC<MonJourMLayoutProps> = ({ children }) => {
                 <Link to="/mon-jour-m/equipe" className="flex items-center gap-2">
                   <Users className="h-4 w-4" />
                   Équipe
-                </Link>
-              </TabsTrigger>
-              <TabsTrigger value="documents" asChild>
-                <Link to="/mon-jour-m/documents" className="flex items-center gap-2">
-                  <FileText className="h-4 w-4" />
-                  Documents
                 </Link>
               </TabsTrigger>
             </TabsList>

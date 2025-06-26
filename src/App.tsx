@@ -20,7 +20,6 @@ import JourMVue from "./pages/JourMVue";
 import MonJourM from "./pages/MonJourM";
 import MonJourMPlanningPage from "./pages/MonJourMPlanning";
 import MonJourMEquipePage from "./pages/MonJourMEquipe";
-import MonJourMDocumentsPage from "./pages/MonJourMDocuments";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import Pricing from "./pages/Pricing";
@@ -66,7 +65,6 @@ function App() {
                   <Route path="/mon-jour-m" element={<Navigate to="/mon-jour-m/planning" replace />} />
                   <Route path="/mon-jour-m/planning" element={<MonJourMPlanningPage />} />
                   <Route path="/mon-jour-m/equipe" element={<MonJourMEquipePage />} />
-                  <Route path="/mon-jour-m/documents" element={<MonJourMDocumentsPage />} />
 
                   {/* Auth routes */}
                   <Route path="/login" element={<Login />} />

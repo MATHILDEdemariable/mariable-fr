@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -11,6 +12,7 @@ import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautif
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 import AISuggestionsModal from './AISuggestionsModal';
+import TaskEditModal from './TaskEditModal';
 
 interface PlanningTask {
   id: string;
@@ -24,6 +26,7 @@ interface PlanningTask {
   status: string;
   assigned_to?: string[];
   position?: number;
+  is_ai_generated?: boolean;
 }
 
 interface WeddingCoordination {
@@ -57,7 +60,6 @@ const MonJourMPlanning: React.FC = () => {
   const [showAddTask, setShowAddTask] = useState(false);
   const [editingTask, setEditingTask] = useState<PlanningTask | null>(null);
   const [showAISuggestions, setShowAISuggestions] = useState(false);
-  const [startingTime, setStartingTime] = useState('09:00');
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -264,28 +266,32 @@ const MonJourMPlanning: React.FC = () => {
     }
   };
 
-  const handleUpdateTask = async () => {
+  const handleSaveTask = async (taskData: Partial<PlanningTask>) => {
     if (!editingTask) return;
 
     try {
       const { error } = await supabase
         .from('coordination_planning')
         .update({
-          title: editingTask.title,
-          description: editingTask.description || null,
-          start_time: editingTask.start_time || null,
-          end_time: editingTask.end_time || null,
-          duration: editingTask.duration || 30,
-          category: editingTask.category,
-          priority: editingTask.priority,
-          status: editingTask.status,
-          assigned_to: editingTask.assigned_to && editingTask.assigned_to.length > 0 ? editingTask.assigned_to : null
+          title: taskData.title,
+          description: taskData.description || null,
+          start_time: taskData.start_time || null,
+          duration: taskData.duration || 30,
+          category: taskData.category,
+          priority: taskData.priority,
+          assigned_to: taskData.assigned_to && taskData.assigned_to.length > 0 ? taskData.assigned_to : null
         })
         .eq('id', editingTask.id);
 
       if (error) throw error;
 
-      setTasks(prev => prev.map(t => t.id === editingTask.id ? editingTask : t));
+      // Mettre à jour la tâche dans le state local
+      setTasks(prev => prev.map(t => 
+        t.id === editingTask.id 
+          ? { ...t, ...taskData } 
+          : t
+      ));
+      
       setEditingTask(null);
       
       toast({
@@ -419,23 +425,6 @@ const MonJourMPlanning: React.FC = () => {
     }
   };
 
-  const calculateTimesFromPosition = (tasksArray: PlanningTask[], startTime: string = startingTime) => {
-    let currentTime = new Date(`1970-01-01T${startTime}:00`);
-    
-    return tasksArray.map((task, index) => {
-      const taskStartTime = currentTime.toTimeString().substring(0, 5);
-      currentTime.setMinutes(currentTime.getMinutes() + (task.duration || 30));
-      const taskEndTime = currentTime.toTimeString().substring(0, 5);
-      
-      return {
-        ...task,
-        start_time: taskStartTime,
-        end_time: taskEndTime,
-        position: index
-      };
-    });
-  };
-
   const handleDragEnd = async (result: DropResult) => {
     if (!result.destination) return;
 
@@ -443,26 +432,26 @@ const MonJourMPlanning: React.FC = () => {
     const [reorderedItem] = items.splice(result.source.index, 1);
     items.splice(result.destination.index, 0, reorderedItem);
 
-    // Recalculer les horaires
-    const updatedTasks = calculateTimesFromPosition(items, startingTime);
+    // Mise à jour des positions SEULEMENT
+    const updatedTasks = items.map((task, index) => ({
+      ...task,
+      position: index
+    }));
+    
     setTasks(updatedTasks);
 
-    // Mettre à jour en base
+    // Mettre à jour en base - SEULEMENT les positions
     try {
       for (const task of updatedTasks) {
         await supabase
           .from('coordination_planning')
-          .update({
-            position: task.position,
-            start_time: task.start_time,
-            end_time: task.end_time
-          })
+          .update({ position: task.position })
           .eq('id', task.id);
       }
       
       toast({
-        title: "Planning mis à jour",
-        description: "L'ordre et les horaires ont été actualisés"
+        title: "Planning réorganisé",
+        description: "L'ordre des tâches a été mis à jour"
       });
     } catch (error) {
       console.error('Erreur mise à jour positions:', error);
@@ -472,23 +461,6 @@ const MonJourMPlanning: React.FC = () => {
         variant: "destructive"
       });
     }
-  };
-
-  const handleStartTimeChange = (newStartTime: string) => {
-    setStartingTime(newStartTime);
-    const updatedTasks = calculateTimesFromPosition(tasks, newStartTime);
-    setTasks(updatedTasks);
-    
-    // Mettre à jour en base
-    updatedTasks.forEach(async (task) => {
-      await supabase
-        .from('coordination_planning')
-        .update({
-          start_time: task.start_time,
-          end_time: task.end_time
-        })
-        .eq('id', task.id);
-    });
   };
 
   const getStatusIcon = (status: string) => {
@@ -527,16 +499,6 @@ const MonJourMPlanning: React.FC = () => {
         </div>
         
         <div className="flex gap-2">
-          <div className="flex items-center gap-2">
-            <label className="text-sm font-medium">Heure de début:</label>
-            <Input
-              type="time"
-              value={startingTime}
-              onChange={(e) => handleStartTimeChange(e.target.value)}
-              className="w-32"
-            />
-          </div>
-
           <Button
             onClick={refreshData}
             variant="outline"
@@ -753,12 +715,14 @@ const MonJourMPlanning: React.FC = () => {
                                 </div>
 
                                 <div className="flex items-center gap-2 mt-2 text-xs flex-wrap">
-                                  <div className="flex items-center gap-1 bg-blue-50 px-2 py-1 rounded">
-                                    <Clock className="h-3 w-3 text-blue-600" />
-                                    <span className="text-blue-700 font-medium">
-                                      {formatTime(task.start_time)} - {formatTime(task.end_time)}
-                                    </span>
-                                  </div>
+                                  {task.start_time && (
+                                    <div className="flex items-center gap-1 bg-blue-50 px-2 py-1 rounded">
+                                      <Clock className="h-3 w-3 text-blue-600" />
+                                      <span className="text-blue-700 font-medium">
+                                        {formatTime(task.start_time)}
+                                      </span>
+                                    </div>
+                                  )}
                                   
                                   <Badge variant="outline">{task.duration} min</Badge>
                                   <Badge className={getPriorityColor(task.priority)}>
@@ -802,122 +766,13 @@ const MonJourMPlanning: React.FC = () => {
       </Card>
 
       {/* Modal d'édition de tâche */}
-      {editingTask && (
-        <Dialog open={!!editingTask} onOpenChange={() => setEditingTask(null)}>
-          <DialogContent className="max-w-2xl">
-            <DialogHeader>
-              <DialogTitle>Modifier la tâche</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium mb-1">Titre *</label>
-                <Input
-                  value={editingTask.title}
-                  onChange={(e) => setEditingTask({ ...editingTask, title: e.target.value })}
-                  placeholder="Titre de la tâche"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-1">Description</label>
-                <Textarea
-                  value={editingTask.description || ''}
-                  onChange={(e) => setEditingTask({ ...editingTask, description: e.target.value })}
-                  placeholder="Description détaillée de la tâche"
-                  rows={3}
-                />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <label className="block text-sm font-medium mb-1">Heure de début</label>
-                  <Input
-                    type="time"
-                    value={editingTask.start_time || ''}
-                    onChange={(e) => setEditingTask({ ...editingTask, start_time: e.target.value })}
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">Heure de fin</label>
-                  <Input
-                    type="time"
-                    value={editingTask.end_time || ''}
-                    onChange={(e) => setEditingTask({ ...editingTask, end_time: e.target.value })}
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">Durée (min)</label>
-                  <Input
-                    type="number"
-                    value={editingTask.duration || 30}
-                    onChange={(e) => setEditingTask({ ...editingTask, duration: parseInt(e.target.value) || 30 })}
-                    min="1"
-                    max="1440"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <label className="block text-sm font-medium mb-1">Catégorie</label>
-                  <Select value={editingTask.category} onValueChange={(value) => setEditingTask({ ...editingTask, category: value })}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="general">Général</SelectItem>
-                      <SelectItem value="ceremony">Cérémonie</SelectItem>
-                      <SelectItem value="reception">Réception</SelectItem>
-                      <SelectItem value="photos">Photos</SelectItem>
-                      <SelectItem value="music">Musique</SelectItem>
-                      <SelectItem value="catering">Traiteur</SelectItem>
-                      <SelectItem value="decoration">Décoration</SelectItem>
-                      <SelectItem value="transport">Transport</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-1">Priorité</label>
-                  <Select value={editingTask.priority} onValueChange={(value) => setEditingTask({ ...editingTask, priority: value })}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="low">Faible</SelectItem>
-                      <SelectItem value="medium">Moyenne</SelectItem>
-                      <SelectItem value="high">Élevée</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-1">Statut</label>
-                  <Select value={editingTask.status} onValueChange={(value) => setEditingTask({ ...editingTask, status: value })}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="todo">À faire</SelectItem>
-                      <SelectItem value="in_progress">En cours</SelectItem>
-                      <SelectItem value="completed">Terminé</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <div className="flex gap-2">
-                <Button onClick={handleUpdateTask}>
-                  Sauvegarder
-                </Button>
-                <Button variant="outline" onClick={() => setEditingTask(null)}>
-                  Annuler
-                </Button>
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog>
-      )}
+      <TaskEditModal
+        isOpen={!!editingTask}
+        onClose={() => setEditingTask(null)}
+        task={editingTask}
+        teamMembers={teamMembers}
+        onSave={handleSaveTask}
+      />
 
       {/* Modal de suggestions IA */}
       <AISuggestionsModal
