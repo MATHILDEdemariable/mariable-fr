@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -159,6 +158,7 @@ const MonJourMPlanning: React.FC = () => {
   };
 
   const handleAISuggestion = async (suggestion: { title: string; description: string; category: string; priority: string; duration: number }) => {
+    console.log('Adding AI suggestion:', suggestion);
     const success = await addTask({
       title: suggestion.title,
       description: suggestion.description,
@@ -170,7 +170,9 @@ const MonJourMPlanning: React.FC = () => {
     });
 
     if (success) {
-      setShowAISuggestions(false);
+      console.log('AI suggestion added successfully');
+    } else {
+      console.error('Failed to add AI suggestion');
     }
   };
 

@@ -26,7 +26,8 @@ interface TaskSuggestion {
 interface AISuggestionsModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAddSuggestions: (tasks: Omit<TaskSuggestion, 'id' | 'icon'>[]) => void;
+  onSelectSuggestion: (suggestion: { title: string; description: string; category: string; priority: string; duration: number }) => Promise<void>;
+  coordination?: any;
 }
 
 const taskSuggestions: TaskSuggestion[] = [
@@ -44,7 +45,7 @@ const taskSuggestions: TaskSuggestion[] = [
     title: 'Accueil des invités',
     description: 'Accueil et placement des invités avant la cérémonie',
     duration: 30,
-    category: 'ceremonie',
+    category: 'ceremony',
     priority: 'medium',
     icon: <Users className="h-4 w-4" />
   },
@@ -53,7 +54,7 @@ const taskSuggestions: TaskSuggestion[] = [
     title: 'Cérémonie civile',
     description: 'Cérémonie de mariage civil',
     duration: 45,
-    category: 'ceremonie',
+    category: 'ceremony',
     priority: 'high',
     icon: <Heart className="h-4 w-4" />
   },
@@ -116,7 +117,7 @@ const taskSuggestions: TaskSuggestion[] = [
     title: 'Préparation du lieu',
     description: 'Installation et décoration du lieu de réception',
     duration: 60,
-    category: 'preparation',
+    category: 'decoration',
     priority: 'medium',
     icon: <Heart className="h-4 w-4" />
   }
@@ -125,7 +126,7 @@ const taskSuggestions: TaskSuggestion[] = [
 const AISuggestionsModal: React.FC<AISuggestionsModalProps> = ({
   isOpen,
   onClose,
-  onAddSuggestions
+  onSelectSuggestion
 }) => {
   const [selectedTasks, setSelectedTasks] = useState<string[]>([]);
 
@@ -137,12 +138,19 @@ const AISuggestionsModal: React.FC<AISuggestionsModalProps> = ({
     );
   };
 
-  const handleAddSelected = () => {
-    const tasksToAdd = taskSuggestions
-      .filter(task => selectedTasks.includes(task.id))
-      .map(({ id, icon, ...task }) => task);
+  const handleAddSelected = async () => {
+    const tasksToAdd = taskSuggestions.filter(task => selectedTasks.includes(task.id));
     
-    onAddSuggestions(tasksToAdd);
+    for (const task of tasksToAdd) {
+      await onSelectSuggestion({
+        title: task.title,
+        description: task.description,
+        category: task.category,
+        priority: task.priority,
+        duration: task.duration
+      });
+    }
+    
     setSelectedTasks([]);
     onClose();
   };
@@ -159,9 +167,10 @@ const AISuggestionsModal: React.FC<AISuggestionsModalProps> = ({
   const getCategoryLabel = (category: string) => {
     switch (category) {
       case 'preparation': return 'Préparation';
-      case 'ceremonie': return 'Cérémonie';
+      case 'ceremony': return 'Cérémonie';
       case 'photos': return 'Photos';
       case 'reception': return 'Réception';
+      case 'decoration': return 'Décoration';
       default: return 'Général';
     }
   };
