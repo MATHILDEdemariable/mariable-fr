@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -14,13 +13,14 @@ import { useToast } from '@/components/ui/use-toast';
 import AISuggestionsModal from './AISuggestionsModal';
 import TaskEditModal from './TaskEditModal';
 
+// Interface locale harmonisée avec celle du contexte
 interface PlanningTask {
   id: string;
   title: string;
   description?: string;
   start_time?: string;
   end_time?: string;
-  duration?: number;
+  duration?: number; // Propriété optionnelle pour correspondre au contexte
   category: string;
   priority: string;
   status: string;
@@ -276,6 +276,7 @@ const MonJourMPlanning: React.FC = () => {
           title: taskData.title,
           description: taskData.description || null,
           start_time: taskData.start_time || null,
+          end_time: taskData.end_time || null,
           duration: taskData.duration || 30,
           category: taskData.category,
           priority: taskData.priority,
@@ -724,7 +725,7 @@ const MonJourMPlanning: React.FC = () => {
                                     </div>
                                   )}
                                   
-                                  <Badge variant="outline">{task.duration} min</Badge>
+                                  <Badge variant="outline">{task.duration || 30} min</Badge>
                                   <Badge className={getPriorityColor(task.priority)}>
                                     {task.priority === 'high' ? 'Élevée' : task.priority === 'medium' ? 'Moyenne' : 'Faible'}
                                   </Badge>
