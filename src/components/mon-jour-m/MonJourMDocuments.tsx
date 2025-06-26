@@ -290,7 +290,7 @@ const MonJourMDocuments: React.FC = () => {
 
       // Recharger la liste
       await loadDocuments(coordination.id);
-    } catch (error: any) {
+    } catch (error) {
       console.error('❌ Error uploading document:', error);
       toast({
         title: "Erreur d'upload",
@@ -302,13 +302,13 @@ const MonJourMDocuments: React.FC = () => {
     }
   };
 
-  const deleteDocument = async (documentItem: DocumentItem) => {
+  const deleteDocument = async (document: DocumentItem) => {
     try {
       // Supprimer le fichier du storage si le chemin existe
-      if (documentItem.file_path) {
+      if (document.file_path) {
         const { error: storageError } = await supabase.storage
           .from('wedding-documents')
-          .remove([documentItem.file_path]);
+          .remove([document.file_path]);
           
         if (storageError) {
           console.error('❌ Error deleting file from storage:', storageError);
@@ -320,7 +320,7 @@ const MonJourMDocuments: React.FC = () => {
       const { error: dbError } = await supabase
         .from('coordination_documents')
         .delete()
-        .eq('id', documentItem.id);
+        .eq('id', document.id);
 
       if (dbError) throw dbError;
       
@@ -343,28 +343,28 @@ const MonJourMDocuments: React.FC = () => {
     }
   };
 
-  const downloadDocument = async (documentItem: DocumentItem) => {
+  const downloadDocument = async (document: DocumentItem) => {
     try {
-      if (documentItem.file_path) {
+      if (document.file_path) {
         // Télécharger depuis Supabase Storage
         const { data, error } = await supabase.storage
           .from('wedding-documents')
-          .download(documentItem.file_path);
+          .download(document.file_path);
 
         if (error) throw error;
 
         // Créer un lien de téléchargement
         const url = URL.createObjectURL(data);
-        const linkElement = document.createElement('a');
-        linkElement.href = url;
-        linkElement.download = documentItem.title;
-        document.body.appendChild(linkElement);
-        linkElement.click();
-        document.body.removeChild(linkElement);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = document.title;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
         URL.revokeObjectURL(url);
       } else {
         // Fallback sur l'URL publique
-        window.open(documentItem.file_url, '_blank');
+        window.open(document.file_url, '_blank');
       }
     } catch (error) {
       console.error('❌ Error downloading document:', error);
@@ -596,31 +596,31 @@ const MonJourMDocuments: React.FC = () => {
       ) : (
         /* Liste des documents */
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredDocuments.map((documentItem) => (
-            <Card key={documentItem.id} className="hover:shadow-md transition-shadow">
+          {filteredDocuments.map((document) => (
+            <Card key={document.id} className="hover:shadow-md transition-shadow">
               <CardContent className="p-4">
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-2">
-                    <span className="text-2xl">{getFileIcon(documentItem.file_type)}</span>
+                    <span className="text-2xl">{getFileIcon(document.file_type)}</span>
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-medium truncate">{documentItem.title}</h3>
+                      <h3 className="font-medium truncate">{document.title}</h3>
                       <p className="text-xs text-gray-500">
-                        {formatFileSize(documentItem.file_size)}
+                        {formatFileSize(document.file_size)}
                       </p>
                     </div>
                   </div>
                   
                   <div className="flex gap-1">
-                    <Button variant="ghost" size="sm" onClick={() => window.open(documentItem.file_url, '_blank')}>
+                    <Button variant="ghost" size="sm" onClick={() => window.open(document.file_url, '_blank')}>
                       <Eye className="h-4 w-4" />
                     </Button>
-                    <Button variant="ghost" size="sm" onClick={() => downloadDocument(documentItem)}>
+                    <Button variant="ghost" size="sm" onClick={() => downloadDocument(document)}>
                       <Download className="h-4 w-4" />
                     </Button>
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => deleteDocument(documentItem)}
+                      onClick={() => deleteDocument(document)}
                       className="text-red-600 hover:text-red-800"
                     >
                       <Trash2 className="h-4 w-4" />
@@ -628,27 +628,27 @@ const MonJourMDocuments: React.FC = () => {
                   </div>
                 </div>
 
-                {documentItem.description && (
+                {document.description && (
                   <p className="text-sm text-gray-600 mb-3 line-clamp-2">
-                    {documentItem.description}
+                    {document.description}
                   </p>
                 )}
 
                 <div className="flex flex-wrap gap-2 mb-3">
                   <Badge variant="outline">
-                    {categories.find(c => c.value === documentItem.category)?.icon}
-                    {categories.find(c => c.value === documentItem.category)?.label}
+                    {categories.find(c => c.value === document.category)?.icon}
+                    {categories.find(c => c.value === document.category)?.label}
                   </Badge>
                   
-                  {documentItem.assigned_to && (
+                  {document.assigned_to && (
                     <Badge variant="secondary">
-                      {teamMembers.find(m => m.id === documentItem.assigned_to)?.name}
+                      {teamMembers.find(m => m.id === document.assigned_to)?.name}
                     </Badge>
                   )}
                 </div>
 
                 <p className="text-xs text-gray-400">
-                  Ajouté le {new Date(documentItem.created_at).toLocaleDateString('fr-FR')}
+                  Ajouté le {new Date(document.created_at).toLocaleDateString('fr-FR')}
                 </p>
               </CardContent>
             </Card>

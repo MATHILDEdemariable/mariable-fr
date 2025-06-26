@@ -90,7 +90,7 @@ export const useWeddingCoordination = () => {
     if (!coordination) return;
     
     try {
-      console.log('🔄 Refreshing coordination data...');
+      setIsLoading(true);
       const { data, error } = await supabase
         .from('wedding_coordination')
         .select('*')
@@ -100,8 +100,7 @@ export const useWeddingCoordination = () => {
       if (error) throw error;
       
       setCoordination(data);
-      console.log('✅ Coordination refreshed successfully');
-      return data;
+      console.log('🔄 Coordination refreshed');
     } catch (error) {
       console.error('❌ Error refreshing coordination:', error);
       toast({
@@ -109,18 +108,10 @@ export const useWeddingCoordination = () => {
         description: "Impossible de rafraîchir les données",
         variant: "destructive",
       });
-      throw error;
+    } finally {
+      setIsLoading(false);
     }
   }, [coordination, toast]);
-
-  const forceRefreshAfterMutation = useCallback(async () => {
-    if (!coordination) return;
-    
-    console.log('🔄 Forcing refresh after mutation...');
-    // Petit délai pour laisser le temps à la base de données de se mettre à jour
-    await new Promise(resolve => setTimeout(resolve, 500));
-    return await refreshCoordination();
-  }, [coordination, refreshCoordination]);
 
   useEffect(() => {
     const loadData = async () => {
@@ -142,7 +133,6 @@ export const useWeddingCoordination = () => {
     isLoading: isLoading || isInitializing,
     isInitializing,
     refreshCoordination,
-    initializeCoordination,
-    forceRefreshAfterMutation
+    initializeCoordination
   };
 };

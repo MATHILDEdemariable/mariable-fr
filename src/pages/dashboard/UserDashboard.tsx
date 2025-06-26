@@ -11,7 +11,6 @@ import CoordinationPage from './CoordinationPage';
 import WishlistPage from './WishlistPage';
 import BudgetPage from './BudgetPage';
 import PlanningPage from './PlanningPage';
-import MonJourMPage from './MonJourMPage';
 import DetailedBudget from '@/components/dashboard/DetailedBudget';
 import UserProfile from '@/components/dashboard/UserProfile';
 import AssistantPage from './AssistantPage';
@@ -55,7 +54,6 @@ const UserDashboard: React.FC = () => {
       <Routes>
         <Route path="/" element={<DashboardLayout />}>
           <Route index element={<ProjectSummary />} />
-          <Route path="mon-jour-m" element={<MonJourMPage />} />
           <Route path="planning" element={<PlanningPage />} />
           <Route path="tasks" element={<ChecklistPage />} />
           <Route path="budget" element={<BudgetPage />} />
