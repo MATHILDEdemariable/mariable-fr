@@ -13,21 +13,8 @@ import { useToast } from '@/components/ui/use-toast';
 import AISuggestionsModal from './AISuggestionsModal';
 import TaskEditModal from './TaskEditModal';
 
-// Interface locale harmonisée avec celle du contexte
-interface PlanningTask {
-  id: string;
-  title: string;
-  description?: string;
-  start_time?: string;
-  end_time?: string;
-  duration?: number; // Propriété optionnelle pour correspondre au contexte
-  category: string;
-  priority: string;
-  status: string;
-  assigned_to?: string[];
-  position?: number;
-  is_ai_generated?: boolean;
-}
+// Utilisation du type PlanningTask du contexte - pas de duplication d'interface
+import { PlanningTask } from '@/contexts/MonJourMContext';
 
 interface WeddingCoordination {
   id: string;
