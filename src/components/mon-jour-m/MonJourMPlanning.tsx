@@ -59,6 +59,79 @@ const MonJourMPlanning: React.FC = () => {
     assigned_to: [] as string[]
   });
 
+  // Utilitaire pour additionner des minutes à une heure
+  const addMinutesToTime = (timeString: string, minutes: number): string => {
+    if (!timeString || !minutes) return timeString;
+    
+    try {
+      // Gérer différents formats d'heure
+      let hour: number, minute: number;
+      
+      if (timeString.includes('T')) {
+        // Format ISO complet
+        const date = new Date(timeString);
+        hour = date.getHours();
+        minute = date.getMinutes();
+      } else if (timeString.match(/^\d{2}:\d{2}$/)) {
+        // Format HH:MM
+        [hour, minute] = timeString.split(':').map(Number);
+      } else {
+        return timeString;
+      }
+      
+      // Ajouter les minutes
+      const totalMinutes = hour * 60 + minute + minutes;
+      const newHour = Math.floor(totalMinutes / 60) % 24;
+      const newMinute = totalMinutes % 60;
+      
+      return `${newHour.toString().padStart(2, '0')}:${newMinute.toString().padStart(2, '0')}`;
+    } catch (error) {
+      console.error('Erreur lors du calcul du temps:', error);
+      return timeString;
+    }
+  };
+
+  // Recalcule automatiquement tous les horaires de la timeline
+  const recalculateTimeline = (tasksToRecalculate: PlanningTask[]): PlanningTask[] => {
+    if (tasksToRecalculate.length === 0) return tasksToRecalculate;
+    
+    // Trier par position pour maintenir l'ordre
+    const sortedTasks = [...tasksToRecalculate].sort((a, b) => (a.position || 0) - (b.position || 0));
+    
+    // La première tâche garde son heure de début existante
+    const recalculatedTasks = sortedTasks.map((task, index) => {
+      if (index === 0) {
+        // Première tâche : garder l'heure existante ou définir une heure par défaut
+        const startTime = task.start_time || '09:00';
+        const endTime = task.duration ? addMinutesToTime(startTime, task.duration) : startTime;
+        
+        return {
+          ...task,
+          start_time: startTime,
+          end_time: endTime
+        };
+      } else {
+        // Tâches suivantes : commencer à la fin de la tâche précédente
+        const previousTask = sortedTasks[index - 1];
+        const previousEndTime = previousTask.start_time && previousTask.duration 
+          ? addMinutesToTime(previousTask.start_time, previousTask.duration)
+          : previousTask.end_time || '09:00';
+        
+        const currentDuration = task.duration || 30;
+        const newStartTime = previousEndTime;
+        const newEndTime = addMinutesToTime(newStartTime, currentDuration);
+        
+        return {
+          ...task,
+          start_time: newStartTime,
+          end_time: newEndTime
+        };
+      }
+    });
+    
+    return recalculatedTasks;
+  };
+
   const initializeData = async () => {
     try {
       setIsLoading(true);
@@ -231,13 +304,19 @@ const MonJourMPlanning: React.FC = () => {
         is_ai_generated: data.is_ai_generated || false
       };
       
-      setTasks(prev => [...prev, newTask]);
+      const updatedTasks = [...tasks, newTask];
+      const recalculatedTasks = recalculateTimeline(updatedTasks);
+      setTasks(recalculatedTasks);
+      
+      // Mettre à jour les horaires en base de données
+      await updateTasksInDatabase(recalculatedTasks);
+      
       resetForm();
       setShowAddTask(false);
       
       toast({
         title: "Tâche ajoutée",
-        description: "La nouvelle tâche a été ajoutée au planning"
+        description: "La nouvelle tâche a été ajoutée au planning avec recalcul automatique des horaires"
       });
 
     } catch (error) {
@@ -271,18 +350,24 @@ const MonJourMPlanning: React.FC = () => {
 
       if (error) throw error;
 
-      // Mettre à jour la tâche dans le state local
-      setTasks(prev => prev.map(t => 
+      // Mettre à jour la tâche dans le state local et recalculer
+      const updatedTasks = tasks.map(t => 
         t.id === editingTask.id 
           ? { ...t, ...taskData } 
           : t
-      ));
+      );
+      
+      const recalculatedTasks = recalculateTimeline(updatedTasks);
+      setTasks(recalculatedTasks);
+      
+      // Mettre à jour les horaires en base de données
+      await updateTasksInDatabase(recalculatedTasks);
       
       setEditingTask(null);
       
       toast({
         title: "Tâche modifiée",
-        description: "Les informations ont été mises à jour"
+        description: "Les informations ont été mises à jour avec recalcul automatique"
       });
 
     } catch (error) {
@@ -306,11 +391,16 @@ const MonJourMPlanning: React.FC = () => {
 
       if (error) throw error;
       
-      setTasks(prev => prev.filter(t => t.id !== taskId));
+      const remainingTasks = tasks.filter(t => t.id !== taskId);
+      const recalculatedTasks = recalculateTimeline(remainingTasks);
+      setTasks(recalculatedTasks);
+      
+      // Mettre à jour les positions et horaires en base
+      await updateTasksInDatabase(recalculatedTasks);
       
       toast({
         title: "Tâche supprimée",
-        description: "La tâche a été retirée du planning"
+        description: "La tâche a été retirée du planning avec recalcul automatique"
       });
 
     } catch (error) {
@@ -369,11 +459,16 @@ const MonJourMPlanning: React.FC = () => {
         is_ai_generated: true
       };
       
-      setTasks(prev => [...prev, newTask]);
+      const updatedTasks = [...tasks, newTask];
+      const recalculatedTasks = recalculateTimeline(updatedTasks);
+      setTasks(recalculatedTasks);
+      
+      // Mettre à jour les horaires en base
+      await updateTasksInDatabase(recalculatedTasks);
       
       toast({
         title: "Suggestion ajoutée",
-        description: "La tâche suggérée a été ajoutée au planning"
+        description: "La tâche suggérée a été ajoutée au planning avec recalcul automatique"
       });
 
     } catch (error) {
@@ -383,6 +478,24 @@ const MonJourMPlanning: React.FC = () => {
         description: "Impossible d'ajouter la suggestion",
         variant: "destructive"
       });
+    }
+  };
+
+  // Fonction pour mettre à jour les tâches en base de données
+  const updateTasksInDatabase = async (tasksToUpdate: PlanningTask[]) => {
+    try {
+      for (const task of tasksToUpdate) {
+        await supabase
+          .from('coordination_planning')
+          .update({
+            position: task.position,
+            start_time: task.start_time,
+            end_time: task.end_time
+          })
+          .eq('id', task.id);
+      }
+    } catch (error) {
+      console.error('Erreur mise à jour tâches:', error);
     }
   };
 
@@ -413,6 +526,7 @@ const MonJourMPlanning: React.FC = () => {
     }
   };
 
+  // Drag & Drop amélioré avec recalcul automatique
   const handleDragEnd = async (result: DropResult) => {
     if (!result.destination) return;
 
@@ -420,26 +534,24 @@ const MonJourMPlanning: React.FC = () => {
     const [reorderedItem] = items.splice(result.source.index, 1);
     items.splice(result.destination.index, 0, reorderedItem);
 
-    // Mise à jour des positions SEULEMENT
-    const updatedTasks = items.map((task, index) => ({
+    // Mise à jour des positions
+    const reorderedTasks = items.map((task, index) => ({
       ...task,
       position: index
     }));
     
-    setTasks(updatedTasks);
+    // Recalcul automatique des horaires après réorganisation
+    const recalculatedTasks = recalculateTimeline(reorderedTasks);
+    
+    setTasks(recalculatedTasks);
 
-    // Mettre à jour en base - SEULEMENT les positions
+    // Mettre à jour en base - positions ET horaires
     try {
-      for (const task of updatedTasks) {
-        await supabase
-          .from('coordination_planning')
-          .update({ position: task.position })
-          .eq('id', task.id);
-      }
+      await updateTasksInDatabase(recalculatedTasks);
       
       toast({
         title: "Planning réorganisé",
-        description: "L'ordre des tâches a été mis à jour"
+        description: "L'ordre des tâches et les horaires ont été automatiquement recalculés"
       });
     } catch (error) {
       console.error('Erreur mise à jour positions:', error);
@@ -488,6 +600,9 @@ const MonJourMPlanning: React.FC = () => {
         <div>
           <h2 className="text-2xl font-semibold mb-2">Planning du jour J</h2>
           <p className="text-gray-600">Organisez et coordonnez tous les détails de votre mariage</p>
+          <p className="text-sm text-blue-600 mt-1">
+            ✨ Drag & drop intelligent : les horaires se recalculent automatiquement
+          </p>
         </div>
         
         <div className="flex gap-2">
@@ -550,6 +665,9 @@ const MonJourMPlanning: React.FC = () => {
                       value={formData.start_time}
                       onChange={(e) => setFormData({ ...formData, start_time: e.target.value })}
                     />
+                    <p className="text-xs text-gray-500 mt-1">
+                      Les horaires suivants se calculeront automatiquement
+                    </p>
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-1">Heure de fin</label>
@@ -560,7 +678,7 @@ const MonJourMPlanning: React.FC = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1">Durée (min)</label>
+                    <label className="block text-sm font-medium mb-1">Durée (min) *</label>
                     <Input
                       type="number"
                       value={formData.duration}
@@ -571,6 +689,7 @@ const MonJourMPlanning: React.FC = () => {
                   </div>
                 </div>
 
+                {/* ... keep existing code (form fields for category, priority, status) */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
                     <label className="block text-sm font-medium mb-1">Catégorie</label>
@@ -639,7 +758,12 @@ const MonJourMPlanning: React.FC = () => {
 
       <Card>
         <CardHeader>
-          <CardTitle>Timeline du jour J</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            Timeline du jour J
+            <Badge variant="secondary" className="text-xs">
+              Recalcul automatique activé
+            </Badge>
+          </CardTitle>
         </CardHeader>
         <CardContent>
           {tasks.length > 0 ? (
@@ -657,16 +781,16 @@ const MonJourMPlanning: React.FC = () => {
                           <div
                             ref={provided.innerRef}
                             {...provided.draggableProps}
-                            className={`p-4 border rounded-lg bg-white shadow-sm hover:shadow-md transition-shadow ${
-                              snapshot.isDragging ? 'shadow-lg' : ''
+                            className={`p-4 border rounded-lg bg-white shadow-sm hover:shadow-md transition-all ${
+                              snapshot.isDragging ? 'shadow-lg border-blue-300 bg-blue-50' : ''
                             }`}
                           >
                             <div className="flex items-start gap-4">
                               <div
                                 {...provided.dragHandleProps}
-                                className="mt-1 cursor-grab active:cursor-grabbing"
+                                className="mt-1 cursor-grab active:cursor-grabbing text-gray-400 hover:text-blue-600 transition-colors"
                               >
-                                <GripVertical className="h-5 w-5 text-gray-400" />
+                                <GripVertical className="h-5 w-5" />
                               </div>
 
                               <button
@@ -708,19 +832,32 @@ const MonJourMPlanning: React.FC = () => {
 
                                 <div className="flex items-center gap-2 mt-2 text-xs flex-wrap">
                                   {task.start_time && (
-                                    <div className="flex items-center gap-1 bg-blue-50 px-2 py-1 rounded">
+                                    <div className="flex items-center gap-1 bg-blue-50 px-2 py-1 rounded border">
                                       <Clock className="h-3 w-3 text-blue-600" />
                                       <span className="text-blue-700 font-medium">
                                         {formatTime(task.start_time)}
                                       </span>
+                                      {task.end_time && (
+                                        <span className="text-blue-600">
+                                          → {formatTime(task.end_time)}
+                                        </span>
+                                      )}
                                     </div>
                                   )}
                                   
-                                  <Badge variant="outline">{task.duration || 30} min</Badge>
+                                  <Badge variant="outline" className="font-medium">
+                                    {task.duration || 30} min
+                                  </Badge>
                                   <Badge className={getPriorityColor(task.priority)}>
                                     {task.priority === 'high' ? 'Élevée' : task.priority === 'medium' ? 'Moyenne' : 'Faible'}
                                   </Badge>
                                   <Badge variant="secondary" className="capitalize">{task.category}</Badge>
+                                  
+                                  {snapshot.isDragging && (
+                                    <Badge variant="default" className="bg-blue-600">
+                                      Déplacement en cours...
+                                    </Badge>
+                                  )}
                                 </div>
 
                                 {task.assigned_to && Array.isArray(task.assigned_to) && task.assigned_to.length > 0 && (
