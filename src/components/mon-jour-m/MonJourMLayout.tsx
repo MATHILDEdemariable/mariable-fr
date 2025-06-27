@@ -49,12 +49,13 @@ const MonJourMLayout: React.FC<MonJourMLayoutProps> = ({ children }) => {
                 </Link>
               </TabsTrigger>
             </TabsList>
-
-            <div className="mt-6">
-              {children}
-            </div>
           </Tabs>
         </div>
+      </div>
+
+      {/* Correction : Rendre le contenu des enfants dans le conteneur principal */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        {children}
       </div>
     </div>
   );
