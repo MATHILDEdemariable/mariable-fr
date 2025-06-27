@@ -13,9 +13,6 @@ import { toast } from '@/components/ui/use-toast';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { supabase } from '@/integrations/supabase/client';
 
-// Import du type unifié et des fonctions utilitaires du contexte
-import { PlanningTask, normalizeTask, updateTaskPositions } from '@/contexts/MonJourMContext';
-
 interface WeddingCoordination {
   id: string;
   title: string;
@@ -37,6 +34,35 @@ interface TeamMember {
   prestataire_id?: string;
   notes?: string;
 }
+
+interface TaskFormData {
+  title: string;
+  description: string;
+  start_time: string;
+  duration: number;
+  category: string;
+  priority: "low" | "medium" | "high";
+  status: "todo" | "completed" | "in_progress";
+  assigned_to: string[];
+  is_manual_time: boolean;
+}
+
+// Catégories disponibles pour les tâches
+const categories = [
+  'Général',
+  'Cérémonie',
+  'Réception',
+  'Photographie',
+  'Musique',
+  'Décoration',
+  'Traiteur',
+  'Transport',
+  'Hébergement',
+  'Animation',
+  'Coiffure/Maquillage',
+  'Fleurs',
+  'Autre'
+];
 
 // Type pour les données brutes de la base de données
 interface DatabaseTask {
