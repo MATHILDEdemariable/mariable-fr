@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -131,7 +130,9 @@ const MonJourMPlanningContent: React.FC = () => {
         category: task.category || 'Général',
         priority: (task.priority as "low" | "medium" | "high") || 'medium',
         status: (task.status as "todo" | "completed" | "in_progress") || 'todo',
-        assigned_to: Array.isArray(task.assigned_to) ? task.assigned_to : [],
+        assigned_to: Array.isArray(task.assigned_to) 
+          ? (task.assigned_to as any[]).map(item => String(item)).filter(item => item && typeof item === 'string')
+          : [],
         position: typeof task.position === 'number' ? task.position : index,
         is_ai_generated: task.is_ai_generated || false,
         is_manual_time: false
