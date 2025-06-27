@@ -1,5 +1,5 @@
 
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -8,13 +8,18 @@ import { v4 as uuidv4 } from 'uuid';
 import { Loader2 } from 'lucide-react';
 
 interface ImageUploaderProps {
-  onUpload: (url: string) => void;
-  initialUrl?: string | null;
+  onImageUpload: (url: string) => void;
+  currentImageUrl?: string | null;
+  bucketName: string;
 }
 
-const ImageUploader: React.FC<ImageUploaderProps> = ({ onUpload, initialUrl }) => {
+const ImageUploader: React.FC<ImageUploaderProps> = ({ 
+  onImageUpload, 
+  currentImageUrl, 
+  bucketName 
+}) => {
   const [uploading, setUploading] = useState(false);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(initialUrl || null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(currentImageUrl || null);
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -24,7 +29,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ onUpload, initialUrl }) =
     try {
       const fileName = `${uuidv4()}-${file.name}`;
       const { data, error } = await supabase.storage
-        .from('blog-images')
+        .from(bucketName)
         .upload(fileName, file);
 
       if (error) {
@@ -32,7 +37,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ onUpload, initialUrl }) =
       }
 
       const { data: { publicUrl } } = supabase.storage
-        .from('blog-images')
+        .from(bucketName)
         .getPublicUrl(data.path);
 
       if (!publicUrl) {
@@ -40,7 +45,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ onUpload, initialUrl }) =
       }
 
       setPreviewUrl(publicUrl);
-      onUpload(publicUrl);
+      onImageUpload(publicUrl);
       toast.success('Image téléversée avec succès !');
     } catch (error: any) {
       toast.error(`Erreur lors du téléversement: ${error.message}`);
@@ -51,7 +56,12 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ onUpload, initialUrl }) =
 
   return (
     <div className="space-y-2">
-      <Input type="file" accept="image/png, image/jpeg, image/webp" onChange={handleFileChange} disabled={uploading} />
+      <Input 
+        type="file" 
+        accept="image/png, image/jpeg, image/webp" 
+        onChange={handleFileChange} 
+        disabled={uploading} 
+      />
       {uploading && (
         <div className="flex items-center gap-2">
           <Loader2 className="h-4 w-4 animate-spin" />
@@ -61,7 +71,11 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ onUpload, initialUrl }) =
       {previewUrl && (
         <div className="mt-2">
           <p className="text-sm font-medium">Aperçu :</p>
-          <img src={previewUrl} alt="Aperçu" className="max-w-xs max-h-48 object-contain rounded-md border" />
+          <img 
+            src={previewUrl} 
+            alt="Aperçu" 
+            className="max-w-xs max-h-48 object-contain rounded-md border" 
+          />
         </div>
       )}
     </div>

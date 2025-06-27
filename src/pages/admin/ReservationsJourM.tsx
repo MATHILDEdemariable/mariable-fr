@@ -41,6 +41,13 @@ interface JourMReservation {
   processed_by?: string;
   processed_at?: string;
   admin_notes?: string;
+  contact_jour_j?: any;
+  prestataires_reserves?: any;
+  uploaded_files?: any[];
+  delegation_tasks?: string;
+  deroulement_mariage?: string;
+  documents_links?: string;
+  hear_about_us?: string;
 }
 
 const AdminReservationsJourM = () => {
@@ -100,8 +107,25 @@ const AdminReservationsJourM = () => {
       }
 
       if (data) {
-        setReservations(data);
-        setFilteredReservations(data);
+        // Convertir les données Supabase vers notre interface
+        const transformedData: JourMReservation[] = data.map(item => ({
+          ...item,
+          services_souhaites: Array.isArray(item.services_souhaites) 
+            ? item.services_souhaites 
+            : (typeof item.services_souhaites === 'string' 
+              ? JSON.parse(item.services_souhaites || '[]') 
+              : []),
+          contact_jour_j: item.contact_jour_j || {},
+          prestataires_reserves: item.prestataires_reserves || {},
+          uploaded_files: Array.isArray(item.uploaded_files) 
+            ? item.uploaded_files 
+            : (typeof item.uploaded_files === 'string' 
+              ? JSON.parse(item.uploaded_files || '[]') 
+              : [])
+        }));
+        
+        setReservations(transformedData);
+        setFilteredReservations(transformedData);
       }
     } catch (err) {
       console.error('Erreur:', err);
@@ -321,7 +345,7 @@ const AdminReservationsJourM = () => {
 
         {selectedReservation && (
           <ReservationDetailModal
-            reservation={selectedReservation}
+            reservation={selectedReservation as any}
             open={modalOpen}
             onClose={() => {
               setModalOpen(false);
