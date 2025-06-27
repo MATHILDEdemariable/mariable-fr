@@ -9,7 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Calendar, Clock, Plus, Edit2, Trash2, Users, Sparkles, GripVertical } from 'lucide-react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { useToast } from '@/components/ui/use-toast';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { supabase } from '@/integrations/supabase/client';
 import { 
   WeddingCoordination, 
@@ -31,13 +31,13 @@ const MonJourMPlanningContent: React.FC = () => {
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   
-  // États des modales
+  // États des modales - SÉPARÉS comme dans l'équipe
   const [showAddTask, setShowAddTask] = useState(false);
   const [editingTask, setEditingTask] = useState<PlanningTask | null>(null);
   const [showAISuggestions, setShowAISuggestions] = useState(false);
   const [isGeneratingTasks, setIsGeneratingTasks] = useState(false);
   
-  // Formulaire UNIQUEMENT pour l'ajout (pas pour l'édition)
+  // Formulaire UNIQUEMENT pour l'ajout
   const [formData, setFormData] = useState<TaskFormData>({
     title: '',
     description: '',
@@ -188,7 +188,7 @@ const MonJourMPlanningContent: React.FC = () => {
     });
   };
 
-  // LOGIQUE SIMPLIFIÉE - Copie exacte de handleAddMember
+  // LOGIQUE SIMPLIFIÉE - Ajout
   const handleAddTask = async () => {
     if (!formData.title?.trim() || !coordination?.id) {
       toast({
@@ -236,7 +236,7 @@ const MonJourMPlanningContent: React.FC = () => {
     await loadTasks(coordination.id);
   };
 
-  // LOGIQUE SIMPLIFIÉE - Copie exacte de handleUpdateMember
+  // LOGIQUE SIMPLIFIÉE - Modification
   const handleUpdateTask = async () => {
     if (!editingTask || !editingTask.title?.trim()) {
       toast({
@@ -456,177 +456,185 @@ const MonJourMPlanningContent: React.FC = () => {
           </p>
         </div>
         <div className="flex gap-2">
-          <Dialog open={showAISuggestions} onOpenChange={setShowAISuggestions}>
-            <DialogTrigger asChild>
-              <Button variant="outline" className="flex items-center gap-2">
-                <Sparkles className="h-4 w-4" />
-                Suggestions IA
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Suggestions de l'IA</DialogTitle>
-                <DialogDescription>
-                  Laissez notre IA générer des tâches de planning personnalisées pour votre mariage
-                </DialogDescription>
-              </DialogHeader>
-              <div className="space-y-4">
-                <p className="text-sm text-muted-foreground">
-                  L'IA va analyser votre mariage et créer automatiquement des tâches de planning avec des horaires réalistes.
-                </p>
-              </div>
-              <DialogFooter>
-                <Button variant="outline" onClick={() => setShowAISuggestions(false)}>
-                  Annuler
-                </Button>
-                <Button 
-                  onClick={generateAITasks} 
-                  disabled={isGeneratingTasks}
-                  className="bg-wedding-olive hover:bg-wedding-olive/90"
-                >
-                  {isGeneratingTasks ? (
-                    <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                      Génération...
-                    </>
-                  ) : (
-                    <>
-                      <Sparkles className="h-4 w-4 mr-2" />
-                      Générer
-                    </>
-                  )}
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+          {/* BOUTON IA SUGGESTIONS - sans DialogTrigger */}
+          <Button 
+            variant="outline" 
+            className="flex items-center gap-2"
+            onClick={() => setShowAISuggestions(true)}
+          >
+            <Sparkles className="h-4 w-4" />
+            Suggestions IA
+          </Button>
           
-          {/* MODALE D'AJOUT - utilise formData */}
-          <Dialog open={showAddTask} onOpenChange={setShowAddTask}>
-            <DialogTrigger asChild>
-              <Button className="bg-wedding-olive hover:bg-wedding-olive/90">
-                <Plus className="h-4 w-4 mr-2" />
-                Ajouter une tâche
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-2xl">
-              <DialogHeader>
-                <DialogTitle>Nouvelle tâche</DialogTitle>
-              </DialogHeader>
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="title">Titre de la tâche *</Label>
-                    <Input
-                      id="title"
-                      value={formData.title}
-                      onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                      placeholder="Ex: Arrivée des invités"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="category">Catégorie</Label>
-                    <Select 
-                      value={formData.category} 
-                      onValueChange={(value) => setFormData({ ...formData, category: value })}
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {categories.map((cat) => (
-                          <SelectItem key={cat} value={cat}>{cat}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                <div>
-                  <Label htmlFor="description">Description</Label>
-                  <Textarea
-                    id="description"
-                    value={formData.description}
-                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    placeholder="Détails de la tâche..."
-                    rows={3}
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div>
-                    <Label htmlFor="start_time">Heure de début</Label>
-                    <Input
-                      id="start_time"
-                      type="time"
-                      value={formData.start_time}
-                      onChange={(e) => setFormData({ ...formData, start_time: e.target.value })}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="duration">Durée (minutes)</Label>
-                    <Input
-                      id="duration"
-                      type="number"
-                      min="5"
-                      max="480"
-                      value={formData.duration}
-                      onChange={(e) => setFormData({ ...formData, duration: parseInt(e.target.value) || 30 })}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="priority">Priorité</Label>
-                    <Select 
-                      value={formData.priority} 
-                      onValueChange={(value: "low" | "medium" | "high") => setFormData({ ...formData, priority: value })}
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="low">Faible</SelectItem>
-                        <SelectItem value="medium">Moyenne</SelectItem>
-                        <SelectItem value="high">Élevée</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                <div>
-                  <Label htmlFor="assigned_to">Assigné à</Label>
-                  <Select
-                    value={formData.assigned_to && formData.assigned_to.length > 0 ? formData.assigned_to[0] : ""}
-                    onValueChange={(value) => setFormData({ ...formData, assigned_to: value ? [value] : [] })}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Sélectionner une personne" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="">Non assigné</SelectItem>
-                      {teamMembers.map((member) => (
-                        <SelectItem key={member.id} value={member.id}>
-                          {member.name} ({member.role})
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="flex gap-2">
-                  <Button onClick={handleAddTask} disabled={!formData.title.trim()}>
-                    Ajouter la tâche
-                  </Button>
-                  <Button variant="outline" onClick={() => {
-                    resetForm();
-                    setShowAddTask(false);
-                  }}>
-                    Annuler
-                  </Button>
-                </div>
-              </div>
-            </DialogContent>
-          </Dialog>
+          {/* BOUTON AJOUTER TÂCHE - sans DialogTrigger */}
+          <Button 
+            className="bg-wedding-olive hover:bg-wedding-olive/90"
+            onClick={() => setShowAddTask(true)}
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Ajouter une tâche
+          </Button>
         </div>
       </div>
+
+      {/* MODALE IA SUGGESTIONS */}
+      <Dialog open={showAISuggestions} onOpenChange={setShowAISuggestions}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Suggestions de l'IA</DialogTitle>
+            <DialogDescription>
+              Laissez notre IA générer des tâches de planning personnalisées pour votre mariage
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <p className="text-sm text-muted-foreground">
+              L'IA va analyser votre mariage et créer automatiquement des tâches de planning avec des horaires réalistes.
+            </p>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowAISuggestions(false)}>
+              Annuler
+            </Button>
+            <Button 
+              onClick={generateAITasks} 
+              disabled={isGeneratingTasks}
+              className="bg-wedding-olive hover:bg-wedding-olive/90"
+            >
+              {isGeneratingTasks ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  Génération...
+                </>
+              ) : (
+                <>
+                  <Sparkles className="h-4 w-4 mr-2" />
+                  Générer
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+          
+      {/* MODALE D'AJOUT - utilise formData, sans DialogTrigger */}
+      <Dialog open={showAddTask} onOpenChange={setShowAddTask}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Nouvelle tâche</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="title">Titre de la tâche *</Label>
+                <Input
+                  id="title"
+                  value={formData.title}
+                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  placeholder="Ex: Arrivée des invités"
+                />
+              </div>
+              <div>
+                <Label htmlFor="category">Catégorie</Label>
+                <Select 
+                  value={formData.category} 
+                  onValueChange={(value) => setFormData({ ...formData, category: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categories.map((cat) => (
+                      <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div>
+              <Label htmlFor="description">Description</Label>
+              <Textarea
+                id="description"
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                placeholder="Détails de la tâche..."
+                rows={3}
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <Label htmlFor="start_time">Heure de début</Label>
+                <Input
+                  id="start_time"
+                  type="time"
+                  value={formData.start_time}
+                  onChange={(e) => setFormData({ ...formData, start_time: e.target.value })}
+                />
+              </div>
+              <div>
+                <Label htmlFor="duration">Durée (minutes)</Label>
+                <Input
+                  id="duration"
+                  type="number"
+                  min="5"
+                  max="480"
+                  value={formData.duration}
+                  onChange={(e) => setFormData({ ...formData, duration: parseInt(e.target.value) || 30 })}
+                />
+              </div>
+              <div>
+                <Label htmlFor="priority">Priorité</Label>
+                <Select 
+                  value={formData.priority} 
+                  onValueChange={(value: "low" | "medium" | "high") => setFormData({ ...formData, priority: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="low">Faible</SelectItem>
+                    <SelectItem value="medium">Moyenne</SelectItem>
+                    <SelectItem value="high">Élevée</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div>
+              <Label htmlFor="assigned_to">Assigné à</Label>
+              <Select
+                value={formData.assigned_to && formData.assigned_to.length > 0 ? formData.assigned_to[0] : ""}
+                onValueChange={(value) => setFormData({ ...formData, assigned_to: value ? [value] : [] })}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Sélectionner une personne" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="">Non assigné</SelectItem>
+                  {teamMembers.map((member) => (
+                    <SelectItem key={member.id} value={member.id}>
+                      {member.name} ({member.role})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex gap-2">
+              <Button onClick={handleAddTask} disabled={!formData.title.trim()}>
+                Ajouter la tâche
+              </Button>
+              <Button variant="outline" onClick={() => {
+                resetForm();
+                setShowAddTask(false);
+              }}>
+                Annuler
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Liste des tâches */}
       {tasks.length === 0 ? (

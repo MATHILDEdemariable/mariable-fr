@@ -15,11 +15,10 @@ import {
   Shield
 } from 'lucide-react';
 import AdminLayout from '@/components/admin/AdminLayout';
-
-const ADMIN_PASSWORD = 'Alain1987!';
+import { useAdminAuth } from '@/hooks/useAdminAuth';
 
 const AdminDashboard = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { isAuthenticated, login, logout } = useAdminAuth();
   const [password, setPassword] = useState('');
   const [stats, setStats] = useState({
     totalReservations: 0,
@@ -30,24 +29,20 @@ const AdminDashboard = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check if admin is already authenticated in session
-    const adminAuth = sessionStorage.getItem('admin_authenticated');
-    if (adminAuth === 'true') {
-      setIsAuthenticated(true);
+    if (isAuthenticated) {
       loadStats();
     }
-  }, []);
+  }, [isAuthenticated]);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (password === ADMIN_PASSWORD) {
-      setIsAuthenticated(true);
-      sessionStorage.setItem('admin_authenticated', 'true');
-      loadStats();
+    const success = login(password);
+    if (success) {
       toast({
         title: "Connexion réussie",
         description: "Bienvenue dans le dashboard admin"
       });
+      loadStats();
     } else {
       toast({
         title: "Erreur d'authentification",
@@ -85,8 +80,7 @@ const AdminDashboard = () => {
   };
 
   const handleLogout = () => {
-    setIsAuthenticated(false);
-    sessionStorage.removeItem('admin_authenticated');
+    logout();
     setPassword('');
   };
 
