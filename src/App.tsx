@@ -80,9 +80,10 @@ function App() {
                   <Route path="/contact" element={<Contact />} />
                   <Route path="/mentions-legales" element={<MentionsLegales />} />
 
-                  {/* Prestataires routes */}
+                  {/* Prestataires routes - AJOUT DE LA ROUTE AU SINGULIER */}
                   <Route path="/prestataires" element={<Prestataires />} />
                   <Route path="/prestataires/:slug" element={<Prestataire />} />
+                  <Route path="/prestataire/:slug" element={<Prestataire />} />
 
                   {/* Admin routes */}
                   <Route path="/admin/dashboard" element={<AdminDashboard />} />

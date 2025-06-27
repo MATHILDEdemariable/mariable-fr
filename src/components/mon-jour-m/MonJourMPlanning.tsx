@@ -2,16 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Calendar, Clock, CheckCircle2, Circle, User, RefreshCw, Edit, Trash2, Sparkles, GripVertical } from 'lucide-react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
+import { Calendar, Clock, Plus, Edit2, Trash2, Save, X, Users, Sparkles, GripVertical } from 'lucide-react';
+import { useMonJourM, PlanningTask } from '@/contexts/MonJourMContext';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { toast } from '@/components/ui/use-toast';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/components/ui/use-toast';
-import AISuggestionsModal from './AISuggestionsModal';
-import TaskEditModal from './TaskEditModal';
 
 // Import du type unifié et des fonctions utilitaires du contexte
 import { PlanningTask, normalizeTask, updateTaskPositions } from '@/contexts/MonJourMContext';
@@ -134,25 +134,30 @@ const transformDatabaseTask = (dbTask: DatabaseTask, index: number): PlanningTas
   };
 };
 
-const MonJourMPlanning: React.FC = () => {
-  const { toast } = useToast();
-  const [coordination, setCoordination] = useState<WeddingCoordination | null>(null);
-  const [tasks, setTasks] = useState<PlanningTask[]>([]);
-  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [showAddTask, setShowAddTask] = useState(false);
+const MonJourMPlanningContent: React.FC = () => {
+  const { 
+    tasks, 
+    teamMembers, 
+    isLoading, 
+    addTask, 
+    updateTask, 
+    deleteTask 
+  } = useMonJourM();
+
+  const [isAddingTask, setIsAddingTask] = useState(false);
   const [editingTask, setEditingTask] = useState<PlanningTask | null>(null);
   const [showAISuggestions, setShowAISuggestions] = useState(false);
-  const [formData, setFormData] = useState({
+  const [isGeneratingTasks, setIsGeneratingTasks] = useState(false);
+  const [formData, setFormData] = useState<TaskFormData>({
     title: '',
     description: '',
-    start_time: '',
-    end_time: '',
-    duration: 15, // Valeur par défaut de 15 minutes
-    category: 'general',
-    priority: 'medium' as "low" | "medium" | "high",
-    status: 'todo' as "todo" | "completed" | "in_progress",
-    assigned_to: [] as string[]
+    start_time: '09:00',
+    duration: 30,
+    category: 'Général',
+    priority: 'medium',
+    status: 'todo',
+    assigned_to: [],
+    is_manual_time: false
   });
 
   // Fonction pour valider et normaliser les heures au format HH:mm
@@ -249,451 +254,200 @@ const MonJourMPlanning: React.FC = () => {
     return recalculatedTasks;
   };
 
-  const initializeData = async () => {
-    try {
-      setIsLoading(true);
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (!user) {
-        toast({
-          title: "Erreur",
-          description: "Vous devez être connecté",
-          variant: "destructive"
-        });
-        return;
-      }
-
-      let { data: coordinations, error: coordError } = await supabase
-        .from('wedding_coordination')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
-
-      if (coordError) throw coordError;
-
-      let activeCoordination: WeddingCoordination;
-
-      if (coordinations && coordinations.length > 0) {
-        activeCoordination = coordinations[0];
-      } else {
-        const { data: newCoordination, error: createError } = await supabase
-          .from('wedding_coordination')
-          .insert({
-            user_id: user.id,
-            title: 'Mon Mariage',
-            description: 'Organisation de mon mariage'
-          })
-          .select()
-          .single();
-
-        if (createError) throw createError;
-        activeCoordination = newCoordination;
-      }
-
-      setCoordination(activeCoordination);
-
-      await Promise.all([
-        loadTasks(activeCoordination.id),
-        loadTeamMembers(activeCoordination.id)
-      ]);
-
-    } catch (error) {
-      console.error('Erreur initialisation:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible de charger les données",
-        variant: "destructive"
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const loadTasks = async (coordId: string) => {
-    try {
-      const { data, error } = await supabase
-        .from('coordination_planning')
-        .select('*')
-        .eq('coordination_id', coordId)
-        .order('position');
-
-      if (error) throw error;
-
-      // Utiliser transformDatabaseTask pour normaliser les données
-      const normalizedTasks: PlanningTask[] = (data || []).map((task, index) => transformDatabaseTask(task as DatabaseTask, index));
-      
-      setTasks(normalizedTasks);
-    } catch (error) {
-      console.error('Erreur chargement tâches:', error);
-    }
-  };
-
-  const loadTeamMembers = async (coordId: string) => {
-    try {
-      const { data, error } = await supabase
-        .from('coordination_team')
-        .select('*')
-        .eq('coordination_id', coordId)
-        .order('created_at');
-
-      if (error) throw error;
-
-      const mappedData = (data || []).map((item: any) => ({
-        id: item.id,
-        name: item.name,
-        role: item.role,
-        email: item.email,
-        phone: item.phone,
-        type: (item.type === 'vendor' ? 'vendor' : 'person') as 'person' | 'vendor',
-        prestataire_id: item.prestataire_id,
-        notes: item.notes
-      }));
-
-      setTeamMembers(mappedData);
-    } catch (error) {
-      console.error('Erreur chargement équipe:', error);
-    }
-  };
-
-  const refreshData = async () => {
-    if (coordination?.id) {
-      await Promise.all([
-        loadTasks(coordination.id),
-        loadTeamMembers(coordination.id)
-      ]);
-    }
-  };
-
   const resetForm = () => {
     setFormData({
       title: '',
       description: '',
-      start_time: '',
-      end_time: '',
-      duration: 15, // Valeur par défaut
-      category: 'general',
+      start_time: '09:00',
+      duration: 30,
+      category: 'Général',
       priority: 'medium',
       status: 'todo',
-      assigned_to: []
+      assigned_to: [],
+      is_manual_time: false
     });
   };
 
-  const handleAddTask = async () => {
-    if (!formData.title.trim() || !coordination?.id) return;
-
-    try {
-      // Convertir l'heure locale en timestamp ISO pour la base de données
-      let startTimeForDB = null;
-      if (formData.start_time) {
-        const [hours, minutes] = formData.start_time.split(':').map(Number);
-        const date = new Date();
-        date.setHours(hours, minutes, 0, 0);
-        startTimeForDB = date.toISOString();
-      }
-
-      const { data, error } = await supabase
-        .from('coordination_planning')
-        .insert({
-          coordination_id: coordination.id,
-          title: formData.title,
-          description: formData.description || null,
-          start_time: startTimeForDB,
-          end_time: formData.end_time || null,
-          duration: formData.duration || 15,
-          category: formData.category,
-          priority: formData.priority,
-          status: formData.status,
-          assigned_to: formData.assigned_to && formData.assigned_to.length > 0 ? formData.assigned_to : null,
-          position: tasks.length,
-          is_ai_generated: false
-        })
-        .select()
-        .single();
-
-      if (error) throw error;
-
-      // Utiliser transformDatabaseTask pour la nouvelle tâche
-      const newTask: PlanningTask = {
-        ...transformDatabaseTask(data as DatabaseTask, tasks.length),
-        is_manual_time: !!formData.start_time // Marquer comme manuelle si une heure a été saisie
-      };
-      
-      const updatedTasks = [...tasks, newTask];
-      const recalculatedTasks = recalculateTimeline(updatedTasks);
-      setTasks(recalculatedTasks);
-      
-      await updateTasksInDatabase(recalculatedTasks);
-      
-      resetForm();
-      setShowAddTask(false);
-      
-      toast({
-        title: "Tâche ajoutée",
-        description: "La nouvelle tâche a été ajoutée au planning avec recalcul automatique des horaires"
-      });
-
-    } catch (error) {
-      console.error('Erreur ajout tâche:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible d'ajouter la tâche",
-        variant: "destructive"
-      });
-    }
-  };
-
-  const handleSaveTask = async (taskData: Partial<PlanningTask>) => {
-    if (!editingTask) return;
-
-    try {
-      // Convertir l'heure locale en timestamp ISO pour la base de données
-      let startTimeForDB = null;
-      if (taskData.start_time) {
-        const normalizedTime = normalizeTimeString(taskData.start_time);
-        const [hours, minutes] = normalizedTime.split(':').map(Number);
-        const date = new Date();
-        date.setHours(hours, minutes, 0, 0);
-        startTimeForDB = date.toISOString();
-      }
-
-      const { error } = await supabase
-        .from('coordination_planning')
-        .update({
-          title: taskData.title,
-          description: taskData.description || null,
-          start_time: startTimeForDB,
-          end_time: taskData.end_time || null,
-          duration: taskData.duration || 15,
-          category: taskData.category,
-          priority: taskData.priority,
-          status: taskData.status,
-          assigned_to: taskData.assigned_to && taskData.assigned_to.length > 0 ? taskData.assigned_to : null,
-          is_ai_generated: taskData.is_ai_generated || false
-        })
-        .eq('id', editingTask.id);
-
-      if (error) throw error;
-
-      // Mettre à jour la tâche avec les heures normalisées et marquer comme manuelle
-      const updatedTask: PlanningTask = {
-        ...editingTask,
-        ...taskData,
-        start_time: taskData.start_time ? normalizeTimeString(taskData.start_time) : editingTask.start_time,
-        is_manual_time: !!taskData.start_time // Marquer comme manuelle si une heure a été modifiée
-      };
-
-      const updatedTasks = tasks.map(t => 
-        t.id === editingTask.id ? updatedTask : t
-      );
-      
-      const recalculatedTasks = recalculateTimeline(updatedTasks);
-      setTasks(recalculatedTasks);
-      
-      await updateTasksInDatabase(recalculatedTasks);
-      
-      setEditingTask(null);
-      
-      toast({
-        title: "Tâche modifiée",
-        description: "Les informations ont été mises à jour avec recalcul automatique intelligent"
-      });
-
-    } catch (error) {
-      console.error('Erreur modification tâche:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible de modifier la tâche",
-        variant: "destructive"
-      });
-    }
-  };
-
-  const handleAISuggestion = async (suggestion: { title: string; description: string; category: string; priority: string; duration: number }) => {
-    if (!coordination?.id) return;
-
-    try {
-      const { data, error } = await supabase
-        .from('coordination_planning')
-        .insert({
-          coordination_id: coordination.id,
-          title: suggestion.title,
-          description: suggestion.description,
-          category: suggestion.category,
-          priority: suggestion.priority,
-          status: 'todo',
-          duration: suggestion.duration || 15,
-          position: tasks.length,
-          is_ai_generated: true
-        })
-        .select()
-        .single();
-
-      if (error) throw error;
-
-      // Utiliser transformDatabaseTask pour la nouvelle tâche
-      const newTask: PlanningTask = transformDatabaseTask({
-        ...data,
-        assigned_to: [],
-        is_ai_generated: true
-      } as DatabaseTask, tasks.length);
-      
-      const updatedTasks = [...tasks, newTask];
-      const recalculatedTasks = recalculateTimeline(updatedTasks);
-      setTasks(recalculatedTasks);
-      
-      await updateTasksInDatabase(recalculatedTasks);
-      
-      toast({
-        title: "Suggestion ajoutée",
-        description: "La tâche suggérée a été ajoutée au planning avec recalcul automatique"
-      });
-
-    } catch (error) {
-      console.error('Erreur ajout suggestion:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible d'ajouter la suggestion",
-        variant: "destructive"
-      });
-    }
-  };
-
-  // Fonction pour basculer le statut d'une tâche
-  const toggleTaskStatus = async (task: PlanningTask) => {
-    const newStatus = task.status === 'completed' ? 'todo' : 'completed';
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     
-    try {
-      const { error } = await supabase
-        .from('coordination_planning')
-        .update({ status: newStatus })
-        .eq('id', task.id);
-
-      if (error) throw error;
-
-      setTasks(prev => prev.map(t => 
-        t.id === task.id ? { ...t, status: newStatus } : t
-      ));
-
-      toast({
-        title: newStatus === 'completed' ? "Tâche terminée" : "Tâche réactivée",
-        description: "Le statut a été mis à jour"
-      });
-
-    } catch (error) {
-      console.error('Erreur changement statut:', error);
+    if (!formData.title.trim()) {
       toast({
         title: "Erreur",
-        description: "Impossible de changer le statut",
+        description: "Le titre de la tâche est obligatoire",
         variant: "destructive"
       });
+      return;
+    }
+
+    const taskData: Omit<PlanningTask, 'id'> = {
+      title: formData.title,
+      description: formData.description,
+      start_time: formData.start_time,
+      end_time: undefined,
+      duration: formData.duration,
+      category: formData.category,
+      priority: formData.priority,
+      status: formData.status,
+      assigned_to: formData.assigned_to,
+      position: tasks.length,
+      is_ai_generated: false,
+      is_manual_time: formData.is_manual_time || false
+    };
+
+    const success = await addTask(taskData);
+    if (success) {
+      resetForm();
+      setIsAddingTask(false);
     }
   };
 
-  // Fonction pour supprimer une tâche
-  const handleDeleteTask = async (taskId: string) => {
-    try {
-      const { error } = await supabase
-        .from('coordination_planning')
-        .delete()
-        .eq('id', taskId);
+  const handleEdit = (task: PlanningTask) => {
+    setEditingTask(task);
+    setFormData({
+      title: task.title,
+      description: task.description || '',
+      start_time: task.start_time || '09:00',
+      duration: task.duration,
+      category: task.category,
+      priority: task.priority,
+      status: task.status,
+      assigned_to: task.assigned_to,
+      is_manual_time: task.is_manual_time || false
+    });
+  };
 
-      if (error) throw error;
-
-      const updatedTasks = tasks.filter(t => t.id !== taskId);
-      const reorderedTasks = updateTaskPositions(updatedTasks);
-      const recalculatedTasks = recalculateTimeline(reorderedTasks);
-      
-      setTasks(recalculatedTasks);
-      await updateTasksInDatabase(recalculatedTasks);
-      
-      toast({
-        title: "Tâche supprimée",
-        description: "La tâche a été supprimée et les horaires recalculés"
-      });
-
-    } catch (error) {
-      console.error('Erreur suppression tâche:', error);
+  const handleUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!editingTask || !formData.title.trim()) {
       toast({
         title: "Erreur",
-        description: "Impossible de supprimer la tâche",
+        description: "Le titre de la tâche est obligatoire",
         variant: "destructive"
       });
+      return;
+    }
+
+    const updatedTask: PlanningTask = {
+      ...editingTask,
+      title: formData.title,
+      description: formData.description,
+      start_time: formData.start_time,
+      duration: formData.duration,
+      category: formData.category,
+      priority: formData.priority,
+      status: formData.status,
+      assigned_to: formData.assigned_to,
+      is_manual_time: formData.is_manual_time || false
+    };
+
+    const success = await updateTask(updatedTask);
+    if (success) {
+      resetForm();
+      setEditingTask(null);
     }
   };
 
-  // Fonction pour mettre à jour les tâches en base de données
-  const updateTasksInDatabase = async (tasksToUpdate: PlanningTask[]) => {
-    try {
-      for (const task of tasksToUpdate) {
-        // Convertir l'heure locale en timestamp ISO pour la base de données
-        let startTimeForDB = null;
-        if (task.start_time) {
-          const normalizedTime = normalizeTimeString(task.start_time);
-          const [hours, minutes] = normalizedTime.split(':').map(Number);
-          const date = new Date();
-          date.setHours(hours, minutes, 0, 0);
-          startTimeForDB = date.toISOString();
-        }
-
-        await supabase
-          .from('coordination_planning')
-          .update({
-            position: task.position,
-            start_time: startTimeForDB,
-            end_time: task.end_time
-          })
-          .eq('id', task.id);
-      }
-    } catch (error) {
-      console.error('Erreur mise à jour tâches:', error);
+  const handleDelete = async (taskId: string) => {
+    if (window.confirm('Êtes-vous sûr de vouloir supprimer cette tâche ?')) {
+      await deleteTask(taskId);
     }
   };
 
-  const formatTime = (timeString?: string) => {
-    if (!timeString) return '';
-    return normalizeTimeString(timeString);
+  const handleStatusChange = async (task: PlanningTask, newStatus: "todo" | "completed" | "in_progress") => {
+    const updatedTask: PlanningTask = {
+      ...task,
+      status: newStatus
+    };
+    await updateTask(updatedTask);
   };
 
-  // Drag & Drop amélioré avec recalcul automatique intelligent
-  const handleDragEnd = async (result: DropResult) => {
+  const handleDragEnd = async (result: any) => {
     if (!result.destination) return;
 
     const items = Array.from(tasks);
     const [reorderedItem] = items.splice(result.source.index, 1);
     items.splice(result.destination.index, 0, reorderedItem);
 
-    // Utiliser updateTaskPositions pour réassigner les positions
-    const reorderedTasks = updateTaskPositions(items);
-    const recalculatedTasks = recalculateTimeline(reorderedTasks);
-    
-    setTasks(recalculatedTasks);
+    // Mettre à jour les positions
+    const updatedTasks = items.map((task, index) => ({
+      ...task,
+      position: index
+    }));
 
+    // Sauvegarder les nouvelles positions
+    for (const task of updatedTasks) {
+      await updateTask(task);
+    }
+  };
+
+  const generateAITasks = async () => {
+    setIsGeneratingTasks(true);
+    
     try {
-      await updateTasksInDatabase(recalculatedTasks);
-      
-      toast({
-        title: "Planning réorganisé",
-        description: "L'ordre des tâches et les horaires ont été automatiquement recalculés intelligemment"
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast({
+          title: "Erreur",
+          description: "Vous devez être connecté pour utiliser l'IA",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      const prompt = `Génère 10 tâches de planning pour un mariage, avec des heures réalistes et des durées appropriées. Format JSON avec: title, description, start_time (format HH:MM), duration (en minutes), category, priority (low/medium/high), status (todo), assigned_to (array vide).`;
+
+      const { data, error } = await supabase.functions.invoke('chat-completion', {
+        body: {
+          message: prompt,
+          user_id: user.id
+        }
       });
+
+      if (error) throw error;
+
+      const aiTasks = JSON.parse(data.response);
+      
+      for (let i = 0; i < aiTasks.length; i++) {
+        const aiTask = aiTasks[i];
+        const taskData: Omit<PlanningTask, 'id'> = {
+          title: aiTask.title,
+          description: aiTask.description || '',
+          start_time: aiTask.start_time || '09:00',
+          end_time: undefined,
+          duration: aiTask.duration || 30,
+          category: aiTask.category || 'Général',
+          priority: aiTask.priority || 'medium',
+          status: 'todo',
+          assigned_to: [],
+          position: tasks.length + i,
+          is_ai_generated: true,
+          is_manual_time: false
+        };
+        
+        await addTask(taskData);
+      }
+
+      toast({
+        title: "Succès",
+        description: `${aiTasks.length} tâches générées par l'IA ont été ajoutées`,
+      });
+      
+      setShowAISuggestions(false);
     } catch (error) {
-      console.error('Erreur mise à jour positions:', error);
+      console.error('Erreur génération IA:', error);
       toast({
         title: "Erreur",
-        description: "Impossible de mettre à jour l'ordre",
+        description: "Impossible de générer les tâches avec l'IA",
         variant: "destructive"
       });
+    } finally {
+      setIsGeneratingTasks(false);
     }
   };
 
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'completed': return <CheckCircle2 className="h-4 w-4 text-green-600" />;
-      case 'in_progress': return <Clock className="h-4 w-4 text-blue-600" />;
-      default: return <Circle className="h-4 w-4 text-gray-400" />;
-    }
-  };
-
-  const getPriorityColor = (priority: string) => {
+  const getPriorityColor = (priority: "low" | "medium" | "high") => {
     switch (priority) {
       case 'high': return 'bg-red-100 text-red-800';
       case 'medium': return 'bg-yellow-100 text-yellow-800';
@@ -702,361 +456,426 @@ const MonJourMPlanning: React.FC = () => {
     }
   };
 
-  const getPriorityLabel = (priority: string) => {
-    switch (priority) {
-      case 'high': return 'Élevée';
-      case 'medium': return 'Moyenne';
-      case 'low': return 'Faible';
-      default: return 'Moyenne';
+  const getStatusColor = (status: "todo" | "completed" | "in_progress") => {
+    switch (status) {
+      case 'completed': return 'bg-green-100 text-green-800';
+      case 'in_progress': return 'bg-blue-100 text-blue-800';
+      case 'todo': return 'bg-gray-100 text-gray-800';
+      default: return 'bg-gray-100 text-gray-800';
     }
   };
 
-  useEffect(() => {
-    initializeData();
-  }, []);
+  const formatTime = (time?: string) => {
+    if (!time) return '';
+    return time.substring(0, 5);
+  };
+
+  const calculateEndTime = (startTime: string, duration: number) => {
+    const [hours, minutes] = startTime.split(':').map(Number);
+    const totalMinutes = hours * 60 + minutes + duration;
+    const endHours = Math.floor(totalMinutes / 60);
+    const endMinutes = totalMinutes % 60;
+    return `${endHours.toString().padStart(2, '0')}:${endMinutes.toString().padStart(2, '0')}`;
+  };
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center p-12">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-wedding-olive"></div>
-        <span className="ml-3">Chargement...</span>
+      <div className="flex justify-center items-center min-h-[200px]">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-wedding-olive mx-auto mb-4"></div>
+          <p>Chargement du planning...</p>
+        </div>
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
-      {/* En-tête avec boutons */}
-      <div className="flex flex-col md:flex-row gap-4 justify-between items-start">
+      <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-semibold mb-2">Planning du jour J</h2>
-          <p className="text-gray-600">Organisez et coordonnez tous les détails de votre mariage</p>
-          <p className="text-sm text-blue-600 mt-1">
-            ⏰ Gestion intelligente des heures : saisissez manuellement et les suivantes se calculent automatiquement
+          <h2 className="text-2xl font-serif mb-2">Mon Planning</h2>
+          <p className="text-muted-foreground">
+            Organisez votre journée parfaite avec un planning détaillé
           </p>
         </div>
-        
         <div className="flex gap-2">
-          <Button
-            onClick={refreshData}
-            variant="outline"
-            size="sm"
-            className="flex items-center gap-2"
-          >
-            <RefreshCw className="h-4 w-4" />
-            Actualiser
-          </Button>
-
-          <Button
-            onClick={() => setShowAISuggestions(true)}
-            variant="outline"
-            size="sm"
-            className="flex items-center gap-2 bg-gradient-to-r from-purple-50 to-pink-50 border-purple-200 hover:from-purple-100 hover:to-pink-100"
-          >
-            <Sparkles className="h-4 w-4 text-purple-600" />
-            Générer avec l'IA
-          </Button>
-
-          <Dialog open={showAddTask} onOpenChange={setShowAddTask}>
+          <Dialog open={showAISuggestions} onOpenChange={setShowAISuggestions}>
             <DialogTrigger asChild>
-              <Button className="flex items-center gap-2">
-                <Plus className="h-4 w-4" />
-                Ajouter une tâche
+              <Button variant="outline" className="flex items-center gap-2">
+                <Sparkles className="h-4 w-4" />
+                Suggestions IA
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-2xl">
+            <DialogContent>
               <DialogHeader>
-                <DialogTitle>Ajouter une tâche au planning</DialogTitle>
+                <DialogTitle>Suggestions de l'IA</DialogTitle>
+                <DialogDescription>
+                  Laissez notre IA générer des tâches de planning personnalisées pour votre mariage
+                </DialogDescription>
               </DialogHeader>
               <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium mb-1">Titre *</label>
-                  <Input
-                    value={formData.title}
-                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                    placeholder="Titre de la tâche"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-1">Description</label>
-                  <Textarea
-                    value={formData.description}
-                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    placeholder="Description détaillée de la tâche"
-                    rows={3}
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Heure de début</label>
-                    <Input
-                      type="time"
-                      value={formData.start_time}
-                      onChange={(e) => setFormData({ ...formData, start_time: e.target.value })}
-                    />
-                    <p className="text-xs text-gray-500 mt-1">
-                      Les horaires suivantes se calculeront automatiquement
-                    </p>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Heure de fin</label>
-                    <Input
-                      type="time"
-                      value={formData.end_time}
-                      onChange={(e) => setFormData({ ...formData, end_time: e.target.value })}
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Durée (min) *</label>
-                    <Input
-                      type="number"
-                      value={formData.duration}
-                      onChange={(e) => setFormData({ ...formData, duration: parseInt(e.target.value) || 15 })}
-                      min="1"
-                      max="1440"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Catégorie</label>
-                    <Select value={formData.category} onValueChange={(value) => setFormData({ ...formData, category: value })}>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="general">Général</SelectItem>
-                        <SelectItem value="ceremony">Cérémonie</SelectItem>
-                        <SelectItem value="reception">Réception</SelectItem>
-                        <SelectItem value="photos">Photos</SelectItem>
-                        <SelectItem value="music">Musique</SelectItem>
-                        <SelectItem value="catering">Traiteur</SelectItem>
-                        <SelectItem value="decoration">Décoration</SelectItem>
-                        <SelectItem value="transport">Transport</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Priorité</label>
-                    <Select value={formData.priority} onValueChange={(value: "low" | "medium" | "high") => setFormData({ ...formData, priority: value })}>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="low">Faible</SelectItem>
-                        <SelectItem value="medium">Moyenne</SelectItem>
-                        <SelectItem value="high">Élevée</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Statut</label>
-                    <Select value={formData.status} onValueChange={(value: "todo" | "completed" | "in_progress") => setFormData({ ...formData, status: value })}>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="todo">À faire</SelectItem>
-                        <SelectItem value="in_progress">En cours</SelectItem>
-                        <SelectItem value="completed">Terminé</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                <div className="flex gap-2">
-                  <Button onClick={handleAddTask} disabled={!formData.title.trim()}>
-                    Ajouter la tâche
-                  </Button>
-                  <Button variant="outline" onClick={() => {
-                    resetForm();
-                    setShowAddTask(false);
-                  }}>
-                    Annuler
-                  </Button>
-                </div>
+                <p className="text-sm text-muted-foreground">
+                  L'IA va analyser votre mariage et créer automatiquement des tâches de planning avec des horaires réalistes.
+                </p>
               </div>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setShowAISuggestions(false)}>
+                  Annuler
+                </Button>
+                <Button 
+                  onClick={generateAITasks} 
+                  disabled={isGeneratingTasks}
+                  className="bg-wedding-olive hover:bg-wedding-olive/90"
+                >
+                  {isGeneratingTasks ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                      Génération...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="h-4 w-4 mr-2" />
+                      Générer
+                    </>
+                  )}
+                </Button>
+              </DialogFooter>
             </DialogContent>
           </Dialog>
+          
+          <Button 
+            onClick={() => setIsAddingTask(true)}
+            className="bg-wedding-olive hover:bg-wedding-olive/90"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Ajouter une tâche
+          </Button>
         </div>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            Timeline du jour J
-            <Badge variant="secondary" className="text-xs">
-              Heures intelligentes activées
-            </Badge>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {tasks.length > 0 ? (
-            <DragDropContext onDragEnd={handleDragEnd}>
-              <Droppable droppableId="tasks">
-                {(provided) => (
-                  <div
-                    {...provided.droppableProps}
-                    ref={provided.innerRef}
-                    className="space-y-4"
+      {/* Formulaire d'ajout/modification */}
+      {(isAddingTask || editingTask) && (
+        <Card>
+          <CardHeader>
+            <CardTitle>
+              {editingTask ? 'Modifier la tâche' : 'Nouvelle tâche'}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={editingTask ? handleUpdate : handleSubmit} className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="title">Titre de la tâche *</Label>
+                  <Input
+                    id="title"
+                    value={formData.title}
+                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                    placeholder="Ex: Arrivée des invités"
+                    required
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="category">Catégorie</Label>
+                  <Select 
+                    value={formData.category} 
+                    onValueChange={(value) => setFormData({ ...formData, category: value })}
                   >
-                    {tasks.map((task, index) => (
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories.map((cat) => (
+                        <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div>
+                <Label htmlFor="description">Description</Label>
+                <Textarea
+                  id="description"
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  placeholder="Détails de la tâche..."
+                  rows={3}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <Label htmlFor="start_time">Heure de début</Label>
+                  <Input
+                    id="start_time"
+                    type="time"
+                    value={formData.start_time}
+                    onChange={(e) => setFormData({ ...formData, start_time: e.target.value })}
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Les horaires suivantes se calculeront automatiquement
+                  </p>
+                </div>
+                <div>
+                  <Label htmlFor="duration">Durée (minutes)</Label>
+                  <Input
+                    id="duration"
+                    type="number"
+                    min="5"
+                    max="480"
+                    value={formData.duration}
+                    onChange={(e) => setFormData({ ...formData, duration: parseInt(e.target.value) || 30 })}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="priority">Priorité</Label>
+                  <Select 
+                    value={formData.priority} 
+                    onValueChange={(value: "low" | "medium" | "high") => setFormData({ ...formData, priority: value })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="low">Faible</SelectItem>
+                      <SelectItem value="medium">Moyenne</SelectItem>
+                      <SelectItem value="high">Élevée</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="status">Statut</Label>
+                  <Select 
+                    value={formData.status} 
+                    onValueChange={(value: "todo" | "completed" | "in_progress") => setFormData({ ...formData, status: value })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="todo">À faire</SelectItem>
+                      <SelectItem value="in_progress">En cours</SelectItem>
+                      <SelectItem value="completed">Terminé</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label htmlFor="assigned_to">Assigné à</Label>
+                  <Select
+                    value={formData.assigned_to.length > 0 ? formData.assigned_to[0] : ""}
+                    onValueChange={(value) => setFormData({ ...formData, assigned_to: value ? [value] : [] })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Sélectionner une personne" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="">Non assigné</SelectItem>
+                      {teamMembers.map((member) => (
+                        <SelectItem key={member.id} value={member.id}>
+                          {member.name} ({member.role})
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-2">
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  onClick={() => {
+                    setIsAddingTask(false);
+                    setEditingTask(null);
+                    resetForm();
+                  }}
+                >
+                  <X className="h-4 w-4 mr-2" />
+                  Annuler
+                </Button>
+                <Button type="submit" className="bg-wedding-olive hover:bg-wedding-olive/90">
+                  <Save className="h-4 w-4 mr-2" />
+                  {editingTask ? 'Modifier' : 'Ajouter'}
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Liste des tâches */}
+      {tasks.length === 0 ? (
+        <Card>
+          <CardContent className="py-12">
+            <div className="text-center">
+              <Calendar className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-lg font-medium mb-2">Aucune tâche planifiée</h3>
+              <p className="text-muted-foreground mb-4">
+                Commencez par ajouter des tâches à votre planning ou utilisez nos suggestions IA
+              </p>
+              <div className="flex justify-center gap-2">
+                <Button 
+                  onClick={() => setShowAISuggestions(true)}
+                  variant="outline"
+                  className="flex items-center gap-2"
+                >
+                  <Sparkles className="h-4 w-4" />
+                  Suggestions IA
+                </Button>
+                <Button 
+                  onClick={() => setIsAddingTask(true)}
+                  className="bg-wedding-olive hover:bg-wedding-olive/90"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Ajouter une tâche
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      ) : (
+        <DragDropContext onDragEnd={handleDragEnd}>
+          <Droppable droppableId="tasks">
+            {(provided) => (
+              <div {...provided.droppableProps} ref={provided.innerRef} className="space-y-4">
+                {tasks
+                  .sort((a, b) => a.position - b.position)
+                  .map((task, index) => {
+                    const assignedMember = task.assigned_to.length > 0 
+                      ? teamMembers.find(m => m.id === task.assigned_to[0])
+                      : null;
+                    const endTime = calculateEndTime(task.start_time || '09:00', task.duration);
+                    
+                    return (
                       <Draggable key={task.id} draggableId={task.id} index={index}>
                         {(provided, snapshot) => (
-                          <div
+                          <Card 
                             ref={provided.innerRef}
                             {...provided.draggableProps}
-                            className={`p-4 border rounded-lg bg-white shadow-sm hover:shadow-md transition-all ${
-                              snapshot.isDragging ? 'shadow-lg border-blue-300 bg-blue-50' : ''
-                            }`}
+                            className={`transition-all ${snapshot.isDragging ? 'shadow-lg rotate-2' : ''}`}
                           >
-                            <div className="flex items-start gap-4">
-                              <div
-                                {...provided.dragHandleProps}
-                                className="mt-1 cursor-grab active:cursor-grabbing text-gray-400 hover:text-blue-600 transition-colors"
-                              >
-                                <GripVertical className="h-5 w-5" />
-                              </div>
-
-                              <button
-                                onClick={() => toggleTaskStatus(task)}
-                                className="mt-1"
-                              >
-                                {getStatusIcon(task.status)}
-                              </button>
-
-                              <div className="flex-1 min-w-0">
-                                <div className="flex items-start justify-between">
-                                  <div className="flex-1">
-                                    <h3 className={`font-medium ${task.status === 'completed' ? 'line-through text-gray-500' : ''}`}>
-                                      {task.title}
-                                      {task.is_manual_time && (
-                                        <span className="ml-2 text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
-                                          📌 Heure fixe
-                                        </span>
-                                      )}
-                                    </h3>
-                                    {task.description && (
-                                      <p className="text-sm text-gray-600 mt-1">{task.description}</p>
-                                    )}
-                                  </div>
-
-                                  <div className="flex items-center gap-1 ml-4">
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      onClick={() => setEditingTask(task)}
-                                    >
-                                      <Edit className="h-4 w-4" />
-                                    </Button>
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      onClick={() => handleDeleteTask(task.id)}
-                                      className="text-red-600 hover:text-red-800"
-                                    >
-                                      <Trash2 className="h-4 w-4" />
-                                    </Button>
-                                  </div>
+                            <CardContent className="p-4">
+                              <div className="flex items-start gap-4">
+                                <div 
+                                  {...provided.dragHandleProps}
+                                  className="mt-2 text-muted-foreground hover:text-foreground cursor-grab"
+                                >
+                                  <GripVertical className="h-4 w-4" />
                                 </div>
-
-                                <div className="flex items-center gap-2 mt-2 text-xs flex-wrap">
-                                  {task.start_time && (
-                                    <div className={`flex items-center gap-1 px-2 py-1 rounded border ${
-                                      task.is_manual_time 
-                                        ? 'bg-blue-50 border-blue-200' 
-                                        : 'bg-gray-50 border-gray-200'
-                                    }`}>
-                                      <Clock className={`h-3 w-3 ${
-                                        task.is_manual_time ? 'text-blue-600' : 'text-gray-600'
-                                      }`} />
-                                      <span className={`font-medium ${
-                                        task.is_manual_time ? 'text-blue-700' : 'text-gray-700'
-                                      }`}>
-                                        {formatTime(task.start_time)}
-                                      </span>
-                                      {task.end_time && (
-                                        <span className={
-                                          task.is_manual_time ? 'text-blue-600' : 'text-gray-600'
-                                        }>
-                                          → {formatTime(task.end_time)}
-                                        </span>
+                                
+                                <div className="flex-grow">
+                                  <div className="flex items-start justify-between mb-2">
+                                    <div>
+                                      <h3 className="font-medium mb-1">
+                                        {task.title}
+                                        {task.is_ai_generated && (
+                                          <Sparkles className="inline h-4 w-4 ml-2 text-purple-500" />
+                                        )}
+                                        {task.is_manual_time && (
+                                          <Clock className="inline h-4 w-4 ml-2 text-blue-500" />
+                                        )}
+                                      </h3>
+                                      {task.description && (
+                                        <p className="text-sm text-muted-foreground mb-2">
+                                          {task.description}
+                                        </p>
                                       )}
                                     </div>
-                                  )}
-                                  
-                                  <Badge variant="outline" className="font-medium">
-                                    {task.duration} min
-                                  </Badge>
-                                  <Badge className={getPriorityColor(task.priority)}>
-                                    {getPriorityLabel(task.priority)}
-                                  </Badge>
-                                  <Badge variant="secondary" className="capitalize">{task.category}</Badge>
-                                  
-                                  {snapshot.isDragging && (
-                                    <Badge variant="default" className="bg-blue-600">
-                                      Déplacement en cours...
-                                    </Badge>
-                                  )}
-                                </div>
-
-                                {task.assigned_to && Array.isArray(task.assigned_to) && task.assigned_to.length > 0 && (
-                                  <div className="flex flex-wrap gap-1 mt-2">
-                                    {task.assigned_to.map((memberId: string) => {
-                                      const member = teamMembers.find(m => m.id === memberId);
-                                      return member ? (
-                                        <Badge key={memberId} variant="secondary">
-                                          <User className="h-3 w-3 mr-1" />
-                                          {member.name}
-                                        </Badge>
-                                      ) : null;
-                                    })}
+                                    <div className="flex items-center gap-2">
+                                      <Button
+                                        size="sm"
+                                        variant="outline"
+                                        onClick={() => handleEdit(task)}
+                                      >
+                                        <Edit2 className="h-3 w-3" />
+                                      </Button>
+                                      <Button
+                                        size="sm"
+                                        variant="outline"
+                                        onClick={() => handleDelete(task.id)}
+                                        className="text-red-600 hover:text-red-700"
+                                      >
+                                        <Trash2 className="h-3 w-3" />
+                                      </Button>
+                                    </div>
                                   </div>
-                                )}
+                                  
+                                  <div className="flex flex-wrap items-center gap-2 mb-3">
+                                    <div className="flex items-center gap-1 text-sm">
+                                      <Clock className="h-3 w-3" />
+                                      <span>{formatTime(task.start_time)} - {endTime}</span>
+                                      <span className="text-muted-foreground">
+                                        ({task.duration}min)
+                                      </span>
+                                    </div>
+                                    
+                                    <Badge variant="outline">
+                                      {task.category}
+                                    </Badge>
+                                    
+                                    <Badge className={getPriorityColor(task.priority)}>
+                                      {task.priority === 'high' ? 'Élevée' : 
+                                       task.priority === 'medium' ? 'Moyenne' : 'Faible'}
+                                    </Badge>
+                                    
+                                    <Badge className={getStatusColor(task.status)}>
+                                      {task.status === 'completed' ? 'Terminé' :
+                                       task.status === 'in_progress' ? 'En cours' : 'À faire'}
+                                    </Badge>
+                                    
+                                    {assignedMember && (
+                                      <div className="flex items-center gap-1 text-sm">
+                                        <Users className="h-3 w-3" />
+                                        <span>{assignedMember.name}</span>
+                                      </div>
+                                    )}
+                                  </div>
+                                  
+                                  <div className="flex gap-1">
+                                    <Button
+                                      size="sm"
+                                      variant={task.status === 'todo' ? 'default' : 'outline'}
+                                      onClick={() => handleStatusChange(task, 'todo')}
+                                      className="text-xs"
+                                    >
+                                      À faire
+                                    </Button>
+                                    <Button
+                                      size="sm"
+                                      variant={task.status === 'in_progress' ? 'default' : 'outline'}
+                                      onClick={() => handleStatusChange(task, 'in_progress')}
+                                      className="text-xs"
+                                    >
+                                      En cours
+                                    </Button>
+                                    <Button
+                                      size="sm"
+                                      variant={task.status === 'completed' ? 'default' : 'outline'}
+                                      onClick={() => handleStatusChange(task, 'completed')}
+                                      className="text-xs"
+                                    >
+                                      Terminé
+                                    </Button>
+                                  </div>
+                                </div>
                               </div>
-                            </div>
-                          </div>
+                            </CardContent>
+                          </Card>
                         )}
                       </Draggable>
-                    ))}
-                    {provided.placeholder}
-                  </div>
-                )}
-              </Droppable>
-            </DragDropContext>
-          ) : (
-            <div className="text-center py-12 text-gray-500">
-              <Calendar className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <p className="text-lg mb-2">Aucune tâche planifiée</p>
-              <p className="text-sm">Commencez par ajouter votre première tâche au planning</p>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Modal d'édition de tâche */}
-      <TaskEditModal
-        isOpen={!!editingTask}
-        onClose={() => setEditingTask(null)}
-        task={editingTask}
-        teamMembers={teamMembers}
-        onSave={handleSaveTask}
-      />
-
-      {/* Modal de suggestions IA */}
-      <AISuggestionsModal
-        isOpen={showAISuggestions}
-        onClose={() => setShowAISuggestions(false)}
-        onSelectSuggestion={handleAISuggestion}
-        coordination={coordination}
-      />
+                    );
+                  })}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
+      )}
     </div>
   );
 };
 
-export default MonJourMPlanning;
+export default MonJourMPlanningContent;

@@ -489,15 +489,18 @@ const SinglePrestataire = () => {
 
               <Card className="p-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="flex items-center gap-2">
-                    <Users className="h-5 w-5 text-wedding-olive" />
-                    <div>
-                      <p className="font-medium">Capacité</p>
-                      <p className="text-sm text-muted-foreground">
-                        Variable selon prestation
-                      </p>
+                  {/* CORRECTION POUR LA CAPACITÉ */}
+                  {vendor.capacite_invites && (
+                    <div className="flex items-center gap-2">
+                      <Users className="h-5 w-5 text-wedding-olive" />
+                      <div>
+                        <p className="font-medium">Capacité</p>
+                        <p className="text-sm text-muted-foreground">
+                          Jusqu'à {vendor.capacite_invites} invités
+                        </p>
+                      </div>
                     </div>
-                  </div>
+                  )}
                   <div className="flex items-center gap-2">
                     <Euro className="h-5 w-5 text-wedding-olive" />
                     <div>
