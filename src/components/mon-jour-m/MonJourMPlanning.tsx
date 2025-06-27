@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -7,169 +8,28 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Calendar, Clock, Plus, Edit2, Trash2, Save, X, Users, Sparkles, GripVertical } from 'lucide-react';
-import { useMonJourM, PlanningTask } from '@/contexts/MonJourMContext';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { toast } from '@/components/ui/use-toast';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { supabase } from '@/integrations/supabase/client';
-
-interface WeddingCoordination {
-  id: string;
-  title: string;
-  description?: string;
-  wedding_date?: string;
-  wedding_location?: string;
-  user_id: string;
-  created_at: string;
-  updated_at: string;
-}
-
-interface TeamMember {
-  id: string;
-  name: string;
-  role: string;
-  email?: string;
-  phone?: string;
-  type: 'person' | 'vendor';
-  prestataire_id?: string;
-  notes?: string;
-}
-
-interface TaskFormData {
-  title: string;
-  description: string;
-  start_time: string;
-  duration: number;
-  category: string;
-  priority: "low" | "medium" | "high";
-  status: "todo" | "completed" | "in_progress";
-  assigned_to: string[];
-  is_manual_time: boolean;
-}
-
-// Catégories disponibles pour les tâches
-const categories = [
-  'Général',
-  'Cérémonie',
-  'Réception',
-  'Photographie',
-  'Musique',
-  'Décoration',
-  'Traiteur',
-  'Transport',
-  'Hébergement',
-  'Animation',
-  'Coiffure/Maquillage',
-  'Fleurs',
-  'Autre'
-];
-
-// Type pour les données brutes de la base de données
-interface DatabaseTask {
-  id: string;
-  title: string;
-  description?: string;
-  start_time?: string;
-  end_time?: string;
-  duration?: number;
-  category?: string;
-  priority?: string;
-  status?: string;
-  assigned_to?: any; // Type Json de Supabase
-  position?: number;
-  is_ai_generated?: boolean;
-  coordination_id?: string;
-  created_at?: string;
-  updated_at?: string;
-}
-
-// Fonction pour normaliser assigned_to
-const normalizeAssignedTo = (value: any): string[] => {
-  if (!value) return [];
-  if (Array.isArray(value)) {
-    return value.map(id => String(id));
-  }
-  if (typeof value === 'string') {
-    try {
-      const parsed = JSON.parse(value);
-      if (Array.isArray(parsed)) {
-        return parsed.map(id => String(id));
-      }
-    } catch {
-      return [String(value)];
-    }
-  }
-  return [];
-};
-
-// Fonction pour normaliser le status
-const normalizeStatus = (value?: string): "todo" | "completed" | "in_progress" => {
-  if (!value) return "todo";
-  switch (value.toLowerCase()) {
-    case "completed":
-    case "complete":
-    case "done":
-      return "completed";
-    case "in_progress":
-    case "in-progress":
-    case "progress":
-    case "doing":
-      return "in_progress";
-    case "todo":
-    case "to-do":
-    case "pending":
-    default:
-      return "todo";
-  }
-};
-
-// Fonction pour normaliser la priorité
-const normalizePriority = (value?: string): "low" | "medium" | "high" => {
-  if (!value) return "medium";
-  switch (value.toLowerCase()) {
-    case "high":
-    case "élevée":
-    case "elevee":
-      return "high";
-    case "low":
-    case "faible":
-      return "low";
-    case "medium":
-    case "moyenne":
-    default:
-      return "medium";
-  }
-};
-
-// Fonction de transformation complète des tâches de la base de données
-const transformDatabaseTask = (dbTask: DatabaseTask, index: number): PlanningTask => {
-  return {
-    id: dbTask.id,
-    title: dbTask.title,
-    description: dbTask.description,
-    start_time: dbTask.start_time || "09:00",
-    end_time: dbTask.end_time,
-    duration: dbTask.duration || 15, // Valeur par défaut de 15 minutes
-    category: dbTask.category || 'general',
-    priority: normalizePriority(dbTask.priority),
-    status: normalizeStatus(dbTask.status),
-    assigned_to: normalizeAssignedTo(dbTask.assigned_to),
-    position: typeof dbTask.position === 'number' ? dbTask.position : index, // Position obligatoire
-    is_ai_generated: dbTask.is_ai_generated || false,
-    is_manual_time: false // Valeur par défaut
-  };
-};
+import { 
+  WeddingCoordination, 
+  PlanningTask, 
+  TeamMember, 
+  TaskFormData,
+  categories,
+  normalizeTimeString,
+  addMinutesToTime
+} from '@/types/monjourm';
 
 const MonJourMPlanningContent: React.FC = () => {
-  const { 
-    tasks, 
-    teamMembers, 
-    isLoading, 
-    addTask, 
-    updateTask, 
-    deleteTask 
-  } = useMonJourM();
-
+  // États locaux simples
+  const [coordination, setCoordination] = useState<WeddingCoordination | null>(null);
+  const [tasks, setTasks] = useState<PlanningTask[]>([]);
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  
+  // États du formulaire
   const [isAddingTask, setIsAddingTask] = useState(false);
   const [editingTask, setEditingTask] = useState<PlanningTask | null>(null);
   const [showAISuggestions, setShowAISuggestions] = useState(false);
@@ -186,98 +46,128 @@ const MonJourMPlanningContent: React.FC = () => {
     is_manual_time: false
   });
 
-  // Fonction pour valider et normaliser les heures au format HH:mm
-  const normalizeTimeString = (timeString: string): string => {
-    if (!timeString) return "09:00";
-    
-    // Si c'est déjà au format HH:mm, valider et retourner
-    if (timeString.match(/^\d{2}:\d{2}$/)) {
-      const [hours, minutes] = timeString.split(':').map(Number);
-      if (hours >= 0 && hours <= 23 && minutes >= 0 && minutes <= 59) {
-        return timeString;
-      }
-    }
-    
-    // Si c'est un timestamp ISO, extraire l'heure
-    if (timeString.includes('T')) {
-      try {
-        const date = new Date(timeString);
-        const hours = date.getHours().toString().padStart(2, '0');
-        const minutes = date.getMinutes().toString().padStart(2, '0');
-        return `${hours}:${minutes}`;
-      } catch (error) {
-        console.error('Erreur parsing timestamp:', error);
-        return "09:00";
-      }
-    }
-    
-    return "09:00";
-  };
+  // Chargement initial simple
+  useEffect(() => {
+    loadData();
+  }, []);
 
-  // Utilitaire pour additionner des minutes à une heure
-  const addMinutesToTime = (timeString: string, minutes: number): string => {
-    if (!timeString || !minutes) return timeString;
-    
+  const loadData = async () => {
     try {
-      const normalizedTime = normalizeTimeString(timeString);
-      const [hour, minute] = normalizedTime.split(':').map(Number);
+      setIsLoading(true);
+      const { data: { user } } = await supabase.auth.getUser();
       
-      const totalMinutes = hour * 60 + minute + minutes;
-      const newHour = Math.floor(totalMinutes / 60) % 24;
-      const newMinute = totalMinutes % 60;
-      
-      return `${newHour.toString().padStart(2, '0')}:${newMinute.toString().padStart(2, '0')}`;
+      if (!user) {
+        toast({
+          title: "Erreur",
+          description: "Vous devez être connecté",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Récupérer ou créer la coordination
+      let { data: coordinations, error: coordError } = await supabase
+        .from('wedding_coordination')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
+      if (coordError) throw coordError;
+
+      let activeCoordination: WeddingCoordination;
+
+      if (coordinations && coordinations.length > 0) {
+        activeCoordination = coordinations[0];
+      } else {
+        const { data: newCoordination, error: createError } = await supabase
+          .from('wedding_coordination')
+          .insert({
+            user_id: user.id,
+            title: 'Mon Mariage',
+            description: 'Organisation de mon mariage'
+          })
+          .select()
+          .single();
+
+        if (createError) throw createError;
+        activeCoordination = newCoordination;
+      }
+
+      setCoordination(activeCoordination);
+      await Promise.all([
+        loadTasks(activeCoordination.id),
+        loadTeamMembers(activeCoordination.id)
+      ]);
+
     } catch (error) {
-      console.error('Erreur lors du calcul du temps:', error);
-      return timeString;
+      console.error('Erreur chargement:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de charger les données",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  // Recalcule intelligemment les horaires en respectant les heures manuelles
-  const recalculateTimeline = (tasksToRecalculate: PlanningTask[]): PlanningTask[] => {
-    if (tasksToRecalculate.length === 0) return tasksToRecalculate;
-    
-    const sortedTasks = [...tasksToRecalculate].sort((a, b) => a.position - b.position);
-    const recalculatedTasks: PlanningTask[] = [];
-    
-    for (let i = 0; i < sortedTasks.length; i++) {
-      const task = sortedTasks[i];
-      
-      if (task.is_manual_time) {
-        // Garder l'heure manuelle telle quelle
-        const endTime = addMinutesToTime(normalizeTimeString(task.start_time || '09:00'), task.duration);
-        recalculatedTasks.push({
-          ...task,
-          start_time: normalizeTimeString(task.start_time || '09:00'),
-          end_time: endTime
-        });
-      } else {
-        // Calculer automatiquement
-        if (i === 0) {
-          // Première tâche : utiliser l'heure actuelle ou 09:00
-          const startTime = normalizeTimeString(task.start_time || '09:00');
-          const endTime = addMinutesToTime(startTime, task.duration);
-          recalculatedTasks.push({
-            ...task,
-            start_time: startTime,
-            end_time: endTime
-          });
-        } else {
-          // Tâches suivantes : commencer après la précédente
-          const previousTask = recalculatedTasks[i - 1];
-          const previousEndTime = previousTask.end_time || addMinutesToTime(normalizeTimeString(previousTask.start_time || '09:00'), previousTask.duration);
-          const newEndTime = addMinutesToTime(previousEndTime, task.duration);
-          
-          recalculatedTasks.push({
-            ...task,
-            start_time: previousEndTime,
-            end_time: newEndTime
-          });
-        }
-      }
+  const loadTasks = async (coordId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('coordination_planning')
+        .select('*')
+        .eq('coordination_id', coordId)
+        .order('position');
+
+      if (error) throw error;
+
+      const normalizedTasks: PlanningTask[] = (data || []).map((task, index) => ({
+        id: task.id,
+        title: task.title,
+        description: task.description,
+        start_time: normalizeTimeString(task.start_time || "09:00"),
+        end_time: task.end_time,
+        duration: task.duration || 15,
+        category: task.category || 'Général',
+        priority: (task.priority as "low" | "medium" | "high") || 'medium',
+        status: (task.status as "todo" | "completed" | "in_progress") || 'todo',
+        assigned_to: Array.isArray(task.assigned_to) ? task.assigned_to : [],
+        position: typeof task.position === 'number' ? task.position : index,
+        is_ai_generated: task.is_ai_generated || false,
+        is_manual_time: false
+      }));
+
+      setTasks(normalizedTasks);
+    } catch (error) {
+      console.error('Erreur chargement tâches:', error);
     }
-    
-    return recalculatedTasks;
+  };
+
+  const loadTeamMembers = async (coordId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('coordination_team')
+        .select('*')
+        .eq('coordination_id', coordId)
+        .order('created_at');
+
+      if (error) throw error;
+
+      const mappedData: TeamMember[] = (data || []).map((item: any) => ({
+        id: item.id,
+        name: item.name,
+        role: item.role,
+        email: item.email,
+        phone: item.phone,
+        type: (item.type === 'vendor' ? 'vendor' : 'person') as 'person' | 'vendor',
+        prestataire_id: item.prestataire_id,
+        notes: item.notes
+      }));
+
+      setTeamMembers(mappedData);
+    } catch (error) {
+      console.error('Erreur chargement équipe:', error);
+    }
   };
 
   const resetForm = () => {
@@ -297,7 +187,7 @@ const MonJourMPlanningContent: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.title.trim()) {
+    if (!formData.title.trim() || !coordination?.id) {
       toast({
         title: "Erreur",
         description: "Le titre de la tâche est obligatoire",
@@ -306,25 +196,42 @@ const MonJourMPlanningContent: React.FC = () => {
       return;
     }
 
-    const taskData: Omit<PlanningTask, 'id'> = {
-      title: formData.title,
-      description: formData.description,
-      start_time: formData.start_time,
-      end_time: undefined,
-      duration: formData.duration,
-      category: formData.category,
-      priority: formData.priority,
-      status: formData.status,
-      assigned_to: formData.assigned_to,
-      position: tasks.length,
-      is_ai_generated: false,
-      is_manual_time: formData.is_manual_time || false
-    };
+    try {
+      const { data, error } = await supabase
+        .from('coordination_planning')
+        .insert({
+          coordination_id: coordination.id,
+          title: formData.title,
+          description: formData.description || null,
+          start_time: formData.start_time || null,
+          duration: formData.duration,
+          category: formData.category,
+          priority: formData.priority,
+          status: formData.status,
+          assigned_to: formData.assigned_to.length > 0 ? formData.assigned_to : null,
+          position: tasks.length,
+          is_ai_generated: false
+        })
+        .select()
+        .single();
 
-    const success = await addTask(taskData);
-    if (success) {
+      if (error) throw error;
+
+      toast({
+        title: "Tâche ajoutée",
+        description: "La nouvelle tâche a été ajoutée au planning"
+      });
+
       resetForm();
       setIsAddingTask(false);
+      await loadTasks(coordination.id);
+    } catch (error) {
+      console.error('Erreur ajout tâche:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible d'ajouter la tâche",
+        variant: "destructive"
+      });
     }
   };
 
@@ -355,42 +262,96 @@ const MonJourMPlanningContent: React.FC = () => {
       return;
     }
 
-    const updatedTask: PlanningTask = {
-      ...editingTask,
-      title: formData.title,
-      description: formData.description,
-      start_time: formData.start_time,
-      duration: formData.duration,
-      category: formData.category,
-      priority: formData.priority,
-      status: formData.status,
-      assigned_to: formData.assigned_to,
-      is_manual_time: formData.is_manual_time || false
-    };
+    try {
+      const { error } = await supabase
+        .from('coordination_planning')
+        .update({
+          title: formData.title,
+          description: formData.description || null,
+          start_time: formData.start_time || null,
+          duration: formData.duration,
+          category: formData.category,
+          priority: formData.priority,
+          status: formData.status,
+          assigned_to: formData.assigned_to.length > 0 ? formData.assigned_to : null
+        })
+        .eq('id', editingTask.id);
 
-    const success = await updateTask(updatedTask);
-    if (success) {
+      if (error) throw error;
+
+      toast({
+        title: "Tâche modifiée",
+        description: "Les informations ont été mises à jour"
+      });
+
       resetForm();
       setEditingTask(null);
+      if (coordination?.id) {
+        await loadTasks(coordination.id);
+      }
+    } catch (error) {
+      console.error('Erreur modification tâche:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de modifier la tâche",
+        variant: "destructive"
+      });
     }
   };
 
   const handleDelete = async (taskId: string) => {
-    if (window.confirm('Êtes-vous sûr de vouloir supprimer cette tâche ?')) {
-      await deleteTask(taskId);
+    if (!window.confirm('Êtes-vous sûr de vouloir supprimer cette tâche ?')) return;
+
+    try {
+      const { error } = await supabase
+        .from('coordination_planning')
+        .delete()
+        .eq('id', taskId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Tâche supprimée",
+        description: "La tâche a été retirée du planning"
+      });
+
+      if (coordination?.id) {
+        await loadTasks(coordination.id);
+      }
+    } catch (error) {
+      console.error('Erreur suppression tâche:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de supprimer la tâche",
+        variant: "destructive"
+      });
     }
   };
 
   const handleStatusChange = async (task: PlanningTask, newStatus: "todo" | "completed" | "in_progress") => {
-    const updatedTask: PlanningTask = {
-      ...task,
-      status: newStatus
-    };
-    await updateTask(updatedTask);
+    try {
+      const { error } = await supabase
+        .from('coordination_planning')
+        .update({ status: newStatus })
+        .eq('id', task.id);
+
+      if (error) throw error;
+
+      if (coordination?.id) {
+        await loadTasks(coordination.id);
+      }
+    } catch (error) {
+      console.error('Erreur changement statut:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de changer le statut",
+        variant: "destructive"
+      });
+    }
   };
 
   const handleDragEnd = async (result: any) => {
-    if (!result.destination) return;
+    if (!result.destination || !coordination?.id) return;
 
     const items = Array.from(tasks);
     const [reorderedItem] = items.splice(result.source.index, 1);
@@ -402,13 +363,25 @@ const MonJourMPlanningContent: React.FC = () => {
       position: index
     }));
 
-    // Sauvegarder les nouvelles positions
-    for (const task of updatedTasks) {
-      await updateTask(task);
+    setTasks(updatedTasks);
+
+    // Sauvegarder en base
+    try {
+      for (const task of updatedTasks) {
+        await supabase
+          .from('coordination_planning')
+          .update({ position: task.position })
+          .eq('id', task.id);
+      }
+    } catch (error) {
+      console.error('Erreur sauvegarde positions:', error);
+      await loadTasks(coordination.id);
     }
   };
 
   const generateAITasks = async () => {
+    if (!coordination?.id) return;
+    
     setIsGeneratingTasks(true);
     
     try {
@@ -437,22 +410,21 @@ const MonJourMPlanningContent: React.FC = () => {
       
       for (let i = 0; i < aiTasks.length; i++) {
         const aiTask = aiTasks[i];
-        const taskData: Omit<PlanningTask, 'id'> = {
-          title: aiTask.title,
-          description: aiTask.description || '',
-          start_time: aiTask.start_time || '09:00',
-          end_time: undefined,
-          duration: aiTask.duration || 30,
-          category: aiTask.category || 'Général',
-          priority: aiTask.priority || 'medium',
-          status: 'todo',
-          assigned_to: [],
-          position: tasks.length + i,
-          is_ai_generated: true,
-          is_manual_time: false
-        };
-        
-        await addTask(taskData);
+        await supabase
+          .from('coordination_planning')
+          .insert({
+            coordination_id: coordination.id,
+            title: aiTask.title,
+            description: aiTask.description || '',
+            start_time: aiTask.start_time || '09:00',
+            duration: aiTask.duration || 30,
+            category: aiTask.category || 'Général',
+            priority: aiTask.priority || 'medium',
+            status: 'todo',
+            assigned_to: null,
+            position: tasks.length + i,
+            is_ai_generated: true
+          });
       }
 
       toast({
@@ -461,6 +433,7 @@ const MonJourMPlanningContent: React.FC = () => {
       });
       
       setShowAISuggestions(false);
+      await loadTasks(coordination.id);
     } catch (error) {
       console.error('Erreur génération IA:', error);
       toast({
@@ -497,11 +470,7 @@ const MonJourMPlanningContent: React.FC = () => {
   };
 
   const calculateEndTime = (startTime: string, duration: number) => {
-    const [hours, minutes] = startTime.split(':').map(Number);
-    const totalMinutes = hours * 60 + minutes + duration;
-    const endHours = Math.floor(totalMinutes / 60);
-    const endMinutes = totalMinutes % 60;
-    return `${endHours.toString().padStart(2, '0')}:${endMinutes.toString().padStart(2, '0')}`;
+    return addMinutesToTime(startTime, duration);
   };
 
   if (isLoading) {
@@ -638,9 +607,6 @@ const MonJourMPlanningContent: React.FC = () => {
                     value={formData.start_time}
                     onChange={(e) => setFormData({ ...formData, start_time: e.target.value })}
                   />
-                  <p className="text-xs text-gray-500 mt-1">
-                    Les horaires suivantes se calculeront automatiquement
-                  </p>
                 </div>
                 <div>
                   <Label htmlFor="duration">Durée (minutes)</Label>

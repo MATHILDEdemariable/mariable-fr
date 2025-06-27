@@ -7,7 +7,6 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import AnalyticsProvider from "@/components/analytics/AnalyticsProvider";
 import { HelmetProvider } from 'react-helmet-async';
 import { ReaderModeProvider } from '@/contexts/ReaderModeContext';
-import { MonJourMProvider } from '@/contexts/MonJourMContext';
 
 // Import pages
 import Index from "./pages/Index";
@@ -47,59 +46,57 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <HelmetProvider>
         <ReaderModeProvider>
-          <MonJourMProvider>
-            <TooltipProvider>
-              <Toaster />
-              <Sonner />
-              <BrowserRouter>
-                <AnalyticsProvider>
-                  <Routes>
-                    <Route path="/" element={<Index />} />
-                    <Route path="/moteur-recherche" element={<MoteurRecherche />} />
-                    <Route path="/selection" element={<MoteurRecherche />} />
-                    <Route path="/planning-personnalise" element={<PlanningPersonnalise />} />
-                    <Route path="/planning-resultats-personnalises" element={<PlanningResultatsPersonnalises />} />
-                    <Route path="/reservation-jour-m" element={<ReservationJourM />} />
-                    <Route path="/dashboard/*" element={<UserDashboard />} />
-                    <Route path="/jour-m-vue/:token" element={<JourMVue />} />
-                    
-                    {/* Mon Jour-M routes - Correction du routage */}
-                    <Route path="/mon-jour-m" element={<Navigate to="/mon-jour-m/planning" replace />} />
-                    <Route path="/mon-jour-m/planning" element={<MonJourMPlanningPage />} />
-                    <Route path="/mon-jour-m/equipe" element={<MonJourMEquipePage />} />
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <AnalyticsProvider>
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/moteur-recherche" element={<MoteurRecherche />} />
+                  <Route path="/selection" element={<MoteurRecherche />} />
+                  <Route path="/planning-personnalise" element={<PlanningPersonnalise />} />
+                  <Route path="/planning-resultats-personnalises" element={<PlanningResultatsPersonnalises />} />
+                  <Route path="/reservation-jour-m" element={<ReservationJourM />} />
+                  <Route path="/dashboard/*" element={<UserDashboard />} />
+                  <Route path="/jour-m-vue/:token" element={<JourMVue />} />
+                  
+                  {/* Mon Jour-M routes */}
+                  <Route path="/mon-jour-m" element={<Navigate to="/mon-jour-m/planning" replace />} />
+                  <Route path="/mon-jour-m/planning" element={<MonJourMPlanningPage />} />
+                  <Route path="/mon-jour-m/equipe" element={<MonJourMEquipePage />} />
 
-                    {/* Auth routes */}
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/register" element={<Register />} />
-                    <Route path="/email-confirmation" element={<EmailConfirmation />} />
-                    <Route path="/auth/email-confirmation" element={<Navigate to="/email-confirmation" replace />} />
+                  {/* Auth routes */}
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/register" element={<Register />} />
+                  <Route path="/email-confirmation" element={<EmailConfirmation />} />
+                  <Route path="/auth/email-confirmation" element={<Navigate to="/email-confirmation" replace />} />
 
-                    {/* Static routes */}
-                    <Route path="/pricing" element={<Pricing />} />
-                    <Route path="/paiement" element={<Paiement />} />
-                    <Route path="/blog" element={<Blog />} />
-                    <Route path="/blog/:slug" element={<BlogPost />} />
-                    <Route path="/contact" element={<Contact />} />
-                    <Route path="/mentions-legales" element={<MentionsLegales />} />
+                  {/* Static routes */}
+                  <Route path="/pricing" element={<Pricing />} />
+                  <Route path="/paiement" element={<Paiement />} />
+                  <Route path="/blog" element={<Blog />} />
+                  <Route path="/blog/:slug" element={<BlogPost />} />
+                  <Route path="/contact" element={<Contact />} />
+                  <Route path="/mentions-legales" element={<MentionsLegales />} />
 
-                    {/* Prestataires routes */}
-                    <Route path="/prestataires" element={<Prestataires />} />
-                    <Route path="/prestataires/:slug" element={<Prestataire />} />
-                    <Route path="/prestataire/:slug" element={<Prestataire />} />
+                  {/* Prestataires routes */}
+                  <Route path="/prestataires" element={<Prestataires />} />
+                  <Route path="/prestataires/:slug" element={<Prestataire />} />
+                  <Route path="/prestataire/:slug" element={<Prestataire />} />
 
-                    {/* Admin routes */}
-                    <Route path="/admin/dashboard" element={<AdminDashboard />} />
-                    <Route path="/admin/blog" element={<AdminBlog />} />
-                    <Route path="/admin/prestataires" element={<AdminPrestataires />} />
-                    <Route path="/admin/form" element={<AdminForm />} />
-                    <Route path="/admin/reservations-jour-m" element={<AdminReservationsJourM />} />
-                    
-                    <Route path="*" element={<NotFound />} />
-                  </Routes>
-                </AnalyticsProvider>
-              </BrowserRouter>
-            </TooltipProvider>
-          </MonJourMProvider>
+                  {/* Admin routes */}
+                  <Route path="/admin/dashboard" element={<AdminDashboard />} />
+                  <Route path="/admin/blog" element={<AdminBlog />} />
+                  <Route path="/admin/prestataires" element={<AdminPrestataires />} />
+                  <Route path="/admin/form" element={<AdminForm />} />
+                  <Route path="/admin/reservations-jour-m" element={<AdminReservationsJourM />} />
+                  
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </AnalyticsProvider>
+            </BrowserRouter>
+          </TooltipProvider>
         </ReaderModeProvider>
       </HelmetProvider>
     </QueryClientProvider>

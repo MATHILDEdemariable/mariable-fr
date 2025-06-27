@@ -10,51 +10,32 @@ import { Plus, Users, Phone, Mail, Edit, Trash2, User } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
-
-interface TeamMember {
-  id: string;
-  name: string;
-  role: string;
-  email?: string;
-  phone?: string;
-  type: 'person' | 'vendor';
-  prestataire_id?: string;
-  notes?: string;
-}
-
-interface WeddingCoordination {
-  id: string;
-  title: string;
-  description?: string;
-  wedding_date?: string;
-  wedding_location?: string;
-  user_id: string;
-  created_at: string;
-  updated_at: string;
-}
+import { WeddingCoordination, TeamMember, TeamMemberFormData } from '@/types/monjourm';
 
 const MonJourMEquipe: React.FC = () => {
   const { toast } = useToast();
+  
+  // États locaux simples
   const [coordination, setCoordination] = useState<WeddingCoordination | null>(null);
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showAddMember, setShowAddMember] = useState(false);
   const [editingMember, setEditingMember] = useState<TeamMember | null>(null);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<TeamMemberFormData>({
     name: '',
     role: '',
     email: '',
     phone: '',
-    type: 'person' as 'person' | 'vendor',
+    type: 'person',
     notes: ''
   });
 
-  // Initialisation simple
+  // Chargement initial
   useEffect(() => {
-    initializeData();
+    loadData();
   }, []);
 
-  const initializeData = async () => {
+  const loadData = async () => {
     try {
       setIsLoading(true);
       const { data: { user } } = await supabase.auth.getUser();
@@ -121,7 +102,7 @@ const MonJourMEquipe: React.FC = () => {
 
       if (error) throw error;
 
-      const mappedData = (data || []).map((item: any) => ({
+      const mappedData: TeamMember[] = (data || []).map((item: any) => ({
         id: item.id,
         name: item.name,
         role: item.role,
@@ -169,25 +150,14 @@ const MonJourMEquipe: React.FC = () => {
 
       if (error) throw error;
 
-      const newMember: TeamMember = {
-        id: data.id,
-        name: data.name,
-        role: data.role,
-        email: data.email,
-        phone: data.phone,
-        type: data.type as 'person' | 'vendor',
-        prestataire_id: data.prestataire_id,
-        notes: data.notes
-      };
-      
-      setTeamMembers(prev => [...prev, newMember]);
-      resetForm();
-      setShowAddMember(false);
-      
       toast({
         title: "Membre ajouté",
         description: "Le nouveau membre a été ajouté à l'équipe"
       });
+
+      resetForm();
+      setShowAddMember(false);
+      await loadTeamMembers(coordination.id);
 
     } catch (error) {
       console.error('Erreur ajout membre:', error);
@@ -200,7 +170,7 @@ const MonJourMEquipe: React.FC = () => {
   };
 
   const handleUpdateMember = async () => {
-    if (!editingMember) return;
+    if (!editingMember || !coordination?.id) return;
 
     try {
       const { error } = await supabase
@@ -217,13 +187,14 @@ const MonJourMEquipe: React.FC = () => {
 
       if (error) throw error;
 
-      setTeamMembers(prev => prev.map(m => m.id === editingMember.id ? editingMember : m));
       setEditingMember(null);
       
       toast({
         title: "Membre modifié",
         description: "Les informations ont été mises à jour"
       });
+
+      await loadTeamMembers(coordination.id);
 
     } catch (error) {
       console.error('Erreur modification membre:', error);
@@ -246,12 +217,14 @@ const MonJourMEquipe: React.FC = () => {
 
       if (error) throw error;
       
-      setTeamMembers(prev => prev.filter(m => m.id !== memberId));
-      
       toast({
         title: "Membre supprimé",
         description: "Le membre a été retiré de l'équipe"
       });
+
+      if (coordination?.id) {
+        await loadTeamMembers(coordination.id);
+      }
 
     } catch (error) {
       console.error('Erreur suppression membre:', error);
