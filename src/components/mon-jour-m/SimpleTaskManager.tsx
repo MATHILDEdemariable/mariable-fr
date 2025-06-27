@@ -7,7 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Clock, Plus, Edit2, Trash2 } from 'lucide-react';
+import { Clock, Plus, Edit2, Trash2, Sparkles } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 import { PlanningTask, WeddingCoordination, PREDEFINED_ROLES, TASK_CATEGORIES, normalizeTimeString, addMinutesToTime } from '@/types/monjourm-mvp';
@@ -20,6 +20,7 @@ const SimpleTaskManager: React.FC<SimpleTaskManagerProps> = ({ coordination }) =
   const { toast } = useToast();
   const [tasks, setTasks] = useState<PlanningTask[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isGeneratingAI, setIsGeneratingAI] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingTask, setEditingTask] = useState<PlanningTask | null>(null);
   
@@ -104,6 +105,79 @@ const SimpleTaskManager: React.FC<SimpleTaskManagerProps> = ({ coordination }) =
       priority: 'medium',
       assigned_role: ''
     });
+  };
+
+  // Génération IA de tâches
+  const handleGenerateAITasks = async () => {
+    try {
+      setIsGeneratingAI(true);
+      
+      // Tâches prédéfinies pour le prototype
+      const aiTasks = [
+        {
+          title: "Accueil des invités",
+          description: "Placement des invités et distribution des programmes",
+          start_time: "14:00",
+          duration: 30,
+          category: "Arrivée",
+          priority: "high" as const,
+          assigned_role: "Témoin(s)"
+        },
+        {
+          title: "Cérémonie laïque",
+          description: "Déroulement de la cérémonie",
+          start_time: "14:30",
+          duration: 45,
+          category: "Cérémonie",
+          priority: "high" as const,
+          assigned_role: "Célébrant"
+        },
+        {
+          title: "Cocktail et photos",
+          description: "Vin d'honneur et séance photos",
+          start_time: "15:15",
+          duration: 90,
+          category: "Cocktail",
+          priority: "medium" as const,
+          assigned_role: "Photographe"
+        }
+      ];
+
+      const insertPromises = aiTasks.map((task, index) => 
+        supabase
+          .from('coordination_planning')
+          .insert({
+            coordination_id: coordination.id,
+            title: task.title,
+            description: task.description,
+            start_time: task.start_time,
+            duration: task.duration,
+            category: task.category,
+            priority: task.priority,
+            assigned_to: task.assigned_role ? [task.assigned_role] : null,
+            position: tasks.length + index,
+            is_ai_generated: true
+          })
+      );
+
+      await Promise.all(insertPromises);
+
+      toast({
+        title: "Succès",
+        description: "Tâches générées automatiquement"
+      });
+
+      await loadTasks();
+    } catch (error) {
+      console.error('❌ Erreur génération IA:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de générer les tâches",
+        variant: "destructive"
+      });
+    } finally {
+      setIsGeneratingAI(false);
+    }
   };
 
   // Ajouter une tâche
@@ -264,10 +338,20 @@ const SimpleTaskManager: React.FC<SimpleTaskManagerProps> = ({ coordination }) =
             Gérez vos tâches et leurs horaires
           </p>
         </div>
-        <Button onClick={() => setShowAddModal(true)}>
-          <Plus className="h-4 w-4 mr-2" />
-          Ajouter une tâche
-        </Button>
+        <div className="flex gap-2">
+          <Button 
+            onClick={handleGenerateAITasks} 
+            disabled={isGeneratingAI}
+            variant="outline"
+          >
+            <Sparkles className="h-4 w-4 mr-2" />
+            {isGeneratingAI ? 'Génération...' : 'Génération IA'}
+          </Button>
+          <Button onClick={() => setShowAddModal(true)}>
+            <Plus className="h-4 w-4 mr-2" />
+            Ajouter une tâche
+          </Button>
+        </div>
       </div>
 
       {/* Liste des tâches */}
@@ -277,12 +361,18 @@ const SimpleTaskManager: React.FC<SimpleTaskManagerProps> = ({ coordination }) =
             <Clock className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
             <h3 className="text-lg font-medium mb-2">Aucune tâche planifiée</h3>
             <p className="text-muted-foreground mb-4">
-              Commencez par ajouter votre première tâche
+              Commencez par ajouter votre première tâche ou utilisez la génération IA
             </p>
-            <Button onClick={() => setShowAddModal(true)}>
-              <Plus className="h-4 w-4 mr-2" />
-              Ajouter une tâche
-            </Button>
+            <div className="flex gap-2 justify-center">
+              <Button onClick={handleGenerateAITasks} disabled={isGeneratingAI} variant="outline">
+                <Sparkles className="h-4 w-4 mr-2" />
+                Génération IA
+              </Button>
+              <Button onClick={() => setShowAddModal(true)}>
+                <Plus className="h-4 w-4 mr-2" />
+                Ajouter une tâche
+              </Button>
+            </div>
           </CardContent>
         </Card>
       ) : (
@@ -297,7 +387,15 @@ const SimpleTaskManager: React.FC<SimpleTaskManagerProps> = ({ coordination }) =
                   <CardContent className="p-4">
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex-grow">
-                        <h4 className="font-medium mb-1">{task.title}</h4>
+                        <div className="flex items-center gap-2 mb-1">
+                          <h4 className="font-medium">{task.title}</h4>
+                          {task.is_ai_generated && (
+                            <Badge variant="secondary" className="text-xs">
+                              <Sparkles className="h-3 w-3 mr-1" />
+                              IA
+                            </Badge>
+                          )}
+                        </div>
                         {task.description && (
                           <p className="text-sm text-muted-foreground mb-2">
                             {task.description}
@@ -446,7 +544,7 @@ const SimpleTaskManager: React.FC<SimpleTaskManagerProps> = ({ coordination }) =
                   <SelectValue placeholder="Sélectionner un rôle" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Non assigné</SelectItem>
+                  <SelectItem value="none">Non assigné</SelectItem>
                   {PREDEFINED_ROLES.map((role) => (
                     <SelectItem key={role} value={role}>{role}</SelectItem>
                   ))}
@@ -474,7 +572,7 @@ const SimpleTaskManager: React.FC<SimpleTaskManagerProps> = ({ coordination }) =
         <Dialog open={!!editingTask} onOpenChange={() => setEditingTask(null)}>
           <DialogContent className="max-w-md">
             <DialogHeader>
-              <DialogTitle>Modifier la tâche</DialogTitle>
+              <DialogTitle>Modifier le tâche</DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
               <div>
@@ -556,14 +654,14 @@ const SimpleTaskManager: React.FC<SimpleTaskManagerProps> = ({ coordination }) =
               <div>
                 <Label htmlFor="edit-assigned_role">Assigné à (rôle)</Label>
                 <Select
-                  value={editingTask.assigned_role || ''}
-                  onValueChange={(value) => setEditingTask({ ...editingTask, assigned_role: value || undefined })}
+                  value={editingTask.assigned_role || 'none'}
+                  onValueChange={(value) => setEditingTask({ ...editingTask, assigned_role: value === 'none' ? undefined : value })}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Sélectionner un rôle" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Non assigné</SelectItem>
+                    <SelectItem value="none">Non assigné</SelectItem>
                     {PREDEFINED_ROLES.map((role) => (
                       <SelectItem key={role} value={role}>{role}</SelectItem>
                     ))}

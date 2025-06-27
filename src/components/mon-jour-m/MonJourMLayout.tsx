@@ -1,22 +1,14 @@
 
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { ArrowLeft, Calendar, Users } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface MonJourMLayoutProps {
   children?: React.ReactNode;
 }
 
 const MonJourMLayout: React.FC<MonJourMLayoutProps> = ({ children }) => {
-  const location = useLocation();
-
-  const getActiveTab = () => {
-    if (location.pathname.includes('/equipe')) return 'equipe';
-    return 'planning';
-  };
-
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="bg-white border-b border-gray-200">
@@ -33,27 +25,9 @@ const MonJourMLayout: React.FC<MonJourMLayoutProps> = ({ children }) => {
               <h1 className="text-2xl font-semibold text-gray-900">Mon Jour-M</h1>
             </div>
           </div>
-
-          <Tabs value={getActiveTab()} className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="planning" asChild>
-                <Link to="/mon-jour-m/planning" className="flex items-center gap-2">
-                  <Calendar className="h-4 w-4" />
-                  Planning
-                </Link>
-              </TabsTrigger>
-              <TabsTrigger value="equipe" asChild>
-                <Link to="/mon-jour-m/equipe" className="flex items-center gap-2">
-                  <Users className="h-4 w-4" />
-                  Équipe
-                </Link>
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
         </div>
       </div>
 
-      {/* Correction : Rendre le contenu des enfants dans le conteneur principal */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {children}
       </div>
