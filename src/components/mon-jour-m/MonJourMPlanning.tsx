@@ -14,7 +14,7 @@ import { useToast } from '@/components/ui/use-toast';
 import AISuggestionsModal from './AISuggestionsModal';
 import TaskEditModal from './TaskEditModal';
 
-// Utilisation du type PlanningTask du contexte - pas de duplication d'interface
+// Utilisation du type PlanningTask du contexte uniquement
 import { PlanningTask } from '@/contexts/MonJourMContext';
 
 interface WeddingCoordination {
