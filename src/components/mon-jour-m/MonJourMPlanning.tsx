@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -130,7 +129,8 @@ const transformDatabaseTask = (dbTask: DatabaseTask, index: number): PlanningTas
     status: normalizeStatus(dbTask.status),
     assigned_to: normalizeAssignedTo(dbTask.assigned_to),
     position: typeof dbTask.position === 'number' ? dbTask.position : index, // Position obligatoire
-    is_ai_generated: dbTask.is_ai_generated || false
+    is_ai_generated: dbTask.is_ai_generated || false,
+    is_manual_time: false // Valeur par défaut
   };
 };
 
@@ -202,40 +202,49 @@ const MonJourMPlanning: React.FC = () => {
     }
   };
 
-  // Recalcule automatiquement tous les horaires de la timeline (SAUF les heures manuelles)
+  // Recalcule intelligemment les horaires en respectant les heures manuelles
   const recalculateTimeline = (tasksToRecalculate: PlanningTask[]): PlanningTask[] => {
     if (tasksToRecalculate.length === 0) return tasksToRecalculate;
     
     const sortedTasks = [...tasksToRecalculate].sort((a, b) => a.position - b.position);
+    const recalculatedTasks: PlanningTask[] = [];
     
-    const recalculatedTasks = sortedTasks.map((task, index) => {
-      // Si c'est la première tâche, utiliser son heure de départ actuelle ou 09:00
-      if (index === 0) {
-        const startTime = normalizeTimeString(task.start_time || '09:00');
-        const endTime = addMinutesToTime(startTime, task.duration);
-        
-        return {
+    for (let i = 0; i < sortedTasks.length; i++) {
+      const task = sortedTasks[i];
+      
+      if (task.is_manual_time) {
+        // Garder l'heure manuelle telle quelle
+        const endTime = addMinutesToTime(normalizeTimeString(task.start_time || '09:00'), task.duration);
+        recalculatedTasks.push({
           ...task,
-          start_time: startTime,
+          start_time: normalizeTimeString(task.start_time || '09:00'),
           end_time: endTime
-        };
+        });
       } else {
-        // Pour les tâches suivantes, calculer à partir de la fin de la précédente
-        const previousTask = sortedTasks[index - 1];
-        const previousEndTime = previousTask.start_time 
-          ? addMinutesToTime(normalizeTimeString(previousTask.start_time), previousTask.duration)
-          : normalizeTimeString(previousTask.end_time || '09:00');
-        
-        const newStartTime = previousEndTime;
-        const newEndTime = addMinutesToTime(newStartTime, task.duration);
-        
-        return {
-          ...task,
-          start_time: newStartTime,
-          end_time: newEndTime
-        };
+        // Calculer automatiquement
+        if (i === 0) {
+          // Première tâche : utiliser l'heure actuelle ou 09:00
+          const startTime = normalizeTimeString(task.start_time || '09:00');
+          const endTime = addMinutesToTime(startTime, task.duration);
+          recalculatedTasks.push({
+            ...task,
+            start_time: startTime,
+            end_time: endTime
+          });
+        } else {
+          // Tâches suivantes : commencer après la précédente
+          const previousTask = recalculatedTasks[i - 1];
+          const previousEndTime = previousTask.end_time || addMinutesToTime(normalizeTimeString(previousTask.start_time || '09:00'), previousTask.duration);
+          const newEndTime = addMinutesToTime(previousEndTime, task.duration);
+          
+          recalculatedTasks.push({
+            ...task,
+            start_time: previousEndTime,
+            end_time: newEndTime
+          });
+        }
       }
-    });
+    }
     
     return recalculatedTasks;
   };
@@ -404,7 +413,10 @@ const MonJourMPlanning: React.FC = () => {
       if (error) throw error;
 
       // Utiliser transformDatabaseTask pour la nouvelle tâche
-      const newTask: PlanningTask = transformDatabaseTask(data as DatabaseTask, tasks.length);
+      const newTask: PlanningTask = {
+        ...transformDatabaseTask(data as DatabaseTask, tasks.length),
+        is_manual_time: !!formData.start_time // Marquer comme manuelle si une heure a été saisie
+      };
       
       const updatedTasks = [...tasks, newTask];
       const recalculatedTasks = recalculateTimeline(updatedTasks);
@@ -462,12 +474,13 @@ const MonJourMPlanning: React.FC = () => {
 
       if (error) throw error;
 
-      // Mettre à jour la tâche avec les heures normalisées
-      const updatedTask = {
+      // Mettre à jour la tâche avec les heures normalisées et marquer comme manuelle
+      const updatedTask: PlanningTask = {
         ...editingTask,
         ...taskData,
-        start_time: taskData.start_time ? normalizeTimeString(taskData.start_time) : editingTask.start_time
-      } as PlanningTask;
+        start_time: taskData.start_time ? normalizeTimeString(taskData.start_time) : editingTask.start_time,
+        is_manual_time: !!taskData.start_time // Marquer comme manuelle si une heure a été modifiée
+      };
 
       const updatedTasks = tasks.map(t => 
         t.id === editingTask.id ? updatedTask : t
@@ -482,7 +495,7 @@ const MonJourMPlanning: React.FC = () => {
       
       toast({
         title: "Tâche modifiée",
-        description: "Les informations ont été mises à jour avec recalcul automatique"
+        description: "Les informations ont été mises à jour avec recalcul automatique intelligent"
       });
 
     } catch (error) {
@@ -641,7 +654,7 @@ const MonJourMPlanning: React.FC = () => {
     return normalizeTimeString(timeString);
   };
 
-  // Drag & Drop amélioré avec recalcul automatique
+  // Drag & Drop amélioré avec recalcul automatique intelligent
   const handleDragEnd = async (result: DropResult) => {
     if (!result.destination) return;
 
@@ -660,7 +673,7 @@ const MonJourMPlanning: React.FC = () => {
       
       toast({
         title: "Planning réorganisé",
-        description: "L'ordre des tâches et les horaires ont été automatiquement recalculés"
+        description: "L'ordre des tâches et les horaires ont été automatiquement recalculés intelligemment"
       });
     } catch (error) {
       console.error('Erreur mise à jour positions:', error);
@@ -922,6 +935,11 @@ const MonJourMPlanning: React.FC = () => {
                                   <div className="flex-1">
                                     <h3 className={`font-medium ${task.status === 'completed' ? 'line-through text-gray-500' : ''}`}>
                                       {task.title}
+                                      {task.is_manual_time && (
+                                        <span className="ml-2 text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                                          📌 Heure fixe
+                                        </span>
+                                      )}
                                     </h3>
                                     {task.description && (
                                       <p className="text-sm text-gray-600 mt-1">{task.description}</p>
@@ -949,13 +967,23 @@ const MonJourMPlanning: React.FC = () => {
 
                                 <div className="flex items-center gap-2 mt-2 text-xs flex-wrap">
                                   {task.start_time && (
-                                    <div className="flex items-center gap-1 bg-blue-50 px-2 py-1 rounded border">
-                                      <Clock className="h-3 w-3 text-blue-600" />
-                                      <span className="text-blue-700 font-medium">
+                                    <div className={`flex items-center gap-1 px-2 py-1 rounded border ${
+                                      task.is_manual_time 
+                                        ? 'bg-blue-50 border-blue-200' 
+                                        : 'bg-gray-50 border-gray-200'
+                                    }`}>
+                                      <Clock className={`h-3 w-3 ${
+                                        task.is_manual_time ? 'text-blue-600' : 'text-gray-600'
+                                      }`} />
+                                      <span className={`font-medium ${
+                                        task.is_manual_time ? 'text-blue-700' : 'text-gray-700'
+                                      }`}>
                                         {formatTime(task.start_time)}
                                       </span>
                                       {task.end_time && (
-                                        <span className="text-blue-600">
+                                        <span className={
+                                          task.is_manual_time ? 'text-blue-600' : 'text-gray-600'
+                                        }>
                                           → {formatTime(task.end_time)}
                                         </span>
                                       )}
