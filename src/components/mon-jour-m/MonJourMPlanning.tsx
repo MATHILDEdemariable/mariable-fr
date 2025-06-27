@@ -98,6 +98,24 @@ const normalizeStatus = (value?: string): "todo" | "completed" | "in_progress" =
   }
 };
 
+// Fonction pour normaliser la priorité
+const normalizePriority = (value?: string): "low" | "medium" | "high" => {
+  if (!value) return "medium";
+  switch (value.toLowerCase()) {
+    case "high":
+    case "élevée":
+    case "elevee":
+      return "high";
+    case "low":
+    case "faible":
+      return "low";
+    case "medium":
+    case "moyenne":
+    default:
+      return "medium";
+  }
+};
+
 // Fonction de transformation complète des tâches de la base de données
 const transformDatabaseTask = (dbTask: DatabaseTask, index: number): PlanningTask => {
   return {
@@ -108,7 +126,7 @@ const transformDatabaseTask = (dbTask: DatabaseTask, index: number): PlanningTas
     end_time: dbTask.end_time,
     duration: dbTask.duration || 15, // Valeur par défaut de 15 minutes
     category: dbTask.category || 'general',
-    priority: dbTask.priority || 'medium',
+    priority: normalizePriority(dbTask.priority),
     status: normalizeStatus(dbTask.status),
     assigned_to: normalizeAssignedTo(dbTask.assigned_to),
     position: typeof dbTask.position === 'number' ? dbTask.position : index, // Position obligatoire
@@ -132,27 +150,46 @@ const MonJourMPlanning: React.FC = () => {
     end_time: '',
     duration: 15, // Valeur par défaut de 15 minutes
     category: 'general',
-    priority: 'medium',
+    priority: 'medium' as "low" | "medium" | "high",
     status: 'todo' as "todo" | "completed" | "in_progress",
     assigned_to: [] as string[]
   });
+
+  // Fonction pour valider et normaliser les heures au format HH:mm
+  const normalizeTimeString = (timeString: string): string => {
+    if (!timeString) return "09:00";
+    
+    // Si c'est déjà au format HH:mm, valider et retourner
+    if (timeString.match(/^\d{2}:\d{2}$/)) {
+      const [hours, minutes] = timeString.split(':').map(Number);
+      if (hours >= 0 && hours <= 23 && minutes >= 0 && minutes <= 59) {
+        return timeString;
+      }
+    }
+    
+    // Si c'est un timestamp ISO, extraire l'heure
+    if (timeString.includes('T')) {
+      try {
+        const date = new Date(timeString);
+        const hours = date.getHours().toString().padStart(2, '0');
+        const minutes = date.getMinutes().toString().padStart(2, '0');
+        return `${hours}:${minutes}`;
+      } catch (error) {
+        console.error('Erreur parsing timestamp:', error);
+        return "09:00";
+      }
+    }
+    
+    return "09:00";
+  };
 
   // Utilitaire pour additionner des minutes à une heure
   const addMinutesToTime = (timeString: string, minutes: number): string => {
     if (!timeString || !minutes) return timeString;
     
     try {
-      let hour: number, minute: number;
-      
-      if (timeString.includes('T')) {
-        const date = new Date(timeString);
-        hour = date.getHours();
-        minute = date.getMinutes();
-      } else if (timeString.match(/^\d{2}:\d{2}$/)) {
-        [hour, minute] = timeString.split(':').map(Number);
-      } else {
-        return timeString;
-      }
+      const normalizedTime = normalizeTimeString(timeString);
+      const [hour, minute] = normalizedTime.split(':').map(Number);
       
       const totalMinutes = hour * 60 + minute + minutes;
       const newHour = Math.floor(totalMinutes / 60) % 24;
@@ -165,15 +202,16 @@ const MonJourMPlanning: React.FC = () => {
     }
   };
 
-  // Recalcule automatiquement tous les horaires de la timeline
+  // Recalcule automatiquement tous les horaires de la timeline (SAUF les heures manuelles)
   const recalculateTimeline = (tasksToRecalculate: PlanningTask[]): PlanningTask[] => {
     if (tasksToRecalculate.length === 0) return tasksToRecalculate;
     
     const sortedTasks = [...tasksToRecalculate].sort((a, b) => a.position - b.position);
     
     const recalculatedTasks = sortedTasks.map((task, index) => {
+      // Si c'est la première tâche, utiliser son heure de départ actuelle ou 09:00
       if (index === 0) {
-        const startTime = task.start_time || '09:00';
+        const startTime = normalizeTimeString(task.start_time || '09:00');
         const endTime = addMinutesToTime(startTime, task.duration);
         
         return {
@@ -182,10 +220,11 @@ const MonJourMPlanning: React.FC = () => {
           end_time: endTime
         };
       } else {
+        // Pour les tâches suivantes, calculer à partir de la fin de la précédente
         const previousTask = sortedTasks[index - 1];
         const previousEndTime = previousTask.start_time 
-          ? addMinutesToTime(previousTask.start_time, previousTask.duration)
-          : previousTask.end_time || '09:00';
+          ? addMinutesToTime(normalizeTimeString(previousTask.start_time), previousTask.duration)
+          : normalizeTimeString(previousTask.end_time || '09:00');
         
         const newStartTime = previousEndTime;
         const newEndTime = addMinutesToTime(newStartTime, task.duration);
@@ -271,7 +310,7 @@ const MonJourMPlanning: React.FC = () => {
 
       if (error) throw error;
 
-      // Utiliser transformDatabaseTask au lieu de normalizeTask
+      // Utiliser transformDatabaseTask pour normaliser les données
       const normalizedTasks: PlanningTask[] = (data || []).map((task, index) => transformDatabaseTask(task as DatabaseTask, index));
       
       setTasks(normalizedTasks);
@@ -334,15 +373,24 @@ const MonJourMPlanning: React.FC = () => {
     if (!formData.title.trim() || !coordination?.id) return;
 
     try {
+      // Convertir l'heure locale en timestamp ISO pour la base de données
+      let startTimeForDB = null;
+      if (formData.start_time) {
+        const [hours, minutes] = formData.start_time.split(':').map(Number);
+        const date = new Date();
+        date.setHours(hours, minutes, 0, 0);
+        startTimeForDB = date.toISOString();
+      }
+
       const { data, error } = await supabase
         .from('coordination_planning')
         .insert({
           coordination_id: coordination.id,
           title: formData.title,
           description: formData.description || null,
-          start_time: formData.start_time || null,
+          start_time: startTimeForDB,
           end_time: formData.end_time || null,
-          duration: formData.duration || 15, // Assurer une valeur par défaut
+          duration: formData.duration || 15,
           category: formData.category,
           priority: formData.priority,
           status: formData.status,
@@ -386,14 +434,24 @@ const MonJourMPlanning: React.FC = () => {
     if (!editingTask) return;
 
     try {
+      // Convertir l'heure locale en timestamp ISO pour la base de données
+      let startTimeForDB = null;
+      if (taskData.start_time) {
+        const normalizedTime = normalizeTimeString(taskData.start_time);
+        const [hours, minutes] = normalizedTime.split(':').map(Number);
+        const date = new Date();
+        date.setHours(hours, minutes, 0, 0);
+        startTimeForDB = date.toISOString();
+      }
+
       const { error } = await supabase
         .from('coordination_planning')
         .update({
           title: taskData.title,
           description: taskData.description || null,
-          start_time: taskData.start_time || null,
+          start_time: startTimeForDB,
           end_time: taskData.end_time || null,
-          duration: taskData.duration || 15, // Assurer une valeur par défaut
+          duration: taskData.duration || 15,
           category: taskData.category,
           priority: taskData.priority,
           status: taskData.status,
@@ -404,10 +462,15 @@ const MonJourMPlanning: React.FC = () => {
 
       if (error) throw error;
 
+      // Mettre à jour la tâche avec les heures normalisées
+      const updatedTask = {
+        ...editingTask,
+        ...taskData,
+        start_time: taskData.start_time ? normalizeTimeString(taskData.start_time) : editingTask.start_time
+      } as PlanningTask;
+
       const updatedTasks = tasks.map(t => 
-        t.id === editingTask.id 
-          ? { ...editingTask, ...taskData } as PlanningTask
-          : t
+        t.id === editingTask.id ? updatedTask : t
       );
       
       const recalculatedTasks = recalculateTimeline(updatedTasks);
@@ -445,7 +508,7 @@ const MonJourMPlanning: React.FC = () => {
           category: suggestion.category,
           priority: suggestion.priority,
           status: 'todo',
-          duration: suggestion.duration || 15, // Assurer une valeur par défaut
+          duration: suggestion.duration || 15,
           position: tasks.length,
           is_ai_generated: true
         })
@@ -482,15 +545,88 @@ const MonJourMPlanning: React.FC = () => {
     }
   };
 
+  // Fonction pour basculer le statut d'une tâche
+  const toggleTaskStatus = async (task: PlanningTask) => {
+    const newStatus = task.status === 'completed' ? 'todo' : 'completed';
+    
+    try {
+      const { error } = await supabase
+        .from('coordination_planning')
+        .update({ status: newStatus })
+        .eq('id', task.id);
+
+      if (error) throw error;
+
+      setTasks(prev => prev.map(t => 
+        t.id === task.id ? { ...t, status: newStatus } : t
+      ));
+
+      toast({
+        title: newStatus === 'completed' ? "Tâche terminée" : "Tâche réactivée",
+        description: "Le statut a été mis à jour"
+      });
+
+    } catch (error) {
+      console.error('Erreur changement statut:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de changer le statut",
+        variant: "destructive"
+      });
+    }
+  };
+
+  // Fonction pour supprimer une tâche
+  const handleDeleteTask = async (taskId: string) => {
+    try {
+      const { error } = await supabase
+        .from('coordination_planning')
+        .delete()
+        .eq('id', taskId);
+
+      if (error) throw error;
+
+      const updatedTasks = tasks.filter(t => t.id !== taskId);
+      const reorderedTasks = updateTaskPositions(updatedTasks);
+      const recalculatedTasks = recalculateTimeline(reorderedTasks);
+      
+      setTasks(recalculatedTasks);
+      await updateTasksInDatabase(recalculatedTasks);
+      
+      toast({
+        title: "Tâche supprimée",
+        description: "La tâche a été supprimée et les horaires recalculés"
+      });
+
+    } catch (error) {
+      console.error('Erreur suppression tâche:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de supprimer la tâche",
+        variant: "destructive"
+      });
+    }
+  };
+
   // Fonction pour mettre à jour les tâches en base de données
   const updateTasksInDatabase = async (tasksToUpdate: PlanningTask[]) => {
     try {
       for (const task of tasksToUpdate) {
+        // Convertir l'heure locale en timestamp ISO pour la base de données
+        let startTimeForDB = null;
+        if (task.start_time) {
+          const normalizedTime = normalizeTimeString(task.start_time);
+          const [hours, minutes] = normalizedTime.split(':').map(Number);
+          const date = new Date();
+          date.setHours(hours, minutes, 0, 0);
+          startTimeForDB = date.toISOString();
+        }
+
         await supabase
           .from('coordination_planning')
           .update({
             position: task.position,
-            start_time: task.start_time,
+            start_time: startTimeForDB,
             end_time: task.end_time
           })
           .eq('id', task.id);
@@ -502,26 +638,7 @@ const MonJourMPlanning: React.FC = () => {
 
   const formatTime = (timeString?: string) => {
     if (!timeString) return '';
-    
-    try {
-      if (timeString.includes('T')) {
-        const date = new Date(timeString);
-        return date.toLocaleTimeString('fr-FR', {
-          hour: '2-digit',
-          minute: '2-digit'
-        });
-      }
-      if (timeString.match(/^\d{2}:\d{2}$/)) {
-        return timeString;
-      }
-      const date = new Date(`1970-01-01T${timeString}`);
-      return date.toLocaleTimeString('fr-FR', {
-        hour: '2-digit',
-        minute: '2-digit'
-      });
-    } catch (error) {
-      return timeString;
-    }
+    return normalizeTimeString(timeString);
   };
 
   // Drag & Drop amélioré avec recalcul automatique
@@ -572,6 +689,15 @@ const MonJourMPlanning: React.FC = () => {
     }
   };
 
+  const getPriorityLabel = (priority: string) => {
+    switch (priority) {
+      case 'high': return 'Élevée';
+      case 'medium': return 'Moyenne';
+      case 'low': return 'Faible';
+      default: return 'Moyenne';
+    }
+  };
+
   useEffect(() => {
     initializeData();
   }, []);
@@ -593,7 +719,7 @@ const MonJourMPlanning: React.FC = () => {
           <h2 className="text-2xl font-semibold mb-2">Planning du jour J</h2>
           <p className="text-gray-600">Organisez et coordonnez tous les détails de votre mariage</p>
           <p className="text-sm text-blue-600 mt-1">
-            ✨ Drag & drop intelligent : les horaires se recalculent automatiquement
+            ⏰ Gestion intelligente des heures : saisissez manuellement et les suivantes se calculent automatiquement
           </p>
         </div>
         
@@ -703,7 +829,7 @@ const MonJourMPlanning: React.FC = () => {
 
                   <div>
                     <label className="block text-sm font-medium mb-1">Priorité</label>
-                    <Select value={formData.priority} onValueChange={(value) => setFormData({ ...formData, priority: value })}>
+                    <Select value={formData.priority} onValueChange={(value: "low" | "medium" | "high") => setFormData({ ...formData, priority: value })}>
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
@@ -717,7 +843,7 @@ const MonJourMPlanning: React.FC = () => {
 
                   <div>
                     <label className="block text-sm font-medium mb-1">Statut</label>
-                    <Select value={formData.status} onValueChange={(value) => setFormData({ ...formData, status: value })}>
+                    <Select value={formData.status} onValueChange={(value: "todo" | "completed" | "in_progress") => setFormData({ ...formData, status: value })}>
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
@@ -752,7 +878,7 @@ const MonJourMPlanning: React.FC = () => {
           <CardTitle className="flex items-center gap-2">
             Timeline du jour J
             <Badge variant="secondary" className="text-xs">
-              Recalcul automatique activé
+              Heures intelligentes activées
             </Badge>
           </CardTitle>
         </CardHeader>
@@ -840,7 +966,7 @@ const MonJourMPlanning: React.FC = () => {
                                     {task.duration} min
                                   </Badge>
                                   <Badge className={getPriorityColor(task.priority)}>
-                                    {task.priority === 'high' ? 'Élevée' : task.priority === 'medium' ? 'Moyenne' : 'Faible'}
+                                    {getPriorityLabel(task.priority)}
                                   </Badge>
                                   <Badge variant="secondary" className="capitalize">{task.category}</Badge>
                                   

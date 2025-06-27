@@ -62,23 +62,39 @@ const TaskEditModal: React.FC<TaskEditModalProps> = ({
   });
   const [isSaving, setIsSaving] = useState(false);
 
+  // Fonction pour normaliser les heures au format HH:mm
+  const normalizeTimeString = (timeString: string): string => {
+    if (!timeString) return '';
+    
+    // Si c'est déjà au format HH:mm, valider et retourner
+    if (timeString.match(/^\d{2}:\d{2}$/)) {
+      const [hours, minutes] = timeString.split(':').map(Number);
+      if (hours >= 0 && hours <= 23 && minutes >= 0 && minutes <= 59) {
+        return timeString;
+      }
+    }
+    
+    // Si c'est un timestamp ISO, extraire l'heure
+    if (timeString.includes('T')) {
+      try {
+        const date = new Date(timeString);
+        const hours = date.getHours().toString().padStart(2, '0');
+        const minutes = date.getMinutes().toString().padStart(2, '0');
+        return `${hours}:${minutes}`;
+      } catch (error) {
+        console.error('Erreur parsing timestamp:', error);
+        return '';
+      }
+    }
+    
+    return '';
+  };
+
   useEffect(() => {
     if (task) {
-      // Extraire l'heure correctement sans conversion de timezone
-      let startTimeValue = '';
-      if (task.start_time) {
-        try {
-          // Créer une date locale à partir de l'ISO string
-          const date = new Date(task.start_time);
-          // Obtenir les heures et minutes locales
-          const hours = date.getHours().toString().padStart(2, '0');
-          const minutes = date.getMinutes().toString().padStart(2, '0');
-          startTimeValue = `${hours}:${minutes}`;
-          console.log('Extracted time for editing:', startTimeValue, 'from', task.start_time);
-        } catch (error) {
-          console.error('Error parsing start_time:', error);
-        }
-      }
+      // Extraire l'heure correctement
+      const startTimeValue = normalizeTimeString(task.start_time || '');
+      console.log('Extracted time for editing:', startTimeValue, 'from', task.start_time);
 
       setFormData({
         title: task.title || '',
@@ -138,14 +154,9 @@ const TaskEditModal: React.FC<TaskEditModalProps> = ({
         assigned_to: formData.assigned_to,
       };
 
-      // Conversion correcte de l'heure locale vers ISO
+      // Passer l'heure au format HH:mm - la conversion ISO sera faite dans le composant parent
       if (formData.start_time) {
-        const [hours, minutes] = formData.start_time.split(':').map(Number);
-        const startDate = new Date();
-        startDate.setHours(hours, minutes, 0, 0);
-        
-        // Utiliser l'heure locale sans conversion de timezone
-        taskData.start_time = startDate.toISOString();
+        taskData.start_time = formData.start_time;
         console.log('Saving task with start_time:', taskData.start_time, 'from input:', formData.start_time);
       }
 
@@ -235,6 +246,9 @@ const TaskEditModal: React.FC<TaskEditModalProps> = ({
                   Heure de fin calculée : {displayedEndTime}
                 </p>
               )}
+              <p className="text-xs text-blue-600 mt-1">
+                💡 Cette heure sera respectée, les tâches suivantes se recalculeront automatiquement
+              </p>
             </div>
           </div>
 
