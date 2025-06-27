@@ -39,6 +39,83 @@ interface TeamMember {
   notes?: string;
 }
 
+// Type pour les données brutes de la base de données
+interface DatabaseTask {
+  id: string;
+  title: string;
+  description?: string;
+  start_time?: string;
+  end_time?: string;
+  duration?: number;
+  category?: string;
+  priority?: string;
+  status?: string;
+  assigned_to?: any; // Type Json de Supabase
+  position?: number;
+  is_ai_generated?: boolean;
+  coordination_id?: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+// Fonction pour normaliser assigned_to
+const normalizeAssignedTo = (value: any): string[] => {
+  if (!value) return [];
+  if (Array.isArray(value)) {
+    return value.map(id => String(id));
+  }
+  if (typeof value === 'string') {
+    try {
+      const parsed = JSON.parse(value);
+      if (Array.isArray(parsed)) {
+        return parsed.map(id => String(id));
+      }
+    } catch {
+      return [String(value)];
+    }
+  }
+  return [];
+};
+
+// Fonction pour normaliser le status
+const normalizeStatus = (value?: string): "todo" | "completed" | "in_progress" => {
+  if (!value) return "todo";
+  switch (value.toLowerCase()) {
+    case "completed":
+    case "complete":
+    case "done":
+      return "completed";
+    case "in_progress":
+    case "in-progress":
+    case "progress":
+    case "doing":
+      return "in_progress";
+    case "todo":
+    case "to-do":
+    case "pending":
+    default:
+      return "todo";
+  }
+};
+
+// Fonction de transformation complète des tâches de la base de données
+const transformDatabaseTask = (dbTask: DatabaseTask, index: number): PlanningTask => {
+  return {
+    id: dbTask.id,
+    title: dbTask.title,
+    description: dbTask.description,
+    start_time: dbTask.start_time || "09:00",
+    end_time: dbTask.end_time,
+    duration: dbTask.duration || 15, // Valeur par défaut de 15 minutes
+    category: dbTask.category || 'general',
+    priority: dbTask.priority || 'medium',
+    status: normalizeStatus(dbTask.status),
+    assigned_to: normalizeAssignedTo(dbTask.assigned_to),
+    position: typeof dbTask.position === 'number' ? dbTask.position : index, // Position obligatoire
+    is_ai_generated: dbTask.is_ai_generated || false
+  };
+};
+
 const MonJourMPlanning: React.FC = () => {
   const { toast } = useToast();
   const [coordination, setCoordination] = useState<WeddingCoordination | null>(null);
@@ -56,7 +133,7 @@ const MonJourMPlanning: React.FC = () => {
     duration: 15, // Valeur par défaut de 15 minutes
     category: 'general',
     priority: 'medium',
-    status: 'todo',
+    status: 'todo' as "todo" | "completed" | "in_progress",
     assigned_to: [] as string[]
   });
 
@@ -194,8 +271,8 @@ const MonJourMPlanning: React.FC = () => {
 
       if (error) throw error;
 
-      // Utiliser la fonction normalizeTask du contexte
-      const normalizedTasks: PlanningTask[] = (data || []).map((task, index) => normalizeTask(task, index));
+      // Utiliser transformDatabaseTask au lieu de normalizeTask
+      const normalizedTasks: PlanningTask[] = (data || []).map((task, index) => transformDatabaseTask(task as DatabaseTask, index));
       
       setTasks(normalizedTasks);
     } catch (error) {
@@ -278,7 +355,8 @@ const MonJourMPlanning: React.FC = () => {
 
       if (error) throw error;
 
-      const newTask: PlanningTask = normalizeTask(data, tasks.length);
+      // Utiliser transformDatabaseTask pour la nouvelle tâche
+      const newTask: PlanningTask = transformDatabaseTask(data as DatabaseTask, tasks.length);
       
       const updatedTasks = [...tasks, newTask];
       const recalculatedTasks = recalculateTimeline(updatedTasks);
@@ -318,6 +396,7 @@ const MonJourMPlanning: React.FC = () => {
           duration: taskData.duration || 15, // Assurer une valeur par défaut
           category: taskData.category,
           priority: taskData.priority,
+          status: taskData.status,
           assigned_to: taskData.assigned_to && taskData.assigned_to.length > 0 ? taskData.assigned_to : null,
           is_ai_generated: taskData.is_ai_generated || false
         })
@@ -327,7 +406,7 @@ const MonJourMPlanning: React.FC = () => {
 
       const updatedTasks = tasks.map(t => 
         t.id === editingTask.id 
-          ? normalizeTask({ ...t, ...taskData }, t.position) 
+          ? { ...editingTask, ...taskData } as PlanningTask
           : t
       );
       
@@ -353,58 +432,6 @@ const MonJourMPlanning: React.FC = () => {
     }
   };
 
-  const handleDeleteTask = async (taskId: string) => {
-    if (!window.confirm('Êtes-vous sûr de vouloir supprimer cette tâche ?')) return;
-
-    try {
-      const { error } = await supabase
-        .from('coordination_planning')
-        .delete()
-        .eq('id', taskId);
-
-      if (error) throw error;
-      
-      const remainingTasks = tasks.filter(t => t.id !== taskId);
-      // Utiliser la fonction updateTaskPositions pour réassigner les positions
-      const repositionedTasks = updateTaskPositions(remainingTasks);
-      const recalculatedTasks = recalculateTimeline(repositionedTasks);
-      setTasks(recalculatedTasks);
-      
-      await updateTasksInDatabase(recalculatedTasks);
-      
-      toast({
-        title: "Tâche supprimée",
-        description: "La tâche a été retirée du planning avec recalcul automatique"
-      });
-
-    } catch (error) {
-      console.error('Erreur suppression tâche:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible de supprimer la tâche",
-        variant: "destructive"
-      });
-    }
-  };
-
-  const toggleTaskStatus = async (task: PlanningTask) => {
-    const newStatus = task.status === 'completed' ? 'todo' : 'completed';
-    const updatedTask = { ...task, status: newStatus };
-    
-    try {
-      const { error } = await supabase
-        .from('coordination_planning')
-        .update({ status: newStatus })
-        .eq('id', task.id);
-
-      if (error) throw error;
-      
-      setTasks(prev => prev.map(t => t.id === task.id ? updatedTask : t));
-    } catch (error) {
-      console.error('Erreur changement statut:', error);
-    }
-  };
-
   const handleAISuggestion = async (suggestion: { title: string; description: string; category: string; priority: string; duration: number }) => {
     if (!coordination?.id) return;
 
@@ -427,11 +454,12 @@ const MonJourMPlanning: React.FC = () => {
 
       if (error) throw error;
 
-      const newTask: PlanningTask = normalizeTask({
+      // Utiliser transformDatabaseTask pour la nouvelle tâche
+      const newTask: PlanningTask = transformDatabaseTask({
         ...data,
         assigned_to: [],
         is_ai_generated: true
-      }, tasks.length);
+      } as DatabaseTask, tasks.length);
       
       const updatedTasks = [...tasks, newTask];
       const recalculatedTasks = recalculateTimeline(updatedTasks);

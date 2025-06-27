@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
@@ -22,8 +23,8 @@ export interface PlanningTask {
   duration: number; // Obligatoire - durée en minutes
   category: string;
   priority: string;
-  status: string;
-  assigned_to?: string[];
+  status: "todo" | "completed" | "in_progress"; // Types stricts
+  assigned_to: string[]; // Array de strings
   position: number; // Obligatoire - position dans la liste
   is_ai_generated?: boolean;
 }
@@ -39,9 +40,28 @@ interface PartialPlanningTask {
   category?: string;
   priority?: string;
   status?: string;
-  assigned_to?: string[];
+  assigned_to?: any; // Json ou string[] ou null
   position?: number;
   is_ai_generated?: boolean;
+}
+
+// Type pour les données brutes de la base de données
+interface DatabaseTask {
+  id: string;
+  title: string;
+  description?: string;
+  start_time?: string;
+  end_time?: string;
+  duration?: number;
+  category?: string;
+  priority?: string;
+  status?: string;
+  assigned_to?: any; // Type Json de Supabase
+  position?: number;
+  is_ai_generated?: boolean;
+  coordination_id?: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
 interface TeamMember {
@@ -55,6 +75,64 @@ interface TeamMember {
   notes?: string;
 }
 
+// Fonction pour normaliser assigned_to
+const normalizeAssignedTo = (value: any): string[] => {
+  if (!value) return [];
+  if (Array.isArray(value)) {
+    return value.map(id => String(id));
+  }
+  if (typeof value === 'string') {
+    try {
+      const parsed = JSON.parse(value);
+      if (Array.isArray(parsed)) {
+        return parsed.map(id => String(id));
+      }
+    } catch {
+      return [String(value)];
+    }
+  }
+  return [];
+};
+
+// Fonction pour normaliser le status
+const normalizeStatus = (value?: string): "todo" | "completed" | "in_progress" => {
+  if (!value) return "todo";
+  switch (value.toLowerCase()) {
+    case "completed":
+    case "complete":
+    case "done":
+      return "completed";
+    case "in_progress":
+    case "in-progress":
+    case "progress":
+    case "doing":
+      return "in_progress";
+    case "todo":
+    case "to-do":
+    case "pending":
+    default:
+      return "todo";
+  }
+};
+
+// Fonction de transformation complète des tâches de la base de données
+const transformDatabaseTask = (dbTask: DatabaseTask, index: number): PlanningTask => {
+  return {
+    id: dbTask.id,
+    title: dbTask.title,
+    description: dbTask.description,
+    start_time: dbTask.start_time || "09:00",
+    end_time: dbTask.end_time,
+    duration: dbTask.duration || 15, // Valeur par défaut de 15 minutes
+    category: dbTask.category || 'general',
+    priority: dbTask.priority || 'medium',
+    status: normalizeStatus(dbTask.status),
+    assigned_to: normalizeAssignedTo(dbTask.assigned_to),
+    position: typeof dbTask.position === 'number' ? dbTask.position : index, // Position obligatoire
+    is_ai_generated: dbTask.is_ai_generated || false
+  };
+};
+
 // Fonction utilitaire pour normaliser les tâches avec valeurs par défaut
 export const normalizeTask = (task: PartialPlanningTask, index: number): PlanningTask => {
   return {
@@ -66,12 +144,8 @@ export const normalizeTask = (task: PartialPlanningTask, index: number): Plannin
     duration: task.duration || 15, // Valeur par défaut de 15 minutes
     category: task.category || 'general',
     priority: task.priority || 'medium',
-    status: task.status || 'todo',
-    assigned_to: Array.isArray(task.assigned_to) 
-      ? task.assigned_to.map(id => String(id))
-      : task.assigned_to 
-        ? [String(task.assigned_to)]
-        : [],
+    status: normalizeStatus(task.status),
+    assigned_to: normalizeAssignedTo(task.assigned_to),
     position: typeof task.position === 'number' ? task.position : index, // Position obligatoire
     is_ai_generated: task.is_ai_generated || false
   };
@@ -374,7 +448,8 @@ export const MonJourMProvider: React.FC<{ children: ReactNode }> = ({ children }
 
       console.log('✅ Loaded tasks:', data?.length || 0);
       
-      const normalizedTasks: PlanningTask[] = (data || []).map((task, index) => normalizeTask(task, index));
+      // Utiliser transformDatabaseTask au lieu de normalizeTask
+      const normalizedTasks: PlanningTask[] = (data || []).map((task, index) => transformDatabaseTask(task as DatabaseTask, index));
       
       setTasks(normalizedTasks);
     } catch (error) {
@@ -486,7 +561,8 @@ export const MonJourMProvider: React.FC<{ children: ReactNode }> = ({ children }
         return false;
       }
 
-      const newTask: PlanningTask = normalizeTask(data, taskData.position);
+      // Utiliser transformDatabaseTask pour la nouvelle tâche
+      const newTask: PlanningTask = transformDatabaseTask(data as DatabaseTask, taskData.position);
       
       setTasks(prev => {
         const updated = [...prev, newTask];
