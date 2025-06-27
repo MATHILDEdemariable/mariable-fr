@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -9,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { Calendar, Clock, Plus, Edit2, Trash2, Save, X, Users, Sparkles, GripVertical } from 'lucide-react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import { toast } from '@/components/ui/use-toast';
+import { toast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { supabase } from '@/integrations/supabase/client';
 import { 
@@ -30,11 +29,13 @@ const MonJourMPlanningContent: React.FC = () => {
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   
-  // États du formulaire
+  // États du formulaire - SÉCURISÉS
   const [isAddingTask, setIsAddingTask] = useState(false);
   const [editingTask, setEditingTask] = useState<PlanningTask | null>(null);
   const [showAISuggestions, setShowAISuggestions] = useState(false);
   const [isGeneratingTasks, setIsGeneratingTasks] = useState(false);
+  
+  // Formulaire avec valeurs par défaut SÛRES
   const [formData, setFormData] = useState<TaskFormData>({
     title: '',
     description: '',
@@ -171,6 +172,101 @@ const MonJourMPlanningContent: React.FC = () => {
     }
   };
 
+  // HANDLER SÉCURISÉ POUR AJOUTER UNE TÂCHE
+  const handleAddTask = () => {
+    try {
+      console.log("Opening add task modal");
+      
+      // Reset complet du formulaire AVANT d'ouvrir
+      const safeFormData: TaskFormData = {
+        title: '',
+        description: '',
+        start_time: '09:00',
+        duration: 30,
+        category: 'Général',
+        priority: 'medium',
+        assigned_to: [],
+        is_manual_time: false
+      };
+      
+      setFormData(safeFormData);
+      setEditingTask(null); // S'assurer qu'on n'est pas en mode édition
+      setIsAddingTask(true);
+      
+      console.log("Add task modal opened successfully");
+    } catch (error) {
+      console.error("Error opening add task modal:", error);
+      toast({
+        title: "Erreur",
+        description: "Impossible d'ouvrir le formulaire d'ajout",
+        variant: "destructive"
+      });
+    }
+  };
+
+  // HANDLER SÉCURISÉ POUR MODIFIER UNE TÂCHE
+  const handleEditTask = (task: PlanningTask) => {
+    try {
+      console.log("Opening edit task modal for:", task.id, task);
+      
+      if (!task || !task.id) {
+        throw new Error("Tâche invalide");
+      }
+
+      // Préparer les données du formulaire avec des valeurs sûres
+      const safeFormData: TaskFormData = {
+        title: task.title || '',
+        description: task.description || '',
+        start_time: normalizeTimeString(task.start_time || '09:00'),
+        duration: task.duration || 30,
+        category: task.category || 'Général',
+        priority: task.priority || 'medium',
+        assigned_to: Array.isArray(task.assigned_to) ? task.assigned_to : [],
+        is_manual_time: task.is_manual_time || false
+      };
+
+      setFormData(safeFormData);
+      setEditingTask(task);
+      setIsAddingTask(false); // S'assurer qu'on n'est pas en mode ajout
+      
+      console.log("Edit task modal opened successfully", safeFormData);
+    } catch (error) {
+      console.error("Error opening edit task modal:", error);
+      toast({
+        title: "Erreur",
+        description: "Impossible d'ouvrir le formulaire de modification",
+        variant: "destructive"
+      });
+    }
+  };
+
+  // FERMETURE SÉCURISÉE DU FORMULAIRE
+  const handleCloseForm = () => {
+    try {
+      console.log("Closing form");
+      
+      // Reset complet
+      const safeFormData: TaskFormData = {
+        title: '',
+        description: '',
+        start_time: '09:00',
+        duration: 30,
+        category: 'Général',
+        priority: 'medium',
+        assigned_to: [],
+        is_manual_time: false
+      };
+      
+      setFormData(safeFormData);
+      setIsAddingTask(false);
+      setEditingTask(null);
+      
+      console.log("Form closed successfully");
+    } catch (error) {
+      console.error("Error closing form:", error);
+    }
+  };
+
   const resetForm = () => {
     setFormData({
       title: '',
@@ -187,16 +283,18 @@ const MonJourMPlanningContent: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.title.trim() || !coordination?.id) {
-      toast({
-        title: "Erreur",
-        description: "Le titre de la tâche est obligatoire",
-        variant: "destructive"
-      });
-      return;
-    }
-
     try {
+      console.log("Submitting form", formData);
+      
+      if (!formData.title?.trim() || !coordination?.id) {
+        toast({
+          title: "Erreur",
+          description: "Le titre de la tâche est obligatoire",
+          variant: "destructive"
+        });
+        return;
+      }
+
       const { data, error } = await supabase
         .from('coordination_planning')
         .insert({
@@ -221,8 +319,7 @@ const MonJourMPlanningContent: React.FC = () => {
         description: "La nouvelle tâche a été ajoutée au planning"
       });
 
-      resetForm();
-      setIsAddingTask(false);
+      handleCloseForm();
       await loadTasks(coordination.id);
     } catch (error) {
       console.error('Erreur ajout tâche:', error);
@@ -234,33 +331,21 @@ const MonJourMPlanningContent: React.FC = () => {
     }
   };
 
-  const handleEdit = (task: PlanningTask) => {
-    setEditingTask(task);
-    setFormData({
-      title: task.title,
-      description: task.description || '',
-      start_time: task.start_time || '09:00',
-      duration: task.duration,
-      category: task.category,
-      priority: task.priority,
-      assigned_to: task.assigned_to,
-      is_manual_time: task.is_manual_time || false
-    });
-  };
-
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!editingTask || !formData.title.trim()) {
-      toast({
-        title: "Erreur",
-        description: "Le titre de la tâche est obligatoire",
-        variant: "destructive"
-      });
-      return;
-    }
-
     try {
+      console.log("Updating task", editingTask?.id, formData);
+      
+      if (!editingTask || !formData.title?.trim()) {
+        toast({
+          title: "Erreur",
+          description: "Le titre de la tâche est obligatoire",
+          variant: "destructive"
+        });
+        return;
+      }
+
       const { error } = await supabase
         .from('coordination_planning')
         .update({
@@ -281,8 +366,7 @@ const MonJourMPlanningContent: React.FC = () => {
         description: "Les informations ont été mises à jour"
       });
 
-      resetForm();
-      setEditingTask(null);
+      handleCloseForm();
       if (coordination?.id) {
         await loadTasks(coordination.id);
       }
@@ -297,9 +381,9 @@ const MonJourMPlanningContent: React.FC = () => {
   };
 
   const handleDelete = async (taskId: string) => {
-    if (!window.confirm('Êtes-vous sûr de vouloir supprimer cette tâche ?')) return;
-
     try {
+      if (!window.confirm('Êtes-vous sûr de vouloir supprimer cette tâche ?')) return;
+
       const { error } = await supabase
         .from('coordination_planning')
         .delete()
@@ -517,7 +601,7 @@ const MonJourMPlanningContent: React.FC = () => {
           </Dialog>
           
           <Button 
-            onClick={() => setIsAddingTask(true)}
+            onClick={handleAddTask}
             className="bg-wedding-olive hover:bg-wedding-olive/90"
           >
             <Plus className="h-4 w-4 mr-2" />
@@ -526,7 +610,7 @@ const MonJourMPlanningContent: React.FC = () => {
         </div>
       </div>
 
-      {/* Formulaire d'ajout/modification */}
+      {/* Formulaire d'ajout/modification SÉCURISÉ */}
       {(isAddingTask || editingTask) && (
         <Card>
           <CardHeader>
@@ -541,7 +625,7 @@ const MonJourMPlanningContent: React.FC = () => {
                   <Label htmlFor="title">Titre de la tâche *</Label>
                   <Input
                     id="title"
-                    value={formData.title}
+                    value={formData.title || ''}
                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                     placeholder="Ex: Arrivée des invités"
                     required
@@ -550,7 +634,7 @@ const MonJourMPlanningContent: React.FC = () => {
                 <div>
                   <Label htmlFor="category">Catégorie</Label>
                   <Select 
-                    value={formData.category} 
+                    value={formData.category || 'Général'} 
                     onValueChange={(value) => setFormData({ ...formData, category: value })}
                   >
                     <SelectTrigger>
@@ -569,7 +653,7 @@ const MonJourMPlanningContent: React.FC = () => {
                 <Label htmlFor="description">Description</Label>
                 <Textarea
                   id="description"
-                  value={formData.description}
+                  value={formData.description || ''}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   placeholder="Détails de la tâche..."
                   rows={3}
@@ -582,7 +666,7 @@ const MonJourMPlanningContent: React.FC = () => {
                   <Input
                     id="start_time"
                     type="time"
-                    value={formData.start_time}
+                    value={formData.start_time || '09:00'}
                     onChange={(e) => setFormData({ ...formData, start_time: e.target.value })}
                   />
                 </div>
@@ -593,14 +677,14 @@ const MonJourMPlanningContent: React.FC = () => {
                     type="number"
                     min="5"
                     max="480"
-                    value={formData.duration}
+                    value={formData.duration || 30}
                     onChange={(e) => setFormData({ ...formData, duration: parseInt(e.target.value) || 30 })}
                   />
                 </div>
                 <div>
                   <Label htmlFor="priority">Priorité</Label>
                   <Select 
-                    value={formData.priority} 
+                    value={formData.priority || 'medium'} 
                     onValueChange={(value: "low" | "medium" | "high") => setFormData({ ...formData, priority: value })}
                   >
                     <SelectTrigger>
@@ -618,7 +702,7 @@ const MonJourMPlanningContent: React.FC = () => {
               <div>
                 <Label htmlFor="assigned_to">Assigné à</Label>
                 <Select
-                  value={formData.assigned_to.length > 0 ? formData.assigned_to[0] : ""}
+                  value={formData.assigned_to && formData.assigned_to.length > 0 ? formData.assigned_to[0] : ""}
                   onValueChange={(value) => setFormData({ ...formData, assigned_to: value ? [value] : [] })}
                 >
                   <SelectTrigger>
@@ -639,11 +723,7 @@ const MonJourMPlanningContent: React.FC = () => {
                 <Button 
                   type="button" 
                   variant="outline" 
-                  onClick={() => {
-                    setIsAddingTask(false);
-                    setEditingTask(null);
-                    resetForm();
-                  }}
+                  onClick={handleCloseForm}
                 >
                   <X className="h-4 w-4 mr-2" />
                   Annuler
@@ -678,7 +758,7 @@ const MonJourMPlanningContent: React.FC = () => {
                   Suggestions IA
                 </Button>
                 <Button 
-                  onClick={() => setIsAddingTask(true)}
+                  onClick={handleAddTask}
                   className="bg-wedding-olive hover:bg-wedding-olive/90"
                 >
                   <Plus className="h-4 w-4 mr-2" />
@@ -740,7 +820,7 @@ const MonJourMPlanningContent: React.FC = () => {
                                       <Button
                                         size="sm"
                                         variant="outline"
-                                        onClick={() => handleEdit(task)}
+                                        onClick={() => handleEditTask(task)}
                                       >
                                         <Edit2 className="h-3 w-3" />
                                       </Button>
