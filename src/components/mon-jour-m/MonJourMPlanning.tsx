@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { Calendar, Clock, Plus, Edit2, Trash2, Users, Sparkles, GripVertical } from 'lucide-react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import { toast } from '@/hooks/use-toast';
+import { useToast } from '@/components/ui/use-toast';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { supabase } from '@/integrations/supabase/client';
 import { 
@@ -24,6 +24,8 @@ import {
 } from '@/types/monjourm';
 
 const MonJourMPlanningContent: React.FC = () => {
+  const { toast } = useToast();
+  
   // États locaux simples (comme dans l'équipe)
   const [coordination, setCoordination] = useState<WeddingCoordination | null>(null);
   const [tasks, setTasks] = useState<PlanningTask[]>([]);
@@ -187,7 +189,7 @@ const MonJourMPlanningContent: React.FC = () => {
     });
   };
 
-  // Ajouter une tâche (logique copiée de handleAddMember)
+  // Ajouter une tâche (LOGIQUE COPIÉE EXACTEMENT DE handleAddMember)
   const handleAddTask = async () => {
     if (!formData.title?.trim() || !coordination?.id) {
       toast({
@@ -198,45 +200,44 @@ const MonJourMPlanningContent: React.FC = () => {
       return;
     }
 
-    try {
-      const { data, error } = await supabase
-        .from('coordination_planning')
-        .insert({
-          coordination_id: coordination.id,
-          title: formData.title,
-          description: formData.description || null,
-          start_time: formData.start_time || null,
-          duration: formData.duration,
-          category: formData.category,
-          priority: formData.priority,
-          assigned_to: formData.assigned_to.length > 0 ? formData.assigned_to : null,
-          position: tasks.length,
-          is_ai_generated: false
-        })
-        .select()
-        .single();
+    const { data, error } = await supabase
+      .from('coordination_planning')
+      .insert({
+        coordination_id: coordination.id,
+        title: formData.title,
+        description: formData.description || null,
+        start_time: formData.start_time || null,
+        duration: formData.duration,
+        category: formData.category,
+        priority: formData.priority,
+        assigned_to: formData.assigned_to.length > 0 ? formData.assigned_to : null,
+        position: tasks.length,
+        is_ai_generated: false
+      })
+      .select()
+      .single();
 
-      if (error) throw error;
-
-      toast({
-        title: "Tâche ajoutée",
-        description: "La nouvelle tâche a été ajoutée au planning"
-      });
-
-      resetForm();
-      setShowAddTask(false);
-      await loadTasks(coordination.id);
-    } catch (error) {
+    if (error) {
       console.error('Erreur ajout tâche:', error);
       toast({
         title: "Erreur",
         description: "Impossible d'ajouter la tâche",
         variant: "destructive"
       });
+      return;
     }
+
+    toast({
+      title: "Tâche ajoutée",
+      description: "La nouvelle tâche a été ajoutée au planning"
+    });
+
+    resetForm();
+    setShowAddTask(false);
+    await loadTasks(coordination.id);
   };
 
-  // Modifier une tâche (logique copiée de handleUpdateMember)
+  // Modifier une tâche (LOGIQUE COPIÉE EXACTEMENT DE handleUpdateMember)
   const handleUpdateTask = async () => {
     if (!editingTask || !formData.title?.trim()) {
       toast({
@@ -247,67 +248,65 @@ const MonJourMPlanningContent: React.FC = () => {
       return;
     }
 
-    try {
-      const { error } = await supabase
-        .from('coordination_planning')
-        .update({
-          title: formData.title,
-          description: formData.description || null,
-          start_time: formData.start_time || null,
-          duration: formData.duration,
-          category: formData.category,
-          priority: formData.priority,
-          assigned_to: formData.assigned_to.length > 0 ? formData.assigned_to : null
-        })
-        .eq('id', editingTask.id);
+    const { error } = await supabase
+      .from('coordination_planning')
+      .update({
+        title: formData.title,
+        description: formData.description || null,
+        start_time: formData.start_time || null,
+        duration: formData.duration,
+        category: formData.category,
+        priority: formData.priority,
+        assigned_to: formData.assigned_to.length > 0 ? formData.assigned_to : null
+      })
+      .eq('id', editingTask.id);
 
-      if (error) throw error;
-
-      toast({
-        title: "Tâche modifiée",
-        description: "Les informations ont été mises à jour"
-      });
-
-      setEditingTask(null);
-      if (coordination?.id) {
-        await loadTasks(coordination.id);
-      }
-    } catch (error) {
+    if (error) {
       console.error('Erreur modification tâche:', error);
       toast({
         title: "Erreur",
         description: "Impossible de modifier la tâche",
         variant: "destructive"
       });
+      return;
+    }
+
+    toast({
+      title: "Tâche modifiée",
+      description: "Les informations ont été mises à jour"
+    });
+
+    setEditingTask(null);
+    if (coordination?.id) {
+      await loadTasks(coordination.id);
     }
   };
 
   const handleDelete = async (taskId: string) => {
     if (!window.confirm('Êtes-vous sûr de vouloir supprimer cette tâche ?')) return;
 
-    try {
-      const { error } = await supabase
-        .from('coordination_planning')
-        .delete()
-        .eq('id', taskId);
+    const { error } = await supabase
+      .from('coordination_planning')
+      .delete()
+      .eq('id', taskId);
 
-      if (error) throw error;
-
-      toast({
-        title: "Tâche supprimée",
-        description: "La tâche a été retirée du planning"
-      });
-
-      if (coordination?.id) {
-        await loadTasks(coordination.id);
-      }
-    } catch (error) {
+    if (error) {
       console.error('Erreur suppression tâche:', error);
       toast({
         title: "Erreur",
         description: "Impossible de supprimer la tâche",
         variant: "destructive"
       });
+      return;
+    }
+
+    toast({
+      title: "Tâche supprimée",
+      description: "La tâche a été retirée du planning"
+    });
+
+    if (coordination?.id) {
+      await loadTasks(coordination.id);
     }
   };
 
