@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -11,6 +12,7 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { useToast } from '@/components/ui/use-toast';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { supabase } from '@/integrations/supabase/client';
+import AISuggestionsModal from './AISuggestionsModal';
 import { 
   WeddingCoordination, 
   PlanningTask, 
@@ -25,17 +27,16 @@ import {
 const MonJourMPlanningContent: React.FC = () => {
   const { toast } = useToast();
   
-  // États locaux simples (comme dans l'équipe)
+  // États locaux
   const [coordination, setCoordination] = useState<WeddingCoordination | null>(null);
   const [tasks, setTasks] = useState<PlanningTask[]>([]);
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   
-  // États des modales - SÉPARÉS comme dans l'équipe
+  // États des modales - SÉPARÉS
   const [showAddTask, setShowAddTask] = useState(false);
   const [editingTask, setEditingTask] = useState<PlanningTask | null>(null);
   const [showAISuggestions, setShowAISuggestions] = useState(false);
-  const [isGeneratingTasks, setIsGeneratingTasks] = useState(false);
   
   // Formulaire UNIQUEMENT pour l'ajout
   const [formData, setFormData] = useState<TaskFormData>({
@@ -174,7 +175,7 @@ const MonJourMPlanningContent: React.FC = () => {
     }
   };
 
-  // Reset formulaire (uniquement pour l'ajout)
+  // Reset formulaire
   const resetForm = () => {
     setFormData({
       title: '',
@@ -188,7 +189,7 @@ const MonJourMPlanningContent: React.FC = () => {
     });
   };
 
-  // LOGIQUE SIMPLIFIÉE - Ajout
+  // Ajout de tâche
   const handleAddTask = async () => {
     if (!formData.title?.trim() || !coordination?.id) {
       toast({
@@ -236,7 +237,7 @@ const MonJourMPlanningContent: React.FC = () => {
     await loadTasks(coordination.id);
   };
 
-  // LOGIQUE SIMPLIFIÉE - Modification
+  // Modification de tâche
   const handleUpdateTask = async () => {
     if (!editingTask || !editingTask.title?.trim()) {
       toast({
@@ -309,6 +310,40 @@ const MonJourMPlanningContent: React.FC = () => {
     }
   };
 
+  // Fonction pour ajouter les suggestions sélectionnées
+  const handleSelectSuggestion = async (suggestion: { title: string; description: string; category: string; priority: string; duration: number }) => {
+    if (!coordination?.id) return Promise.resolve();
+
+    try {
+      const { error } = await supabase
+        .from('coordination_planning')
+        .insert({
+          coordination_id: coordination.id,
+          title: suggestion.title,
+          description: suggestion.description,
+          start_time: '09:00', // Heure par défaut
+          duration: suggestion.duration,
+          category: suggestion.category,
+          priority: suggestion.priority,
+          assigned_to: null,
+          position: tasks.length,
+          is_ai_generated: true
+        });
+
+      if (error) throw error;
+
+      // Recharger les tâches
+      await loadTasks(coordination.id);
+    } catch (error) {
+      console.error('Erreur ajout suggestion:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible d'ajouter la suggestion",
+        variant: "destructive"
+      });
+    }
+  };
+
   // Drag & drop avec recalcul automatique
   const handleDragEnd = async (result: any) => {
     if (!result.destination || !coordination?.id) return;
@@ -351,72 +386,6 @@ const MonJourMPlanningContent: React.FC = () => {
     }
   };
 
-  const generateAITasks = async () => {
-    if (!coordination?.id) return;
-    
-    setIsGeneratingTasks(true);
-    
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        toast({
-          title: "Erreur",
-          description: "Vous devez être connecté pour utiliser l'IA",
-          variant: "destructive"
-        });
-        return;
-      }
-
-      const prompt = `Génère 10 tâches de planning pour un mariage, avec des heures réalistes et des durées appropriées. Format JSON avec: title, description, start_time (format HH:MM), duration (en minutes), category, priority (low/medium/high), assigned_to (array vide).`;
-
-      const { data, error } = await supabase.functions.invoke('chat-completion', {
-        body: {
-          message: prompt,
-          user_id: user.id
-        }
-      });
-
-      if (error) throw error;
-
-      const aiTasks = JSON.parse(data.response);
-      
-      for (let i = 0; i < aiTasks.length; i++) {
-        const aiTask = aiTasks[i];
-        await supabase
-          .from('coordination_planning')
-          .insert({
-            coordination_id: coordination.id,
-            title: aiTask.title,
-            description: aiTask.description || '',
-            start_time: aiTask.start_time || '09:00',
-            duration: aiTask.duration || 30,
-            category: aiTask.category || 'Général',
-            priority: aiTask.priority || 'medium',
-            assigned_to: null,
-            position: tasks.length + i,
-            is_ai_generated: true
-          });
-      }
-
-      toast({
-        title: "Succès",
-        description: `${aiTasks.length} tâches générées par l'IA ont été ajoutées`,
-      });
-      
-      setShowAISuggestions(false);
-      await loadTasks(coordination.id);
-    } catch (error) {
-      console.error('Erreur génération IA:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible de générer les tâches avec l'IA",
-        variant: "destructive"
-      });
-    } finally {
-      setIsGeneratingTasks(false);
-    }
-  };
-
   const getPriorityColor = (priority: "low" | "medium" | "high") => {
     switch (priority) {
       case 'high': return 'bg-red-100 text-red-800';
@@ -456,7 +425,6 @@ const MonJourMPlanningContent: React.FC = () => {
           </p>
         </div>
         <div className="flex gap-2">
-          {/* BOUTON IA SUGGESTIONS - sans DialogTrigger */}
           <Button 
             variant="outline" 
             className="flex items-center gap-2"
@@ -466,7 +434,6 @@ const MonJourMPlanningContent: React.FC = () => {
             Suggestions IA
           </Button>
           
-          {/* BOUTON AJOUTER TÂCHE - sans DialogTrigger */}
           <Button 
             className="bg-wedding-olive hover:bg-wedding-olive/90"
             onClick={() => setShowAddTask(true)}
@@ -477,46 +444,15 @@ const MonJourMPlanningContent: React.FC = () => {
         </div>
       </div>
 
-      {/* MODALE IA SUGGESTIONS */}
-      <Dialog open={showAISuggestions} onOpenChange={setShowAISuggestions}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Suggestions de l'IA</DialogTitle>
-            <DialogDescription>
-              Laissez notre IA générer des tâches de planning personnalisées pour votre mariage
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4">
-            <p className="text-sm text-muted-foreground">
-              L'IA va analyser votre mariage et créer automatiquement des tâches de planning avec des horaires réalistes.
-            </p>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowAISuggestions(false)}>
-              Annuler
-            </Button>
-            <Button 
-              onClick={generateAITasks} 
-              disabled={isGeneratingTasks}
-              className="bg-wedding-olive hover:bg-wedding-olive/90"
-            >
-              {isGeneratingTasks ? (
-                <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                  Génération...
-                </>
-              ) : (
-                <>
-                  <Sparkles className="h-4 w-4 mr-2" />
-                  Générer
-                </>
-              )}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-          
-      {/* MODALE D'AJOUT - utilise formData, sans DialogTrigger */}
+      {/* MODAL AI SUGGESTIONS */}
+      <AISuggestionsModal
+        isOpen={showAISuggestions}
+        onClose={() => setShowAISuggestions(false)}
+        onSelectSuggestion={handleSelectSuggestion}
+        coordination={coordination}
+      />
+
+      {/* MODALE D'AJOUT */}
       <Dialog open={showAddTask} onOpenChange={setShowAddTask}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
@@ -704,9 +640,6 @@ const MonJourMPlanningContent: React.FC = () => {
                                         {task.is_ai_generated && (
                                           <Sparkles className="inline h-4 w-4 ml-2 text-purple-500" />
                                         )}
-                                        {task.is_manual_time && (
-                                          <Clock className="inline h-4 w-4 ml-2 text-blue-500" />
-                                        )}
                                       </h3>
                                       {task.description && (
                                         <p className="text-sm text-muted-foreground mb-2">
@@ -773,7 +706,7 @@ const MonJourMPlanningContent: React.FC = () => {
         </DragDropContext>
       )}
 
-      {/* MODALE D'ÉDITION - utilise directement editingTask */}
+      {/* MODALE D'ÉDITION */}
       {editingTask && (
         <Dialog open={!!editingTask} onOpenChange={() => setEditingTask(null)}>
           <DialogContent className="max-w-2xl">
