@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -59,11 +58,6 @@ const MonJourMPlanning: React.FC = () => {
     status: 'todo',
     assigned_to: [] as string[]
   });
-
-  // Initialisation simple
-  useEffect(() => {
-    initializeData();
-  }, []);
 
   const initializeData = async () => {
     try {
@@ -473,6 +467,10 @@ const MonJourMPlanning: React.FC = () => {
       default: return 'bg-gray-100 text-gray-800';
     }
   };
+
+  useEffect(() => {
+    initializeData();
+  }, []);
 
   if (isLoading) {
     return (
