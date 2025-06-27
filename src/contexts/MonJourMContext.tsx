@@ -19,7 +19,7 @@ export interface PlanningTask {
   description?: string;
   start_time?: string;
   end_time?: string;
-  duration?: number;
+  duration: number; // Obligatoire - durée en minutes
   category: string;
   priority: string;
   status: string;
@@ -38,6 +38,19 @@ interface TeamMember {
   prestataire_id?: string;
   notes?: string;
 }
+
+// Fonction utilitaire pour normaliser les tâches avec durée par défaut
+export const normalizePlanningTask = (task: any): PlanningTask => {
+  return {
+    ...task,
+    duration: task.duration || 15, // Valeur par défaut de 15 minutes
+    assigned_to: Array.isArray(task.assigned_to) 
+      ? task.assigned_to.map(id => String(id))
+      : task.assigned_to 
+        ? [String(task.assigned_to)]
+        : []
+  };
+};
 
 interface MonJourMContextType {
   coordination: WeddingCoordination | null;
@@ -176,7 +189,9 @@ export const MonJourMProvider: React.FC<{ children: ReactNode }> = ({ children }
         }
       }
       if (cachedTasks) {
-        setTasks(JSON.parse(cachedTasks));
+        const rawTasks = JSON.parse(cachedTasks);
+        const normalizedTasks = rawTasks.map(normalizePlanningTask);
+        setTasks(normalizedTasks);
         console.log('📥 Loaded tasks from cache');
       }
       if (cachedTeamMembers) {
@@ -321,16 +336,9 @@ export const MonJourMProvider: React.FC<{ children: ReactNode }> = ({ children }
 
       console.log('✅ Loaded tasks:', data?.length || 0);
       
-      const formattedTasks: PlanningTask[] = (data || []).map(task => ({
-        ...task,
-        assigned_to: Array.isArray(task.assigned_to) 
-          ? task.assigned_to.map(id => String(id))
-          : task.assigned_to 
-            ? [String(task.assigned_to)]
-            : []
-      }));
+      const normalizedTasks: PlanningTask[] = (data || []).map(normalizePlanningTask);
       
-      setTasks(formattedTasks);
+      setTasks(normalizedTasks);
     } catch (error) {
       console.error('❌ Error in loadTasks:', error);
     }
@@ -419,7 +427,7 @@ export const MonJourMProvider: React.FC<{ children: ReactNode }> = ({ children }
           description: taskData.description || null,
           start_time: taskData.start_time || null,
           end_time: taskData.end_time || null,
-          duration: taskData.duration || 30,
+          duration: taskData.duration || 15, // Valeur par défaut
           category: taskData.category,
           priority: taskData.priority,
           status: taskData.status,
@@ -440,15 +448,7 @@ export const MonJourMProvider: React.FC<{ children: ReactNode }> = ({ children }
         return false;
       }
 
-      // Mise à jour immédiate de l'état local
-      const newTask: PlanningTask = {
-        ...data,
-        assigned_to: Array.isArray(data.assigned_to) 
-          ? data.assigned_to.map(id => String(id))
-          : data.assigned_to 
-            ? [String(data.assigned_to)]
-            : []
-      };
+      const newTask: PlanningTask = normalizePlanningTask(data);
       
       setTasks(prev => {
         const updated = [...prev, newTask];
@@ -484,7 +484,7 @@ export const MonJourMProvider: React.FC<{ children: ReactNode }> = ({ children }
           description: task.description || null,
           start_time: task.start_time || null,
           end_time: task.end_time || null,
-          duration: task.duration || 30,
+          duration: task.duration || 15, // Assurer une valeur par défaut
           category: task.category,
           priority: task.priority,
           status: task.status,
@@ -498,9 +498,8 @@ export const MonJourMProvider: React.FC<{ children: ReactNode }> = ({ children }
         throw error;
       }
 
-      // Mise à jour immédiate de l'état local
       setTasks(prev => {
-        const updated = prev.map(t => t.id === task.id ? task : t);
+        const updated = prev.map(t => t.id === task.id ? normalizePlanningTask(task) : t);
         console.log('✅ Task updated locally');
         return updated;
       });
@@ -536,7 +535,6 @@ export const MonJourMProvider: React.FC<{ children: ReactNode }> = ({ children }
         throw error;
       }
       
-      // Mise à jour immédiate de l'état local
       setTasks(prev => {
         const updated = prev.filter(t => t.id !== taskId);
         console.log('✅ Task deleted locally, remaining tasks:', updated.length);
@@ -598,7 +596,6 @@ export const MonJourMProvider: React.FC<{ children: ReactNode }> = ({ children }
         return false;
       }
 
-      // Mise à jour immédiate de l'état local
       const newMember: TeamMember = {
         id: data.id,
         name: data.name,
@@ -654,7 +651,6 @@ export const MonJourMProvider: React.FC<{ children: ReactNode }> = ({ children }
         throw error;
       }
 
-      // Mise à jour immédiate de l'état local
       setTeamMembers(prev => {
         const updated = prev.map(m => m.id === member.id ? member : m);
         console.log('✅ Member updated locally');
@@ -692,7 +688,6 @@ export const MonJourMProvider: React.FC<{ children: ReactNode }> = ({ children }
         throw error;
       }
       
-      // Mise à jour immédiate de l'état local
       setTeamMembers(prev => {
         const updated = prev.filter(m => m.id !== memberId);
         console.log('✅ Member deleted locally, remaining members:', updated.length);
@@ -734,8 +729,6 @@ export const MonJourMProvider: React.FC<{ children: ReactNode }> = ({ children }
         },
         (payload) => {
           console.log('📨 Planning change received:', payload.eventType);
-          
-          // Recharger immédiatement
           loadTasks(coordination.id);
         }
       )
@@ -753,8 +746,6 @@ export const MonJourMProvider: React.FC<{ children: ReactNode }> = ({ children }
         },
         (payload) => {
           console.log('📨 Team change received:', payload.eventType);
-          
-          // Recharger immédiatement
           loadTeamMembers(coordination.id);
         }
       )
