@@ -346,7 +346,7 @@ const AdminReservationsJourM = () => {
         {selectedReservation && (
           <ReservationDetailModal
             reservation={selectedReservation as any}
-            open={modalOpen}
+            isOpen={modalOpen}
             onClose={() => {
               setModalOpen(false);
               setSelectedReservation(null);
