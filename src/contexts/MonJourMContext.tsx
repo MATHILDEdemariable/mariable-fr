@@ -24,6 +24,22 @@ export interface PlanningTask {
   priority: string;
   status: string;
   assigned_to?: string[];
+  position: number; // Obligatoire - position dans la liste
+  is_ai_generated?: boolean;
+}
+
+// Type pour les tâches partielles (venant de la base de données)
+interface PartialPlanningTask {
+  id: string;
+  title: string;
+  description?: string;
+  start_time?: string;
+  end_time?: string;
+  duration?: number;
+  category?: string;
+  priority?: string;
+  status?: string;
+  assigned_to?: string[];
   position?: number;
   is_ai_generated?: boolean;
 }
@@ -39,17 +55,39 @@ interface TeamMember {
   notes?: string;
 }
 
-// Fonction utilitaire pour normaliser les tâches avec durée par défaut
-export const normalizePlanningTask = (task: any): PlanningTask => {
+// Fonction utilitaire pour normaliser les tâches avec valeurs par défaut
+export const normalizeTask = (task: PartialPlanningTask, index: number): PlanningTask => {
   return {
-    ...task,
+    id: task.id,
+    title: task.title,
+    description: task.description,
+    start_time: task.start_time || "09:00",
+    end_time: task.end_time,
     duration: task.duration || 15, // Valeur par défaut de 15 minutes
+    category: task.category || 'general',
+    priority: task.priority || 'medium',
+    status: task.status || 'todo',
     assigned_to: Array.isArray(task.assigned_to) 
       ? task.assigned_to.map(id => String(id))
       : task.assigned_to 
         ? [String(task.assigned_to)]
-        : []
+        : [],
+    position: typeof task.position === 'number' ? task.position : index, // Position obligatoire
+    is_ai_generated: task.is_ai_generated || false
   };
+};
+
+// Fonction pour recalculer les positions après drag & drop
+export const updateTaskPositions = (tasks: PlanningTask[]): PlanningTask[] => {
+  return tasks.map((task, index) => ({
+    ...task,
+    position: index
+  }));
+};
+
+// Fonction utilitaire pour normaliser les tâches (ancienne fonction pour compatibilité)
+export const normalizePlanningTask = (task: any): PlanningTask => {
+  return normalizeTask(task, task.position || 0);
 };
 
 interface MonJourMContextType {
@@ -190,7 +228,7 @@ export const MonJourMProvider: React.FC<{ children: ReactNode }> = ({ children }
       }
       if (cachedTasks) {
         const rawTasks = JSON.parse(cachedTasks);
-        const normalizedTasks = rawTasks.map(normalizePlanningTask);
+        const normalizedTasks = rawTasks.map((task: any, index: number) => normalizeTask(task, index));
         setTasks(normalizedTasks);
         console.log('📥 Loaded tasks from cache');
       }
@@ -336,7 +374,7 @@ export const MonJourMProvider: React.FC<{ children: ReactNode }> = ({ children }
 
       console.log('✅ Loaded tasks:', data?.length || 0);
       
-      const normalizedTasks: PlanningTask[] = (data || []).map(normalizePlanningTask);
+      const normalizedTasks: PlanningTask[] = (data || []).map((task, index) => normalizeTask(task, index));
       
       setTasks(normalizedTasks);
     } catch (error) {
@@ -427,12 +465,12 @@ export const MonJourMProvider: React.FC<{ children: ReactNode }> = ({ children }
           description: taskData.description || null,
           start_time: taskData.start_time || null,
           end_time: taskData.end_time || null,
-          duration: taskData.duration || 15, // Valeur par défaut
+          duration: taskData.duration || 15,
           category: taskData.category,
           priority: taskData.priority,
           status: taskData.status,
           assigned_to: taskData.assigned_to && taskData.assigned_to.length > 0 ? taskData.assigned_to : null,
-          position: tasks.length,
+          position: taskData.position,
           is_ai_generated: taskData.is_ai_generated || false
         })
         .select()
@@ -448,7 +486,7 @@ export const MonJourMProvider: React.FC<{ children: ReactNode }> = ({ children }
         return false;
       }
 
-      const newTask: PlanningTask = normalizePlanningTask(data);
+      const newTask: PlanningTask = normalizeTask(data, taskData.position);
       
       setTasks(prev => {
         const updated = [...prev, newTask];
@@ -471,7 +509,7 @@ export const MonJourMProvider: React.FC<{ children: ReactNode }> = ({ children }
       });
       return false;
     }
-  }, [coordination?.id, tasks.length, toast]);
+  }, [coordination?.id, toast]);
 
   const updateTask = useCallback(async (task: PlanningTask): Promise<boolean> => {
     try {
@@ -484,11 +522,12 @@ export const MonJourMProvider: React.FC<{ children: ReactNode }> = ({ children }
           description: task.description || null,
           start_time: task.start_time || null,
           end_time: task.end_time || null,
-          duration: task.duration || 15, // Assurer une valeur par défaut
+          duration: task.duration,
           category: task.category,
           priority: task.priority,
           status: task.status,
           assigned_to: task.assigned_to && task.assigned_to.length > 0 ? task.assigned_to : null,
+          position: task.position,
           is_ai_generated: task.is_ai_generated || false
         })
         .eq('id', task.id);
@@ -499,7 +538,7 @@ export const MonJourMProvider: React.FC<{ children: ReactNode }> = ({ children }
       }
 
       setTasks(prev => {
-        const updated = prev.map(t => t.id === task.id ? normalizePlanningTask(task) : t);
+        const updated = prev.map(t => t.id === task.id ? task : t);
         console.log('✅ Task updated locally');
         return updated;
       });

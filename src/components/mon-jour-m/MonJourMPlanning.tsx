@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -13,8 +14,8 @@ import { useToast } from '@/components/ui/use-toast';
 import AISuggestionsModal from './AISuggestionsModal';
 import TaskEditModal from './TaskEditModal';
 
-// Import du type unifié et de la fonction de normalisation
-import { PlanningTask, normalizePlanningTask } from '@/contexts/MonJourMContext';
+// Import du type unifié et des fonctions utilitaires du contexte
+import { PlanningTask, normalizeTask, updateTaskPositions } from '@/contexts/MonJourMContext';
 
 interface WeddingCoordination {
   id: string;
@@ -91,7 +92,7 @@ const MonJourMPlanning: React.FC = () => {
   const recalculateTimeline = (tasksToRecalculate: PlanningTask[]): PlanningTask[] => {
     if (tasksToRecalculate.length === 0) return tasksToRecalculate;
     
-    const sortedTasks = [...tasksToRecalculate].sort((a, b) => (a.position || 0) - (b.position || 0));
+    const sortedTasks = [...tasksToRecalculate].sort((a, b) => a.position - b.position);
     
     const recalculatedTasks = sortedTasks.map((task, index) => {
       if (index === 0) {
@@ -193,8 +194,8 @@ const MonJourMPlanning: React.FC = () => {
 
       if (error) throw error;
 
-      // Normaliser toutes les tâches avec la fonction utilitaire
-      const normalizedTasks: PlanningTask[] = (data || []).map(normalizePlanningTask);
+      // Utiliser la fonction normalizeTask du contexte
+      const normalizedTasks: PlanningTask[] = (data || []).map((task, index) => normalizeTask(task, index));
       
       setTasks(normalizedTasks);
     } catch (error) {
@@ -277,7 +278,7 @@ const MonJourMPlanning: React.FC = () => {
 
       if (error) throw error;
 
-      const newTask: PlanningTask = normalizePlanningTask(data);
+      const newTask: PlanningTask = normalizeTask(data, tasks.length);
       
       const updatedTasks = [...tasks, newTask];
       const recalculatedTasks = recalculateTimeline(updatedTasks);
@@ -326,7 +327,7 @@ const MonJourMPlanning: React.FC = () => {
 
       const updatedTasks = tasks.map(t => 
         t.id === editingTask.id 
-          ? normalizePlanningTask({ ...t, ...taskData }) 
+          ? normalizeTask({ ...t, ...taskData }, t.position) 
           : t
       );
       
@@ -364,7 +365,9 @@ const MonJourMPlanning: React.FC = () => {
       if (error) throw error;
       
       const remainingTasks = tasks.filter(t => t.id !== taskId);
-      const recalculatedTasks = recalculateTimeline(remainingTasks);
+      // Utiliser la fonction updateTaskPositions pour réassigner les positions
+      const repositionedTasks = updateTaskPositions(remainingTasks);
+      const recalculatedTasks = recalculateTimeline(repositionedTasks);
       setTasks(recalculatedTasks);
       
       await updateTasksInDatabase(recalculatedTasks);
@@ -424,11 +427,11 @@ const MonJourMPlanning: React.FC = () => {
 
       if (error) throw error;
 
-      const newTask: PlanningTask = normalizePlanningTask({
+      const newTask: PlanningTask = normalizeTask({
         ...data,
         assigned_to: [],
         is_ai_generated: true
-      });
+      }, tasks.length);
       
       const updatedTasks = [...tasks, newTask];
       const recalculatedTasks = recalculateTimeline(updatedTasks);
@@ -501,11 +504,8 @@ const MonJourMPlanning: React.FC = () => {
     const [reorderedItem] = items.splice(result.source.index, 1);
     items.splice(result.destination.index, 0, reorderedItem);
 
-    const reorderedTasks = items.map((task, index) => ({
-      ...task,
-      position: index
-    }));
-    
+    // Utiliser updateTaskPositions pour réassigner les positions
+    const reorderedTasks = updateTaskPositions(items);
     const recalculatedTasks = recalculateTimeline(reorderedTasks);
     
     setTasks(recalculatedTasks);
