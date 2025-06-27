@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -7,10 +8,12 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Clock, Plus, Edit2, Trash2, Sparkles } from 'lucide-react';
+import { Clock, Plus, Edit2, Trash2, Sparkles, GripVertical } from 'lucide-react';
+import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 import { PlanningTask, WeddingCoordination, PREDEFINED_ROLES, TASK_CATEGORIES, normalizeTimeString, addMinutesToTime } from '@/types/monjourm-mvp';
+import AITaskSelectionModal from './AITaskSelectionModal';
 
 interface SimpleTaskManagerProps {
   coordination: WeddingCoordination;
@@ -20,8 +23,8 @@ const SimpleTaskManager: React.FC<SimpleTaskManagerProps> = ({ coordination }) =
   const { toast } = useToast();
   const [tasks, setTasks] = useState<PlanningTask[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [isGeneratingAI, setIsGeneratingAI] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showAIModal, setShowAIModal] = useState(false);
   const [editingTask, setEditingTask] = useState<PlanningTask | null>(null);
   
   // Form state
@@ -39,13 +42,18 @@ const SimpleTaskManager: React.FC<SimpleTaskManagerProps> = ({ coordination }) =
   const loadTasks = async () => {
     try {
       setIsLoading(true);
+      console.log('🔄 Chargement des tâches pour coordination:', coordination.id);
+      
       const { data, error } = await supabase
         .from('coordination_planning')
         .select('*')
         .eq('coordination_id', coordination.id)
         .order('position');
 
-      if (error) throw error;
+      if (error) {
+        console.error('❌ Erreur Supabase:', error);
+        throw error;
+      }
 
       const normalizedTasks: PlanningTask[] = (data || []).map((task, index) => {
         console.log('🔍 Processing task:', task.title, 'assigned_to:', task.assigned_to);
@@ -107,43 +115,61 @@ const SimpleTaskManager: React.FC<SimpleTaskManagerProps> = ({ coordination }) =
     });
   };
 
-  // Génération IA de tâches
-  const handleGenerateAITasks = async () => {
-    try {
-      setIsGeneratingAI(true);
-      
-      // Tâches prédéfinies pour le prototype
-      const aiTasks = [
-        {
-          title: "Accueil des invités",
-          description: "Placement des invités et distribution des programmes",
-          start_time: "14:00",
-          duration: 30,
-          category: "Arrivée",
-          priority: "high" as const,
-          assigned_role: "Témoin(s)"
-        },
-        {
-          title: "Cérémonie laïque",
-          description: "Déroulement de la cérémonie",
-          start_time: "14:30",
-          duration: 45,
-          category: "Cérémonie",
-          priority: "high" as const,
-          assigned_role: "Célébrant"
-        },
-        {
-          title: "Cocktail et photos",
-          description: "Vin d'honneur et séance photos",
-          start_time: "15:15",
-          duration: 90,
-          category: "Cocktail",
-          priority: "medium" as const,
-          assigned_role: "Photographe"
-        }
-      ];
+  // Drag & Drop handler
+  const handleDragEnd = async (result: DropResult) => {
+    if (!result.destination) return;
 
-      const insertPromises = aiTasks.map((task, index) => 
+    const startIndex = result.source.index;
+    const endIndex = result.destination.index;
+
+    if (startIndex === endIndex) return;
+
+    try {
+      // Réorganiser les tâches localement
+      const reorderedTasks = Array.from(tasks);
+      const [removed] = reorderedTasks.splice(startIndex, 1);
+      reorderedTasks.splice(endIndex, 0, removed);
+
+      // Mettre à jour les positions
+      const tasksWithNewPositions = reorderedTasks.map((task, index) => ({
+        ...task,
+        position: index
+      }));
+
+      setTasks(tasksWithNewPositions);
+
+      // Mettre à jour en base de données
+      const updatePromises = tasksWithNewPositions.map(task =>
+        supabase
+          .from('coordination_planning')
+          .update({ position: task.position })
+          .eq('id', task.id)
+      );
+
+      await Promise.all(updatePromises);
+
+      toast({
+        title: "Succès",
+        description: "Ordre des tâches mis à jour"
+      });
+    } catch (error) {
+      console.error('❌ Erreur réorganisation:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de réorganiser les tâches",
+        variant: "destructive"
+      });
+      // Recharger les tâches en cas d'erreur
+      await loadTasks();
+    }
+  };
+
+  // Gérer l'ajout de tâches depuis l'IA
+  const handleAITasksSelected = async (selectedTasks: any[]) => {
+    try {
+      console.log('🤖 Ajout des tâches IA sélectionnées:', selectedTasks);
+
+      const insertPromises = selectedTasks.map((task, index) => 
         supabase
           .from('coordination_planning')
           .insert({
@@ -164,19 +190,17 @@ const SimpleTaskManager: React.FC<SimpleTaskManagerProps> = ({ coordination }) =
 
       toast({
         title: "Succès",
-        description: "Tâches générées automatiquement"
+        description: `${selectedTasks.length} tâche${selectedTasks.length > 1 ? 's' : ''} ajoutée${selectedTasks.length > 1 ? 's' : ''} avec succès`
       });
 
       await loadTasks();
     } catch (error) {
-      console.error('❌ Erreur génération IA:', error);
+      console.error('❌ Erreur ajout tâches IA:', error);
       toast({
         title: "Erreur",
-        description: "Impossible de générer les tâches",
+        description: "Impossible d'ajouter les tâches sélectionnées",
         variant: "destructive"
       });
-    } finally {
-      setIsGeneratingAI(false);
     }
   };
 
@@ -208,7 +232,10 @@ const SimpleTaskManager: React.FC<SimpleTaskManagerProps> = ({ coordination }) =
           position: tasks.length
         });
 
-      if (error) throw error;
+      if (error) {
+        console.error('❌ Erreur Supabase insert:', error);
+        throw error;
+      }
 
       toast({
         title: "Succès",
@@ -255,7 +282,10 @@ const SimpleTaskManager: React.FC<SimpleTaskManagerProps> = ({ coordination }) =
         })
         .eq('id', editingTask.id);
 
-      if (error) throw error;
+      if (error) {
+        console.error('❌ Erreur Supabase update:', error);
+        throw error;
+      }
 
       toast({
         title: "Succès",
@@ -284,16 +314,19 @@ const SimpleTaskManager: React.FC<SimpleTaskManagerProps> = ({ coordination }) =
         .delete()
         .eq('id', taskId);
 
-      if (error) throw error;
+      if (error) {
+        console.error('❌ Erreur Supabase delete:', error);
+        throw error;
+      }
 
       toast({
-        title: "Succès",
+        title: "Succès",  
         description: "Tâche supprimée avec succès"
       });
 
       await loadTasks();
     } catch (error) {
-      console.error('Erreur suppression tâche:', error);
+      console.error('❌ Erreur suppression tâche:', error);
       toast({
         title: "Erreur",
         description: "Impossible de supprimer la tâche",
@@ -314,7 +347,7 @@ const SimpleTaskManager: React.FC<SimpleTaskManagerProps> = ({ coordination }) =
   const getPriorityLabel = (priority: "low" | "medium" | "high") => {
     switch (priority) {
       case 'high': return 'Élevée';
-      case 'medium': return 'Moyenne';
+      case 'medium': return 'Moyenne';  
       case 'low': return 'Faible';
       default: return 'Moyenne';
     }
@@ -335,17 +368,16 @@ const SimpleTaskManager: React.FC<SimpleTaskManagerProps> = ({ coordination }) =
         <div>
           <h3 className="text-lg font-medium">Planning du Jour J</h3>
           <p className="text-sm text-muted-foreground">
-            Gérez vos tâches et leurs horaires
+            Gérez vos tâches et leurs horaires - Glissez-déposez pour réorganiser
           </p>
         </div>
         <div className="flex gap-2">
           <Button 
-            onClick={handleGenerateAITasks} 
-            disabled={isGeneratingAI}
+            onClick={() => setShowAIModal(true)}
             variant="outline"
           >
             <Sparkles className="h-4 w-4 mr-2" />
-            {isGeneratingAI ? 'Génération...' : 'Génération IA'}
+            Suggestions IA
           </Button>
           <Button onClick={() => setShowAddModal(true)}>
             <Plus className="h-4 w-4 mr-2" />
@@ -354,19 +386,19 @@ const SimpleTaskManager: React.FC<SimpleTaskManagerProps> = ({ coordination }) =
         </div>
       </div>
 
-      {/* Liste des tâches */}
+      {/* Liste des tâches avec Drag & Drop */}
       {tasks.length === 0 ? (
         <Card>
           <CardContent className="py-12 text-center">
             <Clock className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
             <h3 className="text-lg font-medium mb-2">Aucune tâche planifiée</h3>
             <p className="text-muted-foreground mb-4">
-              Commencez par ajouter votre première tâche ou utilisez la génération IA
+              Commencez par ajouter votre première tâche ou utilisez les suggestions IA
             </p>
             <div className="flex gap-2 justify-center">
-              <Button onClick={handleGenerateAITasks} disabled={isGeneratingAI} variant="outline">
+              <Button onClick={() => setShowAIModal(true)} variant="outline">
                 <Sparkles className="h-4 w-4 mr-2" />
-                Génération IA
+                Suggestions IA
               </Button>
               <Button onClick={() => setShowAddModal(true)}>
                 <Plus className="h-4 w-4 mr-2" />
@@ -376,78 +408,122 @@ const SimpleTaskManager: React.FC<SimpleTaskManagerProps> = ({ coordination }) =
           </CardContent>
         </Card>
       ) : (
-        <div className="space-y-4">
-          {tasks
-            .sort((a, b) => a.position - b.position)
-            .map((task) => {
-              const endTime = addMinutesToTime(task.start_time, task.duration);
-              
-              return (
-                <Card key={task.id}>
-                  <CardContent className="p-4">
-                    <div className="flex items-start justify-between mb-3">
-                      <div className="flex-grow">
-                        <div className="flex items-center gap-2 mb-1">
-                          <h4 className="font-medium">{task.title}</h4>
-                          {task.is_ai_generated && (
-                            <Badge variant="secondary" className="text-xs">
-                              <Sparkles className="h-3 w-3 mr-1" />
-                              IA
-                            </Badge>
-                          )}
-                        </div>
-                        {task.description && (
-                          <p className="text-sm text-muted-foreground mb-2">
-                            {task.description}
-                          </p>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-2 ml-4">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => setEditingTask(task)}
-                        >
-                          <Edit2 className="h-3 w-3" />
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => handleDeleteTask(task.id)}
-                          className="text-red-600 hover:text-red-700"
-                        >
-                          <Trash2 className="h-3 w-3" />
-                        </Button>
-                      </div>
-                    </div>
+        <DragDropContext onDragEnd={handleDragEnd}>
+          <Droppable droppableId="tasks-list">
+            {(provided, snapshot) => (
+              <div
+                ref={provided.innerRef}
+                {...provided.droppableProps}
+                className={`space-y-4 transition-colors ${
+                  snapshot.isDraggingOver ? 'bg-gray-50 rounded-lg p-2' : ''
+                }`}
+              >
+                {tasks
+                  .sort((a, b) => a.position - b.position)
+                  .map((task, index) => {
+                    const endTime = addMinutesToTime(task.start_time, task.duration);
                     
-                    <div className="flex flex-wrap items-center gap-2">
-                      <div className="flex items-center gap-1 text-sm">
-                        <Clock className="h-3 w-3" />
-                        <span>{task.start_time} - {endTime}</span>
-                        <span className="text-muted-foreground">
-                          ({task.duration}min)
-                        </span>
-                      </div>
-                      
-                      <Badge variant="outline">{task.category}</Badge>
-                      
-                      <Badge className={getPriorityColor(task.priority)}>
-                        {getPriorityLabel(task.priority)}
-                      </Badge>
-                      
-                      {task.assigned_role && (
-                        <Badge variant="secondary">
-                          {task.assigned_role}
-                        </Badge>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
-        </div>
+                    return (
+                      <Draggable key={task.id} draggableId={task.id} index={index}>
+                        {(provided, snapshot) => (
+                          <Card
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            className={`transition-all ${
+                              snapshot.isDragging 
+                                ? 'shadow-lg scale-105 rotate-2 bg-white border-wedding-olive' 
+                                : 'hover:shadow-md'
+                            }`}
+                          >
+                            <CardContent className="p-4">
+                              <div className="flex items-start gap-3">
+                                <div
+                                  {...provided.dragHandleProps}
+                                  className="flex items-center pt-1 text-gray-400 hover:text-gray-600 cursor-grab active:cursor-grabbing"
+                                >
+                                  <GripVertical className="h-4 w-4" />
+                                </div>
+                                
+                                <div className="flex-grow">
+                                  <div className="flex items-start justify-between mb-3">
+                                    <div className="flex-grow">
+                                      <div className="flex items-center gap-2 mb-1">
+                                        <h4 className="font-medium">{task.title}</h4>
+                                        {task.is_ai_generated && (
+                                          <Badge variant="secondary" className="text-xs">
+                                            <Sparkles className="h-3 w-3 mr-1" />
+                                            IA
+                                          </Badge>
+                                        )}
+                                      </div>
+                                      {task.description && (
+                                        <p className="text-sm text-muted-foreground mb-2">
+                                          {task.description}
+                                        </p>
+                                      )}
+                                    </div>
+                                    <div className="flex items-center gap-2 ml-4">
+                                      <Button
+                                        size="sm"
+                                        variant="outline"
+                                        onClick={() => setEditingTask(task)}
+                                      >
+                                        <Edit2 className="h-3 w-3" />
+                                      </Button>
+                                      <Button
+                                        size="sm"
+                                        variant="outline"
+                                        onClick={() => handleDeleteTask(task.id)}
+                                        className="text-red-600 hover:text-red-700"
+                                      >
+                                        <Trash2 className="h-3 w-3" />
+                                      </Button>
+                                    </div>
+                                  </div>
+                                  
+                                  <div className="flex flex-wrap items-center gap-2">
+                                    <div className="flex items-center gap-1 text-sm">
+                                      <Clock className="h-3 w-3" />
+                                      <span>{task.start_time} - {endTime}</span>
+                                      <span className="text-muted-foreground">
+                                        ({task.duration}min)
+                                      </span>
+                                    </div>
+                                    
+                                    <Badge variant="outline">{task.category}</Badge>
+                                    
+                                    <Badge className={getPriorityColor(task.priority)}>
+                                      {getPriorityLabel(task.priority)}
+                                    </Badge>
+                                    
+                                    {task.assigned_role && (
+                                      <Badge variant="secondary">
+                                        {task.assigned_role}
+                                      </Badge>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        )}
+                      </Draggable>
+                    );
+                  })}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
       )}
+
+      {/* Modal IA */}
+      <AITaskSelectionModal
+        isOpen={showAIModal}
+        onClose={() => setShowAIModal(false)}
+        onTasksSelected={handleAITasksSelected}
+        existingTasks={tasks}
+      />
 
       {/* Modal d'ajout */}
       <Dialog open={showAddModal} onOpenChange={setShowAddModal}>
@@ -538,7 +614,7 @@ const SimpleTaskManager: React.FC<SimpleTaskManagerProps> = ({ coordination }) =
               <Label htmlFor="assigned_role">Assigné à (rôle)</Label>
               <Select
                 value={formData.assigned_role}
-                onValueChange={(value) => setFormData({ ...formData, assigned_role: value })}
+                onValueChange={(value) => setFormData({ ...formData, assigned_role: value === 'none' ? '' : value })}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Sélectionner un rôle" />
@@ -572,7 +648,7 @@ const SimpleTaskManager: React.FC<SimpleTaskManagerProps> = ({ coordination }) =
         <Dialog open={!!editingTask} onOpenChange={() => setEditingTask(null)}>
           <DialogContent className="max-w-md">
             <DialogHeader>
-              <DialogTitle>Modifier le tâche</DialogTitle>
+              <DialogTitle>Modifier la tâche</DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
               <div>
@@ -675,7 +751,7 @@ const SimpleTaskManager: React.FC<SimpleTaskManagerProps> = ({ coordination }) =
                 </Button>
                 <Button variant="outline" onClick={() => setEditingTask(null)}>
                   Annuler
-                </Button>
+                </Button>  
               </div>
             </div>
           </DialogContent>
