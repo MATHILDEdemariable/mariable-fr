@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Calendar, Clock, Plus, Edit2, Trash2, Save, X, Users, Sparkles, GripVertical } from 'lucide-react';
+import { Calendar, Clock, Plus, Edit2, Trash2, Users, Sparkles, GripVertical } from 'lucide-react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { toast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -23,14 +24,14 @@ import {
 } from '@/types/monjourm';
 
 const MonJourMPlanningContent: React.FC = () => {
-  // États locaux simples
+  // États locaux simples (comme dans l'équipe)
   const [coordination, setCoordination] = useState<WeddingCoordination | null>(null);
   const [tasks, setTasks] = useState<PlanningTask[]>([]);
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   
-  // États du formulaire - SÉCURISÉS
-  const [isAddingTask, setIsAddingTask] = useState(false);
+  // États des modales (logique identique à l'équipe)
+  const [showAddTask, setShowAddTask] = useState(false);
   const [editingTask, setEditingTask] = useState<PlanningTask | null>(null);
   const [showAISuggestions, setShowAISuggestions] = useState(false);
   const [isGeneratingTasks, setIsGeneratingTasks] = useState(false);
@@ -47,7 +48,7 @@ const MonJourMPlanningContent: React.FC = () => {
     is_manual_time: false
   });
 
-  // Chargement initial simple
+  // Chargement initial
   useEffect(() => {
     loadData();
   }, []);
@@ -172,101 +173,7 @@ const MonJourMPlanningContent: React.FC = () => {
     }
   };
 
-  // HANDLER SÉCURISÉ POUR AJOUTER UNE TÂCHE
-  const handleAddTask = () => {
-    try {
-      console.log("Opening add task modal");
-      
-      // Reset complet du formulaire AVANT d'ouvrir
-      const safeFormData: TaskFormData = {
-        title: '',
-        description: '',
-        start_time: '09:00',
-        duration: 30,
-        category: 'Général',
-        priority: 'medium',
-        assigned_to: [],
-        is_manual_time: false
-      };
-      
-      setFormData(safeFormData);
-      setEditingTask(null); // S'assurer qu'on n'est pas en mode édition
-      setIsAddingTask(true);
-      
-      console.log("Add task modal opened successfully");
-    } catch (error) {
-      console.error("Error opening add task modal:", error);
-      toast({
-        title: "Erreur",
-        description: "Impossible d'ouvrir le formulaire d'ajout",
-        variant: "destructive"
-      });
-    }
-  };
-
-  // HANDLER SÉCURISÉ POUR MODIFIER UNE TÂCHE
-  const handleEditTask = (task: PlanningTask) => {
-    try {
-      console.log("Opening edit task modal for:", task.id, task);
-      
-      if (!task || !task.id) {
-        throw new Error("Tâche invalide");
-      }
-
-      // Préparer les données du formulaire avec des valeurs sûres
-      const safeFormData: TaskFormData = {
-        title: task.title || '',
-        description: task.description || '',
-        start_time: normalizeTimeString(task.start_time || '09:00'),
-        duration: task.duration || 30,
-        category: task.category || 'Général',
-        priority: task.priority || 'medium',
-        assigned_to: Array.isArray(task.assigned_to) ? task.assigned_to : [],
-        is_manual_time: task.is_manual_time || false
-      };
-
-      setFormData(safeFormData);
-      setEditingTask(task);
-      setIsAddingTask(false); // S'assurer qu'on n'est pas en mode ajout
-      
-      console.log("Edit task modal opened successfully", safeFormData);
-    } catch (error) {
-      console.error("Error opening edit task modal:", error);
-      toast({
-        title: "Erreur",
-        description: "Impossible d'ouvrir le formulaire de modification",
-        variant: "destructive"
-      });
-    }
-  };
-
-  // FERMETURE SÉCURISÉE DU FORMULAIRE
-  const handleCloseForm = () => {
-    try {
-      console.log("Closing form");
-      
-      // Reset complet
-      const safeFormData: TaskFormData = {
-        title: '',
-        description: '',
-        start_time: '09:00',
-        duration: 30,
-        category: 'Général',
-        priority: 'medium',
-        assigned_to: [],
-        is_manual_time: false
-      };
-      
-      setFormData(safeFormData);
-      setIsAddingTask(false);
-      setEditingTask(null);
-      
-      console.log("Form closed successfully");
-    } catch (error) {
-      console.error("Error closing form:", error);
-    }
-  };
-
+  // Reset formulaire (logique identique à l'équipe)
   const resetForm = () => {
     setFormData({
       title: '',
@@ -280,21 +187,18 @@ const MonJourMPlanningContent: React.FC = () => {
     });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    try {
-      console.log("Submitting form", formData);
-      
-      if (!formData.title?.trim() || !coordination?.id) {
-        toast({
-          title: "Erreur",
-          description: "Le titre de la tâche est obligatoire",
-          variant: "destructive"
-        });
-        return;
-      }
+  // Ajouter une tâche (logique copiée de handleAddMember)
+  const handleAddTask = async () => {
+    if (!formData.title?.trim() || !coordination?.id) {
+      toast({
+        title: "Erreur",
+        description: "Le titre de la tâche est obligatoire",
+        variant: "destructive"
+      });
+      return;
+    }
 
+    try {
       const { data, error } = await supabase
         .from('coordination_planning')
         .insert({
@@ -319,7 +223,8 @@ const MonJourMPlanningContent: React.FC = () => {
         description: "La nouvelle tâche a été ajoutée au planning"
       });
 
-      handleCloseForm();
+      resetForm();
+      setShowAddTask(false);
       await loadTasks(coordination.id);
     } catch (error) {
       console.error('Erreur ajout tâche:', error);
@@ -331,21 +236,18 @@ const MonJourMPlanningContent: React.FC = () => {
     }
   };
 
-  const handleUpdate = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    try {
-      console.log("Updating task", editingTask?.id, formData);
-      
-      if (!editingTask || !formData.title?.trim()) {
-        toast({
-          title: "Erreur",
-          description: "Le titre de la tâche est obligatoire",
-          variant: "destructive"
-        });
-        return;
-      }
+  // Modifier une tâche (logique copiée de handleUpdateMember)
+  const handleUpdateTask = async () => {
+    if (!editingTask || !formData.title?.trim()) {
+      toast({
+        title: "Erreur",
+        description: "Le titre de la tâche est obligatoire",
+        variant: "destructive"
+      });
+      return;
+    }
 
+    try {
       const { error } = await supabase
         .from('coordination_planning')
         .update({
@@ -366,7 +268,7 @@ const MonJourMPlanningContent: React.FC = () => {
         description: "Les informations ont été mises à jour"
       });
 
-      handleCloseForm();
+      setEditingTask(null);
       if (coordination?.id) {
         await loadTasks(coordination.id);
       }
@@ -381,9 +283,9 @@ const MonJourMPlanningContent: React.FC = () => {
   };
 
   const handleDelete = async (taskId: string) => {
-    try {
-      if (!window.confirm('Êtes-vous sûr de vouloir supprimer cette tâche ?')) return;
+    if (!window.confirm('Êtes-vous sûr de vouloir supprimer cette tâche ?')) return;
 
+    try {
       const { error } = await supabase
         .from('coordination_planning')
         .delete()
@@ -409,7 +311,7 @@ const MonJourMPlanningContent: React.FC = () => {
     }
   };
 
-  // Nouvelle fonction améliorée pour gérer le drag & drop avec recalcul automatique
+  // Drag & drop avec recalcul automatique
   const handleDragEnd = async (result: any) => {
     if (!result.destination || !coordination?.id) return;
 
@@ -600,143 +502,133 @@ const MonJourMPlanningContent: React.FC = () => {
             </DialogContent>
           </Dialog>
           
-          <Button 
-            onClick={handleAddTask}
-            className="bg-wedding-olive hover:bg-wedding-olive/90"
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            Ajouter une tâche
-          </Button>
-        </div>
-      </div>
+          {/* MODALE D'AJOUT (identique à l'équipe) */}
+          <Dialog open={showAddTask} onOpenChange={setShowAddTask}>
+            <DialogTrigger asChild>
+              <Button className="bg-wedding-olive hover:bg-wedding-olive/90">
+                <Plus className="h-4 w-4 mr-2" />
+                Ajouter une tâche
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl">
+              <DialogHeader>
+                <DialogTitle>Nouvelle tâche</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="title">Titre de la tâche *</Label>
+                    <Input
+                      id="title"
+                      value={formData.title}
+                      onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                      placeholder="Ex: Arrivée des invités"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="category">Catégorie</Label>
+                    <Select 
+                      value={formData.category} 
+                      onValueChange={(value) => setFormData({ ...formData, category: value })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {categories.map((cat) => (
+                          <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
 
-      {/* Formulaire d'ajout/modification SÉCURISÉ */}
-      {(isAddingTask || editingTask) && (
-        <Card>
-          <CardHeader>
-            <CardTitle>
-              {editingTask ? 'Modifier la tâche' : 'Nouvelle tâche'}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={editingTask ? handleUpdate : handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="title">Titre de la tâche *</Label>
-                  <Input
-                    id="title"
-                    value={formData.title || ''}
-                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                    placeholder="Ex: Arrivée des invités"
-                    required
+                  <Label htmlFor="description">Description</Label>
+                  <Textarea
+                    id="description"
+                    value={formData.description}
+                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                    placeholder="Détails de la tâche..."
+                    rows={3}
                   />
                 </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <Label htmlFor="start_time">Heure de début</Label>
+                    <Input
+                      id="start_time"
+                      type="time"
+                      value={formData.start_time}
+                      onChange={(e) => setFormData({ ...formData, start_time: e.target.value })}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="duration">Durée (minutes)</Label>
+                    <Input
+                      id="duration"
+                      type="number"
+                      min="5"
+                      max="480"
+                      value={formData.duration}
+                      onChange={(e) => setFormData({ ...formData, duration: parseInt(e.target.value) || 30 })}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="priority">Priorité</Label>
+                    <Select 
+                      value={formData.priority} 
+                      onValueChange={(value: "low" | "medium" | "high") => setFormData({ ...formData, priority: value })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="low">Faible</SelectItem>
+                        <SelectItem value="medium">Moyenne</SelectItem>
+                        <SelectItem value="high">Élevée</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
                 <div>
-                  <Label htmlFor="category">Catégorie</Label>
-                  <Select 
-                    value={formData.category || 'Général'} 
-                    onValueChange={(value) => setFormData({ ...formData, category: value })}
+                  <Label htmlFor="assigned_to">Assigné à</Label>
+                  <Select
+                    value={formData.assigned_to && formData.assigned_to.length > 0 ? formData.assigned_to[0] : ""}
+                    onValueChange={(value) => setFormData({ ...formData, assigned_to: value ? [value] : [] })}
                   >
                     <SelectTrigger>
-                      <SelectValue />
+                      <SelectValue placeholder="Sélectionner une personne" />
                     </SelectTrigger>
                     <SelectContent>
-                      {categories.map((cat) => (
-                        <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                      <SelectItem value="">Non assigné</SelectItem>
+                      {teamMembers.map((member) => (
+                        <SelectItem key={member.id} value={member.id}>
+                          {member.name} ({member.role})
+                        </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </div>
-              </div>
 
-              <div>
-                <Label htmlFor="description">Description</Label>
-                <Textarea
-                  id="description"
-                  value={formData.description || ''}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  placeholder="Détails de la tâche..."
-                  rows={3}
-                />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <Label htmlFor="start_time">Heure de début</Label>
-                  <Input
-                    id="start_time"
-                    type="time"
-                    value={formData.start_time || '09:00'}
-                    onChange={(e) => setFormData({ ...formData, start_time: e.target.value })}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="duration">Durée (minutes)</Label>
-                  <Input
-                    id="duration"
-                    type="number"
-                    min="5"
-                    max="480"
-                    value={formData.duration || 30}
-                    onChange={(e) => setFormData({ ...formData, duration: parseInt(e.target.value) || 30 })}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="priority">Priorité</Label>
-                  <Select 
-                    value={formData.priority || 'medium'} 
-                    onValueChange={(value: "low" | "medium" | "high") => setFormData({ ...formData, priority: value })}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="low">Faible</SelectItem>
-                      <SelectItem value="medium">Moyenne</SelectItem>
-                      <SelectItem value="high">Élevée</SelectItem>
-                    </SelectContent>
-                  </Select>
+                <div className="flex gap-2">
+                  <Button onClick={handleAddTask} disabled={!formData.title.trim()}>
+                    Ajouter la tâche
+                  </Button>
+                  <Button variant="outline" onClick={() => {
+                    resetForm();
+                    setShowAddTask(false);
+                  }}>
+                    Annuler
+                  </Button>
                 </div>
               </div>
-
-              <div>
-                <Label htmlFor="assigned_to">Assigné à</Label>
-                <Select
-                  value={formData.assigned_to && formData.assigned_to.length > 0 ? formData.assigned_to[0] : ""}
-                  onValueChange={(value) => setFormData({ ...formData, assigned_to: value ? [value] : [] })}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Sélectionner une personne" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="">Non assigné</SelectItem>
-                    {teamMembers.map((member) => (
-                      <SelectItem key={member.id} value={member.id}>
-                        {member.name} ({member.role})
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="flex justify-end gap-2">
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  onClick={handleCloseForm}
-                >
-                  <X className="h-4 w-4 mr-2" />
-                  Annuler
-                </Button>
-                <Button type="submit" className="bg-wedding-olive hover:bg-wedding-olive/90">
-                  <Save className="h-4 w-4 mr-2" />
-                  {editingTask ? 'Modifier' : 'Ajouter'}
-                </Button>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
-      )}
+            </DialogContent>
+          </Dialog>
+        </div>
+      </div>
 
       {/* Liste des tâches */}
       {tasks.length === 0 ? (
@@ -758,7 +650,7 @@ const MonJourMPlanningContent: React.FC = () => {
                   Suggestions IA
                 </Button>
                 <Button 
-                  onClick={handleAddTask}
+                  onClick={() => setShowAddTask(true)}
                   className="bg-wedding-olive hover:bg-wedding-olive/90"
                 >
                   <Plus className="h-4 w-4 mr-2" />
@@ -820,7 +712,19 @@ const MonJourMPlanningContent: React.FC = () => {
                                       <Button
                                         size="sm"
                                         variant="outline"
-                                        onClick={() => handleEditTask(task)}
+                                        onClick={() => {
+                                          setFormData({
+                                            title: task.title,
+                                            description: task.description || '',
+                                            start_time: task.start_time || '09:00',
+                                            duration: task.duration,
+                                            category: task.category,
+                                            priority: task.priority,
+                                            assigned_to: task.assigned_to,
+                                            is_manual_time: false
+                                          });
+                                          setEditingTask(task);
+                                        }}
                                       >
                                         <Edit2 className="h-3 w-3" />
                                       </Button>
@@ -873,6 +777,125 @@ const MonJourMPlanningContent: React.FC = () => {
             )}
           </Droppable>
         </DragDropContext>
+      )}
+
+      {/* MODALE D'ÉDITION (identique à l'équipe) */}
+      {editingTask && (
+        <Dialog open={!!editingTask} onOpenChange={() => setEditingTask(null)}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>Modifier la tâche</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="edit-title">Titre de la tâche *</Label>
+                  <Input
+                    id="edit-title"
+                    value={formData.title}
+                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                    placeholder="Ex: Arrivée des invités"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="edit-category">Catégorie</Label>
+                  <Select 
+                    value={formData.category} 
+                    onValueChange={(value) => setFormData({ ...formData, category: value })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories.map((cat) => (
+                        <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div>
+                <Label htmlFor="edit-description">Description</Label>
+                <Textarea
+                  id="edit-description"
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  placeholder="Détails de la tâche..."
+                  rows={3}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <Label htmlFor="edit-start_time">Heure de début</Label>
+                  <Input
+                    id="edit-start_time"
+                    type="time"
+                    value={formData.start_time}
+                    onChange={(e) => setFormData({ ...formData, start_time: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="edit-duration">Durée (minutes)</Label>
+                  <Input
+                    id="edit-duration"
+                    type="number"
+                    min="5"
+                    max="480"
+                    value={formData.duration}
+                    onChange={(e) => setFormData({ ...formData, duration: parseInt(e.target.value) || 30 })}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="edit-priority">Priorité</Label>
+                  <Select 
+                    value={formData.priority} 
+                    onValueChange={(value: "low" | "medium" | "high") => setFormData({ ...formData, priority: value })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="low">Faible</SelectItem>
+                      <SelectItem value="medium">Moyenne</SelectItem>
+                      <SelectItem value="high">Élevée</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div>
+                <Label htmlFor="edit-assigned_to">Assigné à</Label>
+                <Select
+                  value={formData.assigned_to && formData.assigned_to.length > 0 ? formData.assigned_to[0] : ""}
+                  onValueChange={(value) => setFormData({ ...formData, assigned_to: value ? [value] : [] })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Sélectionner une personne" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">Non assigné</SelectItem>
+                    {teamMembers.map((member) => (
+                      <SelectItem key={member.id} value={member.id}>
+                        {member.name} ({member.role})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="flex gap-2">
+                <Button onClick={handleUpdateTask}>
+                  Sauvegarder
+                </Button>
+                <Button variant="outline" onClick={() => setEditingTask(null)}>
+                  Annuler
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       )}
     </div>
   );
