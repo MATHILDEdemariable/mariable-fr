@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -6,12 +7,12 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import { ThemeProvider } from "next-themes";
 import { ReaderModeProvider } from "@/contexts/ReaderModeContext";
-import { AnalyticsProvider } from "@/components/analytics/AnalyticsProvider";
-import DashboardPage from "./pages/Dashboard";
+import AnalyticsProvider from "@/components/analytics/AnalyticsProvider";
+import DashboardPage from "./pages/dashboard/UserDashboard";
 import PublicDashboardPage from "./pages/dashboard/ReaderView";
-import LegalPage from "./pages/Legal";
+import LegalPage from "./pages/MentionsLegales";
 import PricingPage from "./pages/Pricing";
-import AuthCallbackPage from "./pages/AuthCallback";
+import AuthCallbackPage from "./pages/auth/Callback";
 import NotFoundPage from "./pages/NotFound";
 import MonJourMPlanningPage from "./pages/MonJourMPlanning";
 

@@ -130,7 +130,7 @@ const MonJourMSharedPDFExport: React.FC<MonJourMSharedPDFExportProps> = ({
     });
     
     // Pied de page
-    const pageCount = doc.internal.getNumberOfPages();
+    const pageCount = doc.internal.pages.length - 1; // -1 car le premier élément est vide
     for (let i = 1; i <= pageCount; i++) {
       doc.setPage(i);
       doc.setFontSize(8);
