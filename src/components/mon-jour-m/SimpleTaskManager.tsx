@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -47,23 +46,37 @@ const SimpleTaskManager: React.FC<SimpleTaskManagerProps> = ({ coordination }) =
 
       if (error) throw error;
 
-      const normalizedTasks: PlanningTask[] = (data || []).map((task, index) => ({
-        id: task.id,
-        title: task.title,
-        description: task.description,
-        start_time: normalizeTimeString(task.start_time || "09:00"),
-        duration: task.duration || 30,
-        category: task.category || 'Autre',
-        priority: (task.priority as "low" | "medium" | "high") || 'medium',
-        assigned_role: task.assigned_to && Array.isArray(task.assigned_to) && task.assigned_to.length > 0 
-          ? task.assigned_to[0] : undefined,
-        position: typeof task.position === 'number' ? task.position : index,
-        is_ai_generated: task.is_ai_generated || false
-      }));
+      const normalizedTasks: PlanningTask[] = (data || []).map((task, index) => {
+        console.log('🔍 Processing task:', task.title, 'assigned_to:', task.assigned_to);
+        
+        // Gérer l'assigned_role - extraire le premier rôle s'il y en a
+        let assignedRole: string | undefined;
+        if (task.assigned_to) {
+          if (Array.isArray(task.assigned_to) && task.assigned_to.length > 0) {
+            assignedRole = String(task.assigned_to[0]);
+          } else if (typeof task.assigned_to === 'string') {
+            assignedRole = task.assigned_to;
+          }
+        }
 
+        return {
+          id: task.id,
+          title: task.title,
+          description: task.description,
+          start_time: normalizeTimeString(task.start_time || "09:00"),
+          duration: task.duration || 30,
+          category: task.category || 'Autre',
+          priority: (task.priority as "low" | "medium" | "high") || 'medium',
+          assigned_role: assignedRole,
+          position: typeof task.position === 'number' ? task.position : index,
+          is_ai_generated: task.is_ai_generated || false
+        };
+      });
+
+      console.log('✅ Normalized tasks:', normalizedTasks);
       setTasks(normalizedTasks);
     } catch (error) {
-      console.error('Erreur chargement tâches:', error);
+      console.error('❌ Erreur chargement tâches:', error);
       toast({
         title: "Erreur",
         description: "Impossible de charger les tâches",
@@ -105,6 +118,8 @@ const SimpleTaskManager: React.FC<SimpleTaskManagerProps> = ({ coordination }) =
     }
 
     try {
+      console.log('🚀 Adding task with role:', formData.assigned_role);
+      
       const { error } = await supabase
         .from('coordination_planning')
         .insert({
@@ -130,7 +145,7 @@ const SimpleTaskManager: React.FC<SimpleTaskManagerProps> = ({ coordination }) =
       setShowAddModal(false);
       await loadTasks();
     } catch (error) {
-      console.error('Erreur ajout tâche:', error);
+      console.error('❌ Erreur ajout tâche:', error);
       toast({
         title: "Erreur",
         description: "Impossible d'ajouter la tâche",
@@ -151,6 +166,8 @@ const SimpleTaskManager: React.FC<SimpleTaskManagerProps> = ({ coordination }) =
     }
 
     try {
+      console.log('🔄 Updating task with role:', editingTask.assigned_role);
+      
       const { error } = await supabase
         .from('coordination_planning')
         .update({
@@ -174,7 +191,7 @@ const SimpleTaskManager: React.FC<SimpleTaskManagerProps> = ({ coordination }) =
       setEditingTask(null);
       await loadTasks();
     } catch (error) {
-      console.error('Erreur modification tâche:', error);
+      console.error('❌ Erreur modification tâche:', error);
       toast({
         title: "Erreur",
         description: "Impossible de modifier la tâche",
