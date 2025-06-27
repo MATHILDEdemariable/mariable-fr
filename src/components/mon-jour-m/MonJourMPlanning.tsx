@@ -653,7 +653,6 @@ const MonJourMPlanning: React.FC = () => {
                   </div>
                 </div>
 
-                {/* ... keep existing code (form fields for category, priority, status) */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
                     <label className="block text-sm font-medium mb-1">Catégorie</label>
