@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -50,19 +49,45 @@ const MonJourMPlanningContent: React.FC = () => {
     is_manual_time: false
   });
 
+  // DEBUG: Logging pour tracer les erreurs
+  useEffect(() => {
+    console.log('🚀 MonJourMPlanning - Component mounted');
+    console.log('🔍 Initial state:', { 
+      coordination, 
+      tasks: tasks.length, 
+      teamMembers: teamMembers.length,
+      isLoading 
+    });
+  }, []);
+
   // Chargement initial
   useEffect(() => {
+    console.log('🔄 Starting data load...');
     loadData();
   }, []);
 
   const loadData = async () => {
     try {
+      console.log('📊 loadData - Starting...');
       setIsLoading(true);
-      const { data: { user } } = await supabase.auth.getUser();
       
-      if (!user) {
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      console.log('👤 User data:', { user: user?.id, error: userError });
+      
+      if (userError) {
+        console.error('❌ Auth error:', userError);
         toast({
-          title: "Erreur",
+          title: "Erreur d'authentification",
+          description: userError.message,
+          variant: "destructive"
+        });
+        return;
+      }
+
+      if (!user) {
+        console.warn('⚠️ No user found');
+        toast({
+          title: "Non connecté",
           description: "Vous devez être connecté",
           variant: "destructive"
         });
@@ -70,19 +95,27 @@ const MonJourMPlanningContent: React.FC = () => {
       }
 
       // Récupérer ou créer la coordination
+      console.log('🔍 Fetching coordination...');
       let { data: coordinations, error: coordError } = await supabase
         .from('wedding_coordination')
         .select('*')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });
 
-      if (coordError) throw coordError;
+      console.log('📋 Coordination query result:', { coordinations, error: coordError });
+
+      if (coordError) {
+        console.error('❌ Coordination error:', coordError);
+        throw coordError;
+      }
 
       let activeCoordination: WeddingCoordination;
 
       if (coordinations && coordinations.length > 0) {
         activeCoordination = coordinations[0];
+        console.log('✅ Found existing coordination:', activeCoordination.id);
       } else {
+        console.log('🆕 Creating new coordination...');
         const { data: newCoordination, error: createError } = await supabase
           .from('wedding_coordination')
           .insert({
@@ -93,37 +126,54 @@ const MonJourMPlanningContent: React.FC = () => {
           .select()
           .single();
 
-        if (createError) throw createError;
+        console.log('🆕 New coordination result:', { newCoordination, error: createError });
+
+        if (createError) {
+          console.error('❌ Create coordination error:', createError);
+          throw createError;
+        }
         activeCoordination = newCoordination;
       }
 
       setCoordination(activeCoordination);
+      console.log('✅ Coordination set, loading tasks and team...');
+      
       await Promise.all([
         loadTasks(activeCoordination.id),
         loadTeamMembers(activeCoordination.id)
       ]);
 
+      console.log('✅ Data loading completed successfully');
+
     } catch (error) {
-      console.error('Erreur chargement:', error);
+      console.error('💥 Error in loadData:', error);
       toast({
         title: "Erreur",
-        description: "Impossible de charger les données",
+        description: "Impossible de charger les données: " + (error as Error).message,
         variant: "destructive"
       });
     } finally {
       setIsLoading(false);
+      console.log('🏁 loadData - Finished, isLoading set to false');
     }
   };
 
   const loadTasks = async (coordId: string) => {
     try {
+      console.log('📝 Loading tasks for coordination:', coordId);
+      
       const { data, error } = await supabase
         .from('coordination_planning')
         .select('*')
         .eq('coordination_id', coordId)
         .order('position');
 
-      if (error) throw error;
+      console.log('📝 Tasks query result:', { data, error, count: data?.length });
+
+      if (error) {
+        console.error('❌ Tasks error:', error);
+        throw error;
+      }
 
       const normalizedTasks: PlanningTask[] = (data || []).map((task, index) => ({
         id: task.id,
@@ -142,21 +192,29 @@ const MonJourMPlanningContent: React.FC = () => {
         is_manual_time: false
       }));
 
+      console.log('✅ Tasks normalized:', normalizedTasks.length);
       setTasks(normalizedTasks);
     } catch (error) {
-      console.error('Erreur chargement tâches:', error);
+      console.error('💥 Error loading tasks:', error);
     }
   };
 
   const loadTeamMembers = async (coordId: string) => {
     try {
+      console.log('👥 Loading team members for coordination:', coordId);
+      
       const { data, error } = await supabase
         .from('coordination_team')
         .select('*')
         .eq('coordination_id', coordId)
         .order('created_at');
 
-      if (error) throw error;
+      console.log('👥 Team query result:', { data, error, count: data?.length });
+
+      if (error) {
+        console.error('❌ Team error:', error);
+        throw error;
+      }
 
       const mappedData: TeamMember[] = (data || []).map((item: any) => ({
         id: item.id,
@@ -169,14 +227,16 @@ const MonJourMPlanningContent: React.FC = () => {
         notes: item.notes
       }));
 
+      console.log('✅ Team members normalized:', mappedData.length);
       setTeamMembers(mappedData);
     } catch (error) {
-      console.error('Erreur chargement équipe:', error);
+      console.error('💥 Error loading team members:', error);
     }
   };
 
   // Reset formulaire
   const resetForm = () => {
+    console.log('🔄 Resetting form');
     setFormData({
       title: '',
       description: '',
@@ -191,7 +251,10 @@ const MonJourMPlanningContent: React.FC = () => {
 
   // Ajout de tâche
   const handleAddTask = async () => {
+    console.log('➕ Adding task:', formData);
+    
     if (!formData.title?.trim() || !coordination?.id) {
+      console.warn('⚠️ Missing title or coordination');
       toast({
         title: "Erreur",
         description: "Le titre de la tâche est obligatoire",
@@ -200,46 +263,61 @@ const MonJourMPlanningContent: React.FC = () => {
       return;
     }
 
-    const { data, error } = await supabase
-      .from('coordination_planning')
-      .insert({
-        coordination_id: coordination.id,
-        title: formData.title,
-        description: formData.description || null,
-        start_time: formData.start_time || null,
-        duration: formData.duration,
-        category: formData.category,
-        priority: formData.priority,
-        assigned_to: formData.assigned_to.length > 0 ? formData.assigned_to : null,
-        position: tasks.length,
-        is_ai_generated: false
-      })
-      .select()
-      .single();
+    try {
+      const { data, error } = await supabase
+        .from('coordination_planning')
+        .insert({
+          coordination_id: coordination.id,
+          title: formData.title,
+          description: formData.description || null,
+          start_time: formData.start_time || null,
+          duration: formData.duration,
+          category: formData.category,
+          priority: formData.priority,
+          assigned_to: formData.assigned_to.length > 0 ? formData.assigned_to : null,
+          position: tasks.length,
+          is_ai_generated: false
+        })
+        .select()
+        .single();
 
-    if (error) {
-      console.error('Erreur ajout tâche:', error);
+      console.log('➕ Add task result:', { data, error });
+
+      if (error) {
+        console.error('❌ Add task error:', error);
+        toast({
+          title: "Erreur",
+          description: "Impossible d'ajouter la tâche: " + error.message,
+          variant: "destructive"
+        });
+        return;
+      }
+
+      console.log('✅ Task added successfully');
+      toast({
+        title: "Tâche ajoutée",
+        description: "La nouvelle tâche a été ajoutée au planning"
+      });
+
+      resetForm();
+      setShowAddTask(false);
+      await loadTasks(coordination.id);
+    } catch (error) {
+      console.error('💥 Error in handleAddTask:', error);
       toast({
         title: "Erreur",
-        description: "Impossible d'ajouter la tâche",
+        description: "Une erreur est survenue lors de l'ajout",
         variant: "destructive"
       });
-      return;
     }
-
-    toast({
-      title: "Tâche ajoutée",
-      description: "La nouvelle tâche a été ajoutée au planning"
-    });
-
-    resetForm();
-    setShowAddTask(false);
-    await loadTasks(coordination.id);
   };
 
   // Modification de tâche
   const handleUpdateTask = async () => {
+    console.log('✏️ Updating task:', editingTask);
+    
     if (!editingTask || !editingTask.title?.trim()) {
+      console.warn('⚠️ Missing task or title for update');
       toast({
         title: "Erreur",
         description: "Le titre de la tâche est obligatoire",
@@ -248,71 +326,102 @@ const MonJourMPlanningContent: React.FC = () => {
       return;
     }
 
-    const { error } = await supabase
-      .from('coordination_planning')
-      .update({
-        title: editingTask.title,
-        description: editingTask.description || null,
-        start_time: editingTask.start_time || null,
-        duration: editingTask.duration,
-        category: editingTask.category,
-        priority: editingTask.priority,
-        assigned_to: editingTask.assigned_to.length > 0 ? editingTask.assigned_to : null
-      })
-      .eq('id', editingTask.id);
+    try {
+      const { error } = await supabase
+        .from('coordination_planning')
+        .update({
+          title: editingTask.title,
+          description: editingTask.description || null,
+          start_time: editingTask.start_time || null,
+          duration: editingTask.duration,
+          category: editingTask.category,
+          priority: editingTask.priority,
+          assigned_to: editingTask.assigned_to.length > 0 ? editingTask.assigned_to : null
+        })
+        .eq('id', editingTask.id);
 
-    if (error) {
-      console.error('Erreur modification tâche:', error);
+      console.log('✏️ Update task result:', { error });
+
+      if (error) {
+        console.error('❌ Update task error:', error);
+        toast({
+          title: "Erreur",
+          description: "Impossible de modifier la tâche: " + error.message,
+          variant: "destructive"
+        });
+        return;
+      }
+
+      console.log('✅ Task updated successfully');
+      toast({
+        title: "Tâche modifiée",
+        description: "Les informations ont été mises à jour"
+      });
+
+      setEditingTask(null);
+      if (coordination?.id) {
+        await loadTasks(coordination.id);
+      }
+    } catch (error) {
+      console.error('💥 Error in handleUpdateTask:', error);
       toast({
         title: "Erreur",
-        description: "Impossible de modifier la tâche",
+        description: "Une erreur est survenue lors de la modification",
         variant: "destructive"
       });
-      return;
-    }
-
-    toast({
-      title: "Tâche modifiée",
-      description: "Les informations ont été mises à jour"
-    });
-
-    setEditingTask(null);
-    if (coordination?.id) {
-      await loadTasks(coordination.id);
     }
   };
 
   const handleDelete = async (taskId: string) => {
+    console.log('🗑️ Deleting task:', taskId);
+    
     if (!window.confirm('Êtes-vous sûr de vouloir supprimer cette tâche ?')) return;
 
-    const { error } = await supabase
-      .from('coordination_planning')
-      .delete()
-      .eq('id', taskId);
+    try {
+      const { error } = await supabase
+        .from('coordination_planning')
+        .delete()
+        .eq('id', taskId);
 
-    if (error) {
-      console.error('Erreur suppression tâche:', error);
+      console.log('🗑️ Delete task result:', { error });
+
+      if (error) {
+        console.error('❌ Delete task error:', error);
+        toast({
+          title: "Erreur",
+          description: "Impossible de supprimer la tâche: " + error.message,
+          variant: "destructive"
+        });
+        return;
+      }
+
+      console.log('✅ Task deleted successfully');
+      toast({
+        title: "Tâche supprimée",
+        description: "La tâche a été retirée du planning"
+      });
+
+      if (coordination?.id) {
+        await loadTasks(coordination.id);
+      }
+    } catch (error) {
+      console.error('💥 Error in handleDelete:', error);
       toast({
         title: "Erreur",
-        description: "Impossible de supprimer la tâche",
+        description: "Une erreur est survenue lors de la suppression",
         variant: "destructive"
       });
-      return;
-    }
-
-    toast({
-      title: "Tâche supprimée",
-      description: "La tâche a été retirée du planning"
-    });
-
-    if (coordination?.id) {
-      await loadTasks(coordination.id);
     }
   };
 
   // Fonction pour ajouter les suggestions sélectionnées
   const handleSelectSuggestion = async (suggestion: { title: string; description: string; category: string; priority: string; duration: number }) => {
-    if (!coordination?.id) return Promise.resolve();
+    console.log('🤖 Adding AI suggestion:', suggestion);
+    
+    if (!coordination?.id) {
+      console.warn('⚠️ No coordination for AI suggestion');
+      return Promise.resolve();
+    }
 
     try {
       const { error } = await supabase
@@ -330,15 +439,21 @@ const MonJourMPlanningContent: React.FC = () => {
           is_ai_generated: true
         });
 
-      if (error) throw error;
+      console.log('🤖 AI suggestion result:', { error });
 
+      if (error) {
+        console.error('❌ AI suggestion error:', error);
+        throw error;
+      }
+
+      console.log('✅ AI suggestion added successfully');
       // Recharger les tâches
       await loadTasks(coordination.id);
     } catch (error) {
-      console.error('Erreur ajout suggestion:', error);
+      console.error('💥 Error in handleSelectSuggestion:', error);
       toast({
         title: "Erreur",
-        description: "Impossible d'ajouter la suggestion",
+        description: "Impossible d'ajouter la suggestion: " + (error as Error).message,
         variant: "destructive"
       });
     }
@@ -346,7 +461,12 @@ const MonJourMPlanningContent: React.FC = () => {
 
   // Drag & drop avec recalcul automatique
   const handleDragEnd = async (result: any) => {
-    if (!result.destination || !coordination?.id) return;
+    console.log('🔄 Drag end:', result);
+    
+    if (!result.destination || !coordination?.id) {
+      console.log('❌ No destination or coordination for drag');
+      return;
+    }
 
     const items = Array.from(tasks);
     const [reorderedItem] = items.splice(result.source.index, 1);
@@ -376,14 +496,37 @@ const MonJourMPlanningContent: React.FC = () => {
           .eq('id', task.id);
       }
       
+      console.log('✅ Drag reorder saved successfully');
       toast({
         title: "Planning mis à jour",
         description: "Les horaires ont été recalculés automatiquement"
       });
     } catch (error) {
-      console.error('Erreur sauvegarde positions:', error);
+      console.error('💥 Error saving drag reorder:', error);
       await loadTasks(coordination.id);
     }
+  };
+
+  // Handlers pour les modales avec debugging
+  const handleOpenAddTask = () => {
+    console.log('➕ Opening add task modal');
+    setShowAddTask(true);
+  };
+
+  const handleCloseAddTask = () => {
+    console.log('❌ Closing add task modal');
+    resetForm();
+    setShowAddTask(false);
+  };
+
+  const handleOpenAISuggestions = () => {
+    console.log('🤖 Opening AI suggestions modal');
+    setShowAISuggestions(true);
+  };
+
+  const handleCloseAISuggestions = () => {
+    console.log('❌ Closing AI suggestions modal');
+    setShowAISuggestions(false);
   };
 
   const getPriorityColor = (priority: "low" | "medium" | "high") => {
@@ -405,6 +548,7 @@ const MonJourMPlanningContent: React.FC = () => {
   };
 
   if (isLoading) {
+    console.log('🔄 Rendering loading state');
     return (
       <div className="flex justify-center items-center min-h-[200px]">
         <div className="text-center">
@@ -414,6 +558,8 @@ const MonJourMPlanningContent: React.FC = () => {
       </div>
     );
   }
+
+  console.log('🎨 Rendering main UI');
 
   return (
     <div className="space-y-6">
@@ -428,7 +574,7 @@ const MonJourMPlanningContent: React.FC = () => {
           <Button 
             variant="outline" 
             className="flex items-center gap-2"
-            onClick={() => setShowAISuggestions(true)}
+            onClick={handleOpenAISuggestions}
           >
             <Sparkles className="h-4 w-4" />
             Suggestions IA
@@ -436,7 +582,7 @@ const MonJourMPlanningContent: React.FC = () => {
           
           <Button 
             className="bg-wedding-olive hover:bg-wedding-olive/90"
-            onClick={() => setShowAddTask(true)}
+            onClick={handleOpenAddTask}
           >
             <Plus className="h-4 w-4 mr-2" />
             Ajouter une tâche
@@ -447,7 +593,7 @@ const MonJourMPlanningContent: React.FC = () => {
       {/* MODAL AI SUGGESTIONS */}
       <AISuggestionsModal
         isOpen={showAISuggestions}
-        onClose={() => setShowAISuggestions(false)}
+        onClose={handleCloseAISuggestions}
         onSelectSuggestion={handleSelectSuggestion}
         coordination={coordination}
       />
@@ -561,10 +707,7 @@ const MonJourMPlanningContent: React.FC = () => {
               <Button onClick={handleAddTask} disabled={!formData.title.trim()}>
                 Ajouter la tâche
               </Button>
-              <Button variant="outline" onClick={() => {
-                resetForm();
-                setShowAddTask(false);
-              }}>
+              <Button variant="outline" onClick={handleCloseAddTask}>
                 Annuler
               </Button>
             </div>
@@ -584,7 +727,7 @@ const MonJourMPlanningContent: React.FC = () => {
               </p>
               <div className="flex justify-center gap-2">
                 <Button 
-                  onClick={() => setShowAISuggestions(true)}
+                  onClick={handleOpenAISuggestions}
                   variant="outline"
                   className="flex items-center gap-2"
                 >
@@ -592,7 +735,7 @@ const MonJourMPlanningContent: React.FC = () => {
                   Suggestions IA
                 </Button>
                 <Button 
-                  onClick={() => setShowAddTask(true)}
+                  onClick={handleOpenAddTask}
                   className="bg-wedding-olive hover:bg-wedding-olive/90"
                 >
                   <Plus className="h-4 w-4 mr-2" />

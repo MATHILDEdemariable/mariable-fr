@@ -32,6 +32,17 @@ import Prestataires from "./pages/services/Prestataires";
 import Prestataire from "./pages/prestataire/slug";
 import EmailConfirmation from "./pages/auth/EmailConfirmation";
 
+// Import missing pages
+import Professionnels from "./pages/Professionnels";
+import Approche from "./pages/about/Approche";
+import Histoire from "./pages/about/Histoire";
+import Charte from "./pages/about/Charte";
+import Temoignages from "./pages/about/Temoignages";
+import CGV from "./pages/CGV";
+import FAQ from "./pages/contact/FAQ";
+import ChecklistMariage from "./pages/ChecklistMariage";
+import Accompagnement from "./pages/Accompagnement";
+
 // Import admin pages
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminBlog from "./pages/admin/Blog";
@@ -79,6 +90,19 @@ function App() {
                   <Route path="/blog/:slug" element={<BlogPost />} />
                   <Route path="/contact" element={<Contact />} />
                   <Route path="/mentions-legales" element={<MentionsLegales />} />
+                  
+                  {/* Missing routes - Fixed */}
+                  <Route path="/professionnels" element={<Professionnels />} />
+                  <Route path="/cgv" element={<CGV />} />
+                  <Route path="/faq" element={<FAQ />} />
+                  <Route path="/checklist-mariage" element={<ChecklistMariage />} />
+                  <Route path="/accompagnement" element={<Accompagnement />} />
+
+                  {/* À propos routes - Fixed */}
+                  <Route path="/about/approche" element={<Approche />} />
+                  <Route path="/about/histoire" element={<Histoire />} />
+                  <Route path="/about/charte" element={<Charte />} />
+                  <Route path="/about/temoignages" element={<Temoignages />} />
 
                   {/* Prestataires routes */}
                   <Route path="/prestataires" element={<Prestataires />} />
