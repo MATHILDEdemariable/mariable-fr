@@ -1,276 +1,375 @@
-import React, { useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { supabase } from "@/integrations/supabase/client";
-import { BlogPost, BlogPostInsert, BlogPostUpdate } from "@/types/blog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { toast } from "sonner";
-import { useMutation } from "@tanstack/react-query";
-import ImageUploader from "./ImageUploader";
 
-const formSchema = z.object({
-  title: z.string().min(1, "Le titre est requis."),
-  subtitle: z.string().optional(),
-  slug: z.string().min(1, "Le slug est requis."),
-  content: z.string().optional(),
-  background_image_url: z.string().optional(),
-  meta_title: z.string().optional(),
-  meta_description: z.string().optional(),
-  h1_title: z.string().optional(),
-  status: z.enum(["draft", "published"]),
-});
+import React, { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { X } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
+import ImageUploader from './ImageUploader';
 
-type BlogPostFormValues = z.infer<typeof formSchema>;
+interface BlogPost {
+  id?: string;
+  title: string;
+  subtitle?: string;
+  h1_title?: string;
+  content?: string;
+  meta_title?: string;
+  meta_description?: string;
+  category?: string;
+  tags?: string[];
+  status: 'draft' | 'published';
+  featured: boolean;
+  background_image_url?: string;
+  slug: string;
+  order_index: number;
+}
 
-const slugify = (text: string) =>
-  text
-    .toString()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase()
-    .trim()
-    .replace(/\s+/g, '-')
-    .replace(/[^\w-]+/g, '')
-    .replace(/--+/g, '-');
+interface BlogPostFormProps {
+  post?: BlogPost | null;
+  onClose: () => void;
+  onSuccess: () => void;
+}
 
-const BlogPostForm: React.FC<{ post: BlogPost | null; onSuccess: () => void }> = ({ post, onSuccess }) => {
-  const form = useForm<BlogPostFormValues>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      title: "",
-      subtitle: "",
-      slug: "",
-      content: "",
-      background_image_url: "",
-      meta_title: "",
-      meta_description: "",
-      h1_title: "",
-      status: "draft",
-    },
+const BlogPostForm: React.FC<BlogPostFormProps> = ({ post, onClose, onSuccess }) => {
+  const [formData, setFormData] = useState<BlogPost>({
+    title: '',
+    subtitle: '',
+    h1_title: '',
+    content: '',
+    meta_title: '',
+    meta_description: '',
+    category: '',
+    tags: [],
+    status: 'draft',
+    featured: false,
+    background_image_url: '',
+    slug: '',
+    order_index: 0
   });
-
-  const {
-    handleSubmit,
-    control,
-    reset,
-    formState: { isSubmitting },
-    setValue,
-    watch
-  } = form;
   
-  const titleValue = watch("title");
-
-  useEffect(() => {
-    if (titleValue && !post) {
-      setValue("slug", slugify(titleValue));
-    }
-  }, [titleValue, post, setValue]);
+  const [newTag, setNewTag] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (post) {
-      reset({
-        title: post.title,
-        subtitle: post.subtitle ?? "",
-        slug: post.slug,
-        content: post.content ?? "",
-        background_image_url: post.background_image_url ?? "",
-        meta_title: post.meta_title ?? "",
-        meta_description: post.meta_description ?? "",
-        h1_title: post.h1_title ?? "",
-        status: post.status,
-      });
-    } else {
-      reset({
-        title: "",
-        subtitle: "",
-        slug: "",
-        content: "",
-        background_image_url: "",
-        meta_title: "",
-        meta_description: "",
-        h1_title: "",
-        status: "draft",
+      setFormData({
+        ...post,
+        tags: Array.isArray(post.tags) ? post.tags : []
       });
     }
-  }, [post, reset]);
+  }, [post]);
 
-  const mutation = useMutation({
-    mutationFn: async (values: BlogPostFormValues) => {
-      const dataToSubmit: BlogPostInsert | BlogPostUpdate = {
-        ...values,
-        published_at: values.status === "published" && (!post || !post.published_at)
-            ? new Date().toISOString()
-            : post?.published_at,
+  const generateSlug = (title: string) => {
+    return title
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-')
+      .trim();
+  };
+
+  const handleTitleChange = (title: string) => {
+    setFormData(prev => ({
+      ...prev,
+      title,
+      slug: generateSlug(title),
+      h1_title: prev.h1_title || title,
+      meta_title: prev.meta_title || title
+    }));
+  };
+
+  const addTag = () => {
+    if (newTag.trim() && !formData.tags.includes(newTag.trim())) {
+      setFormData(prev => ({
+        ...prev,
+        tags: [...prev.tags, newTag.trim()]
+      }));
+      setNewTag('');
+    }
+  };
+
+  const removeTag = (tagToRemove: string) => {
+    setFormData(prev => ({
+      ...prev,
+      tags: prev.tags.filter(tag => tag !== tagToRemove)
+    }));
+  };
+
+  const handleImageUpload = (imageUrl: string) => {
+    setFormData(prev => ({
+      ...prev,
+      background_image_url: imageUrl
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    try {
+      const dataToSubmit = {
+        ...formData,
+        published_at: formData.status === 'published' ? new Date().toISOString() : null,
+        tags: JSON.stringify(formData.tags)
       };
 
-      if (post) { // Update
-        const { error } = await supabase.from("blog_posts").update(dataToSubmit).eq("id", post.id);
-        if (error) throw error;
-      } else { // Insert
-        const { error } = await supabase.from("blog_posts").insert(dataToSubmit as BlogPostInsert);
-        if (error) throw error;
+      let error;
+      if (post?.id) {
+        const { error: updateError } = await supabase
+          .from('blog_posts')
+          .update(dataToSubmit)
+          .eq('id', post.id);
+        error = updateError;
+      } else {
+        const { error: insertError } = await supabase
+          .from('blog_posts')
+          .insert([dataToSubmit]);
+        error = insertError;
       }
-    },
-    onSuccess: () => {
-      toast.success(`Article ${post ? 'modifié' : 'créé'} avec succès !`);
+
+      if (error) {
+        console.error('Erreur lors de la sauvegarde:', error);
+        toast.error('Erreur lors de la sauvegarde de l\'article');
+        return;
+      }
+
+      toast.success(post?.id ? 'Article mis à jour avec succès' : 'Article créé avec succès');
       onSuccess();
-    },
-    onError: (error) => {
-      toast.error(`Erreur : ${error.message}`);
+      onClose();
+    } catch (err) {
+      console.error('Erreur:', err);
+      toast.error('Une erreur est survenue');
+    } finally {
+      setIsLoading(false);
     }
-  });
+  };
 
   return (
-    <Form {...form}>
-      <form onSubmit={handleSubmit(data => mutation.mutate(data))} className="space-y-4 max-h-[80vh] overflow-y-auto p-2">
-        <FormField
-          control={control}
-          name="title"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Titre</FormLabel>
-              <FormControl>
-                <Input placeholder="Titre de l'article" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={control}
-          name="slug"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Slug (URL)</FormLabel>
-              <FormControl>
-                <Input placeholder="titre-de-l-article" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={control}
-          name="subtitle"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Sous-titre</FormLabel>
-              <FormControl>
-                <Input placeholder="Sous-titre accrocheur" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={control}
-          name="content"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Contenu</FormLabel>
-              <FormControl>
-                <Textarea placeholder="Contenu de l'article..." rows={10} {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-         <FormField
-          control={control}
-          name="background_image_url"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Image de fond</FormLabel>
-              <FormControl>
-                <ImageUploader 
-                  onUpload={(url) => setValue("background_image_url", url, { shouldValidate: true })}
-                  initialUrl={field.value}
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold">
+          {post?.id ? 'Modifier l\'article' : 'Nouvel article'}
+        </h2>
+        <Button variant="outline" onClick={onClose}>
+          Fermer
+        </Button>
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Colonne principale */}
+          <div className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>Contenu principal</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <Label htmlFor="title">Titre *</Label>
+                  <Input
+                    id="title"
+                    value={formData.title}
+                    onChange={(e) => handleTitleChange(e.target.value)}
+                    placeholder="Titre de l'article"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="subtitle">Sous-titre</Label>
+                  <Input
+                    id="subtitle"
+                    value={formData.subtitle || ''}
+                    onChange={(e) => setFormData(prev => ({ ...prev, subtitle: e.target.value }))}
+                    placeholder="Sous-titre de l'article"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="content">Contenu</Label>
+                  <Textarea
+                    id="content"
+                    value={formData.content || ''}
+                    onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
+                    placeholder="Contenu de l'article"
+                    rows={10}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Image de couverture</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ImageUploader
+                  onImageUpload={handleImageUpload}
+                  currentImageUrl={formData.background_image_url}
+                  bucketName="blog-images"
                 />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <h3 className="text-lg font-semibold pt-4 border-t">SEO</h3>
-        <FormField
-          control={control}
-          name="h1_title"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Titre H1</FormLabel>
-              <FormControl>
-                <Input placeholder="Titre H1 pour le SEO" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={control}
-          name="meta_title"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Meta Titre</FormLabel>
-              <FormControl>
-                <Input placeholder="Meta Titre (pour les moteurs de recherche)" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-         <FormField
-          control={control}
-          name="meta_description"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Meta Description</FormLabel>
-              <FormControl>
-                <Textarea placeholder="Meta Description pour le SEO" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-         <FormField
-          control={control}
-          name="status"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Statut</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Choisir un statut" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="draft">Brouillon</SelectItem>
-                  <SelectItem value="published">Publié</SelectItem>
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <div className="flex justify-end gap-2 pt-4">
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Sauvegarde..." : "Sauvegarder"}
-            </Button>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Colonne latérale */}
+          <div className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>Paramètres</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <Label htmlFor="status">Statut</Label>
+                  <Select
+                    value={formData.status}
+                    onValueChange={(value: 'draft' | 'published') => 
+                      setFormData(prev => ({ ...prev, status: value }))
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="draft">Brouillon</SelectItem>
+                      <SelectItem value="published">Publié</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <Label htmlFor="category">Catégorie</Label>
+                  <Input
+                    id="category"
+                    value={formData.category || ''}
+                    onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value }))}
+                    placeholder="Catégorie de l'article"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="order_index">Ordre d'affichage</Label>
+                  <Input
+                    id="order_index"
+                    type="number"
+                    value={formData.order_index}
+                    onChange={(e) => setFormData(prev => ({ ...prev, order_index: parseInt(e.target.value) || 0 }))}
+                    placeholder="0"
+                  />
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    id="featured"
+                    checked={formData.featured}
+                    onCheckedChange={(checked) => 
+                      setFormData(prev => ({ ...prev, featured: checked }))
+                    }
+                  />
+                  <Label htmlFor="featured">Article mis en avant</Label>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>SEO</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <Label htmlFor="slug">Slug URL</Label>
+                  <Input
+                    id="slug"
+                    value={formData.slug}
+                    onChange={(e) => setFormData(prev => ({ ...prev, slug: e.target.value }))}
+                    placeholder="slug-de-l-article"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="h1_title">Titre H1</Label>
+                  <Input
+                    id="h1_title"
+                    value={formData.h1_title || ''}
+                    onChange={(e) => setFormData(prev => ({ ...prev, h1_title: e.target.value }))}
+                    placeholder="Titre H1 pour le SEO"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="meta_title">Meta Title</Label>
+                  <Input
+                    id="meta_title"
+                    value={formData.meta_title || ''}
+                    onChange={(e) => setFormData(prev => ({ ...prev, meta_title: e.target.value }))}
+                    placeholder="Titre pour les moteurs de recherche"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="meta_description">Meta Description</Label>
+                  <Textarea
+                    id="meta_description"
+                    value={formData.meta_description || ''}
+                    onChange={(e) => setFormData(prev => ({ ...prev, meta_description: e.target.value }))}
+                    placeholder="Description pour les moteurs de recherche"
+                    rows={3}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Tags</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex space-x-2">
+                  <Input
+                    value={newTag}
+                    onChange={(e) => setNewTag(e.target.value)}
+                    placeholder="Nouveau tag"
+                    onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
+                  />
+                  <Button type="button" onClick={addTag} size="sm">
+                    Ajouter
+                  </Button>
+                </div>
+                
+                <div className="flex flex-wrap gap-2">
+                  {formData.tags.map((tag, index) => (
+                    <Badge key={index} variant="secondary" className="flex items-center gap-1">
+                      {tag}
+                      <X
+                        className="h-3 w-3 cursor-pointer"
+                        onClick={() => removeTag(tag)}
+                      />
+                    </Badge>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+
+        <div className="flex justify-end space-x-2 pt-4 border-t">
+          <Button variant="outline" type="button" onClick={onClose}>
+            Annuler
+          </Button>
+          <Button type="submit" disabled={isLoading}>
+            {isLoading ? 'Sauvegarde...' : (post?.id ? 'Mettre à jour' : 'Créer')}
+          </Button>
         </div>
       </form>
-    </Form>
+    </div>
   );
 };
 

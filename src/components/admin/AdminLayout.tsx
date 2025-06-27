@@ -1,142 +1,106 @@
 
 import React from 'react';
-import { useLocation, Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
 import { 
   Calendar, 
   Users, 
   FileText, 
-  Settings, 
+  BarChart3,
   Home,
-  Menu,
-  X
+  Settings
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { useState } from 'react';
+import { useAdminAuth } from '@/hooks/useAdminAuth';
 
 interface AdminLayoutProps {
   children: React.ReactNode;
 }
 
-const AdminLayout = ({ children }: AdminLayoutProps) => {
+const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   const location = useLocation();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { logout } = useAdminAuth();
 
-  const menuItems = [
+  const navigation = [
     {
+      name: 'Dashboard',
+      href: '/admin/dashboard',
       icon: Home,
-      label: 'Dashboard',
-      path: '/admin/dashboard',
+      current: location.pathname === '/admin/dashboard'
     },
     {
+      name: 'Réservations Jour-M',
+      href: '/admin/reservations-jour-m',
       icon: Calendar,
-      label: 'Réservations Jour-M',
-      path: '/admin/reservations-jour-m',
+      current: location.pathname === '/admin/reservations-jour-m'
     },
     {
+      name: 'CRM Prestataires',
+      href: '/admin/prestataires',
       icon: Users,
-      label: 'CRM Prestataires',
-      path: '/admin/prestataires',
+      current: location.pathname === '/admin/prestataires'
     },
     {
+      name: 'Blog',
+      href: '/admin/blog',
       icon: FileText,
-      label: 'Blog',
-      path: '/admin/blog',
-    },
-    {
-      icon: Settings,
-      label: 'Formulaires',
-      path: '/admin/form',
-    },
+      current: location.pathname === '/admin/blog'
+    }
   ];
 
-  return (
-    <div className="min-h-screen bg-gray-50 flex">
-      {/* Mobile menu button */}
-      <div className="lg:hidden fixed top-4 left-4 z-50">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="bg-white shadow-md"
-        >
-          {sidebarOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
-        </Button>
-      </div>
+  const handleLogout = () => {
+    logout();
+    window.location.href = '/admin/dashboard';
+  };
 
+  return (
+    <div className="min-h-screen bg-gray-50">
       {/* Sidebar */}
-      <div className={`
-        fixed lg:static inset-y-0 left-0 z-40
-        w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out
-        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-        lg:translate-x-0
-      `}>
+      <div className="fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg">
         <div className="flex flex-col h-full">
           {/* Header */}
-          <div className="p-6 border-b border-gray-200">
-            <div className="flex items-center gap-2">
-              <img 
-                src="/lovable-uploads/c5ca128d-6c6f-4f09-a990-f6f16d47e231.png" 
-                alt="Mariable Logo" 
-                className="h-8 w-auto" 
-              />
-              <div>
-                <h2 className="text-lg font-semibold text-wedding-black">Admin</h2>
-                <p className="text-sm text-gray-500">Tableau de bord</p>
-              </div>
-            </div>
+          <div className="flex items-center justify-center h-16 px-4 bg-wedding-olive">
+            <h1 className="text-xl font-serif text-white">
+              Admin Panel
+            </h1>
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 p-4">
-            <ul className="space-y-2">
-              {menuItems.map((item) => {
-                const isActive = location.pathname === item.path;
-                return (
-                  <li key={item.path}>
-                    <Link
-                      to={item.path}
-                      className={`
-                        flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors
-                        ${isActive 
-                          ? 'bg-wedding-olive text-white' 
-                          : 'text-gray-700 hover:bg-gray-100'
-                        }
-                      `}
-                      onClick={() => setSidebarOpen(false)}
-                    >
-                      <item.icon className="h-5 w-5" />
-                      {item.label}
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
+          <nav className="flex-1 px-4 py-6 space-y-2">
+            {navigation.map((item) => {
+              const Icon = item.icon;
+              return (
+                <Link
+                  key={item.name}
+                  to={item.href}
+                  className={`flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
+                    item.current
+                      ? 'bg-wedding-olive text-white'
+                      : 'text-gray-700 hover:bg-gray-100'
+                  }`}
+                >
+                  <Icon className="w-5 h-5 mr-3" />
+                  {item.name}
+                </Link>
+              );
+            })}
           </nav>
 
           {/* Footer */}
-          <div className="p-4 border-t border-gray-200">
-            <Link
-              to="/"
-              className="flex items-center gap-2 text-sm text-gray-600 hover:text-wedding-olive transition-colors"
+          <div className="p-4 border-t">
+            <Button 
+              variant="outline" 
+              onClick={handleLogout}
+              className="w-full"
             >
-              <Home className="h-4 w-4" />
-              Retour au site
-            </Link>
+              Déconnexion
+            </Button>
           </div>
         </div>
       </div>
 
-      {/* Mobile overlay */}
-      {sidebarOpen && (
-        <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
-
       {/* Main content */}
-      <div className="flex-1 flex flex-col min-w-0">
-        <main className="flex-1 p-4 lg:p-8">
+      <div className="ml-64">
+        <main className="py-8 px-8">
           {children}
         </main>
       </div>

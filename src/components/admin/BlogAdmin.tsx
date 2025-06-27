@@ -1,9 +1,6 @@
 
-import React, { useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { BlogPost } from "@/types/blog";
-import { Button } from "@/components/ui/button";
+import React, { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
 import {
   Table,
   TableBody,
@@ -11,139 +8,312 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { toast } from "sonner";
-import { Plus, Edit, Trash2 } from "lucide-react";
-import BlogPostForm from "./BlogPostForm";
+} from '@/components/ui/table';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Search, Plus, Edit, Trash2, Eye } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
+import BlogPostForm from './BlogPostForm';
 
-const fetchBlogPosts = async (): Promise<BlogPost[]> => {
-  const { data, error } = await supabase
-    .from("blog_posts")
-    .select("*")
-    .order("created_at", { ascending: false });
-
-  if (error) {
-    console.error("Error fetching blog posts:", error);
-    throw new Error(error.message);
-  }
-
-  return data || [];
-};
+interface BlogPost {
+  id: string;
+  title: string;
+  subtitle?: string;
+  category?: string;
+  status: 'draft' | 'published';
+  featured: boolean;
+  created_at: string;
+  published_at?: string;
+  order_index: number;
+  slug: string;
+  tags?: string[];
+}
 
 const BlogAdmin = () => {
-  const queryClient = useQueryClient();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedPost, setSelectedPost] = useState<BlogPost | null>(null);
+  const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [filteredPosts, setFilteredPosts] = useState<BlogPost[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [categoryFilter, setCategoryFilter] = useState('all');
+  const [isLoading, setIsLoading] = useState(true);
+  const [formOpen, setFormOpen] = useState(false);
+  const [editingPost, setEditingPost] = useState<BlogPost | null>(null);
 
-  const { data: posts, isLoading } = useQuery({
-    queryKey: ["blog_posts"],
-    queryFn: fetchBlogPosts,
-  });
+  useEffect(() => {
+    fetchPosts();
+  }, []);
 
-  const deleteMutation = useMutation({
-    mutationFn: async (id: string) => {
-      const { error } = await supabase.from("blog_posts").delete().eq("id", id);
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      toast.success("Article supprimé avec succès !");
-      queryClient.invalidateQueries({ queryKey: ["blog_posts"] });
-    },
-    onError: (error) => {
-      toast.error(`Erreur lors de la suppression: ${error.message}`);
-    },
-  });
+  useEffect(() => {
+    let filtered = posts;
 
-  const handleAddNew = () => {
-    setSelectedPost(null);
-    setIsModalOpen(true);
-  };
+    if (searchTerm) {
+      filtered = filtered.filter(post => 
+        post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        post.category?.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
 
-  const handleEdit = (post: BlogPost) => {
-    setSelectedPost(post);
-    setIsModalOpen(true);
-  };
+    if (statusFilter !== 'all') {
+      filtered = filtered.filter(post => post.status === statusFilter);
+    }
 
-  const handleDelete = (id: string) => {
-    if (window.confirm("Êtes-vous sûr de vouloir supprimer cet article ?")) {
-      deleteMutation.mutate(id);
+    if (categoryFilter !== 'all') {
+      filtered = filtered.filter(post => post.category === categoryFilter);
+    }
+
+    setFilteredPosts(filtered);
+  }, [searchTerm, statusFilter, categoryFilter, posts]);
+
+  const fetchPosts = async () => {
+    try {
+      setIsLoading(true);
+      const { data, error } = await supabase
+        .from('blog_posts')
+        .select('*')
+        .order('order_index', { ascending: false });
+
+      if (error) {
+        console.error('Erreur lors du chargement des articles:', error);
+        toast.error('Erreur lors du chargement des articles');
+        return;
+      }
+
+      if (data) {
+        const postsWithParsedTags = data.map(post => ({
+          ...post,
+          tags: typeof post.tags === 'string' ? JSON.parse(post.tags || '[]') : (post.tags || [])
+        }));
+        setPosts(postsWithParsedTags);
+        setFilteredPosts(postsWithParsedTags);
+      }
+    } catch (err) {
+      console.error('Erreur:', err);
+      toast.error('Une erreur est survenue');
+    } finally {
+      setIsLoading(false);
     }
   };
 
+  const handleDelete = async (id: string) => {
+    if (!window.confirm('Êtes-vous sûr de vouloir supprimer cet article ?')) {
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('blog_posts')
+        .delete()
+        .eq('id', id);
+
+      if (error) {
+        console.error('Erreur lors de la suppression:', error);
+        toast.error('Erreur lors de la suppression');
+        return;
+      }
+
+      toast.success('Article supprimé avec succès');
+      fetchPosts();
+    } catch (err) {
+      console.error('Erreur:', err);
+      toast.error('Une erreur est survenue');
+    }
+  };
+
+  const handleEdit = (post: BlogPost) => {
+    setEditingPost(post);
+    setFormOpen(true);
+  };
+
+  const handleNew = () => {
+    setEditingPost(null);
+    setFormOpen(true);
+  };
+
+  const handleFormSuccess = () => {
+    fetchPosts();
+    setFormOpen(false);
+    setEditingPost(null);
+  };
+
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return 'Non publié';
+    return new Date(dateString).toLocaleDateString('fr-FR');
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'published': return 'bg-green-100 text-green-800';
+      case 'draft': return 'bg-gray-100 text-gray-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const uniqueCategories = [...new Set(posts.map(p => p.category).filter(Boolean))];
+
   return (
-    <div className="p-4 bg-white rounded-lg shadow">
-      <div className="flex justify-end mb-4">
-        <Button onClick={handleAddNew}>
-          <Plus className="mr-2" />
-          Ajouter un article
-        </Button>
-      </div>
+    <div className="space-y-6">
+      {!formOpen ? (
+        <>
+          <div className="flex justify-between items-center">
+            <div>
+              <h2 className="text-2xl font-bold">Gestion des articles</h2>
+              <p className="text-gray-600">Gérez le contenu de votre blog</p>
+            </div>
+            <Button onClick={handleNew} className="bg-wedding-olive hover:bg-wedding-olive/80">
+              <Plus className="w-4 h-4 mr-2" />
+              Nouvel article
+            </Button>
+          </div>
 
-      {isLoading ? (
-        <p>Chargement...</p>
+          <Card>
+            <CardHeader>
+              <CardTitle>Filtres</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                  <Input
+                    placeholder="Rechercher un article..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                  <SelectTrigger className="w-full sm:w-[180px]">
+                    <SelectValue placeholder="Statut" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Tous les statuts</SelectItem>
+                    <SelectItem value="published">Publié</SelectItem>
+                    <SelectItem value="draft">Brouillon</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                  <SelectTrigger className="w-full sm:w-[180px]">
+                    <SelectValue placeholder="Catégorie" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Toutes les catégories</SelectItem>
+                    {uniqueCategories.map((category) => (
+                      <SelectItem key={category} value={category}>
+                        {category}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Articles ({filteredPosts.length})</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {isLoading ? (
+                <div className="flex justify-center items-center p-10">
+                  <p>Chargement des articles...</p>
+                </div>
+              ) : filteredPosts.length === 0 ? (
+                <div className="text-center py-10">
+                  <p className="text-gray-500">
+                    {posts.length === 0 ? 'Aucun article créé.' : 'Aucun article ne correspond à vos critères.'}
+                  </p>
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Titre</TableHead>
+                        <TableHead>Catégorie</TableHead>
+                        <TableHead>Statut</TableHead>
+                        <TableHead>Mis en avant</TableHead>
+                        <TableHead>Date de publication</TableHead>
+                        <TableHead>Ordre</TableHead>
+                        <TableHead className="text-right">Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {filteredPosts.map((post) => (
+                        <TableRow key={post.id}>
+                          <TableCell>
+                            <div>
+                              <div className="font-medium">{post.title}</div>
+                              {post.subtitle && (
+                                <div className="text-sm text-gray-500">{post.subtitle}</div>
+                              )}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            {post.category && (
+                              <Badge variant="outline">{post.category}</Badge>
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            <Badge className={getStatusColor(post.status)}>
+                              {post.status === 'published' ? 'Publié' : 'Brouillon'}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            {post.featured && (
+                              <Badge className="bg-purple-100 text-purple-800">
+                                En avant
+                              </Badge>
+                            )}
+                          </TableCell>
+                          <TableCell>{formatDate(post.published_at)}</TableCell>
+                          <TableCell>{post.order_index}</TableCell>
+                          <TableCell className="text-right">
+                            <div className="flex justify-end gap-2">
+                              {post.status === 'published' && (
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => window.open(`/blog/${post.slug}`, '_blank')}
+                                >
+                                  <Eye className="w-4 h-4" />
+                                </Button>
+                              )}
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleEdit(post)}
+                              >
+                                <Edit className="w-4 h-4" />
+                              </Button>
+                              <Button
+                                variant="destructive"
+                                size="sm"
+                                onClick={() => handleDelete(post.id)}
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </>
       ) : (
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Titre</TableHead>
-              <TableHead>Statut</TableHead>
-              <TableHead>Date de création</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {posts?.map((post) => (
-              <TableRow key={post.id}>
-                <TableCell className="font-medium">{post.title}</TableCell>
-                <TableCell>
-                  <span
-                    className={`px-2 py-1 text-xs rounded-full ${
-                      post.status === "published"
-                        ? "bg-green-100 text-green-800"
-                        : "bg-yellow-100 text-yellow-800"
-                    }`}
-                  >
-                    {post.status}
-                  </span>
-                </TableCell>
-                <TableCell>
-                  {new Date(post.created_at).toLocaleDateString()}
-                </TableCell>
-                <TableCell className="text-right space-x-2">
-                  <Button variant="outline" size="sm" onClick={() => handleEdit(post)}>
-                    <Edit />
-                  </Button>
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={() => handleDelete(post.id)}
-                  >
-                    <Trash2 />
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+        <BlogPostForm
+          post={editingPost}
+          onClose={() => setFormOpen(false)}
+          onSuccess={handleFormSuccess}
+        />
       )}
-
-      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="sm:max-w-4xl">
-          <DialogHeader>
-            <DialogTitle>
-              {selectedPost ? "Modifier l'article" : "Nouvel article"}
-            </DialogTitle>
-          </DialogHeader>
-          <BlogPostForm
-            post={selectedPost}
-            onSuccess={() => {
-              setIsModalOpen(false);
-              queryClient.invalidateQueries({ queryKey: ["blog_posts"] });
-            }}
-          />
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };

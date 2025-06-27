@@ -1,22 +1,47 @@
 
-import React from "react";
-import BlogAdmin from "@/components/admin/BlogAdmin";
-import { Toaster } from "@/components/ui/sonner";
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import AdminLayout from '@/components/admin/AdminLayout';
+import { useAdminAuth } from '@/hooks/useAdminAuth';
+import BlogAdmin from '@/components/admin/BlogAdmin';
 
 const AdminBlog = () => {
+  const navigate = useNavigate();
+  const { isAuthenticated, isLoading } = useAdminAuth();
+
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      navigate('/admin/dashboard');
+    }
+  }, [isAuthenticated, isLoading, navigate]);
+
+  if (isLoading) {
+    return (
+      <AdminLayout>
+        <div className="flex justify-center items-center h-64">
+          <p>Chargement...</p>
+        </div>
+      </AdminLayout>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return null; // La redirection va se faire
+  }
+
   return (
-    <div className="min-h-screen px-4 py-8">
-      <div className="w-full max-w-7xl mx-auto">
-        <h1 className="text-2xl font-bold mb-4 text-center mt-12">
-          Administration du Blog
-        </h1>
-        <p className="text-lg text-center mb-6">
-          Gérez les articles de votre blog depuis cette interface.
-        </p>
+    <AdminLayout>
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-2xl font-bold text-wedding-black">Gestion du Blog</h1>
+          <p className="text-gray-600 mt-2">
+            Gérez les articles de votre blog depuis cette interface.
+          </p>
+        </div>
+        
         <BlogAdmin />
-        <Toaster />
       </div>
-    </div>
+    </AdminLayout>
   );
 };
 

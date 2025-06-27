@@ -1,141 +1,114 @@
 
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Search, Filter, Download, Eye, Calendar, Users, MapPin } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import AdminLayout from '@/components/admin/AdminLayout';
+import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
-import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { 
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableHead, 
+  TableHeader, 
+  TableRow 
+} from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Search, Eye, Calendar, Users, MapPin } from 'lucide-react';
+import { toast } from 'sonner';
 import ReservationDetailModal from '@/components/admin/ReservationDetailModal';
 import ReservationMetrics from '@/components/admin/ReservationMetrics';
-import { Database } from '@/integrations/supabase/types';
 
-// Use the actual database type
-type JourMReservation = Database['public']['Tables']['jour_m_reservations']['Row'];
-
-interface Reservation extends JourMReservation {
-  // Type assertions for Json fields to make them more usable
-  services_souhaites: string[];
-  contact_jour_j: any;
-  prestataires_reserves: any;
-  uploaded_files: any[];
+interface JourMReservation {
+  id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone: string;
+  wedding_date: string;
+  wedding_location: string;
+  guest_count: number;
+  budget?: string;
+  status: string;
+  created_at: string;
+  current_organization: string;
+  partner_name?: string;
+  services_souhaites?: any[];
+  specific_needs?: string;
+  processed_by?: string;
+  processed_at?: string;
+  admin_notes?: string;
 }
 
-const ReservationsJourM: React.FC = () => {
-  const [reservations, setReservations] = useState<Reservation[]>([]);
-  const [filteredReservations, setFilteredReservations] = useState<Reservation[]>([]);
-  const [loading, setLoading] = useState(true);
+const AdminReservationsJourM = () => {
+  const navigate = useNavigate();
+  const { isAuthenticated, isLoading } = useAdminAuth();
+  const [reservations, setReservations] = useState<JourMReservation[]>([]);
+  const [filteredReservations, setFilteredReservations] = useState<JourMReservation[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
-  const [dateFilter, setDateFilter] = useState('all');
-  const [selectedReservation, setSelectedReservation] = useState<Reservation | null>(null);
-  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
-  const { toast } = useToast();
-
-  const statusOptions = [
-    { value: 'all', label: 'Tous les statuts' },
-    { value: 'nouveau', label: 'Nouveau' },
-    { value: 'en_cours', label: 'En cours' },
-    { value: 'traite', label: 'Traité' },
-    { value: 'annule', label: 'Annulé' }
-  ];
-
-  const dateFilterOptions = [
-    { value: 'all', label: 'Toutes les dates' },
-    { value: 'today', label: "Aujourd'hui" },
-    { value: 'week', label: 'Cette semaine' },
-    { value: 'month', label: 'Ce mois' }
-  ];
+  const [isLoadingData, setIsLoadingData] = useState(true);
+  const [selectedReservation, setSelectedReservation] = useState<JourMReservation | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
-    fetchReservations();
-  }, []);
+    if (!isLoading && !isAuthenticated) {
+      navigate('/admin/dashboard');
+    }
+  }, [isAuthenticated, isLoading, navigate]);
 
   useEffect(() => {
-    filterReservations();
-  }, [reservations, searchTerm, statusFilter, dateFilter]);
+    if (isAuthenticated) {
+      fetchReservations();
+    }
+  }, [isAuthenticated]);
+
+  useEffect(() => {
+    let filtered = reservations;
+
+    if (searchTerm) {
+      filtered = filtered.filter(res => 
+        res.first_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        res.last_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        res.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        res.wedding_location.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    if (statusFilter !== 'all') {
+      filtered = filtered.filter(res => res.status === statusFilter);
+    }
+
+    setFilteredReservations(filtered);
+  }, [searchTerm, statusFilter, reservations]);
 
   const fetchReservations = async () => {
     try {
+      setIsLoadingData(true);
       const { data, error } = await supabase
         .from('jour_m_reservations')
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
-      
-      // Transform the data to match our interface
-      const transformedData: Reservation[] = (data || []).map(item => ({
-        ...item,
-        services_souhaites: Array.isArray(item.services_souhaites) 
-          ? item.services_souhaites as string[]
-          : [],
-        contact_jour_j: item.contact_jour_j || {},
-        prestataires_reserves: item.prestataires_reserves || {},
-        uploaded_files: Array.isArray(item.uploaded_files) 
-          ? item.uploaded_files as any[]
-          : []
-      }));
-      
-      setReservations(transformedData);
-    } catch (error) {
-      console.error('Erreur lors du chargement des réservations:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible de charger les réservations",
-        variant: "destructive"
-      });
+      if (error) {
+        console.error('Erreur lors du chargement des réservations:', error);
+        toast.error('Erreur lors du chargement des réservations');
+        return;
+      }
+
+      if (data) {
+        setReservations(data);
+        setFilteredReservations(data);
+      }
+    } catch (err) {
+      console.error('Erreur:', err);
+      toast.error('Une erreur est survenue');
     } finally {
-      setLoading(false);
+      setIsLoadingData(false);
     }
-  };
-
-  const filterReservations = () => {
-    let filtered = [...reservations];
-
-    // Filtrer par terme de recherche
-    if (searchTerm) {
-      filtered = filtered.filter(reservation =>
-        `${reservation.first_name} ${reservation.last_name}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        reservation.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        reservation.wedding_location.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-
-    // Filtrer par statut
-    if (statusFilter !== 'all') {
-      filtered = filtered.filter(reservation => reservation.status === statusFilter);
-    }
-
-    // Filtrer par date
-    if (dateFilter !== 'all') {
-      const now = new Date();
-      const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-      const startOfWeek = new Date(startOfToday);
-      startOfWeek.setDate(startOfToday.getDate() - startOfToday.getDay());
-      const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-
-      filtered = filtered.filter(reservation => {
-        const createdAt = new Date(reservation.created_at);
-        switch (dateFilter) {
-          case 'today':
-            return createdAt >= startOfToday;
-          case 'week':
-            return createdAt >= startOfWeek;
-          case 'month':
-            return createdAt >= startOfMonth;
-          default:
-            return true;
-        }
-      });
-    }
-
-    setFilteredReservations(filtered);
   };
 
   const updateReservationStatus = async (id: string, newStatus: string) => {
@@ -144,258 +117,226 @@ const ReservationsJourM: React.FC = () => {
         .from('jour_m_reservations')
         .update({ 
           status: newStatus,
-          processed_at: newStatus === 'traite' ? new Date().toISOString() : null
+          processed_at: newStatus !== 'nouveau' ? new Date().toISOString() : null
         })
         .eq('id', id);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Erreur lors de la mise à jour du statut:', error);
+        toast.error('Erreur lors de la mise à jour du statut');
+        return;
+      }
 
-      await fetchReservations();
-      toast({
-        title: "Succès",
-        description: "Statut mis à jour avec succès"
-      });
-    } catch (error) {
-      console.error('Erreur lors de la mise à jour:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible de mettre à jour le statut",
-        variant: "destructive"
-      });
+      toast.success('Statut mis à jour avec succès');
+      fetchReservations();
+    } catch (err) {
+      console.error('Erreur:', err);
+      toast.error('Une erreur est survenue');
     }
   };
 
-  const exportToCSV = () => {
-    const csvData = filteredReservations.map(reservation => ({
-      'Nom': `${reservation.first_name} ${reservation.last_name}`,
-      'Email': reservation.email,
-      'Téléphone': reservation.phone,
-      'Partenaire': reservation.partner_name,
-      'Date de mariage': format(new Date(reservation.wedding_date), 'dd/MM/yyyy', { locale: fr }),
-      'Lieu': reservation.wedding_location,
-      'Invités': reservation.guest_count,
-      'Budget': reservation.budget,
-      'Statut': reservation.status,
-      'Date de création': format(new Date(reservation.created_at), 'dd/MM/yyyy HH:mm', { locale: fr })
-    }));
-
-    const csvContent = [
-      Object.keys(csvData[0]).join(','),
-      ...csvData.map(row => Object.values(row).join(','))
-    ].join('\n');
-
-    const blob = new Blob([csvContent], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `reservations_jour_m_${format(new Date(), 'yyyy-MM-dd')}.csv`;
-    a.click();
-    window.URL.revokeObjectURL(url);
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'nouveau': return 'bg-blue-100 text-blue-800';
+      case 'en_cours': return 'bg-orange-100 text-orange-800';
+      case 'traite': return 'bg-green-100 text-green-800';
+      case 'annule': return 'bg-red-100 text-red-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
   };
 
-  const getStatusBadge = (status: string) => {
-    const statusConfig = {
-      'nouveau': { label: 'Nouveau', variant: 'default' as const },
-      'en_cours': { label: 'En cours', variant: 'secondary' as const },
-      'traite': { label: 'Traité', variant: 'default' as const },
-      'annule': { label: 'Annulé', variant: 'destructive' as const }
-    };
-
-    const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.nouveau;
-    return <Badge variant={config.variant}>{config.label}</Badge>;
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('fr-FR');
   };
 
-  const openDetailModal = (reservation: Reservation) => {
-    setSelectedReservation(reservation);
-    setIsDetailModalOpen(true);
-  };
+  const uniqueStatuses = [...new Set(reservations.map(r => r.status))];
 
-  if (loading) {
+  if (isLoading) {
     return (
-      <div className="container mx-auto p-6">
-        <div className="flex items-center justify-center h-64">
-          <div className="text-lg">Chargement des réservations...</div>
+      <AdminLayout>
+        <div className="flex justify-center items-center h-64">
+          <p>Chargement...</p>
         </div>
-      </div>
+      </AdminLayout>
     );
   }
 
+  if (!isAuthenticated) {
+    return null;
+  }
+
   return (
-    <div className="container mx-auto p-6 space-y-6">
-      {/* En-tête */}
-      <div className="flex justify-between items-center">
+    <AdminLayout>
+      <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold">Réservations Jour M</h1>
-          <p className="text-muted-foreground">Gestion des demandes de coordination</p>
+          <h1 className="text-2xl font-bold text-wedding-black">Réservations Jour-M</h1>
+          <p className="text-gray-600 mt-2">
+            Gérez les demandes de coordination de mariage.
+          </p>
         </div>
-        <Button onClick={exportToCSV} className="flex items-center gap-2">
-          <Download className="h-4 w-4" />
-          Exporter CSV
-        </Button>
+
+        <ReservationMetrics reservations={reservations} />
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Filtres et recherche</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                <Input
+                  placeholder="Rechercher par nom, email ou lieu..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+              
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="w-full sm:w-[200px]">
+                  <SelectValue placeholder="Filtrer par statut" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Tous les statuts</SelectItem>
+                  {uniqueStatuses.map(status => (
+                    <SelectItem key={status} value={status}>
+                      {status.charAt(0).toUpperCase() + status.slice(1).replace('_', ' ')}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>
+              Réservations ({filteredReservations.length})
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {isLoadingData ? (
+              <div className="flex justify-center items-center p-10">
+                <p>Chargement des réservations...</p>
+              </div>
+            ) : filteredReservations.length === 0 ? (
+              <div className="text-center py-10">
+                <p className="text-gray-500">
+                  {reservations.length === 0 
+                    ? 'Aucune réservation trouvée.' 
+                    : 'Aucune réservation ne correspond à vos critères de recherche.'}
+                </p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Client</TableHead>
+                      <TableHead>Date de mariage</TableHead>
+                      <TableHead>Lieu</TableHead>
+                      <TableHead>Invités</TableHead>
+                      <TableHead>Statut</TableHead>
+                      <TableHead>Créé le</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredReservations.map((reservation) => (
+                      <TableRow key={reservation.id}>
+                        <TableCell>
+                          <div>
+                            <div className="font-medium">
+                              {reservation.first_name} {reservation.last_name}
+                            </div>
+                            <div className="text-sm text-gray-500">
+                              {reservation.email}
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <Calendar className="h-4 w-4 text-gray-400" />
+                            {formatDate(reservation.wedding_date)}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <MapPin className="h-4 w-4 text-gray-400" />
+                            {reservation.wedding_location}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <Users className="h-4 w-4 text-gray-400" />
+                            {reservation.guest_count}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Select
+                            value={reservation.status}
+                            onValueChange={(value) => updateReservationStatus(reservation.id, value)}
+                          >
+                            <SelectTrigger className="w-[140px]">
+                              <SelectValue>
+                                <Badge className={getStatusColor(reservation.status)}>
+                                  {reservation.status.charAt(0).toUpperCase() + reservation.status.slice(1).replace('_', ' ')}
+                                </Badge>
+                              </SelectValue>
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="nouveau">Nouveau</SelectItem>
+                              <SelectItem value="en_cours">En cours</SelectItem>
+                              <SelectItem value="traite">Traité</SelectItem>
+                              <SelectItem value="annule">Annulé</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </TableCell>
+                        <TableCell>
+                          {formatDate(reservation.created_at)}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              setSelectedReservation(reservation);
+                              setModalOpen(true);
+                            }}
+                          >
+                            <Eye className="h-4 w-4 mr-2" />
+                            Voir détails
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {selectedReservation && (
+          <ReservationDetailModal
+            reservation={selectedReservation}
+            open={modalOpen}
+            onClose={() => {
+              setModalOpen(false);
+              setSelectedReservation(null);
+            }}
+            onUpdate={() => {
+              fetchReservations();
+              setModalOpen(false);
+              setSelectedReservation(null);
+            }}
+          />
+        )}
       </div>
-
-      {/* Métriques */}
-      <ReservationMetrics reservations={reservations} />
-
-      {/* Filtres */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Filter className="h-5 w-5" />
-            Filtres
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Rechercher par nom, email, lieu..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger>
-                <SelectValue placeholder="Statut" />
-              </SelectTrigger>
-              <SelectContent>
-                {statusOptions.map(option => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select value={dateFilter} onValueChange={setDateFilter}>
-              <SelectTrigger>
-                <SelectValue placeholder="Période" />
-              </SelectTrigger>
-              <SelectContent>
-                {dateFilterOptions.map(option => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <div className="text-sm text-muted-foreground flex items-center">
-              {filteredReservations.length} résultat(s)
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Tableau des réservations */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Liste des réservations</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Couple</TableHead>
-                <TableHead>Date de mariage</TableHead>
-                <TableHead>Lieu</TableHead>
-                <TableHead>Invités</TableHead>
-                <TableHead>Statut</TableHead>
-                <TableHead>Date de demande</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredReservations.map((reservation) => (
-                <TableRow key={reservation.id}>
-                  <TableCell>
-                    <div>
-                      <div className="font-medium">
-                        {reservation.first_name} {reservation.last_name}
-                      </div>
-                      <div className="text-sm text-muted-foreground">
-                        {reservation.email}
-                      </div>
-                      {reservation.partner_name && (
-                        <div className="text-sm text-muted-foreground">
-                          & {reservation.partner_name}
-                        </div>
-                      )}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <Calendar className="h-4 w-4 text-muted-foreground" />
-                      {format(new Date(reservation.wedding_date), 'dd/MM/yyyy', { locale: fr })}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <MapPin className="h-4 w-4 text-muted-foreground" />
-                      {reservation.wedding_location}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <Users className="h-4 w-4 text-muted-foreground" />
-                      {reservation.guest_count}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    {getStatusBadge(reservation.status || 'nouveau')}
-                  </TableCell>
-                  <TableCell>
-                    {format(new Date(reservation.created_at), 'dd/MM/yyyy', { locale: fr })}
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => openDetailModal(reservation)}
-                      >
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                      <Select
-                        value={reservation.status || 'nouveau'}
-                        onValueChange={(value) => updateReservationStatus(reservation.id, value)}
-                      >
-                        <SelectTrigger className="w-32">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="nouveau">Nouveau</SelectItem>
-                          <SelectItem value="en_cours">En cours</SelectItem>
-                          <SelectItem value="traite">Traité</SelectItem>
-                          <SelectItem value="annule">Annulé</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-          
-          {filteredReservations.length === 0 && (
-            <div className="text-center py-8 text-muted-foreground">
-              Aucune réservation trouvée
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Modal de détail */}
-      {selectedReservation && (
-        <ReservationDetailModal
-          reservation={selectedReservation}
-          isOpen={isDetailModalOpen}
-          onClose={() => setIsDetailModalOpen(false)}
-          onUpdate={fetchReservations}
-        />
-      )}
-    </div>
+    </AdminLayout>
   );
 };
 
-export default ReservationsJourM;
+export default AdminReservationsJourM;

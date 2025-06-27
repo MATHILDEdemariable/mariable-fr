@@ -1107,6 +1107,7 @@ export type Database = {
           categorie: Database["public"]["Enums"]["prestataire_categorie"] | null
           categorie_lieu: string | null
           created_at: string
+          date_derniere_contact: string | null
           description: string | null
           description_more: string | null
           email: string | null
@@ -1142,6 +1143,7 @@ export type Database = {
           siret: string | null
           site_web: string | null
           slug: string | null
+          status_crm: Database["public"]["Enums"]["prestataire_status"] | null
           styles: Json | null
           telephone: string | null
           third_price_package: number | null
@@ -1161,6 +1163,7 @@ export type Database = {
             | null
           categorie_lieu?: string | null
           created_at?: string
+          date_derniere_contact?: string | null
           description?: string | null
           description_more?: string | null
           email?: string | null
@@ -1196,6 +1199,7 @@ export type Database = {
           siret?: string | null
           site_web?: string | null
           slug?: string | null
+          status_crm?: Database["public"]["Enums"]["prestataire_status"] | null
           styles?: Json | null
           telephone?: string | null
           third_price_package?: number | null
@@ -1215,6 +1219,7 @@ export type Database = {
             | null
           categorie_lieu?: string | null
           created_at?: string
+          date_derniere_contact?: string | null
           description?: string | null
           description_more?: string | null
           email?: string | null
@@ -1250,6 +1255,7 @@ export type Database = {
           siret?: string | null
           site_web?: string | null
           slug?: string | null
+          status_crm?: Database["public"]["Enums"]["prestataire_status"] | null
           styles?: Json | null
           telephone?: string | null
           third_price_package?: number | null
