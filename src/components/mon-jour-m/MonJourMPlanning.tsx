@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -18,7 +19,8 @@ import {
   TaskFormData,
   categories,
   normalizeTimeString,
-  addMinutesToTime
+  addMinutesToTime,
+  recalculateTimeline
 } from '@/types/monjourm';
 
 const MonJourMPlanningContent: React.FC = () => {
@@ -40,7 +42,6 @@ const MonJourMPlanningContent: React.FC = () => {
     duration: 30,
     category: 'Général',
     priority: 'medium',
-    status: 'todo',
     assigned_to: [],
     is_manual_time: false
   });
@@ -129,7 +130,6 @@ const MonJourMPlanningContent: React.FC = () => {
         duration: task.duration || 15,
         category: task.category || 'Général',
         priority: (task.priority as "low" | "medium" | "high") || 'medium',
-        status: (task.status as "todo" | "completed" | "in_progress") || 'todo',
         assigned_to: Array.isArray(task.assigned_to) 
           ? (task.assigned_to as any[]).map(item => String(item)).filter(item => item && typeof item === 'string')
           : [],
@@ -179,7 +179,6 @@ const MonJourMPlanningContent: React.FC = () => {
       duration: 30,
       category: 'Général',
       priority: 'medium',
-      status: 'todo',
       assigned_to: [],
       is_manual_time: false
     });
@@ -208,7 +207,6 @@ const MonJourMPlanningContent: React.FC = () => {
           duration: formData.duration,
           category: formData.category,
           priority: formData.priority,
-          status: formData.status,
           assigned_to: formData.assigned_to.length > 0 ? formData.assigned_to : null,
           position: tasks.length,
           is_ai_generated: false
@@ -245,7 +243,6 @@ const MonJourMPlanningContent: React.FC = () => {
       duration: task.duration,
       category: task.category,
       priority: task.priority,
-      status: task.status,
       assigned_to: task.assigned_to,
       is_manual_time: task.is_manual_time || false
     });
@@ -273,7 +270,6 @@ const MonJourMPlanningContent: React.FC = () => {
           duration: formData.duration,
           category: formData.category,
           priority: formData.priority,
-          status: formData.status,
           assigned_to: formData.assigned_to.length > 0 ? formData.assigned_to : null
         })
         .eq('id', editingTask.id);
@@ -329,28 +325,7 @@ const MonJourMPlanningContent: React.FC = () => {
     }
   };
 
-  const handleStatusChange = async (task: PlanningTask, newStatus: "todo" | "completed" | "in_progress") => {
-    try {
-      const { error } = await supabase
-        .from('coordination_planning')
-        .update({ status: newStatus })
-        .eq('id', task.id);
-
-      if (error) throw error;
-
-      if (coordination?.id) {
-        await loadTasks(coordination.id);
-      }
-    } catch (error) {
-      console.error('Erreur changement statut:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible de changer le statut",
-        variant: "destructive"
-      });
-    }
-  };
-
+  // Nouvelle fonction améliorée pour gérer le drag & drop avec recalcul automatique
   const handleDragEnd = async (result: any) => {
     if (!result.destination || !coordination?.id) return;
 
@@ -359,21 +334,33 @@ const MonJourMPlanningContent: React.FC = () => {
     items.splice(result.destination.index, 0, reorderedItem);
 
     // Mettre à jour les positions
-    const updatedTasks = items.map((task, index) => ({
+    const reorderedTasks = items.map((task, index) => ({
       ...task,
       position: index
     }));
 
-    setTasks(updatedTasks);
+    // Recalculer automatiquement la timeline
+    const recalculatedTasks = recalculateTimeline(reorderedTasks);
 
-    // Sauvegarder en base
+    setTasks(recalculatedTasks);
+
+    // Sauvegarder en base avec les nouvelles positions ET les nouvelles heures
     try {
-      for (const task of updatedTasks) {
+      for (const task of recalculatedTasks) {
         await supabase
           .from('coordination_planning')
-          .update({ position: task.position })
+          .update({ 
+            position: task.position,
+            start_time: task.start_time,
+            end_time: task.end_time
+          })
           .eq('id', task.id);
       }
+      
+      toast({
+        title: "Planning mis à jour",
+        description: "Les horaires ont été recalculés automatiquement"
+      });
     } catch (error) {
       console.error('Erreur sauvegarde positions:', error);
       await loadTasks(coordination.id);
@@ -396,7 +383,7 @@ const MonJourMPlanningContent: React.FC = () => {
         return;
       }
 
-      const prompt = `Génère 10 tâches de planning pour un mariage, avec des heures réalistes et des durées appropriées. Format JSON avec: title, description, start_time (format HH:MM), duration (en minutes), category, priority (low/medium/high), status (todo), assigned_to (array vide).`;
+      const prompt = `Génère 10 tâches de planning pour un mariage, avec des heures réalistes et des durées appropriées. Format JSON avec: title, description, start_time (format HH:MM), duration (en minutes), category, priority (low/medium/high), assigned_to (array vide).`;
 
       const { data, error } = await supabase.functions.invoke('chat-completion', {
         body: {
@@ -421,7 +408,6 @@ const MonJourMPlanningContent: React.FC = () => {
             duration: aiTask.duration || 30,
             category: aiTask.category || 'Général',
             priority: aiTask.priority || 'medium',
-            status: 'todo',
             assigned_to: null,
             position: tasks.length + i,
             is_ai_generated: true
@@ -452,15 +438,6 @@ const MonJourMPlanningContent: React.FC = () => {
       case 'high': return 'bg-red-100 text-red-800';
       case 'medium': return 'bg-yellow-100 text-yellow-800';
       case 'low': return 'bg-green-100 text-green-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  };
-
-  const getStatusColor = (status: "todo" | "completed" | "in_progress") => {
-    switch (status) {
-      case 'completed': return 'bg-green-100 text-green-800';
-      case 'in_progress': return 'bg-blue-100 text-blue-800';
-      case 'todo': return 'bg-gray-100 text-gray-800';
       default: return 'bg-gray-100 text-gray-800';
     }
   };
@@ -638,42 +615,24 @@ const MonJourMPlanningContent: React.FC = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="status">Statut</Label>
-                  <Select 
-                    value={formData.status} 
-                    onValueChange={(value: "todo" | "completed" | "in_progress") => setFormData({ ...formData, status: value })}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="todo">À faire</SelectItem>
-                      <SelectItem value="in_progress">En cours</SelectItem>
-                      <SelectItem value="completed">Terminé</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label htmlFor="assigned_to">Assigné à</Label>
-                  <Select
-                    value={formData.assigned_to.length > 0 ? formData.assigned_to[0] : ""}
-                    onValueChange={(value) => setFormData({ ...formData, assigned_to: value ? [value] : [] })}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Sélectionner une personne" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="">Non assigné</SelectItem>
-                      {teamMembers.map((member) => (
-                        <SelectItem key={member.id} value={member.id}>
-                          {member.name} ({member.role})
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+              <div>
+                <Label htmlFor="assigned_to">Assigné à</Label>
+                <Select
+                  value={formData.assigned_to.length > 0 ? formData.assigned_to[0] : ""}
+                  onValueChange={(value) => setFormData({ ...formData, assigned_to: value ? [value] : [] })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Sélectionner une personne" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">Non assigné</SelectItem>
+                    {teamMembers.map((member) => (
+                      <SelectItem key={member.id} value={member.id}>
+                        {member.name} ({member.role})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
               <div className="flex justify-end gap-2">
@@ -814,44 +773,12 @@ const MonJourMPlanningContent: React.FC = () => {
                                        task.priority === 'medium' ? 'Moyenne' : 'Faible'}
                                     </Badge>
                                     
-                                    <Badge className={getStatusColor(task.status)}>
-                                      {task.status === 'completed' ? 'Terminé' :
-                                       task.status === 'in_progress' ? 'En cours' : 'À faire'}
-                                    </Badge>
-                                    
                                     {assignedMember && (
                                       <div className="flex items-center gap-1 text-sm">
                                         <Users className="h-3 w-3" />
                                         <span>{assignedMember.name}</span>
                                       </div>
                                     )}
-                                  </div>
-                                  
-                                  <div className="flex gap-1">
-                                    <Button
-                                      size="sm"
-                                      variant={task.status === 'todo' ? 'default' : 'outline'}
-                                      onClick={() => handleStatusChange(task, 'todo')}
-                                      className="text-xs"
-                                    >
-                                      À faire
-                                    </Button>
-                                    <Button
-                                      size="sm"
-                                      variant={task.status === 'in_progress' ? 'default' : 'outline'}
-                                      onClick={() => handleStatusChange(task, 'in_progress')}
-                                      className="text-xs"
-                                    >
-                                      En cours
-                                    </Button>
-                                    <Button
-                                      size="sm"
-                                      variant={task.status === 'completed' ? 'default' : 'outline'}
-                                      onClick={() => handleStatusChange(task, 'completed')}
-                                      className="text-xs"
-                                    >
-                                      Terminé
-                                    </Button>
                                   </div>
                                 </div>
                               </div>

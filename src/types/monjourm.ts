@@ -20,7 +20,6 @@ export interface PlanningTask {
   duration: number;
   category: string;
   priority: "low" | "medium" | "high";
-  status: "todo" | "completed" | "in_progress";
   assigned_to: string[];
   position: number;
   is_ai_generated?: boolean;
@@ -46,7 +45,6 @@ export interface TaskFormData {
   duration: number;
   category: string;
   priority: "low" | "medium" | "high";
-  status: "todo" | "completed" | "in_progress";
   assigned_to: string[];
   is_manual_time: boolean;
 }
@@ -119,4 +117,28 @@ export const addMinutesToTime = (timeString: string, minutes: number): string =>
     console.error('Erreur lors du calcul du temps:', error);
     return timeString;
   }
+};
+
+// Nouvelle fonction pour recalculer automatiquement la timeline
+export const recalculateTimeline = (tasks: PlanningTask[]): PlanningTask[] => {
+  const sortedTasks = [...tasks].sort((a, b) => a.position - b.position);
+  
+  let currentTime = sortedTasks.length > 0 ? sortedTasks[0].start_time || '09:00' : '09:00';
+  
+  return sortedTasks.map((task, index) => {
+    if (index === 0) {
+      // La première tâche garde son heure de début
+      currentTime = task.start_time || '09:00';
+    } else {
+      // Les tâches suivantes commencent à la fin de la précédente
+      task.start_time = currentTime;
+    }
+    
+    // Calculer l'heure de fin et préparer pour la suivante
+    const endTime = addMinutesToTime(currentTime, task.duration);
+    task.end_time = endTime;
+    currentTime = endTime;
+    
+    return task;
+  });
 };

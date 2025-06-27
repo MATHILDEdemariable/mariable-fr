@@ -316,7 +316,6 @@ export type Database = {
           position: number | null
           priority: string | null
           start_time: string | null
-          status: string | null
           title: string
           updated_at: string
         }
@@ -333,7 +332,6 @@ export type Database = {
           position?: number | null
           priority?: string | null
           start_time?: string | null
-          status?: string | null
           title: string
           updated_at?: string
         }
@@ -350,7 +348,6 @@ export type Database = {
           position?: number | null
           priority?: string | null
           start_time?: string | null
-          status?: string | null
           title?: string
           updated_at?: string
         }
