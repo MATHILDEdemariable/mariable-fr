@@ -457,6 +457,7 @@ export type Database = {
           created_at: string
           description: string | null
           expires_at: string | null
+          filter_role: string | null
           id: string
           token: string
           user_id: string
@@ -466,6 +467,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           expires_at?: string | null
+          filter_role?: string | null
           id?: string
           token: string
           user_id: string
@@ -475,6 +477,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           expires_at?: string | null
+          filter_role?: string | null
           id?: string
           token?: string
           user_id?: string

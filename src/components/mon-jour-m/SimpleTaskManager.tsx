@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -14,6 +13,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 import { PlanningTask, WeddingCoordination, PREDEFINED_ROLES, TASK_CATEGORIES, normalizeTimeString, addMinutesToTime } from '@/types/monjourm-mvp';
 import AITaskSelectionModal from './AITaskSelectionModal';
+import SharePlanningButton from './SharePlanningButton';
 
 interface SimpleTaskManagerProps {
   coordination: WeddingCoordination;
@@ -372,6 +372,7 @@ const SimpleTaskManager: React.FC<SimpleTaskManagerProps> = ({ coordination }) =
           </p>
         </div>
         <div className="flex gap-2">
+          <SharePlanningButton coordinationId={coordination.id} />
           <Button 
             onClick={() => setShowAIModal(true)}
             variant="outline"
