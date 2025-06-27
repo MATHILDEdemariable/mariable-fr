@@ -797,7 +797,7 @@ const MonJourMPlanning: React.FC = () => {
                       onChange={(e) => setFormData({ ...formData, start_time: e.target.value })}
                     />
                     <p className="text-xs text-gray-500 mt-1">
-                      Les horaires suivants se calculeront automatiquement
+                      Les horaires suivantes se calculeront automatiquement
                     </p>
                   </div>
                   <div>

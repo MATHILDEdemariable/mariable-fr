@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
@@ -22,11 +21,12 @@ export interface PlanningTask {
   end_time?: string;
   duration: number; // Obligatoire - durée en minutes
   category: string;
-  priority: string;
+  priority: "low" | "medium" | "high"; // Types stricts uniformisés
   status: "todo" | "completed" | "in_progress"; // Types stricts
   assigned_to: string[]; // Array de strings
   position: number; // Obligatoire - position dans la liste
   is_ai_generated?: boolean;
+  is_manual_time?: boolean; // Nouvelle propriété pour les heures fixées manuellement
 }
 
 // Type pour les tâches partielles (venant de la base de données)
@@ -115,6 +115,24 @@ const normalizeStatus = (value?: string): "todo" | "completed" | "in_progress" =
   }
 };
 
+// Fonction pour normaliser la priorité
+const normalizePriority = (value?: string): "low" | "medium" | "high" => {
+  if (!value) return "medium";
+  switch (value.toLowerCase()) {
+    case "high":
+    case "élevée":
+    case "elevee":
+      return "high";
+    case "low":
+    case "faible":
+      return "low";
+    case "medium":
+    case "moyenne":
+    default:
+      return "medium";
+  }
+};
+
 // Fonction de transformation complète des tâches de la base de données
 const transformDatabaseTask = (dbTask: DatabaseTask, index: number): PlanningTask => {
   return {
@@ -125,11 +143,12 @@ const transformDatabaseTask = (dbTask: DatabaseTask, index: number): PlanningTas
     end_time: dbTask.end_time,
     duration: dbTask.duration || 15, // Valeur par défaut de 15 minutes
     category: dbTask.category || 'general',
-    priority: dbTask.priority || 'medium',
+    priority: normalizePriority(dbTask.priority),
     status: normalizeStatus(dbTask.status),
     assigned_to: normalizeAssignedTo(dbTask.assigned_to),
     position: typeof dbTask.position === 'number' ? dbTask.position : index, // Position obligatoire
-    is_ai_generated: dbTask.is_ai_generated || false
+    is_ai_generated: dbTask.is_ai_generated || false,
+    is_manual_time: false // Valeur par défaut
   };
 };
 
@@ -143,11 +162,12 @@ export const normalizeTask = (task: PartialPlanningTask, index: number): Plannin
     end_time: task.end_time,
     duration: task.duration || 15, // Valeur par défaut de 15 minutes
     category: task.category || 'general',
-    priority: task.priority || 'medium',
+    priority: normalizePriority(task.priority),
     status: normalizeStatus(task.status),
     assigned_to: normalizeAssignedTo(task.assigned_to),
     position: typeof task.position === 'number' ? task.position : index, // Position obligatoire
-    is_ai_generated: task.is_ai_generated || false
+    is_ai_generated: task.is_ai_generated || false,
+    is_manual_time: false // Valeur par défaut
   };
 };
 
@@ -546,7 +566,8 @@ export const MonJourMProvider: React.FC<{ children: ReactNode }> = ({ children }
           status: taskData.status,
           assigned_to: taskData.assigned_to && taskData.assigned_to.length > 0 ? taskData.assigned_to : null,
           position: taskData.position,
-          is_ai_generated: taskData.is_ai_generated || false
+          is_ai_generated: taskData.is_ai_generated || false,
+          is_manual_time: false
         })
         .select()
         .single();
@@ -604,7 +625,8 @@ export const MonJourMProvider: React.FC<{ children: ReactNode }> = ({ children }
           status: task.status,
           assigned_to: task.assigned_to && task.assigned_to.length > 0 ? task.assigned_to : null,
           position: task.position,
-          is_ai_generated: task.is_ai_generated || false
+          is_ai_generated: task.is_ai_generated || false,
+          is_manual_time: false
         })
         .eq('id', task.id);
 
