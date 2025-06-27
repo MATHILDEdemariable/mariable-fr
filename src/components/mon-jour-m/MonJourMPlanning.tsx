@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -32,13 +31,13 @@ const MonJourMPlanningContent: React.FC = () => {
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   
-  // États des modales (logique identique à l'équipe)
+  // États des modales
   const [showAddTask, setShowAddTask] = useState(false);
   const [editingTask, setEditingTask] = useState<PlanningTask | null>(null);
   const [showAISuggestions, setShowAISuggestions] = useState(false);
   const [isGeneratingTasks, setIsGeneratingTasks] = useState(false);
   
-  // Formulaire avec valeurs par défaut SÛRES
+  // Formulaire UNIQUEMENT pour l'ajout (pas pour l'édition)
   const [formData, setFormData] = useState<TaskFormData>({
     title: '',
     description: '',
@@ -175,7 +174,7 @@ const MonJourMPlanningContent: React.FC = () => {
     }
   };
 
-  // Reset formulaire (logique identique à l'équipe)
+  // Reset formulaire (uniquement pour l'ajout)
   const resetForm = () => {
     setFormData({
       title: '',
@@ -189,7 +188,7 @@ const MonJourMPlanningContent: React.FC = () => {
     });
   };
 
-  // Ajouter une tâche (LOGIQUE COPIÉE EXACTEMENT DE handleAddMember)
+  // LOGIQUE SIMPLIFIÉE - Copie exacte de handleAddMember
   const handleAddTask = async () => {
     if (!formData.title?.trim() || !coordination?.id) {
       toast({
@@ -237,9 +236,9 @@ const MonJourMPlanningContent: React.FC = () => {
     await loadTasks(coordination.id);
   };
 
-  // Modifier une tâche (LOGIQUE COPIÉE EXACTEMENT DE handleUpdateMember)
+  // LOGIQUE SIMPLIFIÉE - Copie exacte de handleUpdateMember
   const handleUpdateTask = async () => {
-    if (!editingTask || !formData.title?.trim()) {
+    if (!editingTask || !editingTask.title?.trim()) {
       toast({
         title: "Erreur",
         description: "Le titre de la tâche est obligatoire",
@@ -251,13 +250,13 @@ const MonJourMPlanningContent: React.FC = () => {
     const { error } = await supabase
       .from('coordination_planning')
       .update({
-        title: formData.title,
-        description: formData.description || null,
-        start_time: formData.start_time || null,
-        duration: formData.duration,
-        category: formData.category,
-        priority: formData.priority,
-        assigned_to: formData.assigned_to.length > 0 ? formData.assigned_to : null
+        title: editingTask.title,
+        description: editingTask.description || null,
+        start_time: editingTask.start_time || null,
+        duration: editingTask.duration,
+        category: editingTask.category,
+        priority: editingTask.priority,
+        assigned_to: editingTask.assigned_to.length > 0 ? editingTask.assigned_to : null
       })
       .eq('id', editingTask.id);
 
@@ -501,7 +500,7 @@ const MonJourMPlanningContent: React.FC = () => {
             </DialogContent>
           </Dialog>
           
-          {/* MODALE D'AJOUT (identique à l'équipe) */}
+          {/* MODALE D'AJOUT - utilise formData */}
           <Dialog open={showAddTask} onOpenChange={setShowAddTask}>
             <DialogTrigger asChild>
               <Button className="bg-wedding-olive hover:bg-wedding-olive/90">
@@ -711,19 +710,7 @@ const MonJourMPlanningContent: React.FC = () => {
                                       <Button
                                         size="sm"
                                         variant="outline"
-                                        onClick={() => {
-                                          setFormData({
-                                            title: task.title,
-                                            description: task.description || '',
-                                            start_time: task.start_time || '09:00',
-                                            duration: task.duration,
-                                            category: task.category,
-                                            priority: task.priority,
-                                            assigned_to: task.assigned_to,
-                                            is_manual_time: false
-                                          });
-                                          setEditingTask(task);
-                                        }}
+                                        onClick={() => setEditingTask(task)}
                                       >
                                         <Edit2 className="h-3 w-3" />
                                       </Button>
@@ -778,7 +765,7 @@ const MonJourMPlanningContent: React.FC = () => {
         </DragDropContext>
       )}
 
-      {/* MODALE D'ÉDITION (identique à l'équipe) */}
+      {/* MODALE D'ÉDITION - utilise directement editingTask */}
       {editingTask && (
         <Dialog open={!!editingTask} onOpenChange={() => setEditingTask(null)}>
           <DialogContent className="max-w-2xl">
@@ -791,16 +778,16 @@ const MonJourMPlanningContent: React.FC = () => {
                   <Label htmlFor="edit-title">Titre de la tâche *</Label>
                   <Input
                     id="edit-title"
-                    value={formData.title}
-                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                    value={editingTask.title}
+                    onChange={(e) => setEditingTask({ ...editingTask, title: e.target.value })}
                     placeholder="Ex: Arrivée des invités"
                   />
                 </div>
                 <div>
                   <Label htmlFor="edit-category">Catégorie</Label>
                   <Select 
-                    value={formData.category} 
-                    onValueChange={(value) => setFormData({ ...formData, category: value })}
+                    value={editingTask.category} 
+                    onValueChange={(value) => setEditingTask({ ...editingTask, category: value })}
                   >
                     <SelectTrigger>
                       <SelectValue />
@@ -818,8 +805,8 @@ const MonJourMPlanningContent: React.FC = () => {
                 <Label htmlFor="edit-description">Description</Label>
                 <Textarea
                   id="edit-description"
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  value={editingTask.description || ''}
+                  onChange={(e) => setEditingTask({ ...editingTask, description: e.target.value })}
                   placeholder="Détails de la tâche..."
                   rows={3}
                 />
@@ -831,8 +818,8 @@ const MonJourMPlanningContent: React.FC = () => {
                   <Input
                     id="edit-start_time"
                     type="time"
-                    value={formData.start_time}
-                    onChange={(e) => setFormData({ ...formData, start_time: e.target.value })}
+                    value={editingTask.start_time || '09:00'}
+                    onChange={(e) => setEditingTask({ ...editingTask, start_time: e.target.value })}
                   />
                 </div>
                 <div>
@@ -842,15 +829,15 @@ const MonJourMPlanningContent: React.FC = () => {
                     type="number"
                     min="5"
                     max="480"
-                    value={formData.duration}
-                    onChange={(e) => setFormData({ ...formData, duration: parseInt(e.target.value) || 30 })}
+                    value={editingTask.duration}
+                    onChange={(e) => setEditingTask({ ...editingTask, duration: parseInt(e.target.value) || 30 })}
                   />
                 </div>
                 <div>
                   <Label htmlFor="edit-priority">Priorité</Label>
                   <Select 
-                    value={formData.priority} 
-                    onValueChange={(value: "low" | "medium" | "high") => setFormData({ ...formData, priority: value })}
+                    value={editingTask.priority} 
+                    onValueChange={(value: "low" | "medium" | "high") => setEditingTask({ ...editingTask, priority: value })}
                   >
                     <SelectTrigger>
                       <SelectValue />
@@ -867,8 +854,8 @@ const MonJourMPlanningContent: React.FC = () => {
               <div>
                 <Label htmlFor="edit-assigned_to">Assigné à</Label>
                 <Select
-                  value={formData.assigned_to && formData.assigned_to.length > 0 ? formData.assigned_to[0] : ""}
-                  onValueChange={(value) => setFormData({ ...formData, assigned_to: value ? [value] : [] })}
+                  value={editingTask.assigned_to && editingTask.assigned_to.length > 0 ? editingTask.assigned_to[0] : ""}
+                  onValueChange={(value) => setEditingTask({ ...editingTask, assigned_to: value ? [value] : [] })}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Sélectionner une personne" />
