@@ -8,11 +8,14 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Clock, Plus, Edit2, Trash2, Sparkles, GripVertical } from 'lucide-react';
+import { Clock, Plus, Sparkles } from 'lucide-react';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
-import { PlanningTask, WeddingCoordination, PREDEFINED_ROLES, TASK_CATEGORIES, normalizeTimeString, addMinutesToTime } from '@/types/monjourm-mvp';
+import { PlanningTask, WeddingCoordination, PREDEFINED_ROLES, TASK_CATEGORIES } from '@/types/monjourm-mvp';
+import { recalculateTaskTimeline, normalizeTimeString } from '@/utils/timeCalculations';
+import ImprovedTaskCard from './ImprovedTaskCard';
+import PlanningShareManager from './PlanningShareManager';
 import AITaskSelectionModal from './AITaskSelectionModal';
 
 interface SimpleTaskManagerProps {
@@ -25,7 +28,6 @@ const SimpleTaskManager: React.FC<SimpleTaskManagerProps> = ({ coordination }) =
   const [isLoading, setIsLoading] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showAIModal, setShowAIModal] = useState(false);
-  const [editingTask, setEditingTask] = useState<PlanningTask | null>(null);
   
   // Form state
   const [formData, setFormData] = useState({
@@ -115,7 +117,7 @@ const SimpleTaskManager: React.FC<SimpleTaskManagerProps> = ({ coordination }) =
     });
   };
 
-  // Drag & Drop handler
+  // Drag & Drop handler avec recalcul automatique
   const handleDragEnd = async (result: DropResult) => {
     if (!result.destination) return;
 
@@ -130,27 +132,30 @@ const SimpleTaskManager: React.FC<SimpleTaskManagerProps> = ({ coordination }) =
       const [removed] = reorderedTasks.splice(startIndex, 1);
       reorderedTasks.splice(endIndex, 0, removed);
 
-      // Mettre à jour les positions
-      const tasksWithNewPositions = reorderedTasks.map((task, index) => ({
+      // Recalculer automatiquement les heures
+      const recalculatedTasks = recalculateTaskTimeline(reorderedTasks.map((task, index) => ({
         ...task,
         position: index
-      }));
+      })));
 
-      setTasks(tasksWithNewPositions);
+      setTasks(recalculatedTasks);
 
-      // Mettre à jour en base de données
-      const updatePromises = tasksWithNewPositions.map(task =>
+      // Mettre à jour en base de données avec les nouvelles positions ET heures
+      const updatePromises = recalculatedTasks.map(task =>
         supabase
           .from('coordination_planning')
-          .update({ position: task.position })
+          .update({ 
+            position: task.position,
+            start_time: task.start_time
+          })
           .eq('id', task.id)
       );
 
       await Promise.all(updatePromises);
 
       toast({
-        title: "Succès",
-        description: "Ordre des tâches mis à jour"
+        title: "Planning reorganisé",
+        description: "Les horaires ont été recalculés automatiquement"
       });
     } catch (error) {
       console.error('❌ Erreur réorganisation:', error);
@@ -256,44 +261,59 @@ const SimpleTaskManager: React.FC<SimpleTaskManagerProps> = ({ coordination }) =
   };
 
   // Modifier une tâche
-  const handleUpdateTask = async () => {
-    if (!editingTask || !editingTask.title.trim()) {
-      toast({
-        title: "Erreur",
-        description: "Le titre est obligatoire",
-        variant: "destructive"
-      });
-      return;
-    }
-
+  const handleUpdateTask = async (updatedTask: PlanningTask) => {
     try {
-      console.log('🔄 Updating task with role:', editingTask.assigned_role);
+      console.log('🔄 Updating task with role:', updatedTask.assigned_role);
       
       const { error } = await supabase
         .from('coordination_planning')
         .update({
-          title: editingTask.title,
-          description: editingTask.description || null,
-          start_time: editingTask.start_time,
-          duration: editingTask.duration,
-          category: editingTask.category,
-          priority: editingTask.priority,
-          assigned_to: editingTask.assigned_role ? [editingTask.assigned_role] : null
+          title: updatedTask.title,
+          description: updatedTask.description || null,
+          start_time: updatedTask.start_time,
+          duration: updatedTask.duration,
+          category: updatedTask.category,
+          priority: updatedTask.priority,
+          assigned_to: updatedTask.assigned_role ? [updatedTask.assigned_role] : null
         })
-        .eq('id', editingTask.id);
+        .eq('id', updatedTask.id);
 
       if (error) {
         console.error('❌ Erreur Supabase update:', error);
         throw error;
       }
 
-      toast({
-        title: "Succès",
-        description: "Tâche modifiée avec succès"
-      });
+      // Mettre à jour localement et recalculer si nécessaire
+      const updatedTasks = tasks.map(task => 
+        task.id === updatedTask.id ? updatedTask : task
+      );
 
-      setEditingTask(null);
-      await loadTasks();
+      // Recalculer la timeline si la durée a changé
+      const originalTask = tasks.find(t => t.id === updatedTask.id);
+      if (originalTask && originalTask.duration !== updatedTask.duration) {
+        const recalculatedTasks = recalculateTaskTimeline(updatedTasks);
+        setTasks(recalculatedTasks);
+        
+        // Sauvegarder les nouveaux horaires
+        const updatePromises = recalculatedTasks.map(task =>
+          supabase
+            .from('coordination_planning')
+            .update({ start_time: task.start_time })
+            .eq('id', task.id)
+        );
+        await Promise.all(updatePromises);
+        
+        toast({
+          title: "Succès",
+          description: "Tâche modifiée et horaires recalculés"
+        });
+      } else {
+        setTasks(updatedTasks);
+        toast({
+          title: "Succès",
+          description: "Tâche modifiée avec succès"
+        });
+      }
     } catch (error) {
       console.error('❌ Erreur modification tâche:', error);
       toast({
@@ -335,22 +355,15 @@ const SimpleTaskManager: React.FC<SimpleTaskManagerProps> = ({ coordination }) =
     }
   };
 
-  const getPriorityColor = (priority: "low" | "medium" | "high") => {
-    switch (priority) {
-      case 'high': return 'bg-red-100 text-red-800';
-      case 'medium': return 'bg-yellow-100 text-yellow-800';
-      case 'low': return 'bg-green-100 text-green-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  };
-
-  const getPriorityLabel = (priority: "low" | "medium" | "high") => {
-    switch (priority) {
-      case 'high': return 'Élevée';
-      case 'medium': return 'Moyenne';  
-      case 'low': return 'Faible';
-      default: return 'Moyenne';
-    }
+  // Obtenir les rôles disponibles
+  const getAvailableRoles = (): string[] => {
+    const rolesFromTasks = tasks
+      .filter(task => task.assigned_role)
+      .map(task => task.assigned_role!)
+      .filter((role, index, array) => array.indexOf(role) === index);
+    
+    return [...PREDEFINED_ROLES, ...rolesFromTasks]
+      .filter((role, index, array) => array.indexOf(role) === index);
   };
 
   if (isLoading) {
@@ -368,7 +381,7 @@ const SimpleTaskManager: React.FC<SimpleTaskManagerProps> = ({ coordination }) =
         <div>
           <h3 className="text-lg font-medium">Planning du Jour J</h3>
           <p className="text-sm text-muted-foreground">
-            Gérez vos tâches et leurs horaires - Glissez-déposez pour réorganiser
+            Gérez vos tâches et leurs horaires - Glissez-déposez pour réorganiser avec recalcul automatique
           </p>
         </div>
         <div className="flex gap-2">
@@ -385,6 +398,12 @@ const SimpleTaskManager: React.FC<SimpleTaskManagerProps> = ({ coordination }) =
           </Button>
         </div>
       </div>
+
+      {/* Gestionnaire de partage */}
+      <PlanningShareManager 
+        coordination={coordination} 
+        availableRoles={getAvailableRoles()}
+      />
 
       {/* Liste des tâches avec Drag & Drop */}
       {tasks.length === 0 ? (
@@ -420,96 +439,25 @@ const SimpleTaskManager: React.FC<SimpleTaskManagerProps> = ({ coordination }) =
               >
                 {tasks
                   .sort((a, b) => a.position - b.position)
-                  .map((task, index) => {
-                    const endTime = addMinutesToTime(task.start_time, task.duration);
-                    
-                    return (
-                      <Draggable key={task.id} draggableId={task.id} index={index}>
-                        {(provided, snapshot) => (
-                          <Card
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            className={`transition-all ${
-                              snapshot.isDragging 
-                                ? 'shadow-lg scale-105 rotate-2 bg-white border-wedding-olive' 
-                                : 'hover:shadow-md'
-                            }`}
-                          >
-                            <CardContent className="p-4">
-                              <div className="flex items-start gap-3">
-                                <div
-                                  {...provided.dragHandleProps}
-                                  className="flex items-center pt-1 text-gray-400 hover:text-gray-600 cursor-grab active:cursor-grabbing"
-                                >
-                                  <GripVertical className="h-4 w-4" />
-                                </div>
-                                
-                                <div className="flex-grow">
-                                  <div className="flex items-start justify-between mb-3">
-                                    <div className="flex-grow">
-                                      <div className="flex items-center gap-2 mb-1">
-                                        <h4 className="font-medium">{task.title}</h4>
-                                        {task.is_ai_generated && (
-                                          <Badge variant="secondary" className="text-xs">
-                                            <Sparkles className="h-3 w-3 mr-1" />
-                                            IA
-                                          </Badge>
-                                        )}
-                                      </div>
-                                      {task.description && (
-                                        <p className="text-sm text-muted-foreground mb-2">
-                                          {task.description}
-                                        </p>
-                                      )}
-                                    </div>
-                                    <div className="flex items-center gap-2 ml-4">
-                                      <Button
-                                        size="sm"
-                                        variant="outline"
-                                        onClick={() => setEditingTask(task)}
-                                      >
-                                        <Edit2 className="h-3 w-3" />
-                                      </Button>
-                                      <Button
-                                        size="sm"
-                                        variant="outline"
-                                        onClick={() => handleDeleteTask(task.id)}
-                                        className="text-red-600 hover:text-red-700"
-                                      >
-                                        <Trash2 className="h-3 w-3" />
-                                      </Button>
-                                    </div>
-                                  </div>
-                                  
-                                  <div className="flex flex-wrap items-center gap-2">
-                                    <div className="flex items-center gap-1 text-sm">
-                                      <Clock className="h-3 w-3" />
-                                      <span>{task.start_time} - {endTime}</span>
-                                      <span className="text-muted-foreground">
-                                        ({task.duration}min)
-                                      </span>
-                                    </div>
-                                    
-                                    <Badge variant="outline">{task.category}</Badge>
-                                    
-                                    <Badge className={getPriorityColor(task.priority)}>
-                                      {getPriorityLabel(task.priority)}
-                                    </Badge>
-                                    
-                                    {task.assigned_role && (
-                                      <Badge variant="secondary">
-                                        {task.assigned_role}
-                                      </Badge>
-                                    )}
-                                  </div>
-                                </div>
-                              </div>
-                            </CardContent>
-                          </Card>
-                        )}
-                      </Draggable>
-                    );
-                  })}
+                  .map((task, index) => (
+                    <Draggable key={task.id} draggableId={task.id} index={index}>
+                      {(provided, snapshot) => (
+                        <div
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                        >
+                          <ImprovedTaskCard
+                            task={task}
+                            onUpdate={handleUpdateTask}
+                            onDelete={handleDeleteTask}
+                            dragHandleProps={provided.dragHandleProps}
+                            isDragging={snapshot.isDragging}
+                            isCustom={task.is_ai_generated}
+                          />
+                        </div>
+                      )}
+                    </Draggable>
+                  ))}
                 {provided.placeholder}
               </div>
             )}
@@ -642,121 +590,6 @@ const SimpleTaskManager: React.FC<SimpleTaskManagerProps> = ({ coordination }) =
           </div>
         </DialogContent>
       </Dialog>
-
-      {/* Modal d'édition */}
-      {editingTask && (
-        <Dialog open={!!editingTask} onOpenChange={() => setEditingTask(null)}>
-          <DialogContent className="max-w-md">
-            <DialogHeader>
-              <DialogTitle>Modifier la tâche</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="edit-title">Titre *</Label>
-                <Input
-                  id="edit-title"
-                  value={editingTask.title}
-                  onChange={(e) => setEditingTask({ ...editingTask, title: e.target.value })}
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="edit-description">Description</Label>
-                <Textarea
-                  id="edit-description"
-                  value={editingTask.description || ''}
-                  onChange={(e) => setEditingTask({ ...editingTask, description: e.target.value })}
-                  rows={2}
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="edit-start_time">Heure de début</Label>
-                  <Input
-                    id="edit-start_time"
-                    type="time"
-                    value={editingTask.start_time}
-                    onChange={(e) => setEditingTask({ ...editingTask, start_time: e.target.value })}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="edit-duration">Durée (min)</Label>
-                  <Input
-                    id="edit-duration"
-                    type="number"
-                    min="5"
-                    max="480"
-                    value={editingTask.duration}
-                    onChange={(e) => setEditingTask({ ...editingTask, duration: parseInt(e.target.value) || 30 })}
-                  />
-                </div>
-              </div>
-
-              <div>
-                <Label htmlFor="edit-category">Catégorie</Label>
-                <Select 
-                  value={editingTask.category} 
-                  onValueChange={(value) => setEditingTask({ ...editingTask, category: value })}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {TASK_CATEGORIES.map((cat) => (
-                      <SelectItem key={cat} value={cat}>{cat}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div>
-                <Label htmlFor="edit-priority">Priorité</Label>
-                <Select 
-                  value={editingTask.priority} 
-                  onValueChange={(value: "low" | "medium" | "high") => setEditingTask({ ...editingTask, priority: value })}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="low">Faible</SelectItem>
-                    <SelectItem value="medium">Moyenne</SelectItem>
-                    <SelectItem value="high">Élevée</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div>
-                <Label htmlFor="edit-assigned_role">Assigné à (rôle)</Label>
-                <Select
-                  value={editingTask.assigned_role || 'none'}
-                  onValueChange={(value) => setEditingTask({ ...editingTask, assigned_role: value === 'none' ? undefined : value })}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Sélectionner un rôle" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="none">Non assigné</SelectItem>
-                    {PREDEFINED_ROLES.map((role) => (
-                      <SelectItem key={role} value={role}>{role}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="flex gap-2">
-                <Button onClick={handleUpdateTask} disabled={!editingTask.title.trim()}>
-                  Sauvegarder
-                </Button>
-                <Button variant="outline" onClick={() => setEditingTask(null)}>
-                  Annuler
-                </Button>  
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog>
-      )}
     </div>
   );
 };
