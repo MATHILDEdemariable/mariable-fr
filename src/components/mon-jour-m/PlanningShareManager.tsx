@@ -51,7 +51,20 @@ const PlanningShareManager: React.FC<PlanningShareManagerProps> = ({
 
       if (error) throw error;
 
-      setShareTokens(data || []);
+      // Convertir les données Supabase vers notre interface
+      const convertedTokens: PlanningShareToken[] = (data || []).map(token => ({
+        id: token.id,
+        coordination_id: token.coordination_id,
+        token: token.token,
+        name: token.name,
+        roles_filter: Array.isArray(token.roles_filter) ? token.roles_filter as string[] : null,
+        expires_at: token.expires_at,
+        is_active: token.is_active,
+        created_at: token.created_at,
+        updated_at: token.updated_at
+      }));
+
+      setShareTokens(convertedTokens);
     } catch (error) {
       console.error('❌ Erreur chargement tokens:', error);
       toast({

@@ -4,8 +4,8 @@ export interface PlanningShareToken {
   coordination_id: string;
   token: string;
   name: string;
-  roles_filter?: string[];
-  expires_at?: string;
+  roles_filter?: string[] | null;
+  expires_at?: string | null;
   is_active: boolean;
   created_at: string;
   updated_at: string;
@@ -30,7 +30,7 @@ export interface PublicPlanningView {
   }[];
   share_info: {
     name: string;
-    roles_filter?: string[];
-    expires_at?: string;
+    roles_filter?: string[] | null;
+    expires_at?: string | null;
   };
 }

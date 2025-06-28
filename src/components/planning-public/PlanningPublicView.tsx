@@ -62,11 +62,13 @@ const PlanningPublicView: React.FC = () => {
 
       // Filtrer par rôles si nécessaire
       let filteredTasks = tasks || [];
-      if (shareData.roles_filter && shareData.roles_filter.length > 0) {
+      const rolesFilter = Array.isArray(shareData.roles_filter) ? shareData.roles_filter as string[] : null;
+      
+      if (rolesFilter && rolesFilter.length > 0) {
         filteredTasks = filteredTasks.filter(task => {
           if (!task.assigned_to || !Array.isArray(task.assigned_to)) return false;
-          return task.assigned_to.some((role: string) => 
-            shareData.roles_filter!.includes(role)
+          return task.assigned_to.some((role: any) => 
+            rolesFilter.includes(String(role))
           );
         });
       }
@@ -80,7 +82,7 @@ const PlanningPublicView: React.FC = () => {
         category: task.category || 'Général',
         priority: (task.priority as "low" | "medium" | "high") || 'medium',
         assigned_role: Array.isArray(task.assigned_to) && task.assigned_to.length > 0 
-          ? task.assigned_to[0] : undefined,
+          ? String(task.assigned_to[0]) : undefined,
         position: task.position || 0
       }));
 
@@ -89,7 +91,7 @@ const PlanningPublicView: React.FC = () => {
         tasks: normalizedTasks,
         share_info: {
           name: shareData.name,
-          roles_filter: shareData.roles_filter,
+          roles_filter: rolesFilter,
           expires_at: shareData.expires_at
         }
       });

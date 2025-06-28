@@ -19,7 +19,7 @@ import PrestataireDetail from "./pages/prestataire/slug"
 import BlogPage from "./pages/Blog"
 import BlogPostPage from "./pages/BlogArticle"
 import ContactPage from "./pages/contact/NousContacter"
-import AuthWrapper from "./components/dashboard/DashboardLayout"
+import DashboardLayout from "./components/dashboard/DashboardLayout"
 
 const queryClient = new QueryClient()
 
@@ -43,40 +43,40 @@ const App = () => (
             <Route
               path="/dashboard"
               element={
-                <AuthWrapper>
+                <DashboardLayout>
                   <Dashboard />
-                </AuthWrapper>
+                </DashboardLayout>
               }
             />
             <Route
               path="/mon-jour-m"
               element={
-                <AuthWrapper>
+                <DashboardLayout>
                   <MonJourMPage />
-                </AuthWrapper>
+                </DashboardLayout>
               }
             />
             <Route
               path="/mon-jour-m/planning"
               element={
-                <AuthWrapper>
+                <DashboardLayout>
                   <MonJourMPlanning />
-                </AuthWrapper>
+                </DashboardLayout>
               }
             />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route
               path="/admin/*"
               element={
-                <AuthWrapper requireAdmin>
+                <DashboardLayout>
                   <AdminDashboard />
-                </AuthWrapper>
+                </DashboardLayout>
               }
             />
           </Routes>
         </BrowserRouter>
       </TooltipProvider>
-    </HelmetProvider>
+    </HelmelProvider>
   </QueryClientProvider>
 )
 
