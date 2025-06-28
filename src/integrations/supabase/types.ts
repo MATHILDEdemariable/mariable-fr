@@ -771,6 +771,50 @@ export type Database = {
         }
         Relationships: []
       }
+      planning_share_tokens: {
+        Row: {
+          coordination_id: string
+          created_at: string
+          expires_at: string | null
+          id: string
+          is_active: boolean
+          name: string
+          roles_filter: Json | null
+          token: string
+          updated_at: string
+        }
+        Insert: {
+          coordination_id: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          roles_filter?: Json | null
+          token: string
+          updated_at?: string
+        }
+        Update: {
+          coordination_id?: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          roles_filter?: Json | null
+          token?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "planning_share_tokens_coordination_id_fkey"
+            columns: ["coordination_id"]
+            isOneToOne: false
+            referencedRelation: "wedding_coordination"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       prestataires: {
         Row: {
           accord_cgv: boolean | null

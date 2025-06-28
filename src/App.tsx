@@ -1,27 +1,27 @@
 
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { HelmetProvider } from 'react-helmet-async';
-import Index from "./pages/Index";
-import Login from "./pages/Login";
-import Dashboard from "./pages/Dashboard";
-import Register from "./pages/Register";
-import AdminLogin from "./pages/AdminLogin";
-import AdminDashboard from "./pages/AdminDashboard";
-import MonJourMPage from "./pages/MonJourM";
-import MonJourMPlanning from "./pages/MonJourMPlanning";
-import PlanningPartage from "./pages/PlanningPartage";
-import SearchPrestataires from "./pages/SearchPrestataires";
-import PrestataireDetail from "./pages/PrestataireDetail";
-import BlogPage from "./pages/Blog";
-import BlogPostPage from "./pages/BlogPost";
-import ContactPage from "./pages/Contact";
-import AuthWrapper from "./components/AuthWrapper";
+import { Toaster } from "@/components/ui/toaster"
+import { Toaster as Sonner } from "@/components/ui/sonner"
+import { TooltipProvider } from "@/components/ui/tooltip"
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { BrowserRouter, Routes, Route } from "react-router-dom"
+import { HelmetProvider } from 'react-helmet-async'
+import Index from "./pages/Index"
+import Login from "./pages/auth/Login"
+import Dashboard from "./pages/dashboard/UserDashboard"
+import Register from "./pages/auth/Register"
+import AdminLogin from "./pages/admin/AdminLogin"
+import AdminDashboard from "./pages/admin/AdminDashboard"
+import MonJourMPage from "./pages/MonJourM"
+import MonJourMPlanning from "./pages/MonJourMPlanning"
+import PlanningPartagePage from "./pages/PlanningPartage"
+import SearchPrestataires from "./pages/services/Prestataires"
+import PrestataireDetail from "./pages/prestataire/slug"
+import BlogPage from "./pages/Blog"
+import BlogPostPage from "./pages/BlogArticle"
+import ContactPage from "./pages/contact/NousContacter"
+import AuthWrapper from "./components/dashboard/DashboardLayout"
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient()
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -39,7 +39,7 @@ const App = () => (
             <Route path="/blog" element={<BlogPage />} />
             <Route path="/blog/:slug" element={<BlogPostPage />} />
             <Route path="/contact" element={<ContactPage />} />
-            <Route path="/planning-partage/:token" element={<PlanningPartage />} />
+            <Route path="/planning-partage/:token" element={<PlanningPartagePage />} />
             <Route
               path="/dashboard"
               element={
@@ -78,6 +78,6 @@ const App = () => (
       </TooltipProvider>
     </HelmetProvider>
   </QueryClientProvider>
-);
+)
 
-export default App;
+export default App
