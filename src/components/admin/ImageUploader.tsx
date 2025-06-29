@@ -25,16 +25,33 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
     const file = event.target.files?.[0];
     if (!file) return;
 
+    console.log('📷 Starting image upload to bucket:', bucketName);
     setUploading(true);
+    
     try {
+      // Vérifier que l'utilisateur est connecté
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      if (userError || !user) {
+        console.error('❌ User not authenticated:', userError);
+        toast.error('Vous devez être connecté pour uploader des images');
+        return;
+      }
+
+      console.log('✅ User authenticated:', user.id);
+
       const fileName = `${uuidv4()}-${file.name}`;
+      console.log('📁 Uploading file:', fileName, 'to bucket:', bucketName);
+      
       const { data, error } = await supabase.storage
         .from(bucketName)
         .upload(fileName, file);
 
       if (error) {
+        console.error('❌ Upload error:', error);
         throw error;
       }
+
+      console.log('✅ Upload successful:', data);
 
       const { data: { publicUrl } } = supabase.storage
         .from(bucketName)
@@ -44,10 +61,13 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
         throw new Error("Impossible d'obtenir l'URL publique de l'image.");
       }
 
+      console.log('✅ Public URL generated:', publicUrl);
+      
       setPreviewUrl(publicUrl);
       onImageUpload(publicUrl);
       toast.success('Image téléversée avec succès !');
     } catch (error: any) {
+      console.error('❌ Complete upload error:', error);
       toast.error(`Erreur lors du téléversement: ${error.message}`);
     } finally {
       setUploading(false);

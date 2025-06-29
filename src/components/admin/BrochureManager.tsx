@@ -20,60 +20,123 @@ const BrochureManager: React.FC<BrochureManagerProps> = ({ prestataire, onUpdate
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0 || !prestataire) return;
+    
+    console.log('📄 Starting brochure upload for prestataire:', prestataire.id);
     setIsUploading(true);
 
     const file = e.target.files[0];
-    if (file.type !== "application/pdf") {
+    
+    try {
+      // Vérifier le type de fichier
+      if (file.type !== "application/pdf") {
+        console.error('❌ Invalid file type:', file.type);
         toast.error("Seuls les fichiers PDF sont autorisés pour les brochures.");
-        setIsUploading(false);
         return;
-    }
+      }
 
-    const filePath = `${prestataire.id}/${uuidv4()}-${file.name}`;
-    const { error: uploadError } = await supabase.storage.from("prestataires-brochures").upload(filePath, file);
-    if (uploadError) {
-      toast.error(`Erreur d'upload: ${uploadError.message}`);
-      setIsUploading(false);
-      return;
-    }
+      // Vérifier que l'utilisateur est connecté
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      if (userError || !user) {
+        console.error('❌ User not authenticated:', userError);
+        toast.error('Vous devez être connecté pour uploader des brochures');
+        return;
+      }
 
-    const { data: { publicUrl } } = supabase.storage.from("prestataires-brochures").getPublicUrl(filePath);
+      console.log('✅ User authenticated:', user.id);
+      console.log('📁 Processing brochure file:', file.name);
 
-    const newBrochureData = {
-      prestataire_id: prestataire.id,
-      url: publicUrl,
-      filename: file.name,
-      size: file.size,
-      type: file.type,
-    };
+      const filePath = `${prestataire.id}/${uuidv4()}-${file.name}`;
+      console.log('📁 Upload path:', filePath);
+      
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from("prestataires-brochures")
+        .upload(filePath, file);
+        
+      if (uploadError) {
+        console.error('❌ Upload error:', uploadError);
+        toast.error(`Erreur d'upload: ${uploadError.message}`);
+        return;
+      }
 
-    const { error: insertError } = await supabase.from("prestataires_brochures_preprod").insert([newBrochureData]);
-    if (insertError) {
-      toast.error(`Erreur DB: ${insertError.message}`);
-      await supabase.storage.from("prestataires-brochures").remove([filePath]);
-    } else {
+      console.log('✅ Upload successful:', uploadData);
+
+      const { data: { publicUrl } } = supabase.storage
+        .from("prestataires-brochures")
+        .getPublicUrl(uploadData.path);
+
+      console.log('✅ Public URL generated:', publicUrl);
+
+      const newBrochureData = {
+        prestataire_id: prestataire.id,
+        url: publicUrl,
+        filename: file.name,
+        size: file.size,
+        type: file.type,
+      };
+
+      console.log('💾 Inserting brochure data:', newBrochureData);
+
+      const { error: insertError } = await supabase
+        .from("prestataires_brochures_preprod")
+        .insert([newBrochureData]);
+        
+      if (insertError) {
+        console.error('❌ DB insert error:', insertError);
+        toast.error(`Erreur DB: ${insertError.message}`);
+        // Supprimer le fichier uploadé en cas d'erreur DB
+        await supabase.storage.from("prestataires-brochures").remove([filePath]);        
+      } else {
+        console.log('✅ Brochure inserted successfully');
         toast.success("Brochure ajoutée.");
+      }
+    } catch (error) {
+      console.error('❌ Unexpected error during brochure upload:', error);
+      toast.error('Une erreur inattendue est survenue');
+    } finally {
+      setIsUploading(false);
+      onUpdate();
     }
-
-    setIsUploading(false);
-    onUpdate();
   };
 
   const handleDelete = async (brochureId: string, brochureUrl: string) => {
     if (!prestataire) return;
-    const path = new URL(brochureUrl).pathname.split('/prestataires-brochures/')[1];
-    const { error: storageError } = await supabase.storage.from("prestataires-brochures").remove([path]);
-    if (storageError) {
-      toast.error(`Erreur suppression fichier: ${storageError.message}`);
-      return;
+    
+    console.log('🗑️ Deleting brochure:', brochureId, brochureUrl);
+    
+    try {
+      const path = new URL(brochureUrl).pathname.split('/prestataires-brochures/')[1];
+      console.log('📁 Deleting file at path:', path);
+      
+      const { error: storageError } = await supabase.storage
+        .from("prestataires-brochures")
+        .remove([path]);
+        
+      if (storageError) {
+        console.error('❌ Storage delete error:', storageError);
+        toast.error(`Erreur suppression fichier: ${storageError.message}`);
+        return;
+      }
+      
+      console.log('✅ File deleted from storage');
+      
+      const { error: dbError } = await supabase
+        .from("prestataires_brochures_preprod")
+        .delete()
+        .eq("id", brochureId);
+        
+      if (dbError) {
+        console.error('❌ DB delete error:', dbError);
+        toast.error(`Erreur DB: ${dbError.message}`);
+        return;
+      }
+      
+      console.log('✅ Brochure deleted from database');
+      toast.success("Brochure supprimée.");
+      onUpdate();
+    } catch (error) {
+      console.error('❌ Unexpected error during delete:', error);
+      toast.error('Une erreur inattendue est survenue');
     }
-    const { error: dbError } = await supabase.from("prestataires_brochures_preprod").delete().eq("id", brochureId);
-    if (dbError) {
-      toast.error(`Erreur DB: ${dbError.message}`);
-      return;
-    }
-    toast.success("Brochure supprimée.");
-    onUpdate();
   };
   
   if (!prestataire) return <p>Veuillez d'abord sauvegarder le prestataire.</p>;
@@ -84,7 +147,14 @@ const BrochureManager: React.FC<BrochureManagerProps> = ({ prestataire, onUpdate
       <div className="mb-4">
         <Label htmlFor="brochure-upload">Ajouter une brochure (PDF)</Label>
         <div className="flex items-center gap-4">
-          <Input id="brochure-upload" type="file" accept="application/pdf" onChange={handleUpload} disabled={isUploading} className="max-w-sm" />
+          <Input 
+            id="brochure-upload" 
+            type="file" 
+            accept="application/pdf" 
+            onChange={handleUpload} 
+            disabled={isUploading} 
+            className="max-w-sm" 
+          />
           {isUploading && <Loader2 className="animate-spin" />}
         </div>
         <p className="text-sm text-muted-foreground mt-1">PDF. Max 10MB.</p>
@@ -107,4 +177,5 @@ const BrochureManager: React.FC<BrochureManagerProps> = ({ prestataire, onUpdate
     </div>
   );
 };
+
 export default BrochureManager;
