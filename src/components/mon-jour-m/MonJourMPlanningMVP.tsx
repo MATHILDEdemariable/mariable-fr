@@ -7,13 +7,11 @@ import { useToast } from '@/components/ui/use-toast';
 import { WeddingCoordination } from '@/types/monjourm-mvp';
 import SimpleTaskManager from './SimpleTaskManager';
 import SimpleTeamManager from './SimpleTeamManager';
-import PlanningShareManager from './PlanningShareManager';
 
 const MonJourMPlanningMVP: React.FC = () => {
   const { toast } = useToast();
   const [coordination, setCoordination] = useState<WeddingCoordination | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [availableRoles, setAvailableRoles] = useState<string[]>([]);
 
   useEffect(() => {
     loadCoordination();
@@ -62,18 +60,6 @@ const MonJourMPlanningMVP: React.FC = () => {
       }
 
       setCoordination(activeCoordination);
-
-      // Charger les rôles disponibles depuis l'équipe
-      const { data: teamMembers } = await supabase
-        .from('coordination_team')
-        .select('role')
-        .eq('coordination_id', activeCoordination.id);
-
-      if (teamMembers) {
-        const roles = [...new Set(teamMembers.map(member => member.role).filter(Boolean))];
-        setAvailableRoles(roles);
-      }
-
     } catch (error) {
       console.error('Erreur chargement coordination:', error);
       toast({
@@ -120,10 +106,9 @@ const MonJourMPlanningMVP: React.FC = () => {
       </div>
 
       <Tabs defaultValue="planning" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="planning">Planning</TabsTrigger>
           <TabsTrigger value="team">Équipe</TabsTrigger>
-          <TabsTrigger value="share">Partager</TabsTrigger>
         </TabsList>
         
         <TabsContent value="planning" className="space-y-4">
@@ -140,13 +125,6 @@ const MonJourMPlanningMVP: React.FC = () => {
               <SimpleTeamManager coordination={coordination} />
             </CardContent>
           </Card>
-        </TabsContent>
-
-        <TabsContent value="share" className="space-y-4">
-          <PlanningShareManager 
-            coordination={coordination} 
-            availableRoles={availableRoles}
-          />
         </TabsContent>
       </Tabs>
     </div>

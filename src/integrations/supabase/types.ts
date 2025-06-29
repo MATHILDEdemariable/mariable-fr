@@ -457,7 +457,6 @@ export type Database = {
           created_at: string
           description: string | null
           expires_at: string | null
-          filter_role: string | null
           id: string
           token: string
           user_id: string
@@ -467,7 +466,6 @@ export type Database = {
           created_at?: string
           description?: string | null
           expires_at?: string | null
-          filter_role?: string | null
           id?: string
           token: string
           user_id: string
@@ -477,7 +475,6 @@ export type Database = {
           created_at?: string
           description?: string | null
           expires_at?: string | null
-          filter_role?: string | null
           id?: string
           token?: string
           user_id?: string
@@ -770,50 +767,6 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
-      }
-      planning_share_tokens: {
-        Row: {
-          coordination_id: string
-          created_at: string
-          expires_at: string | null
-          id: string
-          is_active: boolean
-          name: string
-          roles_filter: Json | null
-          token: string
-          updated_at: string
-        }
-        Insert: {
-          coordination_id: string
-          created_at?: string
-          expires_at?: string | null
-          id?: string
-          is_active?: boolean
-          name: string
-          roles_filter?: Json | null
-          token: string
-          updated_at?: string
-        }
-        Update: {
-          coordination_id?: string
-          created_at?: string
-          expires_at?: string | null
-          id?: string
-          is_active?: boolean
-          name?: string
-          roles_filter?: Json | null
-          token?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "planning_share_tokens_coordination_id_fkey"
-            columns: ["coordination_id"]
-            isOneToOne: false
-            referencedRelation: "wedding_coordination"
-            referencedColumns: ["id"]
-          },
-        ]
       }
       prestataires: {
         Row: {
