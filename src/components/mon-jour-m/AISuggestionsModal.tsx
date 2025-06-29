@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import {
   Dialog,
@@ -11,7 +10,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Clock, Users, Camera, Utensils, Heart, Sparkles } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Clock, Users, Camera, Utensils, Heart, Sparkles, Lightbulb } from 'lucide-react';
+import PersonalizedScenarioTab from './PersonalizedScenarioTab';
 
 interface TaskSuggestion {
   id: string;
@@ -177,7 +178,7 @@ const AISuggestionsModal: React.FC<AISuggestionsModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+      <DialogContent className="max-w-5xl max-h-[85vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-purple-600" />
@@ -185,69 +186,89 @@ const AISuggestionsModal: React.FC<AISuggestionsModalProps> = ({
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-4">
-          <p className="text-gray-600 text-sm">
-            Sélectionnez les tâches que vous souhaitez ajouter à votre planning :
-          </p>
+        <Tabs defaultValue="predefined" className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="predefined" className="flex items-center gap-2">
+              <Sparkles className="h-4 w-4" />
+              Suggestions prédéfinies
+            </TabsTrigger>
+            <TabsTrigger value="personalized" className="flex items-center gap-2">
+              <Lightbulb className="h-4 w-4" />
+              Scénario personnalisé
+            </TabsTrigger>
+          </TabsList>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {taskSuggestions.map((task) => (
-              <Card key={task.id} className={`cursor-pointer transition-all ${
-                selectedTasks.includes(task.id) 
-                  ? 'ring-2 ring-purple-400 bg-purple-50' 
-                  : 'hover:shadow-md'
-              }`}>
-                <CardContent className="p-4">
-                  <div className="flex items-start gap-3">
-                    <Checkbox
-                      checked={selectedTasks.includes(task.id)}
-                      onCheckedChange={() => handleTaskToggle(task.id)}
-                      className="mt-1"
-                    />
-                    
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        {task.icon}
-                        <h3 className="font-medium">{task.title}</h3>
-                      </div>
+          <TabsContent value="predefined" className="space-y-4">
+            <p className="text-gray-600 text-sm">
+              Sélectionnez les tâches que vous souhaitez ajouter à votre planning :
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {taskSuggestions.map((task) => (
+                <Card key={task.id} className={`cursor-pointer transition-all ${
+                  selectedTasks.includes(task.id) 
+                    ? 'ring-2 ring-purple-400 bg-purple-50' 
+                    : 'hover:shadow-md'
+                }`}>
+                  <CardContent className="p-4">
+                    <div className="flex items-start gap-3">
+                      <Checkbox
+                        checked={selectedTasks.includes(task.id)}
+                        onCheckedChange={() => handleTaskToggle(task.id)}
+                        className="mt-1"
+                      />
                       
-                      <p className="text-sm text-gray-600 mb-3">
-                        {task.description}
-                      </p>
-                      
-                      <div className="flex items-center gap-2 text-xs">
-                        <Badge variant="outline" className="flex items-center gap-1">
-                          <Clock className="h-3 w-3" />
-                          {task.duration} min
-                        </Badge>
-                        <Badge className={getPriorityColor(task.priority)}>
-                          {task.priority === 'high' ? 'Élevée' : 
-                           task.priority === 'medium' ? 'Moyenne' : 'Faible'}
-                        </Badge>
-                        <Badge variant="secondary">
-                          {getCategoryLabel(task.category)}
-                        </Badge>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-2">
+                          {task.icon}
+                          <h3 className="font-medium">{task.title}</h3>
+                        </div>
+                        
+                        <p className="text-sm text-gray-600 mb-3">
+                          {task.description}
+                        </p>
+                        
+                        <div className="flex items-center gap-2 text-xs">
+                          <Badge variant="outline" className="flex items-center gap-1">
+                            <Clock className="h-3 w-3" />
+                            {task.duration} min
+                          </Badge>
+                          <Badge className={getPriorityColor(task.priority)}>
+                            {task.priority === 'high' ? 'Élevée' : 
+                             task.priority === 'medium' ? 'Moyenne' : 'Faible'}
+                          </Badge>
+                          <Badge variant="secondary">
+                            {getCategoryLabel(task.category)}
+                          </Badge>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
 
-        <DialogFooter>
-          <Button variant="outline" onClick={onClose}>
-            Annuler
-          </Button>
-          <Button 
-            onClick={handleAddSelected}
-            disabled={selectedTasks.length === 0}
-            className="bg-purple-600 hover:bg-purple-700"
-          >
-            Ajouter {selectedTasks.length} tâche{selectedTasks.length > 1 ? 's' : ''}
-          </Button>
-        </DialogFooter>
+            <div className="flex gap-2 pt-4 border-t">
+              <Button variant="outline" onClick={onClose}>
+                Annuler
+              </Button>
+              <Button 
+                onClick={handleAddSelected}
+                disabled={selectedTasks.length === 0}
+                className="bg-purple-600 hover:bg-purple-700"
+              >
+                Ajouter {selectedTasks.length} tâche{selectedTasks.length > 1 ? 's' : ''}
+              </Button>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="personalized">
+            <PersonalizedScenarioTab 
+              onSelectSuggestion={onSelectSuggestion}
+              onClose={onClose}
+            />
+          </TabsContent>
+        </Tabs>
       </DialogContent>
     </Dialog>
   );
