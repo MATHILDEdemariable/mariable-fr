@@ -264,7 +264,9 @@ const MonJourMPlanningMVP: React.FC = () => {
     priority: task.priority as "low" | "medium" | "high",
     assigned_to: task.assigned_to || [],
     position: task.position,
-    is_ai_generated: task.is_ai_generated || false
+    is_ai_generated: task.is_ai_generated || false,
+    status: (task.status === 'completed' ? 'completed' : 
+             task.status === 'in_progress' ? 'in_progress' : 'todo') as 'todo' | 'in_progress' | 'completed'
   });
 
   const handleTaskUpdate = async (taskData: any) => {
