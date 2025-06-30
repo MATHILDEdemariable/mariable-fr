@@ -7,36 +7,32 @@ import { v4 as uuidv4 } from 'uuid';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/components/ui/use-toast';
-
 interface PlanningShareButtonProps {
   coordinationId: string;
 }
-
-const PlanningShareButton: React.FC<PlanningShareButtonProps> = ({ coordinationId }) => {
+const PlanningShareButton: React.FC<PlanningShareButtonProps> = ({
+  coordinationId
+}) => {
   const [open, setOpen] = useState(false);
   const [shareLink, setShareLink] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
-  const { toast } = useToast();
-
+  const {
+    toast
+  } = useToast();
   const generateToken = async () => {
     try {
       setIsGenerating(true);
-      
+
       // Vérifier s'il existe déjà un token actif pour cette coordination
-      const { data: existingTokens, error: fetchError } = await supabase
-        .from('planning_share_tokens')
-        .select('token')
-        .eq('coordination_id', coordinationId)
-        .eq('is_active', true)
-        .maybeSingle();
-      
+      const {
+        data: existingTokens,
+        error: fetchError
+      } = await supabase.from('planning_share_tokens').select('token').eq('coordination_id', coordinationId).eq('is_active', true).maybeSingle();
       if (fetchError) {
         throw fetchError;
       }
-      
       let token;
-      
       if (existingTokens?.token) {
         // Utiliser le token existant
         token = existingTokens.token;
@@ -44,24 +40,21 @@ const PlanningShareButton: React.FC<PlanningShareButtonProps> = ({ coordinationI
       } else {
         // Générer un nouveau token
         token = uuidv4();
-        
-        const { error: insertError } = await supabase
-          .from('planning_share_tokens')
-          .insert({
-            token,
-            coordination_id: coordinationId,
-            name: 'Lien de partage planning',
-            expires_at: null, // Token permanent
-            is_active: true
-          });
-        
+        const {
+          error: insertError
+        } = await supabase.from('planning_share_tokens').insert({
+          token,
+          coordination_id: coordinationId,
+          name: 'Lien de partage planning',
+          expires_at: null,
+          // Token permanent
+          is_active: true
+        });
         if (insertError) throw insertError;
         console.log('✅ Created new planning share token');
       }
-      
       const shareUrl = `${window.location.origin}/jour-m-vue/${token}`;
       setShareLink(shareUrl);
-      
       toast({
         title: "Lien généré avec succès",
         description: "Ce lien permet de voir votre planning en mode consultation"
@@ -77,7 +70,6 @@ const PlanningShareButton: React.FC<PlanningShareButtonProps> = ({ coordinationI
       setIsGenerating(false);
     }
   };
-
   const copyToClipboard = async () => {
     try {
       await navigator.clipboard.writeText(shareLink);
@@ -95,28 +87,17 @@ const PlanningShareButton: React.FC<PlanningShareButtonProps> = ({ coordinationI
       });
     }
   };
-
   const resetDialog = () => {
     setShareLink('');
     setIsCopied(false);
   };
-
-  return (
-    <>
-      <Button 
-        onClick={() => setOpen(true)} 
-        variant="outline" 
-        size="sm" 
-        className="flex items-center gap-2"
-      >
-        <Share className="h-4 w-4" />
-        Partager
-      </Button>
+  return <>
       
-      <Dialog open={open} onOpenChange={(isOpen) => {
-        setOpen(isOpen);
-        if (!isOpen) resetDialog();
-      }}>
+      
+      <Dialog open={open} onOpenChange={isOpen => {
+      setOpen(isOpen);
+      if (!isOpen) resetDialog();
+    }}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Partager votre planning</DialogTitle>
@@ -125,37 +106,21 @@ const PlanningShareButton: React.FC<PlanningShareButtonProps> = ({ coordinationI
             </DialogDescription>
           </DialogHeader>
           
-          {!shareLink ? (
-            <div className="space-y-4 py-2">
+          {!shareLink ? <div className="space-y-4 py-2">
               <p className="text-sm text-muted-foreground">
                 Le lien généré sera permanent et donnera accès à une version publique 
                 de votre planning avec possibilité de filtrer par membre d'équipe.
               </p>
               
-              <Button 
-                onClick={generateToken} 
-                className="w-full" 
-                disabled={isGenerating}
-              >
+              <Button onClick={generateToken} className="w-full" disabled={isGenerating}>
                 {isGenerating ? "Génération..." : "Générer un lien public"}
               </Button>
-            </div>
-          ) : (
-            <div className="space-y-4 py-2">
+            </div> : <div className="space-y-4 py-2">
               <div className="space-y-2">
                 <Label htmlFor="share-link">Lien de partage du planning</Label>
                 <div className="flex items-center space-x-2">
-                  <Input 
-                    id="share-link" 
-                    value={shareLink} 
-                    readOnly 
-                    className="flex-1 text-xs"
-                  />
-                  <Button 
-                    onClick={copyToClipboard} 
-                    size="sm"
-                    variant={isCopied ? "default" : "outline"}
-                  >
+                  <Input id="share-link" value={shareLink} readOnly className="flex-1 text-xs" />
+                  <Button onClick={copyToClipboard} size="sm" variant={isCopied ? "default" : "outline"}>
                     {isCopied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
                   </Button>
                 </div>
@@ -164,19 +129,12 @@ const PlanningShareButton: React.FC<PlanningShareButtonProps> = ({ coordinationI
                 </p>
               </div>
               
-              <Button 
-                onClick={resetDialog} 
-                variant="outline" 
-                className="w-full"
-              >
+              <Button onClick={resetDialog} variant="outline" className="w-full">
                 Générer un nouveau lien
               </Button>
-            </div>
-          )}
+            </div>}
         </DialogContent>
       </Dialog>
-    </>
-  );
+    </>;
 };
-
 export default PlanningShareButton;
