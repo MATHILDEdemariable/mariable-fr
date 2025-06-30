@@ -35,28 +35,16 @@ export const useMonJourMCoordination = (): UseMonJourMCoordinationReturn => {
   
   // Ref pour éviter les setState sur composant démonté
   const mountedRef = useRef(true);
-  const abortControllerRef = useRef<AbortController | null>(null);
 
   // Cleanup function
   useEffect(() => {
     return () => {
       mountedRef.current = false;
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
-      }
     };
   }, []);
 
   const initializeCoordination = useCallback(async (): Promise<WeddingCoordination | null> => {
     if (isInitializing || coordination) return coordination;
-
-    // Abort any previous request
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-    }
-    
-    const abortController = new AbortController();
-    abortControllerRef.current = abortController;
 
     try {
       setIsInitializing(true);
@@ -74,7 +62,7 @@ export const useMonJourMCoordination = (): UseMonJourMCoordinationReturn => {
 
       // Vérifier le cache d'abord
       const cachedCoordination = coordinationCache.get(user.id);
-      if (cachedCoordination && !abortController.signal.aborted) {
+      if (cachedCoordination) {
         console.log('📦 useMonJourMCoordination: Using cached coordination');
         if (mountedRef.current) {
           setCoordination(cachedCoordination);
@@ -89,10 +77,9 @@ export const useMonJourMCoordination = (): UseMonJourMCoordinationReturn => {
         .select('*')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
-        .limit(1)
-        .abortSignal(abortController.signal);
+        .limit(1);
 
-      if (abortController.signal.aborted || !mountedRef.current) return null;
+      if (!mountedRef.current) return null;
       
       if (fetchError) {
         console.error('❌ Error fetching coordination:', fetchError);
@@ -115,10 +102,9 @@ export const useMonJourMCoordination = (): UseMonJourMCoordinationReturn => {
             description: 'Organisation de mon mariage'
           })
           .select()
-          .single()
-          .abortSignal(abortController.signal);
+          .single();
 
-        if (abortController.signal.aborted || !mountedRef.current) return null;
+        if (!mountedRef.current) return null;
 
         if (createError) {
           console.error('❌ Error creating coordination:', createError);
@@ -139,7 +125,7 @@ export const useMonJourMCoordination = (): UseMonJourMCoordinationReturn => {
       
       return activeCoordination;
     } catch (error: any) {
-      if (error.name === 'AbortError' || !mountedRef.current) {
+      if (!mountedRef.current) {
         return null;
       }
       
