@@ -88,7 +88,7 @@ const MonJourMPlanningMVP: React.FC = () => {
           ? task.assigned_to.filter(item => typeof item === 'string')
           : [],
         position: task.position || 0,
-        status: task.status || 'pending',
+        status: 'pending', // Valeur par défaut car la colonne n'existe pas encore
         coordination_id: task.coordination_id,
         is_ai_generated: task.is_ai_generated || false
       }));
@@ -147,15 +147,23 @@ const MonJourMPlanningMVP: React.FC = () => {
           category: newTask.category,
           priority: newTask.priority,
           assigned_to: newTask.assigned_to.length > 0 ? newTask.assigned_to : null,
-          position: maxPosition + 1,
-          status: 'pending'
+          position: maxPosition + 1
         })
         .select()
         .single();
 
       if (error) throw error;
 
-      setTasks([...tasks, data as Task]);
+      // Créer la tâche normalisée avec status par défaut
+      const normalizedTask: Task = {
+        ...data,
+        assigned_to: Array.isArray(data.assigned_to) 
+          ? data.assigned_to.filter(item => typeof item === 'string')
+          : [],
+        status: 'pending'
+      };
+
+      setTasks([...tasks, normalizedTask]);
       setNewTask({
         title: '',
         description: '',
@@ -183,9 +191,12 @@ const MonJourMPlanningMVP: React.FC = () => {
 
   const updateTask = async (updatedTask: Partial<Task> & { id: string }) => {
     try {
+      // Exclure les propriétés qui n'existent pas dans la table
+      const { status, ...taskUpdate } = updatedTask;
+      
       const { error } = await supabase
         .from('coordination_planning')
-        .update(updatedTask)
+        .update(taskUpdate)
         .eq('id', updatedTask.id);
 
       if (error) throw error;
@@ -237,7 +248,10 @@ const MonJourMPlanningMVP: React.FC = () => {
 
   const toggleTaskStatus = async (task: Task) => {
     const newStatus = task.status === 'completed' ? 'pending' : 'completed';
-    await updateTask({ id: task.id, status: newStatus });
+    // Mettre à jour seulement localement car la colonne status n'existe pas en DB
+    setTasks(tasks.map(t => 
+      t.id === task.id ? { ...t, status: newStatus } : t
+    ));
   };
 
   const formatTime = (timeString?: string) => {
@@ -285,7 +299,6 @@ const MonJourMPlanningMVP: React.FC = () => {
           category: suggestion.category,
           priority: suggestion.priority,
           position: maxPosition + 1,
-          status: 'pending',
           is_ai_generated: true
         })
         .select()
@@ -293,7 +306,16 @@ const MonJourMPlanningMVP: React.FC = () => {
 
       if (error) throw error;
 
-      setTasks([...tasks, data as Task]);
+      // Créer la tâche normalisée avec status par défaut
+      const normalizedTask: Task = {
+        ...data,
+        assigned_to: Array.isArray(data.assigned_to) 
+          ? data.assigned_to.filter(item => typeof item === 'string')
+          : [],
+        status: 'pending'
+      };
+
+      setTasks([...tasks, normalizedTask]);
       console.log('✅ AI suggestion added to planning');
     } catch (error) {
       console.error('❌ Error adding AI suggestion:', error);
