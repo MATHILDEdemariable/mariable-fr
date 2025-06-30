@@ -85,6 +85,7 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
               endTime: new Date(startTime.getTime() + (item.duration || 30) * 60000),
               duration: item.duration || 30,
               category: item.category || 'general',
+              type: item.category || 'general', // Ajout de la propriété type
               isHighlight: item.priority === 'high',
               assignedTo: Array.isArray(item.assigned_to) ? item.assigned_to : []
             };
@@ -148,6 +149,7 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
           endTime: new Date(startTime.getTime() + item.duration * 60000),
           duration: item.duration,
           category: item.category,
+          type: item.category, // Ajout de la propriété type
           isHighlight: item.priority === 'high',
           assignedTo: []
         };
@@ -220,6 +222,65 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
     );
   }
 
+  // Gestionnaire pour les suggestions IA (corrigé)
+  const handleSelectSuggestion = async (suggestion: { title: string; description: string; category: string; priority: string; duration: number; }) => {
+    console.log('🤖 Adding AI suggestion:', suggestion.title);
+    
+    const newEvent: PlanningEvent = {
+      id: `ai-${Date.now()}-${Math.random()}`,
+      title: suggestion.title,
+      notes: suggestion.description,
+      startTime: new Date(),
+      endTime: new Date(Date.now() + suggestion.duration * 60000),
+      duration: suggestion.duration,
+      category: suggestion.category,
+      type: suggestion.category,
+      isHighlight: suggestion.priority === 'high',
+      assignedTo: []
+    };
+
+    try {
+      // Sauvegarder en base
+      const { data, error } = await supabase
+        .from('coordination_planning')
+        .insert({
+          coordination_id: coordinationId,
+          title: newEvent.title,
+          description: newEvent.notes,
+          start_time: newEvent.startTime.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+          duration: newEvent.duration,
+          category: newEvent.category,
+          priority: newEvent.isHighlight ? 'high' : 'medium',
+          position: events.length,
+          assigned_to: []
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      // Mettre à jour l'état local
+      const savedEvent: PlanningEvent = {
+        ...newEvent,
+        id: data.id
+      };
+      
+      setEvents(prev => [...prev, savedEvent]);
+      
+      toast({
+        title: "Tâche ajoutée",
+        description: `"${suggestion.title}" a été ajoutée au planning.`
+      });
+    } catch (error) {
+      console.error('❌ Error adding suggestion:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible d'ajouter la tâche suggérée.",
+        variant: "destructive"
+      });
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* En-tête avec statistiques */}
@@ -280,7 +341,7 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
               </TabsList>
               <TabsContent value="personalized">
                 <PersonalizedScenarioTab
-                  onSelectSuggestion={() => {}}
+                  onSelectSuggestion={handleSelectSuggestion}
                   onClose={() => setIsModalOpen(false)}
                   onPlanningGenerated={handlePlanningGenerated}
                 />

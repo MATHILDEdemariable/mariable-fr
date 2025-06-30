@@ -86,6 +86,7 @@ export type PlanningEvent = {
   isHighlight?: boolean;
   notes?: string;
   location?: string;
+  assignedTo?: string[]; // Ajout de la propriété assignedTo
 };
 
 // This type is needed for JSON serialization
@@ -515,7 +516,8 @@ const createEventFromQuestion = (
     duration,
     type: getEventType(question.option_name, category),
     isHighlight,
-    notes: getEventNotes(question, value)
+    notes: getEventNotes(question, value),
+    assignedTo: [] // Ajout de la propriété assignedTo
   };
 };
 
