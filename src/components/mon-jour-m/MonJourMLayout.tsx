@@ -40,7 +40,7 @@ const MonJourMLayout: React.FC<MonJourMLayoutProps> = ({ children }) => {
           {/* Navigation par onglets */}
           <div className="mt-4 pb-4">
             <Tabs value={getActiveTab()} className="w-full">
-              <TabsList className="grid w-full grid-cols-2 max-w-md">
+              <TabsList className="grid w-full grid-cols-3 max-w-lg">
                 <TabsTrigger value="planning" asChild>
                   <Link 
                     to="/mon-jour-m/planning" 
@@ -57,6 +57,15 @@ const MonJourMLayout: React.FC<MonJourMLayoutProps> = ({ children }) => {
                   >
                     <Users className="h-4 w-4" />
                     Équipe
+                  </Link>
+                </TabsTrigger>
+                <TabsTrigger value="documents" asChild>
+                  <Link 
+                    to="/mon-jour-m/documents" 
+                    className="flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:text-blue-600"
+                  >
+                    <FileText className="h-4 w-4" />
+                    Documents
                   </Link>
                 </TabsTrigger>
               </TabsList>
