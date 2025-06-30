@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -7,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Clock, Users, Sparkles, Loader2, Lightbulb } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/components/ui/use-toast';
 
 interface PersonalizedTask {
   title: string;
@@ -23,20 +23,31 @@ interface PersonalizedTask {
 interface PersonalizedScenarioTabProps {
   onSelectSuggestion: (suggestion: { title: string; description: string; category: string; priority: string; duration: number }) => Promise<void>;
   onClose: () => void;
+  // Nouvelle prop pour mettre à jour directement le planning principal
+  onPlanningGenerated?: (tasks: PersonalizedTask[]) => void;
 }
 
 const PersonalizedScenarioTab: React.FC<PersonalizedScenarioTabProps> = ({
   onSelectSuggestion,
-  onClose
+  onClose,
+  onPlanningGenerated
 }) => {
   const [scenario, setScenario] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedTasks, setGeneratedTasks] = useState<PersonalizedTask[]>([]);
   const [selectedTasks, setSelectedTasks] = useState<string[]>([]);
   const [summary, setSummary] = useState('');
+  const { toast } = useToast();
 
   const handleGenerate = async () => {
-    if (!scenario.trim()) return;
+    if (!scenario.trim()) {
+      toast({
+        title: "Scénario requis",
+        description: "Veuillez décrire votre vision du jour J",
+        variant: "destructive"
+      });
+      return;
+    }
 
     console.log('🎯 Generating personalized planning from scenario');
     setIsGenerating(true);
@@ -45,9 +56,9 @@ const PersonalizedScenarioTab: React.FC<PersonalizedScenarioTabProps> = ({
       const { data, error } = await supabase.functions.invoke('ai-wedding-planner', {
         body: {
           scenario: scenario.trim(),
-          weddingDate: new Date().toISOString().split('T')[0], // Placeholder
-          guestCount: 50, // Placeholder
-          ceremonyTime: '15:00' // Placeholder
+          weddingDate: new Date().toISOString().split('T')[0],
+          guestCount: 50,
+          ceremonyTime: '15:00'
         }
       });
 
@@ -61,13 +72,26 @@ const PersonalizedScenarioTab: React.FC<PersonalizedScenarioTabProps> = ({
       if (data.tasks && Array.isArray(data.tasks)) {
         setGeneratedTasks(data.tasks);
         setSummary(data.summary || '');
+        
+        // Sélectionner automatiquement toutes les tâches générées
+        const allTaskIds = data.tasks.map((_, index) => index.toString());
+        setSelectedTasks(allTaskIds);
+        
+        toast({
+          title: "Planning généré avec succès",
+          description: `${data.tasks.length} tâche${data.tasks.length > 1 ? 's' : ''} générée${data.tasks.length > 1 ? 's' : ''}`
+        });
       } else {
-        throw new Error('Format de réponse invalide');
+        throw new Error('Format de réponse invalide de l\'IA');
       }
 
     } catch (error) {
       console.error('❌ Error generating personalized planning:', error);
-      // TODO: Show error toast
+      toast({
+        title: "Erreur de génération",
+        description: "Impossible de générer le planning. Vérifiez votre connexion et réessayez.",
+        variant: "destructive"
+      });
     } finally {
       setIsGenerating(false);
     }
@@ -87,18 +111,47 @@ const PersonalizedScenarioTab: React.FC<PersonalizedScenarioTabProps> = ({
       selectedTasks.includes(index.toString())
     );
     
-    for (const task of tasksToAdd) {
-      await onSelectSuggestion({
-        title: task.title,
-        description: task.description,
-        category: task.category,
-        priority: task.priority,
-        duration: task.duration
+    if (tasksToAdd.length === 0) {
+      toast({
+        title: "Aucune tâche sélectionnée",
+        description: "Veuillez sélectionner au moins une tâche à ajouter",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      // Utiliser la nouvelle fonction pour mettre à jour directement le planning principal
+      if (onPlanningGenerated) {
+        await onPlanningGenerated(tasksToAdd);
+      } else {
+        // Fallback vers l'ancienne méthode
+        for (const task of tasksToAdd) {
+          await onSelectSuggestion({
+            title: task.title,
+            description: task.description,
+            category: task.category,
+            priority: task.priority,
+            duration: task.duration
+          });
+        }
+      }
+      
+      toast({
+        title: "Tâches ajoutées avec succès",
+        description: `${tasksToAdd.length} tâche${tasksToAdd.length > 1 ? 's ont été ajoutées' : ' a été ajoutée'} à votre planning`
+      });
+      
+      setSelectedTasks([]);
+      onClose();
+    } catch (error) {
+      console.error('❌ Error adding tasks:', error);
+      toast({
+        title: "Erreur d'ajout",
+        description: "Impossible d'ajouter les tâches sélectionnées",
+        variant: "destructive"
       });
     }
-    
-    setSelectedTasks([]);
-    onClose();
   };
 
   const getPriorityColor = (priority: string) => {

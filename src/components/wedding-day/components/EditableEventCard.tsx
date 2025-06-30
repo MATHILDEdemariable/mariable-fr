@@ -4,8 +4,9 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { Edit2, Check, X, Trash2 } from 'lucide-react';
+import { Edit2, Check, X, Trash2, GripVertical } from 'lucide-react';
 import { PlanningEvent } from '../types/planningTypes';
+import { addMinutes } from 'date-fns';
 
 interface EditableEventCardProps {
   event: PlanningEvent;
@@ -30,12 +31,19 @@ const EditableEventCard: React.FC<EditableEventCardProps> = ({
   const [editedDuration, setEditedDuration] = useState(event.duration);
 
   const handleSave = () => {
-    const updatedEvent = {
+    console.log('💾 Saving event changes:', editedTitle);
+    
+    if (!editedTitle.trim()) {
+      console.warn('⚠️ Empty title, not saving');
+      return;
+    }
+
+    const updatedEvent: PlanningEvent = {
       ...event,
-      title: editedTitle,
-      notes: editedNotes,
-      duration: editedDuration,
-      endTime: new Date(event.startTime.getTime() + editedDuration * 60000)
+      title: editedTitle.trim(),
+      notes: editedNotes.trim() || undefined,
+      duration: Math.max(editedDuration, 5), // Minimum 5 minutes
+      endTime: addMinutes(event.startTime, Math.max(editedDuration, 5))
     };
     
     onUpdate(updatedEvent);
@@ -43,10 +51,23 @@ const EditableEventCard: React.FC<EditableEventCardProps> = ({
   };
 
   const handleCancel = () => {
+    console.log('❌ Cancelling edit');
     setEditedTitle(event.title);
     setEditedNotes(event.notes || '');
     setEditedDuration(event.duration);
     setIsEditing(false);
+  };
+
+  const handleStartEdit = () => {
+    console.log('✏️ Starting edit mode for:', event.title);
+    setIsEditing(true);
+  };
+
+  const handleDelete = () => {
+    if (onDelete && window.confirm(`Êtes-vous sûr de vouloir supprimer "${event.title}" ?`)) {
+      console.log('🗑️ Deleting event:', event.title);
+      onDelete(event.id);
+    }
   };
 
   const formatTime = (date: Date) => {
@@ -54,32 +75,39 @@ const EditableEventCard: React.FC<EditableEventCardProps> = ({
   };
 
   return (
-    <Card className={`transition-all duration-200 ${isDragging ? 'opacity-50 rotate-2' : ''} ${event.isHighlight ? 'border-wedding-olive border-2' : 'border-gray-200'}`}>
+    <Card className={`transition-all duration-200 ${
+      isDragging ? 'opacity-50 rotate-2 scale-105 shadow-lg' : 'hover:shadow-md'
+    } ${
+      event.isHighlight ? 'border-wedding-olive border-2 bg-wedding-olive/5' : 'border-gray-200'
+    }`}>
       <CardContent className="p-4">
-        <div className="flex items-start justify-between">
+        <div className="flex items-start gap-4">
+          {/* Drag Handle */}
+          <div 
+            {...dragHandleProps} 
+            className="cursor-grab active:cursor-grabbing mt-2 text-gray-400 hover:text-gray-600"
+          >
+            <GripVertical className="h-5 w-5" />
+          </div>
+          
           <div className="flex-1">
-            <div className="flex items-center gap-3 mb-2">
-              <div {...dragHandleProps} className="cursor-grab active:cursor-grabbing">
-                <div className="w-2 h-8 bg-gray-300 rounded-sm flex flex-col justify-center gap-0.5">
-                  <div className="w-full h-0.5 bg-gray-400 rounded"></div>
-                  <div className="w-full h-0.5 bg-gray-400 rounded"></div>
-                  <div className="w-full h-0.5 bg-gray-400 rounded"></div>
-                </div>
-              </div>
-              
+            <div className="flex items-center gap-3 mb-3">
               {/* HEURE en gros */}
-              <div className="text-2xl font-bold text-wedding-olive">
+              <div className={`text-2xl font-bold ${
+                event.isHighlight ? 'text-wedding-olive' : 'text-gray-700'
+              }`}>
                 {formatTime(event.startTime)}
               </div>
               
+              {/* Actions */}
               <div className="flex items-center gap-1 ml-auto">
                 {!isEditing ? (
                   <>
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => setIsEditing(true)}
-                      className="h-8 w-8 p-0"
+                      onClick={handleStartEdit}
+                      className="h-8 w-8 p-0 hover:bg-blue-100"
                     >
                       <Edit2 className="h-4 w-4" />
                     </Button>
@@ -87,8 +115,8 @@ const EditableEventCard: React.FC<EditableEventCardProps> = ({
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => onDelete(event.id)}
-                        className="h-8 w-8 p-0 text-red-500 hover:text-red-700"
+                        onClick={handleDelete}
+                        className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-100"
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -100,7 +128,8 @@ const EditableEventCard: React.FC<EditableEventCardProps> = ({
                       variant="ghost"
                       size="sm"
                       onClick={handleSave}
-                      className="h-8 w-8 p-0 text-green-600"
+                      className="h-8 w-8 p-0 text-green-600 hover:bg-green-100"
+                      disabled={!editedTitle.trim()}
                     >
                       <Check className="h-4 w-4" />
                     </Button>
@@ -108,7 +137,7 @@ const EditableEventCard: React.FC<EditableEventCardProps> = ({
                       variant="ghost"
                       size="sm"
                       onClick={handleCancel}
-                      className="h-8 w-8 p-0 text-red-600"
+                      className="h-8 w-8 p-0 text-red-600 hover:bg-red-100"
                     >
                       <X className="h-4 w-4" />
                     </Button>
@@ -124,12 +153,24 @@ const EditableEventCard: React.FC<EditableEventCardProps> = ({
                   value={editedTitle}
                   onChange={(e) => setEditedTitle(e.target.value)}
                   className="text-lg font-semibold"
+                  placeholder="Titre de l'étape"
                   autoFocus
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault();
+                      handleSave();
+                    } else if (e.key === 'Escape') {
+                      handleCancel();
+                    }
+                  }}
                 />
               ) : (
                 <h4 
-                  className="text-lg font-semibold text-gray-800 cursor-pointer hover:bg-gray-50 p-1 rounded"
-                  onDoubleClick={() => setIsEditing(true)}
+                  className={`text-lg font-semibold cursor-pointer hover:bg-gray-50 p-2 rounded transition-colors ${
+                    event.isHighlight ? 'text-wedding-olive' : 'text-gray-800'
+                  }`}
+                  onDoubleClick={handleStartEdit}
+                  title="Double-cliquez pour modifier"
                 >
                   {event.title}
                 </h4>
@@ -144,14 +185,18 @@ const EditableEventCard: React.FC<EditableEventCardProps> = ({
                   <Input
                     type="number"
                     value={editedDuration}
-                    onChange={(e) => setEditedDuration(parseInt(e.target.value) || 0)}
+                    onChange={(e) => setEditedDuration(Math.max(parseInt(e.target.value) || 5, 5))}
                     className="w-20"
-                    min="1"
+                    min="5"
+                    max="480"
                   />
                   <span>min</span>
                 </div>
               ) : (
-                <span className="font-medium">Durée: {event.duration} min</span>
+                <span className="font-medium">
+                  Durée: {event.duration} min • 
+                  Fin: {formatTime(event.endTime)}
+                </span>
               )}
             </div>
             
@@ -164,25 +209,43 @@ const EditableEventCard: React.FC<EditableEventCardProps> = ({
                     onChange={(e) => setEditedNotes(e.target.value)}
                     placeholder="Notes (optionnel)"
                     rows={2}
+                    className="resize-none"
                   />
                 ) : (
                   event.notes && (
-                    <p className="text-sm text-gray-600 cursor-pointer hover:bg-gray-50 p-1 rounded" onDoubleClick={() => setIsEditing(true)}>
-                      {event.notes}
+                    <p 
+                      className="text-sm text-gray-600 italic bg-gray-50 p-2 rounded cursor-pointer hover:bg-gray-100 transition-colors"
+                      onClick={handleStartEdit}
+                      title="Cliquez pour modifier"
+                    >
+                      💡 {event.notes}
                     </p>
                   )
                 )}
               </div>
             )}
             
-            {/* Badge pour les éléments personnalisés uniquement */}
-            {isCustom && (
-              <div className="mt-3">
-                <span className="inline-block px-2 py-1 text-xs rounded bg-indigo-100 text-indigo-800">
-                  Personnalisé
+            {/* Catégorie et highlight badge */}
+            <div className="flex items-center gap-2 mt-3">
+              <span className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium ${
+                event.category === 'logistique' ? 'bg-blue-100 text-blue-800' :
+                event.category === 'préparatifs_final' ? 'bg-pink-100 text-pink-800' :
+                event.category === 'cérémonie' ? 'bg-wedding-olive/20 text-wedding-olive' :
+                event.category === 'photos' ? 'bg-blue-100 text-blue-800' :
+                event.category === 'cocktail' ? 'bg-amber-100 text-amber-800' :
+                event.category === 'repas' ? 'bg-slate-100 text-slate-800' :
+                event.category === 'soiree' ? 'bg-purple-100 text-purple-800' :
+                'bg-gray-100 text-gray-600'
+              }`}>
+                {event.category}
+              </span>
+              
+              {event.isHighlight && (
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-wedding-olive/20 text-wedding-olive">
+                  Moment clé
                 </span>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
       </CardContent>

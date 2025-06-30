@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import { addMinutes } from 'date-fns';
@@ -23,49 +24,46 @@ const EnhancedDragDropTimeline: React.FC<EnhancedDragDropTimelineProps> = ({
   const { toast } = useToast();
 
   useEffect(() => {
+    console.log('📋 Timeline events updated:', events.length);
     setTimelineEvents(events);
   }, [events]);
 
-  // Recalculate timeline function
+  // Fonction de recalcul du planning améliorée
   const recalculateTimeline = (events: PlanningEvent[]): PlanningEvent[] => {
     if (events.length === 0) return [];
     
-    // Find the earliest start time to use as base, or use first event's start time
+    console.log('🔄 Recalculating timeline for', events.length, 'events');
+    
+    // Chercher un point de départ logique
     let currentTime = events[0]?.startTime || new Date();
     
-    // For ceremonies, try to preserve their original timing as anchor points
+    // Pour les cérémonies, essayer de préserver leur timing original
     const ceremonyEvents = events.filter(e => e.category === 'cérémonie' || e.type === 'ceremony');
     if (ceremonyEvents.length > 0) {
-      // Use the first ceremony as time anchor
       const firstCeremony = ceremonyEvents[0];
       const ceremonyIndex = events.findIndex(e => e.id === firstCeremony.id);
       
-      // Calculate preparation time (start 3 hours before ceremony)
+      // Calculer le temps de préparation (commencer 3h avant la cérémonie)
       const preparationStartTime = addMinutes(firstCeremony.startTime, -180);
       currentTime = preparationStartTime;
     }
     
-    // Get appropriate buffer time between events based on category
+    // Fonction pour calculer le buffer entre événements
     const getBufferTime = (event: PlanningEvent, nextEvent?: PlanningEvent): number => {
-      // No buffer for travel/logistics
       if (event.category === 'logistique' || event.type === 'travel') return 0;
-      
-      // Special buffers for different transitions
       if (event.category === 'préparatifs_final') return 5;
       if (event.category === 'cérémonie') return 15;
       if (event.category === 'photos') return 10;
       if (event.category === 'cocktail') return 5;
       if (event.category === 'repas') return 10;
-      
-      return 5; // Default buffer
+      return 5;
     };
     
-    return events.map((event, index) => {
+    const recalculatedEvents = events.map((event, index) => {
       const updatedEvent = { ...event };
       
-      // For ceremony events, try to preserve their specified times
+      // Pour les événements de cérémonie, essayer de préserver leur heure spécifiée
       if (event.category === 'cérémonie' && event.startTime) {
-        // Keep ceremony at its original time if it makes sense in sequence
         const potentialCeremonyTime = event.startTime;
         if (index === 0 || potentialCeremonyTime >= currentTime) {
           updatedEvent.startTime = potentialCeremonyTime;
@@ -75,20 +73,26 @@ const EnhancedDragDropTimeline: React.FC<EnhancedDragDropTimelineProps> = ({
         }
       }
       
-      // For all other events, calculate sequential timing
+      // Pour tous les autres événements, calculer séquentiellement
       updatedEvent.startTime = new Date(currentTime);
       updatedEvent.endTime = addMinutes(updatedEvent.startTime, event.duration);
       
-      // Calculate next start time with appropriate buffer
+      // Calculer le prochain temps de début avec buffer approprié
       const nextEvent = events[index + 1];
       const bufferTime = getBufferTime(event, nextEvent);
       currentTime = addMinutes(updatedEvent.endTime, bufferTime);
       
       return updatedEvent;
     });
+
+    console.log('✅ Timeline recalculated successfully');
+    return recalculatedEvents;
   };
 
-  const handleAddCustomBlock = (block: { duration: number; title: string; description?: string }) => {
+  // Gestionnaire d'ajout de bloc personnalisé amélioré
+  const handleAddCustomBlock = async (block: { duration: number; title: string; description?: string }) => {
+    console.log('➕ Adding custom block:', block.title);
+    
     const newEvent: PlanningEvent = {
       id: uuidv4(),
       title: block.title,
@@ -110,7 +114,7 @@ const EnhancedDragDropTimeline: React.FC<EnhancedDragDropTimelineProps> = ({
       onEventsUpdate(recalculatedEvents);
     }
 
-    saveToDatabase(recalculatedEvents);
+    await saveToDatabase(recalculatedEvents);
     
     toast({
       title: "Étape ajoutée",
@@ -118,28 +122,43 @@ const EnhancedDragDropTimeline: React.FC<EnhancedDragDropTimelineProps> = ({
     });
   };
 
-  const handleUpdateEvent = (updatedEvent: PlanningEvent) => {
-    const updatedEvents = timelineEvents.map(event => 
-      event.id === updatedEvent.id ? updatedEvent : event
-    );
+  // Gestionnaire de mise à jour d'événement corrigé
+  const handleUpdateEvent = async (updatedEvent: PlanningEvent) => {
+    console.log('✏️ Updating event:', updatedEvent.title);
     
-    // Recalculate timeline after individual event update
-    const recalculatedEvents = recalculateTimeline(updatedEvents);
-    setTimelineEvents(recalculatedEvents);
-    
-    if (onEventsUpdate) {
-      onEventsUpdate(recalculatedEvents);
-    }
+    try {
+      const updatedEvents = timelineEvents.map(event => 
+        event.id === updatedEvent.id ? updatedEvent : event
+      );
+      
+      // Recalculer le planning après la mise à jour individuelle
+      const recalculatedEvents = recalculateTimeline(updatedEvents);
+      setTimelineEvents(recalculatedEvents);
+      
+      if (onEventsUpdate) {
+        onEventsUpdate(recalculatedEvents);
+      }
 
-    saveToDatabase(recalculatedEvents);
-    
-    toast({
-      title: "Étape modifiée",
-      description: "Les modifications ont été sauvegardées."
-    });
+      await saveToDatabase(recalculatedEvents);
+      
+      toast({
+        title: "Étape modifiée",
+        description: "Les modifications ont été sauvegardées avec succès."
+      });
+    } catch (error) {
+      console.error('❌ Error updating event:', error);
+      toast({
+        title: "Erreur de mise à jour",
+        description: "Impossible de sauvegarder les modifications. Veuillez réessayer.",
+        variant: "destructive"
+      });
+    }
   };
 
-  const handleDeleteEvent = (eventId: string) => {
+  // Gestionnaire de suppression d'événement
+  const handleDeleteEvent = async (eventId: string) => {
+    console.log('🗑️ Deleting event:', eventId);
+    
     const updatedEvents = timelineEvents.filter(event => event.id !== eventId);
     const recalculatedEvents = recalculateTimeline(updatedEvents);
     
@@ -149,7 +168,7 @@ const EnhancedDragDropTimeline: React.FC<EnhancedDragDropTimelineProps> = ({
       onEventsUpdate(recalculatedEvents);
     }
 
-    saveToDatabase(recalculatedEvents);
+    await saveToDatabase(recalculatedEvents);
     
     toast({
       title: "Étape supprimée",
@@ -157,52 +176,77 @@ const EnhancedDragDropTimeline: React.FC<EnhancedDragDropTimelineProps> = ({
     });
   };
 
+  // Fonction de sauvegarde en base améliorée
   const saveToDatabase = async (events: PlanningEvent[]) => {
-    if (!user) return;
+    if (!user) {
+      console.warn('⚠️ No user found, skipping save');
+      return;
+    }
 
     try {
-      // Save to new generated_planning table
+      console.log('💾 Saving', events.length, 'events to database');
       await saveGeneratedPlanning(
         supabase,
         user.id,
         formData || {},
         events
       );
+      console.log('✅ Events saved successfully');
     } catch (error) {
-      console.error('Error saving planning:', error);
-      // Silent error handling - don't show error toast for save failures
-      // The timeline changes are still visible to the user
+      console.error('❌ Error saving planning:', error);
+      // Ne pas afficher d'erreur toast pour les échecs de sauvegarde
+      // Les changements restent visibles pour l'utilisateur
     }
   };
 
+  // Gestionnaire de drag & drop corrigé
   const handleDragEnd = async (result: DropResult) => {
-    if (!result.destination) return;
+    console.log('🔄 Drag end:', result);
+    
+    if (!result.destination) {
+      console.log('❌ No destination, cancelling drag');
+      return;
+    }
 
     const sourceIndex = result.source.index;
     const destinationIndex = result.destination.index;
 
-    if (sourceIndex === destinationIndex) return;
-
-    // Reorder the events array
-    const reorderedEvents = Array.from(timelineEvents);
-    const [movedEvent] = reorderedEvents.splice(sourceIndex, 1);
-    reorderedEvents.splice(destinationIndex, 0, movedEvent);
-
-    // Recalculate all times in the new order
-    const recalculatedEvents = recalculateTimeline(reorderedEvents);
-    
-    setTimelineEvents(recalculatedEvents);
-    
-    if (onEventsUpdate) {
-      onEventsUpdate(recalculatedEvents);
+    if (sourceIndex === destinationIndex) {
+      console.log('❌ Same position, cancelling drag');
+      return;
     }
 
-    saveToDatabase(recalculatedEvents);
+    try {
+      // Réorganiser le tableau d'événements
+      const reorderedEvents = Array.from(timelineEvents);
+      const [movedEvent] = reorderedEvents.splice(sourceIndex, 1);
+      reorderedEvents.splice(destinationIndex, 0, movedEvent);
 
-    toast({
-      title: "Planning réorganisé",
-      description: "Les horaires ont été recalculés automatiquement pour maintenir une séquence logique.",
-    });
+      console.log('📋 Events reordered, recalculating timeline');
+      
+      // Recalculer tous les horaires dans le nouvel ordre
+      const recalculatedEvents = recalculateTimeline(reorderedEvents);
+      
+      setTimelineEvents(recalculatedEvents);
+      
+      if (onEventsUpdate) {
+        onEventsUpdate(recalculatedEvents);
+      }
+
+      await saveToDatabase(recalculatedEvents);
+
+      toast({
+        title: "Planning réorganisé",
+        description: "Les horaires ont été recalculés automatiquement.",
+      });
+    } catch (error) {
+      console.error('❌ Error during drag & drop:', error);
+      toast({
+        title: "Erreur de réorganisation",
+        description: "Impossible de réorganiser le planning. Veuillez réessayer.",
+        variant: "destructive"
+      });
+    }
   };
 
   return (
@@ -218,7 +262,9 @@ const EnhancedDragDropTimeline: React.FC<EnhancedDragDropTimelineProps> = ({
             <div
               {...provided.droppableProps}
               ref={provided.innerRef}
-              className={`space-y-4 ${snapshot.isDraggingOver ? 'bg-gray-50 rounded-lg p-2' : ''}`}
+              className={`space-y-4 transition-colors ${
+                snapshot.isDraggingOver ? 'bg-gray-50 rounded-lg p-2' : ''
+              }`}
             >
               {timelineEvents.map((event, index) => (
                 <Draggable key={event.id} draggableId={event.id} index={index}>

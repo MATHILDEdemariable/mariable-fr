@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -14,6 +13,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 import { PlanningTask, WeddingCoordination, PREDEFINED_ROLES, TASK_CATEGORIES, normalizeTimeString, addMinutesToTime } from '@/types/monjourm-mvp';
 import AITaskSelectionModal from './AITaskSelectionModal';
+import PersonalizedScenarioTab from './PersonalizedScenarioTab';
 
 interface SimpleTaskManagerProps {
   coordination: WeddingCoordination;
@@ -25,6 +25,7 @@ const SimpleTaskManager: React.FC<SimpleTaskManagerProps> = ({ coordination }) =
   const [isLoading, setIsLoading] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showAIModal, setShowAIModal] = useState(false);
+  const [showPersonalizedModal, setShowPersonalizedModal] = useState(false);
   const [editingTask, setEditingTask] = useState<PlanningTask | null>(null);
   
   // Form state
@@ -113,6 +114,46 @@ const SimpleTaskManager: React.FC<SimpleTaskManagerProps> = ({ coordination }) =
       priority: 'medium',
       assigned_role: ''
     });
+  };
+
+  // Nouvelle fonction pour gérer le planning généré par l'IA
+  const handlePlanningGenerated = async (generatedTasks: any[]) => {
+    try {
+      console.log('🤖 Intégration du planning généré par l\'IA:', generatedTasks);
+
+      const insertPromises = generatedTasks.map((task, index) => 
+        supabase
+          .from('coordination_planning')
+          .insert({
+            coordination_id: coordination.id,
+            title: task.title,
+            description: task.description,
+            start_time: task.start_time || '09:00',
+            duration: task.duration || 30,
+            category: task.category || 'Autre',
+            priority: task.priority || 'medium',
+            assigned_to: task.assigned_role ? [task.assigned_role] : null,
+            position: tasks.length + index,
+            is_ai_generated: true
+          })
+      );
+
+      await Promise.all(insertPromises);
+
+      toast({
+        title: "Planning généré avec succès",
+        description: `${generatedTasks.length} tâche${generatedTasks.length > 1 ? 's ont été ajoutées' : ' a été ajoutée'} à votre planning`
+      });
+
+      await loadTasks();
+    } catch (error) {
+      console.error('❌ Erreur intégration planning IA:', error);
+      toast({
+        title: "Erreur d'intégration",
+        description: "Impossible d'intégrer le planning généré par l'IA",
+        variant: "destructive"
+      });
+    }
   };
 
   // Drag & Drop handler
@@ -373,6 +414,13 @@ const SimpleTaskManager: React.FC<SimpleTaskManagerProps> = ({ coordination }) =
         </div>
         <div className="flex gap-2">
           <Button 
+            onClick={() => setShowPersonalizedModal(true)}
+            className="bg-purple-600 hover:bg-purple-700"
+          >
+            <Sparkles className="h-4 w-4 mr-2" />
+            Générer planning IA
+          </Button>
+          <Button 
             onClick={() => setShowAIModal(true)}
             variant="outline"
           >
@@ -393,9 +441,16 @@ const SimpleTaskManager: React.FC<SimpleTaskManagerProps> = ({ coordination }) =
             <Clock className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
             <h3 className="text-lg font-medium mb-2">Aucune tâche planifiée</h3>
             <p className="text-muted-foreground mb-4">
-              Commencez par ajouter votre première tâche ou utilisez les suggestions IA
+              Commencez par générer un planning personnalisé ou ajouter vos propres tâches
             </p>
             <div className="flex gap-2 justify-center">
+              <Button 
+                onClick={() => setShowPersonalizedModal(true)}
+                className="bg-purple-600 hover:bg-purple-700"
+              >
+                <Sparkles className="h-4 w-4 mr-2" />
+                Générer planning IA
+              </Button>
               <Button onClick={() => setShowAIModal(true)} variant="outline">
                 <Sparkles className="h-4 w-4 mr-2" />
                 Suggestions IA
@@ -517,7 +572,21 @@ const SimpleTaskManager: React.FC<SimpleTaskManagerProps> = ({ coordination }) =
         </DragDropContext>
       )}
 
-      {/* Modal IA */}
+      {/* Modal IA personnalisé */}
+      <Dialog open={showPersonalizedModal} onOpenChange={setShowPersonalizedModal}>
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Génération de planning personnalisé</DialogTitle>
+          </DialogHeader>
+          <PersonalizedScenarioTab
+            onSelectSuggestion={async () => {}} // Pas utilisé dans ce contexte
+            onClose={() => setShowPersonalizedModal(false)}
+            onPlanningGenerated={handlePlanningGenerated}
+          />
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal IA traditionnel */}
       <AITaskSelectionModal
         isOpen={showAIModal}
         onClose={() => setShowAIModal(false)}
