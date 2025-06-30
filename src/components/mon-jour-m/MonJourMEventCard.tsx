@@ -83,17 +83,36 @@ const MonJourMEventCard: React.FC<MonJourMEventCardProps> = ({
     setShowAssignmentSelect(false);
   };
 
+  // Nouvelle fonction pour désassigner un membre spécifique
+  const handleUnassignMember = (memberId: string) => {
+    console.log('🚫 Unassigning member:', memberId);
+    const currentAssigned = event.assignedTo || [];
+    const newAssigned = currentAssigned.filter(id => id !== memberId);
+    
+    const updatedEvent: PlanningEvent = {
+      ...event,
+      assignedTo: newAssigned
+    };
+    
+    onUpdate(updatedEvent);
+  };
+
   const getAssignedMembers = () => {
     const assignedIds = event.assignedTo || [];
     return teamMembers.filter(member => assignedIds.includes(member.id));
   };
 
   const formatTime = (date: Date) => {
+    if (!date || isNaN(date.getTime())) {
+      return '--:--';
+    }
     return date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
   };
 
   const formatTimeRange = () => {
-    return `${formatTime(event.startTime)} - ${formatTime(event.endTime)}`;
+    const start = formatTime(event.startTime);
+    const end = formatTime(event.endTime);
+    return `${start} - ${end}`;
   };
 
   return (
@@ -211,7 +230,7 @@ const MonJourMEventCard: React.FC<MonJourMEventCardProps> = ({
               )}
             </div>
 
-            {/* ASSIGNATION */}
+            {/* ASSIGNATION AMÉLIORÉE */}
             <div className="mb-3">
               <div className="flex items-center gap-2 mb-2">
                 <Users className="h-4 w-4 text-gray-500" />
@@ -226,11 +245,25 @@ const MonJourMEventCard: React.FC<MonJourMEventCardProps> = ({
                 </Button>
               </div>
 
-              {/* Membres assignés */}
+              {/* Badges des membres assignés avec désassignation */}
               <div className="flex flex-wrap gap-1 mb-2">
                 {getAssignedMembers().map((member) => (
-                  <Badge key={member.id} variant="secondary" className="text-xs">
-                    {member.name} ({member.role})
+                  <Badge 
+                    key={member.id} 
+                    variant="secondary" 
+                    className="text-xs flex items-center gap-1 pr-1 hover:bg-red-100 transition-colors cursor-pointer group"
+                  >
+                    <span>{member.name} ({member.role})</span>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleUnassignMember(member.id);
+                      }}
+                      className="ml-1 hover:bg-red-200 rounded-full p-0.5 group-hover:text-red-600 transition-colors"
+                      title={`Désassigner ${member.name}`}
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
                   </Badge>
                 ))}
                 {(!event.assignedTo || event.assignedTo.length === 0) && (

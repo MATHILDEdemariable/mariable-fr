@@ -3,12 +3,15 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Sparkles, Calendar, Clock, Users } from 'lucide-react';
+import { Plus, Sparkles, Calendar, Clock, Users, Settings } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
 import PersonalizedScenarioTab from './PersonalizedScenarioTab';
+import AISuggestionsModal from './AISuggestionsModal';
+import AddManualEventModal from './AddManualEventModal';
+import TimeReferenceModal from './TimeReferenceModal';
 import EnhancedDragDropTimeline from './MonJourMTimeline';
 import { PlanningEvent } from '../wedding-day/types/planningTypes';
 import { useMonJourMCoordination } from '@/hooks/useMonJourMCoordination';
@@ -21,14 +24,54 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
   coordinationId 
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isManualModalOpen, setIsManualModalOpen] = useState(false);
+  const [isTimeReferenceModalOpen, setIsTimeReferenceModalOpen] = useState(false);
   const [events, setEvents] = useState<PlanningEvent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [teamMembers, setTeamMembers] = useState<any[]>([]);
+  const [referenceTime, setReferenceTime] = useState(new Date());
   const { toast } = useToast();
   
   const { coordination } = useMonJourMCoordination();
 
   console.log('🎯 MonJourMPlanningContent: coordination:', coordinationId);
+
+  // Initialiser l'heure de référence
+  useEffect(() => {
+    const initReferenceTime = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('coordination_parameters')
+          .select('parameters')
+          .eq('coordination_id', coordinationId)
+          .eq('name', 'reference_time')
+          .maybeSingle();
+
+        if (error && error.code !== 'PGRST116') throw error;
+
+        if (data?.parameters?.reference_time) {
+          const [hours, minutes] = data.parameters.reference_time.split(':').map(Number);
+          const refTime = new Date();
+          refTime.setHours(hours, minutes, 0, 0);
+          setReferenceTime(refTime);
+        } else {
+          // Heure par défaut : 15h00
+          const defaultTime = new Date();
+          defaultTime.setHours(15, 0, 0, 0);
+          setReferenceTime(defaultTime);
+        }
+      } catch (error) {
+        console.error('❌ Error loading reference time:', error);
+        const defaultTime = new Date();
+        defaultTime.setHours(15, 0, 0, 0);
+        setReferenceTime(defaultTime);
+      }
+    };
+
+    if (coordinationId) {
+      initReferenceTime();
+    }
+  }, [coordinationId]);
 
   // Charger les membres d'équipe
   useEffect(() => {
@@ -73,9 +116,15 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
         if (data && data.length > 0) {
           // Convertir les données de la base vers le format PlanningEvent
           const convertedEvents: PlanningEvent[] = data.map((item: any) => {
-            const startTime = item.start_time ? 
-              new Date(`2025-01-01T${item.start_time}:00`) : 
-              new Date(`2025-01-01T09:00:00`);
+            let startTime: Date;
+            
+            if (item.start_time) {
+              const [hours, minutes] = item.start_time.split(':').map(Number);
+              startTime = new Date(referenceTime);
+              startTime.setHours(hours, minutes, 0, 0);
+            } else {
+              startTime = new Date(referenceTime);
+            }
             
             return {
               id: item.id,
@@ -85,7 +134,7 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
               endTime: new Date(startTime.getTime() + (item.duration || 30) * 60000),
               duration: item.duration || 30,
               category: item.category || 'general',
-              type: item.category || 'general', // Ajout de la propriété type
+              type: item.category || 'general',
               isHighlight: item.priority === 'high',
               assignedTo: Array.isArray(item.assigned_to) ? item.assigned_to : []
             };
@@ -111,7 +160,7 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
     };
 
     loadExistingPlanning();
-  }, [coordination?.user_id, coordinationId, toast]);
+  }, [coordination?.user_id, coordinationId, referenceTime, toast]);
 
   // Gestionnaire pour l'intégration des événements générés par l'IA
   const handlePlanningGenerated = async (newEvents: PlanningEvent[]) => {
@@ -140,7 +189,10 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
 
       // Convertir et ajouter aux événements existants
       const convertedNewEvents: PlanningEvent[] = data.map((item: any) => {
-        const startTime = new Date(`2025-01-01T${item.start_time}:00`);
+        const [hours, minutes] = item.start_time.split(':').map(Number);
+        const startTime = new Date(referenceTime);
+        startTime.setHours(hours, minutes, 0, 0);
+        
         return {
           id: item.id,
           title: item.title,
@@ -149,7 +201,7 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
           endTime: new Date(startTime.getTime() + item.duration * 60000),
           duration: item.duration,
           category: item.category,
-          type: item.category, // Ajout de la propriété type
+          type: item.category,
           isHighlight: item.priority === 'high',
           assignedTo: []
         };
@@ -203,6 +255,31 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
     }
   };
 
+  // Gestionnaire pour l'ajout d'événement manuel
+  const handleManualEventAdded = (newEvent: PlanningEvent) => {
+    setEvents(prev => [...prev, newEvent]);
+  };
+
+  // Gestionnaire pour la mise à jour de l'heure de référence
+  const handleTimeReferenceUpdated = (newTime: Date) => {
+    setReferenceTime(newTime);
+    
+    // Recalculer tous les événements avec la nouvelle heure de référence
+    const updatedEvents = events.map(event => {
+      const [hours, minutes] = event.startTime.toTimeString().slice(0, 5).split(':').map(Number);
+      const newStartTime = new Date(newTime);
+      newStartTime.setHours(hours, minutes, 0, 0);
+      
+      return {
+        ...event,
+        startTime: newStartTime,
+        endTime: new Date(newStartTime.getTime() + event.duration * 60000)
+      };
+    });
+    
+    setEvents(updatedEvents);
+  };
+
   const getEventStats = () => {
     const total = events.length;
     const highlights = events.filter(e => e.isHighlight).length;
@@ -222,69 +299,10 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
     );
   }
 
-  // Gestionnaire pour les suggestions IA (corrigé)
-  const handleSelectSuggestion = async (suggestion: { title: string; description: string; category: string; priority: string; duration: number; }) => {
-    console.log('🤖 Adding AI suggestion:', suggestion.title);
-    
-    const newEvent: PlanningEvent = {
-      id: `ai-${Date.now()}-${Math.random()}`,
-      title: suggestion.title,
-      notes: suggestion.description,
-      startTime: new Date(),
-      endTime: new Date(Date.now() + suggestion.duration * 60000),
-      duration: suggestion.duration,
-      category: suggestion.category,
-      type: suggestion.category,
-      isHighlight: suggestion.priority === 'high',
-      assignedTo: []
-    };
-
-    try {
-      // Sauvegarder en base
-      const { data, error } = await supabase
-        .from('coordination_planning')
-        .insert({
-          coordination_id: coordinationId,
-          title: newEvent.title,
-          description: newEvent.notes,
-          start_time: newEvent.startTime.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-          duration: newEvent.duration,
-          category: newEvent.category,
-          priority: newEvent.isHighlight ? 'high' : 'medium',
-          position: events.length,
-          assigned_to: []
-        })
-        .select()
-        .single();
-
-      if (error) throw error;
-
-      // Mettre à jour l'état local
-      const savedEvent: PlanningEvent = {
-        ...newEvent,
-        id: data.id
-      };
-      
-      setEvents(prev => [...prev, savedEvent]);
-      
-      toast({
-        title: "Tâche ajoutée",
-        description: `"${suggestion.title}" a été ajoutée au planning.`
-      });
-    } catch (error) {
-      console.error('❌ Error adding suggestion:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible d'ajouter la tâche suggérée.",
-        variant: "destructive"
-      });
-    }
-  };
-
   return (
     <div className="space-y-6">
       {/* En-tête avec statistiques */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
@@ -320,37 +338,48 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
             </div>
           </CardContent>
         </Card>
+
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">Heure de référence</p>
+                <p className="text-lg font-bold text-purple-600">
+                  {referenceTime.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                </p>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsTimeReferenceModalOpen(true)}
+                className="text-purple-600 hover:bg-purple-100"
+              >
+                <Settings className="h-4 w-4" />
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Actions principales */}
       <div className="flex flex-col sm:flex-row gap-4">
-        <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-          <DialogTrigger asChild>
+        <AISuggestionsModal
+          coordinationId={coordinationId}
+          onClose={() => setIsModalOpen(false)}
+          onPlanningGenerated={handlePlanningGenerated}
+          trigger={
             <Button className="bg-purple-600 hover:bg-purple-700 flex-1">
               <Sparkles className="h-4 w-4 mr-2" />
               Suggestions de tâches IA
             </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>Assistant IA pour votre planning</DialogTitle>
-            </DialogHeader>
-            <Tabs defaultValue="personalized" className="w-full">
-              <TabsList className="grid w-full grid-cols-1">
-                <TabsTrigger value="personalized">Scénario personnalisé</TabsTrigger>
-              </TabsList>
-              <TabsContent value="personalized">
-                <PersonalizedScenarioTab
-                  onSelectSuggestion={handleSelectSuggestion}
-                  onClose={() => setIsModalOpen(false)}
-                  onPlanningGenerated={handlePlanningGenerated}
-                />
-              </TabsContent>
-            </Tabs>
-          </DialogContent>
-        </Dialog>
+          }
+        />
 
-        <Button variant="outline" className="flex-1">
+        <Button 
+          variant="outline" 
+          className="flex-1"
+          onClick={() => setIsManualModalOpen(true)}
+        >
           <Plus className="h-4 w-4 mr-2" />
           Ajouter une étape manuelle
         </Button>
@@ -378,13 +407,17 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
               <p className="text-gray-500 mb-4">
                 Commencez par utiliser l'assistant IA pour générer votre planning personnalisé.
               </p>
-              <Button 
-                onClick={() => setIsModalOpen(true)}
-                className="bg-purple-600 hover:bg-purple-700"
-              >
-                <Sparkles className="h-4 w-4 mr-2" />
-                Générer mon planning
-              </Button>
+              <AISuggestionsModal
+                coordinationId={coordinationId}
+                onClose={() => setIsModalOpen(false)}
+                onPlanningGenerated={handlePlanningGenerated}
+                trigger={
+                  <Button className="bg-purple-600 hover:bg-purple-700">
+                    <Sparkles className="h-4 w-4 mr-2" />
+                    Générer mon planning
+                  </Button>
+                }
+              />
             </div>
           ) : (
             <EnhancedDragDropTimeline
@@ -395,6 +428,23 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
           )}
         </CardContent>
       </Card>
+
+      {/* Modals */}
+      <AddManualEventModal
+        isOpen={isManualModalOpen}
+        onClose={() => setIsManualModalOpen(false)}
+        coordinationId={coordinationId}
+        onEventAdded={handleManualEventAdded}
+        referenceTime={referenceTime}
+      />
+
+      <TimeReferenceModal
+        isOpen={isTimeReferenceModalOpen}
+        onClose={() => setIsTimeReferenceModalOpen(false)}
+        coordinationId={coordinationId}
+        currentReferenceTime={referenceTime}
+        onTimeReferenceUpdated={handleTimeReferenceUpdated}
+      />
     </div>
   );
 };
