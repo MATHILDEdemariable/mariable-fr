@@ -11,9 +11,10 @@ import { useToast } from '@/components/ui/use-toast';
 import PersonalizedScenarioTab from './PersonalizedScenarioTab';
 import EnhancedDragDropTimeline from '../wedding-day/components/EnhancedDragDropTimeline';
 import { PlanningEvent } from '../wedding-day/types/planningTypes';
+import { PlanningProvider } from '../wedding-day/context/PlanningContext';
 import { useMonJourMCoordination } from '@/hooks/useMonJourMCoordination';
 
-const MonJourMPlanningMVP: React.FC = () => {
+const MonJourMPlanningContent: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [events, setEvents] = useState<PlanningEvent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -28,7 +29,7 @@ const MonJourMPlanningMVP: React.FC = () => {
     refreshCoordination 
   } = useMonJourMCoordination();
 
-  console.log('🎯 MonJourMPlanningMVP: coordination state:', { 
+  console.log('🎯 MonJourMPlanningContent: coordination state:', { 
     coordination: coordination?.id, 
     loading: coordinationLoading, 
     initializing: isInitializing,
@@ -38,7 +39,7 @@ const MonJourMPlanningMVP: React.FC = () => {
   // Charger les événements existants quand la coordination est prête
   useEffect(() => {
     if (!coordination || coordinationLoading || isInitializing) {
-      console.log('⏳ MonJourMPlanningMVP: Waiting for coordination...');
+      console.log('⏳ MonJourMPlanningContent: Waiting for coordination...');
       return;
     }
 
@@ -289,6 +290,21 @@ const MonJourMPlanningMVP: React.FC = () => {
         </CardContent>
       </Card>
     </div>
+  );
+};
+
+const MonJourMPlanningMVP: React.FC = () => {
+  const { coordination } = useMonJourMCoordination();
+
+  // Récupérer l'utilisateur de la coordination
+  const user = coordination ? { id: coordination.user_id } : null;
+
+  console.log('🎯 MonJourMPlanningMVP: Wrapping with PlanningProvider, user:', user?.id);
+
+  return (
+    <PlanningProvider user={user}>
+      <MonJourMPlanningContent />
+    </PlanningProvider>
   );
 };
 
