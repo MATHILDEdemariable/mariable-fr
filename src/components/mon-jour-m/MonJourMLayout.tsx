@@ -5,16 +5,15 @@ import { ArrowLeft, Calendar, Users, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import SharePublicButton from './SharePublicButton';
-import { useWeddingCoordination } from '@/hooks/useWeddingCoordination';
 
 interface MonJourMLayoutProps {
   children?: React.ReactNode;
+  coordinationId?: string;
 }
 
-const MonJourMLayout: React.FC<MonJourMLayoutProps> = ({ children }) => {
+const MonJourMLayout: React.FC<MonJourMLayoutProps> = ({ children, coordinationId }) => {
   const location = useLocation();
   const currentPath = location.pathname;
-  const { coordination } = useWeddingCoordination();
 
   const getActiveTab = () => {
     if (currentPath.includes('/planning')) return 'planning';
@@ -39,8 +38,8 @@ const MonJourMLayout: React.FC<MonJourMLayoutProps> = ({ children }) => {
               <h1 className="text-2xl font-semibold text-gray-900">Mon Jour-M</h1>
             </div>
 
-            {/* Bouton de partage */}
-            <SharePublicButton coordinationId={coordination?.id} />
+            {/* Bouton de partage - conditionnel */}
+            {coordinationId && <SharePublicButton coordinationId={coordinationId} />}
           </div>
 
           {/* Navigation par onglets */}
