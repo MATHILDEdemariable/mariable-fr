@@ -25,7 +25,7 @@ interface Task {
   priority: string;
   assigned_to?: string[];
   position: number;
-  status?: string;
+  status?: 'pending' | 'completed' | 'in_progress';
   coordination_id: string;
   is_ai_generated?: boolean;
 }
@@ -252,6 +252,27 @@ const MonJourMPlanningMVP: React.FC = () => {
     setTasks(tasks.map(t => 
       t.id === task.id ? { ...t, status: newStatus } : t
     ));
+  };
+
+  const convertTaskToPlanningTask = (task: Task) => ({
+    id: task.id,
+    title: task.title,
+    description: task.description || '',
+    start_time: task.start_time || '09:00',
+    duration: task.duration,
+    category: task.category,
+    priority: task.priority as "low" | "medium" | "high",
+    assigned_to: task.assigned_to || [],
+    position: task.position,
+    is_ai_generated: task.is_ai_generated || false
+  });
+
+  const handleTaskUpdate = async (taskData: any) => {
+    const updatedTask = {
+      id: taskData.id,
+      ...taskData
+    };
+    await updateTask(updatedTask);
   };
 
   const formatTime = (timeString?: string) => {
@@ -555,11 +576,11 @@ const MonJourMPlanningMVP: React.FC = () => {
       {/* Modals */}
       {editingTask && (
         <TaskEditModal
-          task={editingTask}
+          task={convertTaskToPlanningTask(editingTask)}
           teamMembers={teamMembers}
           isOpen={!!editingTask}
           onClose={() => setEditingTask(null)}
-          onSave={updateTask}
+          onSave={handleTaskUpdate}
         />
       )}
 
