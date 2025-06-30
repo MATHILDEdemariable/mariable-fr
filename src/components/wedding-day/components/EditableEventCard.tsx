@@ -70,6 +70,17 @@ const EditableEventCard: React.FC<EditableEventCardProps> = ({
     }
   };
 
+  // Gestionnaire unifié des raccourcis clavier
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSave();
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      handleCancel();
+    }
+  };
+
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
   };
@@ -108,6 +119,7 @@ const EditableEventCard: React.FC<EditableEventCardProps> = ({
                       size="sm"
                       onClick={handleStartEdit}
                       className="h-8 w-8 p-0 hover:bg-blue-100"
+                      title="Modifier (double-clic aussi)"
                     >
                       <Edit2 className="h-4 w-4" />
                     </Button>
@@ -117,6 +129,7 @@ const EditableEventCard: React.FC<EditableEventCardProps> = ({
                         size="sm"
                         onClick={handleDelete}
                         className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-100"
+                        title="Supprimer"
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -130,6 +143,7 @@ const EditableEventCard: React.FC<EditableEventCardProps> = ({
                       onClick={handleSave}
                       className="h-8 w-8 p-0 text-green-600 hover:bg-green-100"
                       disabled={!editedTitle.trim()}
+                      title="Sauvegarder (Entrée)"
                     >
                       <Check className="h-4 w-4" />
                     </Button>
@@ -138,6 +152,7 @@ const EditableEventCard: React.FC<EditableEventCardProps> = ({
                       size="sm"
                       onClick={handleCancel}
                       className="h-8 w-8 p-0 text-red-600 hover:bg-red-100"
+                      title="Annuler (Échap)"
                     >
                       <X className="h-4 w-4" />
                     </Button>
@@ -155,14 +170,7 @@ const EditableEventCard: React.FC<EditableEventCardProps> = ({
                   className="text-lg font-semibold"
                   placeholder="Titre de l'étape"
                   autoFocus
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                      e.preventDefault();
-                      handleSave();
-                    } else if (e.key === 'Escape') {
-                      handleCancel();
-                    }
-                  }}
+                  onKeyDown={handleKeyDown}
                 />
               ) : (
                 <h4 
@@ -189,6 +197,7 @@ const EditableEventCard: React.FC<EditableEventCardProps> = ({
                     className="w-20"
                     min="5"
                     max="480"
+                    onKeyDown={handleKeyDown}
                   />
                   <span>min</span>
                 </div>
@@ -210,6 +219,16 @@ const EditableEventCard: React.FC<EditableEventCardProps> = ({
                     placeholder="Notes (optionnel)"
                     rows={2}
                     className="resize-none"
+                    onKeyDown={(e) => {
+                      // Permettre Shift+Entrée pour nouvelle ligne dans textarea
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        handleSave();
+                      } else if (e.key === 'Escape') {
+                        e.preventDefault();
+                        handleCancel();
+                      }
+                    }}
                   />
                 ) : (
                   event.notes && (
@@ -226,7 +245,7 @@ const EditableEventCard: React.FC<EditableEventCardProps> = ({
             )}
             
             {/* Catégorie et highlight badge */}
-            <div className="flex items-center gap-2 mt-3">
+            <div className="flex items-center gap-2 mt-3 flex-wrap">
               <span className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium ${
                 event.category === 'logistique' ? 'bg-blue-100 text-blue-800' :
                 event.category === 'préparatifs_final' ? 'bg-pink-100 text-pink-800' :
@@ -243,6 +262,12 @@ const EditableEventCard: React.FC<EditableEventCardProps> = ({
               {event.isHighlight && (
                 <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-wedding-olive/20 text-wedding-olive">
                   Moment clé
+                </span>
+              )}
+              
+              {isEditing && (
+                <span className="text-xs text-gray-500 italic">
+                  Entrée = Sauver • Échap = Annuler
                 </span>
               )}
             </div>

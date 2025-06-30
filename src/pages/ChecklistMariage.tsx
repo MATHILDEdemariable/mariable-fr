@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import Header from '@/components/Header';
@@ -118,28 +119,44 @@ const ChecklistMariage = () => {
   const checkAuthAndLoadTasks = async () => {
     setIsLoading(true);
     try {
+      console.log('🔍 Checking authentication and loading tasks');
+      
       // Vérifier si l'utilisateur est connecté
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
+      
+      if (authError) {
+        console.error('❌ Auth error:', authError);
+        throw authError;
+      }
       
       if (user) {
+        console.log('👤 User authenticated:', user.id);
         setIsAuthenticated(true);
         
         // Récupérer les tâches depuis Supabase
         const { data: userTasks, error } = await supabase
           .from('todos_planification')
           .select('*')
+          .eq('user_id', user.id)
           .order('position', { ascending: true });
           
-        if (error) throw error;
+        if (error) {
+          console.error('❌ Error loading tasks:', error);
+          throw error;
+        }
+        
+        console.log('📋 Tasks loaded:', userTasks?.length || 0);
         
         if (userTasks && userTasks.length > 0) {
           setTasks(userTasks);
         } else {
           // Si l'utilisateur n'a pas encore de tâches, importer les tâches initiales
+          console.log('📝 Importing initial tasks for new user');
           await importInitialTasks(user.id);
         }
       } else {
         // Utilisateur non connecté, utiliser les tâches initiales avec statut local
+        console.log('👤 User not authenticated, using local tasks');
         setIsAuthenticated(false);
         
         // Récupérer l'état des tâches depuis le localStorage s'il existe
@@ -154,11 +171,23 @@ const ChecklistMariage = () => {
         setTasks(tasksWithStatus);
       }
     } catch (error) {
-      console.error('Erreur lors du chargement des tâches:', error);
+      console.error('❌ Error in checkAuthAndLoadTasks:', error);
+      
+      // En cas d'erreur, utiliser les tâches locales
+      setIsAuthenticated(false);
+      const savedTaskStatuses = localStorage.getItem('weddingTasksStatus');
+      const statuses = savedTaskStatuses ? JSON.parse(savedTaskStatuses) : {};
+      
+      const tasksWithStatus = initialWeddingTasks.map(task => ({
+        ...task,
+        completed: statuses[task.id] || false
+      }));
+      
+      setTasks(tasksWithStatus);
+      
       toast({
-        title: "Erreur",
-        description: "Impossible de charger les tâches de planification",
-        variant: "destructive"
+        title: "Mode hors ligne",
+        description: "Utilisation des tâches en mode local. Connectez-vous pour synchroniser.",
       });
     } finally {
       setIsLoading(false);
@@ -168,6 +197,8 @@ const ChecklistMariage = () => {
   // Importer les tâches initiales pour un nouvel utilisateur
   const importInitialTasks = async (userId: string) => {
     try {
+      console.log('📥 Importing initial tasks for user:', userId);
+      
       // Convertir les tâches initiales au format de la base de données
       const tasksToInsert = initialWeddingTasks.map((task, index) => ({
         user_id: userId,
@@ -185,33 +216,49 @@ const ChecklistMariage = () => {
         .insert(tasksToInsert)
         .select();
         
-      if (error) throw error;
+      if (error) {
+        console.error('❌ Error inserting tasks:', error);
+        throw error;
+      }
+      
+      console.log('✅ Tasks imported successfully:', insertedTasks?.length || 0);
       
       // Mettre à jour l'état local avec les tâches insérées
       setTasks(insertedTasks || []);
       
     } catch (error) {
-      console.error('Erreur lors de l\'importation des tâches initiales:', error);
+      console.error('❌ Error importing initial tasks:', error);
       toast({
-        title: "Erreur",
-        description: "Impossible d'initialiser les tâches",
+        title: "Erreur d'initialisation",
+        description: "Impossible d'initialiser les tâches. Utilisation du mode local.",
         variant: "destructive"
       });
+      
+      // Fallback vers les tâches locales
+      const tasksWithStatus = initialWeddingTasks.map(task => ({
+        ...task,
+        completed: false
+      }));
+      setTasks(tasksWithStatus);
     }
   };
   
   const toggleTaskCompletion = async (taskId: number | string) => {
-    // Convert taskId to string for consistent comparison
     const taskIdStr = taskId.toString();
     
     // Trouver la tâche à mettre à jour
     const taskIndex = tasks.findIndex(t => t.id.toString() === taskIdStr);
-    if (taskIndex === -1) return;
+    if (taskIndex === -1) {
+      console.warn('⚠️ Task not found:', taskIdStr);
+      return;
+    }
     
     const taskToUpdate = tasks[taskIndex];
     const newCompletedState = !taskToUpdate.completed;
     
-    // Mettre à jour l'état local d'abord
+    console.log('🔄 Toggling task completion:', taskToUpdate.label, 'to', newCompletedState);
+    
+    // Mettre à jour l'état local d'abord pour une UI réactive
     const updatedTasks = [...tasks];
     updatedTasks[taskIndex] = { ...taskToUpdate, completed: newCompletedState };
     setTasks(updatedTasks);
@@ -224,17 +271,25 @@ const ChecklistMariage = () => {
           .update({ completed: newCompletedState })
           .eq('id', taskIdStr);
           
-        if (error) throw error;
+        if (error) {
+          console.error('❌ Error updating task in database:', error);
+          throw error;
+        }
+        
+        console.log('✅ Task updated in database successfully');
       } catch (error) {
-        console.error('Erreur lors de la mise à jour de la tâche:', error);
-        toast({
-          title: "Erreur",
-          description: "Impossible de mettre à jour la tâche",
-          variant: "destructive"
-        });
+        console.error('❌ Database update failed, reverting local state');
         
         // Restaurer l'état précédent en cas d'erreur
-        checkAuthAndLoadTasks();
+        const revertedTasks = [...tasks];
+        revertedTasks[taskIndex] = { ...taskToUpdate, completed: !newCompletedState };
+        setTasks(revertedTasks);
+        
+        toast({
+          title: "Erreur de synchronisation",
+          description: "Impossible de mettre à jour la tâche. Veuillez réessayer.",
+          variant: "destructive"
+        });
       }
     } else {
       // Utilisateur non connecté, mettre à jour le localStorage
@@ -243,10 +298,13 @@ const ChecklistMariage = () => {
       
       statuses[taskIdStr] = newCompletedState;
       localStorage.setItem('weddingTasksStatus', JSON.stringify(statuses));
+      
+      console.log('💾 Task status saved to localStorage');
     }
   };
   
   const getProgressPercentage = () => {
+    if (tasks.length === 0) return 0;
     const completed = tasks.filter(t => t.completed).length;
     return Math.round((completed / tasks.length) * 100);
   };
@@ -324,7 +382,7 @@ const ChecklistMariage = () => {
                           onCheckedChange={() => toggleTaskCompletion(task.id)}
                           className="mt-0.5"
                         />
-                        <div>
+                        <div className="flex-1">
                           <label 
                             htmlFor={`task-${task.id}`} 
                             className={`cursor-pointer font-medium ${task.completed ? 'line-through text-muted-foreground' : ''}`}
@@ -358,7 +416,7 @@ const ChecklistMariage = () => {
               }}
             >
               <Calendar size={18} />
-              Créer mon compte
+              {isAuthenticated ? 'Aller au dashboard' : 'Créer mon compte'}
             </Button>
           </div>
         </div>

@@ -89,6 +89,39 @@ const EnhancedDragDropTimeline: React.FC<EnhancedDragDropTimelineProps> = ({
     return recalculatedEvents;
   };
 
+  // Nouvelle fonction pour intégrer les événements générés par l'IA
+  const handlePlanningGenerated = async (newEvents: PlanningEvent[]) => {
+    console.log('🤖 Integrating AI-generated events:', newEvents.length);
+    
+    try {
+      // Ajouter les nouveaux événements à la liste existante
+      const updatedEvents = [...timelineEvents, ...newEvents];
+      
+      // Recalculer le planning complet
+      const recalculatedEvents = recalculateTimeline(updatedEvents);
+      
+      setTimelineEvents(recalculatedEvents);
+      
+      if (onEventsUpdate) {
+        onEventsUpdate(recalculatedEvents);
+      }
+
+      await saveToDatabase(recalculatedEvents);
+      
+      toast({
+        title: "Planning mis à jour",
+        description: `${newEvents.length} nouvelle${newEvents.length > 1 ? 's' : ''} étape${newEvents.length > 1 ? 's ont été ajoutées' : ' a été ajoutée'}.`
+      });
+    } catch (error) {
+      console.error('❌ Error integrating AI events:', error);
+      toast({
+        title: "Erreur d'intégration",
+        description: "Impossible d'ajouter les événements générés par l'IA.",
+        variant: "destructive"
+      });
+    }
+  };
+
   // Gestionnaire d'ajout de bloc personnalisé amélioré
   const handleAddCustomBlock = async (block: { duration: number; title: string; description?: string }) => {
     console.log('➕ Adding custom block:', block.title);
@@ -122,11 +155,30 @@ const EnhancedDragDropTimeline: React.FC<EnhancedDragDropTimelineProps> = ({
     });
   };
 
-  // Gestionnaire de mise à jour d'événement corrigé
+  // Gestionnaire de mise à jour d'événement corrigé avec validation améliorée
   const handleUpdateEvent = async (updatedEvent: PlanningEvent) => {
     console.log('✏️ Updating event:', updatedEvent.title);
     
     try {
+      // Validation des données
+      if (!updatedEvent.title.trim()) {
+        toast({
+          title: "Erreur de validation",
+          description: "Le titre de l'étape ne peut pas être vide.",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      if (updatedEvent.duration < 5) {
+        toast({
+          title: "Erreur de validation", 
+          description: "La durée minimum est de 5 minutes.",
+          variant: "destructive"
+        });
+        return;
+      }
+
       const updatedEvents = timelineEvents.map(event => 
         event.id === updatedEvent.id ? updatedEvent : event
       );
@@ -176,8 +228,8 @@ const EnhancedDragDropTimeline: React.FC<EnhancedDragDropTimelineProps> = ({
     });
   };
 
-  // Fonction de sauvegarde en base améliorée
-  const saveToDatabase = async (events: PlanningEvent[]) => {
+  // Fonction de sauvegarde en base améliorée avec retry
+  const saveToDatabase = async (events: PlanningEvent[], retryCount = 0) => {
     if (!user) {
       console.warn('⚠️ No user found, skipping save');
       return;
@@ -194,14 +246,25 @@ const EnhancedDragDropTimeline: React.FC<EnhancedDragDropTimelineProps> = ({
       console.log('✅ Events saved successfully');
     } catch (error) {
       console.error('❌ Error saving planning:', error);
-      // Ne pas afficher d'erreur toast pour les échecs de sauvegarde
-      // Les changements restent visibles pour l'utilisateur
+      
+      // Retry une fois en cas d'échec
+      if (retryCount < 1) {
+        console.log('🔄 Retrying save operation...');
+        setTimeout(() => saveToDatabase(events, retryCount + 1), 1000);
+      } else {
+        // Afficher une erreur seulement après retry
+        toast({
+          title: "Erreur de sauvegarde",
+          description: "Impossible de sauvegarder en base. Vos modifications sont conservées localement.",
+          variant: "destructive"
+        });
+      }
     }
   };
 
-  // Gestionnaire de drag & drop corrigé
+  // Gestionnaire de drag & drop corrigé avec validation améliorée
   const handleDragEnd = async (result: DropResult) => {
-    console.log('🔄 Drag end:', result);
+    console.log('🔄 Drag operation:', result);
     
     if (!result.destination) {
       console.log('❌ No destination, cancelling drag');
@@ -233,7 +296,8 @@ const EnhancedDragDropTimeline: React.FC<EnhancedDragDropTimelineProps> = ({
         onEventsUpdate(recalculatedEvents);
       }
 
-      await saveToDatabase(recalculatedEvents);
+      // Sauvegarde asynchrone pour ne pas bloquer l'UI
+      saveToDatabase(recalculatedEvents);
 
       toast({
         title: "Planning réorganisé",

@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -7,6 +8,9 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Clock, Users, Sparkles, Loader2, Lightbulb } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
+import { PlanningEvent } from '../wedding-day/types/planningTypes';
+import { addMinutes } from 'date-fns';
+import { v4 as uuidv4 } from 'uuid';
 
 interface PersonalizedTask {
   title: string;
@@ -24,7 +28,7 @@ interface PersonalizedScenarioTabProps {
   onSelectSuggestion: (suggestion: { title: string; description: string; category: string; priority: string; duration: number }) => Promise<void>;
   onClose: () => void;
   // Nouvelle prop pour mettre à jour directement le planning principal
-  onPlanningGenerated?: (tasks: PersonalizedTask[]) => void;
+  onPlanningGenerated?: (events: PlanningEvent[]) => void;
 }
 
 const PersonalizedScenarioTab: React.FC<PersonalizedScenarioTabProps> = ({
@@ -97,6 +101,35 @@ const PersonalizedScenarioTab: React.FC<PersonalizedScenarioTabProps> = ({
     }
   };
 
+  // Conversion des tâches IA en événements de planning
+  const convertTasksToPlanningEvents = (tasks: PersonalizedTask[]): PlanningEvent[] => {
+    let currentStartTime = new Date();
+    currentStartTime.setHours(8, 0, 0, 0); // Commencer à 8h du matin
+    
+    return tasks.map((task, index) => {
+      const event: PlanningEvent = {
+        id: uuidv4(),
+        title: task.title,
+        category: task.category === 'ceremonie' ? 'cérémonie' : 
+                 task.category === 'preparation' ? 'préparatifs_final' :
+                 task.category === 'photo' ? 'photos' :
+                 task.category === 'reception' ? 'cocktail' :
+                 task.category === 'party' ? 'soiree' : 'personnalisé',
+        startTime: new Date(currentStartTime),
+        endTime: addMinutes(currentStartTime, task.duration),
+        duration: task.duration,
+        type: 'custom',
+        notes: task.description + (task.notes ? ` • ${task.notes}` : ''),
+        isHighlight: task.priority === 'high'
+      };
+      
+      // Mettre à jour l'heure pour la prochaine tâche (avec 15 min de buffer)
+      currentStartTime = addMinutes(event.endTime, 15);
+      
+      return event;
+    });
+  };
+
   const handleTaskToggle = (taskIndex: number) => {
     const taskId = taskIndex.toString();
     setSelectedTasks(prev => 
@@ -123,7 +156,9 @@ const PersonalizedScenarioTab: React.FC<PersonalizedScenarioTabProps> = ({
     try {
       // Utiliser la nouvelle fonction pour mettre à jour directement le planning principal
       if (onPlanningGenerated) {
-        await onPlanningGenerated(tasksToAdd);
+        console.log('🔄 Converting AI tasks to planning events');
+        const planningEvents = convertTasksToPlanningEvents(tasksToAdd);
+        await onPlanningGenerated(planningEvents);
       } else {
         // Fallback vers l'ancienne méthode
         for (const task of tasksToAdd) {
