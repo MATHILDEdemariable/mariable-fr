@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -7,79 +8,84 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
-import { User } from '@supabase/supabase-js';
 import PersonalizedScenarioTab from './PersonalizedScenarioTab';
 import EnhancedDragDropTimeline from '../wedding-day/components/EnhancedDragDropTimeline';
 import { PlanningEvent } from '../wedding-day/types/planningTypes';
+import { useMonJourMCoordination } from '@/hooks/useMonJourMCoordination';
 
 const MonJourMPlanningMVP: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [events, setEvents] = useState<PlanningEvent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [user, setUser] = useState<User | null>(null);
   const { toast } = useToast();
+  
+  // Utilisation du nouveau hook optimisé
+  const { 
+    coordination, 
+    isLoading: coordinationLoading, 
+    isInitializing,
+    error: coordinationError,
+    refreshCoordination 
+  } = useMonJourMCoordination();
 
-  // Récupération simple de l'utilisateur (sans vérification d'auth car déjà faite par MonJourM)
+  console.log('🎯 MonJourMPlanningMVP: coordination state:', { 
+    coordination: coordination?.id, 
+    loading: coordinationLoading, 
+    initializing: isInitializing,
+    error: coordinationError 
+  });
+
+  // Charger les événements existants quand la coordination est prête
   useEffect(() => {
-    const getUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      setUser(user);
-    };
-    
-    getUser();
-  }, []);
-
-  // Charger les événements existants au démarrage
-  useEffect(() => {
-    loadExistingPlanning();
-  }, [user]);
-
-  const loadExistingPlanning = async () => {
-    if (!user) {
-      console.log('👤 No user found, skipping load');
-      setIsLoading(false);
+    if (!coordination || coordinationLoading || isInitializing) {
+      console.log('⏳ MonJourMPlanningMVP: Waiting for coordination...');
       return;
     }
 
-    try {
-      setIsLoading(true);
-      console.log('📋 Loading existing planning for user:', user.id);
+    const loadExistingPlanning = async () => {
+      try {
+        setIsLoading(true);
+        console.log('📋 Loading existing planning for coordination:', coordination.id);
 
-      const { data, error } = await supabase
-        .from('planning_reponses_utilisateur')
-        .select('planning_genere')
-        .eq('user_id', user.id)
-        .order('date_creation', { ascending: false })
-        .limit(1)
-        .maybeSingle();
+        const { data, error } = await supabase
+          .from('planning_reponses_utilisateur')
+          .select('planning_genere')
+          .eq('user_id', coordination.user_id)
+          .order('date_creation', { ascending: false })
+          .limit(1)
+          .maybeSingle();
 
-      if (error) throw error;
+        if (error) throw error;
 
-      if (data?.planning_genere && Array.isArray(data.planning_genere)) {
-        // Convertir les dates string en objets Date
-        const convertedEvents: PlanningEvent[] = data.planning_genere.map((event: any) => ({
-          ...event,
-          startTime: new Date(event.startTime),
-          endTime: new Date(event.endTime)
-        }));
-        
-        console.log('✅ Loaded', convertedEvents.length, 'existing events');
-        setEvents(convertedEvents);
-      } else {
-        console.log('📋 No existing planning found');
+        if (data?.planning_genere && Array.isArray(data.planning_genere)) {
+          // Convertir les dates string en objets Date
+          const convertedEvents: PlanningEvent[] = data.planning_genere.map((event: any) => ({
+            ...event,
+            startTime: new Date(event.startTime),
+            endTime: new Date(event.endTime)
+          }));
+          
+          console.log('✅ Loaded', convertedEvents.length, 'existing events');
+          setEvents(convertedEvents);
+        } else {
+          console.log('📋 No existing planning found');
+          setEvents([]);
+        }
+      } catch (error) {
+        console.error('❌ Error loading existing planning:', error);
+        toast({
+          title: "Erreur de chargement",
+          description: "Impossible de charger le planning existant.",
+          variant: "destructive"
+        });
         setEvents([]);
+      } finally {
+        setIsLoading(false);
       }
-    } catch (error) {
-      console.error('❌ Error loading existing planning:', error);
-      toast({
-        title: "Erreur de chargement",
-        description: "Impossible de charger le planning existant.",
-        variant: "destructive"
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    };
+
+    loadExistingPlanning();
+  }, [coordination, coordinationLoading, isInitializing, toast]);
 
   // Gestionnaire pour l'intégration des événements générés par l'IA
   const handlePlanningGenerated = async (newEvents: PlanningEvent[]) => {
@@ -128,10 +134,43 @@ const MonJourMPlanningMVP: React.FC = () => {
 
   const stats = getEventStats();
 
-  if (isLoading) {
+  // Guard pour les erreurs de coordination
+  if (coordinationError) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <Card className="max-w-md">
+          <CardContent className="p-6 text-center">
+            <p className="text-red-600 mb-4">Erreur de chargement de la coordination</p>
+            <Button onClick={refreshCoordination} variant="outline">
+              Réessayer
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // Loading state pendant l'initialisation
+  if (coordinationLoading || isInitializing || isLoading) {
     return (
       <div className="flex justify-center items-center h-64">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-wedding-olive"></div>
+      </div>
+    );
+  }
+
+  // Guard pour coordination manquante
+  if (!coordination) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <Card className="max-w-md">
+          <CardContent className="p-6 text-center">
+            <p className="text-gray-600 mb-4">Coordination non disponible</p>
+            <Button onClick={refreshCoordination} variant="outline">
+              Actualiser
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     );
   }
