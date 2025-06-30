@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -17,6 +16,7 @@ import NotFound from "./pages/NotFound";
 import ReservationJourM from "./pages/ReservationJourM";
 import UserDashboard from "./pages/dashboard/UserDashboard";
 import JourMVue from "./pages/JourMVue";
+import PlanningPublic from "./pages/PlanningPublic";
 import MonJourM from "./pages/MonJourM";
 import MonJourMPlanningPage from "./pages/MonJourMPlanning";
 import MonJourMEquipePage from "./pages/MonJourMEquipe";
@@ -72,6 +72,9 @@ function App() {
                   <Route path="/reservation-jour-m" element={<ReservationJourM />} />
                   <Route path="/dashboard/*" element={<UserDashboard />} />
                   <Route path="/jour-m-vue/:token" element={<JourMVue />} />
+                  
+                  {/* Route publique pour le planning */}
+                  <Route path="/planning-public/:coordinationId" element={<PlanningPublic />} />
                   
                   {/* Mon Jour-M routes */}
                   <Route path="/mon-jour-m" element={<Navigate to="/mon-jour-m/planning" replace />} />
