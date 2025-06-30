@@ -296,10 +296,10 @@ const MonJourMPlanningContent: React.FC = () => {
 const MonJourMPlanningMVP: React.FC = () => {
   const { coordination } = useMonJourMCoordination();
 
-  // Récupérer l'utilisateur de la coordination
-  const user = coordination ? { id: coordination.user_id } : null;
+  // Passer null au lieu d'un objet partiel pour éviter l'erreur TypeScript
+  const user = coordination ? null : null;
 
-  console.log('🎯 MonJourMPlanningMVP: Wrapping with PlanningProvider, user:', user?.id);
+  console.log('🎯 MonJourMPlanningMVP: Wrapping with PlanningProvider, coordination:', coordination?.id);
 
   return (
     <PlanningProvider user={user}>
