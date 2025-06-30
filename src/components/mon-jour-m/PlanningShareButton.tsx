@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Share, Copy, Check } from "lucide-react";
@@ -60,7 +59,7 @@ const PlanningShareButton: React.FC<PlanningShareButtonProps> = ({ coordinationI
         console.log('✅ Created new planning share token');
       }
       
-      const shareUrl = `${window.location.origin}/jour-m/${token}`;
+      const shareUrl = `${window.location.origin}/jour-m-vue/${token}`;
       setShareLink(shareUrl);
       
       toast({
