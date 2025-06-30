@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -43,9 +42,9 @@ const ReaderView: React.FC = () => {
       try {
         console.log('Validating token:', token);
         
-        // Validate token using the RPC function
+        // Validate token using the correct RPC function
         const { data: tokenValidation, error: tokenError } = await supabase
-          .rpc('validate_share_token', { token_value: token });
+          .rpc('validate_dashboard_share_token', { token_value: token });
 
         console.log('Token validation result:', tokenValidation, tokenError);
 
@@ -56,7 +55,7 @@ const ReaderView: React.FC = () => {
           return;
         }
 
-        if (!tokenValidation || tokenValidation.length === 0 || !tokenValidation[0].is_valid) {
+        if (!tokenValidation || !Array.isArray(tokenValidation) || tokenValidation.length === 0 || !tokenValidation[0].is_valid) {
           setError('Lien invalide ou expiré');
           setLoading(false);
           return;

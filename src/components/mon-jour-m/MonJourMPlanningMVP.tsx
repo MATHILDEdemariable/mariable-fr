@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -74,7 +73,27 @@ const MonJourMPlanningMVP: React.FC = () => {
         .order('position', { ascending: true });
 
       if (error) throw error;
-      setTasks(data || []);
+      
+      // Normaliser les données pour correspondre à l'interface Task
+      const normalizedTasks: Task[] = (data || []).map(task => ({
+        id: task.id,
+        title: task.title,
+        description: task.description,
+        start_time: task.start_time,
+        end_time: task.end_time,
+        duration: task.duration || 30,
+        category: task.category,
+        priority: task.priority,
+        assigned_to: Array.isArray(task.assigned_to) 
+          ? task.assigned_to.filter(item => typeof item === 'string')
+          : [],
+        position: task.position || 0,
+        status: task.status || 'pending',
+        coordination_id: task.coordination_id,
+        is_ai_generated: task.is_ai_generated || false
+      }));
+      
+      setTasks(normalizedTasks);
     } catch (error) {
       console.error('❌ Error loading tasks:', error);
       toast({
@@ -96,7 +115,16 @@ const MonJourMPlanningMVP: React.FC = () => {
         .order('created_at');
 
       if (error) throw error;
-      setTeamMembers(data || []);
+      
+      // Normaliser les données pour correspondre à l'interface TeamMember
+      const normalizedTeamMembers: TeamMember[] = (data || []).map(member => ({
+        id: member.id,
+        name: member.name,
+        role: member.role,
+        type: (member.type === 'vendor' ? 'vendor' : 'person') as 'person' | 'vendor'
+      }));
+      
+      setTeamMembers(normalizedTeamMembers);
     } catch (error) {
       console.error('❌ Error loading team members:', error);
     }
