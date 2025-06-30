@@ -4,9 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Calendar, Users, FileText, Clock, CheckCircle2, Circle, User, Building, Mail, Phone, AlertCircle, Filter } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { validatePlanningShareToken } from '@/utils/tokenUtils';
+import { validatePlanningShareToken, getPublicCoordinationData } from '@/utils/tokenUtils';
 
 interface WeddingData {
   coordination: any;
@@ -27,7 +26,6 @@ const JourMVue: React.FC = () => {
     console.log('🚀 JourMVue component mounted with token:', token);
     if (token) {
       loadSharedData(token);
-      setupRealtimeSubscription(token);
     } else {
       setError('Token de partage manquant');
       setLoading(false);
@@ -44,7 +42,9 @@ const JourMVue: React.FC = () => {
     console.log('📊 Loading shared data for token:', shareToken);
     
     try {
-      // Utiliser la nouvelle fonction de validation pour les tokens de planning
+      setLoading(true);
+      
+      // Valider le token avec la nouvelle fonction simplifiée
       const { isValid, coordinationId } = await validatePlanningShareToken(shareToken);
       
       console.log('✅ Planning token validation result:', { isValid, coordinationId });
@@ -55,61 +55,9 @@ const JourMVue: React.FC = () => {
         return;
       }
 
-      // Récupérer les données de coordination
-      const { data: coordination, error: coordError } = await supabase
-        .from('wedding_coordination')
-        .select('*')
-        .eq('id', coordinationId)
-        .single();
-
-      console.log('📋 Coordination data:', coordination, 'Error:', coordError);
-
-      if (coordError || !coordination) {
-        setError('Données de mariage non trouvées');
-        setLoading(false);
-        return;
-      }
-
-      // Récupérer les tâches
-      const { data: tasks, error: tasksError } = await supabase
-        .from('coordination_planning')
-        .select('*')
-        .eq('coordination_id', coordinationId)
-        .order('position');
-
-      if (tasksError) {
-        console.error('❌ Error loading tasks:', tasksError);
-      }
-
-      // Récupérer l'équipe
-      const { data: teamMembers, error: teamError } = await supabase
-        .from('coordination_team')
-        .select('*')
-        .eq('coordination_id', coordinationId)
-        .order('created_at');
-
-      if (teamError) {
-        console.error('❌ Error loading team:', teamError);
-      }
-
-      // Récupérer les documents (titres seulement pour la vue publique)
-      const { data: documents, error: docsError } = await supabase
-        .from('coordination_documents')
-        .select('id, title, category, created_at')
-        .eq('coordination_id', coordinationId)
-        .order('created_at', { ascending: false });
-
-      if (docsError) {
-        console.error('❌ Error loading documents:', docsError);
-      }
-
-      const weddingDataResult = {
-        coordination,
-        tasks: tasks || [],
-        teamMembers: teamMembers || [],
-        documents: documents || []
-      };
-
+      // Récupérer les données publiques
+      const weddingDataResult = await getPublicCoordinationData(coordinationId);
+      
       console.log('📦 Final wedding data:', weddingDataResult);
       setWeddingData(weddingDataResult);
     } catch (error) {
@@ -118,40 +66,6 @@ const JourMVue: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const setupRealtimeSubscription = (shareToken: string) => {
-    const channel = supabase
-      .channel(`planning-public-${shareToken}`)
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'coordination_planning'
-        },
-        () => {
-          console.log('🔄 Real-time update received for planning');
-          if (token) loadSharedData(token);
-        }
-      )
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'coordination_team'
-        },
-        () => {
-          console.log('🔄 Real-time update received for team');
-          if (token) loadSharedData(token);
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
   };
 
   const filterTasks = () => {
@@ -223,6 +137,7 @@ const JourMVue: React.FC = () => {
             <p className="font-medium text-gray-800 mb-2">Informations de débogage :</p>
             <p className="text-gray-600">Token: {token || 'Non fourni'}</p>
             <p className="text-gray-600">URL: {window.location.href}</p>
+            <p className="text-gray-600">Navigation privée: {navigator.cookieEnabled ? 'Non' : 'Possible'}</p>
           </div>
         </div>
       </div>
