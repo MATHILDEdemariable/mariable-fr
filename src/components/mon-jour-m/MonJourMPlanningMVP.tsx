@@ -8,17 +8,35 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
+import { User } from '@supabase/supabase-js';
 import PersonalizedScenarioTab from './PersonalizedScenarioTab';
 import EnhancedDragDropTimeline from '../wedding-day/components/EnhancedDragDropTimeline';
 import { PlanningEvent } from '../wedding-day/types/planningTypes';
-import { usePlanning } from '../wedding-day/context/PlanningContext';
 
 const MonJourMPlanningMVP: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [events, setEvents] = useState<PlanningEvent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const { user } = usePlanning();
+  const [user, setUser] = useState<User | null>(null);
   const { toast } = useToast();
+
+  // Récupération de l'utilisateur authentifié
+  useEffect(() => {
+    const getUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
+    };
+    
+    getUser();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        setUser(session?.user ?? null);
+      }
+    );
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   // Charger les événements existants au démarrage
   useEffect(() => {
