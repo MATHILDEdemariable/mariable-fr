@@ -1,4 +1,3 @@
-
 import { createClient } from '@supabase/supabase-js';
 
 // Client Supabase public pour les données partagées (sans authentification)
@@ -71,16 +70,23 @@ export const getPublicCoordinationData = async (coordinationId: string) => {
   try {
     console.log('📋 Loading public coordination data for:', coordinationId);
 
-    // Récupérer les données de coordination
+    // Récupérer les données de coordination avec maybeSingle()
     const { data: coordination, error: coordError } = await publicSupabase
       .from('wedding_coordination')
       .select('*')
       .eq('id', coordinationId)
-      .single();
+      .maybeSingle();
 
-    if (coordError || !coordination) {
+    console.log('📊 Coordination query result:', { coordination, coordError });
+
+    if (coordError) {
       console.error('❌ Error loading coordination:', coordError);
-      throw new Error('Données de coordination non trouvées');
+      throw new Error(`Erreur lors du chargement de la coordination: ${coordError.message}`);
+    }
+
+    if (!coordination) {
+      console.error('❌ No coordination found for ID:', coordinationId);
+      throw new Error('Données de coordination non trouvées - ID invalide');
     }
 
     // Récupérer les tâches
@@ -123,7 +129,13 @@ export const getPublicCoordinationData = async (coordinationId: string) => {
       documents: documents || []
     };
 
-    console.log('📦 Public coordination data loaded:', result);
+    console.log('📦 Public coordination data loaded successfully:', {
+      coordinationTitle: coordination.title,
+      tasksCount: result.tasks.length,
+      teamCount: result.teamMembers.length,
+      documentsCount: result.documents.length
+    });
+    
     return result;
   } catch (error) {
     console.error('❌ Error in getPublicCoordinationData:', error);
