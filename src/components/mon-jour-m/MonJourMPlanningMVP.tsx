@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -20,7 +19,7 @@ const MonJourMPlanningMVP: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
   const { toast } = useToast();
 
-  // Récupération de l'utilisateur authentifié
+  // Récupération simple de l'utilisateur (sans vérification d'auth car déjà faite par MonJourM)
   useEffect(() => {
     const getUser = async () => {
       const { data: { user } } = await supabase.auth.getUser();
@@ -28,14 +27,6 @@ const MonJourMPlanningMVP: React.FC = () => {
     };
     
     getUser();
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setUser(session?.user ?? null);
-      }
-    );
-
-    return () => subscription.unsubscribe();
   }, []);
 
   // Charger les événements existants au démarrage
@@ -125,8 +116,6 @@ const MonJourMPlanningMVP: React.FC = () => {
   // Fonction fallback pour l'ancienne méthode (suggestions individuelles)
   const handleSelectSuggestion = async (suggestion: any) => {
     console.log('📝 Adding individual suggestion:', suggestion.title);
-    // Cette fonction peut rester vide ou implémenter une logique de fallback
-    // car nous utilisons maintenant handlePlanningGenerated
   };
 
   const getEventStats = () => {
