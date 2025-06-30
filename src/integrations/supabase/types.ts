@@ -1996,11 +1996,18 @@ export type Database = {
         Args: { token_value: string }
         Returns: boolean
       }
-      validate_share_token: {
+      validate_dashboard_share_token: {
         Args: { token_value: string }
         Returns: {
           is_valid: boolean
           user_id: string
+        }[]
+      }
+      validate_planning_share_token: {
+        Args: { token_value: string }
+        Returns: {
+          is_valid: boolean
+          coordination_id: string
         }[]
       }
     }

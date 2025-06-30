@@ -1,12 +1,12 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Calendar, Users, FileText, Clock, CheckCircle2, Circle, User, Building, Mail, Phone, AlertCircle } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Calendar, Users, FileText, Clock, CheckCircle2, Circle, User, Building, Mail, Phone, AlertCircle, Filter } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { validateShareToken } from '@/utils/tokenUtils';
+import { validatePlanningShareToken } from '@/utils/tokenUtils';
 
 interface WeddingData {
   coordination: any;
@@ -20,9 +20,11 @@ const JourMVue: React.FC = () => {
   const [weddingData, setWeddingData] = useState<WeddingData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedTeamMember, setSelectedTeamMember] = useState<string>('all');
+  const [filteredTasks, setFilteredTasks] = useState<any[]>([]);
 
   useEffect(() => {
-    console.log('JourMVue component mounted with token:', token);
+    console.log('🚀 JourMVue component mounted with token:', token);
     if (token) {
       loadSharedData(token);
       setupRealtimeSubscription(token);
@@ -32,16 +34,22 @@ const JourMVue: React.FC = () => {
     }
   }, [token]);
 
+  useEffect(() => {
+    if (weddingData?.tasks) {
+      filterTasks();
+    }
+  }, [selectedTeamMember, weddingData?.tasks]);
+
   const loadSharedData = async (shareToken: string) => {
-    console.log('Loading shared data for token:', shareToken);
+    console.log('📊 Loading shared data for token:', shareToken);
     
     try {
-      // Utiliser la fonction utilitaire pour valider le token
-      const { isValid, userId } = await validateShareToken(shareToken);
+      // Utiliser la nouvelle fonction de validation pour les tokens de planning
+      const { isValid, coordinationId } = await validatePlanningShareToken(shareToken);
       
-      console.log('Token validation result:', { isValid, userId });
+      console.log('✅ Planning token validation result:', { isValid, coordinationId });
       
-      if (!isValid || !userId) {
+      if (!isValid || !coordinationId) {
         setError('Token de partage invalide ou expiré');
         setLoading(false);
         return;
@@ -51,10 +59,10 @@ const JourMVue: React.FC = () => {
       const { data: coordination, error: coordError } = await supabase
         .from('wedding_coordination')
         .select('*')
-        .eq('user_id', userId)
+        .eq('id', coordinationId)
         .single();
 
-      console.log('Coordination data:', coordination, 'Error:', coordError);
+      console.log('📋 Coordination data:', coordination, 'Error:', coordError);
 
       if (coordError || !coordination) {
         setError('Données de mariage non trouvées');
@@ -66,33 +74,33 @@ const JourMVue: React.FC = () => {
       const { data: tasks, error: tasksError } = await supabase
         .from('coordination_planning')
         .select('*')
-        .eq('coordination_id', coordination.id)
+        .eq('coordination_id', coordinationId)
         .order('position');
 
       if (tasksError) {
-        console.error('Error loading tasks:', tasksError);
+        console.error('❌ Error loading tasks:', tasksError);
       }
 
       // Récupérer l'équipe
       const { data: teamMembers, error: teamError } = await supabase
         .from('coordination_team')
         .select('*')
-        .eq('coordination_id', coordination.id)
+        .eq('coordination_id', coordinationId)
         .order('created_at');
 
       if (teamError) {
-        console.error('Error loading team:', teamError);
+        console.error('❌ Error loading team:', teamError);
       }
 
       // Récupérer les documents (titres seulement pour la vue publique)
       const { data: documents, error: docsError } = await supabase
         .from('coordination_documents')
         .select('id, title, category, created_at')
-        .eq('coordination_id', coordination.id)
+        .eq('coordination_id', coordinationId)
         .order('created_at', { ascending: false });
 
       if (docsError) {
-        console.error('Error loading documents:', docsError);
+        console.error('❌ Error loading documents:', docsError);
       }
 
       const weddingDataResult = {
@@ -102,10 +110,10 @@ const JourMVue: React.FC = () => {
         documents: documents || []
       };
 
-      console.log('Final wedding data:', weddingDataResult);
+      console.log('📦 Final wedding data:', weddingDataResult);
       setWeddingData(weddingDataResult);
     } catch (error) {
-      console.error('Error loading shared data:', error);
+      console.error('❌ Error loading shared data:', error);
       setError(`Erreur lors du chargement des données: ${error.message}`);
     } finally {
       setLoading(false);
@@ -114,7 +122,7 @@ const JourMVue: React.FC = () => {
 
   const setupRealtimeSubscription = (shareToken: string) => {
     const channel = supabase
-      .channel(`jour-m-public-${shareToken}`)
+      .channel(`planning-public-${shareToken}`)
       .on(
         'postgres_changes',
         {
@@ -123,7 +131,7 @@ const JourMVue: React.FC = () => {
           table: 'coordination_planning'
         },
         () => {
-          console.log('Real-time update received for planning');
+          console.log('🔄 Real-time update received for planning');
           if (token) loadSharedData(token);
         }
       )
@@ -135,7 +143,7 @@ const JourMVue: React.FC = () => {
           table: 'coordination_team'
         },
         () => {
-          console.log('Real-time update received for team');
+          console.log('🔄 Real-time update received for team');
           if (token) loadSharedData(token);
         }
       )
@@ -144,6 +152,20 @@ const JourMVue: React.FC = () => {
     return () => {
       supabase.removeChannel(channel);
     };
+  };
+
+  const filterTasks = () => {
+    if (!weddingData?.tasks) return;
+
+    if (selectedTeamMember === 'all') {
+      setFilteredTasks(weddingData.tasks);
+    } else {
+      const filtered = weddingData.tasks.filter(task => {
+        if (!task.assigned_to || !Array.isArray(task.assigned_to)) return false;
+        return task.assigned_to.includes(selectedTeamMember);
+      });
+      setFilteredTasks(filtered);
+    }
   };
 
   const formatTime = (timeString?: string) => {
@@ -233,6 +255,12 @@ const JourMVue: React.FC = () => {
                 })}
               </p>
             )}
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-4 max-w-md mx-auto">
+              <p className="text-sm text-blue-700">
+                <strong>Mode consultation :</strong> Ce planning est en lecture seule. 
+                Contactez les mariés pour toute modification.
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -258,12 +286,34 @@ const JourMVue: React.FC = () => {
           <TabsContent value="planning">
             <Card>
               <CardHeader>
-                <CardTitle>Timeline du jour J</CardTitle>
+                <div className="flex justify-between items-center">
+                  <CardTitle>Timeline du jour J</CardTitle>
+                  
+                  {/* Filtre par équipe */}
+                  {teamMembers.length > 0 && (
+                    <div className="flex items-center gap-2">
+                      <Filter className="h-4 w-4 text-gray-500" />
+                      <Select value={selectedTeamMember} onValueChange={setSelectedTeamMember}>
+                        <SelectTrigger className="w-48">
+                          <SelectValue placeholder="Filtrer par membre" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">Voir toutes les tâches</SelectItem>
+                          {teamMembers.map((member) => (
+                            <SelectItem key={member.id} value={member.id}>
+                              {member.name} ({member.role})
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
+                </div>
               </CardHeader>
               <CardContent>
-                {tasks.length > 0 ? (
+                {filteredTasks.length > 0 ? (
                   <div className="space-y-4">
-                    {tasks.map((task) => (
+                    {filteredTasks.map((task) => (
                       <div key={task.id} className="p-4 border rounded-lg bg-white shadow-sm">
                         <div className="flex items-start gap-4">
                           <div className="flex items-center gap-2 min-w-0 flex-1">
@@ -318,7 +368,12 @@ const JourMVue: React.FC = () => {
                 ) : (
                   <div className="text-center py-12 text-gray-500">
                     <Calendar className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                    <p>Aucune tâche planifiée</p>
+                    <p>
+                      {selectedTeamMember === 'all' 
+                        ? 'Aucune tâche planifiée' 
+                        : 'Aucune tâche assignée à ce membre'
+                      }
+                    </p>
                   </div>
                 )}
               </CardContent>
@@ -421,6 +476,9 @@ const JourMVue: React.FC = () => {
             <Card>
               <CardHeader>
                 <CardTitle>Documents partagés</CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  Les documents sont visibles en consultation uniquement pour des raisons de confidentialité.
+                </p>
               </CardHeader>
               <CardContent>
                 {documents.length > 0 ? (
