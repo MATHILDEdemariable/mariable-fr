@@ -104,7 +104,6 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
       error: error ? {
         message: error.message,
         name: error.name,
-        cause: error.cause,
         stack: error.stack
       } : null
     });
