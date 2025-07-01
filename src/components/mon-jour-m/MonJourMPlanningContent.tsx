@@ -19,9 +19,9 @@ interface MonJourMPlanningContentProps {
   coordinationId: string;
 }
 
-// Interface pour typer les paramètres JSON
+// Interface pour typer les paramètres JSON de façon sécurisée
 interface ReferenceTimeParams {
-  reference_time: string;
+  reference_time?: string;
 }
 
 const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({ 
@@ -53,8 +53,8 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
 
         if (error && error.code !== 'PGRST116') throw error;
 
-        if (data?.parameters && typeof data.parameters === 'object' && data.parameters !== null) {
-          const params = data.parameters as ReferenceTimeParams;
+        if (data?.parameters && typeof data.parameters === 'object' && data.parameters !== null && !Array.isArray(data.parameters)) {
+          const params = data.parameters as unknown as ReferenceTimeParams;
           if (params.reference_time) {
             const [hours, minutes] = params.reference_time.split(':').map(Number);
             const refTime = new Date();
@@ -376,16 +376,31 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
       {/* Actions principales */}
       <div className="flex flex-col sm:flex-row gap-4">
         <AISuggestionsModal
-          coordination={{ id: coordinationId, user_id: coordination?.user_id || '' }}
+          isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
-          onPlanningGenerated={handlePlanningGenerated}
-          trigger={
-            <Button className="bg-purple-600 hover:bg-purple-700 flex-1">
-              <Sparkles className="h-4 w-4 mr-2" />
-              Suggestions de tâches IA
-            </Button>
-          }
+          onSelectSuggestion={async (suggestion) => {
+            // Convertir la suggestion en PlanningEvent
+            const newEvent: PlanningEvent = {
+              id: `temp-${Date.now()}`,
+              title: suggestion.title,
+              notes: suggestion.description,
+              startTime: new Date(referenceTime),
+              endTime: new Date(referenceTime.getTime() + suggestion.duration * 60000),
+              duration: suggestion.duration,
+              category: suggestion.category,
+              type: suggestion.category,
+              isHighlight: suggestion.priority === 'high',
+              assignedTo: []
+            };
+            
+            await handlePlanningGenerated([newEvent]);
+          }}
         />
+
+        <Button className="bg-purple-600 hover:bg-purple-700 flex-1" onClick={() => setIsModalOpen(true)}>
+          <Sparkles className="h-4 w-4 mr-2" />
+          Suggestions de tâches IA
+        </Button>
 
         <Button 
           variant="outline" 
@@ -420,15 +435,25 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
                 Commencez par utiliser l'assistant IA pour générer votre planning personnalisé.
               </p>
               <AISuggestionsModal
-                coordination={{ id: coordinationId, user_id: coordination?.user_id || '' }}
+                isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
-                onPlanningGenerated={handlePlanningGenerated}
-                trigger={
-                  <Button className="bg-purple-600 hover:bg-purple-700">
-                    <Sparkles className="h-4 w-4 mr-2" />
-                    Générer mon planning
-                  </Button>
-                }
+                onSelectSuggestion={async (suggestion) => {
+                  // Convertir la suggestion en PlanningEvent
+                  const newEvent: PlanningEvent = {
+                    id: `temp-${Date.now()}`,
+                    title: suggestion.title,
+                    notes: suggestion.description,
+                    startTime: new Date(referenceTime),
+                    endTime: new Date(referenceTime.getTime() + suggestion.duration * 60000),
+                    duration: suggestion.duration,
+                    category: suggestion.category,
+                    type: suggestion.category,
+                    isHighlight: suggestion.priority === 'high',
+                    assignedTo: []
+                  };
+                  
+                  await handlePlanningGenerated([newEvent]);
+                }}
               />
             </div>
           ) : (
