@@ -8,21 +8,22 @@ import { Link } from 'react-router-dom';
 
 const BlogPostCard: React.FC<{ post: BlogPost }> = ({ post }) => {
   const title = post.h1_title || post.title;
-  const letters = Array.from(title);
+  const words = title.split(' ');
 
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: { staggerChildren: 0.03 },
+      transition: { staggerChildren: 0.1 },
     },
   };
 
-  const letterVariants = {
+  const wordVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: {
       opacity: 1,
       y: 0,
+      transition: { duration: 0.5 }
     },
   };
 
@@ -39,15 +40,19 @@ const BlogPostCard: React.FC<{ post: BlogPost }> = ({ post }) => {
         <div className="absolute inset-0 bg-black bg-opacity-50" />
         <div className="relative z-10 text-white text-center p-8 max-w-3xl flex flex-col items-center">
             <motion.h1
-                className="text-4xl md:text-6xl font-bold mb-4 flex flex-wrap justify-center"
+                className="text-4xl md:text-6xl font-bold mb-4 text-center leading-tight"
                 variants={containerVariants}
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true, amount: 0.5 }}
             >
-                {letters.map((letter, index) => (
-                    <motion.span key={index} variants={letterVariants}>
-                        {letter === ' ' ? '\u00A0' : letter}
+                {words.map((word, index) => (
+                    <motion.span 
+                        key={index} 
+                        variants={wordVariants}
+                        className="inline-block mr-3 whitespace-nowrap"
+                    >
+                        {word}
                     </motion.span>
                 ))}
             </motion.h1>
@@ -56,7 +61,7 @@ const BlogPostCard: React.FC<{ post: BlogPost }> = ({ post }) => {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: letters.length * 0.03 + 0.3, duration: 0.5 }}
+              transition={{ delay: words.length * 0.1 + 0.3, duration: 0.5 }}
             >
                 {post.subtitle}
             </motion.p>
@@ -64,7 +69,7 @@ const BlogPostCard: React.FC<{ post: BlogPost }> = ({ post }) => {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: letters.length * 0.03 + 0.5, duration: 0.5 }}
+              transition={{ delay: words.length * 0.1 + 0.5, duration: 0.5 }}
             >
                 <Link to={`/blog/${post.slug}`}>
                     <Button>
