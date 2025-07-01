@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { Clock, Info } from 'lucide-react';
+import { useMonJourMCoordination } from '@/hooks/useMonJourMCoordination';
 
 interface TimeReferenceModalProps {
   isOpen: boolean;
@@ -28,6 +29,7 @@ const TimeReferenceModal: React.FC<TimeReferenceModalProps> = ({
   );
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const { coordination } = useMonJourMCoordination();
 
   useEffect(() => {
     setReferenceTime(currentReferenceTime.toTimeString().slice(0, 5));
@@ -37,11 +39,11 @@ const TimeReferenceModal: React.FC<TimeReferenceModalProps> = ({
     setIsLoading(true);
 
     try {
-      // Sauvegarder la configuration dans coordination_parameters
+      // Sauvegarder la configuration dans coordination_parameters avec user_id
       const { error } = await supabase
         .from('coordination_parameters')
         .upsert({
-          coordination_id: coordinationId,
+          user_id: coordination?.user_id || '',
           name: 'reference_time',
           parameters: { reference_time: referenceTime }
         });

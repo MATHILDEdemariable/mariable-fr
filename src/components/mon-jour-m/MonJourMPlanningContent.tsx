@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -18,6 +17,11 @@ import { useMonJourMCoordination } from '@/hooks/useMonJourMCoordination';
 
 interface MonJourMPlanningContentProps {
   coordinationId: string;
+}
+
+// Interface pour typer les paramètres JSON
+interface ReferenceTimeParams {
+  reference_time: string;
 }
 
 const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({ 
@@ -43,17 +47,25 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
         const { data, error } = await supabase
           .from('coordination_parameters')
           .select('parameters')
-          .eq('coordination_id', coordinationId)
+          .eq('user_id', coordination?.user_id || '')
           .eq('name', 'reference_time')
           .maybeSingle();
 
         if (error && error.code !== 'PGRST116') throw error;
 
-        if (data?.parameters?.reference_time) {
-          const [hours, minutes] = data.parameters.reference_time.split(':').map(Number);
-          const refTime = new Date();
-          refTime.setHours(hours, minutes, 0, 0);
-          setReferenceTime(refTime);
+        if (data?.parameters && typeof data.parameters === 'object' && data.parameters !== null) {
+          const params = data.parameters as ReferenceTimeParams;
+          if (params.reference_time) {
+            const [hours, minutes] = params.reference_time.split(':').map(Number);
+            const refTime = new Date();
+            refTime.setHours(hours, minutes, 0, 0);
+            setReferenceTime(refTime);
+          } else {
+            // Heure par défaut : 15h00
+            const defaultTime = new Date();
+            defaultTime.setHours(15, 0, 0, 0);
+            setReferenceTime(defaultTime);
+          }
         } else {
           // Heure par défaut : 15h00
           const defaultTime = new Date();
@@ -68,10 +80,10 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
       }
     };
 
-    if (coordinationId) {
+    if (coordinationId && coordination?.user_id) {
       initReferenceTime();
     }
-  }, [coordinationId]);
+  }, [coordinationId, coordination?.user_id]);
 
   // Charger les membres d'équipe
   useEffect(() => {
@@ -364,7 +376,7 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
       {/* Actions principales */}
       <div className="flex flex-col sm:flex-row gap-4">
         <AISuggestionsModal
-          coordinationId={coordinationId}
+          coordination={{ id: coordinationId, user_id: coordination?.user_id || '' }}
           onClose={() => setIsModalOpen(false)}
           onPlanningGenerated={handlePlanningGenerated}
           trigger={
@@ -408,7 +420,7 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
                 Commencez par utiliser l'assistant IA pour générer votre planning personnalisé.
               </p>
               <AISuggestionsModal
-                coordinationId={coordinationId}
+                coordination={{ id: coordinationId, user_id: coordination?.user_id || '' }}
                 onClose={() => setIsModalOpen(false)}
                 onPlanningGenerated={handlePlanningGenerated}
                 trigger={
