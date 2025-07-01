@@ -3,38 +3,58 @@ import React from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { PlanningEvent } from '../wedding-day/types/planningTypes';
 import MonJourMEventCard from './MonJourMEventCard';
+import { addMinutes } from 'date-fns';
 
 interface MonJourMTimelineProps {
   events: PlanningEvent[];
   teamMembers: any[];
   onEventsUpdate: (events: PlanningEvent[]) => void;
+  selectionMode?: boolean;
+  selectedEvents?: string[];
+  onSelectionChange?: (eventId: string, selected: boolean) => void;
 }
 
 const MonJourMTimeline: React.FC<MonJourMTimelineProps> = ({
   events,
   teamMembers,
-  onEventsUpdate
+  onEventsUpdate,
+  selectionMode = false,
+  selectedEvents = [],
+  onSelectionChange
 }) => {
+  const BUFFER_TIME_MINUTES = 15; // Buffer entre les événements
+
   const handleDragEnd = (result: any) => {
-    if (!result.destination) return;
+    if (!result.destination || selectionMode) return;
 
     const items = Array.from(events);
     const [reorderedItem] = items.splice(result.source.index, 1);
     items.splice(result.destination.index, 0, reorderedItem);
 
-    // Recalculer les heures après le réarrangement
+    // Recalculer les heures séquentiellement avec buffer
     let currentTime = items[0]?.startTime || new Date();
+    
     const updatedItems = items.map((item, index) => {
       if (index === 0) {
-        currentTime = item.startTime;
+        // Le premier événement garde son heure de début
+        currentTime = new Date(item.startTime);
       } else {
-        currentTime = new Date(currentTime.getTime() + items[index - 1].duration * 60000);
-        item.startTime = currentTime;
+        // Les événements suivants commencent après la fin du précédent + buffer
+        const previousEvent = items[index - 1];
+        const previousEndTime = addMinutes(previousEvent.startTime, previousEvent.duration);
+        currentTime = addMinutes(previousEndTime, BUFFER_TIME_MINUTES);
       }
-      item.endTime = new Date(currentTime.getTime() + item.duration * 60000);
-      return item;
+      
+      const updatedItem = {
+        ...item,
+        startTime: new Date(currentTime),
+        endTime: addMinutes(currentTime, item.duration)
+      };
+      
+      return updatedItem;
     });
 
+    console.log('🔄 Drag & drop completed, recalculated times for', updatedItems.length, 'events');
     onEventsUpdate(updatedItems);
   };
 
@@ -42,7 +62,29 @@ const MonJourMTimeline: React.FC<MonJourMTimelineProps> = ({
     const updatedEvents = events.map(event => 
       event.id === updatedEvent.id ? updatedEvent : event
     );
-    onEventsUpdate(updatedEvents);
+    
+    // Recalculer les heures de tous les événements suivants si l'heure de début a changé
+    const eventIndex = updatedEvents.findIndex(e => e.id === updatedEvent.id);
+    if (eventIndex !== -1) {
+      const eventsToUpdate = [...updatedEvents];
+      
+      // Recalculer les événements suivants
+      for (let i = eventIndex + 1; i < eventsToUpdate.length; i++) {
+        const previousEvent = eventsToUpdate[i - 1];
+        const previousEndTime = addMinutes(previousEvent.startTime, previousEvent.duration);
+        const newStartTime = addMinutes(previousEndTime, BUFFER_TIME_MINUTES);
+        
+        eventsToUpdate[i] = {
+          ...eventsToUpdate[i],
+          startTime: newStartTime,
+          endTime: addMinutes(newStartTime, eventsToUpdate[i].duration)
+        };
+      }
+      
+      onEventsUpdate(eventsToUpdate);
+    } else {
+      onEventsUpdate(updatedEvents);
+    }
   };
 
   const handleEventDelete = (eventId: string) => {
@@ -50,6 +92,27 @@ const MonJourMTimeline: React.FC<MonJourMTimelineProps> = ({
     onEventsUpdate(updatedEvents);
   };
 
+  if (selectionMode) {
+    // Mode sélection - pas de drag & drop
+    return (
+      <div className="space-y-4">
+        {events.map((event) => (
+          <MonJourMEventCard
+            key={event.id}
+            event={event}
+            teamMembers={teamMembers}
+            onUpdate={handleEventUpdate}
+            onDelete={handleEventDelete}
+            selectionMode={selectionMode}
+            isSelected={selectedEvents.includes(event.id)}
+            onSelectionChange={onSelectionChange}
+          />
+        ))}
+      </div>
+    );
+  }
+
+  // Mode normal avec drag & drop
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
       <Droppable droppableId="timeline">
