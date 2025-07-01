@@ -10,6 +10,7 @@ import { generateQuizResult, saveQuizResult } from './types';
 import { usePersistentQuiz } from '@/hooks/usePersistentQuiz';
 import { useProgressTracking } from '@/hooks/useProgressTracking';
 import { supabase } from '@/integrations/supabase/client';
+import { useNavigate } from 'react-router-dom';
 
 interface QuizOption {
   text: string;
@@ -27,17 +28,17 @@ interface QuizQuestion {
 const WeddingQuiz: React.FC = () => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<Record<string, { answer: string, score: number }>>({});
-  const [isCompleted, setIsCompleted] = useState(false);
-  const [result, setResult] = useState<any>(null);
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
   const { quizData, saveQuizResponse } = usePersistentQuiz();
   const { updateProgress } = useProgressTracking();
+  const navigate = useNavigate();
 
   // Load questions from Supabase
   useEffect(() => {
     const loadQuestions = async () => {
+      console.log('🚀 Loading quiz questions from database');
       try {
         const { data, error } = await supabase
           .from('quiz_questions')
@@ -63,10 +64,12 @@ const WeddingQuiz: React.FC = () => {
               order_index: q.order_index
             };
           });
+          
+          console.log('✅ Quiz questions loaded successfully:', formattedQuestions.length);
           setQuestions(formattedQuestions as QuizQuestion[]);
         }
       } catch (error) {
-        console.error('Error loading questions:', error);
+        console.error('❌ Error loading questions:', error);
         // Use fallback questions instead of showing error toast
         setQuestions([
           {
@@ -119,13 +122,6 @@ const WeddingQuiz: React.FC = () => {
   useEffect(() => {
     if (quizData?.responses && Object.keys(quizData.responses).length > 0) {
       setAnswers(quizData.responses as Record<string, { answer: string, score: number }>);
-      if (quizData.completed) {
-        setIsCompleted(true);
-        const savedResult = localStorage.getItem('quizResult');
-        if (savedResult) {
-          setResult(JSON.parse(savedResult));
-        }
-      }
     }
   }, [quizData]);
 
@@ -133,9 +129,7 @@ const WeddingQuiz: React.FC = () => {
   useEffect(() => {
     if (Object.keys(answers).length > 0) {
       const timeoutId = setTimeout(() => {
-        // Silent save - no error handling that would show toast messages
         saveQuizResponse(answers).catch(() => {
-          // Silently handle errors - don't show error messages to user
           console.log('Auto-save failed, will retry on completion');
         });
       }, 1000);
@@ -147,6 +141,7 @@ const WeddingQuiz: React.FC = () => {
   const handleAnswer = (questionId: string, answer: string, score: number) => {
     const newAnswers = { ...answers, [questionId]: { answer, score } };
     setAnswers(newAnswers);
+    console.log('📝 Answer recorded:', { questionId, answer, score });
   };
 
   const handleNext = () => {
@@ -164,11 +159,16 @@ const WeddingQuiz: React.FC = () => {
   };
 
   const handleComplete = async () => {
+    console.log('🎯 Completing quiz with answers:', answers);
+    
     try {
       const quizResult = await generateQuizResult(answers);
-      setResult(quizResult);
+      console.log('📊 Quiz result generated:', quizResult);
       
-      // Save quiz result
+      // Save quiz result to localStorage for immediate access
+      localStorage.setItem('quizResult', JSON.stringify(quizResult));
+      
+      // Save to database
       await saveQuizResult(quizResult);
       
       // Generate tasks
@@ -177,29 +177,33 @@ const WeddingQuiz: React.FC = () => {
       // Save responses with tasks
       await saveQuizResponse(answers, generatedTasks);
       
-      // Update progress - only show success message for this
+      // Update progress
       await updateProgress('planning', true);
-      
-      setIsCompleted(true);
       
       toast({
         title: "Questionnaire terminé!",
         description: "Votre planning personnalisé a été généré avec succès."
       });
       
+      // Redirect to personalized results page
+      console.log('🔄 Redirecting to personalized results page');
+      navigate('/planning-resultats-personnalises');
+      
     } catch (error) {
       console.error('Error completing quiz:', error);
-      // Show minimal error message only for critical failures
+      
+      // Still redirect even if save failed, with localStorage data
+      const quizResult = await generateQuizResult(answers);
+      localStorage.setItem('quizResult', JSON.stringify(quizResult));
+      
       toast({
         title: "Questionnaire terminé",
-        description: "Votre planning a été généré. Vos réponses seront sauvegardées lors de votre prochaine connexion.",
-        variant: "default" // Use default variant instead of destructive
+        description: "Votre planning a été généré. Redirection en cours...",
+        variant: "default"
       });
       
-      // Still mark as completed even if save failed
-      setIsCompleted(true);
-      const quizResult = await generateQuizResult(answers);
-      setResult(quizResult);
+      // Redirect anyway
+      navigate('/planning-resultats-personnalises');
     }
   };
 
@@ -216,49 +220,6 @@ const WeddingQuiz: React.FC = () => {
     return (
       <div className="text-center py-8">
         <p className="text-muted-foreground">Aucune question disponible pour le moment.</p>
-      </div>
-    );
-  }
-
-  if (isCompleted && result) {
-    return (
-      <div className="space-y-6">
-        <Card className="bg-gradient-to-r from-wedding-olive/10 to-wedding-cream/20">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-wedding-olive">
-              <CheckCircle2 className="h-6 w-6" />
-              Questionnaire terminé !
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-              <div className="text-center">
-                <div className="text-2xl font-bold text-wedding-olive">{result.score}/10</div>
-                <div className="text-sm text-muted-foreground">Score</div>
-              </div>
-              <div className="text-center">
-                <div className="text-lg font-medium">{result.level}</div>
-                <div className="text-sm text-muted-foreground">Niveau</div>
-              </div>
-              <div className="text-center">
-                <div className="text-lg font-medium">{result.status}</div>
-                <div className="text-sm text-muted-foreground">Statut</div>
-              </div>
-            </div>
-            
-            <div className="flex justify-center">
-              <Button 
-                onClick={() => {
-                  setIsCompleted(false);
-                  setCurrentQuestion(0);
-                }} 
-                variant="outline"
-              >
-                Modifier mes réponses
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
       </div>
     );
   }

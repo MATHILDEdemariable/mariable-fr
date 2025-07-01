@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import Header from '@/components/Header';
@@ -10,10 +11,10 @@ import { useToast } from '@/components/ui/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 
-// Tâches initiales corrigées pour garantir l'affichage
+// Tâches initiales avec IDs cohérents
 const INITIAL_WEDDING_TASKS = [
   { 
-    id: 1, 
+    id: 'task-1', 
     label: "Posez les bases", 
     description: "Définissez la vision de votre mariage : style, ambiance, type de cérémonie.", 
     priority: "haute", 
@@ -22,7 +23,7 @@ const INITIAL_WEDDING_TASKS = [
     completed: false
   },
   { 
-    id: 2, 
+    id: 'task-2', 
     label: "Estimez le nombre d'invités", 
     description: "Même approximatif, cela guidera vos choix logistiques et budgétaires.", 
     priority: "haute", 
@@ -31,7 +32,7 @@ const INITIAL_WEDDING_TASKS = [
     completed: false
   },
   { 
-    id: 3, 
+    id: 'task-3', 
     label: "Calibrez votre budget", 
     description: "Évaluez vos moyens et priorisez les postes les plus importants selon vos envies.", 
     priority: "haute", 
@@ -40,7 +41,7 @@ const INITIAL_WEDDING_TASKS = [
     completed: false
   },
   { 
-    id: 4, 
+    id: 'task-4', 
     label: "Choisissez une période ou une date cible", 
     description: "Cela conditionne les disponibilités des lieux et prestataires.", 
     priority: "haute", 
@@ -49,7 +50,7 @@ const INITIAL_WEDDING_TASKS = [
     completed: false
   },
   { 
-    id: 5, 
+    id: 'task-5', 
     label: "Réservez les prestataires clés", 
     description: "Lieu, traiteur, photographe en priorité. Puis DJ, déco, animation, etc.", 
     priority: "haute", 
@@ -58,7 +59,7 @@ const INITIAL_WEDDING_TASKS = [
     completed: false
   },
   { 
-    id: 6, 
+    id: 'task-6', 
     label: "Gérez les démarches officielles", 
     description: "Mairie, cérémonies religieuses ou laïques, contrats, assurances, etc.", 
     priority: "moyenne", 
@@ -67,7 +68,7 @@ const INITIAL_WEDDING_TASKS = [
     completed: false
   },
   { 
-    id: 7, 
+    id: 'task-7', 
     label: "Anticipez la coordination du jour J", 
     description: "Prévoyez une coordinatrice (recommandée), les préparatifs beauté, la logistique (transport, hébergements) et les temps forts.", 
     priority: "moyenne", 
@@ -76,7 +77,7 @@ const INITIAL_WEDDING_TASKS = [
     completed: false
   },
   { 
-    id: 8, 
+    id: 'task-8', 
     label: "Préparez vos éléments personnels", 
     description: "Tenues, alliances, accessoires, papeterie, DIY ou détails personnalisés.", 
     priority: "moyenne", 
@@ -85,7 +86,7 @@ const INITIAL_WEDDING_TASKS = [
     completed: false
   },
   { 
-    id: 9, 
+    id: 'task-9', 
     label: "Consolidez votre organisation", 
     description: "Revoyez chaque point avec vos prestataires : timing, livraisons, besoins techniques, derniers ajustements.", 
     priority: "haute", 
@@ -94,7 +95,7 @@ const INITIAL_WEDDING_TASKS = [
     completed: false
   },
   { 
-    id: 10, 
+    id: 'task-10', 
     label: "Vivez pleinement votre journée", 
     description: "Vous avez tout prévu : il ne reste plus qu'à profiter à 100% !", 
     priority: "haute", 
@@ -105,8 +106,8 @@ const INITIAL_WEDDING_TASKS = [
 ];
 
 const ChecklistMariage = () => {
-  const [tasks, setTasks] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [tasks, setTasks] = useState<any[]>(INITIAL_WEDDING_TASKS); // Initialiser avec les tâches par défaut
+  const [isLoading, setIsLoading] = useState(false); // Pas de loading initial
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -117,7 +118,6 @@ const ChecklistMariage = () => {
   
   const loadTasksWithFallback = async () => {
     console.log('🚀 Starting task loading process');
-    setIsLoading(true);
     
     try {
       // Vérifier l'authentification
@@ -143,8 +143,6 @@ const ChecklistMariage = () => {
       console.error('❌ Error in loadTasksWithFallback:', error);
       // Fallback vers les tâches locales en cas d'erreur
       loadLocalTasks();
-    } finally {
-      setIsLoading(false);
     }
   };
   
@@ -238,7 +236,7 @@ const ChecklistMariage = () => {
   
   const toggleTaskCompletion = async (taskId: number | string) => {
     const taskIdStr = taskId.toString();
-    const taskIndex = tasks.findIndex(t => t.id.toString() === taskIdStr);
+    const taskIndex = tasks.findIndex(t => (t.id || '').toString() === taskIdStr);
     
     if (taskIndex === -1) {
       console.warn('⚠️ Task not found:', taskIdStr);
@@ -255,13 +253,13 @@ const ChecklistMariage = () => {
     updatedTasks[taskIndex] = { ...taskToUpdate, completed: newCompletedState };
     setTasks(updatedTasks);
     
-    if (isAuthenticated) {
-      // Sauvegarder en base de données
+    if (isAuthenticated && taskToUpdate.id && typeof taskToUpdate.id !== 'string') {
+      // Sauvegarder en base de données (seulement si l'ID existe en DB)
       try {
         const { error } = await supabase
           .from('todos_planification')
           .update({ completed: newCompletedState })
-          .eq('id', taskIdStr);
+          .eq('id', taskToUpdate.id);
           
         if (error) {
           console.error('❌ Error updating task in database:', error);
@@ -305,7 +303,6 @@ const ChecklistMariage = () => {
     return Math.round((completed / tasks.length) * 100);
   };
 
-  
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <Helmet>
@@ -366,21 +363,21 @@ const ChecklistMariage = () => {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {tasks.map((task) => (
-                    <div key={task.id} className="border-l-2 border-wedding-olive/30 pl-4 ml-2">
+                  {tasks.map((task, index) => (
+                    <div key={task.id || index} className="border-l-2 border-wedding-olive/30 pl-4 ml-2">
                       <div className="flex items-start space-x-2">
                         <Checkbox 
-                          id={`task-${task.id}`} 
+                          id={`task-${task.id || index}`} 
                           checked={task.completed}
-                          onCheckedChange={() => toggleTaskCompletion(task.id)}
+                          onCheckedChange={() => toggleTaskCompletion(task.id || `task-${index}`)}
                           className="mt-0.5"
                         />
                         <div className="flex-1">
                           <label 
-                            htmlFor={`task-${task.id}`} 
+                            htmlFor={`task-${task.id || index}`} 
                             className={`cursor-pointer font-medium ${task.completed ? 'line-through text-muted-foreground' : ''}`}
                           >
-                            {task.position}. {task.label}
+                            {task.position || (index + 1)}. {task.label}
                           </label>
                           <p className={`mt-1 text-sm ${task.completed ? 'line-through text-muted-foreground' : 'text-muted-foreground'}`}>
                             {task.description}

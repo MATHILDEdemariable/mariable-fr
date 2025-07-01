@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import Header from '@/components/Header';
@@ -57,6 +58,21 @@ const PlanningResultatsPersonnalises: React.FC = () => {
     setIsLoading(true);
     
     try {
+      // D'abord vérifier localStorage pour les résultats récents
+      const localResult = localStorage.getItem('quizResult');
+      if (localResult) {
+        console.log('📱 Found local quiz result');
+        const parsedResult = JSON.parse(localResult);
+        setResult(parsedResult);
+        
+        // Générer des recommandations basées sur le résultat local
+        const personalizedRecs = await generatePersonalizedRecommendations(parsedResult);
+        setRecommendations(personalizedRecs);
+
+        const personalizedInsights = generatePersonalizedInsights(parsedResult);
+        setInsights(personalizedInsights);
+      }
+
       const { data: { user } } = await supabase.auth.getUser();
       
       if (user) {
@@ -72,7 +88,7 @@ const PlanningResultatsPersonnalises: React.FC = () => {
 
         if (quizError) {
           console.error('❌ Error loading quiz results:', quizError);
-          throw quizError;
+          if (!localResult) throw quizError;
         }
 
         if (userQuizResults && userQuizResults.length > 0) {
@@ -111,34 +127,23 @@ const PlanningResultatsPersonnalises: React.FC = () => {
             console.log('📝 User responses loaded:', responses);
           }
 
-          setResult(quizResult);
+          // Utiliser les résultats de la DB si disponibles, sinon garder localStorage
+          if (!localResult) {
+            setResult(quizResult);
+          }
           
-          // Générer des recommandations personnalisées
+          // Générer des recommandations personnalisées avec les données DB
           const personalizedRecs = await generatePersonalizedRecommendations(quizResult);
           setRecommendations(personalizedRecs);
 
-          // Générer des insights personnalisés
           const personalizedInsights = generatePersonalizedInsights(quizResult);
           setInsights(personalizedInsights);
           
-        } else {
+        } else if (!localResult) {
           throw new Error('Aucun résultat de quiz trouvé en base de données');
         }
-      } else {
-        // Fallback vers localStorage pour les utilisateurs non connectés
-        const storedResult = localStorage.getItem('quizResult');
-        if (storedResult) {
-          const quizResult = JSON.parse(storedResult) as QuizResult;
-          setResult(quizResult);
-          
-          const personalizedRecs = await generatePersonalizedRecommendations(quizResult);
-          setRecommendations(personalizedRecs);
-
-          const personalizedInsights = generatePersonalizedInsights(quizResult);
-          setInsights(personalizedInsights);
-        } else {
-          throw new Error('Aucun résultat de quiz trouvé');
-        }
+      } else if (!localResult) {
+        throw new Error('Aucun résultat de quiz trouvé');
       }
       
     } catch (error) {
@@ -540,7 +545,6 @@ const PlanningResultatsPersonnalises: React.FC = () => {
 
                 <Separator />
                 
-                {/* Actions suivantes */}
                 <Card className="border-wedding-olive/20">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 font-serif">
