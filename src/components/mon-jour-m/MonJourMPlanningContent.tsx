@@ -1,16 +1,15 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Sparkles, Calendar, Clock, Users, Trash2, CheckSquare, Square } from 'lucide-react';
+import { Plus, Sparkles, Calendar, Clock, Users, Trash2, CheckSquare, Square, Save } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import PersonalizedScenarioTab from './PersonalizedScenarioTab';
-import AISuggestionsModal from './AISuggestionsModal';
-import AddManualEventModal from './AddManualEventModal';
+import UnifiedTaskModal from './UnifiedTaskModal';
 import EnhancedDragDropTimeline from './MonJourMTimeline';
 import { PlanningEvent } from '../wedding-day/types/planningTypes';
 import { useMonJourMCoordination } from '@/hooks/useMonJourMCoordination';
@@ -27,19 +26,68 @@ interface ReferenceTimeParams {
 const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({ 
   coordinationId 
 }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isManualModalOpen, setIsManualModalOpen] = useState(false);
+  const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
   const [events, setEvents] = useState<PlanningEvent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [teamMembers, setTeamMembers] = useState<any[]>([]);
   const [referenceTime, setReferenceTime] = useState(new Date());
   const [selectionMode, setSelectionMode] = useState(false);
   const [selectedEvents, setSelectedEvents] = useState<string[]>([]);
+  const [isSaving, setIsSaving] = useState(false);
   const { toast } = useToast();
   
   const { coordination } = useMonJourMCoordination();
 
   console.log('🎯 MonJourMPlanningContent: coordination:', coordinationId);
+
+  // Fonction de sauvegarde avec debounce
+  const saveEventsToDatabase = useCallback(async (eventsToSave: PlanningEvent[]) => {
+    if (!coordinationId) return;
+    
+    setIsSaving(true);
+    try {
+      console.log('💾 Saving events to database:', eventsToSave.length);
+      
+      for (const [index, event] of eventsToSave.entries()) {
+        await supabase
+          .from('coordination_planning')
+          .update({
+            title: event.title,
+            description: event.notes,
+            start_time: event.startTime.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+            duration: event.duration,
+            assigned_to: event.assignedTo || [],
+            position: index // Sauvegarder la position aussi
+          })
+          .eq('id', event.id);
+      }
+      
+      console.log('✅ All events saved successfully');
+    } catch (error) {
+      console.error('❌ Error saving events:', error);
+      toast({
+        title: "Erreur de sauvegarde",
+        description: "Impossible de sauvegarder les modifications.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  }, [coordinationId, toast]);
+
+  // Debounced save (500ms delay)
+  const debouncedSave = useCallback(
+    (() => {
+      let timeoutId: NodeJS.Timeout;
+      return (events: PlanningEvent[]) => {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+          saveEventsToDatabase(events);
+        }, 500);
+      };
+    })(),
+    [saveEventsToDatabase]
+  );
 
   // Initialiser l'heure de référence
   useEffect(() => {
@@ -62,13 +110,11 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
             refTime.setHours(hours, minutes, 0, 0);
             setReferenceTime(refTime);
           } else {
-            // Heure par défaut : 15h00
             const defaultTime = new Date();
             defaultTime.setHours(15, 0, 0, 0);
             setReferenceTime(defaultTime);
           }
         } else {
-          // Heure par défaut : 15h00
           const defaultTime = new Date();
           defaultTime.setHours(15, 0, 0, 0);
           setReferenceTime(defaultTime);
@@ -109,7 +155,7 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
     loadTeamMembers();
   }, [coordinationId]);
 
-  // Charger les événements existants
+  // Charger les événements existants avec ordre par position
   useEffect(() => {
     const loadExistingPlanning = async () => {
       if (!coordination?.user_id) return;
@@ -127,7 +173,6 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
         if (error) throw error;
 
         if (data && data.length > 0) {
-          // Convertir les données de la base vers le format PlanningEvent
           const convertedEvents: PlanningEvent[] = data.map((item: any) => {
             let startTime: Date;
             
@@ -180,7 +225,6 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
     console.log('🤖 Handling AI-generated planning:', newEvents.length, 'events');
     
     try {
-      // Sauvegarder les nouveaux événements en base
       const eventsToSave = newEvents.map((event, index) => ({
         coordination_id: coordinationId,
         title: event.title,
@@ -200,7 +244,6 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
 
       if (error) throw error;
 
-      // Convertir et ajouter aux événements existants
       const convertedNewEvents: PlanningEvent[] = data.map((item: any) => {
         const [hours, minutes] = item.start_time.split(':').map(Number);
         const startTime = new Date(referenceTime);
@@ -227,7 +270,7 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
         description: `${newEvents.length} nouvelle${newEvents.length > 1 ? 's' : ''} étape${newEvents.length > 1 ? 's ont été ajoutées' : ' a été ajoutée'}.`
       });
       
-      setIsModalOpen(false);
+      setIsTaskModalOpen(false);
     } catch (error) {
       console.error('❌ Error handling AI planning:', error);
       toast({
@@ -238,34 +281,13 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
     }
   };
 
-  // Gestionnaire pour la mise à jour des événements
+  // Gestionnaire pour la mise à jour des événements avec sauvegarde auto
   const handleEventsUpdate = async (updatedEvents: PlanningEvent[]) => {
     console.log('🔄 Updating events from timeline:', updatedEvents.length);
+    setEvents(updatedEvents);
     
-    try {
-      // Sauvegarder en base
-      for (const event of updatedEvents) {
-        await supabase
-          .from('coordination_planning')
-          .update({
-            title: event.title,
-            description: event.notes,
-            start_time: event.startTime.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-            duration: event.duration,
-            assigned_to: event.assignedTo || []
-          })
-          .eq('id', event.id);
-      }
-
-      setEvents(updatedEvents);
-    } catch (error) {
-      console.error('❌ Error updating events:', error);
-      toast({
-        title: "Erreur de sauvegarde",
-        description: "Impossible de sauvegarder les modifications.",
-        variant: "destructive"
-      });
-    }
+    // Sauvegarde automatique avec debounce
+    debouncedSave(updatedEvents);
   };
 
   // Gestionnaire pour l'ajout d'événement manuel
@@ -300,7 +322,6 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
     if (!confirmed) return;
 
     try {
-      // Supprimer en base
       const { error } = await supabase
         .from('coordination_planning')
         .delete()
@@ -308,7 +329,6 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
 
       if (error) throw error;
 
-      // Mettre à jour l'état local
       const updatedEvents = events.filter(event => !selectedEvents.includes(event.id));
       setEvents(updatedEvents);
       setSelectedEvents([]);
@@ -338,7 +358,6 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
 
   const stats = getEventStats();
 
-  // Loading state
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -390,36 +409,26 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
 
       {/* Actions principales */}
       <div className="flex flex-col sm:flex-row gap-4">
-        <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <Dialog open={isTaskModalOpen} onOpenChange={setIsTaskModalOpen}>
           <DialogTrigger asChild>
-            <Button className="bg-purple-600 hover:bg-purple-700 flex-1">
-              <Sparkles className="h-4 w-4 mr-2" />
-              Créer un planning personnalisé
+            <Button className="bg-wedding-olive hover:bg-wedding-olive/90 flex-1">
+              <Plus className="h-4 w-4 mr-2" />
+              Ajouter une étape
             </Button>
           </DialogTrigger>
           <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>Assistant IA - Planning personnalisé</DialogTitle>
+              <DialogTitle>Ajouter une nouvelle étape</DialogTitle>
             </DialogHeader>
-            <PersonalizedScenarioTab
-              onSelectSuggestion={async (suggestion) => {
-                // Cette méthode ne sera plus utilisée avec onPlanningGenerated
-                console.log('Legacy suggestion handler:', suggestion);
-              }}
-              onClose={() => setIsModalOpen(false)}
+            <UnifiedTaskModal
+              coordinationId={coordinationId}
+              referenceTime={referenceTime}
+              onEventAdded={handleManualEventAdded}
               onPlanningGenerated={handlePlanningGenerated}
+              onClose={() => setIsTaskModalOpen(false)}
             />
           </DialogContent>
         </Dialog>
-
-        <Button 
-          variant="outline" 
-          className="flex-1"
-          onClick={() => setIsManualModalOpen(true)}
-        >
-          <Plus className="h-4 w-4 mr-2" />
-          Ajouter une étape manuelle
-        </Button>
 
         {events.length > 0 && (
           <Button
@@ -433,6 +442,14 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
             {selectionMode ? <CheckSquare className="h-4 w-4 mr-2" /> : <Square className="h-4 w-4 mr-2" />}
             {selectionMode ? "Annuler sélection" : "Sélectionner plusieurs"}
           </Button>
+        )}
+
+        {/* Indicateur de sauvegarde */}
+        {isSaving && (
+          <div className="flex items-center gap-2 text-sm text-gray-600">
+            <Save className="h-4 w-4 animate-pulse" />
+            Sauvegarde...
+          </div>
         )}
       </div>
 
@@ -487,7 +504,7 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
                 Aucun planning pour le moment
               </h3>
               <p className="text-gray-500 mb-4">
-                Commencez par créer votre planning personnalisé avec l'assistant IA.
+                Commencez par créer votre planning avec l'assistant IA ou ajoutez des étapes manuellement.
               </p>
             </div>
           ) : (
@@ -502,15 +519,6 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
           )}
         </CardContent>
       </Card>
-
-      {/* Modals */}
-      <AddManualEventModal
-        isOpen={isManualModalOpen}
-        onClose={() => setIsManualModalOpen(false)}
-        coordinationId={coordinationId}
-        onEventAdded={handleManualEventAdded}
-        referenceTime={referenceTime}
-      />
     </div>
   );
 };
