@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import Header from '@/components/Header';
@@ -11,77 +10,97 @@ import { useToast } from '@/components/ui/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 
-// Liste des tâches initiales pour les utilisateurs non connectés
-const initialWeddingTasks = [
+// Tâches initiales corrigées pour garantir l'affichage
+const INITIAL_WEDDING_TASKS = [
   { 
     id: 1, 
     label: "Posez les bases", 
     description: "Définissez la vision de votre mariage : style, ambiance, type de cérémonie.", 
     priority: "haute", 
-    category: "essentiel" 
+    category: "essentiel",
+    position: 1,
+    completed: false
   },
   { 
     id: 2, 
     label: "Estimez le nombre d'invités", 
     description: "Même approximatif, cela guidera vos choix logistiques et budgétaires.", 
     priority: "haute", 
-    category: "organisation" 
+    category: "organisation",
+    position: 2,
+    completed: false
   },
   { 
     id: 3, 
     label: "Calibrez votre budget", 
     description: "Évaluez vos moyens et priorisez les postes les plus importants selon vos envies.", 
     priority: "haute", 
-    category: "essentiel" 
+    category: "essentiel",
+    position: 3,
+    completed: false
   },
   { 
     id: 4, 
     label: "Choisissez une période ou une date cible", 
     description: "Cela conditionne les disponibilités des lieux et prestataires.", 
     priority: "haute", 
-    category: "essentiel" 
+    category: "essentiel",
+    position: 4,
+    completed: false
   },
   { 
     id: 5, 
     label: "Réservez les prestataires clés", 
     description: "Lieu, traiteur, photographe en priorité. Puis DJ, déco, animation, etc.", 
     priority: "haute", 
-    category: "essentiel" 
+    category: "essentiel",
+    position: 5,
+    completed: false
   },
   { 
     id: 6, 
     label: "Gérez les démarches officielles", 
     description: "Mairie, cérémonies religieuses ou laïques, contrats, assurances, etc.", 
     priority: "moyenne", 
-    category: "essentiel" 
+    category: "essentiel",
+    position: 6,
+    completed: false
   },
   { 
     id: 7, 
     label: "Anticipez la coordination du jour J", 
     description: "Prévoyez une coordinatrice (recommandée), les préparatifs beauté, la logistique (transport, hébergements) et les temps forts.", 
     priority: "moyenne", 
-    category: "organisation" 
+    category: "organisation",
+    position: 7,
+    completed: false
   },
   { 
     id: 8, 
     label: "Préparez vos éléments personnels", 
     description: "Tenues, alliances, accessoires, papeterie, DIY ou détails personnalisés.", 
     priority: "moyenne", 
-    category: "personnel" 
+    category: "personnel",
+    position: 8,
+    completed: false
   },
   { 
     id: 9, 
     label: "Consolidez votre organisation", 
     description: "Revoyez chaque point avec vos prestataires : timing, livraisons, besoins techniques, derniers ajustements.", 
     priority: "haute", 
-    category: "organisation" 
+    category: "organisation",
+    position: 9,
+    completed: false
   },
   { 
     id: 10, 
     label: "Vivez pleinement votre journée", 
     description: "Vous avez tout prévu : il ne reste plus qu'à profiter à 100% !", 
     priority: "haute", 
-    category: "personnel" 
+    category: "personnel",
+    position: 10,
+    completed: false
   }
 ];
 
@@ -93,161 +112,134 @@ const ChecklistMariage = () => {
   const { toast } = useToast();
   
   useEffect(() => {
-    checkAuthAndLoadTasks();
-    
-    // S'abonner aux mises à jour en temps réel
-    const channel = supabase
-      .channel('todos_changes')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'todos_planification',
-        },
-        () => {
-          checkAuthAndLoadTasks();
-        }
-      )
-      .subscribe();
-      
-    return () => {
-      supabase.removeChannel(channel);
-    };
+    loadTasksWithFallback();
   }, []);
   
-  const checkAuthAndLoadTasks = async () => {
+  const loadTasksWithFallback = async () => {
+    console.log('🚀 Starting task loading process');
     setIsLoading(true);
+    
     try {
-      console.log('🔍 Checking authentication and loading tasks');
-      
-      // Vérifier si l'utilisateur est connecté
+      // Vérifier l'authentification
       const { data: { user }, error: authError } = await supabase.auth.getUser();
       
       if (authError) {
-        console.error('❌ Auth error:', authError);
-        throw authError;
+        console.warn('⚠️ Auth error:', authError.message);
+        // Continuer avec le mode non-connecté
+        loadLocalTasks();
+        return;
       }
       
       if (user) {
         console.log('👤 User authenticated:', user.id);
         setIsAuthenticated(true);
-        
-        // Récupérer les tâches depuis Supabase
-        const { data: userTasks, error } = await supabase
-          .from('todos_planification')
-          .select('*')
-          .eq('user_id', user.id)
-          .order('position', { ascending: true });
-          
-        if (error) {
-          console.error('❌ Error loading tasks:', error);
-          throw error;
-        }
-        
-        console.log('📋 Tasks loaded:', userTasks?.length || 0);
-        
-        if (userTasks && userTasks.length > 0) {
-          setTasks(userTasks);
-        } else {
-          // Si l'utilisateur n'a pas encore de tâches, importer les tâches initiales
-          console.log('📝 Importing initial tasks for new user');
-          await importInitialTasks(user.id);
-        }
+        await loadUserTasks(user.id);
       } else {
-        // Utilisateur non connecté, utiliser les tâches initiales avec statut local
-        console.log('👤 User not authenticated, using local tasks');
+        console.log('👤 User not authenticated, loading local tasks');
         setIsAuthenticated(false);
-        
-        // Récupérer l'état des tâches depuis le localStorage s'il existe
-        const savedTaskStatuses = localStorage.getItem('weddingTasksStatus');
-        const statuses = savedTaskStatuses ? JSON.parse(savedTaskStatuses) : {};
-        
-        const tasksWithStatus = initialWeddingTasks.map(task => ({
-          ...task,
-          completed: statuses[task.id] || false
-        }));
-        
-        setTasks(tasksWithStatus);
+        loadLocalTasks();
       }
     } catch (error) {
-      console.error('❌ Error in checkAuthAndLoadTasks:', error);
-      
-      // En cas d'erreur, utiliser les tâches locales
-      setIsAuthenticated(false);
-      const savedTaskStatuses = localStorage.getItem('weddingTasksStatus');
-      const statuses = savedTaskStatuses ? JSON.parse(savedTaskStatuses) : {};
-      
-      const tasksWithStatus = initialWeddingTasks.map(task => ({
-        ...task,
-        completed: statuses[task.id] || false
-      }));
-      
-      setTasks(tasksWithStatus);
-      
-      toast({
-        title: "Mode hors ligne",
-        description: "Utilisation des tâches en mode local. Connectez-vous pour synchroniser.",
-      });
+      console.error('❌ Error in loadTasksWithFallback:', error);
+      // Fallback vers les tâches locales en cas d'erreur
+      loadLocalTasks();
     } finally {
       setIsLoading(false);
     }
   };
   
-  // Importer les tâches initiales pour un nouvel utilisateur
-  const importInitialTasks = async (userId: string) => {
+  const loadUserTasks = async (userId: string) => {
     try {
-      console.log('📥 Importing initial tasks for user:', userId);
+      console.log('📋 Loading user tasks from database');
+      const { data: userTasks, error } = await supabase
+        .from('todos_planification')
+        .select('*')
+        .eq('user_id', userId)
+        .order('position', { ascending: true });
+        
+      if (error) {
+        console.error('❌ Error loading user tasks:', error);
+        throw error;
+      }
       
-      // Convertir les tâches initiales au format de la base de données
-      const tasksToInsert = initialWeddingTasks.map((task, index) => ({
+      console.log('✅ User tasks loaded:', userTasks?.length || 0);
+      
+      if (userTasks && userTasks.length > 0) {
+        setTasks(userTasks);
+      } else {
+        console.log('📝 No user tasks found, creating initial tasks');
+        await createInitialTasks(userId);
+      }
+    } catch (error) {
+      console.error('❌ Error in loadUserTasks:', error);
+      // Fallback vers les tâches locales
+      loadLocalTasks();
+      toast({
+        title: "Mode hors ligne",
+        description: "Utilisation des tâches en mode local. Vos modifications ne seront pas sauvegardées.",
+      });
+    }
+  };
+  
+  const createInitialTasks = async (userId: string) => {
+    try {
+      console.log('📥 Creating initial tasks for user:', userId);
+      
+      const tasksToInsert = INITIAL_WEDDING_TASKS.map((task) => ({
         user_id: userId,
         label: task.label,
         description: task.description,
         priority: task.priority as 'haute' | 'moyenne' | 'basse',
         category: task.category,
-        position: index + 1,
-        completed: false
+        position: task.position,
+        completed: task.completed
       }));
       
-      // Insérer les tâches dans Supabase
       const { data: insertedTasks, error } = await supabase
         .from('todos_planification')
         .insert(tasksToInsert)
         .select();
         
       if (error) {
-        console.error('❌ Error inserting tasks:', error);
+        console.error('❌ Error creating initial tasks:', error);
         throw error;
       }
       
-      console.log('✅ Tasks imported successfully:', insertedTasks?.length || 0);
-      
-      // Mettre à jour l'état local avec les tâches insérées
+      console.log('✅ Initial tasks created successfully:', insertedTasks?.length || 0);
       setTasks(insertedTasks || []);
       
     } catch (error) {
-      console.error('❌ Error importing initial tasks:', error);
-      toast({
-        title: "Erreur d'initialisation",
-        description: "Impossible d'initialiser les tâches. Utilisation du mode local.",
-        variant: "destructive"
-      });
-      
+      console.error('❌ Error in createInitialTasks:', error);
       // Fallback vers les tâches locales
-      const tasksWithStatus = initialWeddingTasks.map(task => ({
+      loadLocalTasks();
+    }
+  };
+  
+  const loadLocalTasks = () => {
+    console.log('💾 Loading local tasks from localStorage');
+    
+    try {
+      const savedTaskStatuses = localStorage.getItem('weddingTasksStatus');
+      const statuses = savedTaskStatuses ? JSON.parse(savedTaskStatuses) : {};
+      
+      const tasksWithStatus = INITIAL_WEDDING_TASKS.map(task => ({
         ...task,
-        completed: false
+        completed: statuses[task.id] || false
       }));
+      
       setTasks(tasksWithStatus);
+      console.log('✅ Local tasks loaded successfully:', tasksWithStatus.length);
+    } catch (error) {
+      console.error('❌ Error loading local tasks:', error);
+      // En dernier recours, utiliser les tâches par défaut
+      setTasks(INITIAL_WEDDING_TASKS);
     }
   };
   
   const toggleTaskCompletion = async (taskId: number | string) => {
     const taskIdStr = taskId.toString();
-    
-    // Trouver la tâche à mettre à jour
     const taskIndex = tasks.findIndex(t => t.id.toString() === taskIdStr);
+    
     if (taskIndex === -1) {
       console.warn('⚠️ Task not found:', taskIdStr);
       return;
@@ -258,13 +250,13 @@ const ChecklistMariage = () => {
     
     console.log('🔄 Toggling task completion:', taskToUpdate.label, 'to', newCompletedState);
     
-    // Mettre à jour l'état local d'abord pour une UI réactive
+    // Mise à jour locale immédiate pour une UI réactive
     const updatedTasks = [...tasks];
     updatedTasks[taskIndex] = { ...taskToUpdate, completed: newCompletedState };
     setTasks(updatedTasks);
     
     if (isAuthenticated) {
-      // Utilisateur connecté, mettre à jour dans Supabase
+      // Sauvegarder en base de données
       try {
         const { error } = await supabase
           .from('todos_planification')
@@ -280,7 +272,7 @@ const ChecklistMariage = () => {
       } catch (error) {
         console.error('❌ Database update failed, reverting local state');
         
-        // Restaurer l'état précédent en cas d'erreur
+        // Restaurer l'état précédent
         const revertedTasks = [...tasks];
         revertedTasks[taskIndex] = { ...taskToUpdate, completed: !newCompletedState };
         setTasks(revertedTasks);
@@ -292,14 +284,18 @@ const ChecklistMariage = () => {
         });
       }
     } else {
-      // Utilisateur non connecté, mettre à jour le localStorage
-      const savedTaskStatuses = localStorage.getItem('weddingTasksStatus');
-      const statuses = savedTaskStatuses ? JSON.parse(savedTaskStatuses) : {};
-      
-      statuses[taskIdStr] = newCompletedState;
-      localStorage.setItem('weddingTasksStatus', JSON.stringify(statuses));
-      
-      console.log('💾 Task status saved to localStorage');
+      // Sauvegarder en localStorage
+      try {
+        const savedTaskStatuses = localStorage.getItem('weddingTasksStatus');
+        const statuses = savedTaskStatuses ? JSON.parse(savedTaskStatuses) : {};
+        
+        statuses[taskIdStr] = newCompletedState;
+        localStorage.setItem('weddingTasksStatus', JSON.stringify(statuses));
+        
+        console.log('💾 Task status saved to localStorage');
+      } catch (error) {
+        console.error('❌ Error saving to localStorage:', error);
+      }
     }
   };
   
@@ -309,6 +305,7 @@ const ChecklistMariage = () => {
     return Math.round((completed / tasks.length) * 100);
   };
 
+  
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <Helmet>
@@ -320,7 +317,6 @@ const ChecklistMariage = () => {
 
       <main className="flex-grow container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
-          {/* Header with back button */}
           <div className="flex items-center mb-6">
             <Button
               variant="ghost"
@@ -332,7 +328,6 @@ const ChecklistMariage = () => {
             </Button>
           </div>
 
-          {/* Page title */}
           <div className="text-center mb-8">
             <h1 className="text-3xl md:text-4xl font-serif mb-4 text-wedding-olive">
               Checklist de mariage
@@ -342,7 +337,6 @@ const ChecklistMariage = () => {
             </p>
           </div>
 
-          {/* Progress section */}
           <Card className="mb-8">
             <CardHeader>
               <CardTitle className="text-xl flex items-center">
@@ -358,7 +352,6 @@ const ChecklistMariage = () => {
             </CardHeader>
           </Card>
 
-          {/* Checklist */}
           <Card>
             <CardHeader>
               <CardTitle className="text-xl">Les 10 étapes clés de l'organisation</CardTitle>
@@ -387,7 +380,7 @@ const ChecklistMariage = () => {
                             htmlFor={`task-${task.id}`} 
                             className={`cursor-pointer font-medium ${task.completed ? 'line-through text-muted-foreground' : ''}`}
                           >
-                            {typeof task.position === 'number' ? `${task.position}.` : ''} {task.label}
+                            {task.position}. {task.label}
                           </label>
                           <p className={`mt-1 text-sm ${task.completed ? 'line-through text-muted-foreground' : 'text-muted-foreground'}`}>
                             {task.description}
@@ -401,7 +394,6 @@ const ChecklistMariage = () => {
             </CardContent>
           </Card>
 
-          {/* Call to action */}
           <div className="flex justify-center mt-8">
             <Button
               variant="wedding"
