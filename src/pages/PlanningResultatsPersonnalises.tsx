@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import Header from '@/components/Header';
@@ -7,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
-import { CalendarIcon, ArrowRight, CheckCircle, Loader2, Target, TrendingUp, Users, Clock } from 'lucide-react';
+import { CalendarIcon, ArrowRight, CheckCircle, Loader2, Target, TrendingUp, Users, Clock, Brain, Star, Heart } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
@@ -21,6 +20,7 @@ interface QuizResult {
   objectives: string[];
   categories: string[];
   user_responses?: Record<string, any>;
+  detailed_answers?: Record<string, any>;
 }
 
 interface PersonalizedRecommendation {
@@ -29,11 +29,20 @@ interface PersonalizedRecommendation {
   priority: 'high' | 'medium' | 'low';
   category: string;
   actionUrl?: string;
+  icon?: React.ReactNode;
+}
+
+interface PersonalizedInsight {
+  title: string;
+  content: string;
+  type: 'strength' | 'challenge' | 'opportunity';
+  basedOn: string;
 }
 
 const PlanningResultatsPersonnalises: React.FC = () => {
   const [result, setResult] = useState<QuizResult | null>(null);
   const [recommendations, setRecommendations] = useState<PersonalizedRecommendation[]>([]);
+  const [insights, setInsights] = useState<PersonalizedInsight[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -48,16 +57,6 @@ const PlanningResultatsPersonnalises: React.FC = () => {
     setIsLoading(true);
     
     try {
-      // Récupérer le résultat du localStorage comme fallback
-      const storedResult = localStorage.getItem('quizResult');
-      let quizResult: QuizResult | null = null;
-      
-      if (storedResult) {
-        quizResult = JSON.parse(storedResult);
-        console.log('📋 Quiz result from localStorage:', quizResult);
-      }
-
-      // Tenter de récupérer depuis la base de données
       const { data: { user } } = await supabase.auth.getUser();
       
       if (user) {
@@ -73,42 +72,74 @@ const PlanningResultatsPersonnalises: React.FC = () => {
 
         if (quizError) {
           console.error('❌ Error loading quiz results:', quizError);
-        } else if (userQuizResults && userQuizResults.length > 0) {
+          throw quizError;
+        }
+
+        if (userQuizResults && userQuizResults.length > 0) {
           const dbResult = userQuizResults[0];
-          quizResult = {
+          
+          // Conversion sécurisée des types Json vers les types attendus
+          const objectives = Array.isArray(dbResult.objectives) 
+            ? dbResult.objectives.map(obj => typeof obj === 'string' ? obj : String(obj))
+            : [];
+          const categories = Array.isArray(dbResult.categories) 
+            ? dbResult.categories.map(cat => typeof cat === 'string' ? cat : String(cat))
+            : [];
+
+          const quizResult: QuizResult = {
             score: dbResult.score,
             status: dbResult.status,
             level: dbResult.level,
-            objectives: Array.isArray(dbResult.objectives) ? dbResult.objectives : [],
-            categories: Array.isArray(dbResult.categories) ? dbResult.categories : []
+            objectives,
+            categories
           };
-          console.log('✅ Quiz result from database:', quizResult);
-        }
 
-        // Récupérer les réponses détaillées pour personnalisation
-        const { data: userResponses, error: responsesError } = await supabase
-          .from('user_planning_responses')
-          .select('responses')
-          .eq('user_id', user.id)
-          .maybeSingle();
+          // Récupérer les réponses détaillées pour personnalisation
+          const { data: userResponses, error: responsesError } = await supabase
+            .from('user_planning_responses')
+            .select('responses')
+            .eq('user_id', user.id)
+            .maybeSingle();
 
-        if (!responsesError && userResponses) {
-          if (quizResult) {
-            quizResult.user_responses = userResponses.responses;
+          if (!responsesError && userResponses) {
+            // Conversion sécurisée du type Json vers Record<string, any>
+            const responses = typeof userResponses.responses === 'object' && userResponses.responses !== null
+              ? userResponses.responses as Record<string, any>
+              : {};
+            quizResult.user_responses = responses;
+            quizResult.detailed_answers = responses;
+            console.log('📝 User responses loaded:', responses);
           }
-          console.log('📝 User responses loaded:', userResponses.responses);
+
+          setResult(quizResult);
+          
+          // Générer des recommandations personnalisées
+          const personalizedRecs = await generatePersonalizedRecommendations(quizResult);
+          setRecommendations(personalizedRecs);
+
+          // Générer des insights personnalisés
+          const personalizedInsights = generatePersonalizedInsights(quizResult);
+          setInsights(personalizedInsights);
+          
+        } else {
+          throw new Error('Aucun résultat de quiz trouvé en base de données');
+        }
+      } else {
+        // Fallback vers localStorage pour les utilisateurs non connectés
+        const storedResult = localStorage.getItem('quizResult');
+        if (storedResult) {
+          const quizResult = JSON.parse(storedResult) as QuizResult;
+          setResult(quizResult);
+          
+          const personalizedRecs = await generatePersonalizedRecommendations(quizResult);
+          setRecommendations(personalizedRecs);
+
+          const personalizedInsights = generatePersonalizedInsights(quizResult);
+          setInsights(personalizedInsights);
+        } else {
+          throw new Error('Aucun résultat de quiz trouvé');
         }
       }
-
-      if (!quizResult) {
-        throw new Error('Aucun résultat de quiz trouvé');
-      }
-
-      setResult(quizResult);
-      
-      // Générer des recommandations personnalisées
-      const personalizedRecs = await generatePersonalizedRecommendations(quizResult);
-      setRecommendations(personalizedRecs);
       
     } catch (error) {
       console.error('❌ Error in loadPersonalizedResults:', error);
@@ -221,6 +252,52 @@ const PlanningResultatsPersonnalises: React.FC = () => {
     return recs;
   };
 
+  const generatePersonalizedInsights = (quizResult: QuizResult): PersonalizedInsight[] => {
+    const insights: PersonalizedInsight[] = [];
+    const responses = quizResult.detailed_answers || {};
+
+    // Analyser les points forts
+    if (quizResult.score >= 15) {
+      insights.push({
+        title: "Excellente préparation !",
+        content: "Vous avez une vision claire de votre mariage et une bonne organisation. Continuez sur cette lancée !",
+        type: 'strength',
+        basedOn: `Score élevé de ${quizResult.score}/20`
+      });
+    }
+
+    // Analyser les défis selon les réponses
+    if (responses.budget_range === 'moins_10k') {
+      insights.push({
+        title: "Budget maîtrisé",
+        content: "Votre budget limité nécessite une planification stratégique. Concentrez-vous sur l'essentiel et explorez les alternatives créatives.",
+        type: 'challenge',
+        basedOn: "Budget inférieur à 10k€"
+      });
+    }
+
+    if (responses.time_available === 'moins_2h_semaine') {
+      insights.push({
+        title: "Temps d'organisation limité",
+        content: "Avec peu de temps disponible, priorisez les tâches essentielles et considérez déléguer certaines responsabilités.",
+        type: 'challenge',
+        basedOn: "Moins de 2h par semaine disponibles"
+      });
+    }
+
+    // Analyser les opportunités
+    if (responses.style_preferences && Array.isArray(responses.style_preferences)) {
+      insights.push({
+        title: "Style bien défini",
+        content: "Vos préférences stylistiques claires vous aideront à faire des choix cohérents pour tous vos prestataires.",
+        type: 'opportunity',
+        basedOn: "Préférences stylistiques définies"
+      });
+    }
+
+    return insights;
+  };
+
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case 'high': return 'bg-red-100 text-red-800 border-red-200';
@@ -236,7 +313,7 @@ const PlanningResultatsPersonnalises: React.FC = () => {
       color: "text-blue-600",
       icon: <Target className="h-5 w-5" />
     };
-    if (score <= 7) return {
+    if (score <= 10) return {
       message: "Vous progressez bien dans vos préparatifs !",
       color: "text-orange-600", 
       icon: <TrendingUp className="h-5 w-5" />
@@ -246,6 +323,15 @@ const PlanningResultatsPersonnalises: React.FC = () => {
       color: "text-green-600",
       icon: <CheckCircle className="h-5 w-5" />
     };
+  };
+
+  const getInsightIcon = (type: string) => {
+    switch (type) {
+      case 'strength': return <Star className="h-4 w-4 text-green-600" />;
+      case 'challenge': return <Target className="h-4 w-4 text-orange-600" />;
+      case 'opportunity': return <Heart className="h-4 w-4 text-pink-600" />;
+      default: return <Brain className="h-4 w-4 text-blue-600" />;
+    }
   };
 
   if (isLoading) {
@@ -337,6 +423,36 @@ const PlanningResultatsPersonnalises: React.FC = () => {
                     </div>
                   </CardContent>
                 </Card>
+
+                {/* Insights personnalisés */}
+                {insights.length > 0 && (
+                  <Card className="border-wedding-olive/20">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2 font-serif">
+                        <Brain className="h-5 w-5 text-wedding-olive" />
+                        Analyse personnalisée de votre profil
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        {insights.map((insight, index) => (
+                          <div key={index} className="border rounded-lg p-4 bg-white shadow-sm">
+                            <div className="flex items-start gap-3 mb-2">
+                              {getInsightIcon(insight.type)}
+                              <div className="flex-1">
+                                <h4 className="font-medium text-wedding-olive">{insight.title}</h4>
+                                <p className="text-sm text-muted-foreground mt-1">{insight.content}</p>
+                                <span className="text-xs bg-wedding-light px-2 py-1 rounded-full mt-2 inline-block">
+                                  Basé sur : {insight.basedOn}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
 
                 {/* Recommandations personnalisées */}
                 {recommendations.length > 0 && (
