@@ -106,83 +106,104 @@ const INITIAL_WEDDING_TASKS = [
 ];
 
 const ChecklistMariage = () => {
-  const [tasks, setTasks] = useState<any[]>(INITIAL_WEDDING_TASKS); // Initialiser avec les tâches par défaut
-  const [isLoading, setIsLoading] = useState(false); // Pas de loading initial
+  const [tasks, setTasks] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [dataSource, setDataSource] = useState<string>('');
   const navigate = useNavigate();
   const { toast } = useToast();
   
   useEffect(() => {
-    loadTasksWithFallback();
+    console.log('🚀 ChecklistMariage component mounted');
+    loadTasksWithDiagnostic();
   }, []);
+
+  // Guard de sécurité finale pour garantir l'affichage
+  useEffect(() => {
+    if (!isLoading && tasks.length === 0) {
+      console.warn('🚨 EMERGENCY GUARD: Tasks array is empty after loading, forcing default tasks');
+      setTasks(INITIAL_WEDDING_TASKS);
+      setDataSource('emergency-fallback');
+    }
+  }, [isLoading, tasks.length]);
   
-  const loadTasksWithFallback = async () => {
-    console.log('🚀 Starting task loading process');
+  const loadTasksWithDiagnostic = async () => {
+    console.log('🔍 Starting comprehensive task loading diagnostic');
+    setIsLoading(true);
     
     try {
-      // Vérifier l'authentification
+      // Étape 1: Vérifier l'authentification
+      console.log('👤 Step 1: Checking authentication...');
       const { data: { user }, error: authError } = await supabase.auth.getUser();
       
       if (authError) {
-        console.warn('⚠️ Auth error:', authError.message);
-        // Continuer avec le mode non-connecté
-        loadLocalTasks();
+        console.warn('⚠️ Auth error detected:', authError.message);
+        await handleUnauthenticatedUser();
         return;
       }
       
       if (user) {
-        console.log('👤 User authenticated:', user.id);
+        console.log('✅ User authenticated with ID:', user.id);
         setIsAuthenticated(true);
         await loadUserTasks(user.id);
       } else {
-        console.log('👤 User not authenticated, loading local tasks');
+        console.log('👥 User not authenticated, loading for anonymous user');
         setIsAuthenticated(false);
-        loadLocalTasks();
+        await handleUnauthenticatedUser();
       }
+      
     } catch (error) {
-      console.error('❌ Error in loadTasksWithFallback:', error);
-      // Fallback vers les tâches locales en cas d'erreur
-      loadLocalTasks();
+      console.error('❌ Critical error in loadTasksWithDiagnostic:', error);
+      await handleFallbackToDefault('critical-error');
+    } finally {
+      setIsLoading(false);
+      console.log('✅ Task loading process completed');
     }
   };
   
   const loadUserTasks = async (userId: string) => {
+    console.log('📋 Step 2: Loading tasks for authenticated user');
+    
     try {
-      console.log('📋 Loading user tasks from database');
+      console.log('🔍 Querying todos_planification table...');
       const { data: userTasks, error } = await supabase
         .from('todos_planification')
         .select('*')
         .eq('user_id', userId)
         .order('position', { ascending: true });
         
+      console.log('📊 Database query result:', { 
+        data: userTasks, 
+        error: error,
+        count: userTasks?.length || 0 
+      });
+        
       if (error) {
-        console.error('❌ Error loading user tasks:', error);
+        console.error('❌ Database error while loading tasks:', error);
         throw error;
       }
       
-      console.log('✅ User tasks loaded:', userTasks?.length || 0);
-      
       if (userTasks && userTasks.length > 0) {
+        console.log('✅ Successfully loaded', userTasks.length, 'tasks from database');
+        console.log('📝 First task example:', userTasks[0]);
         setTasks(userTasks);
+        setDataSource('database');
+        return;
       } else {
-        console.log('📝 No user tasks found, creating initial tasks');
+        console.log('📥 No tasks found in database, creating initial tasks');
         await createInitialTasks(userId);
       }
+      
     } catch (error) {
-      console.error('❌ Error in loadUserTasks:', error);
-      // Fallback vers les tâches locales
-      loadLocalTasks();
-      toast({
-        title: "Mode hors ligne",
-        description: "Utilisation des tâches en mode local. Vos modifications ne seront pas sauvegardées.",
-      });
+      console.error('❌ Error in loadUserTasks, falling back:', error);
+      await handleFallbackToDefault('database-error');
     }
   };
   
   const createInitialTasks = async (userId: string) => {
+    console.log('📥 Step 3: Creating initial tasks for user:', userId);
+    
     try {
-      console.log('📥 Creating initial tasks for user:', userId);
-      
       const tasksToInsert = INITIAL_WEDDING_TASKS.map((task) => ({
         user_id: userId,
         label: task.label,
@@ -193,31 +214,36 @@ const ChecklistMariage = () => {
         completed: task.completed
       }));
       
+      console.log('📝 Inserting', tasksToInsert.length, 'initial tasks');
+      
       const { data: insertedTasks, error } = await supabase
         .from('todos_planification')
         .insert(tasksToInsert)
         .select();
         
       if (error) {
-        console.error('❌ Error creating initial tasks:', error);
+        console.error('❌ Error inserting initial tasks:', error);
         throw error;
       }
       
-      console.log('✅ Initial tasks created successfully:', insertedTasks?.length || 0);
+      console.log('✅ Successfully created', insertedTasks?.length || 0, 'initial tasks');
       setTasks(insertedTasks || []);
+      setDataSource('database-created');
       
     } catch (error) {
-      console.error('❌ Error in createInitialTasks:', error);
-      // Fallback vers les tâches locales
-      loadLocalTasks();
+      console.error('❌ Error in createInitialTasks, falling back:', error);
+      await handleFallbackToDefault('creation-error');
     }
   };
   
-  const loadLocalTasks = () => {
-    console.log('💾 Loading local tasks from localStorage');
+  const handleUnauthenticatedUser = async () => {
+    console.log('👥 Step 4: Handling unauthenticated user');
     
     try {
+      console.log('💾 Attempting to load from localStorage...');
       const savedTaskStatuses = localStorage.getItem('weddingTasksStatus');
+      console.log('📊 LocalStorage data:', savedTaskStatuses);
+      
       const statuses = savedTaskStatuses ? JSON.parse(savedTaskStatuses) : {};
       
       const tasksWithStatus = INITIAL_WEDDING_TASKS.map(task => ({
@@ -225,54 +251,73 @@ const ChecklistMariage = () => {
         completed: statuses[task.id] || false
       }));
       
+      console.log('✅ Successfully loaded', tasksWithStatus.length, 'tasks from localStorage');
+      console.log('📝 Tasks with status:', tasksWithStatus);
       setTasks(tasksWithStatus);
-      console.log('✅ Local tasks loaded successfully:', tasksWithStatus.length);
+      setDataSource('localStorage');
+      
     } catch (error) {
-      console.error('❌ Error loading local tasks:', error);
-      // En dernier recours, utiliser les tâches par défaut
-      setTasks(INITIAL_WEDDING_TASKS);
+      console.error('❌ Error loading from localStorage:', error);
+      await handleFallbackToDefault('localStorage-error');
     }
+  };
+  
+  const handleFallbackToDefault = async (reason: string) => {
+    console.warn('🔄 Falling back to default tasks, reason:', reason);
+    console.log('📝 Loading default tasks:', INITIAL_WEDDING_TASKS);
+    
+    setTasks(INITIAL_WEDDING_TASKS);
+    setDataSource(`default-${reason}`);
+    
+    toast({
+      title: "Mode hors ligne",
+      description: "Utilisation des tâches par défaut. Vos modifications ne seront pas sauvegardées.",
+    });
   };
   
   const toggleTaskCompletion = async (taskId: number | string) => {
     const taskIdStr = taskId.toString();
+    console.log('🔄 Toggling task completion for ID:', taskIdStr);
+    
     const taskIndex = tasks.findIndex(t => (t.id || '').toString() === taskIdStr);
     
     if (taskIndex === -1) {
-      console.warn('⚠️ Task not found:', taskIdStr);
+      console.warn('⚠️ Task not found with ID:', taskIdStr);
       return;
     }
     
     const taskToUpdate = tasks[taskIndex];
     const newCompletedState = !taskToUpdate.completed;
     
-    console.log('🔄 Toggling task completion:', taskToUpdate.label, 'to', newCompletedState);
+    console.log('📝 Updating task:', {
+      label: taskToUpdate.label,
+      from: taskToUpdate.completed,
+      to: newCompletedState
+    });
     
-    // Mise à jour locale immédiate pour une UI réactive
+    // Mise à jour locale immédiate
     const updatedTasks = [...tasks];
     updatedTasks[taskIndex] = { ...taskToUpdate, completed: newCompletedState };
     setTasks(updatedTasks);
     
     if (isAuthenticated && taskToUpdate.id && typeof taskToUpdate.id !== 'string') {
-      // Sauvegarder en base de données (seulement si l'ID existe en DB)
       try {
+        console.log('💾 Saving to database...');
         const { error } = await supabase
           .from('todos_planification')
           .update({ completed: newCompletedState })
           .eq('id', taskToUpdate.id);
           
         if (error) {
-          console.error('❌ Error updating task in database:', error);
+          console.error('❌ Database update failed:', error);
           throw error;
         }
         
         console.log('✅ Task updated in database successfully');
       } catch (error) {
         console.error('❌ Database update failed, reverting local state');
-        
-        // Restaurer l'état précédent
         const revertedTasks = [...tasks];
-        revertedTasks[taskIndex] = { ...taskToUpdate, completed: !newCompletedState };
+        revertedTasks[taskIndex] = { ...taskToUpdate, completed: taskToUpdate.completed };
         setTasks(revertedTasks);
         
         toast({
@@ -282,15 +327,15 @@ const ChecklistMariage = () => {
         });
       }
     } else {
-      // Sauvegarder en localStorage
       try {
+        console.log('💾 Saving to localStorage...');
         const savedTaskStatuses = localStorage.getItem('weddingTasksStatus');
         const statuses = savedTaskStatuses ? JSON.parse(savedTaskStatuses) : {};
         
         statuses[taskIdStr] = newCompletedState;
         localStorage.setItem('weddingTasksStatus', JSON.stringify(statuses));
         
-        console.log('💾 Task status saved to localStorage');
+        console.log('✅ Task status saved to localStorage');
       } catch (error) {
         console.error('❌ Error saving to localStorage:', error);
       }
@@ -302,6 +347,15 @@ const ChecklistMariage = () => {
     const completed = tasks.filter(t => t.completed).length;
     return Math.round((completed / tasks.length) * 100);
   };
+
+  // Log final state
+  console.log('📊 Final render state:', {
+    tasksCount: tasks.length,
+    isLoading,
+    isAuthenticated,
+    dataSource,
+    progressPercentage: getProgressPercentage()
+  });
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
@@ -332,6 +386,11 @@ const ChecklistMariage = () => {
             <p className="text-lg text-muted-foreground">
               Organisez votre mariage en 10 étapes clés
             </p>
+            {dataSource && (
+              <p className="text-sm text-muted-foreground mt-2">
+                Source des données : {dataSource} | {tasks.length} tâches chargées
+              </p>
+            )}
           </div>
 
           <Card className="mb-8">
@@ -360,6 +419,16 @@ const ChecklistMariage = () => {
               {isLoading ? (
                 <div className="flex justify-center py-8">
                   <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-wedding-olive"></div>
+                  <p className="ml-4">Chargement des tâches de planification...</p>
+                </div>
+              ) : tasks.length === 0 ? (
+                <div className="text-center py-8">
+                  <p className="text-red-600 font-medium">
+                    🚨 Aucune tâche trouvée - Ceci ne devrait pas arriver !
+                  </p>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    Merci de signaler ce problème avec les détails de la console.
+                  </p>
                 </div>
               ) : (
                 <div className="space-y-4">

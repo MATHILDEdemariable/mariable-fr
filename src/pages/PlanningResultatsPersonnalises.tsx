@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
-import { CalendarIcon, ArrowRight, CheckCircle, Loader2, Target, TrendingUp, Users, Clock, Brain, Star, Heart } from 'lucide-react';
+import { CalendarIcon, ArrowRight, CheckCircle, Loader2, Target, TrendingUp, Users, Clock, Brain, Star, Heart, RefreshCw } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
@@ -58,14 +58,14 @@ const PlanningResultatsPersonnalises: React.FC = () => {
     setIsLoading(true);
     
     try {
-      // D'abord vérifier localStorage pour les résultats récents
+      // Check localStorage first for recent results
       const localResult = localStorage.getItem('quizResult');
       if (localResult) {
         console.log('📱 Found local quiz result');
         const parsedResult = JSON.parse(localResult);
         setResult(parsedResult);
         
-        // Générer des recommandations basées sur le résultat local
+        // Generate recommendations based on local result
         const personalizedRecs = await generatePersonalizedRecommendations(parsedResult);
         setRecommendations(personalizedRecs);
 
@@ -76,9 +76,9 @@ const PlanningResultatsPersonnalises: React.FC = () => {
       const { data: { user } } = await supabase.auth.getUser();
       
       if (user) {
-        console.log('👤 User authenticated, loading from database');
+        console.log('👤 User authenticated, loading comprehensive data from database');
         
-        // Récupérer les résultats du quiz depuis la DB
+        // Load quiz results
         const { data: userQuizResults, error: quizError } = await supabase
           .from('user_quiz_results')
           .select('*')
@@ -91,10 +91,21 @@ const PlanningResultatsPersonnalises: React.FC = () => {
           if (!localResult) throw quizError;
         }
 
+        // Load detailed quiz responses from planning_reponses_utilisateur
+        const { data: detailedResponses, error: responsesError } = await supabase
+          .from('planning_reponses_utilisateur')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('date_creation', { ascending: false })
+          .limit(1);
+
+        if (responsesError) {
+          console.error('❌ Error loading detailed responses:', responsesError);
+        }
+
         if (userQuizResults && userQuizResults.length > 0) {
           const dbResult = userQuizResults[0];
           
-          // Conversion sécurisée des types Json vers les types attendus
           const objectives = Array.isArray(dbResult.objectives) 
             ? dbResult.objectives.map(obj => typeof obj === 'string' ? obj : String(obj))
             : [];
@@ -110,29 +121,22 @@ const PlanningResultatsPersonnalises: React.FC = () => {
             categories
           };
 
-          // Récupérer les réponses détaillées pour personnalisation
-          const { data: userResponses, error: responsesError } = await supabase
-            .from('user_planning_responses')
-            .select('responses')
-            .eq('user_id', user.id)
-            .maybeSingle();
-
-          if (!responsesError && userResponses) {
-            // Conversion sécurisée du type Json vers Record<string, any>
-            const responses = typeof userResponses.responses === 'object' && userResponses.responses !== null
-              ? userResponses.responses as Record<string, any>
+          // Add detailed responses if available
+          if (detailedResponses && detailedResponses.length > 0) {
+            const responses = typeof detailedResponses[0].reponses === 'object' && detailedResponses[0].reponses !== null
+              ? detailedResponses[0].reponses as Record<string, any>
               : {};
             quizResult.user_responses = responses;
             quizResult.detailed_answers = responses;
-            console.log('📝 User responses loaded:', responses);
+            console.log('📝 Loaded detailed responses:', Object.keys(responses));
           }
 
-          // Utiliser les résultats de la DB si disponibles, sinon garder localStorage
+          // Use database results if no local result exists
           if (!localResult) {
             setResult(quizResult);
           }
           
-          // Générer des recommandations personnalisées avec les données DB
+          // Generate enhanced recommendations with database data
           const personalizedRecs = await generatePersonalizedRecommendations(quizResult);
           setRecommendations(personalizedRecs);
 
@@ -140,7 +144,7 @@ const PlanningResultatsPersonnalises: React.FC = () => {
           setInsights(personalizedInsights);
           
         } else if (!localResult) {
-          throw new Error('Aucun résultat de quiz trouvé en base de données');
+          throw new Error('Aucun résultat de quiz trouvé');
         }
       } else if (!localResult) {
         throw new Error('Aucun résultat de quiz trouvé');
@@ -152,13 +156,9 @@ const PlanningResultatsPersonnalises: React.FC = () => {
       
       toast({
         title: "Erreur",
-        description: "Impossible de récupérer vos résultats. Redirection vers le quiz...",
+        description: "Impossible de récupérer vos résultats. Vous pouvez refaire le quiz.",
         variant: "destructive"
       });
-      
-      setTimeout(() => {
-        navigate('/planning-personnalise');
-      }, 2000);
     } finally {
       setIsLoading(false);
     }
@@ -166,27 +166,28 @@ const PlanningResultatsPersonnalises: React.FC = () => {
 
   const generatePersonalizedRecommendations = async (quizResult: QuizResult): Promise<PersonalizedRecommendation[]> => {
     const recs: PersonalizedRecommendation[] = [];
-    const responses = quizResult.user_responses || {};
+    const responses = quizResult.user_responses || quizResult.detailed_answers || {};
     
     console.log('🎯 Generating personalized recommendations based on:', responses);
 
-    // Recommandations basées sur le score et le niveau
-    if (quizResult.score <= 3) {
+    // Recommendations based on score and level
+    if (quizResult.score <= 5) {
       recs.push({
-        title: "Créez votre budget détaillé",
-        description: "Commencez par définir un budget réaliste pour éviter les mauvaises surprises.",
+        title: "Commencez par les fondamentaux",
+        description: "Définissez votre budget, votre date et le nombre d'invités - les trois piliers de votre mariage.",
         priority: 'high',
-        category: 'Budget',
-        actionUrl: '/dashboard/budget'
+        category: 'Étapes essentielles',
+        actionUrl: '/dashboard/planning'
       });
       
       recs.push({
-        title: "Définissez votre date et vos invités",
-        description: "Les deux décisions fondamentales qui impacteront tous vos autres choix.",
+        title: "Créez votre checklist personnalisée",
+        description: "Organisez-vous avec notre checklist des 10 étapes clés adaptée à votre niveau.",
         priority: 'high',
-        category: 'Planning'
+        category: 'Organisation',
+        actionUrl: '/checklist-mariage'
       });
-    } else if (quizResult.score <= 7) {
+    } else if (quizResult.score <= 12) {
       recs.push({
         title: "Réservez vos prestataires prioritaires",
         description: "Lieu, traiteur et photographe sont les prestataires à réserver en premier.",
@@ -196,8 +197,8 @@ const PlanningResultatsPersonnalises: React.FC = () => {
       });
       
       recs.push({
-        title: "Organisez votre timeline du jour J",
-        description: "Planifiez le déroulement de votre journée pour un timing parfait.",
+        title: "Planifiez votre jour J",
+        description: "Créez le planning détaillé de votre journée de mariage.",
         priority: 'medium',
         category: 'Coordination',
         actionUrl: '/planning-jour-j'
@@ -211,96 +212,114 @@ const PlanningResultatsPersonnalises: React.FC = () => {
       });
       
       recs.push({
-        title: "Créez votre coordination du jour J",
-        description: "Organisez la logistique et déléguez les tâches pour profiter pleinement.",
+        title: "Organisez la coordination du jour J",
+        description: "Déléguez les tâches et créez un planning précis pour profiter pleinement.",
         priority: 'high',
         category: 'Coordination',
         actionUrl: '/planning-jour-j'
       });
     }
 
-    // Recommandations basées sur les réponses spécifiques
-    if (responses.budget_range) {
-      const budget = responses.budget_range;
-      if (budget === 'moins_10k' || budget === '10k_20k') {
-        recs.push({
-          title: "Optimisez votre budget limité",
-          description: "Découvrez nos astuces pour un mariage magnifique avec un budget maîtrisé.",
-          priority: 'high',
-          category: 'Budget',
-          actionUrl: '/dashboard/budget/calculator'
-        });
+    // Analyze specific responses for detailed recommendations
+    Object.entries(responses).forEach(([key, value]) => {
+      // Handle wedding size
+      if (key.includes('invites') || key.includes('guests')) {
+        const guestCount = parseInt(String(value)) || 0;
+        if (guestCount > 100) {
+          recs.push({
+            title: "Gérez votre grand mariage",
+            description: `Avec ${guestCount} invités, la logistique devient cruciale. Priorisez l'organisation.`,
+            priority: 'high',
+            category: 'Logistique'
+          });
+        } else if (guestCount < 30) {
+          recs.push({
+            title: "Profitez de votre mariage intime",
+            description: "Avec un petit nombre d'invités, vous pouvez vous concentrer sur les détails personnalisés.",
+            priority: 'medium',
+            category: 'Personnalisation'
+          });
+        }
       }
-    }
 
-    if (responses.guest_count) {
-      const guests = parseInt(responses.guest_count) || 0;
-      if (guests > 100) {
-        recs.push({
-          title: "Gérez votre grand mariage",
-          description: "Avec plus de 100 invités, la logistique devient cruciale. Planifiez en conséquence.",
-          priority: 'high',
-          category: 'Logistique'
-        });
+      // Handle budget constraints
+      if (key.includes('budget') && typeof value === 'string') {
+        if (value.includes('10') || value.includes('petit')) {
+          recs.push({
+            title: "Optimisez votre budget maîtrisé",
+            description: "Découvrez nos astuces pour un mariage magnifique avec un budget optimisé.",
+            priority: 'high',
+            category: 'Budget',
+            actionUrl: '/dashboard/budget/calculator'
+          });
+        }
       }
-    }
 
-    if (responses.time_available === 'moins_2h_semaine') {
-      recs.push({
-        title: "Optimisez votre temps limité",
-        description: "Avec peu de temps disponible, concentrez-vous sur les tâches essentielles.",
-        priority: 'high',
-        category: 'Planning'
-      });
-    }
+      // Handle time availability
+      if (key.includes('temps') || key.includes('time')) {
+        if (typeof value === 'string' && (value.includes('peu') || value.includes('2h'))) {
+          recs.push({
+            title: "Organisez-vous avec un temps limité",
+            description: "Concentrez-vous sur les tâches essentielles et déléguez quand c'est possible.",
+            priority: 'high',
+            category: 'Efficacité'
+          });
+        }
+      }
+    });
 
     return recs;
   };
 
   const generatePersonalizedInsights = (quizResult: QuizResult): PersonalizedInsight[] => {
     const insights: PersonalizedInsight[] = [];
-    const responses = quizResult.detailed_answers || {};
+    const responses = quizResult.detailed_answers || quizResult.user_responses || {};
 
-    // Analyser les points forts
+    // Analyze based on score
     if (quizResult.score >= 15) {
       insights.push({
-        title: "Excellente préparation !",
-        content: "Vous avez une vision claire de votre mariage et une bonne organisation. Continuez sur cette lancée !",
+        title: "Excellente organisation !",
+        content: "Vous avez une vision claire et une bonne préparation. Continuez sur cette lancée !",
         type: 'strength',
         basedOn: `Score élevé de ${quizResult.score}/20`
       });
-    }
-
-    // Analyser les défis selon les réponses
-    if (responses.budget_range === 'moins_10k') {
+    } else if (quizResult.score <= 5) {
       insights.push({
-        title: "Budget maîtrisé",
-        content: "Votre budget limité nécessite une planification stratégique. Concentrez-vous sur l'essentiel et explorez les alternatives créatives.",
-        type: 'challenge',
-        basedOn: "Budget inférieur à 10k€"
-      });
-    }
-
-    if (responses.time_available === 'moins_2h_semaine') {
-      insights.push({
-        title: "Temps d'organisation limité",
-        content: "Avec peu de temps disponible, priorisez les tâches essentielles et considérez déléguer certaines responsabilités.",
-        type: 'challenge',
-        basedOn: "Moins de 2h par semaine disponibles"
-      });
-    }
-
-    // Analyser les opportunités
-    if (responses.style_preferences && Array.isArray(responses.style_preferences)) {
-      insights.push({
-        title: "Style bien défini",
-        content: "Vos préférences stylistiques claires vous aideront à faire des choix cohérents pour tous vos prestataires.",
+        title: "Début d'aventure",
+        content: "Vous êtes au début de votre préparation. C'est le moment parfait pour bien poser les bases.",
         type: 'opportunity',
-        basedOn: "Préférences stylistiques définies"
+        basedOn: `Score de début: ${quizResult.score}/20`
       });
     }
+
+    // Analyze specific responses
+    Object.entries(responses).forEach(([key, value]) => {
+      if (key.includes('style') && Array.isArray(value)) {
+        insights.push({
+          title: "Style bien défini",
+          content: "Vos préférences stylistiques claires vous aideront à faire des choix cohérents.",
+          type: 'strength',
+          basedOn: "Préférences stylistiques définies"
+        });
+      }
+
+      if (key.includes('priorite') || key.includes('priority')) {
+        insights.push({
+          title: "Priorités identifiées",
+          content: "Avoir des priorités claires vous permettra d'allouer votre budget et votre énergie efficacement.",
+          type: 'opportunity',
+          basedOn: "Priorités de mariage définies"
+        });
+      }
+    });
 
     return insights;
+  };
+
+  const handleRetakeQuiz = () => {
+    console.log('🔄 User wants to retake quiz');
+    localStorage.removeItem('quizResult');
+    navigate('/planning-personnalise');
   };
 
   const getPriorityColor = (priority: string) => {
@@ -313,12 +332,12 @@ const PlanningResultatsPersonnalises: React.FC = () => {
   };
 
   const getScoreInsight = (score: number) => {
-    if (score <= 3) return {
+    if (score <= 5) return {
       message: "Vous êtes au début de votre aventure !",
       color: "text-blue-600",
       icon: <Target className="h-5 w-5" />
     };
-    if (score <= 10) return {
+    if (score <= 12) return {
       message: "Vous progressez bien dans vos préparatifs !",
       color: "text-orange-600", 
       icon: <TrendingUp className="h-5 w-5" />
@@ -361,10 +380,16 @@ const PlanningResultatsPersonnalises: React.FC = () => {
         <main className="container mx-auto px-4 py-8 mb-16">
           <div className="text-center py-12">
             <h1 className="text-3xl font-serif mb-4">Résultats non disponibles</h1>
-            <p className="mb-8">{error || "Nous n'avons pas pu trouver vos résultats. Veuillez refaire le quiz."}</p>
-            <Button asChild className="bg-wedding-olive hover:bg-wedding-olive/90">
-              <Link to="/planning-personnalise">Refaire le quiz</Link>
-            </Button>
+            <p className="mb-8">{error || "Nous n'avons pas pu trouver vos résultats."}</p>
+            <div className="space-y-4">
+              <Button onClick={handleRetakeQuiz} className="bg-wedding-olive hover:bg-wedding-olive/90">
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Refaire le quiz
+              </Button>
+              <Button asChild variant="outline">
+                <Link to="/checklist-mariage">Voir la checklist générale</Link>
+              </Button>
+            </div>
           </div>
         </main>
         <Footer />
@@ -384,7 +409,13 @@ const PlanningResultatsPersonnalises: React.FC = () => {
       <Header />
       
       <main className="container mx-auto px-4 py-8 mb-16">
-        <h1 className="text-3xl font-serif text-center mb-8">Votre Planning de Mariage Personnalisé</h1>
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-3xl font-serif">Votre Planning de Mariage Personnalisé</h1>
+          <Button onClick={handleRetakeQuiz} variant="outline" size="sm">
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Refaire le quiz
+          </Button>
+        </div>
         
         <Card>
           <CardContent className="pt-6">
@@ -568,7 +599,7 @@ const PlanningResultatsPersonnalises: React.FC = () => {
                         <p className="text-sm text-muted-foreground">Timeline adaptée à vos choix</p>
                       </Link>
                       
-                      <Link to="/register" className="border rounded-md p-4 bg-wedding-light/50 hover:bg-wedding-light transition-colors">
+                      <Link to="/checklist-mariage" className="border rounded-md p-4 bg-wedding-light/50 hover:bg-wedding-light transition-colors">
                         <h4 className="font-medium mb-1">Checklist détaillée</h4>
                         <p className="text-sm text-muted-foreground">Tâches prioritaires selon votre niveau</p>
                       </Link>
