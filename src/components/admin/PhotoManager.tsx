@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Loader2, Trash2, Star, GripVertical } from "lucide-react";
+import { Loader2, Trash2, Star, GripVertical, AlertCircle, RefreshCw } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
 import { DragDropContext, Droppable, Draggable, DropResult } from "react-beautiful-dnd";
 import { Database } from "@/integrations/supabase/types";
@@ -18,6 +18,7 @@ interface PhotoManagerProps {
 const PhotoManager: React.FC<PhotoManagerProps> = ({ prestataire, onUpdate }) => {
   const [photos, setPhotos] = useState<Database["public"]["Tables"]["prestataires_photos_preprod"]["Row"][]>([]);
   const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
   useEffect(() => {
     const sortedPhotos = [...(prestataire?.prestataires_photos_preprod ?? [])]
@@ -26,49 +27,110 @@ const PhotoManager: React.FC<PhotoManagerProps> = ({ prestataire, onUpdate }) =>
     setPhotos(sortedPhotos);
   }, [prestataire?.prestataires_photos_preprod]);
 
+  const logUploadDiagnostic = async () => {
+    console.log('🔍 PHOTO MANAGER: Starting upload diagnostic');
+    
+    try {
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      console.log('👤 PHOTO MANAGER: User status:', {
+        authenticated: !!user,
+        userId: user?.id,
+        error: userError?.message
+      });
+
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      console.log('🔐 PHOTO MANAGER: Session status:', {
+        hasSession: !!session,
+        hasAccessToken: !!session?.access_token,
+        error: sessionError?.message
+      });
+
+      return { user, session };
+    } catch (error) {
+      console.error('❌ PHOTO MANAGER: Diagnostic failed:', error);
+      return { user: null, session: null };
+    }
+  };
+
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0 || !prestataire) return;
     
-    console.log('📷 Starting photos upload for prestataire:', prestataire.id);
+    console.log('📷 PHOTO MANAGER: Starting photos upload for prestataire:', prestataire.id);
     setIsUploading(true);
+    setUploadError(null);
 
     const files = Array.from(e.target.files);
     const newPhotos: Database["public"]["Tables"]["prestataires_photos_preprod"]["Row"][] = [];
 
     try {
-      // Vérifier que l'utilisateur est connecté
-      const { data: { user }, error: userError } = await supabase.auth.getUser();
-      if (userError || !user) {
-        console.error('❌ User not authenticated:', userError);
-        toast.error('Vous devez être connecté pour uploader des photos');
-        return;
+      // Diagnostic initial
+      const { user, session } = await logUploadDiagnostic();
+      
+      if (!user || !session) {
+        throw new Error('Vous devez être connecté pour uploader des photos. Veuillez vous reconnecter.');
       }
 
-      console.log('✅ User authenticated:', user.id);
+      console.log('✅ PHOTO MANAGER: User authenticated:', user.id);
 
       for (const file of files) {
-        console.log('📁 Processing file:', file.name);
-        
-        const filePath = `${prestataire.id}/${uuidv4()}-${file.name}`;
-        console.log('📁 Upload path:', filePath);
-        
-        const { data: uploadData, error: uploadError } = await supabase.storage
-          .from("prestataires-photos")
-          .upload(filePath, file);
+        console.log('📁 PHOTO MANAGER: Processing file:', {
+          name: file.name,
+          size: file.size,
+          type: file.type
+        });
 
-        if (uploadError) {
-          console.error('❌ Upload error for file:', file.name, uploadError);
-          toast.error(`Erreur d'upload pour ${file.name}: ${uploadError.message}`);
+        // Validation du fichier
+        const maxSize = 5 * 1024 * 1024; // 5MB
+        if (file.size > maxSize) {
+          console.warn(`⚠️ PHOTO MANAGER: File too large: ${file.name}`);
+          toast.error(`Fichier trop volumineux: ${file.name} (${(file.size / 1024 / 1024).toFixed(1)}MB)`);
           continue;
         }
 
-        console.log('✅ Upload successful for:', file.name, uploadData);
+        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'];
+        if (!allowedTypes.includes(file.type)) {
+          console.warn(`⚠️ PHOTO MANAGER: Invalid file type: ${file.type}`);
+          toast.error(`Type de fichier non supporté: ${file.name}`);
+          continue;
+        }
+        
+        const fileName = `${uuidv4()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
+        const filePath = `${prestataire.id}/${fileName}`;
+        console.log('📁 PHOTO MANAGER: Upload path:', filePath);
+        
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from("prestataires-photos")
+          .upload(filePath, file, {
+            cacheControl: '3600',
+            upsert: false
+          });
+
+        if (uploadError) {
+          console.error('❌ PHOTO MANAGER: Upload error for file:', file.name, {
+            error: uploadError,
+            message: uploadError.message,
+            name: uploadError.name
+          });
+          
+          if (uploadError.message.includes('Invalid key') || uploadError.message.includes('Access denied')) {
+            throw new Error(`Erreur d'autorisation pour ${file.name}: ${uploadError.message}`);
+          } else {
+            toast.error(`Erreur d'upload pour ${file.name}: ${uploadError.message}`);
+            continue;
+          }
+        }
+
+        console.log('✅ PHOTO MANAGER: Upload successful for:', file.name, uploadData);
 
         const { data: { publicUrl } } = supabase.storage
           .from("prestataires-photos")
           .getPublicUrl(uploadData.path);
 
-        console.log('✅ Public URL generated:', publicUrl);
+        if (!publicUrl) {
+          throw new Error(`Impossible d'obtenir l'URL publique pour ${file.name}`);
+        }
+
+        console.log('✅ PHOTO MANAGER: Public URL generated:', publicUrl);
 
         const newPhotoData = {
           prestataire_id: prestataire.id,
@@ -80,7 +142,7 @@ const PhotoManager: React.FC<PhotoManagerProps> = ({ prestataire, onUpdate }) =>
           type: file.type,
         };
 
-        console.log('💾 Inserting photo data:', newPhotoData);
+        console.log('💾 PHOTO MANAGER: Inserting photo data:', newPhotoData);
 
         const { data: insertedPhoto, error: insertError } = await supabase
           .from("prestataires_photos_preprod")
@@ -89,12 +151,12 @@ const PhotoManager: React.FC<PhotoManagerProps> = ({ prestataire, onUpdate }) =>
           .single();
 
         if (insertError) {
-          console.error('❌ DB insert error:', insertError);
+          console.error('❌ PHOTO MANAGER: DB insert error:', insertError);
           toast.error(`Erreur DB pour ${file.name}: ${insertError.message}`);
           // Supprimer le fichier uploadé en cas d'erreur DB
           await supabase.storage.from("prestataires-photos").remove([filePath]);
         } else if (insertedPhoto) {
-          console.log('✅ Photo inserted successfully:', insertedPhoto);
+          console.log('✅ PHOTO MANAGER: Photo inserted successfully:', insertedPhoto);
           newPhotos.push(insertedPhoto);
         }
       }
@@ -102,12 +164,17 @@ const PhotoManager: React.FC<PhotoManagerProps> = ({ prestataire, onUpdate }) =>
       if (newPhotos.length > 0) {
         setPhotos(prev => [...prev, ...newPhotos]);
         toast.success(`${newPhotos.length} photo(s) ajoutée(s)`);
+        onUpdate(); // Refresh parent component
       }
-    } catch (error) {
-      console.error('❌ Unexpected error during upload:', error);
-      toast.error('Une erreur inattendue est survenue');
+    } catch (error: any) {
+      const errorMessage = error.message || 'Erreur inconnue lors de l\'upload';
+      console.error('❌ PHOTO MANAGER: Unexpected error during upload:', error);
+      setUploadError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setIsUploading(false);
+      // Reset input value
+      e.target.value = '';
     }
   };
 
@@ -211,26 +278,63 @@ const PhotoManager: React.FC<PhotoManagerProps> = ({ prestataire, onUpdate }) =>
     }
   };
 
+  const handleRetry = () => {
+    setUploadError(null);
+    const fileInput = document.querySelector('input[type="file"][multiple]') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.click();
+    }
+  };
+
   if (!prestataire) return <p>Veuillez d'abord sauvegarder le prestataire.</p>;
 
   return (
     <div>
       <h3 className="mb-4 font-semibold text-lg">Gestion des Photos</h3>
-      <div className="mb-4">
+      <div className="mb-4 space-y-3">
         <Label htmlFor="photo-upload">Ajouter des photos</Label>
-        <div className="flex items-center gap-4">
-          <Input 
-            id="photo-upload" 
-            type="file" 
-            multiple 
-            onChange={handleUpload} 
-            disabled={isUploading} 
-            className="max-w-sm" 
-            accept="image/png, image/jpeg, image/webp, image/gif" 
-          />
-          {isUploading && <Loader2 className="animate-spin" />}
+        <div className="space-y-2">
+          <div className="flex items-center gap-4">
+            <Input 
+              id="photo-upload" 
+              type="file" 
+              multiple 
+              onChange={handleUpload} 
+              disabled={isUploading} 
+              className="max-w-sm" 
+              accept="image/png, image/jpeg, image/webp, image/gif" 
+            />
+            {isUploading && (
+              <div className="flex items-center gap-2">
+                <Loader2 className="animate-spin h-4 w-4" />
+                <span className="text-sm">Upload en cours...</span>
+              </div>
+            )}
+          </div>
+          <p className="text-sm text-muted-foreground">
+            JPEG, PNG, WEBP, GIF. Max 5MB par photo. Bucket: prestataires-photos
+          </p>
         </div>
-        <p className="text-sm text-muted-foreground mt-1">JPEG, PNG, WEBP, GIF. Max 5MB par photo.</p>
+
+        {uploadError && (
+          <div className="p-3 bg-red-50 border border-red-200 rounded-md">
+            <div className="flex items-start gap-2">
+              <AlertCircle className="h-4 w-4 text-red-600 mt-0.5 flex-shrink-0" />
+              <div className="flex-1">
+                <p className="text-red-700 text-sm">{uploadError}</p>
+                <Button 
+                  onClick={handleRetry} 
+                  variant="outline" 
+                  size="sm" 
+                  className="mt-2"
+                >
+                  <RefreshCw className="h-3 w-3 mr-1" />
+                  Réessayer
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
       
       <DragDropContext onDragEnd={onDragEnd}>
