@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -31,7 +32,6 @@ const PrestatairesAdmin = () => {
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [cityFilter, setCityFilter] = useState<string>('all');
   const [visibilityFilter, setVisibilityFilter] = useState<string>('all');
-  const [sourceFilter, setSourceFilter] = useState<string>('all');
 
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
@@ -111,15 +111,8 @@ const PrestatairesAdmin = () => {
       filtered = filtered.filter(presta => presta.visible === isVisible);
     }
 
-    // Nouveau filtre par source
-    if (sourceFilter !== 'all') {
-      filtered = filtered.filter(presta => 
-        (presta.source_inscription || 'manuel') === sourceFilter
-      );
-    }
-
     setFilteredPrestataires(filtered);
-  }, [debouncedSearchTerm, prestataires, categoryFilter, cityFilter, visibilityFilter, sourceFilter]);
+  }, [debouncedSearchTerm, prestataires, categoryFilter, cityFilter, visibilityFilter]);
 
   // Obtenir les valeurs uniques pour les filtres
   const uniqueCategories = [...new Set(prestataires.map(p => p.categorie).filter(Boolean))];
@@ -218,6 +211,7 @@ const PrestatairesAdmin = () => {
 
   const updateStatusCrm = async (id: string, newStatus: string) => {
     try {
+      // Utiliser une requête SQL directe pour contourner les limitations de type
       const updateData: any = { 
         status_crm: newStatus
       };
@@ -259,19 +253,9 @@ const PrestatairesAdmin = () => {
       'relance_2': 'Relance 2',
       'called': 'Appelé',
       'waiting': 'En attente',
-      'a_traiter': 'À traiter',
       'other': 'Autre'
     };
     return statusMap[status] || status;
-  };
-
-  const getSourceLabel = (source: string) => {
-    const sourceMap: { [key: string]: string } = {
-      'manuel': 'Ajout manuel',
-      'formulaire_site': 'Formulaire site',
-      'import': 'Import'
-    };
-    return sourceMap[source] || source;
   };
 
   return (
@@ -342,18 +326,6 @@ const PrestatairesAdmin = () => {
               <SelectItem value="hidden">Masqués</SelectItem>
             </SelectContent>
           </Select>
-
-          <Select value={sourceFilter} onValueChange={setSourceFilter}>
-            <SelectTrigger className="w-full sm:w-[180px]">
-              <SelectValue placeholder="Source" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Toutes les sources</SelectItem>
-              <SelectItem value="manuel">Ajout manuel</SelectItem>
-              <SelectItem value="formulaire_site">Formulaire site</SelectItem>
-              <SelectItem value="import">Import</SelectItem>
-            </SelectContent>
-          </Select>
         </div>
       </div>
 
@@ -370,7 +342,6 @@ const PrestatairesAdmin = () => {
                 <TableHead>Nom</TableHead>
                 <TableHead>Catégorie</TableHead>
                 <TableHead>Ville</TableHead>
-                <TableHead className="text-center">Source</TableHead>
                 <TableHead className="text-center">Visible</TableHead>
                 <TableHead className="text-center">Mis en avant</TableHead>
                 <TableHead className="text-center">Statut CRM</TableHead>
@@ -389,16 +360,6 @@ const PrestatairesAdmin = () => {
                     {presta.categorie || "Non spécifiée"}
                   </TableCell>
                   <TableCell>{presta.ville || "Non spécifiée"}</TableCell>
-                  <TableCell className="text-center">
-                    <span
-                      className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
-                        (presta.source_inscription || 'manuel') === 'formulaire_site' 
-                          ? 'bg-green-100 text-green-800' 
-                          : 'bg-gray-100 text-gray-800'
-                      }`}>
-                      {getSourceLabel(presta.source_inscription || 'manuel')}
-                    </span>
-                  </TableCell>
                   <TableCell className="text-center">
                     <span
                       className={`inline-block w-3 h-3 rounded-full ${
@@ -423,7 +384,6 @@ const PrestatairesAdmin = () => {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="acquisition">Acquisition</SelectItem>
-                        <SelectItem value="a_traiter">À traiter</SelectItem>
                         <SelectItem value="contacted">Contacté</SelectItem>
                         <SelectItem value="in_progress">En cours</SelectItem>
                         <SelectItem value="relance_1">Relance 1</SelectItem>

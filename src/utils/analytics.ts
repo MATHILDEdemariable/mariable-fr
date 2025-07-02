@@ -13,58 +13,19 @@ declare global {
   }
 }
 
-// Initialiser le dataLayer de manière sécurisée
-const initializeDataLayer = () => {
-  try {
-    if (typeof window !== 'undefined' && !window.dataLayer) {
-      window.dataLayer = [];
-    }
-  } catch (error) {
-    console.warn('Impossible d\'initialiser dataLayer:', error);
-  }
-};
-
-// Initialiser seulement si on est dans le navigateur
+// Initialiser le dataLayer si pas encore défini
 if (typeof window !== 'undefined') {
-  initializeDataLayer();
+  window.dataLayer = window.dataLayer || [];
 }
-
-/**
- * Vérifie si les analytics sont disponibles
- */
-const isAnalyticsAvailable = (): boolean => {
-  try {
-    return typeof window !== 'undefined' && 
-           window.dataLayer && 
-           Array.isArray(window.dataLayer);
-  } catch (error) {
-    return false;
-  }
-};
-
-/**
- * Vérifie si gtag est disponible
- */
-const isGtagAvailable = (): boolean => {
-  try {
-    return typeof window !== 'undefined' && 
-           window.gtag && 
-           typeof window.gtag === 'function';
-  } catch (error) {
-    return false;
-  }
-};
 
 /**
  * Envoie un événement personnalisé à Google Tag Manager
  */
 export const sendGTMEvent = (eventData: GTMEvent) => {
   try {
-    if (isAnalyticsAvailable()) {
+    if (typeof window !== 'undefined' && window.dataLayer) {
       window.dataLayer.push(eventData);
       console.log('GTM Event envoyé:', eventData);
-    } else {
-      console.warn('GTM non disponible - événement ignoré:', eventData);
     }
   } catch (error) {
     console.warn('Erreur lors de l\'envoi GTM Event:', error);
@@ -76,11 +37,9 @@ export const sendGTMEvent = (eventData: GTMEvent) => {
  */
 export const sendGA4Event = (eventName: string, parameters: Record<string, any> = {}) => {
   try {
-    if (isGtagAvailable()) {
+    if (typeof window !== 'undefined' && window.gtag && typeof window.gtag === 'function') {
       window.gtag('event', eventName, parameters);
       console.log('GA4 Event envoyé:', eventName, parameters);
-    } else {
-      console.warn('GA4 non disponible - événement ignoré:', eventName, parameters);
     }
   } catch (error) {
     console.warn('Erreur lors de l\'envoi GA4 Event:', error);

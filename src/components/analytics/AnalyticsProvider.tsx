@@ -11,22 +11,18 @@ interface AnalyticsProviderProps {
 
 const AnalyticsProvider: React.FC<AnalyticsProviderProps> = ({ 
   children, 
-  showDebugConsole = false
+  showDebugConsole = false // Désactivé par défaut pour éviter les erreurs
 }) => {
   const location = useLocation();
 
   useEffect(() => {
-    // Ajouter un délai pour s'assurer que la page est entièrement chargée
-    const timer = setTimeout(() => {
-      try {
-        const pageTitle = document.title || 'Page sans titre';
-        trackPageView(location.pathname, pageTitle);
-      } catch (error) {
-        console.warn('Erreur lors du tracking de page:', error);
-      }
-    }, 100);
-
-    return () => clearTimeout(timer);
+    try {
+      // Track page view on route change
+      const pageTitle = document.title;
+      trackPageView(location.pathname, pageTitle);
+    } catch (error) {
+      console.warn('Erreur lors du tracking de page:', error);
+    }
   }, [location]);
 
   return (

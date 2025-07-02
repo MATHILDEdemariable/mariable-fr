@@ -1,129 +1,134 @@
-
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import AnalyticsProvider from "@/components/analytics/AnalyticsProvider";
+import { HelmetProvider } from 'react-helmet-async';
+import { ReaderModeProvider } from '@/contexts/ReaderModeContext';
+
+// Import pages
 import Index from "./pages/Index";
-import Selection from "./pages/MoteurRecherche";
-import Prestataire from "./pages/prestataire/slug";
-import Dashboard from "./pages/dashboard/UserDashboard";
+import MoteurRecherche from "./pages/MoteurRecherche";
+import PlanningPersonnalise from "./pages/PlanningPersonnalise";
+import PlanningResultatsPersonnalises from "./pages/PlanningResultatsPersonnalises";
+import NotFound from "./pages/NotFound";
+import ReservationJourM from "./pages/ReservationJourM";
+import UserDashboard from "./pages/dashboard/UserDashboard";
+import JourMVue from "./pages/JourMVue";
+import PlanningPublic from "./pages/PlanningPublic";
+import MonJourM from "./pages/MonJourM";
+import MonJourMPlanningPage from "./pages/MonJourMPlanning";
+import MonJourMEquipePage from "./pages/MonJourMEquipe";
+import MonJourMDocumentsPage from "./pages/MonJourMDocuments";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
-import Professionnels from "./pages/Professionnels";
+import Pricing from "./pages/Pricing";
+import Paiement from "./pages/Paiement";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogArticle";
-import CGV from "./pages/CGV";
-import MentionsLegales from "./pages/MentionsLegales";
-import PolitiqueConfidentialite from "./pages/contact/NousContacter";
 import Contact from "./pages/contact/NousContacter";
+import MentionsLegales from "./pages/MentionsLegales";
+import Prestataires from "./pages/services/Prestataires";
+import Prestataire from "./pages/prestataire/slug";
+import EmailConfirmation from "./pages/auth/EmailConfirmation";
+
+// Import missing pages
+import Professionnels from "./pages/Professionnels";
+import Approche from "./pages/about/Approche";
+import Histoire from "./pages/about/Histoire";
+import Charte from "./pages/about/Charte";
+import Temoignages from "./pages/about/Temoignages";
+import CGV from "./pages/CGV";
+import FAQ from "./pages/contact/FAQ";
+import ChecklistMariage from "./pages/ChecklistMariage";
+import Accompagnement from "./pages/Accompagnement";
+
+// Import admin pages
 import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminBlog from "./pages/admin/Blog";
 import AdminPrestataires from "./pages/admin/Prestataires";
-import BlogAdmin from "./pages/admin/Blog";
-import FormAdmin from "./pages/admin/FormAdmin";
-import ReservationsJourM from "./pages/admin/ReservationsJourM";
-import InscriptionsUtilisateurs from "./pages/admin/InscriptionsUtilisateurs";
-import PrestataireTracking from "./pages/prestataire/tracking";
-import AnalyticsProvider from "./components/analytics/AnalyticsProvider";
-import { ReaderModeProvider } from "./contexts/ReaderModeContext";
-import React from "react";
+import AdminForm from "./pages/admin/FormAdmin";
+import AdminReservationsJourM from "./pages/admin/ReservationsJourM";
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: 1,
-      refetchOnWindowFocus: false,
-    },
-  },
-});
-
-// Composant Error Boundary pour capturer les erreurs
-class ErrorBoundary extends React.Component<
-  { children: React.ReactNode },
-  { hasError: boolean }
-> {
-  constructor(props: { children: React.ReactNode }) {
-    super(props);
-    this.state = { hasError: false };
-  }
-
-  static getDerivedStateFromError(error: Error) {
-    console.error('Error Boundary a capturé une erreur:', error);
-    return { hasError: true };
-  }
-
-  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error('Détails de l\'erreur:', error, errorInfo);
-  }
-
-  render() {
-    if (this.state.hasError) {
-      return (
-        <div className="flex items-center justify-center min-h-screen bg-gray-50">
-          <div className="text-center p-8">
-            <h1 className="text-2xl font-bold text-gray-800 mb-4">
-              Une erreur est survenue
-            </h1>
-            <p className="text-gray-600 mb-4">
-              Veuillez rafraîchir la page ou contacter le support si le problème persiste.
-            </p>
-            <button
-              onClick={() => window.location.reload()}
-              className="bg-wedding-olive text-white px-4 py-2 rounded hover:bg-wedding-olive/90"
-            >
-              Rafraîchir la page
-            </button>
-          </div>
-        </div>
-      );
-    }
-
-    return this.props.children;
-  }
-}
+const queryClient = new QueryClient();
 
 function App() {
   return (
-    <ErrorBoundary>
-      <QueryClientProvider client={queryClient}>
-        <AnalyticsProvider>
-          <ReaderModeProvider>
+    <QueryClientProvider client={queryClient}>
+      <HelmetProvider>
+        <ReaderModeProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
             <BrowserRouter>
-              <div className="min-h-screen bg-gray-50">
+              <AnalyticsProvider>
                 <Routes>
                   <Route path="/" element={<Index />} />
-                  <Route path="/selection" element={<Selection />} />
-                  <Route path="/prestataire/:slug" element={<Prestataire />} />
-                  <Route path="/prestataire/tracking" element={<PrestataireTracking />} />
-                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/moteur-recherche" element={<MoteurRecherche />} />
+                  <Route path="/selection" element={<MoteurRecherche />} />
+                  <Route path="/planning-personnalise" element={<PlanningPersonnalise />} />
+                  <Route path="/planning-resultats-personnalises" element={<PlanningResultatsPersonnalises />} />
+                  <Route path="/reservation-jour-m" element={<ReservationJourM />} />
+                  <Route path="/dashboard/*" element={<UserDashboard />} />
+                  <Route path="/jour-m-vue/:token" element={<JourMVue />} />
+                  
+                  {/* Route publique pour le planning */}
+                  <Route path="/planning-public/:coordinationId" element={<PlanningPublic />} />
+                  
+                  {/* Mon Jour-M routes */}
+                  <Route path="/mon-jour-m" element={<Navigate to="/mon-jour-m/planning" replace />} />
+                  <Route path="/mon-jour-m/planning" element={<MonJourMPlanningPage />} />
+                  <Route path="/mon-jour-m/equipe" element={<MonJourMEquipePage />} />
+                  <Route path="/mon-jour-m/documents" element={<MonJourMDocumentsPage />} />
+
+                  {/* Auth routes */}
                   <Route path="/login" element={<Login />} />
                   <Route path="/register" element={<Register />} />
-                  <Route path="/professionnels" element={<Professionnels />} />
+                  <Route path="/email-confirmation" element={<EmailConfirmation />} />
+                  <Route path="/auth/email-confirmation" element={<Navigate to="/email-confirmation" replace />} />
+
+                  {/* Static routes */}
+                  <Route path="/pricing" element={<Pricing />} />
+                  <Route path="/paiement" element={<Paiement />} />
                   <Route path="/blog" element={<Blog />} />
                   <Route path="/blog/:slug" element={<BlogPost />} />
-                  <Route path="/cgv" element={<CGV />} />
-                  <Route path="/mentions-legales" element={<MentionsLegales />} />
-                  <Route path="/politique-confidentialite" element={<PolitiqueConfidentialite />} />
                   <Route path="/contact" element={<Contact />} />
+                  <Route path="/mentions-legales" element={<MentionsLegales />} />
                   
+                  {/* Missing routes - Fixed */}
+                  <Route path="/professionnels" element={<Professionnels />} />
+                  <Route path="/cgv" element={<CGV />} />
+                  <Route path="/faq" element={<FAQ />} />
+                  <Route path="/checklist-mariage" element={<ChecklistMariage />} />
+                  <Route path="/accompagnement" element={<Accompagnement />} />
+
+                  {/* À propos routes - Fixed */}
+                  <Route path="/about/approche" element={<Approche />} />
+                  <Route path="/about/histoire" element={<Histoire />} />
+                  <Route path="/about/charte" element={<Charte />} />
+                  <Route path="/about/temoignages" element={<Temoignages />} />
+
+                  {/* Prestataires routes */}
+                  <Route path="/prestataires" element={<Prestataires />} />
+                  <Route path="/prestataires/:slug" element={<Prestataire />} />
+                  <Route path="/prestataire/:slug" element={<Prestataire />} />
+
                   {/* Admin routes */}
                   <Route path="/admin/dashboard" element={<AdminDashboard />} />
+                  <Route path="/admin/blog" element={<AdminBlog />} />
                   <Route path="/admin/prestataires" element={<AdminPrestataires />} />
-                  <Route path="/admin/blog" element={<BlogAdmin />} />
-                  <Route path="/admin/form" element={<FormAdmin />} />
-                  <Route path="/admin/reservations-jour-m" element={<ReservationsJourM />} />
-                  <Route path="/admin/inscriptions-utilisateurs" element={<InscriptionsUtilisateurs />} />
+                  <Route path="/admin/form" element={<AdminForm />} />
+                  <Route path="/admin/reservations-jour-m" element={<AdminReservationsJourM />} />
+                  
+                  <Route path="*" element={<NotFound />} />
                 </Routes>
-              </div>
+              </AnalyticsProvider>
             </BrowserRouter>
-          </ReaderModeProvider>
-        </AnalyticsProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-        </TooltipProvider>
-      </QueryClientProvider>
-    </ErrorBoundary>
+          </TooltipProvider>
+        </ReaderModeProvider>
+      </HelmetProvider>
+    </QueryClientProvider>
   );
 }
 
