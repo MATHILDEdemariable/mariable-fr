@@ -24,7 +24,7 @@ import FormAdmin from "./pages/admin/FormAdmin";
 import ReservationsJourM from "./pages/admin/ReservationsJourM";
 import InscriptionsUtilisateurs from "./pages/admin/InscriptionsUtilisateurs";
 import PrestataireTracking from "./pages/prestataire/tracking";
-import { AnalyticsProvider } from "./components/analytics/AnalyticsProvider";
+import AnalyticsProvider from "./components/analytics/AnalyticsProvider";
 import { ReaderModeProvider } from "./contexts/ReaderModeContext";
 
 const queryClient = new QueryClient();
