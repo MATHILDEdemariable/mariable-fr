@@ -9,16 +9,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Download, Calendar, User, Mail } from "lucide-react";
+import { Json } from "@/integrations/supabase/types";
 
 interface UserRegistration {
   id: string;
   email: string;
   created_at: string;
-  raw_user_meta_data: {
-    first_name?: string;
-    last_name?: string;
-    [key: string]: any;
-  };
+  raw_user_meta_data: Json;
 }
 
 const InscriptionsUtilisateurs = () => {
@@ -90,12 +87,15 @@ const InscriptionsUtilisateurs = () => {
     const headers = ['Email', 'Prénom', 'Nom', 'Date d\'inscription'];
     const csvContent = [
       headers.join(','),
-      ...filteredRegistrations.map(reg => [
-        reg.email,
-        reg.raw_user_meta_data?.first_name || '',
-        reg.raw_user_meta_data?.last_name || '',
-        new Date(reg.created_at).toLocaleDateString('fr-FR')
-      ].join(','))
+      ...filteredRegistrations.map(reg => {
+        const metaData = reg.raw_user_meta_data as any;
+        return [
+          reg.email,
+          metaData?.first_name || '',
+          metaData?.last_name || '',
+          new Date(reg.created_at).toLocaleDateString('fr-FR')
+        ].join(',');
+      })
     ].join('\n');
 
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -113,6 +113,13 @@ const InscriptionsUtilisateurs = () => {
       hour: '2-digit',
       minute: '2-digit'
     });
+  };
+
+  const getMetaDataValue = (metaData: Json, key: string): string => {
+    if (typeof metaData === 'object' && metaData !== null) {
+      return (metaData as any)[key] || 'Non renseigné';
+    }
+    return 'Non renseigné';
   };
 
   if (isLoading) {
@@ -203,10 +210,10 @@ const InscriptionsUtilisateurs = () => {
                         {registration.email}
                       </TableCell>
                       <TableCell>
-                        {registration.raw_user_meta_data?.first_name || 'Non renseigné'}
+                        {getMetaDataValue(registration.raw_user_meta_data, 'first_name')}
                       </TableCell>
                       <TableCell>
-                        {registration.raw_user_meta_data?.last_name || 'Non renseigné'}
+                        {getMetaDataValue(registration.raw_user_meta_data, 'last_name')}
                       </TableCell>
                       <TableCell>
                         {formatDate(registration.created_at)}
