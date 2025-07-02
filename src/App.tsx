@@ -26,49 +26,104 @@ import InscriptionsUtilisateurs from "./pages/admin/InscriptionsUtilisateurs";
 import PrestataireTracking from "./pages/prestataire/tracking";
 import AnalyticsProvider from "./components/analytics/AnalyticsProvider";
 import { ReaderModeProvider } from "./contexts/ReaderModeContext";
+import React from "react";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
+
+// Composant Error Boundary pour capturer les erreurs
+class ErrorBoundary extends React.Component<
+  { children: React.ReactNode },
+  { hasError: boolean }
+> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error: Error) {
+    console.error('Error Boundary a capturé une erreur:', error);
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error('Détails de l\'erreur:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="flex items-center justify-center min-h-screen bg-gray-50">
+          <div className="text-center p-8">
+            <h1 className="text-2xl font-bold text-gray-800 mb-4">
+              Une erreur est survenue
+            </h1>
+            <p className="text-gray-600 mb-4">
+              Veuillez rafraîchir la page ou contacter le support si le problème persiste.
+            </p>
+            <button
+              onClick={() => window.location.reload()}
+              className="bg-wedding-olive text-white px-4 py-2 rounded hover:bg-wedding-olive/90"
+            >
+              Rafraîchir la page
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <AnalyticsProvider>
-        <ReaderModeProvider>
-          <BrowserRouter>
-            <div className="min-h-screen bg-gray-50">
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/selection" element={<Selection />} />
-                <Route path="/prestataire/:slug" element={<Prestataire />} />
-                <Route path="/prestataire/tracking" element={<PrestataireTracking />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/professionnels" element={<Professionnels />} />
-                <Route path="/blog" element={<Blog />} />
-                <Route path="/blog/:slug" element={<BlogPost />} />
-                <Route path="/cgv" element={<CGV />} />
-                <Route path="/mentions-legales" element={<MentionsLegales />} />
-                <Route path="/politique-confidentialite" element={<PolitiqueConfidentialite />} />
-                <Route path="/contact" element={<Contact />} />
-                
-                {/* Admin routes */}
-                <Route path="/admin/dashboard" element={<AdminDashboard />} />
-                <Route path="/admin/prestataires" element={<AdminPrestataires />} />
-                <Route path="/admin/blog" element={<BlogAdmin />} />
-                <Route path="/admin/form" element={<FormAdmin />} />
-                <Route path="/admin/reservations-jour-m" element={<ReservationsJourM />} />
-                <Route path="/admin/inscriptions-utilisateurs" element={<InscriptionsUtilisateurs />} />
-              </Routes>
-            </div>
-          </BrowserRouter>
-        </ReaderModeProvider>
-      </AnalyticsProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-      </TooltipProvider>
-    </QueryClientProvider>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <AnalyticsProvider>
+          <ReaderModeProvider>
+            <BrowserRouter>
+              <div className="min-h-screen bg-gray-50">
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/selection" element={<Selection />} />
+                  <Route path="/prestataire/:slug" element={<Prestataire />} />
+                  <Route path="/prestataire/tracking" element={<PrestataireTracking />} />
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/register" element={<Register />} />
+                  <Route path="/professionnels" element={<Professionnels />} />
+                  <Route path="/blog" element={<Blog />} />
+                  <Route path="/blog/:slug" element={<BlogPost />} />
+                  <Route path="/cgv" element={<CGV />} />
+                  <Route path="/mentions-legales" element={<MentionsLegales />} />
+                  <Route path="/politique-confidentialite" element={<PolitiqueConfidentialite />} />
+                  <Route path="/contact" element={<Contact />} />
+                  
+                  {/* Admin routes */}
+                  <Route path="/admin/dashboard" element={<AdminDashboard />} />
+                  <Route path="/admin/prestataires" element={<AdminPrestataires />} />
+                  <Route path="/admin/blog" element={<BlogAdmin />} />
+                  <Route path="/admin/form" element={<FormAdmin />} />
+                  <Route path="/admin/reservations-jour-m" element={<ReservationsJourM />} />
+                  <Route path="/admin/inscriptions-utilisateurs" element={<InscriptionsUtilisateurs />} />
+                </Routes>
+              </div>
+            </BrowserRouter>
+          </ReaderModeProvider>
+        </AnalyticsProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+        </TooltipProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 }
 
