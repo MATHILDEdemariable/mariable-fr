@@ -218,14 +218,16 @@ const ProfessionalRegistrationForm = () => {
           description: values.description || null,
           accord_referencement: values.accord_referencement,
           accord_cgv: values.accord_cgv,
-          visible: false, // Le prestataire n'est pas visible par défaut
+          visible: false,
           featured: false,
           description_more: null,
           partner: false,
           first_price_package: null,
           second_price_package: null,
           third_price_package: null,
-          slug: slug
+          slug: slug,
+          source_inscription: 'formulaire_site', // Marquer la source
+          status_crm: 'a_traiter' // Nouveau statut pour traitement
         })
         .select("id")
         .single();
