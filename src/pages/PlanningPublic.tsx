@@ -5,7 +5,7 @@ import { Helmet } from 'react-helmet-async';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Calendar, Users, FileText, Clock, CheckCircle2, Circle, User, Building, Mail, Phone, AlertCircle, Filter } from 'lucide-react';
+import { Calendar, Users, FileText, Clock, CheckCircle2, Circle, User, Building, Mail, Phone, AlertCircle, Filter, Eye } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -381,7 +381,9 @@ const PlanningPublic: React.FC = () => {
                               {member.phone && (
                                 <div className="flex items-center gap-2">
                                   <Phone className="h-4 w-4" />
-                                  <span>{member.phone}</span>
+                                  <a href={`tel:${member.phone}`} className="text-blue-600 hover:underline">
+                                    {member.phone}
+                                  </a>
                                 </div>
                               )}
                             </div>
@@ -424,7 +426,9 @@ const PlanningPublic: React.FC = () => {
                               {member.phone && (
                                 <div className="flex items-center gap-2">
                                   <Phone className="h-4 w-4" />
-                                  <span>{member.phone}</span>
+                                  <a href={`tel:${member.phone}`} className="text-blue-600 hover:underline">
+                                    {member.phone}
+                                  </a>
                                 </div>
                               )}
                             </div>
@@ -463,9 +467,20 @@ const PlanningPublic: React.FC = () => {
                               <p className="text-sm text-gray-500 capitalize">{doc.category}</p>
                             </div>
                           </div>
-                          <p className="text-xs text-gray-400">
-                            {new Date(doc.created_at).toLocaleDateString('fr-FR')}
-                          </p>
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => {
+                                alert('Aperçu non disponible en mode consultation. Contactez les mariés pour accéder au document.');
+                              }}
+                              className="text-sm text-blue-600 hover:text-blue-800 flex items-center gap-1"
+                            >
+                              <Eye className="h-4 w-4" />
+                              Visualiser
+                            </button>
+                            <p className="text-xs text-gray-400">
+                              {new Date(doc.created_at).toLocaleDateString('fr-FR')}
+                            </p>
+                          </div>
                         </div>
                       ))}
                     </div>

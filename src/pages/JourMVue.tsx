@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Calendar, Users, FileText, Clock, CheckCircle2, Circle, User, Building, Mail, Phone, AlertCircle, Filter } from 'lucide-react';
+import { Calendar, Users, FileText, Clock, CheckCircle2, Circle, User, Building, Mail, Phone, AlertCircle, Filter, Eye } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { validatePlanningShareToken, getPublicCoordinationData } from '@/utils/tokenUtils';
 
@@ -336,7 +336,9 @@ const JourMVue: React.FC = () => {
                             {member.phone && (
                               <div className="flex items-center gap-2">
                                 <Phone className="h-4 w-4" />
-                                <span>{member.phone}</span>
+                                <a href={`tel:${member.phone}`} className="text-blue-600 hover:underline">
+                                  {member.phone}
+                                </a>
                               </div>
                             )}
                           </div>
@@ -376,12 +378,14 @@ const JourMVue: React.FC = () => {
                                 <span className="truncate">{member.email}</span>
                               </div>
                             )}
-                            {member.phone && (
-                              <div className="flex items-center gap-2">
-                                <Phone className="h-4 w-4" />
-                                <span>{member.phone}</span>
-                              </div>
-                            )}
+                             {member.phone && (
+                               <div className="flex items-center gap-2">
+                                 <Phone className="h-4 w-4" />
+                                 <a href={`tel:${member.phone}`} className="text-blue-600 hover:underline">
+                                   {member.phone}
+                                 </a>
+                               </div>
+                             )}
                           </div>
                         </div>
                       ))}
@@ -409,20 +413,31 @@ const JourMVue: React.FC = () => {
               <CardContent>
                 {documents.length > 0 ? (
                   <div className="space-y-3">
-                    {documents.map((doc) => (
-                      <div key={doc.id} className="flex items-center justify-between p-3 border rounded-lg">
-                        <div className="flex items-center gap-3">
-                          <FileText className="h-5 w-5 text-gray-400" />
-                          <div>
-                            <h3 className="font-medium">{doc.title}</h3>
-                            <p className="text-sm text-gray-500 capitalize">{doc.category}</p>
+                      {documents.map((doc) => (
+                        <div key={doc.id} className="flex items-center justify-between p-3 border rounded-lg">
+                          <div className="flex items-center gap-3">
+                            <FileText className="h-5 w-5 text-gray-400" />
+                            <div>
+                              <h3 className="font-medium">{doc.title}</h3>
+                              <p className="text-sm text-gray-500 capitalize">{doc.category}</p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => {
+                                alert('Aperçu non disponible en mode consultation. Contactez les mariés pour accéder au document.');
+                              }}
+                              className="text-sm text-blue-600 hover:text-blue-800 flex items-center gap-1"
+                            >
+                              <Eye className="h-4 w-4" />
+                              Visualiser
+                            </button>
+                            <p className="text-xs text-gray-400">
+                              {new Date(doc.created_at).toLocaleDateString('fr-FR')}
+                            </p>
                           </div>
                         </div>
-                        <p className="text-xs text-gray-400">
-                          {new Date(doc.created_at).toLocaleDateString('fr-FR')}
-                        </p>
-                      </div>
-                    ))}
+                      ))}
                   </div>
                 ) : (
                   <div className="text-center py-12 text-gray-500">

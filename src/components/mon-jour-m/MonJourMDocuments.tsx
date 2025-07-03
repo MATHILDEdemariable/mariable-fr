@@ -271,15 +271,15 @@ const MonJourMDocuments: React.FC = () => {
     if (!editingDocument) return;
 
     try {
-      const { error } = await supabase
-        .from('coordination_documents')
-        .update({
-          title: editingDocument.title,
-          description: editingDocument.description || null,
-          category: editingDocument.category,
-          assigned_to: editingDocument.assigned_to || null
-        })
-        .eq('id', editingDocument.id);
+        const { error } = await supabase
+          .from('coordination_documents')
+          .update({
+            title: editingDocument.title,
+            description: editingDocument.description || null,
+            category: editingDocument.category,
+            assigned_to: editingDocument.assigned_to === 'none' ? null : editingDocument.assigned_to || null
+          })
+          .eq('id', editingDocument.id);
 
       if (error) throw error;
 
@@ -487,7 +487,18 @@ const MonJourMDocuments: React.FC = () => {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => window.open(document.file_url, '_blank')}
+                          onClick={() => {
+                            try {
+                              window.open(document.file_url, '_blank');
+                            } catch (error) {
+                              console.error('Erreur ouverture document:', error);
+                              toast({
+                                title: "Erreur",
+                                description: "Impossible d'ouvrir le document",
+                                variant: "destructive"
+                              });
+                            }
+                          }}
                         >
                           <Eye className="h-4 w-4" />
                         </Button>
@@ -603,14 +614,14 @@ const MonJourMDocuments: React.FC = () => {
                   </Select>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium mb-1">Assigné à</label>
-                  <Select value={editingDocument.assigned_to || ''} onValueChange={(value) => setEditingDocument({ ...editingDocument, assigned_to: value })}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Sélectionner un membre" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="">Aucun</SelectItem>
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Assigné à</label>
+                    <Select value={editingDocument.assigned_to || 'none'} onValueChange={(value) => setEditingDocument({ ...editingDocument, assigned_to: value })}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Sélectionner un membre" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="none">Aucun</SelectItem>
                       {teamMembers.map((member) => (
                         <SelectItem key={member.id} value={member.id}>
                           {member.name} ({member.role})
