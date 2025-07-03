@@ -224,7 +224,7 @@ const MonJourMDocuments: React.FC = () => {
         title: formData.title,
         description: formData.description || null,
         category: formData.category,
-        assigned_to: formData.assigned_to || null,
+        assigned_to: formData.assigned_to === 'none' ? null : formData.assigned_to || null,
       };
 
       // Ajouter les données du fichier seulement si elles existent
@@ -421,7 +421,7 @@ const MonJourMDocuments: React.FC = () => {
                         <SelectValue placeholder="Sélectionner un membre" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">Aucun</SelectItem>
+                        <SelectItem value="none">Aucun</SelectItem>
                         {teamMembers.map((member) => (
                           <SelectItem key={member.id} value={member.id}>
                             {member.name} ({member.role})

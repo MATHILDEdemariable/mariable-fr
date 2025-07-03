@@ -83,10 +83,21 @@ const JourMVue: React.FC = () => {
   };
 
   const formatTime = (timeString?: string) => {
-    if (!timeString) return '';
+    if (!timeString) return 'Heure non définie';
     
     try {
+      // Si c'est déjà au format HH:MM, on le retourne tel quel
+      if (/^\d{2}:\d{2}$/.test(timeString)) {
+        return timeString;
+      }
+      
+      // Sinon, on essaie de parser comme une date
       const date = new Date(timeString);
+      if (isNaN(date.getTime())) {
+        console.warn('formatTime: Invalid date string:', timeString);
+        return 'Heure non définie';
+      }
+      
       return date.toLocaleTimeString('fr-FR', {
         hour: '2-digit',
         minute: '2-digit',

@@ -1190,6 +1190,7 @@ export type Database = {
           siret: string | null
           site_web: string | null
           slug: string | null
+          source_inscription: string | null
           status_crm: Database["public"]["Enums"]["prestataire_status"] | null
           styles: Json | null
           telephone: string | null
@@ -1246,6 +1247,7 @@ export type Database = {
           siret?: string | null
           site_web?: string | null
           slug?: string | null
+          source_inscription?: string | null
           status_crm?: Database["public"]["Enums"]["prestataire_status"] | null
           styles?: Json | null
           telephone?: string | null
@@ -1302,6 +1304,7 @@ export type Database = {
           siret?: string | null
           site_web?: string | null
           slug?: string | null
+          source_inscription?: string | null
           status_crm?: Database["public"]["Enums"]["prestataire_status"] | null
           styles?: Json | null
           telephone?: string | null
@@ -1988,6 +1991,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_user_registrations: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          id: string
+          email: string
+          created_at: string
+          raw_user_meta_data: Json
+        }[]
+      }
       is_admin: {
         Args: Record<PropertyKey, never>
         Returns: boolean
@@ -2034,6 +2046,7 @@ export type Database = {
         | "inactif"
         | "blackliste"
         | "exclu"
+        | "a_traiter"
       quiz_section:
         | "Organisation Générale"
         | "Réception"
@@ -2200,6 +2213,7 @@ export const Constants = {
         "inactif",
         "blackliste",
         "exclu",
+        "a_traiter",
       ],
       quiz_section: [
         "Organisation Générale",
