@@ -99,7 +99,7 @@ function Menus({ onClick, isLoggedIn }: { onClick?: () => void, isLoggedIn?: boo
           <HeaderDropdownItem
             label="Nous contacter"
             description="Discutez avec notre équipe pour toutes vos questions"
-            to="/contact/nous-contacter"
+            to="/contact"
             onClick={onClick}
           />
           <HeaderDropdownItem
