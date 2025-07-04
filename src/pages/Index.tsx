@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import Header from '@/components/Header';
 import ChatbotButton from '@/components/ChatbotButton';
@@ -8,15 +7,13 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowRight, Check, Brain, Handshake, MessageCircle, Smartphone, Mail, Phone, Settings, Lightbulb, Users, Calendar } from 'lucide-react';
 import { Link } from 'react-router-dom';
-
 const Index = () => {
   const [displayedText, setDisplayedText] = useState('');
   const staticText = 'Profitez pleinement de votre mariage. ';
   const typedText = 'Organisez-le facilement, vous-même.';
-  
   useEffect(() => {
     window.scrollTo(0, 0);
-    
+
     // Typing animation effect for "Organisez-le facilement, vous-même."
     let index = 0;
     const timer = setInterval(() => {
@@ -27,57 +24,50 @@ const Index = () => {
         clearInterval(timer);
       }
     }, 100);
-    
     return () => clearInterval(timer);
   }, []);
-
   const scrollToServices = () => {
     const servicesSection = document.getElementById('services-section');
     if (servicesSection) {
-      servicesSection.scrollIntoView({ behavior: 'smooth' });
+      servicesSection.scrollIntoView({
+        behavior: 'smooth'
+      });
     }
   };
-
-  return (
-    <div className="min-h-screen flex flex-col bg-white">
+  return <div className="min-h-screen flex flex-col bg-white">
       <SEO />
       <Header />
       
       <main className="flex-grow">
         {/* Hero Section with dark overlay */}
-        <section 
-          className="relative py-20 md:py-28 bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage: "url('/lovable-uploads/16238829-fdfc-4fe2-ade8-9c49d79851b4.png')"
-          }}
-        >
+        <section className="relative py-20 md:py-28 bg-cover bg-center bg-no-repeat" style={{
+        backgroundImage: "url('/lovable-uploads/16238829-fdfc-4fe2-ade8-9c49d79851b4.png')"
+      }}>
           {/* Dark overlay */}
           <div className="absolute inset-0 bg-neutral-900/20"></div>
           
           <div className="container mx-auto px-4 relative z-10">
             <div className="max-w-3xl">
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif text-white font-bold mb-4" style={{ fontFamily: 'Playfair Display, serif' }}>
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif text-white font-bold mb-4" style={{
+              fontFamily: 'Playfair Display, serif'
+            }}>
                 Profitez pleinement de votre mariage.
               </h1>
               
-              <p className="text-xl sm:text-2xl font-serif text-white mb-8" style={{ fontFamily: 'Playfair Display, serif' }}>
+              <p className="text-xl sm:text-2xl font-serif text-white mb-8" style={{
+              fontFamily: 'Playfair Display, serif'
+            }}>
                 <span className="inline-block min-h-[1.2em]">
                   {displayedText}
-                  {displayedText.length < typedText.length && (
-                    <span className="animate-pulse">|</span>
-                  )}
+                  {displayedText.length < typedText.length && <span className="animate-pulse">|</span>}
                 </span>
               </p>
               
               <div className="mb-8 flex justify-center sm:justify-start">
-                <Button 
-                  onClick={scrollToServices}
-                  size="lg" 
-                  className="bg-wedding-olive hover:bg-wedding-olive/90 text-white 
+                <Button onClick={scrollToServices} size="lg" className="bg-wedding-olive hover:bg-wedding-olive/90 text-white 
                            w-full max-w-[280px] sm:w-auto sm:max-w-none
                            text-sm px-4 py-3 
-                           sm:text-base sm:px-8 sm:py-4"
-                >
+                           sm:text-base sm:px-8 sm:py-4">
                   <span className="truncate">Organisez mieux, profitez plus</span>
                   <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
                 </Button>
@@ -90,7 +80,9 @@ const Index = () => {
         <section className="py-16 md:py-20 bg-white">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif text-black mb-6 max-w-4xl mx-auto" style={{ fontFamily: 'Playfair Display, serif' }}>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif text-black mb-6 max-w-4xl mx-auto" style={{
+              fontFamily: 'Playfair Display, serif'
+            }}>
                 Le premier wedding planner de poche
               </h2>
               
@@ -145,7 +137,9 @@ const Index = () => {
         <section id="services-section" className="py-16 md:py-20 bg-gray-50">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif text-black mb-6" style={{ fontFamily: 'Playfair Display, serif' }}>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif text-black mb-6" style={{
+              fontFamily: 'Playfair Display, serif'
+            }}>
                 Transformez l'organisation de votre mariage en une expérience simple & agréable.
               </h2>
               <p className="text-lg text-gray-700 max-w-2xl mx-auto">
@@ -343,7 +337,7 @@ const Index = () => {
                     </div>
                   </div>
                   
-                  <div className="mt-auto p-6 pt-6">
+                  <div className="mt-auto p-6 pt-6 bg-transparent">
                     <div className="text-3xl font-bold text-wedding-olive mb-4 text-center">
                       9,90€/mois TTC
                     </div>
@@ -365,7 +359,9 @@ const Index = () => {
         {/* Final CTA Section */}
         <section className="py-16 md:py-20 bg-wedding-olive text-white">
           <div className="container mx-auto px-4 text-center">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif mb-4" style={{ fontFamily: 'Playfair Display, serif' }}>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif mb-4" style={{
+            fontFamily: 'Playfair Display, serif'
+          }}>
               Et si vous disiez "oui" à la simplicité ?
             </h2>
             <p className="text-lg mb-8 max-w-2xl mx-auto">
@@ -383,8 +379,6 @@ const Index = () => {
       
       <Footer />
       <ChatbotButton />
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
