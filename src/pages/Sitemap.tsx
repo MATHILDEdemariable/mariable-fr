@@ -38,7 +38,7 @@ const SitemapPage = () => {
         { url: '/about/histoire', priority: 0.8, changefreq: 'yearly' },
         { url: '/about/charte', priority: 0.8, changefreq: 'yearly' },
         { url: '/about/approche', priority: 0.8, changefreq: 'yearly' },
-        { url: '/contact/nous-contacter', priority: 0.8, changefreq: 'yearly' },
+        { url: '/contact', priority: 0.8, changefreq: 'yearly' },
         { url: '/professionnels', priority: 0.8, changefreq: 'monthly' },
         { url: '/planning-personnalise', priority: 0.7, changefreq: 'monthly' },
         { url: '/assistant-v2', priority: 0.7, changefreq: 'monthly' },

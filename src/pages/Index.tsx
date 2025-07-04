@@ -369,7 +369,7 @@ const Index = () => {
             </p>
             
             <Button asChild size="lg" className="bg-white text-wedding-olive hover:bg-white/90">
-              <Link to="/contact/nous-contacter">
+              <Link to="/contact">
                 Contactez Mathilde <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>

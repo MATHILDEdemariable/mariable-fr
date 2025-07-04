@@ -190,7 +190,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         text: "Nous contacter directement", 
         value: "contact", 
         icon: <Users className="h-4 w-4" />,
-        link: "/contact/nous-contacter"
+        link: "/contact"
       },
       { 
         text: "Consulter le guide Mariable", 
@@ -272,7 +272,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
             };
             buttons = [
               { text: "Assistant virtuel", value: "assistant", icon: <HeadphonesIcon className="h-4 w-4" />, link: "/dashboard/assistant" },
-              { text: "Nous contacter", value: "contact", icon: <Users className="h-4 w-4" />, link: "/contact/nous-contacter" },
+              { text: "Nous contacter", value: "contact", icon: <Users className="h-4 w-4" />, link: "/contact" },
               { text: "FAQ", value: "faq", icon: <HelpCircle className="h-4 w-4" />, link: "/contact/faq" }
             ];
             break;

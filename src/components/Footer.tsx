@@ -3,16 +3,18 @@ import { Link } from 'react-router-dom';
 import { Instagram, Mail, Settings } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 const Footer = () => {
-  return <footer className="py-8 bg-white text-wedding-black" role="contentinfo" aria-label="Pied de page">
-      <div className="container px-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+  return (
+    <footer className="py-8 bg-white text-wedding-black" role="contentinfo" aria-label="Pied de page">
+      <div className="container mx-auto px-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {/* Logo et description à gauche */}
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <Link to="/admin/dashboard" className="hover:opacity-80 transition-opacity">
-                <img src="/lovable-uploads/c5ca128d-6c6f-4f09-a990-f6f16d47e231.png" alt="Mariable Logo" className="h-10 md:h-12 w-auto" />
-              </Link>
+              <div className="w-10 h-10 bg-wedding-black rounded-full flex items-center justify-center">
+                <span className="text-white font-serif text-lg">M</span>
+              </div>
             </div>
-            <p className="mb-3 text-wedding-black/70 text-xs md:text-sm">
+            <p className="mb-4 text-wedding-black/70 text-sm">
               Mariable est la référence des mariages modernes & élégants.
             </p>
             <div className="flex gap-4">
@@ -22,48 +24,32 @@ const Footer = () => {
             </div>
           </div>
           
-          <div className="mt-4 sm:mt-0">
-            <h3 className="font-serif text-base mb-2 md:mb-3">Planifier mon mariage</h3>
-            <ul className="space-y-1 text-xs md:text-sm">
+          {/* Planifier mon mariage au centre */}
+          <div>
+            <h3 className="font-serif text-base mb-3">Planifier mon mariage</h3>
+            <ul className="space-y-1 text-sm">
               <li><Link to="/dashboard" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Mon tableau de bord</Link></li>
               <li><Link to="/checklist-mariage" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Check-list</Link></li>
               <li><Link to="/planning-personnalise" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Planning personnalisé</Link></li>
-              
               <li><Link to="/selection" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Trouver un prestataire</Link></li>
-              <li><Link to="/register" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Coordination du jour J</Link></li>
+              <li><Link to="/mon-jour-m" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Coordination du jour J</Link></li>
               <li><Link to="/services/budget" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Calculateur de budget</Link></li>
             </ul>
           </div>
           
-          <div className="mt-4 sm:mt-0">
-            <h3 className="font-serif text-base mb-2 md:mb-3">À Propos</h3>
-            <ul className="space-y-1 text-xs md:text-sm">
+          {/* À Propos à droite */}
+          <div>
+            <h3 className="font-serif text-base mb-3">À Propos</h3>
+            <ul className="space-y-1 text-sm">
               <li><Link to="/about/histoire" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Notre Histoire</Link></li>
               <li><Link to="/about/approche" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Notre Approche</Link></li>
               <li><Link to="/about/charte" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Notre Charte</Link></li>
-              <li><Link to="/contact/nous-contacter" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Nous Contacter</Link></li>
-            </ul>
-          </div>
-          
-          <div className="mt-4 lg:mt-0">
-            <h3 className="font-serif text-base mb-2 md:mb-3">Contact</h3>
-            <ul className="space-y-2 text-xs md:text-sm">
-              <li className="flex items-center">
-                <Mail className="mr-2 h-4 w-4 text-wedding-black shrink-0" />
-                <a href="mailto:mathilde@mariable.fr" className="text-wedding-black/70 hover:text-wedding-black transition-colors">
-                  mathilde@mariable.fr
-                </a>
-              </li>
-              <li>
-                <Link to="/professionnels" className="text-wedding-black/70 hover:text-wedding-black transition-colors">
-                  Espace Pro (accès dédié aux prestataires)
-                </Link>
-              </li>
+              <li><Link to="/contact" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Nous Contacter</Link></li>
             </ul>
           </div>
         </div>
         
-        <div className="mt-6 md:mt-8 pt-4 border-t border-wedding-black/10 flex flex-col md:flex-row justify-between items-center">
+        <div className="mt-8 pt-4 border-t border-wedding-black/10 flex flex-col md:flex-row justify-between items-center">
           <p className="text-xs text-wedding-black/70 mb-3 md:mb-0 text-center md:text-left">
             © 2025 Mariable – Tous droits réservés. | Conçu avec joie pour les couples modernes 💍
           </p>
@@ -73,6 +59,7 @@ const Footer = () => {
           </div>
         </div>
       </div>
-    </footer>;
+    </footer>
+  );
 };
 export default Footer;
