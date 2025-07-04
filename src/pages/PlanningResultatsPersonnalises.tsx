@@ -316,71 +316,25 @@ const PlanningResultatsPersonnalises: React.FC = () => {
   };
 
   const handleRetakeQuiz = async () => {
-    console.log('🔄 User wants to retake quiz - starting cleanup process');
+    console.log('🔄 Recommencer le quiz depuis le début');
     
-    try {
-      // 1. Nettoyer le localStorage
-      localStorage.removeItem('quizResult');
-      console.log('✅ Cleared quizResult from localStorage');
-      
-      // 2. Si l'utilisateur est connecté, nettoyer aussi la base de données
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        console.log('👤 User authenticated, clearing database results');
-        
-        // Supprimer les résultats de quiz existants
-        const { error: quizError } = await supabase
-          .from('user_quiz_results')
-          .delete()
-          .eq('user_id', user.id);
-          
-        if (quizError) {
-          console.error('❌ Error deleting quiz results:', quizError);
-        } else {
-          console.log('✅ Quiz results cleared from database');
-        }
-        
-        // Supprimer les réponses détaillées existantes
-        const { error: responsesError } = await supabase
-          .from('planning_reponses_utilisateur')
-          .delete()
-          .eq('user_id', user.id);
-          
-        if (responsesError) {
-          console.error('❌ Error deleting detailed responses:', responsesError);
-        } else {
-          console.log('✅ Detailed responses cleared from database');
-        }
-      }
-      
-      // 3. Afficher un message de confirmation
-      toast({
-        title: "Quiz réinitialisé",
-        description: "Vous allez être redirigé vers le début du quiz.",
-        duration: 2000
-      });
-      
-      // 4. Rediriger vers le quiz après un court délai
-      setTimeout(() => {
-        navigate('/planning-personnalise');
-      }, 1500);
-      
-    } catch (error) {
-      console.error('❌ Error in handleRetakeQuiz:', error);
-      
-      // En cas d'erreur, au moins nettoyer le local et rediriger
-      localStorage.removeItem('quizResult');
-      
-      toast({
-        title: "Quiz réinitialisé",
-        description: "Redirection vers le quiz en cours...",
-        duration: 2000
-      });
-      
-      setTimeout(() => {
-        navigate('/planning-personnalise');
-      }, 1000);
+    // 1. Nettoyer immédiatement le localStorage
+    localStorage.removeItem('quizResult');
+    localStorage.removeItem('quizResponses');
+    localStorage.removeItem('quizProgress');
+    
+    // 2. Nettoyer la base de données si utilisateur connecté (en arrière-plan)
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      // Suppression en parallèle et silencieuse
+      Promise.all([
+        supabase.from('user_quiz_results').delete().eq('user_id', user.id),
+        supabase.from('planning_reponses_utilisateur').delete().eq('user_id', user.id)
+      ]).catch(error => console.error('❌ Erreur lors du nettoyage:', error));
     }
+    
+    // 3. Redirection immédiate vers le quiz
+    navigate('/planning-personnalise');
   };
 
   const getPriorityColor = (priority: string) => {
