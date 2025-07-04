@@ -30,6 +30,7 @@ import BlogPost from "./pages/BlogArticle";
 import Contact from "./pages/contact/NousContacter";
 import MentionsLegales from "./pages/MentionsLegales";
 import Prestataires from "./pages/services/Prestataires";
+import Budget from "./pages/services/Budget";
 import Prestataire from "./pages/prestataire/slug";
 import EmailConfirmation from "./pages/auth/EmailConfirmation";
 
@@ -119,7 +120,10 @@ function App() {
                   <Route path="/admin/blog" element={<AdminBlog />} />
                   <Route path="/admin/prestataires" element={<AdminPrestataires />} />
                   <Route path="/admin/form" element={<AdminForm />} />
-                  <Route path="/admin/reservations-jour-m" element={<AdminReservationsJourM />} />
+                   <Route path="/admin/reservations-jour-m" element={<AdminReservationsJourM />} />
+                  
+                  {/* Services routes */}
+                  <Route path="/services/budget" element={<Budget />} />
                   
                   <Route path="*" element={<NotFound />} />
                 </Routes>
