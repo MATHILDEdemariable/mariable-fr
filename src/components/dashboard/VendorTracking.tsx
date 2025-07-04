@@ -281,12 +281,20 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
               </Button>
               
               <Button 
-                className="bg-wedding-olive hover:bg-wedding-olive/90"
+                variant="outline"
+                className="bg-wedding-olive hover:bg-wedding-olive/90 text-white"
                 onClick={()=> (
                   window.open('/selection','_self')
                 )}
               >
-                <Plus className="h-4 w-4 mr-2" /> Ajouter un prestataire
+                <Plus className="h-4 w-4 mr-2" /> Sélection Mariable
+              </Button>
+              
+              <Button 
+                className="bg-wedding-olive hover:bg-wedding-olive/90"
+                onClick={() => setAddDialogOpen(true)}
+              >
+                <Plus className="h-4 w-4 mr-2" /> Sélection personnelle
               </Button>
             </div>
           </div>
