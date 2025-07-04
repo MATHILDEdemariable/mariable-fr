@@ -1847,64 +1847,79 @@ export type Database = {
           category: string
           contact_date: string | null
           created_at: string
+          email: string | null
           email_client: string | null
           email_presta: string | null
           first_date_rdv: string | null
           id: string
           key_prestataire: string | null
+          location: string | null
           notes: string | null
+          phone: string | null
           prestataire_id: string | null
           project_id: string | null
           response_date: string | null
           second_date_rdv: string | null
+          source: string | null
           status: Database["public"]["Enums"]["vendor_status"]
           third_date_rdv: string | null
           updated_at: string
           user_id: string
           valide_date_rdv: number | null
           vendor_name: string
+          website: string | null
         }
         Insert: {
           category: string
           contact_date?: string | null
           created_at?: string
+          email?: string | null
           email_client?: string | null
           email_presta?: string | null
           first_date_rdv?: string | null
           id?: string
           key_prestataire?: string | null
+          location?: string | null
           notes?: string | null
+          phone?: string | null
           prestataire_id?: string | null
           project_id?: string | null
           response_date?: string | null
           second_date_rdv?: string | null
+          source?: string | null
           status?: Database["public"]["Enums"]["vendor_status"]
           third_date_rdv?: string | null
           updated_at?: string
           user_id: string
           valide_date_rdv?: number | null
           vendor_name: string
+          website?: string | null
         }
         Update: {
           category?: string
           contact_date?: string | null
           created_at?: string
+          email?: string | null
           email_client?: string | null
           email_presta?: string | null
           first_date_rdv?: string | null
           id?: string
           key_prestataire?: string | null
+          location?: string | null
           notes?: string | null
+          phone?: string | null
           prestataire_id?: string | null
           project_id?: string | null
           response_date?: string | null
           second_date_rdv?: string | null
+          source?: string | null
           status?: Database["public"]["Enums"]["vendor_status"]
           third_date_rdv?: string | null
           updated_at?: string
           user_id?: string
           valide_date_rdv?: number | null
           vendor_name?: string
+          website?: string | null
         }
         Relationships: [
           {

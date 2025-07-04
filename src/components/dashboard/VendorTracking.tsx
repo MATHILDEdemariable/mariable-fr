@@ -47,6 +47,10 @@ interface Vendor {
   contact_date?: Date | null;
   response_date?: Date | null;
   notes?: string | null;
+  email?: string | null;
+  phone?: string | null;
+  website?: string | null;
+  source?: string;
 }
 
 const statusColorMap: Record<VendorStatus, string> = {
@@ -305,6 +309,7 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
                 <TableRow>
                   <TableHead>Prestataire</TableHead>
                   <TableHead>Catégorie</TableHead>
+                  <TableHead>Source</TableHead>
                   <TableHead>Statut</TableHead>
                   <TableHead>Dernier contact</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
@@ -313,7 +318,7 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
               <TableBody>
                 {isLoading ? (
                   <TableRow>
-                    <TableCell colSpan={5} className="text-center py-6">
+                    <TableCell colSpan={6} className="text-center py-6">
                       <div className="flex justify-center">
                         <RefreshCw className="h-5 w-5 animate-spin" />
                       </div>
@@ -321,9 +326,9 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
                   </TableRow>
                 ) : filteredVendors.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={5} className="text-center py-6 text-muted-foreground">
+                    <TableCell colSpan={6} className="text-center py-6 text-muted-foreground">
                       {vendors.length === 0 ? 
-                        "Aucun prestataire ajouté. Cliquez sur 'Ajouter un prestataire' pour commencer." :
+                        "Aucun prestataire ajouté. Utilisez les boutons ci-dessus pour commencer." :
                         "Aucun prestataire trouvé avec ces critères"
                       }
                     </TableCell>
@@ -333,13 +338,40 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
                     <TableRow key={vendor.id}>
                       <TableCell>
                         <div className="font-medium">{vendor.vendor_name}</div>
+                        {vendor.source === 'personal' && (
+                          <div className="mt-1 space-y-1 text-xs text-muted-foreground">
+                            {vendor.email && (
+                              <div className="flex items-center gap-1">
+                                <Mail className="h-3 w-3" />
+                                <span>{vendor.email}</span>
+                              </div>
+                            )}
+                            {vendor.phone && (
+                              <div className="flex items-center gap-1">
+                                <Phone className="h-3 w-3" />
+                                <span>{vendor.phone}</span>
+                              </div>
+                            )}
+                            {vendor.location && (
+                              <div className="truncate max-w-[180px]">📍 {vendor.location}</div>
+                            )}
+                          </div>
+                        )}
                         {vendor.notes && (
-                          <div className="text-xs text-muted-foreground truncate max-w-[200px]">
-                            {vendor.notes}
+                          <div className="text-xs text-muted-foreground truncate max-w-[200px] mt-1">
+                            💭 {vendor.notes}
                           </div>
                         )}
                       </TableCell>
                       <TableCell>{vendor.category}</TableCell>
+                      <TableCell>
+                        <Badge 
+                          variant={vendor.source === 'personal' ? 'secondary' : 'default'}
+                          className={vendor.source === 'personal' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'}
+                        >
+                          {vendor.source === 'personal' ? '👤 Personnel' : '🏢 Mariable'}
+                        </Badge>
+                      </TableCell>
                       <TableCell>
                         <Badge className={cn("flex items-center gap-1 w-fit", statusColorMap[vendor.status])}>
                           {statusIconMap[vendor.status]}
@@ -351,14 +383,36 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-2">
-                          <Button
-                            variant='outline' onClick={
-                              () => {
+                          {vendor.source === 'personal' ? (
+                            vendor.website ? (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => window.open(vendor.website, '_blank')}
+                              >
+                                Voir le site
+                              </Button>
+                            ) : (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                disabled
+                              >
+                                Pas de site
+                              </Button>
+                            )
+                          ) : (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => {
                                 window.open(`/prestataire/tracking?id=${vendor.id}&edit=user`, '_blank');
-                              }
-                            }>Voir la demande</Button>
+                              }}
+                            >
+                              Voir la demande
+                            </Button>
+                          )}
                           <Select 
-
                             defaultValue={vendor.status}
                             onValueChange={(value) => updateVendorStatus(vendor.id, value as VendorStatus)}
                           >
