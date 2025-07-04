@@ -371,11 +371,11 @@ const ChecklistMariage = () => {
           <div className="flex items-center mb-6">
             <Button
               variant="ghost"
-              onClick={() => navigate('/services/planification')}
+              onClick={() => navigate('/')}
               className="mr-4"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Retour à la planification
+              Retour
             </Button>
           </div>
 
