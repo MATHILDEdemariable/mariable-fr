@@ -100,7 +100,7 @@ function App() {
                   {/* Missing routes - Fixed */}
                   <Route path="/professionnels" element={<Professionnels />} />
                   <Route path="/cgv" element={<CGV />} />
-                  <Route path="/faq" element={<FAQ />} />
+                  <Route path="/contact/faq" element={<FAQ />} />
                   <Route path="/checklist-mariage" element={<ChecklistMariage />} />
                   <Route path="/accompagnement" element={<Accompagnement />} />
 

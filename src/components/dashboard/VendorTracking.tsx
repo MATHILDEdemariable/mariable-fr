@@ -34,6 +34,7 @@ import { Database } from '@/integrations/supabase/types';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 import AddVendorDialog from './AddVendorDialog';
+import EditVendorModal from './EditVendorModal';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 
 type VendorStatus = Database['public']['Enums']['vendor_status'];
@@ -85,6 +86,8 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [isLoading, setIsLoading] = useState(false);
   const [addDialogOpen, setAddDialogOpen] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [vendorToEdit, setVendorToEdit] = useState<Vendor | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [vendorToDelete, setVendorToDelete] = useState<string | null>(null);
   const { toast } = useToast();
@@ -384,23 +387,27 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-2">
                           {vendor.source === 'personal' ? (
-                            vendor.website ? (
+                            <>
                               <Button
                                 variant="outline"
                                 size="sm"
-                                onClick={() => window.open(vendor.website, '_blank')}
+                                onClick={() => {
+                                  setVendorToEdit(vendor);
+                                  setEditDialogOpen(true);
+                                }}
                               >
-                                Voir le site
+                                Modifier
                               </Button>
-                            ) : (
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                disabled
-                              >
-                                Pas de site
-                              </Button>
-                            )
+                              {vendor.website && (
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => window.open(vendor.website, '_blank')}
+                                >
+                                  Site web
+                                </Button>
+                              )}
+                            </>
                           ) : (
                             <Button
                               variant="outline"
@@ -416,7 +423,7 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
                             defaultValue={vendor.status}
                             onValueChange={(value) => updateVendorStatus(vendor.id, value as VendorStatus)}
                           >
-                            <SelectTrigger className="w-[140px] hidden">
+                            <SelectTrigger className="w-[140px]">
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
@@ -428,17 +435,6 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
                               <SelectItem value="annuler">Annuler</SelectItem>
                             </SelectContent>
                           </Select>
-                          <Button 
-                            variant="outline" 
-                            size="icon"
-                            className="hidden"
-                            onClick={() => {
-                              setVendorToDelete(vendor.id);
-                              setDeleteDialogOpen(true);
-                            }}
-                          >
-                            <Trash className="h-4 w-4" />
-                          </Button>
                         </div>
                       </TableCell>
                     </TableRow>
@@ -456,6 +452,14 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
         onOpenChange={setAddDialogOpen} 
         onVendorAdded={fetchVendors}
         // projectId={projectId}
+      />
+      
+      {/* Edit Vendor Modal */}
+      <EditVendorModal
+        vendor={vendorToEdit}
+        open={editDialogOpen}
+        onOpenChange={setEditDialogOpen}
+        onVendorUpdated={fetchVendors}
       />
       
       {/* Delete Confirmation Dialog */}
