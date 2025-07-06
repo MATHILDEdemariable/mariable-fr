@@ -10,9 +10,9 @@ const Footer = () => {
           {/* Logo et description à gauche */}
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 bg-wedding-black rounded-full flex items-center justify-center">
+              <Link to="/admin/dashboard" className="w-10 h-10 bg-wedding-black rounded-full flex items-center justify-center hover:bg-wedding-black/80 transition-colors" aria-label="Administration">
                 <span className="text-white font-serif text-lg">M</span>
-              </div>
+              </Link>
             </div>
             <p className="mb-4 text-wedding-black/70 text-sm">
               Mariable est la référence des mariages modernes & élégants.
