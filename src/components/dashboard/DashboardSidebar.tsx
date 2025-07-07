@@ -58,6 +58,12 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
       path: '/dashboard/wishlist',
     },
     {
+      label: 'Mission Mariage',
+      icon: <Calendar className="h-4 w-4" />,
+      path: '/dashboard/project-management',
+      mission: true,
+    },
+    {
       label: 'Jour M',
       icon: <Calendar className="h-4 w-4" />,
       path: '/mon-jour-m',
@@ -167,6 +173,8 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
                 "flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors",
                 isActive(item.path)
                   ? 'bg-wedding-olive text-white shadow-sm'
+                  : item.mission
+                  ? 'text-blue-600 font-semibold hover:bg-blue-50 border border-blue-200'
                   : item.jourM
                   ? 'text-wedding-olive font-semibold hover:bg-wedding-olive/20 border border-wedding-olive/20'
                   : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive',
@@ -175,6 +183,11 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
             >
               {item.icon}
               <span className="ml-2 sm:ml-3 leading-tight">{item.label}</span>
+              {item.mission && !isReaderMode && (
+                <span className="ml-auto text-xs bg-blue-600 text-white px-1.5 sm:px-2 py-0.5 rounded-full hidden sm:inline">
+                  NOUVEAU
+                </span>
+              )}
               {item.jourM && !isReaderMode && (
                 <span className="ml-auto text-xs bg-wedding-olive text-white px-1.5 sm:px-2 py-0.5 rounded-full hidden sm:inline">
                   NOUVEAU
