@@ -101,26 +101,11 @@ const ReservationJourM = () => {
 
   const pricingData = [
     {
-      title: "Gratuite",
-      price: "0€",
+      title: "Libre",
+      price: "Gratuite",
       subtitle: "Inscrivez-vous :-)",
       features: [
         { icon: Phone, text: "Application de gestion Jour J personnalisable (planning, checklist, guide)", included: true, note: "(sans partage)" },
-        { icon: Users, text: "Partage de l'application avec vos proches (mode collaboratif)", included: false },
-        { icon: UserCheck, text: "Vues personnalisées par rôle / mission assignée", included: false },
-        { icon: FileText, text: "Accès aux documents partagés & assignés", included: false },
-        { icon: Bell, text: "Notifications et rappels en temps réel (de J-3 à J+1)", included: false },
-        { icon: Headphones, text: "Hotline Mariable disponible le jour J", included: false },
-        { icon: MapPin, text: "Coordination des prestataires en amont (J-15)", included: false },
-        { icon: Users, text: "Présence physique le jour J (8h incluses, horaires adaptables)", included: false }
-      ]
-    },
-    {
-      title: "Libre",
-      price: "49€",
-      subtitle: "",
-      features: [
-        { icon: Phone, text: "Application de gestion Jour J personnalisable (planning, checklist, guide)", included: true, note: "(à remplir vous-même)" },
         { icon: Users, text: "Partage de l'application avec vos proches (mode collaboratif)", included: true },
         { icon: UserCheck, text: "Vues personnalisées par rôle / mission assignée", included: true },
         { icon: FileText, text: "Accès aux documents partagés & assignés", included: true },
@@ -363,15 +348,11 @@ const ReservationJourM = () => {
                       </Dialog>
                     </div>
                     
-                    <RadioGroup value={formData.selected_formula} onValueChange={handleFormulaChange}>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="gratuite" id="gratuite" />
-                        <Label htmlFor="gratuite">Version gratuite (Inscrivez-vous)</Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="libre" id="libre" />
-                        <Label htmlFor="libre">Formule Libre (49€)</Label>
-                      </div>
+                     <RadioGroup value={formData.selected_formula} onValueChange={handleFormulaChange}>
+                       <div className="flex items-center space-x-2">
+                         <RadioGroupItem value="libre" id="libre" />
+                         <Label htmlFor="libre">Formule Libre (Gratuite)</Label>
+                       </div>
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="sereine" id="sereine" />
                         <Label htmlFor="sereine">Formule Sereine (149€)</Label>
