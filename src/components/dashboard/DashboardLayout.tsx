@@ -7,6 +7,8 @@ import Header from '@/components/Header';
 import { PanelLeft } from 'lucide-react';
 import { useReaderMode } from '@/contexts/ReaderModeContext';
 import ShareDashboardButton from './ShareDashboardButton';
+import { OnboardingProvider } from '@/components/onboarding/OnboardingProvider';
+import { OnboardingTour } from '@/components/onboarding/OnboardingTour';
 
 interface DashboardLayoutProps {
   children?: React.ReactNode;
@@ -23,10 +25,11 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      <Header />
-      
-      <div className="flex flex-1 relative">
+    <OnboardingProvider>
+      <div className="min-h-screen bg-gray-50 flex flex-col">
+        <Header />
+        
+        <div className="flex flex-1 relative">
         {/* Mobile toggle button - using PanelLeft icon for dashboard */}
         {isMobile && (
           <button 
@@ -67,8 +70,12 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
             onClick={() => setSidebarVisible(false)}
           />
         )}
+        </div>
+
+        {/* Tour d'onboarding */}
+        <OnboardingTour />
       </div>
-    </div>
+    </OnboardingProvider>
   );
 };
 

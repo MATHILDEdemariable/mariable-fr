@@ -19,6 +19,7 @@ import DrinksCalculator from '@/components/drinks/DrinksCalculator';
 import BudgetCalculator from '@/components/dashboard/BudgetCalculator';
 import { useReaderMode } from '@/contexts/ReaderModeContext';
 import ProjectManagement from '@/components/project-management/ProjectManagement';
+import HelpPage from './HelpPage';
 
 const UserDashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -66,6 +67,7 @@ const UserDashboard: React.FC = () => {
           <Route path="drinks" element={<DrinksCalculator />} />
           <Route path="assistant" element={<AssistantPage />} />
           <Route path="project-management/*" element={<ProjectManagement />} />
+          <Route path="help" element={<HelpPage />} />
           <Route path="settings" element={<UserProfile />} />
           <Route path="*" element={<div>Page non trouvée</div>} />
         </Route>

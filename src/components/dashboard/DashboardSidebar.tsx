@@ -97,6 +97,11 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
       external: true,
     },
     {
+      label: 'Mode d\'emploi',
+      icon: <MessageCircleQuestion className="h-4 w-4" />,
+      path: '/dashboard/help',
+    },
+    {
       label: 'Paramètres',
       icon: <Settings className="h-4 w-4" />,
       path: '/dashboard/settings',
