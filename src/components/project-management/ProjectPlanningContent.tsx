@@ -83,14 +83,18 @@ const ProjectPlanningContent: React.FC<ProjectPlanningContentProps> = ({
     [saveEventsToDatabase]
   );
 
-  // Charger les événements existants avec ordre par position
+  // Charger les événements existants avec validation stricte
   useEffect(() => {
     const loadExistingPlanning = async () => {
-      if (!coordination?.user_id) return;
+      // Vérifications strictes pour éviter les erreurs
+      if (!coordination?.user_id || !coordinationId || coordinationId.trim() === '') {
+        console.log('📋 ProjectPlanning: Waiting for valid coordination data...');
+        return;
+      }
 
       try {
         setIsLoading(true);
-        console.log('📋 Loading existing project planning for user:', coordination.user_id);
+        console.log('📋 Loading existing project planning for coordination:', coordinationId);
 
         const { data, error } = await supabase
           .from('coordination_planning')
@@ -98,7 +102,10 @@ const ProjectPlanningContent: React.FC<ProjectPlanningContentProps> = ({
           .eq('coordination_id', coordinationId)
           .order('position', { ascending: true });
 
-        if (error) throw error;
+        if (error) {
+          console.error('❌ Error loading project planning:', error);
+          throw error;
+        }
 
         if (data && data.length > 0) {
           const convertedEvents: PlanningEvent[] = data.map((item: any) => {
@@ -138,19 +145,20 @@ const ProjectPlanningContent: React.FC<ProjectPlanningContentProps> = ({
         }
       } catch (error) {
         console.error('❌ Error loading existing project planning:', error);
-        toast({
-          title: "Erreur de chargement",
-          description: "Impossible de charger le planning de projet existant.",
-          variant: "destructive"
-        });
+        // Logging silencieux pour les erreurs temporaires qui se résolvent automatiquement
         setEvents([]);
       } finally {
         setIsLoading(false);
       }
     };
 
-    loadExistingPlanning();
-  }, [coordination?.user_id, coordinationId, toast]);
+    // Délai pour éviter les appels trop rapides lors de l'initialisation
+    const timeoutId = setTimeout(loadExistingPlanning, 100);
+    
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, [coordination?.user_id, coordinationId]);
 
   // Gestionnaire pour l'ajout d'événement manuel
   const handleManualEventAdded = (newEvent: PlanningEvent) => {

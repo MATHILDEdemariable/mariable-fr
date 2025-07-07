@@ -178,26 +178,30 @@ export const useProjectCoordination = (): UseProjectCoordinationReturn => {
     }
   }, [coordination, toast]);
 
-  // Auto-initialisation avec cleanup
+  // Auto-initialisation avec protection contre les race conditions
   useEffect(() => {
+    let isCancelled = false;
+    
     if (!coordination && !isInitializing && mountedRef.current) {
       const initialize = async () => {
+        if (isCancelled || !mountedRef.current) return;
+        
         try {
           await initializeCoordination();
         } catch (error) {
-          console.error('useProjectCoordination: Auto-initialization failed:', error);
-          // Ne pas faire de retry automatique en cas d'erreur critique
-          if (mountedRef.current) {
+          if (!isCancelled && mountedRef.current) {
+            console.error('useProjectCoordination: Auto-initialization failed:', error);
             setError('Impossible d\'initialiser la coordination');
             setIsLoading(false);
           }
         }
       };
 
-      // Délai pour éviter les appels trop rapides
-      const timeoutId = setTimeout(initialize, 100);
+      // Délai plus court pour une meilleure réactivité
+      const timeoutId = setTimeout(initialize, 50);
       
       return () => {
+        isCancelled = true;
         clearTimeout(timeoutId);
       };
     }
