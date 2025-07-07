@@ -51,6 +51,7 @@ import AdminBlog from "./pages/admin/Blog";
 import AdminPrestataires from "./pages/admin/Prestataires";
 import AdminForm from "./pages/admin/FormAdmin";
 import AdminReservationsJourM from "./pages/admin/ReservationsJourM";
+import AdminSystemCheck from "./pages/admin/SystemCheck";
 
 const queryClient = new QueryClient();
 
@@ -115,12 +116,13 @@ function App() {
                   <Route path="/prestataires/:slug" element={<Prestataire />} />
                   <Route path="/prestataire/:slug" element={<Prestataire />} />
 
-                  {/* Admin routes */}
-                  <Route path="/admin/dashboard" element={<AdminDashboard />} />
-                  <Route path="/admin/blog" element={<AdminBlog />} />
-                  <Route path="/admin/prestataires" element={<AdminPrestataires />} />
-                  <Route path="/admin/form" element={<AdminForm />} />
+                   {/* Admin routes */}
+                   <Route path="/admin/dashboard" element={<AdminDashboard />} />
+                   <Route path="/admin/blog" element={<AdminBlog />} />
+                   <Route path="/admin/prestataires" element={<AdminPrestataires />} />
+                   <Route path="/admin/form" element={<AdminForm />} />
                    <Route path="/admin/reservations-jour-m" element={<AdminReservationsJourM />} />
+                   <Route path="/admin/system-check" element={<AdminSystemCheck />} />
                   
                   {/* Services routes */}
                   <Route path="/services/budget" element={<Budget />} />

@@ -44,6 +44,12 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
       href: '/admin/blog',
       icon: FileText,
       current: location.pathname === '/admin/blog'
+    },
+    {
+      name: 'Tests & Diagnostics',
+      href: '/admin/system-check',
+      icon: Settings,
+      current: location.pathname === '/admin/system-check'
     }
   ];
 
