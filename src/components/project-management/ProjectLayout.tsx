@@ -6,6 +6,7 @@ import { Calendar, Users, FileText, Target } from 'lucide-react';
 import ProjectPlanningContent from './ProjectPlanningContent';
 import ProjectTeamManager from './ProjectTeamManager';
 import ProjectDocuments from './ProjectDocuments';
+import ProjectShareButton from './ProjectShareButton';
 import { useProjectCoordination } from '@/hooks/useProjectCoordination';
 
 const ProjectLayout: React.FC = () => {
@@ -25,7 +26,7 @@ const ProjectLayout: React.FC = () => {
         <div className="bg-background border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between py-4">
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center justify-between w-full">
               <div className="flex items-center gap-3">
                 <Target className="h-8 w-8 text-primary" />
                 <div>
@@ -33,6 +34,7 @@ const ProjectLayout: React.FC = () => {
                   <p className="text-sm text-muted-foreground">Préparation et organisation</p>
                 </div>
               </div>
+              <ProjectShareButton />
             </div>
           </div>
 

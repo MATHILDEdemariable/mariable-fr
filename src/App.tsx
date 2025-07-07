@@ -17,6 +17,7 @@ import ReservationJourM from "./pages/ReservationJourM";
 import UserDashboard from "./pages/dashboard/UserDashboard";
 import JourMVue from "./pages/JourMVue";
 import PlanningPublic from "./pages/PlanningPublic";
+import PlanningPublicProject from "./pages/PlanningPublicProject";
 import MonJourM from "./pages/MonJourM";
 import MonJourMPlanningPage from "./pages/MonJourMPlanning";
 import MonJourMEquipePage from "./pages/MonJourMEquipe";
@@ -77,8 +78,9 @@ function App() {
                   <Route path="/dashboard/*" element={<UserDashboard />} />
                   <Route path="/jour-m-vue/:token" element={<JourMVue />} />
                   
-                  {/* Route publique pour le planning */}
+                  {/* Routes publiques pour les plannings */}
                   <Route path="/planning-public/:coordinationId" element={<PlanningPublic />} />
+                  <Route path="/planning-public/project/:token" element={<PlanningPublicProject />} />
                   
                   {/* Mon Jour-M routes */}
                   <Route path="/mon-jour-m" element={<Navigate to="/mon-jour-m/planning" replace />} />

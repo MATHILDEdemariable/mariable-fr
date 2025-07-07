@@ -22,12 +22,9 @@ interface UseProjectCoordinationReturn {
   initializeCoordination: () => Promise<ProjectCoordination | null>;
 }
 
-// Cache simple pour éviter les re-appels
-const projectCoordinationCache = new Map<string, ProjectCoordination>();
-
 export const useProjectCoordination = (): UseProjectCoordinationReturn => {
   const [coordination, setCoordination] = useState<ProjectCoordination | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [isInitializing, setIsInitializing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
@@ -43,10 +40,11 @@ export const useProjectCoordination = (): UseProjectCoordinationReturn => {
   }, []);
 
   const initializeCoordination = useCallback(async (): Promise<ProjectCoordination | null> => {
-    if (isInitializing || coordination) return coordination;
+    if (isInitializing) return coordination;
 
     try {
       setIsInitializing(true);
+      setIsLoading(true);
       setError(null);
       
       const { data: { user } } = await supabase.auth.getUser();
@@ -58,17 +56,6 @@ export const useProjectCoordination = (): UseProjectCoordinationReturn => {
       }
 
       console.log('🚀 useProjectCoordination: Initializing project coordination for user:', user.id);
-
-      // Vérifier le cache d'abord
-      const cachedCoordination = projectCoordinationCache.get(user.id);
-      if (cachedCoordination) {
-        console.log('📦 useProjectCoordination: Using cached project coordination');
-        if (mountedRef.current) {
-          setCoordination(cachedCoordination);
-          setIsLoading(false);
-        }
-        return cachedCoordination;
-      }
 
       // Vérifier si une coordination projet existe déjà - prendre la plus récente
       const { data: existingCoordinations, error: fetchError } = await supabase
@@ -114,9 +101,6 @@ export const useProjectCoordination = (): UseProjectCoordinationReturn => {
         activeCoordination = newCoordination;
         console.log('✅ useProjectCoordination: Created new project coordination:', activeCoordination.id);
       }
-
-      // Mettre en cache
-      projectCoordinationCache.set(user.id, activeCoordination);
 
       if (mountedRef.current) {
         setCoordination(activeCoordination);
@@ -173,9 +157,6 @@ export const useProjectCoordination = (): UseProjectCoordinationReturn => {
       if (!mountedRef.current) return;
 
       if (error) throw error;
-      
-      // Mettre à jour le cache
-      projectCoordinationCache.set(data.user_id, data);
       
       setCoordination(data);
       console.log('🔄 useProjectCoordination: Project coordination refreshed');

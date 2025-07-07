@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useToast } from '@/hooks/use-toast';
 import { PlanningEvent } from '../wedding-day/types/planningTypes';
 import { supabase } from '@/integrations/supabase/client';
+import { useProjectCoordination } from '@/hooks/useProjectCoordination';
 
 interface ProjectTaskEditModalProps {
   event: PlanningEvent;
@@ -32,13 +33,39 @@ const ProjectTaskEditModal: React.FC<ProjectTaskEditModalProps> = ({
   onClose
 }) => {
   const { toast } = useToast();
+  const { coordination } = useProjectCoordination();
+  const [teamMembers, setTeamMembers] = useState<Array<{id: string, name: string, role: string}>>([]);
   const [formData, setFormData] = useState({
     title: event.title,
     description: event.notes || '',
     category: event.category,
-    priority: event.isHighlight ? 'high' : 'medium'
+    priority: event.isHighlight ? 'high' : 'medium',
+    assignedTo: event.assignedTo || []
   });
   const [isLoading, setIsLoading] = useState(false);
+
+  // Charger les membres de l'équipe
+  React.useEffect(() => {
+    if (coordination?.id) {
+      loadTeamMembers();
+    }
+  }, [coordination?.id]);
+
+  const loadTeamMembers = async () => {
+    if (!coordination?.id) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('coordination_team')
+        .select('id, name, role')
+        .eq('coordination_id', coordination.id);
+
+      if (error) throw error;
+      setTeamMembers(data || []);
+    } catch (error) {
+      console.error('Erreur chargement équipe:', error);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,7 +89,8 @@ const ProjectTaskEditModal: React.FC<ProjectTaskEditModalProps> = ({
           title: formData.title,
           description: formData.description || null,
           category: formData.category,
-          priority: formData.priority
+          priority: formData.priority,
+          assigned_to: formData.assignedTo
         })
         .eq('id', event.id);
 
@@ -75,7 +103,8 @@ const ProjectTaskEditModal: React.FC<ProjectTaskEditModalProps> = ({
         notes: formData.description,
         category: formData.category,
         type: formData.category,
-        isHighlight: formData.priority === 'high'
+        isHighlight: formData.priority === 'high',
+        assignedTo: formData.assignedTo
       };
 
       onSave(updatedEvent);
@@ -160,6 +189,38 @@ const ProjectTaskEditModal: React.FC<ProjectTaskEditModalProps> = ({
             </Select>
           </div>
         </div>
+
+        {/* Assignation */}
+        {teamMembers.length > 0 && (
+          <div>
+            <Label>Assigner à</Label>
+            <div className="space-y-2 max-h-32 overflow-y-auto border rounded-lg p-2">
+              {teamMembers.map((member) => (
+                <label key={member.id} className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={formData.assignedTo.includes(member.id)}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setFormData(prev => ({
+                          ...prev,
+                          assignedTo: [...prev.assignedTo, member.id]
+                        }));
+                      } else {
+                        setFormData(prev => ({
+                          ...prev,
+                          assignedTo: prev.assignedTo.filter(id => id !== member.id)
+                        }));
+                      }
+                    }}
+                    className="rounded"
+                  />
+                  <span className="text-sm">{member.name} ({member.role})</span>
+                </label>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="flex gap-3 pt-4">

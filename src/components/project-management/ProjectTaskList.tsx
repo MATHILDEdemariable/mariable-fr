@@ -6,6 +6,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Edit, Trash2, User, CheckCircle2 } from 'lucide-react';
 import { PlanningEvent } from '../wedding-day/types/planningTypes';
 import ProjectTaskEditModal from './ProjectTaskEditModal';
+import { useProjectCoordination } from '@/hooks/useProjectCoordination';
+import { supabase } from '@/integrations/supabase/client';
 
 interface ProjectTaskListProps {
   events: PlanningEvent[];
@@ -51,6 +53,31 @@ const ProjectTaskList: React.FC<ProjectTaskListProps> = ({
   onSelectionChange
 }) => {
   const [editingEvent, setEditingEvent] = useState<PlanningEvent | null>(null);
+  const [teamMembers, setTeamMembers] = useState<Array<{id: string, name: string, role: string}>>([]);
+  const { coordination } = useProjectCoordination();
+
+  // Charger les membres de l'équipe
+  React.useEffect(() => {
+    if (coordination?.id) {
+      loadTeamMembers();
+    }
+  }, [coordination?.id]);
+
+  const loadTeamMembers = async () => {
+    if (!coordination?.id) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('coordination_team')
+        .select('id, name, role')
+        .eq('coordination_id', coordination.id);
+
+      if (error) throw error;
+      setTeamMembers(data || []);
+    } catch (error) {
+      console.error('Erreur chargement équipe:', error);
+    }
+  };
 
   const handleEdit = (event: PlanningEvent) => {
     setEditingEvent(event);
@@ -119,9 +146,16 @@ const ProjectTaskList: React.FC<ProjectTaskListProps> = ({
                       </div>
 
                       {event.assignedTo && event.assignedTo.length > 0 && (
-                        <div className="flex items-center gap-1">
+                        <div className="flex items-center gap-1 flex-wrap">
                           <User className="h-3 w-3" />
-                          <span>Assigné à {event.assignedTo.length} personne{event.assignedTo.length > 1 ? 's' : ''}</span>
+                          {event.assignedTo.map((memberId: string) => {
+                            const member = teamMembers.find(m => m.id === memberId);
+                            return member ? (
+                              <Badge key={memberId} variant="outline" className="text-xs">
+                                {member.name}
+                              </Badge>
+                            ) : null;
+                          })}
                         </div>
                       )}
                     </div>
