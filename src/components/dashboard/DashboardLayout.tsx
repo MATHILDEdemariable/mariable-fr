@@ -6,7 +6,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import Header from '@/components/Header';
 import { PanelLeft } from 'lucide-react';
 import { useReaderMode } from '@/contexts/ReaderModeContext';
-import ShareDashboardButton from './ShareDashboardButton';
+
 import { OnboardingProvider } from '@/components/onboarding/OnboardingProvider';
 import { OnboardingTour } from '@/components/onboarding/OnboardingTour';
 
@@ -54,11 +54,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         <div className="flex-1 flex justify-start items-start transition-all duration-300" 
              style={{ marginLeft: (!isMobile && sidebarVisible) ? '0' : '0' }}>
           <main className="w-full max-w-6xl mx-auto py-4 px-3 sm:py-6 sm:px-4 lg:px-8">
-            {!isReaderMode && (
-              <div className="flex justify-end mb-4">
-                <ShareDashboardButton />
-              </div>
-            )}
             {children || <Outlet />}
           </main>
         </div>
