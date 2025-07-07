@@ -40,16 +40,21 @@ Deno.serve(async (req) => {
 
     // Try to get users via admin API first
     let users: DatabaseUser[] = [];
+    let method = 'unknown';
     
     try {
-      const { data: authData, error: authError } = await supabase.auth.admin.listUsers();
+      console.log('🔐 Trying auth.admin.listUsers...');
+      const { data: authData, error: authError } = await supabase.auth.admin.listUsers({
+        page: 1,
+        perPage: 1000
+      });
       
       if (authError) {
         console.error('❌ Auth API error:', authError);
         throw authError;
       }
 
-      if (authData?.users) {
+      if (authData?.users && authData.users.length > 0) {
         users = authData.users.map(user => ({
           id: user.id,
           email: user.email || '',
@@ -57,33 +62,68 @@ Deno.serve(async (req) => {
           raw_user_meta_data: user.user_metadata || {}
         }));
         
+        method = 'auth_api';
         console.log(`✅ Successfully fetched ${users.length} users via auth API`);
+      } else {
+        throw new Error('No users returned from auth API');
       }
     } catch (authError) {
-      console.error('❌ Auth API failed, trying profiles table fallback:', authError);
+      console.error('❌ Auth API failed, trying direct SQL approach:', authError);
       
-      // Fallback: Get users from profiles table with email lookup
-      const { data: profilesData, error: profilesError } = await supabase
-        .from('profiles')
-        .select('id, first_name, last_name, created_at');
-
-      if (profilesError) {
-        console.error('❌ Profiles query error:', profilesError);
-        throw profilesError;
-      }
-
-      if (profilesData) {
-        users = profilesData.map(profile => ({
-          id: profile.id,
-          email: 'Email non disponible',
-          created_at: profile.created_at,
-          raw_user_meta_data: {
-            first_name: profile.first_name,
-            last_name: profile.last_name
-          }
-        }));
+      try {
+        // Use RPC function to get users (bypasses RLS with SECURITY DEFINER)
+        const { data: rpcData, error: rpcError } = await supabase.rpc('get_user_registrations');
         
-        console.log(`✅ Fallback: fetched ${users.length} users via profiles table`);
+        if (rpcError) {
+          console.error('❌ RPC error:', rpcError);
+          throw rpcError;
+        }
+
+        if (rpcData && rpcData.length > 0) {
+          users = rpcData.map((user: any) => ({
+            id: user.id,
+            email: user.email || '',
+            created_at: user.created_at,
+            raw_user_meta_data: user.raw_user_meta_data || {}
+          }));
+          
+          method = 'rpc_function';
+          console.log(`✅ RPC: fetched ${users.length} users via get_user_registrations`);
+        } else {
+          throw new Error('No users returned from RPC');
+        }
+      } catch (rpcError) {
+        console.error('❌ RPC failed, trying profiles table fallback:', rpcError);
+        
+        // Final fallback: Get users from profiles table
+        const { data: profilesData, error: profilesError } = await supabase
+          .from('profiles')
+          .select('id, first_name, last_name, created_at');
+
+        if (profilesError) {
+          console.error('❌ Profiles query error:', profilesError);
+          throw profilesError;
+        }
+
+        if (profilesData && profilesData.length > 0) {
+          users = profilesData.map(profile => ({
+            id: profile.id,
+            email: 'Email non disponible via profiles',
+            created_at: profile.created_at,
+            raw_user_meta_data: {
+              first_name: profile.first_name,
+              last_name: profile.last_name
+            }
+          }));
+          
+          method = 'profiles_fallback';
+          console.log(`✅ Fallback: fetched ${users.length} users via profiles table`);
+        } else {
+          // Return empty array instead of throwing error
+          users = [];
+          method = 'empty_result';
+          console.log('⚠️ No users found in any method, returning empty array');
+        }
       }
     }
 
@@ -93,7 +133,7 @@ Deno.serve(async (req) => {
         success: true, 
         users: users,
         count: users.length,
-        method: users.length > 0 && users[0].email !== 'Email non disponible' ? 'auth_api' : 'profiles_fallback'
+        method: method
       }),
       {
         headers: { 

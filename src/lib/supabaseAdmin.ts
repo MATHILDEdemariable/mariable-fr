@@ -33,35 +33,48 @@ export const testSupabaseConnection = async () => {
 // Méthode alternative : requête SQL directe
 export const fetchUsersDirectSQL = async () => {
   try {
-    console.log('🔍 Récupération des utilisateurs via SQL direct...');
+    console.log('🔍 Récupération des utilisateurs via SQL direct avec RPC...');
     
-    // Requête SQL directe pour récupérer les utilisateurs depuis auth.users
-    const { data, error } = await supabaseAdmin
-      .from('profiles')
-      .select(`
-        id,
-        first_name,
-        last_name,
-        created_at
-      `)
-      .order('created_at', { ascending: false });
+    // Utiliser la fonction RPC get_user_registrations qui bypasse RLS
+    const { data, error } = await supabaseAdmin.rpc('get_user_registrations');
 
     if (error) {
-      console.error('❌ Erreur SQL directe:', error);
-      throw error;
+      console.error('❌ Erreur RPC get_user_registrations:', error);
+      
+      // Fallback vers profiles si RPC échoue
+      console.log('🔄 Tentative fallback vers profiles...');
+      const { data: profilesData, error: profilesError } = await supabaseAdmin
+        .from('profiles')
+        .select(`
+          id,
+          first_name,
+          last_name,
+          created_at
+        `)
+        .order('created_at', { ascending: false });
+
+      if (profilesError) {
+        console.error('❌ Erreur profiles fallback:', profilesError);
+        throw profilesError;
+      }
+
+      console.log(`✅ ${profilesData?.length || 0} utilisateurs récupérés via profiles fallback`);
+      
+      return profilesData?.map(user => ({
+        id: user.id,
+        email: 'Non disponible via profiles',
+        created_at: user.created_at,
+        raw_user_meta_data: {
+          first_name: user.first_name,
+          last_name: user.last_name
+        }
+      })) || [];
     }
 
-    console.log(`✅ ${data?.length || 0} utilisateurs récupérés via SQL`);
+    console.log(`✅ ${data?.length || 0} utilisateurs récupérés via RPC`);
     
-    return data?.map(user => ({
-      id: user.id,
-      email: 'Non disponible via SQL', // L'email est dans auth.users, pas accessible via SQL direct
-      created_at: user.created_at,
-      raw_user_meta_data: {
-        first_name: user.first_name,
-        last_name: user.last_name
-      }
-    })) || [];
+    // Les données RPC ont déjà le bon format
+    return data || [];
   } catch (error) {
     console.error('❌ Erreur fetchUsersDirectSQL:', error);
     throw error;
