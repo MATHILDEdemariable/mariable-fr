@@ -4,13 +4,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { PlanningEvent } from '../wedding-day/types/planningTypes';
+import { supabase } from '@/integrations/supabase/client';
 
-interface ProjectTaskModalProps {
-  coordinationId: string;
-  onEventAdded: (event: PlanningEvent) => void;
+interface ProjectTaskEditModalProps {
+  event: PlanningEvent;
+  onSave: (event: PlanningEvent) => void;
   onClose: () => void;
 }
 
@@ -26,17 +26,17 @@ const PROJECT_CATEGORIES = [
   'Autre'
 ];
 
-const ProjectTaskModal: React.FC<ProjectTaskModalProps> = ({
-  coordinationId,
-  onEventAdded,
+const ProjectTaskEditModal: React.FC<ProjectTaskEditModalProps> = ({
+  event,
+  onSave,
   onClose
 }) => {
   const { toast } = useToast();
   const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    category: 'Planification',
-    priority: 'medium' as 'low' | 'medium' | 'high'
+    title: event.title,
+    description: event.notes || '',
+    category: event.category,
+    priority: event.isHighlight ? 'high' : 'medium'
   });
   const [isLoading, setIsLoading] = useState(false);
 
@@ -55,54 +55,40 @@ const ProjectTaskModal: React.FC<ProjectTaskModalProps> = ({
     setIsLoading(true);
     
     try {
-      // Créer l'événement dans la base de données
-      const { data, error } = await supabase
+      // Mettre à jour dans la base de données
+      const { error } = await supabase
         .from('coordination_planning')
-        .insert({
-          coordination_id: coordinationId,
+        .update({
           title: formData.title,
           description: formData.description || null,
           category: formData.category,
-          priority: formData.priority,
-          duration: 30, // Durée par défaut
-          start_time: '09:00', // Heure par défaut pour les tâches de projet
-          position: 0
+          priority: formData.priority
         })
-        .select()
-        .single();
+        .eq('id', event.id);
 
       if (error) throw error;
 
-      // Créer l'objet PlanningEvent pour l'interface
-      const baseDate = new Date();
-      baseDate.setHours(9, 0, 0, 0);
-      
-      const newEvent: PlanningEvent = {
-        id: data.id,
+      // Créer l'objet mis à jour
+      const updatedEvent: PlanningEvent = {
+        ...event,
         title: formData.title,
         notes: formData.description,
-        startTime: baseDate,
-        endTime: new Date(baseDate.getTime() + 30 * 60000),
-        duration: 30,
         category: formData.category,
         type: formData.category,
-        isHighlight: formData.priority === 'high',
-        assignedTo: []
+        isHighlight: formData.priority === 'high'
       };
 
-      onEventAdded(newEvent);
+      onSave(updatedEvent);
       
       toast({
         title: "Succès",
-        description: "Tâche ajoutée avec succès"
+        description: "Tâche modifiée avec succès"
       });
-      
-      onClose();
     } catch (error) {
-      console.error('❌ Error adding project task:', error);
+      console.error('❌ Error updating task:', error);
       toast({
         title: "Erreur",
-        description: "Impossible d'ajouter la tâche",
+        description: "Impossible de modifier la tâche",
         variant: "destructive"
       });
     } finally {
@@ -174,7 +160,6 @@ const ProjectTaskModal: React.FC<ProjectTaskModalProps> = ({
             </Select>
           </div>
         </div>
-
       </div>
 
       <div className="flex gap-3 pt-4">
@@ -183,7 +168,7 @@ const ProjectTaskModal: React.FC<ProjectTaskModalProps> = ({
           disabled={isLoading || !formData.title.trim()}
           className="bg-blue-600 hover:bg-blue-700"
         >
-          {isLoading ? 'Ajout...' : 'Ajouter la tâche'}
+          {isLoading ? 'Modification...' : 'Modifier la tâche'}
         </Button>
         <Button type="button" variant="outline" onClick={onClose}>
           Annuler
@@ -193,4 +178,4 @@ const ProjectTaskModal: React.FC<ProjectTaskModalProps> = ({
   );
 };
 
-export default ProjectTaskModal;
+export default ProjectTaskEditModal;

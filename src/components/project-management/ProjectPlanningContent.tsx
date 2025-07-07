@@ -2,7 +2,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Target, Calendar, Clock, Users, Trash2, CheckSquare, Square, Save } from 'lucide-react';
+import { Plus, Target, Calendar, Clock, Users, Trash2, CheckSquare, Square, Save, Sparkles, ChevronDown } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { supabase } from '@/integrations/supabase/client';
@@ -10,7 +11,8 @@ import { useToast } from '@/hooks/use-toast';
 import { PlanningEvent } from '../wedding-day/types/planningTypes';
 import { useProjectCoordination } from '@/hooks/useProjectCoordination';
 import ProjectTaskModal from './ProjectTaskModal';
-import ProjectTimeline from './ProjectTimeline';
+import ProjectTaskList from './ProjectTaskList';
+import ProjectAISuggestionsModal from './ProjectAISuggestionsModal';
 
 interface ProjectPlanningContentProps {
   coordinationId: string;
@@ -20,6 +22,7 @@ const ProjectPlanningContent: React.FC<ProjectPlanningContentProps> = ({
   coordinationId 
 }) => {
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
+  const [showAISuggestions, setShowAISuggestions] = useState(false);
   const [events, setEvents] = useState<PlanningEvent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectionMode, setSelectionMode] = useState(false);
@@ -154,6 +157,95 @@ const ProjectPlanningContent: React.FC<ProjectPlanningContentProps> = ({
     setEvents(prev => [...prev, newEvent]);
   };
 
+  // Gestionnaire pour les suggestions IA
+  const handleAITasksAdded = async (aiTasks: PlanningEvent[]) => {
+    try {
+      // Enregistrer les tâches en base
+      const tasksToSave = aiTasks.map((task, index) => ({
+        coordination_id: coordinationId,
+        title: task.title,
+        description: task.notes,
+        start_time: '09:00',
+        duration: 30,
+        category: task.category,
+        priority: task.isHighlight ? 'high' : 'medium',
+        position: events.length + index,
+        assigned_to: []
+      }));
+
+      const { data, error } = await supabase
+        .from('coordination_planning')
+        .insert(tasksToSave)
+        .select();
+
+      if (error) throw error;
+
+      // Convertir les données de retour en PlanningEvent
+      const convertedEvents: PlanningEvent[] = data.map((item: any) => {
+        const baseDate = new Date();
+        baseDate.setHours(9, 0, 0, 0);
+        
+        return {
+          id: item.id,
+          title: item.title,
+          notes: item.description,
+          startTime: baseDate,
+          endTime: new Date(baseDate.getTime() + 30 * 60000),
+          duration: 30,
+          category: item.category,
+          type: item.category,
+          isHighlight: item.priority === 'high',
+          assignedTo: []
+        };
+      });
+
+      setEvents(prev => [...prev, ...convertedEvents]);
+      setShowAISuggestions(false);
+    } catch (error) {
+      console.error('❌ Error adding AI tasks:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible d'ajouter les tâches suggérées",
+        variant: "destructive"
+      });
+    }
+  };
+
+  // Gestionnaire pour l'édition d'une tâche
+  const handleEditTask = async (updatedEvent: PlanningEvent) => {
+    setEvents(prev => 
+      prev.map(event => 
+        event.id === updatedEvent.id ? updatedEvent : event
+      )
+    );
+  };
+
+  // Gestionnaire pour la suppression d'une tâche
+  const handleDeleteTask = async (eventId: string) => {
+    try {
+      const { error } = await supabase
+        .from('coordination_planning')
+        .delete()
+        .eq('id', eventId);
+
+      if (error) throw error;
+
+      setEvents(prev => prev.filter(event => event.id !== eventId));
+      
+      toast({
+        title: "Tâche supprimée",
+        description: "La tâche a été supprimée avec succès"
+      });
+    } catch (error) {
+      console.error('❌ Error deleting task:', error);
+      toast({
+        title: "Erreur de suppression",
+        description: "Impossible de supprimer la tâche",
+        variant: "destructive"
+      });
+    }
+  };
+
   // Gestionnaire pour la mise à jour des événements avec sauvegarde auto
   const handleEventsUpdate = async (updatedEvents: PlanningEvent[]) => {
     console.log('🔄 Updating project events from timeline:', updatedEvents.length);
@@ -242,10 +334,10 @@ const ProjectPlanningContent: React.FC<ProjectPlanningContentProps> = ({
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Total tâches</p>
-                <p className="text-2xl font-bold text-blue-600">{stats.total}</p>
+                <p className="text-sm text-muted-foreground">Total tâches</p>
+                <p className="text-2xl font-bold text-primary">{stats.total}</p>
               </div>
-              <Target className="h-8 w-8 text-blue-600/60" />
+              <Target className="h-8 w-8 text-primary/60" />
             </div>
           </CardContent>
         </Card>
@@ -254,10 +346,10 @@ const ProjectPlanningContent: React.FC<ProjectPlanningContentProps> = ({
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Priorités élevées</p>
-                <p className="text-2xl font-bold text-amber-600">{stats.highlights}</p>
+                <p className="text-sm text-muted-foreground">Priorités élevées</p>
+                <p className="text-2xl font-bold text-destructive">{stats.highlights}</p>
               </div>
-              <Clock className="h-8 w-8 text-amber-600/60" />
+              <Clock className="h-8 w-8 text-destructive/60" />
             </div>
           </CardContent>
         </Card>
@@ -266,10 +358,10 @@ const ProjectPlanningContent: React.FC<ProjectPlanningContentProps> = ({
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Tâches assignées</p>
-                <p className="text-2xl font-bold text-green-600">{stats.assigned}</p>
+                <p className="text-sm text-muted-foreground">Tâches assignées</p>
+                <p className="text-2xl font-bold text-success">{stats.assigned}</p>
               </div>
-              <Users className="h-8 w-8 text-green-600/60" />
+              <Users className="h-8 w-8 text-success/60" />
             </div>
           </CardContent>
         </Card>
@@ -277,14 +369,35 @@ const ProjectPlanningContent: React.FC<ProjectPlanningContentProps> = ({
 
       {/* Actions principales */}
       <div className="flex flex-col sm:flex-row gap-4">
-        <Dialog open={isTaskModalOpen} onOpenChange={setIsTaskModalOpen}>
-          <DialogTrigger asChild>
-            <Button className="bg-blue-600 hover:bg-blue-700 flex-1">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button className="bg-primary hover:bg-primary/90 flex-1">
               <Plus className="h-4 w-4 mr-2" />
               Ajouter une tâche
+              <ChevronDown className="h-4 w-4 ml-2" />
             </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start" className="w-64">
+            <DropdownMenuItem
+              onClick={() => setIsTaskModalOpen(true)}
+              className="cursor-pointer"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Ajout manuel
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => setShowAISuggestions(true)}
+              className="cursor-pointer"
+            >
+              <Sparkles className="h-4 w-4 mr-2" />
+              Suggestions IA mariage
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        {/* Modal ajout manuel */}
+        <Dialog open={isTaskModalOpen} onOpenChange={setIsTaskModalOpen}>
+          <DialogContent className="max-w-2xl">
             <DialogHeader>
               <DialogTitle>Ajouter une nouvelle tâche</DialogTitle>
             </DialogHeader>
@@ -296,6 +409,17 @@ const ProjectPlanningContent: React.FC<ProjectPlanningContentProps> = ({
           </DialogContent>
         </Dialog>
 
+        {/* Modal suggestions IA */}
+        <Dialog open={showAISuggestions} onOpenChange={setShowAISuggestions}>
+          <DialogContent className="max-w-4xl max-h-[90vh]">
+            <ProjectAISuggestionsModal
+              coordinationId={coordinationId}
+              onTasksAdded={handleAITasksAdded}
+              onClose={() => setShowAISuggestions(false)}
+            />
+          </DialogContent>
+        </Dialog>
+
         {events.length > 0 && (
           <Button
             variant={selectionMode ? "default" : "outline"}
@@ -303,7 +427,7 @@ const ProjectPlanningContent: React.FC<ProjectPlanningContentProps> = ({
               setSelectionMode(!selectionMode);
               setSelectedEvents([]);
             }}
-            className={selectionMode ? "bg-blue-600 hover:bg-blue-700" : ""}
+            className={selectionMode ? "bg-primary hover:bg-primary/90" : ""}
           >
             {selectionMode ? <CheckSquare className="h-4 w-4 mr-2" /> : <Square className="h-4 w-4 mr-2" />}
             {selectionMode ? "Annuler sélection" : "Sélectionner plusieurs"}
@@ -312,7 +436,7 @@ const ProjectPlanningContent: React.FC<ProjectPlanningContentProps> = ({
 
         {/* Indicateur de sauvegarde */}
         {isSaving && (
-          <div className="flex items-center gap-2 text-sm text-gray-600">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Save className="h-4 w-4 animate-pulse" />
             Sauvegarde...
           </div>
@@ -321,12 +445,12 @@ const ProjectPlanningContent: React.FC<ProjectPlanningContentProps> = ({
 
       {/* Actions de sélection multiple */}
       {selectionMode && events.length > 0 && (
-        <div className="flex items-center gap-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+        <div className="flex items-center gap-4 p-4 bg-primary/10 border border-primary/20 rounded-lg">
           <Button
             variant="ghost"
             size="sm"
             onClick={handleSelectAll}
-            className="text-blue-700 hover:bg-blue-100"
+            className="text-primary hover:bg-primary/10"
           >
             {selectedEvents.length === events.length ? "Tout désélectionner" : "Tout sélectionner"}
           </Button>
@@ -350,11 +474,11 @@ const ProjectPlanningContent: React.FC<ProjectPlanningContentProps> = ({
         </div>
       )}
 
-      {/* Planning principal */}
+      {/* TO DO List principale */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
-            <span>Planning de préparation</span>
+            <span>TO DO List</span>
             {events.length > 0 && (
               <Badge variant="secondary">
                 {events.length} tâche{events.length > 1 ? 's' : ''}
@@ -365,22 +489,38 @@ const ProjectPlanningContent: React.FC<ProjectPlanningContentProps> = ({
         <CardContent>
           {events.length === 0 ? (
             <div className="text-center py-12">
-              <Target className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
+              <Target className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-lg font-medium mb-2">
                 Aucune tâche planifiée
               </h3>
-              <p className="text-gray-500 mb-6">
+              <p className="text-muted-foreground mb-6">
                 Commencez par ajouter des tâches de préparation pour votre mariage
               </p>
-              <Button onClick={() => setIsTaskModalOpen(true)} className="bg-blue-600 hover:bg-blue-700">
-                <Plus className="h-4 w-4 mr-2" />
-                Ajouter votre première tâche
-              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button className="bg-primary hover:bg-primary/90">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Ajouter votre première tâche
+                    <ChevronDown className="h-4 w-4 ml-2" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem onClick={() => setIsTaskModalOpen(true)}>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Ajout manuel
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setShowAISuggestions(true)}>
+                    <Sparkles className="h-4 w-4 mr-2" />
+                    Suggestions IA mariage
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           ) : (
-            <ProjectTimeline
+            <ProjectTaskList
               events={events}
-              onEventsChange={handleEventsUpdate}
+              onEdit={handleEditTask}
+              onDelete={handleDeleteTask}
               selectionMode={selectionMode}
               selectedEvents={selectedEvents}
               onSelectionChange={handleSelectionChange}

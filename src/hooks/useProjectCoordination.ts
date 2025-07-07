@@ -205,6 +205,11 @@ export const useProjectCoordination = (): UseProjectCoordinationReturn => {
           await initializeCoordination();
         } catch (error) {
           console.error('useProjectCoordination: Auto-initialization failed:', error);
+          // Ne pas faire de retry automatique en cas d'erreur critique
+          if (mountedRef.current) {
+            setError('Impossible d\'initialiser la coordination');
+            setIsLoading(false);
+          }
         }
       };
 
