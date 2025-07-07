@@ -137,6 +137,7 @@ const MonJourMDocuments: React.FC = () => {
         .from('coordination_documents')
         .select('*')
         .eq('coordination_id', coordId)
+        .eq('category', 'jour-m')
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -223,7 +224,7 @@ const MonJourMDocuments: React.FC = () => {
         coordination_id: coordination.id,
         title: formData.title,
         description: formData.description || null,
-        category: formData.category,
+        category: 'jour-m',
         assigned_to: formData.assigned_to === 'none' ? null : formData.assigned_to || null,
       };
 

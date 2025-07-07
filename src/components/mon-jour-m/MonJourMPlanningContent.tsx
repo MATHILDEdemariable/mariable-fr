@@ -168,6 +168,7 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
           .from('coordination_planning')
           .select('*')
           .eq('coordination_id', coordinationId)
+          .eq('category', 'jour-m')
           .order('position', { ascending: true });
 
         if (error) throw error;
@@ -231,7 +232,7 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
         description: event.notes,
         start_time: event.startTime.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
         duration: event.duration,
-        category: event.category,
+        category: 'jour-m',
         priority: event.isHighlight ? 'high' : 'medium',
         position: events.length + index,
         assigned_to: []

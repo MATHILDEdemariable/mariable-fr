@@ -57,6 +57,7 @@ const ProjectDocuments: React.FC = () => {
         .from('coordination_documents')
         .select('*')
         .eq('coordination_id', coordination.id)
+        .eq('category', 'project')
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -138,7 +139,7 @@ const ProjectDocuments: React.FC = () => {
           coordination_id: coordination.id,
           title: formData.title,
           description: formData.description || null,
-          category: formData.category,
+          category: 'project',
           file_url: publicUrl,
           file_path: filePath,
           file_type: formData.file.type,

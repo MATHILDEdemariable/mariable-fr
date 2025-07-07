@@ -100,6 +100,7 @@ const ProjectPlanningContent: React.FC<ProjectPlanningContentProps> = ({
           .from('coordination_planning')
           .select('*')
           .eq('coordination_id', coordinationId)
+          .eq('category', 'project')
           .order('position', { ascending: true });
 
         if (error) {
@@ -175,7 +176,7 @@ const ProjectPlanningContent: React.FC<ProjectPlanningContentProps> = ({
         description: task.notes,
         start_time: '09:00',
         duration: 30,
-        category: task.category,
+        category: 'project',
         priority: task.isHighlight ? 'high' : 'medium',
         position: events.length + index,
         assigned_to: []

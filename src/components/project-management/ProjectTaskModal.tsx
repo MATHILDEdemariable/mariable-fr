@@ -89,7 +89,7 @@ const ProjectTaskModal: React.FC<ProjectTaskModalProps> = ({
           coordination_id: coordinationId,
           title: formData.title,
           description: formData.description || null,
-          category: formData.category,
+          category: 'project',
           priority: formData.priority,
           duration: 30, // Durée par défaut
           start_time: '09:00', // Heure par défaut pour les tâches de projet
