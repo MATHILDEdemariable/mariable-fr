@@ -10,7 +10,7 @@ import { Link } from 'react-router-dom';
 
 const Accompagnement = () => {
   // IMPORTANT: Remplacez "33..." par le vrai numéro WhatsApp de Mathilde
-  const whatsappNumber = "33600000000"; 
+  const whatsappNumber = "33760108189"; 
   const prefilledMessage = "Bonjour Mathilde, je viens de souscrire à l'accompagnement Mariable et je suis prête à commencer !";
   const whatsappLink = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(prefilledMessage)}`;
 
