@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
-import { supabase } from '@/integrations/supabase/client';
+import { fetchAllUsers } from '@/lib/supabaseAdmin';
 import { 
   Table, 
   TableBody, 
@@ -62,23 +62,14 @@ const AdminUsers = () => {
     try {
       setIsLoadingData(true);
       
-      // Utiliser la fonction get_user_registrations()
-      const { data, error } = await supabase
-        .rpc('get_user_registrations');
-
-      if (error) {
-        console.error('Erreur lors du chargement des utilisateurs:', error);
-        toast.error('Erreur lors du chargement des utilisateurs');
-        return;
-      }
-
-      if (data) {
-        setUsers(data);
-        setFilteredUsers(data);
-      }
+      // Utiliser le Service Role Key pour récupérer tous les utilisateurs
+      const userData = await fetchAllUsers();
+      
+      setUsers(userData);
+      setFilteredUsers(userData);
     } catch (err) {
       console.error('Erreur:', err);
-      toast.error('Une erreur est survenue');
+      toast.error('Erreur lors du chargement des utilisateurs');
     } finally {
       setIsLoadingData(false);
     }
