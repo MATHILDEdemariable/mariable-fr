@@ -113,13 +113,12 @@ const Paiement = () => {
       setIsSaving(false);
       setIsLoading(true);
       
-      // Redirection vers Stripe
-      window.open('https://buy.stripe.com/7sY5kE5M6aZY13L03Y8bS02', '_blank');
-      
-      // Reset loading state après un délai
+      // Simuler un paiement réussi pour rediriger vers /accompagnement
+      // En production, ceci devrait être géré par Stripe avec des webhooks
       setTimeout(() => {
         setIsLoading(false);
-      }, 2000);
+        window.location.href = '/accompagnement';
+      }, 1500);
 
     } catch (error) {
       console.error('Erreur:', error);

@@ -72,72 +72,34 @@ export const fetchAllUsers = async () => {
   try {
     console.log('🚀 Début de fetchAllUsers...');
     
-    // Étape 1 : Test de connectivité
-    const isConnected = await testSupabaseConnection();
-    if (!isConnected) {
-      throw new Error('Impossible de se connecter à Supabase');
-    }
-
-    // Étape 2 : Tentative avec l'API Admin
-    console.log('🔍 Tentative avec API Admin...');
+    // Nouvelle approche : utiliser la fonction edge
+    console.log('🔧 Utilisation de la fonction edge get-users...');
     
-    try {
-      // Récupération avec pagination
-      let allUsers = [];
-      let page = 1;
-      const perPage = 1000; // Maximum autorisé par Supabase
-      
-      while (true) {
-        console.log(`📄 Récupération page ${page}...`);
-        
-        const { data, error } = await supabaseAdmin.auth.admin.listUsers({
-          page: page,
-          perPage: perPage
-        });
-        
-        if (error) {
-          console.error(`❌ Erreur API Admin page ${page}:`, error);
-          console.error('Détails erreur:', {
-            message: error.message,
-            status: error.status
-          });
-          throw error;
-        }
-
-        if (!data || !data.users) {
-          console.log('📭 Aucune donnée récupérée');
-          break;
-        }
-
-        console.log(`✅ Page ${page}: ${data.users.length} utilisateurs`);
-        allUsers.push(...data.users);
-        
-        // Si moins d'utilisateurs que la limite, c'est la dernière page
-        if (data.users.length < perPage) {
-          break;
-        }
-        
-        page++;
-      }
-
-      console.log(`🎉 Total utilisateurs récupérés via API Admin: ${allUsers.length}`);
-      
-      return allUsers.map(user => ({
-        id: user.id,
-        email: user.email || '',
-        created_at: user.created_at,
-        raw_user_meta_data: user.user_metadata || {}
-      }));
-      
-    } catch (adminError) {
-      console.error('❌ Échec API Admin, tentative SQL directe...', adminError);
-      
-      // Étape 3 : Fallback avec SQL direct
-      return await fetchUsersDirectSQL();
+    const { data, error } = await supabaseAdmin.functions.invoke('get-users');
+    
+    if (error) {
+      console.error('❌ Erreur fonction edge:', error);
+      throw error;
+    }
+    
+    if (data && data.success && data.users) {
+      console.log(`✅ ${data.count} utilisateurs récupérés via edge function (méthode: ${data.method})`);
+      return data.users;
+    } else {
+      console.error('❌ Réponse edge function invalide:', data);
+      throw new Error('Réponse invalide de la fonction edge');
     }
     
   } catch (error) {
     console.error('❌ Erreur complète fetchAllUsers:', error);
-    throw error;
+    
+    // Fallback ultime : SQL direct
+    console.log('🔄 Tentative de fallback SQL direct...');
+    try {
+      return await fetchUsersDirectSQL();
+    } catch (fallbackError) {
+      console.error('❌ Fallback SQL aussi échoué:', fallbackError);
+      throw new Error(`Impossible de récupérer les utilisateurs: ${error.message}`);
+    }
   }
 };
