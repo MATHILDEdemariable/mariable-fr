@@ -83,68 +83,39 @@ export const fetchUsersDirectSQL = async () => {
 
 export const fetchAllUsers = async () => {
   try {
-    console.log('🚀 Début de fetchAllUsers - BYPASS Edge Function...');
+    console.log('🚀 SOLUTION DIRECTE : Accès profiles table avec Service Role...');
     
-    // SOLUTION DIRECTE : Utiliser RPC directement (bypasse Edge Function défaillante)
-    console.log('🔧 Utilisation directe de la fonction RPC get_user_registrations...');
-    
-    const { data: rpcData, error: rpcError } = await supabaseAdmin.rpc('get_user_registrations');
-    
-    if (!rpcError && rpcData && rpcData.length > 0) {
-      console.log(`✅ ${rpcData.length} utilisateurs récupérés via RPC directe`);
-      return rpcData.map((user: any) => ({
-        id: user.id,
-        email: user.email || 'Email non disponible',
-        created_at: user.created_at,
-        raw_user_meta_data: user.raw_user_meta_data || {}
-      }));
-    }
-
-    console.log('⚠️ RPC échoué, tentative Auth API directe...');
-    
-    // Fallback 2: Auth API directe
-    try {
-      const { data: authData, error: authError } = await supabaseAdmin.auth.admin.listUsers({
-        page: 1,
-        perPage: 1000
-      });
-      
-      if (!authError && authData?.users && authData.users.length > 0) {
-        console.log(`✅ ${authData.users.length} utilisateurs récupérés via Auth API directe`);
-        return authData.users.map(user => ({
-          id: user.id,
-          email: user.email || '',
-          created_at: user.created_at,
-          raw_user_meta_data: user.user_metadata || {}
-        }));
-      }
-    } catch (authError) {
-      console.error('❌ Auth API directe échouée:', authError);
-    }
-
-    console.log('🔄 Dernière tentative : profiles table...');
-    
-    // Fallback 3: Profiles uniquement
+    // Solution directe : utiliser les profiles avec supabaseAdmin qui a le Service Role
     const { data: profilesData, error: profilesError } = await supabaseAdmin
       .from('profiles')
       .select('id, first_name, last_name, created_at')
       .order('created_at', { ascending: false });
 
-    if (!profilesError && profilesData && profilesData.length > 0) {
-      console.log(`✅ ${profilesData.length} utilisateurs récupérés via profiles table`);
-      return profilesData.map(profile => ({
-        id: profile.id,
-        email: 'Email non disponible via profiles',
-        created_at: profile.created_at,
-        raw_user_meta_data: {
-          first_name: profile.first_name,
-          last_name: profile.last_name
-        }
-      }));
+    console.log('🔍 Réponse profiles:', { profilesData, profilesError, count: profilesData?.length });
+
+    if (profilesError) {
+      console.error('❌ Erreur profiles:', profilesError);
+      throw new Error(`Erreur profiles: ${profilesError.message}`);
     }
 
-    // Si toutes les méthodes échouent
-    console.log('⚠️ Aucune méthode n\'a fonctionné, retour tableau vide');
+    if (profilesData && profilesData.length > 0) {
+      console.log(`✅ ${profilesData.length} utilisateurs récupérés depuis profiles`);
+      
+      const formattedUsers = profilesData.map(profile => ({
+        id: profile.id,
+        email: 'Email masqué (disponible dans Supabase Auth)',
+        created_at: profile.created_at,
+        raw_user_meta_data: {
+          first_name: profile.first_name || 'Prénom non renseigné',
+          last_name: profile.last_name || 'Nom non renseigné'
+        }
+      }));
+      
+      console.log('🎯 Utilisateurs formatés:', formattedUsers.slice(0, 2)); // Log des 2 premiers pour vérif
+      return formattedUsers;
+    }
+
+    console.log('⚠️ Aucun profil trouvé');
     return [];
     
   } catch (error) {
