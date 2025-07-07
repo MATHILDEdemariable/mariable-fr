@@ -14,7 +14,9 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Search, User, Mail, Calendar } from 'lucide-react';
+import { Search, User, Mail, Calendar, RefreshCw, AlertTriangle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { toast } from 'sonner';
 
 interface UserRegistration {
@@ -31,6 +33,7 @@ const AdminUsers = () => {
   const [filteredUsers, setFilteredUsers] = useState<UserRegistration[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [isLoadingData, setIsLoadingData] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
@@ -61,14 +64,30 @@ const AdminUsers = () => {
   const fetchUsers = async () => {
     try {
       setIsLoadingData(true);
+      setError(null);
+      
+      console.log('🚀 Début de la récupération des utilisateurs...');
       
       // Utiliser le Service Role Key pour récupérer tous les utilisateurs
       const userData = await fetchAllUsers();
       
+      console.log(`✅ ${userData.length} utilisateurs récupérés avec succès`);
+      
       setUsers(userData);
       setFilteredUsers(userData);
+      
+      if (userData.length === 0) {
+        toast.error('Aucun utilisateur trouvé dans la base de données');
+      } else {
+        toast.success(`${userData.length} utilisateurs chargés avec succès`);
+      }
+      
     } catch (err) {
-      console.error('Erreur:', err);
+      console.error('❌ Erreur complète:', err);
+      
+      const errorMessage = err instanceof Error ? err.message : 'Erreur inconnue';
+      setError(`Erreur lors du chargement des utilisateurs: ${errorMessage}`);
+      
       toast.error('Erreur lors du chargement des utilisateurs');
     } finally {
       setIsLoadingData(false);
@@ -120,6 +139,26 @@ const AdminUsers = () => {
             Gérez les comptes utilisateurs et suivez les nouvelles inscriptions.
           </p>
         </div>
+
+        {/* Alerte d'erreur */}
+        {error && (
+          <Alert variant="destructive">
+            <AlertTriangle className="h-4 w-4" />
+            <AlertDescription className="flex items-center justify-between">
+              <span>{error}</span>
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={fetchUsers}
+                disabled={isLoadingData}
+                className="ml-4"
+              >
+                <RefreshCw className={`h-4 w-4 mr-2 ${isLoadingData ? 'animate-spin' : ''}`} />
+                Réessayer
+              </Button>
+            </AlertDescription>
+          </Alert>
+        )}
 
         {/* Métriques */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
