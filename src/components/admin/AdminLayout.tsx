@@ -34,6 +34,12 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
       current: location.pathname === '/admin/reservations-jour-m'
     },
     {
+      name: 'Inscriptions Utilisateurs',
+      href: '/admin/users',
+      icon: Users,
+      current: location.pathname === '/admin/users'
+    },
+    {
       name: 'CRM Prestataires',
       href: '/admin/prestataires',
       icon: Users,

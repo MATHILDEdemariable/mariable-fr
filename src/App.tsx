@@ -48,6 +48,7 @@ import Accompagnement from "./pages/Accompagnement";
 // Import admin pages
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminBlog from "./pages/admin/Blog";
+import AdminUsers from "./pages/admin/Users";
 import AdminPrestataires from "./pages/admin/Prestataires";
 import AdminForm from "./pages/admin/FormAdmin";
 import AdminReservationsJourM from "./pages/admin/ReservationsJourM";
@@ -119,6 +120,7 @@ function App() {
                    {/* Admin routes */}
                    <Route path="/admin/dashboard" element={<AdminDashboard />} />
                    <Route path="/admin/blog" element={<AdminBlog />} />
+                   <Route path="/admin/users" element={<AdminUsers />} />
                    <Route path="/admin/prestataires" element={<AdminPrestataires />} />
                    <Route path="/admin/form" element={<AdminForm />} />
                    <Route path="/admin/reservations-jour-m" element={<AdminReservationsJourM />} />
