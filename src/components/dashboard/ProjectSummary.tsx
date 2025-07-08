@@ -11,6 +11,8 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { useUserProfile } from '@/hooks/useUserProfile';
 import ProgressOverview from './ProgressOverview';
 import DashboardFeatureCards from './DashboardFeatureCards';
+import InitiationMariageWidget from './InitiationMariageWidget';
+import ChecklistWidget from './ChecklistWidget';
 
 const ProjectSummary = () => {
   const today = new Date();
@@ -142,6 +144,15 @@ const ProjectSummary = () => {
 
       {/* Progress Overview */}
       <ProgressOverview />
+      
+      {/* Widgets principaux */}
+      <div>
+        <h2 className="text-xl font-serif mb-4 text-wedding-olive">Premiers pas</h2>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <InitiationMariageWidget />
+          <ChecklistWidget />
+        </div>
+      </div>
       
       {/* Feature Cards */}
       <div>
