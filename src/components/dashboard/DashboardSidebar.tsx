@@ -34,6 +34,25 @@ interface DashboardSidebarProps {
 const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = false }) => {
   const location = useLocation();
   
+  // Menu déroulant Tableau de bord
+  const dashboardItems = [
+    {
+      label: 'Tableau de bord',
+      icon: <LayoutDashboard className="h-4 w-4" />,
+      path: '/dashboard',
+    },
+    {
+      label: 'Check-list',
+      icon: <CheckSquare className="h-4 w-4" />,
+      path: '/dashboard/tasks',
+    },
+    {
+      label: 'Initiation Mariage',
+      icon: <Calendar className="h-4 w-4" />,
+      path: '/dashboard/planning',
+    },
+  ];
+
   // Menu déroulant Calculatrice
   const calculatriceItems = [
     {
@@ -104,21 +123,6 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
 
   const navigationItems = [
     {
-      label: 'Tableau de bord',
-      icon: <LayoutDashboard className="h-4 w-4" />,
-      path: '/dashboard',
-    },
-    {
-      label: 'Initiation Mariage',
-      icon: <Calendar className="h-4 w-4" />,
-      path: '/dashboard/planning',
-    },
-    {
-      label: 'Check-list',
-      icon: <CheckSquare className="h-4 w-4" />,
-      path: '/dashboard/tasks',
-    },
-    {
       label: 'Mission Mariage',
       icon: <Calendar className="h-4 w-4" />,
       path: '/dashboard/project-management',
@@ -153,6 +157,11 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
     return location.pathname.startsWith(path);
   };
 
+  // Vérifier si le menu Tableau de bord doit être actif
+  const isDashboardActive = () => {
+    return dashboardItems.some(item => isActive(item.path));
+  };
+
   // Vérifier si le menu Calculatrice doit être actif
   const isCalculatriceActive = () => {
     return calculatriceItems.some(item => isActive(item.path));
@@ -180,6 +189,50 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
       </div>
       
       <nav className="py-2 sm:py-4 px-2 sm:px-3 space-y-1">
+        {/* Menu déroulant Tableau de bord */}
+        <DropdownMenu>
+          <DropdownMenuTrigger 
+            className={cn(
+              "flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors w-full justify-start",
+              isDashboardActive()
+                ? 'bg-wedding-olive text-white shadow-sm'
+                : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive',
+              isReaderMode ? 'pointer-events-none opacity-70' : ''
+            )}
+            disabled={isReaderMode}
+          >
+            <LayoutDashboard className="h-4 w-4" />
+            <span className="ml-2 sm:ml-3 leading-tight">Tableau de bord</span>
+            <ChevronDown className="ml-auto h-4 w-4" />
+            {isReaderMode && (
+              <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>
+            )}
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-56 bg-white shadow-lg border border-gray-200" align="end">
+            {dashboardItems.map((subItem) => (
+              <DropdownMenuItem key={subItem.path} asChild>
+                <Link
+                  to={isReaderMode ? '#' : subItem.path}
+                  onClick={(e) => {
+                    if (isReaderMode) {
+                      e.preventDefault();
+                    }
+                  }}
+                  className={cn(
+                    "flex items-center px-2 py-2 text-sm w-full",
+                    isActive(subItem.path)
+                      ? 'bg-wedding-olive/10 text-wedding-olive font-medium'
+                      : 'text-gray-600 hover:bg-gray-50'
+                  )}
+                >
+                  {subItem.icon}
+                  <span className="ml-2">{subItem.label}</span>
+                </Link>
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+
         {/* Menu déroulant Calculatrice */}
         <DropdownMenu>
           <DropdownMenuTrigger 
