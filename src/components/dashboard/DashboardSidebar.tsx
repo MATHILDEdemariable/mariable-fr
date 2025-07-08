@@ -121,19 +121,6 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
     },
   ];
 
-  const navigationItems = [
-    {
-      label: 'Mission Mariage',
-      icon: <Calendar className="h-4 w-4" />,
-      path: '/dashboard/project-management',
-      mission: true,
-    },
-    {
-      label: 'Paramètres',
-      icon: <Settings className="h-4 w-4" />,
-      path: '/dashboard/settings',
-    },
-  ];
   
   const handleLogout = async () => {
     try {
@@ -321,50 +308,6 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
           </DropdownMenuContent>
         </DropdownMenu>
 
-        {/* Menu déroulant Jour M */}
-        <DropdownMenu>
-          <DropdownMenuTrigger 
-            className={cn(
-              "flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors w-full justify-start",
-              isJourMActive()
-                ? 'bg-wedding-olive text-white shadow-sm'
-                : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive',
-              isReaderMode ? 'pointer-events-none opacity-70' : ''
-            )}
-            disabled={isReaderMode}
-          >
-            <Calendar className="h-4 w-4" />
-            <span className="ml-2 sm:ml-3 leading-tight">Jour M</span>
-            <ChevronDown className="ml-auto h-4 w-4" />
-            {isReaderMode && (
-              <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>
-            )}
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-56 bg-white shadow-lg border border-gray-200" align="end">
-            {jourMItems.map((subItem) => (
-              <DropdownMenuItem key={subItem.path} asChild>
-                <Link
-                  to={isReaderMode ? '#' : subItem.path}
-                  onClick={(e) => {
-                    if (isReaderMode) {
-                      e.preventDefault();
-                    }
-                  }}
-                  className={cn(
-                    "flex items-center px-2 py-2 text-sm w-full",
-                    isActive(subItem.path)
-                      ? 'bg-wedding-olive/10 text-wedding-olive font-medium'
-                      : 'text-gray-600 hover:bg-gray-50'
-                  )}
-                >
-                  {subItem.icon}
-                  <span className="ml-2">{subItem.label}</span>
-                </Link>
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
-
         {/* Menu déroulant Besoin d'aide ? */}
         <DropdownMenu>
           <DropdownMenuTrigger 
@@ -429,37 +372,100 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
           </DropdownMenuContent>
         </DropdownMenu>
 
-        {navigationItems.map((item) => (
-          <Link
-            key={item.path}
-            to={isReaderMode ? '#' : item.path}
-            onClick={(e) => {
-              if (isReaderMode) {
-                e.preventDefault();
-              }
-            }}
+        {/* Mission Mariage */}
+        <Link
+          to={isReaderMode ? '#' : '/dashboard/project-management'}
+          onClick={(e) => {
+            if (isReaderMode) {
+              e.preventDefault();
+            }
+          }}
+          className={cn(
+            "flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors",
+            isActive('/dashboard/project-management')
+              ? 'bg-wedding-olive text-white shadow-sm'
+              : 'text-blue-600 font-semibold hover:bg-blue-50 border border-blue-200',
+            isReaderMode ? 'pointer-events-none opacity-70' : ''
+          )}
+        >
+          <Calendar className="h-4 w-4" />
+          <span className="ml-2 sm:ml-3 leading-tight">Mission Mariage</span>
+          {!isReaderMode && (
+            <span className="ml-auto text-xs bg-blue-600 text-white px-1.5 sm:px-2 py-0.5 rounded-full hidden sm:inline">
+              NOUVEAU
+            </span>
+          )}
+          {isReaderMode && (
+            <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>
+          )}
+        </Link>
+
+        {/* Menu déroulant Jour M */}
+        <DropdownMenu>
+          <DropdownMenuTrigger 
             className={cn(
-              "flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors",
-              isActive(item.path)
+              "flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors w-full justify-start",
+              isJourMActive()
                 ? 'bg-wedding-olive text-white shadow-sm'
-                : item.mission
-                ? 'text-blue-600 font-semibold hover:bg-blue-50 border border-blue-200'
                 : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive',
               isReaderMode ? 'pointer-events-none opacity-70' : ''
             )}
+            disabled={isReaderMode}
           >
-            {item.icon}
-            <span className="ml-2 sm:ml-3 leading-tight">{item.label}</span>
-            {item.mission && !isReaderMode && (
-              <span className="ml-auto text-xs bg-blue-600 text-white px-1.5 sm:px-2 py-0.5 rounded-full hidden sm:inline">
-                NOUVEAU
-              </span>
-            )}
-            {isReaderMode && item.path !== '/dashboard' && (
+            <Calendar className="h-4 w-4" />
+            <span className="ml-2 sm:ml-3 leading-tight">Jour M</span>
+            <ChevronDown className="ml-auto h-4 w-4" />
+            {isReaderMode && (
               <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>
             )}
-          </Link>
-        ))}
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-56 bg-white shadow-lg border border-gray-200" align="end">
+            {jourMItems.map((subItem) => (
+              <DropdownMenuItem key={subItem.path} asChild>
+                <Link
+                  to={isReaderMode ? '#' : subItem.path}
+                  onClick={(e) => {
+                    if (isReaderMode) {
+                      e.preventDefault();
+                    }
+                  }}
+                  className={cn(
+                    "flex items-center px-2 py-2 text-sm w-full",
+                    isActive(subItem.path)
+                      ? 'bg-wedding-olive/10 text-wedding-olive font-medium'
+                      : 'text-gray-600 hover:bg-gray-50'
+                  )}
+                >
+                  {subItem.icon}
+                  <span className="ml-2">{subItem.label}</span>
+                </Link>
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        {/* Paramètres */}
+        <Link
+          to={isReaderMode ? '#' : '/dashboard/settings'}
+          onClick={(e) => {
+            if (isReaderMode) {
+              e.preventDefault();
+            }
+          }}
+          className={cn(
+            "flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors",
+            isActive('/dashboard/settings')
+              ? 'bg-wedding-olive text-white shadow-sm'
+              : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive',
+            isReaderMode ? 'pointer-events-none opacity-70' : ''
+          )}
+        >
+          <Settings className="h-4 w-4" />
+          <span className="ml-2 sm:ml-3 leading-tight">Paramètres</span>
+          {isReaderMode && (
+            <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>
+          )}
+        </Link>
       </nav>
       
       <div className="mt-auto px-2 sm:px-3 py-2">

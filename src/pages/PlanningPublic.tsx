@@ -14,6 +14,7 @@ interface CoordinationData {
   tasks: any[];
   teamMembers: any[];
   documents: any[];
+  planningType?: string;
 }
 
 const PlanningPublic: React.FC = () => {
@@ -60,11 +61,15 @@ const PlanningPublic: React.FC = () => {
         throw new Error('Planning non trouvé. Vérifiez le lien de partage.');
       }
 
-      // Récupérer les tâches
+      // Détecter le type de planning basé sur l'URL ou les paramètres
+      const planningType = window.location.pathname.includes('/planning-public-project/') ? 'project' : 'jour-m';
+      
+      // Récupérer les tâches selon le type
       const { data: tasks, error: tasksError } = await supabase
         .from('coordination_planning')
         .select('*')
         .eq('coordination_id', id)
+        .eq('category', planningType)
         .order('position');
 
       // Récupérer l'équipe
@@ -74,21 +79,23 @@ const PlanningPublic: React.FC = () => {
         .eq('coordination_id', id)
         .order('created_at');
 
-      // Récupérer les documents (titres seulement)
+      // Récupérer les documents selon le type
       const { data: documents, error: docsError } = await supabase
         .from('coordination_documents')
         .select('id, title, category, created_at')
         .eq('coordination_id', id)
+        .eq('category', planningType)
         .order('created_at', { ascending: false });
 
       const result = {
         coordination,
         tasks: tasks || [],
         teamMembers: teamMembers || [],
-        documents: documents || []
+        documents: documents || [],
+        planningType
       };
 
-      console.log('✅ Coordination data loaded successfully');
+      console.log(`✅ Coordination data loaded successfully (${planningType}):`, tasks?.length, 'tasks');
       setCoordinationData(result);
     } catch (error: any) {
       console.error('❌ Error loading coordination data:', error);
@@ -195,7 +202,7 @@ const PlanningPublic: React.FC = () => {
     );
   }
 
-  const { coordination, tasks, teamMembers, documents } = coordinationData;
+  const { coordination, tasks, teamMembers, documents, planningType } = coordinationData;
   const people = teamMembers.filter(m => m.type === 'person');
   const vendors = teamMembers.filter(m => m.type === 'vendor');
 
@@ -215,7 +222,7 @@ const PlanningPublic: React.FC = () => {
                 {coordination.title}
               </h1>
               <p className="text-gray-600">
-                Planning partagé du mariage
+                {planningType === 'project' ? 'Mission Mariage - Planning partagé' : 'Jour M - Planning partagé'}
               </p>
               {coordination.wedding_date && (
                 <p className="text-sm text-wedding-olive font-medium mt-2">
