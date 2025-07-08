@@ -48,6 +48,60 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
     },
   ];
 
+  // Menu déroulant Prestataires
+  const prestatairesItems = [
+    {
+      label: 'Suivi',
+      icon: <Store className="h-4 w-4" />,
+      path: '/dashboard/prestataires',
+    },
+    {
+      label: 'Wishlist',
+      icon: <Heart className="h-4 w-4" />,
+      path: '/dashboard/wishlist',
+    },
+  ];
+
+  // Menu déroulant Jour M
+  const jourMItems = [
+    {
+      label: 'Jour M',
+      icon: <Calendar className="h-4 w-4" />,
+      path: '/mon-jour-m',
+    },
+    {
+      label: 'Conseils Jour M',
+      icon: <Lightbulb className="h-4 w-4" />,
+      path: '/dashboard/coordination',
+    },
+  ];
+
+  // Menu déroulant Besoin d'aide ?
+  const helpItems = [
+    {
+      label: 'Des questions ?',
+      icon: <MessageCircleQuestion className="h-4 w-4" />,
+      path: '/dashboard/assistant',
+    },
+    {
+      label: 'CHATGPT Mariage',
+      icon: <MessageSquare className="h-4 w-4" />,
+      path: 'https://chatgpt.com/g/g-684071f00100819199b7b11839db48d4-assistant-mariage-by-mariable',
+      external: true,
+    },
+    {
+      label: 'Communauté WhatsApp',
+      icon: <Users className="h-4 w-4" />,
+      path: 'https://chat.whatsapp.com/Gc5zeFsJYdDKTqsQqEOTzf',
+      external: true,
+    },
+    {
+      label: 'Mode d\'emploi',
+      icon: <MessageCircleQuestion className="h-4 w-4" />,
+      path: '/dashboard/help',
+    },
+  ];
+
   const navigationItems = [
     {
       label: 'Tableau de bord',
@@ -65,53 +119,10 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
       path: '/dashboard/tasks',
     },
     {
-      label: 'Prestataires',
-      icon: <Store className="h-4 w-4" />,
-      path: '/dashboard/prestataires',
-    },
-    {
-      label: 'Wishlist',
-      icon: <Heart className="h-4 w-4" />,
-      path: '/dashboard/wishlist',
-    },
-    {
       label: 'Mission Mariage',
       icon: <Calendar className="h-4 w-4" />,
       path: '/dashboard/project-management',
       mission: true,
-    },
-    {
-      label: 'Jour M',
-      icon: <Calendar className="h-4 w-4" />,
-      path: '/mon-jour-m',
-      jourM: true,
-    },
-    {
-      label: 'Conseils Jour M',
-      icon: <Lightbulb className="h-4 w-4" />,
-      path: '/dashboard/coordination',
-    },
-    {
-      label: 'Des questions ?',
-      icon: <MessageCircleQuestion className="h-4 w-4" />,
-      path: '/dashboard/assistant',
-    },
-    {
-      label: 'CHATGPT Mariage',
-      icon: <MessageSquare className="h-4 w-4" />,
-      path: 'https://chatgpt.com/g/g-684071f00100819199b7b11839db48d4-assistant-mariage-by-mariable',
-      external: true,
-    },
-    {
-      label: 'Accès à la communauté WhatsApp',
-      icon: <Users className="h-4 w-4" />,
-      path: 'https://chat.whatsapp.com/Gc5zeFsJYdDKTqsQqEOTzf',
-      external: true,
-    },
-    {
-      label: 'Mode d\'emploi',
-      icon: <MessageCircleQuestion className="h-4 w-4" />,
-      path: '/dashboard/help',
     },
     {
       label: 'Paramètres',
@@ -145,6 +156,21 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
   // Vérifier si le menu Calculatrice doit être actif
   const isCalculatriceActive = () => {
     return calculatriceItems.some(item => isActive(item.path));
+  };
+
+  // Vérifier si le menu Prestataires doit être actif
+  const isPrestatairesActive = () => {
+    return prestatairesItems.some(item => isActive(item.path));
+  };
+
+  // Vérifier si le menu Jour M doit être actif
+  const isJourMActive = () => {
+    return jourMItems.some(item => isActive(item.path));
+  };
+
+  // Vérifier si le menu Aide doit être actif
+  const isHelpActive = () => {
+    return helpItems.some(item => !item.external && isActive(item.path));
   };
 
   return (
@@ -198,73 +224,189 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
           </DropdownMenuContent>
         </DropdownMenu>
 
-        {navigationItems.map((item) => {
-          if (item.external) {
-            return (
-              <a
-                key={item.path}
-                href={isReaderMode ? '#' : item.path}
-                target={isReaderMode ? undefined : "_blank"}
-                rel={isReaderMode ? undefined : "noopener noreferrer"}
-                onClick={(e) => {
-                  if (isReaderMode) {
-                    e.preventDefault();
-                  }
-                }}
-                className={cn(
-                  "flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors",
-                  'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive',
-                  isReaderMode ? 'pointer-events-none opacity-70' : ''
-                )}
-              >
-                {item.icon}
-                <span className="ml-2 sm:ml-3 leading-tight">{item.label}</span>
-                {isReaderMode && (
-                  <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>
-                )}
-              </a>
-            );
-          }
+        {/* Menu déroulant Prestataires */}
+        <DropdownMenu>
+          <DropdownMenuTrigger 
+            className={cn(
+              "flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors w-full justify-start",
+              isPrestatairesActive()
+                ? 'bg-wedding-olive text-white shadow-sm'
+                : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive',
+              isReaderMode ? 'pointer-events-none opacity-70' : ''
+            )}
+            disabled={isReaderMode}
+          >
+            <Store className="h-4 w-4" />
+            <span className="ml-2 sm:ml-3 leading-tight">Prestataires</span>
+            <ChevronDown className="ml-auto h-4 w-4" />
+            {isReaderMode && (
+              <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>
+            )}
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-56 bg-white shadow-lg border border-gray-200" align="end">
+            {prestatairesItems.map((subItem) => (
+              <DropdownMenuItem key={subItem.path} asChild>
+                <Link
+                  to={isReaderMode ? '#' : subItem.path}
+                  onClick={(e) => {
+                    if (isReaderMode) {
+                      e.preventDefault();
+                    }
+                  }}
+                  className={cn(
+                    "flex items-center px-2 py-2 text-sm w-full",
+                    isActive(subItem.path)
+                      ? 'bg-wedding-olive/10 text-wedding-olive font-medium'
+                      : 'text-gray-600 hover:bg-gray-50'
+                  )}
+                >
+                  {subItem.icon}
+                  <span className="ml-2">{subItem.label}</span>
+                </Link>
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
 
-          return (
-            <Link
-              key={item.path}
-              to={isReaderMode ? '#' : item.path}
-              onClick={(e) => {
-                if (isReaderMode) {
-                  e.preventDefault();
-                }
-              }}
-              className={cn(
-                "flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors",
-                isActive(item.path)
-                  ? 'bg-wedding-olive text-white shadow-sm'
-                  : item.mission
-                  ? 'text-blue-600 font-semibold hover:bg-blue-50 border border-blue-200'
-                  : item.jourM
-                  ? 'text-wedding-olive font-semibold hover:bg-wedding-olive/20 border border-wedding-olive/20'
-                  : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive',
-                isReaderMode ? 'pointer-events-none opacity-70' : ''
-              )}
-            >
-              {item.icon}
-              <span className="ml-2 sm:ml-3 leading-tight">{item.label}</span>
-              {item.mission && !isReaderMode && (
-                <span className="ml-auto text-xs bg-blue-600 text-white px-1.5 sm:px-2 py-0.5 rounded-full hidden sm:inline">
-                  NOUVEAU
-                </span>
-              )}
-              {item.jourM && !isReaderMode && (
-                <span className="ml-auto text-xs bg-wedding-olive text-white px-1.5 sm:px-2 py-0.5 rounded-full hidden sm:inline">
-                  NOUVEAU
-                </span>
-              )}
-              {isReaderMode && item.path !== '/dashboard' && (
-                <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>
-              )}
-            </Link>
-          );
-        })}
+        {/* Menu déroulant Jour M */}
+        <DropdownMenu>
+          <DropdownMenuTrigger 
+            className={cn(
+              "flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors w-full justify-start",
+              isJourMActive()
+                ? 'bg-wedding-olive text-white shadow-sm'
+                : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive',
+              isReaderMode ? 'pointer-events-none opacity-70' : ''
+            )}
+            disabled={isReaderMode}
+          >
+            <Calendar className="h-4 w-4" />
+            <span className="ml-2 sm:ml-3 leading-tight">Jour M</span>
+            <ChevronDown className="ml-auto h-4 w-4" />
+            {isReaderMode && (
+              <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>
+            )}
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-56 bg-white shadow-lg border border-gray-200" align="end">
+            {jourMItems.map((subItem) => (
+              <DropdownMenuItem key={subItem.path} asChild>
+                <Link
+                  to={isReaderMode ? '#' : subItem.path}
+                  onClick={(e) => {
+                    if (isReaderMode) {
+                      e.preventDefault();
+                    }
+                  }}
+                  className={cn(
+                    "flex items-center px-2 py-2 text-sm w-full",
+                    isActive(subItem.path)
+                      ? 'bg-wedding-olive/10 text-wedding-olive font-medium'
+                      : 'text-gray-600 hover:bg-gray-50'
+                  )}
+                >
+                  {subItem.icon}
+                  <span className="ml-2">{subItem.label}</span>
+                </Link>
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        {/* Menu déroulant Besoin d'aide ? */}
+        <DropdownMenu>
+          <DropdownMenuTrigger 
+            className={cn(
+              "flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors w-full justify-start",
+              isHelpActive()
+                ? 'bg-wedding-olive text-white shadow-sm'
+                : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive',
+              isReaderMode ? 'pointer-events-none opacity-70' : ''
+            )}
+            disabled={isReaderMode}
+          >
+            <MessageCircleQuestion className="h-4 w-4" />
+            <span className="ml-2 sm:ml-3 leading-tight">Besoin d'aide ?</span>
+            <ChevronDown className="ml-auto h-4 w-4" />
+            {isReaderMode && (
+              <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>
+            )}
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-56 bg-white shadow-lg border border-gray-200" align="end">
+            {helpItems.map((subItem) => (
+              <DropdownMenuItem key={subItem.path} asChild>
+                {subItem.external ? (
+                  <a
+                    href={isReaderMode ? '#' : subItem.path}
+                    target={isReaderMode ? undefined : "_blank"}
+                    rel={isReaderMode ? undefined : "noopener noreferrer"}
+                    onClick={(e) => {
+                      if (isReaderMode) {
+                        e.preventDefault();
+                      }
+                    }}
+                    className={cn(
+                      "flex items-center px-2 py-2 text-sm w-full",
+                      'text-gray-600 hover:bg-gray-50'
+                    )}
+                  >
+                    {subItem.icon}
+                    <span className="ml-2">{subItem.label}</span>
+                  </a>
+                ) : (
+                  <Link
+                    to={isReaderMode ? '#' : subItem.path}
+                    onClick={(e) => {
+                      if (isReaderMode) {
+                        e.preventDefault();
+                      }
+                    }}
+                    className={cn(
+                      "flex items-center px-2 py-2 text-sm w-full",
+                      isActive(subItem.path)
+                        ? 'bg-wedding-olive/10 text-wedding-olive font-medium'
+                        : 'text-gray-600 hover:bg-gray-50'
+                    )}
+                  >
+                    {subItem.icon}
+                    <span className="ml-2">{subItem.label}</span>
+                  </Link>
+                )}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        {navigationItems.map((item) => (
+          <Link
+            key={item.path}
+            to={isReaderMode ? '#' : item.path}
+            onClick={(e) => {
+              if (isReaderMode) {
+                e.preventDefault();
+              }
+            }}
+            className={cn(
+              "flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors",
+              isActive(item.path)
+                ? 'bg-wedding-olive text-white shadow-sm'
+                : item.mission
+                ? 'text-blue-600 font-semibold hover:bg-blue-50 border border-blue-200'
+                : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive',
+              isReaderMode ? 'pointer-events-none opacity-70' : ''
+            )}
+          >
+            {item.icon}
+            <span className="ml-2 sm:ml-3 leading-tight">{item.label}</span>
+            {item.mission && !isReaderMode && (
+              <span className="ml-auto text-xs bg-blue-600 text-white px-1.5 sm:px-2 py-0.5 rounded-full hidden sm:inline">
+                NOUVEAU
+              </span>
+            )}
+            {isReaderMode && item.path !== '/dashboard' && (
+              <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>
+            )}
+          </Link>
+        ))}
       </nav>
       
       <div className="mt-auto px-2 sm:px-3 py-2">
