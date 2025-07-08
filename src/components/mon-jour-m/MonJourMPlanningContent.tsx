@@ -57,9 +57,11 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
             start_time: event.startTime.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
             duration: event.duration,
             assigned_to: event.assignedTo || [],
-            position: index // Sauvegarder la position aussi
+            position: index,
+            category: 'jour-m' // S'assurer que la catégorie reste 'jour-m'
           })
-          .eq('id', event.id);
+          .eq('id', event.id)
+          .eq('category', 'jour-m'); // Sécurité supplémentaire
       }
       
       console.log('✅ All events saved successfully');

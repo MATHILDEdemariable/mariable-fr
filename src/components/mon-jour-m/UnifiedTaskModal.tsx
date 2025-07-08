@@ -168,7 +168,7 @@ const UnifiedTaskModal: React.FC<UnifiedTaskModalProps> = ({
           description: formData.description.trim() || null,
           start_time: formData.startTime,
           duration: formData.duration,
-          category: formData.category,
+          category: 'jour-m', // Force jour-m category
           priority: formData.isHighlight ? 'high' : 'medium',
           position: 999,
           assigned_to: []
@@ -237,23 +237,49 @@ const UnifiedTaskModal: React.FC<UnifiedTaskModalProps> = ({
     try {
       const suggestionsToAdd = PREDEFINED_SUGGESTIONS.filter(s => selectedSuggestions.includes(s.id));
       
-      for (const suggestion of suggestionsToAdd) {
-        const { error } = await supabase
-          .from('coordination_planning')
-          .insert({
-            coordination_id: coordinationId,
-            title: suggestion.title,
-            description: suggestion.description,
-            start_time: '09:00',
-            duration: suggestion.duration,
-            category: suggestion.category,
-            priority: suggestion.priority,
-            position: 999,
-            assigned_to: [],
-            is_ai_generated: true
-          });
+      const eventsToInsert = suggestionsToAdd.map((suggestion, index) => ({
+        coordination_id: coordinationId,
+        title: suggestion.title,
+        description: suggestion.description,
+        start_time: '09:00',
+        duration: suggestion.duration,
+        category: 'jour-m', // Force jour-m category
+        priority: suggestion.priority,
+        position: 999 + index,
+        assigned_to: [],
+        is_ai_generated: true
+      }));
 
-        if (error) throw error;
+      const { data, error } = await supabase
+        .from('coordination_planning')
+        .insert(eventsToInsert)
+        .select();
+
+      if (error) throw error;
+
+      // Convertir les nouvelles données en PlanningEvent et les ajouter directement
+      if (data) {
+        const newEvents: PlanningEvent[] = data.map((item: any) => {
+          const [hours, minutes] = item.start_time.split(':').map(Number);
+          const startTime = new Date(referenceTime);
+          startTime.setHours(hours, minutes, 0, 0);
+          
+          return {
+            id: item.id,
+            title: item.title,
+            notes: item.description,
+            startTime,
+            endTime: new Date(startTime.getTime() + item.duration * 60000),
+            duration: item.duration,
+            category: item.category,
+            type: item.category,
+            isHighlight: item.priority === 'high',
+            assignedTo: []
+          };
+        });
+
+        // Passer les nouveaux événements au composant parent
+        onPlanningGenerated(newEvents);
       }
 
       toast({
@@ -263,9 +289,6 @@ const UnifiedTaskModal: React.FC<UnifiedTaskModalProps> = ({
 
       setSelectedSuggestions([]);
       onClose();
-      
-      // Recharger la page pour voir les nouveaux éléments
-      window.location.reload();
     } catch (error) {
       console.error('❌ Error adding suggestions:', error);
       toast({
