@@ -250,36 +250,17 @@ const UnifiedTaskModal: React.FC<UnifiedTaskModalProps> = ({
         is_ai_generated: true
       }));
 
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('coordination_planning')
-        .insert(eventsToInsert)
-        .select();
+        .insert(eventsToInsert);
 
-      if (error) throw error;
-
-      // Convertir les nouvelles données en PlanningEvent et les ajouter directement
-      if (data) {
-        const newEvents: PlanningEvent[] = data.map((item: any) => {
-          const [hours, minutes] = item.start_time.split(':').map(Number);
-          const startTime = new Date(referenceTime);
-          startTime.setHours(hours, minutes, 0, 0);
-          
-          return {
-            id: item.id,
-            title: item.title,
-            notes: item.description,
-            startTime,
-            endTime: new Date(startTime.getTime() + item.duration * 60000),
-            duration: item.duration,
-            category: item.category,
-            type: item.category,
-            isHighlight: item.priority === 'high',
-            assignedTo: []
-          };
-        });
-
-        // Passer les nouveaux événements au composant parent
-        onPlanningGenerated(newEvents);
+      if (error) {
+        // Si erreur de conflit de contrainte unique, on l'ignore (doublon)
+        if (error.code === '23505') {
+          console.log('⚠️ Some suggestions already exist, skipping duplicates');
+        } else {
+          throw error;
+        }
       }
 
       toast({
@@ -289,6 +270,10 @@ const UnifiedTaskModal: React.FC<UnifiedTaskModalProps> = ({
 
       setSelectedSuggestions([]);
       onClose();
+      
+      // Déclencher un rechargement des données depuis la base
+      // au lieu d'ajouter directement à l'état local
+      onPlanningGenerated([]);
     } catch (error) {
       console.error('❌ Error adding suggestions:', error);
       toast({

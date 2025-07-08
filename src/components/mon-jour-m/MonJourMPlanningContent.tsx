@@ -227,6 +227,63 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
   const handlePlanningGenerated = async (newEvents: PlanningEvent[]) => {
     console.log('🤖 Handling AI-generated planning:', newEvents.length, 'events');
     
+    // Si aucun nouvel événement (cas des suggestions), recharger les données depuis la base
+    if (newEvents.length === 0) {
+      console.log('🔄 Reloading planning data from database');
+      try {
+        const { data, error } = await supabase
+          .from('coordination_planning')
+          .select('*')
+          .eq('coordination_id', coordinationId)
+          .eq('category', 'jour-m')
+          .order('position', { ascending: true });
+
+        if (error) throw error;
+
+        if (data && data.length > 0) {
+          const convertedEvents: PlanningEvent[] = data.map((item: any) => {
+            let startTime: Date;
+            
+            if (item.start_time) {
+              const [hours, minutes] = item.start_time.split(':').map(Number);
+              startTime = new Date(referenceTime);
+              startTime.setHours(hours, minutes, 0, 0);
+            } else {
+              startTime = new Date(referenceTime);
+            }
+            
+            return {
+              id: item.id,
+              title: item.title,
+              notes: item.description,
+              startTime,
+              endTime: new Date(startTime.getTime() + (item.duration || 30) * 60000),
+              duration: item.duration || 30,
+              category: item.category || 'general',
+              type: item.category || 'general',
+              isHighlight: item.priority === 'high',
+              assignedTo: Array.isArray(item.assigned_to) ? item.assigned_to : []
+            };
+          });
+          
+          console.log('✅ Reloaded', convertedEvents.length, 'events from database');
+          setEvents(convertedEvents);
+        }
+        
+        setIsTaskModalOpen(false);
+        return;
+      } catch (error) {
+        console.error('❌ Error reloading planning data:', error);
+        toast({
+          title: "Erreur de rechargement",
+          description: "Impossible de recharger le planning.",
+          variant: "destructive"
+        });
+        return;
+      }
+    }
+    
+    // Cas des événements AI personnalisés - insertion directe
     try {
       const eventsToSave = newEvents.map((event, index) => ({
         coordination_id: coordinationId,
