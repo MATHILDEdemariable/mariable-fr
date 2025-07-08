@@ -9,10 +9,18 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useUserProfile } from '@/hooks/useUserProfile';
-import ProgressOverview from './ProgressOverview';
 import DashboardFeatureCards from './DashboardFeatureCards';
-import InitiationMariageWidget from './InitiationMariageWidget';
-import ChecklistWidget from './ChecklistWidget';
+import { CheckSquare, ArrowRight, Circle, CheckCircle2, Loader2 } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/components/ui/use-toast';
+
+interface Task {
+  id: string;
+  label: string;
+  completed: boolean;
+  priority?: string;
+  category: string;
+}
 
 const ProjectSummary = () => {
   const today = new Date();
@@ -21,6 +29,9 @@ const ProjectSummary = () => {
   const [localWeddingDate, setLocalWeddingDate] = useState<Date | undefined>();
   const [localGuestCount, setLocalGuestCount] = useState<string>("");
   const isMobile = useIsMobile();
+  const { toast } = useToast();
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [tasksLoading, setTasksLoading] = useState(true);
 
   // Initialize local state from profile
   useEffect(() => {
@@ -33,6 +44,37 @@ const ProjectSummary = () => {
       }
     }
   }, [profile]);
+
+  // Load tasks
+  useEffect(() => {
+    const loadRecentTasks = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+
+        const { data, error } = await supabase
+          .from('generated_tasks')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('priority', { ascending: false })
+          .order('position', { ascending: true })
+          .limit(5);
+
+        if (error) {
+          console.error('Error loading tasks:', error);
+          return;
+        }
+
+        setTasks(data || []);
+      } catch (error) {
+        console.error('Error:', error);
+      } finally {
+        setTasksLoading(false);
+      }
+    };
+
+    loadRecentTasks();
+  }, []);
 
   // Auto-save wedding date
   const handleWeddingDateChange = async (date: Date | undefined) => {
@@ -56,8 +98,47 @@ const ProjectSummary = () => {
     return () => clearTimeout(timer);
   }, [localGuestCount, updateProfile]);
 
+  // Toggle task completion
+  const toggleTask = async (taskId: string) => {
+    try {
+      const task = tasks.find(t => t.id === taskId);
+      if (!task) return;
+
+      const { error } = await supabase
+        .from('generated_tasks')
+        .update({ completed: !task.completed })
+        .eq('id', taskId);
+
+      if (error) {
+        toast({
+          title: "Erreur",
+          description: "Impossible de mettre à jour la tâche",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      setTasks(prev => 
+        prev.map(t => 
+          t.id === taskId ? { ...t, completed: !t.completed } : t
+        )
+      );
+
+      toast({
+        title: task.completed ? "Tâche réactivée" : "Tâche complétée",
+        description: `"${task.label}" ${task.completed ? 'réactivée' : 'marquée comme complétée'}`,
+      });
+    } catch (error) {
+      console.error('Error toggling task:', error);
+    }
+  };
+
   // Calculate days until wedding
   const daysUntilWedding = localWeddingDate ? differenceInDays(localWeddingDate, today) : null;
+  
+  // Calculate task completion stats
+  const completedTasks = tasks.filter(task => task.completed).length;
+  const completionPercentage = tasks.length > 0 ? Math.round((completedTasks / tasks.length) * 100) : 0;
 
   // Get greeting with first name
   const getGreeting = () => {
@@ -142,16 +223,86 @@ const ProjectSummary = () => {
         )}
       </div>
 
-      {/* Progress Overview */}
-      <ProgressOverview />
-      
-      {/* Widgets principaux */}
-      <div>
-        <h2 className="text-xl font-serif mb-4 text-wedding-olive">Premiers pas</h2>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <InitiationMariageWidget />
-          <ChecklistWidget />
+      {/* Initiation Button */}
+      <div className="mb-6">
+        <Button 
+          onClick={() => window.location.href = '/dashboard/planning'}
+          className="bg-wedding-olive hover:bg-wedding-olive/90 text-white"
+        >
+          Commencer votre initiation mariage
+        </Button>
+      </div>
+
+      {/* Check-list Mariage Section */}
+      <div className="bg-gradient-to-br from-wedding-cream/20 to-wedding-olive/5 border border-wedding-olive/20 rounded-xl p-6">
+        <div className="mb-6">
+          <h2 className="text-2xl font-serif text-wedding-olive flex items-center gap-2">
+            <CheckSquare className="h-6 w-6" />
+            Check-list Mariage
+          </h2>
         </div>
+        
+        {tasksLoading ? (
+          <div className="flex justify-center py-8">
+            <Loader2 className="h-6 w-6 animate-spin text-wedding-olive" />
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {tasks.length > 0 ? (
+              <>
+                <div className="flex justify-between items-center">
+                  <p className="text-sm text-gray-600">
+                    {completedTasks} sur {tasks.length} tâches terminées
+                  </p>
+                  <span className="text-sm font-medium text-wedding-olive">
+                    {completionPercentage}%
+                  </span>
+                </div>
+                
+                <div className="space-y-2">
+                  {tasks.map((task) => (
+                    <div 
+                      key={task.id} 
+                      className="flex items-center gap-3 py-2 px-2 rounded-lg hover:bg-white/50 transition-colors"
+                    >
+                      <button
+                        onClick={() => toggleTask(task.id)}
+                        className="text-wedding-olive hover:text-wedding-olive/80 transition-colors"
+                      >
+                        {task.completed ? (
+                          <CheckCircle2 className="h-4 w-4" />
+                        ) : (
+                          <Circle className="h-4 w-4" />
+                        )}
+                      </button>
+                      <span className={`text-sm flex-1 ${task.completed ? 'line-through text-gray-500' : 'text-gray-700'}`}>
+                        {task.label}
+                      </span>
+                      {task.priority === 'high' && !task.completed && (
+                        <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : (
+              <div className="text-center py-4">
+                <p className="text-sm text-gray-600 mb-3">
+                  Aucune tâche trouvée. Commencez par créer votre check-list personnalisée !
+                </p>
+              </div>
+            )}
+            
+            <Button 
+              onClick={() => window.location.href = '/dashboard/tasks'}
+              variant="outline"
+              className="w-full border-wedding-olive text-wedding-olive hover:bg-wedding-olive hover:text-white"
+            >
+              {tasks.length > 0 ? 'Voir toutes les tâches' : 'Créer ma check-list'}
+              <ArrowRight className="h-4 w-4 ml-2" />
+            </Button>
+          </div>
+        )}
       </div>
       
       {/* Feature Cards */}
