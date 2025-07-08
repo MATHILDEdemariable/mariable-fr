@@ -5,7 +5,7 @@ import {
   LayoutDashboard, 
   Calendar, 
   CheckSquare, 
-  Coins, 
+  Calculator, 
   Store, 
   Heart, 
   Settings,
@@ -14,10 +14,18 @@ import {
   MessageCircleQuestion,
   MessageSquare,
   Users,
-  Lightbulb
+  Lightbulb,
+  ChevronDown,
+  Coins
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 interface DashboardSidebarProps {
   isReaderMode?: boolean;
@@ -26,6 +34,20 @@ interface DashboardSidebarProps {
 const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = false }) => {
   const location = useLocation();
   
+  // Menu déroulant Calculatrice
+  const calculatriceItems = [
+    {
+      label: 'Calculatrice Budget',
+      icon: <Coins className="h-4 w-4" />,
+      path: '/dashboard/budget',
+    },
+    {
+      label: 'Calculatrice Boisson',
+      icon: <Wine className="h-4 w-4" />,
+      path: '/dashboard/drinks',
+    },
+  ];
+
   const navigationItems = [
     {
       label: 'Tableau de bord',
@@ -41,11 +63,6 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
       label: 'Check-list',
       icon: <CheckSquare className="h-4 w-4" />,
       path: '/dashboard/tasks',
-    },
-    {
-      label: 'Budget',
-      icon: <Coins className="h-4 w-4" />,
-      path: '/dashboard/budget',
     },
     {
       label: 'Prestataires',
@@ -73,11 +90,6 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
       label: 'Conseils Jour M',
       icon: <Lightbulb className="h-4 w-4" />,
       path: '/dashboard/coordination',
-    },
-    {
-      label: 'Calculatrice de boisson',
-      icon: <Wine className="h-4 w-4" />,
-      path: '/dashboard/drinks',
     },
     {
       label: 'Des questions ?',
@@ -130,6 +142,11 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
     return location.pathname.startsWith(path);
   };
 
+  // Vérifier si le menu Calculatrice doit être actif
+  const isCalculatriceActive = () => {
+    return calculatriceItems.some(item => isActive(item.path));
+  };
+
   return (
     <div className="h-full min-h-screen bg-white border-r border-gray-200">
       <div className="flex items-center px-4 sm:px-6 py-3 sm:py-4">
@@ -137,6 +154,50 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
       </div>
       
       <nav className="py-2 sm:py-4 px-2 sm:px-3 space-y-1">
+        {/* Menu déroulant Calculatrice */}
+        <DropdownMenu>
+          <DropdownMenuTrigger 
+            className={cn(
+              "flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors w-full justify-start",
+              isCalculatriceActive()
+                ? 'bg-wedding-olive text-white shadow-sm'
+                : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive',
+              isReaderMode ? 'pointer-events-none opacity-70' : ''
+            )}
+            disabled={isReaderMode}
+          >
+            <Calculator className="h-4 w-4" />
+            <span className="ml-2 sm:ml-3 leading-tight">Calculatrice</span>
+            <ChevronDown className="ml-auto h-4 w-4" />
+            {isReaderMode && (
+              <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>
+            )}
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-56 bg-white shadow-lg border border-gray-200" align="end">
+            {calculatriceItems.map((subItem) => (
+              <DropdownMenuItem key={subItem.path} asChild>
+                <Link
+                  to={isReaderMode ? '#' : subItem.path}
+                  onClick={(e) => {
+                    if (isReaderMode) {
+                      e.preventDefault();
+                    }
+                  }}
+                  className={cn(
+                    "flex items-center px-2 py-2 text-sm w-full",
+                    isActive(subItem.path)
+                      ? 'bg-wedding-olive/10 text-wedding-olive font-medium'
+                      : 'text-gray-600 hover:bg-gray-50'
+                  )}
+                >
+                  {subItem.icon}
+                  <span className="ml-2">{subItem.label}</span>
+                </Link>
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+
         {navigationItems.map((item) => {
           if (item.external) {
             return (
