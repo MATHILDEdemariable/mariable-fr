@@ -10,6 +10,7 @@ import { Plus, FileText, Download, Eye, Edit, Trash2, Upload, File } from 'lucid
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
+import SharePublicButton from './SharePublicButton';
 
 interface Document {
   id: string;
@@ -191,12 +192,26 @@ const MonJourMDocuments: React.FC = () => {
       const fileExt = file.name.split('.').pop();
       const fileName = `${coordination.id}/${Date.now()}.${fileExt}`;
       
-      // Pour l'instant, on simule l'upload sans stockage réel
-      // Dans une vraie app, il faudrait configurer Supabase Storage
-      const mockUrl = URL.createObjectURL(file);
+      // Upload vers Supabase Storage
+      const { data, error } = await supabase.storage
+        .from('coordination-files')
+        .upload(fileName, file, {
+          cacheControl: '3600',
+          upsert: false
+        });
+
+      if (error) {
+        console.error('Erreur upload vers Supabase Storage:', error);
+        throw error;
+      }
+
+      // Obtenir l'URL publique
+      const { data: { publicUrl } } = supabase.storage
+        .from('coordination-files')
+        .getPublicUrl(fileName);
       
       return {
-        file_url: mockUrl,
+        file_url: publicUrl,
         file_path: fileName,
         file_type: fileExt,
         file_size: file.size,
@@ -362,10 +377,14 @@ const MonJourMDocuments: React.FC = () => {
       <div className="flex flex-col md:flex-row gap-4 justify-between items-start">
         <div>
           <h2 className="text-2xl font-semibold mb-2">Documents du jour J</h2>
+          <p className="text-sm text-muted-foreground mb-3">
+            Créez votre équipe, faites votre planning, enregistrez les documents et partagez.
+          </p>
           <p className="text-gray-600">Centralisez tous vos documents importants</p>
         </div>
         
         <div className="flex gap-2">
+          {coordination && <SharePublicButton coordinationId={coordination.id} />}
           <Dialog open={showAddDocument} onOpenChange={setShowAddDocument}>
             <DialogTrigger asChild>
               <Button className="flex items-center gap-2">

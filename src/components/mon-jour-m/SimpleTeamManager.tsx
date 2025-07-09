@@ -12,6 +12,7 @@ import { Users, Plus, Edit2, Trash2, Mail, Phone } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 import { TeamMember, WeddingCoordination } from '@/types/monjourm-mvp';
+import SharePublicButton from './SharePublicButton';
 
 // Mêmes rôles que dans Mission Mariage pour la cohérence
 const TEAM_ROLES = [
@@ -227,14 +228,20 @@ const SimpleTeamManager: React.FC<SimpleTeamManagerProps> = ({ coordination }) =
       <div className="flex justify-between items-center">
         <div>
           <h3 className="text-lg font-medium">Équipe du Jour J</h3>
+          <p className="text-sm text-muted-foreground mb-3">
+            Créez votre équipe, faites votre planning, enregistrez les documents et partagez.
+          </p>
           <p className="text-sm text-muted-foreground">
             Gérez votre équipe et leurs rôles
           </p>
         </div>
-        <Button onClick={() => setShowAddModal(true)}>
-          <Plus className="h-4 w-4 mr-2" />
-          Ajouter un membre
-        </Button>
+        <div className="flex gap-2">
+          <SharePublicButton coordinationId={coordination.id} />
+          <Button onClick={() => setShowAddModal(true)}>
+            <Plus className="h-4 w-4 mr-2" />
+            Ajouter un membre
+          </Button>
+        </div>
       </div>
 
       {/* Liste des membres */}
