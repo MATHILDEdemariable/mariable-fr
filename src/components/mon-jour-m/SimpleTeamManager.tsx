@@ -11,7 +11,22 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Users, Plus, Edit2, Trash2, Mail, Phone } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
-import { TeamMember, WeddingCoordination, PREDEFINED_ROLES } from '@/types/monjourm-mvp';
+import { TeamMember, WeddingCoordination } from '@/types/monjourm-mvp';
+
+// Mêmes rôles que dans Mission Mariage pour la cohérence
+const TEAM_ROLES = [
+  'Organisateur principal',
+  'Co-organisateur',
+  'Responsable budget',
+  'Responsable prestataires',
+  'Responsable logistique',
+  'Responsable communication',
+  'Responsable administratif',
+  'Assistant',
+  'Famille proche',
+  'Ami(e) de confiance',
+  'Autre'
+];
 
 interface SimpleTeamManagerProps {
   coordination: WeddingCoordination;
@@ -320,7 +335,7 @@ const SimpleTeamManager: React.FC<SimpleTeamManagerProps> = ({ coordination }) =
                   <SelectValue placeholder="Sélectionner un rôle" />
                 </SelectTrigger>
                 <SelectContent>
-                  {PREDEFINED_ROLES.map((role) => (
+                  {TEAM_ROLES.map((role) => (
                     <SelectItem key={role} value={role}>{role}</SelectItem>
                   ))}
                 </SelectContent>
@@ -404,7 +419,7 @@ const SimpleTeamManager: React.FC<SimpleTeamManagerProps> = ({ coordination }) =
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {PREDEFINED_ROLES.map((role) => (
+                    {TEAM_ROLES.map((role) => (
                       <SelectItem key={role} value={role}>{role}</SelectItem>
                     ))}
                   </SelectContent>
