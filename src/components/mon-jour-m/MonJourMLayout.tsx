@@ -46,15 +46,6 @@ const MonJourMLayout: React.FC<MonJourMLayoutProps> = ({ children, coordinationI
           <div className="mt-4 pb-4">
             <Tabs value={getActiveTab()} className="w-full">
               <TabsList className="grid w-full grid-cols-3 max-w-lg">
-                <TabsTrigger value="planning" asChild>
-                  <Link 
-                    to="/mon-jour-m/planning" 
-                    className="flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:text-blue-600"
-                  >
-                    <Calendar className="h-4 w-4" />
-                    Planning
-                  </Link>
-                </TabsTrigger>
                 <TabsTrigger value="equipe" asChild>
                   <Link 
                     to="/mon-jour-m/equipe" 
@@ -62,6 +53,15 @@ const MonJourMLayout: React.FC<MonJourMLayoutProps> = ({ children, coordinationI
                   >
                     <Users className="h-4 w-4" />
                     Équipe
+                  </Link>
+                </TabsTrigger>
+                <TabsTrigger value="planning" asChild>
+                  <Link 
+                    to="/mon-jour-m/planning" 
+                    className="flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:text-blue-600"
+                  >
+                    <Calendar className="h-4 w-4" />
+                    Planning
                   </Link>
                 </TabsTrigger>
                 <TabsTrigger value="documents" asChild>
