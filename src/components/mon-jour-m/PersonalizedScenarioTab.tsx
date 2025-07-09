@@ -354,7 +354,7 @@ Instructions spécifiques :
           {isGenerating ? (
             <>
               <Loader2 className="h-4 w-4 animate-spin mr-2" />
-              Génération en cours...
+              Génération en cours... (1-2 minutes)
             </>
           ) : (
             <>

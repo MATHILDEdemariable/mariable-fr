@@ -283,27 +283,36 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
       }
     }
     
-    // Cas des événements AI personnalisés - insertion directe
+    // Cas des événements AI personnalisés - insertion directe en base de données
+    console.log('💾 Saving AI-generated events to database');
     try {
       const eventsToSave = newEvents.map((event, index) => ({
         coordination_id: coordinationId,
         title: event.title,
-        description: event.notes,
+        description: event.notes || event.title,
         start_time: event.startTime.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
         duration: event.duration,
         category: 'jour-m',
         priority: event.isHighlight ? 'high' : 'medium',
         position: events.length + index,
-        assigned_to: []
+        assigned_to: event.assignedTo || []
       }));
+
+      console.log('📝 Events to save:', eventsToSave);
 
       const { data, error } = await supabase
         .from('coordination_planning')
         .insert(eventsToSave)
         .select();
 
-      if (error) throw error;
+      if (error) {
+        console.error('❌ Database insert error:', error);
+        throw error;
+      }
 
+      console.log('✅ Events saved to database:', data);
+
+      // Convertir les données sauvegardées en événements de planning
       const convertedNewEvents: PlanningEvent[] = data.map((item: any) => {
         const [hours, minutes] = item.start_time.split(':').map(Number);
         const startTime = new Date(referenceTime);
@@ -319,11 +328,16 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
           category: item.category,
           type: item.category,
           isHighlight: item.priority === 'high',
-          assignedTo: []
+          assignedTo: Array.isArray(item.assigned_to) ? item.assigned_to : []
         };
       });
 
-      setEvents(prev => [...prev, ...convertedNewEvents]);
+      // Mettre à jour l'état local avec les nouveaux événements
+      setEvents(prev => {
+        const updatedEvents = [...prev, ...convertedNewEvents];
+        console.log('🔄 Updated events state with', updatedEvents.length, 'total events');
+        return updatedEvents;
+      });
       
       toast({
         title: "Planning mis à jour",
@@ -335,7 +349,7 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
       console.error('❌ Error handling AI planning:', error);
       toast({
         title: "Erreur d'intégration",
-        description: "Impossible d'ajouter les événements générés.",
+        description: "Impossible d'ajouter les événements générés. Détails: " + (error instanceof Error ? error.message : 'Erreur inconnue'),
         variant: "destructive"
       });
     }
