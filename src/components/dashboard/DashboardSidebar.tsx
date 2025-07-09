@@ -392,7 +392,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
           <span className="ml-2 sm:ml-3 leading-tight">Mission Mariage</span>
           {!isReaderMode && (
             <span className="ml-auto text-xs bg-blue-600 text-white px-1.5 sm:px-2 py-0.5 rounded-full hidden sm:inline">
-              NOUVEAU
+              BETA
             </span>
           )}
           {isReaderMode && (
