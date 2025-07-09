@@ -70,34 +70,14 @@ const CoordinationPage = () => {
             </CardContent>
           </Card>
         ) : (
-          <Tabs defaultValue="conseils" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="conseils">Conseils Pratiques</TabsTrigger>
-              <TabsTrigger value="coordination">Coordination Équipe</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="conseils" className="space-y-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Conseils pour votre Jour M</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <AdviceSidebar />
-                </CardContent>
-              </Card>
-            </TabsContent>
-            
-            <TabsContent value="coordination" className="space-y-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Coordination d'Équipe</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <TeamTasksSection />
-                </CardContent>
-              </Card>
-            </TabsContent>
-          </Tabs>
+          <Card>
+            <CardHeader>
+              <CardTitle>Conseils pour votre Jour M</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <AdviceSidebar />
+            </CardContent>
+          </Card>
         )}
       </div>
     </>
