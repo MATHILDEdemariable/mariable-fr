@@ -372,33 +372,6 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
           </DropdownMenuContent>
         </DropdownMenu>
 
-        {/* Mission Mariage */}
-        <Link
-          to={isReaderMode ? '#' : '/dashboard/project-management'}
-          onClick={(e) => {
-            if (isReaderMode) {
-              e.preventDefault();
-            }
-          }}
-          className={cn(
-            "flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors",
-            isActive('/dashboard/project-management')
-              ? 'bg-wedding-olive text-white shadow-sm'
-              : 'text-blue-600 font-semibold hover:bg-blue-50 border border-blue-200',
-            isReaderMode ? 'pointer-events-none opacity-70' : ''
-          )}
-        >
-          <Calendar className="h-4 w-4" />
-          <span className="ml-2 sm:ml-3 leading-tight">Mission Mariage</span>
-          {!isReaderMode && (
-            <span className="ml-auto text-xs bg-blue-600 text-white px-1.5 sm:px-2 py-0.5 rounded-full hidden sm:inline">
-              BETA
-            </span>
-          )}
-          {isReaderMode && (
-            <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>
-          )}
-        </Link>
 
         {/* Menu déroulant Jour M */}
         <DropdownMenu>
@@ -462,6 +435,34 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
         >
           <Settings className="h-4 w-4" />
           <span className="ml-2 sm:ml-3 leading-tight">Paramètres</span>
+          {isReaderMode && (
+            <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>
+          )}
+        </Link>
+
+        {/* Mission Mariage */}
+        <Link
+          to={isReaderMode ? '#' : '/dashboard/project-management'}
+          onClick={(e) => {
+            if (isReaderMode) {
+              e.preventDefault();
+            }
+          }}
+          className={cn(
+            "flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors",
+            isActive('/dashboard/project-management')
+              ? 'bg-wedding-olive text-white shadow-sm'
+              : 'text-blue-600 font-semibold hover:bg-blue-50 border border-blue-200',
+            isReaderMode ? 'pointer-events-none opacity-70' : ''
+          )}
+        >
+          <Calendar className="h-4 w-4" />
+          <span className="ml-2 sm:ml-3 leading-tight">Mission Mariage</span>
+          {!isReaderMode && (
+            <span className="ml-auto text-xs bg-blue-600 text-white px-1.5 sm:px-2 py-0.5 rounded-full hidden sm:inline">
+              BETA
+            </span>
+          )}
           {isReaderMode && (
             <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>
           )}
