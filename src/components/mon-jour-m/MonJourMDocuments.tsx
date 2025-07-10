@@ -403,8 +403,16 @@ const MonJourMDocuments: React.FC = () => {
     if (!coordination?.id) return null;
 
     try {
+      // Obtenir l'utilisateur authentifié
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        throw new Error('Utilisateur non authentifié');
+      }
+
       const fileExt = file.name.split('.').pop();
-      const fileName = `${coordination.id}/${Date.now()}.${fileExt}`;
+      // Utiliser user_id comme dossier principal pour respecter les politiques RLS
+      const fileName = `${user.id}/coordination-${coordination.id}/${Date.now()}.${fileExt}`;
       
       const { data, error } = await supabase.storage
         .from('coordination-files')
