@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Calendar, Users, FileText, Clock, CheckCircle2, Circle, User, Building, Mail, Phone, AlertCircle, Filter, Eye, ExternalLink, Download } from 'lucide-react';
+import { Calendar, Users, FileText, Clock, CheckCircle2, Circle, User, Building, Mail, Phone, AlertCircle, Filter, Eye, ExternalLink, Download, Loader2 } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { validatePlanningShareToken, getPublicCoordinationData } from '@/utils/tokenUtils';
 
@@ -22,6 +23,7 @@ const JourMVue: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [selectedTeamMember, setSelectedTeamMember] = useState<string>('all');
   const [filteredTasks, setFilteredTasks] = useState<any[]>([]);
+  const [isExporting, setIsExporting] = useState(false);
 
   useEffect(() => {
     console.log('🚀 JourMVue component mounted with token:', token);
@@ -127,6 +129,29 @@ const JourMVue: React.FC = () => {
     }
   };
 
+  const handleExportPDF = async () => {
+    setIsExporting(true);
+    try {
+      const { exportPublicPlanningToPDF } = await import('@/services/publicPlanningExportService');
+      const success = await exportPublicPlanningToPDF({
+        coordination,
+        tasks: filteredTasks,
+        teamMembers,
+        documents,
+        pinterestLinks
+      }, `${coordination.title || 'Planning'}_${new Date().toISOString().split('T')[0]}.pdf`);
+      
+      if (!success) {
+        alert('Erreur lors de l\'export PDF');
+      }
+    } catch (error) {
+      console.error('Erreur export PDF:', error);
+      alert('Erreur lors de l\'export PDF');
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -196,6 +221,28 @@ const JourMVue: React.FC = () => {
                 <strong>Mode consultation :</strong> Ce planning est en lecture seule. 
                 Contactez les mariés pour toute modification.
               </p>
+            </div>
+            
+            {/* Bouton Export PDF principal bien visible */}
+            <div className="mt-6">
+              <Button
+                onClick={handleExportPDF}
+                disabled={isExporting}
+                className="bg-primary text-primary-foreground hover:bg-primary/90"
+                size="lg"
+              >
+                {isExporting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Export en cours...
+                  </>
+                ) : (
+                  <>
+                    <Download className="mr-2 h-4 w-4" />
+                    Exporter en PDF
+                  </>
+                )}
+              </Button>
             </div>
           </div>
         </div>
@@ -426,32 +473,6 @@ const JourMVue: React.FC = () => {
                       Les documents sont visibles en consultation uniquement pour des raisons de confidentialité.
                     </p>
                   </div>
-                  <button
-                    onClick={async () => {
-                      try {
-                        // Import dynamique du service d'export PDF public
-                        const { exportPublicPlanningToPDF } = await import('@/services/publicPlanningExportService');
-                        const success = await exportPublicPlanningToPDF({
-                          coordination,
-                          tasks: filteredTasks,
-                          teamMembers,
-                          documents,
-                          pinterestLinks
-                        });
-                        
-                        if (!success) {
-                          alert('Erreur lors de l\'export PDF');
-                        }
-                      } catch (error) {
-                        console.error('Erreur export PDF:', error);
-                        alert('Erreur lors de l\'export PDF');
-                      }
-                    }}
-                    className="flex items-center gap-2 px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                  >
-                    <Download className="h-4 w-4" />
-                    Exporter en PDF
-                  </button>
                 </div>
               </CardHeader>
               <CardContent>
@@ -469,22 +490,60 @@ const JourMVue: React.FC = () => {
                               <p className="text-sm text-gray-500 capitalize">{doc.category}</p>
                             </div>
                           </div>
-                          <div className="flex items-center gap-2">
-                            {doc.file_url && (
-                              <button
-                                onClick={() => {
-                                  window.open(doc.file_url, '_blank');
-                                }}
-                                className="text-sm text-blue-600 hover:text-blue-800 flex items-center gap-1"
-                              >
-                                <Eye className="h-4 w-4" />
-                                Visualiser
-                              </button>
-                            )}
-                            <p className="text-xs text-gray-400">
-                              {new Date(doc.created_at).toLocaleDateString('fr-FR')}
-                            </p>
-                          </div>
+                           <div className="flex items-center gap-2">
+                             {doc.file_url && (
+                               <div className="flex gap-2">
+                                 <Button 
+                                   variant="outline" 
+                                   size="sm"
+                                   onClick={() => {
+                                     try {
+                                       // Construire l'URL publique directe pour Supabase Storage
+                                       let publicUrl = doc.file_url;
+                                       
+                                       // Si c'est une URL signée Supabase, la convertir en URL publique
+                                       if (doc.file_url.includes('supabase') && doc.file_url.includes('/storage/v1/object/sign/')) {
+                                         publicUrl = doc.file_url.replace('/storage/v1/object/sign/', '/storage/v1/object/public/');
+                                       }
+                                       
+                                       window.open(publicUrl, '_blank');
+                                     } catch (error) {
+                                       console.error('Erreur lors de l\'ouverture du document:', error);
+                                       // Fallback vers l'URL originale
+                                       window.open(doc.file_url, '_blank');
+                                     }
+                                   }}
+                                 >
+                                   <Eye className="h-4 w-4 mr-1" />
+                                   Visualiser
+                                 </Button>
+                                 <Button 
+                                   variant="ghost" 
+                                   size="sm"
+                                   onClick={() => {
+                                     try {
+                                       const link = document.createElement('a');
+                                       link.href = doc.file_url;
+                                       link.download = doc.title;
+                                       link.target = '_blank';
+                                       document.body.appendChild(link);
+                                       link.click();
+                                       document.body.removeChild(link);
+                                     } catch (error) {
+                                       console.error('Erreur lors du téléchargement:', error);
+                                       window.open(doc.file_url, '_blank');
+                                     }
+                                   }}
+                                 >
+                                   <Download className="h-4 w-4 mr-1" />
+                                   Télécharger
+                                 </Button>
+                               </div>
+                             )}
+                             <p className="text-xs text-gray-400">
+                               {new Date(doc.created_at).toLocaleDateString('fr-FR')}
+                             </p>
+                           </div>
                         </div>
                       ))}
                   </div>
