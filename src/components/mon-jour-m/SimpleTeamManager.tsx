@@ -14,19 +14,18 @@ import { useToast } from '@/components/ui/use-toast';
 import { TeamMember, WeddingCoordination } from '@/types/monjourm-mvp';
 import SharePublicButton from './SharePublicButton';
 
-// Mêmes rôles que dans Mission Mariage pour la cohérence
+// Rôles spécifiques au mariage
 const TEAM_ROLES = [
-  'Organisateur principal',
+  'Mariés',
+  'Témoins', 
+  'Amis',
+  'Famille',
   'Co-organisateur',
-  'Responsable budget',
-  'Responsable prestataires',
-  'Responsable logistique',
-  'Responsable communication',
-  'Responsable administratif',
-  'Assistant',
-  'Famille proche',
-  'Ami(e) de confiance',
-  'Autre'
+  'Prestataires : Lieux',
+  'Prestataires : Traiteur',
+  'Prestataires : Coordinateur',
+  'Prestataires : Photographe',
+  'Autres'
 ];
 
 interface SimpleTeamManagerProps {
@@ -121,7 +120,7 @@ const SimpleTeamManager: React.FC<SimpleTeamManagerProps> = ({ coordination }) =
           email: formData.email || null,
           phone: formData.phone || null,
           notes: formData.notes || null,
-          type: 'person'
+          type: formData.role.startsWith('Prestataires :') ? 'vendor' : 'person'
         });
 
       if (error) throw error;
