@@ -156,8 +156,17 @@ const JourMVue: React.FC = () => {
   }
 
   const { coordination, tasks, teamMembers, documents } = weddingData;
-  const people = teamMembers.filter(m => m.type === 'person');
-  const vendors = teamMembers.filter(m => m.type === 'vendor');
+  
+  // Améliorer la gestion des types avec fallback
+  const people = teamMembers.filter(m => {
+    const type = m.type || 'person'; // Fallback vers 'person' si type manquant
+    return type === 'person' || (type !== 'vendor' && type !== 'person'); // Inclure les types inconnus comme 'person'
+  });
+  
+  const vendors = teamMembers.filter(m => {
+    const type = m.type || 'person';
+    return type === 'vendor';
+  });
 
   return (
     <div className="min-h-screen bg-gray-50">
