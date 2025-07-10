@@ -307,6 +307,44 @@ export type Database = {
         }
         Relationships: []
       }
+      coordination_pinterest: {
+        Row: {
+          coordination_id: string
+          created_at: string
+          description: string | null
+          id: string
+          pinterest_url: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          coordination_id: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          pinterest_url: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          coordination_id?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          pinterest_url?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "coordination_pinterest_coordination_id_fkey"
+            columns: ["coordination_id"]
+            isOneToOne: false
+            referencedRelation: "wedding_coordination"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       coordination_planning: {
         Row: {
           assigned_to: Json | null

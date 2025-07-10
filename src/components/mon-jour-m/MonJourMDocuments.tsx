@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,7 +5,8 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Plus, FileText, Download, Eye, Edit, Trash2, Upload, File } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Plus, FileText, Download, Eye, Edit, Trash2, Upload, File, ExternalLink } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
@@ -49,14 +49,26 @@ interface TeamMember {
   notes?: string;
 }
 
+interface PinterestLink {
+  id: string;
+  title: string;
+  pinterest_url: string;
+  description?: string;
+  created_at: string;
+  updated_at: string;
+}
+
 const MonJourMDocuments: React.FC = () => {
   const { toast } = useToast();
   const [coordination, setCoordination] = useState<WeddingCoordination | null>(null);
   const [documents, setDocuments] = useState<Document[]>([]);
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+  const [pinterestLinks, setPinterestLinks] = useState<PinterestLink[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showAddDocument, setShowAddDocument] = useState(false);
+  const [showAddPinterest, setShowAddPinterest] = useState(false);
   const [editingDocument, setEditingDocument] = useState<Document | null>(null);
+  const [editingPinterest, setEditingPinterest] = useState<PinterestLink | null>(null);
   const [uploadingFile, setUploadingFile] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
@@ -64,6 +76,11 @@ const MonJourMDocuments: React.FC = () => {
     category: 'general',
     assigned_to: '',
     file: null as File | null
+  });
+  const [pinterestFormData, setPinterestFormData] = useState({
+    title: '',
+    pinterest_url: '',
+    description: ''
   });
 
   useEffect(() => {
@@ -114,9 +131,10 @@ const MonJourMDocuments: React.FC = () => {
 
       setCoordination(activeCoordination);
 
-      // Charger les documents et l'équipe
+      // Charger les documents, Pinterest et l'équipe
       await Promise.all([
         loadDocuments(activeCoordination.id),
+        loadPinterestLinks(activeCoordination.id),
         loadTeamMembers(activeCoordination.id)
       ]);
 
@@ -145,6 +163,21 @@ const MonJourMDocuments: React.FC = () => {
       setDocuments(data || []);
     } catch (error) {
       console.error('Erreur chargement documents:', error);
+    }
+  };
+
+  const loadPinterestLinks = async (coordId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('coordination_pinterest')
+        .select('*')
+        .eq('coordination_id', coordId)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setPinterestLinks(data || []);
+    } catch (error) {
+      console.error('Erreur chargement Pinterest:', error);
     }
   };
 
@@ -185,6 +218,136 @@ const MonJourMDocuments: React.FC = () => {
     });
   };
 
+  const resetPinterestForm = () => {
+    setPinterestFormData({
+      title: '',
+      pinterest_url: '',
+      description: ''
+    });
+  };
+
+  const extractPinterestEmbedUrl = (url: string) => {
+    try {
+      // Convertir l'URL Pinterest en URL d'embed
+      const pinterestRegex = /pinterest\.com\/pin\/(\d+)/;
+      const match = url.match(pinterestRegex);
+      
+      if (match) {
+        return `https://assets.pinterest.com/ext/embed.html?id=${match[1]}`;
+      }
+      
+      // Si c'est un board ou une recherche
+      const boardRegex = /pinterest\.com\/([^\/]+)\/([^\/]+)/;
+      const boardMatch = url.match(boardRegex);
+      
+      if (boardMatch) {
+        return `https://assets.pinterest.com/ext/embed.html?url=${encodeURIComponent(url)}`;
+      }
+      
+      return url;
+    } catch (error) {
+      console.error('Erreur parsing URL Pinterest:', error);
+      return url;
+    }
+  };
+
+  const handleAddPinterest = async () => {
+    if (!pinterestFormData.title.trim() || !pinterestFormData.pinterest_url.trim() || !coordination?.id) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('coordination_pinterest')
+        .insert({
+          coordination_id: coordination.id,
+          title: pinterestFormData.title,
+          pinterest_url: pinterestFormData.pinterest_url,
+          description: pinterestFormData.description || null
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setPinterestLinks(prev => [data, ...prev]);
+      resetPinterestForm();
+      setShowAddPinterest(false);
+      
+      toast({
+        title: "Lien Pinterest ajouté",
+        description: "Le lien a été ajouté avec succès"
+      });
+
+    } catch (error) {
+      console.error('Erreur ajout Pinterest:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible d'ajouter le lien Pinterest",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleUpdatePinterest = async () => {
+    if (!editingPinterest) return;
+
+    try {
+      const { error } = await supabase
+        .from('coordination_pinterest')
+        .update({
+          title: editingPinterest.title,
+          pinterest_url: editingPinterest.pinterest_url,
+          description: editingPinterest.description || null
+        })
+        .eq('id', editingPinterest.id);
+
+      if (error) throw error;
+
+      setPinterestLinks(prev => prev.map(p => p.id === editingPinterest.id ? editingPinterest : p));
+      setEditingPinterest(null);
+      
+      toast({
+        title: "Lien Pinterest modifié",
+        description: "Les informations ont été mises à jour"
+      });
+
+    } catch (error) {
+      console.error('Erreur modification Pinterest:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de modifier le lien Pinterest",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleDeletePinterest = async (pinterestId: string) => {
+    if (!window.confirm('Êtes-vous sûr de vouloir supprimer ce lien Pinterest ?')) return;
+
+    try {
+      const { error } = await supabase
+        .from('coordination_pinterest')
+        .delete()
+        .eq('id', pinterestId);
+
+      if (error) throw error;
+      
+      setPinterestLinks(prev => prev.filter(p => p.id !== pinterestId));
+      
+      toast({
+        title: "Lien Pinterest supprimé",
+        description: "Le lien a été supprimé"
+      });
+
+    } catch (error) {
+      console.error('Erreur suppression Pinterest:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de supprimer le lien Pinterest",
+        variant: "destructive"
+      });
+    }
+  };
+
   const handleFileUpload = async (file: File) => {
     if (!coordination?.id) return null;
 
@@ -192,7 +355,6 @@ const MonJourMDocuments: React.FC = () => {
       const fileExt = file.name.split('.').pop();
       const fileName = `${coordination.id}/${Date.now()}.${fileExt}`;
       
-      // Upload vers Supabase Storage
       const { data, error } = await supabase.storage
         .from('coordination-files')
         .upload(fileName, file, {
@@ -205,7 +367,6 @@ const MonJourMDocuments: React.FC = () => {
         throw error;
       }
 
-      // Obtenir l'URL publique
       const { data: { publicUrl } } = supabase.storage
         .from('coordination-files')
         .getPublicUrl(fileName);
@@ -234,7 +395,6 @@ const MonJourMDocuments: React.FC = () => {
         fileData = await handleFileUpload(formData.file);
       }
 
-      // Préparer les données pour l'insertion
       const insertData: any = {
         coordination_id: coordination.id,
         title: formData.title,
@@ -243,11 +403,9 @@ const MonJourMDocuments: React.FC = () => {
         assigned_to: formData.assigned_to === 'none' ? null : formData.assigned_to || null,
       };
 
-      // Ajouter les données du fichier seulement si elles existent
       if (fileData && Object.keys(fileData).length > 0) {
         Object.assign(insertData, fileData);
       } else {
-        // Si pas de fichier, on définit file_url comme une chaîne vide plutôt que null
         insertData.file_url = '';
       }
 
@@ -380,216 +538,364 @@ const MonJourMDocuments: React.FC = () => {
           <p className="text-sm text-muted-foreground mb-3">
             Créez votre équipe, faites votre planning, enregistrez les documents et partagez.
           </p>
-          <p className="text-gray-600">Centralisez tous vos documents importants</p>
+          <p className="text-gray-600">Centralisez tous vos documents importants et inspirations</p>
         </div>
         
         <div className="flex gap-2">
           {coordination && <SharePublicButton coordinationId={coordination.id} />}
-          <Dialog open={showAddDocument} onOpenChange={setShowAddDocument}>
-            <DialogTrigger asChild>
-              <Button className="flex items-center gap-2">
-                <Plus className="h-4 w-4" />
-                Ajouter un document
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-2xl">
-              <DialogHeader>
-                <DialogTitle>Ajouter un document</DialogTitle>
-              </DialogHeader>
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium mb-1">Titre *</label>
-                  <Input
-                    value={formData.title}
-                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                    placeholder="Titre du document"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-1">Description</label>
-                  <Textarea
-                    value={formData.description}
-                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    placeholder="Description du document"
-                    rows={3}
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Catégorie</label>
-                    <Select value={formData.category} onValueChange={(value) => setFormData({ ...formData, category: value })}>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="general">Général</SelectItem>
-                        <SelectItem value="contract">Contrat</SelectItem>
-                        <SelectItem value="invoice">Facture</SelectItem>
-                        <SelectItem value="planning">Planning</SelectItem>
-                        <SelectItem value="photo">Photo</SelectItem>
-                        <SelectItem value="legal">Légal</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Assigné à</label>
-                    <Select value={formData.assigned_to} onValueChange={(value) => setFormData({ ...formData, assigned_to: value })}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Sélectionner un membre" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="none">Aucun</SelectItem>
-                        {teamMembers.map((member) => (
-                          <SelectItem key={member.id} value={member.id}>
-                            {member.name} ({member.role})
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-1">Fichier</label>
-                  <Input
-                    type="file"
-                    onChange={(e) => setFormData({ ...formData, file: e.target.files?.[0] || null })}
-                    accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.gif"
-                  />
-                </div>
-
-                <div className="flex gap-2">
-                  <Button 
-                    onClick={handleAddDocument} 
-                    disabled={!formData.title.trim() || uploadingFile}
-                  >
-                    {uploadingFile ? (
-                      <>
-                        <Upload className="mr-2 h-4 w-4 animate-spin" />
-                        Ajout en cours...
-                      </>
-                    ) : (
-                      'Ajouter le document'
-                    )}
-                  </Button>
-                  <Button variant="outline" onClick={() => {
-                    resetForm();
-                    setShowAddDocument(false);
-                  }}>
-                    Annuler
-                  </Button>
-                </div>
-              </div>
-            </DialogContent>
-          </Dialog>
         </div>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Mes Documents</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {documents.length > 0 ? (
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {documents.map((document) => (
-                <Card key={document.id} className="p-4">
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="flex items-center gap-2">
-                      <FileText className="h-5 w-5 text-gray-400" />
-                      <h3 className="font-medium line-clamp-2">{document.title}</h3>
+      <Tabs defaultValue="documents" className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="documents">Documents</TabsTrigger>
+          <TabsTrigger value="pinterest">Pinterest (Beta)</TabsTrigger>
+        </TabsList>
+
+        {/* Onglet Documents */}
+        <TabsContent value="documents" className="space-y-6">
+          <div className="flex justify-between items-center">
+            <h3 className="text-lg font-medium">Mes Documents</h3>
+            <Dialog open={showAddDocument} onOpenChange={setShowAddDocument}>
+              <DialogTrigger asChild>
+                <Button className="flex items-center gap-2">
+                  <Plus className="h-4 w-4" />
+                  Ajouter un document
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl">
+                <DialogHeader>
+                  <DialogTitle>Ajouter un document</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Titre *</label>
+                    <Input
+                      value={formData.title}
+                      onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                      placeholder="Titre du document"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Description</label>
+                    <Textarea
+                      value={formData.description}
+                      onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                      placeholder="Description du document"
+                      rows={3}
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Catégorie</label>
+                      <Select value={formData.category} onValueChange={(value) => setFormData({ ...formData, category: value })}>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="general">Général</SelectItem>
+                          <SelectItem value="contract">Contrat</SelectItem>
+                          <SelectItem value="invoice">Facture</SelectItem>
+                          <SelectItem value="planning">Planning</SelectItem>
+                          <SelectItem value="photo">Photo</SelectItem>
+                          <SelectItem value="legal">Légal</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
-                    <div className="flex items-center gap-1">
-                      {document.file_url && document.file_url !== '' && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => {
-                            try {
-                              window.open(document.file_url, '_blank');
-                            } catch (error) {
-                              console.error('Erreur ouverture document:', error);
-                              toast({
-                                title: "Erreur",
-                                description: "Impossible d'ouvrir le document",
-                                variant: "destructive"
-                              });
-                            }
-                          }}
-                        >
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                      )}
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setEditingDocument(document)}
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleDeleteDocument(document.id)}
-                        className="text-red-600 hover:text-red-800"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Assigné à</label>
+                      <Select value={formData.assigned_to} onValueChange={(value) => setFormData({ ...formData, assigned_to: value })}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Sélectionner un membre" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="none">Aucun</SelectItem>
+                          {teamMembers.map((member) => (
+                            <SelectItem key={member.id} value={member.id}>
+                              {member.name} ({member.role})
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
                   </div>
 
-                  <div className="space-y-2">
-                    {document.description && (
-                      <p className="text-sm text-gray-600 line-clamp-2">{document.description}</p>
-                    )}
-                    
-                    <div className="flex flex-wrap gap-1">
-                      <Badge className={getCategoryColor(document.category)}>
-                        {document.category === 'contract' ? 'Contrat' : 
-                         document.category === 'invoice' ? 'Facture' :
-                         document.category === 'planning' ? 'Planning' :
-                         document.category === 'photo' ? 'Photo' :
-                         document.category === 'legal' ? 'Légal' : 'Général'}
-                      </Badge>
-                      
-                      {document.file_size && (
-                        <Badge variant="secondary">
-                          {formatFileSize(document.file_size)}
-                        </Badge>
-                      )}
-                    </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Fichier</label>
+                    <Input
+                      type="file"
+                      onChange={(e) => setFormData({ ...formData, file: e.target.files?.[0] || null })}
+                      accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.gif"
+                    />
+                  </div>
 
-                    {document.assigned_to && (
-                      <div className="flex items-center gap-1 text-sm text-gray-500">
-                        <span>Assigné à:</span>
-                        {(() => {
-                          const member = teamMembers.find(m => m.id === document.assigned_to);
-                          return member ? member.name : 'Membre inconnu';
-                        })()}
+                  <div className="flex gap-2">
+                    <Button 
+                      onClick={handleAddDocument} 
+                      disabled={!formData.title.trim() || uploadingFile}
+                    >
+                      {uploadingFile ? (
+                        <>
+                          <Upload className="mr-2 h-4 w-4 animate-spin" />
+                          Ajout en cours...
+                        </>
+                      ) : (
+                        'Ajouter le document'
+                      )}
+                    </Button>
+                    <Button variant="outline" onClick={() => {
+                      resetForm();
+                      setShowAddDocument(false);
+                    }}>
+                      Annuler
+                    </Button>
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
+          </div>
+
+          <Card>
+            <CardContent className="pt-6">
+              {documents.length > 0 ? (
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                  {documents.map((document) => (
+                    <Card key={document.id} className="p-4">
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="flex items-center gap-2">
+                          <FileText className="h-5 w-5 text-gray-400" />
+                          <h3 className="font-medium line-clamp-2">{document.title}</h3>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          {document.file_url && document.file_url !== '' && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => {
+                                try {
+                                  window.open(document.file_url, '_blank');
+                                } catch (error) {
+                                  console.error('Erreur ouverture document:', error);
+                                  toast({
+                                    title: "Erreur",
+                                    description: "Impossible d'ouvrir le document",
+                                    variant: "destructive"
+                                  });
+                                }
+                              }}
+                            >
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                          )}
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setEditingDocument(document)}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleDeleteDocument(document.id)}
+                            className="text-red-600 hover:text-red-800"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
                       </div>
-                    )}
 
-                    <div className="text-xs text-gray-400">
-                      Ajouté le {new Date(document.created_at).toLocaleDateString('fr-FR')}
-                    </div>
+                      <div className="space-y-2">
+                        {document.description && (
+                          <p className="text-sm text-gray-600 line-clamp-2">{document.description}</p>
+                        )}
+                        
+                        <div className="flex flex-wrap gap-1">
+                          <Badge className={getCategoryColor(document.category)}>
+                            {document.category === 'contract' ? 'Contrat' : 
+                             document.category === 'invoice' ? 'Facture' :
+                             document.category === 'planning' ? 'Planning' :
+                             document.category === 'photo' ? 'Photo' :
+                             document.category === 'legal' ? 'Légal' : 'Général'}
+                          </Badge>
+                          
+                          {document.file_size && (
+                            <Badge variant="secondary">
+                              {formatFileSize(document.file_size)}
+                            </Badge>
+                          )}
+                        </div>
+
+                        {document.assigned_to && (
+                          <div className="flex items-center gap-1 text-sm text-gray-500">
+                            <span>Assigné à:</span>
+                            {(() => {
+                              const member = teamMembers.find(m => m.id === document.assigned_to);
+                              return member ? member.name : 'Membre inconnu';
+                            })()}
+                          </div>
+                        )}
+
+                        <div className="text-xs text-gray-400">
+                          Ajouté le {new Date(document.created_at).toLocaleDateString('fr-FR')}
+                        </div>
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12 text-gray-500">
+                  <File className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                  <p className="text-lg mb-2">Aucun document enregistré</p>
+                  <p className="text-sm">Commencez par ajouter votre premier document</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Onglet Pinterest */}
+        <TabsContent value="pinterest" className="space-y-6">
+          <div className="flex justify-between items-center">
+            <div>
+              <h3 className="text-lg font-medium">Liens Pinterest</h3>
+              <p className="text-sm text-gray-600">Ajoutez vos inspirations Pinterest pour votre mariage</p>
+            </div>
+            <Dialog open={showAddPinterest} onOpenChange={setShowAddPinterest}>
+              <DialogTrigger asChild>
+                <Button className="flex items-center gap-2">
+                  <Plus className="h-4 w-4" />
+                  Ajouter un lien Pinterest
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl">
+                <DialogHeader>
+                  <DialogTitle>Ajouter un lien Pinterest</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Titre *</label>
+                    <Input
+                      value={pinterestFormData.title}
+                      onChange={(e) => setPinterestFormData({ ...pinterestFormData, title: e.target.value })}
+                      placeholder="Ex: Inspiration décoration"
+                    />
                   </div>
-                </Card>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12 text-gray-500">
-              <File className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <p className="text-lg mb-2">Aucun document enregistré</p>
-              <p className="text-sm">Commencez par ajouter votre premier document</p>
-            </div>
-          )}
-        </CardContent>
-      </Card>
 
-      {/* Modal d'édition de document */}
+                  <div>
+                    <label className="block text-sm font-medium mb-1">URL Pinterest *</label>
+                    <Input
+                      value={pinterestFormData.pinterest_url}
+                      onChange={(e) => setPinterestFormData({ ...pinterestFormData, pinterest_url: e.target.value })}
+                      placeholder="https://www.pinterest.com/pin/..."
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Description</label>
+                    <Textarea
+                      value={pinterestFormData.description}
+                      onChange={(e) => setPinterestFormData({ ...pinterestFormData, description: e.target.value })}
+                      placeholder="Description de cette inspiration"
+                      rows={3}
+                    />
+                  </div>
+
+                  <div className="flex gap-2">
+                    <Button 
+                      onClick={handleAddPinterest} 
+                      disabled={!pinterestFormData.title.trim() || !pinterestFormData.pinterest_url.trim()}
+                    >
+                      Ajouter le lien
+                    </Button>
+                    <Button variant="outline" onClick={() => {
+                      resetPinterestForm();
+                      setShowAddPinterest(false);
+                    }}>
+                      Annuler
+                    </Button>
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
+          </div>
+
+          <Card>
+            <CardContent className="pt-6">
+              {pinterestLinks.length > 0 ? (
+                <div className="grid gap-6 md:grid-cols-2">
+                  {pinterestLinks.map((link) => (
+                    <Card key={link.id} className="p-4">
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="flex items-center gap-2">
+                          <ExternalLink className="h-5 w-5 text-pink-500" />
+                          <h3 className="font-medium">{link.title}</h3>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => window.open(link.pinterest_url, '_blank')}
+                          >
+                            <ExternalLink className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setEditingPinterest(link)}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleDeletePinterest(link.id)}
+                            className="text-red-600 hover:text-red-800"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+
+                      {link.description && (
+                        <p className="text-sm text-gray-600 mb-3">{link.description}</p>
+                      )}
+
+                      <div className="w-full h-64 border rounded-lg overflow-hidden">
+                        <iframe
+                          src={extractPinterestEmbedUrl(link.pinterest_url)}
+                          width="100%"
+                          height="100%"
+                          style={{ border: 'none' }}
+                          scrolling="no"
+                          loading="lazy"
+                          title={link.title}
+                          className="w-full h-full"
+                        />
+                      </div>
+
+                      <div className="text-xs text-gray-400 mt-2">
+                        Ajouté le {new Date(link.created_at).toLocaleDateString('fr-FR')}
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12 text-gray-500">
+                  <ExternalLink className="h-12 w-12 mx-auto mb-4 opacity-50 text-pink-400" />
+                  <p className="text-lg mb-2">Aucun lien Pinterest</p>
+                  <p className="text-sm">Ajoutez vos inspirations Pinterest pour votre mariage</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+
+      {/* Modals d'édition */}
       {editingDocument && (
         <Dialog open={!!editingDocument} onOpenChange={() => setEditingDocument(null)}>
           <DialogContent className="max-w-2xl">
@@ -634,29 +940,77 @@ const MonJourMDocuments: React.FC = () => {
                   </Select>
                 </div>
 
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Assigné à</label>
-                    <Select value={editingDocument.assigned_to || 'none'} onValueChange={(value) => setEditingDocument({ ...editingDocument, assigned_to: value })}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Sélectionner un membre" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="none">Aucun</SelectItem>
-                      {teamMembers.map((member) => (
-                        <SelectItem key={member.id} value={member.id}>
-                          {member.name} ({member.role})
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Assigné à</label>
+                  <Select value={editingDocument.assigned_to || 'none'} onValueChange={(value) => setEditingDocument({ ...editingDocument, assigned_to: value })}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Sélectionner un membre" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">Aucun</SelectItem>
+                    {teamMembers.map((member) => (
+                      <SelectItem key={member.id} value={member.id}>
+                        {member.name} ({member.role})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="flex gap-2">
+              <Button onClick={handleUpdateDocument}>
+                Sauvegarder
+              </Button>
+              <Button variant="outline" onClick={() => setEditingDocument(null)}>
+                Annuler
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+      )}
+
+      {editingPinterest && (
+        <Dialog open={!!editingPinterest} onOpenChange={() => setEditingPinterest(null)}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>Modifier le lien Pinterest</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">Titre *</label>
+                <Input
+                  value={editingPinterest.title}
+                  onChange={(e) => setEditingPinterest({ ...editingPinterest, title: e.target.value })}
+                  placeholder="Ex: Inspiration décoration"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1">URL Pinterest *</label>
+                <Input
+                  value={editingPinterest.pinterest_url}
+                  onChange={(e) => setEditingPinterest({ ...editingPinterest, pinterest_url: e.target.value })}
+                  placeholder="https://www.pinterest.com/pin/..."
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1">Description</label>
+                <Textarea
+                  value={editingPinterest.description || ''}
+                  onChange={(e) => setEditingPinterest({ ...editingPinterest, description: e.target.value })}
+                  placeholder="Description de cette inspiration"
+                  rows={3}
+                />
               </div>
 
               <div className="flex gap-2">
-                <Button onClick={handleUpdateDocument}>
+                <Button onClick={handleUpdatePinterest}>
                   Sauvegarder
                 </Button>
-                <Button variant="outline" onClick={() => setEditingDocument(null)}>
+                <Button variant="outline" onClick={() => setEditingPinterest(null)}>
                   Annuler
                 </Button>
               </div>
