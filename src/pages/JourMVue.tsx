@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Calendar, Users, FileText, Clock, CheckCircle2, Circle, User, Building, Mail, Phone, AlertCircle, Filter, Eye } from 'lucide-react';
+import { Calendar, Users, FileText, Clock, CheckCircle2, Circle, User, Building, Mail, Phone, AlertCircle, Filter, Eye, ExternalLink, Download } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { validatePlanningShareToken, getPublicCoordinationData } from '@/utils/tokenUtils';
 
@@ -12,6 +12,7 @@ interface WeddingData {
   tasks: any[];
   teamMembers: any[];
   documents: any[];
+  pinterestLinks: any[];
 }
 
 const JourMVue: React.FC = () => {
@@ -155,7 +156,7 @@ const JourMVue: React.FC = () => {
     );
   }
 
-  const { coordination, tasks, teamMembers, documents } = weddingData;
+  const { coordination, tasks, teamMembers, documents, pinterestLinks } = weddingData;
   
   // Améliorer la gestion des types avec fallback
   const people = teamMembers.filter(m => {
@@ -202,7 +203,7 @@ const JourMVue: React.FC = () => {
 
       <div className="container mx-auto px-4 py-6 max-w-6xl">
         <Tabs defaultValue="planning" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-6">
+          <TabsList className="grid w-full grid-cols-4 mb-6">
             <TabsTrigger value="planning" className="flex items-center gap-2">
               <Calendar className="h-4 w-4" />
               Planning ({tasks.length})
@@ -214,6 +215,10 @@ const JourMVue: React.FC = () => {
             <TabsTrigger value="documents" className="flex items-center gap-2">
               <FileText className="h-4 w-4" />
               Documents ({documents.length})
+            </TabsTrigger>
+            <TabsTrigger value="pinterest" className="flex items-center gap-2">
+              <ExternalLink className="h-4 w-4" />
+              Pinterest ({pinterestLinks?.length || 0})
             </TabsTrigger>
           </TabsList>
 
@@ -414,10 +419,40 @@ const JourMVue: React.FC = () => {
           <TabsContent value="documents">
             <Card>
               <CardHeader>
-                <CardTitle>Documents partagés</CardTitle>
-                <p className="text-sm text-muted-foreground">
-                  Les documents sont visibles en consultation uniquement pour des raisons de confidentialité.
-                </p>
+                <div className="flex justify-between items-start">
+                  <div>
+                    <CardTitle>Documents partagés</CardTitle>
+                    <p className="text-sm text-muted-foreground">
+                      Les documents sont visibles en consultation uniquement pour des raisons de confidentialité.
+                    </p>
+                  </div>
+                  <button
+                    onClick={async () => {
+                      try {
+                        // Import dynamique du service d'export PDF public
+                        const { exportPublicPlanningToPDF } = await import('@/services/publicPlanningExportService');
+                        const success = await exportPublicPlanningToPDF({
+                          coordination,
+                          tasks: filteredTasks,
+                          teamMembers,
+                          documents,
+                          pinterestLinks
+                        });
+                        
+                        if (!success) {
+                          alert('Erreur lors de l\'export PDF');
+                        }
+                      } catch (error) {
+                        console.error('Erreur export PDF:', error);
+                        alert('Erreur lors de l\'export PDF');
+                      }
+                    }}
+                    className="flex items-center gap-2 px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  >
+                    <Download className="h-4 w-4" />
+                    Exporter en PDF
+                  </button>
+                </div>
               </CardHeader>
               <CardContent>
                 {documents.length > 0 ? (
@@ -428,19 +463,24 @@ const JourMVue: React.FC = () => {
                             <FileText className="h-5 w-5 text-gray-400" />
                             <div>
                               <h3 className="font-medium">{doc.title}</h3>
+                              {doc.description && (
+                                <p className="text-sm text-gray-600 mt-1">{doc.description}</p>
+                              )}
                               <p className="text-sm text-gray-500 capitalize">{doc.category}</p>
                             </div>
                           </div>
                           <div className="flex items-center gap-2">
-                            <button
-                              onClick={() => {
-                                alert('Aperçu non disponible en mode consultation. Contactez les mariés pour accéder au document.');
-                              }}
-                              className="text-sm text-blue-600 hover:text-blue-800 flex items-center gap-1"
-                            >
-                              <Eye className="h-4 w-4" />
-                              Visualiser
-                            </button>
+                            {doc.file_url && (
+                              <button
+                                onClick={() => {
+                                  window.open(doc.file_url, '_blank');
+                                }}
+                                className="text-sm text-blue-600 hover:text-blue-800 flex items-center gap-1"
+                              >
+                                <Eye className="h-4 w-4" />
+                                Visualiser
+                              </button>
+                            )}
                             <p className="text-xs text-gray-400">
                               {new Date(doc.created_at).toLocaleDateString('fr-FR')}
                             </p>
@@ -452,6 +492,66 @@ const JourMVue: React.FC = () => {
                   <div className="text-center py-12 text-gray-500">
                     <FileText className="h-12 w-12 mx-auto mb-4 opacity-50" />
                     <p>Aucun document partagé</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Onglet Pinterest */}
+          <TabsContent value="pinterest">
+            <Card>
+              <CardHeader>
+                <CardTitle>Inspirations Pinterest</CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  Découvrez les inspirations Pinterest sélectionnées pour ce mariage
+                </p>
+              </CardHeader>
+              <CardContent>
+                {pinterestLinks && pinterestLinks.length > 0 ? (
+                  <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                    {pinterestLinks.map((link: any) => (
+                      <Card key={link.id} className="p-4">
+                        <div className="flex items-start justify-between mb-3">
+                          <div className="flex items-center gap-2">
+                            <ExternalLink className="h-5 w-5 text-pink-500" />
+                            <h3 className="font-medium">{link.title}</h3>
+                          </div>
+                        </div>
+
+                        {link.description && (
+                          <p className="text-sm text-gray-600 mb-3">{link.description}</p>
+                        )}
+
+                        <div className="border rounded-lg overflow-hidden mb-3">
+                          <div className="aspect-video relative bg-gray-100 flex items-center justify-center">
+                            <div className="text-center">
+                              <div className="text-4xl mb-2">📌</div>
+                              <p className="text-sm text-gray-600">Inspiration Pinterest</p>
+                            </div>
+                          </div>
+                        </div>
+
+                        <a 
+                          href={link.pinterest_url} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="text-blue-600 hover:underline text-sm inline-flex items-center gap-1"
+                        >
+                          <ExternalLink className="h-3 w-3" />
+                          Voir sur Pinterest
+                        </a>
+
+                        <div className="text-xs text-gray-400 mt-2">
+                          Ajouté le {new Date(link.created_at).toLocaleDateString('fr-FR')}
+                        </div>
+                      </Card>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-12 text-gray-500">
+                    <ExternalLink className="h-12 w-12 mx-auto mb-4 opacity-50 text-pink-400" />
+                    <p>Aucune inspiration Pinterest partagée</p>
                   </div>
                 )}
               </CardContent>

@@ -114,7 +114,7 @@ export const getPublicCoordinationData = async (coordinationId: string) => {
     // Récupérer les documents (titres seulement pour la vue publique)
     const { data: documents, error: docsError } = await publicSupabase
       .from('coordination_documents')
-      .select('id, title, category, created_at')
+      .select('id, title, category, created_at, file_url, description')
       .eq('coordination_id', coordinationId)
       .order('created_at', { ascending: false });
 
@@ -122,18 +122,31 @@ export const getPublicCoordinationData = async (coordinationId: string) => {
       console.error('❌ Error loading documents:', docsError);
     }
 
+    // Récupérer les liens Pinterest
+    const { data: pinterestLinks, error: pinterestError } = await publicSupabase
+      .from('coordination_pinterest')
+      .select('*')
+      .eq('coordination_id', coordinationId)
+      .order('created_at', { ascending: false });
+
+    if (pinterestError) {
+      console.error('❌ Error loading Pinterest links:', pinterestError);
+    }
+
     const result = {
       coordination,
       tasks: tasks || [],
       teamMembers: teamMembers || [],
-      documents: documents || []
+      documents: documents || [],
+      pinterestLinks: pinterestLinks || []
     };
 
     console.log('📦 Public coordination data loaded successfully:', {
       coordinationTitle: coordination.title,
       tasksCount: result.tasks.length,
       teamCount: result.teamMembers.length,
-      documentsCount: result.documents.length
+      documentsCount: result.documents.length,
+      pinterestCount: result.pinterestLinks.length
     });
     
     return result;

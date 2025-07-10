@@ -228,20 +228,21 @@ const MonJourMDocuments: React.FC = () => {
 
   const extractPinterestEmbedUrl = (url: string) => {
     try {
-      // Convertir l'URL Pinterest en URL d'embed
-      const pinterestRegex = /pinterest\.com\/pin\/(\d+)/;
-      const match = url.match(pinterestRegex);
+      // Convertir l'URL Pinterest en URL d'embed pour les pins
+      const pinRegex = /pinterest\.com\/pin\/(\d+)/;
+      const pinMatch = url.match(pinRegex);
       
-      if (match) {
-        return `https://assets.pinterest.com/ext/embed.html?id=${match[1]}`;
+      if (pinMatch) {
+        const pinId = pinMatch[1];
+        return `https://www.pinterest.com/pin/${pinId}/`;
       }
       
-      // Si c'est un board ou une recherche
+      // Si c'est un board
       const boardRegex = /pinterest\.com\/([^\/]+)\/([^\/]+)/;
       const boardMatch = url.match(boardRegex);
       
       if (boardMatch) {
-        return `https://assets.pinterest.com/ext/embed.html?url=${encodeURIComponent(url)}`;
+        return url;
       }
       
       return url;
@@ -249,6 +250,56 @@ const MonJourMDocuments: React.FC = () => {
       console.error('Erreur parsing URL Pinterest:', error);
       return url;
     }
+  };
+
+  const renderPinterestPreview = (link: PinterestLink) => {
+    const embedUrl = extractPinterestEmbedUrl(link.pinterest_url);
+    
+    return (
+      <div className="border rounded-lg overflow-hidden">
+        <div className="aspect-video relative">
+          <iframe
+            src={`https://assets.pinterest.com/ext/embed.html?id=${link.pinterest_url.match(/pin\/(\d+)/)?.[1] || ''}`}
+            className="w-full h-full border-0"
+            scrolling="no"
+            onError={(e) => {
+              // Fallback si l'iframe ne fonctionne pas
+              e.currentTarget.style.display = 'none';
+              const parent = e.currentTarget.parentElement;
+              if (parent) {
+                parent.innerHTML = `
+                  <div class="flex items-center justify-center h-full bg-gray-100 text-gray-500">
+                    <div class="text-center">
+                      <div class="text-2xl mb-2">📌</div>
+                      <p class="text-sm">Aperçu Pinterest non disponible</p>
+                      <a href="${link.pinterest_url}" target="_blank" rel="noopener noreferrer" 
+                         class="text-blue-600 hover:underline text-xs">
+                        Voir sur Pinterest
+                      </a>
+                    </div>
+                  </div>
+                `;
+              }
+            }}
+          />
+        </div>
+        <div className="p-3">
+          <h4 className="font-medium text-sm">{link.title}</h4>
+          {link.description && (
+            <p className="text-xs text-gray-600 mt-1">{link.description}</p>
+          )}
+          <a 
+            href={link.pinterest_url} 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="text-blue-600 hover:underline text-xs mt-2 inline-flex items-center gap-1"
+          >
+            <ExternalLink className="h-3 w-3" />
+            Voir sur Pinterest
+          </a>
+        </div>
+      </div>
+    );
   };
 
   const handleAddPinterest = async () => {
@@ -864,18 +915,7 @@ const MonJourMDocuments: React.FC = () => {
                         <p className="text-sm text-gray-600 mb-3">{link.description}</p>
                       )}
 
-                      <div className="w-full h-64 border rounded-lg overflow-hidden">
-                        <iframe
-                          src={extractPinterestEmbedUrl(link.pinterest_url)}
-                          width="100%"
-                          height="100%"
-                          style={{ border: 'none' }}
-                          scrolling="no"
-                          loading="lazy"
-                          title={link.title}
-                          className="w-full h-full"
-                        />
-                      </div>
+                      {renderPinterestPreview(link)}
 
                       <div className="text-xs text-gray-400 mt-2">
                         Ajouté le {new Date(link.created_at).toLocaleDateString('fr-FR')}
