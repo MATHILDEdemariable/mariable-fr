@@ -356,6 +356,7 @@ export type Database = {
           end_time: string | null
           id: string
           is_ai_generated: boolean | null
+          parallel_group: string | null
           position: number | null
           priority: string | null
           start_time: string | null
@@ -372,6 +373,7 @@ export type Database = {
           end_time?: string | null
           id?: string
           is_ai_generated?: boolean | null
+          parallel_group?: string | null
           position?: number | null
           priority?: string | null
           start_time?: string | null
@@ -388,6 +390,7 @@ export type Database = {
           end_time?: string | null
           id?: string
           is_ai_generated?: boolean | null
+          parallel_group?: string | null
           position?: number | null
           priority?: string | null
           start_time?: string | null
