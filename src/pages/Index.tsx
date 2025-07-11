@@ -297,7 +297,7 @@ const Index = () => {
                       </CardTitle>
                     </div>
                     <p className="text-lg font-medium text-gray-700">
-                      Une ligne directe
+                      Une ligne directe avec une experte
                     </p>
                   </div>
                   
