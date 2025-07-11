@@ -46,39 +46,40 @@ const BudgetPage: React.FC = () => {
         <meta name="description" content="Gérez le budget de votre mariage" />
       </Helmet>
 
-      <div className="space-y-4 sm:space-y-6 w-full">
+      <div className="space-y-3 sm:space-y-6 w-full">
         <div className="flex justify-between items-center">
-          <h1 className="text-2xl sm:text-3xl font-serif text-wedding-olive">Budget de Mariage</h1>
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-serif text-wedding-olive truncate">Budget de Mariage</h1>
         </div>
 
         <Tabs defaultValue="summary" value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="mb-4 sm:mb-6 grid w-full grid-cols-1 sm:grid-cols-3 bg-wedding-cream/10 h-auto">
-            <TabsTrigger value="summary" className="flex items-center gap-2 data-[state=active]:bg-wedding-cream/30 data-[state=active]:text-wedding-olive text-xs sm:text-sm py-2 sm:py-2.5">
-              <PieChart className="h-3 w-3 sm:h-4 sm:w-4" />
-              <span>Résumé</span>
+          <TabsList className="mb-4 sm:mb-6 grid w-full grid-cols-3 bg-wedding-cream/10 h-auto p-1">
+            <TabsTrigger value="summary" className="flex items-center gap-1 sm:gap-2 data-[state=active]:bg-wedding-cream/30 data-[state=active]:text-wedding-olive text-xs sm:text-sm py-2 sm:py-2.5 px-2 sm:px-3 min-h-[44px] touch-manipulation">
+              <PieChart className="h-3 w-3 sm:h-4 sm:w-4 shrink-0" />
+              <span className="truncate">Résumé</span>
             </TabsTrigger>
-            <TabsTrigger value="detailed" className="flex items-center gap-2 data-[state=active]:bg-wedding-cream/30 data-[state=active]:text-wedding-olive text-xs sm:text-sm py-2 sm:py-2.5">
-              <BarChart className="h-3 w-3 sm:h-4 sm:w-4" />
-              <span className="hidden sm:inline">Budget Détaillé</span>
-              <span className="sm:hidden">Détaillé</span>
+            <TabsTrigger value="detailed" className="flex items-center gap-1 sm:gap-2 data-[state=active]:bg-wedding-cream/30 data-[state=active]:text-wedding-olive text-xs sm:text-sm py-2 sm:py-2.5 px-2 sm:px-3 min-h-[44px] touch-manipulation">
+              <BarChart className="h-3 w-3 sm:h-4 sm:w-4 shrink-0" />
+              <span className="hidden sm:inline truncate">Budget Détaillé</span>
+              <span className="sm:hidden truncate">Détaillé</span>
             </TabsTrigger>
-            <TabsTrigger value="calculator" className="flex items-center gap-2 data-[state=active]:bg-wedding-cream/30 data-[state=active]:text-wedding-olive text-xs sm:text-sm py-2 sm:py-2.5">
-              <Calculator className="h-3 w-3 sm:h-4 sm:w-4" />
-              <span>Calculatrice</span>
+            <TabsTrigger value="calculator" className="flex items-center gap-1 sm:gap-2 data-[state=active]:bg-wedding-cream/30 data-[state=active]:text-wedding-olive text-xs sm:text-sm py-2 sm:py-2.5 px-2 sm:px-3 min-h-[44px] touch-manipulation">
+              <Calculator className="h-3 w-3 sm:h-4 sm:w-4 shrink-0" />
+              <span className="hidden sm:inline truncate">Calculatrice</span>
+              <span className="sm:hidden truncate">Calc</span>
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="summary">
+          <TabsContent value="summary" className="mt-3 sm:mt-6">
             <div className="bg-white p-3 sm:p-6 rounded-lg shadow-sm">
               <BudgetSummary />
             </div>
           </TabsContent>
 
-          <TabsContent value="detailed">
+          <TabsContent value="detailed" className="mt-3 sm:mt-6">
             <DetailedBudget />
           </TabsContent>
 
-          <TabsContent value="calculator" className="bg-white rounded-lg">
+          <TabsContent value="calculator" className="bg-white rounded-lg mt-3 sm:mt-6">
             <div className="bg-white rounded-lg">
               <BudgetCalculator />
             </div>

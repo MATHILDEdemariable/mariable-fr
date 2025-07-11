@@ -48,12 +48,13 @@ const SharePublicButton: React.FC<SharePublicButtonProps> = ({ coordinationId })
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="flex items-center gap-2">
-          <Share className="h-4 w-4" />
-          Partager
+        <Button variant="outline" className="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 text-xs sm:text-sm min-h-[44px] touch-manipulation">
+          <Share className="h-3 w-3 sm:h-4 sm:w-4 shrink-0" />
+          <span className="hidden sm:inline">Partager</span>
+          <span className="sm:hidden">Share</span>
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md mx-3 sm:mx-auto max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Partager le planning</DialogTitle>
         </DialogHeader>
@@ -62,19 +63,19 @@ const SharePublicButton: React.FC<SharePublicButtonProps> = ({ coordinationId })
             Partagez ce lien pour permettre à votre équipe de consulter le planning en mode lecture seule.
           </p>
           
-          <div className="flex items-center space-x-2">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-2">
             <Input
               value={publicUrl}
               readOnly
-              className="flex-1"
+              className="flex-1 text-xs sm:text-sm"
             />
             <Button
               size="sm"
               onClick={handleCopy}
-              className="flex items-center gap-1"
+              className="flex items-center gap-1 justify-center min-h-[44px] touch-manipulation px-3 sm:px-4"
             >
-              {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-              {copied ? 'Copié' : 'Copier'}
+              {copied ? <Check className="h-3 w-3 sm:h-4 sm:w-4" /> : <Copy className="h-3 w-3 sm:h-4 sm:w-4" />}
+              <span className="text-xs sm:text-sm">{copied ? 'Copié' : 'Copier'}</span>
             </Button>
           </div>
 
@@ -82,9 +83,9 @@ const SharePublicButton: React.FC<SharePublicButtonProps> = ({ coordinationId })
             <Button 
               variant="outline" 
               onClick={handlePreview}
-              className="flex items-center gap-2 flex-1"
+              className="flex items-center gap-2 flex-1 min-h-[44px] touch-manipulation text-xs sm:text-sm"
             >
-              <Eye className="h-4 w-4" />
+              <Eye className="h-3 w-3 sm:h-4 sm:w-4" />
               Prévisualiser
             </Button>
           </div>
