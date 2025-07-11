@@ -181,10 +181,7 @@ const Index = () => {
                         <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
                         <p className="text-sm text-gray-700">Modèle de suivi budgétaire en ligne & téléchargeable</p>
                       </div>
-                      <div className="flex items-start gap-3">
-                        <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                        <p className="text-sm text-gray-700">Générateur de planning Jour J</p>
-                      </div>
+                      
                       <div className="flex items-start gap-3">
                         <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
                         <p className="text-sm text-gray-700">Compilation de conseils opérationnels</p>
@@ -228,7 +225,7 @@ const Index = () => {
                       </CardTitle>
                     </div>
                     <p className="text-lg font-medium text-gray-700">
-                      La coordination intelligente et collaborative
+                      Une application en ligne collaborative
                     </p>
                   </div>
                   
@@ -239,8 +236,8 @@ const Index = () => {
                         <p className="text-sm text-gray-700">Application personnalisée à partager</p>
                       </div>
                       <div className="flex items-start gap-3">
-                        <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                        <p className="text-sm text-gray-700">Accessible par toute votre équipe</p>
+                        
+                        
                       </div>
                       <div className="flex items-start gap-3">
                         <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
