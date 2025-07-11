@@ -3,9 +3,7 @@ import React from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { PlanningEvent } from '../wedding-day/types/planningTypes';
 import MonJourMEventCard from './MonJourMEventCard';
-import MonJourMParallelTasks from './MonJourMParallelTasks';
 import { addMinutes, parseISO } from 'date-fns';
-import { generateParallelGroupId } from '@/types/monjourm-mvp';
 
 interface MonJourMTimelineProps {
   events: PlanningEvent[];
@@ -26,74 +24,43 @@ const MonJourMTimeline: React.FC<MonJourMTimelineProps> = ({
 }) => {
   const BUFFER_TIME_MINUTES = 15; // Buffer entre les événements
 
-  // Grouper les événements par parallel_group
-  const groupEventsByParallelGroup = (eventsList: PlanningEvent[]): Map<string, PlanningEvent[]> => {
-    const groups = new Map<string, PlanningEvent[]>();
-    
-    eventsList.forEach(event => {
-      const groupKey = (event as any).parallel_group || `single_${event.id}`;
-      if (!groups.has(groupKey)) {
-        groups.set(groupKey, []);
-      }
-      groups.get(groupKey)!.push(event);
-    });
-    
-    return groups;
-  };
-
-  // Obtenir la durée maximale d'un groupe parallèle
-  const getGroupDuration = (groupEvents: PlanningEvent[]): number => {
-    return Math.max(...groupEvents.map(event => event.duration));
-  };
-
-  // Fonction pour recalculer chronologiquement TOUS les horaires (avec support des groupes parallèles)
+  // Fonction pour recalculer chronologiquement TOUS les horaires
   const recalculateAllTimes = (eventsList: PlanningEvent[]): PlanningEvent[] => {
     if (eventsList.length === 0) return eventsList;
 
     console.log('🔄 Recalculating all times chronologically for', eventsList.length, 'events');
     
-    // Grouper les événements par parallel_group
-    const groups = groupEventsByParallelGroup(eventsList);
-    const groupKeys = Array.from(groups.keys()).sort((a, b) => {
-      const firstEventA = groups.get(a)![0];
-      const firstEventB = groups.get(b)![0];
-      const indexA = eventsList.findIndex(e => e.id === firstEventA.id);
-      const indexB = eventsList.findIndex(e => e.id === firstEventB.id);
-      return indexA - indexB;
+    // Trier par position pour maintenir l'ordre voulu
+    const sortedEvents = [...eventsList].sort((a, b) => {
+      const aIndex = eventsList.findIndex(e => e.id === a.id);
+      const bIndex = eventsList.findIndex(e => e.id === b.id);
+      return aIndex - bIndex;
     });
 
-    let currentTime = groups.get(groupKeys[0])![0]?.startTime || new Date();
-    const updatedEvents: PlanningEvent[] = [];
+    let currentTime = sortedEvents[0]?.startTime || new Date();
     
-    groupKeys.forEach((groupKey, groupIndex) => {
-      const groupEvents = groups.get(groupKey)!;
-      const maxDuration = getGroupDuration(groupEvents);
-      
-      if (groupIndex === 0) {
-        // Le premier groupe garde son heure de début actuelle
-        currentTime = new Date(groupEvents[0].startTime);
+    return sortedEvents.map((event, index) => {
+      if (index === 0) {
+        // Le premier événement garde son heure de début actuelle
+        currentTime = new Date(event.startTime);
       } else {
-        // Les groupes suivants : fin du précédent + buffer
+        // Les événements suivants : fin du précédent + buffer
         currentTime = addMinutes(currentTime, BUFFER_TIME_MINUTES);
       }
       
-      // Tous les événements du groupe commencent en même temps
-      groupEvents.forEach(event => {
-        const updatedEvent = {
-          ...event,
-          startTime: new Date(currentTime),
-          endTime: addMinutes(currentTime, event.duration)
-        };
-        updatedEvents.push(updatedEvent);
-        
-        console.log(`⏰ Group ${groupIndex + 1}: ${updatedEvent.title} - ${updatedEvent.startTime.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })} à ${updatedEvent.endTime.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}`);
-      });
+      const updatedEvent = {
+        ...event,
+        startTime: new Date(currentTime),
+        endTime: addMinutes(currentTime, event.duration)
+      };
       
-      // Préparer pour le prochain groupe (utiliser la durée maximale du groupe)
-      currentTime = addMinutes(currentTime, maxDuration);
+      // Préparer pour le prochain événement
+      currentTime = addMinutes(currentTime, event.duration);
+      
+      console.log(`⏰ Event ${index + 1}: ${updatedEvent.title} - ${updatedEvent.startTime.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })} à ${updatedEvent.endTime.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}`);
+      
+      return updatedEvent;
     });
-    
-    return updatedEvents;
   };
 
   const handleDragEnd = (result: any) => {
@@ -151,78 +118,24 @@ const MonJourMTimeline: React.FC<MonJourMTimelineProps> = ({
     onEventsUpdate(recalculatedEvents);
   };
 
-  const handleAddParallelTask = (baseEvent: PlanningEvent) => {
-    console.log('➕ Adding parallel task to:', baseEvent.title);
-    
-    // Générer un ID de groupe si la tâche de base n'en a pas
-    const parallelGroupId = (baseEvent as any).parallel_group || generateParallelGroupId();
-    
-    // Créer une nouvelle tâche parallèle
-    const newEvent: PlanningEvent = {
-      id: `parallel_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-      title: `Tâche parallèle`,
-      startTime: new Date(baseEvent.startTime),
-      endTime: addMinutes(baseEvent.startTime, 30),
-      duration: 30,
-      category: baseEvent.category,
-      type: baseEvent.type,
-      isHighlight: false,
-      assignedTo: [],
-      notes: ''
-    };
-
-    // Mettre à jour la tâche de base avec le groupe parallèle
-    const updatedBaseEvent = {
-      ...baseEvent,
-      parallel_group: parallelGroupId
-    } as any;
-
-    // Ajouter le parallel_group à la nouvelle tâche
-    (newEvent as any).parallel_group = parallelGroupId;
-
-    // Mettre à jour la liste des événements
-    const updatedEvents = events.map(event => 
-      event.id === baseEvent.id ? updatedBaseEvent : event
-    );
-    updatedEvents.push(newEvent);
-
-    // Recalculer tous les horaires
-    const recalculatedEvents = recalculateAllTimes(updatedEvents);
-    onEventsUpdate(recalculatedEvents);
-  };
-
-  // Grouper les événements pour l'affichage
-  const getGroupedEventsForDisplay = () => {
-    const groups = groupEventsByParallelGroup(events);
-    const groupKeys = Array.from(groups.keys()).sort((a, b) => {
-      const firstEventA = groups.get(a)![0];
-      const firstEventB = groups.get(b)![0];
-      const indexA = events.findIndex(e => e.id === firstEventA.id);
-      const indexB = events.findIndex(e => e.id === firstEventB.id);
-      return indexA - indexB;
-    });
-
-    return groupKeys.map(groupKey => ({
-      groupKey,
-      events: groups.get(groupKey)!
-    }));
-  };
-
-  const groupedEvents = getGroupedEventsForDisplay();
+  // Trier les événements par heure de début pour l'affichage
+  const sortedEvents = [...events].sort((a, b) => {
+    return new Date(a.startTime).getTime() - new Date(b.startTime).getTime();
+  });
 
   if (selectionMode) {
-    // Mode sélection - affichage groupé sans drag & drop
+    // Mode sélection - pas de drag & drop
     return (
       <div className="space-y-4">
-        {groupedEvents.map(({ groupKey, events: groupEvents }) => (
-          <MonJourMParallelTasks
-            key={groupKey}
-            parallelTasks={groupEvents}
+        {sortedEvents.map((event) => (
+          <MonJourMEventCard
+            key={event.id}
+            event={event}
             teamMembers={teamMembers}
             onUpdate={handleEventUpdate}
             onDelete={handleEventDelete}
             selectionMode={selectionMode}
-            selectedEvents={selectedEvents}
+            isSelected={selectedEvents.includes(event.id)}
             onSelectionChange={onSelectionChange}
           />
         ))}
@@ -230,7 +143,7 @@ const MonJourMTimeline: React.FC<MonJourMTimelineProps> = ({
     );
   }
 
-  // Mode normal avec drag & drop et support des tâches parallèles
+  // Mode normal avec drag & drop - utiliser l'ordre des événements tels qu'ils sont dans la liste
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
       <Droppable droppableId="timeline">
@@ -240,19 +153,18 @@ const MonJourMTimeline: React.FC<MonJourMTimelineProps> = ({
             ref={provided.innerRef}
             className="space-y-4"
           >
-            {groupedEvents.map(({ groupKey, events: groupEvents }, groupIndex) => (
-              <Draggable key={groupKey} draggableId={groupKey} index={groupIndex}>
+            {events.map((event, index) => (
+              <Draggable key={event.id} draggableId={event.id} index={index}>
                 {(provided, snapshot) => (
                   <div
                     ref={provided.innerRef}
                     {...provided.draggableProps}
                   >
-                    <MonJourMParallelTasks
-                      parallelTasks={groupEvents}
+                    <MonJourMEventCard
+                      event={event}
                       teamMembers={teamMembers}
                       onUpdate={handleEventUpdate}
                       onDelete={handleEventDelete}
-                      onAddParallelTask={handleAddParallelTask}
                       dragHandleProps={provided.dragHandleProps}
                       isDragging={snapshot.isDragging}
                     />

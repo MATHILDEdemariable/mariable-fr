@@ -22,7 +22,6 @@ export interface PlanningTask {
   assigned_role?: string; // Changement : assigné à un rôle au lieu d'une personne
   position: number;
   is_ai_generated?: boolean;
-  parallel_group?: string; // Identifiant pour grouper les tâches parallèles
 }
 
 export interface TeamMember {
@@ -93,27 +92,4 @@ export const addMinutesToTime = (timeString: string, minutes: number): string =>
   } catch (error) {
     return timeString;
   }
-};
-
-// Fonctions utilitaires pour les tâches parallèles
-export const generateParallelGroupId = (): string => {
-  return `parallel_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-};
-
-export const groupTasksByParallelGroup = (tasks: PlanningTask[]): Map<string, PlanningTask[]> => {
-  const groups = new Map<string, PlanningTask[]>();
-  
-  tasks.forEach(task => {
-    const groupKey = task.parallel_group || `single_${task.id}`;
-    if (!groups.has(groupKey)) {
-      groups.set(groupKey, []);
-    }
-    groups.get(groupKey)!.push(task);
-  });
-  
-  return groups;
-};
-
-export const getGroupDuration = (tasks: PlanningTask[]): number => {
-  return Math.max(...tasks.map(task => task.duration));
 };
