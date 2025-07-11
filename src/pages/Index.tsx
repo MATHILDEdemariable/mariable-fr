@@ -261,7 +261,7 @@ const Index = () => {
                       </div>
                       <div className="flex items-start gap-3">
                         <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                        <p className="text-sm text-gray-700">Vos proches reçoivent leurs instructions directement</p>
+                        <p className="text-sm text-gray-700">Vos proches reçoivent leurs instructions directement sans créer de compte</p>
                       </div>
                       <div className="flex items-start gap-3">
                         <Check className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
