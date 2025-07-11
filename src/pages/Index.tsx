@@ -228,7 +228,7 @@ const Index = () => {
                       </CardTitle>
                     </div>
                     <p className="text-lg font-medium text-gray-700">
-                      Une application en ligne collaborative
+                      La coordination intelligente et collaborative
                     </p>
                   </div>
                   
