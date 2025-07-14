@@ -45,6 +45,7 @@ import CGV from "./pages/CGV";
 import FAQ from "./pages/contact/FAQ";
 import ChecklistMariage from "./pages/ChecklistMariage";
 import Accompagnement from "./pages/Accompagnement";
+import LivreBlanc from "./pages/LivreBlanc";
 
 // Import admin pages
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -108,6 +109,7 @@ function App() {
                   <Route path="/contact/faq" element={<FAQ />} />
                   <Route path="/checklist-mariage" element={<ChecklistMariage />} />
                   <Route path="/accompagnement" element={<Accompagnement />} />
+                  <Route path="/livre-blanc" element={<LivreBlanc />} />
 
                   {/* À propos routes - Fixed */}
                   <Route path="/about/approche" element={<Approche />} />

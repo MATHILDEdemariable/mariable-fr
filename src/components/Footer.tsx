@@ -41,6 +41,7 @@ const Footer = () => {
           <div>
             <h3 className="font-serif text-base mb-3">À Propos</h3>
             <ul className="space-y-1 text-sm">
+              <li><Link to="/livre-blanc" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Livre blanc</Link></li>
               <li><Link to="/about/histoire" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Notre Histoire</Link></li>
               <li><Link to="/about/approche" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Notre Approche</Link></li>
               <li><Link to="/about/charte" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Notre Charte</Link></li>
