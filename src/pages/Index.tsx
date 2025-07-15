@@ -149,7 +149,7 @@ const Index = () => {
                 Transformez l'organisation de votre mariage
               </h2>
               <p className="text-lg text-gray-700 max-w-2xl mx-auto">
-                Choisissez le niveau d'accompagnement qui vous correspond en une expérience simple & agréable
+                en une expérience simple & agréable
               </p>
             </div>
 
