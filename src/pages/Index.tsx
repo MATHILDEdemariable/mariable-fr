@@ -343,11 +343,122 @@ const Index = () => {
               <p className="text-lg text-gray-700 mb-6">
                 Plusieurs couples nous on déjà fait confiance
               </p>
-              <Button asChild size="lg" className="bg-wedding-olive hover:bg-wedding-olive/90 text-white">
-                <Link to="/nous-contacter">
-                  Contacter Mathilde <Mail className="ml-2 h-5 w-5" />
-                </Link>
-              </Button>
+              {/* Section Témoignages */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+                {/* Témoignage 1 */}
+                <Card className="bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
+                  <CardContent className="p-6">
+                    <div className="mb-4">
+                      <div className="flex items-center gap-1 mb-3">
+                        {[...Array(5)].map((_, i) => (
+                          <span key={i} className="text-yellow-400 text-lg">★</span>
+                        ))}
+                      </div>
+                      <p className="text-gray-700 italic text-sm">
+                        "Mariable nous a vraiment sauvé la vie ! L'organisation était tellement plus simple avec leur plateforme. 
+                        Notre mariage s'est déroulé parfaitement grâce à leurs conseils."
+                      </p>
+                    </div>
+                    <div className="border-t pt-4">
+                      <p className="font-medium text-gray-900">Sophie & Alexandre</p>
+                      <p className="text-sm text-gray-600">Mariage en Provence, Juin 2024</p>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Témoignage 2 */}
+                <Card className="bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
+                  <CardContent className="p-6">
+                    <div className="mb-4">
+                      <div className="flex items-center gap-1 mb-3">
+                        {[...Array(5)].map((_, i) => (
+                          <span key={i} className="text-yellow-400 text-lg">★</span>
+                        ))}
+                      </div>
+                      <p className="text-gray-700 italic text-sm">
+                        "Nous recommandons Mariable les yeux fermés ! Le service client est fantastique et l'application 
+                        nous a permis de coordonner toute notre équipe le jour J."
+                      </p>
+                    </div>
+                    <div className="border-t pt-4">
+                      <p className="font-medium text-gray-900">Marie & Thomas</p>
+                      <p className="text-sm text-gray-600">Mariage en Normandie, Septembre 2024</p>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Témoignage 3 */}
+                <Card className="bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
+                  <CardContent className="p-6">
+                    <div className="mb-4">
+                      <div className="flex items-center gap-1 mb-3">
+                        {[...Array(5)].map((_, i) => (
+                          <span key={i} className="text-yellow-400 text-lg">★</span>
+                        ))}
+                      </div>
+                      <p className="text-gray-700 italic text-sm">
+                        "Grâce à Mariable, nous avons pu organiser notre mariage sans stress. Les outils sont géniaux 
+                        et l'accompagnement personnalisé nous a beaucoup aidés."
+                      </p>
+                    </div>
+                    <div className="border-t pt-4">
+                      <p className="font-medium text-gray-900">Camille & Julien</p>
+                      <p className="text-sm text-gray-600">Mariage en Bretagne, Août 2024</p>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Témoignage 4 */}
+                <Card className="bg-white shadow-lg hover:shadow-xl transition-shadow duration-300 md:col-span-1 lg:col-span-1">
+                  <CardContent className="p-6">
+                    <div className="mb-4">
+                      <div className="flex items-center gap-1 mb-3">
+                        {[...Array(5)].map((_, i) => (
+                          <span key={i} className="text-yellow-400 text-lg">★</span>
+                        ))}
+                      </div>
+                      <p className="text-gray-700 italic text-sm">
+                        "L'application Jour-J de Mariable est un vrai game-changer ! Tous nos prestataires et témoins 
+                        savaient exactement quoi faire et quand. Parfait !"
+                      </p>
+                    </div>
+                    <div className="border-t pt-4">
+                      <p className="font-medium text-gray-900">Laura & Maxime</p>
+                      <p className="text-sm text-gray-600">Mariage en Côte d'Azur, Juillet 2024</p>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Témoignage 5 */}
+                <Card className="bg-white shadow-lg hover:shadow-xl transition-shadow duration-300 md:col-span-1 lg:col-span-1">
+                  <CardContent className="p-6">
+                    <div className="mb-4">
+                      <div className="flex items-center gap-1 mb-3">
+                        {[...Array(5)].map((_, i) => (
+                          <span key={i} className="text-yellow-400 text-lg">★</span>
+                        ))}
+                      </div>
+                      <p className="text-gray-700 italic text-sm">
+                        "Service client au top ! Mathilde répond rapidement et donne de précieux conseils. 
+                        Notre budget a été maîtrisé grâce à leur suivi."
+                      </p>
+                    </div>
+                    <div className="border-t pt-4">
+                      <p className="font-medium text-gray-900">Emma & Pierre</p>
+                      <p className="text-sm text-gray-600">Mariage en Bourgogne, Mai 2024</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Bouton CTA après les témoignages */}
+              <div className="text-center mt-12">
+                <Button asChild size="lg" className="bg-wedding-olive hover:bg-wedding-olive/90 text-white">
+                  <Link to="/nous-contacter">
+                    Contacter Mathilde <Mail className="ml-2 h-5 w-5" />
+                  </Link>
+                </Button>
+              </div>
             </div>
           </div>
         </section>
