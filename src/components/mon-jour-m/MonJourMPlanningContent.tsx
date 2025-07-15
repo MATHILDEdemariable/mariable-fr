@@ -3,7 +3,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Sparkles, Calendar, Clock, Users, Trash2, CheckSquare, Square, Save } from 'lucide-react';
+import { Plus, Sparkles, Calendar, Clock, Users, Trash2, CheckSquare, Square, Save, HelpCircle } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { supabase } from '@/integrations/supabase/client';
@@ -13,6 +13,7 @@ import UnifiedTaskModal from './UnifiedTaskModal';
 import EnhancedDragDropTimeline from './MonJourMTimeline';
 import { PlanningEvent } from '../wedding-day/types/planningTypes';
 import { useMonJourMCoordination } from '@/hooks/useMonJourMCoordination';
+import MonJourMOnboardingModal from './MonJourMOnboardingModal';
 
 interface MonJourMPlanningContentProps {
   coordinationId: string;
@@ -34,11 +35,28 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
   const [selectionMode, setSelectionMode] = useState(false);
   const [selectedEvents, setSelectedEvents] = useState<string[]>([]);
   const [isSaving, setIsSaving] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
   const { toast } = useToast();
   
   const { coordination } = useMonJourMCoordination();
 
   console.log('🎯 MonJourMPlanningContent: coordination:', coordinationId);
+
+  // Vérifier si l'onboarding doit être affiché
+  useEffect(() => {
+    const hasSeenOnboarding = localStorage.getItem('mon-jour-m-onboarding-seen');
+    if (!hasSeenOnboarding) {
+      // Petit délai pour permettre le chargement de l'interface
+      const timer = setTimeout(() => {
+        setShowOnboarding(true);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
+  const handleShowOnboarding = () => {
+    setShowOnboarding(true);
+  };
 
   // Fonction de sauvegarde avec debounce
   const saveEventsToDatabase = useCallback(async (eventsToSave: PlanningEvent[]) => {
@@ -482,6 +500,19 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
       </div>
 
       {/* Actions principales */}
+      <div className="flex flex-col sm:flex-row gap-4 items-start">
+        {/* Bouton d'aide pour relancer l'onboarding */}
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleShowOnboarding}
+          className="sm:ml-auto shrink-0 text-gray-600 hover:text-wedding-olive"
+        >
+          <HelpCircle className="h-4 w-4 mr-2" />
+          Guide d'utilisation
+        </Button>
+      </div>
+      
       <div className="flex flex-col sm:flex-row gap-4">
         <Dialog open={isTaskModalOpen} onOpenChange={setIsTaskModalOpen}>
           <DialogTrigger asChild>
@@ -593,6 +624,13 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
           )}
         </CardContent>
       </Card>
+
+      {/* Modal d'onboarding */}
+      <MonJourMOnboardingModal
+        isOpen={showOnboarding}
+        onOpenChange={setShowOnboarding}
+        hasExistingEvents={events.length > 0}
+      />
     </div>
   );
 };
