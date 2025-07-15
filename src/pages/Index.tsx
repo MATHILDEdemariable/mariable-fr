@@ -419,9 +419,7 @@ const Index = () => {
               {/* Bouton CTA après les témoignages */}
               <div className="text-center mt-12">
                 <Button asChild size="lg" className="bg-wedding-olive hover:bg-wedding-olive/90 text-white">
-                  <Link to="/nous-contacter">
-                    Contacter Mathilde <Mail className="ml-2 h-5 w-5" />
-                  </Link>
+                  
                 </Button>
               </div>
             </div>
