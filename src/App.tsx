@@ -46,6 +46,7 @@ import FAQ from "./pages/contact/FAQ";
 import ChecklistMariage from "./pages/ChecklistMariage";
 import Accompagnement from "./pages/Accompagnement";
 import LivreBlanc from "./pages/LivreBlanc";
+import CoordinateursMarriage from "./pages/CoordinateursMarriage";
 
 // Import admin pages
 import AdminDashboard from "./pages/admin/AdminDashboard";
