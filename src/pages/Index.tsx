@@ -201,7 +201,7 @@ const Index = () => {
                 <CardHeader className="text-center pb-4">
                   <div className="flex items-center justify-center gap-2 mb-3">
                     <MessageCircle className="h-6 w-6 text-wedding-olive" />
-                    <CardTitle className="text-xl font-bold">L'accompagnement Mariable</CardTitle>
+                    <CardTitle className="text-xl font-bold">L'accompagnement</CardTitle>
                   </div>
                   <p className="text-sm text-gray-600">Ligne directe avec une experte</p>
                 </CardHeader>
