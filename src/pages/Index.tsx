@@ -338,7 +338,7 @@ const Index = () => {
               <h3 className="text-2xl font-serif mb-4" style={{
                 fontFamily: 'Playfair Display, serif'
               }}>
-                prêt(e) à vivre une expérience unique pour votre mariage?
+                Prêt(e) à vivre une expérience unique pour votre mariage?
               </h3>
               <p className="text-lg text-gray-700 mb-6">
                 Plusieurs couples nous on déjà fait confiance
