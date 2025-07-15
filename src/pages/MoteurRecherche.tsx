@@ -44,7 +44,7 @@ const MoteurRecherche = () => {
   const [filters, setFilters] = useState<VendorFilter>({
     search: searchParams.get('q') || '',
     category: (searchParams.get('category') as Database['public']['Enums']['prestataire_categorie']) || 'Tous',
-    region: selectedRegion || searchParams.get('region'),
+    region: selectedRegion || null,
     minPrice: searchParams.get('min') ? Number(searchParams.get('min')) : undefined,
     maxPrice: searchParams.get('max') ? Number(searchParams.get('max')) : undefined,
     categorieLieu: searchParams.get('categorieLieu'),
@@ -52,6 +52,13 @@ const MoteurRecherche = () => {
     hebergement: searchParams.get('hebergement') === 'true' ? true : undefined,
     couchages: searchParams.get('couchages') ? Number(searchParams.get('couchages')) : undefined,
   });
+
+  // Synchroniser la région depuis l'URL avec les filtres
+  useEffect(() => {
+    if (selectedRegion !== filters.region) {
+      setFilters(prev => ({ ...prev, region: selectedRegion }));
+    }
+  }, [selectedRegion, filters.region]);
 
   // Debounce pour la recherche
   const [debouncedSearch, setDebouncedSearch] = useState(filters.search);

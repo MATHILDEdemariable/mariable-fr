@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { MapPin } from 'lucide-react';
 
+// Organiser les régions par ordre alphabétique
 const regions = [
   "Auvergne-Rhône-Alpes",
   "Bourgogne-Franche-Comté", 
@@ -18,7 +19,7 @@ const regions = [
   "Occitanie",
   "Pays de la Loire",
   "Provence-Alpes-Côte d'Azur"
-];
+].sort();
 
 // Fonction pour convertir le nom de région en slug
 export const regionToSlug = (region: string): string => {
@@ -89,39 +90,53 @@ const RegionSelectorPage: React.FC<RegionSelectorPageProps> = ({ onRegionSelect 
         </p>
       </div>
 
-      {/* Option France entière */}
-      <div className="mb-8">
-        <Card 
-          className="border-2 border-wedding-olive/20 hover:border-wedding-olive/40 transition-all duration-200 cursor-pointer group"
-          onClick={handleFranceEntiere}
-        >
-          <CardContent className="p-6 text-center">
-            <MapPin className="w-6 h-6 mx-auto mb-2 text-wedding-olive" />
-            <h3 className="text-xl font-semibold text-wedding-olive group-hover:text-wedding-olive/80 transition-colors">
-              France entière
-            </h3>
-            <p className="text-sm text-muted-foreground mt-1">
-              Voir tous les prestataires
-            </p>
-          </CardContent>
-        </Card>
-      </div>
+      {/* Grille des régions avec France entière en dernier */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-4xl mx-auto">
+        {/* Première colonne */}
+        <div className="space-y-4">
+          {regions.slice(0, 7).map((region) => (
+            <Card 
+              key={region}
+              className="border hover:border-wedding-olive/40 transition-all duration-200 cursor-pointer group hover:shadow-md"
+              onClick={() => handleRegionClick(region)}
+            >
+              <CardContent className="p-4 text-center">
+                <h3 className="font-medium text-foreground group-hover:text-wedding-olive transition-colors">
+                  {region}
+                </h3>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
 
-      {/* Grille des régions */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        {regions.map((region) => (
+        {/* Deuxième colonne */}
+        <div className="space-y-4">
+          {regions.slice(7).map((region) => (
+            <Card 
+              key={region}
+              className="border hover:border-wedding-olive/40 transition-all duration-200 cursor-pointer group hover:shadow-md"
+              onClick={() => handleRegionClick(region)}
+            >
+              <CardContent className="p-4 text-center">
+                <h3 className="font-medium text-foreground group-hover:text-wedding-olive transition-colors">
+                  {region}
+                </h3>
+              </CardContent>
+            </Card>
+          ))}
+          
+          {/* France entière en dernier */}
           <Card 
-            key={region}
-            className="border hover:border-wedding-olive/40 transition-all duration-200 cursor-pointer group hover:shadow-md"
-            onClick={() => handleRegionClick(region)}
+            className="border-2 border-wedding-olive/20 hover:border-wedding-olive/40 transition-all duration-200 cursor-pointer group"
+            onClick={handleFranceEntiere}
           >
             <CardContent className="p-4 text-center">
-              <h3 className="font-medium text-foreground group-hover:text-wedding-olive transition-colors">
-                {region}
+              <h3 className="font-medium text-wedding-olive group-hover:text-wedding-olive/80 transition-colors">
+                France entière
               </h3>
             </CardContent>
           </Card>
-        ))}
+        </div>
       </div>
     </div>
   );

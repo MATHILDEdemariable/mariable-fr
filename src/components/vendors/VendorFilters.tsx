@@ -150,7 +150,9 @@ const VendorFilters: React.FC<VendorFiltersProps> = ({ filters, onFilterChange }
               onValueChange={(value) => onFilterChange({ region: value === 'all-regions' ? null : value })}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Région" />
+                <SelectValue>
+                  {filters.region || 'Toutes les régions'}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all-regions">Toutes les régions</SelectItem>
@@ -258,7 +260,9 @@ const VendorFilters: React.FC<VendorFiltersProps> = ({ filters, onFilterChange }
                     onValueChange={(value) => onFilterChange({ region: value === 'all-regions' ? null : value })}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Région" />
+                      <SelectValue>
+                        {filters.region || 'Toutes les régions'}
+                      </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all-regions">Toutes les régions</SelectItem>
