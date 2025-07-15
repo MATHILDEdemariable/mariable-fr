@@ -70,8 +70,13 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
   // Menu déroulant Prestataires
   const prestatairesItems = [
     {
-      label: 'Suivi',
+      label: 'Sélection Mariable',
       icon: <Store className="h-4 w-4" />,
+      path: '/selection',
+    },
+    {
+      label: 'Suivi',
+      icon: <Settings className="h-4 w-4" />,
       path: '/dashboard/prestataires',
     },
     {

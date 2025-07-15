@@ -185,7 +185,7 @@ const LazyVendorCard: React.FC<LazyVendorCardProps> = ({
           {vendor.featured && (
             <Badge
               variant="default"
-              className="absolute top-3 right-12 bg-wedding-gold text-white"
+              className="absolute bottom-3 right-3 bg-wedding-gold text-white"
             >
               Premium
             </Badge>
