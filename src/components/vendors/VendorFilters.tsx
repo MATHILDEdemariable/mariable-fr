@@ -45,7 +45,6 @@ const CATEGORIES: (PrestataireCategorie | 'Tous')[] = [
   "Traiteur",
   "Photographe",
   "Vidéaste",
-  "Coordination",
   "DJ",
   "Fleuriste",
   "Robe de mariée",

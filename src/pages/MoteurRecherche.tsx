@@ -113,6 +113,9 @@ const MoteurRecherche = () => {
         query = query.eq('categorie', filters.category);
       }
       
+      // Exclure les coordinateurs (ils ont leur page dédiée)
+      query = query.neq('categorie', 'Coordination');
+      
       if (filters.region) {
         // Utiliser une assertion de type pour assurer la compatibilité
         query = query.eq('region', filters.region as RegionFrance);

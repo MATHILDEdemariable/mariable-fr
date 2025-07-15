@@ -89,6 +89,11 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
       path: '/mon-jour-m',
     },
     {
+      label: 'Coordinateurs',
+      icon: <Users className="h-4 w-4" />,
+      path: '/coordinateurs-mariage',
+    },
+    {
       label: 'Conseils Jour M',
       icon: <Lightbulb className="h-4 w-4" />,
       path: '/dashboard/coordination',
