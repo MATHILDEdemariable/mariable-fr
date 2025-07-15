@@ -3,9 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { MapPin } from 'lucide-react';
+import { RegionFrance } from '@/types/airtable';
 
-// Organiser les régions par ordre alphabétique
-const regions = [
+// Organiser les régions par ordre alphabétique (sans France entière)
+const regions: RegionFrance[] = [
   "Auvergne-Rhône-Alpes",
   "Bourgogne-Franche-Comté", 
   "Bretagne",
@@ -19,7 +20,7 @@ const regions = [
   "Occitanie",
   "Pays de la Loire",
   "Provence-Alpes-Côte d'Azur"
-].sort();
+];
 
 // Fonction pour convertir le nom de région en slug
 export const regionToSlug = (region: string): string => {
@@ -39,10 +40,10 @@ export const regionToSlug = (region: string): string => {
 };
 
 // Fonction pour convertir le slug en nom de région
-export const slugToRegion = (slug: string): string | null => {
-  if (slug === 'france-entiere') return '';
+export const slugToRegion = (slug: string): RegionFrance | null => {
+  if (slug === 'france-entiere') return 'France entière';
   
-  const slugMap: { [key: string]: string } = {
+  const slugMap: { [key: string]: RegionFrance } = {
     'auvergne-rhone-alpes': 'Auvergne-Rhône-Alpes',
     'bourgogne-franche-comte': 'Bourgogne-Franche-Comté',
     'bretagne': 'Bretagne',
@@ -76,7 +77,7 @@ const RegionSelectorPage: React.FC<RegionSelectorPageProps> = ({ onRegionSelect 
 
   const handleFranceEntiere = () => {
     navigate('/mariage/france-entiere');
-    onRegionSelect?.(null);
+    onRegionSelect?.('France entière');
   };
 
   return (

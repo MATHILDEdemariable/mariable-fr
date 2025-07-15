@@ -2128,6 +2128,7 @@ export type Database = {
         | "Occitanie"
         | "Pays de la Loire"
         | "Provence-Alpes-Côte d'Azur"
+        | "France entière"
       todo_priority: "haute" | "moyenne" | "basse"
       vendor_status:
         | "à contacter"
@@ -2309,6 +2310,7 @@ export const Constants = {
         "Occitanie",
         "Pays de la Loire",
         "Provence-Alpes-Côte d'Azur",
+        "France entière",
       ],
       todo_priority: ["haute", "moyenne", "basse"],
       vendor_status: [

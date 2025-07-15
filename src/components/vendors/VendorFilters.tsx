@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -14,21 +14,22 @@ import {
 import { useIsMobile } from '@/hooks/use-mobile';
 import { VendorFilter } from '@/pages/MoteurRecherche';
 import VenueExtraFilters from '@/components/search/VenueExtraFilters';
+import { RegionFrance } from '@/types/airtable';
 
 type PrestataireCategorie = Database['public']['Enums']['prestataire_categorie'];
-type RegionFrance = Database['public']['Enums']['region_france'];
 
 interface VendorFiltersProps {
   filters: VendorFilter;
   onFilterChange: (newFilters: Partial<VendorFilter>) => void;
 }
 
-const REGIONS = [
+const REGIONS: RegionFrance[] = [
   "Auvergne-Rhône-Alpes",
   "Bourgogne-Franche-Comté",
   "Bretagne",
   "Centre-Val de Loire",
   "Corse",
+  "France entière",
   "Grand Est",
   "Hauts-de-France",
   "Île-de-France",
@@ -59,7 +60,8 @@ const VendorFilters: React.FC<VendorFiltersProps> = ({ filters, onFilterChange }
     filters.maxPrice || 10000
   ]);
   
-  const hasActiveFilters = 
+  // Optimisation avec useMemo pour les calculs coûteux
+  const hasActiveFilters = useMemo(() => 
     filters.category !== 'Tous' || 
     filters.region !== null || 
     filters.minPrice !== undefined || 
@@ -67,7 +69,14 @@ const VendorFilters: React.FC<VendorFiltersProps> = ({ filters, onFilterChange }
     filters.categorieLieu !== undefined ||
     filters.capaciteMin !== undefined ||
     filters.hebergement !== undefined ||
-    filters.couchages !== undefined;
+    filters.couchages !== undefined,
+    [filters]
+  );
+
+  const isVenueCategory = useMemo(() => 
+    filters.category === 'Lieu de réception', 
+    [filters.category]
+  );
   
   const handlePriceChange = (value: number[]) => {
     setPriceRange([value[0], value[1]]);
@@ -105,7 +114,7 @@ const VendorFilters: React.FC<VendorFiltersProps> = ({ filters, onFilterChange }
     onFilterChange(venueFilters);
   };
 
-  const isVenueCategory = filters.category === 'Lieu de réception';
+  
 
   return (
     <div className="space-y-4 bg-white">

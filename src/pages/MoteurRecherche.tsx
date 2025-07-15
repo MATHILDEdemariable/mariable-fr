@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSearchParams, useNavigate, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Database } from '@/integrations/supabase/types';
@@ -104,19 +104,34 @@ const MoteurRecherche = () => {
     setFilters(prev => ({ ...prev, ...newFilters }));
   };
   
+  // Optimiser les clés de cache avec useMemo
+  const queryKey = useMemo(() => [
+    'vendors', 
+    filters.category, 
+    filters.region, 
+    filters.minPrice, 
+    filters.maxPrice, 
+    filters.categorieLieu, 
+    filters.capaciteMin, 
+    filters.hebergement, 
+    filters.couchages, 
+    debouncedSearch
+  ], [filters, debouncedSearch]);
+
   const { data: vendors, isLoading, error } = useQuery({
-    queryKey: ['vendors', filters.category, filters.region, filters.minPrice, filters.maxPrice, 
-               filters.categorieLieu, filters.capaciteMin, filters.hebergement, filters.couchages, debouncedSearch],
+    queryKey,
     queryFn: async () => {
       let query = supabase
         .from('prestataires_rows')
         .select('*, prestataires_photos_preprod (*)')
         .eq('visible', true)
-        .order('featured',{ascending:false})
+        .order('featured', { ascending: false })
+        .order('nom');
+      
+      // Exclure les coordinateurs (ils ont leur page dédiée)
+      query = query.neq('categorie', 'Coordination');
       
       if (debouncedSearch) {
-        // Recherche étendue sur plusieurs champs
-        console.log('oui');
         query = query.or(
           `nom.ilike.%${debouncedSearch}%,` +
           `ville.ilike.%${debouncedSearch}%,` +
@@ -128,11 +143,7 @@ const MoteurRecherche = () => {
         query = query.eq('categorie', filters.category);
       }
       
-      // Exclure les coordinateurs (ils ont leur page dédiée)
-      query = query.neq('categorie', 'Coordination');
-      
       if (filters.region) {
-        // Utiliser une assertion de type pour assurer la compatibilité
         query = query.eq('region', filters.region as RegionFrance);
       }
       
@@ -144,21 +155,17 @@ const MoteurRecherche = () => {
         query = query.or(`prix_a_partir_de.lte.${filters.maxPrice},prix_par_personne.lte.${filters.maxPrice}`);
       }
       
-      // Filtres supplémentaires pour les lieux de réception
+      // Filtres pour les lieux de réception
       if (filters.category === 'Lieu de réception') {
         if (filters.categorieLieu) {
           query = query.eq('categorie_lieu', filters.categorieLieu);
         }
-        
-        // Filtre simplifié pour la capacité
         if (filters.capaciteMin) {
           query = query.gte('capacite_invites', filters.capaciteMin);
         }
-        
         if (filters.hebergement !== undefined) {
           query = query.eq('hebergement_inclus', filters.hebergement);
         }
-        
         if (filters.couchages) {
           query = query.gte('nombre_couchages', filters.couchages);
         }
@@ -168,7 +175,10 @@ const MoteurRecherche = () => {
       
       if (error) throw new Error(error.message);
       return data as Prestataire[];
-    }
+    },
+    // Cache plus long pour améliorer les performances
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes (remplace cacheTime)
   });
   
   useEffect(() => {
