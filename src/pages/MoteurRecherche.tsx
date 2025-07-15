@@ -6,9 +6,10 @@ import { Database } from '@/integrations/supabase/types';
 import { supabase } from '@/integrations/supabase/client';
 import Header from '@/components/Header';
 import VendorCard from '@/components/vendors/VendorCard';
+import VendorCardSkeleton from '@/components/vendors/VendorCardSkeleton';
 import VendorFilters from '@/components/vendors/VendorFilters';
 import { toast } from '@/components/ui/use-toast';
-import { Loader2, ArrowLeft } from 'lucide-react';
+import { Loader2, ArrowLeft, Search, MapPin } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from '@/components/ui/button';
 import RegionSelectorPage, { slugToRegion, regionToSlug } from '@/components/search/RegionSelectorPage';
@@ -285,8 +286,28 @@ const MoteurRecherche = () => {
         </div>
         
         {isLoading ? (
-          <div className="flex justify-center items-center py-12">
-            <Loader2 className="h-8 w-8 animate-spin text-wedding-olive" />
+          <div className="space-y-6">
+            {/* Message informatif pendant le chargement */}
+            <div className="bg-wedding-olive/10 border border-wedding-olive/20 rounded-lg p-6 text-center">
+              <div className="flex items-center justify-center gap-2 mb-3">
+                <Search className="h-5 w-5 text-wedding-olive" />
+                <span className="font-medium text-wedding-olive">Recherche en cours...</span>
+              </div>
+              <p className="text-sm text-muted-foreground mb-2">
+                Nous recherchons les meilleurs prestataires de mariage en {selectedRegion}
+              </p>
+              <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground">
+                <MapPin className="h-3 w-3" />
+                Filtrage par région et critères de qualité
+              </div>
+            </div>
+            
+            {/* Skeleton cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {Array.from({ length: 9 }).map((_, index) => (
+                <VendorCardSkeleton key={index} />
+              ))}
+            </div>
           </div>
         ) : vendors && vendors.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
