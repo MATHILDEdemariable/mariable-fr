@@ -5,7 +5,7 @@ import SEO from '@/components/SEO';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowRight, Check, Brain, Handshake, MessageCircle, Smartphone, Mail, Settings, Calendar, Users } from 'lucide-react';
+import { ArrowRight, Check, Brain, Handshake, MessageCircle, Smartphone, Mail, Settings, Calendar, Users, Star } from 'lucide-react';
 import { Link } from 'react-router-dom';
 const Index = () => {
   const [displayedText, setDisplayedText] = useState('');
@@ -385,7 +385,9 @@ const Index = () => {
                   <CardContent className="p-6">
                     <div className="mb-4">
                       <div className="flex items-center gap-1 mb-3">
-                        {[...Array(5)].map((_, i) => {})}
+                        {[...Array(5)].map((_, i) => (
+                          <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                        ))}
                       </div>
                       <p className="text-gray-700 italic text-sm">
                         "Service client au top ! Mathilde répond rapidement et donne de précieux conseils. 
