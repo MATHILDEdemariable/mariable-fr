@@ -57,6 +57,11 @@ import AdminForm from "./pages/admin/FormAdmin";
 import AdminReservationsJourM from "./pages/admin/ReservationsJourM";
 import AdminSystemCheck from "./pages/admin/SystemCheck";
 
+// Import test pages
+import TestVendorSelectionHub from "./pages/TestVendorSelectionHub";
+import TestRegionServicePage from "./pages/TestRegionServicePage";
+import TestCoordinationPage from "./pages/TestCoordinationPage";
+
 const queryClient = new QueryClient();
 
 function App() {
@@ -132,10 +137,16 @@ function App() {
                    <Route path="/admin/reservations-jour-m" element={<AdminReservationsJourM />} />
                    <Route path="/admin/system-check" element={<AdminSystemCheck />} />
                   
-                  {/* Services routes */}
-                  <Route path="/services/budget" element={<Budget />} />
-                  
-                  <Route path="*" element={<NotFound />} />
+                   {/* Services routes */}
+                   <Route path="/services/budget" element={<Budget />} />
+
+                   {/* Test routes */}
+                   <Route path="/test-selection" element={<TestVendorSelectionHub />} />
+                   <Route path="/test-region/:region" element={<TestRegionServicePage />} />
+                   <Route path="/test-coordination" element={<TestCoordinationPage />} />
+                   <Route path="/test-mariage-*" element={<MoteurRecherche />} />
+                   
+                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </AnalyticsProvider>
             </BrowserRouter>
