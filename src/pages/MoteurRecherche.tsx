@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useSearchParams, useNavigate, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Database } from '@/integrations/supabase/types';
 import { supabase } from '@/integrations/supabase/client';
@@ -8,9 +8,11 @@ import Header from '@/components/Header';
 import VendorCard from '@/components/vendors/VendorCard';
 import VendorFilters from '@/components/vendors/VendorFilters';
 import { toast } from '@/components/ui/use-toast';
-import { Loader2 } from 'lucide-react';
+import { Loader2, ArrowLeft } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from '@/components/ui/button';
+import RegionSelectorPage, { slugToRegion, regionToSlug } from '@/components/search/RegionSelectorPage';
+import { Helmet } from 'react-helmet-async';
 
 type Prestataire = Database['public']['Tables']['prestataires_rows']['Row'];
 type RegionFrance = Database['public']['Enums']['region_france'];
@@ -31,12 +33,18 @@ export interface VendorFilter {
 const MoteurRecherche = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
+  const params = useParams();
   const isMobile = useIsMobile();
+  
+  // Déterminer si on affiche la sélection de région ou les résultats
+  const regionSlug = params.region;
+  const selectedRegion = regionSlug ? slugToRegion(regionSlug) : null;
+  const showRegionSelector = !regionSlug;
   
   const [filters, setFilters] = useState<VendorFilter>({
     search: searchParams.get('q') || '',
     category: (searchParams.get('category') as Database['public']['Enums']['prestataire_categorie']) || 'Tous',
-    region: searchParams.get('region'),
+    region: selectedRegion || searchParams.get('region'),
     minPrice: searchParams.get('min') ? Number(searchParams.get('min')) : undefined,
     maxPrice: searchParams.get('max') ? Number(searchParams.get('max')) : undefined,
     categorieLieu: searchParams.get('categorieLieu'),
@@ -167,14 +175,78 @@ const MoteurRecherche = () => {
     }
   }, [error]);
 
+  // Génération du titre SEO
+  const getPageTitle = () => {
+    if (regionSlug === 'france-entiere') {
+      return 'Prestataires Mariage France | Mariable';
+    }
+    if (selectedRegion) {
+      return `Prestataires Mariage ${selectedRegion} | Mariable`;
+    }
+    return 'Choisissez votre région | Mariable';
+  };
+
+  const getMetaDescription = () => {
+    if (regionSlug === 'france-entiere') {
+      return 'Trouvez les meilleurs prestataires de mariage en France. Photographes, traiteurs, lieux de réception et plus encore.';
+    }
+    if (selectedRegion) {
+      return `Découvrez les meilleurs prestataires de mariage en ${selectedRegion}. Sélection de qualité pour votre jour J.`;
+    }
+    return 'Sélectionnez votre région pour découvrir les meilleurs prestataires de mariage près de chez vous.';
+  };
+
+  const handleChangeRegion = () => {
+    navigate('/selection');
+  };
+
+  if (showRegionSelector) {
+    return (
+      <div className="min-h-screen bg-white">
+        <Helmet>
+          <title>{getPageTitle()}</title>
+          <meta name="description" content={getMetaDescription()} />
+        </Helmet>
+        <Header />
+        <main className="container max-w-7xl px-4 py-6 md:py-8">
+          <RegionSelectorPage />
+        </main>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-white">
+      <Helmet>
+        <title>{getPageTitle()}</title>
+        <meta name="description" content={getMetaDescription()} />
+      </Helmet>
       <Header />
       
       <main className="container max-w-7xl px-4 py-6 md:py-8">
+        {/* Breadcrumb et bouton retour */}
+        <div className="flex items-center gap-2 mb-6 text-sm">
+          <button 
+            onClick={handleChangeRegion}
+            className="flex items-center gap-1 text-muted-foreground hover:text-wedding-olive transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Changer de région
+          </button>
+          <span className="text-muted-foreground">•</span>
+          <span className="text-wedding-olive font-medium">
+            {regionSlug === 'france-entiere' ? 'France entière' : selectedRegion}
+          </span>
+        </div>
+
         <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
           <div>
-            <h1 className="text-2xl md:text-3xl font-serif mb-2">Trouvez le prestataire idéal</h1>
+            <h1 className="text-2xl md:text-3xl font-serif mb-2">
+              {regionSlug === 'france-entiere' 
+                ? 'Prestataires de mariage en France' 
+                : `Prestataires de mariage en ${selectedRegion}`
+              }
+            </h1>
             <p className="text-muted-foreground">
               Découvrez notre sélection de prestataires de qualité pour votre mariage
             </p>

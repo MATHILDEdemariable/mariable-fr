@@ -72,8 +72,9 @@ function App() {
               <AnalyticsProvider>
                 <Routes>
                   <Route path="/" element={<Index />} />
-                  <Route path="/moteur-recherche" element={<MoteurRecherche />} />
+                   <Route path="/moteur-recherche" element={<MoteurRecherche />} />
           <Route path="/selection" element={<MoteurRecherche />} />
+          <Route path="/mariage/:region" element={<MoteurRecherche />} />
           <Route path="/coordinateurs-mariage" element={<CoordinateursMarriage />} />
                   <Route path="/planning-personnalise" element={<PlanningPersonnalise />} />
                   <Route path="/planning-resultats-personnalises" element={<PlanningResultatsPersonnalises />} />
