@@ -233,7 +233,7 @@ const Index = () => {
                   
                   <div className="mt-auto">
                     <Button asChild className="w-full bg-wedding-olive text-white hover:bg-wedding-olive/90">
-                      <Link to="/nous-contacter">Envoyer une demande</Link>
+                      <Link to="/reservation-jour-m">Envoyer une demande</Link>
                     </Button>
                   </div>
                 </CardContent>
@@ -274,8 +274,11 @@ const Index = () => {
                   </div>
                   
                   <div className="mt-auto">
-                    <Button asChild className="w-full bg-wedding-olive text-white hover:bg-wedding-olive/90">
-                      <Link to="/paiement">Payer maintenant</Link>
+                    <Button 
+                      onClick={() => window.open('https://buy.stripe.com/7sY00ka2m3xwcMt8Au8bS03', '_blank')}
+                      className="w-full bg-wedding-olive text-white hover:bg-wedding-olive/90"
+                    >
+                      Payer maintenant
                     </Button>
                   </div>
                 </CardContent>

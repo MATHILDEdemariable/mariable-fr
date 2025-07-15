@@ -65,7 +65,7 @@ const Paiement = () => {
           telephone_whatsapp: formData.phone,
           date_mariage: formData.weddingDate,
           statut: 'en_attente',
-          montant: 9.90,
+          montant: 14.90,
           devise: 'EUR'
         });
 
@@ -156,10 +156,10 @@ const Paiement = () => {
 
               <div className="text-center mb-12">
                 <h1 className="text-4xl md:text-5xl font-serif text-black mb-6">
-                  Souscrire à l'accompagnement Mariable
+                  Application Jour-J Libre
                 </h1>
                 <p className="text-lg text-gray-700 max-w-2xl mx-auto">
-                  Bénéficiez d'un accompagnement personnalisé pour votre mariage avec notre service premium
+                  Votre application Jour-J personnalisable pour organiser votre mariage en toute autonomie
                 </p>
               </div>
 
@@ -168,49 +168,49 @@ const Paiement = () => {
                 <Card className="shadow-lg">
                   <CardHeader>
                     <CardTitle className="text-2xl font-serif text-center">
-                      Accompagnement Mariable
+                      Application Libre
                     </CardTitle>
                     <div className="text-center">
                       <div className="text-4xl font-bold text-wedding-olive mb-2">
-                        9,90€ / mois TTC
+                        14,9€ TTC
                       </div>
-                      <p className="text-sm text-wedding-olive font-medium mt-2">📱 Disponible avec WhatsApp</p>
+                      <p className="text-sm text-wedding-olive font-medium mt-2">💍 Application Jour-J personnalisable</p>
                     </div>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    <h3 className="font-semibold text-lg mb-4">Inclus dans votre abonnement :</h3>
+                    <h3 className="font-semibold text-lg mb-4">Inclus dans votre application :</h3>
                     <div className="space-y-3">
                       <div className="flex items-start gap-3">
                         <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                        <p className="text-sm text-gray-700">Support 7J/7J : Messages texte illimités + messages vocaux autorisés</p>
+                        <p className="text-sm text-gray-700">Application personnalisée pour votre mariage</p>
                       </div>
                       <div className="flex items-start gap-3">
                         <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                        <p className="text-sm text-gray-700">Réponse rapide &lt;24H</p>
+                        <p className="text-sm text-gray-700">Planning intelligent et personnalisable</p>
                       </div>
                       <div className="flex items-start gap-3">
                         <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                        <p className="text-sm text-gray-700">Soutien émotionnel</p>
+                        <p className="text-sm text-gray-700">Partage avec vos proches et prestataires</p>
                       </div>
                       <div className="flex items-start gap-3">
                         <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                        <p className="text-sm text-gray-700">Analyse de votre organisation</p>
+                        <p className="text-sm text-gray-700">Documents partagés et centralisés</p>
                       </div>
                       <div className="flex items-start gap-3">
                         <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                        <p className="text-sm text-gray-700">Relecture de votre planning & checklists</p>
+                        <p className="text-sm text-gray-700">Gestion d'équipe simplifiée</p>
                       </div>
                       <div className="flex items-start gap-3">
                         <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                        <p className="text-sm text-gray-700">Accompagnement pour votre planification</p>
+                        <p className="text-sm text-gray-700">Timeline interactive du jour J</p>
                       </div>
                       <div className="flex items-start gap-3">
                         <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                        <p className="text-sm text-gray-700">Relecture des documents techniques</p>
+                        <p className="text-sm text-gray-700">Mode collaboratif en temps réel</p>
                       </div>
                       <div className="flex items-start gap-3">
                         <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                        <p className="text-sm text-gray-700">Aide à la prise de décision</p>
+                        <p className="text-sm text-gray-700">Accès vie entière à votre planning</p>
                       </div>
                     </div>
 
@@ -218,7 +218,7 @@ const Paiement = () => {
                       <div className="flex items-center gap-2 mb-4">
                         <span className="text-lg">💡</span>
                         <p className="text-sm font-medium text-gray-700">
-                          Comme une consultation de médecin… mais pour votre mariage et en abonnement mensuel !
+                          Votre outil personnel pour organiser et coordonner votre mariage en toute autonomie !
                         </p>
                       </div>
                     </div>
@@ -300,17 +300,16 @@ const Paiement = () => {
 
                     <div className="pt-4 border-t">
                       <div className="flex items-center justify-between mb-4">
-                        <span className="text-lg font-semibold">Total mensuel</span>
-                        <span className="text-2xl font-bold text-wedding-olive">9,90€ TTC</span>
+                        <span className="text-lg font-semibold">Total</span>
+                        <span className="text-2xl font-bold text-wedding-olive">14,90€ TTC</span>
                       </div>
                       
-                      <Button 
-                        onClick={handlePayment}
-                        disabled={isSaving || isLoading}
-                        className="w-full bg-wedding-olive hover:bg-wedding-olive/90 text-white py-3 text-lg"
-                      >
-                        {isSaving ? 'Sauvegarde en cours...' : isLoading ? 'Redirection en cours...' : 'Souscrire maintenant'}
-                      </Button>
+      <Button 
+        onClick={() => window.open('https://buy.stripe.com/7sY00ka2m3xwcMt8Au8bS03', '_blank')}
+        className="w-full bg-wedding-olive hover:bg-wedding-olive/90 text-white py-3 text-lg"
+      >
+        Acheter maintenant
+      </Button>
                     </div>
 
                     <div className="space-y-3 pt-4 border-t">
@@ -320,11 +319,11 @@ const Paiement = () => {
                       </div>
                       <div className="flex items-center gap-2 text-sm text-gray-600">
                         <Clock className="h-4 w-4" />
-                        <span>Résiliation possible à tout moment</span>
+                        <span>Accès vie entière après achat</span>
                       </div>
                       <p className="text-xs text-gray-500">
-                        En souscrivant, vous acceptez nos conditions générales de vente et notre politique de confidentialité.
-                        Votre abonnement sera automatiquement renouvelé chaque mois.
+                        En achetant, vous acceptez nos conditions générales de vente et notre politique de confidentialité.
+                        Paiement unique, accès permanent à votre application.
                       </p>
                     </div>
                   </CardContent>
