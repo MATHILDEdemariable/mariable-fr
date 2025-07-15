@@ -340,23 +340,7 @@ const Index = () => {
                 
 
                 {/* Témoignage 2 */}
-                <Card className="bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
-                  <CardContent className="p-6">
-                    <div className="mb-4">
-                      <div className="flex items-center gap-1 mb-3">
-                        {[...Array(5)].map((_, i) => <span key={i} className="text-yellow-400 text-lg">★</span>)}
-                      </div>
-                      <p className="text-gray-700 italic text-sm">
-                        "Nous recommandons Mariable les yeux fermés ! Le service client est fantastique et l'application 
-                        nous a permis de coordonner toute notre équipe le jour J."
-                      </p>
-                    </div>
-                    <div className="border-t pt-4">
-                      <p className="font-medium text-gray-900">Marie & Thomas</p>
-                      <p className="text-sm text-gray-600">Mariage en Normandie, Septembre 2024</p>
-                    </div>
-                  </CardContent>
-                </Card>
+                
 
                 {/* Témoignage 3 */}
                 <Card className="bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
