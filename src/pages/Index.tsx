@@ -337,9 +337,7 @@ const Index = () => {
               {/* Section Témoignages */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
                 {/* Témoignage 1 */}
-                <Card className="bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
-                  
-                </Card>
+                
 
                 {/* Témoignage 2 */}
                 <Card className="bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
