@@ -338,7 +338,7 @@ const Index = () => {
                 Prête à commencer ?
               </h3>
               <p className="text-lg text-gray-700 mb-6">
-                Rejoignez plus de 10 000 couples qui nous font confiance
+                Plusieurs couples nous on déjà fait confiance
               </p>
               <Button asChild size="lg" className="bg-wedding-olive hover:bg-wedding-olive/90 text-white">
                 <Link to="/nous-contacter">
