@@ -209,7 +209,7 @@ const Index = () => {
                 <CardContent className="flex-grow flex flex-col">
                   <div className="text-center mb-6">
                     <div className="text-3xl font-bold text-wedding-olive mb-2">9,90€/mois</div>
-                    <div className="text-sm text-gray-600">TTC</div>
+                    <div className="text-sm text-gray-600">jusqu'à votre mariage</div>
                   </div>
                   
                   <div className="space-y-3 mb-6">
