@@ -7,12 +7,10 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowRight, Check, Brain, Handshake, MessageCircle, Smartphone, Mail, Settings, Calendar, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
-
 const Index = () => {
   const [displayedText, setDisplayedText] = useState('');
   const staticText = 'Profitez pleinement de votre mariage. ';
   const typedText = 'Organisez-le facilement, vous-même.';
-
   useEffect(() => {
     window.scrollTo(0, 0);
 
@@ -26,10 +24,8 @@ const Index = () => {
         clearInterval(timer);
       }
     }, 100);
-
     return () => clearInterval(timer);
   }, []);
-
   const scrollToServices = () => {
     const servicesSection = document.getElementById('services-section');
     if (servicesSection) {
@@ -38,31 +34,29 @@ const Index = () => {
       });
     }
   };
-
-  return (
-    <div className="min-h-screen flex flex-col bg-white">
+  return <div className="min-h-screen flex flex-col bg-white">
       <SEO />
       <Header />
       
       <main className="flex-grow">
         {/* Hero Section with dark overlay */}
         <section className="relative py-20 md:py-28 bg-cover bg-center bg-no-repeat" style={{
-          backgroundImage: "url('/lovable-uploads/16238829-fdfc-4fe2-ade8-9c49d79851b4.png')"
-        }}>
+        backgroundImage: "url('/lovable-uploads/16238829-fdfc-4fe2-ade8-9c49d79851b4.png')"
+      }}>
           {/* Dark overlay */}
           <div className="absolute inset-0 bg-neutral-900/20"></div>
           
           <div className="container mx-auto px-4 relative z-10">
             <div className="max-w-3xl">
               <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif text-white font-bold mb-4" style={{
-                fontFamily: 'Playfair Display, serif'
-              }}>
+              fontFamily: 'Playfair Display, serif'
+            }}>
                 Profitez pleinement de votre mariage.
               </h1>
               
               <p className="text-xl sm:text-2xl font-serif text-white mb-8" style={{
-                fontFamily: 'Playfair Display, serif'
-              }}>
+              fontFamily: 'Playfair Display, serif'
+            }}>
                 <span className="inline-block min-h-[1.2em]">
                   {displayedText}
                   {displayedText.length < typedText.length && <span className="animate-pulse">|</span>}
@@ -87,8 +81,8 @@ const Index = () => {
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif text-black mb-6 max-w-4xl mx-auto" style={{
-                fontFamily: 'Playfair Display, serif'
-              }}>
+              fontFamily: 'Playfair Display, serif'
+            }}>
                 Le premier wedding planner de poche
               </h2>
               
@@ -144,8 +138,8 @@ const Index = () => {
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif text-black mb-6" style={{
-                fontFamily: 'Playfair Display, serif'
-              }}>
+              fontFamily: 'Playfair Display, serif'
+            }}>
                 Transformez l'organisation de votre mariage
               </h2>
               <p className="text-lg text-gray-700 max-w-2xl mx-auto">
@@ -274,10 +268,7 @@ const Index = () => {
                   </div>
                   
                   <div className="mt-auto">
-                    <Button 
-                      onClick={() => window.open('https://buy.stripe.com/7sY00ka2m3xwcMt8Au8bS03', '_blank')}
-                      className="w-full bg-wedding-olive text-white hover:bg-wedding-olive/90"
-                    >
+                    <Button onClick={() => window.open('https://buy.stripe.com/7sY00ka2m3xwcMt8Au8bS03', '_blank')} className="w-full bg-wedding-olive text-white hover:bg-wedding-olive/90">
                       Payer maintenant
                     </Button>
                   </div>
@@ -336,8 +327,8 @@ const Index = () => {
             {/* Call to Action */}
             <div className="text-center mt-16">
               <h3 className="text-2xl font-serif mb-4" style={{
-                fontFamily: 'Playfair Display, serif'
-              }}>
+              fontFamily: 'Playfair Display, serif'
+            }}>
                 Prêt(e) à vivre une expérience unique pour votre mariage?
               </h3>
               <p className="text-lg text-gray-700 mb-6">
@@ -347,23 +338,7 @@ const Index = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
                 {/* Témoignage 1 */}
                 <Card className="bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
-                  <CardContent className="p-6">
-                    <div className="mb-4">
-                      <div className="flex items-center gap-1 mb-3">
-                        {[...Array(5)].map((_, i) => (
-                          <span key={i} className="text-yellow-400 text-lg">★</span>
-                        ))}
-                      </div>
-                      <p className="text-gray-700 italic text-sm">
-                        "Mariable nous a vraiment sauvé la vie ! L'organisation était tellement plus simple avec leur plateforme. 
-                        Notre mariage s'est déroulé parfaitement grâce à leurs conseils."
-                      </p>
-                    </div>
-                    <div className="border-t pt-4">
-                      <p className="font-medium text-gray-900">Sophie & Alexandre</p>
-                      <p className="text-sm text-gray-600">Mariage en Provence, Juin 2024</p>
-                    </div>
-                  </CardContent>
+                  
                 </Card>
 
                 {/* Témoignage 2 */}
@@ -371,9 +346,7 @@ const Index = () => {
                   <CardContent className="p-6">
                     <div className="mb-4">
                       <div className="flex items-center gap-1 mb-3">
-                        {[...Array(5)].map((_, i) => (
-                          <span key={i} className="text-yellow-400 text-lg">★</span>
-                        ))}
+                        {[...Array(5)].map((_, i) => <span key={i} className="text-yellow-400 text-lg">★</span>)}
                       </div>
                       <p className="text-gray-700 italic text-sm">
                         "Nous recommandons Mariable les yeux fermés ! Le service client est fantastique et l'application 
@@ -392,9 +365,7 @@ const Index = () => {
                   <CardContent className="p-6">
                     <div className="mb-4">
                       <div className="flex items-center gap-1 mb-3">
-                        {[...Array(5)].map((_, i) => (
-                          <span key={i} className="text-yellow-400 text-lg">★</span>
-                        ))}
+                        {[...Array(5)].map((_, i) => <span key={i} className="text-yellow-400 text-lg">★</span>)}
                       </div>
                       <p className="text-gray-700 italic text-sm">
                         "Grâce à Mariable, nous avons pu organiser notre mariage sans stress. Les outils sont géniaux 
@@ -413,9 +384,7 @@ const Index = () => {
                   <CardContent className="p-6">
                     <div className="mb-4">
                       <div className="flex items-center gap-1 mb-3">
-                        {[...Array(5)].map((_, i) => (
-                          <span key={i} className="text-yellow-400 text-lg">★</span>
-                        ))}
+                        {[...Array(5)].map((_, i) => <span key={i} className="text-yellow-400 text-lg">★</span>)}
                       </div>
                       <p className="text-gray-700 italic text-sm">
                         "L'application Jour-J de Mariable est un vrai game-changer ! Tous nos prestataires et témoins 
@@ -434,9 +403,7 @@ const Index = () => {
                   <CardContent className="p-6">
                     <div className="mb-4">
                       <div className="flex items-center gap-1 mb-3">
-                        {[...Array(5)].map((_, i) => (
-                          <span key={i} className="text-yellow-400 text-lg">★</span>
-                        ))}
+                        {[...Array(5)].map((_, i) => <span key={i} className="text-yellow-400 text-lg">★</span>)}
                       </div>
                       <p className="text-gray-700 italic text-sm">
                         "Service client au top ! Mathilde répond rapidement et donne de précieux conseils. 
@@ -467,8 +434,8 @@ const Index = () => {
         <section className="py-16 md:py-20 bg-wedding-olive text-white">
           <div className="container mx-auto px-4 text-center">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif mb-4" style={{
-              fontFamily: 'Playfair Display, serif'
-            }}>
+            fontFamily: 'Playfair Display, serif'
+          }}>
               Et si vous disiez "oui" à la simplicité ?
             </h2>
             <p className="text-lg mb-8 max-w-2xl mx-auto">
@@ -486,8 +453,6 @@ const Index = () => {
       
       <Footer />
       <ChatbotButton />
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
