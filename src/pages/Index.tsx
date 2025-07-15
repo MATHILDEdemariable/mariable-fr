@@ -385,7 +385,7 @@ const Index = () => {
                   <CardContent className="p-6">
                     <div className="mb-4">
                       <div className="flex items-center gap-1 mb-3">
-                        {[...Array(5)].map((_, i) => <span key={i} className="text-yellow-400 text-lg">★</span>)}
+                        {[...Array(5)].map((_, i) => {})}
                       </div>
                       <p className="text-gray-700 italic text-sm">
                         "Service client au top ! Mathilde répond rapidement et donne de précieux conseils. 
@@ -395,25 +395,6 @@ const Index = () => {
                     <div className="border-t pt-4">
                       <p className="font-medium text-gray-900">Emma & Pierre</p>
                       <p className="text-sm text-gray-600">MARIAGE A VENIR - MAI 2026</p>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Témoignage 6 */}
-                <Card className="bg-white shadow-lg hover:shadow-xl transition-shadow duration-300 md:col-span-1 lg:col-span-1">
-                  <CardContent className="p-6">
-                    <div className="mb-4">
-                      <div className="flex items-center gap-1 mb-3">
-                        {[...Array(5)].map((_, i) => <span key={i} className="text-yellow-400 text-lg">★</span>)}
-                      </div>
-                      <p className="text-gray-700 italic text-sm">
-                        "Grâce aux outils de Mariable, nous avons pu organiser notre mariage de rêve en toute sérénité. 
-                        La planification était claire et les conseils personnalisés vraiment précieux !"
-                      </p>
-                    </div>
-                    <div className="border-t pt-4">
-                      <p className="font-medium text-gray-900">Sophie & Antoine</p>
-                      <p className="text-sm text-gray-600">Mariage en Provence, Juin 2025</p>
                     </div>
                   </CardContent>
                 </Card>
