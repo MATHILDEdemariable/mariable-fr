@@ -424,7 +424,7 @@ const Index = () => {
                     </div>
                     <div className="border-t pt-4">
                       <p className="font-medium text-gray-900">Laura & Maxime</p>
-                      <p className="text-sm text-gray-600">Mariage en Côte d'Azur, Juillet 2024</p>
+                      <p className="text-sm text-gray-600">Mariage en Côte d'Azur, Juillet 2025</p>
                     </div>
                   </CardContent>
                 </Card>
