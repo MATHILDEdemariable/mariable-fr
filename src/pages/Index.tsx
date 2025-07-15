@@ -146,7 +146,7 @@ const Index = () => {
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif text-black mb-6" style={{
                 fontFamily: 'Playfair Display, serif'
               }}>
-                Transformez l'organisation de votre mariage en une expérience simple & agréable.
+                Transformez l'organisation de votre mariage
               </h2>
               <p className="text-lg text-gray-700 max-w-2xl mx-auto">
                 Choisissez le niveau d'accompagnement qui vous correspond
