@@ -7,7 +7,10 @@ import { supabase } from '@/integrations/supabase/client';
 import Header from '@/components/Header';
 import VendorCard from '@/components/vendors/VendorCard';
 import VendorCardSkeleton from '@/components/vendors/VendorCardSkeleton';
+import LazyVendorCard from '@/components/vendors/LazyVendorCard';
 import VendorFilters from '@/components/vendors/VendorFilters';
+import { useOptimizedVendors } from '@/hooks/useOptimizedVendors';
+import { usePaginatedVendors } from '@/hooks/usePaginatedVendors';
 import { toast } from '@/components/ui/use-toast';
 import { Loader2, ArrowLeft, Search, MapPin } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -105,82 +108,26 @@ const MoteurRecherche = () => {
     setFilters(prev => ({ ...prev, ...newFilters }));
   };
   
-  // Optimiser les clés de cache avec useMemo
-  const queryKey = useMemo(() => [
-    'vendors', 
-    filters.category, 
-    filters.region, 
-    filters.minPrice, 
-    filters.maxPrice, 
-    filters.categorieLieu, 
-    filters.capaciteMin, 
-    filters.hebergement, 
-    filters.couchages, 
-    debouncedSearch
-  ], [filters, debouncedSearch]);
-
-  const { data: vendors, isLoading, error } = useQuery({
-    queryKey,
-    queryFn: async () => {
-      let query = supabase
-        .from('prestataires_rows')
-        .select('*, prestataires_photos_preprod (*)')
-        .eq('visible', true)
-        .order('featured', { ascending: false })
-        .order('nom');
-      
-      // Exclure les coordinateurs (ils ont leur page dédiée)
-      query = query.neq('categorie', 'Coordination');
-      
-      if (debouncedSearch) {
-        query = query.or(
-          `nom.ilike.%${debouncedSearch}%,` +
-          `ville.ilike.%${debouncedSearch}%,` +
-          `description.ilike.%${debouncedSearch}%`
-        );
-      }
-      
-      if (filters.category && filters.category !== 'Tous') {
-        query = query.eq('categorie', filters.category);
-      }
-      
-      if (filters.region) {
-        query = query.eq('region', filters.region as RegionFrance);
-      }
-      
-      if (filters.minPrice) {
-        query = query.or(`prix_a_partir_de.gte.${filters.minPrice},prix_par_personne.gte.${filters.minPrice}`);
-      }
-      
-      if (filters.maxPrice) {
-        query = query.or(`prix_a_partir_de.lte.${filters.maxPrice},prix_par_personne.lte.${filters.maxPrice}`);
-      }
-      
-      // Filtres pour les lieux de réception
-      if (filters.category === 'Lieu de réception') {
-        if (filters.categorieLieu) {
-          query = query.eq('categorie_lieu', filters.categorieLieu);
-        }
-        if (filters.capaciteMin) {
-          query = query.gte('capacite_invites', filters.capaciteMin);
-        }
-        if (filters.hebergement !== undefined) {
-          query = query.eq('hebergement_inclus', filters.hebergement);
-        }
-        if (filters.couchages) {
-          query = query.gte('nombre_couchages', filters.couchages);
-        }
-      }
-      
-      const { data, error } = await query;
-      
-      if (error) throw new Error(error.message);
-      return data as Prestataire[];
-    },
-    // Cache plus long pour améliorer les performances
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    gcTime: 10 * 60 * 1000, // 10 minutes (remplace cacheTime)
+  // Utiliser le hook paginé pour de meilleures performances
+  const { 
+    vendors, 
+    isLoading, 
+    isLoadingMore, 
+    error, 
+    loadMore, 
+    hasMore, 
+    reset 
+  } = usePaginatedVendors({
+    filters,
+    debouncedSearch,
+    pageSize: 12,
+    enabled: !!selectedRegion
   });
+
+  // Reset pagination quand les filtres changent
+  useEffect(() => {
+    reset();
+  }, [filters.category, filters.region, debouncedSearch, reset]);
   
   useEffect(() => {
     if (error) {
@@ -310,15 +257,39 @@ const MoteurRecherche = () => {
             </div>
           </div>
         ) : vendors && vendors.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {vendors.map(vendor => (
-              <VendorCard 
-                key={vendor.id} 
-                vendor={vendor} 
-                onClick={navigateToVendorDetails}
-                onWishlistAdd={handleWishlistAdd}
-              />
-            ))}
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {vendors.map(vendor => (
+                <LazyVendorCard 
+                  key={vendor.id} 
+                  vendor={vendor} 
+                  onClick={navigateToVendorDetails}
+                  onWishlistAdd={handleWishlistAdd}
+                />
+              ))}
+            </div>
+            
+            {/* Bouton "Charger plus" */}
+            {hasMore && (
+              <div className="flex justify-center pt-6">
+                <Button
+                  onClick={loadMore}
+                  disabled={isLoadingMore}
+                  variant="outline"
+                  size="lg"
+                  className="min-w-[200px]"
+                >
+                  {isLoadingMore ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Chargement...
+                    </>
+                  ) : (
+                    'Charger plus de prestataires'
+                  )}
+                </Button>
+              </div>
+            )}
           </div>
         ) : (
           <div className="text-center py-12">
