@@ -198,7 +198,7 @@ const Pricing = () => {
                             </td>
                           </tr>
                           <tr className="border-b">
-                            <td className="px-3 sm:px-6 py-4 font-medium text-gray-900 text-sm sm:text-base">Présence physique le jour J</td>
+                            <td className="px-3 sm:px-6 py-4 font-medium text-gray-900 text-sm sm:text-base">Présence coordinateur le jour J (pendant 10h)</td>
                             <td className="px-3 sm:px-6 py-4 text-center">
                               <X className="h-5 w-5 text-red-500 mx-auto" />
                             </td>
