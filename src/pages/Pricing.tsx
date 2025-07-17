@@ -382,7 +382,7 @@ const Pricing = () => {
                               Transfert des infos via le formulaire
                             </h3>
                             <p className="text-gray-600">
-                              Vous nous envoyez tous vos documents, plannings et informations de mariage via le formulaire.
+                              Vous faites une demande, vous payez et ensuite vous remplissez l'application afin de nous transférer les informations directement en ligne.
                             </p>
                           </div>
                         </div>
