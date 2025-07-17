@@ -424,7 +424,7 @@ const Pricing = () => {
                               Création d'un groupe WhatsApp
                             </h3>
                             <p className="text-gray-600">
-                              avec les membres de votre équipe personnelle (hors presta) max 4 personnes.
+                              L'équipe Mariable se charge de créer le groupe avec les membres de votre équipe personnelle (hors presta) max 4 personnes.
                             </p>
                           </div>
                         </div>
