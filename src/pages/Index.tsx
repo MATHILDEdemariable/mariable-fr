@@ -299,7 +299,7 @@ const Index = () => {
                   <div className="space-y-3 mb-6">
                     <div className="flex items-start gap-2">
                       <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Coordination complète</p>
+                      <p className="text-sm text-gray-700">Utilisation appli Jour-M</p>
                     </div>
                     <div className="flex items-start gap-2">
                       <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
