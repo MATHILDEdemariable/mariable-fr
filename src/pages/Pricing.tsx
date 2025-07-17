@@ -113,7 +113,7 @@ const Pricing = () => {
                           <tr className="border-b bg-gray-50">
                             <td className="px-3 sm:px-6 py-4 font-medium text-gray-900 text-sm sm:text-base">Prix (TTC)</td>
                             <td className="px-3 sm:px-6 py-4 text-center font-bold text-wedding-olive text-sm sm:text-base">14,9€</td>
-                            <td className="px-3 sm:px-6 py-4 text-center font-bold text-wedding-olive bg-gray-100 text-sm sm:text-base">24,9€</td>
+                            <td className="px-3 sm:px-6 py-4 text-center font-bold text-wedding-olive bg-gray-100 text-sm sm:text-base">149€</td>
                             <td className="px-3 sm:px-6 py-4 text-center font-bold text-wedding-olive text-sm sm:text-base">799€</td>
                           </tr>
                           <tr className="border-b">
@@ -159,7 +159,7 @@ const Pricing = () => {
                             </td>
                           </tr>
                           <tr className="border-b">
-                            <td className="px-3 sm:px-6 py-4 font-medium text-gray-900 text-sm sm:text-base">Notifications et rappels en temps réel de J-1 et J-M (via Whatsapp)</td>
+                            <td className="px-3 sm:px-6 py-4 font-medium text-gray-900 text-sm sm:text-base">Notifications et rappels en temps réel de J-1 et J-M</td>
                             <td className="px-3 sm:px-6 py-4 text-center">
                               <X className="h-5 w-5 text-red-500 mx-auto" />
                             </td>
@@ -198,7 +198,7 @@ const Pricing = () => {
                             </td>
                           </tr>
                           <tr className="border-b">
-                            <td className="px-3 sm:px-6 py-4 font-medium text-gray-900 text-sm sm:text-base">Présence d'un coordinateur Mariable le jour-J (pendant 10h)</td>
+                            <td className="px-3 sm:px-6 py-4 font-medium text-gray-900 text-sm sm:text-base">Présence physique le jour J</td>
                             <td className="px-3 sm:px-6 py-4 text-center">
                               <X className="h-5 w-5 text-red-500 mx-auto" />
                             </td>
@@ -215,10 +215,8 @@ const Pricing = () => {
                     
                     {/* Boutons mis à jour avec Réserver */}
                     <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8 p-6">
-                      <Button asChild className="bg-wedding-olive hover:bg-wedding-olive/90 text-white w-full sm:w-auto">
-                        <Link to="/coordinateurs-mariage">
-                          Voir les coordinateurs
-                        </Link>
+                      <Button onClick={scrollToDemo} className="bg-wedding-olive hover:bg-wedding-olive/90 text-white w-full sm:w-auto">
+                        Voir une démo
                       </Button>
                       <Button onClick={scrollToCommentCaMarche} className="bg-wedding-olive hover:bg-wedding-olive/90 text-white w-full sm:w-auto">
                         En savoir plus
@@ -421,10 +419,10 @@ const Pricing = () => {
                           <div className="bg-white p-6 rounded-lg shadow-md">
                             <h3 className="text-xl font-semibold mb-3 flex items-center justify-end gap-2">
                               <Smartphone className="h-5 w-5 text-wedding-olive" />
-                              Création d'un groupe WhatsApp
+                              Création de l'application & du WhatsApp
                             </h3>
                             <p className="text-gray-600">
-                              L'équipe Mariable se charge de créer le groupe avec les membres de votre équipe personnelle (hors presta) max 4 personnes.
+                              Développement de votre application mobile personnalisée et création du groupe WhatsApp.
                             </p>
                           </div>
                         </div>
@@ -494,7 +492,7 @@ const Pricing = () => {
                             </h3>
                             <p className="text-gray-600">
                               <span className="font-semibold text-wedding-olive">Formules Sereine &amp; Privilège :</span> Vivez votre mariage sereinement, un manager Mariable organise et coordonne tout pour vous.<br />
-                              <span className="mt-2 block font-semibold text-wedding-olive">Formule Libre :</span> Vous conservez la main sur la gestion et la coordination, l'app devient votre assistant personnel autonome.
+                               Vous conservez la main sur la gestion et la coordination, l'app devient votre assistant personnel autonome.
                             </p>
                           </div>
                         </div>
