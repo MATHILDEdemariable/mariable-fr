@@ -5,7 +5,7 @@ import { Helmet } from 'react-helmet-async';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Calendar, Users, FileText, Clock, CheckCircle2, Circle, User, Building, Mail, Phone, AlertCircle, Filter, Eye } from 'lucide-react';
+import { Calendar, Users, FileText, Clock, CheckCircle2, Circle, User, Building, Mail, Phone, AlertCircle, Filter, Eye, ExternalLink, Download } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -24,6 +24,7 @@ const PlanningPublic: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [selectedTeamMember, setSelectedTeamMember] = useState<string>('all');
   const [filteredTasks, setFilteredTasks] = useState<any[]>([]);
+  const [pinterestLinks, setPinterestLinks] = useState<any[]>([]);
 
   useEffect(() => {
     if (coordinationId) {
@@ -79,12 +80,19 @@ const PlanningPublic: React.FC = () => {
         .eq('coordination_id', id)
         .order('created_at');
 
-      // Récupérer les documents selon le type
+      // Récupérer les documents selon le type (avec file_url pour vraie visualisation)
       const { data: documents, error: docsError } = await supabase
         .from('coordination_documents')
-        .select('id, title, category, created_at')
+        .select('*')
         .eq('coordination_id', id)
         .eq('category', planningType)
+        .order('created_at', { ascending: false });
+
+      // Récupérer les liens Pinterest
+      const { data: pinterest, error: pinterestError } = await supabase
+        .from('coordination_pinterest')
+        .select('*')
+        .eq('coordination_id', id)
         .order('created_at', { ascending: false });
 
       const result = {
@@ -94,6 +102,8 @@ const PlanningPublic: React.FC = () => {
         documents: documents || [],
         planningType
       };
+
+      setPinterestLinks(pinterest || []);
 
       console.log(`✅ Coordination data loaded successfully (${planningType}):`, tasks?.length, 'tasks');
       setCoordinationData(result);
@@ -161,6 +171,57 @@ const PlanningPublic: React.FC = () => {
       case 'low': return 'bg-green-100 text-green-800';
       default: return 'bg-gray-100 text-gray-800';
     }
+  };
+
+  const handleDocumentView = (document: any) => {
+    if (document.file_url) {
+      window.open(document.file_url, '_blank');
+    } else {
+      alert('Ce document n\'a pas de fichier associé.');
+    }
+  };
+
+  const renderPinterestPreview = (link: any) => {
+    return (
+      <div key={link.id} className="border rounded-lg overflow-hidden mb-4">
+        <div className="aspect-video relative bg-gray-100">
+          <iframe
+            src={`https://assets.pinterest.com/ext/embed.html?id=${link.pinterest_url.match(/pin\/(\d+)/)?.[1] || ''}`}
+            className="w-full h-full border-0"
+            scrolling="no"
+            onError={(e) => {
+              e.currentTarget.style.display = 'none';
+              const parent = e.currentTarget.parentElement;
+              if (parent) {
+                parent.innerHTML = `
+                  <div class="flex items-center justify-center h-full bg-gray-100 text-gray-500">
+                    <div class="text-center">
+                      <div class="text-2xl mb-2">📌</div>
+                      <p class="text-sm">Aperçu Pinterest non disponible</p>
+                    </div>
+                  </div>
+                `;
+              }
+            }}
+          />
+        </div>
+        <div className="p-3">
+          <h4 className="font-medium text-sm">{link.title}</h4>
+          {link.description && (
+            <p className="text-xs text-gray-600 mt-1">{link.description}</p>
+          )}
+          <a 
+            href={link.pinterest_url} 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="text-blue-600 hover:underline text-xs mt-2 inline-flex items-center gap-1"
+          >
+            <ExternalLink className="h-3 w-3" />
+            Voir sur Pinterest
+          </a>
+        </div>
+      </div>
+    );
   };
 
   if (loading) {
@@ -256,7 +317,7 @@ const PlanningPublic: React.FC = () => {
               </TabsTrigger>
               <TabsTrigger value="documents" className="flex items-center gap-2">
                 <FileText className="h-4 w-4" />
-                Documents ({documents.length})
+                Documents ({documents.length + pinterestLinks.length})
               </TabsTrigger>
             </TabsList>
 
@@ -455,50 +516,78 @@ const PlanningPublic: React.FC = () => {
 
             {/* Onglet Documents */}
             <TabsContent value="documents">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Documents partagés</CardTitle>
-                  <p className="text-sm text-muted-foreground">
-                    Les documents sont visibles en consultation uniquement pour des raisons de confidentialité.
-                  </p>
-                </CardHeader>
-                <CardContent>
-                  {documents.length > 0 ? (
-                    <div className="space-y-3">
-                      {documents.map((doc) => (
-                        <div key={doc.id} className="flex items-center justify-between p-3 border rounded-lg">
-                          <div className="flex items-center gap-3">
-                            <FileText className="h-5 w-5 text-gray-400" />
-                            <div>
-                              <h3 className="font-medium">{doc.title}</h3>
-                              <p className="text-sm text-gray-500 capitalize">{doc.category}</p>
+              <div className="space-y-6">
+                {/* Section Documents */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Documents partagés</CardTitle>
+                    <p className="text-sm text-muted-foreground">
+                      Cliquez sur un document pour le visualiser ou le télécharger.
+                    </p>
+                  </CardHeader>
+                  <CardContent>
+                    {documents.length > 0 ? (
+                      <div className="space-y-3">
+                        {documents.map((doc) => (
+                          <div key={doc.id} className="flex items-center justify-between p-3 border rounded-lg">
+                            <div className="flex items-center gap-3">
+                              <FileText className="h-5 w-5 text-gray-400" />
+                              <div>
+                                <h3 className="font-medium">{doc.title}</h3>
+                                <p className="text-sm text-gray-500 capitalize">{doc.category}</p>
+                                {doc.description && (
+                                  <p className="text-xs text-gray-600 mt-1">{doc.description}</p>
+                                )}
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              {doc.file_url ? (
+                                <button
+                                  onClick={() => handleDocumentView(doc)}
+                                  className="text-sm text-blue-600 hover:text-blue-800 flex items-center gap-1"
+                                >
+                                  <Eye className="h-4 w-4" />
+                                  Visualiser
+                                </button>
+                              ) : (
+                                <span className="text-sm text-gray-400 flex items-center gap-1">
+                                  <FileText className="h-4 w-4" />
+                                  Document texte
+                                </span>
+                              )}
+                              <p className="text-xs text-gray-400">
+                                {new Date(doc.created_at).toLocaleDateString('fr-FR')}
+                              </p>
                             </div>
                           </div>
-                          <div className="flex items-center gap-2">
-                            <button
-                              onClick={() => {
-                                alert('Aperçu non disponible en mode consultation. Contactez les mariés pour accéder au document.');
-                              }}
-                              className="text-sm text-blue-600 hover:text-blue-800 flex items-center gap-1"
-                            >
-                              <Eye className="h-4 w-4" />
-                              Visualiser
-                            </button>
-                            <p className="text-xs text-gray-400">
-                              {new Date(doc.created_at).toLocaleDateString('fr-FR')}
-                            </p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-center py-12 text-gray-500">
-                      <FileText className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                      <p>Aucun document partagé</p>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-center py-8 text-gray-500">
+                        <FileText className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                        <p>Aucun document partagé</p>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+
+                {/* Section Pinterest */}
+                {pinterestLinks.length > 0 && (
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Inspirations Pinterest</CardTitle>
+                      <p className="text-sm text-muted-foreground">
+                        Idées et inspirations partagées par les mariés.
+                      </p>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {pinterestLinks.map((link) => renderPinterestPreview(link))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+              </div>
             </TabsContent>
           </Tabs>
         </div>
