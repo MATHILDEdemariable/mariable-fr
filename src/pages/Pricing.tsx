@@ -359,10 +359,6 @@ const Pricing = () => {
                     <span className="inline-block mt-2 text-wedding-olive font-semibold">Applicable uniquement aux formules Sereine &amp; Privilège</span>
                     </span>
                   </p>
-                  <p className="text-xs text-gray-500 mt-2">
-                    Pour la formule "Libre" : vous gérez tout de manière autonome grâce à l'application ({' '}
-                    <Link to="/demo-jour-m" className="underline text-wedding-olive hover:text-wedding-olive/70">voir la démo</Link> )
-                  </p>
                 </div>
 
                 <div className="max-w-4xl mx-auto">
