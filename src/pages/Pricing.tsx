@@ -380,7 +380,7 @@ const Pricing = () => {
                               Transfert des informations clés
                             </h3>
                             <p className="text-gray-600">
-                              Transfert des informations clés de votre mariage via l'application en ligne
+                              Remplissez l'application vous-même avec vos informations mariage et vos envies de déroulé
                             </p>
                           </div>
                         </div>
