@@ -238,9 +238,9 @@ const Index = () => {
                 <CardHeader className="text-center pb-4">
                   <div className="flex items-center justify-center gap-2 mb-3">
                     <Calendar className="h-6 w-6 text-wedding-olive" />
-                    <CardTitle className="text-xl font-bold">Libre</CardTitle>
+                    <CardTitle className="text-xl font-bold">Coordination Jour-J</CardTitle>
                   </div>
-                  <p className="text-sm text-gray-600">Coordination Jour-J</p>
+                  <p className="text-sm text-gray-600">avec l'appli en ligne Mariable dédiée</p>
                 </CardHeader>
                 
                 <CardContent className="flex-grow flex flex-col">
@@ -255,7 +255,7 @@ const Index = () => {
                     </div>
                     <div className="flex items-start gap-2">
                       <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Planning intelligent</p>
+                      <p className="text-sm text-gray-700">Planning intelligent et assignation des tâches</p>
                     </div>
                     <div className="flex items-start gap-2">
                       <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
@@ -268,8 +268,8 @@ const Index = () => {
                   </div>
                   
                   <div className="mt-auto">
-                    <Button asChild className="w-full bg-wedding-olive text-white hover:bg-wedding-olive/90">
-                      <Link to="/detail-coordination-jourm">Voir une démo</Link>
+                    <Button onClick={() => window.open('https://buy.stripe.com/7sY00ka2m3xwcMt8Au8bS03', '_blank')} className="w-full bg-wedding-olive text-white hover:bg-wedding-olive/90">
+                      Payer maintenant
                     </Button>
                   </div>
                 </CardContent>
@@ -288,7 +288,7 @@ const Index = () => {
                     <Users className="h-6 w-6 text-wedding-olive" />
                     <CardTitle className="text-xl font-bold">Privilège</CardTitle>
                   </div>
-                  <p className="text-sm text-gray-600">formule libre + coordinateur Mariable</p>
+                  <p className="text-sm text-gray-600">Formule libre + coordinateur Mariable</p>
                 </CardHeader>
                 
                 <CardContent className="flex-grow flex flex-col">
@@ -299,11 +299,11 @@ const Index = () => {
                   <div className="space-y-3 mb-6">
                     <div className="flex items-start gap-2">
                       <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Utilisation appli Jour-M</p>
+                      <p className="text-sm text-gray-700">Planning via l'appli. Mariable</p>
                     </div>
                     <div className="flex items-start gap-2">
                       <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Présence physique Jour-J</p>
+                      <p className="text-sm text-gray-700">Présence d'un coordinateur Jour-J</p>
                     </div>
                     <div className="flex items-start gap-2">
                       <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
@@ -385,9 +385,7 @@ const Index = () => {
                   <CardContent className="p-6">
                     <div className="mb-4">
                       <div className="flex items-center gap-1 mb-3">
-                        {[...Array(5)].map((_, i) => (
-                          <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                        ))}
+                        {[...Array(5)].map((_, i) => <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />)}
                       </div>
                       <p className="text-gray-700 italic text-sm">
                         "Service client au top ! Mathilde répond rapidement et donne de précieux conseils. 
