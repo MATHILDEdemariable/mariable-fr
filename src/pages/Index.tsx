@@ -240,7 +240,7 @@ const Index = () => {
                     <Calendar className="h-6 w-6 text-wedding-olive" />
                     <CardTitle className="text-xl font-bold">Libre</CardTitle>
                   </div>
-                  <p className="text-sm text-gray-600">Application Jour-J personnalisable</p>
+                  <p className="text-sm text-gray-600">Coordination Jour-J</p>
                 </CardHeader>
                 
                 <CardContent className="flex-grow flex flex-col">
