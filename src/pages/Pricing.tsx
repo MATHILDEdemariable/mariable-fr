@@ -424,7 +424,7 @@ const Pricing = () => {
                               Création d'un groupe WhatsApp
                             </h3>
                             <p className="text-gray-600">
-                              Développement de votre application mobile personnalisée et création du groupe WhatsApp.
+                              avec les membres de votre équipe personnelle (hors presta) max 4 personnes.
                             </p>
                           </div>
                         </div>
