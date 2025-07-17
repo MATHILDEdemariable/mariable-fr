@@ -113,7 +113,7 @@ const Pricing = () => {
                           <tr className="border-b bg-gray-50">
                             <td className="px-3 sm:px-6 py-4 font-medium text-gray-900 text-sm sm:text-base">Prix (TTC)</td>
                             <td className="px-3 sm:px-6 py-4 text-center font-bold text-wedding-olive text-sm sm:text-base">14,9€</td>
-                            <td className="px-3 sm:px-6 py-4 text-center font-bold text-wedding-olive bg-gray-100 text-sm sm:text-base">149€</td>
+                            <td className="px-3 sm:px-6 py-4 text-center font-bold text-wedding-olive bg-gray-100 text-sm sm:text-base">24,9€</td>
                             <td className="px-3 sm:px-6 py-4 text-center font-bold text-wedding-olive text-sm sm:text-base">799€</td>
                           </tr>
                           <tr className="border-b">
@@ -215,8 +215,8 @@ const Pricing = () => {
                     
                     {/* Boutons mis à jour avec Réserver */}
                     <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8 p-6">
-                      <Button onClick={scrollToDemo} className="bg-wedding-olive hover:bg-wedding-olive/90 text-white w-full sm:w-auto">
-                        Voir une démo
+                      <Button asChild className="bg-wedding-olive hover:bg-wedding-olive/90 text-white w-full sm:w-auto">
+                        <Link to="/coordinateurs-mariage">Voir les coordinateurs</Link>
                       </Button>
                       <Button onClick={scrollToCommentCaMarche} className="bg-wedding-olive hover:bg-wedding-olive/90 text-white w-full sm:w-auto">
                         En savoir plus
@@ -354,12 +354,15 @@ const Pricing = () => {
                     Comment ça marche ?
                   </h2>
                   <p className="text-lg text-gray-700 mb-2">
-                    <span>Le processus de coordination <b>"Le Jour M"</b> en 6 étapes
+                    <span>Le processus de coordination <b>"Le Jour M"</b> en 5 étapes
                     <br />
                     <span className="inline-block mt-2 text-wedding-olive font-semibold">Applicable uniquement aux formules Sereine &amp; Privilège</span>
                     </span>
                   </p>
-                  
+                  <p className="text-xs text-gray-500 mt-2">
+                    Pour la formule "Libre" : vous gérez tout de manière autonome grâce à l'application ({' '}
+                    <Link to="/demo-jour-m" className="underline text-wedding-olive hover:text-wedding-olive/70">voir la démo</Link> )
+                  </p>
                 </div>
 
                 <div className="max-w-4xl mx-auto">
@@ -374,10 +377,10 @@ const Pricing = () => {
                           <div className="bg-white p-6 rounded-lg shadow-md">
                             <h3 className="text-xl font-semibold mb-3 flex items-center justify-end gap-2">
                               <Mail className="h-5 w-5 text-wedding-olive" />
-                              Transfert des infos via le formulaire
+                              Transfert des informations clés
                             </h3>
                             <p className="text-gray-600">
-                              Vous nous envoyez tous vos documents, plannings et informations de mariage via le formulaire.
+                              Remplissez l'application vous-même avec vos informations mariage et vos envies de déroulé
                             </p>
                           </div>
                         </div>
@@ -400,11 +403,11 @@ const Pricing = () => {
                         <div className="md:w-1/2">
                           <div className="bg-white p-6 rounded-lg shadow-md">
                             <h3 className="text-xl font-semibold mb-3 flex items-center gap-2">
-                              
-                              Rendez-vous téléphonique ou visio
+                              <Smartphone className="h-5 w-5 text-wedding-olive" />
+                              Création ligne directe WhatsApp
                             </h3>
                             <p className="text-gray-600">
-                              Échange personnalisé pour comprendre vos besoins et affiner l'organisation.
+                              Création de la ligne directe WhatsApp par l'équipe Mariable (selon formule)
                             </p>
                           </div>
                         </div>
@@ -415,11 +418,11 @@ const Pricing = () => {
                         <div className="md:w-1/2 text-right">
                           <div className="bg-white p-6 rounded-lg shadow-md">
                             <h3 className="text-xl font-semibold mb-3 flex items-center justify-end gap-2">
-                              <Smartphone className="h-5 w-5 text-wedding-olive" />
-                              Création de l'application & du WhatsApp
+                              <Phone className="h-5 w-5 text-wedding-olive" />
+                              Support disponible
                             </h3>
                             <p className="text-gray-600">
-                              Développement de votre application mobile personnalisée et création du groupe WhatsApp.
+                              Contactez nous si besoin à tout moment
                             </p>
                           </div>
                         </div>
@@ -443,10 +446,10 @@ const Pricing = () => {
                           <div className="bg-white p-6 rounded-lg shadow-md">
                             <h3 className="text-xl font-semibold mb-3 flex items-center gap-2">
                               <Users className="h-5 w-5 text-wedding-olive" />
-                              Partagez les accès à vos proches et laissez-vous guider par l'application
+                              Partagez le lien de consultation
                             </h3>
                             <p className="text-gray-600">
-                              Vos proches reçoivent l'accès à l'application et peuvent suivre le planning et leurs tâches.
+                              Quand votre jour-m est finalisé, transférer le lien à vos proches, prestataire et équipe mariable
                             </p>
                           </div>
                         </div>
@@ -457,11 +460,11 @@ const Pricing = () => {
                         <div className="md:w-1/2 text-right">
                           <div className="bg-white p-6 rounded-lg shadow-md">
                             <h3 className="text-xl font-semibold mb-3 flex items-center justify-end gap-2">
-                              <Phone className="h-5 w-5 text-wedding-olive" />
-                              Utilisez la hotline si besoin jusqu'au jour J pour toutes questions
+                              <Calendar className="h-5 w-5 text-wedding-olive" />
+                              Laissez-vous guider
                             </h3>
                             <p className="text-gray-600">
-                              Support client dédié disponible 7J/7 pour répondre à toutes vos questions.
+                              Laissez vous guider par votre feuille de route sur l'appli ou les notifications ou le coordinateur - selon la formule choisie
                             </p>
                           </div>
                         </div>
@@ -471,28 +474,6 @@ const Pricing = () => {
                           </div>
                         </div>
                         <div className="md:w-1/2"></div>
-                      </div>
-
-                      {/* Étape 6 - Ajout précision selon formule */}
-                      <div className="flex flex-col md:flex-row items-center gap-8">
-                        <div className="md:w-1/2"></div>
-                        <div className="relative z-10">
-                          <div className="w-12 h-12 bg-wedding-olive rounded-full flex items-center justify-center text-white font-bold text-lg">
-                            6
-                          </div>
-                        </div>
-                        <div className="md:w-1/2">
-                          <div className="bg-white p-6 rounded-lg shadow-md">
-                            <h3 className="text-xl font-semibold mb-3 flex items-center gap-2">
-                              <Calendar className="h-5 w-5 text-wedding-olive" />
-                              Laissez le manager Mariable gérer pour vous & profitez
-                            </h3>
-                            <p className="text-gray-600">
-                              <span className="font-semibold text-wedding-olive">Formules Sereine &amp; Privilège :</span> Vivez votre mariage sereinement, un manager Mariable organise et coordonne tout pour vous.<br />
-                               Vous conservez la main sur la gestion et la coordination, l'app devient votre assistant personnel autonome.
-                            </p>
-                          </div>
-                        </div>
                       </div>
                     </div>
                   </div>
