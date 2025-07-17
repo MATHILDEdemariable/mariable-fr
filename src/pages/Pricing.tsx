@@ -176,10 +176,7 @@ const Pricing = () => {
                               <X className="h-5 w-5 text-red-500 mx-auto" />
                             </td>
                             <td className="px-3 sm:px-6 py-4 text-center bg-gray-100">
-                              <div className="flex flex-col items-center">
-                                <CheckCircle className="h-5 w-5 text-green-500 mb-1" />
-                                <span className="text-sm text-gray-600">(option +50€)</span>
-                              </div>
+                              <CheckCircle className="h-5 w-5 text-green-500 mx-auto" />
                             </td>
                             <td className="px-3 sm:px-6 py-4 text-center">
                               <div className="flex flex-col items-center">
