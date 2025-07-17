@@ -28,7 +28,7 @@ const DemoJourM = () => {
             <div className="max-w-4xl mx-auto">
               <div className="flex items-center gap-4 mb-8">
                 <Button asChild variant="outline" size="sm">
-                  <Link to="/pricing">
+                  <Link to="/detail-coordination-jourm">
                     <ArrowLeft className="h-4 w-4 mr-2" />
                     Retour aux tarifs
                   </Link>

@@ -51,8 +51,8 @@ const Pricing = () => {
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <Helmet>
-        <title>Tarifs | Mariable</title>
-        <meta name="description" content="Découvrez nos tarifs et choisissez le service qui vous correspond" />
+        <title>Détail - Coordination Jour M | Mariable</title>
+        <meta name="description" content="Découvrez nos formules de coordination pour le jour J et choisissez le service qui vous correspond" />
       </Helmet>
       
       <Header />
@@ -72,15 +72,41 @@ const Pricing = () => {
 
             <div className="text-center mb-12">
               <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif text-black mb-6">
-                Formules Jour-M
+                Détail - Coordination Jour M
               </h1>
               <p className="text-lg text-gray-700 max-w-2xl mx-auto">
                 Choisissez le niveau d'accompagnement qui vous correspond
               </p>
             </div>
 
-            {/* Section Formules Jour-M */}
-            <section className="py-8 md:py-16 bg-gray-50 rounded-xl mb-16">
+            {/* Section Démo - Position 1 */}
+            <section id="demo-section" className="py-16 bg-gray-50 rounded-xl mb-16">
+              <div className="container mx-auto px-4">
+                <div className="text-center mb-12">
+                  <h2 className="text-3xl md:text-4xl font-serif text-black mb-4">
+                    Démo
+                  </h2>
+                  <p className="text-lg text-gray-700">
+                    Découvrez comment fonctionne notre service Jour-M
+                  </p>
+                </div>
+
+                <div className="max-w-4xl mx-auto">
+                  <div className="relative w-full" style={{ paddingBottom: '56.25%', height: 0 }}>
+                    <iframe
+                      src="https://www.loom.com/embed/a0d0d52de99d4af59d67604f01c8af14?sid=72174f71-1964-4904-9f5a-c7d71faff046"
+                      frameBorder="0"
+                      allowFullScreen
+                      className="absolute top-0 left-0 w-full h-full rounded-lg shadow-lg"
+                      title="Démo Mariable Jour-M"
+                    ></iframe>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* Section Formules Jour-M - Position 2 */}
+            <section className="py-8 md:py-16 bg-white rounded-xl mb-16">
               <div className="container mx-auto px-4">
                 <div className="max-w-6xl mx-auto mb-8">
                   {/* Tableau comparatif */}
@@ -227,33 +253,121 @@ const Pricing = () => {
               </div>
             </section>
 
-            {/* Section Démo */}
-            <section id="demo-section" className="py-16 bg-white mb-16">
+            {/* Section Options supplémentaires - Position 3 */}
+            <section className="py-16 bg-white">
               <div className="container mx-auto px-4">
                 <div className="text-center mb-12">
                   <h2 className="text-3xl md:text-4xl font-serif text-black mb-4">
-                    Démo
+                    Options supplémentaires
                   </h2>
                   <p className="text-lg text-gray-700">
-                    Découvrez comment fonctionne notre service Jour-M
+                    Personnalisez votre service "Le Jour M" avec nos options à la carte
                   </p>
                 </div>
 
                 <div className="max-w-4xl mx-auto">
-                  <div className="relative w-full" style={{ paddingBottom: '56.25%', height: 0 }}>
-                    <iframe
-                      src="https://www.loom.com/embed/8d66cb2771e945e09aca2294b99a9393?sid=37c88597-2418-4613-9e40-2da03097c2b7"
-                      frameBorder="0"
-                      allowFullScreen
-                      className="absolute top-0 left-0 w-full h-full rounded-lg shadow-lg"
-                      title="Démo Mariable Jour-M"
-                    ></iframe>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <Card className="shadow-md hover:shadow-lg transition-shadow">
+                      <CardContent className="p-6">
+                        <div className="flex items-center justify-between mb-4">
+                          <div className="flex items-center gap-3">
+                            <Clock className="h-6 w-6 text-wedding-olive" />
+                            <h3 className="text-lg font-semibold">Heure supplémentaire</h3>
+                          </div>
+                          <span className="text-xl font-bold text-wedding-olive">+30€</span>
+                        </div>
+                        <p className="text-sm text-gray-600">
+                          Extension de la présence du coordinateur pour les mariages nécessitant plus de temps
+                        </p>
+                      </CardContent>
+                    </Card>
+
+                    <Card className="shadow-md hover:shadow-lg transition-shadow">
+                      <CardContent className="p-6">
+                        <div className="flex items-center justify-between mb-4">
+                          <div className="flex items-center gap-3">
+                            <Palette className="h-6 w-6 text-wedding-olive" />
+                            <h3 className="text-lg font-semibold">Installation décoration</h3>
+                          </div>
+                          <span className="text-xl font-bold text-wedding-olive">+200€</span>
+                        </div>
+                        <p className="text-sm text-gray-600">
+                          Installation et mise en place de votre décoration selon vos souhaits
+                        </p>
+                      </CardContent>
+                    </Card>
+
+                    <Card className="shadow-md hover:shadow-lg transition-shadow">
+                      <CardContent className="p-6">
+                        <div className="flex items-center justify-between mb-4">
+                          <div className="flex items-center gap-3">
+                            <Building className="h-6 w-6 text-wedding-olive" />
+                            <h3 className="text-lg font-semibold">RDV visite technique</h3>
+                          </div>
+                          <span className="text-xl font-bold text-wedding-olive">+200€</span>
+                        </div>
+                        <p className="text-sm text-gray-600">
+                          Visite sur site avec vous pour optimiser l'organisation spatiale et anticiper les défis logistiques
+                        </p>
+                      </CardContent>
+                    </Card>
+
+                    <Card className="shadow-md hover:shadow-lg transition-shadow">
+                      <CardContent className="p-6">
+                        <div className="flex items-center justify-between mb-4">
+                          <div className="flex items-center gap-3">
+                            <Calendar className="h-6 w-6 text-wedding-olive" />
+                            <h3 className="text-lg font-semibold">Présence J-1 ou J+1</h3>
+                          </div>
+                          <span className="text-xl font-bold text-wedding-olive">+200€</span>
+                        </div>
+                        <p className="text-sm text-gray-600">
+                          Accompagnement supplémentaire la veille ou le lendemain pour la mise en place ou le rangement
+                        </p>
+                      </CardContent>
+                    </Card>
+
+                    <Card className="shadow-md hover:shadow-lg transition-shadow">
+                      <CardContent className="p-6">
+                        <div className="flex items-center justify-between mb-4">
+                          <div className="flex items-center gap-3">
+                            <FileText className="h-6 w-6 text-wedding-olive" />
+                            <h3 className="text-lg font-semibold">Documentation imprimée</h3>
+                          </div>
+                          <span className="text-xl font-bold text-wedding-olive">+20€</span>
+                        </div>
+                        <p className="text-sm text-gray-600">
+                          Version papier haute qualité de tous vos documents de coordination (planning, contacts, etc.)
+                        </p>
+                      </CardContent>
+                    </Card>
+
+                    <Card className="shadow-md hover:shadow-lg transition-shadow">
+                      <CardContent className="p-6">
+                        <div className="flex items-center justify-between mb-4">
+                          <div className="flex items-center gap-3">
+                            <Users className="h-6 w-6 text-wedding-olive" />
+                            <h3 className="text-lg font-semibold">Mariage +180 personnes</h3>
+                          </div>
+                          <span className="text-xl font-bold text-wedding-olive">+200€</span>
+                        </div>
+                        <p className="text-sm text-gray-600">
+                          Supplément pour la coordination de mariages de plus de 180 invités nécessitant une logistique renforcée
+                        </p>
+                      </CardContent>
+                    </Card>
+
+                    <div className="text-center mt-8">
+                      <p className="text-sm text-gray-600">
+                        Ces options peuvent être ajoutées lors de votre réservation ou discutées pendant l'audit initial.
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
             </section>
 
-            {/* Section Comment ça marche */}
+            {/* Section Comment ça marche - Position 4 */}
             <section id="comment-ca-marche" className="py-16 bg-gray-50 rounded-xl mb-16">
               <div className="container mx-auto px-4">
                 <div className="text-center mb-12">
@@ -426,119 +540,6 @@ const Pricing = () => {
               </div>
             </section>
 
-            {/* Section Options supplémentaires */}
-            <section className="py-16 bg-white">
-              <div className="container mx-auto px-4">
-                <div className="text-center mb-12">
-                  <h2 className="text-3xl md:text-4xl font-serif text-black mb-4">
-                    Options supplémentaires
-                  </h2>
-                  <p className="text-lg text-gray-700">
-                    Personnalisez votre service "Le Jour M" avec nos options à la carte
-                  </p>
-                </div>
-
-                <div className="max-w-4xl mx-auto">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <Card className="shadow-md hover:shadow-lg transition-shadow">
-                      <CardContent className="p-6">
-                        <div className="flex items-center justify-between mb-4">
-                          <div className="flex items-center gap-3">
-                            <Clock className="h-6 w-6 text-wedding-olive" />
-                            <h3 className="text-lg font-semibold">Heure supplémentaire</h3>
-                          </div>
-                          <span className="text-xl font-bold text-wedding-olive">+30€</span>
-                        </div>
-                        <p className="text-sm text-gray-600">
-                          Extension de la présence du coordinateur pour les mariages nécessitant plus de temps
-                        </p>
-                      </CardContent>
-                    </Card>
-
-                    <Card className="shadow-md hover:shadow-lg transition-shadow">
-                      <CardContent className="p-6">
-                        <div className="flex items-center justify-between mb-4">
-                          <div className="flex items-center gap-3">
-                            <Palette className="h-6 w-6 text-wedding-olive" />
-                            <h3 className="text-lg font-semibold">Installation décoration</h3>
-                          </div>
-                          <span className="text-xl font-bold text-wedding-olive">+200€</span>
-                        </div>
-                        <p className="text-sm text-gray-600">
-                          Installation et mise en place de votre décoration selon vos souhaits
-                        </p>
-                      </CardContent>
-                    </Card>
-
-                    <Card className="shadow-md hover:shadow-lg transition-shadow">
-                      <CardContent className="p-6">
-                        <div className="flex items-center justify-between mb-4">
-                          <div className="flex items-center gap-3">
-                            <Building className="h-6 w-6 text-wedding-olive" />
-                            <h3 className="text-lg font-semibold">RDV visite technique</h3>
-                          </div>
-                          <span className="text-xl font-bold text-wedding-olive">+200€</span>
-                        </div>
-                        <p className="text-sm text-gray-600">
-                          Visite sur site avec vous pour optimiser l'organisation spatiale et anticiper les défis logistiques
-                        </p>
-                      </CardContent>
-                    </Card>
-
-                    <Card className="shadow-md hover:shadow-lg transition-shadow">
-                      <CardContent className="p-6">
-                        <div className="flex items-center justify-between mb-4">
-                          <div className="flex items-center gap-3">
-                            <Calendar className="h-6 w-6 text-wedding-olive" />
-                            <h3 className="text-lg font-semibold">Présence J-1 ou J+1</h3>
-                          </div>
-                          <span className="text-xl font-bold text-wedding-olive">+200€</span>
-                        </div>
-                        <p className="text-sm text-gray-600">
-                          Accompagnement supplémentaire la veille ou le lendemain pour la mise en place ou le rangement
-                        </p>
-                      </CardContent>
-                    </Card>
-
-                    <Card className="shadow-md hover:shadow-lg transition-shadow">
-                      <CardContent className="p-6">
-                        <div className="flex items-center justify-between mb-4">
-                          <div className="flex items-center gap-3">
-                            <FileText className="h-6 w-6 text-wedding-olive" />
-                            <h3 className="text-lg font-semibold">Documentation imprimée</h3>
-                          </div>
-                          <span className="text-xl font-bold text-wedding-olive">+20€</span>
-                        </div>
-                        <p className="text-sm text-gray-600">
-                          Version papier haute qualité de tous vos documents de coordination (planning, contacts, etc.)
-                        </p>
-                      </CardContent>
-                    </Card>
-
-                    <Card className="shadow-md hover:shadow-lg transition-shadow">
-                      <CardContent className="p-6">
-                        <div className="flex items-center justify-between mb-4">
-                          <div className="flex items-center gap-3">
-                            <Users className="h-6 w-6 text-wedding-olive" />
-                            <h3 className="text-lg font-semibold">Mariage +180 personnes</h3>
-                          </div>
-                          <span className="text-xl font-bold text-wedding-olive">+200€</span>
-                        </div>
-                        <p className="text-sm text-gray-600">
-                          Supplément pour la coordination de mariages de plus de 180 invités nécessitant une logistique renforcée
-                        </p>
-                      </CardContent>
-                    </Card>
-
-                    <div className="text-center mt-8">
-                      <p className="text-sm text-gray-600">
-                        Ces options peuvent être ajoutées lors de votre réservation ou discutées pendant l'audit initial.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </section>
 
             {/* Section FAQ */}
             <section className="py-16 bg-gray-50 rounded-xl mt-16">

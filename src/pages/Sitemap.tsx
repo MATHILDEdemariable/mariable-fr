@@ -34,7 +34,7 @@ const SitemapPage = () => {
         { url: '/services/prestataires', priority: 1.0, changefreq: 'weekly' },
         { url: '/services/budget', priority: 0.9, changefreq: 'monthly' },
         { url: '/checklist-mariage', priority: 0.9, changefreq: 'monthly' },
-        { url: '/pricing', priority: 0.9, changefreq: 'monthly' },
+        { url: '/detail-coordination-jourm', priority: 0.9, changefreq: 'monthly' },
         { url: '/about/histoire', priority: 0.8, changefreq: 'yearly' },
         { url: '/about/charte', priority: 0.8, changefreq: 'yearly' },
         { url: '/about/approche', priority: 0.8, changefreq: 'yearly' },

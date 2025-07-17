@@ -285,7 +285,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
             };
             buttons = [
               { text: "Créer mon compte", value: "register", icon: <Users className="h-4 w-4" />, link: "/register" },
-              { text: "Découvrir les tarifs", value: "pricing", icon: <Calculator className="h-4 w-4" />, link: "/pricing" }
+              { text: "Découvrir les tarifs", value: "pricing", icon: <Calculator className="h-4 w-4" />, link: "/detail-coordination-jourm" }
             ];
             break;
           default:

@@ -99,7 +99,7 @@ function App() {
                   <Route path="/auth/email-confirmation" element={<Navigate to="/email-confirmation" replace />} />
 
                   {/* Static routes */}
-                  <Route path="/pricing" element={<Pricing />} />
+                  <Route path="/detail-coordination-jourm" element={<Pricing />} />
                   <Route path="/paiement" element={<Paiement />} />
                   <Route path="/blog" element={<Blog />} />
                   <Route path="/blog/:slug" element={<BlogPost />} />
