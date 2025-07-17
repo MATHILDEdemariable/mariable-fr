@@ -30,8 +30,8 @@ const HeaderLogo = () => (
 function Menus({ onClick, isLoggedIn }: { onClick?: () => void, isLoggedIn?: boolean }) {
   return (
     <>
-      {/* Futurs mariés - Toujours visible avec contenu conditionnel */}
-      <HeaderDropdown label="Futurs mariés">
+      {/* Menu principal - Label conditionnel selon l'état de connexion */}
+      <HeaderDropdown label={isLoggedIn ? "Mon compte" : "Futurs mariés"}>
         <HeaderDropdownMenu>
           {isLoggedIn ? (
             <>

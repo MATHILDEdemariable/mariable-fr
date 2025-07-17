@@ -110,6 +110,10 @@ const AdminUsers = () => {
     return firstName || lastName ? `${firstName} ${lastName}`.trim() : 'Non renseigné';
   };
 
+  const getPhone = (user: UserRegistration) => {
+    return user.raw_user_meta_data?.phone || 'Non renseigné';
+  };
+
   const getRecentUsers = () => {
     const weekAgo = new Date();
     weekAgo.setDate(weekAgo.getDate() - 7);
@@ -238,6 +242,7 @@ const AdminUsers = () => {
                     <TableRow>
                       <TableHead>Nom Complet</TableHead>
                       <TableHead>Email</TableHead>
+                      <TableHead>Téléphone</TableHead>
                       <TableHead>Date d'inscription</TableHead>
                       <TableHead>Statut</TableHead>
                     </TableRow>
@@ -256,7 +261,17 @@ const AdminUsers = () => {
                         <TableCell>
                           <div className="flex items-center gap-2">
                             <Mail className="h-4 w-4 text-gray-400" />
-                            {user.email}
+                            <span className={user.email === 'Email non disponible' ? 'text-gray-400 italic' : ''}>
+                              {user.email}
+                            </span>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <User className="h-4 w-4 text-gray-400" />
+                            <span className={getPhone(user) === 'Non renseigné' ? 'text-gray-400 italic' : ''}>
+                              {getPhone(user)}
+                            </span>
                           </div>
                         </TableCell>
                         <TableCell>

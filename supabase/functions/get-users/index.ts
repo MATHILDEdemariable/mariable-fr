@@ -1,9 +1,9 @@
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.4'
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
+};
 
 interface DatabaseUser {
   id: string;
@@ -19,147 +19,135 @@ Deno.serve(async (req) => {
   }
 
   try {
-    console.log('🚀 get-users function called');
-    
-    // Create Supabase client with service role key
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    
+    console.log('🚀 Starting get-users function...');
+
+    // Initialize Supabase client with service role key
+    const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+
     if (!supabaseUrl || !supabaseServiceKey) {
-      throw new Error('Missing Supabase configuration');
+      console.error('❌ Missing environment variables');
+      return new Response(
+        JSON.stringify({ error: 'Server configuration error' }),
+        { 
+          status: 500, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      );
     }
 
-    const supabase = createClient(supabaseUrl, supabaseServiceKey, {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false
-      }
-    });
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    console.log('📊 Attempting to fetch users from auth.users...');
+    console.log('🔑 Supabase client initialized with service role');
 
-    // Try to get users via admin API first
     let users: DatabaseUser[] = [];
     let method = 'unknown';
-    
+
+    // Method 1: Try to access auth.users directly using Supabase Auth API
     try {
-      console.log('🔐 Trying auth.admin.listUsers...');
-      const { data: authData, error: authError } = await supabase.auth.admin.listUsers({
-        page: 1,
-        perPage: 1000
-      });
+      console.log('📋 Attempting to fetch users from Supabase Auth API...');
+      
+      const { data: authUsers, error: authError } = await supabase.auth.admin.listUsers();
       
       if (authError) {
         console.error('❌ Auth API error:', authError);
         throw authError;
       }
-
-      if (authData?.users && authData.users.length > 0) {
-        users = authData.users.map(user => ({
+      
+      if (authUsers && authUsers.users && authUsers.users.length > 0) {
+        console.log(`✅ Successfully fetched ${authUsers.users.length} users from Auth API`);
+        
+        users = authUsers.users.map(user => ({
           id: user.id,
-          email: user.email || '',
+          email: user.email || 'Email non disponible',
           created_at: user.created_at,
           raw_user_meta_data: user.user_metadata || {}
         }));
         
         method = 'auth_api';
-        console.log(`✅ Successfully fetched ${users.length} users via auth API`);
       } else {
-        throw new Error('No users returned from auth API');
+        throw new Error('No users found in Auth API');
       }
-    } catch (authError) {
-      console.error('❌ Auth API failed, trying direct SQL approach:', authError);
+    } catch (authApiError) {
+      console.log('⚠️ Auth API failed, trying RPC function...');
       
+      // Method 2: Try the RPC function as fallback
       try {
-        // Use RPC function to get users (bypasses RLS with SECURITY DEFINER)
-        const { data: rpcData, error: rpcError } = await supabase.rpc('get_user_registrations');
+        const { data: rpcUsers, error: rpcError } = await supabase.rpc('get_user_registrations');
         
         if (rpcError) {
           console.error('❌ RPC error:', rpcError);
           throw rpcError;
         }
-
-        if (rpcData && rpcData.length > 0) {
-          users = rpcData.map((user: any) => ({
-            id: user.id,
-            email: user.email || '',
-            created_at: user.created_at,
-            raw_user_meta_data: user.raw_user_meta_data || {}
-          }));
-          
-          method = 'rpc_function';
-          console.log(`✅ RPC: fetched ${users.length} users via get_user_registrations`);
+        
+        if (rpcUsers && rpcUsers.length > 0) {
+          console.log(`✅ Successfully fetched ${rpcUsers.length} users from RPC`);
+          users = rpcUsers;
+          method = 'rpc';
         } else {
-          throw new Error('No users returned from RPC');
+          throw new Error('No users found via RPC');
         }
       } catch (rpcError) {
-        console.error('❌ RPC failed, trying profiles table fallback:', rpcError);
+        console.log('⚠️ RPC failed, trying profiles table as final fallback...');
         
-        // Final fallback: Get users from profiles table
-        const { data: profilesData, error: profilesError } = await supabase
-          .from('profiles')
-          .select('id, first_name, last_name, created_at');
-
-        if (profilesError) {
-          console.error('❌ Profiles query error:', profilesError);
-          throw profilesError;
-        }
-
-        if (profilesData && profilesData.length > 0) {
-          users = profilesData.map(profile => ({
-            id: profile.id,
-            email: 'Email non disponible via profiles',
-            created_at: profile.created_at,
-            raw_user_meta_data: {
-              first_name: profile.first_name,
-              last_name: profile.last_name
-            }
-          }));
+        // Method 3: Final fallback to profiles table
+        try {
+          const { data: profileUsers, error: profileError } = await supabase
+            .from('profiles')
+            .select('id, first_name, last_name, created_at')
+            .order('created_at', { ascending: false });
           
-          method = 'profiles_fallback';
-          console.log(`✅ Fallback: fetched ${users.length} users via profiles table`);
-        } else {
-          // Return empty array instead of throwing error
-          users = [];
-          method = 'empty_result';
-          console.log('⚠️ No users found in any method, returning empty array');
+          if (profileError) {
+            console.error('❌ Profiles error:', profileError);
+            throw profileError;
+          }
+          
+          if (profileUsers && profileUsers.length > 0) {
+            console.log(`✅ Successfully fetched ${profileUsers.length} users from profiles table`);
+            
+            users = profileUsers.map(profile => ({
+              id: profile.id,
+              email: 'Email non disponible',
+              created_at: profile.created_at,
+              raw_user_meta_data: {
+                first_name: profile.first_name,
+                last_name: profile.last_name
+              }
+            }));
+            
+            method = 'profiles_fallback';
+          } else {
+            throw new Error('No users found in profiles table');
+          }
+        } catch (profileError) {
+          console.error('❌ All methods failed:', profileError);
+          throw new Error('Unable to fetch users from any source');
         }
       }
     }
 
-    // Return the users data
+    console.log(`✅ Returning ${users.length} users via method: ${method}`);
+
     return new Response(
       JSON.stringify({ 
+        users, 
         success: true, 
-        users: users,
-        count: users.length,
-        method: method
+        method,
+        count: users.length 
       }),
-      {
-        headers: { 
-          ...corsHeaders, 
-          'Content-Type': 'application/json' 
-        },
-        status: 200,
-      }
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
   } catch (error) {
     console.error('❌ Function error:', error);
-    
     return new Response(
       JSON.stringify({ 
-        success: false, 
-        error: error.message,
-        users: [],
-        count: 0
+        error: error.message, 
+        success: false 
       }),
-      {
-        headers: { 
-          ...corsHeaders, 
-          'Content-Type': 'application/json' 
-        },
-        status: 500,
+      { 
+        status: 500, 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
       }
     );
   }

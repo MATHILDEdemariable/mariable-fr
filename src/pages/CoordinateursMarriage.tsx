@@ -109,17 +109,27 @@ const CoordinateursMarriage = () => {
       <Header />
       
       <main className="container max-w-7xl px-4 py-6 md:py-8">
-        {/* Breadcrumb */}
-        <nav className="flex items-center space-x-2 text-sm text-muted-foreground mb-4">
-          <button 
+        {/* Bouton retour et Breadcrumb */}
+        <div className="flex flex-col gap-3 mb-4">
+          <Button 
+            variant="outline" 
             onClick={() => navigate('/')}
-            className="hover:text-wedding-olive transition-colors"
+            className="w-fit flex items-center gap-2 hover:bg-wedding-olive hover:text-white transition-colors"
           >
-            Accueil
-          </button>
-          <span>/</span>
-          <span className="text-wedding-olive">Coordinateurs de Mariage</span>
-        </nav>
+            ← Retour à l'accueil
+          </Button>
+          
+          <nav className="flex items-center space-x-2 text-sm text-muted-foreground">
+            <button 
+              onClick={() => navigate('/')}
+              className="hover:text-wedding-olive transition-colors"
+            >
+              Accueil
+            </button>
+            <span>/</span>
+            <span className="text-wedding-olive">Coordinateurs de Mariage</span>
+          </nav>
+        </div>
 
         <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
           <div>
