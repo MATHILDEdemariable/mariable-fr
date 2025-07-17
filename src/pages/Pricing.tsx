@@ -215,8 +215,10 @@ const Pricing = () => {
                     
                     {/* Boutons mis à jour avec Réserver */}
                     <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8 p-6">
-                      <Button onClick={scrollToDemo} className="bg-wedding-olive hover:bg-wedding-olive/90 text-white w-full sm:w-auto">
-                        Voir une démo
+                      <Button asChild className="bg-wedding-olive hover:bg-wedding-olive/90 text-white w-full sm:w-auto">
+                        <Link to="/coordinateurs-mariage">
+                          Voir les coordinateurs
+                        </Link>
                       </Button>
                       <Button onClick={scrollToCommentCaMarche} className="bg-wedding-olive hover:bg-wedding-olive/90 text-white w-full sm:w-auto">
                         En savoir plus
