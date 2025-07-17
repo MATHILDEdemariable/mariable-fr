@@ -113,7 +113,7 @@ const Pricing = () => {
                           <tr className="border-b bg-gray-50">
                             <td className="px-3 sm:px-6 py-4 font-medium text-gray-900 text-sm sm:text-base">Prix (TTC)</td>
                             <td className="px-3 sm:px-6 py-4 text-center font-bold text-wedding-olive text-sm sm:text-base">14,9€</td>
-                            <td className="px-3 sm:px-6 py-4 text-center font-bold text-wedding-olive bg-gray-100 text-sm sm:text-base">24,9€</td>
+                            <td className="px-3 sm:px-6 py-4 text-center font-bold text-wedding-olive bg-gray-100 text-sm sm:text-base">149€</td>
                             <td className="px-3 sm:px-6 py-4 text-center font-bold text-wedding-olive text-sm sm:text-base">799€</td>
                           </tr>
                           <tr className="border-b">
@@ -198,7 +198,7 @@ const Pricing = () => {
                             </td>
                           </tr>
                           <tr className="border-b">
-                            <td className="px-3 sm:px-6 py-4 font-medium text-gray-900 text-sm sm:text-base">Présence coordinateur le jour J (pendant 10h)</td>
+                            <td className="px-3 sm:px-6 py-4 font-medium text-gray-900 text-sm sm:text-base">Présence physique le jour J</td>
                             <td className="px-3 sm:px-6 py-4 text-center">
                               <X className="h-5 w-5 text-red-500 mx-auto" />
                             </td>
@@ -215,10 +215,8 @@ const Pricing = () => {
                     
                     {/* Boutons mis à jour avec Réserver */}
                     <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8 p-6">
-                      <Button asChild className="bg-wedding-olive hover:bg-wedding-olive/90 text-white w-full sm:w-auto">
-                        <Link to="/coordinateurs-mariage">
-                          Voir les coordinateurs
-                        </Link>
+                      <Button onClick={scrollToDemo} className="bg-wedding-olive hover:bg-wedding-olive/90 text-white w-full sm:w-auto">
+                        Voir une démo
                       </Button>
                       <Button onClick={scrollToCommentCaMarche} className="bg-wedding-olive hover:bg-wedding-olive/90 text-white w-full sm:w-auto">
                         En savoir plus
@@ -382,7 +380,7 @@ const Pricing = () => {
                               Transfert des infos via le formulaire
                             </h3>
                             <p className="text-gray-600">
-                              Vous faites une demande, vous payez et ensuite vous remplissez l'application afin de nous transférer les informations directement en ligne.
+                              Vous nous envoyez tous vos documents, plannings et informations de mariage via le formulaire.
                             </p>
                           </div>
                         </div>
@@ -405,7 +403,7 @@ const Pricing = () => {
                         <div className="md:w-1/2">
                           <div className="bg-white p-6 rounded-lg shadow-md">
                             <h3 className="text-xl font-semibold mb-3 flex items-center gap-2">
-                              <Phone className="h-5 w-5 text-wedding-olive" />
+                              
                               Rendez-vous téléphonique ou visio
                             </h3>
                             <p className="text-gray-600">
