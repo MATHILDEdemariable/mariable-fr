@@ -159,7 +159,7 @@ const Pricing = () => {
                             </td>
                           </tr>
                           <tr className="border-b">
-                            <td className="px-3 sm:px-6 py-4 font-medium text-gray-900 text-sm sm:text-base">Notifications et rappels en temps réel de J-1 et J-M</td>
+                            <td className="px-3 sm:px-6 py-4 font-medium text-gray-900 text-sm sm:text-base">Notifications et rappels en temps réel de J-1 et J-M (via Whatsapp)</td>
                             <td className="px-3 sm:px-6 py-4 text-center">
                               <X className="h-5 w-5 text-red-500 mx-auto" />
                             </td>
