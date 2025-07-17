@@ -269,7 +269,7 @@ const Index = () => {
                   
                   <div className="mt-auto">
                     <Button asChild className="w-full bg-wedding-olive text-white hover:bg-wedding-olive/90">
-                      <Link to="/coordinateurs-mariage">Voir une démo</Link>
+                      <Link to="/detail-coordination-jourm">Voir une démo</Link>
                     </Button>
                   </div>
                 </CardContent>
