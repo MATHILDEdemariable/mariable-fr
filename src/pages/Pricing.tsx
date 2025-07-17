@@ -449,7 +449,7 @@ const Pricing = () => {
                               Partagez le lien de consultation
                             </h3>
                             <p className="text-gray-600">
-                              Partagez le lien de consultation - à vos proches, prestataires, équipe mariable si besoin et selon formule
+                              Quand votre jour-m est finalisé, transférer le lien à vos proches, prestataire et équipe mariable
                             </p>
                           </div>
                         </div>
