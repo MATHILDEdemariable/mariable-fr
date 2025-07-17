@@ -268,8 +268,8 @@ const Index = () => {
                   </div>
                   
                   <div className="mt-auto">
-                    <Button onClick={() => window.open('https://buy.stripe.com/7sY00ka2m3xwcMt8Au8bS03', '_blank')} className="w-full bg-wedding-olive text-white hover:bg-wedding-olive/90">
-                      Payer maintenant
+                    <Button asChild className="w-full bg-wedding-olive text-white hover:bg-wedding-olive/90">
+                      <Link to="/coordinateurs-mariage">Voir une démo</Link>
                     </Button>
                   </div>
                 </CardContent>
