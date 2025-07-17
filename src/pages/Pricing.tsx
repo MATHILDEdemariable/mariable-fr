@@ -113,7 +113,7 @@ const Pricing = () => {
                           <tr className="border-b bg-gray-50">
                             <td className="px-3 sm:px-6 py-4 font-medium text-gray-900 text-sm sm:text-base">Prix (TTC)</td>
                             <td className="px-3 sm:px-6 py-4 text-center font-bold text-wedding-olive text-sm sm:text-base">14,9€</td>
-                            <td className="px-3 sm:px-6 py-4 text-center font-bold text-wedding-olive bg-gray-100 text-sm sm:text-base">149€</td>
+                            <td className="px-3 sm:px-6 py-4 text-center font-bold text-wedding-olive bg-gray-100 text-sm sm:text-base">24,9€</td>
                             <td className="px-3 sm:px-6 py-4 text-center font-bold text-wedding-olive text-sm sm:text-base">799€</td>
                           </tr>
                           <tr className="border-b">
