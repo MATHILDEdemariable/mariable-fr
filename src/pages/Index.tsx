@@ -286,9 +286,9 @@ const Index = () => {
                 <CardHeader className="text-center pb-4 pt-8">
                   <div className="flex items-center justify-center gap-2 mb-3">
                     <Users className="h-6 w-6 text-wedding-olive" />
-                    <CardTitle className="text-xl font-bold">Privilège</CardTitle>
+                    <CardTitle className="text-xl font-bold">Jour-J Privilège</CardTitle>
                   </div>
-                  <p className="text-sm text-gray-600">Formule libre + coordinateur Mariable</p>
+                  <p className="text-sm text-gray-600">Appli Mariable + Coordinateur </p>
                 </CardHeader>
                 
                 <CardContent className="flex-grow flex flex-col">
