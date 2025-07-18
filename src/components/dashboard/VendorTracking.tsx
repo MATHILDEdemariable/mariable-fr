@@ -27,7 +27,8 @@ import {
   Clock,
   Plus,
   RefreshCw,
-  Trash
+  Trash,
+  Edit
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Database } from '@/integrations/supabase/types';
@@ -77,10 +78,6 @@ const statusIconMap: Record<VendorStatus, React.ReactNode> = {
   'annuler': <Trash className="h-4 w-4" />,
 };
 
-// interface VendorTrackingProps {
-//   projectId?: string;
-// }
-
 type VendorTrackingProps = {
   project_id?: string;
 };
@@ -96,6 +93,7 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [vendorToDelete, setVendorToDelete] = useState<string | null>(null);
   const { toast } = useToast();
+
   // Fetch vendors from the database
   const fetchVendors = async () => {
     setIsLoading(true);
@@ -107,15 +105,10 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
         return;
       }
 
-
       let query = supabase
         .from('vendors_tracking_preprod')
         .select('*')
         .eq('user_id', user.id);
-        
-      // if (projectId) {
-      //   query = query.eq('project_id', projectId);
-      // }
         
       const { data, error } = await query.order('created_at', { ascending: false });
 
@@ -311,24 +304,26 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
             </div>
           </div>
           
-          <div className="rounded-md border overflow-hidden">
+          <div className="rounded-md border overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Prestataire</TableHead>
+                  <TableHead className="min-w-[200px]">Prestataire</TableHead>
                   <TableHead>Catégorie</TableHead>
                   <TableHead>Source</TableHead>
                   <TableHead>Statut</TableHead>
                   <TableHead>Budget</TableHead>
                   <TableHead>Feeling</TableHead>
-                  <TableHead>Dernier contact</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead>Notes utilisateur</TableHead>
+                  <TableHead>Points +/-</TableHead>
+                  <TableHead>Contact</TableHead>
+                  <TableHead className="text-right min-w-[200px]">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {isLoading ? (
                   <TableRow>
-                    <TableCell colSpan={8} className="text-center py-6">
+                    <TableCell colSpan={10} className="text-center py-6">
                       <div className="flex justify-center">
                         <RefreshCw className="h-5 w-5 animate-spin" />
                       </div>
@@ -336,7 +331,7 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
                   </TableRow>
                 ) : filteredVendors.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={8} className="text-center py-6 text-muted-foreground">
+                    <TableCell colSpan={10} className="text-center py-6 text-muted-foreground">
                       {vendors.length === 0 ? 
                         "Aucun prestataire ajouté. Utilisez les boutons ci-dessus pour commencer." :
                         "Aucun prestataire trouvé avec ces critères"
@@ -346,14 +341,14 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
                 ) : (
                   filteredVendors.map((vendor) => (
                     <TableRow key={vendor.id}>
-                      <TableCell>
+                      <TableCell className="min-w-[200px]">
                         <div className="font-medium">{vendor.vendor_name}</div>
                         {vendor.source === 'personal' && (
                           <div className="mt-1 space-y-1 text-xs text-muted-foreground">
                             {vendor.email && (
                               <div className="flex items-center gap-1">
                                 <Mail className="h-3 w-3" />
-                                <span>{vendor.email}</span>
+                                <span className="truncate">{vendor.email}</span>
                               </div>
                             )}
                             {vendor.phone && (
@@ -363,28 +358,13 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
                               </div>
                             )}
                             {vendor.location && (
-                              <div className="truncate max-w-[180px]">📍 {vendor.location}</div>
+                              <div className="truncate">📍 {vendor.location}</div>
                             )}
                           </div>
                         )}
                         {vendor.notes && (
-                          <div className="text-xs text-muted-foreground truncate max-w-[200px] mt-1">
+                          <div className="text-xs text-muted-foreground truncate mt-1" title={vendor.notes}>
                             💭 {vendor.notes}
-                          </div>
-                        )}
-                        {vendor.user_notes && (
-                          <div className="text-xs text-muted-foreground truncate max-w-[200px] mt-1">
-                            📝 Notes: {vendor.user_notes}
-                          </div>
-                        )}
-                        {vendor.points_forts && (
-                          <div className="text-xs text-green-600 truncate max-w-[200px] mt-1">
-                            ✅ {vendor.points_forts}
-                          </div>
-                        )}
-                        {vendor.points_faibles && (
-                          <div className="text-xs text-red-600 truncate max-w-[200px] mt-1">
-                            ❌ {vendor.points_faibles}
                           </div>
                         )}
                       </TableCell>
@@ -404,54 +384,85 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
                         </Badge>
                       </TableCell>
                       <TableCell>
-                        <div className="text-sm">
+                        <div className="text-sm font-medium">
                           {vendor.budget || '-'}
                         </div>
                       </TableCell>
                       <TableCell>
-                        {vendor.feeling && (
+                        {vendor.feeling ? (
                           <Badge 
                             variant="outline" 
                             className={cn(
-                              "text-xs",
-                              vendor.feeling === 'Excellent' && 'bg-green-100 text-green-800',
-                              vendor.feeling === 'Bon' && 'bg-blue-100 text-blue-800',
-                              vendor.feeling === 'Moyen' && 'bg-yellow-100 text-yellow-800',
-                              vendor.feeling === 'Mauvais' && 'bg-red-100 text-red-800'
+                              "text-xs font-medium",
+                              vendor.feeling === 'Excellent' && 'bg-green-100 text-green-800 border-green-300',
+                              vendor.feeling === 'Bon' && 'bg-blue-100 text-blue-800 border-blue-300',
+                              vendor.feeling === 'Moyen' && 'bg-yellow-100 text-yellow-800 border-yellow-300',
+                              vendor.feeling === 'Mauvais' && 'bg-red-100 text-red-800 border-red-300'
                             )}
                           >
                             {vendor.feeling}
                           </Badge>
+                        ) : (
+                          <span className="text-muted-foreground text-sm">-</span>
                         )}
                       </TableCell>
                       <TableCell>
-                        {formatDate(vendor.contact_date)}
+                        {vendor.user_notes ? (
+                          <div className="text-xs text-muted-foreground truncate max-w-[150px]" title={vendor.user_notes}>
+                            📝 {vendor.user_notes}
+                          </div>
+                        ) : (
+                          <span className="text-muted-foreground text-sm">-</span>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <div className="space-y-1">
+                          {vendor.points_forts && (
+                            <div className="text-xs text-green-600 truncate max-w-[120px]" title={vendor.points_forts}>
+                              ✅ {vendor.points_forts}
+                            </div>
+                          )}
+                          {vendor.points_faibles && (
+                            <div className="text-xs text-red-600 truncate max-w-[120px]" title={vendor.points_faibles}>
+                              ❌ {vendor.points_faibles}
+                            </div>
+                          )}
+                          {!vendor.points_forts && !vendor.points_faibles && (
+                            <span className="text-muted-foreground text-sm">-</span>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="text-sm">
+                          {formatDate(vendor.contact_date)}
+                        </div>
                       </TableCell>
                       <TableCell className="text-right">
-                        <div className="flex items-center justify-end gap-2">
-                          {vendor.source === 'personal' ? (
-                            <>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => {
-                                  setVendorToEdit(vendor);
-                                  setEditDialogOpen(true);
-                                }}
-                              >
-                                Modifier
-                              </Button>
-                              {vendor.website && (
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() => window.open(vendor.website, '_blank')}
-                                >
-                                  Site web
-                                </Button>
-                              )}
-                            </>
-                          ) : (
+                        <div className="flex items-center justify-end gap-2 flex-wrap">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              setVendorToEdit(vendor);
+                              setEditDialogOpen(true);
+                            }}
+                            className="flex items-center gap-1"
+                          >
+                            <Edit className="h-3 w-3" />
+                            Modifier
+                          </Button>
+                          
+                          {vendor.source !== 'personal' && vendor.website && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => window.open(vendor.website, '_blank')}
+                            >
+                              Site web
+                            </Button>
+                          )}
+                          
+                          {vendor.source !== 'personal' && (
                             <Button
                               variant="outline"
                               size="sm"
@@ -462,11 +473,12 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
                               Voir la demande
                             </Button>
                           )}
+                          
                           <Select 
                             defaultValue={vendor.status}
                             onValueChange={(value) => updateVendorStatus(vendor.id, value as VendorStatus)}
                           >
-                            <SelectTrigger className="w-[140px]">
+                            <SelectTrigger className="w-[130px]">
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
@@ -494,7 +506,6 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
         open={addDialogOpen} 
         onOpenChange={setAddDialogOpen} 
         onVendorAdded={fetchVendors}
-        // projectId={projectId}
       />
       
       {/* Edit Vendor Modal */}
