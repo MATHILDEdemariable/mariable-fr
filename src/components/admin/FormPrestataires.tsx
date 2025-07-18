@@ -1,6 +1,4 @@
-
-import React, { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
+import React, { useState, useEffect } from 'react';
 import {
   Table,
   TableBody,
@@ -8,74 +6,141 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
-import { Prestataire } from "./types";
-import FeaturedImage from "@/components/ui/featured-image";
-import { Search, Plus, Filter } from "lucide-react";
-import { useDebounce } from "@/hooks/use-debounce";
-import FrontStylePrestataireEditModal from "./FrontStylePrestataireEditModal";
+} from "@/components/ui/table"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { Prestataire } from './types';
+import { Edit, Trash2, Eye, Plus } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Badge } from "@/components/ui/badge"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import { toast } from 'sonner';
+import { Toaster } from "@/components/ui/toaster"
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { DEFAULT_PRESTATAIRE } from './form-parts/constants';
+import PrestataireCRMFilters from './PrestataireCRMFilters';
 
-const PrestatairesAdmin = () => {
+const FormPrestataires = () => {
   const [prestataires, setPrestataires] = useState<Prestataire[]>([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
   const [filteredPrestataires, setFilteredPrestataires] = useState<Prestataire[]>([]);
-  const [frontEditOpen, setFrontEditOpen] = useState(false);
-  const [editMode, setEditMode] = useState<"edit" | "add" | "">("");
-  const [frontEditSelected, setFrontEditSelected] = useState<Prestataire | null>(null);
+  const [isLoadingData, setIsLoadingData] = useState(true);
+  const navigate = useNavigate();
 
-  // Nouveaux filtres
-  const [categoryFilter, setCategoryFilter] = useState<string>('all');
-  const [cityFilter, setCityFilter] = useState<string>('all');
-  const [visibilityFilter, setVisibilityFilter] = useState<string>('all');
+  const [filters, setFilters] = useState({
+  statusCrm: '',
+  search: '',
+  category: '',
+  region: '',
+  sourceInscription: '' // Nouveau filtre
+});
 
-  const debouncedSearchTerm = useDebounce(searchTerm, 300);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [prestataireToDelete, setPrestataireToDelete] = useState<Prestataire | null>(null);
+
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+  const [prestataireToView, setPrestataireToView] = useState<Prestataire | null>(null);
+
+  const queryClient = useQueryClient();
+
+  const { data: statusCrmOptions, isLoading: isLoadingStatusCrm } = useQuery({
+    queryKey: ['statusCrmOptions'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('status_crm')
+        .select('*')
+        .order('order', { ascending: true });
+
+      if (error) {
+        console.error('Erreur lors du chargement des status CRM:', error);
+        toast.error('Erreur lors du chargement des status CRM');
+        return [];
+      }
+      return data;
+    },
+  });
+
+  const { mutate: updateStatusCrm, isLoading: isUpdatingStatusCrm } = useMutation(
+    async ({ id, statusCrm }: { id: string, statusCrm: string }) => {
+      const { error } = await supabase
+        .from('prestataires_rows')
+        .update({ status_crm: statusCrm })
+        .eq('id', id);
+
+      if (error) {
+        throw error;
+      }
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(['prestataires']);
+        toast.success('Statut CRM mis à jour avec succès');
+      },
+      onError: (error: any) => {
+        console.error('Erreur lors de la mise à jour du statut CRM:', error);
+        toast.error('Erreur lors de la mise à jour du statut CRM');
+      },
+    }
+  );
+
+  const handleFilterChange = (key: string, value: string) => {
+  console.log(`🔍 Filter changed: ${key} = ${value}`);
+  setFilters(prev => ({
+    ...prev,
+    [key]: value
+  }));
+};
+
+const handleResetFilters = () => {
+  console.log('🔄 Resetting all filters');
+  setFilters({
+    statusCrm: '',
+    search: '',
+    category: '',
+    region: '',
+    sourceInscription: ''
+  });
+};
 
   const fetchPrestataires = async () => {
-    setIsLoading(true);
     try {
+      setIsLoadingData(true);
       const { data, error } = await supabase
-        .from("prestataires_rows")
-        .select(`*, prestataires_photos_preprod (*)`)
-        .order("nom", { ascending: true });
-      
+        .from('prestataires_rows')
+        .select('*')
+        .order('nom', { ascending: true });
+
       if (error) {
-        toast.error("Erreur lors du chargement des prestataires");
-        console.error("Erreur chargement:", error);
-        setIsLoading(false);
+        console.error('Erreur lors du chargement des prestataires:', error);
+        toast.error('Erreur lors du chargement des prestataires');
         return;
       }
-      
+
       if (data) {
-        const prestataireData = data as unknown as Prestataire[];
-        for (const presta of prestataireData) {
-          // Fetch additional related data
-          const { data: brochures } = await supabase
-            .from("prestataires_brochures_preprod")
-            .select("*")
-            .eq("prestataire_id", presta.id);
-
-          const { data: meta } = await supabase
-            .from("prestataires_meta")
-            .select("*")
-            .eq("prestataire_id", presta.id);
-
-          presta.prestataires_brochures = brochures || [];
-          presta.prestataires_meta = meta || [];
-        }
-        
-        setPrestataires(prestataireData);
-        setFilteredPrestataires(prestataireData);
+        setPrestataires(data);
+        setFilteredPrestataires(data);
+      } else {
+        setPrestataires([]);
+        setFilteredPrestataires([]);
       }
     } catch (err) {
-      console.error("Erreur lors du chargement des prestataires:", err);
-      toast.error("Erreur lors du chargement des données");
+      console.error('Erreur:', err);
+      toast.error('Une erreur est survenue');
     } finally {
-      setIsLoading(false);
+      setIsLoadingData(false);
     }
   };
 
@@ -84,376 +149,231 @@ const PrestatairesAdmin = () => {
   }, []);
 
   useEffect(() => {
-    let filtered = prestataires;
+  console.log('🔍 Filters changed, applying:', filters);
+  
+  let filtered = prestataires;
 
-    // Filtre par recherche
-    if (debouncedSearchTerm) {
-      filtered = filtered.filter(presta => 
-        presta.nom.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
-        presta.ville?.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
-        presta.categorie?.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
-      );
-    }
+  if (filters.search) {
+    const searchLower = filters.search.toLowerCase();
+    filtered = filtered.filter(p => 
+      p.nom?.toLowerCase().includes(searchLower) ||
+      p.email?.toLowerCase().includes(searchLower) ||
+      p.ville?.toLowerCase().includes(searchLower)
+    );
+  }
 
-    // Filtre par catégorie
-    if (categoryFilter !== 'all') {
-      filtered = filtered.filter(presta => presta.categorie === categoryFilter);
-    }
+  if (filters.statusCrm) {
+    filtered = filtered.filter(p => p.status_crm === filters.statusCrm);
+  }
 
-    // Filtre par ville
-    if (cityFilter !== 'all') {
-      filtered = filtered.filter(presta => presta.ville === cityFilter);
-    }
+  if (filters.category) {
+    filtered = filtered.filter(p => p.categorie === filters.category);
+  }
 
-    // Filtre par visibilité
-    if (visibilityFilter !== 'all') {
-      const isVisible = visibilityFilter === 'visible';
-      filtered = filtered.filter(presta => presta.visible === isVisible);
-    }
+  if (filters.region) {
+    filtered = filtered.filter(p => p.region === filters.region);
+  }
 
-    setFilteredPrestataires(filtered);
-  }, [debouncedSearchTerm, prestataires, categoryFilter, cityFilter, visibilityFilter]);
+  // Nouveau filtre pour la source d'inscription
+  if (filters.sourceInscription) {
+    filtered = filtered.filter(p => p.source_inscription === filters.sourceInscription);
+  }
 
-  // Obtenir les valeurs uniques pour les filtres
-  const uniqueCategories = [...new Set(prestataires.map(p => p.categorie).filter(Boolean))];
-  const uniqueCities = [...new Set(prestataires.map(p => p.ville).filter(Boolean))];
+  console.log(`📊 Filtered results: ${filtered.length}/${prestataires.length}`);
+  setFilteredPrestataires(filtered);
+}, [filters, prestataires]);
 
   const handleDelete = async (id: string) => {
-    if (window.confirm("Êtes-vous sûr de vouloir supprimer ce prestataire ?")) {
-      try {
-        const { error } = await supabase
-          .from("prestataires_rows")
-          .delete()
-          .eq("id", id);
-          
-        if (error) {
-          toast.error("Erreur lors de la suppression");
-          console.error("Erreur suppression:", error);
-          return;
-        }
-        
-        toast.success("Prestataire supprimé avec succès");
-        fetchPrestataires();
-      } catch (err) {
-        console.error("Erreur lors de la suppression:", err);
-        toast.error("Une erreur est survenue");
-      }
-    }
-  };
-
-  const handleEdit = (presta: Prestataire) => {
-    setFrontEditSelected(presta);
-    setEditMode("edit");
-    setFrontEditOpen(true);
-  };
-
-  const handlePublish = async (presta: Prestataire) => {
     try {
       const { error } = await supabase
-        .from("prestataires_rows")
-        .update({ visible: !presta.visible })
-        .eq("id", presta.id);
-        
-      if (error) {
-        toast.error("Erreur lors de la modification");
-        console.error("Erreur mise à jour:", error);
-        return;
-      }
-      
-      toast.success(presta.visible 
-        ? "Prestataire masqué avec succès" 
-        : "Prestataire publié avec succès"
-      );
-      fetchPrestataires();
-    } catch (err) {
-      console.error("Erreur lors de la modification:", err);
-      toast.error("Une erreur est survenue");
-    }
-  };
-
-  const handleFeature = async (presta: Prestataire) => {
-    try {
-      const { error } = await supabase
-        .from("prestataires_rows")
-        .update({ featured: !presta.featured })
-        .eq("id", presta.id);
+        .from('prestataires_rows')
+        .delete()
+        .eq('id', id);
 
       if (error) {
-        toast.error("Erreur lors de la modification de la mise en avant");
-        console.error("Erreur mise à jour 'featured':", error);
+        console.error('Erreur lors de la suppression du prestataire:', error);
+        toast.error('Erreur lors de la suppression du prestataire');
         return;
       }
 
-      toast.success(
-        presta.featured
-          ? "Prestataire retiré de la mise en avant"
-          : "Prestataire mis en avant avec succès"
-      );
+      toast.success('Prestataire supprimé avec succès');
       fetchPrestataires();
     } catch (err) {
-      console.error(
-        "Erreur lors de la modification de la mise en avant:",
-        err
-      );
-      toast.error("Une erreur est survenue");
+      console.error('Erreur:', err);
+      toast.error('Une erreur est survenue');
+    } finally {
+      setIsDeleteModalOpen(false);
+      setPrestataireToDelete(null);
     }
-  };
-
-  const handleAddNew = () => {
-    setFrontEditSelected(null);
-    setEditMode("add");
-    setFrontEditOpen(true);
-  };
-
-  const handleHref = (slug: string) => {
-    window.open(`/prestataire/${slug}`, "_blank");
-  };
-
-  const updateStatusCrm = async (id: string, newStatus: string) => {
-    try {
-      // Utiliser une requête SQL directe pour contourner les limitations de type
-      const updateData: any = { 
-        status_crm: newStatus
-      };
-      
-      if (newStatus === 'contacted') {
-        updateData.date_derniere_contact = new Date().toISOString();
-      }
-
-      const { error } = await supabase
-        .from("prestataires_rows")
-        .update(updateData)
-        .eq("id", id);
-        
-      if (error) {
-        toast.error("Erreur lors de la mise à jour du statut");
-        console.error("Erreur statut CRM:", error);
-        return;
-      }
-      
-      toast.success("Statut CRM mis à jour");
-      fetchPrestataires();
-    } catch (err) {
-      console.error("Erreur lors de la mise à jour du statut:", err);
-      toast.error("Une erreur est survenue");
-    }
-  };
-
-  const formatDate = (dateString: string | null) => {
-    if (!dateString) return "Jamais contacté";
-    return new Date(dateString).toLocaleDateString('fr-FR');
-  };
-
-  const getStatusLabel = (status: string) => {
-    const statusMap: { [key: string]: string } = {
-      'acquisition': 'Acquisition',
-      'contacted': 'Contacté',
-      'in_progress': 'En cours',
-      'relance_1': 'Relance 1',
-      'relance_2': 'Relance 2',
-      'called': 'Appelé',
-      'waiting': 'En attente',
-      'other': 'Autre'
-    };
-    return statusMap[status] || status;
   };
 
   return (
-    <div className="p-4 bg-white rounded-lg shadow">
-      <div className="flex flex-col space-y-4 mb-6">
-        {/* Première ligne : Recherche et bouton ajouter */}
-        <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-          <div className="relative w-full sm:w-96">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-            <Input
-              placeholder="Rechercher un prestataire..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 w-full"
-            />
-          </div>
-          <Button 
-            onClick={handleAddNew} 
-            className="flex items-center gap-2 w-full sm:w-auto"
-          >
-            <Plus size={18} />
-            Ajouter un prestataire
+    <div className="space-y-4">
+      <Toaster />
+
+      <PrestataireCRMFilters 
+        filters={filters}
+        onFilterChange={handleFilterChange}
+        onReset={handleResetFilters}
+      />
+
+      <Card>
+        <CardHeader className="flex items-center justify-between">
+          <CardTitle>Liste des prestataires ({filteredPrestataires.length})</CardTitle>
+          <Button asChild>
+            <Link to="/admin/prestataires/ajouter" className="flex items-center gap-2">
+              <Plus className="h-4 w-4" />
+              Ajouter
+            </Link>
           </Button>
-        </div>
+        </CardHeader>
+        <CardContent>
+          {isLoadingData ? (
+            <div className="flex justify-center items-center p-10">
+              <p>Chargement des prestataires...</p>
+            </div>
+          ) : filteredPrestataires.length === 0 ? (
+            <div className="text-center py-10">
+              <p className="text-gray-500">Aucun prestataire trouvé.</p>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Nom</TableHead>
+                    <TableHead>Catégorie</TableHead>
+                    <TableHead>Ville</TableHead>
+                    <TableHead>Région</TableHead>
+                    <TableHead>Statut CRM</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredPrestataires.map((prestataire) => (
+                    <TableRow key={prestataire.id}>
+                      <TableCell>{prestataire.nom}</TableCell>
+                      <TableCell>{prestataire.categorie}</TableCell>
+                      <TableCell>{prestataire.ville}</TableCell>
+                      <TableCell>{prestataire.region}</TableCell>
+                      <TableCell>
+                        {statusCrmOptions && statusCrmOptions.length > 0 ? (
+                          <Select
+                            value={prestataire.status_crm || ''}
+                            onValueChange={(value) => {
+                              if (prestataire.id) {
+                                updateStatusCrm({ id: prestataire.id, statusCrm: value });
+                              }
+                            }}
+                            disabled={isUpdatingStatusCrm}
+                          >
+                            <SelectTrigger className="w-[180px]">
+                              <SelectValue placeholder="Sélectionner un statut" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {statusCrmOptions.map((status) => (
+                                <SelectItem key={status.id} value={status.id}>
+                                  {status.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        ) : (
+                          'Chargement des statuts...'
+                        )}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex justify-end gap-2">
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={() => {
+                              setPrestataireToView(prestataire);
+                              setIsDetailsModalOpen(true);
+                            }}
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                          <Button variant="outline" size="icon" asChild>
+                            <Link to={`/admin/prestataires/modifier/${prestataire.id}`}>
+                              <Edit className="h-4 w-4" />
+                            </Link>
+                          </Button>
+                          <Button
+                            variant="destructive"
+                            size="icon"
+                            onClick={() => {
+                              setPrestataireToDelete(prestataire);
+                              setIsDeleteModalOpen(true);
+                            }}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
-        {/* Deuxième ligne : Filtres */}
-        <div className="flex flex-col sm:flex-row gap-3 items-center">
-          <div className="flex items-center gap-2">
-            <Filter size={18} className="text-gray-500" />
-            <span className="text-sm font-medium text-gray-700">Filtres :</span>
+      {/* Delete Confirmation Modal */}
+      {isDeleteModalOpen && prestataireToDelete && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-lg shadow-xl">
+            <h2 className="text-lg font-semibold mb-4">Confirmer la suppression</h2>
+            <p>Êtes-vous sûr de vouloir supprimer le prestataire "{prestataireToDelete.nom}" ?</p>
+            <div className="mt-6 flex justify-end gap-4">
+              <Button variant="ghost" onClick={() => setIsDeleteModalOpen(false)}>
+                Annuler
+              </Button>
+              <Button variant="destructive" onClick={() => handleDelete(prestataireToDelete.id)}>
+                Supprimer
+              </Button>
+            </div>
           </div>
-          
-          <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-            <SelectTrigger className="w-full sm:w-[180px]">
-              <SelectValue placeholder="Catégorie" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Toutes les catégories</SelectItem>
-              {uniqueCategories.map((category) => (
-                <SelectItem key={category} value={category}>
-                  {category}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          <Select value={cityFilter} onValueChange={setCityFilter}>
-            <SelectTrigger className="w-full sm:w-[180px]">
-              <SelectValue placeholder="Ville" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Toutes les villes</SelectItem>
-              {uniqueCities.map((city) => (
-                <SelectItem key={city} value={city}>
-                  {city}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          <Select value={visibilityFilter} onValueChange={setVisibilityFilter}>
-            <SelectTrigger className="w-full sm:w-[180px]">
-              <SelectValue placeholder="Visibilité" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Tous</SelectItem>
-              <SelectItem value="visible">Visibles</SelectItem>
-              <SelectItem value="hidden">Masqués</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-
-      {isLoading ? (
-        <div className="flex justify-center items-center p-10">
-          <p>Chargement des prestataires...</p>
-        </div>
-      ) : (
-        <div className="overflow-x-auto">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-20">Image</TableHead>
-                <TableHead>Nom</TableHead>
-                <TableHead>Catégorie</TableHead>
-                <TableHead>Ville</TableHead>
-                <TableHead className="text-center">Visible</TableHead>
-                <TableHead className="text-center">Mis en avant</TableHead>
-                <TableHead className="text-center">Statut CRM</TableHead>
-                <TableHead className="text-center">Dernier contact</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredPrestataires.map((presta) => (
-                <TableRow key={presta.id} className="hover:bg-gray-50">
-                  <TableCell>
-                    <FeaturedImage presta={presta} />
-                  </TableCell>
-                  <TableCell className="font-medium">{presta.nom}</TableCell>
-                  <TableCell>
-                    {presta.categorie || "Non spécifiée"}
-                  </TableCell>
-                  <TableCell>{presta.ville || "Non spécifiée"}</TableCell>
-                  <TableCell className="text-center">
-                    <span
-                      className={`inline-block w-3 h-3 rounded-full ${
-                        presta.visible ? "bg-green-500" : "bg-red-500"
-                      }`}
-                    ></span>
-                  </TableCell>
-                  <TableCell className="text-center">
-                    <span
-                      className={`inline-block w-3 h-3 rounded-full ${
-                        presta.featured ? "bg-purple-500" : "bg-gray-300"
-                      }`}
-                    ></span>
-                  </TableCell>
-                  <TableCell className="text-center">
-                    <Select 
-                      value={presta.status_crm || 'acquisition'} 
-                      onValueChange={(value) => updateStatusCrm(presta.id, value)}
-                    >
-                      <SelectTrigger className="w-[120px]">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="acquisition">Acquisition</SelectItem>
-                        <SelectItem value="contacted">Contacté</SelectItem>
-                        <SelectItem value="in_progress">En cours</SelectItem>
-                        <SelectItem value="relance_1">Relance 1</SelectItem>
-                        <SelectItem value="relance_2">Relance 2</SelectItem>
-                        <SelectItem value="called">Appelé</SelectItem>
-                        <SelectItem value="waiting">En attente</SelectItem>
-                        <SelectItem value="other">Autre</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </TableCell>
-                  <TableCell className="text-center text-sm">
-                    {formatDate(presta.date_derniere_contact)}
-                  </TableCell>
-                  <TableCell className="space-x-2 flex flex-wrap justify-end gap-2">
-                    <Button
-                      size="sm"
-                      variant={presta.featured ? "secondary" : "outline"}
-                      onClick={() => handleFeature(presta)}
-                    >
-                      {presta.featured ? "En avant ✨" : "Mettre en avant"}
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => handleHref(presta.slug!)}
-                      disabled={!presta.slug}
-                    >
-                      Aperçu
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant={presta.visible ? "destructive" : "default"}
-                      onClick={() => handlePublish(presta)}
-                    >
-                      {presta.visible ? "Masquer" : "Publier"}
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => handleEdit(presta)}
-                    >
-                      Modifier
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="destructive"
-                      onClick={() => handleDelete(presta.id)}
-                    >
-                      Supprimer
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
         </div>
       )}
 
-      <FrontStylePrestataireEditModal
-        open={frontEditOpen}
-        onClose={() => setFrontEditOpen(false)}
-        prestataire={editMode === "edit" ? frontEditSelected : null}
-        onSuccess={() => {
-          setFrontEditOpen(false);
-          fetchPrestataires();
-        }}
-        isCreating={editMode === "add"}
-      />
+      {/* Details Modal */}
+      {isDetailsModalOpen && prestataireToView && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center overflow-auto">
+          <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-3xl">
+            <h2 className="text-lg font-semibold mb-4">Détails du prestataire</h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <p><strong>Nom:</strong> {prestataireToView.nom}</p>
+                <p><strong>Catégorie:</strong> {prestataireToView.categorie}</p>
+                <p><strong>Ville:</strong> {prestataireToView.ville}</p>
+                <p><strong>Région:</strong> {prestataireToView.region}</p>
+                <p><strong>Email:</strong> {prestataireToView.email}</p>
+                <p><strong>Téléphone:</strong> {prestataireToView.telephone}</p>
+                <p><strong>Site Web:</strong> {prestataireToView.site_web}</p>
+              </div>
+              <div>
+                <p><strong>SIRET:</strong> {prestataireToView.siret}</p>
+                <p><strong>Assurance:</strong> {prestataireToView.assurance_nom}</p>
+                <p><strong>Prix minimum:</strong> {prestataireToView.prix_minimum} €</p>
+                <p><strong>Status CRM:</strong> {prestataireToView.status_crm}</p>
+                <p><strong>Source Inscription:</strong> {prestataireToView.source_inscription}</p>
+                <p><strong>Description:</strong> {prestataireToView.description}</p>
+              </div>
+            </div>
+
+            <div className="mt-6 flex justify-end">
+              <Button variant="ghost" onClick={() => setIsDetailsModalOpen(false)}>
+                Fermer
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
-export default PrestatairesAdmin;
+export default FormPrestataires;

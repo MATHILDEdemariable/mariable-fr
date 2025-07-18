@@ -94,23 +94,57 @@ const AdminReservationsJourM = () => {
 
   const fetchReservations = async () => {
     try {
-      console.log('🚀 Fetching reservations...');
+      console.log('🚀 fetchReservations: Starting to fetch reservations');
+      console.log('🔐 Auth state:', { isAuthenticated, isLoading });
+      
       setIsLoadingData(true);
+      
+      // Test de la fonction is_admin()
+      const { data: adminCheck, error: adminError } = await supabase
+        .rpc('is_admin');
+      
+      console.log('👤 Admin check result:', { adminCheck, adminError });
+      
+      if (adminError) {
+        console.error('❌ Admin check failed:', adminError);
+        toast.error('Erreur de vérification admin: ' + adminError.message);
+        return;
+      }
+      
+      if (!adminCheck) {
+        console.error('❌ User is not admin');
+        toast.error('Accès refusé: droits administrateur requis');
+        return;
+      }
+
+      console.log('✅ Admin check passed, fetching reservations...');
+      
       const { data, error } = await supabase
         .from('jour_m_reservations')
         .select('*')
         .order('created_at', { ascending: false });
 
+      console.log('📊 Query result:', { 
+        data: data?.length || 0, 
+        error: error?.message || 'no error' 
+      });
+
       if (error) {
-        console.error('❌ Erreur lors du chargement des réservations:', error);
-        console.error('❌ Error details:', error.message, error.details, error.hint);
+        console.error('❌ Database error:', {
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          code: error.code
+        });
         toast.error('Erreur lors du chargement des réservations: ' + error.message);
         return;
       }
 
-      console.log('✅ Reservations data received:', data?.length, 'items');
+      console.log('✅ Raw data from Supabase:', data);
       
-      if (data) {
+      if (data && data.length > 0) {
+        console.log('📝 Sample reservation:', data[0]);
+        
         // Convertir les données Supabase vers notre interface
         const transformedData: JourMReservation[] = data.map(item => ({
           ...item,
@@ -129,16 +163,18 @@ const AdminReservationsJourM = () => {
         }));
         
         console.log('✅ Transformed reservations:', transformedData.length);
+        console.log('📋 Transformed sample:', transformedData[0]);
+        
         setReservations(transformedData);
         setFilteredReservations(transformedData);
       } else {
-        console.log('⚠️ No data received from Supabase');
+        console.log('⚠️ No reservations found in database');
         setReservations([]);
         setFilteredReservations([]);
       }
     } catch (err) {
-      console.error('Erreur:', err);
-      toast.error('Une erreur est survenue');
+      console.error('💥 Unexpected error in fetchReservations:', err);
+      toast.error('Une erreur inattendue est survenue');
     } finally {
       setIsLoadingData(false);
     }
@@ -261,6 +297,13 @@ const AdminReservationsJourM = () => {
                     ? 'Aucune réservation trouvée.' 
                     : 'Aucune réservation ne correspond à vos critères de recherche.'}
                 </p>
+                <Button 
+                  onClick={fetchReservations}
+                  variant="outline"
+                  className="mt-4"
+                >
+                  Actualiser
+                </Button>
               </div>
             ) : (
               <div className="overflow-x-auto">
