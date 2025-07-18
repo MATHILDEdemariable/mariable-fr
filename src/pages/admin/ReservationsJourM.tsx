@@ -1,8 +1,8 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
+import { fetchJourMReservations } from '@/lib/supabaseAdmin';
 import { supabase } from '@/integrations/supabase/client';
 import { 
   Table, 
@@ -94,20 +94,11 @@ const AdminReservationsJourM = () => {
 
   const fetchReservations = async () => {
     try {
-      console.log('🚀 Fetching reservations...');
+      console.log('🚀 Fetching reservations via Edge Function...');
       setIsLoadingData(true);
-      const { data, error } = await supabase
-        .from('jour_m_reservations')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) {
-        console.error('❌ Erreur lors du chargement des réservations:', error);
-        console.error('❌ Error details:', error.message, error.details, error.hint);
-        toast.error('Erreur lors du chargement des réservations: ' + error.message);
-        return;
-      }
-
+      
+      const data = await fetchJourMReservations();
+      
       console.log('✅ Reservations data received:', data?.length, 'items');
       
       if (data) {
@@ -132,13 +123,13 @@ const AdminReservationsJourM = () => {
         setReservations(transformedData);
         setFilteredReservations(transformedData);
       } else {
-        console.log('⚠️ No data received from Supabase');
+        console.log('⚠️ No data received from Edge Function');
         setReservations([]);
         setFilteredReservations([]);
       }
     } catch (err) {
-      console.error('Erreur:', err);
-      toast.error('Une erreur est survenue');
+      console.error('❌ Erreur:', err);
+      toast.error('Une erreur est survenue lors du chargement des réservations');
     } finally {
       setIsLoadingData(false);
     }
