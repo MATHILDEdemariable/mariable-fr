@@ -128,7 +128,7 @@ const MoteurRecherche = () => {
   useEffect(() => {
     console.log('🔄 Filter changed, resetting pagination');
     reset();
-  }, [filters.category, filters.region, debouncedSearch]);
+  }, [filters.category, filters.region, debouncedSearch, reset]);
   
   useEffect(() => {
     if (error) {
@@ -272,9 +272,21 @@ const MoteurRecherche = () => {
             
             {/* Bouton "Charger plus" */}
             {hasMore && (
-              <div className="flex justify-center pt-6">
+              <div className="flex justify-center pt-6" id="load-more-section">
                 <Button
-                  onClick={loadMore}
+                  onClick={() => {
+                    loadMore();
+                    // Scroll smooth vers les nouveaux éléments après un délai
+                    setTimeout(() => {
+                      const loadMoreSection = document.getElementById('load-more-section');
+                      if (loadMoreSection) {
+                        loadMoreSection.scrollIntoView({ 
+                          behavior: 'smooth', 
+                          block: 'center' 
+                        });
+                      }
+                    }, 500);
+                  }}
                   disabled={isLoadingMore}
                   variant="outline"
                   size="lg"

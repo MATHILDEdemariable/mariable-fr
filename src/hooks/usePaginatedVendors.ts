@@ -46,7 +46,6 @@ export const usePaginatedVendors = ({
 
   const reset = () => {
     setCurrentPage(1);
-    setAllVendors([]);
   };
 
   const hasMore = vendors && vendors.length >= currentPage * pageSize;
