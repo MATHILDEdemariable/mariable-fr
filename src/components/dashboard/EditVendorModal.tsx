@@ -237,12 +237,11 @@ const EditVendorModal: React.FC<EditVendorModalProps> = ({
 
             <div className="space-y-2">
               <Label htmlFor="feeling">Feeling général</Label>
-              <Select value={formData.feeling} onValueChange={(value) => setFormData(prev => ({ ...prev, feeling: value }))}>
+              <Select value={formData.feeling || undefined} onValueChange={(value) => setFormData(prev => ({ ...prev, feeling: value }))}>
                 <SelectTrigger>
                   <SelectValue placeholder="Sélectionnez votre impression" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Aucun</SelectItem>
                   <SelectItem value="Excellent">Excellent ⭐⭐⭐⭐⭐</SelectItem>
                   <SelectItem value="Bon">Bon ⭐⭐⭐⭐</SelectItem>
                   <SelectItem value="Moyen">Moyen ⭐⭐⭐</SelectItem>
