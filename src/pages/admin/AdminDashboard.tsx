@@ -220,6 +220,24 @@ const AdminDashboard = () => {
 
           <Card 
             className="hover:shadow-lg transition-shadow cursor-pointer" 
+            onClick={() => navigate('/admin/professional-registrations')}
+          >
+            <CardHeader>
+              <CardTitle className="flex items-center gap-3">
+                <Users className="h-6 w-6 text-wedding-olive" />
+                Inscriptions Professionnels
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-gray-600">Gérer les demandes d'inscription des professionnels</p>
+              <Button className="mt-4 w-full bg-wedding-olive hover:bg-wedding-olive/80">
+                Accéder
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card 
+            className="hover:shadow-lg transition-shadow cursor-pointer" 
             onClick={() => navigate('/admin/blog')}
           >
             <CardHeader>
