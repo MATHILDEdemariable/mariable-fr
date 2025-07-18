@@ -88,7 +88,7 @@ const PrestataireCRMFilters: React.FC<PrestataireCRMFiltersProps> = ({
               <SelectValue placeholder="Tous les statuts" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Tous les statuts</SelectItem>
+              <SelectItem value="all">Tous les statuts</SelectItem>
               {crmStatuses.map((status) => (
                 <SelectItem key={status.value} value={status.value}>
                   {status.label}
@@ -105,7 +105,7 @@ const PrestataireCRMFilters: React.FC<PrestataireCRMFiltersProps> = ({
               <SelectValue placeholder="Toutes les catégories" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Toutes les catégories</SelectItem>
+              <SelectItem value="all">Toutes les catégories</SelectItem>
               {categories.map((cat) => (
                 <SelectItem key={cat.value} value={cat.value}>
                   {cat.label}
@@ -122,7 +122,7 @@ const PrestataireCRMFilters: React.FC<PrestataireCRMFiltersProps> = ({
               <SelectValue placeholder="Toutes les régions" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Toutes les régions</SelectItem>
+              <SelectItem value="all">Toutes les régions</SelectItem>
               {regions.map((region) => (
                 <SelectItem key={region.value} value={region.value}>
                   {region.label}
@@ -139,7 +139,7 @@ const PrestataireCRMFilters: React.FC<PrestataireCRMFiltersProps> = ({
               <SelectValue placeholder="Toutes les sources" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Toutes les sources</SelectItem>
+              <SelectItem value="all">Toutes les sources</SelectItem>
               {sourcesInscription.map((source) => (
                 <SelectItem key={source.value} value={source.value}>
                   {source.label}

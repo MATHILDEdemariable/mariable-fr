@@ -41,12 +41,12 @@ const FormPrestataires = () => {
   const navigate = useNavigate();
 
   const [filters, setFilters] = useState({
-  statusCrm: '',
-  search: '',
-  category: '',
-  region: '',
-  sourceInscription: '' // Nouveau filtre
-});
+    statusCrm: 'all',
+    search: '',
+    category: 'all',
+    region: 'all',
+    sourceInscription: 'all' // Nouveau filtre
+  });
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [prestataireToDelete, setPrestataireToDelete] = useState<Prestataire | null>(null);
@@ -102,11 +102,11 @@ const FormPrestataires = () => {
 const handleResetFilters = () => {
   console.log('🔄 Resetting all filters');
   setFilters({
-    statusCrm: '',
+    statusCrm: 'all',
     search: '',
-    category: '',
-    region: '',
-    sourceInscription: ''
+    category: 'all',
+    region: 'all',
+    sourceInscription: 'all'
   });
 };
 
@@ -157,20 +157,20 @@ const handleResetFilters = () => {
     );
   }
 
-  if (filters.statusCrm) {
+  if (filters.statusCrm && filters.statusCrm !== 'all') {
     filtered = filtered.filter(p => p.status_crm === filters.statusCrm);
   }
 
-  if (filters.category) {
+  if (filters.category && filters.category !== 'all') {
     filtered = filtered.filter(p => p.categorie === filters.category);
   }
 
-  if (filters.region) {
+  if (filters.region && filters.region !== 'all') {
     filtered = filtered.filter(p => p.region === filters.region);
   }
 
   // Nouveau filtre pour la source d'inscription
-  if (filters.sourceInscription) {
+  if (filters.sourceInscription && filters.sourceInscription !== 'all') {
     filtered = filtered.filter(p => p.source_inscription === filters.sourceInscription);
   }
 
