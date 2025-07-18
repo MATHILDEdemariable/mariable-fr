@@ -308,16 +308,16 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="min-w-[200px]">Prestataire</TableHead>
-                  <TableHead>Catégorie</TableHead>
-                  <TableHead>Source</TableHead>
-                  <TableHead>Statut</TableHead>
-                  <TableHead>Budget</TableHead>
-                  <TableHead>Feeling</TableHead>
-                  <TableHead>Notes utilisateur</TableHead>
-                  <TableHead>Points +/-</TableHead>
-                  <TableHead>Contact</TableHead>
-                  <TableHead className="text-right min-w-[200px]">Actions</TableHead>
+                  <TableHead className="w-[250px]">Prestataire</TableHead>
+                  <TableHead className="w-[120px]">Catégorie</TableHead>
+                  <TableHead className="w-[100px]">Source</TableHead>
+                  <TableHead className="w-[140px]">Statut</TableHead>
+                  <TableHead className="w-[100px]">Budget</TableHead>
+                  <TableHead className="w-[120px]">Feeling</TableHead>
+                  <TableHead className="w-[150px]">Notes</TableHead>
+                  <TableHead className="w-[150px]">Points +/-</TableHead>
+                  <TableHead className="w-[110px]">Contact</TableHead>
+                  <TableHead className="text-right w-[120px]">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -341,24 +341,26 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
                 ) : (
                   filteredVendors.map((vendor) => (
                     <TableRow key={vendor.id}>
-                      <TableCell className="min-w-[200px]">
-                        <div className="font-medium">{vendor.vendor_name}</div>
+                      <TableCell className="w-[250px]">
+                        <div className="font-medium truncate" title={vendor.vendor_name}>
+                          {vendor.vendor_name}
+                        </div>
                         {vendor.source === 'personal' && (
                           <div className="mt-1 space-y-1 text-xs text-muted-foreground">
                             {vendor.email && (
-                              <div className="flex items-center gap-1">
-                                <Mail className="h-3 w-3" />
-                                <span className="truncate">{vendor.email}</span>
+                              <div className="flex items-center gap-1 truncate">
+                                <Mail className="h-3 w-3 flex-shrink-0" />
+                                <span className="truncate" title={vendor.email}>{vendor.email}</span>
                               </div>
                             )}
                             {vendor.phone && (
                               <div className="flex items-center gap-1">
-                                <Phone className="h-3 w-3" />
-                                <span>{vendor.phone}</span>
+                                <Phone className="h-3 w-3 flex-shrink-0" />
+                                <span className="truncate">{vendor.phone}</span>
                               </div>
                             )}
                             {vendor.location && (
-                              <div className="truncate">📍 {vendor.location}</div>
+                              <div className="truncate" title={vendor.location}>📍 {vendor.location}</div>
                             )}
                           </div>
                         )}
@@ -368,23 +370,26 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
                           </div>
                         )}
                       </TableCell>
-                      <TableCell>{vendor.category}</TableCell>
+                      <TableCell className="truncate text-sm">{vendor.category}</TableCell>
                       <TableCell>
                         <Badge 
                           variant={vendor.source === 'personal' ? 'secondary' : 'default'}
-                          className={vendor.source === 'personal' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'}
+                          className={cn(
+                            "text-xs px-2 py-1",
+                            vendor.source === 'personal' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'
+                          )}
                         >
-                          {vendor.source === 'personal' ? '👤 Personnel' : '🏢 Mariable'}
+                          {vendor.source === 'personal' ? '👤' : '🏢'}
                         </Badge>
                       </TableCell>
                       <TableCell>
-                        <Badge className={cn("flex items-center gap-1 w-fit", statusColorMap[vendor.status])}>
+                        <Badge className={cn("flex items-center gap-1 text-xs px-2 py-1", statusColorMap[vendor.status])}>
                           {statusIconMap[vendor.status]}
-                          <span>{vendor.status}</span>
+                          <span className="hidden sm:inline">{vendor.status}</span>
                         </Badge>
                       </TableCell>
                       <TableCell>
-                        <div className="text-sm font-medium">
+                        <div className="text-sm font-medium truncate">
                           {vendor.budget || '-'}
                         </div>
                       </TableCell>
@@ -393,14 +398,15 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
                           <Badge 
                             variant="outline" 
                             className={cn(
-                              "text-xs font-medium",
+                              "text-xs px-2 py-1",
                               vendor.feeling === 'Excellent' && 'bg-green-100 text-green-800 border-green-300',
                               vendor.feeling === 'Bon' && 'bg-blue-100 text-blue-800 border-blue-300',
                               vendor.feeling === 'Moyen' && 'bg-yellow-100 text-yellow-800 border-yellow-300',
                               vendor.feeling === 'Mauvais' && 'bg-red-100 text-red-800 border-red-300'
                             )}
+                            title={vendor.feeling}
                           >
-                            {vendor.feeling}
+                            {vendor.feeling.charAt(0)}
                           </Badge>
                         ) : (
                           <span className="text-muted-foreground text-sm">-</span>
@@ -408,7 +414,7 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
                       </TableCell>
                       <TableCell>
                         {vendor.user_notes ? (
-                          <div className="text-xs text-muted-foreground truncate max-w-[150px]" title={vendor.user_notes}>
+                          <div className="text-xs text-muted-foreground truncate" title={vendor.user_notes}>
                             📝 {vendor.user_notes}
                           </div>
                         ) : (
@@ -418,12 +424,12 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
                       <TableCell>
                         <div className="space-y-1">
                           {vendor.points_forts && (
-                            <div className="text-xs text-green-600 truncate max-w-[120px]" title={vendor.points_forts}>
+                            <div className="text-xs text-green-600 truncate" title={vendor.points_forts}>
                               ✅ {vendor.points_forts}
                             </div>
                           )}
                           {vendor.points_faibles && (
-                            <div className="text-xs text-red-600 truncate max-w-[120px]" title={vendor.points_faibles}>
+                            <div className="text-xs text-red-600 truncate" title={vendor.points_faibles}>
                               ❌ {vendor.points_faibles}
                             </div>
                           )}
@@ -433,12 +439,12 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <div className="text-sm">
+                        <div className="text-sm truncate">
                           {formatDate(vendor.contact_date)}
                         </div>
                       </TableCell>
                       <TableCell className="text-right">
-                        <div className="flex items-center justify-end gap-2 flex-wrap">
+                        <div className="flex items-center justify-end gap-1">
                           <Button
                             variant="outline"
                             size="sm"
@@ -446,39 +452,30 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
                               setVendorToEdit(vendor);
                               setEditDialogOpen(true);
                             }}
-                            className="flex items-center gap-1"
+                            className="p-2"
+                            title="Modifier"
                           >
                             <Edit className="h-3 w-3" />
-                            Modifier
                           </Button>
                           
-                          {vendor.source !== 'personal' && vendor.website && (
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => window.open(vendor.website, '_blank')}
-                            >
-                              Site web
-                            </Button>
-                          )}
-                          
-                          {vendor.source !== 'personal' && (
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => {
-                                window.open(`/prestataire/tracking?id=${vendor.id}&edit=user`, '_blank');
-                              }}
-                            >
-                              Voir la demande
-                            </Button>
-                          )}
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              setVendorToDelete(vendor.id);
+                              setDeleteDialogOpen(true);
+                            }}
+                            className="p-2 text-red-600 hover:text-red-700"
+                            title="Supprimer"
+                          >
+                            <Trash className="h-3 w-3" />
+                          </Button>
                           
                           <Select 
                             defaultValue={vendor.status}
                             onValueChange={(value) => updateVendorStatus(vendor.id, value as VendorStatus)}
                           >
-                            <SelectTrigger className="w-[130px]">
+                            <SelectTrigger className="w-[100px] text-xs">
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
