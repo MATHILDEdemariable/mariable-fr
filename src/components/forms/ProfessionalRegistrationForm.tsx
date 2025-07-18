@@ -99,13 +99,9 @@ const CATEGORIES: PrestataireCategorie[] = [
   "Fleuriste",
   "Robe de mariée",
   "Décoration",
-  "Mise en beauté",
-  "Voiture",
-  "Invités",
 ];
 
 const REGIONS: RegionFrance[] = [
-  "France entière",
   "Auvergne-Rhône-Alpes",
   "Bourgogne-Franche-Comté",
   "Bretagne",
@@ -229,8 +225,7 @@ const ProfessionalRegistrationForm = () => {
           first_price_package: null,
           second_price_package: null,
           third_price_package: null,
-          slug: slug,
-          source_inscription: 'formulaire' // Marquer comme venant du formulaire
+          slug: slug
         })
         .select("id")
         .single();

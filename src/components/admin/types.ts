@@ -20,6 +20,8 @@ export type Prestataire = Database["public"]["Tables"]["prestataires_rows"]["Row
   fourth_price_package_name?: string | null;
   fourth_price_package?: number | null;
   fourth_price_package_description?: string | null;
+  status_crm?: 'acquisition' | 'contacted' | 'in_progress' | 'relance_1' | 'relance_2' | 'called' | 'waiting' | 'other' | null;
+  date_derniere_contact?: string | null;
   prestataires_photos_preprod?: Database["public"]["Tables"]["prestataires_photos_preprod"]["Row"][];
   prestataires_brochures?: Database["public"]["Tables"]["prestataires_brochures_preprod"]["Row"][];
   prestataires_meta?: Array<{

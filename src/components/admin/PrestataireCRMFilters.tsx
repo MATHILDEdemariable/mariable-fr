@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -11,7 +12,6 @@ interface PrestataireCRMFiltersProps {
     search: string;
     category: string;
     region: string;
-    sourceInscription: string;
   };
   onFilterChange: (key: string, value: string) => void;
   onReset: () => void;
@@ -53,12 +53,6 @@ const PrestataireCRMFilters: React.FC<PrestataireCRMFiltersProps> = ({
     { value: 'autre', label: 'Autre' }
   ];
 
-  const sourcesInscription = [
-    { value: 'formulaire', label: 'Formulaire web' },
-    { value: 'manuel', label: 'Ajout manuel admin' },
-    { value: 'import', label: 'Import externe' }
-  ];
-
   return (
     <div className="bg-white p-6 rounded-lg shadow-sm border mb-6">
       <div className="flex items-center gap-2 mb-4">
@@ -66,7 +60,7 @@ const PrestataireCRMFilters: React.FC<PrestataireCRMFiltersProps> = ({
         <h3 className="font-semibold text-lg">Filtres CRM</h3>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
         <div>
           <Label htmlFor="search">Recherche</Label>
           <div className="relative">
@@ -88,7 +82,7 @@ const PrestataireCRMFilters: React.FC<PrestataireCRMFiltersProps> = ({
               <SelectValue placeholder="Tous les statuts" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Tous les statuts</SelectItem>
+              <SelectItem value="">Tous les statuts</SelectItem>
               {crmStatuses.map((status) => (
                 <SelectItem key={status.value} value={status.value}>
                   {status.label}
@@ -105,7 +99,7 @@ const PrestataireCRMFilters: React.FC<PrestataireCRMFiltersProps> = ({
               <SelectValue placeholder="Toutes les catégories" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Toutes les catégories</SelectItem>
+              <SelectItem value="">Toutes les catégories</SelectItem>
               {categories.map((cat) => (
                 <SelectItem key={cat.value} value={cat.value}>
                   {cat.label}
@@ -122,27 +116,10 @@ const PrestataireCRMFilters: React.FC<PrestataireCRMFiltersProps> = ({
               <SelectValue placeholder="Toutes les régions" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Toutes les régions</SelectItem>
+              <SelectItem value="">Toutes les régions</SelectItem>
               {regions.map((region) => (
                 <SelectItem key={region.value} value={region.value}>
                   {region.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div>
-          <Label htmlFor="source-inscription">Source inscription</Label>
-          <Select value={filters.sourceInscription} onValueChange={(value) => onFilterChange('sourceInscription', value)}>
-            <SelectTrigger>
-              <SelectValue placeholder="Toutes les sources" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Toutes les sources</SelectItem>
-              {sourcesInscription.map((source) => (
-                <SelectItem key={source.value} value={source.value}>
-                  {source.label}
                 </SelectItem>
               ))}
             </SelectContent>

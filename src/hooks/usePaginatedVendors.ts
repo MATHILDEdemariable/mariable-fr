@@ -1,5 +1,4 @@
-
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useOptimizedVendors } from './useOptimizedVendors';
 
 interface VendorFilter {
@@ -28,6 +27,7 @@ export const usePaginatedVendors = ({
   enabled = true
 }: UsePaginatedVendorsOptions) => {
   const [currentPage, setCurrentPage] = useState(1);
+  const [allVendors, setAllVendors] = useState<any[]>([]);
 
   const {
     data: vendors,
@@ -41,31 +41,13 @@ export const usePaginatedVendors = ({
   });
 
   const loadMore = () => {
-    console.log('📄 Loading more vendors - page:', currentPage + 1);
     setCurrentPage(prev => prev + 1);
-    
-    // Scroll smooth vers les nouveaux éléments après un petit délai
-    setTimeout(() => {
-      const container = document.querySelector('[data-vendors-container]');
-      if (container) {
-        const newItems = container.children[container.children.length - pageSize];
-        if (newItems) {
-          newItems.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-      }
-    }, 100);
   };
 
-  // Reset seulement lors des changements de filtres de recherche (pas lors du loadMore)
   const reset = () => {
-    console.log('🔄 Resetting pagination to page 1');
     setCurrentPage(1);
+    setAllVendors([]);
   };
-
-  // Réinitialiser automatiquement quand les filtres changent
-  useEffect(() => {
-    reset();
-  }, [filters.category, filters.region, debouncedSearch]);
 
   const hasMore = vendors && vendors.length >= currentPage * pageSize;
   const isLoadingMore = isLoading && currentPage > 1;

@@ -1,24 +1,33 @@
-import React, { useState, useEffect, useCallback } from 'react';
+
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { useSearchParams, useNavigate, useParams } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { Database } from '@/integrations/supabase/types';
+import { supabase } from '@/integrations/supabase/client';
 import Header from '@/components/Header';
-import VendorCard from '@/components/VendorCard';
-import VendorFilters from '@/components/vendors/VendorFilters';
-import { usePaginatedVendors } from '@/hooks/usePaginatedVendors';
-import { toast } from 'sonner';
-import { Toaster } from '@/components/ui/toaster';
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Search } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import VendorCard from '@/components/vendors/VendorCard';
 import VendorCardSkeleton from '@/components/vendors/VendorCardSkeleton';
-import SEO from '@/components/SEO';
-import { Loader2 } from 'lucide-react';
+import LazyVendorCard from '@/components/vendors/LazyVendorCard';
+import VendorFilters from '@/components/vendors/VendorFilters';
+import { useOptimizedVendors } from '@/hooks/useOptimizedVendors';
+import { usePaginatedVendors } from '@/hooks/usePaginatedVendors';
+import { toast } from '@/components/ui/use-toast';
+import { Loader2, ArrowLeft, Search, MapPin } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { Button } from '@/components/ui/button';
+import RegionSelectorPage, { slugToRegion, regionToSlug } from '@/components/search/RegionSelectorPage';
+import { Helmet } from 'react-helmet-async';
+
+type Prestataire = Database['public']['Tables']['prestataires_rows']['Row'];
+type RegionFrance = Database['public']['Enums']['region_france'];
 
 export interface VendorFilter {
   search: string;
-  category: string;
+  category: Database['public']['Enums']['prestataire_categorie'] | 'Tous';
   region: string | null;
   minPrice?: number;
   maxPrice?: number;
+  // Filtres pour les lieux de réception
   categorieLieu?: string | null;
   capaciteMin?: number | null;
   hebergement?: boolean | null;
@@ -26,28 +35,88 @@ export interface VendorFilter {
 }
 
 const MoteurRecherche = () => {
-  const [search, setSearch] = useState('');
-  const [debouncedSearch, setDebouncedSearch] = useState('');
-  const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const params = useParams();
+  const isMobile = useIsMobile();
+  
+  // Déterminer si on affiche la sélection de région ou les résultats
+  const regionSlug = params.region;
+  const selectedRegion = regionSlug ? slugToRegion(regionSlug) : null;
+  const showRegionSelector = !regionSlug;
+  
   const [filters, setFilters] = useState<VendorFilter>({
-    search: '',
-    category: '',
-    region: null,
-    minPrice: undefined,
-    maxPrice: undefined,
-    categorieLieu: null,
-    capaciteMin: null,
-    hebergement: null,
-    couchages: null,
+    search: searchParams.get('q') || '',
+    category: (searchParams.get('category') as Database['public']['Enums']['prestataire_categorie']) || 'Tous',
+    region: selectedRegion || null,
+    minPrice: searchParams.get('min') ? Number(searchParams.get('min')) : undefined,
+    maxPrice: searchParams.get('max') ? Number(searchParams.get('max')) : undefined,
+    categorieLieu: searchParams.get('categorieLieu'),
+    capaciteMin: searchParams.get('capaciteMin') ? Number(searchParams.get('capaciteMin')) : undefined,
+    hebergement: searchParams.get('hebergement') === 'true' ? true : undefined,
+    couchages: searchParams.get('couchages') ? Number(searchParams.get('couchages')) : undefined,
   });
 
-  const {
-    vendors,
-    isLoading,
-    isLoadingMore,
-    error,
-    loadMore,
-    hasMore,
+  // Synchroniser la région depuis l'URL avec les filtres
+  useEffect(() => {
+    if (selectedRegion !== filters.region) {
+      setFilters(prev => ({ ...prev, region: selectedRegion }));
+    }
+  }, [selectedRegion, filters.region]);
+
+  // Debounce pour la recherche
+  const [debouncedSearch, setDebouncedSearch] = useState(filters.search);
+  
+  // Effet pour gérer le debounce
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(filters.search);
+    }, 300);
+    
+    return () => clearTimeout(timer);
+  }, [filters.search]);
+  
+  const navigateToVendorDetails = (vendor: Prestataire) => {
+    navigate(`/prestataire/${vendor.slug}`);
+  };
+
+  const handleWishlistAdd = (vendor: Prestataire) => {
+    // Cette fonction sera déclenchée après l'ajout à la wishlist
+    // On peut simplement afficher une notification supplémentaire si nécessaire
+  };
+  
+  useEffect(() => {
+    const newParams = new URLSearchParams();
+    
+    if (filters.search) newParams.set('q', filters.search);
+    if (filters.category && filters.category !== 'Tous') newParams.set('category', filters.category);
+    if (filters.region) newParams.set('region', filters.region);
+    if (filters.minPrice) newParams.set('min', filters.minPrice.toString());
+    if (filters.maxPrice) newParams.set('max', filters.maxPrice.toString());
+    
+    // Paramètres pour les lieux
+    if (filters.categorieLieu) newParams.set('categorieLieu', filters.categorieLieu);
+    if (filters.capaciteMin) newParams.set('capaciteMin', filters.capaciteMin.toString());
+    if (filters.hebergement !== undefined) newParams.set('hebergement', filters.hebergement.toString());
+    if (filters.couchages) newParams.set('couchages', filters.couchages.toString());
+    
+    setSearchParams(newParams);
+  }, [filters, setSearchParams]);
+  
+  const handleFilterChange = (newFilters: Partial<VendorFilter>) => {
+    console.log('New filters:', newFilters);
+    setFilters(prev => ({ ...prev, ...newFilters }));
+  };
+  
+  // Utiliser le hook paginé pour de meilleures performances
+  const { 
+    vendors, 
+    isLoading, 
+    isLoadingMore, 
+    error, 
+    loadMore, 
+    hasMore, 
+    reset 
   } = usePaginatedVendors({
     filters,
     debouncedSearch,
@@ -55,154 +124,180 @@ const MoteurRecherche = () => {
     enabled: !!selectedRegion
   });
 
-  // Removed the useEffect that was causing unwanted reset
+  // Reset pagination seulement quand les filtres de recherche changent (pas lors du chargement de plus)
+  useEffect(() => {
+    console.log('🔄 Filter changed, resetting pagination');
+    reset();
+  }, [filters.category, filters.region, debouncedSearch]);
   
   useEffect(() => {
     if (error) {
-      console.error('Erreur lors du chargement des prestataires:', error);
-      toast.error('Erreur lors du chargement des prestataires');
+      toast({
+        title: "Erreur",
+        description: "Impossible de charger les prestataires. Veuillez réessayer.",
+        variant: "destructive",
+      });
+      console.error('Error fetching vendors:', error);
     }
   }, [error]);
 
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      setDebouncedSearch(search);
-    }, 500);
-
-    return () => clearTimeout(timeoutId);
-  }, [search]);
-
-  const handleRegionChange = (region: string | null) => {
-    setSelectedRegion(region);
-    setFilters(prev => ({ ...prev, region: region }));
+  // Génération du titre SEO
+  const getPageTitle = () => {
+    if (regionSlug === 'france-entiere') {
+      return 'Prestataires Mariage France | Mariable';
+    }
+    if (selectedRegion) {
+      return `Prestataires Mariage ${selectedRegion} | Mariable`;
+    }
+    return 'Choisissez votre région | Mariable';
   };
 
-  const handleFilterChange = (key: string, value: string) => {
-    setFilters(prev => ({ ...prev, [key]: value }));
+  const getMetaDescription = () => {
+    if (regionSlug === 'france-entiere') {
+      return 'Trouvez les meilleurs prestataires de mariage en France. Photographes, traiteurs, lieux de réception et plus encore.';
+    }
+    if (selectedRegion) {
+      return `Découvrez les meilleurs prestataires de mariage en ${selectedRegion}. Sélection de qualité pour votre jour J.`;
+    }
+    return 'Sélectionnez votre région pour découvrir les meilleurs prestataires de mariage près de chez vous.';
   };
 
-  const handleResetFilters = () => {
-    setFilters({
-      search: '',
-      category: '',
-      region: null,
-      minPrice: undefined,
-      maxPrice: undefined,
-      categorieLieu: null,
-      capaciteMin: null,
-      hebergement: null,
-      couchages: null,
-    });
+  const handleChangeRegion = () => {
+    navigate('/selection');
   };
+
+  if (showRegionSelector) {
+    return (
+      <div className="min-h-screen bg-white">
+        <Helmet>
+          <title>{getPageTitle()}</title>
+          <meta name="description" content={getMetaDescription()} />
+        </Helmet>
+        <Header />
+        <main className="container max-w-7xl px-4 py-6 md:py-8">
+          <RegionSelectorPage />
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-white">
+      <Helmet>
+        <title>{getPageTitle()}</title>
+        <meta name="description" content={getMetaDescription()} />
+      </Helmet>
       <Header />
-      <SEO 
-        title="Recherche de prestataires de mariage | Mariable"
-        description="Trouvez les meilleurs prestataires de mariage près de chez vous. Photographes, traiteurs, lieux de réception et plus encore."
-        canonical="/prestataires"
-      />
       
-      <main className="container mx-auto px-4 py-8">
-        <div className="mb-8 text-center">
-          <h1 className="text-3xl font-semibold text-wedding-black mb-4">
-            Trouvez le prestataire idéal pour votre mariage
-          </h1>
-          <p className="text-gray-600">
-            Sélectionnez une région et commencez votre recherche parmi nos prestataires de mariage.
-          </p>
+      <main className="container max-w-7xl px-4 py-6 md:py-8">
+        {/* Breadcrumb et bouton retour */}
+        <div className="flex items-center gap-2 mb-6 text-sm">
+          <button 
+            onClick={handleChangeRegion}
+            className="flex items-center gap-1 text-muted-foreground hover:text-wedding-olive transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Changer de région
+          </button>
+          <span className="text-muted-foreground">•</span>
+          <span className="text-wedding-olive font-medium">
+            {regionSlug === 'france-entiere' ? 'France entière' : selectedRegion}
+          </span>
         </div>
 
-        <div className="mb-6">
-          <Label htmlFor="regionSearch" className="block text-sm font-medium text-gray-700 mb-2">
-            Rechercher par région :
-          </Label>
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-            <Input
-              type="text"
-              id="regionSearch"
-              placeholder="Entrez une région (ex: Île-de-France)"
-              className="pl-10"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+          <div>
+            <h1 className="text-2xl md:text-3xl font-serif mb-2">
+              {regionSlug === 'france-entiere' 
+                ? 'Prestataires de mariage en France' 
+                : `Prestataires de mariage en ${selectedRegion}`
+              }
+            </h1>
+            <p className="text-muted-foreground">
+              Découvrez notre sélection de prestataires de qualité pour votre mariage
+            </p>
           </div>
+          
+          <Button 
+            className="bg-wedding-olive hover:bg-wedding-olive/90 text-white"
+            onClick={() => navigate('/professionnels')}
+          >
+            Être référencé
+          </Button>
         </div>
-
-        {selectedRegion && (
+        
+        <div className="mb-8">
+          <VendorFilters 
+            filters={filters} 
+            onFilterChange={handleFilterChange} 
+          />
+        </div>
+        
+        {isLoading ? (
           <div className="space-y-6">
-            <VendorFilters 
-              filters={filters} 
-              onFilterChange={(newFilters) => setFilters(prev => ({ ...prev, ...newFilters }))}
-            />
-
-            {isLoading ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {Array.from({ length: 6 }).map((_, i) => (
-                  <VendorCardSkeleton key={i} />
-                ))}
+            {/* Message informatif pendant le chargement */}
+            <div className="bg-wedding-olive/10 border border-wedding-olive/20 rounded-lg p-6 text-center">
+              <div className="flex items-center justify-center gap-2 mb-3">
+                <Search className="h-5 w-5 text-wedding-olive" />
+                <span className="font-medium text-wedding-olive">Recherche en cours...</span>
               </div>
-            ) : (
-              <>
-                <div className="flex items-center justify-between mb-4">
-                  <p className="text-gray-600">
-                    {vendors.length} prestataire{vendors.length > 1 ? 's' : ''} trouvé{vendors.length > 1 ? 's' : ''}
-                  </p>
-                </div>
-
-                <div 
-                  data-vendors-container
-                  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+              <p className="text-sm text-muted-foreground mb-2">
+                Nous recherchons les meilleurs prestataires de mariage en {selectedRegion}
+              </p>
+              <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground">
+                <MapPin className="h-3 w-3" />
+                Filtrage par région et critères de qualité
+              </div>
+            </div>
+            
+            {/* Skeleton cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {Array.from({ length: 9 }).map((_, index) => (
+                <VendorCardSkeleton key={index} />
+              ))}
+            </div>
+          </div>
+        ) : vendors && vendors.length > 0 ? (
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {vendors.map(vendor => (
+                <LazyVendorCard 
+                  key={vendor.id} 
+                  vendor={vendor} 
+                  onClick={navigateToVendorDetails}
+                  onWishlistAdd={handleWishlistAdd}
+                />
+              ))}
+            </div>
+            
+            {/* Bouton "Charger plus" */}
+            {hasMore && (
+              <div className="flex justify-center pt-6">
+                <Button
+                  onClick={loadMore}
+                  disabled={isLoadingMore}
+                  variant="outline"
+                  size="lg"
+                  className="min-w-[200px]"
                 >
-                  {vendors.map((vendor) => (
-                    <VendorCard key={vendor.id} recommendation={{
-                      id: vendor.id,
-                      nom: vendor.nom,
-                      categorie: vendor.categorie,
-                      description: vendor.description,
-                      ville: vendor.ville,
-                      region: vendor.region,
-                      prix_minimum: vendor.prix_minimum,
-                      prix_a_partir_de: vendor.prix_a_partir_de,
-                      capacite_invites: vendor.capacite_invites,
-                      site_web: vendor.site_web,
-                      email: vendor.email,
-                      telephone: vendor.telephone,
-                      slug: vendor.slug
-                    }} />
-                  ))}
-                </div>
-
-                {hasMore && (
-                  <div className="text-center mt-8">
-                    <Button
-                      onClick={loadMore}
-                      disabled={isLoadingMore}
-                      className="bg-wedding-olive hover:bg-wedding-olive/90"
-                    >
-                      {isLoadingMore ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Chargement...
-                        </>
-                      ) : (
-                        'Charger plus de prestataires'
-                      )}
-                    </Button>
-                  </div>
-                )}
-
-                {vendors.length === 0 && !isLoading && (
-                  <div className="text-center py-12">
-                    <p className="text-gray-600">
-                      Aucun prestataire trouvé pour ces critères.
-                    </p>
-                  </div>
-                )}
-              </>
+                  {isLoadingMore ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Chargement...
+                    </>
+                  ) : (
+                    'Charger plus de prestataires'
+                  )}
+                </Button>
+              </div>
             )}
+          </div>
+        ) : (
+          <div className="text-center py-12">
+            <h3 className="text-lg font-medium mb-2">Aucun prestataire trouvé</h3>
+            <p className="text-muted-foreground">
+              Essayez de modifier vos critères de recherche pour obtenir plus de résultats.
+            </p>
           </div>
         )}
       </main>
