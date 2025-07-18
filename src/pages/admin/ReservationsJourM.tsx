@@ -94,6 +94,7 @@ const AdminReservationsJourM = () => {
 
   const fetchReservations = async () => {
     try {
+      console.log('🚀 Fetching reservations...');
       setIsLoadingData(true);
       const { data, error } = await supabase
         .from('jour_m_reservations')
@@ -101,11 +102,14 @@ const AdminReservationsJourM = () => {
         .order('created_at', { ascending: false });
 
       if (error) {
-        console.error('Erreur lors du chargement des réservations:', error);
-        toast.error('Erreur lors du chargement des réservations');
+        console.error('❌ Erreur lors du chargement des réservations:', error);
+        console.error('❌ Error details:', error.message, error.details, error.hint);
+        toast.error('Erreur lors du chargement des réservations: ' + error.message);
         return;
       }
 
+      console.log('✅ Reservations data received:', data?.length, 'items');
+      
       if (data) {
         // Convertir les données Supabase vers notre interface
         const transformedData: JourMReservation[] = data.map(item => ({
@@ -124,8 +128,13 @@ const AdminReservationsJourM = () => {
               : [])
         }));
         
+        console.log('✅ Transformed reservations:', transformedData.length);
         setReservations(transformedData);
         setFilteredReservations(transformedData);
+      } else {
+        console.log('⚠️ No data received from Supabase');
+        setReservations([]);
+        setFilteredReservations([]);
       }
     } catch (err) {
       console.error('Erreur:', err);

@@ -11,10 +11,14 @@ export const PRESTATAIRE_CATEGORIES = [
   "DJ",
   "Fleuriste",
   "Robe de mariée",
-  "Décoration"
+  "Décoration",
+  "Mise en beauté",
+  "Voiture",
+  "Invités"
 ] as const;
 
 export const PRESTATAIRE_REGIONS = [
+  "France entière",
   "Île-de-France",
   "Auvergne-Rhône-Alpes",
   "Bourgogne-Franche-Comté",

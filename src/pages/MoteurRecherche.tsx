@@ -124,10 +124,11 @@ const MoteurRecherche = () => {
     enabled: !!selectedRegion
   });
 
-  // Reset pagination quand les filtres changent
+  // Reset pagination seulement quand les filtres de recherche changent (pas lors du chargement de plus)
   useEffect(() => {
+    console.log('🔄 Filter changed, resetting pagination');
     reset();
-  }, [filters.category, filters.region, debouncedSearch, reset]);
+  }, [filters.category, filters.region, debouncedSearch]);
   
   useEffect(() => {
     if (error) {

@@ -2097,6 +2097,9 @@ export type Database = {
         | "Fleuriste"
         | "Robe de mariée"
         | "Décoration"
+        | "Mise en beauté"
+        | "Voiture"
+        | "Invités"
       prestataire_status:
         | "acquisition"
         | "verification"
@@ -2276,6 +2279,9 @@ export const Constants = {
         "Fleuriste",
         "Robe de mariée",
         "Décoration",
+        "Mise en beauté",
+        "Voiture",
+        "Invités",
       ],
       prestataire_status: [
         "acquisition",
