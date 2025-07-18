@@ -23,10 +23,22 @@ export interface Vendor {
 }
 
 export interface VendorRecommendation {
-  name: string;
-  description: string;
-  imageUrl: string;
-  link: string;
+  id?: string;
+  nom?: string;
+  categorie?: string;
+  description?: string | null;
+  ville?: string | null;
+  region?: string | null;
+  prix_minimum?: number | null;
+  prix_a_partir_de?: number | null;
+  capacite_invites?: number | null;
+  site_web?: string | null;
+  email?: string | null;
+  telephone?: string | null;
+  slug?: string | null;
+  name?: string;
+  imageUrl?: string;
+  link?: string;
 }
 
 export interface ChatResponse {

@@ -56,45 +56,40 @@ const FormPrestataires = () => {
 
   const queryClient = useQueryClient();
 
-  const { data: statusCrmOptions, isLoading: isLoadingStatusCrm } = useQuery({
-    queryKey: ['statusCrmOptions'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('status_crm')
-        .select('*')
-        .order('order', { ascending: true });
+  // Options CRM statiques depuis la base de données
+  const statusCrmOptions = [
+    { id: 'acquisition', label: 'Acquisition' },
+    { id: 'verification', label: 'Vérification' },
+    { id: 'a_valider', label: 'À valider' },
+    { id: 'valide', label: 'Validé' },
+    { id: 'en_attente', label: 'En attente' },
+    { id: 'actif', label: 'Actif' },
+    { id: 'inactif', label: 'Inactif' },
+    { id: 'blackliste', label: 'Blacklisté' },
+    { id: 'exclu', label: 'Exclu' },
+    { id: 'a_traiter', label: 'À traiter' }
+  ];
 
-      if (error) {
-        console.error('Erreur lors du chargement des status CRM:', error);
-        toast.error('Erreur lors du chargement des status CRM');
-        return [];
-      }
-      return data;
-    },
-  });
-
-  const { mutate: updateStatusCrm, isLoading: isUpdatingStatusCrm } = useMutation(
-    async ({ id, statusCrm }: { id: string, statusCrm: string }) => {
+  const { mutate: updateStatusCrm, isPending: isUpdatingStatusCrm } = useMutation({
+    mutationFn: async ({ id, statusCrm }: { id: string, statusCrm: string }) => {
       const { error } = await supabase
         .from('prestataires_rows')
-        .update({ status_crm: statusCrm })
+        .update({ status_crm: statusCrm as any })
         .eq('id', id);
 
       if (error) {
         throw error;
       }
     },
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries(['prestataires']);
-        toast.success('Statut CRM mis à jour avec succès');
-      },
-      onError: (error: any) => {
-        console.error('Erreur lors de la mise à jour du statut CRM:', error);
-        toast.error('Erreur lors de la mise à jour du statut CRM');
-      },
-    }
-  );
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['prestataires'] });
+      toast.success('Statut CRM mis à jour avec succès');
+    },
+    onError: (error: any) => {
+      console.error('Erreur lors de la mise à jour du statut CRM:', error);
+      toast.error('Erreur lors de la mise à jour du statut CRM');
+    },
+  });
 
   const handleFilterChange = (key: string, value: string) => {
   console.log(`🔍 Filter changed: ${key} = ${value}`);

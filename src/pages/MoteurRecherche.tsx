@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Header from '@/components/Header';
 import VendorCard from '@/components/VendorCard';
-import VendorFilters from '@/components/VendorFilters';
+import VendorFilters from '@/components/vendors/VendorFilters';
 import { usePaginatedVendors } from '@/hooks/usePaginatedVendors';
 import { toast } from 'sonner';
 import { Toaster } from '@/components/ui/toaster';
@@ -9,19 +9,11 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import VendorCardSkeleton from '@/components/VendorCardSkeleton';
+import VendorCardSkeleton from '@/components/vendors/VendorCardSkeleton';
 import SEO from '@/components/SEO';
-import { LazyLoadComponent } from 'react-lazy-load-image-component';
-import 'react-lazy-load-image-component/src/effects/blur.css';
 import { Loader2 } from 'lucide-react';
 
-const LazyVendorCard = ({ vendor }: { vendor: any }) => (
-  <LazyLoadComponent effect="blur">
-    <VendorCard vendor={vendor} />
-  </LazyLoadComponent>
-);
-
-interface VendorFilter {
+export interface VendorFilter {
   search: string;
   category: string;
   region: string | null;
@@ -143,8 +135,7 @@ const MoteurRecherche = () => {
           <div className="space-y-6">
             <VendorFilters 
               filters={filters} 
-              onFilterChange={handleFilterChange}
-              onReset={handleResetFilters}
+              onFilterChange={(newFilters) => setFilters(prev => ({ ...prev, ...newFilters }))}
             />
 
             {isLoading ? (
@@ -166,7 +157,21 @@ const MoteurRecherche = () => {
                   className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
                 >
                   {vendors.map((vendor) => (
-                    <LazyVendorCard key={vendor.id} vendor={vendor} />
+                    <VendorCard key={vendor.id} recommendation={{
+                      id: vendor.id,
+                      nom: vendor.nom,
+                      categorie: vendor.categorie,
+                      description: vendor.description,
+                      ville: vendor.ville,
+                      region: vendor.region,
+                      prix_minimum: vendor.prix_minimum,
+                      prix_a_partir_de: vendor.prix_a_partir_de,
+                      capacite_invites: vendor.capacite_invites,
+                      site_web: vendor.site_web,
+                      email: vendor.email,
+                      telephone: vendor.telephone,
+                      slug: vendor.slug
+                    }} />
                   ))}
                 </div>
 
