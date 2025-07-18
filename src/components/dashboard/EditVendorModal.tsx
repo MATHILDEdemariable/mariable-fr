@@ -26,6 +26,11 @@ interface Vendor {
   phone?: string | null;
   website?: string | null;
   notes?: string | null;
+  budget?: string | null;
+  user_notes?: string | null;
+  points_forts?: string | null;
+  points_faibles?: string | null;
+  feeling?: string | null;
 }
 
 interface EditVendorModalProps {
@@ -48,7 +53,12 @@ const EditVendorModal: React.FC<EditVendorModalProps> = ({
     phone: '',
     website: '',
     location: '',
-    notes: ''
+    notes: '',
+    budget: '',
+    user_notes: '',
+    points_forts: '',
+    points_faibles: '',
+    feeling: ''
   });
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
@@ -62,7 +72,12 @@ const EditVendorModal: React.FC<EditVendorModalProps> = ({
         phone: vendor.phone || '',
         website: vendor.website || '',
         location: vendor.location || '',
-        notes: vendor.notes || ''
+        notes: vendor.notes || '',
+        budget: vendor.budget || '',
+        user_notes: vendor.user_notes || '',
+        points_forts: vendor.points_forts || '',
+        points_faibles: vendor.points_faibles || '',
+        feeling: vendor.feeling || ''
       });
     }
   }, [vendor]);
@@ -83,6 +98,11 @@ const EditVendorModal: React.FC<EditVendorModalProps> = ({
           website: formData.website || null,
           location: formData.location || null,
           notes: formData.notes || null,
+          budget: formData.budget || null,
+          user_notes: formData.user_notes || null,
+          points_forts: formData.points_forts || null,
+          points_faibles: formData.points_faibles || null,
+          feeling: formData.feeling || null,
           updated_at: new Date().toISOString()
         })
         .eq('id', vendor.id);
@@ -190,6 +210,64 @@ const EditVendorModal: React.FC<EditVendorModalProps> = ({
               onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
               rows={3}
             />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="budget">Budget estimé</Label>
+            <Input
+              id="budget"
+              value={formData.budget}
+              onChange={(e) => setFormData(prev => ({ ...prev, budget: e.target.value }))}
+              placeholder="ex: 2000€"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="user_notes">Notes personnelles</Label>
+            <Textarea
+              id="user_notes"
+              value={formData.user_notes}
+              onChange={(e) => setFormData(prev => ({ ...prev, user_notes: e.target.value }))}
+              rows={2}
+              placeholder="Vos notes et impressions..."
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="points_forts">Points forts</Label>
+            <Textarea
+              id="points_forts"
+              value={formData.points_forts}
+              onChange={(e) => setFormData(prev => ({ ...prev, points_forts: e.target.value }))}
+              rows={2}
+              placeholder="Ce qui vous plaît chez ce prestataire..."
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="points_faibles">Points faibles</Label>
+            <Textarea
+              id="points_faibles"
+              value={formData.points_faibles}
+              onChange={(e) => setFormData(prev => ({ ...prev, points_faibles: e.target.value }))}
+              rows={2}
+              placeholder="Ce qui vous inquiète ou déplaît..."
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="feeling">Feeling général</Label>
+            <Select value={formData.feeling} onValueChange={(value) => setFormData(prev => ({ ...prev, feeling: value }))}>
+              <SelectTrigger>
+                <SelectValue placeholder="Sélectionnez votre impression" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Excellent">Excellent ⭐⭐⭐⭐⭐</SelectItem>
+                <SelectItem value="Bon">Bon ⭐⭐⭐⭐</SelectItem>
+                <SelectItem value="Moyen">Moyen ⭐⭐⭐</SelectItem>
+                <SelectItem value="Mauvais">Mauvais ⭐⭐</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="flex justify-end space-x-2">

@@ -1890,18 +1890,22 @@ export type Database = {
       }
       vendors_tracking_preprod: {
         Row: {
+          budget: string | null
           category: string
           contact_date: string | null
           created_at: string
           email: string | null
           email_client: string | null
           email_presta: string | null
+          feeling: string | null
           first_date_rdv: string | null
           id: string
           key_prestataire: string | null
           location: string | null
           notes: string | null
           phone: string | null
+          points_faibles: string | null
+          points_forts: string | null
           prestataire_id: string | null
           project_id: string | null
           response_date: string | null
@@ -1911,23 +1915,28 @@ export type Database = {
           third_date_rdv: string | null
           updated_at: string
           user_id: string
+          user_notes: string | null
           valide_date_rdv: number | null
           vendor_name: string
           website: string | null
         }
         Insert: {
+          budget?: string | null
           category: string
           contact_date?: string | null
           created_at?: string
           email?: string | null
           email_client?: string | null
           email_presta?: string | null
+          feeling?: string | null
           first_date_rdv?: string | null
           id?: string
           key_prestataire?: string | null
           location?: string | null
           notes?: string | null
           phone?: string | null
+          points_faibles?: string | null
+          points_forts?: string | null
           prestataire_id?: string | null
           project_id?: string | null
           response_date?: string | null
@@ -1937,23 +1946,28 @@ export type Database = {
           third_date_rdv?: string | null
           updated_at?: string
           user_id: string
+          user_notes?: string | null
           valide_date_rdv?: number | null
           vendor_name: string
           website?: string | null
         }
         Update: {
+          budget?: string | null
           category?: string
           contact_date?: string | null
           created_at?: string
           email?: string | null
           email_client?: string | null
           email_presta?: string | null
+          feeling?: string | null
           first_date_rdv?: string | null
           id?: string
           key_prestataire?: string | null
           location?: string | null
           notes?: string | null
           phone?: string | null
+          points_faibles?: string | null
+          points_forts?: string | null
           prestataire_id?: string | null
           project_id?: string | null
           response_date?: string | null
@@ -1963,6 +1977,7 @@ export type Database = {
           third_date_rdv?: string | null
           updated_at?: string
           user_id?: string
+          user_notes?: string | null
           valide_date_rdv?: number | null
           vendor_name?: string
           website?: string | null

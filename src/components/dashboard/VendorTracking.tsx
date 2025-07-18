@@ -52,6 +52,11 @@ interface Vendor {
   phone?: string | null;
   website?: string | null;
   source?: string;
+  budget?: string | null;
+  user_notes?: string | null;
+  points_forts?: string | null;
+  points_faibles?: string | null;
+  feeling?: string | null;
 }
 
 const statusColorMap: Record<VendorStatus, string> = {
@@ -314,6 +319,8 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
                   <TableHead>Catégorie</TableHead>
                   <TableHead>Source</TableHead>
                   <TableHead>Statut</TableHead>
+                  <TableHead>Budget</TableHead>
+                  <TableHead>Feeling</TableHead>
                   <TableHead>Dernier contact</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
@@ -321,7 +328,7 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
               <TableBody>
                 {isLoading ? (
                   <TableRow>
-                    <TableCell colSpan={6} className="text-center py-6">
+                    <TableCell colSpan={8} className="text-center py-6">
                       <div className="flex justify-center">
                         <RefreshCw className="h-5 w-5 animate-spin" />
                       </div>
@@ -329,7 +336,7 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
                   </TableRow>
                 ) : filteredVendors.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={6} className="text-center py-6 text-muted-foreground">
+                    <TableCell colSpan={8} className="text-center py-6 text-muted-foreground">
                       {vendors.length === 0 ? 
                         "Aucun prestataire ajouté. Utilisez les boutons ci-dessus pour commencer." :
                         "Aucun prestataire trouvé avec ces critères"
@@ -365,6 +372,21 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
                             💭 {vendor.notes}
                           </div>
                         )}
+                        {vendor.user_notes && (
+                          <div className="text-xs text-muted-foreground truncate max-w-[200px] mt-1">
+                            📝 Notes: {vendor.user_notes}
+                          </div>
+                        )}
+                        {vendor.points_forts && (
+                          <div className="text-xs text-green-600 truncate max-w-[200px] mt-1">
+                            ✅ {vendor.points_forts}
+                          </div>
+                        )}
+                        {vendor.points_faibles && (
+                          <div className="text-xs text-red-600 truncate max-w-[200px] mt-1">
+                            ❌ {vendor.points_faibles}
+                          </div>
+                        )}
                       </TableCell>
                       <TableCell>{vendor.category}</TableCell>
                       <TableCell>
@@ -380,6 +402,27 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
                           {statusIconMap[vendor.status]}
                           <span>{vendor.status}</span>
                         </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <div className="text-sm">
+                          {vendor.budget || '-'}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        {vendor.feeling && (
+                          <Badge 
+                            variant="outline" 
+                            className={cn(
+                              "text-xs",
+                              vendor.feeling === 'Excellent' && 'bg-green-100 text-green-800',
+                              vendor.feeling === 'Bon' && 'bg-blue-100 text-blue-800',
+                              vendor.feeling === 'Moyen' && 'bg-yellow-100 text-yellow-800',
+                              vendor.feeling === 'Mauvais' && 'bg-red-100 text-red-800'
+                            )}
+                          >
+                            {vendor.feeling}
+                          </Badge>
+                        )}
                       </TableCell>
                       <TableCell>
                         {formatDate(vendor.contact_date)}
