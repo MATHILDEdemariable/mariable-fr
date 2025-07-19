@@ -506,7 +506,7 @@ const PhotoManager: React.FC<PhotoManagerProps> = ({ prestataire, onUpdate }) =>
               {provided.placeholder}
             </div>
           )}
-        </</Droppable>
+        </Droppable>
       </DragDropContext>
     </div>
   );
