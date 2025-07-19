@@ -31,6 +31,7 @@ const PrestatairesAdmin = () => {
   // Nouveaux filtres
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [cityFilter, setCityFilter] = useState<string>('all');
+  const [regionFilter, setRegionFilter] = useState<string>('all');
   const [visibilityFilter, setVisibilityFilter] = useState<string>('all');
 
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
@@ -105,6 +106,11 @@ const PrestatairesAdmin = () => {
       filtered = filtered.filter(presta => presta.ville === cityFilter);
     }
 
+    // Filtre par région
+    if (regionFilter !== 'all') {
+      filtered = filtered.filter(presta => presta.region === regionFilter);
+    }
+
     // Filtre par visibilité
     if (visibilityFilter !== 'all') {
       const isVisible = visibilityFilter === 'visible';
@@ -112,11 +118,12 @@ const PrestatairesAdmin = () => {
     }
 
     setFilteredPrestataires(filtered);
-  }, [debouncedSearchTerm, prestataires, categoryFilter, cityFilter, visibilityFilter]);
+  }, [debouncedSearchTerm, prestataires, categoryFilter, cityFilter, regionFilter, visibilityFilter]);
 
   // Obtenir les valeurs uniques pour les filtres
   const uniqueCategories = [...new Set(prestataires.map(p => p.categorie).filter(Boolean))];
   const uniqueCities = [...new Set(prestataires.map(p => p.ville).filter(Boolean))];
+  const uniqueRegions = [...new Set(prestataires.map(p => p.region).filter(Boolean))];
 
   const handleDelete = async (id: string) => {
     if (window.confirm("Êtes-vous sûr de vouloir supprimer ce prestataire ?")) {
@@ -209,54 +216,6 @@ const PrestatairesAdmin = () => {
     window.open(`/prestataire/${slug}`, "_blank");
   };
 
-  const updateStatusCrm = async (id: string, newStatus: string) => {
-    try {
-      // Utiliser une requête SQL directe pour contourner les limitations de type
-      const updateData: any = { 
-        status_crm: newStatus
-      };
-      
-      if (newStatus === 'contacted') {
-        updateData.date_derniere_contact = new Date().toISOString();
-      }
-
-      const { error } = await supabase
-        .from("prestataires_rows")
-        .update(updateData)
-        .eq("id", id);
-        
-      if (error) {
-        toast.error("Erreur lors de la mise à jour du statut");
-        console.error("Erreur statut CRM:", error);
-        return;
-      }
-      
-      toast.success("Statut CRM mis à jour");
-      fetchPrestataires();
-    } catch (err) {
-      console.error("Erreur lors de la mise à jour du statut:", err);
-      toast.error("Une erreur est survenue");
-    }
-  };
-
-  const formatDate = (dateString: string | null) => {
-    if (!dateString) return "Jamais contacté";
-    return new Date(dateString).toLocaleDateString('fr-FR');
-  };
-
-  const getStatusLabel = (status: string) => {
-    const statusMap: { [key: string]: string } = {
-      'acquisition': 'Acquisition',
-      'contacted': 'Contacté',
-      'in_progress': 'En cours',
-      'relance_1': 'Relance 1',
-      'relance_2': 'Relance 2',
-      'called': 'Appelé',
-      'waiting': 'En attente',
-      'other': 'Autre'
-    };
-    return statusMap[status] || status;
-  };
 
   return (
     <div className="p-4 bg-white rounded-lg shadow">
@@ -316,6 +275,20 @@ const PrestatairesAdmin = () => {
             </SelectContent>
           </Select>
 
+          <Select value={regionFilter} onValueChange={setRegionFilter}>
+            <SelectTrigger className="w-full sm:w-[180px]">
+              <SelectValue placeholder="Région" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Toutes les régions</SelectItem>
+              {uniqueRegions.map((region) => (
+                <SelectItem key={region} value={region}>
+                  {region}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
           <Select value={visibilityFilter} onValueChange={setVisibilityFilter}>
             <SelectTrigger className="w-full sm:w-[180px]">
               <SelectValue placeholder="Visibilité" />
@@ -342,10 +315,9 @@ const PrestatairesAdmin = () => {
                 <TableHead>Nom</TableHead>
                 <TableHead>Catégorie</TableHead>
                 <TableHead>Ville</TableHead>
+                <TableHead>Région</TableHead>
                 <TableHead className="text-center">Visible</TableHead>
                 <TableHead className="text-center">Mis en avant</TableHead>
-                <TableHead className="text-center">Statut CRM</TableHead>
-                <TableHead className="text-center">Dernier contact</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -360,6 +332,7 @@ const PrestatairesAdmin = () => {
                     {presta.categorie || "Non spécifiée"}
                   </TableCell>
                   <TableCell>{presta.ville || "Non spécifiée"}</TableCell>
+                  <TableCell>{presta.region || "Non spécifiée"}</TableCell>
                   <TableCell className="text-center">
                     <span
                       className={`inline-block w-3 h-3 rounded-full ${
@@ -373,29 +346,6 @@ const PrestatairesAdmin = () => {
                         presta.featured ? "bg-purple-500" : "bg-gray-300"
                       }`}
                     ></span>
-                  </TableCell>
-                  <TableCell className="text-center">
-                    <Select 
-                      value={presta.status_crm || 'acquisition'} 
-                      onValueChange={(value) => updateStatusCrm(presta.id, value)}
-                    >
-                      <SelectTrigger className="w-[120px]">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="acquisition">Acquisition</SelectItem>
-                        <SelectItem value="contacted">Contacté</SelectItem>
-                        <SelectItem value="in_progress">En cours</SelectItem>
-                        <SelectItem value="relance_1">Relance 1</SelectItem>
-                        <SelectItem value="relance_2">Relance 2</SelectItem>
-                        <SelectItem value="called">Appelé</SelectItem>
-                        <SelectItem value="waiting">En attente</SelectItem>
-                        <SelectItem value="other">Autre</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </TableCell>
-                  <TableCell className="text-center text-sm">
-                    {formatDate(presta.date_derniere_contact)}
                   </TableCell>
                   <TableCell className="space-x-2 flex flex-wrap justify-end gap-2">
                     <Button

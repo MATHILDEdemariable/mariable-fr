@@ -164,7 +164,10 @@ const PhotoManager: React.FC<PhotoManagerProps> = ({ prestataire, onUpdate }) =>
       if (newPhotos.length > 0) {
         setPhotos(prev => [...prev, ...newPhotos]);
         toast.success(`${newPhotos.length} photo(s) ajoutée(s)`);
-        onUpdate(); // Refresh parent component
+        // Force refresh du prestataire pour synchroniser les données
+        setTimeout(() => {
+          onUpdate();
+        }, 500);
       }
     } catch (error: any) {
       const errorMessage = error.message || 'Erreur inconnue lors de l\'upload';
@@ -213,6 +216,10 @@ const PhotoManager: React.FC<PhotoManagerProps> = ({ prestataire, onUpdate }) =>
       console.log('✅ Photo deleted from database');
       setPhotos(prevPhotos => prevPhotos.filter(p => p.id !== photoId));
       toast.success("Photo supprimée.");
+      // Force refresh du prestataire pour synchroniser les données
+      setTimeout(() => {
+        onUpdate();
+      }, 500);
     } catch (error) {
       console.error('❌ Unexpected error during delete:', error);
       toast.error('Une erreur inattendue est survenue');
@@ -250,6 +257,10 @@ const PhotoManager: React.FC<PhotoManagerProps> = ({ prestataire, onUpdate }) =>
       console.log('✅ Primary photo set successfully');
       setPhotos(prevPhotos => prevPhotos.map(p => ({ ...p, principale: p.id === photoId })));
       toast.success("Photo principale définie.");
+      // Force refresh du prestataire pour synchroniser les données
+      setTimeout(() => {
+        onUpdate();
+      }, 500);
     } catch (error) {
       console.error('❌ Unexpected error setting primary:', error);
       toast.error('Une erreur inattendue est survenue');
