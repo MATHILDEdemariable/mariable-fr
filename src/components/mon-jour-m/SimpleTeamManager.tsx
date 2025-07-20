@@ -448,52 +448,52 @@ const SimpleTeamManager: React.FC<SimpleTeamManagerProps> = ({ coordination }) =
                       ))}
                     </SelectContent>
                   </Select>
-                </Select>
-              </div>
+                </div>
 
-              <div>
-                <Label htmlFor="edit-email">Email</Label>
-                <Input
-                  id="edit-email"
-                  type="email"
-                  value={editingMember.email || ''}
-                  onChange={(e) => setEditingMember({ ...editingMember, email: e.target.value })}
-                />
-              </div>
+                <div>
+                  <Label htmlFor="edit-email">Email</Label>
+                  <Input
+                    id="edit-email"
+                    type="email"
+                    value={editingMember.email || ''}
+                    onChange={(e) => setEditingMember({ ...editingMember, email: e.target.value })}
+                  />
+                </div>
 
-              <div>
-                <Label htmlFor="edit-phone">Téléphone</Label>
-                <Input
-                  id="edit-phone"
-                  value={editingMember.phone || ''}
-                  onChange={(e) => setEditingMember({ ...editingMember, phone: e.target.value })}
-                />
-              </div>
+                <div>
+                  <Label htmlFor="edit-phone">Téléphone</Label>
+                  <Input
+                    id="edit-phone"
+                    value={editingMember.phone || ''}
+                    onChange={(e) => setEditingMember({ ...editingMember, phone: e.target.value })}
+                  />
+                </div>
 
-              <div>
-                <Label htmlFor="edit-notes">Notes</Label>
-                <Textarea
-                  id="edit-notes"
-                  value={editingMember.notes || ''}
-                  onChange={(e) => setEditingMember({ ...editingMember, notes: e.target.value })}
-                  rows={2}
-                />
-              </div>
+                <div>
+                  <Label htmlFor="edit-notes">Notes</Label>
+                  <Textarea
+                    id="edit-notes"
+                    value={editingMember.notes || ''}
+                    onChange={(e) => setEditingMember({ ...editingMember, notes: e.target.value })}
+                    rows={2}
+                  />
+                </div>
 
-              <div className="flex gap-2">
-                <Button 
-                  onClick={handleUpdateMember} 
-                  disabled={!editingMember.name.trim() || !editingMember.role.trim()}
-                >
-                  Sauvegarder
-                </Button>
-                <Button variant="outline" onClick={() => setEditingMember(null)}>
-                  Annuler
-                </Button>
+                <div className="flex gap-2">
+                  <Button 
+                    onClick={handleUpdateMember} 
+                    disabled={!editingMember.name.trim() || !editingMember.role.trim()}
+                  >
+                    Sauvegarder
+                  </Button>
+                  <Button variant="outline" onClick={() => setEditingMember(null)}>
+                    Annuler
+                  </Button>
+                </div>
               </div>
-            </div>
-          </DialogContent>
-        </Dialog>
+            </DialogContent>
+          </Dialog>
+        )}
       </div>
 
       {/* Modals Premium */}
