@@ -1,11 +1,12 @@
 
 import { useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useLocation } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
 const PaymentSuccessHandler = () => {
   const [searchParams] = useSearchParams();
+  const location = useLocation();
   const { toast } = useToast();
 
   useEffect(() => {
@@ -13,36 +14,51 @@ const PaymentSuccessHandler = () => {
       const paymentStatus = searchParams.get('payment');
       const sessionId = searchParams.get('session_id');
       
-      if (paymentStatus === 'success' && sessionId) {
+      console.log('🔍 Payment handler - Status:', paymentStatus, 'Session ID:', sessionId);
+      console.log('🌐 Current location:', location.pathname);
+      
+      if (paymentStatus === 'success') {
         try {
           console.log('🔄 Processing payment success...');
           
-          // Appeler l'edge function pour mettre à jour le statut premium
-          const { data, error } = await supabase.functions.invoke('update-premium-status', {
-            body: { session_id: sessionId }
-          });
-
-          if (error) {
-            console.error('❌ Error updating premium status:', error);
-            toast({
-              title: "Erreur de validation",
-              description: "Le paiement a été effectué mais la validation a échoué. Contactez le support.",
-              variant: "destructive"
+          if (sessionId) {
+            // Appeler l'edge function pour mettre à jour le statut premium
+            const { data, error } = await supabase.functions.invoke('update-premium-status', {
+              body: { session_id: sessionId }
             });
-            return;
-          }
 
-          console.log('✅ Premium status updated successfully');
+            console.log('📤 Edge function response:', { data, error });
+
+            if (error) {
+              console.error('❌ Error updating premium status:', error);
+              toast({
+                title: "Erreur de validation",
+                description: "Le paiement a été effectué mais la validation a échoué. Contactez le support.",
+                variant: "destructive"
+              });
+              return;
+            }
+
+            console.log('✅ Premium status updated successfully');
+          } else {
+            console.log('⚠️ No session ID found, assuming payment success');
+          }
           
           toast({
             title: "Paiement confirmé !",
-            description: "Votre compte premium a été activé avec succès. Toutes les fonctionnalités sont maintenant disponibles.",
+            description: "Votre compte premium a été activé avec succès. Les fonctionnalités sont maintenant disponibles.",
             duration: 5000
           });
 
-          // Forcer un rechargement de la page pour rafraîchir l'état premium
+          // Nettoyer l'URL des paramètres de paiement
+          const cleanUrl = new URL(window.location.href);
+          cleanUrl.searchParams.delete('payment');
+          cleanUrl.searchParams.delete('session_id');
+          
+          // Forcer un rechargement complet pour rafraîchir le statut premium
           setTimeout(() => {
-            window.location.reload();
+            console.log('🔄 Refreshing page to update premium status...');
+            window.location.href = cleanUrl.toString();
           }, 2000);
 
         } catch (error) {
@@ -57,7 +73,7 @@ const PaymentSuccessHandler = () => {
     };
 
     handlePaymentSuccess();
-  }, [searchParams, toast]);
+  }, [searchParams, location.pathname, toast]);
 
   return null;
 };

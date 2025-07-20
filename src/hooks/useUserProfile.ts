@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
 
 interface UserProfile {
   id: string;
@@ -20,8 +20,12 @@ export const useUserProfile = () => {
 
   const fetchProfile = async () => {
     try {
+      console.log('🔄 Fetching user profile...');
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      if (!user) {
+        console.log('❌ No user found');
+        return;
+      }
 
       const { data, error } = await supabase
         .from('profiles')
@@ -34,6 +38,7 @@ export const useUserProfile = () => {
       }
 
       if (!data) {
+        console.log('🆕 Creating new profile...');
         // Create profile if it doesn't exist
         const newProfile = {
           id: user.id,
@@ -52,12 +57,14 @@ export const useUserProfile = () => {
           .single();
 
         if (insertError) throw insertError;
+        console.log('✅ Profile created:', insertedProfile);
         setProfile(insertedProfile);
       } else {
+        console.log('✅ Profile loaded:', data.subscription_type);
         setProfile(data);
       }
     } catch (error) {
-      console.error('Error fetching profile:', error);
+      console.error('❌ Error fetching profile:', error);
       toast({
         title: "Erreur",
         description: "Impossible de charger votre profil",
@@ -82,10 +89,11 @@ export const useUserProfile = () => {
 
       if (error) throw error;
 
+      console.log('✅ Profile updated:', data);
       setProfile(data);
       return data;
     } catch (error) {
-      console.error('Error updating profile:', error);
+      console.error('❌ Error updating profile:', error);
       toast({
         title: "Erreur",
         description: "Impossible de mettre à jour votre profil",
@@ -100,6 +108,12 @@ export const useUserProfile = () => {
 
   const isPremium = profile?.subscription_type === 'premium' && 
     (!profile?.subscription_expires_at || new Date(profile.subscription_expires_at) > new Date());
+
+  console.log('🔍 Current profile status:', { 
+    subscription_type: profile?.subscription_type, 
+    isPremium,
+    loading 
+  });
 
   return {
     profile,

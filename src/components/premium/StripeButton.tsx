@@ -14,6 +14,8 @@ declare global {
 
 const StripeButton: React.FC = () => {
   useEffect(() => {
+    console.log('🔄 Loading Stripe button script...');
+    
     // Charger le script Stripe dynamiquement
     const script = document.createElement('script');
     script.src = 'https://js.stripe.com/v3/buy-button.js';
@@ -21,20 +23,32 @@ const StripeButton: React.FC = () => {
     document.head.appendChild(script);
 
     // Écouter les événements de succès de paiement
-    const handleStripeSuccess = () => {
-      // Rediriger vers une page de succès avec un paramètre
-      window.location.href = window.location.origin + '/dashboard?payment=success';
+    const handleStripeSuccess = (event: MessageEvent) => {
+      console.log('💳 Stripe checkout event received:', event.data);
+      
+      if (event.data && event.data.type === 'stripe_checkout_success') {
+        console.log('✅ Payment successful, redirecting...');
+        
+        // Extraire le session_id de l'événement si disponible
+        const sessionId = event.data.sessionId || event.data.session_id;
+        const currentUrl = window.location.href;
+        
+        // Construire l'URL de redirection avec session_id
+        const redirectUrl = sessionId 
+          ? `${currentUrl}${currentUrl.includes('?') ? '&' : '?'}payment=success&session_id=${sessionId}`
+          : `${currentUrl}${currentUrl.includes('?') ? '&' : '?'}payment=success`;
+        
+        console.log('🔄 Redirecting to:', redirectUrl);
+        window.location.href = redirectUrl;
+      }
     };
 
-    // Ajouter un event listener pour détecter le succès
-    window.addEventListener('message', (event) => {
-      if (event.data && event.data.type === 'stripe_checkout_success') {
-        handleStripeSuccess();
-      }
-    });
+    // Ajouter l'event listener
+    window.addEventListener('message', handleStripeSuccess);
 
     return () => {
-      // Nettoyer le script lors du démontage
+      // Nettoyer les event listeners et scripts
+      window.removeEventListener('message', handleStripeSuccess);
       const existingScript = document.querySelector('script[src="https://js.stripe.com/v3/buy-button.js"]');
       if (existingScript) {
         document.head.removeChild(existingScript);
