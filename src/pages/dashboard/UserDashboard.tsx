@@ -20,6 +20,7 @@ import BudgetCalculator from '@/components/dashboard/BudgetCalculator';
 import { useReaderMode } from '@/contexts/ReaderModeContext';
 import ProjectManagement from '@/components/project-management/ProjectManagement';
 import HelpPage from './HelpPage';
+import PremiumBadge from '@/components/premium/PremiumBadge';
 
 const UserDashboard: React.FC = () => {
   const navigate = useNavigate();

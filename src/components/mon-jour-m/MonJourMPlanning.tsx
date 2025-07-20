@@ -12,6 +12,9 @@ import { useToast } from '@/components/ui/use-toast';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { supabase } from '@/integrations/supabase/client';
 import AISuggestionsModal from './AISuggestionsModal';
+import PremiumGate from '@/components/premium/PremiumGate';
+import PremiumBadge from '@/components/premium/PremiumBadge';
+import { useUserProfile } from '@/hooks/useUserProfile';
 import { 
   WeddingCoordination, 
   PlanningTask, 
@@ -25,6 +28,7 @@ import {
 
 const MonJourMPlanningContent: React.FC = () => {
   const { toast } = useToast();
+  const { isPremium } = useUserProfile();
   
   // États locaux
   const [coordination, setCoordination] = useState<WeddingCoordination | null>(null);
@@ -570,7 +574,8 @@ const MonJourMPlanningContent: React.FC = () => {
             Organisez votre journée parfaite avec un planning détaillé
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center">
+          <PremiumBadge />
           <Button 
             variant="outline" 
             className="flex items-center gap-2"
@@ -580,13 +585,18 @@ const MonJourMPlanningContent: React.FC = () => {
             Suggestions IA
           </Button>
           
-          <Button 
-            className="bg-wedding-olive hover:bg-wedding-olive/90"
-            onClick={handleOpenAddTask}
+          <PremiumGate 
+            feature="l'ajout d'étapes personnalisées" 
+            description="Créez des étapes sur mesure pour votre planning de mariage avec notre version premium"
           >
-            <Plus className="h-4 w-4 mr-2" />
-            Ajouter une tâche
-          </Button>
+            <Button 
+              className="bg-wedding-olive hover:bg-wedding-olive/90"
+              onClick={handleOpenAddTask}
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Ajouter une tâche
+            </Button>
+          </PremiumGate>
         </div>
       </div>
 
@@ -734,13 +744,18 @@ const MonJourMPlanningContent: React.FC = () => {
                   <Sparkles className="h-4 w-4" />
                   Suggestions IA
                 </Button>
-                <Button 
-                  onClick={handleOpenAddTask}
-                  className="bg-wedding-olive hover:bg-wedding-olive/90"
+                <PremiumGate 
+                  feature="l'ajout d'étapes personnalisées" 
+                  description="Créez des étapes sur mesure pour votre planning de mariage avec notre version premium"
                 >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Ajouter une tâche
-                </Button>
+                  <Button 
+                    onClick={handleOpenAddTask}
+                    className="bg-wedding-olive hover:bg-wedding-olive/90"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Ajouter une tâche
+                  </Button>
+                </PremiumGate>
               </div>
             </div>
           </CardContent>

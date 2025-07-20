@@ -9,6 +9,8 @@ interface UserProfile {
   last_name: string | null;
   wedding_date: string | null;
   guest_count: number | null;
+  subscription_type: string;
+  subscription_expires_at: string | null;
 }
 
 export const useUserProfile = () => {
@@ -38,7 +40,9 @@ export const useUserProfile = () => {
           first_name: user.user_metadata?.first_name || null,
           last_name: user.user_metadata?.last_name || null,
           wedding_date: null,
-          guest_count: null
+          guest_count: null,
+          subscription_type: 'free',
+          subscription_expires_at: null
         };
 
         const { data: insertedProfile, error: insertError } = await supabase
@@ -94,10 +98,14 @@ export const useUserProfile = () => {
     fetchProfile();
   }, []);
 
+  const isPremium = profile?.subscription_type === 'premium' && 
+    (!profile?.subscription_expires_at || new Date(profile.subscription_expires_at) > new Date());
+
   return {
     profile,
     loading,
     updateProfile,
-    refetch: fetchProfile
+    refetch: fetchProfile,
+    isPremium
   };
 };

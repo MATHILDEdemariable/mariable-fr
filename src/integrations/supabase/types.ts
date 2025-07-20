@@ -1408,6 +1408,8 @@ export type Database = {
           guest_count: number | null
           id: string
           last_name: string | null
+          subscription_expires_at: string | null
+          subscription_type: string | null
           updated_at: string
           wedding_date: string | null
         }
@@ -1417,6 +1419,8 @@ export type Database = {
           guest_count?: number | null
           id: string
           last_name?: string | null
+          subscription_expires_at?: string | null
+          subscription_type?: string | null
           updated_at?: string
           wedding_date?: string | null
         }
@@ -1426,6 +1430,8 @@ export type Database = {
           guest_count?: number | null
           id?: string
           last_name?: string | null
+          subscription_expires_at?: string | null
+          subscription_type?: string | null
           updated_at?: string
           wedding_date?: string | null
         }
@@ -2078,6 +2084,10 @@ export type Database = {
       }
       is_admin: {
         Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
+      is_user_premium: {
+        Args: { user_uuid: string }
         Returns: boolean
       }
       is_valid_share_token: {

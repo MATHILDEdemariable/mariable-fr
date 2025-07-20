@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import AnalyticsProvider from "@/components/analytics/AnalyticsProvider";
 import { HelmetProvider } from 'react-helmet-async';
 import { ReaderModeProvider } from '@/contexts/ReaderModeContext';
+import PaymentSuccessHandler from '@/components/premium/PaymentSuccessHandler';
 
 // Import pages
 import Index from "./pages/Index";
@@ -71,6 +72,7 @@ function App() {
             <Sonner />
             <BrowserRouter>
               <AnalyticsProvider>
+                <PaymentSuccessHandler />
                 <Routes>
                   <Route path="/" element={<Index />} />
                    <Route path="/moteur-recherche" element={<MoteurRecherche />} />
