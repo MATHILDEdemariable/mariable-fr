@@ -1,6 +1,6 @@
+
 import React, { useEffect } from 'react';
 import { useToast } from '@/components/ui/use-toast';
-import { supabase } from '@/integrations/supabase/client';
 import { useUserProfile } from '@/hooks/useUserProfile';
 
 const PaymentSuccessHandler: React.FC = () => {
@@ -8,41 +8,43 @@ const PaymentSuccessHandler: React.FC = () => {
   const { refetch } = useUserProfile();
 
   useEffect(() => {
-    const updatePremiumStatus = async () => {
-      try {
-        // Appeler l'edge function pour mettre à jour le statut premium
-        const { data, error } = await supabase.functions.invoke('update-premium-status');
-        
-        if (error) {
-          throw error;
-        }
-
-        // Rafraîchir le profil utilisateur
-        await refetch();
-
-        toast({
-          title: "Paiement réussi !",
-          description: "Votre compte a été mis à niveau vers Premium. Profitez de vos nouvelles fonctionnalités !",
-          variant: "default"
-        });
-      } catch (error) {
-        console.error('Error updating premium status:', error);
-        toast({
-          title: "Paiement traité",
-          description: "Votre paiement a été accepté. Si votre statut premium n'apparaît pas, contactez le support.",
-          variant: "default"
-        });
-      }
-    };
-
-    // Vérifier si l'URL contient des paramètres de succès Stripe
     const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('payment') === 'success' || window.location.pathname.includes('success')) {
-      updatePremiumStatus();
-    }
-  }, [toast, refetch]);
+    const paymentStatus = urlParams.get('payment');
+    
+    if (paymentStatus === 'success') {
+      console.log('🎉 Payment success detected, refreshing user profile...');
+      
+      // Attendre un peu que le webhook ait le temps de traiter
+      const timer = setTimeout(async () => {
+        try {
+          await refetch();
+          
+          toast({
+            title: "🎉 Paiement réussi !",
+            description: "Félicitations ! Vous avez maintenant accès à toutes les fonctionnalités premium de Mariable.",
+            duration: 6000,
+          });
 
-  return null; // Ce composant ne rend rien visuellement
+          // Nettoyer l'URL pour éviter de redemander
+          const newUrl = window.location.pathname;
+          window.history.replaceState({}, document.title, newUrl);
+          
+        } catch (error) {
+          console.error('Error refreshing profile after payment:', error);
+          toast({
+            title: "Paiement réussi",
+            description: "Votre paiement a été traité. Actualisez la page si les fonctionnalités premium ne sont pas encore disponibles.",
+            variant: "default",
+            duration: 8000,
+          });
+        }
+      }, 2000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [refetch, toast]);
+
+  return null;
 };
 
 export default PaymentSuccessHandler;

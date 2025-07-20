@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -12,8 +13,8 @@ import { useToast } from '@/components/ui/use-toast';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { supabase } from '@/integrations/supabase/client';
 import AISuggestionsModal from './AISuggestionsModal';
-import PremiumGate from '@/components/premium/PremiumGate';
 import PremiumBadge from '@/components/premium/PremiumBadge';
+import PremiumGateClickable from '@/components/premium/PremiumGateClickable';
 import { useUserProfile } from '@/hooks/useUserProfile';
 import { 
   WeddingCoordination, 
@@ -585,7 +586,7 @@ const MonJourMPlanningContent: React.FC = () => {
             Suggestions IA
           </Button>
           
-          <PremiumGate 
+          <PremiumGateClickable 
             feature="l'ajout d'étapes personnalisées" 
             description="Créez des étapes sur mesure pour votre planning de mariage avec notre version premium"
           >
@@ -596,7 +597,7 @@ const MonJourMPlanningContent: React.FC = () => {
               <Plus className="h-4 w-4 mr-2" />
               Ajouter une tâche
             </Button>
-          </PremiumGate>
+          </PremiumGateClickable>
         </div>
       </div>
 
@@ -608,122 +609,124 @@ const MonJourMPlanningContent: React.FC = () => {
         coordination={coordination}
       />
 
-      {/* MODALE D'AJOUT */}
-      <Dialog open={showAddTask} onOpenChange={setShowAddTask}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>Nouvelle tâche</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {/* MODALE D'AJOUT - seulement si premium */}
+      {isPremium && (
+        <Dialog open={showAddTask} onOpenChange={setShowAddTask}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>Nouvelle tâche</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="title">Titre de la tâche *</Label>
+                  <Input
+                    id="title"
+                    value={formData.title}
+                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                    placeholder="Ex: Arrivée des invités"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="category">Catégorie</Label>
+                  <Select 
+                    value={formData.category} 
+                    onValueChange={(value) => setFormData({ ...formData, category: value })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories.map((cat) => (
+                        <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
               <div>
-                <Label htmlFor="title">Titre de la tâche *</Label>
-                <Input
-                  id="title"
-                  value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  placeholder="Ex: Arrivée des invités"
+                <Label htmlFor="description">Description</Label>
+                <Textarea
+                  id="description"
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  placeholder="Détails de la tâche..."
+                  rows={3}
                 />
               </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <Label htmlFor="start_time">Heure de début</Label>
+                  <Input
+                    id="start_time"
+                    type="time"
+                    value={formData.start_time}
+                    onChange={(e) => setFormData({ ...formData, start_time: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="duration">Durée (minutes)</Label>
+                  <Input
+                    id="duration"
+                    type="number"
+                    min="5"
+                    max="480"
+                    value={formData.duration}
+                    onChange={(e) => setFormData({ ...formData, duration: parseInt(e.target.value) || 30 })}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="priority">Priorité</Label>
+                  <Select 
+                    value={formData.priority} 
+                    onValueChange={(value: "low" | "medium" | "high") => setFormData({ ...formData, priority: value })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="low">Faible</SelectItem>
+                      <SelectItem value="medium">Moyenne</SelectItem>
+                      <SelectItem value="high">Élevée</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
               <div>
-                <Label htmlFor="category">Catégorie</Label>
-                <Select 
-                  value={formData.category} 
-                  onValueChange={(value) => setFormData({ ...formData, category: value })}
+                <Label htmlFor="assigned_to">Assigné à</Label>
+                <Select
+                  value={formData.assigned_to && formData.assigned_to.length > 0 ? formData.assigned_to[0] : ""}
+                  onValueChange={(value) => setFormData({ ...formData, assigned_to: value ? [value] : [] })}
                 >
                   <SelectTrigger>
-                    <SelectValue />
+                    <SelectValue placeholder="Sélectionner une personne" />
                   </SelectTrigger>
                   <SelectContent>
-                    {categories.map((cat) => (
-                      <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                    <SelectItem value="">Non assigné</SelectItem>
+                    {teamMembers.map((member) => (
+                      <SelectItem key={member.id} value={member.id}>
+                        {member.name} ({member.role})
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
-            </div>
 
-            <div>
-              <Label htmlFor="description">Description</Label>
-              <Textarea
-                id="description"
-                value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                placeholder="Détails de la tâche..."
-                rows={3}
-              />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <Label htmlFor="start_time">Heure de début</Label>
-                <Input
-                  id="start_time"
-                  type="time"
-                  value={formData.start_time}
-                  onChange={(e) => setFormData({ ...formData, start_time: e.target.value })}
-                />
-              </div>
-              <div>
-                <Label htmlFor="duration">Durée (minutes)</Label>
-                <Input
-                  id="duration"
-                  type="number"
-                  min="5"
-                  max="480"
-                  value={formData.duration}
-                  onChange={(e) => setFormData({ ...formData, duration: parseInt(e.target.value) || 30 })}
-                />
-              </div>
-              <div>
-                <Label htmlFor="priority">Priorité</Label>
-                <Select 
-                  value={formData.priority} 
-                  onValueChange={(value: "low" | "medium" | "high") => setFormData({ ...formData, priority: value })}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="low">Faible</SelectItem>
-                    <SelectItem value="medium">Moyenne</SelectItem>
-                    <SelectItem value="high">Élevée</SelectItem>
-                  </SelectContent>
-                </Select>
+              <div className="flex gap-2">
+                <Button onClick={handleAddTask} disabled={!formData.title.trim()}>
+                  Ajouter la tâche
+                </Button>
+                <Button variant="outline" onClick={handleCloseAddTask}>
+                  Annuler
+                </Button>
               </div>
             </div>
-
-            <div>
-              <Label htmlFor="assigned_to">Assigné à</Label>
-              <Select
-                value={formData.assigned_to && formData.assigned_to.length > 0 ? formData.assigned_to[0] : ""}
-                onValueChange={(value) => setFormData({ ...formData, assigned_to: value ? [value] : [] })}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Sélectionner une personne" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="">Non assigné</SelectItem>
-                  {teamMembers.map((member) => (
-                    <SelectItem key={member.id} value={member.id}>
-                      {member.name} ({member.role})
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="flex gap-2">
-              <Button onClick={handleAddTask} disabled={!formData.title.trim()}>
-                Ajouter la tâche
-              </Button>
-              <Button variant="outline" onClick={handleCloseAddTask}>
-                Annuler
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+          </DialogContent>
+        </Dialog>
+      )}
 
       {/* Liste des tâches */}
       {tasks.length === 0 ? (
@@ -744,7 +747,7 @@ const MonJourMPlanningContent: React.FC = () => {
                   <Sparkles className="h-4 w-4" />
                   Suggestions IA
                 </Button>
-                <PremiumGate 
+                <PremiumGateClickable 
                   feature="l'ajout d'étapes personnalisées" 
                   description="Créez des étapes sur mesure pour votre planning de mariage avec notre version premium"
                 >
@@ -755,7 +758,7 @@ const MonJourMPlanningContent: React.FC = () => {
                     <Plus className="h-4 w-4 mr-2" />
                     Ajouter une tâche
                   </Button>
-                </PremiumGate>
+                </PremiumGateClickable>
               </div>
             </div>
           </CardContent>
@@ -864,8 +867,8 @@ const MonJourMPlanningContent: React.FC = () => {
         </DragDropContext>
       )}
 
-      {/* MODALE D'ÉDITION */}
-      {editingTask && (
+      {/* MODALE D'ÉDITION - seulement si premium */}
+      {isPremium && editingTask && (
         <Dialog open={!!editingTask} onOpenChange={() => setEditingTask(null)}>
           <DialogContent className="max-w-2xl">
             <DialogHeader>
