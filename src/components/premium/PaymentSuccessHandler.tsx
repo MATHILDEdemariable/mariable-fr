@@ -1,48 +1,63 @@
 
-import React, { useEffect } from 'react';
-import { useToast } from '@/components/ui/use-toast';
-import { useUserProfile } from '@/hooks/useUserProfile';
+import { useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
-const PaymentSuccessHandler: React.FC = () => {
+const PaymentSuccessHandler = () => {
+  const [searchParams] = useSearchParams();
   const { toast } = useToast();
-  const { refetch } = useUserProfile();
 
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const paymentStatus = urlParams.get('payment');
-    
-    if (paymentStatus === 'success') {
-      console.log('🎉 Payment success detected, refreshing user profile...');
+    const handlePaymentSuccess = async () => {
+      const paymentStatus = searchParams.get('payment');
+      const sessionId = searchParams.get('session_id');
       
-      // Attendre un peu que le webhook ait le temps de traiter
-      const timer = setTimeout(async () => {
+      if (paymentStatus === 'success' && sessionId) {
         try {
-          await refetch();
+          console.log('🔄 Processing payment success...');
           
-          toast({
-            title: "🎉 Paiement réussi !",
-            description: "Félicitations ! Vous avez maintenant accès à toutes les fonctionnalités premium de Mariable.",
-            duration: 6000,
+          // Appeler l'edge function pour mettre à jour le statut premium
+          const { data, error } = await supabase.functions.invoke('update-premium-status', {
+            body: { session_id: sessionId }
           });
 
-          // Nettoyer l'URL pour éviter de redemander
-          const newUrl = window.location.pathname;
-          window.history.replaceState({}, document.title, newUrl);
+          if (error) {
+            console.error('❌ Error updating premium status:', error);
+            toast({
+              title: "Erreur de validation",
+              description: "Le paiement a été effectué mais la validation a échoué. Contactez le support.",
+              variant: "destructive"
+            });
+            return;
+          }
+
+          console.log('✅ Premium status updated successfully');
           
-        } catch (error) {
-          console.error('Error refreshing profile after payment:', error);
           toast({
-            title: "Paiement réussi",
-            description: "Votre paiement a été traité. Actualisez la page si les fonctionnalités premium ne sont pas encore disponibles.",
-            variant: "default",
-            duration: 8000,
+            title: "Paiement confirmé !",
+            description: "Votre compte premium a été activé avec succès. Toutes les fonctionnalités sont maintenant disponibles.",
+            duration: 5000
+          });
+
+          // Forcer un rechargement de la page pour rafraîchir l'état premium
+          setTimeout(() => {
+            window.location.reload();
+          }, 2000);
+
+        } catch (error) {
+          console.error('❌ Payment success handling error:', error);
+          toast({
+            title: "Erreur de traitement",
+            description: "Une erreur s'est produite lors de la validation du paiement.",
+            variant: "destructive"
           });
         }
-      }, 2000);
+      }
+    };
 
-      return () => clearTimeout(timer);
-    }
-  }, [refetch, toast]);
+    handlePaymentSuccess();
+  }, [searchParams, toast]);
 
   return null;
 };

@@ -9,6 +9,8 @@ import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 import { useProjectCoordination } from '@/hooks/useProjectCoordination';
+import { usePremiumAction } from '@/hooks/usePremiumAction';
+import PremiumModal from '@/components/premium/PremiumModal';
 
 interface ProjectDocument {
   id: string;
@@ -39,6 +41,12 @@ const ProjectDocuments: React.FC = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [uploadingFile, setUploadingFile] = useState(false);
   
+  // Premium action hook
+  const addDocumentAction = usePremiumAction({
+    feature: "Ajout de documents",
+    description: "Pour ajouter des documents à votre projet de mariage, vous devez être abonné à notre version premium."
+  });
+
   // Form state
   const [formData, setFormData] = useState({
     title: '',
@@ -113,60 +121,60 @@ const ProjectDocuments: React.FC = () => {
       return;
     }
 
-    setUploadingFile(true);
+    // Intercepter l'action avec le hook premium
+    addDocumentAction.executeAction(async () => {
+      setUploadingFile(true);
 
-    try {
-      // Upload du fichier vers Supabase Storage
-      const fileExt = formData.file.name.split('.').pop();
-      const fileName = `${Date.now()}.${fileExt}`;
-      const filePath = `project-documents/${coordination.user_id}/${fileName}`;
+      try {
+        const fileExt = formData.file.name.split('.').pop();
+        const fileName = `${Date.now()}.${fileExt}`;
+        const filePath = `project-documents/${coordination.user_id}/${fileName}`;
 
-      const { error: uploadError } = await supabase.storage
-        .from('coordination-files')
-        .upload(filePath, formData.file);
+        const { error: uploadError } = await supabase.storage
+          .from('coordination-files')
+          .upload(filePath, formData.file);
 
-      if (uploadError) throw uploadError;
+        if (uploadError) throw uploadError;
 
-      // Obtenir l'URL publique du fichier
-      const { data: { publicUrl } } = supabase.storage
-        .from('coordination-files')
-        .getPublicUrl(filePath);
+        const { data: { publicUrl } } = supabase.storage
+          .from('coordination-files')
+          .getPublicUrl(filePath);
 
-      // Enregistrer les métadonnées dans la base
-      const { error: dbError } = await supabase
-        .from('coordination_documents')
-        .insert({
-          coordination_id: coordination.id,
-          title: formData.title,
-          description: formData.description || null,
-          category: 'project',
-          file_url: publicUrl,
-          file_path: filePath,
-          file_type: formData.file.type,
-          file_size: formData.file.size,
-          mime_type: formData.file.type
+        const { error: dbError } = await supabase
+          .from('coordination_documents')
+          .insert({
+            coordination_id: coordination.id,
+            title: formData.title,
+            description: formData.description || null,
+            category: 'project',
+            file_url: publicUrl,
+            file_path: filePath,
+            file_type: formData.file.type,
+            file_size: formData.file.size,
+            mime_type: formData.file.type
+          });
+
+        if (dbError) throw dbError;
+
+        toast({
+          title: "Succès",
+          description: "Document ajouté avec succès"
         });
 
-      if (dbError) throw dbError;
-
-      toast({
-        title: "Succès",
-        description: "Document ajouté avec succès"
-      });
-
-      resetForm();
-      setShowAddModal(false);
-      await loadDocuments();
-    } catch (error) {
-      console.error('Erreur upload document:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible d'ajouter le document",
-        variant: "destructive"
-      });
-    } finally {
-      setUploadingFile(false);
-    }
+        resetForm();
+        setShowAddModal(false);
+        await loadDocuments();
+      } catch (error) {
+        console.error('Erreur upload document:', error);
+        toast({
+          title: "Erreur",
+          description: "Impossible d'ajouter le document",
+          variant: "destructive"
+        });
+      } finally {
+        setUploadingFile(false);
+      }
+    });
   };
 
   // Supprimer un document
@@ -222,185 +230,195 @@ const ProjectDocuments: React.FC = () => {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h3 className="text-lg font-medium">Documents Mission Mariage</h3>
-          <p className="text-sm text-muted-foreground">
-            Centralisez tous vos documents de préparation
-          </p>
-        </div>
-        <Button onClick={() => setShowAddModal(true)} className="bg-blue-600 hover:bg-blue-700">
-          <Plus className="h-4 w-4 mr-2" />
-          Ajouter un document
-        </Button>
-      </div>
-
-      {/* Liste des documents */}
-      {documents.length === 0 ? (
-        <Card>
-          <CardContent className="py-12 text-center">
-            <FolderOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-medium mb-2">Aucun document</h3>
-            <p className="text-muted-foreground mb-4">
-              Commencez par ajouter vos premiers documents de préparation
+    <>
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex justify-between items-center">
+          <div>
+            <h3 className="text-lg font-medium">Documents Mission Mariage</h3>
+            <p className="text-sm text-muted-foreground">
+              Centralisez tous vos documents de préparation
             </p>
-            <Button onClick={() => setShowAddModal(true)} className="bg-blue-600 hover:bg-blue-700">
-              <Plus className="h-4 w-4 mr-2" />
-              Ajouter un document
-            </Button>
-          </CardContent>
-        </Card>
-      ) : (
-        <div className="grid gap-4">
-          {documents.map((document) => (
-            <Card key={document.id}>
-              <CardContent className="p-4">
-                <div className="flex items-start justify-between">
-                  <div className="flex items-start gap-4 flex-grow">
-                    <div className="flex-shrink-0">
-                      <FileText className="h-8 w-8 text-blue-600" />
-                    </div>
-                    
-                    <div className="flex-grow min-w-0">
-                      <h4 className="font-medium text-gray-900 mb-1">
-                        {document.title}
-                      </h4>
-                      
-                      <div className="flex flex-wrap items-center gap-2 mb-2">
-                        <Badge variant="secondary" className="bg-blue-100 text-blue-800">
-                          {document.category}
-                        </Badge>
-                        
-                        {document.file_size && (
-                          <span className="text-sm text-gray-500">
-                            {formatFileSize(document.file_size)}
-                          </span>
-                        )}
-                        
-                        <span className="text-sm text-gray-500">
-                          {new Date(document.created_at).toLocaleDateString('fr-FR')}
-                        </span>
+          </div>
+          <Button onClick={() => setShowAddModal(true)} className="bg-blue-600 hover:bg-blue-700">
+            <Plus className="h-4 w-4 mr-2" />
+            Ajouter un document
+          </Button>
+        </div>
+
+        {/* Liste des documents */}
+        {documents.length === 0 ? (
+          <Card>
+            <CardContent className="py-12 text-center">
+              <FolderOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-lg font-medium mb-2">Aucun document</h3>
+              <p className="text-muted-foreground mb-4">
+                Commencez par ajouter vos premiers documents de préparation
+              </p>
+              <Button onClick={() => setShowAddModal(true)} className="bg-blue-600 hover:bg-blue-700">
+                <Plus className="h-4 w-4 mr-2" />
+                Ajouter un document
+              </Button>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="grid gap-4">
+            {documents.map((document) => (
+              <Card key={document.id}>
+                <CardContent className="p-4">
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-start gap-4 flex-grow">
+                      <div className="flex-shrink-0">
+                        <FileText className="h-8 w-8 text-blue-600" />
                       </div>
                       
-                      {document.description && (
-                        <p className="text-sm text-gray-600">
-                          {document.description}
-                        </p>
-                      )}
+                      <div className="flex-grow min-w-0">
+                        <h4 className="font-medium text-gray-900 mb-1">
+                          {document.title}
+                        </h4>
+                        
+                        <div className="flex flex-wrap items-center gap-2 mb-2">
+                          <Badge variant="secondary" className="bg-blue-100 text-blue-800">
+                            {document.category}
+                          </Badge>
+                          
+                          {document.file_size && (
+                            <span className="text-sm text-gray-500">
+                              {formatFileSize(document.file_size)}
+                            </span>
+                          )}
+                          
+                          <span className="text-sm text-gray-500">
+                            {new Date(document.created_at).toLocaleDateString('fr-FR')}
+                          </span>
+                        </div>
+                        
+                        {document.description && (
+                          <p className="text-sm text-gray-600">
+                            {document.description}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center gap-2 ml-4">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => window.open(document.file_url, '_blank')}
+                      >
+                        <Download className="h-3 w-3" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleDeleteDocument(document.id)}
+                        className="text-red-600 hover:text-red-700"
+                      >
+                        <Trash2 className="h-3 w-3" />
+                      </Button>
                     </div>
                   </div>
-                  
-                  <div className="flex items-center gap-2 ml-4">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => window.open(document.file_url, '_blank')}
-                    >
-                      <Download className="h-3 w-3" />
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => handleDeleteDocument(document.id)}
-                      className="text-red-600 hover:text-red-700"
-                    >
-                      <Trash2 className="h-3 w-3" />
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
-
-      {/* Modal d'ajout */}
-      <Dialog open={showAddModal} onOpenChange={setShowAddModal}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle>Nouveau document</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="title">Titre *</Label>
-              <Input
-                id="title"
-                value={formData.title}
-                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                placeholder="Ex: Devis traiteur"
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="category">Catégorie</Label>
-              <select
-                id="category"
-                value={formData.category}
-                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                className="w-full p-2 border border-gray-300 rounded-md"
-              >
-                {DOCUMENT_CATEGORIES.map((category) => (
-                  <option key={category} value={category}>
-                    {category}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <Label htmlFor="description">Description</Label>
-              <Input
-                id="description"
-                value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                placeholder="Description optionnelle..."
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="file">Fichier *</Label>
-              <Input
-                id="file"
-                type="file"
-                onChange={(e) => setFormData({ 
-                  ...formData, 
-                  file: e.target.files?.[0] || null 
-                })}
-                accept=".pdf,.doc,.docx,.xls,.xlsx,.txt,.jpg,.jpeg,.png"
-              />
-              <p className="text-xs text-gray-500 mt-1">
-                Formats acceptés : PDF, Word, Excel, images, texte
-              </p>
-            </div>
-
-            <div className="flex gap-2">
-              <Button 
-                onClick={handleFileUpload} 
-                disabled={uploadingFile || !formData.title.trim() || !formData.file}
-                className="bg-blue-600 hover:bg-blue-700"
-              >
-                {uploadingFile ? (
-                  <>
-                    <Upload className="h-4 w-4 mr-2 animate-spin" />
-                    Upload...
-                  </>
-                ) : (
-                  'Ajouter'
-                )}
-              </Button>
-              <Button variant="outline" onClick={() => {
-                resetForm();
-                setShowAddModal(false);
-              }}>
-                Annuler
-              </Button>
-            </div>
+                </CardContent>
+              </Card>
+            ))}
           </div>
-        </DialogContent>
-      </Dialog>
-    </div>
+        )}
+
+        {/* Modal d'ajout */}
+        <Dialog open={showAddModal} onOpenChange={setShowAddModal}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle>Nouveau document</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="title">Titre *</Label>
+                <Input
+                  id="title"
+                  value={formData.title}
+                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  placeholder="Ex: Devis traiteur"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="category">Catégorie</Label>
+                <select
+                  id="category"
+                  value={formData.category}
+                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                  className="w-full p-2 border border-gray-300 rounded-md"
+                >
+                  {DOCUMENT_CATEGORIES.map((category) => (
+                    <option key={category} value={category}>
+                      {category}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <Label htmlFor="description">Description</Label>
+                <Input
+                  id="description"
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  placeholder="Description optionnelle..."
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="file">Fichier *</Label>
+                <Input
+                  id="file"
+                  type="file"
+                  onChange={(e) => setFormData({ 
+                    ...formData, 
+                    file: e.target.files?.[0] || null 
+                  })}
+                  accept=".pdf,.doc,.docx,.xls,.xlsx,.txt,.jpg,.jpeg,.png"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Formats acceptés : PDF, Word, Excel, images, texte
+                </p>
+              </div>
+
+              <div className="flex gap-2">
+                <Button 
+                  onClick={handleFileUpload} 
+                  disabled={uploadingFile || !formData.title.trim() || !formData.file}
+                  className="bg-blue-600 hover:bg-blue-700"
+                >
+                  {uploadingFile ? (
+                    <>
+                      <Upload className="h-4 w-4 mr-2 animate-spin" />
+                      Upload...
+                    </>
+                  ) : (
+                    'Ajouter'
+                  )}
+                </Button>
+                <Button variant="outline" onClick={() => {
+                  resetForm();
+                  setShowAddModal(false);
+                }}>
+                  Annuler
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </div>
+
+      {/* Modal Premium */}
+      <PremiumModal
+        isOpen={addDocumentAction.showPremiumModal}
+        onClose={addDocumentAction.closePremiumModal}
+        feature={addDocumentAction.feature}
+        description={addDocumentAction.description}
+      />
+    </>
   );
 };
 
