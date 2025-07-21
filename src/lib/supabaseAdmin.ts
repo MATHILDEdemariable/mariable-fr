@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 
 export const fetchAllUsers = async () => {
   try {
-    console.log('🚀 Appel de la fonction Edge pour récupérer les utilisateurs...');
+    console.log('🚀 Appel de la fonction Edge pour récupérer les utilisateurs avec profils...');
     
     // Utiliser l'Edge Function qui utilise le Service Role Key
     const { data, error } = await supabase.functions.invoke('get-users', {

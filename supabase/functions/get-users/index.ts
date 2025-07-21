@@ -1,3 +1,4 @@
+
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const corsHeaders = {
@@ -10,6 +11,14 @@ interface DatabaseUser {
   email: string;
   created_at: string;
   raw_user_meta_data: any;
+  profile?: {
+    first_name?: string;
+    last_name?: string;
+    subscription_type?: string;
+    subscription_expires_at?: string;
+    wedding_date?: string;
+    guest_count?: number;
+  };
 }
 
 Deno.serve(async (req) => {
@@ -37,7 +46,6 @@ Deno.serve(async (req) => {
     }
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
-
     console.log('🔑 Supabase client initialized with service role');
 
     let users: DatabaseUser[] = [];
@@ -57,72 +65,80 @@ Deno.serve(async (req) => {
       if (authUsers && authUsers.users && authUsers.users.length > 0) {
         console.log(`✅ Successfully fetched ${authUsers.users.length} users from Auth API`);
         
+        // Fetch profiles for all users
+        const userIds = authUsers.users.map(user => user.id);
+        const { data: profiles, error: profilesError } = await supabase
+          .from('profiles')
+          .select('id, first_name, last_name, subscription_type, subscription_expires_at, wedding_date, guest_count')
+          .in('id', userIds);
+
+        if (profilesError) {
+          console.error('⚠️ Error fetching profiles:', profilesError);
+        }
+
+        // Map profiles to users
+        const profilesMap = new Map();
+        if (profiles) {
+          profiles.forEach(profile => {
+            profilesMap.set(profile.id, profile);
+          });
+        }
+        
         users = authUsers.users.map(user => ({
           id: user.id,
           email: user.email || 'Email non disponible',
           created_at: user.created_at,
-          raw_user_meta_data: user.user_metadata || {}
+          raw_user_meta_data: user.user_metadata || {},
+          profile: profilesMap.get(user.id) || null
         }));
         
-        method = 'auth_api';
+        method = 'auth_api_with_profiles';
       } else {
         throw new Error('No users found in Auth API');
       }
     } catch (authApiError) {
-      console.log('⚠️ Auth API failed, trying RPC function...');
+      console.log('⚠️ Auth API failed, trying profiles table as fallback...');
       
-      // Method 2: Try the RPC function as fallback
+      // Method 2: Final fallback to profiles table
       try {
-        const { data: rpcUsers, error: rpcError } = await supabase.rpc('get_user_registrations');
+        const { data: profileUsers, error: profileError } = await supabase
+          .from('profiles')
+          .select('id, first_name, last_name, subscription_type, subscription_expires_at, wedding_date, guest_count, created_at')
+          .order('created_at', { ascending: false });
         
-        if (rpcError) {
-          console.error('❌ RPC error:', rpcError);
-          throw rpcError;
+        if (profileError) {
+          console.error('❌ Profiles error:', profileError);
+          throw profileError;
         }
         
-        if (rpcUsers && rpcUsers.length > 0) {
-          console.log(`✅ Successfully fetched ${rpcUsers.length} users from RPC`);
-          users = rpcUsers;
-          method = 'rpc';
+        if (profileUsers && profileUsers.length > 0) {
+          console.log(`✅ Successfully fetched ${profileUsers.length} users from profiles table`);
+          
+          users = profileUsers.map(profile => ({
+            id: profile.id,
+            email: 'Email non disponible',
+            created_at: profile.created_at,
+            raw_user_meta_data: {
+              first_name: profile.first_name,
+              last_name: profile.last_name
+            },
+            profile: {
+              first_name: profile.first_name,
+              last_name: profile.last_name,
+              subscription_type: profile.subscription_type,
+              subscription_expires_at: profile.subscription_expires_at,
+              wedding_date: profile.wedding_date,
+              guest_count: profile.guest_count
+            }
+          }));
+          
+          method = 'profiles_fallback';
         } else {
-          throw new Error('No users found via RPC');
+          throw new Error('No users found in profiles table');
         }
-      } catch (rpcError) {
-        console.log('⚠️ RPC failed, trying profiles table as final fallback...');
-        
-        // Method 3: Final fallback to profiles table
-        try {
-          const { data: profileUsers, error: profileError } = await supabase
-            .from('profiles')
-            .select('id, first_name, last_name, created_at')
-            .order('created_at', { ascending: false });
-          
-          if (profileError) {
-            console.error('❌ Profiles error:', profileError);
-            throw profileError;
-          }
-          
-          if (profileUsers && profileUsers.length > 0) {
-            console.log(`✅ Successfully fetched ${profileUsers.length} users from profiles table`);
-            
-            users = profileUsers.map(profile => ({
-              id: profile.id,
-              email: 'Email non disponible',
-              created_at: profile.created_at,
-              raw_user_meta_data: {
-                first_name: profile.first_name,
-                last_name: profile.last_name
-              }
-            }));
-            
-            method = 'profiles_fallback';
-          } else {
-            throw new Error('No users found in profiles table');
-          }
-        } catch (profileError) {
-          console.error('❌ All methods failed:', profileError);
-          throw new Error('Unable to fetch users from any source');
-        }
+      } catch (profileError) {
+        console.error('❌ All methods failed:', profileError);
+        throw new Error('Unable to fetch users from any source');
       }
     }
 

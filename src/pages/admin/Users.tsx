@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminLayout from '@/components/admin/AdminLayout';
@@ -14,16 +15,26 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Search, User, Mail, Calendar, RefreshCw, AlertTriangle } from 'lucide-react';
+import { Search, User, Mail, Calendar, RefreshCw, AlertTriangle, Crown, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
+import { useUserStatus, getStatusBadgeProps, UserStatus } from '@/hooks/useUserStatus';
 
 interface UserRegistration {
   id: string;
   email: string;
   created_at: string;
   raw_user_meta_data: any;
+  profile?: {
+    first_name?: string;
+    last_name?: string;
+    subscription_type?: string;
+    subscription_expires_at?: string;
+    wedding_date?: string;
+    guest_count?: number;
+  };
 }
 
 const AdminUsers = () => {
@@ -32,6 +43,7 @@ const AdminUsers = () => {
   const [users, setUsers] = useState<UserRegistration[]>([]);
   const [filteredUsers, setFilteredUsers] = useState<UserRegistration[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState<string>('all');
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -53,13 +65,22 @@ const AdminUsers = () => {
     if (searchTerm) {
       filtered = filtered.filter(user => 
         user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.profile?.first_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.profile?.last_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         user.raw_user_meta_data?.first_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         user.raw_user_meta_data?.last_name?.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
+    if (statusFilter !== 'all') {
+      filtered = filtered.filter(user => {
+        const status = getUserStatus(user.profile);
+        return status === statusFilter;
+      });
+    }
+
     setFilteredUsers(filtered);
-  }, [searchTerm, users]);
+  }, [searchTerm, statusFilter, users]);
 
   const fetchUsers = async () => {
     try {
@@ -68,7 +89,6 @@ const AdminUsers = () => {
       
       console.log('🚀 Début de la récupération des utilisateurs...');
       
-      // Utiliser le Service Role Key pour récupérer tous les utilisateurs
       const userData = await fetchAllUsers();
       
       console.log(`✅ ${userData.length} utilisateurs récupérés avec succès`);
@@ -94,6 +114,28 @@ const AdminUsers = () => {
     }
   };
 
+  const getUserStatus = (profile: UserRegistration['profile']): UserStatus => {
+    if (!profile) return 'free';
+    
+    const subscriptionType = profile.subscription_type;
+    const expiresAt = profile.subscription_expires_at;
+    
+    if (subscriptionType === 'premium') {
+      if (!expiresAt) return 'premium';
+      
+      const expirationDate = new Date(expiresAt);
+      const now = new Date();
+      
+      if (expirationDate > now) {
+        return 'premium';
+      } else {
+        return 'expired';
+      }
+    }
+    
+    return 'free';
+  };
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('fr-FR', {
       year: 'numeric',
@@ -105,19 +147,35 @@ const AdminUsers = () => {
   };
 
   const getFullName = (user: UserRegistration) => {
-    const firstName = user.raw_user_meta_data?.first_name || '';
-    const lastName = user.raw_user_meta_data?.last_name || '';
+    const firstName = user.profile?.first_name || user.raw_user_meta_data?.first_name || '';
+    const lastName = user.profile?.last_name || user.raw_user_meta_data?.last_name || '';
     return firstName || lastName ? `${firstName} ${lastName}`.trim() : 'Non renseigné';
-  };
-
-  const getPhone = (user: UserRegistration) => {
-    return user.raw_user_meta_data?.phone || 'Non renseigné';
   };
 
   const getRecentUsers = () => {
     const weekAgo = new Date();
     weekAgo.setDate(weekAgo.getDate() - 7);
     return users.filter(user => new Date(user.created_at) >= weekAgo).length;
+  };
+
+  const getPremiumUsers = () => {
+    return users.filter(user => getUserStatus(user.profile) === 'premium').length;
+  };
+
+  const getExpiredUsers = () => {
+    return users.filter(user => getUserStatus(user.profile) === 'expired').length;
+  };
+
+  const StatusBadge = ({ user }: { user: UserRegistration }) => {
+    const status = getUserStatus(user.profile);
+    const badgeProps = getStatusBadgeProps(status);
+    
+    return (
+      <Badge variant={badgeProps.variant} className={badgeProps.className}>
+        {status === 'premium' && <Crown className="h-3 w-3 mr-1" />}
+        {badgeProps.text}
+      </Badge>
+    );
   };
 
   if (isLoading) {
@@ -165,11 +223,11 @@ const AdminUsers = () => {
         )}
 
         {/* Métriques */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Total Utilisateurs</CardTitle>
-              <User className="h-4 w-4 text-muted-foreground" />
+              <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-wedding-olive">{users.length}</div>
@@ -178,39 +236,62 @@ const AdminUsers = () => {
           
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Nouveaux (7j)</CardTitle>
-              <Calendar className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm font-medium">Utilisateurs Premium</CardTitle>
+              <Crown className="h-4 w-4 text-green-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-green-600">{getRecentUsers()}</div>
+              <div className="text-2xl font-bold text-green-600">{getPremiumUsers()}</div>
             </CardContent>
           </Card>
           
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Comptes Actifs</CardTitle>
-              <Badge variant="outline" className="text-green-600">Actif</Badge>
+              <CardTitle className="text-sm font-medium">Abonnements Expirés</CardTitle>
+              <Calendar className="h-4 w-4 text-orange-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-blue-600">{users.length}</div>
+              <div className="text-2xl font-bold text-orange-600">{getExpiredUsers()}</div>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Nouveaux (7j)</CardTitle>
+              <User className="h-4 w-4 text-blue-600" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-blue-600">{getRecentUsers()}</div>
             </CardContent>
           </Card>
         </div>
 
-        {/* Recherche */}
+        {/* Filtres */}
         <Card>
           <CardHeader>
-            <CardTitle>Recherche</CardTitle>
+            <CardTitle>Filtres</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-              <Input
-                placeholder="Rechercher par nom ou email..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                <Input
+                  placeholder="Rechercher par nom ou email..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="w-full sm:w-[200px]">
+                  <SelectValue placeholder="Filtrer par statut" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Tous les statuts</SelectItem>
+                  <SelectItem value="premium">Premium</SelectItem>
+                  <SelectItem value="expired">Expirés</SelectItem>
+                  <SelectItem value="free">Gratuit</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </CardContent>
         </Card>
@@ -242,7 +323,8 @@ const AdminUsers = () => {
                     <TableRow>
                       <TableHead>Nom Complet</TableHead>
                       <TableHead>Email</TableHead>
-                      <TableHead>Téléphone</TableHead>
+                      <TableHead>Date de mariage</TableHead>
+                      <TableHead>Nb. invités</TableHead>
                       <TableHead>Date d'inscription</TableHead>
                       <TableHead>Statut</TableHead>
                     </TableRow>
@@ -267,12 +349,15 @@ const AdminUsers = () => {
                           </div>
                         </TableCell>
                         <TableCell>
-                          <div className="flex items-center gap-2">
-                            <User className="h-4 w-4 text-gray-400" />
-                            <span className={getPhone(user) === 'Non renseigné' ? 'text-gray-400 italic' : ''}>
-                              {getPhone(user)}
-                            </span>
-                          </div>
+                          {user.profile?.wedding_date ? 
+                            formatDate(user.profile.wedding_date) : 
+                            <span className="text-gray-400 italic">Non renseigné</span>
+                          }
+                        </TableCell>
+                        <TableCell>
+                          {user.profile?.guest_count || 
+                            <span className="text-gray-400 italic">Non renseigné</span>
+                          }
                         </TableCell>
                         <TableCell>
                           <div className="flex items-center gap-2">
@@ -281,9 +366,12 @@ const AdminUsers = () => {
                           </div>
                         </TableCell>
                         <TableCell>
-                          <Badge variant="outline" className="text-green-600 border-green-600">
-                            Actif
-                          </Badge>
+                          <StatusBadge user={user} />
+                          {user.profile?.subscription_expires_at && getUserStatus(user.profile) === 'premium' && (
+                            <div className="text-xs text-gray-500 mt-1">
+                              Expire le {formatDate(user.profile.subscription_expires_at)}
+                            </div>
+                          )}
                         </TableCell>
                       </TableRow>
                     ))}

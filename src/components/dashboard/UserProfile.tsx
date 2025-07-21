@@ -1,41 +1,19 @@
 
-import React, { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { LogOut, User } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { LogOut, User, Crown, Calendar } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
+import { useUserProfile } from '@/hooks/useUserProfile';
+import StripeButton from '@/components/premium/StripeButton';
 
 const UserProfile: React.FC = () => {
-  const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const { profile, isPremium, loading } = useUserProfile();
   const { toast } = useToast();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        setLoading(true);
-        const { data: { user } } = await supabase.auth.getUser();
-        
-        if (user) {
-          setUser({
-            id: user.id,
-            email: user.email,
-            firstName: user.user_metadata?.first_name || '',
-            lastName: user.user_metadata?.last_name || ''
-          });
-        }
-      } catch (error) {
-        console.error('Error fetching user data:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUserData();
-  }, []);
 
   const handleLogout = async () => {
     try {
@@ -56,6 +34,30 @@ const UserProfile: React.FC = () => {
     }
   };
 
+  const getStatusBadge = () => {
+    if (isPremium) {
+      return (
+        <Badge className="bg-green-500 text-white hover:bg-green-600">
+          <Crown className="w-3 h-3 mr-1" />
+          Premium
+        </Badge>
+      );
+    }
+    return (
+      <Badge variant="secondary" className="bg-gray-500 text-white hover:bg-gray-600">
+        Gratuit
+      </Badge>
+    );
+  };
+
+  const formatExpirationDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('fr-FR', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
+
   return (
     <Card className="shadow-sm">
       <CardHeader>
@@ -68,28 +70,61 @@ const UserProfile: React.FC = () => {
           <div className="flex justify-center py-4">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-wedding-olive"></div>
           </div>
-        ) : user ? (
+        ) : profile ? (
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <p className="text-sm text-gray-500">Prénom</p>
-                <p className="font-medium">{user.firstName || 'Non défini'}</p>
+                <p className="font-medium">{profile.first_name || 'Non défini'}</p>
               </div>
               <div>
                 <p className="text-sm text-gray-500">Nom</p>
-                <p className="font-medium">{user.lastName || 'Non défini'}</p>
+                <p className="font-medium">{profile.last_name || 'Non défini'}</p>
               </div>
             </div>
-            <div>
-              <p className="text-sm text-gray-500">Email</p>
-              <p className="font-medium">{user.email}</p>
+
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-gray-500">Statut d'abonnement</span>
+                {getStatusBadge()}
+              </div>
+              
+              {isPremium && profile.subscription_expires_at && (
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <Calendar className="w-4 h-4" />
+                  <span>Expire le {formatExpirationDate(profile.subscription_expires_at)}</span>
+                </div>
+              )}
             </div>
-            <Button 
-              onClick={handleLogout} 
-              className="flex items-center gap-2 bg-wedding-olive hover:bg-wedding-olive/80 w-full mt-4"
-            >
-              <LogOut size={16} /> Se déconnecter
-            </Button>
+
+            {profile.wedding_date && (
+              <div>
+                <p className="text-sm text-gray-500">Date de mariage</p>
+                <p className="font-medium">{formatExpirationDate(profile.wedding_date)}</p>
+              </div>
+            )}
+
+            {profile.guest_count && (
+              <div>
+                <p className="text-sm text-gray-500">Nombre d'invités</p>
+                <p className="font-medium">{profile.guest_count}</p>
+              </div>
+            )}
+
+            <div className="pt-4 space-y-2">
+              {!isPremium && (
+                <div className="mb-3">
+                  <StripeButton />
+                </div>
+              )}
+              
+              <Button 
+                onClick={handleLogout} 
+                className="flex items-center gap-2 bg-wedding-olive hover:bg-wedding-olive/80 w-full"
+              >
+                <LogOut size={16} /> Se déconnecter
+              </Button>
+            </div>
           </div>
         ) : (
           <p>Aucune information disponible</p>
