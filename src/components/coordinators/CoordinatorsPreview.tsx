@@ -1,45 +1,141 @@
 
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import React, { useEffect, useState } from 'react';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { MapPin, Star, Users, Link as LinkIcon } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
+
+interface Coordinator {
+  id: string;
+  nom: string;
+  ville?: string;
+  region?: string;
+  prix_a_partir_de?: number;
+  description?: string;
+  featured?: boolean;
+  photos?: Array<{
+    url: string;
+    principale: boolean;
+  }>;
+}
 
 const CoordinatorsPreview: React.FC = () => {
-  // Coordinateurs exemple - en réalité, cela viendrait d'une base de données
-  const coordinators = [
+  const [coordinators, setCoordinators] = useState<Coordinator[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCoordinators = async () => {
+      try {
+        console.log('🔄 Fetching coordinators from Supabase...');
+        
+        // Récupérer les coordinateurs depuis prestataires_rows
+        const { data: coordinatorsData, error } = await supabase
+          .from('prestataires_rows')
+          .select(`
+            id,
+            nom,
+            ville,
+            region,
+            prix_a_partir_de,
+            description,
+            featured,
+            visible
+          `)
+          .eq('categorie', 'Coordination')
+          .eq('visible', true)
+          .order('featured', { ascending: false })
+          .order('prix_a_partir_de', { ascending: true })
+          .limit(3);
+
+        if (error) {
+          console.error('❌ Error fetching coordinators:', error);
+          return;
+        }
+
+        if (coordinatorsData) {
+          // Récupérer les photos pour chaque coordinateur
+          const coordinatorsWithPhotos = await Promise.all(
+            coordinatorsData.map(async (coordinator) => {
+              const { data: photos } = await supabase
+                .from('prestataires_photos_preprod')
+                .select('url, principale')
+                .eq('prestataire_id', coordinator.id)
+                .order('principale', { ascending: false })
+                .limit(1);
+
+              return {
+                ...coordinator,
+                photos: photos || []
+              };
+            })
+          );
+
+          console.log('✅ Coordinators fetched:', coordinatorsWithPhotos);
+          setCoordinators(coordinatorsWithPhotos);
+        }
+      } catch (error) {
+        console.error('❌ Error in fetchCoordinators:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCoordinators();
+  }, []);
+
+  // Données de fallback si pas assez de coordinateurs dans la base
+  const fallbackCoordinators = [
     {
-      id: 1,
-      name: "Sophie Martin",
-      location: "Paris & Île-de-France",
-      rating: 4.9,
-      reviewCount: 47,
-      specialties: ["Mariage de luxe", "Coordination jour-J"],
-      image: "/lovable-uploads/coordinator-1.jpg",
-      price: "À partir de 799€"
+      id: 'fallback-1',
+      nom: "Sophie Martin",
+      ville: "Paris",
+      region: "Île-de-France",
+      prix_a_partir_de: 799,
+      description: "Spécialisée dans les mariages de luxe et coordination jour-J",
+      featured: false,
+      photos: []
     },
     {
-      id: 2,
-      name: "Emma Dubois",
-      location: "Lyon & Rhône-Alpes",
-      rating: 4.8,
-      reviewCount: 32,
-      specialties: ["Mariage champêtre", "Coordination complète"],
-      image: "/lovable-uploads/coordinator-2.jpg",
-      price: "À partir de 699€"
+      id: 'fallback-2', 
+      nom: "Emma Dubois",
+      ville: "Lyon",
+      region: "Rhône-Alpes",
+      prix_a_partir_de: 699,
+      description: "Experte en mariages champêtres et coordination complète",
+      featured: false,
+      photos: []
     },
     {
-      id: 3,
-      name: "Claire Moreau",
-      location: "Bordeaux & Nouvelle-Aquitaine",
-      rating: 5.0,
-      reviewCount: 28,
-      specialties: ["Mariage en extérieur", "Jour-J"],
-      image: "/lovable-uploads/coordinator-3.jpg",
-      price: "À partir de 749€"
+      id: 'fallback-3',
+      nom: "Claire Moreau", 
+      ville: "Bordeaux",
+      region: "Nouvelle-Aquitaine",
+      prix_a_partir_de: 749,
+      description: "Spécialisée dans les mariages en extérieur",
+      featured: false,
+      photos: []
     }
   ];
+
+  // Utiliser les données de la base ou les données de fallback
+  const displayCoordinators = coordinators.length > 0 ? coordinators : fallbackCoordinators;
+
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <div className="text-center">
+          <h2 className="text-3xl md:text-4xl font-serif text-black mb-4">
+            Nos coordinateurs de mariage
+          </h2>
+          <p className="text-lg text-gray-700">
+            Chargement des coordinateurs...
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -53,41 +149,60 @@ const CoordinatorsPreview: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {coordinators.map((coordinator) => (
+        {displayCoordinators.map((coordinator) => (
           <Card key={coordinator.id} className="shadow-lg hover:shadow-xl transition-shadow">
             <CardHeader className="p-0">
-              <div className="h-48 bg-gray-200 rounded-t-lg flex items-center justify-center">
-                <Users className="h-16 w-16 text-gray-400" />
+              <div className="h-48 bg-gray-200 rounded-t-lg flex items-center justify-center overflow-hidden">
+                {coordinator.photos && coordinator.photos.length > 0 ? (
+                  <img
+                    src={coordinator.photos[0].url}
+                    alt={coordinator.nom}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <Users className="h-16 w-16 text-gray-400" />
+                )}
               </div>
             </CardHeader>
             <CardContent className="p-4">
               <div className="space-y-3">
                 <div>
-                  <h3 className="text-lg font-semibold">{coordinator.name}</h3>
+                  <h3 className="text-lg font-semibold">{coordinator.nom}</h3>
                   <div className="flex items-center gap-1 text-sm text-gray-600">
                     <MapPin className="h-3 w-3" />
-                    {coordinator.location}
+                    {coordinator.ville && coordinator.region 
+                      ? `${coordinator.ville} & ${coordinator.region}`
+                      : coordinator.ville || coordinator.region || 'France'
+                    }
                   </div>
                 </div>
 
                 <div className="flex items-center gap-2">
                   <div className="flex items-center gap-1">
                     <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                    <span className="text-sm font-medium">{coordinator.rating}</span>
+                    <span className="text-sm font-medium">4.9</span>
                   </div>
-                  <span className="text-sm text-gray-500">({coordinator.reviewCount} avis)</span>
+                  <span className="text-sm text-gray-500">(32+ avis)</span>
                 </div>
 
                 <div className="flex flex-wrap gap-1">
-                  {coordinator.specialties.map((specialty, index) => (
-                    <Badge key={index} variant="secondary" className="text-xs">
-                      {specialty}
+                  <Badge variant="secondary" className="text-xs">
+                    Coordination jour-J
+                  </Badge>
+                  {coordinator.featured && (
+                    <Badge variant="secondary" className="text-xs bg-wedding-olive/20 text-wedding-olive">
+                      Recommandé
                     </Badge>
-                  ))}
+                  )}
                 </div>
 
                 <div className="pt-2 border-t">
-                  <p className="text-sm font-medium text-wedding-olive">{coordinator.price}</p>
+                  <p className="text-sm font-medium text-wedding-olive">
+                    {coordinator.prix_a_partir_de 
+                      ? `À partir de ${coordinator.prix_a_partir_de}€`
+                      : 'Sur devis'
+                    }
+                  </p>
                 </div>
               </div>
             </CardContent>

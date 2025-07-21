@@ -1,20 +1,35 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-import StripeButton from '@/components/premium/StripeButton';
+import PaymentModal from './PaymentModal';
 
 interface FormulaCTAButtonProps {
   formula: 'libre' | 'sereine' | 'privilege';
 }
 
 const FormulaCTAButton: React.FC<FormulaCTAButtonProps> = ({ formula }) => {
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+
   const getButtonConfig = () => {
     switch (formula) {
       case 'libre':
         return {
           text: 'Commencer',
-          component: <StripeButton />,
+          component: (
+            <>
+              <Button 
+                onClick={() => setShowPaymentModal(true)}
+                className="bg-wedding-olive hover:bg-wedding-olive/90 text-white w-full"
+              >
+                Commencer
+              </Button>
+              <PaymentModal 
+                isOpen={showPaymentModal} 
+                onClose={() => setShowPaymentModal(false)} 
+              />
+            </>
+          ),
         };
       case 'sereine':
         return {
