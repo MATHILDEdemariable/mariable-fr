@@ -6,18 +6,14 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CheckCircle, Mail, Phone, Smartphone, Users, Calendar, X, ArrowLeft, Clock, Palette, Building, FileText, CreditCard, ChevronDown, Play } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import FormulaCTAButton from '@/components/pricing/FormulaCTAButton';
+import CoordinatorsPreview from '@/components/coordinators/CoordinatorsPreview';
+
 const Pricing = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
-  const scrollToDemo = () => {
-    const demoSection = document.getElementById('demo-section');
-    if (demoSection) {
-      demoSection.scrollIntoView({
-        behavior: 'smooth'
-      });
-    }
-  };
+
   const scrollToCommentCaMarche = () => {
     const commentSection = document.getElementById('comment-ca-marche');
     if (commentSection) {
@@ -26,23 +22,27 @@ const Pricing = () => {
       });
     }
   };
-  const handleReservationClick = () => {
-    window.scrollTo(0, 0);
-  };
-  const faqData = [{
-    id: 1,
-    question: "Puis-je modifier la formule plus tard ?",
-    answer: "Oui, vous pouvez upgrader votre formule jusqu'à J-30. Un ajustement tarifaire sera appliqué au prorata du temps restant jusqu'à votre mariage."
-  }, {
-    id: 2,
-    question: "La présence terrain, c'est quoi exactement ?",
-    answer: "Un manager Mariable est physiquement présent le jour J pour superviser le déroulement, coordonner les prestataires et gérer les imprévus."
-  }, {
-    id: 3,
-    question: "Puis-je utiliser l'app avec ma famille ?",
-    answer: "Oui justement, l'application est faite pour être collaborative - chacun peut accéder à son planning et aux informations importantes."
-  }];
-  return <div className="min-h-screen flex flex-col bg-white">
+
+  const faqData = [
+    {
+      id: 1,
+      question: "Puis-je modifier la formule plus tard ?",
+      answer: "Oui, vous pouvez upgrader votre formule jusqu'à J-30. Un ajustement tarifaire sera appliqué au prorata du temps restant jusqu'à votre mariage."
+    },
+    {
+      id: 2,
+      question: "La présence terrain, c'est quoi exactement ?",
+      answer: "Un manager Mariable est physiquement présent le jour J pour superviser le déroulement, coordonner les prestataires et gérer les imprévus."
+    },
+    {
+      id: 3,
+      question: "Puis-je utiliser l'app avec ma famille ?",
+      answer: "Oui justement, l'application est faite pour être collaborative - chacun peut accéder à son planning et aux informations importantes."
+    }
+  ];
+
+  return (
+    <div className="min-h-screen flex flex-col bg-white">
       <Helmet>
         <title>Détail - Coordination Jour M | Mariable</title>
         <meta name="description" content="Découvrez nos formules de coordination pour le jour J et choisissez le service qui vous correspond" />
@@ -67,10 +67,9 @@ const Pricing = () => {
               <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif text-black mb-6">
                 Détail - Coordination Jour M
               </h1>
-              
             </div>
 
-            {/* Section Démo - Position 1 */}
+            {/* Section Démo */}
             <section id="demo-section" className="py-16 bg-gray-50 rounded-xl mb-16">
               <div className="container mx-auto px-4">
                 <div className="text-center mb-12">
@@ -84,20 +83,25 @@ const Pricing = () => {
 
                 <div className="max-w-4xl mx-auto">
                   <div className="relative w-full" style={{
-                  paddingBottom: '56.25%',
-                  height: 0
-                }}>
-                    <iframe src="https://www.loom.com/embed/a0d0d52de99d4af59d67604f01c8af14?sid=72174f71-1964-4904-9f5a-c7d71faff046" frameBorder="0" allowFullScreen className="absolute top-0 left-0 w-full h-full rounded-lg shadow-lg" title="Démo Mariable Jour-M"></iframe>
+                    paddingBottom: '56.25%',
+                    height: 0
+                  }}>
+                    <iframe 
+                      src="https://www.loom.com/embed/a0d0d52de99d4af59d67604f01c8af14?sid=72174f71-1964-4904-9f5a-c7d71faff046" 
+                      frameBorder="0" 
+                      allowFullScreen 
+                      className="absolute top-0 left-0 w-full h-full rounded-lg shadow-lg" 
+                      title="Démo Mariable Jour-M"
+                    />
                   </div>
                 </div>
               </div>
             </section>
 
-            {/* Section Formules Jour-M - Position 2 */}
+            {/* Section Formules Jour-M */}
             <section className="py-8 md:py-16 bg-white rounded-xl mb-16">
               <div className="container mx-auto px-4">
                 <div className="max-w-6xl mx-auto mb-8">
-                  {/* Tableau comparatif */}
                   <div className="bg-white rounded-lg shadow-lg overflow-hidden">
                     <div className="overflow-x-auto">
                       <table className="w-full min-w-[600px]">
@@ -209,30 +213,49 @@ const Pricing = () => {
                               <CheckCircle className="h-5 w-5 text-green-500 mx-auto" />
                             </td>
                           </tr>
+                          <tr className="bg-gray-50">
+                            <td className="px-3 sm:px-6 py-4 font-medium text-gray-900 text-sm sm:text-base">Action</td>
+                            <td className="px-3 sm:px-6 py-4 text-center">
+                              <FormulaCTAButton formula="libre" />
+                            </td>
+                            <td className="px-3 sm:px-6 py-4 text-center bg-gray-100">
+                              <FormulaCTAButton formula="sereine" />
+                            </td>
+                            <td className="px-3 sm:px-6 py-4 text-center">
+                              <FormulaCTAButton formula="privilege" />
+                            </td>
+                          </tr>
                         </tbody>
                       </table>
                     </div>
                     
-                    {/* Boutons mis à jour avec Réserver */}
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8 p-6">
-                      <Button asChild className="bg-wedding-olive hover:bg-wedding-olive/90 text-white w-full sm:w-auto">
-                        <Link to="/coordinateurs-mariage">Voir les coordinateurs</Link>
-                      </Button>
-                      <Button onClick={scrollToCommentCaMarche} className="bg-wedding-olive hover:bg-wedding-olive/90 text-white w-full sm:w-auto">
-                        En savoir plus
-                      </Button>
-                      <Button asChild className="bg-wedding-olive hover:bg-wedding-olive/90 text-white w-full sm:w-auto">
-                        <Link to="/reservation-jour-m">
-                          Réserver
-                        </Link>
-                      </Button>
+                    {/* Section En savoir plus sur la formule privilège */}
+                    <div className="p-6 bg-gray-50 border-t">
+                      <h3 className="text-xl font-serif text-center mb-4">
+                        En savoir plus sur la formule privilège
+                      </h3>
+                      <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                        <Button onClick={scrollToCommentCaMarche} className="bg-wedding-olive hover:bg-wedding-olive/90 text-white w-full sm:w-auto">
+                          En savoir plus
+                        </Button>
+                        <Button asChild className="bg-wedding-olive hover:bg-wedding-olive/90 text-white w-full sm:w-auto">
+                          <Link to="/coordinateurs-mariage">Voir les coordinateurs</Link>
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </section>
 
-            {/* Section Options supplémentaires - Position 3 */}
+            {/* Section Coordinateurs */}
+            <section className="py-16 bg-gray-50 rounded-xl mb-16">
+              <div className="container mx-auto px-4">
+                <CoordinatorsPreview />
+              </div>
+            </section>
+
+            {/* Section Options supplémentaires */}
             <section className="py-16 bg-white">
               <div className="container mx-auto px-4">
                 <div className="text-center mb-12">
@@ -346,7 +369,7 @@ const Pricing = () => {
               </div>
             </section>
 
-            {/* Section Comment ça marche - Position 4 */}
+            {/* Section Comment ça marche */}
             <section id="comment-ca-marche" className="py-16 bg-gray-50 rounded-xl mb-16">
               <div className="container mx-auto px-4">
                 <div className="text-center mb-12">
@@ -354,20 +377,17 @@ const Pricing = () => {
                     Comment ça marche ?
                   </h2>
                   <p className="text-lg text-gray-700 mb-2">
-                    <span>Le processus de coordination <b>"Le Jour M"</b> en 5 étapes
+                    Le processus de coordination <b>"Le Jour M"</b> en 5 étapes
                     <br />
                     <span className="inline-block mt-2 text-wedding-olive font-semibold">Applicable uniquement aux formules Sereine &amp; Privilège</span>
-                    </span>
                   </p>
                 </div>
 
                 <div className="max-w-4xl mx-auto">
                   <div className="relative">
-                    {/* Timeline line */}
                     <div className="absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-wedding-olive/30 hidden md:block"></div>
 
                     <div className="space-y-12">
-                      {/* Étape 1 */}
                       <div className="flex flex-col md:flex-row items-center gap-8">
                         <div className="md:w-1/2 text-right">
                           <div className="bg-white p-6 rounded-lg shadow-md">
@@ -388,7 +408,6 @@ const Pricing = () => {
                         <div className="md:w-1/2"></div>
                       </div>
 
-                      {/* Étape 2 */}
                       <div className="flex flex-col md:flex-row items-center gap-8">
                         <div className="md:w-1/2"></div>
                         <div className="relative z-10">
@@ -409,7 +428,6 @@ const Pricing = () => {
                         </div>
                       </div>
 
-                      {/* Étape 3 */}
                       <div className="flex flex-col md:flex-row items-center gap-8">
                         <div className="md:w-1/2 text-right">
                           <div className="bg-white p-6 rounded-lg shadow-md">
@@ -430,7 +448,6 @@ const Pricing = () => {
                         <div className="md:w-1/2"></div>
                       </div>
 
-                      {/* Étape 4 */}
                       <div className="flex flex-col md:flex-row items-center gap-8">
                         <div className="md:w-1/2"></div>
                         <div className="relative z-10">
@@ -451,7 +468,6 @@ const Pricing = () => {
                         </div>
                       </div>
 
-                      {/* Étape 5 */}
                       <div className="flex flex-col md:flex-row items-center gap-8">
                         <div className="md:w-1/2 text-right">
                           <div className="bg-white p-6 rounded-lg shadow-md">
@@ -477,18 +493,6 @@ const Pricing = () => {
               </div>
             </section>
 
-            {/* Bouton CTA Réserver */}
-            <section className="py-8 bg-white text-center">
-              <div className="container mx-auto px-4">
-                <Button asChild size="lg" className="bg-wedding-olive hover:bg-wedding-olive/90 text-white" onClick={handleReservationClick}>
-                  <Link to="/reservation-jour-m">
-                    Réserver
-                  </Link>
-                </Button>
-              </div>
-            </section>
-
-
             {/* Section FAQ */}
             <section className="py-16 bg-gray-50 rounded-xl mt-16">
               <div className="container mx-auto px-4">
@@ -502,7 +506,8 @@ const Pricing = () => {
                 </div>
 
                 <div className="max-w-4xl mx-auto space-y-6">
-                  {faqData.map(faq => <Card key={faq.id} className="bg-white shadow-md">
+                  {faqData.map((faq) => (
+                    <Card key={faq.id} className="bg-white shadow-md">
                       <CardContent className="p-6">
                         <div className="flex items-start gap-4">
                           <div className="flex-shrink-0 w-8 h-8 bg-wedding-olive rounded-full flex items-center justify-center">
@@ -518,7 +523,8 @@ const Pricing = () => {
                           </div>
                         </div>
                       </CardContent>
-                    </Card>)}
+                    </Card>
+                  ))}
                 </div>
               </div>
             </section>
@@ -527,6 +533,8 @@ const Pricing = () => {
       </main>
       
       <Footer />
-    </div>;
+    </div>
+  );
 };
+
 export default Pricing;

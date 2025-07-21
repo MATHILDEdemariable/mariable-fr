@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -14,6 +14,7 @@ const UserProfile: React.FC = () => {
   const { profile, isPremium, loading } = useUserProfile();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const [showStripeButton, setShowStripeButton] = useState(false);
 
   const handleLogout = async () => {
     try {
@@ -56,6 +57,10 @@ const UserProfile: React.FC = () => {
       month: 'long',
       day: 'numeric'
     });
+  };
+
+  const handleUpgradeToPremium = () => {
+    setShowStripeButton(true);
   };
 
   return (
@@ -114,7 +119,17 @@ const UserProfile: React.FC = () => {
             <div className="pt-4 space-y-2">
               {!isPremium && (
                 <div className="mb-3">
-                  <StripeButton />
+                  {showStripeButton ? (
+                    <StripeButton />
+                  ) : (
+                    <Button 
+                      onClick={handleUpgradeToPremium}
+                      className="bg-wedding-olive hover:bg-wedding-olive/90 text-white w-full"
+                    >
+                      <Crown className="w-4 h-4 mr-2" />
+                      Passer au Premium
+                    </Button>
+                  )}
                 </div>
               )}
               
