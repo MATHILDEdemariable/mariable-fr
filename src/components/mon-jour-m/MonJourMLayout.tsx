@@ -36,7 +36,7 @@ const MonJourMLayout: React.FC<MonJourMLayoutProps> = ({ children, coordinationI
                 </Link>
               </Button>
               <div className="h-6 w-px bg-gray-300 hidden sm:block" />
-              <h1 className="text-lg sm:text-2xl font-semibold text-gray-900 truncate">Mon Jour-M</h1>
+              <h1 className="text-lg sm:text-2xl font-semibold text-gray-900 truncate">Mon Jour-J</h1>
             </div>
 
             {/* Bouton de partage - conditionnel - optimisé pour mobile */}

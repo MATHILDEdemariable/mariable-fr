@@ -30,12 +30,22 @@ interface PersonalizedScenarioTabProps {
   onSelectSuggestion: (suggestion: { title: string; description: string; category: string; priority: string; duration: number }) => Promise<void>;
   onClose: () => void;
   onPlanningGenerated?: (events: PlanningEvent[]) => void;
+  premiumAction?: {
+    executeAction: (action: () => void) => void;
+    showPremiumModal: boolean;
+    closePremiumModal: () => void;
+    isPremium: boolean;
+    loading: boolean;
+    feature: string;
+    description: string;
+  };
 }
 
 const PersonalizedScenarioTab: React.FC<PersonalizedScenarioTabProps> = ({
   onSelectSuggestion,
   onClose,
-  onPlanningGenerated
+  onPlanningGenerated,
+  premiumAction
 }) => {
   const [scenario, setScenario] = useState('');
   const [referenceTime, setReferenceTime] = useState('15:00');
@@ -63,6 +73,16 @@ const PersonalizedScenarioTab: React.FC<PersonalizedScenarioTabProps> = ({
       });
       return;
     }
+
+    // Bloquer l'action si l'utilisateur n'est pas premium
+    if (premiumAction) {
+      premiumAction.executeAction(generatePersonalizedPlanning);
+    } else {
+      generatePersonalizedPlanning();
+    }
+  };
+
+  const generatePersonalizedPlanning = async () => {
 
     console.log('🎯 Generating personalized planning from scenario with reference time:', referenceTime);
     setIsGenerating(true);

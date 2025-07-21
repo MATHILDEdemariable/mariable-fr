@@ -134,6 +134,11 @@ const UnifiedTaskModal: React.FC<UnifiedTaskModalProps> = ({
     description: "Pour ajouter des étapes suggérées à votre planning, vous devez être abonné à notre version premium."
   });
 
+  const aiPersonalizedAction = usePremiumAction({
+    feature: "IA Personnalisé",
+    description: "Pour générer un planning personnalisé avec l'IA, vous devez être abonné à notre version premium."
+  });
+
   // État pour l'ajout manuel
   const [formData, setFormData] = useState({
     title: '',
@@ -479,6 +484,7 @@ const UnifiedTaskModal: React.FC<UnifiedTaskModalProps> = ({
             onSelectSuggestion={async () => {}}
             onClose={onClose}
             onPlanningGenerated={onPlanningGenerated}
+            premiumAction={aiPersonalizedAction}
           />
         </TabsContent>
       </Tabs>
@@ -496,6 +502,13 @@ const UnifiedTaskModal: React.FC<UnifiedTaskModalProps> = ({
         onClose={suggestionsAction.closePremiumModal}
         feature={suggestionsAction.feature}
         description={suggestionsAction.description}
+      />
+
+      <PremiumModal
+        isOpen={aiPersonalizedAction.showPremiumModal}
+        onClose={aiPersonalizedAction.closePremiumModal}
+        feature={aiPersonalizedAction.feature}
+        description={aiPersonalizedAction.description}
       />
     </>
   );

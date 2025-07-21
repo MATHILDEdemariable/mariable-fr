@@ -42,7 +42,7 @@ function Menus({ onClick, isLoggedIn }: { onClick?: () => void, isLoggedIn?: boo
                 onClick={onClick}
               />
               <HeaderDropdownItem
-                label="Mon Jour-M"
+                label="Mon Jour-J"
                 description="Coordonnez tous les détails de votre mariage"
                 to="/mon-jour-m"
                 onClick={onClick}

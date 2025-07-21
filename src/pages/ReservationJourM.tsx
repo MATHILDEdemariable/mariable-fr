@@ -105,14 +105,14 @@ const ReservationJourM = () => {
       price: "Gratuite",
       subtitle: "Inscrivez-vous :-)",
       features: [
-        { icon: Phone, text: "Application de gestion Jour J personnalisable (planning, checklist, guide)", included: true, note: "(sans partage)" },
+        { icon: Phone, text: "Application de gestion Jour-J personnalisable (planning, checklist, guide)", included: true, note: "(sans partage)" },
         { icon: Users, text: "Partage de l'application avec vos proches (mode collaboratif)", included: true },
         { icon: UserCheck, text: "Vues personnalisées par rôle / mission assignée", included: true },
         { icon: FileText, text: "Accès aux documents partagés & assignés", included: true },
         { icon: Bell, text: "Notifications et rappels en temps réel (de J-3 à J+1)", included: false },
-        { icon: Headphones, text: "Hotline Mariable disponible le jour J", included: false },
+        { icon: Headphones, text: "Hotline Mariable disponible le jour-J", included: false },
         { icon: MapPin, text: "Coordination des prestataires en amont (J-15)", included: false },
-        { icon: Users, text: "Présence physique le jour J (8h incluses, horaires adaptables)", included: false }
+        { icon: Users, text: "Présence physique le jour-J (8h incluses, horaires adaptables)", included: false }
       ]
     },
     {
@@ -120,14 +120,14 @@ const ReservationJourM = () => {
       price: "149€",
       subtitle: "",
       features: [
-        { icon: Phone, text: "Application de gestion Jour J personnalisable (planning, checklist, guide)", included: true, note: "(remplie avec notre aide lors d'un RDV visio)" },
+        { icon: Phone, text: "Application de gestion Jour-J personnalisable (planning, checklist, guide)", included: true, note: "(remplie avec notre aide lors d'un RDV visio)" },
         { icon: Users, text: "Partage de l'application avec vos proches (mode collaboratif)", included: true },
         { icon: UserCheck, text: "Vues personnalisées par rôle / mission assignée", included: true },
         { icon: FileText, text: "Accès aux documents partagés & assignés", included: true },
         { icon: Bell, text: "Notifications et rappels en temps réel (de J-3 à J+1)", included: true },
-        { icon: Headphones, text: "Hotline Mariable disponible le jour J", included: true, note: "(option +50€ ou incluse si abonnement ligne directe)" },
+        { icon: Headphones, text: "Hotline Mariable disponible le jour-J", included: true, note: "(option +50€ ou incluse si abonnement ligne directe)" },
         { icon: MapPin, text: "Coordination des prestataires en amont (J-15)", included: false },
-        { icon: Users, text: "Présence physique le jour J (8h incluses, horaires adaptables)", included: false }
+        { icon: Users, text: "Présence physique le jour-J (8h incluses, horaires adaptables)", included: false }
       ]
     },
     {
@@ -135,14 +135,14 @@ const ReservationJourM = () => {
       price: "799€",
       subtitle: "",
       features: [
-        { icon: Phone, text: "Application de gestion Jour J personnalisable (planning, checklist, guide)", included: true, note: "(remplie avec notre aide lors d'un RDV visio)" },
+        { icon: Phone, text: "Application de gestion Jour-J personnalisable (planning, checklist, guide)", included: true, note: "(remplie avec notre aide lors d'un RDV visio)" },
         { icon: Users, text: "Partage de l'application avec vos proches (mode collaboratif)", included: true },
         { icon: UserCheck, text: "Vues personnalisées par rôle / mission assignée", included: true },
         { icon: FileText, text: "Accès aux documents partagés & assignés", included: true },
         { icon: Bell, text: "Notifications et rappels en temps réel (de J-3 à J+1)", included: true },
-        { icon: Headphones, text: "Hotline Mariable disponible le jour J", included: true, note: "(incluse – accès prioritaire)" },
+        { icon: Headphones, text: "Hotline Mariable disponible le jour-J", included: true, note: "(incluse – accès prioritaire)" },
         { icon: MapPin, text: "Coordination des prestataires en amont (J-15)", included: true },
-        { icon: Users, text: "Présence physique le jour J (8h incluses, horaires adaptables)", included: true, note: "(heures supplémentaires possibles)" }
+        { icon: Users, text: "Présence physique le jour-J (8h incluses, horaires adaptables)", included: true, note: "(heures supplémentaires possibles)" }
       ]
     }
   ];
@@ -151,7 +151,7 @@ const ReservationJourM = () => {
   const FormulasTable = () => (
     <Card className="shadow-lg">
       <CardHeader>
-        <CardTitle className="text-center">Nos formules Jour-M</CardTitle>
+        <CardTitle className="text-center">Nos formules Jour-J</CardTitle>
         <p className="text-center text-gray-600">Choisissez votre niveau de sérénité</p>
       </CardHeader>
       <CardContent className="p-0">
@@ -209,8 +209,8 @@ const ReservationJourM = () => {
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <Helmet>
-        <title>Demande de réservation Jour-M | Mariable</title>
-        <meta name="description" content="Réservez votre service de coordination Jour-M avec Mariable" />
+        <title>Demande de réservation Jour-J | Mariable</title>
+        <meta name="description" content="Réservez votre service de coordination Jour-J avec Mariable" />
       </Helmet>
       
       <Header />
@@ -228,7 +228,7 @@ const ReservationJourM = () => {
           
           <div className="text-center mb-8">
             <h1 className="text-3xl md:text-4xl font-serif text-black mb-2">
-              Demande de réservation Jour-M
+              Demande de réservation Jour-J
             </h1>
             <p className="text-lg text-gray-700">
               Confiez-nous la coordination de votre mariage
