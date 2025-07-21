@@ -1211,6 +1211,10 @@ export type Database = {
           fourth_price_package: number | null
           fourth_price_package_description: string | null
           fourth_price_package_name: string | null
+          google_business_url: string | null
+          google_place_id: string | null
+          google_rating: number | null
+          google_reviews_count: number | null
           hebergement_inclus: boolean | null
           id: string
           latitude: number | null
@@ -1268,6 +1272,10 @@ export type Database = {
           fourth_price_package?: number | null
           fourth_price_package_description?: string | null
           fourth_price_package_name?: string | null
+          google_business_url?: string | null
+          google_place_id?: string | null
+          google_rating?: number | null
+          google_reviews_count?: number | null
           hebergement_inclus?: boolean | null
           id?: string
           latitude?: number | null
@@ -1325,6 +1333,10 @@ export type Database = {
           fourth_price_package?: number | null
           fourth_price_package_description?: string | null
           fourth_price_package_name?: string | null
+          google_business_url?: string | null
+          google_place_id?: string | null
+          google_rating?: number | null
+          google_reviews_count?: number | null
           hebergement_inclus?: boolean | null
           id?: string
           latitude?: number | null

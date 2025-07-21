@@ -1,9 +1,9 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { LogOut, User, Crown, Calendar } from 'lucide-react';
+import { LogOut, User, Crown, Calendar, Mail, Key } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -15,6 +15,7 @@ const UserProfile: React.FC = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [showStripeButton, setShowStripeButton] = useState(false);
+  const [userEmail, setUserEmail] = useState<string>('');
 
   const handleLogout = async () => {
     try {
@@ -63,6 +64,48 @@ const UserProfile: React.FC = () => {
     setShowStripeButton(true);
   };
 
+  useEffect(() => {
+    const getUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user?.email) {
+        setUserEmail(user.email);
+      }
+    };
+    getUser();
+  }, []);
+
+  const handlePasswordReset = async () => {
+    if (!userEmail) {
+      toast({
+        title: "Erreur",
+        description: "Impossible de récupérer votre email",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(userEmail, {
+        redirectTo: `${window.location.origin}/auth/callback?type=recovery`,
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Email envoyé",
+        description: "Un email de réinitialisation a été envoyé à votre adresse",
+        duration: 5000,
+      });
+    } catch (error) {
+      console.error('Error sending password reset:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible d'envoyer l'email de réinitialisation",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <Card className="shadow-sm">
       <CardHeader>
@@ -77,14 +120,38 @@ const UserProfile: React.FC = () => {
           </div>
         ) : profile ? (
           <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <p className="text-sm text-gray-500">Prénom</p>
-                <p className="font-medium">{profile.first_name || 'Non défini'}</p>
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm text-gray-500">Prénom</p>
+                  <p className="font-medium">{profile.first_name || 'Non défini'}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Nom</p>
+                  <p className="font-medium">{profile.last_name || 'Non défini'}</p>
+                </div>
               </div>
-              <div>
-                <p className="text-sm text-gray-500">Nom</p>
-                <p className="font-medium">{profile.last_name || 'Non défini'}</p>
+
+              <div className="border-t pt-4">
+                <h3 className="text-sm font-medium text-gray-700 mb-3">Informations de connexion</h3>
+                <div className="space-y-3">
+                  <div>
+                    <p className="text-sm text-gray-500">Email</p>
+                    <div className="flex items-center gap-2">
+                      <Mail className="w-4 h-4 text-gray-400" />
+                      <p className="font-medium">{userEmail || 'Non disponible'}</p>
+                    </div>
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={handlePasswordReset}
+                    className="flex items-center gap-2 text-sm"
+                  >
+                    <Key className="w-4 h-4" />
+                    Changer le mot de passe
+                  </Button>
+                </div>
               </div>
             </div>
 

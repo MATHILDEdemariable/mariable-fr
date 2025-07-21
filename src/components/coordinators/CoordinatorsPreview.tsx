@@ -15,6 +15,9 @@ interface Coordinator {
   prix_a_partir_de?: number;
   description?: string;
   featured?: boolean;
+  google_rating?: number;
+  google_reviews_count?: number;
+  google_business_url?: string;
   photos?: Array<{
     url: string;
     principale: boolean;
@@ -41,7 +44,10 @@ const CoordinatorsPreview: React.FC = () => {
             prix_a_partir_de,
             description,
             featured,
-            visible
+            visible,
+            google_rating,
+            google_reviews_count,
+            google_business_url
           `)
           .eq('categorie', 'Coordination')
           .eq('visible', true)
@@ -177,13 +183,15 @@ const CoordinatorsPreview: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <div className="flex items-center gap-1">
-                    <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                    <span className="text-sm font-medium">4.9</span>
+                {(coordinator.google_rating && coordinator.google_reviews_count) && (
+                  <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1">
+                      <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                      <span className="text-sm font-medium">{coordinator.google_rating}</span>
+                    </div>
+                    <span className="text-sm text-gray-500">({coordinator.google_reviews_count} avis)</span>
                   </div>
-                  <span className="text-sm text-gray-500">(32+ avis)</span>
-                </div>
+                )}
 
                 <div className="flex flex-wrap gap-1">
                   <Badge variant="secondary" className="text-xs">
@@ -196,14 +204,13 @@ const CoordinatorsPreview: React.FC = () => {
                   )}
                 </div>
 
-                <div className="pt-2 border-t">
-                  <p className="text-sm font-medium text-wedding-olive">
-                    {coordinator.prix_a_partir_de 
-                      ? `À partir de ${coordinator.prix_a_partir_de}€`
-                      : 'Sur devis'
-                    }
-                  </p>
-                </div>
+                {coordinator.prix_a_partir_de && (
+                  <div className="pt-2 border-t">
+                    <p className="text-sm font-medium text-wedding-olive">
+                      À partir de {coordinator.prix_a_partir_de}€
+                    </p>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
