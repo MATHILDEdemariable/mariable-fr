@@ -331,8 +331,15 @@ const ReservationJourM = () => {
                     
                     <RadioGroup value={formData.selected_formula} onValueChange={handleFormulaChange}>
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="application_seule" id="application_seule" />
-                        <Label htmlFor="application_seule" className="flex flex-col">
+                        <RadioGroupItem value="ligne_directe" id="ligne_directe" />
+                        <Label htmlFor="ligne_directe" className="flex flex-col">
+                          <span>Ligne directe (9,9€/mois jusqu'au jour du mariage)</span>
+                          <span className="text-sm text-gray-500 font-normal">Hotline dédiée avec priorité</span>
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2 opacity-50">
+                        <RadioGroupItem value="application_seule" id="application_seule" disabled />
+                        <Label htmlFor="application_seule" className="flex flex-col cursor-not-allowed">
                           <span>Application seule (14,9€)</span>
                           <span className="text-sm text-gray-500 font-normal">Paiement direct - pas de demande nécessaire</span>
                         </Label>

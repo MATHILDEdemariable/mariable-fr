@@ -41,6 +41,9 @@ import {
 } from "@/components/ui/dialog";
 import RdvForm from "@/components/forms/RdvForm";
 import ContactForm from "@/components/forms/ContactForm";
+import GoogleReviews from "@/components/vendors/GoogleReviews";
+import PhotoGalleryViewer from "@/components/vendors/PhotoGalleryViewer";
+import VendorMoreInfo from "@/components/vendors/VendorMoreInfo";
 
 // Import the Prestataire type and PrestatairePhoto
 import { Prestataire, PrestatairePhoto } from "@/components/admin/types";
@@ -354,7 +357,7 @@ const SinglePrestataire = () => {
         <div className="container max-w-6xl px-4 py-12 flex justify-center">
           <Card className="p-8 text-center">
             <h1 className="text-2xl font-serif mb-4">
-              Aucun prestataire s��lectionné
+              Aucun prestataire sélectionné
             </h1>
             <p className="mb-6">
               Veuillez sélectionner un prestataire depuis notre moteur de
@@ -553,36 +556,24 @@ const SinglePrestataire = () => {
                   </div>
                 </div>
               )}
+
+              {/* Section Avis Google */}
+              <GoogleReviews
+                rating={vendor.google_rating}
+                reviewsCount={vendor.google_reviews_count}
+                businessUrl={vendor.google_business_url}
+              />
+
+              {/* Galerie photo avec visionneur avancé */}
               <div className="space-y-4">
                 <h2 className="text-xl font-serif">Galerie photo</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {vendor && vendor.prestataires_photos_preprod ? (
-                    Array.isArray(vendor.prestataires_photos_preprod) &&
-                    vendor.prestataires_photos_preprod.map((photo) => (
-                      <Dialog key={photo.id}>
-                        <DialogTrigger asChild>
-                          <Card>
-                            <img
-                              src={photo.url}
-                              alt={vendor.nom}
-                              className="w-full h-auto cursor-pointer"
-                            />
-                          </Card>
-                        </DialogTrigger>
-                        <DialogContent className="max-w-[80vw] max-h-[90vh] overflow-y-auto">
-                          <img
-                            src={photo.url}
-                            alt={vendor.nom}
-                            className="w-full h-auto"
-                          />
-                        </DialogContent>
-                      </Dialog>
-                    ))
-                  ) : (
-                    <p>Aucune photo disponible pour ce prestataire.</p>
-                  )}
-                </div>
+                <PhotoGalleryViewer
+                  photos={photos || []}
+                  vendorName={vendor.nom}
+                />
               </div>
+
+              {/* Documents utiles */}
               {vendor && vendor.prestataires_brochures && vendor.prestataires_brochures.length > 0 && (
                 <div className="space-y-4">
                   <h2 className="text-xl font-serif">Documents utiles</h2>
@@ -606,6 +597,12 @@ const SinglePrestataire = () => {
                   </div>
                 </div>
               )}
+
+              {/* Section Plus d'informations */}
+              <VendorMoreInfo
+                website={vendor.site_web}
+                vendorName={vendor.nom}
+              />
             </div>
             <div className="w-full lg:w-80 space-y-4">
               <Card className="p-4">
