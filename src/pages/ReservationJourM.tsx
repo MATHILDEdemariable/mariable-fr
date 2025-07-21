@@ -329,14 +329,27 @@ const ReservationJourM = () => {
                   <div>
                     <Label className="text-base font-medium mb-3">Services souhaités *</Label>
                     
-                     <RadioGroup value={formData.selected_formula} onValueChange={handleFormulaChange}>
-                       <div className="flex items-center space-x-2">
-                         <RadioGroupItem value="accompagnement" id="accompagnement" />
-                         <Label htmlFor="accompagnement">Accompagnement (9,9€/mois)</Label>
-                       </div>
+                    <RadioGroup value={formData.selected_formula} onValueChange={handleFormulaChange}>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="application_seule" id="application_seule" />
+                        <Label htmlFor="application_seule" className="flex flex-col">
+                          <span>Application seule (14,9€)</span>
+                          <span className="text-sm text-gray-500 font-normal">Paiement direct - pas de demande nécessaire</span>
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="application_support" id="application_support" />
+                        <Label htmlFor="application_support" className="flex flex-col">
+                          <span>Application + Support téléphonique (24,9€)</span>
+                          <span className="text-sm text-gray-500 font-normal">Application + assistance téléphonique</span>
+                        </Label>
+                      </div>
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="privilege" id="privilege" />
-                        <Label htmlFor="privilege">Privilège (799€)</Label>
+                        <Label htmlFor="privilege" className="flex flex-col">
+                          <span>Privilège (799€)</span>
+                          <span className="text-sm text-gray-500 font-normal">Service complet avec présence physique</span>
+                        </Label>
                       </div>
                     </RadioGroup>
                   </div>
