@@ -11,6 +11,7 @@ interface UserProfile {
   guest_count: number | null;
   subscription_type: string;
   subscription_expires_at: string | null;
+  updated_at: string | null;
 }
 
 export const useUserProfile = () => {
@@ -24,6 +25,7 @@ export const useUserProfile = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         console.log('❌ No user found');
+        setLoading(false);
         return;
       }
 
@@ -60,7 +62,10 @@ export const useUserProfile = () => {
         console.log('✅ Profile created:', insertedProfile);
         setProfile(insertedProfile);
       } else {
-        console.log('✅ Profile loaded:', data.subscription_type);
+        console.log('✅ Profile loaded:', {
+          subscription_type: data.subscription_type,
+          updated_at: data.updated_at
+        });
         setProfile(data);
       }
     } catch (error) {
@@ -82,7 +87,10 @@ export const useUserProfile = () => {
 
       const { data, error } = await supabase
         .from('profiles')
-        .update(updates)
+        .update({
+          ...updates,
+          updated_at: new Date().toISOString()
+        })
         .eq('id', user.id)
         .select()
         .single();
@@ -104,6 +112,31 @@ export const useUserProfile = () => {
 
   useEffect(() => {
     fetchProfile();
+
+    // Écouter les changements sur la table profiles pour ce user
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      const channel = supabase
+        .channel('profile-changes')
+        .on(
+          'postgres_changes',
+          {
+            event: 'UPDATE',
+            schema: 'public',
+            table: 'profiles',
+            filter: `id=eq.${user.id}`,
+          },
+          (payload) => {
+            console.log('🔔 Profile updated via realtime:', payload.new);
+            setProfile(payload.new as UserProfile);
+          }
+        )
+        .subscribe();
+
+      return () => {
+        supabase.removeChannel(channel);
+      };
+    }
   }, []);
 
   const isPremium = profile?.subscription_type === 'premium' && 
@@ -112,7 +145,8 @@ export const useUserProfile = () => {
   console.log('🔍 Current profile status:', { 
     subscription_type: profile?.subscription_type, 
     isPremium,
-    loading 
+    loading,
+    updated_at: profile?.updated_at
   });
 
   return {

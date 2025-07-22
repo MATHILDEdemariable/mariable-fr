@@ -22,9 +22,9 @@ const PaymentSuccessHandler = () => {
           console.log('🔄 Processing payment success...');
           
           if (sessionId) {
-            // Appeler l'edge function pour mettre à jour le statut premium
+            // Appeler l'edge function avec le bon nom de paramètre
             const { data, error } = await supabase.functions.invoke('update-premium-status', {
-              body: { sessionId: sessionId }
+              body: { session_id: sessionId }  // Changé de sessionId à session_id
             });
 
             console.log('📤 Edge function response:', { data, error });
@@ -39,27 +39,43 @@ const PaymentSuccessHandler = () => {
               return;
             }
 
-            console.log('✅ Premium status updated successfully');
-          } else {
-            console.log('⚠️ No session ID found, assuming payment success');
-          }
-          
-          toast({
-            title: "Paiement confirmé !",
-            description: "Votre compte premium a été activé avec succès. Les fonctionnalités sont maintenant disponibles.",
-            duration: 5000
-          });
+            if (data && !data.success) {
+              console.error('❌ Edge function failed:', data.error);
+              toast({
+                title: "Erreur de validation",
+                description: data.error || "Une erreur est survenue lors de la validation.",
+                variant: "destructive"
+              });
+              return;
+            }
 
-          // Nettoyer l'URL des paramètres de paiement
-          const cleanUrl = new URL(window.location.href);
-          cleanUrl.searchParams.delete('payment');
-          cleanUrl.searchParams.delete('session_id');
-          
-          // Forcer un rechargement complet pour rafraîchir le statut premium
-          setTimeout(() => {
-            console.log('🔄 Refreshing page to update premium status...');
-            window.location.href = cleanUrl.toString();
-          }, 2000);
+            console.log('✅ Premium status updated successfully');
+            
+            toast({
+              title: "Paiement confirmé !",
+              description: "Votre compte premium a été activé avec succès. Les fonctionnalités sont maintenant disponibles.",
+              duration: 5000
+            });
+
+            // Nettoyer l'URL des paramètres de paiement
+            const cleanUrl = new URL(window.location.href);
+            cleanUrl.searchParams.delete('payment');
+            cleanUrl.searchParams.delete('session_id');
+            
+            // Forcer un rechargement complet pour rafraîchir le statut premium
+            setTimeout(() => {
+              console.log('🔄 Refreshing page to update premium status...');
+              window.location.href = cleanUrl.toString();
+            }, 2000);
+
+          } else {
+            console.log('⚠️ No session ID found');
+            toast({
+              title: "Paiement effectué",
+              description: "Votre paiement a été traité. Si les fonctionnalités premium ne sont pas actives, contactez le support.",
+              duration: 5000
+            });
+          }
 
         } catch (error) {
           console.error('❌ Payment success handling error:', error);

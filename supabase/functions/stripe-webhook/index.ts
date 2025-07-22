@@ -20,6 +20,7 @@ serve(async (req) => {
   }
 
   if (req.method !== "POST") {
+    logStep("ERROR: Method not allowed", { method: req.method });
     return new Response("Method not allowed", { status: 405 });
   }
 
@@ -42,7 +43,10 @@ serve(async (req) => {
     const webhookSecret = Deno.env.get("STRIPE_WEBHOOK_SECRET");
     
     if (!stripeKey || !webhookSecret) {
-      logStep("ERROR: Missing Stripe keys");
+      logStep("ERROR: Missing Stripe keys", { 
+        hasStripeKey: !!stripeKey, 
+        hasWebhookSecret: !!webhookSecret 
+      });
       return new Response("Configuration error", { status: 500 });
     }
 
@@ -70,10 +74,11 @@ serve(async (req) => {
       const session = event.data.object as Stripe.Checkout.Session;
       logStep("Checkout session completed", { 
         sessionId: session.id, 
-        customerEmail: session.customer_email 
+        customerEmail: session.customer_details?.email,
+        paymentStatus: session.payment_status
       });
 
-      if (session.customer_email) {
+      if (session.customer_details?.email && session.payment_status === 'paid') {
         try {
           // Trouver l'utilisateur par email
           const { data: userData, error: userError } = await supabaseClient.auth.admin.listUsers();
@@ -83,37 +88,43 @@ serve(async (req) => {
             throw userError;
           }
 
-          const user = userData.users.find(u => u.email === session.customer_email);
+          const user = userData.users.find(u => u.email === session.customer_details?.email);
           
           if (!user) {
-            logStep("ERROR: User not found", { email: session.customer_email });
+            logStep("ERROR: User not found", { email: session.customer_details?.email });
             return new Response("User not found", { status: 404 });
           }
 
           logStep("User found", { userId: user.id, email: user.email });
 
           // Mettre à jour le profil pour le rendre premium
-          const { error: updateError } = await supabaseClient
+          const { data: updatedProfile, error: updateError } = await supabaseClient
             .from('profiles')
-            .upsert({
-              id: user.id,
+            .update({
               subscription_type: 'premium',
-              subscription_expires_at: null, // Premium à vie pour l'instant
+              subscription_expires_at: null,
               updated_at: new Date().toISOString()
-            });
+            })
+            .eq('id', user.id)
+            .select()
+            .single();
 
           if (updateError) {
             logStep("ERROR: Failed to update profile", { error: updateError });
             throw updateError;
           }
 
-          logStep("Profile updated to premium successfully", { userId: user.id });
+          logStep("Profile updated to premium successfully", { 
+            userId: user.id,
+            updatedProfile: updatedProfile
+          });
 
           return new Response(
             JSON.stringify({ 
               success: true, 
               message: "User upgraded to premium successfully",
-              userId: user.id 
+              userId: user.id,
+              profile: updatedProfile
             }),
             {
               headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -124,13 +135,21 @@ serve(async (req) => {
         } catch (error) {
           logStep("ERROR: Processing checkout session", { error: error.message });
           return new Response(
-            JSON.stringify({ error: "Failed to process payment" }),
+            JSON.stringify({ 
+              success: false,
+              error: "Failed to process payment" 
+            }),
             {
               headers: { ...corsHeaders, "Content-Type": "application/json" },
               status: 500,
             }
           );
         }
+      } else {
+        logStep("WARNING: Session not fully paid or missing email", {
+          paymentStatus: session.payment_status,
+          hasEmail: !!session.customer_details?.email
+        });
       }
     }
 
@@ -145,7 +164,7 @@ serve(async (req) => {
     // Événement non traité mais valide
     logStep("Webhook event received but not processed", { type: event.type });
     return new Response(
-      JSON.stringify({ received: true }),
+      JSON.stringify({ received: true, processed: false }),
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 200,
@@ -155,7 +174,10 @@ serve(async (req) => {
   } catch (error) {
     logStep("ERROR: Webhook processing failed", { error: error.message });
     return new Response(
-      JSON.stringify({ error: "Webhook processing failed" }),
+      JSON.stringify({ 
+        success: false,
+        error: "Webhook processing failed" 
+      }),
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 500,

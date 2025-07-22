@@ -17,26 +17,45 @@ serve(async (req) => {
   }
 
   try {
-    // Get session ID from query params or request body
-    const url = new URL(req.url);
-    let sessionId = url.searchParams.get('session_id');
+    // Récupérer le session ID depuis le body
+    let sessionId;
     
-    if (!sessionId && req.method === 'POST') {
+    if (req.method === 'POST') {
       const body = await req.json();
-      sessionId = body.session_id;
+      sessionId = body.session_id || body.sessionId;
+      console.log('📋 Body received:', JSON.stringify(body, null, 2));
     }
     
     console.log('📋 Session ID:', sessionId);
     
     if (!sessionId) {
-      throw new Error('Session ID manquant');
+      console.error('❌ Session ID manquant');
+      return new Response(
+        JSON.stringify({ 
+          success: false, 
+          error: 'Session ID manquant' 
+        }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 400,
+        }
+      );
     }
 
     // Initialize Stripe
     const stripeKey = Deno.env.get('STRIPE_SECRET_KEY');
     if (!stripeKey) {
       console.error('❌ STRIPE_SECRET_KEY not configured');
-      throw new Error('Configuration Stripe manquante');
+      return new Response(
+        JSON.stringify({ 
+          success: false, 
+          error: 'Configuration Stripe manquante' 
+        }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 500,
+        }
+      );
     }
     
     const stripe = new Stripe(stripeKey, {
@@ -51,16 +70,37 @@ serve(async (req) => {
     });
     
     console.log('💳 Session status:', session.payment_status);
+    console.log('💳 Session mode:', session.mode);
     console.log('👤 Customer email:', session.customer_details?.email);
     
     if (session.payment_status !== 'paid') {
-      throw new Error('Paiement non confirmé');
+      console.error('❌ Paiement non confirmé, statut:', session.payment_status);
+      return new Response(
+        JSON.stringify({ 
+          success: false, 
+          error: 'Paiement non confirmé' 
+        }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 400,
+        }
+      );
     }
 
     // Get customer email from session
     const customerEmail = session.customer_details?.email;
     if (!customerEmail) {
-      throw new Error('Email du customer non trouvé');
+      console.error('❌ Email du customer non trouvé');
+      return new Response(
+        JSON.stringify({ 
+          success: false, 
+          error: 'Email du customer non trouvé' 
+        }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 400,
+        }
+      );
     }
 
     console.log('🔍 Looking for user with email:', customerEmail);
@@ -77,13 +117,31 @@ serve(async (req) => {
     
     if (usersError) {
       console.error('❌ Error fetching users:', usersError);
-      throw new Error('Erreur lors de la recherche de l\'utilisateur');
+      return new Response(
+        JSON.stringify({ 
+          success: false, 
+          error: 'Erreur lors de la recherche de l\'utilisateur' 
+        }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 500,
+        }
+      );
     }
 
     const user = users.users.find(u => u.email === customerEmail);
     if (!user) {
       console.error('❌ User not found for email:', customerEmail);
-      throw new Error('Utilisateur non trouvé');
+      return new Response(
+        JSON.stringify({ 
+          success: false, 
+          error: 'Utilisateur non trouvé' 
+        }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 404,
+        }
+      );
     }
 
     console.log('✅ User found:', user.id);
@@ -93,7 +151,8 @@ serve(async (req) => {
       .from('profiles')
       .update({
         subscription_type: 'premium',
-        subscription_expires_at: null
+        subscription_expires_at: null,
+        updated_at: new Date().toISOString()
       })
       .eq('id', user.id)
       .select()
@@ -101,10 +160,20 @@ serve(async (req) => {
 
     if (updateError) {
       console.error('❌ Error updating profile:', updateError);
-      throw updateError;
+      return new Response(
+        JSON.stringify({ 
+          success: false, 
+          error: 'Erreur lors de la mise à jour du profil' 
+        }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 500,
+        }
+      );
     }
 
     console.log('✅ Premium status updated successfully for user:', user.id);
+    console.log('✅ Updated profile:', updatedProfile);
 
     return new Response(
       JSON.stringify({ 
