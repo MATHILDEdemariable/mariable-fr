@@ -59,8 +59,8 @@ serve(async (req) => {
         },
         quantity: 1,
       }],
-      success_url: `${req.headers.get("origin")}/dashboard?payment=success&session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${req.headers.get("origin")}/dashboard?payment=cancelled`,
+      success_url: `https://www.mariable.fr/dashboard?payment=success&session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `https://www.mariable.fr/dashboard?payment=cancelled`,
       metadata: {
         userId: user.id,
         userEmail: user.email
@@ -68,6 +68,7 @@ serve(async (req) => {
     });
 
     console.log('✅ Checkout session created:', session.id);
+    console.log('✅ Session URL:', session.url);
 
     return new Response(JSON.stringify({ 
       url: session.url,
