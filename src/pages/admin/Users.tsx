@@ -15,7 +15,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Search, User, Mail, Calendar, RefreshCw, AlertTriangle, Crown, Users } from 'lucide-react';
+import { Search, User, Mail, Calendar, RefreshCw, AlertTriangle, Crown, Users, Phone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -150,6 +150,10 @@ const AdminUsers = () => {
     const firstName = user.profile?.first_name || user.raw_user_meta_data?.first_name || '';
     const lastName = user.profile?.last_name || user.raw_user_meta_data?.last_name || '';
     return firstName || lastName ? `${firstName} ${lastName}`.trim() : 'Non renseigné';
+  };
+
+  const getPhoneNumber = (user: UserRegistration) => {
+    return user.raw_user_meta_data?.phone || 'Non renseigné';
   };
 
   const getRecentUsers = () => {
@@ -323,6 +327,7 @@ const AdminUsers = () => {
                     <TableRow>
                       <TableHead>Nom Complet</TableHead>
                       <TableHead>Email</TableHead>
+                      <TableHead>Téléphone</TableHead>
                       <TableHead>Date de mariage</TableHead>
                       <TableHead>Nb. invités</TableHead>
                       <TableHead>Date d'inscription</TableHead>
@@ -345,6 +350,14 @@ const AdminUsers = () => {
                             <Mail className="h-4 w-4 text-gray-400" />
                             <span className={user.email === 'Email non disponible' ? 'text-gray-400 italic' : ''}>
                               {user.email}
+                            </span>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <Phone className="h-4 w-4 text-gray-400" />
+                            <span className={getPhoneNumber(user) === 'Non renseigné' ? 'text-gray-400 italic' : ''}>
+                              {getPhoneNumber(user)}
                             </span>
                           </div>
                         </TableCell>
