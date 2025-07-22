@@ -745,6 +745,51 @@ export type Database = {
         }
         Relationships: []
       }
+      payment_audit: {
+        Row: {
+          amount: number | null
+          created_at: string
+          currency: string | null
+          customer_email: string | null
+          error_message: string | null
+          id: string
+          payment_intent_id: string | null
+          processed_at: string
+          session_id: string | null
+          status: string
+          stripe_event_id: string
+          stripe_event_type: string
+        }
+        Insert: {
+          amount?: number | null
+          created_at?: string
+          currency?: string | null
+          customer_email?: string | null
+          error_message?: string | null
+          id?: string
+          payment_intent_id?: string | null
+          processed_at?: string
+          session_id?: string | null
+          status: string
+          stripe_event_id: string
+          stripe_event_type: string
+        }
+        Update: {
+          amount?: number | null
+          created_at?: string
+          currency?: string | null
+          customer_email?: string | null
+          error_message?: string | null
+          id?: string
+          payment_intent_id?: string | null
+          processed_at?: string
+          session_id?: string | null
+          status?: string
+          stripe_event_id?: string
+          stripe_event_type?: string
+        }
+        Relationships: []
+      }
       planning_questions: {
         Row: {
           categorie: string

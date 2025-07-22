@@ -55,7 +55,7 @@ serve(async (req) => {
     // Vérifier la signature du webhook
     let event: Stripe.Event;
     try {
-      event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
+      event = await stripe.webhooks.constructEventAsync(body, signature, webhookSecret);
       logStep("Webhook signature verified", { type: event.type, id: event.id });
     } catch (err) {
       logStep("ERROR: Webhook signature verification failed", { error: err.message });
@@ -69,107 +69,83 @@ serve(async (req) => {
       { auth: { persistSession: false } }
     );
 
-    // Traiter les événements de paiement réussi
-    if (event.type === "checkout.session.completed") {
-      const session = event.data.object as Stripe.Checkout.Session;
-      logStep("Checkout session completed", { 
-        sessionId: session.id, 
-        customerEmail: session.customer_details?.email,
-        paymentStatus: session.payment_status
-      });
+    // Fonction pour logger les audits
+    const logAudit = async (status: string, errorMessage?: string) => {
+      const auditData: any = {
+        stripe_event_id: event.id,
+        stripe_event_type: event.type,
+        status,
+        error_message: errorMessage || null,
+      };
 
-      if (session.customer_details?.email && session.payment_status === 'paid') {
-        try {
-          // Trouver l'utilisateur par email
-          const { data: userData, error: userError } = await supabaseClient.auth.admin.listUsers();
-          
-          if (userError) {
-            logStep("ERROR: Failed to list users", { error: userError });
-            throw userError;
-          }
+      // Ajouter des données spécifiques selon le type d'événement
+      if (event.type === 'checkout.session.completed') {
+        const session = event.data.object as Stripe.Checkout.Session;
+        auditData.customer_email = session.customer_details?.email;
+        auditData.session_id = session.id;
+        auditData.payment_intent_id = session.payment_intent;
+        auditData.amount = session.amount_total;
+        auditData.currency = session.currency;
+      } else if (event.type.startsWith('payment_intent.')) {
+        const paymentIntent = event.data.object as Stripe.PaymentIntent;
+        auditData.payment_intent_id = paymentIntent.id;
+        auditData.amount = paymentIntent.amount;
+        auditData.currency = paymentIntent.currency;
+      }
 
-          const user = userData.users.find(u => u.email === session.customer_details?.email);
-          
-          if (!user) {
-            logStep("ERROR: User not found", { email: session.customer_details?.email });
-            return new Response("User not found", { status: 404 });
-          }
+      const { error: auditError } = await supabaseClient
+        .from('payment_audit')
+        .insert(auditData);
 
-          logStep("User found", { userId: user.id, email: user.email });
-
-          // Mettre à jour le profil pour le rendre premium
-          const { data: updatedProfile, error: updateError } = await supabaseClient
-            .from('profiles')
-            .update({
-              subscription_type: 'premium',
-              subscription_expires_at: null,
-              updated_at: new Date().toISOString()
-            })
-            .eq('id', user.id)
-            .select()
-            .single();
-
-          if (updateError) {
-            logStep("ERROR: Failed to update profile", { error: updateError });
-            throw updateError;
-          }
-
-          logStep("Profile updated to premium successfully", { 
-            userId: user.id,
-            updatedProfile: updatedProfile
-          });
-
-          return new Response(
-            JSON.stringify({ 
-              success: true, 
-              message: "User upgraded to premium successfully",
-              userId: user.id,
-              profile: updatedProfile
-            }),
-            {
-              headers: { ...corsHeaders, "Content-Type": "application/json" },
-              status: 200,
-            }
-          );
-
-        } catch (error) {
-          logStep("ERROR: Processing checkout session", { error: error.message });
-          return new Response(
-            JSON.stringify({ 
-              success: false,
-              error: "Failed to process payment" 
-            }),
-            {
-              headers: { ...corsHeaders, "Content-Type": "application/json" },
-              status: 500,
-            }
-          );
-        }
+      if (auditError) {
+        logStep("ERROR: Failed to log audit", { error: auditError });
       } else {
-        logStep("WARNING: Session not fully paid or missing email", {
-          paymentStatus: session.payment_status,
-          hasEmail: !!session.customer_details?.email
-        });
+        logStep("Audit logged", { type: auditData.stripe_event_type, status });
       }
-    }
+    };
 
-    // Traiter les événements d'abonnement (si besoin futur)
-    if (event.type === "invoice.payment_succeeded") {
-      const invoice = event.data.object as Stripe.Invoice;
-      logStep("Invoice payment succeeded", { invoiceId: invoice.id });
+    // Traiter les différents types d'événements
+    try {
+      if (event.type === "checkout.session.completed") {
+        await handleCheckoutCompleted(event, supabaseClient);
+        await logAudit('success');
+      } else if (event.type === "payment_intent.succeeded") {
+        await handlePaymentSucceeded(event, supabaseClient);
+        await logAudit('success');
+      } else if (event.type === "payment_intent.payment_failed") {
+        await handlePaymentFailed(event, supabaseClient);
+        await logAudit('payment_failed');
+      } else if (event.type === "invoice.payment_succeeded") {
+        await handleInvoicePaymentSucceeded(event, supabaseClient);
+        await logAudit('success');
+      } else {
+        logStep("Unhandled event type", { type: event.type });
+        await logAudit('unhandled');
+      }
+
+      return new Response(
+        JSON.stringify({ received: true, processed: true }),
+        {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 200,
+        }
+      );
+
+    } catch (error) {
+      logStep("ERROR: Processing webhook event", { error: error.message });
+      await logAudit('error', error.message);
       
-      // Logique pour les abonnements récurrents si nécessaire
+      return new Response(
+        JSON.stringify({ 
+          success: false,
+          error: "Failed to process webhook event" 
+        }),
+        {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 500,
+        }
+      );
     }
-
-    // Événement non traité mais valide
-    logStep("Webhook event received but not processed", { type: event.type });
-    return new Response(
-      JSON.stringify({ received: true, processed: false }),
-      {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 200,
-      }
-    );
 
   } catch (error) {
     logStep("ERROR: Webhook processing failed", { error: error.message });
@@ -185,3 +161,89 @@ serve(async (req) => {
     );
   }
 });
+
+// Gestionnaire pour checkout.session.completed
+async function handleCheckoutCompleted(event: Stripe.Event, supabaseClient: any) {
+  const session = event.data.object as Stripe.Checkout.Session;
+  logStep("Checkout session completed", { 
+    sessionId: session.id, 
+    customerEmail: session.customer_details?.email,
+    paymentStatus: session.payment_status
+  });
+
+  if (!session.customer_details?.email) {
+    throw new Error('No customer email found in session');
+  }
+
+  if (session.payment_status !== 'paid') {
+    throw new Error(`Payment not completed. Status: ${session.payment_status}`);
+  }
+
+  // Trouver l'utilisateur par email
+  const { data: userData, error: userError } = await supabaseClient.auth.admin.listUsers();
+  
+  if (userError) {
+    logStep("ERROR: Failed to list users", { error: userError });
+    throw userError;
+  }
+
+  const user = userData.users.find(u => u.email === session.customer_details?.email);
+  
+  if (!user) {
+    logStep("ERROR: User not found", { email: session.customer_details?.email });
+    throw new Error(`User not found with email: ${session.customer_details?.email}`);
+  }
+
+  logStep("User found", { userId: user.id, email: user.email });
+
+  // Mettre à jour le profil pour le rendre premium
+  const { data: updatedProfile, error: updateError } = await supabaseClient
+    .from('profiles')
+    .update({
+      subscription_type: 'premium',
+      subscription_expires_at: null,
+      updated_at: new Date().toISOString()
+    })
+    .eq('id', user.id)
+    .select()
+    .single();
+
+  if (updateError) {
+    logStep("ERROR: Failed to update profile", { error: updateError });
+    throw updateError;
+  }
+
+  logStep("Profile updated to premium successfully", { 
+    userId: user.id,
+    updatedProfile: updatedProfile
+  });
+}
+
+// Gestionnaire pour payment_intent.succeeded
+async function handlePaymentSucceeded(event: Stripe.Event, supabaseClient: any) {
+  const paymentIntent = event.data.object as Stripe.PaymentIntent;
+  logStep("Payment succeeded", { paymentIntentId: paymentIntent.id, amount: paymentIntent.amount });
+  
+  // Logique supplémentaire pour les paiements réussis si nécessaire
+  // Par exemple, envoyer une notification ou mettre à jour des métriques
+}
+
+// Gestionnaire pour payment_intent.payment_failed
+async function handlePaymentFailed(event: Stripe.Event, supabaseClient: any) {
+  const paymentIntent = event.data.object as Stripe.PaymentIntent;
+  logStep("Payment failed", { 
+    paymentIntentId: paymentIntent.id, 
+    error: paymentIntent.last_payment_error?.message 
+  });
+  
+  // Logique pour gérer les échecs de paiement
+  // Par exemple, notifier l'utilisateur ou l'admin
+}
+
+// Gestionnaire pour invoice.payment_succeeded
+async function handleInvoicePaymentSucceeded(event: Stripe.Event, supabaseClient: any) {
+  const invoice = event.data.object as Stripe.Invoice;
+  logStep("Invoice payment succeeded", { invoiceId: invoice.id });
+  
+  // Logique pour les abonnements récurrents si nécessaire
+}
