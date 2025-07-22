@@ -1,3 +1,4 @@
+
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@14.21.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
@@ -43,7 +44,7 @@ serve(async (req) => {
       apiVersion: "2023-10-16",
     });
 
-    // Create checkout session
+    // Create checkout session with promotion codes enabled
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       mode: 'payment',
@@ -59,6 +60,8 @@ serve(async (req) => {
         },
         quantity: 1,
       }],
+      // ✨ NOUVELLE FONCTIONNALITÉ : Activation des codes promo
+      allow_promotion_codes: true,
       success_url: `https://www.mariable.fr/dashboard?payment=success&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `https://www.mariable.fr/dashboard?payment=cancelled`,
       metadata: {
@@ -69,6 +72,7 @@ serve(async (req) => {
 
     console.log('✅ Checkout session created:', session.id);
     console.log('✅ Session URL:', session.url);
+    console.log('✅ Promotion codes enabled:', session.allow_promotion_codes);
 
     return new Response(JSON.stringify({ 
       url: session.url,

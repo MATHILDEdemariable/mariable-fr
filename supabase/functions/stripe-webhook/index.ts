@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@14.21.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
@@ -69,8 +68,8 @@ serve(async (req) => {
       { auth: { persistSession: false } }
     );
 
-    // Fonction pour logger les audits
-    const logAudit = async (status: string, errorMessage?: string) => {
+    // Fonction pour logger les audits avec informations de réduction
+    const logAudit = async (status: string, errorMessage?: string, discountInfo?: any) => {
       const auditData: any = {
         stripe_event_id: event.id,
         stripe_event_type: event.type,
@@ -86,6 +85,20 @@ serve(async (req) => {
         auditData.payment_intent_id = session.payment_intent;
         auditData.amount = session.amount_total;
         auditData.currency = session.currency;
+        
+        // ✨ NOUVELLE FONCTIONNALITÉ : Tracer les informations de réduction
+        if (session.total_details?.amount_discount && session.total_details.amount_discount > 0) {
+          auditData.discount_amount = session.total_details.amount_discount;
+          auditData.amount_subtotal = session.amount_subtotal;
+          
+          // Log des détails de réduction
+          logStep("Discount applied", {
+            original_amount: session.amount_subtotal,
+            discount_amount: session.total_details.amount_discount,
+            final_amount: session.amount_total,
+            session_id: session.id
+          });
+        }
       } else if (event.type.startsWith('payment_intent.')) {
         const paymentIntent = event.data.object as Stripe.PaymentIntent;
         auditData.payment_intent_id = paymentIntent.id;
@@ -162,13 +175,22 @@ serve(async (req) => {
   }
 });
 
-// Gestionnaire pour checkout.session.completed
+// Gestionnaire pour checkout.session.completed avec support des réductions
 async function handleCheckoutCompleted(event: Stripe.Event, supabaseClient: any) {
   const session = event.data.object as Stripe.Checkout.Session;
+  
+  // Log des informations de réduction si présentes
+  const discountInfo = session.total_details?.amount_discount > 0 ? {
+    discount_amount: session.total_details.amount_discount,
+    original_amount: session.amount_subtotal,
+    final_amount: session.amount_total
+  } : null;
+
   logStep("Checkout session completed", { 
     sessionId: session.id, 
     customerEmail: session.customer_details?.email,
-    paymentStatus: session.payment_status
+    paymentStatus: session.payment_status,
+    discountInfo
   });
 
   if (!session.customer_details?.email) {
@@ -215,7 +237,8 @@ async function handleCheckoutCompleted(event: Stripe.Event, supabaseClient: any)
 
   logStep("Profile updated to premium successfully", { 
     userId: user.id,
-    updatedProfile: updatedProfile
+    updatedProfile: updatedProfile,
+    discountApplied: !!discountInfo
   });
 }
 
