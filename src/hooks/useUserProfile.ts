@@ -114,29 +114,37 @@ export const useUserProfile = () => {
     fetchProfile();
 
     // Écouter les changements sur la table profiles pour ce user
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user) {
-      const channel = supabase
-        .channel('profile-changes')
-        .on(
-          'postgres_changes',
-          {
-            event: 'UPDATE',
-            schema: 'public',
-            table: 'profiles',
-            filter: `id=eq.${user.id}`,
-          },
-          (payload) => {
-            console.log('🔔 Profile updated via realtime:', payload.new);
-            setProfile(payload.new as UserProfile);
-          }
-        )
-        .subscribe();
+    const setupRealtimeSubscription = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const channel = supabase
+          .channel('profile-changes')
+          .on(
+            'postgres_changes',
+            {
+              event: 'UPDATE',
+              schema: 'public',
+              table: 'profiles',
+              filter: `id=eq.${user.id}`,
+            },
+            (payload) => {
+              console.log('🔔 Profile updated via realtime:', payload.new);
+              setProfile(payload.new as UserProfile);
+            }
+          )
+          .subscribe();
 
-      return () => {
-        supabase.removeChannel(channel);
-      };
-    }
+        return channel;
+      }
+    };
+
+    setupRealtimeSubscription().then((channel) => {
+      if (channel) {
+        return () => {
+          supabase.removeChannel(channel);
+        };
+      }
+    });
   }, []);
 
   const isPremium = profile?.subscription_type === 'premium' && 
