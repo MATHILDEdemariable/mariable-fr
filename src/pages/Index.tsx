@@ -87,9 +87,7 @@ const Index = () => {
               </h2>
               
               <div className="max-w-3xl mx-auto mb-8">
-                <p className="text-lg text-gray-700 mb-6">
-                  Une application en ligne pensée pour les couples qui veulent tout organiser eux-mêmes – sans stress, sans perte de temps, sans galère.
-                </p>
+                <p className="text-lg text-gray-700 mb-6">Une solution pour organiser, coordonner et vivre un mariage parfait</p>
                 
                 <div className="grid md:grid-cols-3 gap-6 text-left">
                   <div className="flex items-start gap-3">
