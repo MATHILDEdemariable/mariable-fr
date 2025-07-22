@@ -1,66 +1,66 @@
 
-import React, { useEffect } from 'react';
-
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      'stripe-buy-button': {
-        'buy-button-id': string;
-        'publishable-key': string;
-      };
-    }
-  }
-}
+import React, { useState } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { Button } from '@/components/ui/button';
+import { useToast } from '@/hooks/use-toast';
 
 const StripeButton: React.FC = () => {
-  useEffect(() => {
-    console.log('🔄 Loading Stripe button script...');
-    
-    // Charger le script Stripe dynamiquement
-    const script = document.createElement('script');
-    script.src = 'https://js.stripe.com/v3/buy-button.js';
-    script.async = true;
-    document.head.appendChild(script);
+  const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
 
-    // Écouter les événements de succès de paiement
-    const handleStripeSuccess = (event: MessageEvent) => {
-      console.log('💳 Stripe checkout event received:', event.data);
+  const handlePayment = async () => {
+    try {
+      setLoading(true);
+      console.log('🚀 Creating checkout session...');
+
+      const { data, error } = await supabase.functions.invoke('create-checkout-session');
+
+      if (error) {
+        console.error('❌ Error creating checkout session:', error);
+        toast({
+          title: "Erreur",
+          description: "Impossible de créer la session de paiement. Veuillez réessayer.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (!data?.url) {
+        console.error('❌ No checkout URL received');
+        toast({
+          title: "Erreur",
+          description: "URL de paiement invalide. Veuillez réessayer.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      console.log('✅ Redirecting to Stripe checkout:', data.url);
       
-      if (event.data && event.data.type === 'stripe_checkout_success') {
-        console.log('✅ Payment successful, redirecting...');
-        
-        // Extraire le session_id de l'événement si disponible
-        const sessionId = event.data.sessionId || event.data.session_id;
-        const currentUrl = window.location.href;
-        
-        // Construire l'URL de redirection avec session_id
-        const redirectUrl = sessionId 
-          ? `${currentUrl}${currentUrl.includes('?') ? '&' : '?'}payment=success&session_id=${sessionId}`
-          : `${currentUrl}${currentUrl.includes('?') ? '&' : '?'}payment=success`;
-        
-        console.log('🔄 Redirecting to:', redirectUrl);
-        window.location.href = redirectUrl;
-      }
-    };
+      // Rediriger vers Stripe Checkout
+      window.location.href = data.url;
 
-    // Ajouter l'event listener
-    window.addEventListener('message', handleStripeSuccess);
-
-    return () => {
-      // Nettoyer les event listeners et scripts
-      window.removeEventListener('message', handleStripeSuccess);
-      const existingScript = document.querySelector('script[src="https://js.stripe.com/v3/buy-button.js"]');
-      if (existingScript) {
-        document.head.removeChild(existingScript);
-      }
-    };
-  }, []);
+    } catch (error) {
+      console.error('❌ Payment initiation failed:', error);
+      toast({
+        title: "Erreur",
+        description: "Une erreur est survenue. Veuillez réessayer.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <stripe-buy-button
-      buy-button-id="buy_btn_1RmxYCKHghqBzkgj4PRtbqgp"
-      publishable-key="pk_live_51QhATxKHghqBzkgjrOvXxufXAoARsLAhtHykXruHDjz2b52lbegutZofksNklLE8SUGR0OXHcvQYFdFq4kZtzDPG00RlmJOHbp"
-    />
+    <Button 
+      onClick={handlePayment}
+      disabled={loading}
+      className="w-full"
+      size="lg"
+    >
+      {loading ? 'Préparation...' : 'Passer à Premium - 14,90€'}
+    </Button>
   );
 };
 

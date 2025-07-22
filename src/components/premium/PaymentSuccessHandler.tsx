@@ -24,7 +24,7 @@ const PaymentSuccessHandler = () => {
           if (sessionId) {
             // Appeler l'edge function pour mettre à jour le statut premium
             const { data, error } = await supabase.functions.invoke('update-premium-status', {
-              body: { session_id: sessionId }
+              body: { sessionId: sessionId }
             });
 
             console.log('📤 Edge function response:', { data, error });
