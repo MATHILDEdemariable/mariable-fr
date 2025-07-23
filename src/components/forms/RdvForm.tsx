@@ -157,9 +157,12 @@ const RdvForm = ({prestataire_id, prestataire_name, contact_date, email_prestata
   }, []);
 
   const handleBookingClick = async () => {
+    console.log('🚀 handleBookingClick démarré');
+    
     const message = document.querySelector("textarea")?.value;
 
     if (!date1.hour || !date2.hour || !date3.hour) {
+      console.log('❌ Dates manquantes');
       toast({
         description: "Veuillez sélectionner toutes les propositions de dates.",
         variant: "destructive",
@@ -167,9 +170,12 @@ const RdvForm = ({prestataire_id, prestataire_name, contact_date, email_prestata
       return;
     }
 
+    if (!prestataire_id) {
+      console.log('❌ prestataire_id manquant');
+      return;
+    }
 
-    if (!prestataire_id) return;
-
+    console.log('📝 Insertion RDV dans la base de données...');
     // Create a single object for the insert instead of an array
     const { data, error } = await supabase.from("vendors_tracking_preprod").insert({
       contact_date: contact_date,
@@ -188,39 +194,53 @@ const RdvForm = ({prestataire_id, prestataire_name, contact_date, email_prestata
     .select();
 
     if (error) {
+      console.error('❌ Erreur DB RDV:', error);
       toast({
         description: `Erreur lors de la réservation: ${error.message}`,
         variant: "destructive",
       });
       return;
-    } else {
-      // Appeler directement la fonction Edge pour envoyer l'email
-      try {
-        const { error: emailError } = await supabase.functions.invoke('notifyNewProspect', {
-          body: {
-            record: {
-              id: data && data.length > 0 ? data[0].id : null,
-              email_presta: email_prestataire,
-              status: "en attente"
-            }
+    } 
+
+    console.log('✅ RDV inséré:', data);
+    
+    // Appeler directement la fonction Edge pour envoyer l'email
+    console.log('📧 Appel de la fonction Edge notifyNewProspect...');
+    try {
+      const { data: emailData, error: emailError } = await supabase.functions.invoke('notifyNewProspect', {
+        body: {
+          record: {
+            id: data && data.length > 0 ? data[0].id : null,
+            email_presta: email_prestataire,
+            status: "en attente"
           }
-        });
-        
-        if (emailError) {
-          console.error('Erreur envoi email RDV:', emailError);
         }
-      } catch (emailError) {
-        console.error('Erreur fonction Edge RDV:', emailError);
+      });
+      
+      if (emailError) {
+        console.error('❌ Erreur envoi email RDV:', emailError);
+        toast({
+          description: "RDV enregistré mais erreur lors de l'envoi de l'email",
+          variant: "destructive",
+        });
+      } else {
+        console.log('✅ Email RDV envoyé avec succès:', emailData);
       }
+    } catch (emailError) {
+      console.error('❌ Erreur fonction Edge RDV:', emailError);
+      toast({
+        description: "RDV enregistré mais erreur lors de l'envoi de l'email",
+        variant: "destructive",
+      });
+    }
       const currentButton = document.querySelector("#button-rdv");
       currentButton?.setAttribute("disabled", "true");
       
-      toast({
-        description: `Votre demande de prise de rendez-vous été envoyé au prestataire.`,
-        variant: "default",
-      });
-      dialogClose();
-    }
+    toast({
+      description: `Votre demande de prise de rendez-vous été envoyé au prestataire.`,
+      variant: "default",
+    });
+    dialogClose();
   };
 
   return (

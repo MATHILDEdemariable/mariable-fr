@@ -45,7 +45,7 @@ const handler = async (_request) => {
         'Authorization': `Bearer ${RESEND_API_KEY}`
       },
       body: JSON.stringify({
-        "from": "Mariable <contact@mariable.fr>",
+        "from": "Mariable <mathilde@mariable.fr>",
         "to": emailPresta,
         "bcc": "mathilde@mariable.fr",
         "subject": "[PRESTA] - Demande de rendez-vous",

@@ -13,14 +13,28 @@ const ContactForm = ({prestataire, dialogClose,user}) => {
   const [message, setMessage] = useState("");
 
   const sendMessage = async () => {
+    console.log('🚀 sendMessage démarré');
+    
     const trimmedMessage = message.trim();
     if (!trimmedMessage) {
+      console.log('❌ Message vide');
       toast({
         description: `Veuillez écrire un message.`,
         variant: "destructive",
       });
       return;
     }
+
+    if (!user || !user.user) {
+      console.log('❌ Utilisateur non connecté');
+      toast({
+        description: "Vous devez être connecté pour envoyer un message",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    console.log('📝 Insertion dans la base de données...');
     //insert to supabase
     const { data, error } = await supabase
       .from("vendors_contact_preprod")
@@ -35,30 +49,46 @@ const ContactForm = ({prestataire, dialogClose,user}) => {
       .select();
       
       if(error){
+        console.error('❌ Erreur DB:', error);
         toast({
           description: `Erreur lors de l'envoi du message`,
           variant: "destructive",
         });
-      }else{
-        // Appeler directement la fonction Edge pour envoyer l'email
-        try {
-          const { error: emailError } = await supabase.functions.invoke('notifyNewContact', {
-            body: {
-              record: {
-                id: data && data.length > 0 ? data[0].id : null,
-                message: trimmedMessage,
-                email_client: user.user.email,
-                email_presta: prestataire.email
-              }
+        return;
+      }
+
+      console.log('✅ Données insérées:', data);
+      
+      // Appeler directement la fonction Edge pour envoyer l'email
+      console.log('📧 Appel de la fonction Edge notifyNewContact...');
+      try {
+        const { data: emailData, error: emailError } = await supabase.functions.invoke('notifyNewContact', {
+          body: {
+            record: {
+              id: data && data.length > 0 ? data[0].id : null,
+              message: trimmedMessage,
+              email_client: user.user.email,
+              email_presta: prestataire.email
             }
-          });
-          
-          if (emailError) {
-            console.error('Erreur envoi email:', emailError);
           }
-        } catch (emailError) {
-          console.error('Erreur fonction Edge:', emailError);
+        });
+        
+        if (emailError) {
+          console.error('❌ Erreur envoi email:', emailError);
+          toast({
+            description: "Message enregistré mais erreur lors de l'envoi de l'email",
+            variant: "destructive",
+          });
+        } else {
+          console.log('✅ Email envoyé avec succès:', emailData);
         }
+      } catch (emailError) {
+        console.error('❌ Erreur fonction Edge:', emailError);
+        toast({
+          description: "Message enregistré mais erreur lors de l'envoi de l'email",
+          variant: "destructive",
+        });
+      }
         // Handle tracking
         try {
           const { data: existingTracking } = await supabase
@@ -102,9 +132,7 @@ const ContactForm = ({prestataire, dialogClose,user}) => {
           variant: "default",
         });
         dialogClose();
-      }
-
-  }
+  };
 
   return (
     <>

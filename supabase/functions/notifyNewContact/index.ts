@@ -31,7 +31,7 @@ const handler = async (_request) => {
     console.log('📧 Données reçues:', { id, emailClient, emailPresta });
     
     const bodyContent = JSON.stringify({
-      "from": "Mariable <contact@mariable.fr>",
+      "from": "Mariable <mathilde@mariable.fr>",
       "to": "mathilde@mariable.fr",
       "bcc": [
         emailClient,
