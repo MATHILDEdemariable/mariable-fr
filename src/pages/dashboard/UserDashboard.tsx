@@ -21,6 +21,7 @@ import { useReaderMode } from '@/contexts/ReaderModeContext';
 import ProjectManagement from '@/components/project-management/ProjectManagement';
 import HelpPage from './HelpPage';
 import PremiumBadge from '@/components/premium/PremiumBadge';
+import MessageHistoryPage from './MessageHistoryPage';
 
 const UserDashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -63,6 +64,7 @@ const UserDashboard: React.FC = () => {
           <Route path="budget/detailed" element={<DetailedBudget />} />
           <Route path="budget/calculator" element={<BudgetCalculator />} />
           <Route path="prestataires" element={<VendorTracking />} />
+          <Route path="message-history" element={<MessageHistoryPage />} />
           <Route path="wishlist" element={<WishlistPage />} />
           <Route path="coordination" element={<CoordinationPage />} />
           <Route path="drinks" element={<DrinksCalculator />} />

@@ -80,6 +80,11 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
       path: '/dashboard/prestataires',
     },
     {
+      label: 'Historique Message',
+      icon: <MessageSquare className="h-4 w-4" />,
+      path: '/dashboard/message-history',
+    },
+    {
       label: 'Wishlist',
       icon: <Heart className="h-4 w-4" />,
       path: '/dashboard/wishlist',

@@ -47,12 +47,16 @@ const handler = async (_request) => {
       body: JSON.stringify({
         "from": "Mariable <mathilde@mariable.fr>",
         "to": emailPresta,
-        "bcc": "mathilde@mariable.fr",
-        "subject": "[PRESTA] - Demande de rendez-vous",
-        "html": `Bonjour,<br/>
-        Vous venez de recevoir une nouvelle demande de rendez-vous<br/>
-        <a href="https://www.mariable.fr/prestataire/tracking?id=${idTracking}">Cliquez ici pour voir les détails</a>
-        `
+        "bcc": [
+          "mathilde@mariable.fr", 
+          "contact.mariable@gmail.com"
+        ],
+        "subject": "[PRESTA] - Demande de rendez-vous via Mariable",
+        "html": `Bonjour,<br/><br/>
+        Vous venez de recevoir une nouvelle demande de rendez-vous via Mariable.<br/><br/>
+        <a href="https://www.mariable.fr/prestataire/tracking?id=${idTracking}">Cliquez ici pour voir les détails et répondre</a><br/><br/>
+        Bonne journée !<br/>
+        L'équipe Mariable`
       })
     });
     

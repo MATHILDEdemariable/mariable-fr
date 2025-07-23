@@ -35,6 +35,7 @@ import Prestataires from "./pages/services/Prestataires";
 import Budget from "./pages/services/Budget";
 import Prestataire from "./pages/prestataire/slug";
 import EmailConfirmation from "./pages/auth/EmailConfirmation";
+import MessageHistoryPage from "./pages/dashboard/MessageHistoryPage";
 
 // Import missing pages
 import Professionnels from "./pages/Professionnels";

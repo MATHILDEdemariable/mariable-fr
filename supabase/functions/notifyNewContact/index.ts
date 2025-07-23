@@ -32,16 +32,20 @@ const handler = async (_request) => {
     
     const bodyContent = JSON.stringify({
       "from": "Mariable <mathilde@mariable.fr>",
-      "to": "mathilde@mariable.fr",
+      "to": emailPresta,
       "bcc": [
-        emailClient,
-        emailPresta
+        "mathilde@mariable.fr",
+        "contact.mariable@gmail.com"
       ],
-      "subject": "Nouveau message prestataire",
-      "html": `Bonjour, <br/> Un nouveau message vient de vous être envoyé. <br/>
-        Message : <br />
-        ${message} <br /><br />
-        <a href="https://www.mariable.fr/prestataire/contact?id=${id}">Répondre au message</a>`
+      "subject": "Nouveau message de Mariable - Répondez directement",
+      "html": `Bonjour,<br/><br/>
+        Vous avez reçu un nouveau message via Mariable :<br/><br/>
+        <strong>Message :</strong><br/>
+        ${message}<br/><br/>
+        <strong>Client :</strong> ${emailClient}<br/><br/>
+        <strong>Pour répondre :</strong> Répondez directement à ce mail, votre réponse sera envoyée au client.<br/><br/>
+        Bonne journée !<br/>
+        L'équipe Mariable`
     });
     
     console.log('📬 Envoi email vers:', 'mathilde@mariable.fr');
