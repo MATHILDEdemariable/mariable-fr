@@ -31,13 +31,34 @@ const ContactForm = ({prestataire, dialogClose,user}) => {
         email_client: user.user.email,
         message: trimmedMessage,
         origin_user:true
-      });
+      })
+      .select();
+      
       if(error){
         toast({
           description: `Erreur lors de l'envoi du message`,
           variant: "destructive",
         });
       }else{
+        // Appeler directement la fonction Edge pour envoyer l'email
+        try {
+          const { error: emailError } = await supabase.functions.invoke('notifyNewContact', {
+            body: {
+              record: {
+                id: data && data.length > 0 ? data[0].id : null,
+                message: trimmedMessage,
+                email_client: user.user.email,
+                email_presta: prestataire.email
+              }
+            }
+          });
+          
+          if (emailError) {
+            console.error('Erreur envoi email:', emailError);
+          }
+        } catch (emailError) {
+          console.error('Erreur fonction Edge:', emailError);
+        }
         // Handle tracking
         try {
           const { data: existingTracking } = await supabase

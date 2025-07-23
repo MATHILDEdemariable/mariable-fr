@@ -171,7 +171,7 @@ const RdvForm = ({prestataire_id, prestataire_name, contact_date, email_prestata
     if (!prestataire_id) return;
 
     // Create a single object for the insert instead of an array
-    const { error } = await supabase.from("vendors_tracking_preprod").insert({
+    const { data, error } = await supabase.from("vendors_tracking_preprod").insert({
       contact_date: contact_date,
       user_id: userData.id,
       prestataire_id: prestataire_id,
@@ -184,7 +184,8 @@ const RdvForm = ({prestataire_id, prestataire_name, contact_date, email_prestata
       second_date_rdv: date2.hour ? date2.hour.toISOString() : null,
       third_date_rdv: date3.hour ? date3.hour.toISOString() : null,
       valide_date_rdv: 0
-    });
+    })
+    .select();
 
     if (error) {
       toast({
@@ -193,6 +194,24 @@ const RdvForm = ({prestataire_id, prestataire_name, contact_date, email_prestata
       });
       return;
     } else {
+      // Appeler directement la fonction Edge pour envoyer l'email
+      try {
+        const { error: emailError } = await supabase.functions.invoke('notifyNewProspect', {
+          body: {
+            record: {
+              id: data && data.length > 0 ? data[0].id : null,
+              email_presta: email_prestataire,
+              status: "en attente"
+            }
+          }
+        });
+        
+        if (emailError) {
+          console.error('Erreur envoi email RDV:', emailError);
+        }
+      } catch (emailError) {
+        console.error('Erreur fonction Edge RDV:', emailError);
+      }
       const currentButton = document.querySelector("#button-rdv");
       currentButton?.setAttribute("disabled", "true");
       
