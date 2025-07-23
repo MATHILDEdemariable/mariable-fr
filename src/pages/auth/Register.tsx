@@ -101,6 +101,9 @@ const Register = () => {
         return;
       }
       
+      // Stocker l'email pour permettre le renvoi en cas d'expiration
+      localStorage.setItem('pending_verification_email', email);
+      
       // Afficher l'alerte pour vérifier les mails indésirables
       setShowEmailAlert(true);
       
