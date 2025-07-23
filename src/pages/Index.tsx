@@ -87,7 +87,7 @@ const Index = () => {
               </h2>
               
               <div className="max-w-3xl mx-auto mb-8">
-                <p className="text-lg text-gray-700 mb-6">Une solution pour organiser, coordonner et vivre un mariage parfait - pensée pour les couples qui veulent gérer eux-mêmes.</p>
+                <p className="text-lg text-gray-700 mb-6">Coordonner et vivre un mariage parfait. Crée pour les couples qui veulent organiser eux-mêmes.</p>
                 
                 <div className="grid md:grid-cols-3 gap-6 text-left">
                   <div className="flex items-start gap-3">
