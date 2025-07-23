@@ -37,15 +37,130 @@ const handler = async (_request) => {
         "mathilde@mariable.fr",
         "contact.mariable@gmail.com"
       ],
-      "subject": "Nouveau message de Mariable - Répondez directement",
-      "html": `Bonjour,<br/><br/>
-        Vous avez reçu un nouveau message via Mariable :<br/><br/>
+      "subject": "Demande de contact sur mariable.fr",
+      "html": `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Demande de contact sur mariable.fr</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@400;500&display=swap');
+    
+    body { 
+      font-family: 'Inter', Arial, sans-serif; 
+      line-height: 1.6; 
+      color: #000000; 
+      margin: 0; 
+      padding: 0; 
+      background-color: #f8f6f0; 
+    }
+    
+    .container { 
+      max-width: 600px; 
+      margin: 0 auto; 
+      background-color: #ffffff; 
+      padding: 40px; 
+      border-radius: 8px; 
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
+    }
+    
+    .header { 
+      text-align: center; 
+      margin-bottom: 30px; 
+    }
+    
+    .logo { 
+      font-family: 'Playfair Display', serif; 
+      font-size: 28px; 
+      font-weight: 600; 
+      color: #7F9474; 
+      margin-bottom: 10px; 
+    }
+    
+    .message-block { 
+      background-color: #f8f6f0; 
+      border-left: 4px solid #7F9474; 
+      padding: 20px; 
+      margin: 25px 0; 
+      border-radius: 4px; 
+    }
+    
+    .message-content { 
+      background-color: #ffffff; 
+      padding: 15px; 
+      border-radius: 4px; 
+      margin-bottom: 15px; 
+      border: 1px solid #e5e5e5; 
+    }
+    
+    .client-info { 
+      color: #7F9474; 
+      font-weight: 500; 
+      font-size: 14px; 
+    }
+    
+    .cta-section { 
+      background-color: #7F9474; 
+      color: white; 
+      padding: 20px; 
+      border-radius: 6px; 
+      text-align: center; 
+      margin: 25px 0; 
+    }
+    
+    .cta-text { 
+      font-weight: 500; 
+      font-size: 16px; 
+      margin: 0; 
+    }
+    
+    .signature { 
+      margin-top: 30px; 
+      padding-top: 20px; 
+      border-top: 1px solid #e5e5e5; 
+    }
+    
+    .signature-name { 
+      color: #7F9474; 
+      font-weight: 500; 
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo">Mariable</div>
+    </div>
+    
+    <p>Bonjour,</p>
+    
+    <p>Vous avez reçu le message suivant via notre site. Vous trouverez les coordonnées du client ci-dessous.</p>
+    
+    <div class="message-block">
+      <div class="message-content">
         <strong>Message :</strong><br/>
-        ${message}<br/><br/>
-        <strong>Client :</strong> ${emailClient}<br/><br/>
-        <strong>Pour répondre :</strong> Répondez directement à ce mail, votre réponse sera envoyée au client.<br/><br/>
-        Bonne journée !<br/>
-        L'équipe Mariable`
+        ${message}
+      </div>
+      
+      <div class="client-info">
+        <strong>Email du Client :</strong> ${emailClient}
+      </div>
+    </div>
+    
+    <div class="cta-section">
+      <p class="cta-text">📧 Recontactez directement le client par email - idéalement dans les 24H</p>
+    </div>
+    
+    <div class="signature">
+      <p>N'hésitez pas si vous avez besoin d'aide!</p>
+      <p>Bonne journée,</p>
+      <p class="signature-name">Mathilde de Mariable</p>
+    </div>
+  </div>
+</body>
+</html>`
     });
     
     console.log('📬 Envoi email vers:', 'mathilde@mariable.fr');
