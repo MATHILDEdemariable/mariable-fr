@@ -80,9 +80,9 @@ const Index = () => {
         <section className="py-16 md:py-20 bg-white">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif text-black mb-6 max-w-4xl mx-auto" style={{
+              <h2 style={{
               fontFamily: 'Playfair Display, serif'
-            }}>
+            }} className="sm:text-3xl md:text-4xl font-serif text-black mb-6 max-w-4xl mx-auto text-3xl font-semibold">
                 Le premier wedding planner de poche
               </h2>
               
