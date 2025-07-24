@@ -233,16 +233,11 @@ const EnhancedDragDropTimeline: React.FC<EnhancedDragDropTimelineProps> = ({
       const updatedEvents = timelineEvents.filter(event => event.id !== eventId);
       console.log('🔄 Local events updated, remaining:', updatedEvents.length);
       
-      const recalculatedEvents = recalculateTimeline(updatedEvents);
-      
-      setTimelineEvents(recalculatedEvents);
+      setTimelineEvents(updatedEvents);
       
       if (onEventsUpdate) {
-        onEventsUpdate(recalculatedEvents);
+        onEventsUpdate(updatedEvents);
       }
-
-      // Sauvegarder les positions mises à jour
-      await saveToDatabase(recalculatedEvents);
       
       toast({
         title: "Étape supprimée",
