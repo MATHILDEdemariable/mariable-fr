@@ -263,8 +263,8 @@ const PlanningPublicProject: React.FC = () => {
   }
 
   const { coordination, tasks, teamMembers, documents } = coordinationData;
-  const people = teamMembers.filter(m => m.type === 'person');
-  const vendors = teamMembers.filter(m => m.type === 'vendor');
+  const people = teamMembers.filter(m => m.type === 'person' && m.role !== 'Autre prestataire');
+  const vendors = teamMembers.filter(m => m.type === 'vendor' || m.role === 'Autre prestataire');
 
   return (
     <>
@@ -276,16 +276,16 @@ const PlanningPublicProject: React.FC = () => {
       <div className="min-h-screen bg-gray-50">
         {/* En-tête */}
         <div className="bg-white shadow-sm border-b">
-          <div className="container mx-auto px-4 py-6">
+          <div className="container mx-auto px-4 md:px-6 py-4 md:py-6">
             <div className="text-center">
-              <h1 className="text-3xl font-serif text-wedding-black mb-2">
+              <h1 className="text-xl md:text-3xl font-serif text-wedding-black mb-2">
                 {coordination.title}
               </h1>
-              <p className="text-gray-600">
+              <p className="text-sm md:text-base text-gray-600">
                 Mission Mariage - Planning partagé
               </p>
               {coordination.wedding_date && (
-                <p className="text-sm text-blue-600 font-medium mt-2">
+                <p className="text-xs md:text-sm text-blue-600 font-medium mt-2">
                   {new Date(coordination.wedding_date).toLocaleDateString('fr-FR', {
                     weekday: 'long',
                     year: 'numeric',
@@ -294,8 +294,8 @@ const PlanningPublicProject: React.FC = () => {
                   })}
                 </p>
               )}
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-4 max-w-md mx-auto">
-                <p className="text-sm text-blue-700">
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-2 md:p-3 mt-4 max-w-md mx-auto">
+                <p className="text-xs md:text-sm text-blue-700">
                   <strong>Mode consultation :</strong> Ce planning est en lecture seule.
                 </p>
               </div>
@@ -303,19 +303,19 @@ const PlanningPublicProject: React.FC = () => {
           </div>
         </div>
 
-        <div className="container mx-auto px-4 py-6 max-w-6xl">
+        <div className="container mx-auto px-4 md:px-6 py-4 md:py-6 max-w-6xl">
           <Tabs defaultValue="planning" className="w-full">
-            <TabsList className="grid w-full grid-cols-3 mb-6">
-              <TabsTrigger value="planning" className="flex items-center gap-2">
-                <Calendar className="h-4 w-4" />
+            <TabsList className="grid w-full grid-cols-1 md:grid-cols-3 mb-6">
+              <TabsTrigger value="planning" className="flex items-center gap-2 text-xs md:text-sm">
+                <Calendar className="h-3 w-3 md:h-4 md:w-4" />
                 TO DO List ({tasks.length})
               </TabsTrigger>
-              <TabsTrigger value="equipe" className="flex items-center gap-2">
-                <Users className="h-4 w-4" />
+              <TabsTrigger value="equipe" className="flex items-center gap-2 text-xs md:text-sm">
+                <Users className="h-3 w-3 md:h-4 md:w-4" />
                 Équipe ({teamMembers.length})
               </TabsTrigger>
-              <TabsTrigger value="documents" className="flex items-center gap-2">
-                <FileText className="h-4 w-4" />
+              <TabsTrigger value="documents" className="flex items-center gap-2 text-xs md:text-sm">
+                <FileText className="h-3 w-3 md:h-4 md:w-4" />
                 Documents ({documents.length + pinterestLinks.length})
               </TabsTrigger>
             </TabsList>

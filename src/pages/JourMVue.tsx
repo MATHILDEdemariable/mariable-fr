@@ -183,9 +183,9 @@ const JourMVue: React.FC = () => {
 
   const { coordination, tasks, teamMembers, documents, pinterestLinks } = weddingData;
   
-  // Filtrage simple des équipes
-  const people = teamMembers.filter(m => m.type === 'person');
-  const vendors = teamMembers.filter(m => m.type === 'vendor');
+  // Filtrage des équipes avec gestion "Autre prestataire"
+  const people = teamMembers.filter(m => m.type === 'person' && m.role !== 'Autre prestataire');
+  const vendors = teamMembers.filter(m => m.type === 'vendor' || m.role === 'Autre prestataire');
 
   return (
     <div className="min-h-screen bg-gray-50">
