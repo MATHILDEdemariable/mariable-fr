@@ -10,7 +10,6 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Edit2, Check, X, Trash2, GripVertical, Users, Plus, ChevronDown, ChevronUp } from 'lucide-react';
 import { PlanningEvent } from '../wedding-day/types/planningTypes';
 import { addMinutes } from 'date-fns';
-import { useIsMobile } from '@/hooks/use-mobile';
 
 interface MonJourMEventCardProps {
   event: PlanningEvent;
@@ -44,7 +43,6 @@ const MonJourMEventCard: React.FC<MonJourMEventCardProps> = ({
   );
   const [showAssignmentSelect, setShowAssignmentSelect] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
-  const isMobile = useIsMobile();
 
   const handleSave = () => {
     console.log('💾 Saving event changes:', editedTitle);
@@ -154,59 +152,57 @@ const MonJourMEventCard: React.FC<MonJourMEventCardProps> = ({
     } ${
       isSelected ? 'ring-2 ring-blue-500 bg-blue-50' : ''
     }`}>
-      <CardContent className={isMobile ? "p-2" : "p-4"}>
-        <div className={`flex items-start ${isMobile ? "gap-2" : "gap-4"}`}>
+      <CardContent className="p-3 sm:p-4">
+        <div className="flex items-start gap-2 sm:gap-4">
           {/* Selection checkbox in selection mode */}
           {selectionMode && (
             <div className="mt-1">
               <Checkbox
                 checked={isSelected}
                 onCheckedChange={handleSelectionToggle}
-                className={isMobile ? "h-4 w-4" : "h-5 w-5"}
+                className="h-4 w-4 sm:h-5 sm:w-5"
               />
             </div>
           )}
 
           {/* Drag Handle - masqué sur mobile */}
-          {!selectionMode && !isMobile && (
+          {!selectionMode && (
             <div 
               {...dragHandleProps} 
-              className="cursor-grab active:cursor-grabbing mt-2 text-gray-400 hover:text-gray-600"
+              className="cursor-grab active:cursor-grabbing mt-2 text-gray-400 hover:text-gray-600 hidden sm:block"
             >
               <GripVertical className="h-5 w-5" />
             </div>
           )}
           
           <div className="flex-1 min-w-0">
-            {/* Layout mobile optimisé */}
-            {isMobile ? (
+            {/* Layout mobile responsive */}
+            <div className="block sm:hidden">{/* Mobile Layout */}
               <div className="space-y-2">
-                {/* Heure et titre sur mobile */}
-                <div className="flex items-center justify-between">
-                  <div className={`text-sm font-bold ${
-                    event.isHighlight ? 'text-wedding-olive' : 'text-gray-700'
-                  }`}>
+                {/* Heure et actions mobile - ligne compacte */}
+                <div className="flex items-center justify-between gap-2">
+                  <div className="text-sm font-semibold text-primary min-w-0">
                     {isEditing ? (
                       <Input
                         type="time"
                         value={editedStartTime}
                         onChange={(e) => setEditedStartTime(e.target.value)}
-                        className="w-20 text-sm"
+                        className="w-20 text-sm h-7"
                       />
                     ) : (
-                      formatTimeRange()
+                      <span className="truncate">{formatTimeRange()}</span>
                     )}
                   </div>
                   
-                  {/* Actions mobile simplifiées */}
+                  {/* Actions mobile compactes */}
                   {!selectionMode && (
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-1 flex-shrink-0">
                       {!isEditing ? (
                         <Button
                           variant="ghost"
                           size="sm"
                           onClick={() => setIsEditing(true)}
-                          className="h-6 w-6 p-0 hover:bg-blue-100"
+                          className="h-6 w-6 p-0"
                         >
                           <Edit2 className="h-3 w-3" />
                         </Button>
@@ -235,49 +231,45 @@ const MonJourMEventCard: React.FC<MonJourMEventCardProps> = ({
                   )}
                 </div>
 
-                {/* Titre mobile */}
-                <div className="pr-2">
+                {/* Titre mobile - ligne séparée pour éviter le chevauchement */}
+                <div>
                   {isEditing ? (
                     <Input
                       value={editedTitle}
                       onChange={(e) => setEditedTitle(e.target.value)}
-                      className="text-sm font-medium"
+                      className="text-sm font-medium h-8"
                       placeholder="Titre de l'étape"
                       autoFocus
                     />
                   ) : (
-                    <h4 className={`text-sm font-medium leading-tight ${
-                      event.isHighlight ? 'text-wedding-olive' : 'text-gray-800'
-                    }`}>
+                    <h4 className="text-sm font-medium leading-snug text-foreground line-clamp-2">
                       {event.title}
                     </h4>
                   )}
                 </div>
 
-                {/* Assignation mobile - ligne séparée */}
-                <div className="space-y-1">
-                  {getAssignedMembers().length > 0 && (
-                    <div className="flex flex-wrap gap-1">
-                      {getAssignedMembers().map((member) => (
-                        <Badge 
-                          key={member.id} 
-                          variant="secondary" 
-                          className="text-xs px-1 py-0.5"
-                        >
-                          {member.role}
-                        </Badge>
-                      ))}
-                    </div>
-                  )}
-                </div>
+                {/* Assignation mobile - compacte et lisible */}
+                {getAssignedMembers().length > 0 && (
+                  <div className="flex flex-wrap gap-1">
+                    {getAssignedMembers().map((member) => (
+                      <Badge 
+                        key={member.id} 
+                        variant="outline" 
+                        className="text-xs px-1.5 py-0.5 bg-muted/50"
+                      >
+                        {member.role}
+                      </Badge>
+                    ))}
+                  </div>
+                )}
 
-                {/* Bouton voir plus sur mobile */}
-                {(event.notes || event.duration !== 30 || !selectionMode) && (
+                {/* Bouton voir détails - conditionnel */}
+                {(event.notes || (!selectionMode && teamMembers.length > 0)) && (
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={() => setShowDetails(!showDetails)}
-                    className="h-6 text-xs text-gray-500 hover:text-gray-700 p-0 justify-start"
+                    className="h-6 text-xs text-muted-foreground hover:text-foreground p-0 justify-start -ml-1"
                   >
                     {showDetails ? (
                       <>
@@ -287,17 +279,17 @@ const MonJourMEventCard: React.FC<MonJourMEventCardProps> = ({
                     ) : (
                       <>
                         <ChevronDown className="h-3 w-3 mr-1" />
-                        Voir plus
+                        Voir détails
                       </>
                     )}
                   </Button>
                 )}
 
-                {/* Détails mobiles (conditionnels) */}
+                {/* Section détails mobile - dépliable */}
                 {showDetails && (
-                  <div className="space-y-2 pt-1 border-t border-gray-100">
+                  <div className="space-y-2 pt-2 border-t border-border/50">
                     {/* Durée mobile */}
-                    <div className="text-xs text-gray-600">
+                    <div className="text-xs text-muted-foreground">
                       {isEditing ? (
                         <div className="flex items-center gap-2">
                           <span>Durée:</span>
@@ -305,27 +297,27 @@ const MonJourMEventCard: React.FC<MonJourMEventCardProps> = ({
                             type="number"
                             value={editedDuration}
                             onChange={(e) => setEditedDuration(Math.max(parseInt(e.target.value) || 5, 5))}
-                            className="w-16 text-xs"
+                            className="w-16 text-xs h-6"
                             min="5"
                           />
                           <span>min</span>
                         </div>
                       ) : (
-                        <span>Durée: {event.duration} min</span>
+                        <span>⏱️ {event.duration} minutes</span>
                       )}
                     </div>
 
-                    {/* Assignation détaillée mobile */}
+                    {/* Gestion équipe mobile */}
                     {!selectionMode && (
                       <div className="space-y-1">
-                        <div className="flex items-center gap-1">
-                          <Users className="h-3 w-3 text-gray-500" />
-                          <span className="text-xs text-gray-700">Équipe:</span>
+                        <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                          <Users className="h-3 w-3" />
+                          <span>Équipe assignée:</span>
                           <Button
                             variant="ghost"
                             size="sm"
                             onClick={() => setShowAssignmentSelect(!showAssignmentSelect)}
-                            className="h-4 w-4 p-0"
+                            className="h-4 w-4 p-0 ml-auto"
                           >
                             <Plus className="h-2 w-2" />
                           </Button>
@@ -345,7 +337,7 @@ const MonJourMEventCard: React.FC<MonJourMEventCardProps> = ({
                                     e.stopPropagation();
                                     handleUnassignMember(member.id);
                                   }}
-                                  className="hover:bg-red-200 rounded-full p-0.5"
+                                  className="hover:bg-destructive/20 rounded-full p-0.5"
                                 >
                                   <X className="h-2 w-2" />
                                 </button>
@@ -356,13 +348,13 @@ const MonJourMEventCard: React.FC<MonJourMEventCardProps> = ({
 
                         {showAssignmentSelect && (
                           <Select onValueChange={handleAssignMember}>
-                            <SelectTrigger className="w-full h-8 text-xs">
-                              <SelectValue placeholder="Assigner" />
+                            <SelectTrigger className="w-full h-7 text-xs">
+                              <SelectValue placeholder="Assigner un membre" />
                             </SelectTrigger>
                             <SelectContent>
                               {teamMembers.map((member) => (
                                 <SelectItem key={member.id} value={member.id} className="text-xs">
-                                  {member.name} ({member.role})
+                                  {member.name} - {member.role}
                                 </SelectItem>
                               ))}
                             </SelectContent>
@@ -378,15 +370,15 @@ const MonJourMEventCard: React.FC<MonJourMEventCardProps> = ({
                           <Textarea
                             value={editedNotes}
                             onChange={(e) => setEditedNotes(e.target.value)}
-                            placeholder="Notes"
+                            placeholder="Notes ou instructions..."
                             rows={2}
                             className="resize-none text-xs"
                           />
                         ) : (
                           event.notes && (
-                            <p className="text-xs text-gray-600 italic bg-gray-50 p-2 rounded">
-                              💡 {event.notes}
-                            </p>
+                            <div className="text-xs text-muted-foreground bg-muted/30 p-2 rounded-md">
+                              <span className="text-primary">💡</span> {event.notes}
+                            </div>
                           )
                         )}
                       </div>
@@ -396,13 +388,15 @@ const MonJourMEventCard: React.FC<MonJourMEventCardProps> = ({
 
                 {/* Badge moment clé mobile */}
                 {event.isHighlight && (
-                  <Badge variant="outline" className="bg-wedding-olive/20 text-wedding-olive border-wedding-olive text-xs">
-                    Moment clé
+                  <Badge variant="outline" className="bg-wedding-olive/10 text-wedding-olive border-wedding-olive/30 text-xs w-fit">
+                    ⭐ Moment clé
                   </Badge>
                 )}
               </div>
-            ) : (
-              /* Layout desktop existant */
+            </div>
+            
+            {/* Layout desktop */}
+            <div className="hidden sm:block">
               <div>
                 {/* HEURE sur une ligne */}
                 <div className="flex items-center justify-between mb-3">
@@ -620,7 +614,7 @@ const MonJourMEventCard: React.FC<MonJourMEventCardProps> = ({
                   </div>
                 )}
               </div>
-            )}
+            </div>
           </div>
         </div>
       </CardContent>
