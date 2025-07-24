@@ -610,6 +610,81 @@ export type Database = {
           },
         ]
       }
+      jeunes_maries: {
+        Row: {
+          admin_notes: string | null
+          budget_approximatif: string | null
+          conseils_couples: string | null
+          created_at: string
+          date_approbation: string | null
+          date_mariage: string
+          date_soumission: string | null
+          email: string
+          experience_partagee: string | null
+          id: string
+          lieu_mariage: string
+          nom_complet: string
+          nombre_invites: number | null
+          note_experience: number | null
+          photo_principale_url: string | null
+          photos_mariage: Json | null
+          prestataires_recommandes: Json | null
+          slug: string | null
+          status_moderation: string | null
+          telephone: string | null
+          updated_at: string
+          visible: boolean | null
+        }
+        Insert: {
+          admin_notes?: string | null
+          budget_approximatif?: string | null
+          conseils_couples?: string | null
+          created_at?: string
+          date_approbation?: string | null
+          date_mariage: string
+          date_soumission?: string | null
+          email: string
+          experience_partagee?: string | null
+          id?: string
+          lieu_mariage: string
+          nom_complet: string
+          nombre_invites?: number | null
+          note_experience?: number | null
+          photo_principale_url?: string | null
+          photos_mariage?: Json | null
+          prestataires_recommandes?: Json | null
+          slug?: string | null
+          status_moderation?: string | null
+          telephone?: string | null
+          updated_at?: string
+          visible?: boolean | null
+        }
+        Update: {
+          admin_notes?: string | null
+          budget_approximatif?: string | null
+          conseils_couples?: string | null
+          created_at?: string
+          date_approbation?: string | null
+          date_mariage?: string
+          date_soumission?: string | null
+          email?: string
+          experience_partagee?: string | null
+          id?: string
+          lieu_mariage?: string
+          nom_complet?: string
+          nombre_invites?: number | null
+          note_experience?: number | null
+          photo_principale_url?: string | null
+          photos_mariage?: Json | null
+          prestataires_recommandes?: Json | null
+          slug?: string | null
+          status_moderation?: string | null
+          telephone?: string | null
+          updated_at?: string
+          visible?: boolean | null
+        }
+        Relationships: []
+      }
       jour_m_reservations: {
         Row: {
           admin_notes: string | null
@@ -2067,6 +2142,7 @@ export type Database = {
           created_at: string
           description: string | null
           id: string
+          slug: string | null
           title: string
           updated_at: string
           user_id: string
@@ -2077,6 +2153,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
+          slug?: string | null
           title?: string
           updated_at?: string
           user_id: string
@@ -2087,6 +2164,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
+          slug?: string | null
           title?: string
           updated_at?: string
           user_id?: string
@@ -2130,6 +2208,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      generate_coordination_slug: {
+        Args: { title_input: string; coordination_id?: string }
+        Returns: string
+      }
+      generate_jeunes_maries_slug: {
+        Args: { nom_input: string; jeune_marie_id?: string }
+        Returns: string
+      }
       get_user_registrations: {
         Args: Record<PropertyKey, never>
         Returns: {
