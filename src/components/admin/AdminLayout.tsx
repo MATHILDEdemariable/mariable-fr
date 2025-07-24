@@ -9,7 +9,8 @@ import {
   BarChart3,
   Home,
   Settings,
-  Building
+  Building,
+  Heart
 } from 'lucide-react';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 
@@ -57,6 +58,12 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
       href: '/admin/professional-registrations',
       icon: Building,
       current: location.pathname === '/admin/professional-registrations'
+    },
+    {
+      name: 'Jeunes Mariés',
+      href: '/admin/jeunes-maries',
+      icon: Heart,
+      current: location.pathname === '/admin/jeunes-maries'
     },
     {
       name: 'Blog',

@@ -612,6 +612,7 @@ export type Database = {
       }
       jeunes_maries: {
         Row: {
+          accept_email_contact: boolean | null
           admin_notes: string | null
           budget_approximatif: string | null
           conseils_couples: string | null
@@ -636,6 +637,7 @@ export type Database = {
           visible: boolean | null
         }
         Insert: {
+          accept_email_contact?: boolean | null
           admin_notes?: string | null
           budget_approximatif?: string | null
           conseils_couples?: string | null
@@ -660,6 +662,7 @@ export type Database = {
           visible?: boolean | null
         }
         Update: {
+          accept_email_contact?: boolean | null
           admin_notes?: string | null
           budget_approximatif?: string | null
           conseils_couples?: string | null

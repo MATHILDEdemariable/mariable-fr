@@ -19,6 +19,7 @@ export interface JeuneMarie {
   date_soumission: string;
   date_approbation?: string;
   admin_notes?: string;
+  accept_email_contact?: boolean;
   created_at: string;
   updated_at: string;
 }

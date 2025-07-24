@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useJeunesMaries } from '@/hooks/useJeunesMaries';
 import { useNavigate } from 'react-router-dom';
-import { Heart, Plus, Trash2 } from 'lucide-react';
+import { Heart, Plus, Trash2, ArrowLeft } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { ImageUploader } from '@/components/admin/ImageUploader';
 
@@ -36,7 +36,8 @@ const JeuneMariesInscriptionPage: React.FC = () => {
     photo_principale_url: '',
     experience_partagee: '',
     conseils_couples: '',
-    note_experience: 5
+    note_experience: 5,
+    accept_email_contact: false
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -368,6 +369,25 @@ const JeuneMariesInscriptionPage: React.FC = () => {
               </Card>
 
               {/* Soumission */}
+              {/* Consentement */}
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="flex items-start space-x-3">
+                    <input
+                      type="checkbox"
+                      id="accept_email_contact"
+                      checked={formData.accept_email_contact}
+                      onChange={(e) => setFormData({ ...formData, accept_email_contact: e.target.checked })}
+                      className="mt-1 h-4 w-4 text-wedding-olive focus:ring-wedding-olive"
+                    />
+                    <label htmlFor="accept_email_contact" className="text-sm text-gray-700">
+                      J'accepte d'être contacté par email par d'autres mariés et je m'engage à y répondre. 
+                      Cela permettra aux futurs mariés de vous poser des questions sur votre expérience.
+                    </label>
+                  </div>
+                </CardContent>
+              </Card>
+
               <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
                 <p className="text-sm text-yellow-800">
                   <strong>Information importante :</strong> Votre témoignage sera examiné par notre équipe avant publication. 
@@ -375,12 +395,21 @@ const JeuneMariesInscriptionPage: React.FC = () => {
                 </p>
               </div>
 
-              <div className="flex justify-center">
+              <div className="flex gap-4">
+                <Button 
+                  type="button"
+                  variant="outline"
+                  onClick={() => navigate('/jeunes-maries')}
+                  className="flex-1 flex items-center justify-center gap-2"
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                  Retour à la liste
+                </Button>
                 <Button
                   type="submit"
                   size="lg"
                   disabled={loading}
-                  className="bg-wedding-olive hover:bg-wedding-olive/90 min-w-48"
+                  className="flex-1 bg-wedding-olive hover:bg-wedding-olive/90"
                 >
                   {loading ? 'Envoi en cours...' : 'Partager mon expérience'}
                 </Button>

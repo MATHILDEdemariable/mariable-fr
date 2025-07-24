@@ -1,67 +1,113 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import AdminLayout from '@/components/admin/AdminLayout';
+import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { supabase } from '@/integrations/supabase/client';
-import { JeuneMarie } from '@/types/jeunes-maries';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { 
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableHead, 
+  TableHeader, 
+  TableRow 
+} from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
-import { Switch } from '@/components/ui/switch';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Heart, Eye, CheckCircle, XCircle, Edit, Search, Calendar, MapPin, Users } from 'lucide-react';
-import { toast } from '@/hooks/use-toast';
-import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { 
+  Search, 
+  Heart, 
+  Mail, 
+  Calendar, 
+  RefreshCw, 
+  AlertTriangle,
+  Users,
+  MapPin,
+  CheckCircle,
+  XCircle,
+  Clock,
+  Edit,
+  Eye
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { toast } from 'sonner';
+import { JeuneMarie } from '@/types/jeunes-maries';
 
-const AdminJeunesMaries: React.FC = () => {
+const AdminJeunesMaries = () => {
+  const navigate = useNavigate();
+  const { isAuthenticated, isLoading } = useAdminAuth();
   const [jeunesMaries, setJeunesMaries] = useState<JeuneMarie[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [selectedJeuneMarie, setSelectedJeuneMarie] = useState<JeuneMarie | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [filters, setFilters] = useState({
-    search: '',
-    status: 'tous',
-    visible: 'tous'
-  });
+  const [filteredJeunesMaries, setFilteredJeunesMaries] = useState<JeuneMarie[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [isLoadingData, setIsLoadingData] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      navigate('/admin/dashboard');
+    }
+  }, [isAuthenticated, isLoading, navigate]);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchJeunesMaries();
+    }
+  }, [isAuthenticated]);
+
+  useEffect(() => {
+    let filtered = jeunesMaries;
+
+    if (searchTerm) {
+      filtered = filtered.filter(jm => 
+        jm.nom_complet.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        jm.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        jm.lieu_mariage?.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    if (statusFilter !== 'all') {
+      filtered = filtered.filter(jm => jm.status_moderation === statusFilter);
+    }
+
+    setFilteredJeunesMaries(filtered);
+  }, [searchTerm, statusFilter, jeunesMaries]);
 
   const fetchJeunesMaries = async () => {
     try {
-      setLoading(true);
-      let query = supabase
+      setIsLoadingData(true);
+      setError(null);
+      
+      console.log('🚀 Début de la récupération des témoignages jeunes mariés...');
+      
+      const { data, error } = await supabase
         .from('jeunes_maries')
         .select('*')
         .order('date_soumission', { ascending: false });
 
-      if (filters.search) {
-        query = query.or(`nom_complet.ilike.%${filters.search}%,lieu_mariage.ilike.%${filters.search}%,email.ilike.%${filters.search}%`);
+      if (error) throw error;
+      
+      console.log(`✅ ${data.length} témoignages jeunes mariés récupérés avec succès`);
+      
+      setJeunesMaries(data as JeuneMarie[]);
+      setFilteredJeunesMaries(data as JeuneMarie[]);
+      
+      if (data.length === 0) {
+        toast.error('Aucun témoignage trouvé');
+      } else {
+        toast.success(`${data.length} témoignages chargés avec succès`);
       }
-
-      if (filters.status && filters.status !== 'tous') {
-        query = query.eq('status_moderation', filters.status);
-      }
-
-      if (filters.visible !== '' && filters.visible !== 'tous') {
-        query = query.eq('visible', filters.visible === 'true');
-      }
-
-      const { data, error } = await query;
-
-      if (error) {
-        console.error('Erreur lors du chargement:', error);
-        toast({
-          title: "Erreur",
-          description: "Impossible de charger les jeunes mariés",
-          variant: "destructive"
-        });
-        return;
-      }
-
-      setJeunesMaries((data as JeuneMarie[]) || []);
-    } catch (error) {
-      console.error('Erreur:', error);
+      
+    } catch (err) {
+      console.error('❌ Erreur complète:', err);
+      
+      const errorMessage = err instanceof Error ? err.message : 'Erreur inconnue';
+      setError(`Erreur lors du chargement des témoignages: ${errorMessage}`);
+      
+      toast.error('Erreur lors du chargement des témoignages');
     } finally {
-      setLoading(false);
+      setIsLoadingData(false);
     }
   };
 
@@ -72,371 +118,323 @@ const AdminJeunesMaries: React.FC = () => {
         .update(updates)
         .eq('id', id);
 
-      if (error) {
-        console.error('Erreur lors de la mise à jour:', error);
-        toast({
-          title: "Erreur",
-          description: "Impossible de mettre à jour le profil",
-          variant: "destructive"
-        });
-        return;
-      }
+      if (error) throw error;
 
-      toast({
-        title: "Succès",
-        description: "Profil mis à jour avec succès",
-      });
-
-      fetchJeunesMaries();
-      setIsModalOpen(false);
+      // Mettre à jour l'état local
+      setJeunesMaries(prev => 
+        prev.map(jm => jm.id === id ? { ...jm, ...updates } : jm)
+      );
+      
+      toast.success('Témoignage mis à jour avec succès');
     } catch (error) {
-      console.error('Erreur:', error);
+      console.error('Erreur lors de la mise à jour:', error);
+      toast.error('Erreur lors de la mise à jour');
     }
   };
 
-  const approveJeuneMarie = async (id: string) => {
-    await updateJeuneMarie(id, {
-      status_moderation: 'approuve',
-      date_approbation: new Date().toISOString(),
-      visible: true
+  const approveJeuneMarie = (id: string) => {
+    updateJeuneMarie(id, { 
+      status_moderation: 'approuve', 
+      visible: true,
+      date_approbation: new Date().toISOString()
     });
   };
 
-  const rejectJeuneMarie = async (id: string) => {
-    await updateJeuneMarie(id, {
-      status_moderation: 'rejete',
-      visible: false
+  const rejectJeuneMarie = (id: string) => {
+    updateJeuneMarie(id, { 
+      status_moderation: 'rejete', 
+      visible: false 
     });
-  };
-
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'approuve':
-        return <Badge className="bg-green-100 text-green-800">Approuvé</Badge>;
-      case 'rejete':
-        return <Badge className="bg-red-100 text-red-800">Rejeté</Badge>;
-      default:
-        return <Badge className="bg-yellow-100 text-yellow-800">En attente</Badge>;
-    }
   };
 
   const formatDate = (dateString: string) => {
-    try {
-      return format(new Date(dateString), 'dd/MM/yyyy', { locale: fr });
-    } catch {
-      return dateString;
+    return new Date(dateString).toLocaleDateString('fr-FR', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  const getRecentSubmissions = () => {
+    const weekAgo = new Date();
+    weekAgo.setDate(weekAgo.getDate() - 7);
+    return jeunesMaries.filter(jm => new Date(jm.date_soumission) >= weekAgo).length;
+  };
+
+  const getStatusBadge = (status: string, visible: boolean) => {
+    switch (status) {
+      case 'approuve':
+        return (
+          <Badge className="bg-green-100 text-green-800 border-green-200">
+            <CheckCircle className="h-3 w-3 mr-1" />
+            Approuvé
+          </Badge>
+        );
+      case 'rejete':
+        return (
+          <Badge className="bg-red-100 text-red-800 border-red-200">
+            <XCircle className="h-3 w-3 mr-1" />
+            Rejeté
+          </Badge>
+        );
+      default:
+        return (
+          <Badge className="bg-orange-100 text-orange-800 border-orange-200">
+            <Clock className="h-3 w-3 mr-1" />
+            En attente
+          </Badge>
+        );
     }
   };
 
-  useEffect(() => {
-    fetchJeunesMaries();
-  }, [filters]);
+  if (isLoading) {
+    return (
+      <AdminLayout>
+        <div className="flex justify-center items-center h-64">
+          <p>Chargement...</p>
+        </div>
+      </AdminLayout>
+    );
+  }
 
-  const handleEditSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (selectedJeuneMarie) {
-      updateJeuneMarie(selectedJeuneMarie.id, selectedJeuneMarie);
-    }
-  };
+  if (!isAuthenticated) {
+    return null;
+  }
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div className="flex items-center gap-2">
-          <Heart className="h-6 w-6 text-wedding-olive" />
-          <h2 className="text-2xl font-semibold text-wedding-olive">Gestion des Jeunes Mariés</h2>
+    <AdminLayout>
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-2xl font-bold text-wedding-black">Jeunes Mariés</h1>
+          <p className="text-gray-600 mt-2">
+            Gérez les témoignages et expériences partagées par les jeunes mariés.
+          </p>
         </div>
-        <Badge variant="outline">
-          {jeunesMaries.length} témoignage{jeunesMaries.length > 1 ? 's' : ''}
-        </Badge>
-      </div>
 
-      {/* Filtres */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Filtres</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-              <Input
-                placeholder="Rechercher par nom, lieu ou email..."
-                value={filters.search}
-                onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
-                className="pl-9"
-              />
+        {/* Alerte d'erreur */}
+        {error && (
+          <Alert variant="destructive">
+            <AlertTriangle className="h-4 w-4" />
+            <AlertDescription className="flex items-center justify-between">
+              <span>{error}</span>
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={fetchJeunesMaries}
+                disabled={isLoadingData}
+                className="ml-4"
+              >
+                <RefreshCw className={`h-4 w-4 mr-2 ${isLoadingData ? 'animate-spin' : ''}`} />
+                Réessayer
+              </Button>
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {/* Métriques */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Total Témoignages</CardTitle>
+              <Heart className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-wedding-olive">{jeunesMaries.length}</div>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Nouveaux (7j)</CardTitle>
+              <Calendar className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-green-600">{getRecentSubmissions()}</div>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">En attente</CardTitle>
+              <Clock className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-orange-600">
+                {jeunesMaries.filter(jm => jm.status_moderation === 'en_attente').length}
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Approuvés</CardTitle>
+              <CheckCircle className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-green-600">
+                {jeunesMaries.filter(jm => jm.status_moderation === 'approuve').length}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Filtres et recherche */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Recherche et Filtres</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-col md:flex-row gap-4">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                <Input
+                  placeholder="Rechercher par nom, email ou lieu..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="px-3 py-2 border border-gray-300 rounded-md bg-white"
+              >
+                <option value="all">Tous les statuts</option>
+                <option value="en_attente">En attente</option>
+                <option value="approuve">Approuvé</option>
+                <option value="rejete">Rejeté</option>
+              </select>
             </div>
-            
-            <Select
-              value={filters.status}
-              onValueChange={(value) => setFilters(prev => ({ ...prev, status: value }))}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Statut de modération" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="tous">Tous les statuts</SelectItem>
-                <SelectItem value="en_attente">En attente</SelectItem>
-                <SelectItem value="approuve">Approuvé</SelectItem>
-                <SelectItem value="rejete">Rejeté</SelectItem>
-              </SelectContent>
-            </Select>
+          </CardContent>
+        </Card>
 
-            <Select
-              value={filters.visible}
-              onValueChange={(value) => setFilters(prev => ({ ...prev, visible: value }))}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Visibilité" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="tous">Toute visibilité</SelectItem>
-                <SelectItem value="true">Visible</SelectItem>
-                <SelectItem value="false">Masqué</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Liste des témoignages */}
-      {loading ? (
-        <div className="grid gap-4">
-          {[...Array(3)].map((_, i) => (
-            <Card key={i} className="animate-pulse">
-              <CardContent className="p-6">
-                <div className="h-4 bg-gray-200 rounded w-1/4 mb-2"></div>
-                <div className="h-4 bg-gray-200 rounded w-1/2 mb-4"></div>
-                <div className="h-20 bg-gray-200 rounded"></div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      ) : (
-        <div className="grid gap-4">
-          {jeunesMaries.map((jeuneMarie) => (
-            <Card key={jeuneMarie.id} className="hover:shadow-md transition-shadow">
-              <CardContent className="p-6">
-                <div className="flex justify-between items-start mb-4">
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-3">
-                      <h3 className="text-lg font-semibold text-wedding-olive">
-                        {jeuneMarie.nom_complet}
-                      </h3>
-                      {getStatusBadge(jeuneMarie.status_moderation)}
-                      {jeuneMarie.visible && (
-                        <Badge variant="outline" className="text-green-600">
-                          Visible
-                        </Badge>
-                      )}
-                    </div>
-                    
-                    <p className="text-xs text-muted-foreground">
-                      Soumis le: {format(new Date(jeuneMarie.date_soumission), 'dd/MM/yyyy à HH:mm', { locale: fr })}
-                    </p>
-                    
-                    <div className="flex flex-wrap gap-4 text-sm text-gray-600">
-                      <div className="flex items-center gap-1">
-                        <Calendar className="h-4 w-4" />
-                        <span>{formatDate(jeuneMarie.date_mariage)}</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <MapPin className="h-4 w-4" />
-                        <span>{jeuneMarie.lieu_mariage}</span>
-                      </div>
-                      {jeuneMarie.nombre_invites && (
-                        <div className="flex items-center gap-1">
-                          <Users className="h-4 w-4" />
-                          <span>{jeuneMarie.nombre_invites} invités</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="flex gap-2">
-                    {jeuneMarie.status_moderation === 'en_attente' && (
-                      <>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => approveJeuneMarie(jeuneMarie.id)}
-                          className="text-green-600 border-green-600 hover:bg-green-50"
-                        >
-                          <CheckCircle className="h-4 w-4 mr-1" />
-                          Approuver
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => rejectJeuneMarie(jeuneMarie.id)}
-                          className="text-red-600 border-red-600 hover:bg-red-50"
-                        >
-                          <XCircle className="h-4 w-4 mr-1" />
-                          Rejeter
-                        </Button>
-                      </>
-                    )}
-                    
-                    <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-                      <DialogTrigger asChild>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => setSelectedJeuneMarie(jeuneMarie)}
-                        >
-                          <Edit className="h-4 w-4 mr-1" />
-                          Modifier
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-                        <DialogHeader>
-                          <DialogTitle>Modifier le témoignage</DialogTitle>
-                        </DialogHeader>
-                        {selectedJeuneMarie && (
-                          <form onSubmit={handleEditSubmit} className="space-y-4">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                              <div>
-                                <label className="block text-sm font-medium mb-2">Nom complet</label>
-                                <Input
-                                  value={selectedJeuneMarie.nom_complet}
-                                  onChange={(e) => setSelectedJeuneMarie(prev => 
-                                    prev ? { ...prev, nom_complet: e.target.value } : null
-                                  )}
-                                />
-                              </div>
-                              <div>
-                                <label className="block text-sm font-medium mb-2">Email</label>
-                                <Input
-                                  type="email"
-                                  value={selectedJeuneMarie.email}
-                                  onChange={(e) => setSelectedJeuneMarie(prev => 
-                                    prev ? { ...prev, email: e.target.value } : null
-                                  )}
-                                />
-                              </div>
+        {/* Tableau des témoignages */}
+        <Card>
+          <CardHeader>
+            <CardTitle>
+              Témoignages Jeunes Mariés ({filteredJeunesMaries.length})
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {isLoadingData ? (
+              <div className="flex justify-center items-center p-10">
+                <p>Chargement des témoignages...</p>
+              </div>
+            ) : filteredJeunesMaries.length === 0 ? (
+              <div className="text-center py-10">
+                <p className="text-gray-500">
+                  {jeunesMaries.length === 0 
+                    ? 'Aucun témoignage trouvé.' 
+                    : 'Aucun témoignage ne correspond à vos critères de recherche.'}
+                </p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Couple</TableHead>
+                      <TableHead>Contact</TableHead>
+                      <TableHead>Mariage</TableHead>
+                      <TableHead>Soumission</TableHead>
+                      <TableHead>Statut</TableHead>
+                      <TableHead>Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredJeunesMaries.map((jm) => (
+                      <TableRow key={jm.id}>
+                        <TableCell>
+                          <div className="flex flex-col">
+                            <div className="flex items-center gap-2">
+                              <Heart className="h-4 w-4 text-gray-400" />
+                              <span className="font-medium">{jm.nom_complet}</span>
                             </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                              <div>
-                                <label className="block text-sm font-medium mb-2">Lieu du mariage</label>
-                                <Input
-                                  value={selectedJeuneMarie.lieu_mariage}
-                                  onChange={(e) => setSelectedJeuneMarie(prev => 
-                                    prev ? { ...prev, lieu_mariage: e.target.value } : null
-                                  )}
-                                />
-                              </div>
-                              <div>
-                                <label className="block text-sm font-medium mb-2">Date du mariage</label>
-                                <Input
-                                  type="date"
-                                  value={selectedJeuneMarie.date_mariage}
-                                  onChange={(e) => setSelectedJeuneMarie(prev => 
-                                    prev ? { ...prev, date_mariage: e.target.value } : null
-                                  )}
-                                />
-                              </div>
+                            {jm.accept_email_contact && (
+                              <span className="text-xs text-green-600 mt-1">✓ Contact autorisé</span>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex flex-col gap-1">
+                            <div className="flex items-center gap-1">
+                              <Mail className="h-3 w-3 text-gray-400" />
+                              <span className="text-xs">{jm.email}</span>
                             </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                              <div>
-                                <label className="block text-sm font-medium mb-2">Statut</label>
-                                <Select
-                                  value={selectedJeuneMarie.status_moderation}
-                                  onValueChange={(value) => setSelectedJeuneMarie(prev => 
-                                    prev ? { ...prev, status_moderation: value as any } : null
-                                  )}
+                            {jm.telephone && (
+                              <span className="text-xs text-gray-500">{jm.telephone}</span>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex flex-col">
+                            <div className="flex items-center gap-2">
+                              <MapPin className="h-4 w-4 text-gray-400" />
+                              <span className="text-sm">{jm.lieu_mariage}</span>
+                            </div>
+                            <span className="text-xs text-gray-500">
+                              {formatDate(jm.date_mariage)}
+                            </span>
+                            {jm.nombre_invites && (
+                              <div className="flex items-center gap-1 mt-1">
+                                <Users className="h-3 w-3 text-gray-400" />
+                                <span className="text-xs">{jm.nombre_invites} invités</span>
+                              </div>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <Calendar className="h-4 w-4 text-gray-400" />
+                            <span className="text-sm">{formatDate(jm.date_soumission)}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          {getStatusBadge(jm.status_moderation, jm.visible)}
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex gap-2">
+                            {jm.status_moderation === 'en_attente' && (
+                              <>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => approveJeuneMarie(jm.id)}
+                                  className="text-green-600 border-green-600 hover:bg-green-50"
                                 >
-                                  <SelectTrigger>
-                                    <SelectValue />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    <SelectItem value="en_attente">En attente</SelectItem>
-                                    <SelectItem value="approuve">Approuvé</SelectItem>
-                                    <SelectItem value="rejete">Rejeté</SelectItem>
-                                  </SelectContent>
-                                </Select>
-                              </div>
-                              <div className="flex items-center space-x-2">
-                                <Switch
-                                  checked={selectedJeuneMarie.visible}
-                                  onCheckedChange={(checked) => setSelectedJeuneMarie(prev => 
-                                    prev ? { ...prev, visible: checked } : null
-                                  )}
-                                />
-                                <label className="text-sm font-medium">Visible</label>
-                              </div>
-                            </div>
-
-                            <div>
-                              <label className="block text-sm font-medium mb-2">Notes admin</label>
-                              <Textarea
-                                value={selectedJeuneMarie.admin_notes || ''}
-                                onChange={(e) => setSelectedJeuneMarie(prev => 
-                                  prev ? { ...prev, admin_notes: e.target.value } : null
-                                )}
-                                rows={3}
-                              />
-                            </div>
-
-                            <div className="flex justify-end gap-2">
-                              <Button
-                                type="button"
-                                variant="outline"
-                                onClick={() => setIsModalOpen(false)}
-                              >
-                                Annuler
-                              </Button>
-                              <Button type="submit" className="bg-wedding-olive hover:bg-wedding-olive/90">
-                                Sauvegarder
-                              </Button>
-                            </div>
-                          </form>
-                        )}
-                      </DialogContent>
-                    </Dialog>
-
-                    {jeuneMarie.visible && (
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        asChild
-                      >
-                        <a
-                          href={`/jeunes-maries/${jeuneMarie.slug}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          <Eye className="h-4 w-4 mr-1" />
-                          Voir
-                        </a>
-                      </Button>
-                    )}
-                  </div>
-                </div>
-
-                {jeuneMarie.experience_partagee && (
-                  <div className="mt-4">
-                    <p className="text-sm text-gray-600 line-clamp-3">
-                      <span className="font-medium">Expérience:</span> {jeuneMarie.experience_partagee}
-                    </p>
-                  </div>
-                )}
-
-                <div className="mt-4 flex flex-wrap gap-2 text-xs text-gray-500">
-                  <span>Soumis le {formatDate(jeuneMarie.date_soumission)}</span>
-                  {jeuneMarie.date_approbation && (
-                    <span>• Approuvé le {formatDate(jeuneMarie.date_approbation)}</span>
-                  )}
-                  <span>• {jeuneMarie.prestataires_recommandes.length} recommandation{jeuneMarie.prestataires_recommandes.length > 1 ? 's' : ''}</span>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
-    </div>
+                                  <CheckCircle className="h-3 w-3" />
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => rejectJeuneMarie(jm.id)}
+                                  className="text-red-600 border-red-600 hover:bg-red-50"
+                                >
+                                  <XCircle className="h-3 w-3" />
+                                </Button>
+                              </>
+                            )}
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => navigate(`/jeunes-maries/${jm.slug}`)}
+                            >
+                              <Eye className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    </AdminLayout>
   );
 };
 
