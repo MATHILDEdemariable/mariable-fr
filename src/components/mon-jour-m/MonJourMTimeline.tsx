@@ -5,7 +5,19 @@ import { PlanningEvent } from '../wedding-day/types/planningTypes';
 import MonJourMEventCard from './MonJourMEventCard';
 import { addMinutes, parseISO } from 'date-fns';
 import { Button } from '@/components/ui/button';
-import { Clock } from 'lucide-react';
+import { Clock, CheckCircle, Loader2 } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+import { useToast } from '@/hooks/use-toast';
 
 interface MonJourMTimelineProps {
   events: PlanningEvent[];
@@ -25,7 +37,9 @@ const MonJourMTimeline: React.FC<MonJourMTimelineProps> = ({
   onSelectionChange
 }) => {
   const BUFFER_TIME_MINUTES = 15; // Buffer entre les événements
-  const [showManualRecalc, setShowManualRecalc] = useState(false);
+  const [isRecalculating, setIsRecalculating] = useState(false);
+  const [justRecalculated, setJustRecalculated] = useState(false);
+  const { toast } = useToast();
 
   // Fonction pour recalculer chronologiquement TOUS les horaires
   const recalculateAllTimes = (eventsList: PlanningEvent[]): PlanningEvent[] => {
@@ -99,11 +113,43 @@ const MonJourMTimeline: React.FC<MonJourMTimelineProps> = ({
     onEventsUpdate(updatedEvents);
   };
 
-  // Fonction pour recalcul manuel
-  const handleManualRecalculate = () => {
+  // Fonction pour recalcul manuel avec feedback amélioré
+  const handleManualRecalculate = async () => {
+    setIsRecalculating(true);
+    
+    toast({
+      title: "Recalcul en cours...",
+      description: "Réorganisation des horaires selon les durées",
+    });
+
+    // Simule un petit délai pour le feedback visuel
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
     const recalculatedEvents = recalculateAllTimes(events);
     onEventsUpdate(recalculatedEvents);
-    setShowManualRecalc(false);
+    
+    setIsRecalculating(false);
+    setJustRecalculated(true);
+    
+    toast({
+      title: "✅ Horaires recalculés avec succès",
+      description: "Tous les événements ont été réorganisés chronologiquement",
+    });
+
+    // Réinitialiser l'état de succès après 3 secondes
+    setTimeout(() => {
+      setJustRecalculated(false);
+    }, 3000);
+
+    // Scroll vers le haut pour voir les changements
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Fonction pour obtenir l'icône appropriée
+  const getRecalcIcon = () => {
+    if (isRecalculating) return <Loader2 className="h-4 w-4 mr-2 animate-spin" />;
+    if (justRecalculated) return <CheckCircle className="h-4 w-4 mr-2 text-green-600" />;
+    return <Clock className="h-4 w-4 mr-2" />;
   };
 
   // Trier les événements par heure de début pour l'affichage
@@ -118,15 +164,39 @@ const MonJourMTimeline: React.FC<MonJourMTimelineProps> = ({
         {/* Bouton de recalcul manuel */}
         {events.length > 1 && (
           <div className="flex justify-end">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleManualRecalculate}
-              className="text-sm"
-            >
-              <Clock className="h-4 w-4 mr-2" />
-              Réorganiser chronologiquement
-            </Button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={isRecalculating}
+                  className={`text-sm transition-colors ${
+                    justRecalculated 
+                      ? 'border-green-500 bg-green-50 text-green-700 hover:bg-green-100' 
+                      : ''
+                  }`}
+                >
+                  {getRecalcIcon()}
+                  {isRecalculating ? 'Recalcul...' : 'Réorganiser chronologiquement'}
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Réorganiser chronologiquement ?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    <strong>Attention :</strong> Cette action va recalculer tous les horaires à partir de la première carte selon les durées définies. 
+                    <br /><br />
+                    <span className="text-amber-600">⚠️ Les tâches simultanées ne seront plus possibles après cette opération.</span>
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Annuler</AlertDialogCancel>
+                  <AlertDialogAction onClick={handleManualRecalculate}>
+                    Confirmer le recalcul
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
         )}
         {sortedEvents.map((event) => (
@@ -151,15 +221,39 @@ const MonJourMTimeline: React.FC<MonJourMTimelineProps> = ({
       {/* Bouton de recalcul manuel */}
       {events.length > 1 && (
         <div className="flex justify-end">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleManualRecalculate}
-            className="text-sm"
-          >
-            <Clock className="h-4 w-4 mr-2" />
-            Réorganiser chronologiquement
-          </Button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={isRecalculating}
+                className={`text-sm transition-colors ${
+                  justRecalculated 
+                    ? 'border-green-500 bg-green-50 text-green-700 hover:bg-green-100' 
+                    : ''
+                }`}
+              >
+                {getRecalcIcon()}
+                {isRecalculating ? 'Recalcul...' : 'Réorganiser chronologiquement'}
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Réorganiser chronologiquement ?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  <strong>Attention :</strong> Cette action va recalculer tous les horaires à partir de la première carte selon les durées définies. 
+                  <br /><br />
+                  <span className="text-amber-600">⚠️ Les tâches simultanées ne seront plus possibles après cette opération.</span>
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Annuler</AlertDialogCancel>
+                <AlertDialogAction onClick={handleManualRecalculate}>
+                  Confirmer le recalcul
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       )}
       
