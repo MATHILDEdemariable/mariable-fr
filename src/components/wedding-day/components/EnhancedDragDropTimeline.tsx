@@ -2,10 +2,11 @@
 import React, { useState, useEffect } from 'react';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import { addMinutes } from 'date-fns';
-import { PlanningEvent, saveGeneratedPlanning } from '../types/planningTypes';
+import { PlanningEvent } from '../types/planningTypes';
 import { useToast } from '@/components/ui/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { usePlanning } from '../context/PlanningContext';
+import { useMonJourMCoordination } from '@/hooks/useMonJourMCoordination';
 import EditableEventCard from './EditableEventCard';
 import CustomBlockDialog from './CustomBlockDialog';
 import { v4 as uuidv4 } from 'uuid';
@@ -21,6 +22,7 @@ const EnhancedDragDropTimeline: React.FC<EnhancedDragDropTimelineProps> = ({
 }) => {
   const [timelineEvents, setTimelineEvents] = useState<PlanningEvent[]>([]);
   const { user, formData } = usePlanning();
+  const { coordination } = useMonJourMCoordination();
   const { toast } = useToast();
 
   useEffect(() => {
@@ -211,39 +213,69 @@ const EnhancedDragDropTimeline: React.FC<EnhancedDragDropTimelineProps> = ({
   const handleDeleteEvent = async (eventId: string) => {
     console.log('🗑️ Deleting event:', eventId);
     
-    const updatedEvents = timelineEvents.filter(event => event.id !== eventId);
-    const recalculatedEvents = recalculateTimeline(updatedEvents);
-    
-    setTimelineEvents(recalculatedEvents);
-    
-    if (onEventsUpdate) {
-      onEventsUpdate(recalculatedEvents);
-    }
+    try {
+      // Supprimer directement de la base de données
+      const { error } = await supabase
+        .from('coordination_planning')
+        .delete()
+        .eq('id', eventId);
+      
+      if (error) throw error;
+      
+      // Mettre à jour l'état local
+      const updatedEvents = timelineEvents.filter(event => event.id !== eventId);
+      const recalculatedEvents = recalculateTimeline(updatedEvents);
+      
+      setTimelineEvents(recalculatedEvents);
+      
+      if (onEventsUpdate) {
+        onEventsUpdate(recalculatedEvents);
+      }
 
-    await saveToDatabase(recalculatedEvents);
-    
-    toast({
-      title: "Étape supprimée",
-      description: "L'étape a été supprimée de votre planning."
-    });
+      // Sauvegarder les positions mises à jour
+      await saveToDatabase(recalculatedEvents);
+      
+      toast({
+        title: "Étape supprimée",
+        description: "L'étape a été supprimée de votre planning."
+      });
+    } catch (error) {
+      console.error('❌ Error deleting event:', error);
+      toast({
+        title: "Erreur de suppression",
+        description: "Impossible de supprimer l'étape. Veuillez réessayer.",
+        variant: "destructive"
+      });
+    }
   };
 
   // Fonction de sauvegarde en base améliorée avec retry
   const saveToDatabase = async (events: PlanningEvent[], retryCount = 0) => {
-    if (!user) {
-      console.warn('⚠️ No user found, skipping save');
+    if (!coordination?.id) {
+      console.warn('⚠️ No coordination found, skipping save');
       return;
     }
 
     try {
-      console.log('💾 Saving', events.length, 'events to database');
-      await saveGeneratedPlanning(
-        supabase,
-        user.id,
-        formData || {},
-        events
-      );
-      console.log('✅ Events saved successfully');
+      console.log('💾 Saving', events.length, 'events to coordination_planning');
+      
+      for (const [index, event] of events.entries()) {
+        await supabase
+          .from('coordination_planning')
+          .update({
+            title: event.title,
+            description: event.notes,
+            start_time: event.startTime.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+            duration: event.duration,
+            assigned_to: event.assignedTo || [],
+            position: index,
+            category: 'jour-m'
+          })
+          .eq('id', event.id)
+          .eq('coordination_id', coordination.id);
+      }
+      
+      console.log('✅ Events saved successfully to coordination_planning');
     } catch (error) {
       console.error('❌ Error saving planning:', error);
       
@@ -340,7 +372,7 @@ const EnhancedDragDropTimeline: React.FC<EnhancedDragDropTimelineProps> = ({
                       <EditableEventCard
                         event={event}
                         onUpdate={handleUpdateEvent}
-                        onDelete={event.type === 'custom' ? handleDeleteEvent : undefined}
+                        onDelete={handleDeleteEvent}
                         dragHandleProps={provided.dragHandleProps}
                         isDragging={snapshot.isDragging}
                         isCustom={event.type === 'custom'}
