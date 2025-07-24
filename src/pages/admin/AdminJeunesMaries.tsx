@@ -21,8 +21,8 @@ const AdminJeunesMaries: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [filters, setFilters] = useState({
     search: '',
-    status: '',
-    visible: ''
+    status: 'tous',
+    visible: 'tous'
   });
 
   const fetchJeunesMaries = async () => {
@@ -37,11 +37,11 @@ const AdminJeunesMaries: React.FC = () => {
         query = query.or(`nom_complet.ilike.%${filters.search}%,lieu_mariage.ilike.%${filters.search}%,email.ilike.%${filters.search}%`);
       }
 
-      if (filters.status) {
+      if (filters.status && filters.status !== 'tous') {
         query = query.eq('status_moderation', filters.status);
       }
 
-      if (filters.visible !== '') {
+      if (filters.visible !== '' && filters.visible !== 'tous') {
         query = query.eq('visible', filters.visible === 'true');
       }
 
@@ -176,7 +176,7 @@ const AdminJeunesMaries: React.FC = () => {
                 <SelectValue placeholder="Statut de modération" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Tous les statuts</SelectItem>
+                <SelectItem value="tous">Tous les statuts</SelectItem>
                 <SelectItem value="en_attente">En attente</SelectItem>
                 <SelectItem value="approuve">Approuvé</SelectItem>
                 <SelectItem value="rejete">Rejeté</SelectItem>
@@ -191,7 +191,7 @@ const AdminJeunesMaries: React.FC = () => {
                 <SelectValue placeholder="Visibilité" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Toute visibilité</SelectItem>
+                <SelectItem value="tous">Toute visibilité</SelectItem>
                 <SelectItem value="true">Visible</SelectItem>
                 <SelectItem value="false">Masqué</SelectItem>
               </SelectContent>
