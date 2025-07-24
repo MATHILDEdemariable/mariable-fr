@@ -88,6 +88,7 @@ function App() {
                   
                   {/* Routes publiques pour les plannings */}
                   <Route path="/planning-public/:coordinationId" element={<PlanningPublic />} />
+                  <Route path="/planning-public/slug/:slug" element={<PlanningPublic />} />
                   <Route path="/planning-public/project/:token" element={<PlanningPublicProject />} />
                   
                   {/* Mon Jour-M routes */}
