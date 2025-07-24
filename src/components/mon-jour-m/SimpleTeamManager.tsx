@@ -7,7 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Users, Plus, Edit2, Trash2, Mail, Phone } from 'lucide-react';
+import { Users, Plus, Edit2, Trash2, Mail, Phone, Building2, User } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 import { TeamMember, WeddingCoordination } from '@/types/monjourm-mvp';
@@ -26,7 +26,8 @@ const TEAM_ROLES = [
   'Prestataires : Traiteur',
   'Prestataires : Coordinateur',
   'Prestataires : Photographe',
-  'Autres'
+  'Autre prestataire',
+  'Autre personne'
 ];
 
 interface SimpleTeamManagerProps {
@@ -134,7 +135,7 @@ const SimpleTeamManager: React.FC<SimpleTeamManagerProps> = ({ coordination }) =
             email: formData.email || null,
             phone: formData.phone || null,
             notes: formData.notes || null,
-            type: formData.role.startsWith('Prestataires :') ? 'vendor' : 'person'
+            type: formData.role.startsWith('Prestataires :') || formData.role === 'Autre prestataire' ? 'vendor' : 'person'
           });
 
         if (error) throw error;
@@ -282,11 +283,18 @@ const SimpleTeamManager: React.FC<SimpleTeamManagerProps> = ({ coordination }) =
               <Card key={member.id}>
                 <CardContent className="p-4">
                   <div className="flex items-start justify-between mb-3">
-                    <div className="flex-grow">
-                      <h4 className="font-medium mb-1">{member.name}</h4>
-                      <Badge variant="secondary" className="mb-2">
-                        {member.role}
-                      </Badge>
+                     <div className="flex-grow">
+                       <h4 className="font-medium mb-1">{member.name}</h4>
+                       <div className="flex items-center gap-2 mb-2">
+                         <Badge variant="secondary" className="flex items-center gap-1">
+                           {(member.role.startsWith('Prestataires :') || member.role === 'Autre prestataire') ? (
+                             <Building2 className="h-3 w-3" />
+                           ) : (
+                             <User className="h-3 w-3" />
+                           )}
+                           {member.role}
+                         </Badge>
+                       </div>
                       {member.notes && (
                         <p className="text-sm text-muted-foreground mb-2">
                           {member.notes}
