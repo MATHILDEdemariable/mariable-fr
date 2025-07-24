@@ -7,9 +7,10 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Edit2, Check, X, Trash2, GripVertical, Users, Plus } from 'lucide-react';
+import { Edit2, Check, X, Trash2, GripVertical, Users, Plus, ChevronDown, ChevronUp } from 'lucide-react';
 import { PlanningEvent } from '../wedding-day/types/planningTypes';
 import { addMinutes } from 'date-fns';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface MonJourMEventCardProps {
   event: PlanningEvent;
@@ -42,6 +43,8 @@ const MonJourMEventCard: React.FC<MonJourMEventCardProps> = ({
     event.startTime.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
   );
   const [showAssignmentSelect, setShowAssignmentSelect] = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
+  const isMobile = useIsMobile();
 
   const handleSave = () => {
     console.log('💾 Saving event changes:', editedTitle);
@@ -151,21 +154,21 @@ const MonJourMEventCard: React.FC<MonJourMEventCardProps> = ({
     } ${
       isSelected ? 'ring-2 ring-blue-500 bg-blue-50' : ''
     }`}>
-      <CardContent className="p-4">
-        <div className="flex items-start gap-4">
+      <CardContent className={isMobile ? "p-2" : "p-4"}>
+        <div className={`flex items-start ${isMobile ? "gap-2" : "gap-4"}`}>
           {/* Selection checkbox in selection mode */}
           {selectionMode && (
-            <div className="mt-2">
+            <div className="mt-1">
               <Checkbox
                 checked={isSelected}
                 onCheckedChange={handleSelectionToggle}
-                className="h-5 w-5"
+                className={isMobile ? "h-4 w-4" : "h-5 w-5"}
               />
             </div>
           )}
 
-          {/* Drag Handle */}
-          {!selectionMode && (
+          {/* Drag Handle - masqué sur mobile */}
+          {!selectionMode && !isMobile && (
             <div 
               {...dragHandleProps} 
               className="cursor-grab active:cursor-grabbing mt-2 text-gray-400 hover:text-gray-600"
@@ -174,220 +177,448 @@ const MonJourMEventCard: React.FC<MonJourMEventCardProps> = ({
             </div>
           )}
           
-          <div className="flex-1">
-            {/* HEURE sur une ligne */}
-            <div className="flex items-center justify-between mb-3">
-              <div className={`text-xl font-bold ${
-                event.isHighlight ? 'text-wedding-olive' : 'text-gray-700'
-              }`}>
-                {isEditing ? (
-                  <div className="flex items-center gap-2">
-                    <Input
-                      type="time"
-                      value={editedStartTime}
-                      onChange={(e) => setEditedStartTime(e.target.value)}
-                      className="w-24 text-lg font-bold"
-                    />
-                    <span className="text-gray-500">-</span>
-                    <span className="text-sm text-gray-500">
-                      {(() => {
-                        const [hours, minutes] = editedStartTime.split(':').map(Number);
-                        if (!isNaN(hours) && !isNaN(minutes)) {
-                          const start = new Date();
-                          start.setHours(hours, minutes, 0, 0);
-                          const end = addMinutes(start, editedDuration);
-                          return end.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-                        }
-                        return '--:--';
-                      })()}
-                    </span>
+          <div className="flex-1 min-w-0">
+            {/* Layout mobile optimisé */}
+            {isMobile ? (
+              <div className="space-y-2">
+                {/* Heure et titre sur mobile */}
+                <div className="flex items-center justify-between">
+                  <div className={`text-sm font-bold ${
+                    event.isHighlight ? 'text-wedding-olive' : 'text-gray-700'
+                  }`}>
+                    {isEditing ? (
+                      <Input
+                        type="time"
+                        value={editedStartTime}
+                        onChange={(e) => setEditedStartTime(e.target.value)}
+                        className="w-20 text-sm"
+                      />
+                    ) : (
+                      formatTimeRange()
+                    )}
                   </div>
-                ) : (
-                  formatTimeRange()
-                )}
-              </div>
-              
-              {/* Actions */}
-              {!selectionMode && (
-                <div className="flex items-center gap-1">
-                  {!isEditing ? (
-                    <>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setIsEditing(true)}
-                        className="h-8 w-8 p-0 hover:bg-blue-100"
-                        title="Modifier"
-                      >
-                        <Edit2 className="h-4 w-4" />
-                      </Button>
-                      {onDelete && (
+                  
+                  {/* Actions mobile simplifiées */}
+                  {!selectionMode && (
+                    <div className="flex items-center gap-1">
+                      {!isEditing ? (
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={handleDelete}
-                          className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-100"
-                          title="Supprimer"
+                          onClick={() => setIsEditing(true)}
+                          className="h-6 w-6 p-0 hover:bg-blue-100"
                         >
-                          <Trash2 className="h-4 w-4" />
+                          <Edit2 className="h-3 w-3" />
                         </Button>
+                      ) : (
+                        <>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={handleSave}
+                            className="h-6 w-6 p-0 text-green-600"
+                            disabled={!editedTitle.trim()}
+                          >
+                            <Check className="h-3 w-3" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={handleCancel}
+                            className="h-6 w-6 p-0 text-red-600"
+                          >
+                            <X className="h-3 w-3" />
+                          </Button>
+                        </>
                       )}
-                    </>
-                  ) : (
-                    <>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={handleSave}
-                        className="h-8 w-8 p-0 text-green-600 hover:bg-green-100"
-                        disabled={!editedTitle.trim()}
-                      >
-                        <Check className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={handleCancel}
-                        className="h-8 w-8 p-0 text-red-600 hover:bg-red-100"
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
-                    </>
+                    </div>
                   )}
                 </div>
-              )}
-            </div>
-            
-            {/* TITRE */}
-            <div className="mb-3">
-              {isEditing ? (
-                <Input
-                  value={editedTitle}
-                  onChange={(e) => setEditedTitle(e.target.value)}
-                  className="text-lg font-semibold"
-                  placeholder="Titre de l'étape"
-                  autoFocus
-                />
-              ) : (
-                <h4 className={`text-lg font-semibold ${
-                  event.isHighlight ? 'text-wedding-olive' : 'text-gray-800'
-                }`}>
-                  {event.title}
-                </h4>
-              )}
-            </div>
-            
-            {/* DURÉE */}
-            <div className="text-sm text-gray-600 mb-3">
-              {isEditing ? (
-                <div className="flex items-center gap-2">
-                  <span>Durée:</span>
-                  <Input
-                    type="number"
-                    value={editedDuration}
-                    onChange={(e) => setEditedDuration(Math.max(parseInt(e.target.value) || 5, 5))}
-                    className="w-20"
-                    min="5"
-                    max="480"
-                  />
-                  <span>min</span>
-                </div>
-              ) : (
-                <span className="font-medium">
-                  Durée: {event.duration} minutes
-                </span>
-              )}
-            </div>
 
-            {/* ASSIGNATION */}
-            <div className="mb-3">
-              <div className="flex items-center gap-2 mb-2">
-                <Users className="h-4 w-4 text-gray-500" />
-                <span className="text-sm font-medium text-gray-700">Assigné à:</span>
-                {!selectionMode && (
+                {/* Titre mobile */}
+                <div className="pr-2">
+                  {isEditing ? (
+                    <Input
+                      value={editedTitle}
+                      onChange={(e) => setEditedTitle(e.target.value)}
+                      className="text-sm font-medium"
+                      placeholder="Titre de l'étape"
+                      autoFocus
+                    />
+                  ) : (
+                    <h4 className={`text-sm font-medium leading-tight ${
+                      event.isHighlight ? 'text-wedding-olive' : 'text-gray-800'
+                    }`}>
+                      {event.title}
+                    </h4>
+                  )}
+                </div>
+
+                {/* Assignation mobile - ligne séparée */}
+                <div className="space-y-1">
+                  {getAssignedMembers().length > 0 && (
+                    <div className="flex flex-wrap gap-1">
+                      {getAssignedMembers().map((member) => (
+                        <Badge 
+                          key={member.id} 
+                          variant="secondary" 
+                          className="text-xs px-1 py-0.5"
+                        >
+                          {member.role}
+                        </Badge>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Bouton voir plus sur mobile */}
+                {(event.notes || event.duration !== 30 || !selectionMode) && (
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => setShowAssignmentSelect(!showAssignmentSelect)}
-                    className="h-6 w-6 p-0 hover:bg-blue-100"
+                    onClick={() => setShowDetails(!showDetails)}
+                    className="h-6 text-xs text-gray-500 hover:text-gray-700 p-0 justify-start"
                   >
-                    <Plus className="h-3 w-3" />
+                    {showDetails ? (
+                      <>
+                        <ChevronUp className="h-3 w-3 mr-1" />
+                        Voir moins
+                      </>
+                    ) : (
+                      <>
+                        <ChevronDown className="h-3 w-3 mr-1" />
+                        Voir plus
+                      </>
+                    )}
                   </Button>
                 )}
-              </div>
 
-              {/* Badges des membres assignés */}
-              <div className="flex flex-wrap gap-1 mb-2">
-                {getAssignedMembers().map((member) => (
-                  <Badge 
-                    key={member.id} 
-                    variant="secondary" 
-                    className="text-xs flex items-center gap-1 pr-1 hover:bg-red-100 transition-colors cursor-pointer group"
-                  >
-                    <span>{member.name} ({member.role})</span>
+                {/* Détails mobiles (conditionnels) */}
+                {showDetails && (
+                  <div className="space-y-2 pt-1 border-t border-gray-100">
+                    {/* Durée mobile */}
+                    <div className="text-xs text-gray-600">
+                      {isEditing ? (
+                        <div className="flex items-center gap-2">
+                          <span>Durée:</span>
+                          <Input
+                            type="number"
+                            value={editedDuration}
+                            onChange={(e) => setEditedDuration(Math.max(parseInt(e.target.value) || 5, 5))}
+                            className="w-16 text-xs"
+                            min="5"
+                          />
+                          <span>min</span>
+                        </div>
+                      ) : (
+                        <span>Durée: {event.duration} min</span>
+                      )}
+                    </div>
+
+                    {/* Assignation détaillée mobile */}
                     {!selectionMode && (
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleUnassignMember(member.id);
-                        }}
-                        className="ml-1 hover:bg-red-200 rounded-full p-0.5 group-hover:text-red-600 transition-colors"
-                        title={`Désassigner ${member.name}`}
-                      >
-                        <X className="h-3 w-3" />
-                      </button>
-                    )}
-                  </Badge>
-                ))}
-                {(!event.assignedTo || event.assignedTo.length === 0) && (
-                  <span className="text-xs text-gray-500 italic">Non assigné</span>
-                )}
-              </div>
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-1">
+                          <Users className="h-3 w-3 text-gray-500" />
+                          <span className="text-xs text-gray-700">Équipe:</span>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setShowAssignmentSelect(!showAssignmentSelect)}
+                            className="h-4 w-4 p-0"
+                          >
+                            <Plus className="h-2 w-2" />
+                          </Button>
+                        </div>
 
-              {/* Sélecteur d'assignation */}
-              {showAssignmentSelect && !selectionMode && (
-                <Select onValueChange={handleAssignMember}>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Assigner à un membre" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {teamMembers.map((member) => (
-                      <SelectItem key={member.id} value={member.id}>
-                        {member.name} ({member.role})
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
-            </div>
-            
-            {/* Notes optionnelles */}
-            {(isEditing || event.notes) && (
-              <div className="mt-3">
-                {isEditing ? (
-                  <Textarea
-                    value={editedNotes}
-                    onChange={(e) => setEditedNotes(e.target.value)}
-                    placeholder="Notes (optionnel)"
-                    rows={2}
-                    className="resize-none"
-                  />
-                ) : (
-                  event.notes && (
-                    <p className="text-sm text-gray-600 italic bg-gray-50 p-2 rounded">
-                      💡 {event.notes}
-                    </p>
-                  )
+                        {getAssignedMembers().length > 0 && (
+                          <div className="flex flex-wrap gap-1">
+                            {getAssignedMembers().map((member) => (
+                              <Badge 
+                                key={member.id} 
+                                variant="secondary" 
+                                className="text-xs flex items-center gap-1 pr-1"
+                              >
+                                <span>{member.name}</span>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleUnassignMember(member.id);
+                                  }}
+                                  className="hover:bg-red-200 rounded-full p-0.5"
+                                >
+                                  <X className="h-2 w-2" />
+                                </button>
+                              </Badge>
+                            ))}
+                          </div>
+                        )}
+
+                        {showAssignmentSelect && (
+                          <Select onValueChange={handleAssignMember}>
+                            <SelectTrigger className="w-full h-8 text-xs">
+                              <SelectValue placeholder="Assigner" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {teamMembers.map((member) => (
+                                <SelectItem key={member.id} value={member.id} className="text-xs">
+                                  {member.name} ({member.role})
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Notes mobiles */}
+                    {(isEditing || event.notes) && (
+                      <div>
+                        {isEditing ? (
+                          <Textarea
+                            value={editedNotes}
+                            onChange={(e) => setEditedNotes(e.target.value)}
+                            placeholder="Notes"
+                            rows={2}
+                            className="resize-none text-xs"
+                          />
+                        ) : (
+                          event.notes && (
+                            <p className="text-xs text-gray-600 italic bg-gray-50 p-2 rounded">
+                              💡 {event.notes}
+                            </p>
+                          )
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Badge moment clé mobile */}
+                {event.isHighlight && (
+                  <Badge variant="outline" className="bg-wedding-olive/20 text-wedding-olive border-wedding-olive text-xs">
+                    Moment clé
+                  </Badge>
                 )}
               </div>
-            )}
-            
-            {/* Moment clé badge */}
-            {event.isHighlight && (
-              <div className="mt-3">
-                <Badge variant="outline" className="bg-wedding-olive/20 text-wedding-olive border-wedding-olive">
-                  Moment clé
-                </Badge>
+            ) : (
+              /* Layout desktop existant */
+              <div>
+                {/* HEURE sur une ligne */}
+                <div className="flex items-center justify-between mb-3">
+                  <div className={`text-xl font-bold ${
+                    event.isHighlight ? 'text-wedding-olive' : 'text-gray-700'
+                  }`}>
+                    {isEditing ? (
+                      <div className="flex items-center gap-2">
+                        <Input
+                          type="time"
+                          value={editedStartTime}
+                          onChange={(e) => setEditedStartTime(e.target.value)}
+                          className="w-24 text-lg font-bold"
+                        />
+                        <span className="text-gray-500">-</span>
+                        <span className="text-sm text-gray-500">
+                          {(() => {
+                            const [hours, minutes] = editedStartTime.split(':').map(Number);
+                            if (!isNaN(hours) && !isNaN(minutes)) {
+                              const start = new Date();
+                              start.setHours(hours, minutes, 0, 0);
+                              const end = addMinutes(start, editedDuration);
+                              return end.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+                            }
+                            return '--:--';
+                          })()}
+                        </span>
+                      </div>
+                    ) : (
+                      formatTimeRange()
+                    )}
+                  </div>
+                  
+                  {/* Actions */}
+                  {!selectionMode && (
+                    <div className="flex items-center gap-1">
+                      {!isEditing ? (
+                        <>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setIsEditing(true)}
+                            className="h-8 w-8 p-0 hover:bg-blue-100"
+                            title="Modifier"
+                          >
+                            <Edit2 className="h-4 w-4" />
+                          </Button>
+                          {onDelete && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={handleDelete}
+                              className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-100"
+                              title="Supprimer"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          )}
+                        </>
+                      ) : (
+                        <>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={handleSave}
+                            className="h-8 w-8 p-0 text-green-600 hover:bg-green-100"
+                            disabled={!editedTitle.trim()}
+                          >
+                            <Check className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={handleCancel}
+                            className="h-8 w-8 p-0 text-red-600 hover:bg-red-100"
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </>
+                      )}
+                    </div>
+                  )}
+                </div>
+                
+                {/* TITRE */}
+                <div className="mb-3">
+                  {isEditing ? (
+                    <Input
+                      value={editedTitle}
+                      onChange={(e) => setEditedTitle(e.target.value)}
+                      className="text-lg font-semibold"
+                      placeholder="Titre de l'étape"
+                      autoFocus
+                    />
+                  ) : (
+                    <h4 className={`text-lg font-semibold ${
+                      event.isHighlight ? 'text-wedding-olive' : 'text-gray-800'
+                    }`}>
+                      {event.title}
+                    </h4>
+                  )}
+                </div>
+                
+                {/* DURÉE */}
+                <div className="text-sm text-gray-600 mb-3">
+                  {isEditing ? (
+                    <div className="flex items-center gap-2">
+                      <span>Durée:</span>
+                      <Input
+                        type="number"
+                        value={editedDuration}
+                        onChange={(e) => setEditedDuration(Math.max(parseInt(e.target.value) || 5, 5))}
+                        className="w-20"
+                        min="5"
+                        max="480"
+                      />
+                      <span>min</span>
+                    </div>
+                  ) : (
+                    <span className="font-medium">
+                      Durée: {event.duration} minutes
+                    </span>
+                  )}
+                </div>
+
+                {/* ASSIGNATION */}
+                <div className="mb-3">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Users className="h-4 w-4 text-gray-500" />
+                    <span className="text-sm font-medium text-gray-700">Assigné à:</span>
+                    {!selectionMode && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setShowAssignmentSelect(!showAssignmentSelect)}
+                        className="h-6 w-6 p-0 hover:bg-blue-100"
+                      >
+                        <Plus className="h-3 w-3" />
+                      </Button>
+                    )}
+                  </div>
+
+                  {/* Badges des membres assignés */}
+                  <div className="flex flex-wrap gap-1 mb-2">
+                    {getAssignedMembers().map((member) => (
+                      <Badge 
+                        key={member.id} 
+                        variant="secondary" 
+                        className="text-xs flex items-center gap-1 pr-1 hover:bg-red-100 transition-colors cursor-pointer group"
+                      >
+                        <span>{member.name} ({member.role})</span>
+                        {!selectionMode && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleUnassignMember(member.id);
+                            }}
+                            className="ml-1 hover:bg-red-200 rounded-full p-0.5 group-hover:text-red-600 transition-colors"
+                            title={`Désassigner ${member.name}`}
+                          >
+                            <X className="h-3 w-3" />
+                          </button>
+                        )}
+                      </Badge>
+                    ))}
+                    {(!event.assignedTo || event.assignedTo.length === 0) && (
+                      <span className="text-xs text-gray-500 italic">Non assigné</span>
+                    )}
+                  </div>
+
+                  {/* Sélecteur d'assignation */}
+                  {showAssignmentSelect && !selectionMode && (
+                    <Select onValueChange={handleAssignMember}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Assigner à un membre" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {teamMembers.map((member) => (
+                          <SelectItem key={member.id} value={member.id}>
+                            {member.name} ({member.role})
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                </div>
+                
+                {/* Notes optionnelles */}
+                {(isEditing || event.notes) && (
+                  <div className="mt-3">
+                    {isEditing ? (
+                      <Textarea
+                        value={editedNotes}
+                        onChange={(e) => setEditedNotes(e.target.value)}
+                        placeholder="Notes (optionnel)"
+                        rows={2}
+                        className="resize-none"
+                      />
+                    ) : (
+                      event.notes && (
+                        <p className="text-sm text-gray-600 italic bg-gray-50 p-2 rounded">
+                          💡 {event.notes}
+                        </p>
+                      )
+                    )}
+                  </div>
+                )}
+                
+                {/* Moment clé badge */}
+                {event.isHighlight && (
+                  <div className="mt-3">
+                    <Badge variant="outline" className="bg-wedding-olive/20 text-wedding-olive border-wedding-olive">
+                      Moment clé
+                    </Badge>
+                  </div>
+                )}
               </div>
             )}
           </div>
