@@ -12,7 +12,7 @@ interface JeuneMariesFiltersProps {
 }
 
 const budgetOptions = [
-  { value: '', label: 'Tous budgets' },
+  { value: 'tous', label: 'Tous budgets' },
   { value: 'Moins de 10 000€', label: 'Moins de 10 000€' },
   { value: '10 000€ - 20 000€', label: '10 000€ - 20 000€' },
   { value: '20 000€ - 30 000€', label: '20 000€ - 30 000€' },
@@ -21,7 +21,7 @@ const budgetOptions = [
 ];
 
 const regionOptions = [
-  { value: '', label: 'Toutes régions' },
+  { value: 'toutes', label: 'Toutes régions' },
   { value: 'Île-de-France', label: 'Île-de-France' },
   { value: 'Provence-Alpes-Côte d\'Azur', label: 'Provence-Alpes-Côte d\'Azur' },
   { value: 'Auvergne-Rhône-Alpes', label: 'Auvergne-Rhône-Alpes' },

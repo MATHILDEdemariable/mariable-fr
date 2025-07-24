@@ -8,8 +8,8 @@ export const useJeunesMaries = () => {
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState<JeuneMariesFilters>({
     search: '',
-    region: '',
-    budget: '',
+    region: 'toutes',
+    budget: 'tous',
     note: 0
   });
 
@@ -27,11 +27,11 @@ export const useJeunesMaries = () => {
         query = query.or(`nom_complet.ilike.%${filters.search}%,lieu_mariage.ilike.%${filters.search}%`);
       }
 
-      if (filters.region) {
+      if (filters.region && filters.region !== 'toutes') {
         query = query.ilike('lieu_mariage', `%${filters.region}%`);
       }
 
-      if (filters.budget) {
+      if (filters.budget && filters.budget !== 'tous') {
         query = query.eq('budget_approximatif', filters.budget);
       }
 

@@ -17,8 +17,8 @@ const JeunesMariesPage: React.FC = () => {
   const handleResetFilters = () => {
     setFilters({
       search: '',
-      region: '',
-      budget: '',
+      region: 'toutes',
+      budget: 'tous',
       note: 0
     });
   };
