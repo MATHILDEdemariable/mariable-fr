@@ -2067,7 +2067,6 @@ export type Database = {
           created_at: string
           description: string | null
           id: string
-          slug: string | null
           title: string
           updated_at: string
           user_id: string
@@ -2078,7 +2077,6 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
-          slug?: string | null
           title?: string
           updated_at?: string
           user_id: string
@@ -2089,7 +2087,6 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
-          slug?: string | null
           title?: string
           updated_at?: string
           user_id?: string
@@ -2133,10 +2130,6 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      generate_coordination_slug: {
-        Args: { title_input: string; coordination_id?: string }
-        Returns: string
-      }
       get_user_registrations: {
         Args: Record<PropertyKey, never>
         Returns: {

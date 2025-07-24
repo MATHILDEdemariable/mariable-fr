@@ -18,7 +18,7 @@ interface CoordinationData {
 }
 
 const PlanningPublic: React.FC = () => {
-  const { coordinationId, slug } = useParams<{ coordinationId?: string; slug?: string }>();
+  const { coordinationId } = useParams<{ coordinationId: string }>();
   const [coordinationData, setCoordinationData] = useState<CoordinationData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -30,49 +30,17 @@ const PlanningPublic: React.FC = () => {
   useEffect(() => {
     if (coordinationId) {
       loadPublicCoordinationData(coordinationId);
-    } else if (slug) {
-      loadPublicCoordinationDataBySlug(slug);
     } else {
-      setError('ID de coordination ou slug manquant');
+      setError('ID de coordination manquant');
       setLoading(false);
     }
-  }, [coordinationId, slug]);
+  }, [coordinationId]);
 
   useEffect(() => {
     if (coordinationData?.tasks) {
       filterTasks();
     }
   }, [selectedTeamMember, coordinationData?.tasks]);
-
-  const loadPublicCoordinationDataBySlug = async (slugParam: string) => {
-    try {
-      setLoading(true);
-      console.log('📋 Loading public coordination data by slug:', slugParam);
-
-      // Récupérer les données de coordination par slug
-      const { data: coordination, error: coordError } = await supabase
-        .from('wedding_coordination')
-        .select('*')
-        .eq('slug', slugParam)
-        .maybeSingle();
-
-      if (coordError) {
-        console.error('❌ Error loading coordination:', coordError);
-        throw new Error(`Erreur lors du chargement: ${coordError.message}`);
-      }
-
-      if (!coordination) {
-        throw new Error('Planning non trouvé. Vérifiez le lien de partage.');
-      }
-
-      await loadCoordinationTasks(coordination);
-    } catch (error: any) {
-      console.error('❌ Error loading coordination data by slug:', error);
-      setError(error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const loadPublicCoordinationData = async (id: string) => {
     try {
@@ -95,61 +63,57 @@ const PlanningPublic: React.FC = () => {
         throw new Error('Planning non trouvé. Vérifiez le lien de partage.');
       }
 
-      await loadCoordinationTasks(coordination);
+      // Détecter le type de planning basé sur l'URL ou les paramètres
+      const planningType = window.location.pathname.includes('/planning-public-project/') ? 'project' : 'jour-m';
+      
+      // Récupérer les tâches selon le type
+      const { data: tasks, error: tasksError } = await supabase
+        .from('coordination_planning')
+        .select('*')
+        .eq('coordination_id', id)
+        .eq('category', planningType)
+        .order('position');
+
+      // Récupérer l'équipe
+      const { data: teamMembers, error: teamError } = await supabase
+        .from('coordination_team')
+        .select('*')
+        .eq('coordination_id', id)
+        .order('created_at');
+
+      // Récupérer les documents selon le type (avec file_url pour vraie visualisation)
+      const { data: documents, error: docsError } = await supabase
+        .from('coordination_documents')
+        .select('*')
+        .eq('coordination_id', id)
+        .eq('category', planningType)
+        .order('created_at', { ascending: false });
+
+      // Récupérer les liens Pinterest
+      const { data: pinterest, error: pinterestError } = await supabase
+        .from('coordination_pinterest')
+        .select('*')
+        .eq('coordination_id', id)
+        .order('created_at', { ascending: false });
+
+      const result = {
+        coordination,
+        tasks: tasks || [],
+        teamMembers: teamMembers || [],
+        documents: documents || [],
+        planningType
+      };
+
+      setPinterestLinks(pinterest || []);
+
+      console.log(`✅ Coordination data loaded successfully (${planningType}):`, tasks?.length, 'tasks');
+      setCoordinationData(result);
     } catch (error: any) {
       console.error('❌ Error loading coordination data:', error);
       setError(error.message);
     } finally {
       setLoading(false);
     }
-  };
-
-  const loadCoordinationTasks = async (coordination: any) => {
-    // Détecter le type de planning basé sur l'URL ou les paramètres
-    const planningType = window.location.pathname.includes('/planning-public-project/') ? 'project' : 'jour-j';
-    
-    // Récupérer les tâches selon le type
-    const { data: tasks, error: tasksError } = await supabase
-      .from('coordination_planning')
-      .select('*')
-      .eq('coordination_id', coordination.id)
-      .eq('category', planningType)
-      .order('position');
-
-    // Récupérer l'équipe
-    const { data: teamMembers, error: teamError } = await supabase
-      .from('coordination_team')
-      .select('*')
-      .eq('coordination_id', coordination.id)
-      .order('created_at');
-
-    // Récupérer les documents selon le type (avec file_url pour vraie visualisation)
-    const { data: documents, error: docsError } = await supabase
-      .from('coordination_documents')
-      .select('*')
-      .eq('coordination_id', coordination.id)
-      .eq('category', planningType)
-      .order('created_at', { ascending: false });
-
-    // Récupérer les liens Pinterest
-    const { data: pinterest, error: pinterestError } = await supabase
-      .from('coordination_pinterest')
-      .select('*')
-      .eq('coordination_id', coordination.id)
-      .order('created_at', { ascending: false });
-
-    const result = {
-      coordination,
-      tasks: tasks || [],
-      teamMembers: teamMembers || [],
-      documents: documents || [],
-      planningType
-    };
-
-    setPinterestLinks(pinterest || []);
-
-    console.log(`✅ Coordination data loaded successfully (${planningType}):`, tasks?.length, 'tasks');
-    setCoordinationData(result);
   };
 
   const filterTasks = () => {
@@ -332,7 +296,7 @@ const PlanningPublic: React.FC = () => {
                 {coordination.title}
               </h1>
               <p className="text-sm md:text-base text-gray-600">
-                {planningType === 'project' ? 'Mission Mariage - Planning partagé' : 'Jour J - Planning partagé'}
+                {planningType === 'project' ? 'Mission Mariage - Planning partagé' : 'Jour M - Planning partagé'}
               </p>
               {coordination.wedding_date && (
                 <p className="text-xs md:text-sm text-wedding-olive font-medium mt-2">
@@ -406,7 +370,7 @@ const PlanningPublic: React.FC = () => {
               <Card>
                 <CardHeader>
                   <div className="flex justify-between items-center">
-                    <CardTitle>Timeline du Jour J</CardTitle>
+                    <CardTitle>Timeline du jour J</CardTitle>
                     
                     {/* Filtre par équipe */}
                     {teamMembers.length > 0 && (
@@ -449,23 +413,17 @@ const PlanningPublic: React.FC = () => {
                                     {task.title}
                                   </h3>
                                   
-                                   {/* Heure sur mobile directement sous le titre */}
-                                   {task.start_time && (
-                                     <div className="text-xs md:text-sm font-medium text-primary mt-1 md:hidden">
-                                       {formatTime(task.start_time)}
-                                       {task.duration && task.duration > 0 && (
-                                         <span className="text-gray-500 ml-1">
-                                           - {(() => {
-                                             const [hours, minutes] = task.start_time.split(':').map(Number);
-                                             const totalMinutes = hours * 60 + minutes + task.duration;
-                                             const endHour = Math.floor(totalMinutes / 60) % 24;
-                                             const endMinute = totalMinutes % 60;
-                                             return `${endHour.toString().padStart(2, '0')}:${endMinute.toString().padStart(2, '0')}`;
-                                           })()}
-                                         </span>
-                                       )}
-                                     </div>
-                                   )}
+                                  {/* Heure sur mobile directement sous le titre */}
+                                  {task.start_time && (
+                                    <div className="text-xs md:text-sm font-medium text-primary mt-1 md:hidden">
+                                      {formatTime(task.start_time)}
+                                      {task.end_time && (
+                                        <span className="text-gray-500 ml-1">
+                                          - {formatTime(task.end_time)}
+                                        </span>
+                                      )}
+                                    </div>
+                                  )}
                                   
                                   {/* Description - cachée par défaut sur mobile */}
                                   {hasDescription && (
@@ -479,11 +437,11 @@ const PlanningPublic: React.FC = () => {
                                     <Badge variant="outline" className="text-xs px-2 py-0.5">
                                       {task.duration} min
                                     </Badge>
-                                     {task.priority !== 'medium' && task.priority !== 'high' && (
-                                       <Badge className={`text-xs px-2 py-0.5 ${getPriorityColor(task.priority)}`}>
-                                         {task.priority === 'low' ? 'Faible' : task.priority}
-                                       </Badge>
-                                     )}
+                                    {task.priority !== 'medium' && (
+                                      <Badge className={`text-xs px-2 py-0.5 ${getPriorityColor(task.priority)}`}>
+                                        {task.priority === 'high' ? 'Élevée' : 'Faible'}
+                                      </Badge>
+                                    )}
                                     <span className="text-gray-500 capitalize text-xs">{task.category}</span>
                                   </div>
                                 </div>
@@ -491,23 +449,17 @@ const PlanningPublic: React.FC = () => {
                               
                               {/* Partie droite : heure (desktop) et assignations */}
                               <div className="flex flex-col md:text-right gap-2">
-                                 {/* Heure sur desktop */}
-                                 {task.start_time && (
-                                   <div className="hidden md:block text-sm font-medium">
-                                     {formatTime(task.start_time)}
-                                     {task.duration && task.duration > 0 && (
-                                       <span className="text-gray-500 ml-1">
-                                         - {(() => {
-                                           const [hours, minutes] = task.start_time.split(':').map(Number);
-                                           const totalMinutes = hours * 60 + minutes + task.duration;
-                                           const endHour = Math.floor(totalMinutes / 60) % 24;
-                                           const endMinute = totalMinutes % 60;
-                                           return `${endHour.toString().padStart(2, '0')}:${endMinute.toString().padStart(2, '0')}`;
-                                         })()}
-                                       </span>
-                                     )}
-                                   </div>
-                                 )}
+                                {/* Heure sur desktop */}
+                                {task.start_time && (
+                                  <div className="hidden md:block text-sm font-medium">
+                                    {formatTime(task.start_time)}
+                                    {task.end_time && (
+                                      <span className="text-gray-500 ml-1">
+                                        - {formatTime(task.end_time)}
+                                      </span>
+                                    )}
+                                  </div>
+                                )}
                                 
                                 {/* Membres assignés */}
                                 {task.assigned_to && Array.isArray(task.assigned_to) && task.assigned_to.length > 0 && (

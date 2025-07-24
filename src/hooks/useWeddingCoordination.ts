@@ -10,7 +10,6 @@ interface WeddingCoordination {
   wedding_date?: string;
   wedding_location?: string;
   user_id: string;
-  slug?: string;
   created_at: string;
   updated_at: string;
 }
