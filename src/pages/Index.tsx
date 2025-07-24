@@ -82,7 +82,7 @@ const Index = () => {
             <div className="text-center mb-12">
               <h2 style={{
               fontFamily: 'Playfair Display, serif'
-            }} className="sm:text-3xl md:text-4xl font-serif text-black mb-6 max-w-4xl mx-auto text-3xl font-semibold">
+            }} className="sm:text-3xl md:text-4xl font-serif text-black mb-6 max-w-4xl mx-auto text-3xl font-medium">
                 Le premier wedding planner de poche
               </h2>
               
