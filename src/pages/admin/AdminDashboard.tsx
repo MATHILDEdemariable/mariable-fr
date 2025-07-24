@@ -12,7 +12,8 @@ import {
   FileText, 
   Calendar, 
   BarChart3,
-  Shield
+  Shield,
+  User2
 } from 'lucide-react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
@@ -248,6 +249,24 @@ const AdminDashboard = () => {
             </CardHeader>
             <CardContent>
               <p className="text-gray-600">Gérer les articles du blog</p>
+              <Button className="mt-4 w-full bg-wedding-olive hover:bg-wedding-olive/80">
+                Accéder
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card 
+            className="hover:shadow-lg transition-shadow cursor-pointer" 
+            onClick={() => navigate('/admin/jeunes-maries')}
+          >
+            <CardHeader>
+              <CardTitle className="flex items-center gap-3">
+                <User2 className="h-6 w-6 text-wedding-olive" />
+                Jeunes Mariés
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-gray-600">Modérer les témoignages</p>
               <Button className="mt-4 w-full bg-wedding-olive hover:bg-wedding-olive/80">
                 Accéder
               </Button>

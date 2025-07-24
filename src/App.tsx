@@ -61,6 +61,12 @@ import AdminReservationsJourM from "./pages/admin/ReservationsJourM";
 import AdminSystemCheck from "./pages/admin/SystemCheck";
 import AdminProfessionalRegistrations from "./pages/admin/ProfessionalRegistrations";
 
+// Import Jeunes Mariés pages
+import JeunesMaries from "./pages/JeunesMaries";
+import JeuneMariesInscription from "./pages/JeuneMariesInscription";
+import JeuneMariesDetail from "./pages/JeuneMariesDetail";
+import AdminJeunesMaries from "./pages/admin/AdminJeunesMaries";
+
 const queryClient = new QueryClient();
 
 function App() {
@@ -118,11 +124,16 @@ function App() {
                   <Route path="/accompagnement" element={<Accompagnement />} />
                   <Route path="/livre-blanc" element={<LivreBlanc />} />
 
-                  {/* À propos routes - Fixed */}
-                  <Route path="/about/approche" element={<Approche />} />
-                  <Route path="/about/histoire" element={<Histoire />} />
-                  <Route path="/about/charte" element={<Charte />} />
-                  <Route path="/about/temoignages" element={<Temoignages />} />
+                   {/* À propos routes - Fixed */}
+                   <Route path="/about/approche" element={<Approche />} />
+                   <Route path="/about/histoire" element={<Histoire />} />
+                   <Route path="/about/charte" element={<Charte />} />
+                   <Route path="/about/temoignages" element={<Temoignages />} />
+
+                   {/* Jeunes Mariés routes */}
+                   <Route path="/jeunes-maries" element={<JeunesMaries />} />
+                   <Route path="/jeunes-maries/inscription" element={<JeuneMariesInscription />} />
+                   <Route path="/jeunes-maries/:slug" element={<JeuneMariesDetail />} />
 
                   {/* Prestataires routes */}
                   <Route path="/prestataires" element={<Prestataires />} />
@@ -139,6 +150,7 @@ function App() {
                    <Route path="/admin/form" element={<AdminForm />} />
                    <Route path="/admin/reservations-jour-m" element={<AdminReservationsJourM />} />
                    <Route path="/admin/system-check" element={<AdminSystemCheck />} />
+                   <Route path="/admin/jeunes-maries" element={<AdminJeunesMaries />} />
                   
                   {/* Services routes */}
                   <Route path="/services/budget" element={<Budget />} />
