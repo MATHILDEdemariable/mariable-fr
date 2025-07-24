@@ -25,6 +25,7 @@ const PlanningPublic: React.FC = () => {
   const [selectedTeamMember, setSelectedTeamMember] = useState<string>('all');
   const [filteredTasks, setFilteredTasks] = useState<any[]>([]);
   const [pinterestLinks, setPinterestLinks] = useState<any[]>([]);
+  const [expandedTasks, setExpandedTasks] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     if (coordinationId) {
@@ -179,6 +180,18 @@ const PlanningPublic: React.FC = () => {
     } else {
       alert('Ce document n\'a pas de fichier associé.');
     }
+  };
+
+  const toggleTaskExpansion = (taskId: string) => {
+    setExpandedTasks(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(taskId)) {
+        newSet.delete(taskId);
+      } else {
+        newSet.add(taskId);
+      }
+      return newSet;
+    });
   };
 
   const renderPinterestPreview = (link: any) => {
@@ -382,60 +395,117 @@ const PlanningPublic: React.FC = () => {
                 </CardHeader>
                 <CardContent>
                   {filteredTasks.length > 0 ? (
-                    <div className="space-y-4">
-                      {filteredTasks.map((task) => (
-                        <div key={task.id} className="p-4 border rounded-lg bg-white shadow-sm">
-                          <div className="flex items-start gap-4">
-                            <div className="flex items-center gap-2 min-w-0 flex-1">
-                              {getStatusIcon(task.status)}
-                              <div className="flex-1 min-w-0">
-                                <h3 className={`font-medium ${task.status === 'completed' ? 'line-through text-gray-500' : ''}`}>
-                                  {task.title}
-                                </h3>
-                                {task.description && (
-                                  <p className="text-sm text-gray-600 mt-1">{task.description}</p>
-                                )}
-                                <div className="flex items-center gap-2 mt-2 text-xs text-gray-500">
-                                  <Badge variant="outline">{task.duration} min</Badge>
-                                  {task.priority === 'low' && (
-                                    <Badge className={getPriorityColor(task.priority)}>
-                                      Faible
-                                    </Badge>
+                    <div className="space-y-3 md:space-y-4">
+                      {filteredTasks.map((task) => {
+                        const isExpanded = expandedTasks.has(task.id);
+                        const hasDescription = task.description && task.description.trim().length > 0;
+                        
+                        return (
+                          <div key={task.id} className="p-3 md:p-4 border rounded-lg bg-white shadow-sm">
+                            {/* Layout mobile : colonne - Layout desktop : ligne */}
+                            <div className="flex flex-col md:flex-row md:items-start gap-3 md:gap-4">
+                              {/* Partie gauche : titre, status et heure */}
+                              <div className="flex items-center gap-2 min-w-0 flex-1">
+                                {getStatusIcon(task.status)}
+                                <div className="flex-1 min-w-0">
+                                  {/* Titre principal */}
+                                  <h3 className={`text-sm md:text-base font-medium ${task.status === 'completed' ? 'line-through text-gray-500' : ''}`}>
+                                    {task.title}
+                                  </h3>
+                                  
+                                  {/* Heure sur mobile directement sous le titre */}
+                                  {task.start_time && (
+                                    <div className="text-xs md:text-sm font-medium text-primary mt-1 md:hidden">
+                                      {formatTime(task.start_time)}
+                                      {task.end_time && (
+                                        <span className="text-gray-500 ml-1">
+                                          - {formatTime(task.end_time)}
+                                        </span>
+                                      )}
+                                    </div>
                                   )}
-                                  <span className="capitalize">{task.category}</span>
+                                  
+                                  {/* Description - cachée par défaut sur mobile */}
+                                  {hasDescription && (
+                                    <div className={`mt-2 ${isExpanded ? 'block' : 'hidden md:block'}`}>
+                                      <p className="text-xs md:text-sm text-gray-600">{task.description}</p>
+                                    </div>
+                                  )}
+                                  
+                                  {/* Badges et infos secondaires */}
+                                  <div className="flex flex-wrap items-center gap-1 md:gap-2 mt-2 text-xs">
+                                    <Badge variant="outline" className="text-xs px-2 py-0.5">
+                                      {task.duration} min
+                                    </Badge>
+                                    {task.priority !== 'medium' && (
+                                      <Badge className={`text-xs px-2 py-0.5 ${getPriorityColor(task.priority)}`}>
+                                        {task.priority === 'high' ? 'Élevée' : 'Faible'}
+                                      </Badge>
+                                    )}
+                                    <span className="text-gray-500 capitalize text-xs">{task.category}</span>
+                                  </div>
                                 </div>
+                              </div>
+                              
+                              {/* Partie droite : heure (desktop) et assignations */}
+                              <div className="flex flex-col md:text-right gap-2">
+                                {/* Heure sur desktop */}
+                                {task.start_time && (
+                                  <div className="hidden md:block text-sm font-medium">
+                                    {formatTime(task.start_time)}
+                                    {task.end_time && (
+                                      <span className="text-gray-500 ml-1">
+                                        - {formatTime(task.end_time)}
+                                      </span>
+                                    )}
+                                  </div>
+                                )}
+                                
+                                {/* Membres assignés */}
+                                {task.assigned_to && Array.isArray(task.assigned_to) && task.assigned_to.length > 0 && (
+                                  <div className="flex flex-wrap gap-1 md:justify-end">
+                                    {task.assigned_to.map((memberId: string) => {
+                                      const member = teamMembers.find(m => m.id === memberId);
+                                      return member ? (
+                                        <Badge key={memberId} variant="secondary" className="text-xs px-2 py-0.5">
+                                          <User className="h-3 w-3 mr-1" />
+                                          {member.name}
+                                        </Badge>
+                                      ) : null;
+                                    })}
+                                  </div>
+                                )}
                               </div>
                             </div>
                             
-                            <div className="text-right">
-                              {task.start_time && (
-                                <div className="text-sm font-medium mb-2">
-                                  {formatTime(task.start_time)}
-                                  {task.end_time && (
-                                    <span className="text-gray-500 ml-1">
-                                      - {formatTime(task.end_time)}
-                                    </span>
+                            {/* Bouton "Voir plus" sur mobile uniquement si description existe */}
+                            {hasDescription && (
+                              <div className="mt-3 md:hidden">
+                                <button
+                                  onClick={() => toggleTaskExpansion(task.id)}
+                                  className="text-xs text-primary hover:text-primary/80 flex items-center gap-1"
+                                >
+                                  {isExpanded ? (
+                                    <>
+                                      Voir moins
+                                      <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                                      </svg>
+                                    </>
+                                  ) : (
+                                    <>
+                                      Voir plus
+                                      <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                      </svg>
+                                    </>
                                   )}
-                                </div>
-                              )}
-                              
-                              {task.assigned_to && Array.isArray(task.assigned_to) && task.assigned_to.length > 0 && (
-                                <div className="flex flex-wrap gap-1">
-                                  {task.assigned_to.map((memberId: string) => {
-                                    const member = teamMembers.find(m => m.id === memberId);
-                                    return member ? (
-                                      <Badge key={memberId} variant="secondary">
-                                        <User className="h-3 w-3 mr-1" />
-                                        {member.name}
-                                      </Badge>
-                                    ) : null;
-                                  })}
-                                </div>
-                              )}
-                            </div>
+                                </button>
+                              </div>
+                            )}
                           </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   ) : (
                     <div className="text-center py-12 text-gray-500">
