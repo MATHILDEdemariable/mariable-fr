@@ -83,7 +83,8 @@ const JeuneMariesInscriptionPage: React.FC = () => {
       ...formData,
       nombre_invites: formData.nombre_invites ? parseInt(formData.nombre_invites) : null,
       prestataires_recommandes: validPrestataires,
-      photos_mariage: []
+      photos_mariage: [],
+      visible: false
     };
 
     const success = await submitJeuneMarie(dataToSubmit);

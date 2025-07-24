@@ -51,7 +51,7 @@ export const useJeunesMaries = () => {
         return;
       }
 
-      setJeunesMaries(data || []);
+      setJeunesMaries((data as JeuneMarie[]) || []);
     } catch (error) {
       console.error('Erreur:', error);
       toast({
@@ -79,14 +79,14 @@ export const useJeunesMaries = () => {
         return null;
       }
 
-      return data;
+      return data as JeuneMarie;
     } catch (error) {
       console.error('Erreur:', error);
       return null;
     }
   };
 
-  const submitJeuneMarie = async (data: Partial<JeuneMarie>) => {
+  const submitJeuneMarie = async (data: Omit<JeuneMarie, 'id' | 'created_at' | 'updated_at' | 'status_moderation' | 'date_soumission' | 'date_approbation' | 'slug'>) => {
     try {
       const { error } = await supabase
         .from('jeunes_maries')

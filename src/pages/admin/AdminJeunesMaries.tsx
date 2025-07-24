@@ -57,7 +57,7 @@ const AdminJeunesMaries: React.FC = () => {
         return;
       }
 
-      setJeunesMaries(data || []);
+      setJeunesMaries((data as JeuneMarie[]) || []);
     } catch (error) {
       console.error('Erreur:', error);
     } finally {
