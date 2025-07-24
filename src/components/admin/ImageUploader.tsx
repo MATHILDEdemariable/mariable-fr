@@ -1,11 +1,9 @@
-
 import React, { useState } from 'react';
-import { supabase } from '@/integrations/supabase/client';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { toast } from 'sonner';
-import { v4 as uuidv4 } from 'uuid';
-import { Loader2, AlertCircle, RefreshCw } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { toast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
+import { Upload, X, AlertCircle } from 'lucide-react';
 
 interface ImageUploaderProps {
   onImageUpload: (url: string) => void;
@@ -13,251 +11,277 @@ interface ImageUploaderProps {
   bucketName: string;
 }
 
-const ImageUploader: React.FC<ImageUploaderProps> = ({ 
-  onImageUpload, 
-  currentImageUrl, 
-  bucketName 
+export const ImageUploader: React.FC<ImageUploaderProps> = ({
+  onImageUpload,
+  currentImageUrl,
+  bucketName
 }) => {
   const [uploading, setUploading] = useState(false);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(currentImageUrl || null);
-  const [uploadError, setUploadError] = useState<string | null>(null);
-  const [retryCount, setRetryCount] = useState(0);
+  const [uploadProgress, setUploadProgress] = useState<number>(0);
+  const [error, setError] = useState<string | null>(null);
+  const [uploadedUrl, setUploadedUrl] = useState<string | null>(currentImageUrl || null);
 
-  const logUploadDiagnostic = async () => {
-    console.log('🔍 DIAGNOSTIC: Starting upload diagnostic for bucket:', bucketName);
-    
-    try {
-      // Vérifier l'état de l'authentification
-      const { data: { user }, error: userError } = await supabase.auth.getUser();
-      console.log('👤 DIAGNOSTIC: User auth status:', {
-        user: user ? {
-          id: user.id,
-          email: user.email,
-          role: user.role,
-          aud: user.aud
-        } : null,
-        error: userError
-      });
+  const generateUniqueFileName = (originalName: string) => {
+    const timestamp = Date.now();
+    const randomString = Math.random().toString(36).substring(2);
+    const extension = originalName.split('.').pop();
+    return `${timestamp}_${randomString}.${extension}`;
+  };
 
-      // Vérifier les informations de session
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-      console.log('🔐 DIAGNOSTIC: Session status:', {
-        session: session ? {
-          access_token: session.access_token ? 'Present' : 'Missing',
-          token_type: session.token_type,
-          expires_at: session.expires_at
-        } : null,
-        error: sessionError
-      });
-
-      // Tenter de lister les buckets pour tester les permissions
-      const { data: buckets, error: bucketsError } = await supabase.storage.listBuckets();
-      console.log('🪣 DIAGNOSTIC: Storage buckets access:', {
-        buckets: buckets?.map(b => ({ id: b.id, name: b.name, public: b.public })),
-        error: bucketsError
-      });
-
-      // Tester les permissions spécifiques du bucket
-      try {
-        const { data: bucketFiles, error: bucketError } = await supabase.storage
-          .from(bucketName)
-          .list('', { limit: 1 });
-        console.log(`📁 DIAGNOSTIC: Bucket ${bucketName} access test:`, {
-          canList: !bucketError,
-          error: bucketError,
-          fileCount: bucketFiles?.length || 0
-        });
-      } catch (bucketTestError) {
-        console.log(`❌ DIAGNOSTIC: Bucket ${bucketName} access failed:`, bucketTestError);
-      }
-
-      return { user, session };
-    } catch (error) {
-      console.error('❌ DIAGNOSTIC: Diagnostic failed:', error);
-      return { user: null, session: null };
+  const validateFile = (file: File): string | null => {
+    // Vérifier le type de fichier
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      return 'Type de fichier non autorisé. Utilisez JPG, PNG ou WebP.';
     }
+
+    // Vérifier la taille (max 5MB)
+    const maxSize = 5 * 1024 * 1024;
+    if (file.size > maxSize) {
+      return 'Le fichier est trop volumineux. Taille maximum : 5MB.';
+    }
+
+    return null;
   };
 
   const attemptUpload = async (file: File, fileName: string, attempt: number = 1): Promise<string> => {
-    console.log(`🔄 UPLOAD ATTEMPT ${attempt}: Starting upload of ${fileName} to ${bucketName}`);
+    console.log(`🚀 Tentative d'upload ${attempt} pour ${fileName}`);
     
-    const uploadOptions = {
-      cacheControl: '3600',
-      upsert: false
-    };
+    try {
+      const { data, error } = await supabase.storage
+        .from(bucketName)
+        .upload(fileName, file, {
+          cacheControl: '3600',
+          upsert: true
+        });
 
-    console.log('📋 UPLOAD: Upload options:', uploadOptions);
-    console.log('📄 UPLOAD: File details:', {
-      name: file.name,
-      size: file.size,
-      type: file.type,
-      lastModified: file.lastModified
-    });
-
-    const { data, error } = await supabase.storage
-      .from(bucketName)
-      .upload(fileName, file, uploadOptions);
-
-    console.log(`📊 UPLOAD ATTEMPT ${attempt}: Result:`, {
-      success: !error,
-      data: data,
-      error: error ? {
-        message: error.message,
-        name: error.name,
-        stack: error.stack
-      } : null
-    });
-
-    if (error) {
-      // Analyser le type d'erreur
-      if (error.message.includes('Invalid key') || error.message.includes('Access denied')) {
-        console.error('🔒 UPLOAD: Permission/Key error detected:', error);
-        throw new Error(`Erreur d'autorisation: ${error.message}. Vérifiez vos permissions sur le bucket ${bucketName}.`);
-      } else if (error.message.includes('already exists')) {
-        console.warn(`⚠️ UPLOAD: File exists, trying with different name...`);
-        const newFileName = `${uuidv4()}-retry-${fileName}`;
-        return attemptUpload(file, newFileName, attempt + 1);
-      } else {
-        throw new Error(`Erreur d'upload (tentative ${attempt}): ${error.message}`);
+      if (error) {
+        console.error('❌ Erreur upload:', error);
+        throw error;
       }
+
+      console.log('✅ Upload réussi:', data);
+
+      // Obtenir l'URL publique
+      const { data: urlData } = supabase.storage
+        .from(bucketName)
+        .getPublicUrl(fileName);
+
+      return urlData.publicUrl;
+    } catch (error: any) {
+      console.error(`❌ Erreur upload tentative ${attempt}:`, error);
+      
+      if (attempt < 3) {
+        console.log(`🔄 Retry dans ${attempt}s...`);
+        await new Promise(resolve => setTimeout(resolve, attempt * 1000));
+        return attemptUpload(file, fileName, attempt + 1);
+      }
+      
+      throw error;
     }
+  };
 
-    if (!data?.path) {
-      throw new Error('Upload réussi mais chemin de fichier manquant');
+  const logUploadDiagnostic = async () => {
+    try {
+      console.log('🔍 Diagnostic d\'upload:');
+      
+      // Vérifier l'authentification
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
+      console.log('👤 Utilisateur:', user?.id || 'Non connecté');
+      
+      if (authError) {
+        console.error('❌ Erreur auth:', authError);
+      }
+
+      // Vérifier la session
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      console.log('🔐 Session:', session ? 'Active' : 'Inactive');
+      
+      if (sessionError) {
+        console.error('❌ Erreur session:', sessionError);
+      }
+
+      // Tester l'accès au bucket
+      const { data: buckets, error: bucketsError } = await supabase.storage.listBuckets();
+      console.log('🗂️ Buckets disponibles:', buckets?.map(b => b.name) || []);
+      
+      if (bucketsError) {
+        console.error('❌ Erreur buckets:', bucketsError);
+      }
+
+      // Vérifier si le bucket existe
+      const bucketExists = buckets?.some(b => b.name === bucketName);
+      console.log(`🗂️ Bucket "${bucketName}" existe:`, bucketExists);
+
+      if (bucketExists) {
+        // Tester la liste des fichiers
+        const { data: files, error: listError } = await supabase.storage
+          .from(bucketName)
+          .list('', { limit: 1 });
+          
+        console.log('📁 Test accès bucket:', listError ? 'Échec' : 'Réussi');
+        if (listError) {
+          console.error('❌ Erreur list:', listError);
+        }
+      }
+
+    } catch (error) {
+      console.error('🚨 Erreur diagnostic:', error);
     }
-
-    console.log('✅ UPLOAD: Upload successful, getting public URL...');
-    
-    const { data: { publicUrl } } = supabase.storage
-      .from(bucketName)
-      .getPublicUrl(data.path);
-
-    if (!publicUrl) {
-      throw new Error("Impossible d'obtenir l'URL publique de l'image.");
-    }
-
-    console.log('🌐 UPLOAD: Public URL generated:', publicUrl);
-    return publicUrl;
   };
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    console.log('📷 Starting image upload process');
+    setError(null);
+    setUploadProgress(0);
+
+    // Validation
+    const validationError = validateFile(file);
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+
     setUploading(true);
-    setUploadError(null);
-    
+
     try {
-      // Diagnostic initial
-      const { user, session } = await logUploadDiagnostic();
+      console.log('📤 Début upload:', file.name, file.size, file.type);
       
-      if (!user || !session) {
-        throw new Error('Vous devez être connecté pour téléverser des images. Veuillez vous reconnecter.');
-      }
+      // Diagnostic au premier échec
+      await logUploadDiagnostic();
 
-      // Validation du fichier
-      const maxSize = 5 * 1024 * 1024; // 5MB
-      if (file.size > maxSize) {
-        throw new Error(`Le fichier est trop volumineux (${(file.size / 1024 / 1024).toFixed(1)}MB). Taille maximum: 5MB.`);
-      }
+      // Générer un nom unique
+      const fileName = generateUniqueFileName(file.name);
+      console.log('📝 Nom fichier généré:', fileName);
 
-      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'];
-      if (!allowedTypes.includes(file.type)) {
-        throw new Error(`Type de fichier non supporté: ${file.type}. Types autorisés: ${allowedTypes.join(', ')}`);
-      }
+      // Simuler le progrès
+      const progressInterval = setInterval(() => {
+        setUploadProgress(prev => Math.min(prev + 10, 90));
+      }, 200);
 
-      const fileName = `${uuidv4()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
-      console.log('📁 Generated filename:', fileName);
-      
+      // Upload
       const publicUrl = await attemptUpload(file, fileName);
       
-      setPreviewUrl(publicUrl);
-      onImageUpload(publicUrl);
-      setRetryCount(0);
-      toast.success('Image téléversée avec succès !');
+      clearInterval(progressInterval);
+      setUploadProgress(100);
+
+      console.log('✅ URL publique:', publicUrl);
       
+      setUploadedUrl(publicUrl);
+      onImageUpload(publicUrl);
+      
+      toast({
+        title: "Succès",
+        description: "Image uploadée avec succès"
+      });
+
     } catch (error: any) {
-      const errorMessage = error.message || 'Erreur inconnue lors du téléversement';
-      console.error('❌ Complete upload error:', error);
-      setUploadError(errorMessage);
-      toast.error(`Erreur lors du téléversement: ${errorMessage}`);
+      console.error('🚨 Erreur finale:', error);
+      setError(error.message || 'Erreur lors de l\'upload');
+      
+      toast({
+        title: "Erreur",
+        description: "Impossible d'uploader l'image",
+        variant: "destructive"
+      });
     } finally {
       setUploading(false);
-      // Reset input value to allow re-upload of same file
-      event.target.value = '';
+      setUploadProgress(0);
     }
   };
 
   const handleRetry = () => {
-    setRetryCount(prev => prev + 1);
-    setUploadError(null);
-    const fileInput = document.querySelector(`input[type="file"]`) as HTMLInputElement;
-    if (fileInput) {
-      fileInput.click();
+    setError(null);
+    const input = document.querySelector('input[type="file"]') as HTMLInputElement;
+    if (input && input.files?.[0]) {
+      handleFileChange({ target: input } as React.ChangeEvent<HTMLInputElement>);
+    }
+  };
+
+  const removeImage = () => {
+    setUploadedUrl(null);
+    onImageUpload('');
+    const input = document.querySelector('input[type="file"]') as HTMLInputElement;
+    if (input) {
+      input.value = '';
     }
   };
 
   return (
     <div className="space-y-4">
-      <div className="space-y-2">
-        <Input 
-          type="file" 
-          accept="image/png, image/jpeg, image/webp, image/gif" 
-          onChange={handleFileChange} 
-          disabled={uploading} 
-          className="cursor-pointer"
-        />
-        <p className="text-sm text-muted-foreground">
-          Formats acceptés: PNG, JPEG, WEBP, GIF • Taille max: 5MB • Bucket: {bucketName}
-        </p>
-      </div>
-
-      {uploading && (
-        <div className="flex items-center gap-2 p-3 bg-blue-50 border border-blue-200 rounded-md">
-          <Loader2 className="h-4 w-4 animate-spin text-blue-600" />
-          <span className="text-blue-700">Téléversement en cours...</span>
+      {!uploadedUrl ? (
+        <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+          <Upload className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+          <div className="space-y-2">
+            <label htmlFor="image-upload" className="cursor-pointer">
+              <span className="text-sm font-medium text-wedding-olive hover:text-wedding-olive/80">
+                Cliquez pour sélectionner une image
+              </span>
+              <Input
+                id="image-upload"
+                type="file"
+                accept="image/jpeg,image/jpg,image/png,image/webp"
+                onChange={handleFileChange}
+                disabled={uploading}
+                className="sr-only"
+              />
+            </label>
+            <p className="text-xs text-gray-500">
+              JPG, PNG ou WebP. Taille max : 5MB
+            </p>
+          </div>
+        </div>
+      ) : (
+        <div className="relative">
+          <img
+            src={uploadedUrl}
+            alt="Image uploadée"
+            className="w-full h-48 object-cover rounded-lg border"
+          />
+          <Button
+            type="button"
+            variant="destructive"
+            size="sm"
+            onClick={removeImage}
+            className="absolute top-2 right-2"
+          >
+            <X className="h-4 w-4" />
+          </Button>
         </div>
       )}
 
-      {uploadError && (
-        <div className="p-3 bg-red-50 border border-red-200 rounded-md">
-          <div className="flex items-start gap-2">
-            <AlertCircle className="h-4 w-4 text-red-600 mt-0.5 flex-shrink-0" />
-            <div className="flex-1">
-              <p className="text-red-700 text-sm">{uploadError}</p>
-              {retryCount < 3 && (
-                <Button 
-                  onClick={handleRetry} 
-                  variant="outline" 
-                  size="sm" 
-                  className="mt-2"
-                >
-                  <RefreshCw className="h-3 w-3 mr-1" />
-                  Réessayer ({retryCount + 1}/3)
-                </Button>
-              )}
-            </div>
+      {uploading && (
+        <div className="space-y-2">
+          <div className="flex items-center justify-between text-sm">
+            <span>Upload en cours...</span>
+            <span>{uploadProgress}%</span>
+          </div>
+          <div className="w-full bg-gray-200 rounded-full h-2">
+            <div
+              className="bg-wedding-olive h-2 rounded-full transition-all duration-300"
+              style={{ width: `${uploadProgress}%` }}
+            />
           </div>
         </div>
       )}
 
-      {previewUrl && (
-        <div className="space-y-2">
-          <p className="text-sm font-medium">Aperçu :</p>
-          <div className="relative">
-            <img 
-              src={previewUrl} 
-              alt="Aperçu" 
-              className="max-w-xs max-h-48 object-contain rounded-md border shadow-sm" 
-              onError={(e) => {
-                console.error('❌ Image preview failed to load:', previewUrl);
-                const target = e.target as HTMLImageElement;
-                target.style.display = 'none';
-              }}
-            />
-            <div className="mt-1">
-              <p className="text-xs text-muted-foreground break-all">{previewUrl}</p>
+      {error && (
+        <div className="border border-red-200 bg-red-50 rounded-lg p-3">
+          <div className="flex items-start gap-2">
+            <AlertCircle className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" />
+            <div className="space-y-2 flex-1">
+              <p className="text-sm text-red-800">{error}</p>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleRetry}
+                disabled={uploading}
+              >
+                Réessayer
+              </Button>
             </div>
           </div>
         </div>
@@ -265,5 +289,3 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
     </div>
   );
 };
-
-export default ImageUploader;

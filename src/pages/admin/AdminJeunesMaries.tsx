@@ -232,6 +232,10 @@ const AdminJeunesMaries: React.FC = () => {
                       )}
                     </div>
                     
+                    <p className="text-xs text-muted-foreground">
+                      Soumis le: {format(new Date(jeuneMarie.date_soumission), 'dd/MM/yyyy à HH:mm', { locale: fr })}
+                    </p>
+                    
                     <div className="flex flex-wrap gap-4 text-sm text-gray-600">
                       <div className="flex items-center gap-1">
                         <Calendar className="h-4 w-4" />

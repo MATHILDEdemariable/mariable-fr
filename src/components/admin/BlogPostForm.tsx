@@ -11,7 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { X } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import ImageUploader from './ImageUploader';
+import { ImageUploader } from './ImageUploader';
 
 interface BlogPost {
   id?: string;

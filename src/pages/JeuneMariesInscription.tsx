@@ -7,8 +7,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useJeunesMaries } from '@/hooks/useJeunesMaries';
 import { useNavigate } from 'react-router-dom';
-import { Heart, Upload, Plus, Trash2 } from 'lucide-react';
+import { Heart, Plus, Trash2 } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
+import { ImageUploader } from '@/components/admin/ImageUploader';
 
 const budgetOptions = [
   'Moins de 10 000€',
@@ -90,7 +91,7 @@ const JeuneMariesInscriptionPage: React.FC = () => {
     const success = await submitJeuneMarie(dataToSubmit);
     
     if (success) {
-      navigate('/jeunes-maries');
+      navigate('/jeunes-maries/confirmation');
     }
     
     setLoading(false);
@@ -352,16 +353,15 @@ const JeuneMariesInscriptionPage: React.FC = () => {
                 <CardContent>
                   <div>
                     <label className="block text-sm font-medium mb-2">
-                      URL de votre photo de mariage
+                      Photo de votre mariage
                     </label>
-                    <Input
-                      name="photo_principale_url"
-                      value={formData.photo_principale_url}
-                      onChange={handleInputChange}
-                      placeholder="https://exemple.com/photo.jpg"
+                    <ImageUploader
+                      bucketName="jeunes-maries-photos"
+                      currentImageUrl={formData.photo_principale_url}
+                      onImageUpload={(url) => setFormData(prev => ({ ...prev, photo_principale_url: url }))}
                     />
                     <p className="text-sm text-gray-500 mt-1">
-                      Vous pouvez télécharger votre photo sur un service comme Google Photos ou Dropbox et copier le lien ici
+                      Uploadez directement votre plus belle photo de mariage
                     </p>
                   </div>
                 </CardContent>

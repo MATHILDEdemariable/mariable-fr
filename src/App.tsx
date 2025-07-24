@@ -65,6 +65,7 @@ import AdminProfessionalRegistrations from "./pages/admin/ProfessionalRegistrati
 import JeunesMaries from "./pages/JeunesMaries";
 import JeuneMariesInscription from "./pages/JeuneMariesInscription";
 import JeuneMariesDetail from "./pages/JeuneMariesDetail";
+import JeuneMariesConfirmation from "./pages/JeuneMariesConfirmation";
 import AdminJeunesMaries from "./pages/admin/AdminJeunesMaries";
 
 const queryClient = new QueryClient();
@@ -133,6 +134,7 @@ function App() {
                    {/* Jeunes Mariés routes */}
                    <Route path="/jeunes-maries" element={<JeunesMaries />} />
                    <Route path="/jeunes-maries/inscription" element={<JeuneMariesInscription />} />
+                   <Route path="/jeunes-maries/confirmation" element={<JeuneMariesConfirmation />} />
                    <Route path="/jeunes-maries/:slug" element={<JeuneMariesDetail />} />
 
                   {/* Prestataires routes */}
