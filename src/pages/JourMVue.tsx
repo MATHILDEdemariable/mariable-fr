@@ -183,17 +183,15 @@ const JourMVue: React.FC = () => {
 
   const { coordination, tasks, teamMembers, documents, pinterestLinks } = weddingData;
   
-  // Améliorer la gestion des types avec fallback et support des rôles "Autre prestataire"
+  // Améliorer la gestion des types avec fallback
   const people = teamMembers.filter(m => {
     const type = m.type || 'person'; // Fallback vers 'person' si type manquant
-    const isOtherVendor = m.role === 'Autre prestataire';
-    return type === 'person' && !isOtherVendor || (type !== 'vendor' && type !== 'person' && !isOtherVendor); // Inclure les types inconnus comme 'person'
+    return type === 'person' || (type !== 'vendor' && type !== 'person'); // Inclure les types inconnus comme 'person'
   });
   
   const vendors = teamMembers.filter(m => {
     const type = m.type || 'person';
-    const isOtherVendor = m.role === 'Autre prestataire';
-    return type === 'vendor' || isOtherVendor;
+    return type === 'vendor';
   });
 
   return (
@@ -314,10 +312,13 @@ const JourMVue: React.FC = () => {
                               {task.description && (
                                 <p className="text-sm text-gray-600 mt-1">{task.description}</p>
                               )}
-                                <div className="flex items-center gap-2 mt-2 text-xs text-gray-500">
-                                  <Badge variant="outline">{task.duration} min</Badge>
-                                  <span className="capitalize">{task.category}</span>
-                                </div>
+                              <div className="flex items-center gap-2 mt-2 text-xs text-gray-500">
+                                <Badge variant="outline">{task.duration} min</Badge>
+                                <Badge className={getPriorityColor(task.priority)}>
+                                  {task.priority === 'high' ? 'Élevée' : task.priority === 'medium' ? 'Moyenne' : 'Faible'}
+                                </Badge>
+                                <span className="capitalize">{task.category}</span>
+                              </div>
                             </div>
                           </div>
                           
