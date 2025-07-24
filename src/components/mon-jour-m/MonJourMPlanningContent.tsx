@@ -175,10 +175,16 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
     loadTeamMembers();
   }, [coordinationId]);
 
-  // Charger les événements existants avec ordre par position
+  // Charger les événements existants avec ordre par position - UNIQUEMENT au premier chargement
   useEffect(() => {
     const loadExistingPlanning = async () => {
       if (!coordination?.user_id) return;
+      
+      // Ne recharger que si aucun événement n'est déjà présent (évite les rechargements intempestifs)
+      if (events.length > 0) {
+        console.log('📋 Events already loaded, skipping reload to prevent overwrite');
+        return;
+      }
 
       try {
         setIsLoading(true);
@@ -239,7 +245,7 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
     };
 
     loadExistingPlanning();
-  }, [coordination?.user_id, coordinationId, referenceTime, toast]);
+  }, [coordination?.user_id, coordinationId, referenceTime]);
 
   // Gestionnaire pour l'intégration des événements générés par l'IA
   const handlePlanningGenerated = async (newEvents: PlanningEvent[]) => {

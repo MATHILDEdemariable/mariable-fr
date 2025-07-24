@@ -264,39 +264,39 @@ const JourMVue: React.FC = () => {
           </TabsList>
           
           {/* Navigation mobile fixe en bas */}
-          <div className="fixed bottom-0 left-0 right-0 bg-white border-t md:hidden z-50">
-            <TabsList className="grid w-full grid-cols-4 rounded-none h-16">
+          <div className="fixed bottom-0 left-0 right-0 bg-white border-t md:hidden z-50 shadow-lg">
+            <TabsList className="grid w-full grid-cols-4 rounded-none h-20 bg-white">
               <TabsTrigger 
                 value="planning" 
-                className="flex flex-col items-center gap-1 text-xs h-full data-[state=active]:bg-primary/10"
+                className="flex flex-col items-center justify-center gap-1 text-xs h-full data-[state=active]:bg-primary/10 data-[state=active]:text-primary px-2"
               >
-                <Calendar className="h-4 w-4" />
-                <span>Planning</span>
-                <span className="text-[10px] opacity-70">({tasks.length})</span>
+                <Calendar className="h-5 w-5" />
+                <span className="text-[10px] leading-tight text-center">Planning</span>
+                <span className="text-[9px] opacity-70">({tasks.length})</span>
               </TabsTrigger>
               <TabsTrigger 
                 value="equipe" 
-                className="flex flex-col items-center gap-1 text-xs h-full data-[state=active]:bg-primary/10"
+                className="flex flex-col items-center justify-center gap-1 text-xs h-full data-[state=active]:bg-primary/10 data-[state=active]:text-primary px-2"
               >
-                <Users className="h-4 w-4" />
-                <span>Équipe</span>
-                <span className="text-[10px] opacity-70">({teamMembers.length})</span>
+                <Users className="h-5 w-5" />
+                <span className="text-[10px] leading-tight text-center">Équipe</span>
+                <span className="text-[9px] opacity-70">({teamMembers.length})</span>
               </TabsTrigger>
               <TabsTrigger 
                 value="documents" 
-                className="flex flex-col items-center gap-1 text-xs h-full data-[state=active]:bg-primary/10"
+                className="flex flex-col items-center justify-center gap-1 text-xs h-full data-[state=active]:bg-primary/10 data-[state=active]:text-primary px-2"
               >
-                <FileText className="h-4 w-4" />
-                <span>Docs</span>
-                <span className="text-[10px] opacity-70">({documents.length})</span>
+                <FileText className="h-5 w-5" />
+                <span className="text-[10px] leading-tight text-center">Docs</span>
+                <span className="text-[9px] opacity-70">({documents.length})</span>
               </TabsTrigger>
               <TabsTrigger 
                 value="pinterest" 
-                className="flex flex-col items-center gap-1 text-xs h-full data-[state=active]:bg-primary/10"
+                className="flex flex-col items-center justify-center gap-1 text-xs h-full data-[state=active]:bg-primary/10 data-[state=active]:text-primary px-2"
               >
-                <ExternalLink className="h-4 w-4" />
-                <span>Pinterest</span>
-                <span className="text-[10px] opacity-70">({pinterestLinks?.length || 0})</span>
+                <ExternalLink className="h-5 w-5" />
+                <span className="text-[10px] leading-tight text-center">Pinterest</span>
+                <span className="text-[9px] opacity-70">({pinterestLinks?.length || 0})</span>
               </TabsTrigger>
             </TabsList>
           </div>
@@ -334,27 +334,31 @@ const JourMVue: React.FC = () => {
                    <div className="space-y-3 md:space-y-4">
                      {filteredTasks.map((task) => (
                        <div key={task.id} className="p-3 md:p-4 border rounded-lg bg-white shadow-sm">
-                         <div className="flex flex-col md:flex-row md:items-start gap-3 md:gap-4">
-                           <div className="flex items-start gap-2 min-w-0 flex-1">
-                             {getStatusIcon(task.status)}
-                             <div className="flex-1 min-w-0">
-                               <h3 className={`font-medium text-sm md:text-base leading-tight ${task.status === 'completed' ? 'line-through text-gray-500' : ''}`}>
-                                 {task.title}
-                               </h3>
-                               {task.description && (
-                                 <p className="text-xs md:text-sm text-gray-600 mt-1 break-words leading-relaxed">{task.description}</p>
-                               )}
-                               <div className="flex flex-wrap items-center gap-2 mt-2 text-xs text-gray-500">
-                                 <Badge variant="outline" className="text-xs">{task.duration} min</Badge>
-                                 {task.priority === 'low' && (
-                                   <Badge className={`${getPriorityColor(task.priority)} text-xs`}>
-                                     Faible
-                                   </Badge>
-                                 )}
-                                 <span className="capitalize">{task.category}</span>
-                               </div>
-                             </div>
-                           </div>
+                  <div className="flex flex-col gap-4">
+                            <div className="flex items-start gap-3 min-w-0 flex-1">
+                              <div className="flex-shrink-0 mt-1">
+                                {getStatusIcon(task.status)}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <h3 className={`font-medium text-sm md:text-base leading-relaxed mb-2 ${task.status === 'completed' ? 'line-through text-gray-500' : ''}`}>
+                                  {task.title}
+                                </h3>
+                                {task.description && (
+                                  <div className="mb-3">
+                                    <p className="text-xs md:text-sm text-gray-600 break-words leading-relaxed">{task.description}</p>
+                                  </div>
+                                )}
+                                <div className="flex flex-wrap items-center gap-2 text-xs text-gray-500">
+                                  <Badge variant="outline" className="text-xs">{task.duration} min</Badge>
+                                  {task.priority === 'low' && (
+                                    <Badge className={`${getPriorityColor(task.priority)} text-xs`}>
+                                      Faible
+                                    </Badge>
+                                  )}
+                                  <span className="capitalize">{task.category}</span>
+                                </div>
+                              </div>
+                            </div>
                            
                            <div className="flex flex-col md:text-right gap-2">
                              {task.start_time && (

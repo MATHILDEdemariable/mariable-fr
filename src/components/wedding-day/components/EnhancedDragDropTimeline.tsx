@@ -211,19 +211,28 @@ const EnhancedDragDropTimeline: React.FC<EnhancedDragDropTimelineProps> = ({
 
   // Gestionnaire de suppression d'événement
   const handleDeleteEvent = async (eventId: string) => {
-    console.log('🗑️ Deleting event:', eventId);
+    console.log('🗑️ Deleting event:', eventId, 'coordination:', coordination?.id);
     
     try {
-      // Supprimer directement de la base de données
+      // Supprimer directement de la base de données avec coordination_id pour éviter les conflits
       const { error } = await supabase
         .from('coordination_planning')
         .delete()
-        .eq('id', eventId);
+        .eq('id', eventId)
+        .eq('coordination_id', coordination?.id)
+        .eq('category', 'jour-m');
       
-      if (error) throw error;
+      if (error) {
+        console.error('❌ Database deletion error:', error);
+        throw error;
+      }
+      
+      console.log('✅ Event deleted from database:', eventId);
       
       // Mettre à jour l'état local
       const updatedEvents = timelineEvents.filter(event => event.id !== eventId);
+      console.log('🔄 Local events updated, remaining:', updatedEvents.length);
+      
       const recalculatedEvents = recalculateTimeline(updatedEvents);
       
       setTimelineEvents(recalculatedEvents);
@@ -237,7 +246,7 @@ const EnhancedDragDropTimeline: React.FC<EnhancedDragDropTimelineProps> = ({
       
       toast({
         title: "Étape supprimée",
-        description: "L'étape a été supprimée de votre planning."
+        description: "L'étape a été supprimée définitivement de votre planning."
       });
     } catch (error) {
       console.error('❌ Error deleting event:', error);
