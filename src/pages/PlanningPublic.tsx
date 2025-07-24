@@ -264,8 +264,15 @@ const PlanningPublic: React.FC = () => {
   }
 
   const { coordination, tasks, teamMembers, documents, planningType } = coordinationData;
-  const people = teamMembers.filter(m => m.type === 'person');
-  const vendors = teamMembers.filter(m => m.type === 'vendor');
+  // Améliorer la gestion des types avec support des rôles "Autre prestataire"
+  const people = teamMembers.filter(m => {
+    const isOtherVendor = m.role === 'Autre prestataire';
+    return m.type === 'person' && !isOtherVendor;
+  });
+  const vendors = teamMembers.filter(m => {
+    const isOtherVendor = m.role === 'Autre prestataire';
+    return m.type === 'vendor' || isOtherVendor;
+  });
 
   return (
     <>
@@ -366,9 +373,6 @@ const PlanningPublic: React.FC = () => {
                                 )}
                                 <div className="flex items-center gap-2 mt-2 text-xs text-gray-500">
                                   <Badge variant="outline">{task.duration} min</Badge>
-                                  <Badge className={getPriorityColor(task.priority)}>
-                                    {task.priority === 'high' ? 'Élevée' : task.priority === 'medium' ? 'Moyenne' : 'Faible'}
-                                  </Badge>
                                   <span className="capitalize">{task.category}</span>
                                 </div>
                               </div>
