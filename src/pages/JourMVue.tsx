@@ -241,9 +241,10 @@ const JourMVue: React.FC = () => {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-6 max-w-6xl">
+      <div className="container mx-auto px-4 py-6 max-w-6xl pb-20 md:pb-6">
         <Tabs defaultValue="planning" className="w-full">
-          <TabsList className="grid w-full grid-cols-4 mb-6">
+          {/* Navigation desktop */}
+          <TabsList className="hidden md:grid w-full grid-cols-4 mb-6">
             <TabsTrigger value="planning" className="flex items-center gap-2">
               <Calendar className="h-4 w-4" />
               Planning ({tasks.length})
@@ -261,6 +262,44 @@ const JourMVue: React.FC = () => {
               Pinterest ({pinterestLinks?.length || 0})
             </TabsTrigger>
           </TabsList>
+          
+          {/* Navigation mobile fixe en bas */}
+          <div className="fixed bottom-0 left-0 right-0 bg-white border-t md:hidden z-50">
+            <TabsList className="grid w-full grid-cols-4 rounded-none h-16">
+              <TabsTrigger 
+                value="planning" 
+                className="flex flex-col items-center gap-1 text-xs h-full data-[state=active]:bg-primary/10"
+              >
+                <Calendar className="h-4 w-4" />
+                <span>Planning</span>
+                <span className="text-[10px] opacity-70">({tasks.length})</span>
+              </TabsTrigger>
+              <TabsTrigger 
+                value="equipe" 
+                className="flex flex-col items-center gap-1 text-xs h-full data-[state=active]:bg-primary/10"
+              >
+                <Users className="h-4 w-4" />
+                <span>Équipe</span>
+                <span className="text-[10px] opacity-70">({teamMembers.length})</span>
+              </TabsTrigger>
+              <TabsTrigger 
+                value="documents" 
+                className="flex flex-col items-center gap-1 text-xs h-full data-[state=active]:bg-primary/10"
+              >
+                <FileText className="h-4 w-4" />
+                <span>Docs</span>
+                <span className="text-[10px] opacity-70">({documents.length})</span>
+              </TabsTrigger>
+              <TabsTrigger 
+                value="pinterest" 
+                className="flex flex-col items-center gap-1 text-xs h-full data-[state=active]:bg-primary/10"
+              >
+                <ExternalLink className="h-4 w-4" />
+                <span>Pinterest</span>
+                <span className="text-[10px] opacity-70">({pinterestLinks?.length || 0})</span>
+              </TabsTrigger>
+            </TabsList>
+          </div>
 
           {/* Onglet Planning */}
           <TabsContent value="planning">
@@ -291,62 +330,62 @@ const JourMVue: React.FC = () => {
                 </div>
               </CardHeader>
               <CardContent>
-                {filteredTasks.length > 0 ? (
-                  <div className="space-y-4">
-                    {filteredTasks.map((task) => (
-                      <div key={task.id} className="p-4 border rounded-lg bg-white shadow-sm">
-                        <div className="flex items-start gap-4">
-                          <div className="flex items-center gap-2 min-w-0 flex-1">
-                            {getStatusIcon(task.status)}
-                            <div className="flex-1 min-w-0">
-                              <h3 className={`font-medium ${task.status === 'completed' ? 'line-through text-gray-500' : ''}`}>
-                                {task.title}
-                              </h3>
-                              {task.description && (
-                                <p className="text-sm text-gray-600 mt-1">{task.description}</p>
-                              )}
-                              <div className="flex items-center gap-2 mt-2 text-xs text-gray-500">
-                                <Badge variant="outline">{task.duration} min</Badge>
-                                {task.priority === 'low' && (
-                                  <Badge className={getPriorityColor(task.priority)}>
-                                    Faible
-                                  </Badge>
-                                )}
-                                <span className="capitalize">{task.category}</span>
-                              </div>
-                            </div>
-                          </div>
-                          
-                          <div className="text-right">
-                            {task.start_time && (
-                              <div className="text-sm font-medium mb-2">
-                                {formatTime(task.start_time)}
-                                {task.end_time && (
-                                  <span className="text-gray-500 ml-1">
-                                    - {formatTime(task.end_time)}
-                                  </span>
-                                )}
-                              </div>
-                            )}
-                            
-                            {task.assigned_to && Array.isArray(task.assigned_to) && task.assigned_to.length > 0 && (
-                              <div className="flex flex-wrap gap-1">
-                                {task.assigned_to.map((memberId: string) => {
-                                  const member = teamMembers.find(m => m.id === memberId);
-                                  return member ? (
-                                    <Badge key={memberId} variant="secondary">
-                                      <User className="h-3 w-3 mr-1" />
-                                      {member.name}
-                                    </Badge>
-                                  ) : null;
-                                })}
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                 {filteredTasks.length > 0 ? (
+                   <div className="space-y-3 md:space-y-4">
+                     {filteredTasks.map((task) => (
+                       <div key={task.id} className="p-3 md:p-4 border rounded-lg bg-white shadow-sm">
+                         <div className="flex flex-col md:flex-row md:items-start gap-3 md:gap-4">
+                           <div className="flex items-start gap-2 min-w-0 flex-1">
+                             {getStatusIcon(task.status)}
+                             <div className="flex-1 min-w-0">
+                               <h3 className={`font-medium text-sm md:text-base leading-tight ${task.status === 'completed' ? 'line-through text-gray-500' : ''}`}>
+                                 {task.title}
+                               </h3>
+                               {task.description && (
+                                 <p className="text-xs md:text-sm text-gray-600 mt-1 break-words leading-relaxed">{task.description}</p>
+                               )}
+                               <div className="flex flex-wrap items-center gap-2 mt-2 text-xs text-gray-500">
+                                 <Badge variant="outline" className="text-xs">{task.duration} min</Badge>
+                                 {task.priority === 'low' && (
+                                   <Badge className={`${getPriorityColor(task.priority)} text-xs`}>
+                                     Faible
+                                   </Badge>
+                                 )}
+                                 <span className="capitalize">{task.category}</span>
+                               </div>
+                             </div>
+                           </div>
+                           
+                           <div className="flex flex-col md:text-right gap-2">
+                             {task.start_time && (
+                               <div className="text-xs md:text-sm font-medium">
+                                 {formatTime(task.start_time)}
+                                 {task.end_time && (
+                                   <span className="text-gray-500 ml-1">
+                                     - {formatTime(task.end_time)}
+                                   </span>
+                                 )}
+                               </div>
+                             )}
+                             
+                             {task.assigned_to && Array.isArray(task.assigned_to) && task.assigned_to.length > 0 && (
+                               <div className="flex flex-wrap gap-1">
+                                 {task.assigned_to.map((memberId: string) => {
+                                   const member = teamMembers.find(m => m.id === memberId);
+                                   return member ? (
+                                     <Badge key={memberId} variant="secondary" className="text-xs">
+                                       <User className="h-3 w-3 mr-1" />
+                                       <span className="truncate max-w-20 md:max-w-none">{member.name}</span>
+                                     </Badge>
+                                   ) : null;
+                                 })}
+                               </div>
+                             )}
+                           </div>
+                         </div>
+                       </div>
+                     ))}
+                   </div>
                 ) : (
                   <div className="text-center py-12 text-gray-500">
                     <Calendar className="h-12 w-12 mx-auto mb-4 opacity-50" />
@@ -374,33 +413,33 @@ const JourMVue: React.FC = () => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  {people.length > 0 ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {people.map((member) => (
-                        <div key={member.id} className="border rounded-lg p-4">
-                          <h3 className="font-medium">{member.name}</h3>
-                          <Badge variant="outline" className="mt-1 mb-2">
-                            {member.role}
-                          </Badge>
-                          <div className="space-y-1 text-sm text-gray-600">
-                            {member.email && (
-                              <div className="flex items-center gap-2">
-                                <Mail className="h-4 w-4" />
-                                <span className="truncate">{member.email}</span>
-                              </div>
-                            )}
-                            {member.phone && (
-                              <div className="flex items-center gap-2">
-                                <Phone className="h-4 w-4" />
-                                <a href={`tel:${member.phone}`} className="text-blue-600 hover:underline">
-                                  {member.phone}
-                                </a>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
+                   {people.length > 0 ? (
+                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
+                       {people.map((member) => (
+                         <div key={member.id} className="border rounded-lg p-3 md:p-4">
+                           <h3 className="font-medium text-sm md:text-base break-words">{member.name}</h3>
+                           <Badge variant="outline" className="mt-1 mb-2 text-xs">
+                             {member.role}
+                           </Badge>
+                           <div className="space-y-2 text-xs md:text-sm text-gray-600">
+                             {member.email && (
+                               <div className="flex items-start gap-2">
+                                 <Mail className="h-3 w-3 md:h-4 md:w-4 mt-0.5 flex-shrink-0" />
+                                 <span className="break-all leading-tight">{member.email}</span>
+                               </div>
+                             )}
+                             {member.phone && (
+                               <div className="flex items-center gap-2">
+                                 <Phone className="h-3 w-3 md:h-4 md:w-4 flex-shrink-0" />
+                                 <a href={`tel:${member.phone}`} className="text-blue-600 hover:underline break-all">
+                                   {member.phone}
+                                 </a>
+                               </div>
+                             )}
+                           </div>
+                         </div>
+                       ))}
+                     </div>
                   ) : (
                     <div className="text-center py-8 text-gray-500">
                       <User className="h-12 w-12 mx-auto mb-4 opacity-50" />
@@ -418,34 +457,40 @@ const JourMVue: React.FC = () => {
                     Prestataires ({vendors.length})
                   </CardTitle>
                 </CardHeader>
-                <CardContent>
-                  {vendors.length > 0 ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {vendors.map((member) => (
-                        <div key={member.id} className="border rounded-lg p-4">
-                          <h3 className="font-medium">{member.name}</h3>
-                          <Badge variant="outline" className="mt-1 mb-2 bg-blue-50 text-blue-700">
-                            {member.role}
-                          </Badge>
-                          <div className="space-y-1 text-sm text-gray-600">
-                            {member.email && (
-                              <div className="flex items-center gap-2">
-                                <Mail className="h-4 w-4" />
-                                <span className="truncate">{member.email}</span>
-                              </div>
-                            )}
+                 <CardContent>
+                   {vendors.length > 0 ? (
+                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
+                       {vendors.map((member) => (
+                         <div key={member.id} className="border rounded-lg p-3 md:p-4">
+                           <h3 className="font-medium text-sm md:text-base break-words">{member.name}</h3>
+                           <Badge variant="outline" className="mt-1 mb-2 bg-blue-50 text-blue-700 text-xs">
+                             {member.role}
+                           </Badge>
+                           <div className="space-y-2 text-xs md:text-sm text-gray-600">
+                             {member.email && (
+                               <div className="flex items-start gap-2">
+                                 <Mail className="h-3 w-3 md:h-4 md:w-4 mt-0.5 flex-shrink-0" />
+                                 <span className="break-all leading-tight">{member.email}</span>
+                               </div>
+                             )}
                              {member.phone && (
                                <div className="flex items-center gap-2">
-                                 <Phone className="h-4 w-4" />
-                                 <a href={`tel:${member.phone}`} className="text-blue-600 hover:underline">
+                                 <Phone className="h-3 w-3 md:h-4 md:w-4 flex-shrink-0" />
+                                 <a href={`tel:${member.phone}`} className="text-blue-600 hover:underline break-all">
                                    {member.phone}
                                  </a>
                                </div>
                              )}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
+                             {member.notes && (
+                               <div className="mt-2 p-2 bg-gray-50 rounded text-xs leading-relaxed">
+                                 <strong className="block mb-1">Notes:</strong> 
+                                 <span className="break-words">{member.notes}</span>
+                               </div>
+                             )}
+                           </div>
+                         </div>
+                       ))}
+                     </div>
                   ) : (
                     <div className="text-center py-8 text-gray-500">
                       <Building className="h-12 w-12 mx-auto mb-4 opacity-50" />

@@ -249,7 +249,7 @@ const EnhancedDragDropTimeline: React.FC<EnhancedDragDropTimelineProps> = ({
     }
   };
 
-  // Fonction de sauvegarde en base améliorée avec retry
+  // Fonction de sauvegarde en base corrigée - supprime et recrée tout
   const saveToDatabase = async (events: PlanningEvent[], retryCount = 0) => {
     if (!coordination?.id) {
       console.warn('⚠️ No coordination found, skipping save');
@@ -257,37 +257,51 @@ const EnhancedDragDropTimeline: React.FC<EnhancedDragDropTimelineProps> = ({
     }
 
     try {
-      console.log('💾 Saving', events.length, 'events to coordination_planning');
+      console.log('💾 Synchronizing', events.length, 'events to coordination_planning');
       
-      for (const [index, event] of events.entries()) {
-        await supabase
+      // 1. Supprimer tous les événements jour-m existants
+      await supabase
+        .from('coordination_planning')
+        .delete()
+        .eq('coordination_id', coordination.id)
+        .eq('category', 'jour-m');
+      
+      // 2. Recréer tous les événements dans l'ordre
+      if (events.length > 0) {
+        const eventsToInsert = events.map((event, index) => ({
+          id: event.id,
+          coordination_id: coordination.id,
+          title: event.title,
+          description: event.notes || null,
+          start_time: event.startTime.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+          duration: event.duration,
+          assigned_to: event.assignedTo || [],
+          position: index,
+          category: 'jour-m',
+          priority: 'medium',
+          is_ai_generated: event.type !== 'custom'
+        }));
+        
+        const { error: insertError } = await supabase
           .from('coordination_planning')
-          .update({
-            title: event.title,
-            description: event.notes,
-            start_time: event.startTime.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-            duration: event.duration,
-            assigned_to: event.assignedTo || [],
-            position: index,
-            category: 'jour-m'
-          })
-          .eq('id', event.id)
-          .eq('coordination_id', coordination.id);
+          .insert(eventsToInsert);
+          
+        if (insertError) throw insertError;
       }
       
-      console.log('✅ Events saved successfully to coordination_planning');
+      console.log('✅ Events synchronized successfully to coordination_planning');
     } catch (error) {
-      console.error('❌ Error saving planning:', error);
+      console.error('❌ Error synchronizing planning:', error);
       
       // Retry une fois en cas d'échec
       if (retryCount < 1) {
-        console.log('🔄 Retrying save operation...');
+        console.log('🔄 Retrying synchronization...');
         setTimeout(() => saveToDatabase(events, retryCount + 1), 1000);
       } else {
         // Afficher une erreur seulement après retry
         toast({
           title: "Erreur de sauvegarde",
-          description: "Impossible de sauvegarder en base. Vos modifications sont conservées localement.",
+          description: "Impossible de synchroniser avec la base. Vos modifications sont conservées localement.",
           variant: "destructive"
         });
       }

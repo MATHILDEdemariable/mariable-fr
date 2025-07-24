@@ -304,22 +304,53 @@ const PlanningPublic: React.FC = () => {
           </div>
         </div>
 
-        <div className="container mx-auto px-4 md:px-6 py-4 md:py-6 max-w-6xl">
+        <div className="container mx-auto px-4 md:px-6 py-4 md:py-6 max-w-6xl pb-20 md:pb-6">
           <Tabs defaultValue="planning" className="w-full">
-            <TabsList className="grid w-full grid-cols-1 md:grid-cols-3 mb-6">
-              <TabsTrigger value="planning" className="flex items-center gap-2 text-xs md:text-sm">
-                <Calendar className="h-3 w-3 md:h-4 md:w-4" />
+            {/* Navigation desktop */}
+            <TabsList className="hidden md:grid w-full grid-cols-3 mb-6">
+              <TabsTrigger value="planning" className="flex items-center gap-2">
+                <Calendar className="h-4 w-4" />
                 Planning ({tasks.length})
               </TabsTrigger>
-              <TabsTrigger value="equipe" className="flex items-center gap-2 text-xs md:text-sm">
-                <Users className="h-3 w-3 md:h-4 md:w-4" />
+              <TabsTrigger value="equipe" className="flex items-center gap-2">
+                <Users className="h-4 w-4" />
                 Équipe ({teamMembers.length})
               </TabsTrigger>
-              <TabsTrigger value="documents" className="flex items-center gap-2 text-xs md:text-sm">
-                <FileText className="h-3 w-3 md:h-4 md:w-4" />
+              <TabsTrigger value="documents" className="flex items-center gap-2">
+                <FileText className="h-4 w-4" />
                 Documents ({documents.length + pinterestLinks.length})
               </TabsTrigger>
             </TabsList>
+            
+            {/* Navigation mobile fixe en bas */}
+            <div className="fixed bottom-0 left-0 right-0 bg-white border-t md:hidden z-50">
+              <TabsList className="grid w-full grid-cols-3 rounded-none h-16">
+                <TabsTrigger 
+                  value="planning" 
+                  className="flex flex-col items-center gap-1 text-xs h-full data-[state=active]:bg-primary/10"
+                >
+                  <Calendar className="h-4 w-4" />
+                  <span>Planning</span>
+                  <span className="text-[10px] opacity-70">({tasks.length})</span>
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="equipe" 
+                  className="flex flex-col items-center gap-1 text-xs h-full data-[state=active]:bg-primary/10"
+                >
+                  <Users className="h-4 w-4" />
+                  <span>Équipe</span>
+                  <span className="text-[10px] opacity-70">({teamMembers.length})</span>
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="documents" 
+                  className="flex flex-col items-center gap-1 text-xs h-full data-[state=active]:bg-primary/10"
+                >
+                  <FileText className="h-4 w-4" />
+                  <span>Docs</span>
+                  <span className="text-[10px] opacity-70">({documents.length + pinterestLinks.length})</span>
+                </TabsTrigger>
+              </TabsList>
+            </div>
 
             {/* Onglet Planning */}
             <TabsContent value="planning">
