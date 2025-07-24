@@ -366,9 +366,11 @@ const PlanningPublic: React.FC = () => {
                                 )}
                                 <div className="flex items-center gap-2 mt-2 text-xs text-gray-500">
                                   <Badge variant="outline">{task.duration} min</Badge>
-                                  <Badge className={getPriorityColor(task.priority)}>
-                                    {task.priority === 'high' ? 'Élevée' : task.priority === 'medium' ? 'Moyenne' : 'Faible'}
-                                  </Badge>
+                                  {task.priority === 'low' && (
+                                    <Badge className={getPriorityColor(task.priority)}>
+                                      Faible
+                                    </Badge>
+                                  )}
                                   <span className="capitalize">{task.category}</span>
                                 </div>
                               </div>

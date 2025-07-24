@@ -183,16 +183,9 @@ const JourMVue: React.FC = () => {
 
   const { coordination, tasks, teamMembers, documents, pinterestLinks } = weddingData;
   
-  // Améliorer la gestion des types avec fallback
-  const people = teamMembers.filter(m => {
-    const type = m.type || 'person'; // Fallback vers 'person' si type manquant
-    return type === 'person' || (type !== 'vendor' && type !== 'person'); // Inclure les types inconnus comme 'person'
-  });
-  
-  const vendors = teamMembers.filter(m => {
-    const type = m.type || 'person';
-    return type === 'vendor';
-  });
+  // Filtrage simple des équipes
+  const people = teamMembers.filter(m => m.type === 'person');
+  const vendors = teamMembers.filter(m => m.type === 'vendor');
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -314,9 +307,11 @@ const JourMVue: React.FC = () => {
                               )}
                               <div className="flex items-center gap-2 mt-2 text-xs text-gray-500">
                                 <Badge variant="outline">{task.duration} min</Badge>
-                                <Badge className={getPriorityColor(task.priority)}>
-                                  {task.priority === 'high' ? 'Élevée' : task.priority === 'medium' ? 'Moyenne' : 'Faible'}
-                                </Badge>
+                                {task.priority === 'low' && (
+                                  <Badge className={getPriorityColor(task.priority)}>
+                                    Faible
+                                  </Badge>
+                                )}
                                 <span className="capitalize">{task.category}</span>
                               </div>
                             </div>
