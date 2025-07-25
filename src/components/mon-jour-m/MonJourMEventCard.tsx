@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Edit2, Check, X, Trash2, GripVertical, Users, Plus, ChevronDown, ChevronUp } from 'lucide-react';
+import { Edit2, Check, X, GripVertical, Users, Plus, ChevronDown, ChevronUp } from 'lucide-react';
 import { PlanningEvent } from '../wedding-day/types/planningTypes';
 import { addMinutes } from 'date-fns';
 
@@ -15,7 +15,6 @@ interface MonJourMEventCardProps {
   event: PlanningEvent;
   teamMembers: any[];
   onUpdate: (updatedEvent: PlanningEvent) => void;
-  onDelete?: (eventId: string) => void;
   dragHandleProps?: any;
   isDragging?: boolean;
   isSelected?: boolean;
@@ -27,7 +26,6 @@ const MonJourMEventCard: React.FC<MonJourMEventCardProps> = ({
   event,
   teamMembers,
   onUpdate,
-  onDelete,
   dragHandleProps,
   isDragging,
   isSelected = false,
@@ -85,12 +83,6 @@ const MonJourMEventCard: React.FC<MonJourMEventCardProps> = ({
     setIsEditing(false);
   };
 
-  const handleDelete = () => {
-    if (onDelete && window.confirm(`Êtes-vous sûr de vouloir supprimer "${event.title}" ?`)) {
-      console.log('🗑️ Deleting event:', event.title);
-      onDelete(event.id);
-    }
-  };
 
   const handleAssignMember = (memberId: string) => {
     const currentAssigned = event.assignedTo || [];
@@ -433,30 +425,17 @@ const MonJourMEventCard: React.FC<MonJourMEventCardProps> = ({
                   {/* Actions */}
                   {!selectionMode && (
                     <div className="flex items-center gap-1">
-                      {!isEditing ? (
-                        <>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => setIsEditing(true)}
-                            className="h-8 w-8 p-0 hover:bg-blue-100"
-                            title="Modifier"
-                          >
-                            <Edit2 className="h-4 w-4" />
-                          </Button>
-                          {onDelete && (
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={handleDelete}
-                              className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-100"
-                              title="Supprimer"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          )}
-                        </>
-                      ) : (
+                       {!isEditing ? (
+                         <Button
+                           variant="ghost"
+                           size="sm"
+                           onClick={() => setIsEditing(true)}
+                           className="h-8 w-8 p-0 hover:bg-blue-100"
+                           title="Modifier"
+                         >
+                           <Edit2 className="h-4 w-4" />
+                         </Button>
+                       ) : (
                         <>
                           <Button
                             variant="ghost"

@@ -106,12 +106,6 @@ const MonJourMTimeline: React.FC<MonJourMTimelineProps> = ({
     onEventsUpdate(updatedEvents);
   };
 
-  const handleEventDelete = (eventId: string) => {
-    const updatedEvents = events.filter(event => event.id !== eventId);
-    
-    // PAS DE RECALCUL AUTOMATIQUE - maintient les horaires existants
-    onEventsUpdate(updatedEvents);
-  };
 
   // Fonction pour recalcul manuel avec feedback amélioré
   const handleManualRecalculate = async () => {
@@ -205,7 +199,6 @@ const MonJourMTimeline: React.FC<MonJourMTimelineProps> = ({
             event={event}
             teamMembers={teamMembers}
             onUpdate={handleEventUpdate}
-            onDelete={handleEventDelete}
             selectionMode={selectionMode}
             isSelected={selectedEvents.includes(event.id)}
             onSelectionChange={onSelectionChange}
@@ -276,7 +269,6 @@ const MonJourMTimeline: React.FC<MonJourMTimelineProps> = ({
                         event={event}
                         teamMembers={teamMembers}
                         onUpdate={handleEventUpdate}
-                        onDelete={handleEventDelete}
                         dragHandleProps={provided.dragHandleProps}
                         isDragging={snapshot.isDragging}
                       />

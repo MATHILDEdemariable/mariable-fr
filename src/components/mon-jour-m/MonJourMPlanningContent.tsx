@@ -3,7 +3,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Sparkles, Calendar, Clock, Users, Trash2, CheckSquare, Square, Save, HelpCircle } from 'lucide-react';
+import { Plus, Sparkles, Calendar, Clock, Users, Trash2, CheckSquare, Square, Save, HelpCircle, X } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { supabase } from '@/integrations/supabase/client';
@@ -548,10 +548,10 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
               setSelectionMode(!selectionMode);
               setSelectedEvents([]);
             }}
-            className={selectionMode ? "bg-blue-600 hover:bg-blue-700" : ""}
+            className={selectionMode ? "bg-red-600 hover:bg-red-700" : "text-red-600 border-red-300 hover:bg-red-50"}
           >
-            {selectionMode ? <CheckSquare className="h-4 w-4 mr-2" /> : <Square className="h-4 w-4 mr-2" />}
-            {selectionMode ? "Annuler sélection" : "Sélectionner plusieurs"}
+            {selectionMode ? <X className="h-4 w-4 mr-2" /> : <Trash2 className="h-4 w-4 mr-2" />}
+            {selectionMode ? "Annuler" : "Supprimer des étapes"}
           </Button>
         )}
 
