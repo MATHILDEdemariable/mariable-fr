@@ -248,21 +248,18 @@ const Index = () => {
                   </div>
                   
                   <div className="space-y-3 mb-6">
-                    <div className="flex items-start gap-2">
-                      <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Application personnalisée</p>
-                    </div>
+                    
                     <div className="flex items-start gap-2">
                       <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
                       <p className="text-sm text-gray-700">Planning intelligent et assignation des tâches</p>
                     </div>
                     <div className="flex items-start gap-2">
                       <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Partage avec les proches</p>
+                      <p className="text-sm text-gray-700">Partage des informations avec les proches</p>
                     </div>
                     <div className="flex items-start gap-2">
                       <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Documents partagés</p>
+                      <p className="text-sm text-gray-700">Coordinateur à la carte </p>
                     </div>
                   </div>
                   
