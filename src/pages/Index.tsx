@@ -7,10 +7,12 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowRight, Check, Brain, Handshake, MessageCircle, Smartphone, Mail, Settings, Calendar, Users, Star } from 'lucide-react';
 import { Link } from 'react-router-dom';
+
 const Index = () => {
   const [displayedText, setDisplayedText] = useState('');
   const staticText = 'Profitez pleinement de votre mariage. ';
   const typedText = 'Organisez-le facilement, vous-même.';
+
   useEffect(() => {
     window.scrollTo(0, 0);
 
@@ -24,8 +26,10 @@ const Index = () => {
         clearInterval(timer);
       }
     }, 100);
+
     return () => clearInterval(timer);
   }, []);
+
   const scrollToServices = () => {
     const servicesSection = document.getElementById('services-section');
     if (servicesSection) {
@@ -34,29 +38,31 @@ const Index = () => {
       });
     }
   };
-  return <div className="min-h-screen flex flex-col bg-white">
+
+  return (
+    <div className="min-h-screen flex flex-col bg-white">
       <SEO />
       <Header />
       
       <main className="flex-grow">
         {/* Hero Section with dark overlay */}
         <section className="relative py-20 md:py-28 bg-cover bg-center bg-no-repeat" style={{
-        backgroundImage: "url('/lovable-uploads/16238829-fdfc-4fe2-ade8-9c49d79851b4.png')"
-      }}>
+          backgroundImage: "url('/lovable-uploads/16238829-fdfc-4fe2-ade8-9c49d79851b4.png')"
+        }}>
           {/* Dark overlay */}
           <div className="absolute inset-0 bg-neutral-900/20"></div>
           
           <div className="container mx-auto px-4 relative z-10">
             <div className="max-w-3xl">
               <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif text-white font-bold mb-4" style={{
-              fontFamily: 'Playfair Display, serif'
-            }}>
+                fontFamily: 'Playfair Display, serif'
+              }}>
                 Profitez pleinement de votre mariage.
               </h1>
               
               <p className="text-xl sm:text-2xl font-serif text-white mb-8" style={{
-              fontFamily: 'Playfair Display, serif'
-            }}>
+                fontFamily: 'Playfair Display, serif'
+              }}>
                 <span className="inline-block min-h-[1.2em]">
                   {displayedText}
                   {displayedText.length < typedText.length && <span className="animate-pulse">|</span>}
@@ -64,10 +70,14 @@ const Index = () => {
               </p>
               
               <div className="mb-8 flex justify-center sm:justify-start">
-                <Button onClick={scrollToServices} size="lg" className="bg-wedding-olive hover:bg-wedding-olive/90 text-white 
+                <Button
+                  onClick={scrollToServices}
+                  size="lg"
+                  className="bg-wedding-olive hover:bg-wedding-olive/90 text-white 
                            w-full max-w-[280px] sm:w-auto sm:max-w-none
                            text-sm px-4 py-3 
-                           sm:text-base sm:px-8 sm:py-4">
+                           sm:text-base sm:px-8 sm:py-4"
+                >
                   <span className="truncate">Organisez mieux, profitez plus</span>
                   <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
                 </Button>
@@ -81,8 +91,8 @@ const Index = () => {
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
               <h2 style={{
-              fontFamily: 'Playfair Display, serif'
-            }} className="sm:text-3xl md:text-4xl font-serif text-black mb-6 max-w-4xl mx-auto text-3xl font-medium">
+                fontFamily: 'Playfair Display, serif'
+              }} className="sm:text-3xl md:text-4xl font-serif text-black mb-6 max-w-4xl mx-auto text-3xl font-medium">
                 Le premier wedding planner de poche
               </h2>
               
@@ -136,8 +146,8 @@ const Index = () => {
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif text-black mb-6" style={{
-              fontFamily: 'Playfair Display, serif'
-            }}>
+                fontFamily: 'Playfair Display, serif'
+              }}>
                 Transformez l'organisation de votre mariage
               </h2>
               <p className="text-lg text-gray-700 max-w-2xl mx-auto">
@@ -273,21 +283,13 @@ const Index = () => {
                 </CardContent>
               </Card>
 
-              {/* Position 4 - Privilège (799€) avec badge PREMIUM */}
+              {/* Position 4 - Privilège (799€) avec badge PREMIUM - CardHeader supprimé */}
               <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col h-full relative border-2 border-wedding-olive">
                 <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                   <span className="bg-wedding-olive text-white px-4 py-1 rounded-full text-sm font-medium">
                     PREMIUM
                   </span>
                 </div>
-                
-                <CardHeader className="text-center pb-4 pt-8">
-                  <div className="flex items-center justify-center gap-2 mb-3">
-                    <Users className="h-6 w-6 text-wedding-olive" />
-                    <CardTitle className="text-xl font-bold">Jour-J Privilège</CardTitle>
-                  </div>
-                  <p className="text-sm text-gray-600">Appli Mariable + Coordinateur </p>
-                </CardHeader>
                 
                 <CardContent className="flex-grow flex flex-col">
                   <div className="text-center mb-6">
@@ -325,8 +327,8 @@ const Index = () => {
             {/* Call to Action */}
             <div className="text-center mt-16">
               <h3 className="text-2xl font-serif mb-4" style={{
-              fontFamily: 'Playfair Display, serif'
-            }}>
+                fontFamily: 'Playfair Display, serif'
+              }}>
                 Prêt(e) à vivre une expérience unique pour votre mariage?
               </h3>
               <p className="text-lg text-gray-700 mb-6">
@@ -345,7 +347,9 @@ const Index = () => {
                   <CardContent className="p-6">
                     <div className="mb-4">
                       <div className="flex items-center gap-1 mb-3">
-                        {[...Array(5)].map((_, i) => <span key={i} className="text-yellow-400 text-lg">★</span>)}
+                        {[...Array(5)].map((_, i) => (
+                          <span key={i} className="text-yellow-400 text-lg">★</span>
+                        ))}
                       </div>
                       <p className="text-gray-700 italic text-sm">
                         "Grâce à Mariable, nous avons pu organiser notre mariage sans stress. Les outils sont géniaux 
@@ -353,56 +357,11 @@ const Index = () => {
                       </p>
                     </div>
                     <div className="border-t pt-4">
-                      <p className="font-medium text-gray-900">Camille & Julien</p>
-                      <p className="text-sm text-gray-600">Mariage en Bourgogne, Juin 2025</p>
+                      <p className="font-medium text-gray-900">— Sophie & Thomas</p>
+                      <p className="text-sm text-gray-600">Mariage en juin 2024</p>
                     </div>
                   </CardContent>
                 </Card>
-
-                {/* Témoignage 4 */}
-                <Card className="bg-white shadow-lg hover:shadow-xl transition-shadow duration-300 md:col-span-1 lg:col-span-1">
-                  <CardContent className="p-6">
-                    <div className="mb-4">
-                      <div className="flex items-center gap-1 mb-3">
-                        {[...Array(5)].map((_, i) => <span key={i} className="text-yellow-400 text-lg">★</span>)}
-                      </div>
-                      <p className="text-gray-700 italic text-sm">
-                        "L'application Jour-J de Mariable est un vrai game-changer ! Tous nos prestataires et témoins 
-                        savaient exactement quoi faire et quand. Parfait !"
-                      </p>
-                    </div>
-                    <div className="border-t pt-4">
-                      <p className="font-medium text-gray-900">Laura & Maxime</p>
-                      <p className="text-sm text-gray-600">Mariage à Marseille, Juillet 2025</p>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Témoignage 5 */}
-                <Card className="bg-white shadow-lg hover:shadow-xl transition-shadow duration-300 md:col-span-1 lg:col-span-1">
-                  <CardContent className="p-6">
-                    <div className="mb-4">
-                      <div className="flex items-center gap-1 mb-3">
-                        {[...Array(5)].map((_, i) => <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />)}
-                      </div>
-                      <p className="text-gray-700 italic text-sm">
-                        "Service client au top ! Mathilde répond rapidement et donne de précieux conseils. 
-                        Notre budget a été maîtrisé grâce à leur suivi."
-                      </p>
-                    </div>
-                    <div className="border-t pt-4">
-                      <p className="font-medium text-gray-900">Emma & Pierre</p>
-                      <p className="text-sm text-gray-600">MARIAGE A VENIR - MAI 2026</p>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-
-              {/* Bouton CTA après les témoignages */}
-              <div className="text-center mt-12">
-                <Button asChild size="lg" className="bg-wedding-olive hover:bg-wedding-olive/90 text-white">
-                  
-                </Button>
               </div>
             </div>
           </div>
@@ -411,26 +370,41 @@ const Index = () => {
         {/* Final CTA Section */}
         <section className="py-16 md:py-20 bg-wedding-olive text-white">
           <div className="container mx-auto px-4 text-center">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif mb-4" style={{
-            fontFamily: 'Playfair Display, serif'
-          }}>
-              Et si vous disiez "oui" à la simplicité ?
-            </h2>
-            <p className="text-lg mb-8 max-w-2xl mx-auto">
-              Posez vos questions ou réservez un conseil personnalisé.
-            </p>
-            
-            <Button asChild size="lg" className="bg-white text-wedding-olive hover:bg-white/90">
-              <Link to="/contact">
-                Contactez Mathilde <ArrowRight className="ml-2 h-5 w-5" />
-              </Link>
-            </Button>
+            <div className="max-w-3xl mx-auto">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif mb-6" style={{
+                fontFamily: 'Playfair Display, serif'
+              }}>
+                Une question sur l'organisation de votre mariage?
+              </h2>
+              
+              <p className="text-lg mb-8 opacity-90">
+                Notre équipe d'experts est là pour vous accompagner dans cette aventure unique.
+                Contactez-nous pour discuter de votre projet.
+              </p>
+              
+              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <Button asChild size="lg" variant="outline" className="bg-transparent border-white text-white hover:bg-white hover:text-wedding-olive transition-colors w-full sm:w-auto">
+                  <Link to="/nous-contacter">
+                    <Mail className="mr-2 h-5 w-5" />
+                    Nous contacter
+                  </Link>
+                </Button>
+                
+                <Button asChild size="lg" className="bg-white text-wedding-olive hover:bg-gray-100 w-full sm:w-auto">
+                  <Link to="/register">
+                    Commencer gratuitement <ArrowRight className="ml-2 h-5 w-5" />
+                  </Link>
+                </Button>
+              </div>
+            </div>
           </div>
         </section>
       </main>
-      
+
       <Footer />
       <ChatbotButton />
-    </div>;
+    </div>
+  );
 };
+
 export default Index;
