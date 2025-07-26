@@ -145,7 +145,7 @@ const Index = () => {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto mb-16">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto mb-16">
               {/* Position 1 - Le Planner Mariable (Gratuit) */}
               <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col h-full">
                 <CardHeader className="text-center pb-4">
@@ -243,7 +243,8 @@ const Index = () => {
                 
                 <CardContent className="flex-grow flex flex-col">
                   <div className="text-center mb-6">
-                    <div className="text-3xl font-bold text-wedding-olive mb-2">14,9€</div>
+                    <div className="text-3xl font-bold text-wedding-olive mb-2">à partir de 14,9€</div>
+                    <div className="text-sm text-gray-600">selon formules</div>
                   </div>
                   
                   <div className="space-y-3 mb-6">
@@ -273,53 +274,6 @@ const Index = () => {
                 </CardContent>
               </Card>
 
-              {/* Position 4 - Privilège (799€) avec badge PREMIUM */}
-              <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col h-full relative border-2 border-wedding-olive">
-                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                  <span className="bg-wedding-olive text-white px-4 py-1 rounded-full text-sm font-medium">
-                    PREMIUM
-                  </span>
-                </div>
-                
-                <CardHeader className="text-center pb-4 pt-8">
-                  <div className="flex items-center justify-center gap-2 mb-3">
-                    <Users className="h-6 w-6 text-wedding-olive" />
-                    <CardTitle className="text-xl font-bold">Jour-J Privilège</CardTitle>
-                  </div>
-                  <p className="text-sm text-gray-600">Appli Mariable + Coordinateur </p>
-                </CardHeader>
-                
-                <CardContent className="flex-grow flex flex-col">
-                  <div className="text-center mb-6">
-                    <div className="text-3xl font-bold text-wedding-olive mb-2">799€</div>
-                  </div>
-                  
-                  <div className="space-y-3 mb-6">
-                    <div className="flex items-start gap-2">
-                      <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Planning via l'appli. Mariable</p>
-                    </div>
-                    <div className="flex items-start gap-2">
-                      <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Présence d'un coordinateur Jour-J</p>
-                    </div>
-                    <div className="flex items-start gap-2">
-                      <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Gestion des prestataires</p>
-                    </div>
-                    <div className="flex items-start gap-2">
-                      <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Service premium</p>
-                    </div>
-                  </div>
-                  
-                  <div className="mt-auto">
-                    <Button asChild className="w-full bg-wedding-olive text-white hover:bg-wedding-olive/90">
-                      <Link to="/reservation-jour-m">Réserver</Link>
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
             </div>
 
             {/* Call to Action */}

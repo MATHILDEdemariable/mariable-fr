@@ -209,7 +209,7 @@ const ReservationJourM = () => {
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <Helmet>
-        <title>Demande de réservation Jour-J | Mariable</title>
+        <title>Demande de réservation | Mariable</title>
         <meta name="description" content="Réservez votre service de coordination Jour-J avec Mariable" />
       </Helmet>
       
@@ -228,7 +228,7 @@ const ReservationJourM = () => {
           
           <div className="text-center mb-8">
             <h1 className="text-3xl md:text-4xl font-serif text-black mb-2">
-              Demande de réservation Jour-J
+              Demande de réservation
             </h1>
             <p className="text-lg text-gray-700">
               Confiez-nous la coordination de votre mariage
@@ -330,12 +330,17 @@ const ReservationJourM = () => {
                     <Label className="text-base font-medium mb-3">Services souhaités *</Label>
                     
                     <RadioGroup value={formData.selected_formula} onValueChange={handleFormulaChange}>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="ligne_directe" id="ligne_directe" />
-                        <Label htmlFor="ligne_directe" className="flex flex-col">
-                          <span>Ligne directe (9,9€/mois jusqu'au jour du mariage)</span>
-                          <span className="text-sm text-gray-500 font-normal">Hotline dédiée avec priorité</span>
-                        </Label>
+                      <div className="space-y-2">
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="ligne_directe" id="ligne_directe" />
+                          <Label htmlFor="ligne_directe" className="flex flex-col">
+                            <span>Ligne directe (9,9€/mois jusqu'au jour du mariage)</span>
+                            <span className="text-sm text-gray-500 font-normal">Hotline dédiée avec priorité</span>
+                          </Label>
+                        </div>
+                        <div className="ml-6 p-3 bg-orange-50 border-l-4 border-orange-400 text-sm text-orange-700">
+                          <span className="font-medium">⚠️ Attention :</span> ceci n'est pas une offre d'organisation de mariage complète ! uniquement une ligne directe pour des questions ponctuelles et des conseils
+                        </div>
                       </div>
                       <div className="flex items-center space-x-2 opacity-50">
                         <RadioGroupItem value="application_seule" id="application_seule" disabled />
