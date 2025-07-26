@@ -361,9 +361,9 @@ const JeuneMariesInscriptionPage: React.FC = () => {
                       currentImageUrl={formData.photo_principale_url}
                       onImageUpload={(url) => setFormData(prev => ({ ...prev, photo_principale_url: url }))}
                     />
-                    <p className="text-sm text-gray-500 mt-1">
-                      Uploadez directement votre plus belle photo de mariage
-                    </p>
+                     <p className="text-sm text-gray-500 mt-1">
+                       Uploadez votre plus belle photo de mariage (format carré recommandé pour les réseaux sociaux)
+                     </p>
                   </div>
                 </CardContent>
               </Card>

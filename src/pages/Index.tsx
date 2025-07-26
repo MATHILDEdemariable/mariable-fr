@@ -251,7 +251,11 @@ const Index = () => {
                     
                     <div className="flex items-start gap-2">
                       <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Planning intelligent et assignation des tâches</p>
+                       <p className="text-sm text-gray-700">Planning personnalisé</p>
+                     </div>
+                     <div className="flex items-start gap-2">
+                       <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                       <p className="text-sm text-gray-700">Assignation des tâches</p>
                     </div>
                     <div className="flex items-start gap-2">
                       <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />

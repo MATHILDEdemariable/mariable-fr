@@ -27,7 +27,8 @@ import {
   XCircle,
   Clock,
   Edit,
-  Eye
+  Eye,
+  Trash2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -145,6 +146,30 @@ const AdminJeunesMaries = () => {
       status_moderation: 'rejete', 
       visible: false 
     });
+  };
+
+  const deleteJeuneMarie = async (id: string) => {
+    if (!confirm('Êtes-vous sûr de vouloir supprimer ce témoignage ? Cette action est irréversible.')) {
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('jeunes_maries')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      // Mettre à jour l'état local
+      setJeunesMaries(prev => prev.filter(jm => jm.id !== id));
+      setFilteredJeunesMaries(prev => prev.filter(jm => jm.id !== id));
+      
+      toast.success('Témoignage supprimé avec succès');
+    } catch (error) {
+      console.error('Erreur lors de la suppression:', error);
+      toast.error('Erreur lors de la suppression');
+    }
   };
 
   const formatDate = (dateString: string) => {
@@ -394,37 +419,45 @@ const AdminJeunesMaries = () => {
                         <TableCell>
                           {getStatusBadge(jm.status_moderation, jm.visible)}
                         </TableCell>
-                        <TableCell>
-                          <div className="flex gap-2">
-                            {jm.status_moderation === 'en_attente' && (
-                              <>
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  onClick={() => approveJeuneMarie(jm.id)}
-                                  className="text-green-600 border-green-600 hover:bg-green-50"
-                                >
-                                  <CheckCircle className="h-3 w-3" />
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  onClick={() => rejectJeuneMarie(jm.id)}
-                                  className="text-red-600 border-red-600 hover:bg-red-50"
-                                >
-                                  <XCircle className="h-3 w-3" />
-                                </Button>
-                              </>
-                            )}
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => navigate(`/jeunes-maries/${jm.slug}`)}
-                            >
-                              <Eye className="h-3 w-3" />
-                            </Button>
-                          </div>
-                        </TableCell>
+                         <TableCell>
+                           <div className="flex gap-2">
+                             {jm.status_moderation === 'en_attente' && (
+                               <>
+                                 <Button
+                                   size="sm"
+                                   variant="outline"
+                                   onClick={() => approveJeuneMarie(jm.id)}
+                                   className="text-green-600 border-green-600 hover:bg-green-50"
+                                 >
+                                   <CheckCircle className="h-3 w-3" />
+                                 </Button>
+                                 <Button
+                                   size="sm"
+                                   variant="outline"
+                                   onClick={() => rejectJeuneMarie(jm.id)}
+                                   className="text-red-600 border-red-600 hover:bg-red-50"
+                                 >
+                                   <XCircle className="h-3 w-3" />
+                                 </Button>
+                               </>
+                             )}
+                             <Button
+                               size="sm"
+                               variant="outline"
+                               onClick={() => navigate(`/jeunes-maries/${jm.slug}`)}
+                             >
+                               <Eye className="h-3 w-3" />
+                             </Button>
+                             <Button
+                               size="sm"
+                               variant="outline"
+                               onClick={() => deleteJeuneMarie(jm.id)}
+                               className="text-red-600 border-red-600 hover:bg-red-50"
+                             >
+                               <Trash2 className="h-3 w-3" />
+                             </Button>
+                           </div>
+                         </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>

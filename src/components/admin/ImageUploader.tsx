@@ -238,7 +238,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
           <img
             src={uploadedUrl}
             alt="Image uploadée"
-            className="w-full h-48 object-cover rounded-lg border"
+            className="w-full aspect-square object-cover rounded-lg border"
           />
           <Button
             type="button"
