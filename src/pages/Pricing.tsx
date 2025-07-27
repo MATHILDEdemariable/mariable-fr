@@ -8,12 +8,10 @@ import { CheckCircle, Mail, Phone, Smartphone, Users, Calendar, X, ArrowLeft, Cl
 import { Link } from 'react-router-dom';
 import FormulaCTAButton from '@/components/pricing/FormulaCTAButton';
 import CoordinatorsPreview from '@/components/coordinators/CoordinatorsPreview';
-
 const Pricing = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
-
   const scrollToCommentCaMarche = () => {
     const commentSection = document.getElementById('comment-ca-marche');
     if (commentSection) {
@@ -22,27 +20,20 @@ const Pricing = () => {
       });
     }
   };
-
-  const faqData = [
-    {
-      id: 1,
-      question: "Puis-je modifier la formule plus tard ?",
-      answer: "Oui, vous pouvez upgrader votre formule jusqu'à J-30. Un ajustement tarifaire sera appliqué au prorata du temps restant jusqu'à votre mariage."
-    },
-    {
-      id: 2,
-      question: "La présence terrain, c'est quoi exactement ?",
-      answer: "Un manager Mariable est physiquement présent le jour J pour superviser le déroulement, coordonner les prestataires et gérer les imprévus."
-    },
-    {
-      id: 3,
-      question: "Puis-je utiliser l'app avec ma famille ?",
-      answer: "Oui justement, l'application est faite pour être collaborative - chacun peut accéder à son planning et aux informations importantes."
-    }
-  ];
-
-  return (
-    <div className="min-h-screen flex flex-col bg-white">
+  const faqData = [{
+    id: 1,
+    question: "Puis-je modifier la formule plus tard ?",
+    answer: "Oui, vous pouvez upgrader votre formule jusqu'à J-30. Un ajustement tarifaire sera appliqué au prorata du temps restant jusqu'à votre mariage."
+  }, {
+    id: 2,
+    question: "La présence terrain, c'est quoi exactement ?",
+    answer: "Un manager Mariable est physiquement présent le jour J pour superviser le déroulement, coordonner les prestataires et gérer les imprévus."
+  }, {
+    id: 3,
+    question: "Puis-je utiliser l'app avec ma famille ?",
+    answer: "Oui justement, l'application est faite pour être collaborative - chacun peut accéder à son planning et aux informations importantes."
+  }];
+  return <div className="min-h-screen flex flex-col bg-white">
       <Helmet>
         <title>Détail - Coordination Jour M | Mariable</title>
         <meta name="description" content="Découvrez nos formules de coordination pour le jour J et choisissez le service qui vous correspond" />
@@ -64,9 +55,7 @@ const Pricing = () => {
             </div>
 
             <div className="text-center mb-12">
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif text-black mb-6">
-                Détail - Coordination Jour M
-              </h1>
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif text-black mb-6">Détail - Coordination Jour J</h1>
             </div>
 
             {/* Section Démo */}
@@ -76,23 +65,15 @@ const Pricing = () => {
                   <h2 className="text-3xl md:text-4xl font-serif text-black mb-4">
                     Démo
                   </h2>
-                  <p className="text-lg text-gray-700">
-                    Découvrez comment fonctionne notre service Jour-M
-                  </p>
+                  <p className="text-lg text-gray-700">Découvrez comment fonctionne notre service Jour-J</p>
                 </div>
 
                 <div className="max-w-4xl mx-auto">
                   <div className="relative w-full" style={{
-                    paddingBottom: '56.25%',
-                    height: 0
-                  }}>
-                    <iframe 
-                      src="https://www.loom.com/embed/a0d0d52de99d4af59d67604f01c8af14?sid=72174f71-1964-4904-9f5a-c7d71faff046" 
-                      frameBorder="0" 
-                      allowFullScreen 
-                      className="absolute top-0 left-0 w-full h-full rounded-lg shadow-lg" 
-                      title="Démo Mariable Jour-M"
-                    />
+                  paddingBottom: '56.25%',
+                  height: 0
+                }}>
+                    <iframe src="https://www.loom.com/embed/a0d0d52de99d4af59d67604f01c8af14?sid=72174f71-1964-4904-9f5a-c7d71faff046" frameBorder="0" allowFullScreen className="absolute top-0 left-0 w-full h-full rounded-lg shadow-lg" title="Démo Mariable Jour-M" />
                   </div>
                 </div>
               </div>
@@ -506,8 +487,7 @@ const Pricing = () => {
                 </div>
 
                 <div className="max-w-4xl mx-auto space-y-6">
-                  {faqData.map((faq) => (
-                    <Card key={faq.id} className="bg-white shadow-md">
+                  {faqData.map(faq => <Card key={faq.id} className="bg-white shadow-md">
                       <CardContent className="p-6">
                         <div className="flex items-start gap-4">
                           <div className="flex-shrink-0 w-8 h-8 bg-wedding-olive rounded-full flex items-center justify-center">
@@ -523,8 +503,7 @@ const Pricing = () => {
                           </div>
                         </div>
                       </CardContent>
-                    </Card>
-                  ))}
+                    </Card>)}
                 </div>
               </div>
             </section>
@@ -533,8 +512,6 @@ const Pricing = () => {
       </main>
       
       <Footer />
-    </div>
-  );
+    </div>;
 };
-
 export default Pricing;
