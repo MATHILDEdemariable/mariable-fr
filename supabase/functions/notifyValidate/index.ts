@@ -1,4 +1,4 @@
-const RESEND_API_KEY = Deno.env.get('re_iTejhpzK_32MDo5p1C7vrrc8P8qtfXbNX');
+const RESEND_API_KEY = Deno.env.get('RESEND');
 const handler = async (_request)=>{
   const { record } = await _request.json().catch(()=>({
       record: {
@@ -62,7 +62,7 @@ const handler = async (_request)=>{
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': 'Bearer re_iTejhpzK_32MDo5p1C7vrrc8P8qtfXbNX'
+      'Authorization': `Bearer ${RESEND_API_KEY}`
     },
     body: bodyContent
   });

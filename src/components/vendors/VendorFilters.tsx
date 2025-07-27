@@ -14,7 +14,22 @@ import {
 import { useIsMobile } from '@/hooks/use-mobile';
 import { VendorFilter } from '@/pages/MoteurRecherche';
 import VenueExtraFilters from '@/components/search/VenueExtraFilters';
-import { RegionFrance } from '@/types/airtable';
+// Types des régions françaises
+type RegionFrance = 
+  | "Auvergne-Rhône-Alpes"
+  | "Bourgogne-Franche-Comté"
+  | "Bretagne"
+  | "Centre-Val de Loire"
+  | "Corse"
+  | "Grand Est"
+  | "Hauts-de-France"
+  | "Île-de-France"
+  | "Normandie"
+  | "Nouvelle-Aquitaine"
+  | "Occitanie"
+  | "Pays de la Loire"
+  | "Provence-Alpes-Côte d'Azur"
+  | "France entière";
 
 type PrestataireCategorie = Database['public']['Enums']['prestataire_categorie'];
 

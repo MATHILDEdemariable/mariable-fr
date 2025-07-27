@@ -3,7 +3,22 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { MapPin } from 'lucide-react';
-import { RegionFrance } from '@/types/airtable';
+// Types des régions françaises
+type RegionFrance = 
+  | "Auvergne-Rhône-Alpes"
+  | "Bourgogne-Franche-Comté"
+  | "Bretagne"
+  | "Centre-Val de Loire"
+  | "Corse"
+  | "Grand Est"
+  | "Hauts-de-France"
+  | "Île-de-France"
+  | "Normandie"
+  | "Nouvelle-Aquitaine"
+  | "Occitanie"
+  | "Pays de la Loire"
+  | "Provence-Alpes-Côte d'Azur"
+  | "France entière";
 
 // Organiser les régions par ordre alphabétique (sans France entière)
 const regions: RegionFrance[] = [

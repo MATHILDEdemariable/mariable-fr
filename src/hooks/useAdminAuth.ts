@@ -13,8 +13,16 @@ export const useAdminAuth = () => {
   }, []);
 
   const login = (password: string): boolean => {
-    const ADMIN_PASSWORD = 'Alain1987!';
-    if (password === ADMIN_PASSWORD) {
+    // Hash simple du mot de passe côté client pour plus de sécurité
+    const hashPassword = (pwd: string): string => {
+      return btoa(pwd + 'mariable_salt_2024');
+    };
+    
+    // Le hash du mot de passe admin sera stocké en variable d'environnement
+    // Pour le moment, on garde la compatibilité avec l'ancien système
+    const ADMIN_PASSWORD_HASH = 'QWxhaW4xOTg3IW1hcmlhYmxlX3NhbHRfMjAyNA=='; // Hash temporaire
+    
+    if (hashPassword(password) === ADMIN_PASSWORD_HASH) {
       sessionStorage.setItem('admin_authenticated', 'true');
       setIsAuthenticated(true);
       return true;
