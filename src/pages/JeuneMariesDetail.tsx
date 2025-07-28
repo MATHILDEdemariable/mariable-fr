@@ -254,7 +254,7 @@ const JeuneMariesDetailPage: React.FC = () => {
                 <div className="flex flex-wrap gap-4">
                   {jeuneMarie.email && (
                     <Button asChild variant="outline">
-                      <a href={`mailto:${jeuneMarie.email}`}>
+                      <a href={`mailto:${jeuneMarie.email}?bcc=mathilde@mariable.fr&subject=Contact via témoignage Mariable - ${jeuneMarie.nom_complet}`}>
                         <Mail className="h-4 w-4 mr-2" />
                         Nous contacter
                       </a>

@@ -4,7 +4,7 @@ import { useJeunesMaries } from '@/hooks/useJeunesMaries';
 import { JeuneMariesCard } from '@/components/jeunes-maries/JeuneMariesCard';
 import { JeuneMariesFiltersComponent } from '@/components/jeunes-maries/JeuneMariesFilters';
 import { Button } from '@/components/ui/button';
-import { UserPlus, Heart } from 'lucide-react';
+import { UserPlus, Heart, Home } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const JeunesMariesPage: React.FC = () => {
@@ -35,7 +35,17 @@ const JeunesMariesPage: React.FC = () => {
         {/* Hero Section */}
         <section className="bg-wedding-olive text-white py-16">
           <div className="container mx-auto px-4">
-            <div className="max-w-4xl mx-auto text-center">
+            <div className="max-w-4xl mx-auto text-center relative">
+              <Button 
+                asChild
+                variant="outline"
+                className="absolute left-0 top-0 bg-white/10 text-white border-white/20 hover:bg-white/20"
+              >
+                <Link to="/">
+                  <Home className="h-4 w-4 mr-2" />
+                  Retour à l'accueil
+                </Link>
+              </Button>
               <div className="flex justify-center mb-4">
                 <Heart className="h-12 w-12 text-white" />
               </div>
@@ -46,7 +56,7 @@ const JeunesMariesPage: React.FC = () => {
                 Découvrez les expériences authentiques de couples qui ont organisé leur mariage
               </p>
               <p className="text-lg text-white/80 mb-8">
-                Conseils, recommandations de prestataires et inspiration pour votre grand jour
+                Partagez votre expérience pour être contacté par d'autres couples et vous entraider selon vos critères communs : budget, lieu de mariage, type d'expérience. Créez des connexions authentiques avec des couples ayant vécu des défis similaires !
               </p>
               <Button 
                 asChild
