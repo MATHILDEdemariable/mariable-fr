@@ -82,12 +82,11 @@ const Index = () => {
             <div className="text-center mb-12">
               <h2 style={{
               fontFamily: 'Playfair Display, serif'
-            }} className="sm:text-3xl md:text-4xl font-serif text-black mb-6 max-w-4xl mx-auto text-3xl font-medium">
-                Le premier wedding planner de poche
-              </h2>
+            }} className="sm:text-3xl md:text-4xl font-serif text-black mb-6 max-w-4xl mx-auto text-3xl font-medium">L'organisation mariage simplifiée 
+grâce à notre wedding planner en ligne </h2>
               
               <div className="max-w-3xl mx-auto mb-8">
-                <p className="text-lg text-gray-700 mb-6">Coordonner et vivre un mariage parfait. Crée pour les couples qui veulent organiser eux-mêmes.</p>
+                <p className="text-lg text-gray-700 mb-6">Crée pour les couples qui veulent organiser eux-mêmes. </p>
                 
                 <div className="grid md:grid-cols-3 gap-6 text-left">
                   <div className="flex items-start gap-3">
