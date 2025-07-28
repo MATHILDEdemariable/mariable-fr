@@ -6,14 +6,19 @@ import { JeuneMariesFiltersComponent } from '@/components/jeunes-maries/JeuneMar
 import { Button } from '@/components/ui/button';
 import { UserPlus, Heart, Home } from 'lucide-react';
 import { Link } from 'react-router-dom';
-
 const JeunesMariesPage: React.FC = () => {
-  const { jeunesMaries, loading, filters, setFilters } = useJeunesMaries();
-
+  const {
+    jeunesMaries,
+    loading,
+    filters,
+    setFilters
+  } = useJeunesMaries();
   const handleFilterChange = (key: keyof typeof filters, value: string | number) => {
-    setFilters(prev => ({ ...prev, [key]: value }));
+    setFilters(prev => ({
+      ...prev,
+      [key]: value
+    }));
   };
-
   const handleResetFilters = () => {
     setFilters({
       search: '',
@@ -22,25 +27,15 @@ const JeunesMariesPage: React.FC = () => {
       note: 0
     });
   };
-
-  return (
-    <>
-      <SEO 
-        title="Témoignages de Jeunes Mariés - Mariable"
-        description="Découvrez les expériences authentiques de couples qui ont organisé leur mariage. Conseils, recommandations et inspiration pour votre grand jour."
-        keywords="témoignages mariage, expérience jeunes mariés, conseils mariage, inspiration mariage"
-      />
+  return <>
+      <SEO title="Témoignages de Jeunes Mariés - Mariable" description="Découvrez les expériences authentiques de couples qui ont organisé leur mariage. Conseils, recommandations et inspiration pour votre grand jour." keywords="témoignages mariage, expérience jeunes mariés, conseils mariage, inspiration mariage" />
       
       <div className="min-h-screen bg-gradient-subtle">
         {/* Hero Section */}
         <section className="bg-wedding-olive text-white py-16">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto text-center relative">
-              <Button 
-                asChild
-                variant="outline"
-                className="absolute left-0 top-0 bg-white/10 text-white border-white/20 hover:bg-white/20"
-              >
+              <Button asChild variant="outline" className="absolute left-0 top-0 bg-white/10 text-white border-white/20 hover:bg-white/20">
                 <Link to="/">
                   <Home className="h-4 w-4 mr-2" />
                   Retour à l'accueil
@@ -55,15 +50,8 @@ const JeunesMariesPage: React.FC = () => {
               <p className="text-xl md:text-2xl text-white/90 mb-8">
                 Découvrez les expériences authentiques de couples qui ont organisé leur mariage
               </p>
-              <p className="text-lg text-white/80 mb-8">
-                Partagez votre expérience pour être contacté par d'autres couples et vous entraider selon vos critères communs : budget, lieu de mariage, type d'expérience. Créez des connexions authentiques avec des couples ayant vécu des défis similaires !
-              </p>
-              <Button 
-                asChild
-                size="lg"
-                variant="secondary"
-                className="bg-white text-wedding-olive hover:bg-white/90"
-              >
+              <p className="text-lg text-white/80 mb-8">Rejoignez la communauté et acceptez d'être contactés par des futurs mariés</p>
+              <Button asChild size="lg" variant="secondary" className="bg-white text-wedding-olive hover:bg-white/90">
                 <Link to="/jeunes-maries/inscription">
                   <UserPlus className="h-5 w-5 mr-2" />
                   Partager votre expérience
@@ -77,11 +65,7 @@ const JeunesMariesPage: React.FC = () => {
         <div className="container mx-auto px-4 py-12">
           {/* Filters */}
           <div className="mb-8">
-            <JeuneMariesFiltersComponent
-              filters={filters}
-              onFilterChange={handleFilterChange}
-              onReset={handleResetFilters}
-            />
+            <JeuneMariesFiltersComponent filters={filters} onFilterChange={handleFilterChange} onReset={handleResetFilters} />
           </div>
 
           {/* Results */}
@@ -92,20 +76,11 @@ const JeunesMariesPage: React.FC = () => {
           </div>
 
           {/* Grid */}
-          {loading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[...Array(6)].map((_, i) => (
-                <div key={i} className="bg-white rounded-lg shadow-sm h-96 animate-pulse" />
-              ))}
-            </div>
-          ) : jeunesMaries.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {jeunesMaries.map((jeuneMarie) => (
-                <JeuneMariesCard key={jeuneMarie.id} jeuneMarie={jeuneMarie} />
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12">
+          {loading ? <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[...Array(6)].map((_, i) => <div key={i} className="bg-white rounded-lg shadow-sm h-96 animate-pulse" />)}
+            </div> : jeunesMaries.length > 0 ? <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {jeunesMaries.map(jeuneMarie => <JeuneMariesCard key={jeuneMarie.id} jeuneMarie={jeuneMarie} />)}
+            </div> : <div className="text-center py-12">
               <Heart className="h-16 w-16 text-gray-400 mx-auto mb-4" />
               <h3 className="text-xl font-semibold text-gray-600 mb-2">
                 Aucun témoignage trouvé
@@ -118,12 +93,9 @@ const JeunesMariesPage: React.FC = () => {
                   Partager votre expérience
                 </Link>
               </Button>
-            </div>
-          )}
+            </div>}
         </div>
       </div>
-    </>
-  );
+    </>;
 };
-
 export default JeunesMariesPage;
