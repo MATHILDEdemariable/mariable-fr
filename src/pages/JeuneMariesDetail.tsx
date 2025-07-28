@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Navigate } from 'react-router-dom';
-import SEO from '@/components/SEO';
+import SEOTestimonial from '@/components/SEOTestimonial';
 import { useJeunesMaries } from '@/hooks/useJeunesMaries';
 import { JeuneMarie } from '@/types/jeunes-maries';
 import { Button } from '@/components/ui/button';
@@ -89,11 +89,7 @@ const JeuneMariesDetailPage: React.FC = () => {
 
   return (
     <>
-      <SEO 
-        title={`Témoignage de ${jeuneMarie.nom_complet} - Mariable`}
-        description={jeuneMarie.experience_partagee || `Découvrez l'expérience de mariage de ${jeuneMarie.nom_complet} à ${jeuneMarie.lieu_mariage}`}
-        keywords={`témoignage mariage ${jeuneMarie.lieu_mariage}, expérience mariage`}
-      />
+      <SEOTestimonial jeuneMarie={jeuneMarie} />
       
       <div className="min-h-screen bg-gradient-subtle">
         {/* Header */}
@@ -253,11 +249,25 @@ const JeuneMariesDetailPage: React.FC = () => {
                 </p>
                 <div className="flex flex-wrap gap-4">
                   {jeuneMarie.email && (
-                    <Button asChild variant="outline">
-                      <a href={`mailto:${jeuneMarie.email}?bcc=mathilde@mariable.fr&subject=Contact via témoignage Mariable - ${jeuneMarie.nom_complet}`}>
-                        <Mail className="h-4 w-4 mr-2" />
-                        Nous contacter
-                      </a>
+                    <Button 
+                      variant="outline"
+                      onClick={() => {
+                        const subject = encodeURIComponent(`Contact via témoignage Mariable - ${jeuneMarie.nom_complet}`);
+                        const body = encodeURIComponent(`Bonjour ${jeuneMarie.nom_complet},\n\nJe vous contacte suite à votre témoignage sur Mariable.\n\n`);
+                        const mailtoUrl = `mailto:${jeuneMarie.email}?subject=${subject}&body=${body}&cc=mathilde@mariable.fr`;
+                        
+                        // Fallback si mailto ne fonctionne pas
+                        try {
+                          window.location.href = mailtoUrl;
+                        } catch (error) {
+                          // Copier l'email dans le presse-papier
+                          navigator.clipboard.writeText(jeuneMarie.email);
+                          alert(`Email copié : ${jeuneMarie.email}\n\nVeuillez contacter ce couple directement et mettre mathilde@mariable.fr en copie.`);
+                        }
+                      }}
+                    >
+                      <Mail className="h-4 w-4 mr-2" />
+                      Nous contacter
                     </Button>
                   )}
                   {jeuneMarie.telephone && (

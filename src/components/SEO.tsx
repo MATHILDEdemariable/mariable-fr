@@ -23,7 +23,7 @@ const SEO: React.FC<SEOProps> = ({
   const siteUrl = "https://www.mariable.fr";
   const logoUrl = `${siteUrl}/lovable-uploads/c1b39e22-fe32-4dc7-8f94-fbb929ae43fa.png`;
 
-  const metaKeywords = keywords || "mariage, organisation mariage, wedding planner, prestataires mariage, checklist mariage, budget mariage";
+  const metaKeywords = keywords || "mariage france, organisation mariage, wedding planner france, prestataires mariage, checklist mariage, budget mariage, planificateur mariage, coordinateur mariage, témoignages mariage, planning mariage personnalisé";
 
   return (
     <Helmet>
@@ -31,6 +31,9 @@ const SEO: React.FC<SEOProps> = ({
       <meta name="description" content={description} />
       <meta name="keywords" content={metaKeywords} />
       <meta name="robots" content="index, follow" />
+      <meta name="language" content="fr-FR" />
+      <meta name="geo.region" content="FR" />
+      <meta name="geo.country" content="France" />
       {canonical && <link rel="canonical" href={`${siteUrl}${canonical}`} />}
       
       {/* Open Graph / Facebook */}
@@ -39,6 +42,8 @@ const SEO: React.FC<SEOProps> = ({
       <meta property="og:description" content={description} />
       <meta property="og:image" content={image} />
       <meta property="og:site_name" content="MARIABLE" />
+      <meta property="og:locale" content="fr_FR" />
+      <meta property="og:url" content={`${siteUrl}${canonical || ''}`} />
       
       {/* Twitter */}
       <meta name="twitter:card" content="summary_large_image" />

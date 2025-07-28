@@ -28,7 +28,12 @@ const JeunesMariesPage: React.FC = () => {
     });
   };
   return <>
-      <SEO title="Témoignages de Jeunes Mariés - Mariable" description="Découvrez les expériences authentiques de couples qui ont organisé leur mariage. Conseils, recommandations et inspiration pour votre grand jour." keywords="témoignages mariage, expérience jeunes mariés, conseils mariage, inspiration mariage" />
+      <SEO 
+        title="Témoignages de jeunes mariés en France - Conseils & Expériences" 
+        description="Découvrez les témoignages authentiques de couples qui ont organisé leur mariage en France. Conseils d'organisation, retours d'expérience, budgets réels et recommandations de prestataires pour réussir votre grand jour." 
+        keywords="témoignages mariage france, retours expérience mariage, conseils jeunes mariés, organisation mariage france, budget mariage réel, prestataires mariage recommandés, planning mariage france" 
+        canonical="/jeunes-maries" 
+      />
       
       <div className="min-h-screen bg-gradient-subtle">
         {/* Hero Section */}
