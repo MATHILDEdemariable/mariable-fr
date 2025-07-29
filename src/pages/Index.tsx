@@ -3,6 +3,7 @@ import Header from '@/components/Header';
 import ChatbotButton from '@/components/ChatbotButton';
 import SEO from '@/components/SEO';
 import Footer from '@/components/Footer';
+import HeroSection from '@/components/home/HeroSection';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowRight, Check, Brain, Handshake, MessageCircle, Smartphone, Mail, Settings, Calendar, Users, Star } from 'lucide-react';
@@ -39,42 +40,8 @@ const Index = () => {
       <Header />
       
       <main className="flex-grow">
-        {/* Hero Section with dark overlay */}
-        <section className="relative py-20 md:py-28 bg-cover bg-center bg-no-repeat" style={{
-        backgroundImage: "url('/lovable-uploads/16238829-fdfc-4fe2-ade8-9c49d79851b4.png')"
-      }}>
-          {/* Dark overlay */}
-          <div className="absolute inset-0 bg-neutral-900/20"></div>
-          
-          <div className="container mx-auto px-4 relative z-10">
-            <div className="max-w-3xl">
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif text-white font-bold mb-4" style={{
-              fontFamily: 'Playfair Display, serif'
-            }}>
-                Profitez pleinement de votre mariage.
-              </h1>
-              
-              <p className="text-xl sm:text-2xl font-serif text-white mb-8" style={{
-              fontFamily: 'Playfair Display, serif'
-            }}>
-                <span className="inline-block min-h-[1.2em]">
-                  {displayedText}
-                  {displayedText.length < typedText.length && <span className="animate-pulse">|</span>}
-                </span>
-              </p>
-              
-              <div className="mb-8 flex justify-center sm:justify-start">
-                <Button onClick={scrollToServices} size="lg" className="bg-wedding-olive hover:bg-wedding-olive/90 text-white 
-                           w-full max-w-[280px] sm:w-auto sm:max-w-none
-                           text-sm px-4 py-3 
-                           sm:text-base sm:px-8 sm:py-4">
-                  <span className="truncate">Organisez mieux, profitez plus</span>
-                  <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
-                </Button>
-              </div>
-            </div>
-          </div>
-        </section>
+        {/* Hero Section with Video Background */}
+        <HeroSection />
 
         {/* Feature Section */}
         <section className="py-16 md:py-20 bg-white">
@@ -130,12 +97,10 @@ const Index = () => {
         </section>
 
         {/* Services Section - Nouvelles formules pricing */}
-        <section id="services-section" className="py-16 md:py-20 bg-gray-50">
+        <section id="services-section" className="py-12 md:py-16 bg-gray-50 animate-fade-in">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif text-black mb-6" style={{
-              fontFamily: 'Playfair Display, serif'
-            }}>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif text-black mb-6">
                 Transformez l'organisation de votre mariage
               </h2>
               <p className="text-lg text-gray-700 max-w-2xl mx-auto">
@@ -145,7 +110,7 @@ const Index = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto mb-16">
               {/* Position 1 - Le Planner Mariable (Gratuit) */}
-              <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col h-full">
+              <Card className="shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 flex flex-col h-full">
                 <CardHeader className="text-center pb-4">
                   <div className="flex items-center justify-center gap-2 mb-3">
                     <Smartphone className="h-6 w-6 text-wedding-olive" />
@@ -187,7 +152,7 @@ const Index = () => {
               </Card>
 
               {/* Position 2 - L'accompagnement Mariable (9,90€/mois) */}
-              <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col h-full">
+              <Card className="shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 flex flex-col h-full">
                 <CardHeader className="text-center pb-4">
                   <div className="flex items-center justify-center gap-2 mb-3">
                     <MessageCircle className="h-6 w-6 text-wedding-olive" />
@@ -230,7 +195,7 @@ const Index = () => {
               </Card>
 
               {/* Position 3 - Libre (14,9€) */}
-              <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col h-full">
+              <Card className="shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 flex flex-col h-full">
                 <CardHeader className="text-center pb-4">
                   <div className="flex items-center justify-center gap-2 mb-3">
                     <Calendar className="h-6 w-6 text-wedding-olive" />
@@ -276,10 +241,8 @@ const Index = () => {
             </div>
 
             {/* Call to Action */}
-            <div className="text-center mt-16">
-              <h3 className="text-2xl font-serif mb-4" style={{
-              fontFamily: 'Playfair Display, serif'
-            }}>
+            <div className="text-center mt-12">
+              <h3 className="text-2xl font-serif mb-4">
                 Prêt(e) à vivre une expérience unique pour votre mariage?
               </h3>
               <p className="text-lg text-gray-700 mb-6">
@@ -294,7 +257,7 @@ const Index = () => {
                 
 
                 {/* Témoignage 3 */}
-                <Card className="bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
+                <Card className="bg-white shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300">
                   <CardContent className="p-6">
                     <div className="mb-4">
                       <div className="flex items-center gap-1 mb-3">
@@ -313,7 +276,7 @@ const Index = () => {
                 </Card>
 
                 {/* Témoignage 4 */}
-                <Card className="bg-white shadow-lg hover:shadow-xl transition-shadow duration-300 md:col-span-1 lg:col-span-1">
+                <Card className="bg-white shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 md:col-span-1 lg:col-span-1">
                   <CardContent className="p-6">
                     <div className="mb-4">
                       <div className="flex items-center gap-1 mb-3">
@@ -332,7 +295,7 @@ const Index = () => {
                 </Card>
 
                 {/* Témoignage 5 */}
-                <Card className="bg-white shadow-lg hover:shadow-xl transition-shadow duration-300 md:col-span-1 lg:col-span-1">
+                <Card className="bg-white shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 md:col-span-1 lg:col-span-1">
                   <CardContent className="p-6">
                     <div className="mb-4">
                       <div className="flex items-center gap-1 mb-3">
