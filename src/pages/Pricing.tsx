@@ -243,9 +243,7 @@ const Pricing = () => {
                   <h2 className="text-3xl md:text-4xl font-serif text-black mb-4">
                     Options supplémentaires
                   </h2>
-                  <p className="text-lg text-gray-700">
-                    Personnalisez votre service "Le Jour M" avec nos options à la carte
-                  </p>
+                  <p className="text-lg text-gray-700">Personnalisez votre service "Le Jour J" avec nos options à la carte</p>
                 </div>
 
                 <div className="max-w-4xl mx-auto">
@@ -270,13 +268,12 @@ const Pricing = () => {
                         <div className="flex items-center justify-between mb-4">
                           <div className="flex items-center gap-3">
                             <Palette className="h-6 w-6 text-wedding-olive" />
-                            <h3 className="text-lg font-semibold">Installation décoration</h3>
+                            <h3 className="text-lg font-semibold">Installation décorations volumineuses</h3>
                           </div>
                           <span className="text-xl font-bold text-wedding-olive">+200€</span>
                         </div>
-                        <p className="text-sm text-gray-600">
-                          Installation et mise en place de votre décoration selon vos souhaits
-                        </p>
+                        <p className="text-sm text-gray-600">Mise en place de votre décoration selon vos souhaits (ex : mobilier : chaise, table, autres objets volumineux)
+-> petite décorations inclus (ex: bougies)</p>
                       </CardContent>
                     </Card>
 
@@ -334,16 +331,12 @@ const Pricing = () => {
                           </div>
                           <span className="text-xl font-bold text-wedding-olive">+200€</span>
                         </div>
-                        <p className="text-sm text-gray-600">
-                          Supplément pour la coordination de mariages de plus de 180 invités nécessitant une logistique renforcée
-                        </p>
+                        <p className="text-sm text-gray-600">Supplément pour la coordination de mariages de plus de 180 invités nécessitant une personne en plus</p>
                       </CardContent>
                     </Card>
 
                     <div className="text-center mt-8">
-                      <p className="text-sm text-gray-600">
-                        Ces options peuvent être ajoutées lors de votre réservation ou discutées pendant l'audit initial.
-                      </p>
+                      
                     </div>
                   </div>
                 </div>
@@ -358,7 +351,7 @@ const Pricing = () => {
                     Comment ça marche ?
                   </h2>
                   <p className="text-lg text-gray-700 mb-2">
-                    Le processus de coordination <b>"Le Jour M"</b> en 5 étapes
+                    Le processus de coordination <b>"Le Jour J"</b> en 5 étapes
                     <br />
                     <span className="inline-block mt-2 text-wedding-olive font-semibold">Applicable uniquement aux formules Sereine &amp; Privilège</span>
                   </p>
@@ -442,9 +435,7 @@ const Pricing = () => {
                               <Users className="h-5 w-5 text-wedding-olive" />
                               Partagez le lien de consultation
                             </h3>
-                            <p className="text-gray-600">
-                              Quand votre jour-m est finalisé, transférer le lien à vos proches, prestataire et équipe mariable
-                            </p>
+                            <p className="text-gray-600">Quand votre module Jour-J est finalisé, transférez le lien à vos proches, prestataires et coordinateur</p>
                           </div>
                         </div>
                       </div>
@@ -456,9 +447,7 @@ const Pricing = () => {
                               <Calendar className="h-5 w-5 text-wedding-olive" />
                               Laissez-vous guider
                             </h3>
-                            <p className="text-gray-600">
-                              Laissez vous guider par votre feuille de route sur l'appli ou les notifications ou le coordinateur - selon la formule choisie
-                            </p>
+                            <p className="text-gray-600">Utilisez l'application comme feuille de route ou les notifications ou le coordinateur - selon la formule choisie</p>
                           </div>
                         </div>
                         <div className="relative z-10">
@@ -481,9 +470,7 @@ const Pricing = () => {
                   <h2 className="text-3xl md:text-4xl font-serif text-black mb-4">
                     Questions fréquentes
                   </h2>
-                  <p className="text-lg text-gray-700">
-                    Tout ce que vous devez savoir sur nos formules Jour-M
-                  </p>
+                  <p className="text-lg text-gray-700">Tout ce que vous devez savoir sur nos formules Jour-J</p>
                 </div>
 
                 <div className="max-w-4xl mx-auto space-y-6">
