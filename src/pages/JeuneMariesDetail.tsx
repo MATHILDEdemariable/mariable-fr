@@ -14,7 +14,9 @@ import {
   ArrowLeft, 
   Heart,
   Mail,
-  Phone
+  Phone,
+  Copy,
+  Eye
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
@@ -26,6 +28,8 @@ const JeuneMariesDetailPage: React.FC = () => {
   const [jeuneMarie, setJeuneMarie] = useState<JeuneMarie | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  const [emailRevealed, setEmailRevealed] = useState(false);
+  const [emailCopied, setEmailCopied] = useState(false);
 
   useEffect(() => {
     const loadJeuneMarie = async () => {
@@ -85,6 +89,23 @@ const JeuneMariesDetailPage: React.FC = () => {
         <span className="ml-2 text-lg font-medium">{note}/5</span>
       </div>
     );
+  };
+
+  const handleRevealEmail = () => {
+    setEmailRevealed(true);
+  };
+
+  const handleCopyEmail = async () => {
+    if (jeuneMarie?.email) {
+      try {
+        await navigator.clipboard.writeText(jeuneMarie.email);
+        setEmailCopied(true);
+        setTimeout(() => setEmailCopied(false), 2000);
+      } catch (error) {
+        // Fallback pour les navigateurs qui ne supportent pas clipboard
+        alert(`Email: ${jeuneMarie.email}\n\nVeuillez copier cette adresse et mettre mathilde@mariable.fr en copie.`);
+      }
+    }
   };
 
   return (
@@ -247,29 +268,40 @@ const JeuneMariesDetailPage: React.FC = () => {
                 <p className="text-gray-600 mb-4">
                   N'hésitez pas à nous contacter si vous avez des questions sur notre expérience !
                 </p>
-                <div className="flex flex-wrap gap-4">
+                <div className="space-y-4">
                   {jeuneMarie.email && (
-                    <Button 
-                      variant="outline"
-                      onClick={() => {
-                        const subject = encodeURIComponent(`Contact via témoignage Mariable - ${jeuneMarie.nom_complet}`);
-                        const body = encodeURIComponent(`Bonjour ${jeuneMarie.nom_complet},\n\nJe vous contacte suite à votre témoignage sur Mariable.\n\n`);
-                        const mailtoUrl = `mailto:${jeuneMarie.email}?subject=${subject}&body=${body}&cc=mathilde@mariable.fr`;
-                        
-                        // Fallback si mailto ne fonctionne pas
-                        try {
-                          window.location.href = mailtoUrl;
-                        } catch (error) {
-                          // Copier l'email dans le presse-papier
-                          navigator.clipboard.writeText(jeuneMarie.email);
-                          alert(`Email copié : ${jeuneMarie.email}\n\nVeuillez contacter ce couple directement et mettre mathilde@mariable.fr en copie.`);
-                        }
-                      }}
-                    >
-                      <Mail className="h-4 w-4 mr-2" />
-                      Nous contacter
-                    </Button>
+                    <div className="space-y-2">
+                      {!emailRevealed ? (
+                        <Button 
+                          variant="outline"
+                          onClick={handleRevealEmail}
+                        >
+                          <Eye className="h-4 w-4 mr-2" />
+                          Révéler l'adresse email
+                        </Button>
+                      ) : (
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
+                            <Mail className="h-4 w-4 text-gray-600" />
+                            <span className="font-mono text-sm select-all">{jeuneMarie.email}</span>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={handleCopyEmail}
+                              className="ml-auto"
+                            >
+                              <Copy className="h-4 w-4" />
+                              {emailCopied ? 'Copié !' : 'Copier'}
+                            </Button>
+                          </div>
+                          <p className="text-sm text-gray-600">
+                            💡 N'oubliez pas de mettre <strong>mathilde@mariable.fr</strong> en copie de votre message
+                          </p>
+                        </div>
+                      )}
+                    </div>
                   )}
+                  
                   {jeuneMarie.telephone && (
                     <Button asChild variant="outline">
                       <a href={`tel:${jeuneMarie.telephone}`}>
