@@ -18,11 +18,9 @@ const VideoBackground = ({ youtubeId, videoUrl, className = "", children }: Vide
             muted
             loop
             playsInline
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none min-w-[140%] min-h-[140%] w-auto h-auto object-cover"
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none w-full h-full object-cover"
             style={{
-              minWidth: '140%',
-              minHeight: '140%',
-              objectPosition: '60% 20% !important',
+              objectPosition: '60% 20%',
             }}
           >
             <source src={videoUrl} type="video/mp4" />
