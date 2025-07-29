@@ -8,7 +8,7 @@ import VideoBackground from '@/components/VideoBackground';
 const HeroSection = () => {
   return (
     <VideoBackground 
-      youtubeId="M35zhoLNWMI" 
+      videoUrl="https://bgidfcqktsttzlwlumtz.supabase.co/storage/v1/object/public/background-videos//freepik__wideangle-shot-a-joyful-couple-dances-at-their-wed__74093%20(1).mp4"
       className="h-screen flex items-center justify-center"
     >
       <div className="absolute inset-0 flex items-center justify-center px-4">
