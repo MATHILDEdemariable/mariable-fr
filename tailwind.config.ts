@@ -112,7 +112,7 @@ export default {
 			},
 			fontFamily: {
 				serif: ['Playfair Display', 'serif'],
-				sans: ['Raleway', 'sans-serif']
+				sans: ['Inter', 'sans-serif']
 			}
 		}
 	},
