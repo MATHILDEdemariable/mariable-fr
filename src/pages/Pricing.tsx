@@ -144,7 +144,7 @@ const Pricing = () => {
                             </td>
                           </tr>
                           <tr className="border-b">
-                            <td className="px-3 sm:px-6 py-4 font-medium text-gray-900 text-sm sm:text-base">Notifications et rappels en temps réel de J-1 et J-M</td>
+                            <td className="px-3 sm:px-6 py-4 font-medium text-gray-900 text-sm sm:text-base">Notifications et rappels en temps réel de J-1 et J-J</td>
                             <td className="px-3 sm:px-6 py-4 text-center">
                               <X className="h-5 w-5 text-red-500 mx-auto" />
                             </td>
@@ -168,6 +168,18 @@ const Pricing = () => {
                                 <CheckCircle className="h-5 w-5 text-green-500 mb-1" />
                                 <span className="text-sm text-gray-600">incluse</span>
                               </div>
+                            </td>
+                          </tr>
+                          <tr className="border-b">
+                            <td className="px-3 sm:px-6 py-4 font-medium text-gray-900 text-sm sm:text-base">Coordination prestataires en amont (J-15)</td>
+                            <td className="px-3 sm:px-6 py-4 text-center">
+                              <X className="h-5 w-5 text-red-500 mx-auto" />
+                            </td>
+                            <td className="px-3 sm:px-6 py-4 text-center bg-gray-100">
+                              <X className="h-5 w-5 text-red-500 mx-auto" />
+                            </td>
+                            <td className="px-3 sm:px-6 py-4 text-center">
+                              <CheckCircle className="h-5 w-5 text-green-500 mx-auto" />
                             </td>
                           </tr>
                           <tr className="border-b">
