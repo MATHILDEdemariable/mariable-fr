@@ -273,7 +273,7 @@ const Pricing = () => {
                           <span className="text-xl font-bold text-wedding-olive">+200€</span>
                         </div>
                         <p className="text-sm text-gray-600">Mise en place de votre décoration selon vos souhaits (ex : mobilier : chaise, table, autres objets volumineux)
--> petite décorations inclus (ex: bougies)</p>
+{'->'} petite décorations inclus (ex: bougies)</p>
                       </CardContent>
                     </Card>
 
