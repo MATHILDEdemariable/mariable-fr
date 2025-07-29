@@ -22,7 +22,7 @@ const VideoBackground = ({ youtubeId, videoUrl, className = "", children }: Vide
             style={{
               minWidth: '100%',
               minHeight: '100%',
-              objectPosition: '60% 30%',
+              objectPosition: '75% 15%',
             }}
           >
             <source src={videoUrl} type="video/mp4" />
