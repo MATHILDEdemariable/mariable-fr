@@ -5,10 +5,13 @@ import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CheckCircle, Mail, Phone, Smartphone, Users, Calendar, X, ArrowLeft, Clock, Palette, Building, FileText, CreditCard, ChevronDown, Play } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { Link } from 'react-router-dom';
 import FormulaCTAButton from '@/components/pricing/FormulaCTAButton';
 import CoordinatorsPreview from '@/components/coordinators/CoordinatorsPreview';
 const Pricing = () => {
+  const isMobile = useIsMobile();
+  
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -83,134 +86,162 @@ const Pricing = () => {
             <section className="py-8 md:py-16 bg-white rounded-xl mb-16">
               <div className="container mx-auto px-4">
                 <div className="max-w-6xl mx-auto mb-8">
-                  <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-                    <div className="overflow-x-auto">
-                      <table className="w-full min-w-[700px]">
-                        <thead>
-                          <tr className="bg-wedding-olive text-white">
-                            <th className="px-2 md:px-4 py-3 text-left font-semibold text-xs md:text-sm">Fonctionnalité</th>
-                            <th className="px-2 md:px-4 py-3 text-center font-semibold text-xs md:text-sm">Libre</th>
-                            <th className="px-2 md:px-4 py-3 text-center font-semibold text-xs md:text-sm">Sereine</th>
-                            <th className="px-2 md:px-4 py-3 text-center font-semibold text-xs md:text-sm">Privilège</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr className="border-b bg-gray-50">
-                            <td className="px-2 md:px-4 py-3 font-medium text-gray-900 text-xs md:text-sm">Prix (TTC)</td>
-                            <td className="px-2 md:px-4 py-3 text-center font-bold text-wedding-olive text-xs md:text-sm">14,9€</td>
-                            <td className="px-2 md:px-4 py-3 text-center font-bold text-wedding-olive bg-gray-100 text-xs md:text-sm">24,9€</td>
-                            <td className="px-2 md:px-4 py-3 text-center font-bold text-wedding-olive text-xs md:text-sm">799€</td>
-                          </tr>
-                          <tr className="border-b">
-                            <td className="px-2 md:px-4 py-3 font-medium text-gray-900 text-xs md:text-sm">Application personnalisée</td>
-                            <td className="px-2 md:px-4 py-3 text-center">
-                              <div className="flex flex-col items-center">
-                                <CheckCircle className="h-4 w-4 text-green-500 mb-1" />
-                                <span className="text-xs text-gray-600 leading-tight">à remplir vous-même</span>
-                              </div>
-                            </td>
-                            <td className="px-2 md:px-4 py-3 text-center bg-gray-100">
-                              <div className="flex flex-col items-center">
-                                <CheckCircle className="h-4 w-4 text-green-500 mb-1" />
-                                <span className="text-xs text-gray-600 leading-tight">Pré-remplie</span>
-                              </div>
-                            </td>
-                            <td className="px-2 md:px-4 py-3 text-center">
-                              <div className="flex flex-col items-center">
-                                <CheckCircle className="h-4 w-4 text-green-500 mb-1" />
-                                <span className="text-xs text-gray-600 leading-tight">Pré-remplie</span>
-                              </div>
-                            </td>
-                          </tr>
-                          <tr className="border-b">
-                            <td className="px-2 md:px-4 py-3 font-medium text-gray-900 text-xs md:text-sm">Checklists & planning</td>
-                            <td className="px-2 md:px-4 py-3 text-center">
-                              <div className="flex flex-col items-center">
-                                <CheckCircle className="h-4 w-4 text-green-500 mb-1" />
-                                <span className="text-xs text-gray-600 leading-tight">Modifiable</span>
-                              </div>
-                            </td>
-                            <td className="px-2 md:px-4 py-3 text-center bg-gray-100">
-                              <div className="flex flex-col items-center">
-                                <CheckCircle className="h-4 w-4 text-green-500 mb-1" />
-                                <span className="text-xs text-gray-600 leading-tight">Modifiable</span>
-                              </div>
-                            </td>
-                            <td className="px-2 md:px-4 py-3 text-center">
-                              <div className="flex flex-col items-center">
-                                <CheckCircle className="h-4 w-4 text-green-500 mb-1" />
-                                <span className="text-xs text-gray-600 leading-tight">Modifiable</span>
-                              </div>
-                            </td>
-                          </tr>
-                          <tr className="border-b">
-                            <td className="px-2 md:px-4 py-3 font-medium text-gray-900 text-xs md:text-sm leading-tight">Notifications et rappels temps réel J-1 et J-J</td>
-                            <td className="px-2 md:px-4 py-3 text-center">
-                              <X className="h-4 w-4 text-red-500 mx-auto" />
-                            </td>
-                            <td className="px-2 md:px-4 py-3 text-center bg-gray-100">
-                              <CheckCircle className="h-4 w-4 text-green-500 mx-auto" />
-                            </td>
-                            <td className="px-2 md:px-4 py-3 text-center">
-                              <CheckCircle className="h-4 w-4 text-green-500 mx-auto" />
-                            </td>
-                          </tr>
-                          <tr className="border-b">
-                            <td className="px-2 md:px-4 py-3 font-medium text-gray-900 text-xs md:text-sm leading-tight">Support hotline 7J/7 jusqu'au Jour-J</td>
-                            <td className="px-2 md:px-4 py-3 text-center">
-                              <X className="h-4 w-4 text-red-500 mx-auto" />
-                            </td>
-                            <td className="px-2 md:px-4 py-3 text-center bg-gray-100">
-                              <CheckCircle className="h-4 w-4 text-green-500 mx-auto" />
-                            </td>
-                            <td className="px-2 md:px-4 py-3 text-center">
-                              <div className="flex flex-col items-center">
-                                <CheckCircle className="h-4 w-4 text-green-500 mb-1" />
-                                <span className="text-xs text-gray-600 leading-tight">incluse</span>
-                              </div>
-                            </td>
-                          </tr>
-                          <tr className="border-b">
-                            <td className="px-2 md:px-4 py-3 font-medium text-gray-900 text-xs md:text-sm">Présence physique le jour J</td>
-                            <td className="px-2 md:px-4 py-3 text-center">
-                              <X className="h-4 w-4 text-red-500 mx-auto" />
-                            </td>
-                            <td className="px-2 md:px-4 py-3 text-center bg-gray-100">
-                              <X className="h-4 w-4 text-red-500 mx-auto" />
-                            </td>
-                            <td className="px-2 md:px-4 py-3 text-center">
-                              <CheckCircle className="h-4 w-4 text-green-500 mx-auto" />
-                            </td>
-                          </tr>
-                          <tr className="bg-gray-50">
-                            <td className="px-3 sm:px-6 py-4 font-medium text-gray-900 text-sm sm:text-base">Action</td>
-                            <td className="px-3 sm:px-6 py-4 text-center">
-                              <FormulaCTAButton formula="libre" />
-                            </td>
-                            <td className="px-3 sm:px-6 py-4 text-center bg-gray-100">
-                              <FormulaCTAButton formula="sereine" />
-                            </td>
-                            <td className="px-3 sm:px-6 py-4 text-center">
-                              <FormulaCTAButton formula="privilege" />
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                    
-                    {/* Section En savoir plus sur la formule privilège */}
-                    <div className="p-6 bg-gray-50 border-t">
-                      <h3 className="text-xl font-serif text-center mb-4">
-                        En savoir plus sur la formule privilège
-                      </h3>
-                      <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                        <Button onClick={scrollToCommentCaMarche} className="bg-wedding-olive hover:bg-wedding-olive/90 text-white w-full sm:w-auto">
-                          En savoir plus
-                        </Button>
-                        <Button asChild className="bg-wedding-olive hover:bg-wedding-olive/90 text-white w-full sm:w-auto">
-                          <Link to="/coordinateurs-mariage">Voir les coordinateurs</Link>
-                        </Button>
-                      </div>
+                  <div className={`grid gap-6 ${isMobile ? 'grid-cols-1' : 'grid-cols-3'}`}>
+                    {/* Formule Libre */}
+                    <Card className="shadow-md hover:shadow-lg transition-shadow">
+                      <CardHeader className="text-center bg-wedding-olive text-white">
+                        <CardTitle className="text-xl">Libre</CardTitle>
+                        <div className="text-2xl font-bold">14,9€</div>
+                      </CardHeader>
+                      <CardContent className="p-6 space-y-4">
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm">Application personnalisée</span>
+                            <div className="flex flex-col items-center">
+                              <CheckCircle className="h-4 w-4 text-green-500" />
+                              <span className="text-xs text-gray-600">à remplir vous-même</span>
+                            </div>
+                          </div>
+                          
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm">Checklists & planning</span>
+                            <div className="flex flex-col items-center">
+                              <CheckCircle className="h-4 w-4 text-green-500" />
+                              <span className="text-xs text-gray-600">Modifiable</span>
+                            </div>
+                          </div>
+                          
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm">Notifications et rappels temps réel J-1 et J-J</span>
+                            <X className="h-4 w-4 text-red-500" />
+                          </div>
+                          
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm">Support hotline 7J/7 jusqu'au Jour-J</span>
+                            <X className="h-4 w-4 text-red-500" />
+                          </div>
+                          
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm">Présence physique le jour J</span>
+                            <X className="h-4 w-4 text-red-500" />
+                          </div>
+                        </div>
+                        
+                        <div className="pt-4 border-t">
+                          <FormulaCTAButton formula="libre" />
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    {/* Formule Sereine */}
+                    <Card className="shadow-md hover:shadow-lg transition-shadow border-2 border-wedding-olive">
+                      <CardHeader className="text-center bg-wedding-olive text-white">
+                        <CardTitle className="text-xl">Sereine</CardTitle>
+                        <div className="text-2xl font-bold">24,9€</div>
+                        <div className="text-sm bg-yellow-400 text-black px-2 py-1 rounded-full mx-auto w-fit">Recommandée</div>
+                      </CardHeader>
+                      <CardContent className="p-6 space-y-4">
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm">Application personnalisée</span>
+                            <div className="flex flex-col items-center">
+                              <CheckCircle className="h-4 w-4 text-green-500" />
+                              <span className="text-xs text-gray-600">Pré-remplie</span>
+                            </div>
+                          </div>
+                          
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm">Checklists & planning</span>
+                            <div className="flex flex-col items-center">
+                              <CheckCircle className="h-4 w-4 text-green-500" />
+                              <span className="text-xs text-gray-600">Modifiable</span>
+                            </div>
+                          </div>
+                          
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm">Notifications et rappels temps réel J-1 et J-J</span>
+                            <CheckCircle className="h-4 w-4 text-green-500" />
+                          </div>
+                          
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm">Support hotline 7J/7 jusqu'au Jour-J</span>
+                            <CheckCircle className="h-4 w-4 text-green-500" />
+                          </div>
+                          
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm">Présence physique le jour J</span>
+                            <X className="h-4 w-4 text-red-500" />
+                          </div>
+                        </div>
+                        
+                        <div className="pt-4 border-t">
+                          <FormulaCTAButton formula="sereine" />
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    {/* Formule Privilège */}
+                    <Card className="shadow-md hover:shadow-lg transition-shadow">
+                      <CardHeader className="text-center bg-wedding-olive text-white">
+                        <CardTitle className="text-xl">Privilège</CardTitle>
+                        <div className="text-2xl font-bold">799€</div>
+                      </CardHeader>
+                      <CardContent className="p-6 space-y-4">
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm">Application personnalisée</span>
+                            <div className="flex flex-col items-center">
+                              <CheckCircle className="h-4 w-4 text-green-500" />
+                              <span className="text-xs text-gray-600">Pré-remplie</span>
+                            </div>
+                          </div>
+                          
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm">Checklists & planning</span>
+                            <div className="flex flex-col items-center">
+                              <CheckCircle className="h-4 w-4 text-green-500" />
+                              <span className="text-xs text-gray-600">Modifiable</span>
+                            </div>
+                          </div>
+                          
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm">Notifications et rappels temps réel J-1 et J-J</span>
+                            <CheckCircle className="h-4 w-4 text-green-500" />
+                          </div>
+                          
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm">Support hotline 7J/7 jusqu'au Jour-J</span>
+                            <div className="flex flex-col items-center">
+                              <CheckCircle className="h-4 w-4 text-green-500" />
+                              <span className="text-xs text-gray-600">incluse</span>
+                            </div>
+                          </div>
+                          
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm">Présence physique le jour J</span>
+                            <CheckCircle className="h-4 w-4 text-green-500" />
+                          </div>
+                        </div>
+                        
+                        <div className="pt-4 border-t">
+                          <FormulaCTAButton formula="privilege" />
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                  
+                  {/* Section En savoir plus sur la formule privilège */}
+                  <div className="mt-8 p-6 bg-gray-50 rounded-lg">
+                    <h3 className="text-xl font-serif text-center mb-4">
+                      En savoir plus sur la formule privilège
+                    </h3>
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                      <Button onClick={scrollToCommentCaMarche} className="bg-wedding-olive hover:bg-wedding-olive/90 text-white w-full sm:w-auto">
+                        En savoir plus
+                      </Button>
+                      <Button asChild className="bg-wedding-olive hover:bg-wedding-olive/90 text-white w-full sm:w-auto">
+                        <Link to="/coordinateurs-mariage">Voir les coordinateurs</Link>
+                      </Button>
                     </div>
                   </div>
                 </div>
