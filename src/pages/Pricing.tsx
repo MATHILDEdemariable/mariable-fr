@@ -88,142 +88,90 @@ const Pricing = () => {
                 <div className="max-w-6xl mx-auto mb-8">
                   <div className={`grid gap-6 ${isMobile ? 'grid-cols-1' : 'grid-cols-3'}`}>
                     {/* Formule Libre */}
-                    <Card className="shadow-md hover:shadow-lg transition-shadow">
+                    <Card className="shadow-md hover:shadow-lg transition-shadow flex flex-col h-full">
                       <CardHeader className="text-center bg-wedding-olive text-white">
                         <CardTitle className="text-xl">Libre</CardTitle>
                         <div className="text-2xl font-bold">14,9€</div>
                       </CardHeader>
-                      <CardContent className="p-6 space-y-4">
-                        <div className="space-y-3">
-                          <div className="flex items-center justify-between">
-                            <span className="text-sm">Application personnalisée</span>
-                            <div className="flex flex-col items-center">
-                              <CheckCircle className="h-4 w-4 text-green-500" />
-                              <span className="text-xs text-gray-600">à remplir vous-même</span>
-                            </div>
+                      <CardContent className="p-6 flex flex-col flex-1">
+                        <div className="space-y-3 flex-1">
+                          <div>
+                            <span className="text-sm">Application personnalisée (à remplir vous-même)</span>
                           </div>
                           
-                          <div className="flex items-center justify-between">
-                            <span className="text-sm">Checklists & planning</span>
-                            <div className="flex flex-col items-center">
-                              <CheckCircle className="h-4 w-4 text-green-500" />
-                              <span className="text-xs text-gray-600">Modifiable</span>
-                            </div>
-                          </div>
-                          
-                          <div className="flex items-center justify-between">
-                            <span className="text-sm">Notifications et rappels temps réel J-1 et J-J</span>
-                            <X className="h-4 w-4 text-red-500" />
-                          </div>
-                          
-                          <div className="flex items-center justify-between">
-                            <span className="text-sm">Support hotline 7J/7 jusqu'au Jour-J</span>
-                            <X className="h-4 w-4 text-red-500" />
-                          </div>
-                          
-                          <div className="flex items-center justify-between">
-                            <span className="text-sm">Présence physique le jour J</span>
-                            <X className="h-4 w-4 text-red-500" />
+                          <div>
+                            <span className="text-sm">Checklists & planning (Modifiable)</span>
                           </div>
                         </div>
                         
-                        <div className="pt-4 border-t">
+                        <div className="pt-4 border-t mt-auto">
                           <FormulaCTAButton formula="libre" />
                         </div>
                       </CardContent>
                     </Card>
 
                     {/* Formule Sereine */}
-                    <Card className="shadow-md hover:shadow-lg transition-shadow border-2 border-wedding-olive">
-                      <CardHeader className="text-center bg-wedding-olive text-white">
+                    <Card className="shadow-md hover:shadow-lg transition-shadow border-2 border-wedding-olive flex flex-col h-full">
+                      <CardHeader className="text-center bg-wedding-olive text-white relative">
+                        <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-wedding-olive text-white text-sm px-2 py-1 rounded-full">Recommandée</div>
                         <CardTitle className="text-xl">Sereine</CardTitle>
                         <div className="text-2xl font-bold">24,9€</div>
-                        <div className="text-sm bg-yellow-400 text-black px-2 py-1 rounded-full mx-auto w-fit">Recommandée</div>
                       </CardHeader>
-                      <CardContent className="p-6 space-y-4">
-                        <div className="space-y-3">
-                          <div className="flex items-center justify-between">
-                            <span className="text-sm">Application personnalisée</span>
-                            <div className="flex flex-col items-center">
-                              <CheckCircle className="h-4 w-4 text-green-500" />
-                              <span className="text-xs text-gray-600">Pré-remplie</span>
-                            </div>
+                      <CardContent className="p-6 flex flex-col flex-1">
+                        <div className="space-y-3 flex-1">
+                          <div>
+                            <span className="text-sm">Application personnalisée (Pré-remplie)</span>
                           </div>
                           
-                          <div className="flex items-center justify-between">
-                            <span className="text-sm">Checklists & planning</span>
-                            <div className="flex flex-col items-center">
-                              <CheckCircle className="h-4 w-4 text-green-500" />
-                              <span className="text-xs text-gray-600">Modifiable</span>
-                            </div>
+                          <div>
+                            <span className="text-sm">Checklists & planning (Modifiable)</span>
                           </div>
                           
-                          <div className="flex items-center justify-between">
+                          <div>
                             <span className="text-sm">Notifications et rappels temps réel J-1 et J-J</span>
-                            <CheckCircle className="h-4 w-4 text-green-500" />
                           </div>
                           
-                          <div className="flex items-center justify-between">
+                          <div>
                             <span className="text-sm">Support hotline 7J/7 jusqu'au Jour-J</span>
-                            <CheckCircle className="h-4 w-4 text-green-500" />
-                          </div>
-                          
-                          <div className="flex items-center justify-between">
-                            <span className="text-sm">Présence physique le jour J</span>
-                            <X className="h-4 w-4 text-red-500" />
                           </div>
                         </div>
                         
-                        <div className="pt-4 border-t">
+                        <div className="pt-4 border-t mt-auto">
                           <FormulaCTAButton formula="sereine" />
                         </div>
                       </CardContent>
                     </Card>
 
                     {/* Formule Privilège */}
-                    <Card className="shadow-md hover:shadow-lg transition-shadow">
+                    <Card className="shadow-md hover:shadow-lg transition-shadow flex flex-col h-full">
                       <CardHeader className="text-center bg-wedding-olive text-white">
                         <CardTitle className="text-xl">Privilège</CardTitle>
                         <div className="text-2xl font-bold">799€</div>
                       </CardHeader>
-                      <CardContent className="p-6 space-y-4">
-                        <div className="space-y-3">
-                          <div className="flex items-center justify-between">
-                            <span className="text-sm">Application personnalisée</span>
-                            <div className="flex flex-col items-center">
-                              <CheckCircle className="h-4 w-4 text-green-500" />
-                              <span className="text-xs text-gray-600">Pré-remplie</span>
-                            </div>
+                      <CardContent className="p-6 flex flex-col flex-1">
+                        <div className="space-y-3 flex-1">
+                          <div>
+                            <span className="text-sm">Application personnalisée (Pré-remplie)</span>
                           </div>
                           
-                          <div className="flex items-center justify-between">
-                            <span className="text-sm">Checklists & planning</span>
-                            <div className="flex flex-col items-center">
-                              <CheckCircle className="h-4 w-4 text-green-500" />
-                              <span className="text-xs text-gray-600">Modifiable</span>
-                            </div>
+                          <div>
+                            <span className="text-sm">Checklists & planning (Modifiable)</span>
                           </div>
                           
-                          <div className="flex items-center justify-between">
+                          <div>
                             <span className="text-sm">Notifications et rappels temps réel J-1 et J-J</span>
-                            <CheckCircle className="h-4 w-4 text-green-500" />
                           </div>
                           
-                          <div className="flex items-center justify-between">
+                          <div>
                             <span className="text-sm">Support hotline 7J/7 jusqu'au Jour-J</span>
-                            <div className="flex flex-col items-center">
-                              <CheckCircle className="h-4 w-4 text-green-500" />
-                              <span className="text-xs text-gray-600">incluse</span>
-                            </div>
                           </div>
                           
-                          <div className="flex items-center justify-between">
+                          <div>
                             <span className="text-sm">Présence physique le jour J</span>
-                            <CheckCircle className="h-4 w-4 text-green-500" />
                           </div>
                         </div>
                         
-                        <div className="pt-4 border-t">
+                        <div className="pt-4 border-t mt-auto">
                           <FormulaCTAButton formula="privilege" />
                         </div>
                       </CardContent>
