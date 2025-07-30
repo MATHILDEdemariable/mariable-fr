@@ -85,101 +85,101 @@ const Pricing = () => {
                 <div className="max-w-6xl mx-auto mb-8">
                   <div className="bg-white rounded-lg shadow-lg overflow-hidden">
                     <div className="overflow-x-auto">
-                      <table className="w-full min-w-[600px]">
+                      <table className="w-full min-w-[700px]">
                         <thead>
                           <tr className="bg-wedding-olive text-white">
-                            <th className="px-3 sm:px-6 py-4 text-left font-semibold text-sm sm:text-base">Fonctionnalité</th>
-                            <th className="px-3 sm:px-6 py-4 text-center font-semibold text-sm sm:text-base">Libre</th>
-                            <th className="px-3 sm:px-6 py-4 text-center font-semibold text-sm sm:text-base">Sereine</th>
-                            <th className="px-3 sm:px-6 py-4 text-center font-semibold text-sm sm:text-base">Privilège</th>
+                            <th className="px-2 md:px-4 py-3 text-left font-semibold text-xs md:text-sm">Fonctionnalité</th>
+                            <th className="px-2 md:px-4 py-3 text-center font-semibold text-xs md:text-sm">Libre</th>
+                            <th className="px-2 md:px-4 py-3 text-center font-semibold text-xs md:text-sm">Sereine</th>
+                            <th className="px-2 md:px-4 py-3 text-center font-semibold text-xs md:text-sm">Privilège</th>
                           </tr>
                         </thead>
                         <tbody>
                           <tr className="border-b bg-gray-50">
-                            <td className="px-3 sm:px-6 py-4 font-medium text-gray-900 text-sm sm:text-base">Prix (TTC)</td>
-                            <td className="px-3 sm:px-6 py-4 text-center font-bold text-wedding-olive text-sm sm:text-base">14,9€</td>
-                            <td className="px-3 sm:px-6 py-4 text-center font-bold text-wedding-olive bg-gray-100 text-sm sm:text-base">24,9€</td>
-                            <td className="px-3 sm:px-6 py-4 text-center font-bold text-wedding-olive text-sm sm:text-base">799€</td>
+                            <td className="px-2 md:px-4 py-3 font-medium text-gray-900 text-xs md:text-sm">Prix (TTC)</td>
+                            <td className="px-2 md:px-4 py-3 text-center font-bold text-wedding-olive text-xs md:text-sm">14,9€</td>
+                            <td className="px-2 md:px-4 py-3 text-center font-bold text-wedding-olive bg-gray-100 text-xs md:text-sm">24,9€</td>
+                            <td className="px-2 md:px-4 py-3 text-center font-bold text-wedding-olive text-xs md:text-sm">799€</td>
                           </tr>
                           <tr className="border-b">
-                            <td className="px-3 sm:px-6 py-4 font-medium text-gray-900 text-sm sm:text-base">Application personnalisée</td>
-                            <td className="px-3 sm:px-6 py-4 text-center">
+                            <td className="px-2 md:px-4 py-3 font-medium text-gray-900 text-xs md:text-sm">Application personnalisée</td>
+                            <td className="px-2 md:px-4 py-3 text-center">
                               <div className="flex flex-col items-center">
-                                <CheckCircle className="h-5 w-5 text-green-500 mb-1" />
-                                <span className="text-sm text-gray-600">à remplir vous-même</span>
+                                <CheckCircle className="h-4 w-4 text-green-500 mb-1" />
+                                <span className="text-xs text-gray-600 leading-tight">à remplir vous-même</span>
                               </div>
                             </td>
-                            <td className="px-3 sm:px-6 py-4 text-center bg-gray-100">
+                            <td className="px-2 md:px-4 py-3 text-center bg-gray-100">
                               <div className="flex flex-col items-center">
-                                <CheckCircle className="h-5 w-5 text-green-500 mb-1" />
-                                <span className="text-sm text-gray-600">Pré-remplie</span>
+                                <CheckCircle className="h-4 w-4 text-green-500 mb-1" />
+                                <span className="text-xs text-gray-600 leading-tight">Pré-remplie</span>
                               </div>
                             </td>
-                            <td className="px-3 sm:px-6 py-4 text-center">
+                            <td className="px-2 md:px-4 py-3 text-center">
                               <div className="flex flex-col items-center">
-                                <CheckCircle className="h-5 w-5 text-green-500 mb-1" />
-                                <span className="text-sm text-gray-600">Pré-remplie</span>
-                              </div>
-                            </td>
-                          </tr>
-                          <tr className="border-b">
-                            <td className="px-3 sm:px-6 py-4 font-medium text-gray-900 text-sm sm:text-base">Checklists & planning</td>
-                            <td className="px-3 sm:px-6 py-4 text-center">
-                              <div className="flex flex-col items-center">
-                                <CheckCircle className="h-5 w-5 text-green-500 mb-1" />
-                                <span className="text-sm text-gray-600">Modifiable</span>
-                              </div>
-                            </td>
-                            <td className="px-3 sm:px-6 py-4 text-center bg-gray-100">
-                              <div className="flex flex-col items-center">
-                                <CheckCircle className="h-5 w-5 text-green-500 mb-1" />
-                                <span className="text-sm text-gray-600">Modifiable</span>
-                              </div>
-                            </td>
-                            <td className="px-3 sm:px-6 py-4 text-center">
-                              <div className="flex flex-col items-center">
-                                <CheckCircle className="h-5 w-5 text-green-500 mb-1" />
-                                <span className="text-sm text-gray-600">Modifiable</span>
+                                <CheckCircle className="h-4 w-4 text-green-500 mb-1" />
+                                <span className="text-xs text-gray-600 leading-tight">Pré-remplie</span>
                               </div>
                             </td>
                           </tr>
                           <tr className="border-b">
-                            <td className="px-3 sm:px-6 py-4 font-medium text-gray-900 text-sm sm:text-base">Notifications et rappels en temps réel de J-1 et J-J</td>
-                            <td className="px-3 sm:px-6 py-4 text-center">
-                              <X className="h-5 w-5 text-red-500 mx-auto" />
-                            </td>
-                            <td className="px-3 sm:px-6 py-4 text-center bg-gray-100">
-                              <CheckCircle className="h-5 w-5 text-green-500 mx-auto" />
-                            </td>
-                            <td className="px-3 sm:px-6 py-4 text-center">
-                              <CheckCircle className="h-5 w-5 text-green-500 mx-auto" />
-                            </td>
-                          </tr>
-                          <tr className="border-b">
-                            <td className="px-3 sm:px-6 py-4 font-medium text-gray-900 text-sm sm:text-base">Support client via une hotline Mariable dédiée 7J/7 jusqu'au Jour-J</td>
-                            <td className="px-3 sm:px-6 py-4 text-center">
-                              <X className="h-5 w-5 text-red-500 mx-auto" />
-                            </td>
-                            <td className="px-3 sm:px-6 py-4 text-center bg-gray-100">
-                              <CheckCircle className="h-5 w-5 text-green-500 mx-auto" />
-                            </td>
-                            <td className="px-3 sm:px-6 py-4 text-center">
+                            <td className="px-2 md:px-4 py-3 font-medium text-gray-900 text-xs md:text-sm">Checklists & planning</td>
+                            <td className="px-2 md:px-4 py-3 text-center">
                               <div className="flex flex-col items-center">
-                                <CheckCircle className="h-5 w-5 text-green-500 mb-1" />
-                                <span className="text-sm text-gray-600">incluse</span>
+                                <CheckCircle className="h-4 w-4 text-green-500 mb-1" />
+                                <span className="text-xs text-gray-600 leading-tight">Modifiable</span>
+                              </div>
+                            </td>
+                            <td className="px-2 md:px-4 py-3 text-center bg-gray-100">
+                              <div className="flex flex-col items-center">
+                                <CheckCircle className="h-4 w-4 text-green-500 mb-1" />
+                                <span className="text-xs text-gray-600 leading-tight">Modifiable</span>
+                              </div>
+                            </td>
+                            <td className="px-2 md:px-4 py-3 text-center">
+                              <div className="flex flex-col items-center">
+                                <CheckCircle className="h-4 w-4 text-green-500 mb-1" />
+                                <span className="text-xs text-gray-600 leading-tight">Modifiable</span>
                               </div>
                             </td>
                           </tr>
                           <tr className="border-b">
-                            <td className="px-3 sm:px-6 py-4 font-medium text-gray-900 text-sm sm:text-base">Présence physique le jour J</td>
-                            <td className="px-3 sm:px-6 py-4 text-center">
-                              <X className="h-5 w-5 text-red-500 mx-auto" />
+                            <td className="px-2 md:px-4 py-3 font-medium text-gray-900 text-xs md:text-sm leading-tight">Notifications et rappels temps réel J-1 et J-J</td>
+                            <td className="px-2 md:px-4 py-3 text-center">
+                              <X className="h-4 w-4 text-red-500 mx-auto" />
                             </td>
-                            <td className="px-3 sm:px-6 py-4 text-center bg-gray-100">
-                              <X className="h-5 w-5 text-red-500 mx-auto" />
+                            <td className="px-2 md:px-4 py-3 text-center bg-gray-100">
+                              <CheckCircle className="h-4 w-4 text-green-500 mx-auto" />
                             </td>
-                            <td className="px-3 sm:px-6 py-4 text-center">
-                              <CheckCircle className="h-5 w-5 text-green-500 mx-auto" />
+                            <td className="px-2 md:px-4 py-3 text-center">
+                              <CheckCircle className="h-4 w-4 text-green-500 mx-auto" />
+                            </td>
+                          </tr>
+                          <tr className="border-b">
+                            <td className="px-2 md:px-4 py-3 font-medium text-gray-900 text-xs md:text-sm leading-tight">Support hotline 7J/7 jusqu'au Jour-J</td>
+                            <td className="px-2 md:px-4 py-3 text-center">
+                              <X className="h-4 w-4 text-red-500 mx-auto" />
+                            </td>
+                            <td className="px-2 md:px-4 py-3 text-center bg-gray-100">
+                              <CheckCircle className="h-4 w-4 text-green-500 mx-auto" />
+                            </td>
+                            <td className="px-2 md:px-4 py-3 text-center">
+                              <div className="flex flex-col items-center">
+                                <CheckCircle className="h-4 w-4 text-green-500 mb-1" />
+                                <span className="text-xs text-gray-600 leading-tight">incluse</span>
+                              </div>
+                            </td>
+                          </tr>
+                          <tr className="border-b">
+                            <td className="px-2 md:px-4 py-3 font-medium text-gray-900 text-xs md:text-sm">Présence physique le jour J</td>
+                            <td className="px-2 md:px-4 py-3 text-center">
+                              <X className="h-4 w-4 text-red-500 mx-auto" />
+                            </td>
+                            <td className="px-2 md:px-4 py-3 text-center bg-gray-100">
+                              <X className="h-4 w-4 text-red-500 mx-auto" />
+                            </td>
+                            <td className="px-2 md:px-4 py-3 text-center">
+                              <CheckCircle className="h-4 w-4 text-green-500 mx-auto" />
                             </td>
                           </tr>
                           <tr className="bg-gray-50">

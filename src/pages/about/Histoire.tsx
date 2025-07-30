@@ -4,11 +4,25 @@ import ServiceTemplate from '../ServiceTemplate';
 
 const HistoireContent = () => (
   <>
-    <p className="mb-6">
-      L'histoire de Mariable commence avec Mathilde, jeune mariée, diplomée d'école de commerce, 
-      qui décide de se lancer dans l'entrepreneuriat et de révolutionner l'organisation des mariages 
-      après son expérience personnelle.
-    </p>
+    <div className="grid md:grid-cols-3 gap-8 mb-8">
+      <div className="md:col-span-2">
+        <p className="mb-6">
+          L'histoire de Mariable commence avec Mathilde, jeune mariée, diplomée d'école de commerce, 
+          qui décide de se lancer dans l'entrepreneuriat et de révolutionner l'organisation des mariages 
+          après son expérience personnelle.
+        </p>
+      </div>
+      <div className="md:col-span-1 flex justify-center md:justify-end">
+        <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100 max-w-xs">
+          <img 
+            src="/lovable-uploads/b758306b-8818-4cb8-85b9-738dc7e83e60.png" 
+            alt="Mathilde, fondatrice de Mariable" 
+            className="w-full h-auto rounded-lg mb-2 object-cover" 
+          />
+          <p className="text-sm text-gray-600 text-center font-medium">Mathilde, fondatrice</p>
+        </div>
+      </div>
+    </div>
     
     <h2 className="text-2xl font-serif mt-8 mb-4">Notre mission</h2>
     
