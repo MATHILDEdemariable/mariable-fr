@@ -5,6 +5,11 @@ import { generateUniqueSlug } from '@/utils/generateUniqueSlug';
 import { fakeTestimonials } from '@/data/fakeTestimonials';
 import { toast } from '@/hooks/use-toast';
 
+// Utility function to check if a testimonial is fake
+export const isFakeTestimonial = (jeuneMarie: JeuneMarie): boolean => {
+  return jeuneMarie.id.startsWith('fake-');
+};
+
 export const useJeunesMaries = () => {
   const [jeunesMaries, setJeunesMaries] = useState<JeuneMarie[]>([]);
   const [loading, setLoading] = useState(true);
@@ -18,6 +23,7 @@ export const useJeunesMaries = () => {
 
   const fetchSystemSettings = async () => {
     try {
+      console.log('🔍 Fetching system settings...');
       const { data, error } = await supabase
         .from('system_settings')
         .select('setting_value')
@@ -25,14 +31,15 @@ export const useJeunesMaries = () => {
         .single();
 
       if (error) {
-        console.error('Error fetching system settings:', error);
+        console.error('❌ Error fetching system settings:', error);
         setShowFakeTestimonials(false);
         return;
       }
 
+      console.log('✅ System settings fetched:', data);
       setShowFakeTestimonials(data?.setting_value || false);
     } catch (error) {
-      console.error('Error in fetchSystemSettings:', error);
+      console.error('❌ Error in fetchSystemSettings:', error);
       setShowFakeTestimonials(false);
     }
   };
@@ -40,6 +47,8 @@ export const useJeunesMaries = () => {
   const fetchJeunesMaries = async () => {
     try {
       setLoading(true);
+      console.log('🔍 Fetching jeunes mariés...', { showFakeTestimonials, filters });
+      
       let query = supabase
         .from('jeunes_maries')
         .select('*')
@@ -66,19 +75,22 @@ export const useJeunesMaries = () => {
       const { data, error } = await query;
 
       if (error) {
-        console.error('Erreur lors du chargement des jeunes mariés:', error);
+        console.error('❌ Erreur lors du chargement des jeunes mariés:', error);
         toast({
           title: "Erreur",
           description: "Impossible de charger les profils des jeunes mariés",
           variant: "destructive"
         });
+        setJeunesMaries([]);
         return;
       }
 
       let finalData = (data as JeuneMarie[]) || [];
+      console.log('✅ Real testimonials loaded:', finalData.length);
 
-      // Add fake testimonials if enabled and there are few real ones
-      if (showFakeTestimonials && finalData.length < 3) {
+      // Add fake testimonials if enabled
+      if (showFakeTestimonials) {
+        console.log('🎭 Adding fake testimonials...');
         const fakeData = fakeTestimonials.map(fake => ({
           ...fake,
           id: `fake-${fake.slug}`,
@@ -87,16 +99,18 @@ export const useJeunesMaries = () => {
         })) as JeuneMarie[];
         
         finalData = [...finalData, ...fakeData];
+        console.log('✅ Total testimonials (real + fake):', finalData.length);
       }
 
       setJeunesMaries(finalData);
     } catch (error) {
-      console.error('Erreur:', error);
+      console.error('❌ Erreur:', error);
       toast({
         title: "Erreur",
         description: "Une erreur inattendue s'est produite",
         variant: "destructive"
       });
+      setJeunesMaries([]);
     } finally {
       setLoading(false);
     }
@@ -104,15 +118,17 @@ export const useJeunesMaries = () => {
 
   const getJeuneMariesBySlug = async (slug: string): Promise<JeuneMarie | null> => {
     try {
-      // First check fake testimonials
-      const fakeTestimonial = fakeTestimonials.find(fake => fake.slug === slug);
-      if (fakeTestimonial) {
-        return {
-          ...fakeTestimonial,
-          id: `fake-${fakeTestimonial.slug}`,
-          created_at: fakeTestimonial.date_soumission,
-          updated_at: fakeTestimonial.date_soumission
-        } as JeuneMarie;
+      // First check fake testimonials if they should be shown
+      if (showFakeTestimonials) {
+        const fakeTestimonial = fakeTestimonials.find(fake => fake.slug === slug);
+        if (fakeTestimonial) {
+          return {
+            ...fakeTestimonial,
+            id: `fake-${fakeTestimonial.slug}`,
+            created_at: fakeTestimonial.date_soumission,
+            updated_at: fakeTestimonial.date_soumission
+          } as JeuneMarie;
+        }
       }
 
       const { data, error } = await supabase
@@ -182,6 +198,8 @@ export const useJeunesMaries = () => {
     setFilters,
     fetchJeunesMaries,
     getJeuneMariesBySlug,
-    submitJeuneMarie
+    submitJeuneMarie,
+    showFakeTestimonials,
+    setShowFakeTestimonials
   };
 };

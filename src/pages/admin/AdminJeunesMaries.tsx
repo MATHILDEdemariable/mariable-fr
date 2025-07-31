@@ -37,6 +37,7 @@ import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { toast } from 'sonner';
 import { JeuneMarie } from '@/types/jeunes-maries';
+import { fakeTestimonials } from '@/data/fakeTestimonials';
 
 const AdminJeunesMaries = () => {
   const navigate = useNavigate();
@@ -57,10 +58,15 @@ const AdminJeunesMaries = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      fetchJeunesMaries();
       fetchSystemSettings();
     }
   }, [isAuthenticated]);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchJeunesMaries();
+    }
+  }, [isAuthenticated, showFakeTestimonials]);
 
   useEffect(() => {
     let filtered = jeunesMaries;
@@ -131,15 +137,30 @@ const AdminJeunesMaries = () => {
 
       if (error) throw error;
       
-      console.log(`✅ ${data.length} témoignages jeunes mariés récupérés avec succès`);
+      console.log(`✅ ${data.length} témoignages réels récupérés avec succès`);
       
-      setJeunesMaries(data as JeuneMarie[]);
-      setFilteredJeunesMaries(data as JeuneMarie[]);
+      let allTestimonials = data as JeuneMarie[];
       
-      if (data.length === 0) {
+      // Add fake testimonials if enabled
+      if (showFakeTestimonials) {
+        const fakeData = fakeTestimonials.map(fake => ({
+          ...fake,
+          id: `fake-${fake.slug}`,
+          created_at: fake.date_soumission,
+          updated_at: fake.date_soumission
+        })) as JeuneMarie[];
+        
+        allTestimonials = [...allTestimonials, ...fakeData];
+        console.log(`✅ ${fakeData.length} témoignages fictifs ajoutés`);
+      }
+      
+      setJeunesMaries(allTestimonials);
+      setFilteredJeunesMaries(allTestimonials);
+      
+      if (allTestimonials.length === 0) {
         toast.error('Aucun témoignage trouvé');
       } else {
-        toast.success(`${data.length} témoignages chargés avec succès`);
+        toast.success(`${allTestimonials.length} témoignages chargés avec succès`);
       }
       
     } catch (err) {
@@ -369,11 +390,11 @@ const AdminJeunesMaries = () => {
                 }}
               />
               <Label htmlFor="fake-testimonials">
-                Afficher les témoignages fictifs quand il y a peu de vrais témoignages
+                Afficher les témoignages fictifs sur le site public
               </Label>
             </div>
             <p className="text-sm text-muted-foreground mt-2">
-              Lorsque activé, des témoignages fictifs seront affichés si moins de 3 vrais témoignages sont visibles.
+              Lorsque activé, des témoignages fictifs seront affichés sur la page publique pour enrichir le contenu.
             </p>
           </CardContent>
         </Card>
@@ -494,7 +515,7 @@ const AdminJeunesMaries = () => {
                         </TableCell>
                          <TableCell>
                            <div className="flex gap-2">
-                             {jm.status_moderation === 'en_attente' && (
+                             {jm.status_moderation === 'en_attente' && !jm.id.startsWith('fake-') && (
                                <>
                                  <Button
                                    size="sm"
@@ -521,14 +542,16 @@ const AdminJeunesMaries = () => {
                              >
                                <Eye className="h-3 w-3" />
                              </Button>
-                             <Button
-                               size="sm"
-                               variant="outline"
-                               onClick={() => deleteJeuneMarie(jm.id)}
-                               className="text-red-600 border-red-600 hover:bg-red-50"
-                             >
-                               <Trash2 className="h-3 w-3" />
-                             </Button>
+                             {!jm.id.startsWith('fake-') && (
+                               <Button
+                                 size="sm"
+                                 variant="outline"
+                                 onClick={() => deleteJeuneMarie(jm.id)}
+                                 className="text-red-600 border-red-600 hover:bg-red-50"
+                               >
+                                 <Trash2 className="h-3 w-3" />
+                               </Button>
+                             )}
                            </div>
                          </TableCell>
                       </TableRow>

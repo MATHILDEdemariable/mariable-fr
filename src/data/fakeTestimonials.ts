@@ -1,6 +1,6 @@
 import { JeuneMarie } from '@/types/jeunes-maries';
 
-export const fakeTestimonials: (Omit<JeuneMarie, 'id' | 'created_at' | 'updated_at'> & { is_fake: boolean })[] = [
+export const fakeTestimonials: Omit<JeuneMarie, 'id' | 'created_at' | 'updated_at'>[] = [
   {
     nom_complet: "Sarah & Antoine Dubois",
     email: "sarah.dubois@example.com",
@@ -36,8 +36,7 @@ export const fakeTestimonials: (Omit<JeuneMarie, 'id' | 'created_at' | 'updated_
     date_soumission: "2023-07-01T10:00:00Z",
     date_approbation: "2023-07-02T14:30:00Z",
     admin_notes: "Témoignage fictif pour démonstration",
-    accept_email_contact: true,
-    is_fake: true
+    accept_email_contact: true
   },
   {
     nom_complet: "Emma & Lucas Martin",
@@ -68,8 +67,7 @@ export const fakeTestimonials: (Omit<JeuneMarie, 'id' | 'created_at' | 'updated_
     date_soumission: "2023-10-15T09:15:00Z",
     date_approbation: "2023-10-16T11:20:00Z",
     admin_notes: "Témoignage fictif pour démonstration",
-    accept_email_contact: true,
-    is_fake: true
+    accept_email_contact: true
   },
   {
     nom_complet: "Camille & Thomas Rousseau",
@@ -106,8 +104,7 @@ export const fakeTestimonials: (Omit<JeuneMarie, 'id' | 'created_at' | 'updated_
     date_soumission: "2023-06-10T16:45:00Z",
     date_approbation: "2023-06-11T09:30:00Z",
     admin_notes: "Témoignage fictif pour démonstration",
-    accept_email_contact: false,
-    is_fake: true
+    accept_email_contact: false
   },
   {
     nom_complet: "Léa & Maxime Petit",
@@ -138,8 +135,7 @@ export const fakeTestimonials: (Omit<JeuneMarie, 'id' | 'created_at' | 'updated_
     date_soumission: "2023-09-05T14:20:00Z",
     date_approbation: "2023-09-06T10:15:00Z",
     admin_notes: "Témoignage fictif pour démonstration",
-    accept_email_contact: true,
-    is_fake: true
+    accept_email_contact: true
   },
   {
     nom_complet: "Julie & Alexandre Moreau",
@@ -170,8 +166,7 @@ export const fakeTestimonials: (Omit<JeuneMarie, 'id' | 'created_at' | 'updated_
     date_soumission: "2023-11-15T13:30:00Z",
     date_approbation: "2023-11-16T08:45:00Z",
     admin_notes: "Témoignage fictif pour démonstration",
-    accept_email_contact: true,
-    is_fake: true
+    accept_email_contact: true
   },
   {
     nom_complet: "Manon & Pierre Lefebvre",
@@ -208,7 +203,6 @@ export const fakeTestimonials: (Omit<JeuneMarie, 'id' | 'created_at' | 'updated_
     date_soumission: "2023-08-20T15:10:00Z",
     date_approbation: "2023-08-21T12:25:00Z",
     admin_notes: "Témoignage fictif pour démonstration",
-    accept_email_contact: false,
-    is_fake: true
+    accept_email_contact: false
   }
 ];
