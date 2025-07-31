@@ -48,8 +48,6 @@ const AdminJeunesMaries = () => {
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [showFakeTestimonials, setShowFakeTestimonials] = useState(false);
-
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
       navigate('/admin/dashboard');
@@ -58,15 +56,9 @@ const AdminJeunesMaries = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      fetchSystemSettings();
-    }
-  }, [isAuthenticated]);
-
-  useEffect(() => {
-    if (isAuthenticated) {
       fetchJeunesMaries();
     }
-  }, [isAuthenticated, showFakeTestimonials]);
+  }, [isAuthenticated]);
 
   useEffect(() => {
     let filtered = jeunesMaries;
@@ -86,42 +78,6 @@ const AdminJeunesMaries = () => {
     setFilteredJeunesMaries(filtered);
   }, [searchTerm, statusFilter, jeunesMaries]);
 
-  const fetchSystemSettings = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('system_settings')
-        .select('setting_value')
-        .eq('setting_key', 'show_fake_testimonials')
-        .single();
-
-      if (error) {
-        console.error('Error fetching system settings:', error);
-        return;
-      }
-
-      setShowFakeTestimonials(data?.setting_value || false);
-    } catch (error) {
-      console.error('Error in fetchSystemSettings:', error);
-    }
-  };
-
-  const updateSystemSetting = async (key: string, value: boolean) => {
-    try {
-      const { error } = await supabase
-        .from('system_settings')
-        .update({ setting_value: value })
-        .eq('setting_key', key);
-
-      if (error) {
-        throw error;
-      }
-
-      toast.success('Paramètre mis à jour avec succès');
-    } catch (error: any) {
-      console.error('Error updating system setting:', error);
-      toast.error('Erreur lors de la mise à jour du paramètre');
-    }
-  };
 
   const fetchJeunesMaries = async () => {
     try {
@@ -141,18 +97,16 @@ const AdminJeunesMaries = () => {
       
       let allTestimonials = data as JeuneMarie[];
       
-      // Add fake testimonials if enabled
-      if (showFakeTestimonials) {
-        const fakeData = fakeTestimonials.map(fake => ({
-          ...fake,
-          id: `fake-${fake.slug}`,
-          created_at: fake.date_soumission,
-          updated_at: fake.date_soumission
-        })) as JeuneMarie[];
-        
-        allTestimonials = [...allTestimonials, ...fakeData];
-        console.log(`✅ ${fakeData.length} témoignages fictifs ajoutés`);
-      }
+      // Toujours ajouter les témoignages d'exemple
+      const fakeData = fakeTestimonials.map(fake => ({
+        ...fake,
+        id: `fake-${fake.slug}`,
+        created_at: fake.date_soumission,
+        updated_at: fake.date_soumission
+      })) as JeuneMarie[];
+      
+      allTestimonials = [...allTestimonials, ...fakeData];
+      console.log(`✅ ${fakeData.length} témoignages d'exemple ajoutés`);
       
       setJeunesMaries(allTestimonials);
       setFilteredJeunesMaries(allTestimonials);
@@ -368,33 +322,21 @@ const AdminJeunesMaries = () => {
           </Card>
         </div>
 
-        {/* System Settings Card */}
+        {/* Info */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Settings className="h-5 w-5" />
-              Paramètres système
+              Information
             </CardTitle>
             <CardDescription>
-              Gérer l'affichage des témoignages fictifs sur le site
+              Les témoignages d'exemple sont toujours affichés pour enrichir le contenu
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="flex items-center space-x-2">
-              <Switch
-                id="fake-testimonials"
-                checked={showFakeTestimonials}
-                onCheckedChange={(checked) => {
-                  setShowFakeTestimonials(checked);
-                  updateSystemSetting('show_fake_testimonials', checked);
-                }}
-              />
-              <Label htmlFor="fake-testimonials">
-                Afficher les témoignages fictifs sur le site public
-              </Label>
-            </div>
-            <p className="text-sm text-muted-foreground mt-2">
-              Lorsque activé, des témoignages fictifs seront affichés sur la page publique pour enrichir le contenu.
+            <p className="text-sm text-muted-foreground">
+              {fakeTestimonials.length} témoignages d'exemple sont automatiquement inclus dans l'affichage.
+              Vous pouvez les supprimer manuellement du code si nécessaire.
             </p>
           </CardContent>
         </Card>

@@ -44,9 +44,9 @@ export const JeuneMariesCard: React.FC<JeuneMariesCardProps> = ({ jeuneMarie }) 
       {isFakeTestimonial && (
         <Badge 
           variant="secondary" 
-          className="absolute top-2 right-2 z-10 bg-orange-100 text-orange-800 border-orange-200"
+          className="absolute top-2 right-2 z-10 bg-blue-100 text-blue-800 border-blue-200"
         >
-          Fictif
+          Exemple
         </Badge>
       )}
       {jeuneMarie.photo_principale_url && (
