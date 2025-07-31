@@ -37,8 +37,18 @@ export const JeuneMariesCard: React.FC<JeuneMariesCardProps> = ({ jeuneMarie }) 
     );
   };
 
+  const isFakeTestimonial = jeuneMarie.id?.startsWith('fake-');
+
   return (
-    <Card className="h-full overflow-hidden border-wedding-olive/30 hover:shadow-lg transition-all duration-300 group">
+    <Card className="h-full overflow-hidden border-wedding-olive/30 hover:shadow-lg transition-all duration-300 group relative">
+      {isFakeTestimonial && (
+        <Badge 
+          variant="secondary" 
+          className="absolute top-2 right-2 z-10 bg-orange-100 text-orange-800 border-orange-200"
+        >
+          Fictif
+        </Badge>
+      )}
       {jeuneMarie.photo_principale_url && (
         <div className="aspect-video overflow-hidden">
           <img

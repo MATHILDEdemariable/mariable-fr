@@ -13,7 +13,9 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
 import { 
   Search, 
   Heart, 
@@ -28,7 +30,8 @@ import {
   Clock,
   Edit,
   Eye,
-  Trash2
+  Trash2,
+  Settings
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -44,6 +47,7 @@ const AdminJeunesMaries = () => {
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showFakeTestimonials, setShowFakeTestimonials] = useState(false);
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
@@ -54,6 +58,7 @@ const AdminJeunesMaries = () => {
   useEffect(() => {
     if (isAuthenticated) {
       fetchJeunesMaries();
+      fetchSystemSettings();
     }
   }, [isAuthenticated]);
 
@@ -74,6 +79,43 @@ const AdminJeunesMaries = () => {
 
     setFilteredJeunesMaries(filtered);
   }, [searchTerm, statusFilter, jeunesMaries]);
+
+  const fetchSystemSettings = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('system_settings')
+        .select('setting_value')
+        .eq('setting_key', 'show_fake_testimonials')
+        .single();
+
+      if (error) {
+        console.error('Error fetching system settings:', error);
+        return;
+      }
+
+      setShowFakeTestimonials(data?.setting_value || false);
+    } catch (error) {
+      console.error('Error in fetchSystemSettings:', error);
+    }
+  };
+
+  const updateSystemSetting = async (key: string, value: boolean) => {
+    try {
+      const { error } = await supabase
+        .from('system_settings')
+        .update({ setting_value: value })
+        .eq('setting_key', key);
+
+      if (error) {
+        throw error;
+      }
+
+      toast.success('Paramètre mis à jour avec succès');
+    } catch (error: any) {
+      console.error('Error updating system setting:', error);
+      toast.error('Erreur lors de la mise à jour du paramètre');
+    }
+  };
 
   const fetchJeunesMaries = async () => {
     try {
@@ -304,6 +346,37 @@ const AdminJeunesMaries = () => {
             </CardContent>
           </Card>
         </div>
+
+        {/* System Settings Card */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Settings className="h-5 w-5" />
+              Paramètres système
+            </CardTitle>
+            <CardDescription>
+              Gérer l'affichage des témoignages fictifs sur le site
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center space-x-2">
+              <Switch
+                id="fake-testimonials"
+                checked={showFakeTestimonials}
+                onCheckedChange={(checked) => {
+                  setShowFakeTestimonials(checked);
+                  updateSystemSetting('show_fake_testimonials', checked);
+                }}
+              />
+              <Label htmlFor="fake-testimonials">
+                Afficher les témoignages fictifs quand il y a peu de vrais témoignages
+              </Label>
+            </div>
+            <p className="text-sm text-muted-foreground mt-2">
+              Lorsque activé, des témoignages fictifs seront affichés si moins de 3 vrais témoignages sont visibles.
+            </p>
+          </CardContent>
+        </Card>
 
         {/* Filtres et recherche */}
         <Card>

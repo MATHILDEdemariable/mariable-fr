@@ -1,17 +1,41 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { JeuneMarie, JeuneMariesFilters } from '@/types/jeunes-maries';
+import { generateUniqueSlug } from '@/utils/generateUniqueSlug';
+import { fakeTestimonials } from '@/data/fakeTestimonials';
 import { toast } from '@/hooks/use-toast';
 
 export const useJeunesMaries = () => {
   const [jeunesMaries, setJeunesMaries] = useState<JeuneMarie[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showFakeTestimonials, setShowFakeTestimonials] = useState(false);
   const [filters, setFilters] = useState<JeuneMariesFilters>({
     search: '',
     region: 'toutes',
     budget: 'tous',
     note: 0
   });
+
+  const fetchSystemSettings = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('system_settings')
+        .select('setting_value')
+        .eq('setting_key', 'show_fake_testimonials')
+        .single();
+
+      if (error) {
+        console.error('Error fetching system settings:', error);
+        setShowFakeTestimonials(false);
+        return;
+      }
+
+      setShowFakeTestimonials(data?.setting_value || false);
+    } catch (error) {
+      console.error('Error in fetchSystemSettings:', error);
+      setShowFakeTestimonials(false);
+    }
+  };
 
   const fetchJeunesMaries = async () => {
     try {
@@ -51,7 +75,21 @@ export const useJeunesMaries = () => {
         return;
       }
 
-      setJeunesMaries((data as JeuneMarie[]) || []);
+      let finalData = (data as JeuneMarie[]) || [];
+
+      // Add fake testimonials if enabled and there are few real ones
+      if (showFakeTestimonials && finalData.length < 3) {
+        const fakeData = fakeTestimonials.map(fake => ({
+          ...fake,
+          id: `fake-${fake.slug}`,
+          created_at: fake.date_soumission,
+          updated_at: fake.date_soumission
+        })) as JeuneMarie[];
+        
+        finalData = [...finalData, ...fakeData];
+      }
+
+      setJeunesMaries(finalData);
     } catch (error) {
       console.error('Erreur:', error);
       toast({
@@ -66,6 +104,17 @@ export const useJeunesMaries = () => {
 
   const getJeuneMariesBySlug = async (slug: string): Promise<JeuneMarie | null> => {
     try {
+      // First check fake testimonials
+      const fakeTestimonial = fakeTestimonials.find(fake => fake.slug === slug);
+      if (fakeTestimonial) {
+        return {
+          ...fakeTestimonial,
+          id: `fake-${fakeTestimonial.slug}`,
+          created_at: fakeTestimonial.date_soumission,
+          updated_at: fakeTestimonial.date_soumission
+        } as JeuneMarie;
+      }
+
       const { data, error } = await supabase
         .from('jeunes_maries')
         .select('*')
@@ -119,8 +168,12 @@ export const useJeunesMaries = () => {
   };
 
   useEffect(() => {
+    fetchSystemSettings();
+  }, []);
+
+  useEffect(() => {
     fetchJeunesMaries();
-  }, [filters]);
+  }, [filters, showFakeTestimonials]);
 
   return {
     jeunesMaries,
