@@ -19,6 +19,23 @@ const budgetOptions = [
   'Plus de 50 000€'
 ];
 
+const regionOptions = [
+  'Île-de-France',
+  'Auvergne-Rhône-Alpes',
+  'Bourgogne-Franche-Comté',
+  'Bretagne',
+  'Centre-Val de Loire',
+  'Corse',
+  'Grand Est',
+  'Hauts-de-France',
+  'Normandie',
+  'Nouvelle-Aquitaine',
+  'Occitanie',
+  'Pays de la Loire',
+  'Provence-Alpes-Côte d\'Azur',
+  'Hors France'
+];
+
 const JeuneMariesInscriptionPage: React.FC = () => {
   const navigate = useNavigate();
   const { submitJeuneMarie } = useJeunesMaries();
@@ -30,6 +47,7 @@ const JeuneMariesInscriptionPage: React.FC = () => {
     email: '',
     telephone: '',
     lieu_mariage: '',
+    region: '',
     date_mariage: '',
     nombre_invites: '',
     budget_approximatif: '',
@@ -68,10 +86,10 @@ const JeuneMariesInscriptionPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.nom_complet || !formData.email || !formData.lieu_mariage || !formData.date_mariage) {
+    if (!formData.nom_complet || !formData.email || !formData.lieu_mariage || !formData.region || !formData.date_mariage) {
       toast({
         title: "Erreur",
-        description: "Veuillez remplir tous les champs obligatoires",
+        description: "Veuillez remplir tous les champs obligatoires (nom, email, lieu de réception, région et date)",
         variant: "destructive"
       });
       return;
@@ -184,45 +202,65 @@ const JeuneMariesInscriptionPage: React.FC = () => {
                     </div>
                   </div>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium mb-2">
-                        Lieu du mariage <span className="text-red-500">*</span>
-                      </label>
-                      <Input
-                        name="lieu_mariage"
-                        value={formData.lieu_mariage}
-                        onChange={handleInputChange}
-                        placeholder="Ville, Région"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium mb-2">Nombre d'invités</label>
-                      <Input
-                        type="number"
-                        name="nombre_invites"
-                        value={formData.nombre_invites}
-                        onChange={handleInputChange}
-                        placeholder="120"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium mb-2">Budget approximatif</label>
-                      <Select onValueChange={(value) => handleSelectChange('budget_approximatif', value)}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Sélectionner" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {budgetOptions.map((budget) => (
-                            <SelectItem key={budget} value={budget}>
-                              {budget}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
+                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                     <div>
+                       <label className="block text-sm font-medium mb-2">
+                         Lieu de réception du mariage <span className="text-red-500">*</span>
+                       </label>
+                       <Input
+                         name="lieu_mariage"
+                         value={formData.lieu_mariage}
+                         onChange={handleInputChange}
+                         placeholder="Ex: Château de Versailles, Domaine..."
+                         required
+                       />
+                     </div>
+                     <div>
+                       <label className="block text-sm font-medium mb-2">
+                         Région <span className="text-red-500">*</span>
+                       </label>
+                       <Select onValueChange={(value) => handleSelectChange('region', value)} value={formData.region}>
+                         <SelectTrigger>
+                           <SelectValue placeholder="Choisir une région" />
+                         </SelectTrigger>
+                         <SelectContent className="bg-white z-50">
+                           {regionOptions.map((region) => (
+                             <SelectItem key={region} value={region}>
+                               {region}
+                             </SelectItem>
+                           ))}
+                         </SelectContent>
+                       </Select>
+                     </div>
+                   </div>
+                   
+                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                     <div>
+                       <label className="block text-sm font-medium mb-2">Nombre d'invités</label>
+                       <Input
+                         type="number"
+                         name="nombre_invites"
+                         value={formData.nombre_invites}
+                         onChange={handleInputChange}
+                         placeholder="120"
+                       />
+                     </div>
+                     <div>
+                       <label className="block text-sm font-medium mb-2">Budget approximatif</label>
+                       <Select onValueChange={(value) => handleSelectChange('budget_approximatif', value)}>
+                         <SelectTrigger>
+                           <SelectValue placeholder="Sélectionner" />
+                         </SelectTrigger>
+                         <SelectContent className="bg-white z-50">
+                           {budgetOptions.map((budget) => (
+                             <SelectItem key={budget} value={budget}>
+                               {budget}
+                             </SelectItem>
+                           ))}
+                         </SelectContent>
+                       </Select>
+                     </div>
+                   </div>
                 </CardContent>
               </Card>
 

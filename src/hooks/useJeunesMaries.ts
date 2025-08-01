@@ -24,7 +24,8 @@ export const useJeunesMaries = () => {
       id: 'fake-1',
       nom_complet: 'Sarah & Thomas Martin',
       email: 'sarah.thomas@example.com',
-      lieu_mariage: 'Château de Versailles, Île-de-France',
+      lieu_mariage: 'Château de Versailles',
+      region: 'Île-de-France',
       date_mariage: '2023-06-15',
       nombre_invites: 120,
       budget_approximatif: '25000-35000',
@@ -46,7 +47,8 @@ export const useJeunesMaries = () => {
       id: 'fake-2',
       nom_complet: 'Emma & Lucas Dupont',
       email: 'emma.lucas@example.com',
-      lieu_mariage: 'Domaine de la Bergerie, Provence-Alpes-Côte d\'Azur',
+      lieu_mariage: 'Domaine de la Bergerie',
+      region: 'Provence-Alpes-Côte d\'Azur',
       date_mariage: '2023-09-22',
       nombre_invites: 80,
       budget_approximatif: '15000-25000',
@@ -68,7 +70,8 @@ export const useJeunesMaries = () => {
       id: 'fake-3',
       nom_complet: 'Marie & Antoine Leroy',
       email: 'marie.antoine@example.com',
-      lieu_mariage: 'Château de Chambord, Centre-Val de Loire',
+      lieu_mariage: 'Château de Chambord',
+      region: 'Centre-Val de Loire',
       date_mariage: '2023-05-27',
       nombre_invites: 150,
       budget_approximatif: '35000-50000',
@@ -154,6 +157,7 @@ export const useJeunesMaries = () => {
 
       // Filtre par région  
       const regionMatch = filters.region === 'toutes' || 
+        jeuneMarie.region?.toLowerCase().includes(filters.region.toLowerCase()) ||
         jeuneMarie.lieu_mariage?.toLowerCase().includes(filters.region.toLowerCase());
 
       // Filtre par budget

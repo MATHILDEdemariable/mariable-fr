@@ -37,7 +37,7 @@ export const JeuneMariesListItem: React.FC<JeuneMariesListItemProps> = ({ jeuneM
     );
   };
 
-  const isFakeTestimonial = jeuneMarie.id?.startsWith('fake-');
+  
 
   return (
     <div className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-all duration-200 hover:border-wedding-olive/30">
@@ -50,11 +50,11 @@ export const JeuneMariesListItem: React.FC<JeuneMariesListItemProps> = ({ jeuneM
               <h3 className="font-serif text-lg font-semibold text-wedding-olive">
                 {jeuneMarie.nom_complet}
               </h3>
-              <div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
-                <div className="flex items-center gap-1">
-                  <MapPin className="h-4 w-4" />
-                  <span>{jeuneMarie.lieu_mariage}</span>
-                </div>
+               <div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
+                 <div className="flex items-center gap-1">
+                   <MapPin className="h-4 w-4" />
+                   <span>{jeuneMarie.lieu_mariage} • {jeuneMarie.region}</span>
+                 </div>
                 <div className="flex items-center gap-1">
                   <Calendar className="h-4 w-4" />
                   <span>{formatDate(jeuneMarie.date_mariage)}</span>
@@ -74,18 +74,13 @@ export const JeuneMariesListItem: React.FC<JeuneMariesListItemProps> = ({ jeuneM
         <div className="flex items-center gap-4">
           {jeuneMarie.note_experience && renderStars(jeuneMarie.note_experience)}
           
-          <div className="flex gap-2">
-            {jeuneMarie.budget_approximatif && (
-              <Badge variant="outline" className="text-xs">
-                {jeuneMarie.budget_approximatif}
-              </Badge>
-            )}
-            {isFakeTestimonial && (
-              <Badge variant="secondary" className="text-xs bg-blue-100 text-blue-800 border-blue-200">
-                Exemple
-              </Badge>
-            )}
-          </div>
+           <div className="flex gap-2">
+             {jeuneMarie.budget_approximatif && (
+               <Badge variant="outline" className="text-xs">
+                 {jeuneMarie.budget_approximatif}
+               </Badge>
+             )}
+           </div>
         </div>
 
         {/* Right section - Action button */}

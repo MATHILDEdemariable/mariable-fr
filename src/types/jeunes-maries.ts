@@ -4,6 +4,7 @@ export interface JeuneMarie {
   email: string;
   telephone?: string;
   lieu_mariage: string;
+  region?: string;
   date_mariage: string;
   nombre_invites?: number;
   budget_approximatif?: string;

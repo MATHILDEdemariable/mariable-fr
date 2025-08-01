@@ -23,15 +23,19 @@ const budgetOptions = [
 const regionOptions = [
   { value: 'toutes', label: 'Toutes régions' },
   { value: 'Île-de-France', label: 'Île-de-France' },
-  { value: 'Provence-Alpes-Côte d\'Azur', label: 'Provence-Alpes-Côte d\'Azur' },
   { value: 'Auvergne-Rhône-Alpes', label: 'Auvergne-Rhône-Alpes' },
-  { value: 'Nouvelle-Aquitaine', label: 'Nouvelle-Aquitaine' },
-  { value: 'Occitanie', label: 'Occitanie' },
+  { value: 'Bourgogne-Franche-Comté', label: 'Bourgogne-Franche-Comté' },
+  { value: 'Bretagne', label: 'Bretagne' },
+  { value: 'Centre-Val de Loire', label: 'Centre-Val de Loire' },
+  { value: 'Corse', label: 'Corse' },
   { value: 'Grand Est', label: 'Grand Est' },
   { value: 'Hauts-de-France', label: 'Hauts-de-France' },
+  { value: 'Normandie', label: 'Normandie' },
+  { value: 'Nouvelle-Aquitaine', label: 'Nouvelle-Aquitaine' },
+  { value: 'Occitanie', label: 'Occitanie' },
   { value: 'Pays de la Loire', label: 'Pays de la Loire' },
-  { value: 'Bretagne', label: 'Bretagne' },
-  { value: 'Normandie', label: 'Normandie' }
+  { value: 'Provence-Alpes-Côte d\'Azur', label: 'Provence-Alpes-Côte d\'Azur' },
+  { value: 'Hors France', label: 'Hors France' }
 ];
 
 const noteOptions = [
