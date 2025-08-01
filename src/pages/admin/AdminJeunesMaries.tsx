@@ -37,7 +37,6 @@ import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { toast } from 'sonner';
 import { JeuneMarie } from '@/types/jeunes-maries';
-import { fakeTestimonials } from '@/data/fakeTestimonials';
 
 const AdminJeunesMaries = () => {
   const navigate = useNavigate();
@@ -95,18 +94,7 @@ const AdminJeunesMaries = () => {
       
       console.log(`✅ ${data.length} témoignages réels récupérés avec succès`);
       
-      let allTestimonials = data as JeuneMarie[];
-      
-      // Toujours ajouter les témoignages d'exemple
-      const fakeData = fakeTestimonials.map(fake => ({
-        ...fake,
-        id: `fake-${fake.slug}`,
-        created_at: fake.date_soumission,
-        updated_at: fake.date_soumission
-      })) as JeuneMarie[];
-      
-      allTestimonials = [...allTestimonials, ...fakeData];
-      console.log(`✅ ${fakeData.length} témoignages d'exemple ajoutés`);
+      const allTestimonials = data as JeuneMarie[];
       
       setJeunesMaries(allTestimonials);
       setFilteredJeunesMaries(allTestimonials);
@@ -330,13 +318,13 @@ const AdminJeunesMaries = () => {
               Information
             </CardTitle>
             <CardDescription>
-              Les témoignages d'exemple sont toujours affichés pour enrichir le contenu
+              Gestion des témoignages de jeunes mariés
             </CardDescription>
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground">
-              {fakeTestimonials.length} témoignages d'exemple sont automatiquement inclus dans l'affichage.
-              Vous pouvez les supprimer manuellement du code si nécessaire.
+              Les témoignages d'exemple sont maintenant intégrés directement dans le système. 
+              Seuls les vrais témoignages soumis par les utilisateurs apparaissent ici pour modération.
             </p>
           </CardContent>
         </Card>

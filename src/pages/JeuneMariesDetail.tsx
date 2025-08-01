@@ -129,16 +129,6 @@ const JeuneMariesDetailPage: React.FC = () => {
           <div className="max-w-4xl mx-auto space-y-8">
             {/* Hero Section */}
             <div className="text-center space-y-4">
-              {jeuneMarie.photo_principale_url && (
-                <div className="aspect-video max-w-2xl mx-auto overflow-hidden rounded-lg shadow-lg">
-                  <img
-                    src={jeuneMarie.photo_principale_url}
-                    alt={`Mariage de ${jeuneMarie.nom_complet}`}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              )}
-              
               <div className="space-y-2">
                 <h1 className="text-3xl md:text-4xl font-serif text-wedding-olive">
                   {jeuneMarie.nom_complet}
@@ -313,6 +303,24 @@ const JeuneMariesDetailPage: React.FC = () => {
                 </div>
               </CardContent>
             </Card>
+
+            {/* Photo de mariage */}
+            {jeuneMarie.photo_principale_url && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-wedding-olive">Photo de notre mariage</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="aspect-video max-w-2xl mx-auto overflow-hidden rounded-lg shadow-lg">
+                    <img
+                      src={jeuneMarie.photo_principale_url}
+                      alt={`Mariage de ${jeuneMarie.nom_complet}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+            )}
 
             {/* CTA */}
             <div className="text-center">

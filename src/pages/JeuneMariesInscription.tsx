@@ -346,27 +346,27 @@ const JeuneMariesInscriptionPage: React.FC = () => {
                 </CardContent>
               </Card>
 
-              {/* Photo */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-wedding-olive">Photo principale</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div>
-                    <label className="block text-sm font-medium mb-2">
-                      Photo de votre mariage
-                    </label>
-                    <ImageUploader
-                      bucketName="jeunes-maries-photos"
-                      currentImageUrl={formData.photo_principale_url}
-                      onImageUpload={(url) => setFormData(prev => ({ ...prev, photo_principale_url: url }))}
-                    />
-                     <p className="text-sm text-gray-500 mt-1">
-                       Uploadez votre plus belle photo de mariage (format carré recommandé pour les réseaux sociaux)
-                     </p>
-                  </div>
-                </CardContent>
-              </Card>
+               {/* Photo */}
+               <Card>
+                 <CardHeader>
+                   <CardTitle className="text-wedding-olive">Photo de votre mariage (optionnel)</CardTitle>
+                 </CardHeader>
+                 <CardContent>
+                   <div>
+                     <label className="block text-sm font-medium mb-2">
+                       Photo de votre mariage
+                     </label>
+                     <ImageUploader
+                       bucketName="jeunes-maries-photos"
+                       currentImageUrl={formData.photo_principale_url}
+                       onImageUpload={(url) => setFormData(prev => ({ ...prev, photo_principale_url: url }))}
+                     />
+                      <p className="text-sm text-gray-500 mt-1">
+                        Si vous ajoutez une photo, elle sera affichée en bas de votre fiche détail pour illustrer votre témoignage.
+                      </p>
+                   </div>
+                 </CardContent>
+               </Card>
 
               {/* Soumission */}
               {/* Consentement */}

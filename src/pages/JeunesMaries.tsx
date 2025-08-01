@@ -1,7 +1,7 @@
 import React from 'react';
 import SEO from '@/components/SEO';
 import { useJeunesMaries } from '@/hooks/useJeunesMaries';
-import { JeuneMariesCard } from '@/components/jeunes-maries/JeuneMariesCard';
+import { JeuneMariesListItem } from '@/components/jeunes-maries/JeuneMariesListItem';
 import { JeuneMariesFiltersComponent } from '@/components/jeunes-maries/JeuneMariesFilters';
 import { Button } from '@/components/ui/button';
 import { UserPlus, Heart, Home } from 'lucide-react';
@@ -80,12 +80,21 @@ const JeunesMariesPage: React.FC = () => {
             </p>
           </div>
 
-          {/* Grid */}
-          {loading ? <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[...Array(6)].map((_, i) => <div key={i} className="bg-white rounded-lg shadow-sm h-96 animate-pulse" />)}
-            </div> : jeunesMaries.length > 0 ? <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {jeunesMaries.map(jeuneMarie => <JeuneMariesCard key={jeuneMarie.id} jeuneMarie={jeuneMarie} />)}
-            </div> : <div className="text-center py-12">
+          {/* Listing */}
+          {loading ? (
+            <div className="space-y-4">
+              {[...Array(6)].map((_, i) => (
+                <div key={i} className="bg-white rounded-lg h-24 animate-pulse border" />
+              ))}
+            </div>
+          ) : jeunesMaries.length > 0 ? (
+            <div className="space-y-4">
+              {jeunesMaries.map(jeuneMarie => (
+                <JeuneMariesListItem key={jeuneMarie.id} jeuneMarie={jeuneMarie} />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
               <Heart className="h-16 w-16 text-gray-400 mx-auto mb-4" />
               <h3 className="text-xl font-semibold text-gray-600 mb-2">
                 Aucun témoignage trouvé
@@ -98,7 +107,8 @@ const JeunesMariesPage: React.FC = () => {
                   Partager votre expérience
                 </Link>
               </Button>
-            </div>}
+            </div>
+          )}
         </div>
       </div>
     </>;
