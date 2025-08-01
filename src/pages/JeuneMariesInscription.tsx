@@ -95,6 +95,15 @@ const JeuneMariesInscriptionPage: React.FC = () => {
       return;
     }
 
+    if (!formData.accept_email_contact) {
+      toast({
+        title: "Consentement requis",
+        description: "Vous devez accepter d'être contacté par email pour pouvoir soumettre votre témoignage",
+        variant: "destructive"
+      });
+      return;
+    }
+
     setLoading(true);
     
     const validPrestataires = prestataires.filter(p => p.nom && p.categorie);
@@ -143,6 +152,17 @@ const JeuneMariesInscriptionPage: React.FC = () => {
         {/* Form */}
         <div className="container mx-auto px-4 py-12">
           <div className="max-w-4xl mx-auto">
+            {/* Navigation Button */}
+            <div className="mb-6">
+              <Button
+                onClick={() => navigate('/jeunes-maries')}
+                variant="outline"
+                className="flex items-center gap-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Retour à la liste
+              </Button>
+            </div>
             <form onSubmit={handleSubmit} className="space-y-8">
               {/* Informations de base */}
               <Card>
@@ -410,19 +430,22 @@ const JeuneMariesInscriptionPage: React.FC = () => {
               {/* Consentement */}
               <Card>
                 <CardContent className="pt-6">
-                  <div className="flex items-start space-x-3">
-                    <input
-                      type="checkbox"
-                      id="accept_email_contact"
-                      checked={formData.accept_email_contact}
-                      onChange={(e) => setFormData({ ...formData, accept_email_contact: e.target.checked })}
-                      className="mt-1 h-4 w-4 text-wedding-olive focus:ring-wedding-olive"
-                    />
-                    <label htmlFor="accept_email_contact" className="text-sm text-gray-700">
-                      J'accepte d'être contacté par email par d'autres mariés et je m'engage à y répondre. 
-                      Cela permettra aux futurs mariés de vous poser des questions sur votre expérience.
-                    </label>
-                  </div>
+                   <div className="flex items-start space-x-3">
+                     <input
+                       type="checkbox"
+                       id="accept_email_contact"
+                       checked={formData.accept_email_contact}
+                       onChange={(e) => setFormData({ ...formData, accept_email_contact: e.target.checked })}
+                       className="mt-1 h-4 w-4 text-wedding-olive focus:ring-wedding-olive"
+                       required
+                     />
+                     <label htmlFor="accept_email_contact" className="text-sm text-gray-700">
+                       <span className="text-red-500">* </span>
+                       J'accepte d'être contacté par email par d'autres mariés et je m'engage à y répondre. 
+                       Cela permettra aux futurs mariés de vous poser des questions sur votre expérience.
+                       <span className="text-red-500 font-medium"> (Obligatoire)</span>
+                     </label>
+                   </div>
                 </CardContent>
               </Card>
 

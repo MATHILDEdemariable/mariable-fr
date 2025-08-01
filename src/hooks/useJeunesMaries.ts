@@ -106,8 +106,8 @@ export const useJeunesMaries = () => {
 
       if (error) {
         console.error('❌ Erreur lors de la récupération des témoignages:', error);
-        // Même en cas d'erreur, on affiche les témoignages fictifs
-        setJeunesMaries(staticFakeTestimonials);
+        // En cas d'erreur, afficher une liste vide
+        setJeunesMaries([]);
         setLoading(false);
         return;
       }
@@ -133,15 +133,14 @@ export const useJeunesMaries = () => {
         telephone: testimonial.telephone ?? undefined
       }));
 
-      // Combiner tous les témoignages (réels + fictifs)
-      const allTestimonials: JeuneMarie[] = [...normalizedRealTestimonials, ...staticFakeTestimonials];
-      console.log('✅ Total témoignages disponibles:', allTestimonials.length);
+      // Utiliser uniquement les vrais témoignages pour le listing public
+      console.log('✅ Total témoignages réels disponibles:', normalizedRealTestimonials.length);
 
-      setJeunesMaries(allTestimonials);
+      setJeunesMaries(normalizedRealTestimonials);
     } catch (error) {
       console.error('❌ Erreur lors de la récupération des témoignages:', error);
-      // En cas d'erreur, afficher au moins les témoignages fictifs
-      setJeunesMaries(staticFakeTestimonials);
+      // En cas d'erreur, afficher une liste vide
+      setJeunesMaries([]);
     } finally {
       setLoading(false);
     }

@@ -37,6 +37,7 @@ import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { toast } from 'sonner';
 import { JeuneMarie } from '@/types/jeunes-maries';
+import { JeuneMariesFormViewer } from '@/components/admin/JeuneMariesFormViewer';
 
 const AdminJeunesMaries = () => {
   const navigate = useNavigate();
@@ -47,6 +48,8 @@ const AdminJeunesMaries = () => {
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedJeuneMarie, setSelectedJeuneMarie] = useState<JeuneMarie | null>(null);
+  const [isFormViewerOpen, setIsFormViewerOpen] = useState(false);
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
       navigate('/admin/dashboard');
@@ -185,6 +188,16 @@ const AdminJeunesMaries = () => {
       hour: '2-digit',
       minute: '2-digit'
     });
+  };
+
+  const openFormViewer = (jeuneMarie: JeuneMarie) => {
+    setSelectedJeuneMarie(jeuneMarie);
+    setIsFormViewerOpen(true);
+  };
+
+  const closeFormViewer = () => {
+    setIsFormViewerOpen(false);
+    setSelectedJeuneMarie(null);
   };
 
   const getRecentSubmissions = () => {
@@ -465,13 +478,25 @@ const AdminJeunesMaries = () => {
                                  </Button>
                                </>
                              )}
-                             <Button
-                               size="sm"
-                               variant="outline"
-                               onClick={() => navigate(`/jeunes-maries/${jm.slug}`)}
-                             >
-                               <Eye className="h-3 w-3" />
-                             </Button>
+                              {jm.status_moderation === 'en_attente' ? (
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => openFormViewer(jm)}
+                                  title="Voir le formulaire"
+                                >
+                                  <Eye className="h-3 w-3" />
+                                </Button>
+                              ) : (
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => navigate(`/jeunes-maries/${jm.slug}`)}
+                                  title="Voir la fiche publique"
+                                >
+                                  <Eye className="h-3 w-3" />
+                                </Button>
+                              )}
                              {!jm.id.startsWith('fake-') && (
                                <Button
                                  size="sm"
@@ -492,6 +517,21 @@ const AdminJeunesMaries = () => {
             )}
           </CardContent>
         </Card>
+
+        {/* Form Viewer Modal */}
+        <JeuneMariesFormViewer
+          isOpen={isFormViewerOpen}
+          onClose={closeFormViewer}
+          jeuneMarie={selectedJeuneMarie}
+          onApprove={(id) => {
+            approveJeuneMarie(id);
+            closeFormViewer();
+          }}
+          onReject={(id) => {
+            rejectJeuneMarie(id);
+            closeFormViewer();
+          }}
+        />
       </div>
     </AdminLayout>
   );

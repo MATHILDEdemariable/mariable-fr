@@ -125,3 +125,19 @@
   50% { border-color: transparent }
 }
 
+/* Form field cursor styles */
+.cursor-text input, 
+.cursor-text textarea, 
+.cursor-text select,
+input,
+textarea,
+select {
+  cursor: text !important;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  cursor: text !important;
+}
+
