@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Euro, ExternalLink, Heart } from "lucide-react";
+import { MapPin, Euro, ExternalLink, Plus } from "lucide-react";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Database } from "@/integrations/supabase/types";
 import { useNavigate } from "react-router-dom";
@@ -25,9 +25,9 @@ const VendorCard: React.FC<VendorCardProps> = ({
   onWishlistAdd,
 }) => {
   const navigate = useNavigate();
-  const [isAddingToWishlist, setIsAddingToWishlist] = useState(false);
+  const [isAddingToTracking, setIsAddingToTracking] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
-  const [isInWishlist, setIsInWishlist] = useState(false);
+  const [isInTracking, setIsInTracking] = useState(false);
   const [isPartner, setIsPartner] = useState(vendor.partner);
 
   // Get the main image (first photo) with safety checks
@@ -73,27 +73,27 @@ const VendorCard: React.FC<VendorCardProps> = ({
     }
   };
 
-  // Check if vendor is in wishlist on component mount
+  // Check if vendor is in tracking on component mount
   React.useEffect(() => {
-    const checkWishlistStatus = async () => {
+    const checkTrackingStatus = async () => {
       const {
         data: { user },
       } = await supabase.auth.getUser();
 
       if (!user) return;
 
-      // Fixed: Use correct query to check if vendor is in wishlist
+      // Check if vendor is in tracking
       const { data } = await supabase
-        .from("vendor_wishlist")
+        .from("vendors_tracking_preprod")
         .select("id")
         .eq("user_id", user.id)
-        .eq("vendor_id", vendor.id)
+        .eq("vendor_name", vendor.nom)
         .maybeSingle();
 
-      setIsInWishlist(!!data);
+      setIsInTracking(!!data);
     };
 
-    checkWishlistStatus();
+    checkTrackingStatus();
 
     // const checkIsPartner = async () => {
     //   const { data } = await supabase
@@ -109,7 +109,7 @@ const VendorCard: React.FC<VendorCardProps> = ({
     // checkIsPartner();
   }, [vendor.id]);
 
-  const handleWishlistClick = async (e: React.MouseEvent) => {
+  const handleTrackingClick = async (e: React.MouseEvent) => {
     e.stopPropagation();
 
     // Check if user is logged in
@@ -123,59 +123,61 @@ const VendorCard: React.FC<VendorCardProps> = ({
     }
 
     try {
-      setIsAddingToWishlist(true);
+      setIsAddingToTracking(true);
 
-      if (isInWishlist) {
-        // Remove from wishlist - use correct table name
+      if (isInTracking) {
+        // Remove from tracking
         await supabase
-          .from("vendor_wishlist")
+          .from("vendors_tracking_preprod")
           .delete()
           .eq("user_id", user.id)
-          .eq("vendor_id", vendor.id);
+          .eq("vendor_name", vendor.nom);
 
         toast({
-          title: "Retiré de votre wishlist",
-          description: `${vendor.nom} a été retiré de votre wishlist`,
+          title: "Retiré du suivi",
+          description: `${vendor.nom} a été retiré de votre suivi`,
         });
 
-        setIsInWishlist(false);
+        setIsInTracking(false);
       } else {
-        // Add to wishlist - with correct table and fields
-        await supabase.from("vendor_wishlist").insert({
+        // Add to tracking with default status "à contacter"
+        await supabase.from("vendors_tracking_preprod").insert({
           user_id: user.id,
-          vendor_id: vendor.id,
           vendor_name: vendor.nom,
-          vendor_category: vendor.categorie,
+          category: vendor.categorie || "Prestataire",
+          status: "à contacter",
+          location: vendor.ville || vendor.region,
+          source: "mariable",
         });
 
         toast({
-          title: "👍 Ajouté à votre wishlist",
-          description: `${vendor.nom} a bien été ajouté à votre wishlist`,
+          title: "👍 Ajouté au suivi",
+          description: `${vendor.nom} a bien été ajouté à votre suivi`,
         });
 
-        setIsInWishlist(true);
+        setIsInTracking(true);
 
         if (onWishlistAdd) {
           onWishlistAdd(vendor);
         }
       }
     } catch (error) {
-      console.error("Error updating wishlist:", error);
+      console.error("Error updating tracking:", error);
       toast({
         title: "Erreur",
         description: "Une erreur est survenue. Veuillez réessayer.",
         variant: "destructive",
       });
     } finally {
-      setIsAddingToWishlist(false);
+      setIsAddingToTracking(false);
     }
   };
 
   const handleAuthSuccess = () => {
     setShowAuthModal(false);
-    // After successful auth, try to add to wishlist again
+    // After successful auth, try to add to tracking again
     setTimeout(() => {
-      handleWishlistClick({
+      handleTrackingClick({
         stopPropagation: () => {},
       } as React.MouseEvent);
     }, 300);
@@ -198,20 +200,20 @@ const VendorCard: React.FC<VendorCardProps> = ({
             size="sm"
             variant="secondary"
             className={`absolute top-3 right-3 rounded-full p-2 ${
-              isInWishlist
+              isInTracking
                 ? "bg-wedding-olive text-white hover:bg-wedding-olive/90"
                 : "bg-white/80 hover:bg-white text-wedding-olive"
             }`}
-            onClick={handleWishlistClick}
-            disabled={isAddingToWishlist}
+            onClick={handleTrackingClick}
+            disabled={isAddingToTracking}
           >
-            <Heart
-              className={`h-5 w-5 ${isInWishlist ? "fill-current" : ""}`}
+            <Plus
+              className={`h-5 w-5 ${isInTracking ? "fill-current" : ""}`}
             />
             <span className="sr-only">
-              {isInWishlist
-                ? "Retirer de ma wishlist"
-                : "Ajouter à ma wishlist"}
+              {isInTracking
+                ? "Retirer du suivi"
+                : "Ajouter au suivi"}
             </span>
           </Button>
           {isPartner && (

@@ -288,9 +288,7 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
               <Button 
                 variant="outline"
                 className="bg-wedding-olive hover:bg-wedding-olive/90 text-white"
-                onClick={()=> (
-                  window.open('/selection','_self')
-                )}
+                onClick={() => window.location.href = '/selection'}
               >
                 <Plus className="h-4 w-4 mr-2" /> Sélection Mariable
               </Button>

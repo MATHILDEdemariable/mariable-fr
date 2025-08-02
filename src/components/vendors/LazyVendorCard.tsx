@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Euro, ExternalLink, Heart } from "lucide-react";
+import { MapPin, Euro, ExternalLink, Plus } from "lucide-react";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Database } from "@/integrations/supabase/types";
 import { useNavigate } from "react-router-dom";
@@ -26,9 +26,9 @@ const LazyVendorCard: React.FC<LazyVendorCardProps> = ({
 }) => {
   const navigate = useNavigate();
   const [isVisible, setIsVisible] = useState(false);
-  const [isAddingToWishlist, setIsAddingToWishlist] = useState(false);
+  const [isAddingToTracking, setIsAddingToTracking] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
-  const [isInWishlist, setIsInWishlist] = useState(false);
+  const [isInTracking, setIsInTracking] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
 
   // Intersection Observer pour détecter la visibilité
@@ -53,30 +53,30 @@ const LazyVendorCard: React.FC<LazyVendorCardProps> = ({
   // Charger les photos seulement quand la carte devient visible
   const { data: photos, isLoading: photosLoading } = useVendorPhotos(vendor.id, isVisible);
 
-  // Vérifier si l'utilisateur est connecté et si le prestataire est dans sa wishlist
+  // Vérifier si l'utilisateur est connecté et si le prestataire est dans son suivi
   useEffect(() => {
-    const checkWishlistStatus = async () => {
+    const checkTrackingStatus = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         const { data, error } = await supabase
-          .from('vendor_wishlist')
+          .from('vendors_tracking_preprod')
           .select('id')
           .eq('user_id', user.id)
-          .eq('vendor_id', vendor.id)
+          .eq('vendor_name', vendor.nom)
           .single();
         
         if (!error && data) {
-          setIsInWishlist(true);
+          setIsInTracking(true);
         }
       }
     };
 
     if (isVisible) {
-      checkWishlistStatus();
+      checkTrackingStatus();
     }
   }, [vendor.id, isVisible]);
 
-  const handleWishlistClick = async (e: React.MouseEvent) => {
+  const handleTrackingClick = async (e: React.MouseEvent) => {
     e.stopPropagation();
     
     const { data: { user } } = await supabase.auth.getUser();
@@ -85,43 +85,45 @@ const LazyVendorCard: React.FC<LazyVendorCardProps> = ({
       return;
     }
 
-    setIsAddingToWishlist(true);
+    setIsAddingToTracking(true);
 
     try {
-      if (isInWishlist) {
+      if (isInTracking) {
         const { error } = await supabase
-          .from('vendor_wishlist')
+          .from('vendors_tracking_preprod')
           .delete()
           .eq('user_id', user.id)
-          .eq('vendor_id', vendor.id);
+          .eq('vendor_name', vendor.nom);
 
         if (error) throw error;
-        setIsInWishlist(false);
-        toast({ title: "Retiré de vos favoris" });
+        setIsInTracking(false);
+        toast({ title: "Retiré du suivi" });
       } else {
         const { error } = await supabase
-          .from('vendor_wishlist')
+          .from('vendors_tracking_preprod')
           .insert({
             user_id: user.id,
-            vendor_id: vendor.id,
             vendor_name: vendor.nom,
-            vendor_category: vendor.categorie,
+            category: vendor.categorie || "Prestataire",
+            status: "à contacter",
+            location: vendor.ville || vendor.region,
+            source: "mariable",
           });
 
         if (error) throw error;
-        setIsInWishlist(true);
-        toast({ title: "Ajouté à vos favoris" });
+        setIsInTracking(true);
+        toast({ title: "Ajouté au suivi" });
         onWishlistAdd?.(vendor);
       }
     } catch (error) {
-      console.error('Erreur wishlist:', error);
+      console.error('Erreur suivi:', error);
       toast({
         title: "Erreur",
-        description: "Impossible de modifier vos favoris",
+        description: "Impossible de modifier votre suivi",
         variant: "destructive",
       });
     } finally {
-      setIsAddingToWishlist(false);
+      setIsAddingToTracking(false);
     }
   };
 
@@ -195,12 +197,12 @@ const LazyVendorCard: React.FC<LazyVendorCardProps> = ({
             variant="ghost"
             size="icon"
             className={`absolute top-3 right-3 bg-white/90 hover:bg-white ${
-              isInWishlist ? 'text-red-500' : 'text-muted-foreground'
+              isInTracking ? 'text-wedding-olive' : 'text-muted-foreground'
             }`}
-            onClick={handleWishlistClick}
-            disabled={isAddingToWishlist}
+            onClick={handleTrackingClick}
+            disabled={isAddingToTracking}
           >
-            <Heart className={`h-4 w-4 ${isInWishlist ? 'fill-current' : ''}`} />
+            <Plus className={`h-4 w-4 ${isInTracking ? 'fill-current' : ''}`} />
           </Button>
         </div>
 

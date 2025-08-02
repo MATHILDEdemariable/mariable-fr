@@ -84,11 +84,6 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
       icon: <MessageSquare className="h-4 w-4" />,
       path: '/dashboard/message-history',
     },
-    {
-      label: 'Wishlist',
-      icon: <Heart className="h-4 w-4" />,
-      path: '/dashboard/wishlist',
-    },
   ];
 
   // Menu déroulant Jour M
