@@ -86,7 +86,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
     },
   ];
 
-  // Menu déroulant Jour M
+  // Menu déroulant Jour-J
   const jourMItems = [
     {
       label: 'Jour-J',
@@ -99,7 +99,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
       path: '/coordinateurs-mariage',
     },
     {
-      label: 'Conseils Jour M',
+      label: 'Conseils Jour-J',
       icon: <Lightbulb className="h-4 w-4" />,
       path: '/dashboard/coordination',
     },
@@ -169,7 +169,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
     return prestatairesItems.some(item => isActive(item.path));
   };
 
-  // Vérifier si le menu Jour M doit être actif
+  // Vérifier si le menu Jour-J doit être actif
   const isJourMActive = () => {
     return jourMItems.some(item => isActive(item.path));
   };
@@ -383,7 +383,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
         </DropdownMenu>
 
 
-        {/* Menu déroulant Jour M */}
+        {/* Menu déroulant Jour-J */}
         <DropdownMenu>
           <DropdownMenuTrigger 
             className={cn(
