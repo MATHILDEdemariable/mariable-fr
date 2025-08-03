@@ -11,17 +11,18 @@ const PlanningPage: React.FC = () => {
     <div className="w-full max-w-4xl mx-auto p-6">
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl font-serif">Planning de Mariage Personnalisé</CardTitle>
+          <CardTitle className="text-2xl font-serif">Quiz Mariage</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="text-muted-foreground">
-            Créez un planning de mariage adapté à vos besoins et à votre niveau d'avancement.
+            Commencez par répondre aux premières questions essentielles pour l'organisation de votre mariage. 
+            Ce quiz vous aidera à identifier vos priorités et à structurer votre approche.
           </p>
           <Button 
             onClick={() => navigate('/planning-personnalise')}
             className="bg-wedding-olive hover:bg-wedding-olive/90"
           >
-            Commencer mon planning personnalisé
+            Commencer le quiz mariage
           </Button>
         </CardContent>
       </Card>

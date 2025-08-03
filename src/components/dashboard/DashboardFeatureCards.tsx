@@ -18,8 +18,8 @@ const DashboardFeatureCards: React.FC = () => {
 
   const features = [
     {
-      title: 'Planning Personnalisé',
-      description: 'Créez votre planning sur mesure',
+      title: 'Quiz Mariage',
+      description: 'Les premières questions à se poser',
       icon: <CheckSquare className="h-6 w-6" />,
       path: '/dashboard/planning',
       bgColor: 'bg-wedding-olive/10',
@@ -51,15 +51,6 @@ const DashboardFeatureCards: React.FC = () => {
       path: '/dashboard/coordination',
       bgColor: 'bg-wedding-cream/30',
       hoverColor: 'hover:bg-wedding-cream/50',
-      iconColor: 'text-wedding-olive'
-    },
-    {
-      title: 'Ma Wishlist',
-      description: 'Organisez vos coups de cœur',
-      icon: <Heart className="h-6 w-6" />,
-      path: '/dashboard/wishlist',
-      bgColor: 'bg-white',
-      hoverColor: 'hover:bg-wedding-olive/10',
       iconColor: 'text-wedding-olive'
     },
     {

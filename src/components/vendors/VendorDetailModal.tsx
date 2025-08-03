@@ -9,11 +9,12 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Database } from '@/integrations/supabase/types';
-import { X, MapPin, Euro, Mail, Phone, Globe, Download, ChevronLeft, ChevronRight } from 'lucide-react';
+import { X, MapPin, Euro, Mail, Phone, Globe, Download, ChevronLeft, ChevronRight, Plus } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/components/ui/use-toast';
 
 type Prestataire = Database['public']['Tables']['prestataires']['Row'];
 type PrestatairePhoto = Database['public']['Tables']['prestataires_photos']['Row'];
@@ -29,6 +30,7 @@ const VendorDetailModal: React.FC<VendorDetailModalProps> = ({ isOpen, onClose, 
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
   const [photos, setPhotos] = useState<PrestatairePhoto[]>([]);
   const [brochures, setBrochures] = useState<PrestataireBrochure[]>([]);
+  const { toast } = useToast();
 
   React.useEffect(() => {
     const fetchVendorMedia = async () => {
@@ -65,6 +67,65 @@ const VendorDetailModal: React.FC<VendorDetailModalProps> = ({ isOpen, onClose, 
   
   const downloadBrochure = (url: string) => {
     window.open(url, '_blank');
+  };
+
+  const handleAddToTracking = async () => {
+    if (!vendor) return;
+
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        toast({
+          title: "Connexion requise",
+          description: "Veuillez vous connecter pour ajouter ce prestataire à votre suivi.",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Vérifier si le prestataire est déjà dans le suivi
+      const { data: existingTracking } = await supabase
+        .from('vendors_tracking_preprod')
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('key_prestataire', vendor.id.toString())
+        .single();
+
+      if (existingTracking) {
+        toast({
+          title: "Déjà ajouté",
+          description: "Ce prestataire est déjà dans votre suivi.",
+        });
+        return;
+      }
+
+      // Ajouter au suivi avec le statut "à contacter"
+      const { error } = await supabase
+        .from('vendors_tracking_preprod')
+        .insert({
+          user_id: user.id,
+          key_prestataire: vendor.id.toString(),
+          vendor_name: vendor.nom || '',
+          category: vendor.categorie || '',
+          status: 'à contacter',
+          notes: ''
+        });
+
+      if (error) throw error;
+
+      toast({
+        title: "✅ Ajouté au suivi",
+        description: `${vendor.nom} a été ajouté à votre suivi des prestataires.`,
+      });
+    } catch (error) {
+      console.error('❌ Error adding to tracking:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible d'ajouter ce prestataire à votre suivi.",
+        variant: "destructive"
+      });
+    }
   };
 
   const parsedStyles = vendor.styles ? JSON.parse(String(vendor.styles)) : [];
@@ -229,6 +290,16 @@ const VendorDetailModal: React.FC<VendorDetailModalProps> = ({ isOpen, onClose, 
             {(!vendor.email && !vendor.telephone && !vendor.site_web) && (
               <p className="text-sm text-muted-foreground">Aucune information de contact disponible</p>
             )}
+            
+            <div className="pt-4 border-t">
+              <Button 
+                onClick={handleAddToTracking}
+                className="w-full bg-wedding-olive hover:bg-wedding-olive/90 flex items-center justify-center gap-2"
+              >
+                <Plus className="h-4 w-4" />
+                Ajouter au suivi
+              </Button>
+            </div>
           </TabsContent>
         </Tabs>
       </DialogContent>

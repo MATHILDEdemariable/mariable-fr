@@ -85,16 +85,17 @@ const PlanningPersonnalise: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Planning personnalisé | Mariable</title>
-        <meta name="description" content="Créez un planning de mariage personnalisé selon vos besoins - Mariable" />
+        <title>Quiz Mariage | Mariable</title>
+        <meta name="description" content="Répondez aux premières questions essentielles pour bien organiser votre mariage - Mariable" />
       </Helmet>
 
       <Header />
       
       <main className="container mx-auto px-4 py-8 mb-16">
-        <h1 className="text-3xl font-serif text-center mb-4">Planning de Mariage Personnalisé</h1>
+        <h1 className="text-3xl font-serif text-center mb-4">Quiz Mariage</h1>
         <p className="text-center text-muted-foreground mb-8">
-          Répondez à quelques questions pour recevoir un planning adapté à votre niveau d'avancement
+          Commencez par les premières questions essentielles pour bien organiser votre mariage. 
+          Ce quiz vous aidera à identifier vos priorités et à structurer votre approche.
         </p>
         
         <Card className="border-wedding-olive/20">
