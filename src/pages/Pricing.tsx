@@ -11,7 +11,6 @@ import FormulaCTAButton from '@/components/pricing/FormulaCTAButton';
 import CoordinatorsPreview from '@/components/coordinators/CoordinatorsPreview';
 const Pricing = () => {
   const isMobile = useIsMobile();
-  
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -100,7 +99,10 @@ const Pricing = () => {
                           </div>
                           
                           <div>
-                            <span className="text-sm">Checklists & planning (Modifiable)</span>
+                            <span className="text-sm">Checklists & planning à partager 
+
+
+                          </span>
                           </div>
                         </div>
                         
@@ -120,19 +122,19 @@ const Pricing = () => {
                       <CardContent className="p-6 flex flex-col flex-1">
                         <div className="space-y-3 flex-1">
                           <div>
-                            <span className="text-sm">Application personnalisée (Pré-remplie)</span>
+                            <span className="text-sm">Application personnalisée (à remplir)</span>
                           </div>
                           
                           <div>
-                            <span className="text-sm">Checklists & planning (Modifiable)</span>
+                            <span className="text-sm">Checklists & planning partageables</span>
                           </div>
                           
                           <div>
-                            <span className="text-sm">Notifications et rappels temps réel J-1 et J-J</span>
+                            <span className="text-sm">Notifications en temps réel J-1 et J-J</span>
                           </div>
                           
                           <div>
-                            <span className="text-sm">Support hotline 7J/7 jusqu'au Jour-J</span>
+                            <span className="text-sm">Support hotline dédié 7J/7 jusqu'au Jour-J</span>
                           </div>
                         </div>
                         
@@ -151,15 +153,15 @@ const Pricing = () => {
                       <CardContent className="p-6 flex flex-col flex-1">
                         <div className="space-y-3 flex-1">
                           <div>
-                            <span className="text-sm">Application personnalisée (Pré-remplie)</span>
+                            <span className="text-sm">Application personnalisée (à remplir)</span>
                           </div>
                           
                           <div>
-                            <span className="text-sm">Checklists & planning (Modifiable)</span>
+                            <span className="text-sm">Checklists & planning à partager</span>
                           </div>
                           
                           <div>
-                            <span className="text-sm">Notifications et rappels temps réel J-1 et J-J</span>
+                            <span className="text-sm">Notifications en temps réel J-1 et J-J</span>
                           </div>
                           
                           <div>
@@ -167,7 +169,7 @@ const Pricing = () => {
                           </div>
                           
                           <div>
-                            <span className="text-sm">Présence physique le jour J</span>
+                            <span className="text-sm">Présence d'un coordinateur le jour J</span>
                           </div>
                         </div>
                         
@@ -240,7 +242,7 @@ const Pricing = () => {
                           <span className="text-xl font-bold text-wedding-olive">+200€</span>
                         </div>
                         <p className="text-sm text-gray-600">Mise en place de votre décoration selon vos souhaits (ex : mobilier : chaise, table, autres objets volumineux)
-{'->'} petite décorations inclus (ex: bougies)</p>
+                        {'->'} petite décorations inclus (ex: bougies)</p>
                       </CardContent>
                     </Card>
 
