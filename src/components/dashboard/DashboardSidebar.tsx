@@ -89,7 +89,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
   // Menu déroulant Jour M
   const jourMItems = [
     {
-      label: 'Jour M',
+      label: 'Jour-J',
       icon: <Calendar className="h-4 w-4" />,
       path: '/mon-jour-m',
     },
@@ -396,7 +396,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
             disabled={isReaderMode}
           >
             <Calendar className="h-4 w-4" />
-            <span className="ml-2 sm:ml-3 leading-tight">Jour M</span>
+            <span className="ml-2 sm:ml-3 leading-tight">Jour-J</span>
             <ChevronDown className="ml-auto h-4 w-4" />
             {isReaderMode && (
               <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>
