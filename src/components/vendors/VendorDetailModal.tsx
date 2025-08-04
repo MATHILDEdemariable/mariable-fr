@@ -292,12 +292,12 @@ const VendorDetailModal: React.FC<VendorDetailModalProps> = ({ isOpen, onClose, 
             )}
             
             <div className="pt-4 border-t">
-              <Button 
+                <Button 
                 onClick={handleAddToTracking}
                 className="w-full bg-wedding-olive hover:bg-wedding-olive/90 flex items-center justify-center gap-2"
               >
                 <Plus className="h-4 w-4" />
-                Ajouter au suivi
+                Sauvegarder dans mon suivi
               </Button>
             </div>
           </TabsContent>

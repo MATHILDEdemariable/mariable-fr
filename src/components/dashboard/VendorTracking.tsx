@@ -28,7 +28,8 @@ import {
   Plus,
   RefreshCw,
   Trash,
-  Edit
+  Edit,
+  Download
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Database } from '@/integrations/supabase/types';
@@ -37,6 +38,8 @@ import { useToast } from '@/components/ui/use-toast';
 import AddVendorDialog from './AddVendorDialog';
 import EditVendorModal from './EditVendorModal';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
+import { exportVendorTrackingToPDF } from '@/services/vendorTrackingExportService';
+import { useUserProfile } from '@/hooks/useUserProfile';
 
 type VendorStatus = Database['public']['Enums']['vendor_status'];
 
@@ -92,7 +95,9 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
   const [vendorToEdit, setVendorToEdit] = useState<Vendor | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [vendorToDelete, setVendorToDelete] = useState<string | null>(null);
+  const [isExporting, setIsExporting] = useState(false);
   const { toast } = useToast();
+  const { profile } = useUserProfile();
 
   // Fetch vendors from the database
   const fetchVendors = async () => {
@@ -236,6 +241,38 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
     return date.toLocaleDateString('fr-FR');
   };
 
+  // Export to PDF
+  const handleExportPDF = async () => {
+    setIsExporting(true);
+    try {
+      const exportData = {
+        vendors: filteredVendors,
+        userName: profile ? `${profile.first_name || ''} ${profile.last_name || ''}`.trim() : undefined,
+        weddingDate: profile?.wedding_date ? new Date(profile.wedding_date).toLocaleDateString('fr-FR') : undefined
+      };
+
+      const success = await exportVendorTrackingToPDF(exportData);
+      
+      if (success) {
+        toast({
+          title: "Export réussi",
+          description: "Votre suivi des prestataires a été exporté en PDF",
+        });
+      } else {
+        throw new Error('Export failed');
+      }
+    } catch (error) {
+      console.error('Error exporting PDF:', error);
+      toast({
+        title: "Erreur d'export",
+        description: "Impossible d'exporter le PDF. Veuillez réessayer.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   return (
     <Card>
       <CardHeader className="pb-2">
@@ -277,6 +314,20 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
             </Select>
             
             <div className="flex-1 flex gap-2 justify-end">
+              <Button 
+                variant="outline"
+                onClick={handleExportPDF}
+                disabled={isExporting || filteredVendors.length === 0}
+                className="hidden sm:flex"
+              >
+                {isExporting ? (
+                  <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                ) : (
+                  <Download className="h-4 w-4 mr-2" />
+                )}
+                Export PDF
+              </Button>
+              
               <Button 
                 variant="outline"
                 onClick={fetchVendors}

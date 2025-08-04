@@ -46,11 +46,6 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
       icon: <CheckSquare className="h-4 w-4" />,
       path: '/dashboard/tasks',
     },
-    {
-      label: 'Initiation Mariage',
-      icon: <Calendar className="h-4 w-4" />,
-      path: '/dashboard/planning',
-    },
   ];
 
   // Menu déroulant Calculatrice

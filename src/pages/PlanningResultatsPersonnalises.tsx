@@ -62,7 +62,7 @@ const PlanningResultatsPersonnalises: React.FC = () => {
                   <p className="text-sm text-muted-foreground">Estimation personnalisée selon vos réponses</p>
                 </Link>
                 
-                <Link to="/dashboard/coordination" className="border rounded-md p-4 bg-wedding-light/50 hover:bg-wedding-light transition-colors">
+                <Link to="/mon-jour-m/planning" className="border rounded-md p-4 bg-wedding-light/50 hover:bg-wedding-light transition-colors">
                   <h4 className="font-medium mb-1">Planning jour J personnalisé</h4>
                   <p className="text-sm text-muted-foreground">Timeline adaptée à vos choix</p>
                 </Link>

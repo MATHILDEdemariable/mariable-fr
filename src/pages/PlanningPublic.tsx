@@ -6,8 +6,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Calendar, Users, FileText, Clock, CheckCircle2, Circle, User, Building, Mail, Phone, AlertCircle, Filter, Eye, ExternalLink, Download } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { supabase } from '@/integrations/supabase/client';
+import { exportPublicPlanningBrandedToPDF } from '@/services/publicPlanningBrandedExportService';
+import { useToast } from '@/components/ui/use-toast';
 
 interface CoordinationData {
   coordination: any;
@@ -26,6 +29,8 @@ const PlanningPublic: React.FC = () => {
   const [filteredTasks, setFilteredTasks] = useState<any[]>([]);
   const [pinterestLinks, setPinterestLinks] = useState<any[]>([]);
   const [expandedTasks, setExpandedTasks] = useState<Set<string>>(new Set());
+  const [isExporting, setIsExporting] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
     if (coordinationId) {
@@ -237,6 +242,42 @@ const PlanningPublic: React.FC = () => {
     );
   };
 
+  // Export to PDF function
+  const handleExportPDF = async () => {
+    if (!coordinationData) return;
+    
+    setIsExporting(true);
+    try {
+      const exportData = {
+        coordination: coordinationData.coordination,
+        tasks: filteredTasks.length > 0 ? filteredTasks : coordinationData.tasks,
+        teamMembers: coordinationData.teamMembers,
+        documents: coordinationData.documents,
+        pinterestLinks: pinterestLinks
+      };
+
+      const success = await exportPublicPlanningBrandedToPDF(exportData);
+      
+      if (success) {
+        toast({
+          title: "Export réussi",
+          description: "Votre planning a été exporté en PDF",
+        });
+      } else {
+        throw new Error('Export failed');
+      }
+    } catch (error) {
+      console.error('Error exporting PDF:', error);
+      toast({
+        title: "Erreur d'export",
+        description: "Impossible d'exporter le PDF. Veuillez réessayer.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   if (loading) {
     return (
       <>
@@ -312,6 +353,27 @@ const PlanningPublic: React.FC = () => {
                 <p className="text-xs md:text-sm text-blue-700">
                   <strong>Mode consultation :</strong> Ce planning est en lecture seule.
                 </p>
+              </div>
+              
+              {/* Bouton Export PDF */}
+              <div className="mt-4 text-center">
+                <Button 
+                  onClick={handleExportPDF}
+                  disabled={isExporting}
+                  className="bg-wedding-olive hover:bg-wedding-olive/90 text-white"
+                >
+                  {isExporting ? (
+                    <>
+                      <Clock className="h-4 w-4 mr-2 animate-spin" />
+                      Export en cours...
+                    </>
+                  ) : (
+                    <>
+                      <Download className="h-4 w-4 mr-2" />
+                      Exporter en PDF
+                    </>
+                  )}
+                </Button>
               </div>
             </div>
           </div>
