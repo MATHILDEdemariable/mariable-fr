@@ -76,7 +76,7 @@ function Menus({ onClick, isLoggedIn }: { onClick?: () => void, isLoggedIn?: boo
 
       {/* Conseils mariage - Anciennement Blog */}
       <HeaderDropdown 
-        label="Conseils mariage"
+        label="Conseils"
         href="/blog"
         onClick={onClick}
       />
