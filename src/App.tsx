@@ -157,13 +157,16 @@ function App() {
                    <Route path="/admin/jeunes-maries" element={<AdminJeunesMaries />} />
                    <Route path="/admin/custom-pages" element={<CustomPages />} />
                   
-                  {/* Custom pages route */}
-                  <Route path="/custom/:slug" element={<CustomPage />} />
-                  
-                  {/* Services routes */}
-                  <Route path="/services/budget" element={<Budget />} />
-                  
-                  <Route path="*" element={<NotFound />} />
+                   {/* Custom pages route */}
+                   <Route path="/custom/:slug" element={<CustomPage />} />
+                   
+                   {/* Services routes */}
+                   <Route path="/services/budget" element={<Budget />} />
+                   
+                   {/* Direct slug route for custom pages */}
+                   <Route path="/:slug" element={<CustomPage />} />
+                   
+                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </AnalyticsProvider>
             </BrowserRouter>

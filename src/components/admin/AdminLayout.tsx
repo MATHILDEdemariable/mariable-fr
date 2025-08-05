@@ -10,7 +10,8 @@ import {
   Home,
   Settings,
   Building,
-  Heart
+  Heart,
+  Globe
 } from 'lucide-react';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 
@@ -76,6 +77,12 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
       href: '/admin/system-check',
       icon: Settings,
       current: location.pathname === '/admin/system-check'
+    },
+    {
+      name: 'Pages Personnalisées',
+      href: '/admin/custom-pages',
+      icon: Globe,
+      current: location.pathname === '/admin/custom-pages'
     }
   ];
 

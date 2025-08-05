@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Database } from '@/integrations/supabase/types';
 
@@ -17,22 +17,22 @@ interface VendorFilter {
   couchages?: number | null;
 }
 
-interface UseOptimizedVendorsOptions {
+interface UseInfiniteVendorsOptions {
   filters: VendorFilter;
   debouncedSearch: string;
-  initialLimit?: number;
+  pageSize?: number;
   enabled?: boolean;
 }
 
-export const useOptimizedVendors = ({
+export const useInfiniteVendors = ({
   filters,
   debouncedSearch,
-  initialLimit = 12,
+  pageSize = 12,
   enabled = true
-}: UseOptimizedVendorsOptions) => {
-  return useQuery({
+}: UseInfiniteVendorsOptions) => {
+  return useInfiniteQuery({
     queryKey: [
-      'vendors-optimized',
+      'vendors-infinite',
       filters.category,
       filters.region,
       filters.minPrice,
@@ -42,12 +42,11 @@ export const useOptimizedVendors = ({
       filters.hebergement,
       filters.couchages,
       debouncedSearch,
-      initialLimit
+      pageSize
     ],
-    queryFn: async () => {
-      console.log('🚀 useOptimizedVendors - Chargement optimisé des prestataires');
+    queryFn: async ({ pageParam = 0 }) => {
+      console.log('🚀 useInfiniteVendors - Loading page:', pageParam);
       
-      // Étape 1 : Charger d'abord les données essentielles des prestataires (sans les photos)
       let query = supabase
         .from('prestataires_rows')
         .select(`
@@ -71,7 +70,7 @@ export const useOptimizedVendors = ({
         .eq('visible', true)
         .order('featured', { ascending: false })
         .order('nom')
-        .limit(initialLimit);
+        .range(pageParam * pageSize, (pageParam + 1) * pageSize - 1);
 
       // Exclure les coordinateurs
       query = query.neq('categorie', 'Coordination');
@@ -124,33 +123,17 @@ export const useOptimizedVendors = ({
         throw new Error(error.message);
       }
 
-      console.log(`✅ ${data?.length || 0} prestataires chargés`);
-      return data as Prestataire[];
+      console.log(`✅ Page ${pageParam}: ${data?.length || 0} prestataires chargés`);
+      return {
+        data: data as Prestataire[],
+        nextPage: data && data.length === pageSize ? pageParam + 1 : undefined,
+        hasMore: data && data.length === pageSize
+      };
     },
+    getNextPageParam: (lastPage) => lastPage.nextPage,
+    initialPageParam: 0,
     staleTime: 10 * 60 * 1000, // 10 minutes
     gcTime: 15 * 60 * 1000, // 15 minutes
-    enabled,
-    refetchOnWindowFocus: false,
-  });
-};
-
-// Hook séparé pour charger les photos de manière lazy
-export const useVendorPhotos = (vendorId: string, enabled: boolean = true) => {
-  return useQuery({
-    queryKey: ['vendor-photos', vendorId],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('prestataires_photos_preprod')
-        .select('url, ordre, principale, is_cover')
-        .eq('prestataire_id', vendorId)
-        .order('ordre')
-        .limit(1); // Charger seulement la photo principale
-      
-      if (error) throw new Error(error.message);
-      return data;
-    },
-    staleTime: 10 * 60 * 1000, // 10 minutes de cache
-    gcTime: 30 * 60 * 1000, // 30 minutes
     enabled,
     refetchOnWindowFocus: false,
   });
