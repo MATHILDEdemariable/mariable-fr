@@ -125,7 +125,7 @@ function App() {
                   <Route path="/contact/faq" element={<FAQ />} />
                   <Route path="/checklist-mariage" element={<ChecklistMariage />} />
                   <Route path="/accompagnement" element={<Accompagnement />} />
-                  <Route path="/livre-blanc" element={<LivreBlanc />} />
+                  <Route path="/guidecoordinationjour-j" element={<LivreBlanc />} />
 
                    {/* À propos routes - Fixed */}
                    <Route path="/about/approche" element={<Approche />} />

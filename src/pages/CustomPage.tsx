@@ -4,6 +4,8 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Helmet } from 'react-helmet-async';
 import { Loader2 } from 'lucide-react';
+import { Logo } from '@/components/Logo';
+import { Button } from '@/components/ui/button';
 
 const CustomPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -66,11 +68,11 @@ const CustomPage: React.FC = () => {
       </Helmet>
 
       <div className="min-h-screen bg-background">
-        {/* Header simple */}
+        {/* Header avec logo */}
         <header className="border-b">
           <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-            <a href="/" className="text-xl font-serif font-bold text-wedding-olive">
-              Mariable
+            <a href="/" className="hover:opacity-80 transition-opacity">
+              <Logo />
             </a>
             <h1 className="text-lg font-medium">{customPage.title}</h1>
           </div>
@@ -93,10 +95,13 @@ const CustomPage: React.FC = () => {
           </div>
         </main>
 
-        {/* Footer simple */}
+        {/* Footer amélioré */}
         <footer className="border-t mt-12">
-          <div className="container mx-auto px-4 py-6 text-center text-sm text-muted-foreground">
-            <p>© 2024 Mariable - Tous droits réservés</p>
+          <div className="container mx-auto px-4 py-8 text-center">
+            <Button asChild variant="outline" className="mb-4">
+              <a href="/">Retour à l'accueil</a>
+            </Button>
+            <p className="text-sm text-muted-foreground">© 2024 Mariable - Tous droits réservés</p>
           </div>
         </footer>
       </div>
