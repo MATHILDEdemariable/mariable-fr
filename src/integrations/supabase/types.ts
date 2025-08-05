@@ -497,6 +497,39 @@ export type Database = {
         }
         Relationships: []
       }
+      custom_pages: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          iframe_code: string
+          is_active: boolean
+          slug: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          iframe_code: string
+          is_active?: boolean
+          slug: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          iframe_code?: string
+          is_active?: boolean
+          slug?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       dashboard_share_tokens: {
         Row: {
           active: boolean
@@ -630,6 +663,7 @@ export type Database = {
           photo_principale_url: string | null
           photos_mariage: Json | null
           prestataires_recommandes: Json | null
+          region: string | null
           slug: string | null
           status_moderation: string | null
           telephone: string | null
@@ -655,6 +689,7 @@ export type Database = {
           photo_principale_url?: string | null
           photos_mariage?: Json | null
           prestataires_recommandes?: Json | null
+          region?: string | null
           slug?: string | null
           status_moderation?: string | null
           telephone?: string | null
@@ -680,6 +715,7 @@ export type Database = {
           photo_principale_url?: string | null
           photos_mariage?: Json | null
           prestataires_recommandes?: Json | null
+          region?: string | null
           slug?: string | null
           status_moderation?: string | null
           telephone?: string | null

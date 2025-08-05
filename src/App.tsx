@@ -67,6 +67,8 @@ import JeuneMariesInscription from "./pages/JeuneMariesInscription";
 import JeuneMariesDetail from "./pages/JeuneMariesDetail";
 import JeuneMariesConfirmation from "./pages/JeuneMariesConfirmation";
 import AdminJeunesMaries from "./pages/admin/AdminJeunesMaries";
+import CustomPages from "./pages/admin/CustomPages";
+import CustomPage from "./pages/CustomPage";
 
 const queryClient = new QueryClient();
 
@@ -153,6 +155,10 @@ function App() {
                    <Route path="/admin/reservations-jour-m" element={<AdminReservationsJourM />} />
                    <Route path="/admin/system-check" element={<AdminSystemCheck />} />
                    <Route path="/admin/jeunes-maries" element={<AdminJeunesMaries />} />
+                   <Route path="/admin/custom-pages" element={<CustomPages />} />
+                  
+                  {/* Custom pages route */}
+                  <Route path="/custom/:slug" element={<CustomPage />} />
                   
                   {/* Services routes */}
                   <Route path="/services/budget" element={<Budget />} />

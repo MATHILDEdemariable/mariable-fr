@@ -272,6 +272,24 @@ const AdminDashboard = () => {
               </Button>
             </CardContent>
           </Card>
+
+          <Card 
+            className="hover:shadow-lg transition-shadow cursor-pointer" 
+            onClick={() => navigate('/admin/custom-pages')}
+          >
+            <CardHeader>
+              <CardTitle className="flex items-center gap-3">
+                <FileText className="h-6 w-6 text-wedding-olive" />
+                Pages Personnalisées
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-gray-600">Créer des pages avec iframe personnalisé</p>
+              <Button className="mt-4 w-full bg-wedding-olive hover:bg-wedding-olive/80">
+                Accéder
+              </Button>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </AdminLayout>

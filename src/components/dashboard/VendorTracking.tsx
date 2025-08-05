@@ -100,6 +100,8 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
   const { toast } = useToast();
   const { profile } = useUserProfile();
   const isMobile = useIsMobile();
+  
+  console.log('🔍 VendorTracking - isMobile:', isMobile, 'window.innerWidth:', typeof window !== 'undefined' ? window.innerWidth : 'SSR');
 
   // Fetch vendors from the database
   const fetchVendors = async () => {
@@ -355,6 +357,36 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
             </div>
           </div>
           
+          {/* Actions mobiles */}
+          {isMobile && (
+            <div className="flex gap-2 mb-4">
+              <Button 
+                variant="outline"
+                size="sm"
+                onClick={handleExportPDF}
+                disabled={isExporting || filteredVendors.length === 0}
+                className="flex-1"
+              >
+                {isExporting ? (
+                  <RefreshCw className="h-3 w-3 mr-1 animate-spin" />
+                ) : (
+                  <Download className="h-3 w-3 mr-1" />
+                )}
+                PDF
+              </Button>
+              
+              <Button 
+                variant="outline"
+                size="sm"
+                onClick={fetchVendors}
+                className="flex-1"
+              >
+                <RefreshCw className="h-3 w-3 mr-1" />
+                Actualiser
+              </Button>
+            </div>
+          )}
+
           {isMobile ? (
             // Version mobile avec cards
             <div className="space-y-4">
