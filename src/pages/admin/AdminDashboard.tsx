@@ -25,7 +25,9 @@ const AdminDashboard = () => {
     totalReservations: 0,
     totalPrestataires: 0,
     totalBlogPosts: 0,
-    recentReservations: 0
+    recentReservations: 0,
+    totalUsers: 0,
+    featuredPrestataires: 0
   });
   const navigate = useNavigate();
 
@@ -55,10 +57,11 @@ const AdminDashboard = () => {
 
   const loadStats = async () => {
     try {
-      const [reservations, prestataires, blogPosts] = await Promise.all([
+      const [reservations, prestataires, blogPosts, featuredPrestataires] = await Promise.all([
         supabase.from('jour_m_reservations').select('*', { count: 'exact' }),
-        supabase.from('prestataires').select('*', { count: 'exact' }),
-        supabase.from('blog_posts').select('*', { count: 'exact' })
+        supabase.from('prestataires_rows').select('*', { count: 'exact' }),
+        supabase.from('blog_posts').select('*', { count: 'exact' }),
+        supabase.from('prestataires_rows').select('*', { count: 'exact' }).eq('featured', true)
       ]);
 
       // Recent reservations (last 7 days)
@@ -69,11 +72,24 @@ const AdminDashboard = () => {
         .select('*', { count: 'exact' })
         .gte('created_at', weekAgo.toISOString());
 
+      // Get total users count via Edge Function
+      let totalUsers = 0;
+      try {
+        const { data } = await supabase.functions.invoke('get-users');
+        if (data && data.success && data.users) {
+          totalUsers = data.users.length;
+        }
+      } catch (error) {
+        console.error('Erreur lors du chargement du nombre d\'utilisateurs:', error);
+      }
+
       setStats({
         totalReservations: reservations.count || 0,
         totalPrestataires: prestataires.count || 0,
         totalBlogPosts: blogPosts.count || 0,
-        recentReservations: recentRes.count || 0
+        recentReservations: recentRes.count || 0,
+        totalUsers,
+        featuredPrestataires: featuredPrestataires.count || 0
       });
     } catch (error) {
       console.error('Erreur lors du chargement des statistiques:', error);
@@ -131,15 +147,15 @@ const AdminDashboard = () => {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <Card>
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Réservations Jour-M</p>
-                  <p className="text-2xl font-bold text-wedding-olive">{stats.totalReservations}</p>
+                  <p className="text-sm font-medium text-gray-600">Utilisateurs inscrits</p>
+                  <p className="text-2xl font-bold text-wedding-olive">{stats.totalUsers}</p>
                 </div>
-                <Calendar className="h-8 w-8 text-wedding-olive" />
+                <User2 className="h-8 w-8 text-wedding-olive" />
               </div>
             </CardContent>
           </Card>
@@ -150,6 +166,7 @@ const AdminDashboard = () => {
                 <div>
                   <p className="text-sm font-medium text-gray-600">Prestataires</p>
                   <p className="text-2xl font-bold text-wedding-olive">{stats.totalPrestataires}</p>
+                  <p className="text-xs text-gray-500">dont {stats.featuredPrestataires} mis en avant</p>
                 </div>
                 <Users className="h-8 w-8 text-wedding-olive" />
               </div>
@@ -160,22 +177,11 @@ const AdminDashboard = () => {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Articles Blog</p>
-                  <p className="text-2xl font-bold text-wedding-olive">{stats.totalBlogPosts}</p>
+                  <p className="text-sm font-medium text-gray-600">Réservations Jour-M</p>
+                  <p className="text-2xl font-bold text-wedding-olive">{stats.totalReservations}</p>
+                  <p className="text-xs text-gray-500">{stats.recentReservations} nouvelles (7j)</p>
                 </div>
-                <FileText className="h-8 w-8 text-wedding-olive" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Nouvelles (7j)</p>
-                  <p className="text-2xl font-bold text-wedding-olive">{stats.recentReservations}</p>
-                </div>
-                <BarChart3 className="h-8 w-8 text-wedding-olive" />
+                <Calendar className="h-8 w-8 text-wedding-olive" />
               </div>
             </CardContent>
           </Card>

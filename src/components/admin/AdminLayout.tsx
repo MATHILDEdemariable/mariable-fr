@@ -11,7 +11,9 @@ import {
   Settings,
   Building,
   Heart,
-  Globe
+  Globe,
+  ExternalLink,
+  LogOut
 } from 'lucide-react';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 
@@ -125,12 +127,22 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
           </nav>
 
           {/* Footer */}
-          <div className="p-4 border-t">
+          <div className="p-4 border-t space-y-2">
+            <a
+              href="https://mariable.fr"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-wedding-olive border border-wedding-olive rounded-lg hover:bg-wedding-olive hover:text-white transition-colors"
+            >
+              <ExternalLink className="w-4 h-4" />
+              Retour au site
+            </a>
             <Button 
               variant="outline" 
               onClick={handleLogout}
-              className="w-full"
+              className="w-full flex items-center gap-2"
             >
+              <LogOut className="w-4 h-4" />
               Déconnexion
             </Button>
           </div>

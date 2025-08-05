@@ -372,10 +372,10 @@ const CustomPagesManager: React.FC = () => {
                       <p className="text-sm font-mono bg-muted px-2 py-1 rounded">
                         mariable.fr/proposition/{page.slug}
                       </p>
-                      <Button
+                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => copyToClipboard(`${window.location.origin}/proposition/${page.slug}`)}
+                        onClick={() => copyToClipboard(`https://mariable.fr/proposition/${page.slug}`)}
                         className="h-6 w-6 p-0"
                       >
                         <Copy className="h-3 w-3" />

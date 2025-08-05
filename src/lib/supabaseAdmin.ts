@@ -15,7 +15,7 @@ export const fetchAllUsers = async () => {
       throw new Error(`Erreur Edge Function: ${error.message}`);
     }
 
-    if (data && data.success && data.users && data.users.length > 0) {
+    if (data && data.success && data.users) {
       console.log(`✅ ${data.users.length} utilisateurs récupérés via Edge Function (méthode: ${data.method})`);
       return data.users;
     }
