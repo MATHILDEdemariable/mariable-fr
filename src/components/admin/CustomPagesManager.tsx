@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,8 +8,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
-import { Trash2, Edit, Plus, Eye, ExternalLink } from 'lucide-react';
+import { Trash2, Edit, Plus, ExternalLink, Copy, CheckCircle2 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { generateUniqueCustomPageSlug, isSlugValid } from '@/utils/generateUniqueCustomPageSlug';
+import { useDebounce } from 'use-debounce';
 
 interface CustomPage {
   id: string;
@@ -32,6 +34,15 @@ const CustomPagesManager: React.FC = () => {
     description: '',
     is_active: true
   });
+  const [slugValidation, setSlugValidation] = useState<{
+    isValid: boolean;
+    message: string;
+    isChecking: boolean;
+  }>({ isValid: true, message: '', isChecking: false });
+  const [manualSlugEdit, setManualSlugEdit] = useState(false);
+
+  const [debouncedTitle] = useDebounce(formData.title, 500);
+  const [debouncedSlug] = useDebounce(formData.slug, 300);
 
   const queryClient = useQueryClient();
 
@@ -119,10 +130,73 @@ const CustomPagesManager: React.FC = () => {
       description: '',
       is_active: true
     });
+    setSlugValidation({ isValid: true, message: '', isChecking: false });
+    setManualSlugEdit(false);
+  };
+
+  // Auto-génération du slug basé sur le titre
+  useEffect(() => {
+    if (debouncedTitle && !manualSlugEdit && !editingPage) {
+      const generateSlug = async () => {
+        setSlugValidation(prev => ({ ...prev, isChecking: true }));
+        try {
+          const newSlug = await generateUniqueCustomPageSlug(debouncedTitle);
+          setFormData(prev => ({ ...prev, slug: newSlug }));
+          setSlugValidation({ isValid: true, message: 'Slug généré automatiquement', isChecking: false });
+        } catch (error) {
+          setSlugValidation({ isValid: false, message: 'Erreur lors de la génération du slug', isChecking: false });
+        }
+      };
+      generateSlug();
+    }
+  }, [debouncedTitle, manualSlugEdit, editingPage]);
+
+  // Validation du slug saisi manuellement
+  useEffect(() => {
+    if (debouncedSlug && manualSlugEdit) {
+      const validateSlug = async () => {
+        setSlugValidation(prev => ({ ...prev, isChecking: true }));
+        
+        if (!isSlugValid(debouncedSlug)) {
+          setSlugValidation({ 
+            isValid: false, 
+            message: 'Slug invalide (routes réservées ou trop court)', 
+            isChecking: false 
+          });
+          return;
+        }
+
+        try {
+          const { data } = await supabase
+            .from('custom_pages')
+            .select('id')
+            .eq('slug', debouncedSlug);
+          
+          const exists = data && data.length > 0 && (!editingPage || data[0].id !== editingPage.id);
+          setSlugValidation({
+            isValid: !exists,
+            message: exists ? 'Ce slug existe déjà' : 'Slug disponible',
+            isChecking: false
+          });
+        } catch (error) {
+          setSlugValidation({ isValid: false, message: 'Erreur de validation', isChecking: false });
+        }
+      };
+      validateSlug();
+    }
+  }, [debouncedSlug, manualSlugEdit, editingPage]);
+
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+    toast.success('URL copiée dans le presse-papiers');
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!slugValidation.isValid) {
+      toast.error('Veuillez corriger les erreurs avant de soumettre');
+      return;
+    }
     if (editingPage) {
       updatePageMutation.mutate({ id: editingPage.id, ...formData });
     } else {
@@ -139,6 +213,8 @@ const CustomPagesManager: React.FC = () => {
       description: page.description || '',
       is_active: page.is_active
     });
+    setManualSlugEdit(true); // Considérer comme édition manuelle lors de la modification
+    setSlugValidation({ isValid: true, message: '', isChecking: false });
   };
 
   const handleDelete = (id: string) => {
@@ -186,17 +262,36 @@ const CustomPagesManager: React.FC = () => {
               </div>
 
               <div>
-                <Label htmlFor="slug">Slug URL (ex: mariageS&O-2026)</Label>
+                <Label htmlFor="slug">Slug URL</Label>
                 <Input
                   id="slug"
                   value={formData.slug}
-                  onChange={(e) => setFormData(prev => ({ ...prev, slug: e.target.value }))}
-                  placeholder="mariageS&O-2026"
+                  onChange={(e) => {
+                    setFormData(prev => ({ ...prev, slug: e.target.value }));
+                    setManualSlugEdit(true);
+                  }}
+                  placeholder="mariage-chateau-2024"
                   required
+                  className={!slugValidation.isValid ? 'border-destructive' : ''}
                 />
-                <p className="text-sm text-muted-foreground mt-1">
-                  URL finale: /custom/{formData.slug}
-                </p>
+                <div className="flex flex-col gap-1 mt-1">
+                  <p className="text-sm font-medium text-primary">
+                    URL finale: <span className="font-mono">mariable.fr/{formData.slug}</span>
+                  </p>
+                  {slugValidation.isChecking && (
+                    <p className="text-sm text-muted-foreground">Vérification...</p>
+                  )}
+                  {!slugValidation.isChecking && slugValidation.message && (
+                    <p className={`text-sm ${slugValidation.isValid ? 'text-success' : 'text-destructive'}`}>
+                      {slugValidation.message}
+                    </p>
+                  )}
+                  {!manualSlugEdit && !editingPage && (
+                    <p className="text-sm text-muted-foreground">
+                      Le slug est généré automatiquement. Modifiez-le pour le personnaliser.
+                    </p>
+                  )}
+                </div>
               </div>
 
               <div>
@@ -230,8 +325,11 @@ const CustomPagesManager: React.FC = () => {
                 <Label htmlFor="is_active">Page active</Label>
               </div>
 
-              <div className="flex gap-2 pt-4">
-                <Button type="submit" disabled={createPageMutation.isPending || updatePageMutation.isPending}>
+                <div className="flex gap-2 pt-4">
+                <Button 
+                  type="submit" 
+                  disabled={createPageMutation.isPending || updatePageMutation.isPending || !slugValidation.isValid || slugValidation.isChecking}
+                >
                   {editingPage ? 'Mettre à jour' : 'Créer'}
                 </Button>
                 <Button 
@@ -270,9 +368,19 @@ const CustomPagesManager: React.FC = () => {
                         <span className="px-2 py-1 text-xs bg-muted rounded">Inactive</span>
                       )}
                     </CardTitle>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      URL: /custom/{page.slug}
-                    </p>
+                    <div className="flex items-center gap-2 mt-1">
+                      <p className="text-sm font-mono bg-muted px-2 py-1 rounded">
+                        mariable.fr/{page.slug}
+                      </p>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => copyToClipboard(`${window.location.origin}/${page.slug}`)}
+                        className="h-6 w-6 p-0"
+                      >
+                        <Copy className="h-3 w-3" />
+                      </Button>
+                    </div>
                     {page.description && (
                       <p className="text-sm text-muted-foreground mt-2">{page.description}</p>
                     )}
@@ -281,8 +389,9 @@ const CustomPagesManager: React.FC = () => {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => window.open(`/custom/${page.slug}`, '_blank')}
+                      onClick={() => window.open(`/${page.slug}`, '_blank')}
                       disabled={!page.is_active}
+                      title="Ouvrir la page"
                     >
                       <ExternalLink className="h-4 w-4" />
                     </Button>
