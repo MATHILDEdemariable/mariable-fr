@@ -22,6 +22,8 @@ import ProjectManagement from '@/components/project-management/ProjectManagement
 import HelpPage from './HelpPage';
 import PremiumBadge from '@/components/premium/PremiumBadge';
 import MessageHistoryPage from './MessageHistoryPage';
+import VendorSelectionPage from './VendorSelectionPage';
+import CoordinatorsPage from './CoordinatorsPage';
 
 const UserDashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -72,6 +74,9 @@ const UserDashboard: React.FC = () => {
           <Route path="project-management/*" element={<ProjectManagement />} />
           <Route path="help" element={<HelpPage />} />
           <Route path="settings" element={<UserProfile />} />
+          <Route path="selection" element={<VendorSelectionPage />} />
+          <Route path="selection/:region" element={<VendorSelectionPage />} />
+          <Route path="coordinateurs" element={<CoordinatorsPage />} />
           <Route path="*" element={<div>Page non trouvée</div>} />
         </Route>
       </Routes>

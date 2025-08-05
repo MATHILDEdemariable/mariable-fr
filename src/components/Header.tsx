@@ -67,24 +67,24 @@ function Menus({ onClick, isLoggedIn }: { onClick?: () => void, isLoggedIn?: boo
         </HeaderDropdownMenu>
       </HeaderDropdown>
       
-      {/* Professionnels - En second */}
-      <HeaderDropdown 
-        label="Professionnels"
-        href="/professionnels"
-        onClick={onClick}
-      />
-
-      {/* Jeunes Mariés */}
+      {/* Jeunes Mariés - En second */}
       <HeaderDropdown 
         label="Jeunes Mariés"
         href="/jeunes-maries"
         onClick={onClick}
       />
 
-      {/* Blog - Ajouté ici */}
+      {/* Conseils mariage - Anciennement Blog */}
       <HeaderDropdown 
-        label="Blog"
+        label="Conseils mariage"
         href="/blog"
+        onClick={onClick}
+      />
+
+      {/* Professionnels - En quatrième */}
+      <HeaderDropdown 
+        label="Professionnels"
+        href="/professionnels"
         onClick={onClick}
       />
       

@@ -67,7 +67,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
     {
       label: 'Sélection Mariable',
       icon: <Store className="h-4 w-4" />,
-      path: '/selection',
+      path: '/dashboard/selection',
     },
     {
       label: 'Suivi',
@@ -91,7 +91,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
     {
       label: 'Coordinateurs',
       icon: <Users className="h-4 w-4" />,
-      path: '/coordinateurs-mariage',
+      path: '/dashboard/coordinateurs',
     },
     {
       label: 'Conseils Jour-J',
