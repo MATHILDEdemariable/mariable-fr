@@ -69,6 +69,7 @@ import JeuneMariesConfirmation from "./pages/JeuneMariesConfirmation";
 import AdminJeunesMaries from "./pages/admin/AdminJeunesMaries";
 import CustomPages from "./pages/admin/CustomPages";
 import CustomPage from "./pages/CustomPage";
+import PropositionPage from "./pages/PropositionPage";
 
 const queryClient = new QueryClient();
 
@@ -160,11 +161,11 @@ function App() {
                    {/* Custom pages route */}
                    <Route path="/custom/:slug" element={<CustomPage />} />
                    
+                   {/* Proposition pages route */}
+                   <Route path="/proposition/:slug" element={<PropositionPage />} />
+                   
                    {/* Services routes */}
                    <Route path="/services/budget" element={<Budget />} />
-                   
-                   {/* Direct slug route for custom pages */}
-                   <Route path="/:slug" element={<CustomPage />} />
                    
                    <Route path="*" element={<NotFound />} />
                 </Routes>

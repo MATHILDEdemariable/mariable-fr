@@ -276,7 +276,7 @@ const CustomPagesManager: React.FC = () => {
                 />
                 <div className="flex flex-col gap-1 mt-1">
                   <p className="text-sm font-medium text-primary">
-                    URL finale: <span className="font-mono">mariable.fr/{formData.slug}</span>
+                    URL finale: <span className="font-mono">mariable.fr/proposition/{formData.slug}</span>
                   </p>
                   {slugValidation.isChecking && (
                     <p className="text-sm text-muted-foreground">Vérification...</p>
@@ -370,12 +370,12 @@ const CustomPagesManager: React.FC = () => {
                     </CardTitle>
                     <div className="flex items-center gap-2 mt-1">
                       <p className="text-sm font-mono bg-muted px-2 py-1 rounded">
-                        mariable.fr/{page.slug}
+                        mariable.fr/proposition/{page.slug}
                       </p>
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => copyToClipboard(`${window.location.origin}/${page.slug}`)}
+                        onClick={() => copyToClipboard(`${window.location.origin}/proposition/${page.slug}`)}
                         className="h-6 w-6 p-0"
                       >
                         <Copy className="h-3 w-3" />
@@ -389,7 +389,7 @@ const CustomPagesManager: React.FC = () => {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => window.open(`/${page.slug}`, '_blank')}
+                      onClick={() => window.open(`/proposition/${page.slug}`, '_blank')}
                       disabled={!page.is_active}
                       title="Ouvrir la page"
                     >

@@ -73,7 +73,7 @@ const Register = () => {
       
       // Définir l'URL de redirection pour les emails de confirmation
       const origin = window.location.origin;
-      const redirectTo = `${origin}/auth/callback`;
+      const redirectTo = `${origin}/`;
       
       const { data, error } = await supabase.auth.signUp({
         email,
