@@ -62,7 +62,7 @@ const JeunesMariesPage: React.FC = () => {
             {/* Photo Section - Left */}
             <div className="lg:col-span-3 relative">
               <img 
-                src="/lovable-uploads/83d8a2ea-6226-4973-a574-c29cac0bd01f.png" 
+                src="https://bgidfcqktsttzlwlumtz.supabase.co/storage/v1/object/public/visuels/club%20mariable.png" 
                 alt="Couple de mariés - Le Club by Mariable"
                 className="w-full h-full object-cover object-center"
               />
@@ -121,8 +121,8 @@ const JeunesMariesPage: React.FC = () => {
                   Découvrez les expériences authentiques de nos membres et leurs conseils précieux
                 </p>
                 
-                <div className="text-center mb-8">
-                  <Button asChild size="lg" variant="outline">
+                <div className="flex justify-center lg:justify-end mb-8">
+                  <Button asChild size="lg" className="bg-black text-white hover:bg-black/90">
                     <Link to="/jeunes-maries/inscription">
                       <UserPlus className="h-5 w-5 mr-2" />
                       Partager votre expérience
