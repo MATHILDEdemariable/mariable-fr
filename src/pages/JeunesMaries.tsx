@@ -65,9 +65,7 @@ const JeunesMariesPage: React.FC = () => {
                   
                 </div>
                 
-                <h1 className="text-3xl lg:text-4xl font-serif text-foreground mb-6">
-                  Rejoignez le club exclusif des couples mariés
-                </h1>
+                <h1 className="text-3xl lg:text-4xl font-serif text-foreground mb-6">Rejoignez un club exclusif de mariés</h1>
                 
                 <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
                   Découvrez les expériences authentiques, conseils précieux et secrets des couples qui ont vécu leur jour parfait.
