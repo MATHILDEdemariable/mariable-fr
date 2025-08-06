@@ -13,7 +13,6 @@ const JeunesMariesPage: React.FC = () => {
     filters,
     setFilters
   } = useJeunesMaries();
-
   const [showTestimonials, setShowTestimonials] = useState(false);
   const testimonialsRef = useRef<HTMLDivElement>(null);
   const handleFilterChange = (key: keyof typeof filters, value: string | number) => {
@@ -30,23 +29,17 @@ const JeunesMariesPage: React.FC = () => {
       note: 0
     });
   };
-
   const handleJoinClub = () => {
     setShowTestimonials(true);
     setTimeout(() => {
-      testimonialsRef.current?.scrollIntoView({ 
+      testimonialsRef.current?.scrollIntoView({
         behavior: 'smooth',
         block: 'start'
       });
     }, 150);
   };
   return <>
-      <SEO 
-        title="Le Club by Mariable - Témoignages Exclusifs de Couples" 
-        description="Rejoignez le club exclusif des couples mariés et découvrez leurs expériences authentiques, conseils précieux et recommandations de prestataires pour réussir votre grand jour." 
-        keywords="club mariés france, témoignages exclusifs mariage, club couples, expériences mariage, conseils organisation mariage" 
-        canonical="/jeunes-maries" 
-      />
+      <SEO title="Le Club by Mariable - Témoignages Exclusifs de Couples" description="Rejoignez le club exclusif des couples mariés et découvrez leurs expériences authentiques, conseils précieux et recommandations de prestataires pour réussir votre grand jour." keywords="club mariés france, témoignages exclusifs mariage, club couples, expériences mariage, conseils organisation mariage" canonical="/jeunes-maries" />
       
       <div className="min-h-screen bg-gradient-subtle">
         {/* Hero Section - Le Club */}
@@ -61,11 +54,7 @@ const JeunesMariesPage: React.FC = () => {
           <div className="grid lg:grid-cols-5 min-h-screen">
             {/* Photo Section - Left */}
             <div className="lg:col-span-3 relative">
-              <img 
-                src="https://bgidfcqktsttzlwlumtz.supabase.co/storage/v1/object/public/visuels/club%20mariable.png" 
-                alt="Couple de mariés - Le Club by Mariable"
-                className="w-full h-full object-cover object-center"
-              />
+              <img src="https://bgidfcqktsttzlwlumtz.supabase.co/storage/v1/object/public/visuels/club%20mariable.png" alt="Couple de mariés - Le Club by Mariable" className="w-full h-full object-cover object-center" />
               <div className="absolute inset-0 bg-gradient-to-r from-transparent to-background/20 lg:to-background/50" />
             </div>
             
@@ -73,11 +62,7 @@ const JeunesMariesPage: React.FC = () => {
             <div className="lg:col-span-2 flex items-center justify-center bg-background p-8 lg:p-12">
               <div className="max-w-md text-center lg:text-left">
                 <div className="mb-8">
-                  <img 
-                    src="/lovable-uploads/16238829-fdfc-4fe2-ade8-9c49d79851b4.png" 
-                    alt="Le Club by Mariable"
-                    className="h-16 mx-auto lg:mx-0 mb-6"
-                  />
+                  
                 </div>
                 
                 <h1 className="text-3xl lg:text-4xl font-serif text-foreground mb-6">
@@ -88,11 +73,7 @@ const JeunesMariesPage: React.FC = () => {
                   Découvrez les expériences authentiques, conseils précieux et secrets des couples qui ont vécu leur jour parfait.
                 </p>
                 
-                <Button 
-                  onClick={handleJoinClub}
-                  size="lg" 
-                  className="w-full lg:w-auto bg-primary hover:bg-primary/90 text-primary-foreground group"
-                >
+                <Button onClick={handleJoinClub} size="lg" className="w-full lg:w-auto bg-primary hover:bg-primary/90 text-primary-foreground group">
                   <Sparkles className="h-5 w-5 mr-2 group-hover:scale-110 transition-transform" />
                   Rejoindre le club
                 </Button>
@@ -106,11 +87,7 @@ const JeunesMariesPage: React.FC = () => {
         </section>
 
         {/* Testimonials Section - Revealed on demand */}
-        {showTestimonials && (
-          <div 
-            ref={testimonialsRef}
-            className="animate-fade-in bg-background py-16"
-          >
+        {showTestimonials && <div ref={testimonialsRef} className="animate-fade-in bg-background py-16">
             <div className="container mx-auto px-4">
               {/* Section Header */}
               <div className="text-center mb-12">
@@ -133,11 +110,7 @@ const JeunesMariesPage: React.FC = () => {
 
               {/* Filters */}
               <div className="mb-8">
-                <JeuneMariesFiltersComponent 
-                  filters={filters} 
-                  onFilterChange={handleFilterChange} 
-                  onReset={handleResetFilters} 
-                />
+                <JeuneMariesFiltersComponent filters={filters} onFilterChange={handleFilterChange} onReset={handleResetFilters} />
               </div>
 
               {/* Results Count */}
@@ -148,20 +121,11 @@ const JeunesMariesPage: React.FC = () => {
               </div>
 
               {/* Testimonials List */}
-              {loading ? (
-                <div className="space-y-4">
-                  {[...Array(6)].map((_, i) => (
-                    <div key={i} className="bg-card rounded-lg h-24 animate-pulse border" />
-                  ))}
-                </div>
-              ) : jeunesMaries.length > 0 ? (
-                <div className="space-y-4">
-                  {jeunesMaries.map(jeuneMarie => (
-                    <JeuneMariesListItem key={jeuneMarie.id} jeuneMarie={jeuneMarie} />
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-12">
+              {loading ? <div className="space-y-4">
+                  {[...Array(6)].map((_, i) => <div key={i} className="bg-card rounded-lg h-24 animate-pulse border" />)}
+                </div> : jeunesMaries.length > 0 ? <div className="space-y-4">
+                  {jeunesMaries.map(jeuneMarie => <JeuneMariesListItem key={jeuneMarie.id} jeuneMarie={jeuneMarie} />)}
+                </div> : <div className="text-center py-12">
                   <Heart className="h-16 w-16 text-muted-foreground/40 mx-auto mb-4" />
                   <h3 className="text-xl font-semibold text-foreground mb-2">
                     Aucun témoignage trouvé
@@ -175,11 +139,9 @@ const JeunesMariesPage: React.FC = () => {
                       Partager votre expérience
                     </Link>
                   </Button>
-                </div>
-              )}
+                </div>}
             </div>
-          </div>
-        )}
+          </div>}
       </div>
     </>;
 };
