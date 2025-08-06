@@ -62,7 +62,7 @@ const JeunesMariesPage: React.FC = () => {
             {/* Photo Section - Left */}
             <div className="lg:col-span-3 relative">
               <img 
-                src="/lovable-uploads/50002546-1593-48bc-8148-40fbea3cdab6.png" 
+                src="/lovable-uploads/83d8a2ea-6226-4973-a574-c29cac0bd01f.png" 
                 alt="Couple de mariés - Le Club by Mariable"
                 className="w-full h-full object-cover object-center"
               />
@@ -117,9 +117,18 @@ const JeunesMariesPage: React.FC = () => {
                 <h2 className="text-3xl font-serif text-foreground mb-4">
                   Témoignages du Club
                 </h2>
-                <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-6">
                   Découvrez les expériences authentiques de nos membres et leurs conseils précieux
                 </p>
+                
+                <div className="text-center mb-8">
+                  <Button asChild size="lg" variant="outline">
+                    <Link to="/jeunes-maries/inscription">
+                      <UserPlus className="h-5 w-5 mr-2" />
+                      Partager votre expérience
+                    </Link>
+                  </Button>
+                </div>
               </div>
 
               {/* Filters */}
@@ -168,19 +177,6 @@ const JeunesMariesPage: React.FC = () => {
                   </Button>
                 </div>
               )}
-
-              {/* Share Experience CTA */}
-              <div className="text-center mt-12 pt-8 border-t border-border">
-                <p className="text-muted-foreground mb-4">
-                  Vous aussi, partagez votre expérience avec la communauté
-                </p>
-                <Button asChild size="lg" variant="outline">
-                  <Link to="/jeunes-maries/inscription">
-                    <UserPlus className="h-5 w-5 mr-2" />
-                    Partager votre expérience
-                  </Link>
-                </Button>
-              </div>
             </div>
           </div>
         )}
