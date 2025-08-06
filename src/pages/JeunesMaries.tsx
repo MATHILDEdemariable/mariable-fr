@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import SEO from '@/components/SEO';
 import { useJeunesMaries } from '@/hooks/useJeunesMaries';
 import { JeuneMariesListItem } from '@/components/jeunes-maries/JeuneMariesListItem';
 import { JeuneMariesFiltersComponent } from '@/components/jeunes-maries/JeuneMariesFilters';
 import { Button } from '@/components/ui/button';
-import { UserPlus, Heart, Home } from 'lucide-react';
+import { UserPlus, Heart, Home, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
 const JeunesMariesPage: React.FC = () => {
   const {
@@ -13,6 +13,9 @@ const JeunesMariesPage: React.FC = () => {
     filters,
     setFilters
   } = useJeunesMaries();
+
+  const [showTestimonials, setShowTestimonials] = useState(false);
+  const testimonialsRef = useRef<HTMLDivElement>(null);
   const handleFilterChange = (key: keyof typeof filters, value: string | number) => {
     setFilters(prev => ({
       ...prev,
@@ -27,89 +30,160 @@ const JeunesMariesPage: React.FC = () => {
       note: 0
     });
   };
+
+  const handleJoinClub = () => {
+    setShowTestimonials(true);
+    setTimeout(() => {
+      testimonialsRef.current?.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }, 150);
+  };
   return <>
       <SEO 
-        title="Témoignages de jeunes mariés en France - Conseils & Expériences" 
-        description="Découvrez les témoignages authentiques de couples qui ont organisé leur mariage en France. Conseils d'organisation, retours d'expérience, budgets réels et recommandations de prestataires pour réussir votre grand jour." 
-        keywords="témoignages mariage france, retours expérience mariage, conseils jeunes mariés, organisation mariage france, budget mariage réel, prestataires mariage recommandés, planning mariage france" 
+        title="Le Club by Mariable - Témoignages Exclusifs de Couples" 
+        description="Rejoignez le club exclusif des couples mariés et découvrez leurs expériences authentiques, conseils précieux et recommandations de prestataires pour réussir votre grand jour." 
+        keywords="club mariés france, témoignages exclusifs mariage, club couples, expériences mariage, conseils organisation mariage" 
         canonical="/jeunes-maries" 
       />
       
       <div className="min-h-screen bg-gradient-subtle">
-        {/* Hero Section */}
-        <section className="bg-wedding-olive text-white py-16">
-          <div className="container mx-auto px-4">
-            <div className="max-w-4xl mx-auto text-center relative">
-              <Button asChild variant="outline" className="absolute left-0 top-0 bg-white/10 text-white border-white/20 hover:bg-white/20">
-                <Link to="/">
-                  <Home className="h-4 w-4 mr-2" />
-                  Retour à l'accueil
-                </Link>
-              </Button>
-              <div className="flex justify-center mb-4">
-                <Heart className="h-12 w-12 text-white" />
+        {/* Hero Section - Le Club */}
+        <section className="relative min-h-screen overflow-hidden">
+          <Button asChild variant="outline" className="absolute left-4 top-4 z-10 bg-white/10 backdrop-blur-sm text-primary border-primary/20 hover:bg-white/20">
+            <Link to="/">
+              <Home className="h-4 w-4 mr-2" />
+              Retour à l'accueil
+            </Link>
+          </Button>
+          
+          <div className="grid lg:grid-cols-5 min-h-screen">
+            {/* Photo Section - Left */}
+            <div className="lg:col-span-3 relative">
+              <img 
+                src="/lovable-uploads/50002546-1593-48bc-8148-40fbea3cdab6.png" 
+                alt="Couple de mariés - Le Club by Mariable"
+                className="w-full h-full object-cover object-center"
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent to-background/20 lg:to-background/50" />
+            </div>
+            
+            {/* Content Section - Right */}
+            <div className="lg:col-span-2 flex items-center justify-center bg-background p-8 lg:p-12">
+              <div className="max-w-md text-center lg:text-left">
+                <div className="mb-8">
+                  <img 
+                    src="/lovable-uploads/16238829-fdfc-4fe2-ade8-9c49d79851b4.png" 
+                    alt="Le Club by Mariable"
+                    className="h-16 mx-auto lg:mx-0 mb-6"
+                  />
+                </div>
+                
+                <h1 className="text-3xl lg:text-4xl font-serif text-foreground mb-6">
+                  Rejoignez le club exclusif des couples mariés
+                </h1>
+                
+                <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
+                  Découvrez les expériences authentiques, conseils précieux et secrets des couples qui ont vécu leur jour parfait.
+                </p>
+                
+                <Button 
+                  onClick={handleJoinClub}
+                  size="lg" 
+                  className="w-full lg:w-auto bg-primary hover:bg-primary/90 text-primary-foreground group"
+                >
+                  <Sparkles className="h-5 w-5 mr-2 group-hover:scale-110 transition-transform" />
+                  Rejoindre le club
+                </Button>
+                
+                <p className="text-sm text-muted-foreground/80 mt-4">
+                  Accès gratuit et immédiat
+                </p>
               </div>
-              <h1 className="text-4xl md:text-5xl font-serif mb-4">
-                Témoignages de Jeunes Mariés
-              </h1>
-              <p className="text-xl md:text-2xl text-white/90 mb-8">
-                Découvrez les expériences authentiques de couples qui ont organisé leur mariage
-              </p>
-              <p className="text-lg text-white/80 mb-8">Rejoignez la communauté et acceptez d'être contactés par des futurs mariés</p>
-              <Button asChild size="lg" variant="secondary" className="bg-white text-wedding-olive hover:bg-white/90">
-                <Link to="/jeunes-maries/inscription">
-                  <UserPlus className="h-5 w-5 mr-2" />
-                  Partager votre expérience
-                </Link>
-              </Button>
             </div>
           </div>
         </section>
 
-        {/* Content */}
-        <div className="container mx-auto px-4 py-12">
-          {/* Filters */}
-          <div className="mb-8">
-            <JeuneMariesFiltersComponent filters={filters} onFilterChange={handleFilterChange} onReset={handleResetFilters} />
-          </div>
+        {/* Testimonials Section - Revealed on demand */}
+        {showTestimonials && (
+          <div 
+            ref={testimonialsRef}
+            className="animate-fade-in bg-background py-16"
+          >
+            <div className="container mx-auto px-4">
+              {/* Section Header */}
+              <div className="text-center mb-12">
+                <h2 className="text-3xl font-serif text-foreground mb-4">
+                  Témoignages du Club
+                </h2>
+                <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                  Découvrez les expériences authentiques de nos membres et leurs conseils précieux
+                </p>
+              </div>
 
-          {/* Results */}
-          <div className="mb-6">
-            <p className="text-lg text-gray-600">
-              {loading ? 'Chargement...' : `${jeunesMaries.length} témoignage${jeunesMaries.length > 1 ? 's' : ''} trouvé${jeunesMaries.length > 1 ? 's' : ''}`}
-            </p>
-          </div>
+              {/* Filters */}
+              <div className="mb-8">
+                <JeuneMariesFiltersComponent 
+                  filters={filters} 
+                  onFilterChange={handleFilterChange} 
+                  onReset={handleResetFilters} 
+                />
+              </div>
 
-          {/* Listing */}
-          {loading ? (
-            <div className="space-y-4">
-              {[...Array(6)].map((_, i) => (
-                <div key={i} className="bg-white rounded-lg h-24 animate-pulse border" />
-              ))}
+              {/* Results Count */}
+              <div className="mb-6">
+                <p className="text-lg text-muted-foreground">
+                  {loading ? 'Chargement...' : `${jeunesMaries.length} témoignage${jeunesMaries.length > 1 ? 's' : ''} trouvé${jeunesMaries.length > 1 ? 's' : ''}`}
+                </p>
+              </div>
+
+              {/* Testimonials List */}
+              {loading ? (
+                <div className="space-y-4">
+                  {[...Array(6)].map((_, i) => (
+                    <div key={i} className="bg-card rounded-lg h-24 animate-pulse border" />
+                  ))}
+                </div>
+              ) : jeunesMaries.length > 0 ? (
+                <div className="space-y-4">
+                  {jeunesMaries.map(jeuneMarie => (
+                    <JeuneMariesListItem key={jeuneMarie.id} jeuneMarie={jeuneMarie} />
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <Heart className="h-16 w-16 text-muted-foreground/40 mx-auto mb-4" />
+                  <h3 className="text-xl font-semibold text-foreground mb-2">
+                    Aucun témoignage trouvé
+                  </h3>
+                  <p className="text-muted-foreground mb-6">
+                    Essayez de modifier vos critères de recherche ou soyez le premier à partager votre expérience !
+                  </p>
+                  <Button asChild variant="outline">
+                    <Link to="/jeunes-maries/inscription">
+                      <UserPlus className="h-4 w-4 mr-2" />
+                      Partager votre expérience
+                    </Link>
+                  </Button>
+                </div>
+              )}
+
+              {/* Share Experience CTA */}
+              <div className="text-center mt-12 pt-8 border-t border-border">
+                <p className="text-muted-foreground mb-4">
+                  Vous aussi, partagez votre expérience avec la communauté
+                </p>
+                <Button asChild size="lg" variant="outline">
+                  <Link to="/jeunes-maries/inscription">
+                    <UserPlus className="h-5 w-5 mr-2" />
+                    Partager votre expérience
+                  </Link>
+                </Button>
+              </div>
             </div>
-          ) : jeunesMaries.length > 0 ? (
-            <div className="space-y-4">
-              {jeunesMaries.map(jeuneMarie => (
-                <JeuneMariesListItem key={jeuneMarie.id} jeuneMarie={jeuneMarie} />
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12">
-              <Heart className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-gray-600 mb-2">
-                Aucun témoignage trouvé
-              </h3>
-              <p className="text-gray-500 mb-6">
-                Essayez de modifier vos critères de recherche ou soyez le premier à partager votre expérience !
-              </p>
-              <Button asChild variant="outline">
-                <Link to="/jeunes-maries/inscription">
-                  Partager votre expérience
-                </Link>
-              </Button>
-            </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </>;
 };
