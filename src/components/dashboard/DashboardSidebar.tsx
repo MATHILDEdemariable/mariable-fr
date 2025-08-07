@@ -81,22 +81,12 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
     },
   ];
 
-  // Menu déroulant Jour-J
+  // Menu déroulant Jour-J (seulement Jour-J et Coordinateurs)
   const jourMItems = [
-    {
-      label: 'Avant le jour-J',
-      icon: <CheckSquare className="h-4 w-4" />,
-      path: '/dashboard/avant-jour-j',
-    },
     {
       label: 'Jour-J',
       icon: <Calendar className="h-4 w-4" />,
       path: '/mon-jour-m',
-    },
-    {
-      label: 'Après le jour-J',
-      icon: <CheckSquare className="h-4 w-4" />,
-      path: '/dashboard/apres-jour-j',
     },
     {
       label: 'Coordinateurs',
@@ -172,6 +162,16 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
   // Vérifier si le menu Jour-J doit être actif
   const isJourMActive = () => {
     return jourMItems.some(item => isActive(item.path));
+  };
+
+  // Vérifier si Avant le jour-J est actif
+  const isAvantJourJActive = () => {
+    return isActive('/dashboard/avant-jour-j');
+  };
+
+  // Vérifier si Après le jour-J est actif
+  const isApresJourJActive = () => {
+    return isActive('/dashboard/apres-jour-j');
   };
 
   // Vérifier si le menu Aide doit être actif
@@ -318,6 +318,98 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
           </DropdownMenuContent>
         </DropdownMenu>
 
+        {/* Avant le jour-J */}
+        <Link
+          to={isReaderMode ? '#' : '/dashboard/avant-jour-j'}
+          onClick={(e) => {
+            if (isReaderMode) {
+              e.preventDefault();
+            }
+          }}
+          className={cn(
+            "flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors",
+            isAvantJourJActive()
+              ? 'bg-wedding-olive text-white shadow-sm'
+              : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive',
+            isReaderMode ? 'pointer-events-none opacity-70' : ''
+          )}
+        >
+          <CheckSquare className="h-4 w-4" />
+          <span className="ml-2 sm:ml-3 leading-tight">Avant le jour-J</span>
+          <span className="ml-auto text-xs bg-primary text-primary-foreground px-2 py-0.5 rounded-full">Premium</span>
+          {isReaderMode && (
+            <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>
+          )}
+        </Link>
+
+        {/* Menu déroulant Jour-J */}
+        <DropdownMenu>
+          <DropdownMenuTrigger 
+            className={cn(
+              "flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors w-full justify-start",
+              isJourMActive()
+                ? 'bg-wedding-olive text-white shadow-sm'
+                : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive',
+              isReaderMode ? 'pointer-events-none opacity-70' : ''
+            )}
+            disabled={isReaderMode}
+          >
+            <Calendar className="h-4 w-4" />
+            <span className="ml-2 sm:ml-3 leading-tight">Jour-J</span>
+            <ChevronDown className="ml-auto h-4 w-4" />
+            {isReaderMode && (
+              <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>
+            )}
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-56 bg-white shadow-lg border border-gray-200" align="end">
+            {jourMItems.map((subItem) => (
+              <DropdownMenuItem key={subItem.path} asChild>
+                <Link
+                  to={isReaderMode ? '#' : subItem.path}
+                  onClick={(e) => {
+                    if (isReaderMode) {
+                      e.preventDefault();
+                    }
+                  }}
+                  className={cn(
+                    "flex items-center px-2 py-2 text-sm w-full",
+                    isActive(subItem.path)
+                      ? 'bg-wedding-olive/10 text-wedding-olive font-medium'
+                      : 'text-gray-600 hover:bg-gray-50'
+                  )}
+                >
+                  {subItem.icon}
+                  <span className="ml-2">{subItem.label}</span>
+                </Link>
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        {/* Après le jour-J */}
+        <Link
+          to={isReaderMode ? '#' : '/dashboard/apres-jour-j'}
+          onClick={(e) => {
+            if (isReaderMode) {
+              e.preventDefault();
+            }
+          }}
+          className={cn(
+            "flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors",
+            isApresJourJActive()
+              ? 'bg-wedding-olive text-white shadow-sm'
+              : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive',
+            isReaderMode ? 'pointer-events-none opacity-70' : ''
+          )}
+        >
+          <CheckSquare className="h-4 w-4" />
+          <span className="ml-2 sm:ml-3 leading-tight">Après le jour-J</span>
+          <span className="ml-auto text-xs bg-primary text-primary-foreground px-2 py-0.5 rounded-full">Premium</span>
+          {isReaderMode && (
+            <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>
+          )}
+        </Link>
+
         {/* Menu déroulant Besoin d'aide ? */}
         <DropdownMenu>
           <DropdownMenuTrigger 
@@ -383,49 +475,6 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
         </DropdownMenu>
 
 
-        {/* Menu déroulant Jour-J */}
-        <DropdownMenu>
-          <DropdownMenuTrigger 
-            className={cn(
-              "flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors w-full justify-start",
-              isJourMActive()
-                ? 'bg-wedding-olive text-white shadow-sm'
-                : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive',
-              isReaderMode ? 'pointer-events-none opacity-70' : ''
-            )}
-            disabled={isReaderMode}
-          >
-            <Calendar className="h-4 w-4" />
-            <span className="ml-2 sm:ml-3 leading-tight">Jour-J</span>
-            <ChevronDown className="ml-auto h-4 w-4" />
-            {isReaderMode && (
-              <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>
-            )}
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-56 bg-white shadow-lg border border-gray-200" align="end">
-            {jourMItems.map((subItem) => (
-              <DropdownMenuItem key={subItem.path} asChild>
-                <Link
-                  to={isReaderMode ? '#' : subItem.path}
-                  onClick={(e) => {
-                    if (isReaderMode) {
-                      e.preventDefault();
-                    }
-                  }}
-                  className={cn(
-                    "flex items-center px-2 py-2 text-sm w-full",
-                    isActive(subItem.path)
-                      ? 'bg-wedding-olive/10 text-wedding-olive font-medium'
-                      : 'text-gray-600 hover:bg-gray-50'
-                  )}
-                >
-                  {subItem.icon}
-                  <span className="ml-2">{subItem.label}</span>
-                </Link>
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
 
         {/* Paramètres */}
         <Link

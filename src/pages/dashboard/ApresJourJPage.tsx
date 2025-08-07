@@ -12,6 +12,8 @@ import { useToast } from "@/hooks/use-toast";
 import { exportApresJourJToPDF } from "@/services/apresJourJExportService";
 import { ApresJourJShareButton } from "@/components/apres-jour-j/ApresJourJShareButton";
 import { SuggestionsModal } from "@/components/apres-jour-j/SuggestionsModal";
+import PremiumGate from '@/components/premium/PremiumGate';
+import { useUserProfile } from '@/hooks/useUserProfile';
 
 interface Task {
   id: string;
@@ -42,6 +44,7 @@ interface DatabaseChecklist {
 
 const ApresJourJPage: React.FC = () => {
   const [user, setUser] = useState<any>(null);
+  const { isPremium } = useUserProfile();
   const [inputText, setInputText] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [checklistData, setChecklistData] = useState<ChecklistData | null>(null);
@@ -346,71 +349,80 @@ const ApresJourJPage: React.FC = () => {
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-6">
       {!checklistData ? (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-2xl font-bold flex items-center gap-2">
-              <Sparkles className="h-6 w-6 text-primary" />
-              Checklist après le jour-J
-            </CardTitle>
-            <p className="text-muted-foreground">
-              Générez votre checklist personnalisée pour toutes les tâches à accomplir après votre mariage.
-            </p>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <label htmlFor="wedding-details" className="block text-sm font-medium mb-2">
-                Décrivez votre situation après le mariage :
-              </label>
-              <Textarea
-                id="wedding-details"
-                placeholder="Exemple: Nous avons eu notre mariage au Château de Versailles avec 120 invités. Nous avons loué de la décoration, des tables, des chaises. Nous devons récupérer nos affaires, ranger la salle, retourner la location..."
-                value={inputText}
-                onChange={(e) => setInputText(e.target.value)}
-                className="min-h-[150px]"
-              />
-            </div>
-            <Button 
-              onClick={generateChecklist}
-              disabled={!inputText.trim() || isGenerating}
-              className="w-full"
-              size="lg"
-            >
-              {isGenerating ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Génération en cours...
-                </>
-              ) : (
-                <>
-                  <Sparkles className="mr-2 h-4 w-4" />
-                  Générer ma checklist après le jour-J
-                </>
-              )}
-            </Button>
-          </CardContent>
-        </Card>
+        <PremiumGate 
+          feature="génération de checklist après le jour-J"
+          description="Créez votre checklist post-mariage adaptée à vos besoins"
+        >
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-2xl font-bold flex items-center gap-2">
+                <Sparkles className="h-6 w-6 text-primary" />
+                Checklist après le jour-J
+              </CardTitle>
+              <p className="text-muted-foreground">
+                Générez votre checklist personnalisée pour toutes les tâches à accomplir après votre mariage.
+              </p>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <label htmlFor="wedding-details" className="block text-sm font-medium mb-2">
+                  Décrivez votre situation après le mariage :
+                </label>
+                <Textarea
+                  id="wedding-details"
+                  placeholder="Exemple: Nous avons eu notre mariage au Château de Versailles avec 120 invités. Nous avons loué de la décoration, des tables, des chaises. Nous devons récupérer nos affaires, ranger la salle, retourner la location..."
+                  value={inputText}
+                  onChange={(e) => setInputText(e.target.value)}
+                  className="min-h-[150px]"
+                />
+              </div>
+              <Button 
+                onClick={generateChecklist}
+                disabled={!inputText.trim() || isGenerating}
+                className="w-full"
+                size="lg"
+              >
+                {isGenerating ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Génération en cours...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="mr-2 h-4 w-4" />
+                    Générer ma checklist après le jour-J
+                  </>
+                )}
+              </Button>
+            </CardContent>
+          </Card>
+        </PremiumGate>
       ) : (
         <Card>
           <CardHeader className="space-y-4">
             <div className="flex items-center justify-between">
               <CardTitle className="text-2xl font-bold">{checklistData.title}</CardTitle>
               <div className="flex gap-2 flex-wrap">
-                <Button
-                  onClick={() => setShowSuggestions(true)}
-                  variant="outline"
-                  size="sm"
-                >
-                  <Lightbulb className="mr-2 h-4 w-4" />
-                  Suggestions
-                </Button>
-                <Button
-                  onClick={resetChecklist}
-                  variant="outline"
-                  size="sm"
-                >
-                  <Sparkles className="mr-2 h-4 w-4" />
-                  Générer nouvelle liste
-                </Button>
+                {isPremium && (
+                  <Button
+                    onClick={() => setShowSuggestions(true)}
+                    variant="outline"
+                    size="sm"
+                  >
+                    <Lightbulb className="mr-2 h-4 w-4" />
+                    Suggestions
+                  </Button>
+                )}
+                {isPremium && (
+                  <Button
+                    onClick={resetChecklist}
+                    variant="outline"
+                    size="sm"
+                  >
+                    <Sparkles className="mr-2 h-4 w-4" />
+                    Générer nouvelle liste
+                  </Button>
+                )}
                 <Button
                   onClick={handleExportPDF}
                   disabled={isExporting}
