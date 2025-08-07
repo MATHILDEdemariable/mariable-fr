@@ -31,7 +31,7 @@ export const exportAvantJourJToPDF = async (data: ChecklistExportData): Promise<
     // Titre principal
     pdf.setFontSize(24);
     pdf.setTextColor(0, 0, 0);
-    pdf.text(data.title, 20, yPosition);
+    pdf.text('Checklist avant le jour-J', 20, yPosition);
     yPosition += 20;
     
     // Date de création
@@ -79,77 +79,65 @@ export const exportAvantJourJToPDF = async (data: ChecklistExportData): Promise<
       }
     };
     
-    // Afficher les tâches par catégorie
-    Object.entries(tasksByCategory).forEach(([category, tasks]) => {
-      // Vérifier si on a besoin d'une nouvelle page
-      if (yPosition > pageHeight - 60) {
+    // Optimisation pour une seule page - Colonne unique avec espacement compact
+    let currentColumn = 0;
+    const columnWidth = pageWidth - 40;
+    const tasksPerColumn = Math.floor((pageHeight - yPosition - 30) / 15);
+    
+    // Afficher toutes les tâches dans une liste compacte
+    const allTasks = Object.entries(tasksByCategory).flatMap(([category, tasks]) => 
+      [{ type: 'category', content: category }, ...tasks.map(task => ({ type: 'task', content: task }))]
+    );
+    
+    allTasks.forEach((item, index) => {
+      // Vérifier l'espace restant
+      if (yPosition > pageHeight - 30) {
         pdf.addPage();
         yPosition = 30;
       }
       
-      // Titre de la catégorie
-      pdf.setFontSize(16);
-      pdf.setTextColor(139, 69, 19);
-      pdf.text(category.toUpperCase(), 20, yPosition);
-      yPosition += 15;
-      
-      // Ligne de séparation
-      pdf.setDrawColor(200, 200, 200);
-      pdf.line(20, yPosition, pageWidth - 20, yPosition);
-      yPosition += 10;
-      
-      // Tâches de la catégorie
-      tasks.forEach((task) => {
+      if (item.type === 'category') {
+        // Titre de catégorie en style compact
+        pdf.setFontSize(12);
+        pdf.setTextColor(139, 69, 19);
+        pdf.text(`${(item.content as string).toUpperCase()}`, 20, yPosition);
+        yPosition += 8;
+      } else {
+        const task = item.content as Task;
         const isCompleted = data.completedTasks.includes(task.label);
         
-        // Vérifier si on a besoin d'une nouvelle page
-        if (yPosition > pageHeight - 40) {
-          pdf.addPage();
-          yPosition = 30;
-        }
-        
-        // Checkbox
+        // Checkbox compact
         pdf.setDrawColor(100, 100, 100);
-        pdf.rect(20, yPosition - 8, 8, 8);
+        pdf.rect(20, yPosition - 6, 6, 6);
         
         if (isCompleted) {
           pdf.setTextColor(34, 197, 94);
-          pdf.text('✓', 22, yPosition - 2);
+          pdf.setFontSize(8);
+          pdf.text('✓', 21.5, yPosition - 2);
         }
         
-        // Texte de la tâche
-        pdf.setFontSize(11);
-        pdf.setTextColor(isCompleted ? 100 : 0, isCompleted ? 100 : 0, isCompleted ? 100 : 0);
+        // Texte de la tâche en style compact
+        pdf.setFontSize(9);
+        pdf.setTextColor(isCompleted ? 120 : 0, isCompleted ? 120 : 0, isCompleted ? 120 : 0);
         
-        const maxWidth = pageWidth - 60;
-        const lines = pdf.splitTextToSize(task.label, maxWidth);
-        pdf.text(lines, 35, yPosition - 2);
-        
-        // Priorité
-        if (task.priority && task.priority !== 'medium') {
-          const priorityColor = getPriorityColor(task.priority);
-          pdf.setTextColor(priorityColor[0], priorityColor[1], priorityColor[2]);
-          pdf.setFontSize(9);
-          
-          const priorityText = task.priority === 'high' ? 'URGENT' : 'FAIBLE';
-          pdf.text(priorityText, pageWidth - 50, yPosition - 2);
+        // Limiter le texte pour tenir sur une ligne
+        const maxTextWidth = columnWidth - 60;
+        let taskText = task.label;
+        if (pdf.getTextWidth(taskText) > maxTextWidth) {
+          taskText = taskText.substring(0, 50) + '...';
         }
         
-        yPosition += lines.length * 6 + 5;
+        pdf.text(taskText, 30, yPosition - 2);
         
-        // Description si présente
-        if (task.description) {
-          pdf.setFontSize(9);
-          pdf.setTextColor(120, 120, 120);
-          const descLines = pdf.splitTextToSize(task.description, maxWidth);
-          pdf.text(descLines, 35, yPosition - 2);
-          yPosition += descLines.length * 4 + 3;
+        // Catégorie à droite
+        if (task.category) {
+          pdf.setFontSize(7);
+          pdf.setTextColor(100, 100, 100);
+          pdf.text(task.category, pageWidth - 50, yPosition - 2, { align: 'right' });
         }
         
-        yPosition += 3;
-      });
-      
-      yPosition += 10;
+        yPosition += 12;
+      }
     });
     
     // Footer sur chaque page

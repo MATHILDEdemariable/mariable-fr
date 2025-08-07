@@ -20,6 +20,8 @@ interface Task {
   description?: string;
   priority: 'low' | 'medium' | 'high';
   completed: boolean;
+  category?: string;
+  icon?: string;
 }
 
 interface ChecklistData {
@@ -184,12 +186,18 @@ const AvantJourJPage: React.FC = () => {
     }
   };
 
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case 'high': return 'bg-red-100 text-red-800';
-      case 'medium': return 'bg-yellow-100 text-yellow-800';
-      case 'low': return 'bg-green-100 text-green-800';
-      default: return 'bg-gray-100 text-gray-800';
+  const getCategoryColor = (category: string) => {
+    switch (category?.toUpperCase()) {
+      case 'RÉCEPTION': return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200';
+      case 'TENUE': return 'bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-200';
+      case 'DÉCORATION': return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
+      case 'TRAITEUR': return 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200';
+      case 'MUSIQUE': return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
+      case 'PHOTOS/VIDÉOS': return 'bg-cyan-100 text-cyan-800 dark:bg-cyan-900 dark:text-cyan-200';
+      case 'TRANSPORT': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200';
+      case 'ADMINISTRATIF': return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
+      case 'INVITÉS': return 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200';
+      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200';
     }
   };
 
@@ -313,71 +321,20 @@ const AvantJourJPage: React.FC = () => {
           <div className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center justify-between">
-                  <span>To do list personnalisée</span>
+                <div className="flex items-center justify-between mb-4">
+                  <CardTitle>To do list personnalisée</CardTitle>
                   <Badge variant="outline">
                     {getProgressPercentage()}% complété
                   </Badge>
-                </CardTitle>
-                <div className="w-full bg-gray-200 rounded-full h-2">
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2 mb-4">
                   <div 
                     className="bg-wedding-olive h-2 rounded-full transition-all duration-300"
                     style={{ width: `${getProgressPercentage()}%` }}
                   />
                 </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-3">
-                  {checklist.tasks.map((task) => (
-                    <div key={task.id} className="flex items-start gap-3 p-3 border rounded-lg">
-                      <Checkbox
-                        checked={checklist.completed_tasks.includes(task.id)}
-                        onCheckedChange={() => toggleTaskCompletion(task.id)}
-                        className="mt-1"
-                      />
-                      <div className="flex-1 space-y-1">
-                        <div className="flex items-center gap-2">
-                          <span className={checklist.completed_tasks.includes(task.id) ? 'line-through text-gray-500' : ''}>
-                            {task.label}
-                          </span>
-                          <Badge className={getPriorityColor(task.priority)}>
-                            {task.priority}
-                          </Badge>
-                        </div>
-                        {task.description && (
-                          <p className="text-sm text-gray-600">{task.description}</p>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                {showAddTask ? (
-                  <div className="flex gap-2">
-                    <Input
-                      placeholder="Nouvelle tâche..."
-                      value={newTaskLabel}
-                      onChange={(e) => setNewTaskLabel(e.target.value)}
-                      onKeyPress={(e) => e.key === 'Enter' && addManualTask()}
-                    />
-                    <Button onClick={addManualTask} disabled={!newTaskLabel.trim()}>
-                      <Check className="h-4 w-4" />
-                    </Button>
-                    <Button variant="outline" onClick={() => setShowAddTask(false)}>
-                      Annuler
-                    </Button>
-                  </div>
-                ) : (
-                  <Button 
-                    variant="outline" 
-                    onClick={() => setShowAddTask(true)}
-                    className="w-full"
-                  >
-                    <Plus className="h-4 w-4 mr-2" />
-                    Ajouter une tâche manuellement
-                  </Button>
-                )}
-
+                
+                {/* Actions en haut */}
                 <div className="flex gap-2 flex-wrap">
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
@@ -414,6 +371,62 @@ const AvantJourJPage: React.FC = () => {
                   
                   <AvantJourJShareButton checklistId={checklist.id} />
                 </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-3">
+                  {checklist.tasks.map((task) => (
+                    <div key={task.id} className="flex items-start gap-3 p-3 border rounded-lg">
+                      <Checkbox
+                        checked={checklist.completed_tasks.includes(task.id)}
+                        onCheckedChange={() => toggleTaskCompletion(task.id)}
+                        className="mt-1"
+                      />
+                      <div className="flex-1 space-y-1">
+                        <div className="flex items-center gap-2">
+                          {task.icon && <span className="text-lg">{task.icon}</span>}
+                          <span className={checklist.completed_tasks.includes(task.id) ? 'line-through text-gray-500' : ''}>
+                            {task.label}
+                          </span>
+                          {task.category && (
+                            <Badge className={getCategoryColor(task.category)}>
+                              {task.category}
+                            </Badge>
+                          )}
+                        </div>
+                        {task.description && (
+                          <p className="text-sm text-gray-600">{task.description}</p>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {showAddTask ? (
+                  <div className="flex gap-2">
+                    <Input
+                      placeholder="Nouvelle tâche..."
+                      value={newTaskLabel}
+                      onChange={(e) => setNewTaskLabel(e.target.value)}
+                      onKeyPress={(e) => e.key === 'Enter' && addManualTask()}
+                    />
+                    <Button onClick={addManualTask} disabled={!newTaskLabel.trim()}>
+                      <Check className="h-4 w-4" />
+                    </Button>
+                    <Button variant="outline" onClick={() => setShowAddTask(false)}>
+                      Annuler
+                    </Button>
+                  </div>
+                ) : (
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setShowAddTask(true)}
+                    className="w-full"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Ajouter une tâche manuellement
+                  </Button>
+                )}
+
               </CardContent>
             </Card>
           </div>

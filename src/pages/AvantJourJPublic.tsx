@@ -43,21 +43,26 @@ export default function AvantJourJPublic() {
       try {
         console.log('🔍 Validation du token:', token);
         
-        // Valider le token
+        // Valider le token - nouvelle approche
         const { data: tokenData, error: tokenError } = await supabase
-          .rpc('validate_avant_jour_j_share_token', { token_value: token });
+          .from('avant_jour_j_share_tokens')
+          .select('checklist_id, is_active, expires_at')
+          .eq('token', token)
+          .eq('is_active', true)
+          .single();
 
         if (tokenError) {
           console.error('❌ Erreur validation token:', tokenError);
-          throw tokenError;
+          throw new Error('Token invalide ou non trouvé');
         }
 
-        if (!tokenData || tokenData.length === 0 || !tokenData[0]?.is_valid) {
-          console.log('❌ Token invalide ou expiré');
-          throw new Error('Token invalide ou expiré');
+        // Vérifier l'expiration si elle existe
+        if (tokenData.expires_at && new Date(tokenData.expires_at) < new Date()) {
+          console.log('❌ Token expiré');
+          throw new Error('Token expiré');
         }
 
-        const checklistId = tokenData[0].checklist_id;
+        const checklistId = tokenData.checklist_id;
         console.log('✅ Token valide, checklist ID:', checklistId);
 
         // Récupérer les données de la checklist
@@ -131,29 +136,18 @@ export default function AvantJourJPublic() {
     return Math.round((checklist.completed_tasks.length / checklist.tasks.length) * 100);
   };
 
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case 'high':
-        return 'bg-destructive text-destructive-foreground';
-      case 'medium':
-        return 'bg-orange-500 text-white';
-      case 'low':
-        return 'bg-green-500 text-white';
-      default:
-        return 'bg-muted text-muted-foreground';
-    }
-  };
-
-  const getPriorityLabel = (priority: string) => {
-    switch (priority) {
-      case 'high':
-        return 'Urgent';
-      case 'medium':
-        return 'Moyen';
-      case 'low':
-        return 'Faible';
-      default:
-        return 'Normal';
+  const getCategoryColor = (category: string) => {
+    switch (category?.toUpperCase()) {
+      case 'RÉCEPTION': return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200';
+      case 'TENUE': return 'bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-200';
+      case 'DÉCORATION': return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
+      case 'TRAITEUR': return 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200';
+      case 'MUSIQUE': return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
+      case 'PHOTOS/VIDÉOS': return 'bg-cyan-100 text-cyan-800 dark:bg-cyan-900 dark:text-cyan-200';
+      case 'TRANSPORT': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200';
+      case 'ADMINISTRATIF': return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
+      case 'INVITÉS': return 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200';
+      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200';
     }
   };
 
@@ -293,9 +287,9 @@ export default function AvantJourJPublic() {
                               {task.icon && (
                                 <span className="text-lg">{task.icon}</span>
                               )}
-                              {task.priority && task.priority !== 'medium' && (
-                                <Badge variant="secondary" className={getPriorityColor(task.priority)}>
-                                  {getPriorityLabel(task.priority)}
+                              {task.category && (
+                                <Badge className={getCategoryColor(task.category)}>
+                                  {task.category}
                                 </Badge>
                               )}
                             </div>
