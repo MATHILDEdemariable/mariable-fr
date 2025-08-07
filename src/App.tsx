@@ -36,6 +36,7 @@ import Budget from "./pages/services/Budget";
 import Prestataire from "./pages/prestataire/slug";
 import EmailConfirmation from "./pages/auth/EmailConfirmation";
 import MessageHistoryPage from "./pages/dashboard/MessageHistoryPage";
+import MonJourMConseils from "./pages/MonJourMConseils";
 
 // Import missing pages
 import Professionnels from "./pages/Professionnels";
@@ -105,6 +106,7 @@ function App() {
                   <Route path="/mon-jour-m/planning" element={<MonJourMPlanningPage />} />
                   <Route path="/mon-jour-m/equipe" element={<MonJourMEquipePage />} />
                   <Route path="/mon-jour-m/documents" element={<MonJourMDocumentsPage />} />
+                  <Route path="/mon-jour-m/conseils" element={<MonJourMConseils />} />
 
                   {/* Auth routes */}
                   <Route path="/login" element={<Login />} />

@@ -904,6 +904,39 @@ export type Database = {
         }
         Relationships: []
       }
+      planning_avant_jour_j: {
+        Row: {
+          completed_tasks: Json
+          created_at: string
+          id: string
+          original_text: string
+          tasks: Json
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          completed_tasks?: Json
+          created_at?: string
+          id?: string
+          original_text: string
+          tasks?: Json
+          title?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          completed_tasks?: Json
+          created_at?: string
+          id?: string
+          original_text?: string
+          tasks?: Json
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       planning_questions: {
         Row: {
           categorie: string

@@ -93,11 +93,6 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
       icon: <Users className="h-4 w-4" />,
       path: '/dashboard/coordinateurs',
     },
-    {
-      label: 'Conseils Jour-J',
-      icon: <Lightbulb className="h-4 w-4" />,
-      path: '/dashboard/coordination',
-    },
   ];
 
   // Menu déroulant Besoin d'aide ?
@@ -445,9 +440,9 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
           )}
         </Link>
 
-        {/* Mission Mariage */}
+        {/* Avant le jour-J */}
         <Link
-          to={isReaderMode ? '#' : '/dashboard/project-management'}
+          to={isReaderMode ? '#' : '/dashboard/avant-jour-j'}
           onClick={(e) => {
             if (isReaderMode) {
               e.preventDefault();
@@ -455,17 +450,17 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
           }}
           className={cn(
             "flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors",
-            isActive('/dashboard/project-management')
+            isActive('/dashboard/avant-jour-j')
               ? 'bg-wedding-olive text-white shadow-sm'
               : 'text-blue-600 font-semibold hover:bg-blue-50 border border-blue-200',
             isReaderMode ? 'pointer-events-none opacity-70' : ''
           )}
         >
-          <Calendar className="h-4 w-4" />
-          <span className="ml-2 sm:ml-3 leading-tight">Mission Mariage</span>
+          <Lightbulb className="h-4 w-4" />
+          <span className="ml-2 sm:ml-3 leading-tight">Avant le jour-J</span>
           {!isReaderMode && (
             <span className="ml-auto text-xs bg-blue-600 text-white px-1.5 sm:px-2 py-0.5 rounded-full hidden sm:inline">
-              BETA
+              IA
             </span>
           )}
           {isReaderMode && (

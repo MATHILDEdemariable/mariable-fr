@@ -3,3 +3,6 @@ project_id = "bgidfcqktsttzlwlumtz"
 
 [functions.stripe-webhook]
 verify_jwt = false
+
+[functions.generate-checklist-ai]
+verify_jwt = true
