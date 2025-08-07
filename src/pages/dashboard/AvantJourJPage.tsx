@@ -13,8 +13,8 @@ import { Lightbulb, Plus, Check, Loader2, Sparkles, Download, RotateCcw } from '
 import { toast } from 'sonner';
 import { AvantJourJShareButton } from '@/components/avant-jour-j/AvantJourJShareButton';
 import { exportAvantJourJToPDF } from '@/services/avantJourJExportService';
-import PremiumGate from '@/components/premium/PremiumGate';
-import { useUserProfile } from '@/hooks/useUserProfile';
+import { usePremiumAction } from '@/hooks/usePremiumAction';
+import PremiumModal from '@/components/premium/PremiumModal';
 
 interface Task {
   id: string;
@@ -46,7 +46,10 @@ interface DatabaseChecklist {
 
 const AvantJourJPage: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
-  const { isPremium } = useUserProfile();
+  const { executeAction, showPremiumModal, closePremiumModal, feature, description } = usePremiumAction({
+    feature: "génération de checklist avant le jour-J",
+    description: "Générez votre checklist personnalisée avant le jour-J avec l'IA"
+  });
   const [inputText, setInputText] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [checklist, setChecklist] = useState<ChecklistData | null>(null);
@@ -281,50 +284,45 @@ const AvantJourJPage: React.FC = () => {
         </div>
 
         {!checklist ? (
-          <PremiumGate 
-            feature="génération de checklist avant le jour-J"
-            description="Générez votre checklist personnalisée avant le jour-J avec l'IA"
-          >
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Sparkles className="h-5 w-5 text-wedding-olive" />
-                  Générer ma checklist avec l'IA
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Décrivez votre mariage et vos préoccupations
-                  </label>
-                  <Textarea
-                    placeholder="Ex: Mon mariage aura lieu en juin dans un château avec 120 invités. J'ai peur d'oublier des détails importants comme les alliances, les fleurs, la musique. Je veux aussi penser à la météo et aux préparatifs de la veille..."
-                    value={inputText}
-                    onChange={(e) => setInputText(e.target.value)}
-                    rows={6}
-                    className="w-full"
-                  />
-                </div>
-                <Button 
-                  onClick={generateChecklist}
-                  disabled={isGenerating || !inputText.trim()}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Sparkles className="h-5 w-5 text-wedding-olive" />
+                Générer ma checklist avec l'IA
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Décrivez votre mariage et vos préoccupations
+                </label>
+                <Textarea
+                  placeholder="Ex: Mon mariage aura lieu en juin dans un château avec 120 invités. J'ai peur d'oublier des détails importants comme les alliances, les fleurs, la musique. Je veux aussi penser à la météo et aux préparatifs de la veille..."
+                  value={inputText}
+                  onChange={(e) => setInputText(e.target.value)}
+                  rows={6}
                   className="w-full"
-                >
-                  {isGenerating ? (
-                    <>
-                      <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                      Génération en cours...
-                    </>
-                  ) : (
-                    <>
-                      <Sparkles className="h-4 w-4 mr-2" />
-                      Générer ma checklist
-                    </>
-                  )}
-                </Button>
-              </CardContent>
-            </Card>
-          </PremiumGate>
+                />
+              </div>
+              <Button 
+                onClick={() => executeAction(generateChecklist)}
+                disabled={isGenerating || !inputText.trim()}
+                className="w-full"
+              >
+                {isGenerating ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                    Génération en cours...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="h-4 w-4 mr-2" />
+                    Générer ma checklist
+                  </>
+                )}
+              </Button>
+            </CardContent>
+          </Card>
         ) : (
           <div className="space-y-6">
             <Card>
@@ -342,32 +340,39 @@ const AvantJourJPage: React.FC = () => {
                   />
                 </div>
                 
-                {/* Actions en haut */}
+                 {/* Actions en haut */}
                 <div className="flex gap-2 flex-wrap">
-                  {isPremium && (
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button variant="outline" size="sm">
-                          <RotateCcw className="h-4 w-4 mr-2" />
-                          Générer une nouvelle liste
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>Êtes-vous sûr ?</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            Attention, cela va supprimer votre liste actuelle. Cette action est irréversible.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Annuler</AlertDialogCancel>
-                          <AlertDialogAction onClick={resetChecklist}>
-                            Confirmer
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                  )}
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          executeAction(() => {
+                            // L'action sera gérée par le dialog si premium
+                          });
+                        }}
+                      >
+                        <RotateCcw className="h-4 w-4 mr-2" />
+                        Générer une nouvelle liste
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Êtes-vous sûr ?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Attention, cela va supprimer votre liste actuelle. Cette action est irréversible.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Annuler</AlertDialogCancel>
+                        <AlertDialogAction onClick={resetChecklist}>
+                          Confirmer
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                   
                   <Button 
                     variant="outline" 
@@ -441,6 +446,13 @@ const AvantJourJPage: React.FC = () => {
             </Card>
           </div>
         )}
+        
+        <PremiumModal
+          isOpen={showPremiumModal}
+          onClose={closePremiumModal}
+          feature={feature}
+          description={description}
+        />
       </div>
     </>
   );

@@ -40,68 +40,74 @@ export const JeuneMariesListItem: React.FC<JeuneMariesListItemProps> = ({ jeuneM
   
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-all duration-200 hover:border-wedding-olive/30">
-      <div className="flex items-center justify-between">
-        {/* Left section - Main info */}
-        <div className="flex items-center gap-6 flex-1">
-          <div className="flex items-center gap-3">
-            <Heart className="h-6 w-6 text-wedding-olive" />
-            <div>
-              <h3 className="font-serif text-lg font-semibold text-wedding-olive">
-                {jeuneMarie.nom_complet}
-              </h3>
-               <div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
-                 <div className="flex items-center gap-1">
-                   <MapPin className="h-4 w-4" />
-                   <span>{jeuneMarie.lieu_mariage} • {jeuneMarie.region}</span>
-                 </div>
-                <div className="flex items-center gap-1">
-                  <Calendar className="h-4 w-4" />
-                  <span>{formatDate(jeuneMarie.date_mariage)}</span>
-                </div>
-                {jeuneMarie.nombre_invites && (
-                  <div className="flex items-center gap-1">
-                    <Users className="h-4 w-4" />
-                    <span>{jeuneMarie.nombre_invites} invités</span>
-                  </div>
-                )}
+    <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 hover:shadow-md transition-all duration-200 hover:border-wedding-olive/30">
+      {/* Mobile-first responsive layout */}
+      <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+        {/* Header section with couple info */}
+        <div className="flex items-center gap-3 flex-1">
+          <Heart className="h-5 w-5 sm:h-6 sm:w-6 text-wedding-olive shrink-0" />
+          <div className="min-w-0 flex-1">
+            <h3 className="font-serif text-base sm:text-lg font-semibold text-wedding-olive truncate">
+              {jeuneMarie.nom_complet}
+            </h3>
+            
+            {/* Mobile: Stack info vertically */}
+            <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 text-xs sm:text-sm text-muted-foreground mt-1">
+              <div className="flex items-center gap-1">
+                <MapPin className="h-3 w-3 sm:h-4 sm:w-4 shrink-0" />
+                <span className="truncate">{jeuneMarie.lieu_mariage} • {jeuneMarie.region}</span>
               </div>
+              <div className="flex items-center gap-1">
+                <Calendar className="h-3 w-3 sm:h-4 sm:w-4 shrink-0" />
+                <span>{formatDate(jeuneMarie.date_mariage)}</span>
+              </div>
+              {jeuneMarie.nombre_invites && (
+                <div className="flex items-center gap-1">
+                  <Users className="h-3 w-3 sm:h-4 sm:w-4 shrink-0" />
+                  <span>{jeuneMarie.nombre_invites} invités</span>
+                </div>
+              )}
             </div>
           </div>
         </div>
 
-        {/* Center section - Rating and badges */}
-        <div className="flex items-center gap-4">
-          {jeuneMarie.note_experience && renderStars(jeuneMarie.note_experience)}
+        {/* Rating and badges section */}
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+          {jeuneMarie.note_experience && (
+            <div className="flex justify-start sm:justify-center">
+              {renderStars(jeuneMarie.note_experience)}
+            </div>
+          )}
           
-           <div className="flex gap-2">
-             {jeuneMarie.budget_approximatif && (
-               <Badge variant="outline" className="text-xs">
-                 {jeuneMarie.budget_approximatif}
-               </Badge>
-             )}
-           </div>
+          <div className="flex gap-2">
+            {jeuneMarie.budget_approximatif && (
+              <Badge variant="outline" className="text-xs">
+                {jeuneMarie.budget_approximatif}
+              </Badge>
+            )}
+          </div>
         </div>
 
-        {/* Right section - Action button */}
-        <div className="ml-6">
+        {/* Action button - Full width on mobile */}
+        <div className="w-full sm:w-auto sm:ml-2">
           <Button 
             asChild
             variant="outline"
-            className="border-wedding-olive text-wedding-olive hover:bg-wedding-olive hover:text-white"
+            className="w-full sm:w-auto border-wedding-olive text-wedding-olive hover:bg-wedding-olive hover:text-white text-sm"
+            size="sm"
           >
             <Link to={`/jeunes-maries/${jeuneMarie.slug}`}>
-              <ExternalLink className="h-4 w-4 mr-2" />
+              <ExternalLink className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
               Voir le détail
             </Link>
           </Button>
         </div>
       </div>
 
-      {/* Experience preview */}
+      {/* Experience preview - Always full width */}
       {jeuneMarie.experience_partagee && (
         <div className="mt-4 pt-4 border-t border-gray-100">
-          <p className="text-sm text-gray-600 line-clamp-2">
+          <p className="text-xs sm:text-sm text-gray-600 line-clamp-2">
             {jeuneMarie.experience_partagee}
           </p>
         </div>

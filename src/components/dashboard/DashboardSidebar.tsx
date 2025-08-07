@@ -336,7 +336,6 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
         >
           <CheckSquare className="h-4 w-4" />
           <span className="ml-2 sm:ml-3 leading-tight">Avant le jour-J</span>
-          <span className="ml-auto text-xs bg-primary text-primary-foreground px-2 py-0.5 rounded-full">Premium</span>
           {isReaderMode && (
             <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>
           )}
@@ -404,7 +403,6 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
         >
           <CheckSquare className="h-4 w-4" />
           <span className="ml-2 sm:ml-3 leading-tight">Après le jour-J</span>
-          <span className="ml-auto text-xs bg-primary text-primary-foreground px-2 py-0.5 rounded-full">Premium</span>
           {isReaderMode && (
             <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>
           )}
