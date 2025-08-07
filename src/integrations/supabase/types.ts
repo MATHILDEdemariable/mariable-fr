@@ -56,6 +56,39 @@ export type Database = {
         }
         Relationships: []
       }
+      apres_jour_j_share_tokens: {
+        Row: {
+          checklist_id: string
+          created_at: string
+          expires_at: string | null
+          id: string
+          is_active: boolean
+          name: string
+          token: string
+          updated_at: string
+        }
+        Insert: {
+          checklist_id: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          token: string
+          updated_at?: string
+        }
+        Update: {
+          checklist_id?: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          token?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       avant_jour_j_share_tokens: {
         Row: {
           checklist_id: string
@@ -965,6 +998,45 @@ export type Database = {
           id?: string
           is_checked?: boolean
           position?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      planning_apres_jour_j: {
+        Row: {
+          category: string | null
+          completed_tasks: Json
+          created_at: string
+          icon: string | null
+          id: string
+          original_text: string
+          tasks: Json
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          category?: string | null
+          completed_tasks?: Json
+          created_at?: string
+          icon?: string | null
+          id?: string
+          original_text: string
+          tasks?: Json
+          title?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          category?: string | null
+          completed_tasks?: Json
+          created_at?: string
+          icon?: string | null
+          id?: string
+          original_text?: string
+          tasks?: Json
+          title?: string
           updated_at?: string
           user_id?: string
         }
@@ -2407,6 +2479,13 @@ export type Database = {
       is_valid_share_token: {
         Args: { token_value: string }
         Returns: boolean
+      }
+      validate_apres_jour_j_share_token: {
+        Args: { token_value: string }
+        Returns: {
+          is_valid: boolean
+          checklist_id: string
+        }[]
       }
       validate_avant_jour_j_share_token: {
         Args: { token_value: string }

@@ -25,6 +25,7 @@ import MessageHistoryPage from './MessageHistoryPage';
 import VendorSelectionPage from './VendorSelectionPage';
 import CoordinatorsPage from './CoordinatorsPage';
 import AvantJourJPage from './AvantJourJPage';
+import ApresJourJPage from './ApresJourJPage';
 
 const UserDashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -78,7 +79,8 @@ const UserDashboard: React.FC = () => {
           <Route path="selection" element={<VendorSelectionPage />} />
           <Route path="selection/:region" element={<VendorSelectionPage />} />
           <Route path="coordinateurs" element={<CoordinatorsPage />} />
-          <Route path="avant-jour-j" element={<AvantJourJPage />} />
+            <Route path="avant-jour-j" element={<AvantJourJPage />} />
+            <Route path="apres-jour-j" element={<ApresJourJPage />} />
           <Route path="*" element={<div>Page non trouvée</div>} />
         </Route>
       </Routes>

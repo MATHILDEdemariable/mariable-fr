@@ -84,9 +84,19 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
   // Menu déroulant Jour-J
   const jourMItems = [
     {
+      label: 'Avant le jour-J',
+      icon: <CheckSquare className="h-4 w-4" />,
+      path: '/dashboard/avant-jour-j',
+    },
+    {
       label: 'Jour-J',
       icon: <Calendar className="h-4 w-4" />,
       path: '/mon-jour-m',
+    },
+    {
+      label: 'Après le jour-J',
+      icon: <CheckSquare className="h-4 w-4" />,
+      path: '/dashboard/apres-jour-j',
     },
     {
       label: 'Coordinateurs',
@@ -440,33 +450,6 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
           )}
         </Link>
 
-        {/* Avant le jour-J */}
-        <Link
-          to={isReaderMode ? '#' : '/dashboard/avant-jour-j'}
-          onClick={(e) => {
-            if (isReaderMode) {
-              e.preventDefault();
-            }
-          }}
-          className={cn(
-            "flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors",
-            isActive('/dashboard/avant-jour-j')
-              ? 'bg-wedding-olive text-white shadow-sm'
-              : 'text-blue-600 font-semibold hover:bg-blue-50 border border-blue-200',
-            isReaderMode ? 'pointer-events-none opacity-70' : ''
-          )}
-        >
-          <Lightbulb className="h-4 w-4" />
-          <span className="ml-2 sm:ml-3 leading-tight">Avant le jour-J</span>
-          {!isReaderMode && (
-            <span className="ml-auto text-xs bg-blue-600 text-white px-1.5 sm:px-2 py-0.5 rounded-full hidden sm:inline">
-              IA
-            </span>
-          )}
-          {isReaderMode && (
-            <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>
-          )}
-        </Link>
       </nav>
       
       <div className="mt-auto px-2 sm:px-3 py-2">

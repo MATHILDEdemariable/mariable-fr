@@ -73,6 +73,7 @@ import CustomPages from "./pages/admin/CustomPages";
 import CustomPage from "./pages/CustomPage";
 import PropositionPage from "./pages/PropositionPage";
 import AvantJourJPublic from "./pages/AvantJourJPublic";
+import ApresJourJPublic from "./pages/ApresJourJPublic";
 
 const queryClient = new QueryClient();
 
@@ -102,7 +103,8 @@ function App() {
                   {/* Routes publiques pour les plannings */}
                   <Route path="/planning-public/:coordinationId" element={<PlanningPublic />} />
                   <Route path="/planning-public/project/:token" element={<PlanningPublicProject />} />
-                  <Route path="/avant-jour-j-public/:token" element={<AvantJourJPublic />} />
+          <Route path="/avant-jour-j-public/:token" element={<AvantJourJPublic />} />
+          <Route path="/apres-jour-j-public/:token" element={<ApresJourJPublic />} />
                   
                   {/* Mon Jour-M routes */}
                   <Route path="/mon-jour-m" element={<Navigate to="/mon-jour-m/planning" replace />} />
