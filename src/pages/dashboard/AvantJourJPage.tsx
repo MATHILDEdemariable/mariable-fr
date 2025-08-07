@@ -263,7 +263,7 @@ const AvantJourJPage: React.FC = () => {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
-                  <span>{checklist.title}</span>
+                  <span>To do list personnalisée</span>
                   <Badge variant="outline">
                     {getProgressPercentage()}% complété
                   </Badge>
