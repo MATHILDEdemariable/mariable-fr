@@ -8,11 +8,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { v4 as uuidv4 } from "uuid";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-
 interface AvantJourJShareButtonProps {
   checklistId?: string;
 }
-
 interface ShareToken {
   id: string;
   token: string;
@@ -21,26 +19,27 @@ interface ShareToken {
   expires_at: string | null;
   created_at: string;
 }
-
-export function AvantJourJShareButton({ checklistId }: AvantJourJShareButtonProps) {
+export function AvantJourJShareButton({
+  checklistId
+}: AvantJourJShareButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [tokens, setTokens] = useState<ShareToken[]>([]);
   const [newTokenName, setNewTokenName] = useState("");
-  const { toast } = useToast();
-
+  const {
+    toast
+  } = useToast();
   if (!checklistId) {
     return null;
   }
-
   const loadTokens = async () => {
     try {
-      const { data, error } = await supabase
-        .from('avant_jour_j_share_tokens')
-        .select('*')
-        .eq('checklist_id', checklistId)
-        .order('created_at', { ascending: false });
-
+      const {
+        data,
+        error
+      } = await supabase.from('avant_jour_j_share_tokens').select('*').eq('checklist_id', checklistId).order('created_at', {
+        ascending: false
+      });
       if (error) throw error;
       setTokens(data || []);
     } catch (error) {
@@ -48,45 +47,39 @@ export function AvantJourJShareButton({ checklistId }: AvantJourJShareButtonProp
       toast({
         title: "Erreur",
         description: "Impossible de charger les liens de partage",
-        variant: "destructive",
+        variant: "destructive"
       });
     }
   };
-
   const handleOpenDialog = () => {
     setIsOpen(true);
     loadTokens();
   };
-
   const generateShareToken = async () => {
     if (!newTokenName.trim()) {
       toast({
         title: "Erreur",
         description: "Veuillez saisir un nom pour le lien",
-        variant: "destructive",
+        variant: "destructive"
       });
       return;
     }
-
     setIsLoading(true);
     try {
       const token = uuidv4();
-      const { error } = await supabase
-        .from('avant_jour_j_share_tokens')
-        .insert({
-          checklist_id: checklistId,
-          token,
-          name: newTokenName,
-          is_active: true
-        });
-
+      const {
+        error
+      } = await supabase.from('avant_jour_j_share_tokens').insert({
+        checklist_id: checklistId,
+        token,
+        name: newTokenName,
+        is_active: true
+      });
       if (error) throw error;
-
       toast({
         title: "Succès",
-        description: "Lien de partage créé avec succès",
+        description: "Lien de partage créé avec succès"
       });
-
       setNewTokenName("");
       await loadTokens();
     } catch (error) {
@@ -94,91 +87,78 @@ export function AvantJourJShareButton({ checklistId }: AvantJourJShareButtonProp
       toast({
         title: "Erreur",
         description: "Impossible de créer le lien de partage",
-        variant: "destructive",
+        variant: "destructive"
       });
     } finally {
       setIsLoading(false);
     }
   };
-
   const copyToClipboard = async (token: string) => {
     const url = `${window.location.origin}/avant-jour-j-public/${token}`;
     try {
       await navigator.clipboard.writeText(url);
       toast({
         title: "Copié !",
-        description: "Le lien a été copié dans le presse-papiers",
+        description: "Le lien a été copié dans le presse-papiers"
       });
     } catch (error) {
       console.error('Erreur lors de la copie:', error);
       toast({
         title: "Erreur",
         description: "Impossible de copier le lien",
-        variant: "destructive",
+        variant: "destructive"
       });
     }
   };
-
   const previewLink = (token: string) => {
     const url = `${window.location.origin}/avant-jour-j-public/${token}`;
     window.open(url, '_blank');
   };
-
   const toggleTokenStatus = async (tokenId: string, currentStatus: boolean) => {
     try {
-      const { error } = await supabase
-        .from('avant_jour_j_share_tokens')
-        .update({ is_active: !currentStatus })
-        .eq('id', tokenId);
-
+      const {
+        error
+      } = await supabase.from('avant_jour_j_share_tokens').update({
+        is_active: !currentStatus
+      }).eq('id', tokenId);
       if (error) throw error;
       await loadTokens();
-      
       toast({
         title: "Succès",
-        description: `Lien ${!currentStatus ? 'activé' : 'désactivé'}`,
+        description: `Lien ${!currentStatus ? 'activé' : 'désactivé'}`
       });
     } catch (error) {
       console.error('Erreur lors de la mise à jour:', error);
       toast({
         title: "Erreur",
         description: "Impossible de modifier le statut",
-        variant: "destructive",
+        variant: "destructive"
       });
     }
   };
-
   const deleteToken = async (tokenId: string) => {
     try {
-      const { error } = await supabase
-        .from('avant_jour_j_share_tokens')
-        .delete()
-        .eq('id', tokenId);
-
+      const {
+        error
+      } = await supabase.from('avant_jour_j_share_tokens').delete().eq('id', tokenId);
       if (error) throw error;
       await loadTokens();
-      
       toast({
         title: "Succès",
-        description: "Lien supprimé avec succès",
+        description: "Lien supprimé avec succès"
       });
     } catch (error) {
       console.error('Erreur lors de la suppression:', error);
       toast({
         title: "Erreur",
         description: "Impossible de supprimer le lien",
-        variant: "destructive",
+        variant: "destructive"
       });
     }
   };
-
-  return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+  return <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" onClick={handleOpenDialog}>
-          <Share className="h-4 w-4 mr-2" />
-          Partager
-        </Button>
+        
       </DialogTrigger>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
@@ -192,11 +172,7 @@ export function AvantJourJShareButton({ checklistId }: AvantJourJShareButtonProp
               <CardTitle className="text-base">Créer un nouveau lien de partage</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              <Input
-                placeholder="Nom du lien (ex: Pour l'équipe)"
-                value={newTokenName}
-                onChange={(e) => setNewTokenName(e.target.value)}
-              />
+              <Input placeholder="Nom du lien (ex: Pour l'équipe)" value={newTokenName} onChange={e => setNewTokenName(e.target.value)} />
               <Button onClick={generateShareToken} disabled={isLoading} className="w-full">
                 <Plus className="h-4 w-4 mr-2" />
                 Créer le lien
@@ -205,15 +181,13 @@ export function AvantJourJShareButton({ checklistId }: AvantJourJShareButtonProp
           </Card>
 
           {/* Liste des tokens existants */}
-          {tokens.length > 0 && (
-            <Card>
+          {tokens.length > 0 && <Card>
               <CardHeader>
                 <CardTitle className="text-base">Liens de partage existants</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  {tokens.map((token) => (
-                    <div key={token.id} className="flex items-center justify-between p-3 border rounded-lg">
+                  {tokens.map(token => <div key={token.id} className="flex items-center justify-between p-3 border rounded-lg">
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
                           <span className="font-medium">{token.name}</span>
@@ -226,41 +200,23 @@ export function AvantJourJShareButton({ checklistId }: AvantJourJShareButtonProp
                         </p>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => copyToClipboard(token.token)}
-                        >
+                        <Button variant="outline" size="sm" onClick={() => copyToClipboard(token.token)}>
                           <Copy className="h-4 w-4" />
                         </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => previewLink(token.token)}
-                        >
+                        <Button variant="outline" size="sm" onClick={() => previewLink(token.token)}>
                           <Eye className="h-4 w-4" />
                         </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => toggleTokenStatus(token.id, token.is_active)}
-                        >
+                        <Button variant="outline" size="sm" onClick={() => toggleTokenStatus(token.id, token.is_active)}>
                           <Settings className="h-4 w-4" />
                         </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => deleteToken(token.id)}
-                        >
+                        <Button variant="outline" size="sm" onClick={() => deleteToken(token.id)}>
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
-                    </div>
-                  ))}
+                    </div>)}
                 </div>
               </CardContent>
-            </Card>
-          )}
+            </Card>}
 
           <div className="text-sm text-muted-foreground p-3 bg-muted rounded-lg">
             <p><strong>Mode public :</strong></p>
@@ -270,6 +226,5 @@ export function AvantJourJShareButton({ checklistId }: AvantJourJShareButtonProp
           </div>
         </div>
       </DialogContent>
-    </Dialog>
-  );
+    </Dialog>;
 }
