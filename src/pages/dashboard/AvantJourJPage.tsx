@@ -8,8 +8,11 @@ import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
-import { Lightbulb, Plus, Check, Loader2, Sparkles } from 'lucide-react';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { Lightbulb, Plus, Check, Loader2, Sparkles, Download, RotateCcw } from 'lucide-react';
 import { toast } from 'sonner';
+import { AvantJourJShareButton } from '@/components/avant-jour-j/AvantJourJShareButton';
+import { exportAvantJourJToPDF } from '@/services/avantJourJExportService';
 
 interface Task {
   id: string;
@@ -25,6 +28,7 @@ interface ChecklistData {
   original_text: string;
   tasks: Task[];
   completed_tasks: string[];
+  created_at: string;
 }
 
 interface DatabaseChecklist {
@@ -33,6 +37,7 @@ interface DatabaseChecklist {
   original_text: string;
   tasks: any;
   completed_tasks: any;
+  created_at: string;
 }
 
 const AvantJourJPage: React.FC = () => {
@@ -43,6 +48,7 @@ const AvantJourJPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [newTaskLabel, setNewTaskLabel] = useState('');
   const [showAddTask, setShowAddTask] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
 
   useEffect(() => {
     const loadUserAndChecklist = async () => {
@@ -192,6 +198,51 @@ const AvantJourJPage: React.FC = () => {
     return Math.round((checklist.completed_tasks.length / checklist.tasks.length) * 100);
   };
 
+  const handleExportPDF = async () => {
+    if (!checklist) return;
+
+    setIsExporting(true);
+    try {
+      const success = await exportAvantJourJToPDF({
+        title: checklist.title,
+        tasks: checklist.tasks,
+        completedTasks: checklist.completed_tasks,
+        created_at: checklist.created_at
+      });
+
+      if (success) {
+        toast.success('PDF téléchargé avec succès');
+      } else {
+        throw new Error('Échec de l\'export');
+      }
+    } catch (error) {
+      console.error('Erreur export PDF:', error);
+      toast.error('Impossible d\'exporter le PDF');
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  const resetChecklist = async () => {
+    if (!user) return;
+
+    try {
+      const { error } = await supabase
+        .from('planning_avant_jour_j')
+        .delete()
+        .eq('user_id', user.id);
+
+      if (error) throw error;
+
+      setChecklist(null);
+      setInputText('');
+      toast.success('Checklist supprimée avec succès');
+    } catch (error) {
+      console.error('Erreur lors de la suppression:', error);
+      toast.error('Impossible de supprimer la checklist');
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -327,16 +378,42 @@ const AvantJourJPage: React.FC = () => {
                   </Button>
                 )}
 
-                <Button 
-                  variant="outline" 
-                  onClick={() => {
-                    setChecklist(null);
-                    setInputText('');
-                  }}
-                  className="w-full"
-                >
-                  Générer une nouvelle checklist
-                </Button>
+                <div className="flex gap-2 flex-wrap">
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="outline" size="sm">
+                        <RotateCcw className="h-4 w-4 mr-2" />
+                        Générer une nouvelle liste
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Êtes-vous sûr ?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Attention, cela va supprimer votre liste actuelle. Cette action est irréversible.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Annuler</AlertDialogCancel>
+                        <AlertDialogAction onClick={resetChecklist}>
+                          Confirmer
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                  
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={handleExportPDF}
+                    disabled={isExporting}
+                  >
+                    <Download className="h-4 w-4 mr-2" />
+                    {isExporting ? 'Export...' : 'Exporter PDF'}
+                  </Button>
+                  
+                  <AvantJourJShareButton checklistId={checklist.id} />
+                </div>
               </CardContent>
             </Card>
           </div>

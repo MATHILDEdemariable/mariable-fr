@@ -56,6 +56,39 @@ export type Database = {
         }
         Relationships: []
       }
+      avant_jour_j_share_tokens: {
+        Row: {
+          checklist_id: string
+          created_at: string
+          expires_at: string | null
+          id: string
+          is_active: boolean
+          name: string
+          token: string
+          updated_at: string
+        }
+        Insert: {
+          checklist_id: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          token: string
+          updated_at?: string
+        }
+        Update: {
+          checklist_id?: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          token?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       blog_posts: {
         Row: {
           background_image_url: string | null
@@ -2374,6 +2407,13 @@ export type Database = {
       is_valid_share_token: {
         Args: { token_value: string }
         Returns: boolean
+      }
+      validate_avant_jour_j_share_token: {
+        Args: { token_value: string }
+        Returns: {
+          is_valid: boolean
+          checklist_id: string
+        }[]
       }
       validate_dashboard_share_token: {
         Args: { token_value: string }
