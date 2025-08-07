@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { ArrowLeft, Calendar, Users, FileText, Lightbulb } from 'lucide-react';
+import { ArrowLeft, Calendar, Users, FileText, Lightbulb, PenTool } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import SharePublicButton from './SharePublicButton';
@@ -20,6 +20,7 @@ const MonJourMLayout: React.FC<MonJourMLayoutProps> = ({ children, coordinationI
     if (currentPath.includes('/equipe')) return 'equipe';
     if (currentPath.includes('/documents')) return 'documents';
     if (currentPath.includes('/conseils')) return 'conseils';
+    if (currentPath.includes('/pense-bete')) return 'pense-bete';
     return 'planning'; // default
   };
 
@@ -51,7 +52,7 @@ const MonJourMLayout: React.FC<MonJourMLayoutProps> = ({ children, coordinationI
           {/* Navigation par onglets - optimisée pour mobile */}
           <div className="mt-2 sm:mt-4 pb-3 sm:pb-4">
             <Tabs value={getActiveTab()} className="w-full">
-              <TabsList className="grid w-full grid-cols-4 max-w-2xl h-auto p-1">
+              <TabsList className="grid w-full grid-cols-5 max-w-3xl h-auto p-1">
                 <TabsTrigger value="equipe" asChild>
                   <Link 
                     to="/mon-jour-m/equipe" 
@@ -86,6 +87,15 @@ const MonJourMLayout: React.FC<MonJourMLayoutProps> = ({ children, coordinationI
                   >
                     <Lightbulb className="h-3 w-3 sm:h-4 sm:w-4 shrink-0" />
                     <span className="truncate">Conseils</span>
+                  </Link>
+                </TabsTrigger>
+                <TabsTrigger value="pense-bete" asChild>
+                  <Link 
+                    to="/mon-jour-m/pense-bete" 
+                    className="flex items-center gap-1 sm:gap-2 data-[state=active]:bg-wedding-olive data-[state=active]:text-white data-[state=active]:border-wedding-olive border-2 border-transparent rounded-md py-2 sm:py-2.5 px-2 sm:px-3 text-xs sm:text-sm min-h-[44px] touch-manipulation transition-all duration-200 hover:bg-wedding-olive/10"
+                  >
+                    <PenTool className="h-3 w-3 sm:h-4 sm:w-4 shrink-0" />
+                    <span className="truncate">Pense-bête</span>
                   </Link>
                 </TabsTrigger>
               </TabsList>

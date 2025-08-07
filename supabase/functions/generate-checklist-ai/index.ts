@@ -32,7 +32,7 @@ serve(async (req) => {
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     // Call OpenAI API
-    const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
+    const openAIApiKey = Deno.env.get('OPENAI');
     if (!openAIApiKey) {
       return new Response(
         JSON.stringify({ error: 'OpenAI API key not configured' }),
@@ -43,27 +43,48 @@ serve(async (req) => {
       );
     }
 
-    const prompt = `Analyse ce texte d'un futur marié et génère une checklist de tâches structurée pour préparer son mariage. Le texte: "${text}"
+    const prompt = `En tant qu'expert wedding planner avec 15 ans d'expérience dans l'organisation de mariages de luxe, génère une to-do list structurée et catégorisée avec des icônes visuelles pour ce projet de mariage.
+
+Texte du client: "${text}"
+
+Catégories disponibles avec icônes:
+📋 Administratif - Papiers, assurances, autorisations
+💒 Cérémonie - Église, officiant, décoration cérémonie  
+🎉 Réception - Lieu, décoration, organisation
+👗 Tenue - Robe, costume, accessoires
+📸 Photos & Vidéo - Photographe, vidéaste, planning
+🍰 Traiteur - Menu, dégustation, service
+🎵 Animation - DJ, musiciens, playlist
+🚗 Transport - Voiture, navettes invités
+👨‍👩‍👧‍👦 Invités - Liste, faire-part, hébergement
+💐 Fleurs & Déco - Bouquet, centres de table, déco
+💍 Alliances - Choix, gravure, essayage
+🏨 Lune de Miel - Réservation, passeports
 
 Réponds UNIQUEMENT avec un JSON valide dans ce format:
 {
-  "title": "Titre de la checklist",
+  "title": "Planning personnalisé de [Prénom]",
   "tasks": [
     {
-      "id": "task-1",
-      "label": "Titre de la tâche",
-      "description": "Description optionnelle",
-      "priority": "high|medium|low"
+      "id": "task-1", 
+      "label": "Titre précis de la tâche",
+      "description": "Description détaillée avec conseils d'expert",
+      "priority": "high|medium|low",
+      "category": "Nom de la catégorie",
+      "icon": "emoji de la catégorie"
     }
   ]
 }
 
-Règles:
-- Maximum 15 tâches
-- Priorités: high pour l'urgent, medium pour l'important, low pour le nice-to-have
-- Tâches concrètes et actionnables
-- Pas de formatage markdown
-- JSON valide uniquement`;
+Règles strictes:
+- Maximum 12 tâches essentielles 
+- Priorité HIGH: urgent et bloquant (3-4 tâches max)
+- Priorité MEDIUM: important mais flexible timing (5-6 tâches)
+- Priorité LOW: nice-to-have, peut attendre (2-3 tâches)
+- Tâches concrètes et actionnables avec échéances implicites
+- Descriptions avec conseils de pro et timing recommandé
+- Une seule catégorie par tâche
+- JSON valide uniquement, pas de formatage markdown`;
 
     console.log('🚀 Calling OpenAI API...');
     
@@ -111,7 +132,9 @@ Règles:
         title: parsedTasks.title || 'Ma checklist personnalisée',
         original_text: text,
         tasks: parsedTasks.tasks || [],
-        completed_tasks: []
+        completed_tasks: [],
+        category: 'AI Générée',
+        icon: '🤖'
       })
       .select()
       .single();

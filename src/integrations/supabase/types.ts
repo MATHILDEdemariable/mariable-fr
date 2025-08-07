@@ -904,10 +904,45 @@ export type Database = {
         }
         Relationships: []
       }
+      pense_bete: {
+        Row: {
+          content: string
+          coordination_id: string | null
+          created_at: string
+          id: string
+          is_checked: boolean
+          position: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          coordination_id?: string | null
+          created_at?: string
+          id?: string
+          is_checked?: boolean
+          position?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          coordination_id?: string | null
+          created_at?: string
+          id?: string
+          is_checked?: boolean
+          position?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       planning_avant_jour_j: {
         Row: {
+          category: string | null
           completed_tasks: Json
           created_at: string
+          icon: string | null
           id: string
           original_text: string
           tasks: Json
@@ -916,8 +951,10 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          category?: string | null
           completed_tasks?: Json
           created_at?: string
+          icon?: string | null
           id?: string
           original_text: string
           tasks?: Json
@@ -926,8 +963,10 @@ export type Database = {
           user_id: string
         }
         Update: {
+          category?: string | null
           completed_tasks?: Json
           created_at?: string
+          icon?: string | null
           id?: string
           original_text?: string
           tasks?: Json
