@@ -58,7 +58,7 @@ const AuthRequiredModal: React.FC<AuthRequiredModalProps> = ({
         <div className="flex flex-col space-y-4 py-4">
           <Button 
             onClick={handleSignup}
-            className="w-full bg-wedding-beige hover:bg-wedding-beige-dark text-black flex items-center justify-center"
+            className="w-full bg-wedding-olive hover:bg-wedding-olive/90 text-white flex items-center justify-center"
           >
             <UserPlus className="h-4 w-4 mr-2" /> 
             Créer un compte gratuitement

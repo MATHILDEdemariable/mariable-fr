@@ -102,13 +102,13 @@
 
 /* Custom styles for selected items in the wedding day form */
 [data-selected="true"][data-highlight="true"] {
-  border-color: #EFEFE9;
-  background-color: #F5F5F0;
+  border-color: #7F9474;
+  background-color: #f1f7f3;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 [data-selected="true"][data-highlight="true"] .text-sm {
-  color: #000000;
+  color: #7F9474;
 }
 
 /* Typing effect styles */

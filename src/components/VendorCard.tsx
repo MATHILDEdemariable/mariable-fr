@@ -14,7 +14,7 @@ interface VendorCardProps {
 
 export const VendorCard: React.FC<VendorCardProps> = ({ recommendation }) => {
   return (
-    <Card className="vendor-card overflow-hidden border-wedding-beige/30 hover:shadow-md transition-all p-3">
+    <Card className="vendor-card overflow-hidden border-wedding-olive/30 hover:shadow-md transition-all p-3">
       <div className="flex items-center gap-2 mb-1">
         <h3 className="text-lg font-serif">{recommendation.name}</h3>
         <span className="ml-auto text-base flex items-center">
@@ -45,17 +45,17 @@ export const VendorCard: React.FC<VendorCardProps> = ({ recommendation }) => {
             <Button 
               size="sm" 
               variant="outline"
-              className="w-full border-wedding-beige/30 text-black hover:bg-wedding-beige/10 flex items-center justify-center"
+              className="w-full border-wedding-olive/30 text-wedding-olive hover:bg-wedding-olive/10 flex items-center justify-center"
             >
               <ExternalLink className="h-3 w-3 mr-1" /> Détails
             </Button>
           </PopoverTrigger>
           <PopoverContent className="p-4 w-72">
             <div className="space-y-2">
-              <h4 className="font-semibold text-black">Plus d'informations</h4>
+              <h4 className="font-semibold text-wedding-olive">Plus d'informations</h4>
               <p className="text-sm">Inscrivez-vous pour accéder à tous les détails de ce prestataire et à notre sélection complète.</p>
               <Button 
-                className="w-full bg-wedding-beige hover:bg-wedding-beige-dark mt-2 flex items-center justify-center gap-1 text-black"
+                className="w-full bg-wedding-olive hover:bg-wedding-olive/90 mt-2 flex items-center justify-center gap-1"
                 asChild
               >
                 <Link to="/commencer">
@@ -68,7 +68,7 @@ export const VendorCard: React.FC<VendorCardProps> = ({ recommendation }) => {
         
         <Button 
           size="sm" 
-          className="w-full bg-wedding-beige hover:bg-wedding-beige-dark text-black flex items-center justify-center"
+          className="w-full bg-wedding-olive hover:bg-wedding-olive/90 text-white flex items-center justify-center"
           asChild
         >
           <Link to="/commencer">

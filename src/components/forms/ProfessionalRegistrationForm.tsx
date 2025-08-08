@@ -542,7 +542,7 @@ const ProfessionalRegistrationForm = () => {
 
         <Button
           type="submit"
-          className="bg-wedding-beige hover:bg-wedding-beige-dark text-black"
+          className="bg-wedding-olive hover:bg-wedding-olive/90"
           disabled={isSubmitting}
         >
           {isSubmitting ? (

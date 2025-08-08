@@ -39,7 +39,7 @@ const VendorMoreInfo: React.FC<VendorMoreInfoProps> = ({
           
           <Button
             onClick={handleWebsiteClick}
-            className="flex items-center gap-2 bg-wedding-beige hover:bg-wedding-beige-dark text-black"
+            className="flex items-center gap-2 bg-wedding-olive hover:bg-wedding-olive/90"
           >
             <ExternalLink className="h-4 w-4" />
             Visiter le site web

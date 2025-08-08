@@ -90,7 +90,7 @@ const VendorInfoModal: React.FC<VendorInfoModalProps> = ({ isOpen, onClose, vend
               Fermer
             </Button>
             <Button 
-              className="bg-wedding-beige hover:bg-wedding-beige-dark text-black"
+              className="bg-wedding-olive hover:bg-wedding-olive/90"
               onClick={() => window.open(vendor.lien, '_blank')}
             >
               <ExternalLink className="h-4 w-4 mr-1" /> Visiter le site

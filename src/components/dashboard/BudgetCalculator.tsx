@@ -160,7 +160,7 @@ const BudgetCalculator: React.FC = () => {
             onClick={() => handleModeSelection('known')}
           >
             <div className="flex items-center gap-3 mb-2 w-full">
-              <Euro className="h-5 w-5 md:h-6 md:w-6 text-black flex-shrink-0" />
+              <Euro className="h-5 w-5 md:h-6 md:w-6 text-wedding-olive flex-shrink-0" />
               <span className="text-base md:text-lg font-medium">Je connais mon budget total</span>
             </div>
             <p className="text-xs md:text-sm text-muted-foreground text-left">
@@ -174,7 +174,7 @@ const BudgetCalculator: React.FC = () => {
             onClick={() => handleModeSelection('unknown')}
           >
             <div className="flex items-center gap-3 mb-2 w-full">
-              <Calculator className="h-5 w-5 md:h-6 md:w-6 text-black flex-shrink-0" />
+              <Calculator className="h-5 w-5 md:h-6 md:w-6 text-wedding-olive flex-shrink-0" />
               <span className="text-base md:text-lg font-medium">Je ne connais pas mon budget</span>
             </div>
             <p className="text-xs md:text-sm text-muted-foreground text-left">
@@ -230,7 +230,7 @@ const BudgetCalculator: React.FC = () => {
 
           <Button 
             onClick={calculateKnownBudgetAllocation}
-            className="w-full bg-wedding-beige hover:bg-wedding-beige-dark text-black py-6 text-lg"
+            className="w-full bg-wedding-olive hover:bg-wedding-olive/90 py-6 text-lg"
             disabled={!knownBudget || selectedCategories.length === 0}
           >
             <Calculator className="h-5 w-5 mr-2" />
@@ -249,7 +249,7 @@ const BudgetCalculator: React.FC = () => {
       <div className="space-y-6 p-4">
         <div className="text-center">
           <h2 className="text-2xl font-serif mb-4">Votre estimation budgétaire</h2>
-          <div className="text-3xl font-bold text-black mb-2">
+          <div className="text-3xl font-bold text-wedding-olive mb-2">
             {formatCurrency(budgetEstimate.total)}
           </div>
           <p className="text-muted-foreground">Budget total estimé</p>

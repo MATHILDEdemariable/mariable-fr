@@ -20,7 +20,7 @@ const FormulaCTAButton: React.FC<FormulaCTAButtonProps> = ({ formula }) => {
             <>
               <Button 
                 onClick={() => setShowPaymentModal(true)}
-                className="bg-wedding-beige hover:bg-wedding-beige-dark text-black w-full"
+                className="bg-wedding-olive hover:bg-wedding-olive/90 text-white w-full"
               >
                 Commencer
               </Button>
@@ -35,7 +35,7 @@ const FormulaCTAButton: React.FC<FormulaCTAButtonProps> = ({ formula }) => {
         return {
           text: 'Faire une demande',
           component: (
-            <Button asChild className="bg-wedding-beige hover:bg-wedding-beige-dark text-black w-full">
+            <Button asChild className="bg-wedding-olive hover:bg-wedding-olive/90 text-white w-full">
               <Link to="/reservation-jour-m">Faire une demande</Link>
             </Button>
           ),
@@ -44,7 +44,7 @@ const FormulaCTAButton: React.FC<FormulaCTAButtonProps> = ({ formula }) => {
         return {
           text: 'Faire une demande',
           component: (
-            <Button asChild className="bg-wedding-beige hover:bg-wedding-beige-dark text-black w-full">
+            <Button asChild className="bg-wedding-olive hover:bg-wedding-olive/90 text-white w-full">
               <Link to="/reservation-jour-m">Faire une demande</Link>
             </Button>
           ),
@@ -53,7 +53,7 @@ const FormulaCTAButton: React.FC<FormulaCTAButtonProps> = ({ formula }) => {
         return {
           text: 'Réserver',
           component: (
-            <Button asChild className="bg-wedding-beige hover:bg-wedding-beige-dark text-black w-full">
+            <Button asChild className="bg-wedding-olive hover:bg-wedding-olive/90 text-white w-full">
               <Link to="/reservation-jour-m">Réserver</Link>
             </Button>
           ),
