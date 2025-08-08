@@ -328,13 +328,15 @@ const Pricing = () => {
 
                 <div className="max-w-4xl mx-auto">
                   <div className="relative">
-                    <div className="absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-wedding-olive/30 hidden md:block"></div>
+                    {/* Ligne connectrice - visible sur mobile et desktop */}
+                    <div className="absolute left-6 md:left-1/2 md:transform md:-translate-x-1/2 w-1 h-full bg-wedding-olive/30"></div>
 
-                    <div className="space-y-12">
-                      <div className="flex flex-col md:flex-row items-center gap-8">
-                        <div className="md:w-1/2 text-right">
-                          <div className="bg-white p-6 rounded-lg shadow-md">
-                            <h3 className="text-xl font-semibold mb-3 flex items-center justify-end gap-2">
+                    <div className="space-y-8 md:space-y-12">
+                      {/* Étape 1 */}
+                      <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-8">
+                        <div className="md:w-1/2 md:text-right">
+                          <div className="bg-white p-6 rounded-lg shadow-md ml-16 md:ml-0">
+                            <h3 className="text-xl font-semibold mb-3 flex items-center md:justify-end gap-2">
                               <Mail className="h-5 w-5 text-wedding-olive" />
                               Transfert des informations clés
                             </h3>
@@ -343,7 +345,7 @@ const Pricing = () => {
                             </p>
                           </div>
                         </div>
-                        <div className="relative z-10">
+                        <div className="absolute left-0 md:relative md:left-auto z-10">
                           <div className="w-12 h-12 bg-wedding-olive rounded-full flex items-center justify-center text-white font-bold text-lg">
                             1
                           </div>
@@ -351,15 +353,16 @@ const Pricing = () => {
                         <div className="md:w-1/2"></div>
                       </div>
 
-                      <div className="flex flex-col md:flex-row items-center gap-8">
+                      {/* Étape 2 */}
+                      <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-8">
                         <div className="md:w-1/2"></div>
-                        <div className="relative z-10">
+                        <div className="absolute left-0 md:relative md:left-auto z-10">
                           <div className="w-12 h-12 bg-wedding-olive rounded-full flex items-center justify-center text-white font-bold text-lg">
                             2
                           </div>
                         </div>
                         <div className="md:w-1/2">
-                          <div className="bg-white p-6 rounded-lg shadow-md">
+                          <div className="bg-white p-6 rounded-lg shadow-md ml-16 md:ml-0">
                             <h3 className="text-xl font-semibold mb-3 flex items-center gap-2">
                               <Smartphone className="h-5 w-5 text-wedding-olive" />
                               Création ligne directe WhatsApp
@@ -371,10 +374,11 @@ const Pricing = () => {
                         </div>
                       </div>
 
-                      <div className="flex flex-col md:flex-row items-center gap-8">
-                        <div className="md:w-1/2 text-right">
-                          <div className="bg-white p-6 rounded-lg shadow-md">
-                            <h3 className="text-xl font-semibold mb-3 flex items-center justify-end gap-2">
+                      {/* Étape 3 */}
+                      <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-8">
+                        <div className="md:w-1/2 md:text-right">
+                          <div className="bg-white p-6 rounded-lg shadow-md ml-16 md:ml-0">
+                            <h3 className="text-xl font-semibold mb-3 flex items-center md:justify-end gap-2">
                               <Phone className="h-5 w-5 text-wedding-olive" />
                               Support disponible
                             </h3>
@@ -383,7 +387,7 @@ const Pricing = () => {
                             </p>
                           </div>
                         </div>
-                        <div className="relative z-10">
+                        <div className="absolute left-0 md:relative md:left-auto z-10">
                           <div className="w-12 h-12 bg-wedding-olive rounded-full flex items-center justify-center text-white font-bold text-lg">
                             3
                           </div>
@@ -391,15 +395,16 @@ const Pricing = () => {
                         <div className="md:w-1/2"></div>
                       </div>
 
-                      <div className="flex flex-col md:flex-row items-center gap-8">
+                      {/* Étape 4 */}
+                      <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-8">
                         <div className="md:w-1/2"></div>
-                        <div className="relative z-10">
+                        <div className="absolute left-0 md:relative md:left-auto z-10">
                           <div className="w-12 h-12 bg-wedding-olive rounded-full flex items-center justify-center text-white font-bold text-lg">
                             4
                           </div>
                         </div>
                         <div className="md:w-1/2">
-                          <div className="bg-white p-6 rounded-lg shadow-md">
+                          <div className="bg-white p-6 rounded-lg shadow-md ml-16 md:ml-0">
                             <h3 className="text-xl font-semibold mb-3 flex items-center gap-2">
                               <Users className="h-5 w-5 text-wedding-olive" />
                               Partagez le lien de consultation

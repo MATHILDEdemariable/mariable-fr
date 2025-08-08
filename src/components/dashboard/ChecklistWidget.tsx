@@ -160,11 +160,11 @@ const ChecklistWidget: React.FC = () => {
         )}
         
         <Button 
-          onClick={() => navigate('/dashboard/tasks')}
+          onClick={() => navigate('/dashboard/avant-jour-j')}
           variant="outline"
           className="w-full border-wedding-olive text-wedding-olive hover:bg-wedding-olive hover:text-white"
         >
-          {tasks.length > 0 ? 'Voir toutes les tâches' : 'Créer ma check-list'}
+          {tasks.length > 0 ? 'Voir toutes les tâches' : 'Créez votre propre check-list'}
           <ArrowRight className="h-4 w-4 ml-2" />
         </Button>
       </CardContent>
