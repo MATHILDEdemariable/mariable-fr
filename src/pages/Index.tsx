@@ -56,7 +56,7 @@ const Index = () => {
                 
                 <div className="grid md:grid-cols-3 gap-6 text-left">
                   <div className="flex items-start gap-3">
-                    <Brain className="h-6 w-6 text-wedding-olive flex-shrink-0 mt-0.5" />
+                    <Brain className="h-6 w-6 text-black flex-shrink-0 mt-0.5" />
                     <div>
                       <h3 className="font-medium mb-2">Expertise incluse</h3>
                       <p className="text-gray-700">
@@ -66,7 +66,7 @@ const Index = () => {
                   </div>
                   
                   <div className="flex items-start gap-3">
-                    <Settings className="h-6 w-6 text-wedding-olive flex-shrink-0 mt-0.5" />
+                    <Settings className="h-6 w-6 text-black flex-shrink-0 mt-0.5" />
                     <div>
                       <h3 className="font-medium mb-2">Autonomie complète</h3>
                       <p className="text-gray-700">
@@ -76,7 +76,7 @@ const Index = () => {
                   </div>
                   
                   <div className="flex items-start gap-3">
-                    <Handshake className="h-6 w-6 text-wedding-olive flex-shrink-0 mt-0.5" />
+                    <Handshake className="h-6 w-6 text-black flex-shrink-0 mt-0.5" />
                     <div>
                       <h3 className="font-medium mb-2">Assistance à la demande</h3>
                       <p className="text-gray-700">
@@ -87,7 +87,7 @@ const Index = () => {
                 </div>
               </div>
 
-              <Button asChild size="lg" className="bg-wedding-olive hover:bg-wedding-olive/90 text-white">
+              <Button asChild size="lg" className="bg-wedding-beige hover:bg-wedding-beige-dark text-black">
                 <Link to="/register">
                   Découvrir Mariable <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
@@ -113,7 +113,7 @@ const Index = () => {
               <Card className="shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 flex flex-col h-full">
                 <CardHeader className="text-center pb-4">
                   <div className="flex items-center justify-center gap-2 mb-3">
-                    <Smartphone className="h-6 w-6 text-wedding-olive" />
+                    <Smartphone className="h-6 w-6 text-black" />
                     <CardTitle className="text-xl font-bold">Le Planner Mariable</CardTitle>
                   </div>
                   <p className="text-sm text-gray-600">Tableau de bord pour bien démarrer</p>
@@ -121,7 +121,7 @@ const Index = () => {
                 
                 <CardContent className="flex-grow flex flex-col">
                   <div className="text-center mb-6">
-                    <div className="text-3xl font-bold text-wedding-olive mb-2">Gratuit</div>
+                    <div className="text-3xl font-bold text-black mb-2">Gratuit</div>
                   </div>
                   
                   <div className="space-y-3 mb-6">
@@ -144,7 +144,7 @@ const Index = () => {
                   </div>
                   
                   <div className="mt-auto">
-                    <Button asChild className="w-full bg-wedding-olive text-white hover:bg-wedding-olive/90">
+                    <Button asChild className="w-full bg-wedding-beige text-black hover:bg-wedding-beige-dark">
                       <Link to="/register">S'inscrire gratuitement</Link>
                     </Button>
                   </div>
@@ -155,7 +155,7 @@ const Index = () => {
               <Card className="shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 flex flex-col h-full">
                 <CardHeader className="text-center pb-4">
                   <div className="flex items-center justify-center gap-2 mb-3">
-                    <MessageCircle className="h-6 w-6 text-wedding-olive" />
+                    <MessageCircle className="h-6 w-6 text-black" />
                     <CardTitle className="text-xl font-bold">L'accompagnement</CardTitle>
                   </div>
                   <p className="text-sm text-gray-600">Ligne directe avec une experte</p>
@@ -163,7 +163,7 @@ const Index = () => {
                 
                 <CardContent className="flex-grow flex flex-col">
                   <div className="text-center mb-6">
-                    <div className="text-3xl font-bold text-wedding-olive mb-2">9,9€/mois</div>
+                    <div className="text-3xl font-bold text-black mb-2">9,9€/mois</div>
                     <div className="text-sm text-gray-600">jusqu'à votre mariage</div>
                   </div>
                   
@@ -187,7 +187,7 @@ const Index = () => {
                   </div>
                   
                   <div className="mt-auto">
-                    <Button asChild className="w-full bg-wedding-olive text-white hover:bg-wedding-olive/90">
+                    <Button asChild className="w-full bg-wedding-beige text-black hover:bg-wedding-beige-dark">
                       <Link to="/reservation-jour-m">Envoyer une demande</Link>
                     </Button>
                   </div>
@@ -198,7 +198,7 @@ const Index = () => {
               <Card className="shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 flex flex-col h-full">
                 <CardHeader className="text-center pb-4">
                   <div className="flex items-center justify-center gap-2 mb-3">
-                    <Calendar className="h-6 w-6 text-wedding-olive" />
+                    <Calendar className="h-6 w-6 text-black" />
                     <CardTitle className="text-xl font-bold">Coordination Jour-J</CardTitle>
                   </div>
                   <p className="text-sm text-gray-600">avec l'appli en ligne Mariable dédiée</p>
@@ -206,7 +206,7 @@ const Index = () => {
                 
                 <CardContent className="flex-grow flex flex-col">
                   <div className="text-center mb-6">
-                    <div className="text-3xl font-bold text-wedding-olive mb-2">à partir de 14,9€</div>
+                    <div className="text-3xl font-bold text-black mb-2">à partir de 14,9€</div>
                     <div className="text-sm text-gray-600">selon formules</div>
                   </div>
                   
@@ -231,7 +231,7 @@ const Index = () => {
                   </div>
                   
                   <div className="mt-auto">
-                    <Button asChild className="w-full bg-wedding-olive text-white hover:bg-wedding-olive/90">
+                    <Button asChild className="w-full bg-wedding-beige text-black hover:bg-wedding-beige-dark">
                       <Link to="/detail-coordination-jourm">Voir une démo</Link>
                     </Button>
                   </div>
@@ -316,7 +316,7 @@ const Index = () => {
 
               {/* Bouton CTA après les témoignages */}
               <div className="text-center mt-12">
-                <Button asChild size="lg" className="bg-wedding-olive hover:bg-wedding-olive/90 text-white">
+                <Button asChild size="lg" className="bg-wedding-beige hover:bg-wedding-beige-dark text-black">
                   
                 </Button>
               </div>
@@ -325,7 +325,7 @@ const Index = () => {
         </section>
 
         {/* Final CTA Section */}
-        <section className="py-16 md:py-20 bg-wedding-olive text-white">
+        <section className="py-16 md:py-20 bg-wedding-beige text-black">
           <div className="container mx-auto px-4 text-center">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif mb-4" style={{
             fontFamily: 'Playfair Display, serif'
@@ -336,7 +336,7 @@ const Index = () => {
               Posez vos questions ou réservez un conseil personnalisé.
             </p>
             
-            <Button asChild size="lg" className="bg-white text-wedding-olive hover:bg-white/90">
+            <Button asChild size="lg" className="bg-white text-black hover:bg-white/90">
               <Link to="/contact">
                 Contactez Mathilde <ArrowRight className="ml-2 h-5 w-5" />
               </Link>

@@ -91,24 +91,24 @@ const ChecklistWidget: React.FC = () => {
 
   if (loading) {
     return (
-      <Card className="bg-gradient-to-br from-wedding-cream/20 to-wedding-olive/5 border-wedding-olive/20">
+      <Card className="bg-gradient-to-br from-wedding-cream/20 to-wedding-beige/5 border-wedding-beige/20">
         <CardHeader>
-          <CardTitle className="text-lg font-serif flex items-center gap-2 text-wedding-olive">
+          <CardTitle className="text-lg font-serif flex items-center gap-2 text-black">
             <CheckSquare className="h-5 w-5" />
             Check-list Mariage
           </CardTitle>
         </CardHeader>
         <CardContent className="flex justify-center py-8">
-          <Loader2 className="h-6 w-6 animate-spin text-wedding-olive" />
+          <Loader2 className="h-6 w-6 animate-spin text-black" />
         </CardContent>
       </Card>
     );
   }
 
   return (
-    <Card className="bg-gradient-to-br from-wedding-cream/20 to-wedding-olive/5 border-wedding-olive/20">
+    <Card className="bg-gradient-to-br from-wedding-cream/20 to-wedding-beige/5 border-wedding-beige/20">
       <CardHeader>
-        <CardTitle className="text-lg font-serif flex items-center gap-2 text-wedding-olive">
+        <CardTitle className="text-lg font-serif flex items-center gap-2 text-black">
           <CheckSquare className="h-5 w-5" />
           Check-list Mariage
         </CardTitle>
@@ -120,7 +120,7 @@ const ChecklistWidget: React.FC = () => {
               <p className="text-sm text-gray-600">
                 {completedTasks} sur {tasks.length} tâches terminées
               </p>
-              <span className="text-sm font-medium text-wedding-olive">
+              <span className="text-sm font-medium text-black">
                 {completionPercentage}%
               </span>
             </div>
@@ -133,7 +133,7 @@ const ChecklistWidget: React.FC = () => {
                 >
                   <button
                     onClick={() => toggleTask(task.id)}
-                    className="text-wedding-olive hover:text-wedding-olive/80 transition-colors"
+                    className="text-black hover:text-black/80 transition-colors"
                   >
                     {task.completed ? (
                       <CheckCircle2 className="h-4 w-4" />
@@ -162,7 +162,7 @@ const ChecklistWidget: React.FC = () => {
         <Button 
           onClick={() => navigate('/dashboard/tasks')}
           variant="outline"
-          className="w-full border-wedding-olive text-wedding-olive hover:bg-wedding-olive hover:text-white"
+          className="w-full border-wedding-beige text-black hover:bg-wedding-beige hover:text-black"
         >
           {tasks.length > 0 ? 'Voir toutes les tâches' : 'Créer ma check-list'}
           <ArrowRight className="h-4 w-4 ml-2" />

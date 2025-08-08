@@ -13,7 +13,7 @@ const HeroSection = () => {
             Organisez-le facilement, vous-même.
           </p>
           
-          <Button asChild size="lg" className="bg-wedding-olive hover:bg-wedding-olive/90 text-white shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 w-full md:w-auto">
+          <Button asChild size="lg" className="bg-wedding-beige hover:bg-wedding-beige-dark text-black shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 w-full md:w-auto">
             <Link to="/register">
               Organisez mieux, profitez plus. <ArrowRight className="ml-2 h-5 w-5" />
             </Link>

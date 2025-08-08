@@ -20,7 +20,7 @@ const ChatbotButton = () => {
         <div className="relative">
           <Card className="absolute bottom-0 right-0 w-[350px] md:w-[400px] h-[500px] shadow-2xl rounded-xl overflow-hidden border">
             <div className="h-full flex flex-col">
-              <div className="bg-wedding-olive p-3 flex justify-between items-center text-white">
+              <div className="bg-wedding-beige p-3 flex justify-between items-center text-black">
                 <div className="flex items-center gap-2">
                   <MessageCircle size={20} />
                   <h3 className="text-sm font-medium">Guide Mariable</h3>
@@ -28,7 +28,7 @@ const ChatbotButton = () => {
                 <Button 
                   variant="ghost" 
                   size="icon" 
-                  className="text-white hover:bg-wedding-olive/80"
+                  className="text-black hover:bg-wedding-beige-dark"
                   onClick={toggleChat}
                 >
                   <X size={18} />
@@ -48,9 +48,9 @@ const ChatbotButton = () => {
       ) : (
         <Button 
           onClick={toggleChat} 
-          className="rounded-full w-14 h-14 bg-wedding-olive hover:bg-wedding-olive/90 shadow-md transition-transform hover:scale-105"
+          className="rounded-full w-14 h-14 bg-wedding-beige hover:bg-wedding-beige-dark shadow-md transition-transform hover:scale-105"
         >
-          <MessageCircle size={24} className="text-white" />
+          <MessageCircle size={24} className="text-black" />
         </Button>
       )}
     </div>

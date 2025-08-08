@@ -192,8 +192,8 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
             className={cn(
               "flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors w-full justify-start",
               isDashboardActive()
-                ? 'bg-wedding-olive text-white shadow-sm'
-                : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive',
+                ? 'bg-wedding-beige text-black shadow-sm'
+                : 'text-gray-600 hover:bg-wedding-beige/10 hover:text-black',
               isReaderMode ? 'pointer-events-none opacity-70' : ''
             )}
             disabled={isReaderMode}
@@ -218,7 +218,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
                   className={cn(
                     "flex items-center px-2 py-2 text-sm w-full",
                     isActive(subItem.path)
-                      ? 'bg-wedding-olive/10 text-wedding-olive font-medium'
+                      ? 'bg-wedding-beige/10 text-black font-medium'
                       : 'text-gray-600 hover:bg-gray-50'
                   )}
                 >
@@ -236,8 +236,8 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
             className={cn(
               "flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors w-full justify-start",
               isCalculatriceActive()
-                ? 'bg-wedding-olive text-white shadow-sm'
-                : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive',
+                ? 'bg-wedding-beige text-black shadow-sm'
+                : 'text-gray-600 hover:bg-wedding-beige/10 hover:text-black',
               isReaderMode ? 'pointer-events-none opacity-70' : ''
             )}
             disabled={isReaderMode}
@@ -262,7 +262,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
                   className={cn(
                     "flex items-center px-2 py-2 text-sm w-full",
                     isActive(subItem.path)
-                      ? 'bg-wedding-olive/10 text-wedding-olive font-medium'
+                      ? 'bg-wedding-beige/10 text-black font-medium'
                       : 'text-gray-600 hover:bg-gray-50'
                   )}
                 >
@@ -280,8 +280,8 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
             className={cn(
               "flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors w-full justify-start",
               isPrestatairesActive()
-                ? 'bg-wedding-olive text-white shadow-sm'
-                : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive',
+                ? 'bg-wedding-beige text-black shadow-sm'
+                : 'text-gray-600 hover:bg-wedding-beige/10 hover:text-black',
               isReaderMode ? 'pointer-events-none opacity-70' : ''
             )}
             disabled={isReaderMode}
@@ -306,7 +306,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
                   className={cn(
                     "flex items-center px-2 py-2 text-sm w-full",
                     isActive(subItem.path)
-                      ? 'bg-wedding-olive/10 text-wedding-olive font-medium'
+                      ? 'bg-wedding-beige/10 text-black font-medium'
                       : 'text-gray-600 hover:bg-gray-50'
                   )}
                 >
@@ -329,8 +329,8 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
           className={cn(
             "flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors",
             isAvantJourJActive()
-              ? 'bg-wedding-olive text-white shadow-sm'
-              : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive',
+              ? 'bg-wedding-beige text-black shadow-sm'
+              : 'text-gray-600 hover:bg-wedding-beige/10 hover:text-black',
             isReaderMode ? 'pointer-events-none opacity-70' : ''
           )}
         >
@@ -347,8 +347,8 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
             className={cn(
               "flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors w-full justify-start",
               isJourMActive()
-                ? 'bg-wedding-olive text-white shadow-sm'
-                : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive',
+                ? 'bg-wedding-beige text-black shadow-sm'
+                : 'text-gray-600 hover:bg-wedding-beige/10 hover:text-black',
               isReaderMode ? 'pointer-events-none opacity-70' : ''
             )}
             disabled={isReaderMode}
@@ -373,7 +373,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
                   className={cn(
                     "flex items-center px-2 py-2 text-sm w-full",
                     isActive(subItem.path)
-                      ? 'bg-wedding-olive/10 text-wedding-olive font-medium'
+                      ? 'bg-wedding-beige/10 text-black font-medium'
                       : 'text-gray-600 hover:bg-gray-50'
                   )}
                 >
@@ -396,8 +396,8 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
           className={cn(
             "flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors",
             isApresJourJActive()
-              ? 'bg-wedding-olive text-white shadow-sm'
-              : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive',
+              ? 'bg-wedding-beige text-black shadow-sm'
+              : 'text-gray-600 hover:bg-wedding-beige/10 hover:text-black',
             isReaderMode ? 'pointer-events-none opacity-70' : ''
           )}
         >
@@ -414,8 +414,8 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
             className={cn(
               "flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors w-full justify-start",
               isHelpActive()
-                ? 'bg-wedding-olive text-white shadow-sm'
-                : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive',
+                ? 'bg-wedding-beige text-black shadow-sm'
+                : 'text-gray-600 hover:bg-wedding-beige/10 hover:text-black',
               isReaderMode ? 'pointer-events-none opacity-70' : ''
             )}
             disabled={isReaderMode}
@@ -459,7 +459,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
                     className={cn(
                       "flex items-center px-2 py-2 text-sm w-full",
                       isActive(subItem.path)
-                        ? 'bg-wedding-olive/10 text-wedding-olive font-medium'
+                        ? 'bg-wedding-beige/10 text-black font-medium'
                         : 'text-gray-600 hover:bg-gray-50'
                     )}
                   >
@@ -485,8 +485,8 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
           className={cn(
             "flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors",
             isActive('/dashboard/settings')
-              ? 'bg-wedding-olive text-white shadow-sm'
-              : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive',
+              ? 'bg-wedding-beige text-black shadow-sm'
+              : 'text-gray-600 hover:bg-wedding-beige/10 hover:text-black',
             isReaderMode ? 'pointer-events-none opacity-70' : ''
           )}
         >
@@ -512,7 +512,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
       
       {isReaderMode && (
         <div className="px-2 sm:px-3 py-4 mt-auto border-t border-gray-200">
-          <div className="bg-wedding-olive/10 p-3 rounded-md text-xs text-gray-700">
+          <div className="bg-wedding-beige/10 p-3 rounded-md text-xs text-gray-700">
             Vous êtes en mode lecture seule. Les modifications ne sont pas possibles dans ce mode.
           </div>
         </div>

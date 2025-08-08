@@ -34,7 +34,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         {isMobile && (
           <button 
             onClick={toggleSidebar} 
-            className="fixed z-50 bottom-5 right-5 p-3 rounded-full bg-wedding-olive text-white shadow-lg"
+            className="fixed z-50 bottom-5 right-5 p-3 rounded-full bg-wedding-beige text-black shadow-lg"
             aria-label={sidebarVisible ? "Hide sidebar" : "Show sidebar"}
           >
             <PanelLeft size={24} />

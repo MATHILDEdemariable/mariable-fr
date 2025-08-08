@@ -465,7 +465,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
           <Button 
             type="submit" 
             disabled={isLoading || !inputValue.trim()} 
-            className="bg-wedding-olive hover:bg-wedding-olive/90 text-white h-auto rounded-full p-2 mx-2"
+            className="bg-wedding-beige hover:bg-wedding-beige-dark text-black h-auto rounded-full p-2 mx-2"
             aria-label="Envoyer"
           >
             <SendHorizontal className="h-5 w-5" />
@@ -517,7 +517,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                         <Button
                           key={index}
                           onClick={() => handleOptionClick(option)}
-                          className="bg-wedding-cream text-wedding-black hover:bg-wedding-cream/80 border border-wedding-olive/20 flex items-center gap-2 text-xs sm:text-sm py-1 h-auto"
+                          className="bg-wedding-cream text-wedding-black hover:bg-wedding-cream/80 border border-wedding-beige/20 flex items-center gap-2 text-xs sm:text-sm py-1 h-auto"
                           size="sm"
                         >
                           {option.icon}
@@ -539,7 +539,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                         <Button
                           key={index}
                           onClick={() => handleActionButtonClick(button)}
-                          className="bg-wedding-olive text-white hover:bg-wedding-olive/90 flex items-center gap-2 text-xs sm:text-sm py-1 h-auto"
+                          className="bg-wedding-beige text-black hover:bg-wedding-beige-dark flex items-center gap-2 text-xs sm:text-sm py-1 h-auto"
                           size="sm"
                         >
                           {button.icon}
@@ -559,7 +559,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                     <div className="flex justify-center">
                       <Button
                         onClick={handleReset}
-                        className="bg-wedding-cream text-wedding-black hover:bg-wedding-cream/80 border border-wedding-olive/20 flex items-center gap-2 text-xs sm:text-sm py-1 h-auto"
+                        className="bg-wedding-cream text-wedding-black hover:bg-wedding-cream/80 border border-wedding-beige/20 flex items-center gap-2 text-xs sm:text-sm py-1 h-auto"
                         size="sm"
                       >
                         <RefreshCw className="h-4 w-4" />
@@ -590,7 +590,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
             <Button 
               type="submit" 
               disabled={isLoading || !inputValue.trim()} 
-              className="bg-wedding-olive hover:bg-wedding-olive/90 text-white"
+              className="bg-wedding-beige hover:bg-wedding-beige-dark text-black"
               size="sm"
               aria-label="Envoyer"
             >

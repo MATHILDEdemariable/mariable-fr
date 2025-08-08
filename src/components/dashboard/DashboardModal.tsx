@@ -28,7 +28,7 @@ const DashboardModal: React.FC<DashboardModalProps> = ({
       <SheetContent side="right" className="w-full sm:w-[540px] md:w-[640px] overflow-y-auto">
         <SheetHeader className="mb-4">
           <div className="flex justify-between items-center">
-            <SheetTitle className="text-2xl font-serif text-wedding-olive">{title}</SheetTitle>
+            <SheetTitle className="text-2xl font-serif text-black">{title}</SheetTitle>
             <SheetClose asChild>
               <Button variant="ghost" size="icon" aria-label="Fermer">
                 <X size={20} />
