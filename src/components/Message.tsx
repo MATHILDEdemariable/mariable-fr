@@ -45,7 +45,7 @@ export const Message: React.FC<MessageProps> = ({ message, recommendations }) =>
           
           // Add the link
           parts.push(
-            <Link key={`link-${i}-${match.index}`} to={linkUrl} className="text-wedding-olive hover:underline">
+            <Link key={`link-${i}-${match.index}`} to={linkUrl} className="text-black hover:underline">
               {linkText}
             </Link>
           );

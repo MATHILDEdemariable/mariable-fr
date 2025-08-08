@@ -391,7 +391,7 @@ const ReservationJourM = () => {
 
                   <Button 
                     type="submit" 
-                    className="w-full bg-wedding-olive hover:bg-wedding-olive/90"
+                    className="w-full bg-wedding-beige hover:bg-wedding-beige-dark text-black"
                     disabled={isSubmitting}
                   >
                     {isSubmitting ? 'Envoi en cours...' : 'Envoyer ma demande'}

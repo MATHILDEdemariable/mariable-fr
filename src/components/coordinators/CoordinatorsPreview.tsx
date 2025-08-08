@@ -198,7 +198,7 @@ const CoordinatorsPreview: React.FC = () => {
                     Coordination jour-J
                   </Badge>
                   {coordinator.featured && (
-                    <Badge variant="secondary" className="text-xs bg-wedding-olive/20 text-wedding-olive">
+                    <Badge variant="secondary" className="text-xs bg-wedding-beige/20 text-black">
                       Recommandé
                     </Badge>
                   )}
@@ -206,7 +206,7 @@ const CoordinatorsPreview: React.FC = () => {
 
                 {coordinator.prix_a_partir_de && (
                   <div className="pt-2 border-t">
-                    <p className="text-sm font-medium text-wedding-olive">
+                    <p className="text-sm font-medium text-black">
                       À partir de {coordinator.prix_a_partir_de}€
                     </p>
                   </div>
@@ -218,7 +218,7 @@ const CoordinatorsPreview: React.FC = () => {
       </div>
 
       <div className="text-center">
-        <Button asChild className="bg-wedding-olive hover:bg-wedding-olive/90 text-white">
+        <Button asChild className="bg-wedding-beige hover:bg-wedding-beige-dark text-black">
           <Link to="/coordinateurs-mariage">
             <LinkIcon className="h-4 w-4 mr-2" />
             Voir tous les coordinateurs

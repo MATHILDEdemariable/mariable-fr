@@ -56,7 +56,7 @@ const MonJourMLayout: React.FC<MonJourMLayoutProps> = ({ children, coordinationI
                 <TabsTrigger value="equipe" asChild>
                   <Link 
                     to="/mon-jour-m/equipe" 
-                    className="flex items-center gap-1 sm:gap-2 data-[state=active]:bg-wedding-olive data-[state=active]:text-white data-[state=active]:border-wedding-olive border-2 border-transparent rounded-md py-2 sm:py-2.5 px-2 sm:px-3 text-xs sm:text-sm min-h-[44px] touch-manipulation transition-all duration-200 hover:bg-wedding-olive/10"
+                    className="flex items-center gap-1 sm:gap-2 data-[state=active]:bg-wedding-beige data-[state=active]:text-black data-[state=active]:border-wedding-beige border-2 border-transparent rounded-md py-2 sm:py-2.5 px-2 sm:px-3 text-xs sm:text-sm min-h-[44px] touch-manipulation transition-all duration-200 hover:bg-wedding-beige/10"
                   >
                     <Users className="h-3 w-3 sm:h-4 sm:w-4 shrink-0" />
                     <span className="truncate">Équipe</span>
@@ -65,7 +65,7 @@ const MonJourMLayout: React.FC<MonJourMLayoutProps> = ({ children, coordinationI
                 <TabsTrigger value="planning" asChild>
                   <Link 
                     to="/mon-jour-m/planning" 
-                    className="flex items-center gap-1 sm:gap-2 data-[state=active]:bg-wedding-olive data-[state=active]:text-white data-[state=active]:border-wedding-olive border-2 border-transparent rounded-md py-2 sm:py-2.5 px-2 sm:px-3 text-xs sm:text-sm min-h-[44px] touch-manipulation transition-all duration-200 hover:bg-wedding-olive/10"
+                    className="flex items-center gap-1 sm:gap-2 data-[state=active]:bg-wedding-beige data-[state=active]:text-black data-[state=active]:border-wedding-beige border-2 border-transparent rounded-md py-2 sm:py-2.5 px-2 sm:px-3 text-xs sm:text-sm min-h-[44px] touch-manipulation transition-all duration-200 hover:bg-wedding-beige/10"
                   >
                     <Calendar className="h-3 w-3 sm:h-4 sm:w-4 shrink-0" />
                     <span className="truncate">Planning</span>
@@ -74,7 +74,7 @@ const MonJourMLayout: React.FC<MonJourMLayoutProps> = ({ children, coordinationI
                 <TabsTrigger value="documents" asChild>
                   <Link 
                     to="/mon-jour-m/documents" 
-                    className="flex items-center gap-1 sm:gap-2 data-[state=active]:bg-wedding-olive data-[state=active]:text-white data-[state=active]:border-wedding-olive border-2 border-transparent rounded-md py-2 sm:py-2.5 px-2 sm:px-3 text-xs sm:text-sm min-h-[44px] touch-manipulation transition-all duration-200 hover:bg-wedding-olive/10"
+                    className="flex items-center gap-1 sm:gap-2 data-[state=active]:bg-wedding-beige data-[state=active]:text-black data-[state=active]:border-wedding-beige border-2 border-transparent rounded-md py-2 sm:py-2.5 px-2 sm:px-3 text-xs sm:text-sm min-h-[44px] touch-manipulation transition-all duration-200 hover:bg-wedding-beige/10"
                   >
                     <FileText className="h-3 w-3 sm:h-4 sm:w-4 shrink-0" />
                     <span className="truncate">Documents</span>
@@ -83,7 +83,7 @@ const MonJourMLayout: React.FC<MonJourMLayoutProps> = ({ children, coordinationI
                 <TabsTrigger value="conseils" asChild>
                   <Link 
                     to="/mon-jour-m/conseils" 
-                    className="flex items-center gap-1 sm:gap-2 data-[state=active]:bg-wedding-olive data-[state=active]:text-white data-[state=active]:border-wedding-olive border-2 border-transparent rounded-md py-2 sm:py-2.5 px-2 sm:px-3 text-xs sm:text-sm min-h-[44px] touch-manipulation transition-all duration-200 hover:bg-wedding-olive/10"
+                    className="flex items-center gap-1 sm:gap-2 data-[state=active]:bg-wedding-beige data-[state=active]:text-black data-[state=active]:border-wedding-beige border-2 border-transparent rounded-md py-2 sm:py-2.5 px-2 sm:px-3 text-xs sm:text-sm min-h-[44px] touch-manipulation transition-all duration-200 hover:bg-wedding-beige/10"
                   >
                     <Lightbulb className="h-3 w-3 sm:h-4 sm:w-4 shrink-0" />
                     <span className="truncate">Conseils</span>
@@ -92,7 +92,7 @@ const MonJourMLayout: React.FC<MonJourMLayoutProps> = ({ children, coordinationI
                 <TabsTrigger value="pense-bete" asChild>
                   <Link 
                     to="/mon-jour-m/pense-bete" 
-                    className="flex items-center gap-1 sm:gap-2 data-[state=active]:bg-wedding-olive data-[state=active]:text-white data-[state=active]:border-wedding-olive border-2 border-transparent rounded-md py-2 sm:py-2.5 px-2 sm:px-3 text-xs sm:text-sm min-h-[44px] touch-manipulation transition-all duration-200 hover:bg-wedding-olive/10"
+                    className="flex items-center gap-1 sm:gap-2 data-[state=active]:bg-wedding-beige data-[state=active]:text-black data-[state=active]:border-wedding-beige border-2 border-transparent rounded-md py-2 sm:py-2.5 px-2 sm:px-3 text-xs sm:text-sm min-h-[44px] touch-manipulation transition-all duration-200 hover:bg-wedding-beige/10"
                   >
                     <PenTool className="h-3 w-3 sm:h-4 sm:w-4 shrink-0" />
                     <span className="truncate">Pense-bête</span>
