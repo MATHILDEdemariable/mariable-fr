@@ -48,7 +48,7 @@ const DashboardFeatureCards: React.FC = () => {
       title: 'Coordination Jour J',
       description: 'Organisez votre timeline parfaite',
       icon: <Calendar className="h-6 w-6" />,
-      path: '/dashboard/coordination',
+      path: '/mon-jour-m',
       bgColor: 'bg-wedding-cream/30',
       hoverColor: 'hover:bg-wedding-cream/50',
       iconColor: 'text-wedding-olive'
