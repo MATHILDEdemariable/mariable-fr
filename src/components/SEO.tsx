@@ -23,7 +23,7 @@ const SEO: React.FC<SEOProps> = ({
   const siteUrl = "https://www.mariable.fr";
   const logoUrl = `${siteUrl}/lovable-uploads/c1b39e22-fe32-4dc7-8f94-fbb929ae43fa.png`;
 
-  const metaKeywords = keywords || "mariage france, organisation mariage, wedding planner france, prestataires mariage, checklist mariage, budget mariage, planificateur mariage, coordinateur mariage, témoignages mariage, planning mariage personnalisé";
+  const metaKeywords = keywords || "mariage france, organisation mariage, planificateur mariage france, prestataires mariage, checklist mariage, budget mariage, planning mariage, coordinateur mariage, témoignages mariage, outils planning mariage personnalisé";
 
   return (
     <Helmet>
