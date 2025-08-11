@@ -8,10 +8,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { X } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { ImageUploader } from './ImageUploader';
+import BlogSEOManager from './BlogSEOManager';
 
 interface BlogPost {
   id?: string;
@@ -110,6 +112,14 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ post, onClose, onSuccess })
     }));
   };
 
+  const handleMetaChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleSlugChange = (slug: string) => {
+    setFormData(prev => ({ ...prev, slug }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -164,9 +174,14 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ post, onClose, onSuccess })
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Colonne principale */}
-          <div className="space-y-4">
+        <Tabs defaultValue="content" className="w-full">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="content">Contenu</TabsTrigger>
+            <TabsTrigger value="seo">SEO</TabsTrigger>
+            <TabsTrigger value="settings">Paramètres</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="content" className="space-y-6 mt-6">
             <Card>
               <CardHeader>
                 <CardTitle>Contenu principal</CardTitle>
@@ -200,7 +215,7 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ post, onClose, onSuccess })
                     value={formData.content || ''}
                     onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
                     placeholder="Contenu de l'article"
-                    rows={10}
+                    rows={15}
                   />
                 </div>
               </CardContent>
@@ -218,147 +233,112 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ post, onClose, onSuccess })
                 />
               </CardContent>
             </Card>
-          </div>
+          </TabsContent>
 
-          {/* Colonne latérale */}
-          <div className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Paramètres</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <Label htmlFor="status">Statut</Label>
-                  <Select
-                    value={formData.status}
-                    onValueChange={(value: 'draft' | 'published') => 
-                      setFormData(prev => ({ ...prev, status: value }))
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="draft">Brouillon</SelectItem>
-                      <SelectItem value="published">Publié</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+          <TabsContent value="seo" className="space-y-6 mt-6">
+            <BlogSEOManager
+              title={formData.title}
+              content={formData.content || ''}
+              metaTitle={formData.meta_title || ''}
+              metaDescription={formData.meta_description || ''}
+              slug={formData.slug}
+              onMetaChange={handleMetaChange}
+              onSlugChange={handleSlugChange}
+            />
+          </TabsContent>
 
-                <div>
-                  <Label htmlFor="category">Catégorie</Label>
-                  <Input
-                    id="category"
-                    value={formData.category || ''}
-                    onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value }))}
-                    placeholder="Catégorie de l'article"
-                  />
-                </div>
+          <TabsContent value="settings" className="space-y-6 mt-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Paramètres de publication</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div>
+                    <Label htmlFor="status">Statut</Label>
+                    <Select
+                      value={formData.status}
+                      onValueChange={(value: 'draft' | 'published') => 
+                        setFormData(prev => ({ ...prev, status: value }))
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="draft">Brouillon</SelectItem>
+                        <SelectItem value="published">Publié</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
 
-                <div>
-                  <Label htmlFor="order_index">Ordre d'affichage</Label>
-                  <Input
-                    id="order_index"
-                    type="number"
-                    value={formData.order_index}
-                    onChange={(e) => setFormData(prev => ({ ...prev, order_index: parseInt(e.target.value) || 0 }))}
-                    placeholder="0"
-                  />
-                </div>
+                  <div>
+                    <Label htmlFor="category">Catégorie</Label>
+                    <Input
+                      id="category"
+                      value={formData.category || ''}
+                      onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value }))}
+                      placeholder="Catégorie de l'article"
+                    />
+                  </div>
 
-                <div className="flex items-center space-x-2">
-                  <Switch
-                    id="featured"
-                    checked={formData.featured}
-                    onCheckedChange={(checked) => 
-                      setFormData(prev => ({ ...prev, featured: checked }))
-                    }
-                  />
-                  <Label htmlFor="featured">Article mis en avant</Label>
-                </div>
-              </CardContent>
-            </Card>
+                  <div>
+                    <Label htmlFor="order_index">Ordre d'affichage</Label>
+                    <Input
+                      id="order_index"
+                      type="number"
+                      value={formData.order_index}
+                      onChange={(e) => setFormData(prev => ({ ...prev, order_index: parseInt(e.target.value) || 0 }))}
+                      placeholder="0"
+                    />
+                  </div>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>SEO</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <Label htmlFor="slug">Slug URL</Label>
-                  <Input
-                    id="slug"
-                    value={formData.slug}
-                    onChange={(e) => setFormData(prev => ({ ...prev, slug: e.target.value }))}
-                    placeholder="slug-de-l-article"
-                  />
-                </div>
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      id="featured"
+                      checked={formData.featured}
+                      onCheckedChange={(checked) => 
+                        setFormData(prev => ({ ...prev, featured: checked }))
+                      }
+                    />
+                    <Label htmlFor="featured">Article mis en avant</Label>
+                  </div>
+                </CardContent>
+              </Card>
 
-                <div>
-                  <Label htmlFor="h1_title">Titre H1</Label>
-                  <Input
-                    id="h1_title"
-                    value={formData.h1_title || ''}
-                    onChange={(e) => setFormData(prev => ({ ...prev, h1_title: e.target.value }))}
-                    placeholder="Titre H1 pour le SEO"
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="meta_title">Meta Title</Label>
-                  <Input
-                    id="meta_title"
-                    value={formData.meta_title || ''}
-                    onChange={(e) => setFormData(prev => ({ ...prev, meta_title: e.target.value }))}
-                    placeholder="Titre pour les moteurs de recherche"
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="meta_description">Meta Description</Label>
-                  <Textarea
-                    id="meta_description"
-                    value={formData.meta_description || ''}
-                    onChange={(e) => setFormData(prev => ({ ...prev, meta_description: e.target.value }))}
-                    placeholder="Description pour les moteurs de recherche"
-                    rows={3}
-                  />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Tags</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex space-x-2">
-                  <Input
-                    value={newTag}
-                    onChange={(e) => setNewTag(e.target.value)}
-                    placeholder="Nouveau tag"
-                    onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
-                  />
-                  <Button type="button" onClick={addTag} size="sm">
-                    Ajouter
-                  </Button>
-                </div>
-                
-                <div className="flex flex-wrap gap-2">
-                  {formData.tags.map((tag, index) => (
-                    <Badge key={index} variant="secondary" className="flex items-center gap-1">
-                      {tag}
-                      <X
-                        className="h-3 w-3 cursor-pointer"
-                        onClick={() => removeTag(tag)}
-                      />
-                    </Badge>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Tags</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex space-x-2">
+                    <Input
+                      value={newTag}
+                      onChange={(e) => setNewTag(e.target.value)}
+                      placeholder="Nouveau tag"
+                      onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
+                    />
+                    <Button type="button" onClick={addTag} size="sm">
+                      Ajouter
+                    </Button>
+                  </div>
+                  
+                  <div className="flex flex-wrap gap-2">
+                    {formData.tags.map((tag, index) => (
+                      <Badge key={index} variant="secondary" className="flex items-center gap-1">
+                        {tag}
+                        <X
+                          className="h-3 w-3 cursor-pointer"
+                          onClick={() => removeTag(tag)}
+                        />
+                      </Badge>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+        </Tabs>
 
         <div className="flex justify-end space-x-2 pt-4 border-t">
           <Button variant="outline" type="button" onClick={onClose}>
