@@ -53,17 +53,16 @@ const CustomBlockDialog: React.FC<CustomBlockDialogProps> = ({ onAddBlock }) => 
         </DialogHeader>
         <div className="space-y-4">
           <div>
-            <Label htmlFor="duration">Durée</Label>
-            <Select value={duration} onValueChange={setDuration}>
-              <SelectTrigger>
-                <SelectValue placeholder="Sélectionner une durée" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="15">15 minutes</SelectItem>
-                <SelectItem value="30">30 minutes</SelectItem>
-                <SelectItem value="60">1 heure</SelectItem>
-              </SelectContent>
-            </Select>
+            <Label htmlFor="duration">Durée (en minutes)</Label>
+            <Input
+              id="duration"
+              type="number"
+              value={duration}
+              onChange={(e) => setDuration(e.target.value)}
+              placeholder="15"
+              min="1"
+              max="999"
+            />
           </div>
           
           <div>

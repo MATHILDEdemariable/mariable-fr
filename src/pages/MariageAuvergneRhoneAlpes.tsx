@@ -203,7 +203,7 @@ const MariageAuvergneRhoneAlpes = () => {
                     Spécialistes des mariages montagnards
                   </p>
                   <Link 
-                    to="/selection?region=auvergne-rhone-alpes&category=photo"
+                    to="/selection?region=auvergne-rhone-alpes&category=Photographe"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
                     Voir les photographes

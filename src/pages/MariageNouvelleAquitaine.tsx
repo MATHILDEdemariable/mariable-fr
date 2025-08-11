@@ -203,7 +203,7 @@ const MariageNouvelleAquitaine = () => {
                     Spécialistes des mariages océan/vignobles
                   </p>
                   <Link 
-                    to="/selection?region=nouvelle-aquitaine&category=photo"
+                    to="/selection?region=nouvelle-aquitaine&category=Photographe"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
                     Voir les photographes

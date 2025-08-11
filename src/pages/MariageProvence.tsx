@@ -229,7 +229,7 @@ const MariageProvence = () => {
                     Spécialistes des mariages en extérieur
                   </p>
                   <Link 
-                    to="/selection?region=provence-alpes-cote-d-azur&category=photo"
+                    to="/selection?region=provence-alpes-cote-d-azur&category=Photographe"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
                     Voir les photographes

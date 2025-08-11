@@ -87,7 +87,7 @@ const PrestataireContent = () => {
             Immortalisez vos moments précieux avec nos photographes de mariage professionnels.
           </p>
           <div className="pl-7">
-            <Link to="/selection?category=photo" className="text-sm text-wedding-olive hover:underline">
+            <Link to="/selection?category=Photographe" className="text-sm text-wedding-olive hover:underline">
               Voir les photographes →
             </Link>
           </div>

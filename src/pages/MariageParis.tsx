@@ -203,7 +203,7 @@ const MariageParis = () => {
                     Spécialistes des mariages parisiens
                   </p>
                   <Link 
-                    to="/selection?region=ile-de-france&category=photo"
+                    to="/selection?region=ile-de-france&category=Photographe"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
                     Voir les photographes
