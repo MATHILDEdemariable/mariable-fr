@@ -143,7 +143,7 @@ const UnifiedTaskModal: React.FC<UnifiedTaskModalProps> = ({
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    duration: 30,
+    duration: '',
     startTime: referenceTime.toTimeString().slice(0, 5),
     category: 'personnalisé',
     isHighlight: false
@@ -161,7 +161,8 @@ const UnifiedTaskModal: React.FC<UnifiedTaskModalProps> = ({
       return;
     }
 
-    if (formData.duration < 5) {
+    const durationNum = parseInt(formData.duration as string) || 0;
+    if (durationNum < 5) {
       toast({
         title: "Erreur de validation",
         description: "La durée minimum est de 5 minutes.",
@@ -186,7 +187,7 @@ const UnifiedTaskModal: React.FC<UnifiedTaskModalProps> = ({
             title: formData.title.trim(),
             description: formData.description.trim() || null,
             start_time: formData.startTime,
-            duration: formData.duration,
+            duration: durationNum,
             category: 'jour-m', // Force jour-m category
             priority: formData.isHighlight ? 'high' : 'medium',
             position: 999,
@@ -202,8 +203,8 @@ const UnifiedTaskModal: React.FC<UnifiedTaskModalProps> = ({
           title: formData.title.trim(),
           notes: formData.description.trim() || undefined,
           startTime: startDateTime,
-          endTime: new Date(startDateTime.getTime() + formData.duration * 60000),
-          duration: formData.duration,
+          endTime: new Date(startDateTime.getTime() + durationNum * 60000),
+          duration: durationNum,
           category: formData.category,
           type: formData.category,
           isHighlight: formData.isHighlight,
@@ -221,7 +222,7 @@ const UnifiedTaskModal: React.FC<UnifiedTaskModalProps> = ({
         setFormData({
           title: '',
           description: '',
-          duration: 30,
+          duration: '',
           startTime: referenceTime.toTimeString().slice(0, 5),
           category: 'personnalisé',
           isHighlight: false
@@ -381,9 +382,10 @@ const UnifiedTaskModal: React.FC<UnifiedTaskModalProps> = ({
                   id="duration"
                   type="number"
                   value={formData.duration}
-                  onChange={(e) => setFormData(prev => ({ ...prev, duration: parseInt(e.target.value) || 30 }))}
+                  onChange={(e) => setFormData(prev => ({ ...prev, duration: e.target.value }))}
                   min="5"
                   max="480"
+                  placeholder="30"
                 />
               </div>
             </div>

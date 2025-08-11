@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { MapPin, Camera, Utensils, Music, Heart, ArrowRight } from 'lucide-react';
+import { MapPin, Camera, Utensils, Music, Heart, ArrowRight, Users, Sparkles } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import SEO from '@/components/SEO';
@@ -197,22 +197,8 @@ const MariageParis = () => {
               
               <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <div className="text-center">
-                  <Camera className="h-12 w-12 text-wedding-olive mx-auto mb-4" />
-                  <h3 className="font-serif mb-2">Photographes</h3>
-                  <p className="text-sm text-muted-foreground mb-3">
-                    Spécialistes des mariages parisiens
-                  </p>
-                  <Link 
-                    to="/selection?region=ile-de-france&category=Photographe"
-                    className="text-wedding-olive hover:underline text-sm font-medium"
-                  >
-                    Voir les photographes
-                  </Link>
-                </div>
-                
-                <div className="text-center">
                   <Utensils className="h-12 w-12 text-wedding-olive mx-auto mb-4" />
-                  <h3 className="font-serif mb-2">Traiteurs</h3>
+                  <h3 className="font-serif mb-2">Traiteur</h3>
                   <p className="text-sm text-muted-foreground mb-3">
                     Haute gastronomie française
                   </p>
@@ -225,30 +211,44 @@ const MariageParis = () => {
                 </div>
                 
                 <div className="text-center">
-                  <Music className="h-12 w-12 text-wedding-olive mx-auto mb-4" />
-                  <h3 className="font-serif mb-2">Musiciens</h3>
+                  <Camera className="h-12 w-12 text-wedding-olive mx-auto mb-4" />
+                  <h3 className="font-serif mb-2">Photographe</h3>
                   <p className="text-sm text-muted-foreground mb-3">
-                    Orchestres et DJ prestigieux
+                    Spécialistes des mariages parisiens
                   </p>
                   <Link 
-                    to="/selection?region=ile-de-france&category=DJ"
+                    to="/selection?region=ile-de-france&category=Photographe"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
-                    Écouter les groupes
+                    Voir les photographes
                   </Link>
                 </div>
                 
                 <div className="text-center">
-                  <Heart className="h-12 w-12 text-wedding-olive mx-auto mb-4" />
-                  <h3 className="font-serif mb-2">Wedding planners</h3>
+                  <Users className="h-12 w-12 text-wedding-olive mx-auto mb-4" />
+                  <h3 className="font-serif mb-2">Coordinateur</h3>
                   <p className="text-sm text-muted-foreground mb-3">
-                    Organisateurs de mariages luxury
+                    Organisation complète de votre mariage
                   </p>
                   <Link 
-                    to="/selection/ile-de-france?category=wedding-planner"
+                    to="/selection?region=ile-de-france&category=Coordination"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
-                    Voir les planners
+                    Voir les coordinateurs
+                  </Link>
+                </div>
+                
+                <div className="text-center">
+                  <Sparkles className="h-12 w-12 text-wedding-olive mx-auto mb-4" />
+                  <h3 className="font-serif mb-2">Autres</h3>
+                  <p className="text-sm text-muted-foreground mb-3">
+                    Tous nos autres prestataires en Île-de-France
+                  </p>
+                  <Link 
+                    to="/selection?region=ile-de-france"
+                    className="text-wedding-olive hover:underline text-sm font-medium"
+                  >
+                    Voir tous les prestataires
                   </Link>
                 </div>
               </div>
