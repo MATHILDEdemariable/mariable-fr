@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Eye, Search, Target, TrendingUp } from 'lucide-react';
+import { Progress } from '@/components/ui/progress';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { TrendingUp, Eye, AlertCircle, CheckCircle, Lightbulb } from 'lucide-react';
+import KeywordSuggestions from './KeywordSuggestions';
+import BlogSEOAnalytics from './BlogSEOAnalytics';
+import SEORealtimeValidator from './SEORealtimeValidator';
 
 interface BlogSEOManagerProps {
   title: string;
@@ -107,169 +111,148 @@ const BlogSEOManager: React.FC<BlogSEOManagerProps> = ({
   };
 
   return (
-    <div className="space-y-6">
-      {/* Score SEO */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <TrendingUp className="h-5 w-5" />
-            Score SEO
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center gap-4">
-            <div className={`text-3xl font-bold ${getScoreColor()}`}>
-              {seoScore}/100
-            </div>
-            <div>
-              <p className={`font-medium ${getScoreColor()}`}>
+    <Tabs defaultValue="validator" className="w-full">
+      <TabsList className="grid w-full grid-cols-4">
+        <TabsTrigger value="validator">Validation</TabsTrigger>
+        <TabsTrigger value="seo">SEO</TabsTrigger>
+        <TabsTrigger value="keywords">Mots-clés</TabsTrigger>
+        <TabsTrigger value="analytics">Analytics</TabsTrigger>
+      </TabsList>
+
+      <TabsContent value="validator">
+        <SEORealtimeValidator
+          title={title}
+          content={content}
+          metaTitle={metaTitle}
+          metaDescription={metaDescription}
+          keywords={keywords}
+        />
+      </TabsContent>
+
+      <TabsContent value="seo" className="space-y-6">
+        {/* Score SEO */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <TrendingUp className="h-5 w-5" />
+              Score SEO: {seoScore}/100
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <Progress value={seoScore} className="w-full" />
+              <div className={`text-center font-medium ${getScoreColor()}`}>
                 {getScoreText()}
-              </p>
-              <p className="text-sm text-muted-foreground">
-                Score d'optimisation SEO
-              </p>
+              </div>
+              
+              {suggestions.length > 0 && (
+                <div className="space-y-2">
+                  <h4 className="font-medium flex items-center gap-2">
+                    <AlertCircle className="h-4 w-4" />
+                    Suggestions d'amélioration
+                  </h4>
+                  <ul className="space-y-1 text-sm">
+                    {suggestions.map((suggestion, index) => (
+                      <li key={index} className="flex items-start gap-2">
+                        <span className="text-orange-500 mt-0.5">•</span>
+                        {suggestion}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
-          </div>
-          {suggestions.length > 0 && (
-            <div className="mt-4">
-              <p className="font-medium mb-2">Suggestions d'amélioration :</p>
-              <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
-                {suggestions.map((suggestion, index) => (
-                  <li key={index}>{suggestion}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
 
-      {/* Méta données SEO */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Search className="h-5 w-5" />
-            Méta données SEO
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div>
-            <Label htmlFor="metaTitle">
-              Titre SEO ({metaTitle.length}/60)
-            </Label>
-            <Input
-              id="metaTitle"
-              value={metaTitle}
-              onChange={(e) => onMetaChange('metaTitle', e.target.value)}
-              placeholder="Titre optimisé pour les moteurs de recherche"
-              className={metaTitle.length > 60 ? 'border-red-500' : ''}
-            />
-          </div>
-          
-          <div>
-            <Label htmlFor="metaDescription">
-              Meta Description ({metaDescription.length}/160)
-            </Label>
-            <Textarea
-              id="metaDescription"
-              value={metaDescription}
-              onChange={(e) => onMetaChange('metaDescription', e.target.value)}
-              placeholder="Description attrayante qui apparaîtra dans les résultats de recherche"
-              className={metaDescription.length > 160 ? 'border-red-500' : ''}
-              rows={3}
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="slug">
-              URL (Slug)
-            </Label>
-            <Input
-              id="slug"
-              value={slug}
-              onChange={(e) => onSlugChange(e.target.value)}
-              placeholder="url-de-larticle"
-            />
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Mots-clés */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Target className="h-5 w-5" />
-            Mots-clés cibles
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex gap-2">
-            <Input
-              value={currentKeyword}
-              onChange={(e) => setCurrentKeyword(e.target.value)}
-              placeholder="Ajouter un mot-clé"
-              onKeyPress={(e) => e.key === 'Enter' && addKeyword()}
-            />
-            <Button onClick={addKeyword} variant="outline">
-              Ajouter
-            </Button>
-          </div>
-
-          {keywords.length > 0 && (
-            <div className="flex flex-wrap gap-2">
-              {keywords.map((keyword) => (
-                <Badge
-                  key={keyword}
-                  variant="secondary"
-                  className="cursor-pointer"
-                  onClick={() => removeKeyword(keyword)}
-                >
-                  {keyword} ×
-                </Badge>
-              ))}
+        {/* Meta Données */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Meta Données</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium mb-2">
+                Meta Titre ({metaTitle.length}/60)
+              </label>
+              <Input
+                value={metaTitle}
+                onChange={(e) => onMetaChange('metaTitle', e.target.value)}
+                placeholder="Titre optimisé pour les moteurs de recherche..."
+                className={metaTitle.length > 60 ? 'border-red-500' : metaTitle.length > 50 ? 'border-orange-500' : ''}
+              />
+              {metaTitle.length > 60 && (
+                <p className="text-red-500 text-xs mt-1">Le titre dépasse 60 caractères</p>
+              )}
             </div>
-          )}
 
-          <div>
-            <p className="text-sm font-medium mb-2">Suggestions :</p>
-            <div className="flex flex-wrap gap-2">
-              {suggestedKeywords.map((keyword) => (
-                <Badge
-                  key={keyword}
-                  variant="outline"
-                  className="cursor-pointer hover:bg-muted"
-                  onClick={() => addSuggestedKeyword(keyword)}
-                >
-                  {keyword} +
-                </Badge>
-              ))}
+            <div>
+              <label className="block text-sm font-medium mb-2">
+                Meta Description ({metaDescription.length}/160)
+              </label>
+              <Textarea
+                value={metaDescription}
+                onChange={(e) => onMetaChange('metaDescription', e.target.value)}
+                placeholder="Description engageante qui incite au clic..."
+                rows={3}
+                className={metaDescription.length > 160 ? 'border-red-500' : metaDescription.length > 150 ? 'border-orange-500' : ''}
+              />
+              {metaDescription.length > 160 && (
+                <p className="text-red-500 text-xs mt-1">La description dépasse 160 caractères</p>
+              )}
             </div>
-          </div>
-        </CardContent>
-      </Card>
 
-      {/* Prévisualisation SERP */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Eye className="h-5 w-5" />
-            Prévisualisation SERP
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="border rounded-lg p-4 bg-white">
-            <div className="text-sm text-green-600 mb-1">
-              mariable.fr › blog › {slug || 'slug-article'}
+            <div>
+              <label className="block text-sm font-medium mb-2">
+                Slug URL ({slug.length} caractères)
+              </label>
+              <Input
+                value={slug}
+                onChange={(e) => onSlugChange(e.target.value)}
+                placeholder="slug-optimise-seo"
+                className={slug.length > 60 ? 'border-orange-500' : ''}
+              />
             </div>
-            <div className="text-lg text-blue-600 font-medium mb-1 hover:underline cursor-pointer">
-              {metaTitle || title || 'Titre de l\'article'}
+          </CardContent>
+        </Card>
+
+        {/* Aperçu SERP */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Eye className="h-5 w-5" />
+              Aperçu SERP
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="border rounded-lg p-4 bg-white">
+              <div className="text-blue-600 text-lg hover:underline cursor-pointer">
+                {metaTitle || title || 'Titre de l\'article'}
+              </div>
+              <div className="text-green-700 text-sm">
+                mariable.fr/blog/{slug || 'article'}
+              </div>
+              <div className="text-gray-600 text-sm mt-1">
+                {metaDescription || 'Description de l\'article qui apparaîtra dans les résultats de recherche...'}
+              </div>
             </div>
-            <div className="text-sm text-gray-600 leading-relaxed">
-              {metaDescription || 'Meta description de l\'article qui apparaîtra dans les résultats de recherche Google.'}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+          </CardContent>
+        </Card>
+      </TabsContent>
+
+      <TabsContent value="keywords">
+        <KeywordSuggestions
+          title={title}
+          content={content}
+          currentKeywords={keywords}
+          onKeywordsChange={setKeywords}
+        />
+      </TabsContent>
+
+      <TabsContent value="analytics">
+        <BlogSEOAnalytics />
+      </TabsContent>
+    </Tabs>
   );
 };
 
