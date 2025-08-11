@@ -169,10 +169,33 @@ const MoteurRecherche = () => {
   if (showRegionSelector) {
     return (
       <div className="min-h-screen bg-white">
-        <Helmet>
-          <title>{getPageTitle()}</title>
-          <meta name="description" content={getMetaDescription()} />
-        </Helmet>
+      <Helmet>
+        <title>{getPageTitle()}</title>
+        <meta name="description" content={getMetaDescription()} />
+        <script type="application/ld+json">{`
+          {
+            "@context": "https://schema.org",
+            "@type": "ItemList",
+            "name": "Prestataires Mariage ${selectedRegion || 'France'}",
+            "description": "${getMetaDescription()}",
+            "numberOfItems": "${vendors?.length || 0}",
+            "itemListElement": ${vendors ? JSON.stringify(vendors.slice(0, 10).map((vendor, index) => ({
+              "@type": "ListItem",
+              "position": index + 1,
+              "item": {
+                "@type": "LocalBusiness",
+                "name": vendor.nom,
+                "description": vendor.description,
+                "address": {
+                  "@type": "PostalAddress",
+                  "addressRegion": vendor.region
+                },
+                "url": `https://www.mariable.fr/prestataire/${vendor.slug}`
+              }
+            }))) : '[]'}
+          }
+        `}</script>
+      </Helmet>
         <Header />
         <main className="container max-w-7xl px-4 py-6 md:py-8">
           <RegionSelectorPage />

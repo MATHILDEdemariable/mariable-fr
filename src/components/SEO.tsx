@@ -51,25 +51,75 @@ const SEO: React.FC<SEOProps> = ({
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={image} />
       
-      {/* Structured data for Organization */}
+      {/* Enhanced Structured Data */}
       <script type="application/ld+json">{`
         {
           "@context": "https://schema.org",
-          "@type": "Organization",
+          "@type": "LocalBusiness",
           "name": "Mariable",
           "url": "${siteUrl}",
           "logo": "${logoUrl}",
+          "image": "${logoUrl}",
+          "description": "Plateforme intelligente d'organisation de mariage : trouvez les meilleurs prestataires, planifiez chaque étape, suivez votre budget.",
+          "areaServed": {
+            "@type": "Country",
+            "name": "France"
+          },
+          "serviceArea": {
+            "@type": "Country",
+            "name": "France"
+          },
           "contactPoint": {
             "@type": "ContactPoint",
             "contactType": "customer service",
-            "email": "contact@mariable.fr"
+            "email": "contact@mariable.fr",
+            "availableLanguage": "French"
           },
-          "sameAs": [],
-          "description": "Plateforme intelligente d'organisation de mariage : trouvez les meilleurs prestataires, planifiez chaque étape, suivez votre budget.",
+          "sameAs": [
+            "https://www.instagram.com/mariable.fr/"
+          ],
           "potentialAction": {
             "@type": "SearchAction",
             "target": "${siteUrl}/selection?q={search_term_string}",
             "query-input": "required name=search_term_string"
+          },
+          "hasOfferCatalog": {
+            "@type": "OfferCatalog",
+            "name": "Services Mariable",
+            "itemListElement": [
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "Recherche de Prestataires Mariage",
+                  "description": "Trouvez les meilleurs prestataires pour votre mariage"
+                }
+              },
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "Coordination Jour J",
+                  "description": "Organisation et coordination de votre jour de mariage"
+                }
+              },
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "Calculateur Budget Mariage",
+                  "description": "Outil de gestion et calcul de budget mariage"
+                }
+              },
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "Checklist Mariage",
+                  "description": "Planning personnalisé pour l'organisation de votre mariage"
+                }
+              }
+            ]
           }
         }
       `}</script>

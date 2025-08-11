@@ -6,7 +6,7 @@ const Footer = () => {
   return (
     <footer className="py-8 bg-white text-wedding-black" role="contentinfo" aria-label="Pied de page">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Logo et description à gauche */}
           <div>
             <div className="flex items-center gap-2 mb-4">
@@ -24,20 +24,31 @@ const Footer = () => {
             </div>
           </div>
           
-          {/* Planifier mon mariage au centre */}
+          {/* Planifier mon mariage */}
           <div>
             <h3 className="font-serif text-base mb-3">Planifier mon mariage</h3>
             <ul className="space-y-1 text-sm">
               <li><Link to="/dashboard" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Mon tableau de bord</Link></li>
               <li><Link to="/checklist-mariage" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Check-list</Link></li>
-              
               <li><Link to="/selection" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Trouver un prestataire</Link></li>
               <li><Link to="/mon-jour-m" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Coordination du jour J</Link></li>
               <li><Link to="/services/budget" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Calculateur de budget</Link></li>
             </ul>
           </div>
+
+          {/* Mariages par région */}
+          <div>
+            <h3 className="font-serif text-base mb-3">Mariages par région</h3>
+            <ul className="space-y-1 text-sm">
+              <li><Link to="/mariage-provence" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Mariage Provence</Link></li>
+              <li><Link to="/mariage-paris" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Mariage Paris & Île-de-France</Link></li>
+              <li><Link to="/mariage-auvergne-rhone-alpes" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Mariage Auvergne-Rhône-Alpes</Link></li>
+              <li><Link to="/mariage-nouvelle-aquitaine" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Mariage Nouvelle-Aquitaine</Link></li>
+              <li><Link to="/selection" className="text-wedding-black/70 hover:text-wedding-black transition-colors font-medium">Voir toutes les régions →</Link></li>
+            </ul>
+          </div>
           
-          {/* À Propos à droite */}
+          {/* À Propos */}
           <div>
             <h3 className="font-serif text-base mb-3">À Propos</h3>
             <ul className="space-y-1 text-sm">

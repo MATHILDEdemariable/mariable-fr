@@ -103,8 +103,14 @@ function App() {
                    <Route path="/jour-m-vue/:token" element={<JourMVue />} />
                    
                    {/* Nouvelles pages outils */}
-                   <Route path="/outils-planning-mariage" element={<OutilsPlanningMariage />} />
-                   <Route path="/coordination-jour-j" element={<CoordinationJourJ />} />
+          <Route path="/outils-planning-mariage" element={<OutilsPlanningMariage />} />
+          <Route path="/coordination-jour-j" element={<CoordinationJourJ />} />
+          
+          {/* Pages régionales */}
+          <Route path="/mariage-provence" element={<MariageProvence />} />
+          <Route path="/mariage-paris" element={<MariageParis />} />
+          <Route path="/mariage-auvergne-rhone-alpes" element={<MariageAuvergneRhoneAlpes />} />
+          <Route path="/mariage-nouvelle-aquitaine" element={<MariageNouvelleAquitaine />} />
                   
                   {/* Routes publiques pour les plannings */}
                   <Route path="/planning-public/:coordinationId" element={<PlanningPublic />} />

@@ -179,7 +179,64 @@ const Prestataires = () => {
         title="Trouvez les meilleurs prestataires de mariage | Sélection vérifiée"
         description="Lieux, traiteurs, photographes, DJs… Découvrez une sélection des meilleurs prestataires de mariage vérifiés selon votre région et votre style. Comparez et contactez gratuitement."
         canonical="/services/prestataires"
-      />
+      >
+        <script type="application/ld+json">{`
+          {
+            "@context": "https://schema.org",
+            "@type": "Service",
+            "name": "Recherche de Prestataires de Mariage",
+            "description": "Trouvez les meilleurs prestataires pour votre mariage : lieux, photographes, traiteurs, DJ et plus encore.",
+            "provider": {
+              "@type": "Organization",
+              "name": "Mariable",
+              "url": "https://www.mariable.fr"
+            },
+            "serviceType": "Wedding Vendor Directory",
+            "areaServed": {
+              "@type": "Country",
+              "name": "France"
+            },
+            "hasOfferCatalog": {
+              "@type": "OfferCatalog",
+              "name": "Prestataires Mariage",
+              "itemListElement": [
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Lieux de Réception",
+                    "description": "Châteaux, domaines, salles atypiques pour votre mariage"
+                  }
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Photographes Mariage",
+                    "description": "Photographes professionnels spécialisés mariage"
+                  }
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Traiteurs Mariage",
+                    "description": "Services de restauration pour votre réception"
+                  }
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "DJ et Musiciens",
+                    "description": "Animation musicale pour votre mariage"
+                  }
+                }
+              ]
+            }
+          }
+        `}</script>
+      </SEO>
     </ServiceTemplate>
   );
 };
