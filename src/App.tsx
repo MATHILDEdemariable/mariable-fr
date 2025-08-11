@@ -40,6 +40,10 @@ import MonJourMConseils from "./pages/MonJourMConseils";
 import MonJourMPenseBete from "./pages/MonJourMPenseBete";
 import OutilsPlanningMariage from "./pages/OutilsPlanningMariage";
 import CoordinationJourJ from "./pages/CoordinationJourJ";
+import MariageProvence from "./pages/MariageProvence";
+import MariageParis from "./pages/MariageParis";
+import MariageAuvergneRhoneAlpes from "./pages/MariageAuvergneRhoneAlpes";
+import MariageNouvelleAquitaine from "./pages/MariageNouvelleAquitaine";
 
 // Import missing pages
 import Professionnels from "./pages/Professionnels";
