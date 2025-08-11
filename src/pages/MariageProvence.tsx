@@ -172,7 +172,7 @@ const MariageProvence = () => {
                     sur la campagne provençale.
                   </p>
                   <Link 
-                    to="/selection?region=provence-alpes-cote-d-azur&category=lieu"
+                    to="/selection?region=provence-alpes-cote-d-azur&category=Lieu de réception"
                     className="text-wedding-olive hover:underline font-medium"
                   >
                     Découvrir les châteaux →
@@ -187,7 +187,7 @@ const MariageProvence = () => {
                     et caves séculaires.
                   </p>
                   <Link 
-                    to="/selection?region=provence-alpes-cote-d-azur&category=lieu"
+                    to="/selection?region=provence-alpes-cote-d-azur&category=Lieu de réception"
                     className="text-wedding-olive hover:underline font-medium"
                   >
                     Voir les domaines →
@@ -202,7 +202,7 @@ const MariageProvence = () => {
                     nichés dans les oliviers et la garrigue.
                   </p>
                   <Link 
-                    to="/selection?region=provence-alpes-cote-d-azur&category=lieu"
+                    to="/selection?region=provence-alpes-cote-d-azur&category=Lieu de réception"
                     className="text-wedding-olive hover:underline font-medium"
                   >
                     Explorer les mas →
@@ -243,7 +243,7 @@ const MariageProvence = () => {
                     Cuisine méditerranéenne raffinée
                   </p>
                   <Link 
-                    to="/selection?region=provence-alpes-cote-d-azur&category=traiteur"
+                    to="/selection?region=provence-alpes-cote-d-azur&category=Traiteur"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
                     Découvrir les traiteurs
@@ -257,7 +257,7 @@ const MariageProvence = () => {
                     Ambiance musicale sur mesure
                   </p>
                   <Link 
-                    to="/selection?region=provence-alpes-cote-d-azur&category=musique"
+                    to="/selection?region=provence-alpes-cote-d-azur&category=DJ"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
                     Écouter les groupes
@@ -271,7 +271,7 @@ const MariageProvence = () => {
                     Style provençal authentique
                   </p>
                   <Link 
-                    to="/selection?region=provence-alpes-cote-d-azur&category=decoration"
+                    to="/selection?region=provence-alpes-cote-d-azur&category=Décoration"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
                     Voir les décorateurs

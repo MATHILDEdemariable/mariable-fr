@@ -146,7 +146,7 @@ const MariageNouvelleAquitaine = () => {
                     au cœur des vignobles classés UNESCO.
                   </p>
                   <Link 
-                    to="/selection?region=nouvelle-aquitaine&category=lieu"
+                    to="/selection?region=nouvelle-aquitaine&category=Lieu de réception"
                     className="text-wedding-olive hover:underline font-medium"
                   >
                     Découvrir les châteaux →
@@ -161,7 +161,7 @@ const MariageNouvelleAquitaine = () => {
                     d'exception avec vue panoramique sur l'océan.
                   </p>
                   <Link 
-                    to="/selection?region=nouvelle-aquitaine&category=lieu"
+                    to="/selection?region=nouvelle-aquitaine&category=Lieu de réception"
                     className="text-wedding-olive hover:underline font-medium"
                   >
                     Voir les lieux océan →
@@ -176,7 +176,7 @@ const MariageNouvelleAquitaine = () => {
                     typiques du Sud-Ouest et du Périgord.
                   </p>
                   <Link 
-                    to="/selection?region=nouvelle-aquitaine&category=lieu"
+                    to="/selection?region=nouvelle-aquitaine&category=Lieu de réception"
                     className="text-wedding-olive hover:underline font-medium"
                   >
                     Explorer les domaines →
@@ -217,7 +217,7 @@ const MariageNouvelleAquitaine = () => {
                     Spécialités du Sud-Ouest
                   </p>
                   <Link 
-                    to="/selection?region=nouvelle-aquitaine&category=traiteur"
+                    to="/selection?region=nouvelle-aquitaine&category=Traiteur"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
                     Découvrir les traiteurs
@@ -231,7 +231,7 @@ const MariageNouvelleAquitaine = () => {
                     Groupes et fanfares basques
                   </p>
                   <Link 
-                    to="/selection?region=nouvelle-aquitaine&category=musique"
+                    to="/selection?region=nouvelle-aquitaine&category=DJ"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
                     Écouter les groupes
@@ -245,7 +245,7 @@ const MariageNouvelleAquitaine = () => {
                     Style atlantique et viticole
                   </p>
                   <Link 
-                    to="/selection?region=nouvelle-aquitaine&category=decoration"
+                    to="/selection?region=nouvelle-aquitaine&category=Décoration"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
                     Voir les décorateurs

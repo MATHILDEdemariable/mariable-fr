@@ -146,7 +146,7 @@ const MariageAuvergneRhoneAlpes = () => {
                     sur les plus beaux sommets des Alpes.
                   </p>
                   <Link 
-                    to="/selection/auvergne-rhone-alpes?category=lieu&categorieLieu=chalet"
+                    to="/selection?region=auvergne-rhone-alpes&category=Lieu de réception"
                     className="text-wedding-olive hover:underline font-medium"
                   >
                     Découvrir les chalets →
@@ -161,7 +161,7 @@ const MariageAuvergneRhoneAlpes = () => {
                     nichés au cœur des vignobles du Beaujolais.
                   </p>
                   <Link 
-                    to="/selection/auvergne-rhone-alpes?category=lieu&categorieLieu=chateau"
+                    to="/selection?region=auvergne-rhone-alpes&category=Lieu de réception"
                     className="text-wedding-olive hover:underline font-medium"
                   >
                     Voir les châteaux →
@@ -176,7 +176,7 @@ const MariageAuvergneRhoneAlpes = () => {
                     au cœur des appellations prestigieuses.
                   </p>
                   <Link 
-                    to="/selection?region=auvergne-rhone-alpes&category=lieu"
+                    to="/selection?region=auvergne-rhone-alpes&category=Lieu de réception"
                     className="text-wedding-olive hover:underline font-medium"
                   >
                     Explorer les domaines →
@@ -217,7 +217,7 @@ const MariageAuvergneRhoneAlpes = () => {
                     Cuisine gastronomique lyonnaise
                   </p>
                   <Link 
-                    to="/selection?region=auvergne-rhone-alpes&category=traiteur"
+                    to="/selection?region=auvergne-rhone-alpes&category=Traiteur"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
                     Découvrir les traiteurs
@@ -231,7 +231,7 @@ const MariageAuvergneRhoneAlpes = () => {
                     Groupes et DJ alpins
                   </p>
                   <Link 
-                    to="/selection?region=auvergne-rhone-alpes&category=musique"
+                    to="/selection?region=auvergne-rhone-alpes&category=DJ"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
                     Écouter les groupes
@@ -245,7 +245,7 @@ const MariageAuvergneRhoneAlpes = () => {
                     Créations florales alpines
                   </p>
                   <Link 
-                    to="/selection/auvergne-rhone-alpes?category=fleuriste"
+                    to="/selection?region=auvergne-rhone-alpes&category=Décoration"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
                     Voir les fleuristes

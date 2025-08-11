@@ -146,7 +146,7 @@ const MariageParis = () => {
                     témoins de l'histoire de France.
                   </p>
                   <Link 
-                    to="/selection?region=ile-de-france&category=lieu"
+                    to="/selection?region=ile-de-france&category=Lieu de réception"
                     className="text-wedding-olive hover:underline font-medium"
                   >
                     Découvrir les châteaux →
@@ -217,7 +217,7 @@ const MariageParis = () => {
                     Haute gastronomie française
                   </p>
                   <Link 
-                    to="/selection?region=ile-de-france&category=traiteur"
+                    to="/selection?region=ile-de-france&category=Traiteur"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
                     Découvrir les traiteurs
@@ -231,7 +231,7 @@ const MariageParis = () => {
                     Orchestres et DJ prestigieux
                   </p>
                   <Link 
-                    to="/selection?region=ile-de-france&category=musique"
+                    to="/selection?region=ile-de-france&category=DJ"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
                     Écouter les groupes
