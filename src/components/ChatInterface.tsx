@@ -54,7 +54,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         {
           id: 'welcome',
           role: 'assistant',
-          content: "Bonjour et félicitations pour votre mariage ! Je suis Mathilde de Mariable, votre wedding planner digital. Dites-moi tout, je vais vous aider à trouver les meilleurs prestataires selon vos envies.",
+          content: "Bonjour et félicitations pour votre mariage ! Je suis Mathilde de Mariable, votre organisateur de mariage digital. Dites-moi tout, je vais vous aider à trouver les meilleurs prestataires selon vos envies.",
           timestamp: new Date()
         }
       ]);
@@ -390,7 +390,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         const welcomeMessage: MessageType = {
           id: 'welcome',
           role: 'assistant',
-          content: "Bonjour et félicitations pour votre mariage ! Je suis Mathilde de Mariable, votre wedding planner digital ✨ Dites-moi tout, je vais vous aider à trouver les meilleurs prestataires selon vos envies.",
+          content: "Bonjour et félicitations pour votre mariage ! Je suis Mathilde de Mariable, votre organisateur de mariage digital ✨ Dites-moi tout, je vais vous aider à trouver les meilleurs prestataires selon vos envies.",
           timestamp: new Date()
         };
         setMessages(prev => [...prev, welcomeMessage]);
@@ -479,7 +479,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     <div className="w-full h-[450px] sm:h-[500px] flex flex-col bg-white rounded-xl overflow-hidden">
       <div className="p-2 md:p-4 bg-white border-b flex items-center justify-center">
         <p className="text-center text-base font-serif text-wedding-black">
-          {isHomeGuide ? "Guide interactif Mariable" : "Mathilde de Mariable, votre wedding planner"}
+          {isHomeGuide ? "Guide interactif Mariable" : "Mathilde de Mariable, votre organisateur de mariage"}
         </p>
       </div>
       

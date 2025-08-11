@@ -144,7 +144,7 @@ const MonJourMPenseBete: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Pense-bête - Mon Jour-M | Mariable</title>
+        <title>Pense-bête - Mon Jour J | Mariable</title>
         <meta name="description" content="Notez toutes vos idées et pensées pour votre mariage dans votre pense-bête personnel." />
       </Helmet>
 

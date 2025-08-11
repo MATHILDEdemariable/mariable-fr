@@ -19,7 +19,7 @@ const InitiationMariageWidget: React.FC = () => {
       icon: <Heart className="h-4 w-4" />
     },
     {
-      title: 'Timeline personnalisée',
+      title: 'Planning personnalisé',
       description: 'Planning adapté à votre date',
       icon: <Calendar className="h-4 w-4" />
     }

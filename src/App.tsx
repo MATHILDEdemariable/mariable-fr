@@ -38,6 +38,8 @@ import EmailConfirmation from "./pages/auth/EmailConfirmation";
 import MessageHistoryPage from "./pages/dashboard/MessageHistoryPage";
 import MonJourMConseils from "./pages/MonJourMConseils";
 import MonJourMPenseBete from "./pages/MonJourMPenseBete";
+import OutilsPlanningMariage from "./pages/OutilsPlanningMariage";
+import CoordinationJourJ from "./pages/CoordinationJourJ";
 
 // Import missing pages
 import Professionnels from "./pages/Professionnels";
@@ -97,8 +99,12 @@ function App() {
                   <Route path="/planning-personnalise" element={<PlanningPersonnalise />} />
                   <Route path="/planning-resultats-personnalises" element={<PlanningResultatsPersonnalises />} />
                   <Route path="/reservation-jour-m" element={<ReservationJourM />} />
-                  <Route path="/dashboard/*" element={<UserDashboard />} />
-                  <Route path="/jour-m-vue/:token" element={<JourMVue />} />
+                   <Route path="/dashboard/*" element={<UserDashboard />} />
+                   <Route path="/jour-m-vue/:token" element={<JourMVue />} />
+                   
+                   {/* Nouvelles pages outils */}
+                   <Route path="/outils-planning-mariage" element={<OutilsPlanningMariage />} />
+                   <Route path="/coordination-jour-j" element={<CoordinationJourJ />} />
                   
                   {/* Routes publiques pour les plannings */}
                   <Route path="/planning-public/:coordinationId" element={<PlanningPublic />} />
@@ -106,7 +112,7 @@ function App() {
           <Route path="/avant-jour-j-public/:token" element={<AvantJourJPublic />} />
           <Route path="/apres-jour-j-public/:token" element={<ApresJourJPublic />} />
                   
-                  {/* Mon Jour-M routes */}
+                  {/* Mon Jour J routes */}
                   <Route path="/mon-jour-m" element={<Navigate to="/mon-jour-m/planning" replace />} />
                   <Route path="/mon-jour-m/planning" element={<MonJourMPlanningPage />} />
                   <Route path="/mon-jour-m/equipe" element={<MonJourMEquipePage />} />

@@ -28,7 +28,7 @@ const vendorCategories = [
   'DJ',
   'Fleuriste',
   'Décoration',
-  'Wedding planner',
+  'Organisateur de mariage',
   'Tenues',
   'Bijoux',
   'Beauté',

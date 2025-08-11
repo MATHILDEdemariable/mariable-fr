@@ -7,7 +7,7 @@ const FeaturesSection = () => {
       <div className="container px-4">
         <div className="text-center mb-6 md:mb-8">
           <h2 className="text-xl md:text-2xl lg:text-3xl font-serif mb-2 md:mb-3">
-            Le premier wedding planner de poche
+            Le premier organisateur de mariage de poche
           </h2>
           <p className="text-muted-foreground text-xs md:text-sm max-w-2xl mx-auto">
             Un outil en ligne pensé pour les couples qui veulent tout organiser eux-mêmes – sans stress, sans perte de temps, sans galère.

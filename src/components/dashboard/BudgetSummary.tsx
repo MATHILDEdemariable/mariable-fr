@@ -490,7 +490,7 @@ const BudgetSummary: React.FC = () => {
       traiteur: 'Traiteur (hors boissons)',
       photo: 'Photographe & Vidéaste',
       dj: 'DJ / Animation',
-      planner: 'Wedding Planner',
+      planner: 'Organisateur de mariage',
       deco: 'Décoration & Fleurs',
       autres: 'Autres dépenses'
     };

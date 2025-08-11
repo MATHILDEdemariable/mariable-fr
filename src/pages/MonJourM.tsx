@@ -77,7 +77,7 @@ const MonJourM: React.FC = () => {
   return (
     <ErrorBoundary>
       <Helmet>
-        <title>Mon Jour-M | Mariable</title>
+        <title>Mon Jour J | Mariable</title>
         <meta name="description" content="Organisez et coordonnez tous les détails de votre mariage" />
       </Helmet>
 

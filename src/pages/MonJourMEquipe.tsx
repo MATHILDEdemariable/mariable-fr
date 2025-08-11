@@ -11,7 +11,7 @@ const MonJourMEquipePage: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Équipe - Mon Jour-M | Mariable</title>
+        <title>Équipe - Mon Jour J | Mariable</title>
         <meta name="description" content="Gérez votre équipe de mariage et vos prestataires" />
       </Helmet>
       

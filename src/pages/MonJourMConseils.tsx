@@ -36,7 +36,7 @@ const MonJourMConseils: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Conseils Jour-J - Mon Jour-M | Mariable</title>
+        <title>Conseils Jour J - Mon Jour J | Mariable</title>
         <meta name="description" content="Découvrez nos conseils d'experts pour bien organiser votre jour de mariage. Timing, photos, gestion des invités et moments clés." />
       </Helmet>
 
