@@ -72,7 +72,7 @@ const MariageNouvelleAquitaine = () => {
                   asChild
                   className="bg-wedding-olive hover:bg-wedding-olive/90"
                 >
-                  <Link to="/selection/nouvelle-aquitaine">
+                  <Link to="/selection?region=nouvelle-aquitaine">
                     <Waves className="mr-2 h-4 w-4" />
                     Voir les prestataires
                   </Link>
@@ -146,7 +146,7 @@ const MariageNouvelleAquitaine = () => {
                     au cœur des vignobles classés UNESCO.
                   </p>
                   <Link 
-                    to="/selection/nouvelle-aquitaine?category=lieu&categorieLieu=chateau"
+                    to="/selection?region=nouvelle-aquitaine&category=lieu"
                     className="text-wedding-olive hover:underline font-medium"
                   >
                     Découvrir les châteaux →
@@ -161,7 +161,7 @@ const MariageNouvelleAquitaine = () => {
                     d'exception avec vue panoramique sur l'océan.
                   </p>
                   <Link 
-                    to="/selection/nouvelle-aquitaine?category=lieu&categorieLieu=bord-de-mer"
+                    to="/selection?region=nouvelle-aquitaine&category=lieu"
                     className="text-wedding-olive hover:underline font-medium"
                   >
                     Voir les lieux océan →
@@ -176,7 +176,7 @@ const MariageNouvelleAquitaine = () => {
                     typiques du Sud-Ouest et du Périgord.
                   </p>
                   <Link 
-                    to="/selection/nouvelle-aquitaine?category=lieu&categorieLieu=domaine"
+                    to="/selection?region=nouvelle-aquitaine&category=lieu"
                     className="text-wedding-olive hover:underline font-medium"
                   >
                     Explorer les domaines →
@@ -203,7 +203,7 @@ const MariageNouvelleAquitaine = () => {
                     Spécialistes des mariages océan/vignobles
                   </p>
                   <Link 
-                    to="/selection/nouvelle-aquitaine?category=photo"
+                    to="/selection?region=nouvelle-aquitaine&category=photo"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
                     Voir les photographes
@@ -217,7 +217,7 @@ const MariageNouvelleAquitaine = () => {
                     Spécialités du Sud-Ouest
                   </p>
                   <Link 
-                    to="/selection/nouvelle-aquitaine?category=traiteur"
+                    to="/selection?region=nouvelle-aquitaine&category=traiteur"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
                     Découvrir les traiteurs
@@ -231,7 +231,7 @@ const MariageNouvelleAquitaine = () => {
                     Groupes et fanfares basques
                   </p>
                   <Link 
-                    to="/selection/nouvelle-aquitaine?category=musique"
+                    to="/selection?region=nouvelle-aquitaine&category=musique"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
                     Écouter les groupes
@@ -245,7 +245,7 @@ const MariageNouvelleAquitaine = () => {
                     Style atlantique et viticole
                   </p>
                   <Link 
-                    to="/selection/nouvelle-aquitaine?category=decoration"
+                    to="/selection?region=nouvelle-aquitaine&category=decoration"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
                     Voir les décorateurs
@@ -272,7 +272,7 @@ const MariageNouvelleAquitaine = () => {
                   size="lg"
                   className="bg-wedding-olive hover:bg-wedding-olive/90"
                 >
-                  <Link to="/selection/nouvelle-aquitaine">
+                  <Link to="/selection">
                     Commencer ma recherche
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>

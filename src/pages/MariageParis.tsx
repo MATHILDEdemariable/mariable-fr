@@ -72,7 +72,7 @@ const MariageParis = () => {
                   asChild
                   className="bg-wedding-olive hover:bg-wedding-olive/90"
                 >
-                  <Link to="/selection/ile-de-france">
+                  <Link to="/selection?region=ile-de-france">
                     <MapPin className="mr-2 h-4 w-4" />
                     Voir les prestataires
                   </Link>
@@ -146,7 +146,7 @@ const MariageParis = () => {
                     témoins de l'histoire de France.
                   </p>
                   <Link 
-                    to="/selection/ile-de-france?category=lieu&categorieLieu=chateau"
+                    to="/selection?region=ile-de-france&category=lieu"
                     className="text-wedding-olive hover:underline font-medium"
                   >
                     Découvrir les châteaux →
@@ -203,7 +203,7 @@ const MariageParis = () => {
                     Spécialistes des mariages parisiens
                   </p>
                   <Link 
-                    to="/selection/ile-de-france?category=photo"
+                    to="/selection?region=ile-de-france&category=photo"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
                     Voir les photographes
@@ -217,7 +217,7 @@ const MariageParis = () => {
                     Haute gastronomie française
                   </p>
                   <Link 
-                    to="/selection/ile-de-france?category=traiteur"
+                    to="/selection?region=ile-de-france&category=traiteur"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
                     Découvrir les traiteurs
@@ -231,7 +231,7 @@ const MariageParis = () => {
                     Orchestres et DJ prestigieux
                   </p>
                   <Link 
-                    to="/selection/ile-de-france?category=musique"
+                    to="/selection?region=ile-de-france&category=musique"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
                     Écouter les groupes
@@ -272,7 +272,7 @@ const MariageParis = () => {
                   size="lg"
                   className="bg-wedding-olive hover:bg-wedding-olive/90"
                 >
-                  <Link to="/selection/ile-de-france">
+                  <Link to="/selection">
                     Commencer ma recherche
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>

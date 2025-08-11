@@ -98,7 +98,7 @@ const MariageProvence = () => {
                   asChild
                   className="bg-wedding-olive hover:bg-wedding-olive/90"
                 >
-                  <Link to="/selection/provence-alpes-cote-d-azur">
+                  <Link to="/selection?region=provence-alpes-cote-d-azur">
                     <MapPin className="mr-2 h-4 w-4" />
                     Voir les prestataires
                   </Link>
@@ -172,7 +172,7 @@ const MariageProvence = () => {
                     sur la campagne provençale.
                   </p>
                   <Link 
-                    to="/selection/provence-alpes-cote-d-azur?category=lieu&categorieLieu=chateau"
+                    to="/selection?region=provence-alpes-cote-d-azur&category=lieu"
                     className="text-wedding-olive hover:underline font-medium"
                   >
                     Découvrir les châteaux →
@@ -187,7 +187,7 @@ const MariageProvence = () => {
                     et caves séculaires.
                   </p>
                   <Link 
-                    to="/selection/provence-alpes-cote-d-azur?category=lieu&categorieLieu=domaine"
+                    to="/selection?region=provence-alpes-cote-d-azur&category=lieu"
                     className="text-wedding-olive hover:underline font-medium"
                   >
                     Voir les domaines →
@@ -202,7 +202,7 @@ const MariageProvence = () => {
                     nichés dans les oliviers et la garrigue.
                   </p>
                   <Link 
-                    to="/selection/provence-alpes-cote-d-azur?category=lieu&categorieLieu=mas"
+                    to="/selection?region=provence-alpes-cote-d-azur&category=lieu"
                     className="text-wedding-olive hover:underline font-medium"
                   >
                     Explorer les mas →
@@ -229,7 +229,7 @@ const MariageProvence = () => {
                     Spécialistes des mariages en extérieur
                   </p>
                   <Link 
-                    to="/selection/provence-alpes-cote-d-azur?category=photo"
+                    to="/selection?region=provence-alpes-cote-d-azur&category=photo"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
                     Voir les photographes
@@ -243,7 +243,7 @@ const MariageProvence = () => {
                     Cuisine méditerranéenne raffinée
                   </p>
                   <Link 
-                    to="/selection/provence-alpes-cote-d-azur?category=traiteur"
+                    to="/selection?region=provence-alpes-cote-d-azur&category=traiteur"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
                     Découvrir les traiteurs
@@ -257,7 +257,7 @@ const MariageProvence = () => {
                     Ambiance musicale sur mesure
                   </p>
                   <Link 
-                    to="/selection/provence-alpes-cote-d-azur?category=musique"
+                    to="/selection?region=provence-alpes-cote-d-azur&category=musique"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
                     Écouter les groupes
@@ -271,7 +271,7 @@ const MariageProvence = () => {
                     Style provençal authentique
                   </p>
                   <Link 
-                    to="/selection/provence-alpes-cote-d-azur?category=decoration"
+                    to="/selection?region=provence-alpes-cote-d-azur&category=decoration"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
                     Voir les décorateurs
@@ -298,7 +298,7 @@ const MariageProvence = () => {
                   size="lg"
                   className="bg-wedding-olive hover:bg-wedding-olive/90"
                 >
-                  <Link to="/selection/provence-alpes-cote-d-azur">
+                  <Link to="/selection">
                     Commencer ma recherche
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>

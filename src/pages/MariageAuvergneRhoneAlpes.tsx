@@ -72,7 +72,7 @@ const MariageAuvergneRhoneAlpes = () => {
                   asChild
                   className="bg-wedding-olive hover:bg-wedding-olive/90"
                 >
-                  <Link to="/selection/auvergne-rhone-alpes">
+                  <Link to="/selection?region=auvergne-rhone-alpes">
                     <Mountain className="mr-2 h-4 w-4" />
                     Voir les prestataires
                   </Link>
@@ -176,7 +176,7 @@ const MariageAuvergneRhoneAlpes = () => {
                     au cœur des appellations prestigieuses.
                   </p>
                   <Link 
-                    to="/selection/auvergne-rhone-alpes?category=lieu&categorieLieu=domaine"
+                    to="/selection?region=auvergne-rhone-alpes&category=lieu"
                     className="text-wedding-olive hover:underline font-medium"
                   >
                     Explorer les domaines →
@@ -203,7 +203,7 @@ const MariageAuvergneRhoneAlpes = () => {
                     Spécialistes des mariages montagnards
                   </p>
                   <Link 
-                    to="/selection/auvergne-rhone-alpes?category=photo"
+                    to="/selection?region=auvergne-rhone-alpes&category=photo"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
                     Voir les photographes
@@ -217,7 +217,7 @@ const MariageAuvergneRhoneAlpes = () => {
                     Cuisine gastronomique lyonnaise
                   </p>
                   <Link 
-                    to="/selection/auvergne-rhone-alpes?category=traiteur"
+                    to="/selection?region=auvergne-rhone-alpes&category=traiteur"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
                     Découvrir les traiteurs
@@ -231,7 +231,7 @@ const MariageAuvergneRhoneAlpes = () => {
                     Groupes et DJ alpins
                   </p>
                   <Link 
-                    to="/selection/auvergne-rhone-alpes?category=musique"
+                    to="/selection?region=auvergne-rhone-alpes&category=musique"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
                     Écouter les groupes
@@ -272,7 +272,7 @@ const MariageAuvergneRhoneAlpes = () => {
                   size="lg"
                   className="bg-wedding-olive hover:bg-wedding-olive/90"
                 >
-                  <Link to="/selection/auvergne-rhone-alpes">
+                  <Link to="/selection">
                     Commencer ma recherche
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
