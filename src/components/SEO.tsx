@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
+import SEOSchemaEnhanced from './SEOSchemaEnhanced';
 
 interface SEOProps {
   title?: string;
@@ -8,6 +9,7 @@ interface SEOProps {
   keywords?: string;
   image?: string;
   canonical?: string;
+  schemas?: Array<{ type: 'Organization' | 'BlogPosting' | 'FAQ' | 'Course' | 'Review' | 'Event'; data: any }>;
   children?: React.ReactNode;
 }
 
@@ -17,6 +19,7 @@ const SEO: React.FC<SEOProps> = ({
   keywords,
   image = "/lovable-uploads/23541521-b6ff-4175-a8c8-5017e5b19312.png",
   canonical,
+  schemas = [],
   children
 }) => {
   const fullTitle = title === "Le premier wedding planner de poche – Mariable" ? title : `${title} – Mariable`;
@@ -26,105 +29,109 @@ const SEO: React.FC<SEOProps> = ({
   const metaKeywords = keywords || "mariage france, organisation mariage, planificateur mariage france, prestataires mariage, checklist mariage, budget mariage, planning mariage, coordinateur mariage, témoignages mariage, outils planning mariage personnalisé";
 
   return (
-    <Helmet>
-      <title>{fullTitle}</title>
-      <meta name="description" content={description} />
-      <meta name="keywords" content={metaKeywords} />
-      <meta name="robots" content="index, follow" />
-      <meta name="language" content="fr-FR" />
-      <meta name="geo.region" content="FR" />
-      <meta name="geo.country" content="France" />
-      {canonical && <link rel="canonical" href={`${siteUrl}${canonical}`} />}
-      
-      {/* Open Graph / Facebook */}
-      <meta property="og:type" content="website" />
-      <meta property="og:title" content={fullTitle} />
-      <meta property="og:description" content={description} />
-      <meta property="og:image" content={image} />
-      <meta property="og:site_name" content="MARIABLE" />
-      <meta property="og:locale" content="fr_FR" />
-      <meta property="og:url" content={`${siteUrl}${canonical || ''}`} />
-      
-      {/* Twitter */}
-      <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:title" content={fullTitle} />
-      <meta name="twitter:description" content={description} />
-      <meta name="twitter:image" content={image} />
-      
-      {/* Enhanced Structured Data */}
-      <script type="application/ld+json">{`
-        {
-          "@context": "https://schema.org",
-          "@type": "LocalBusiness",
-          "name": "Mariable",
-          "url": "${siteUrl}",
-          "logo": "${logoUrl}",
-          "image": "${logoUrl}",
-          "description": "Plateforme intelligente d'organisation de mariage : trouvez les meilleurs prestataires, planifiez chaque étape, suivez votre budget.",
-          "areaServed": {
-            "@type": "Country",
-            "name": "France"
-          },
-          "serviceArea": {
-            "@type": "Country",
-            "name": "France"
-          },
-          "contactPoint": {
-            "@type": "ContactPoint",
-            "contactType": "customer service",
-            "email": "contact@mariable.fr",
-            "availableLanguage": "French"
-          },
-          "sameAs": [
-            "https://www.instagram.com/mariable.fr/"
-          ],
-          "potentialAction": {
-            "@type": "SearchAction",
-            "target": "${siteUrl}/selection?q={search_term_string}",
-            "query-input": "required name=search_term_string"
-          },
-          "hasOfferCatalog": {
-            "@type": "OfferCatalog",
-            "name": "Services Mariable",
-            "itemListElement": [
-              {
-                "@type": "Offer",
-                "itemOffered": {
-                  "@type": "Service",
-                  "name": "Recherche de Prestataires Mariage",
-                  "description": "Trouvez les meilleurs prestataires pour votre mariage"
+    <>
+      <Helmet>
+        <title>{fullTitle}</title>
+        <meta name="description" content={description} />
+        <meta name="keywords" content={metaKeywords} />
+        <meta name="robots" content="index, follow" />
+        <meta name="language" content="fr-FR" />
+        <meta name="geo.region" content="FR" />
+        <meta name="geo.country" content="France" />
+        {canonical && <link rel="canonical" href={`${siteUrl}${canonical}`} />}
+        
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content={fullTitle} />
+        <meta property="og:description" content={description} />
+        <meta property="og:image" content={image} />
+        <meta property="og:site_name" content="MARIABLE" />
+        <meta property="og:locale" content="fr_FR" />
+        <meta property="og:url" content={`${siteUrl}${canonical || ''}`} />
+        
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={fullTitle} />
+        <meta name="twitter:description" content={description} />
+        <meta name="twitter:image" content={image} />
+        
+        {/* Enhanced Structured Data */}
+        <script type="application/ld+json">{`
+          {
+            "@context": "https://schema.org",
+            "@type": "LocalBusiness",
+            "name": "Mariable",
+            "url": "${siteUrl}",
+            "logo": "${logoUrl}",
+            "image": "${logoUrl}",
+            "description": "Plateforme intelligente d'organisation de mariage : trouvez les meilleurs prestataires, planifiez chaque étape, suivez votre budget.",
+            "areaServed": {
+              "@type": "Country",
+              "name": "France"
+            },
+            "serviceArea": {
+              "@type": "Country",
+              "name": "France"
+            },
+            "contactPoint": {
+              "@type": "ContactPoint",
+              "contactType": "customer service",
+              "email": "contact@mariable.fr",
+              "availableLanguage": "French"
+            },
+            "sameAs": [
+              "https://www.instagram.com/mariable.fr/"
+            ],
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": "${siteUrl}/selection?q={search_term_string}",
+              "query-input": "required name=search_term_string"
+            },
+            "hasOfferCatalog": {
+              "@type": "OfferCatalog",
+              "name": "Services Mariable",
+              "itemListElement": [
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Recherche de Prestataires Mariage",
+                    "description": "Trouvez les meilleurs prestataires pour votre mariage"
+                  }
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Coordination Jour J",
+                    "description": "Organisation et coordination de votre jour de mariage"
+                  }
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Calculateur Budget Mariage",
+                    "description": "Outil de gestion et calcul de budget mariage"
+                  }
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Checklist Mariage",
+                    "description": "Planning personnalisé pour l'organisation de votre mariage"
+                  }
                 }
-              },
-              {
-                "@type": "Offer",
-                "itemOffered": {
-                  "@type": "Service",
-                  "name": "Coordination Jour J",
-                  "description": "Organisation et coordination de votre jour de mariage"
-                }
-              },
-              {
-                "@type": "Offer",
-                "itemOffered": {
-                  "@type": "Service",
-                  "name": "Calculateur Budget Mariage",
-                  "description": "Outil de gestion et calcul de budget mariage"
-                }
-              },
-              {
-                "@type": "Offer",
-                "itemOffered": {
-                  "@type": "Service",
-                  "name": "Checklist Mariage",
-                  "description": "Planning personnalisé pour l'organisation de votre mariage"
-                }
-              }
-            ]
+              ]
+            }
           }
-        }
-      `}</script>
-      {children}
-    </Helmet>
+        `}</script>
+        {children}
+      </Helmet>
+      
+      {schemas.length > 0 && <SEOSchemaEnhanced schemas={schemas} />}
+    </>
   );
 };
 
