@@ -35,6 +35,7 @@ import Prestataires from "./pages/services/Prestataires";
 import Budget from "./pages/services/Budget";
 import Prestataire from "./pages/prestataire/slug";
 import EmailConfirmation from "./pages/auth/EmailConfirmation";
+import ResetPassword from "./pages/auth/ResetPassword";
 import MessageHistoryPage from "./pages/dashboard/MessageHistoryPage";
 import MonJourMConseils from "./pages/MonJourMConseils";
 import MonJourMPenseBete from "./pages/MonJourMPenseBete";
@@ -131,10 +132,13 @@ function App() {
           <Route path="/mon-jour-m/pense-bete" element={<MonJourMPenseBete />} />
 
                   {/* Auth routes */}
-                  <Route path="/login" element={<Login />} />
-                  <Route path="/register" element={<Register />} />
-                  <Route path="/email-confirmation" element={<EmailConfirmation />} />
-                  <Route path="/auth/email-confirmation" element={<Navigate to="/email-confirmation" replace />} />
+                   <Route path="/login" element={<Login />} />
+                   <Route path="/register" element={<Register />} />
+                   <Route path="/auth" element={<Login />} />
+                   <Route path="/auth/callback" element={<Navigate to="/login" replace />} />
+                   <Route path="/auth/reset-password" element={<ResetPassword />} />
+                   <Route path="/email-confirmation" element={<EmailConfirmation />} />
+                   <Route path="/auth/email-confirmation" element={<Navigate to="/email-confirmation" replace />} />
 
                   {/* Static routes */}
                   <Route path="/detail-coordination-jourm" element={<Pricing />} />

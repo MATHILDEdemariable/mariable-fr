@@ -18,6 +18,7 @@ const Callback = () => {
     const errorParam = searchParams.get('error');
     const errorDescription = searchParams.get('error_description');
     const errorCode = searchParams.get('error_code');
+    const type = searchParams.get('type');
 
     if (errorParam) {
       setLoading(false);
@@ -29,6 +30,21 @@ const Callback = () => {
         setError('unknown');
       }
       return;
+    }
+
+    // Gérer spécifiquement la réinitialisation de mot de passe
+    if (type === 'recovery') {
+      const accessToken = searchParams.get('access_token');
+      const refreshToken = searchParams.get('refresh_token');
+      
+      if (accessToken && refreshToken) {
+        // Rediriger vers la page de réinitialisation avec les tokens
+        const resetUrl = new URL('/auth/reset-password', window.location.origin);
+        resetUrl.searchParams.set('access_token', accessToken);
+        resetUrl.searchParams.set('refresh_token', refreshToken);
+        window.location.href = resetUrl.toString();
+        return;
+      }
     }
 
     // Gérer le retour après confirmation d'email
