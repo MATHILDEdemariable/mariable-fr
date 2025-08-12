@@ -113,7 +113,16 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ post, onClose, onSuccess })
   };
 
   const handleMetaChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    console.log('🔄 handleMetaChange:', { field, value });
+    
+    // Mapper les noms de champs pour la cohérence
+    const fieldMapping: Record<string, string> = {
+      'metaTitle': 'meta_title',
+      'metaDescription': 'meta_description'
+    };
+    
+    const actualField = fieldMapping[field] || field;
+    setFormData(prev => ({ ...prev, [actualField]: value }));
   };
 
   const handleSlugChange = (slug: string) => {
@@ -124,30 +133,44 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ post, onClose, onSuccess })
     e.preventDefault();
     setIsLoading(true);
 
-    try {
+      try {
+      console.log('💾 Données à sauvegarder:', formData);
+      
       const dataToSubmit = {
         ...formData,
         published_at: formData.status === 'published' ? new Date().toISOString() : null,
-        tags: JSON.stringify(formData.tags)
+        tags: JSON.stringify(formData.tags),
+        // S'assurer que tous les champs obligatoires sont présents
+        title: formData.title || '',
+        slug: formData.slug || '',
+        status: formData.status || 'draft',
+        featured: formData.featured || false,
+        order_index: formData.order_index || 0
       };
+
+      console.log('💾 Données formatées pour Supabase:', dataToSubmit);
 
       let error;
       if (post?.id) {
-        const { error: updateError } = await supabase
+        const { error: updateError, data: updateData } = await supabase
           .from('blog_posts')
           .update(dataToSubmit)
-          .eq('id', post.id);
+          .eq('id', post.id)
+          .select();
         error = updateError;
+        console.log('✅ Mise à jour réussie:', updateData);
       } else {
-        const { error: insertError } = await supabase
+        const { error: insertError, data: insertData } = await supabase
           .from('blog_posts')
-          .insert([dataToSubmit]);
+          .insert([dataToSubmit])
+          .select();
         error = insertError;
+        console.log('✅ Insertion réussie:', insertData);
       }
 
       if (error) {
-        console.error('Erreur lors de la sauvegarde:', error);
-        toast.error('Erreur lors de la sauvegarde de l\'article');
+        console.error('❌ Erreur Supabase lors de la sauvegarde:', error);
+        toast.error(`Erreur lors de la sauvegarde: ${error.message}`);
         return;
       }
 

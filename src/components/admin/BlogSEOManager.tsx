@@ -177,7 +177,10 @@ const BlogSEOManager: React.FC<BlogSEOManagerProps> = ({
               </label>
               <Input
                 value={metaTitle}
-                onChange={(e) => onMetaChange('metaTitle', e.target.value)}
+                onChange={(e) => {
+                  console.log('🎯 Meta Titre changé:', e.target.value);
+                  onMetaChange('metaTitle', e.target.value);
+                }}
                 placeholder="Titre optimisé pour les moteurs de recherche..."
                 className={metaTitle.length > 60 ? 'border-red-500' : metaTitle.length > 50 ? 'border-orange-500' : ''}
               />
@@ -192,7 +195,10 @@ const BlogSEOManager: React.FC<BlogSEOManagerProps> = ({
               </label>
               <Textarea
                 value={metaDescription}
-                onChange={(e) => onMetaChange('metaDescription', e.target.value)}
+                onChange={(e) => {
+                  console.log('🎯 Meta Description changée:', e.target.value);
+                  onMetaChange('metaDescription', e.target.value);
+                }}
                 placeholder="Description engageante qui incite au clic..."
                 rows={3}
                 className={metaDescription.length > 160 ? 'border-red-500' : metaDescription.length > 150 ? 'border-orange-500' : ''}
