@@ -232,14 +232,27 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ post, onClose, onSuccess })
                 </div>
 
                 <div>
+                  <Label htmlFor="h1_title">Titre H1 (référencement)</Label>
+                  <Input
+                    id="h1_title"
+                    value={formData.h1_title || ''}
+                    onChange={(e) => setFormData(prev => ({ ...prev, h1_title: e.target.value }))}
+                    placeholder="Titre H1 optimisé pour le SEO"
+                  />
+                </div>
+
+                <div>
                   <Label htmlFor="content">Contenu</Label>
                   <Textarea
                     id="content"
                     value={formData.content || ''}
                     onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
-                    placeholder="Contenu de l'article"
+                    placeholder="Contenu de l'article (utilisez # pour H1, ## pour H2, etc.)"
                     rows={15}
                   />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Astuce: Utilisez # pour H1, ## pour H2, ### pour H3 dans votre contenu
+                  </p>
                 </div>
               </CardContent>
             </Card>
@@ -264,9 +277,12 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ post, onClose, onSuccess })
               content={formData.content || ''}
               metaTitle={formData.meta_title || ''}
               metaDescription={formData.meta_description || ''}
+              h1Title={formData.h1_title || ''}
               slug={formData.slug}
+              keywords={formData.tags || []}
               onMetaChange={handleMetaChange}
               onSlugChange={handleSlugChange}
+              onKeywordsChange={(keywords) => setFormData(prev => ({ ...prev, tags: keywords }))}
             />
           </TabsContent>
 

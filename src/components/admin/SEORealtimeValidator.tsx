@@ -9,6 +9,7 @@ interface SEORealtimeValidatorProps {
   content: string;
   metaTitle: string;
   metaDescription: string;
+  h1Title: string;
   keywords: string[];
 }
 
@@ -17,6 +18,7 @@ const SEORealtimeValidator: React.FC<SEORealtimeValidatorProps> = ({
   content,
   metaTitle,
   metaDescription,
+  h1Title,
   keywords
 }) => {
   // Calculs en temps réel
@@ -31,11 +33,16 @@ const SEORealtimeValidator: React.FC<SEORealtimeValidatorProps> = ({
   
   const contentScore = content.length >= 300 ? 100 : content.length > 100 ? 50 : 0;
   
-  const h1Count = (content.match(/<h1[^>]*>/gi) || []).length;
-  const h2Count = (content.match(/<h2[^>]*>/gi) || []).length;
+  // Détection H1 depuis le champ h1Title ou dans le contenu
+  const h1FromField = h1Title ? 1 : 0;
+  const h1InContent = (content.match(/^#\s|<h1[^>]*>/gmi) || []).length;
+  const totalH1 = h1FromField + h1InContent;
   
-  const structureScore = h1Count === 1 && h2Count >= 2 ? 100 : 
-                        h1Count === 1 ? 75 : 
+  // Détection H2 dans le contenu (markdown ## ou balises HTML)
+  const h2Count = (content.match(/^##\s|<h2[^>]*>/gmi) || []).length;
+  
+  const structureScore = totalH1 === 1 && h2Count >= 2 ? 100 : 
+                        totalH1 === 1 ? 75 : 
                         h2Count > 0 ? 50 : 0;
   
   const overallScore = Math.round((titleScore + descriptionScore + keywordsScore + contentScore + structureScore) / 5);
@@ -84,7 +91,7 @@ const SEORealtimeValidator: React.FC<SEORealtimeValidatorProps> = ({
     {
       name: 'Structure (H1/H2)',
       score: structureScore,
-      current: `${h1Count} H1, ${h2Count} H2`,
+      current: `${totalH1} H1, ${h2Count} H2`,
       optimal: '1 H1, 2+ H2',
       icon: <Clock className="h-4 w-4" />
     }

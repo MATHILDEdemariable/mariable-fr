@@ -16,9 +16,12 @@ interface BlogSEOManagerProps {
   content: string;
   metaTitle: string;
   metaDescription: string;
+  h1Title: string;
   slug: string;
+  keywords: string[];
   onMetaChange: (field: string, value: string) => void;
   onSlugChange: (slug: string) => void;
+  onKeywordsChange: (keywords: string[]) => void;
 }
 
 const BlogSEOManager: React.FC<BlogSEOManagerProps> = ({
@@ -26,12 +29,13 @@ const BlogSEOManager: React.FC<BlogSEOManagerProps> = ({
   content,
   metaTitle,
   metaDescription,
+  h1Title,
   slug,
+  keywords,
   onMetaChange,
-  onSlugChange
+  onSlugChange,
+  onKeywordsChange
 }) => {
-  const [keywords, setKeywords] = useState<string[]>([]);
-  const [currentKeyword, setCurrentKeyword] = useState('');
   const [seoScore, setSeoScore] = useState(0);
   const [suggestions, setSuggestions] = useState<string[]>([]);
 
@@ -80,23 +84,6 @@ const BlogSEOManager: React.FC<BlogSEOManagerProps> = ({
     setSuggestions(newSuggestions);
   }, [metaTitle, metaDescription, keywords, slug, content]);
 
-  const addKeyword = () => {
-    if (currentKeyword && !keywords.includes(currentKeyword)) {
-      setKeywords([...keywords, currentKeyword]);
-      setCurrentKeyword('');
-    }
-  };
-
-  const removeKeyword = (keyword: string) => {
-    setKeywords(keywords.filter(k => k !== keyword));
-  };
-
-  const addSuggestedKeyword = (keyword: string) => {
-    if (!keywords.includes(keyword)) {
-      setKeywords([...keywords, keyword]);
-    }
-  };
-
   const getScoreColor = () => {
     if (seoScore >= 80) return 'text-green-600';
     if (seoScore >= 60) return 'text-yellow-600';
@@ -125,6 +112,7 @@ const BlogSEOManager: React.FC<BlogSEOManagerProps> = ({
           content={content}
           metaTitle={metaTitle}
           metaDescription={metaDescription}
+          h1Title={h1Title}
           keywords={keywords}
         />
       </TabsContent>
@@ -168,6 +156,28 @@ const BlogSEOManager: React.FC<BlogSEOManagerProps> = ({
         {/* Meta Données */}
         <Card>
           <CardHeader>
+            <CardTitle>Structure du contenu</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium mb-2">
+                Titre H1 ({h1Title.length} caractères)
+              </label>
+              <Input
+                value={h1Title}
+                onChange={(e) => onMetaChange('h1_title', e.target.value)}
+                placeholder="Titre principal de l'article (H1)"
+                className={h1Title.length > 70 ? 'border-orange-500' : ''}
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                Le titre H1 principal de votre article pour une meilleure structure
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
             <CardTitle>Meta Données</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -177,10 +187,7 @@ const BlogSEOManager: React.FC<BlogSEOManagerProps> = ({
               </label>
               <Input
                 value={metaTitle}
-                onChange={(e) => {
-                  console.log('🎯 Meta Titre changé:', e.target.value);
-                  onMetaChange('metaTitle', e.target.value);
-                }}
+                onChange={(e) => onMetaChange('metaTitle', e.target.value)}
                 placeholder="Titre optimisé pour les moteurs de recherche..."
                 className={metaTitle.length > 60 ? 'border-red-500' : metaTitle.length > 50 ? 'border-orange-500' : ''}
               />
@@ -195,10 +202,7 @@ const BlogSEOManager: React.FC<BlogSEOManagerProps> = ({
               </label>
               <Textarea
                 value={metaDescription}
-                onChange={(e) => {
-                  console.log('🎯 Meta Description changée:', e.target.value);
-                  onMetaChange('metaDescription', e.target.value);
-                }}
+                onChange={(e) => onMetaChange('metaDescription', e.target.value)}
                 placeholder="Description engageante qui incite au clic..."
                 rows={3}
                 className={metaDescription.length > 160 ? 'border-red-500' : metaDescription.length > 150 ? 'border-orange-500' : ''}
@@ -251,7 +255,7 @@ const BlogSEOManager: React.FC<BlogSEOManagerProps> = ({
           title={title}
           content={content}
           currentKeywords={keywords}
-          onKeywordsChange={setKeywords}
+          onKeywordsChange={onKeywordsChange}
         />
       </TabsContent>
 
