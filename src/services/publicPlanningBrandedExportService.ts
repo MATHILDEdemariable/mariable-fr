@@ -278,7 +278,7 @@ export const exportPublicPlanningBrandedToPDF = async (data: PublicPlanningBrand
       pdf.setFontSize(8);
       pdf.setTextColor(77, 85, 73);
       pdf.setFont('helvetica', 'bold');
-      pdf.text('MARIABLE.COM - Votre wedding planner digital', margin, 287);
+      pdf.text('MARIABLE.FR - Votre wedding planner digital', margin, 287);
       
       pdf.setTextColor(150, 150, 150);
       pdf.setFont('helvetica', 'normal');

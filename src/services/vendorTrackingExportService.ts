@@ -174,7 +174,7 @@ export const exportVendorTrackingToPDF = async (data: VendorTrackingData): Promi
       pdf.setFontSize(8);
       pdf.setTextColor(150, 150, 150);
       pdf.text(`Page ${i}/${pageCount}`, pageWidth - margin - 15, 290);
-      pdf.text('Généré par Mariable.com', margin, 290);
+      pdf.text('Généré par Mariable.fr', margin, 290);
     }
 
     // Sauvegarde
