@@ -25,10 +25,14 @@ const HelpPage: React.FC = () => {
 
   const features = [
     {
-      icon: CheckCircle,
+      title: "Check-list personnalisée",
+      description: "Créez votre checklist personnalisée adaptée à vos besoins et préférences",
+      section: "Préparation mariage"
+    },
+    {
       title: "Quiz & Checklist",
-      description: "Découvrez votre style et suivez votre checklist personnalisée",
-      section: "Avant votre mariage"
+      description: "Découvrez votre style et suivez votre checklist de base",
+      section: "Préparation mariage"
     },
     {
       icon: Calculator,
@@ -56,6 +60,12 @@ const HelpPage: React.FC = () => {
     },
     {
       icon: FileText,
+      title: "Conseils après mariage",
+      description: "Conseils pour bien gérer l'après mariage : brunch, rangement, retours",
+      section: "Après le jour-J"
+    },
+    {
+      icon: FileText,
       title: "Documents",
       description: "Centralisez tous vos documents importants",
       section: "Jour-M"
@@ -70,6 +80,14 @@ const HelpPage: React.FC = () => {
 
   const faq = [
     {
+      question: "Comment utiliser la check-list personnalisée ?",
+      answer: "Rendez-vous dans 'Check-list personnalisée' et décrivez votre situation pour générer une liste de tâches adaptée à votre mariage."
+    },
+    {
+      question: "Quelle est la différence entre la check-list de base et personnalisée ?",
+      answer: "La check-list de base contient les tâches essentielles universelles, tandis que la personnalisée s'adapte à vos spécificités (lieu, nombre d'invités, style, etc.)."
+    },
+    {
       question: "Comment commencer l'organisation de mon mariage ?",
       answer: "Commencez par le quiz de style pour définir vos préférences, puis utilisez la calculatrice budget pour estimer vos coûts."
     },
@@ -80,6 +98,10 @@ const HelpPage: React.FC = () => {
     {
       question: "Comment utiliser Mission Mariage ?",
       answer: "Mission Mariage vous permet de créer des tâches, les assigner à votre équipe et suivre l'avancement de votre préparation."
+    },
+    {
+      question: "Que faire après mon mariage ?",
+      answer: "Consultez la section 'Après le jour-J' pour des conseils sur le brunch du lendemain, le rangement, les retours de matériel et les remerciements."
     },
     {
       question: "Mes données sont-elles sauvegardées ?",

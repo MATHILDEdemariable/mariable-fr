@@ -212,10 +212,13 @@ const ProjectSummary = () => {
         <h2 className="text-2xl font-serif text-wedding-olive">Vous ne savez pas par où commencer ?</h2>
       </div>
 
-      {/* Check-list de base Button */}
-      <div className="mb-6">
+      {/* Check-list Buttons */}
+      <div className="mb-6 flex gap-3 flex-wrap">
         <Button onClick={() => window.location.href = '/dashboard/tasks'} className="bg-wedding-olive hover:bg-wedding-olive/90 text-white">
           Check-list de base
+        </Button>
+        <Button onClick={() => window.location.href = '/dashboard/avant-jour-j'} variant="outline" className="border-wedding-olive text-wedding-olive hover:bg-wedding-olive hover:text-white">
+          Créer votre check-liste
         </Button>
       </div>
       

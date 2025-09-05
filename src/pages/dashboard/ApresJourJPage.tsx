@@ -12,6 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { exportApresJourJToPDF } from "@/services/apresJourJExportService";
 import { ApresJourJShareButton } from "@/components/apres-jour-j/ApresJourJShareButton";
 import { SuggestionsModal } from "@/components/apres-jour-j/SuggestionsModal";
+import AfterWeddingAdvice from "@/components/apres-jour-j/AfterWeddingAdvice";
 import { usePremiumAction } from '@/hooks/usePremiumAction';
 import PremiumModal from '@/components/premium/PremiumModal';
 
@@ -350,157 +351,167 @@ const ApresJourJPage: React.FC = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-6 space-y-6">
-      {!checklistData ? (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-2xl font-bold flex items-center gap-2">
-              <Sparkles className="h-6 w-6 text-primary" />
-              Checklist après le jour-J
-            </CardTitle>
-            <p className="text-muted-foreground">
-              Générez votre checklist personnalisée pour toutes les tâches à accomplir après votre mariage.
-            </p>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <label htmlFor="wedding-details" className="block text-sm font-medium mb-2">
-                Décrivez votre situation après le mariage :
-              </label>
-              <Textarea
-                id="wedding-details"
-                placeholder="Exemple: Nous avons eu notre mariage au Château de Versailles avec 120 invités. Nous avons loué de la décoration, des tables, des chaises. Nous devons récupérer nos affaires, ranger la salle, retourner la location..."
-                value={inputText}
-                onChange={(e) => setInputText(e.target.value)}
-                className="min-h-[150px]"
-              />
-            </div>
-            <Button 
-              onClick={() => executeAction(generateChecklist)}
-              disabled={!inputText.trim() || isGenerating}
-              className="w-full"
-              size="lg"
-            >
-              {isGenerating ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Génération en cours...
-                </>
-              ) : (
-                <>
-                  <Sparkles className="mr-2 h-4 w-4" />
-                  Générer ma checklist après le jour-J
-                </>
-              )}
-            </Button>
-          </CardContent>
-        </Card>
-      ) : (
-        <Card>
-          <CardHeader className="space-y-4">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-2xl font-bold">{checklistData.title}</CardTitle>
-              <div className="flex gap-2 flex-wrap">
-                <Button
-                  onClick={() => executeAction(() => setShowSuggestions(true))}
-                  variant="outline"
-                  size="sm"
-                >
-                  <Lightbulb className="mr-2 h-4 w-4" />
-                  Suggestions
-                </Button>
-                <Button
-                  onClick={() => executeAction(resetChecklist)}
-                  variant="outline"
-                  size="sm"
-                >
-                  <Sparkles className="mr-2 h-4 w-4" />
-                  Générer nouvelle liste
-                </Button>
-                <Button
-                  onClick={handleExportPDF}
-                  disabled={isExporting}
-                  variant="outline"
-                  size="sm"
-                >
-                  {isExporting ? (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  ) : (
-                    <Download className="mr-2 h-4 w-4" />
-                  )}
-                  Export PDF
-                </Button>
-                <ApresJourJShareButton checklistId={checklistData.id} />
-              </div>
-            </div>
-            
-            <div className="space-y-2">
-              <div className="flex items-center justify-between text-sm text-muted-foreground">
-                <span>Progression : {checklistData.completed_tasks.length}/{checklistData.tasks.length} tâches</span>
-                <span>{getProgressPercentage()}%</span>
-              </div>
-              <Progress value={getProgressPercentage()} className="w-full" />
-            </div>
-          </CardHeader>
-
-          <CardContent className="space-y-6">
-            <div className="space-y-3">
-              {checklistData.tasks.map((task) => (
-                <div key={task.id} className="flex items-start space-x-3 p-4 border rounded-lg">
-                  <Checkbox
-                    id={task.id}
-                    checked={checklistData.completed_tasks.includes(task.id)}
-                    onCheckedChange={() => toggleTaskCompletion(task.id)}
-                    className="mt-1"
+    <div className="max-w-7xl mx-auto p-6 space-y-6">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        {/* Main content */}
+        <div className="lg:col-span-3 space-y-6">
+          {!checklistData ? (
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-2xl font-bold flex items-center gap-2">
+                  <Sparkles className="h-6 w-6 text-primary" />
+                  Checklist après le jour-J
+                </CardTitle>
+                <p className="text-muted-foreground">
+                  Générez votre checklist personnalisée pour toutes les tâches à accomplir après votre mariage.
+                </p>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <label htmlFor="wedding-details" className="block text-sm font-medium mb-2">
+                    Décrivez votre situation après le mariage :
+                  </label>
+                  <Textarea
+                    id="wedding-details"
+                    placeholder="Exemple: Nous avons eu notre mariage au Château de Versailles avec 120 invités. Nous avons loué de la décoration, des tables, des chaises. Nous devons récupérer nos affaires, ranger la salle, retourner la location..."
+                    value={inputText}
+                    onChange={(e) => setInputText(e.target.value)}
+                    className="min-h-[150px]"
                   />
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <label
-                        htmlFor={task.id}
-                        className={`text-sm font-medium cursor-pointer ${
-                          checklistData.completed_tasks.includes(task.id) 
-                            ? 'line-through text-muted-foreground' 
-                            : ''
-                        }`}
-                      >
-                        {task.label}
-                      </label>
-                      <Badge variant="secondary" className={`text-xs ${getCategoryColor(task.category)}`}>
-                        {task.category}
-                      </Badge>
-                    </div>
-                    {task.description && (
-                      <p className={`text-sm text-muted-foreground ${
-                        checklistData.completed_tasks.includes(task.id) ? 'line-through' : ''
-                      }`}>
-                        {task.description}
-                      </p>
-                    )}
+                </div>
+                <Button 
+                  onClick={() => executeAction(generateChecklist)}
+                  disabled={!inputText.trim() || isGenerating}
+                  className="w-full"
+                  size="lg"
+                >
+                  {isGenerating ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Génération en cours...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="mr-2 h-4 w-4" />
+                      Générer ma checklist après le jour-J
+                    </>
+                  )}
+                </Button>
+              </CardContent>
+            </Card>
+          ) : (
+            <Card>
+              <CardHeader className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-2xl font-bold">{checklistData.title}</CardTitle>
+                  <div className="flex gap-2 flex-wrap">
+                    <Button
+                      onClick={() => executeAction(() => setShowSuggestions(true))}
+                      variant="outline"
+                      size="sm"
+                    >
+                      <Lightbulb className="mr-2 h-4 w-4" />
+                      Suggestions
+                    </Button>
+                    <Button
+                      onClick={() => executeAction(resetChecklist)}
+                      variant="outline"
+                      size="sm"
+                    >
+                      <Sparkles className="mr-2 h-4 w-4" />
+                      Générer nouvelle liste
+                    </Button>
+                    <Button
+                      onClick={handleExportPDF}
+                      disabled={isExporting}
+                      variant="outline"
+                      size="sm"
+                    >
+                      {isExporting ? (
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      ) : (
+                        <Download className="mr-2 h-4 w-4" />
+                      )}
+                      Export PDF
+                    </Button>
+                    <ApresJourJShareButton checklistId={checklistData.id} />
                   </div>
                 </div>
-              ))}
-            </div>
+                
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-sm text-muted-foreground">
+                    <span>Progression : {checklistData.completed_tasks.length}/{checklistData.tasks.length} tâches</span>
+                    <span>{getProgressPercentage()}%</span>
+                  </div>
+                  <Progress value={getProgressPercentage()} className="w-full" />
+                </div>
+              </CardHeader>
 
-            <div className="border-t pt-4">
-              <div className="flex gap-2">
-                <Input
-                  placeholder="Ajouter une tâche manuellement..."
-                  value={newTaskInput}
-                  onChange={(e) => setNewTaskInput(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && addManualTask()}
-                />
-                <Button
-                  onClick={addManualTask}
-                  disabled={!newTaskInput.trim()}
-                  size="sm"
-                >
-                  <Plus className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
+              <CardContent className="space-y-6">
+                <div className="space-y-3">
+                  {checklistData.tasks.map((task) => (
+                    <div key={task.id} className="flex items-start space-x-3 p-4 border rounded-lg">
+                      <Checkbox
+                        id={task.id}
+                        checked={checklistData.completed_tasks.includes(task.id)}
+                        onCheckedChange={() => toggleTaskCompletion(task.id)}
+                        className="mt-1"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <label
+                            htmlFor={task.id}
+                            className={`text-sm font-medium cursor-pointer ${
+                              checklistData.completed_tasks.includes(task.id) 
+                                ? 'line-through text-muted-foreground' 
+                                : ''
+                            }`}
+                          >
+                            {task.label}
+                          </label>
+                          <Badge variant="secondary" className={`text-xs ${getCategoryColor(task.category)}`}>
+                            {task.category}
+                          </Badge>
+                        </div>
+                        {task.description && (
+                          <p className={`text-sm text-muted-foreground ${
+                            checklistData.completed_tasks.includes(task.id) ? 'line-through' : ''
+                          }`}>
+                            {task.description}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="border-t pt-4">
+                  <div className="flex gap-2">
+                    <Input
+                      placeholder="Ajouter une tâche manuellement..."
+                      value={newTaskInput}
+                      onChange={(e) => setNewTaskInput(e.target.value)}
+                      onKeyPress={(e) => e.key === 'Enter' && addManualTask()}
+                    />
+                    <Button
+                      onClick={addManualTask}
+                      disabled={!newTaskInput.trim()}
+                      size="sm"
+                    >
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+
+        {/* Sidebar with advice */}
+        <div className="lg:col-span-1">
+          <AfterWeddingAdvice />
+        </div>
+      </div>
 
       <SuggestionsModal
         isOpen={showSuggestions}

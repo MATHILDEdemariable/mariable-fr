@@ -16,7 +16,8 @@ import {
   Users,
   Lightbulb,
   ChevronDown,
-  Coins
+  Coins,
+  ListChecks
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
@@ -109,10 +110,10 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
       external: true,
     },
     {
-      label: 'Communauté WhatsApp',
-      icon: <Users className="h-4 w-4" />,
-      path: 'https://chat.whatsapp.com/Gc5zeFsJYdDKTqsQqEOTzf',
-      external: true,
+      label: 'Club des mariés',
+      icon: <Heart className="h-4 w-4" />,
+      path: '/jeunes-maries',
+      external: false,
     },
     {
       label: 'Mode d\'emploi',
@@ -318,7 +319,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
           </DropdownMenuContent>
         </DropdownMenu>
 
-        {/* Avant le jour-J */}
+        {/* Check-list personnalisée */}
         <Link
           to={isReaderMode ? '#' : '/dashboard/avant-jour-j'}
           onClick={(e) => {
@@ -334,8 +335,8 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
             isReaderMode ? 'pointer-events-none opacity-70' : ''
           )}
         >
-          <CheckSquare className="h-4 w-4" />
-          <span className="ml-2 sm:ml-3 leading-tight">Avant le jour-J</span>
+          <ListChecks className="h-4 w-4" />
+          <span className="ml-2 sm:ml-3 leading-tight">Check-list personnalisée</span>
           {isReaderMode && (
             <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>
           )}
