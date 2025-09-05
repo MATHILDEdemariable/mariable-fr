@@ -501,10 +501,6 @@ const createEventFromQuestion = (
     title += ` (${value})`;
   }
   
-  // Determine if this is a highlight event
-  const isHighlight = ['ceremonie', 'cocktail', 'repas', 'soiree'].includes(category) ||
-                     question.option_name.includes('ceremonie');
-  
   return {
     id: `${question.option_name}-${Date.now()}-${Math.random()}`,
     title,
@@ -513,7 +509,6 @@ const createEventFromQuestion = (
     endTime: addMinutesToDate(startTime, duration),
     duration,
     type: getEventType(question.option_name, category),
-    isHighlight,
     notes: getEventNotes(question, value),
     assignedTo: [] // Ajout de la propriété assignedTo
   };

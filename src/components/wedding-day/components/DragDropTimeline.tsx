@@ -189,9 +189,7 @@ const DragDropTimeline: React.FC<DragDropTimelineProps> = ({ events, onEventsUpd
                             </div>
                           </div>
                           
-                          <h3 className={`font-medium ${
-                            event.isHighlight ? 'text-wedding-olive' : ''
-                          }`}>
+                          <h3 className="font-medium">
                             {event.title}
                           </h3>
                           

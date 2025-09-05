@@ -272,14 +272,6 @@ const EditableEventCard: React.FC<EditableEventCardProps> = ({
                     {event.category}
                   </span>
                   
-                  {event.isHighlight && (
-                    <span className={`inline-flex items-center rounded-full font-medium bg-wedding-olive/20 text-wedding-olive ${
-                      isMobile ? 'px-2 py-0.5 text-xs' : 'px-2.5 py-0.5 text-xs'
-                    }`}>
-                      Moment clé
-                    </span>
-                  )}
-                  
                   {isEditing && !isMobile && (
                     <span className="text-xs text-gray-500 italic">
                       Entrée = Sauver • Échap = Annuler
