@@ -207,10 +207,9 @@ const ProjectSummary = () => {
           </div>}
       </div>
 
-      {/* Initiation Button */}
+      {/* Initiation Title */}
       <div className="mb-6">
-        <Button onClick={() => window.location.href = '/dashboard/planning'} className="bg-wedding-olive hover:bg-wedding-olive/90 text-white">Vous ne savez pas par où commencer ?
-      </Button>
+        <h2 className="text-2xl font-serif text-wedding-olive">Vous ne savez pas par où commencer ?</h2>
       </div>
 
       {/* Check-list de base Button */}
