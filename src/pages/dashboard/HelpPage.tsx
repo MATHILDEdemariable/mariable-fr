@@ -158,7 +158,7 @@ const HelpPage: React.FC = () => {
           </div>
           
           {isCompleted && (
-            <div className="flex items-center gap-2 text-sm text-success">
+            <div className="flex items-center gap-2 text-sm text-primary">
               <CheckCircle className="h-4 w-4" />
               Tour guidé terminé
             </div>
