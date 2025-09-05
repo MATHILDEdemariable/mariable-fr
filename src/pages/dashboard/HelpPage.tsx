@@ -16,7 +16,8 @@ import {
   Calculator,
   FileText,
   Share2,
-  Target
+  Target,
+  ListChecks
 } from 'lucide-react';
 import { useOnboarding } from '@/components/onboarding/OnboardingProvider';
 
@@ -25,11 +26,13 @@ const HelpPage: React.FC = () => {
 
   const features = [
     {
+      icon: ListChecks,
       title: "Check-list personnalisée",
       description: "Créez votre checklist personnalisée adaptée à vos besoins et préférences",
       section: "Préparation mariage"
     },
     {
+      icon: CheckCircle,
       title: "Quiz & Checklist",
       description: "Découvrez votre style et suivez votre checklist de base",
       section: "Préparation mariage"
