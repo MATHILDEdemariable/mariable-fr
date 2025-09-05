@@ -51,7 +51,7 @@ const SharePublicButton: React.FC<SharePublicButtonProps> = ({ coordinationId })
         <Button variant="outline" className="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 text-xs sm:text-sm min-h-[44px] touch-manipulation">
           <Share className="h-3 w-3 sm:h-4 sm:w-4 shrink-0" />
           <span className="hidden sm:inline">Partager</span>
-          <span className="sm:hidden">Share</span>
+          <span className="sm:hidden">Export</span>
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md mx-3 sm:mx-auto max-h-[90vh] overflow-y-auto">
