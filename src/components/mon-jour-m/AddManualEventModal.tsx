@@ -86,7 +86,7 @@ const AddManualEventModal: React.FC<AddManualEventModalProps> = ({
           start_time: formData.startTime,
           duration: formData.duration,
           category: formData.category,
-          priority: formData.isHighlight ? 'high' : 'medium',
+          priority: 'medium',
           position: 999, // Position temporaire
           assigned_to: []
         })
@@ -105,7 +105,7 @@ const AddManualEventModal: React.FC<AddManualEventModalProps> = ({
         duration: formData.duration,
         category: formData.category,
         type: formData.category,
-        isHighlight: formData.isHighlight,
+        
         assignedTo: []
       };
 

@@ -102,9 +102,7 @@ const EditableTimelineEvent: React.FC<EditableTimelineEventProps> = ({
 
   return (
     <Card
-      className={`overflow-hidden transition-all cursor-move ${
-        event.isHighlight ? 'border-wedding-olive/30 bg-wedding-olive/5' : ''
-      } ${isDragging ? 'shadow-lg rotate-1' : 'hover:shadow-md'}`}
+      className="overflow-hidden transition-all cursor-move hover:shadow-md"
     >
       <CardContent className="p-4">
         <div className="flex items-start gap-4">
@@ -113,7 +111,7 @@ const EditableTimelineEvent: React.FC<EditableTimelineEventProps> = ({
               <GripVertical className="h-5 w-5" />
             </div>
             <div className={`rounded-full p-2 ${
-              event.isHighlight ? 'bg-wedding-olive/20' : 'bg-slate-100'
+              'bg-slate-100'
             }`}>
               {getEventIcon(event.type)}
             </div>
@@ -123,7 +121,7 @@ const EditableTimelineEvent: React.FC<EditableTimelineEventProps> = ({
             <div className="flex justify-between items-start">
               <div className="flex items-center gap-2">
                 <span className={`font-semibold text-lg ${
-                  event.isHighlight ? 'text-wedding-olive' : ''
+                  ''
                 }`}>
                   {format(event.startTime, 'HH:mm', { locale: fr })}
                 </span>
@@ -135,11 +133,6 @@ const EditableTimelineEvent: React.FC<EditableTimelineEventProps> = ({
               </div>
               
               <div className="flex items-center gap-1">
-                {event.isHighlight && (
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-wedding-olive/20 text-wedding-olive">
-                    Moment clé
-                  </span>
-                )}
                 {isCustom && (
                   <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                     Personnalisé
@@ -177,7 +170,7 @@ const EditableTimelineEvent: React.FC<EditableTimelineEventProps> = ({
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
                   <h3 className={`font-medium ${
-                    event.isHighlight ? 'text-wedding-olive' : ''
+                    ''
                   }`}>
                     {event.title}
                   </h3>

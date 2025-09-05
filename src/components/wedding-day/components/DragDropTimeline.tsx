@@ -162,9 +162,7 @@ const DragDropTimeline: React.FC<DragDropTimelineProps> = ({ events, onEventsUpd
                   <Card
                     ref={provided.innerRef}
                     {...provided.draggableProps}
-                    className={`overflow-hidden transition-all cursor-move ${
-                      event.isHighlight ? 'border-wedding-olive/30 bg-wedding-olive/5' : ''
-                    } ${snapshot.isDragging ? 'shadow-lg rotate-1' : 'hover:shadow-md'}`}
+                    className={`overflow-hidden transition-all cursor-move ${snapshot.isDragging ? 'shadow-lg rotate-1' : 'hover:shadow-md'}`}
                   >
                     <CardContent className="p-4">
                       <div className="flex items-start gap-4">
@@ -172,9 +170,7 @@ const DragDropTimeline: React.FC<DragDropTimelineProps> = ({ events, onEventsUpd
                           <div {...provided.dragHandleProps} className="mb-2 text-gray-400 hover:text-gray-600">
                             <GripVertical className="h-5 w-5" />
                           </div>
-                          <div className={`rounded-full p-2 ${
-                            event.isHighlight ? 'bg-wedding-olive/20' : 'bg-slate-100'
-                          }`}>
+                          <div className="rounded-full p-2 bg-slate-100">
                             {getEventIcon(event.type)}
                           </div>
                         </div>
@@ -182,9 +178,7 @@ const DragDropTimeline: React.FC<DragDropTimelineProps> = ({ events, onEventsUpd
                         <div className="flex-1 space-y-2">
                           <div className="flex justify-between">
                             <div className="flex items-center gap-2">
-                              <span className={`font-semibold text-lg ${
-                                event.isHighlight ? 'text-wedding-olive' : ''
-                              }`}>
+                              <span className="font-semibold text-lg">
                                 {format(event.startTime, 'HH:mm', { locale: fr })}
                               </span>
                               {event.duration > 0 && (
@@ -193,12 +187,6 @@ const DragDropTimeline: React.FC<DragDropTimelineProps> = ({ events, onEventsUpd
                                 </span>
                               )}
                             </div>
-                            
-                            {event.isHighlight && (
-                              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-wedding-olive/20 text-wedding-olive">
-                                Moment clé
-                              </span>
-                            )}
                           </div>
                           
                           <h3 className={`font-medium ${

@@ -114,7 +114,7 @@ const ProjectTaskModal: React.FC<ProjectTaskModalProps> = ({
         duration: 30,
         category: formData.category,
         type: formData.category,
-        isHighlight: formData.priority === 'high',
+        
         assignedTo: formData.assignedTo
       };
 

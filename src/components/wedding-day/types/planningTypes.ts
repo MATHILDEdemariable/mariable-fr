@@ -83,7 +83,7 @@ export type PlanningEvent = {
   endTime: Date;
   duration: number;
   type: string;
-  isHighlight?: boolean;
+  
   notes?: string;
   location?: string;
   assignedTo?: string[]; // Ajout de la propriété assignedTo
@@ -395,7 +395,6 @@ export const generatePlanning = (
         endTime: addMinutesToDate(ceremony1Start, ceremony1Duration),
         duration: ceremony1Duration,
         type: 'ceremony',
-        isHighlight: true
       });
     }
     
@@ -411,7 +410,6 @@ export const generatePlanning = (
         endTime: addMinutesToDate(ceremony2Start, ceremony2Duration),
         duration: ceremony2Duration,
         type: 'ceremony',
-        isHighlight: true
       });
     }
   } else {
@@ -428,7 +426,7 @@ export const generatePlanning = (
         endTime: addMinutesToDate(ceremonyStart, ceremonyDuration),
         duration: ceremonyDuration,
         type: 'ceremony',
-        isHighlight: true
+        
       });
     }
   }
@@ -535,7 +533,7 @@ const createTrajectoryEvent = (
     endTime: addMinutesToDate(startTime, duration),
     duration,
     type: 'travel',
-    isHighlight: false,
+    
     notes: `Durée: ${duration} minutes`
   };
 };
@@ -637,7 +635,6 @@ const createEvent = (type: string, title: string, startTime: Date, duration: num
   endTime: new Date(startTime.getTime() + duration * 60000),
   duration,
   type,
-  isHighlight
 });
 
 const getCeremonyDuration = (type: string): number => {

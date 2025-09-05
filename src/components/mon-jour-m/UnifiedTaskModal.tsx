@@ -189,7 +189,7 @@ const UnifiedTaskModal: React.FC<UnifiedTaskModalProps> = ({
             start_time: formData.startTime,
             duration: durationNum,
             category: 'jour-m', // Force jour-m category
-            priority: formData.isHighlight ? 'high' : 'medium',
+            priority: 'medium',
             position: 999,
             assigned_to: []
           })
@@ -207,7 +207,7 @@ const UnifiedTaskModal: React.FC<UnifiedTaskModalProps> = ({
           duration: durationNum,
           category: formData.category,
           type: formData.category,
-          isHighlight: formData.isHighlight,
+          
           assignedTo: []
         };
 

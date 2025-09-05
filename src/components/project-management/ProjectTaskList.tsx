@@ -122,12 +122,9 @@ const ProjectTaskList: React.FC<ProjectTaskListProps> = ({
                         {event.title}
                       </h4>
                       <div className="flex items-center gap-2 ml-4">
-                        <Badge 
-                          variant="outline" 
-                          className={getPriorityColor(event.isHighlight ? 'high' : 'medium')}
-                        >
-                          {getPriorityLabel(event.isHighlight ? 'high' : 'medium')}
-                        </Badge>
+        <Badge variant="outline" className="bg-gray-100 text-gray-800">
+          Moyenne
+        </Badge>
                       </div>
                     </div>
 

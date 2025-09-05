@@ -122,7 +122,7 @@ const generateBrandedContent = (data: PlanningExportData): string => {
         
         <div style="display: grid; gap: 16px;">
           ${data.events.map(event => `
-            <div style="display: flex; align-items: flex-start; padding: 16px; background-color: ${event.isHighlight ? '#7F9474' : '#ffffff'}; border: 2px solid ${event.isHighlight ? '#7F9474' : '#e5e7eb'}; border-radius: 8px; ${event.isHighlight ? 'color: white;' : 'color: #1A1F2C;'}">
+            <div style="display: flex; align-items: flex-start; padding: 16px; background-color: #ffffff; border: 2px solid #e5e7eb; border-radius: 8px; color: #1A1F2C;">
               <div style="min-width: 80px; font-weight: 600; font-size: 14px; margin-right: 16px;">
                 ${event.startTime}
               </div>

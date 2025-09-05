@@ -194,7 +194,6 @@ Instructions spécifiques :
         duration: task.duration,
         type: 'custom',
         notes: task.description + (task.notes ? ` • ${task.notes}` : ''),
-        isHighlight: task.priority === 'high'
       });
     }
 
@@ -209,7 +208,7 @@ Instructions spécifiques :
         duration: ceremonyTask.duration,
         type: 'custom',
         notes: ceremonyTask.description + (ceremonyTask.notes ? ` • ${ceremonyTask.notes}` : ''),
-        isHighlight: true // La cérémonie est toujours un moment clé
+        
       });
     }
 
@@ -232,7 +231,7 @@ Instructions spécifiques :
         duration: task.duration,
         type: 'custom',
         notes: task.description + (task.notes ? ` • ${task.notes}` : ''),
-        isHighlight: task.priority === 'high'
+        
       });
       
       currentTime = addMinutes(currentTime, task.duration + 15); // 15 min de buffer

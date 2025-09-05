@@ -137,7 +137,7 @@ const EnhancedDragDropTimeline: React.FC<EnhancedDragDropTimelineProps> = ({
       duration: block.duration,
       type: 'custom',
       notes: block.description,
-      isHighlight: false
+      
     };
 
     const updatedEvents = [...timelineEvents, newEvent];

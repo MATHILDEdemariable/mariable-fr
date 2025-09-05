@@ -139,9 +139,7 @@ const MonJourMEventCard: React.FC<MonJourMEventCardProps> = ({
   return (
     <Card className={`transition-all duration-200 ${
       isDragging ? 'opacity-50 rotate-2 scale-105 shadow-lg' : 'hover:shadow-md'
-    } ${
-      event.isHighlight ? 'border-wedding-olive border-2 bg-wedding-olive/5' : 'border-gray-200'
-    } ${
+    } border-gray-200 ${
       isSelected ? 'ring-2 ring-blue-500 bg-blue-50' : ''
     }`}>
       <CardContent className="p-3 sm:p-4">
@@ -378,12 +376,6 @@ const MonJourMEventCard: React.FC<MonJourMEventCardProps> = ({
                   </div>
                 )}
 
-                {/* Badge moment clé mobile */}
-                {event.isHighlight && (
-                  <Badge variant="outline" className="bg-wedding-olive/10 text-wedding-olive border-wedding-olive/30 text-xs w-fit">
-                    ⭐ Moment clé
-                  </Badge>
-                )}
               </div>
             </div>
             
@@ -392,9 +384,7 @@ const MonJourMEventCard: React.FC<MonJourMEventCardProps> = ({
               <div>
                 {/* HEURE sur une ligne */}
                 <div className="flex items-center justify-between mb-3">
-                  <div className={`text-xl font-bold ${
-                    event.isHighlight ? 'text-wedding-olive' : 'text-gray-700'
-                  }`}>
+                  <div className="text-xl font-bold text-gray-700">
                     {isEditing ? (
                       <div className="flex items-center gap-2">
                         <Input
@@ -471,9 +461,7 @@ const MonJourMEventCard: React.FC<MonJourMEventCardProps> = ({
                       autoFocus
                     />
                   ) : (
-                    <h4 className={`text-lg font-semibold ${
-                      event.isHighlight ? 'text-wedding-olive' : 'text-gray-800'
-                    }`}>
+                    <h4 className="text-lg font-semibold text-gray-800">
                       {event.title}
                     </h4>
                   )}
@@ -581,15 +569,6 @@ const MonJourMEventCard: React.FC<MonJourMEventCardProps> = ({
                         </p>
                       )
                     )}
-                  </div>
-                )}
-                
-                {/* Moment clé badge */}
-                {event.isHighlight && (
-                  <div className="mt-3">
-                    <Badge variant="outline" className="bg-wedding-olive/20 text-wedding-olive border-wedding-olive">
-                      Moment clé
-                    </Badge>
                   </div>
                 )}
               </div>

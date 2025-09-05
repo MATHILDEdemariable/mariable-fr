@@ -220,7 +220,6 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
               duration: item.duration || 30,
               category: item.category || 'general',
               type: item.category || 'general',
-              isHighlight: item.priority === 'high',
               assignedTo: Array.isArray(item.assigned_to) ? item.assigned_to : []
             };
           });
@@ -285,7 +284,6 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
               duration: item.duration || 30,
               category: item.category || 'general',
               type: item.category || 'general',
-              isHighlight: item.priority === 'high',
               assignedTo: Array.isArray(item.assigned_to) ? item.assigned_to : []
             };
           });
@@ -317,7 +315,7 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
         start_time: event.startTime.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
         duration: event.duration,
         category: 'jour-m',
-        priority: event.isHighlight ? 'high' : 'medium',
+        priority: 'medium',
         position: events.length + index,
         assigned_to: event.assignedTo || []
       }));
@@ -351,7 +349,7 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
           duration: item.duration,
           category: item.category,
           type: item.category,
-          isHighlight: item.priority === 'high',
+          
           assignedTo: Array.isArray(item.assigned_to) ? item.assigned_to : []
         };
       });
@@ -448,10 +446,9 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
 
   const getEventStats = () => {
     const total = events.length;
-    const highlights = events.filter(e => e.isHighlight).length;
     const assigned = events.filter(e => e.assignedTo && e.assignedTo.length > 0).length;
     
-    return { total, highlights, assigned };
+    return { total, assigned };
   };
 
   const stats = getEventStats();
@@ -466,43 +463,16 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
 
   return (
     <div className="space-y-6">
-      {/* En-tête avec statistiques */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Total étapes</p>
-                <p className="text-2xl font-bold text-wedding-olive">{stats.total}</p>
-              </div>
-              <Calendar className="h-8 w-8 text-wedding-olive/60" />
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Moments clés</p>
-                <p className="text-2xl font-bold text-amber-600">{stats.highlights}</p>
-              </div>
-              <Clock className="h-8 w-8 text-amber-600/60" />
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Tâches assignées</p>
-                <p className="text-2xl font-bold text-blue-600">{stats.assigned}</p>
-              </div>
-              <Users className="h-8 w-8 text-blue-600/60" />
-            </div>
-          </CardContent>
-        </Card>
+      {/* Statistiques compactes */}
+      <div className="flex items-center gap-6 text-sm text-muted-foreground mb-4">
+        <div className="flex items-center gap-2">
+          <Calendar className="h-4 w-4 text-wedding-olive" />
+          <span>{stats.total} étapes</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <Users className="h-4 w-4 text-blue-600" />
+          <span>{stats.assigned} assignées</span>
+        </div>
       </div>
 
       {/* Actions principales */}

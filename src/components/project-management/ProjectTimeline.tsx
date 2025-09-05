@@ -38,8 +38,8 @@ const ProjectTimeline: React.FC<ProjectTimelineProps> = ({
     onEventsChange(reorderedEvents);
   };
 
-  const getPriorityColor = (isHighlight: boolean) => {
-    return isHighlight ? 'bg-red-100 text-red-800 border-red-200' : 'bg-gray-100 text-gray-800';
+  const getPriorityColor = () => {
+    return 'bg-gray-100 text-gray-800';
   };
 
   const getCategoryColor = (category: string) => {
@@ -117,11 +117,6 @@ const ProjectTimeline: React.FC<ProjectTimelineProps> = ({
                                   {event.category}
                                 </Badge>
                                 
-                                {event.isHighlight && (
-                                  <Badge variant="secondary" className={getPriorityColor(event.isHighlight)}>
-                                    Priorité élevée
-                                  </Badge>
-                                )}
                                 
                                 <div className="flex items-center gap-1 text-sm text-gray-500">
                                   <Clock className="h-3 w-3" />

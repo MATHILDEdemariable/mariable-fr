@@ -39,7 +39,7 @@ const ProjectTaskEditModal: React.FC<ProjectTaskEditModalProps> = ({
     title: event.title,
     description: event.notes || '',
     category: event.category,
-    priority: event.isHighlight ? 'high' : 'medium',
+    priority: 'medium',
     assignedTo: event.assignedTo || []
   });
   const [isLoading, setIsLoading] = useState(false);
@@ -103,7 +103,7 @@ const ProjectTaskEditModal: React.FC<ProjectTaskEditModalProps> = ({
         notes: formData.description,
         category: formData.category,
         type: formData.category,
-        isHighlight: formData.priority === 'high',
+        
         assignedTo: formData.assignedTo
       };
 

@@ -91,9 +91,7 @@ const EditableEventCard: React.FC<EditableEventCardProps> = ({
   return (
     <Card className={`transition-all duration-200 ${
       isDragging ? 'opacity-50 rotate-2 scale-105 shadow-lg' : 'hover:shadow-md'
-    } ${
-      event.isHighlight ? 'border-wedding-olive border-2 bg-wedding-olive/5' : 'border-gray-200'
-    }`}>
+    } border-gray-200 `}>
       <CardContent className={isMobile ? "p-3" : "p-4"}>
         <div className="flex items-start gap-3">
           {/* Drag Handle */}
@@ -112,7 +110,7 @@ const EditableEventCard: React.FC<EditableEventCardProps> = ({
               <div className={`font-bold ${
                 isMobile ? 'text-xl' : 'text-2xl'
               } ${
-                event.isHighlight ? 'text-wedding-olive' : 'text-gray-700'
+                'text-gray-700'
               }`}>
                 {formatTime(event.startTime)}
               </div>
@@ -184,7 +182,7 @@ const EditableEventCard: React.FC<EditableEventCardProps> = ({
                   className={`font-semibold cursor-pointer hover:bg-gray-50 p-2 rounded transition-colors truncate ${
                     isMobile ? 'text-base pr-8' : 'text-lg'
                   } ${
-                    event.isHighlight ? 'text-wedding-olive' : 'text-gray-800'
+                    'text-gray-800'
                   }`}
                   onDoubleClick={handleStartEdit}
                   title={isMobile ? event.title : "Double-cliquez pour modifier"}

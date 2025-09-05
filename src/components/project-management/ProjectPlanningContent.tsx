@@ -133,7 +133,6 @@ const ProjectPlanningContent: React.FC<ProjectPlanningContentProps> = ({
               duration: item.duration || 30,
               category: item.category || 'préparation',
               type: item.category || 'préparation',
-              isHighlight: item.priority === 'high',
               assignedTo: Array.isArray(item.assigned_to) ? item.assigned_to : []
             };
           });
@@ -177,7 +176,7 @@ const ProjectPlanningContent: React.FC<ProjectPlanningContentProps> = ({
         start_time: '09:00',
         duration: 30,
         category: 'project',
-        priority: task.isHighlight ? 'high' : 'medium',
+        priority: 'medium',
         position: events.length + index,
         assigned_to: []
       }));
@@ -203,7 +202,7 @@ const ProjectPlanningContent: React.FC<ProjectPlanningContentProps> = ({
           duration: 30,
           category: item.category,
           type: item.category,
-          isHighlight: item.priority === 'high',
+          
           assignedTo: []
         };
       });
@@ -319,10 +318,9 @@ const ProjectPlanningContent: React.FC<ProjectPlanningContentProps> = ({
 
   const getEventStats = () => {
     const total = events.length;
-    const highlights = events.filter(e => e.isHighlight).length;
     const assigned = events.filter(e => e.assignedTo && e.assignedTo.length > 0).length;
     
-    return { total, highlights, assigned };
+    return { total, assigned };
   };
 
   const stats = getEventStats();
@@ -351,17 +349,6 @@ const ProjectPlanningContent: React.FC<ProjectPlanningContentProps> = ({
           </CardContent>
         </Card>
         
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Priorités élevées</p>
-                <p className="text-2xl font-bold text-destructive">{stats.highlights}</p>
-              </div>
-              <Clock className="h-8 w-8 text-destructive/60" />
-            </div>
-          </CardContent>
-        </Card>
         
         <Card>
           <CardContent className="p-4">

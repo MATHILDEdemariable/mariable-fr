@@ -94,7 +94,7 @@ const PlanningTimeline: React.FC<PlanningTimelineProps> = ({ events }) => {
       return 'border-purple-200 bg-purple-50';
     }
     
-    return event.isHighlight ? 'border-wedding-olive/30 bg-wedding-olive/5' : '';
+    return '';
   };
 
   // Helper to ensure we always work with Date objects
@@ -111,7 +111,7 @@ const PlanningTimeline: React.FC<PlanningTimelineProps> = ({ events }) => {
             <div className="flex items-start gap-4">
               <div className="flex flex-col items-center">
                 <div className={`rounded-full p-2 ${
-                  event.isHighlight ? 'bg-wedding-olive/20' : 'bg-white/70'
+                  'bg-white/70'
                 }`}>
                   {getEventIcon(event)}
                 </div>
@@ -121,26 +121,20 @@ const PlanningTimeline: React.FC<PlanningTimelineProps> = ({ events }) => {
               </div>
               
               <div className="flex-1 space-y-2">
-                <div className="flex justify-between items-start">
-                  <div className="flex items-center gap-2">
-                    <span className={`font-semibold text-lg ${
-                      event.isHighlight ? 'text-wedding-olive' : 'text-slate-700'
-                    }`}>
-                      {format(getTimeFromEvent(event, 'startTime'), 'HH:mm', { locale: fr })}
-                    </span>
-                    {event.duration > 0 && (
-                      <span className="text-slate-500 text-sm">
-                        → {format(getTimeFromEvent(event, 'endTime'), 'HH:mm', { locale: fr })}
+                  <div className="flex justify-between items-start">
+                    <div className="flex items-center gap-2">
+                      <span className={`font-semibold text-lg ${
+                        'text-slate-700'
+                      }`}>
+                        {format(getTimeFromEvent(event, 'startTime'), 'HH:mm', { locale: fr })}
                       </span>
-                    )}
-                  </div>
-                  
-                  <div className="flex gap-2">
-                    {event.isHighlight && (
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-wedding-olive/20 text-wedding-olive">
-                        Moment clé
-                      </span>
-                    )}
+                      {event.duration > 0 && (
+                        <span className="text-slate-500 text-sm">
+                          → {format(getTimeFromEvent(event, 'endTime'), 'HH:mm', { locale: fr })}
+                        </span>
+                      )}
+                    </div>
+                    
                     <span className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium ${
                       event.category === 'logistique' ? 'bg-blue-100 text-blue-800' :
                       event.category === 'préparatifs_final' ? 'bg-pink-100 text-pink-800' :
@@ -154,10 +148,9 @@ const PlanningTimeline: React.FC<PlanningTimelineProps> = ({ events }) => {
                       {event.category}
                     </span>
                   </div>
-                </div>
                 
                 <h3 className={`font-medium ${
-                  event.isHighlight ? 'text-wedding-olive' : 'text-slate-800'
+                  'text-slate-800'
                 }`}>
                   {event.title}
                 </h3>

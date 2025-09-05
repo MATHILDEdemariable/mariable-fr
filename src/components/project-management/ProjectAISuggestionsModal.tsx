@@ -235,7 +235,7 @@ const ProjectAISuggestionsModal: React.FC<ProjectAISuggestionsModalProps> = ({
           duration: 30,
           category: task.category,
           type: task.category,
-          isHighlight: task.priority === 'high',
+          
           assignedTo: []
         };
       });
