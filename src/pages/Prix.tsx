@@ -169,10 +169,7 @@ const Prix = () => {
                     </div>
                   </div>
                   
-                  <div className="mt-auto space-y-3">
-                    <Button asChild className="w-full bg-wedding-olive text-white hover:bg-wedding-olive/90">
-                      <Link to="#coordination-section">Voir les formules</Link>
-                    </Button>
+                  <div className="mt-auto">
                     <Button asChild variant="outline" className="w-full border-wedding-olive text-wedding-olive hover:bg-wedding-olive hover:text-white">
                       <Link to="/demo-jour-m">Voir la démo</Link>
                     </Button>
