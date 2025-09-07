@@ -6,12 +6,14 @@ import Footer from '@/components/Footer';
 import HeroSection from '@/components/home/HeroSection';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowRight, Check, Brain, Handshake, MessageCircle, Smartphone, Mail, Settings, Calendar, Users, Star } from 'lucide-react';
+import { ArrowRight, Check, Star } from 'lucide-react';
 import { Link } from 'react-router-dom';
+
 const Index = () => {
   const [displayedText, setDisplayedText] = useState('');
   const staticText = 'Profitez pleinement de votre mariage. ';
   const typedText = 'Organisez-le facilement, vous-même.';
+
   useEffect(() => {
     window.scrollTo(0, 0);
 
@@ -25,8 +27,10 @@ const Index = () => {
         clearInterval(timer);
       }
     }, 100);
+
     return () => clearInterval(timer);
   }, []);
+
   const scrollToServices = () => {
     const servicesSection = document.getElementById('services-section');
     if (servicesSection) {
@@ -35,7 +39,9 @@ const Index = () => {
       });
     }
   };
-  return <div className="min-h-screen flex flex-col bg-white">
+
+  return (
+    <div className="min-h-screen flex flex-col bg-white">
       <SEO />
       <Header />
       
@@ -43,49 +49,74 @@ const Index = () => {
         {/* Hero Section with Video Background */}
         <HeroSection />
 
-        {/* Feature Section */}
+        {/* Differentiation Section */}
         <section className="py-16 md:py-20 bg-white">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
               <h2 style={{
-              fontFamily: 'Playfair Display, serif'
-            }} className="sm:text-3xl font-serif text-black mb-6 max-w-4xl mx-auto text-3xl font-normal md:text-4xl">Le wedding planner en ligne </h2>
+                fontFamily: 'Playfair Display, serif'
+              }} className="text-3xl md:text-4xl font-serif text-black mb-4 max-w-4xl mx-auto">
+                La première appli de coordination jour-J
+              </h2>
+              <p className="text-lg text-gray-700 mb-8 max-w-3xl mx-auto italic">
+                Mariable, c'est la solution innovante qui vous permet de gérer la journée du mariage avec vos proches et prestataires.
+              </p>
               
-              <div className="max-w-3xl mx-auto mb-8">
-                <p className="text-lg text-gray-700 mb-6">Crée pour les couples qui veulent organiser eux-mêmes. </p>
+              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 text-left mb-12">
+                <div className="flex items-start gap-3">
+                  <div className="text-2xl">⏳</div>
+                  <div>
+                    <h3 className="font-medium mb-2">Plus rapide</h3>
+                    <p className="text-gray-700 text-sm">
+                      Planifiez votre Jour J en quelques clics grâce à un outil intuitif qui centralise toutes les infos utiles.
+                    </p>
+                  </div>
+                </div>
                 
-                <div className="grid md:grid-cols-3 gap-6 text-left">
-                  <div className="flex items-start gap-3">
-                    <Brain className="h-6 w-6 text-wedding-olive flex-shrink-0 mt-0.5" />
-                    <div>
-                      <h3 className="font-medium mb-2">Expertise incluse</h3>
-                      <p className="text-gray-700">
-                        Les bonnes adresses et les bons outils d'un professionnel.
-                      </p>
-                    </div>
+                <div className="flex items-start gap-3">
+                  <div className="text-2xl">🎯</div>
+                  <div>
+                    <h3 className="font-medium mb-2">Plus simple</h3>
+                    <p className="text-gray-700 text-sm">
+                      Partagez l'organisation avec vos proches & prestataires, consultable à tout moment depuis leur téléphone.
+                    </p>
                   </div>
-                  
-                  <div className="flex items-start gap-3">
-                    <Settings className="h-6 w-6 text-wedding-olive flex-shrink-0 mt-0.5" />
-                    <div>
-                      <h3 className="font-medium mb-2">Autonomie complète</h3>
-                      <p className="text-gray-700">
-                        Organisez tout à votre rythme, selon vos règles.
-                      </p>
-                    </div>
+                </div>
+                
+                <div className="flex items-start gap-3">
+                  <div className="text-2xl">💎</div>
+                  <div>
+                    <h3 className="font-medium mb-2">Moins cher</h3>
+                    <p className="text-gray-700 text-sm">
+                      Une solution accessible, bien plus économique qu'un wedding planner ou qu'un modèle générique en ligne.
+                    </p>
                   </div>
-                  
-                  <div className="flex items-start gap-3">
-                    <Handshake className="h-6 w-6 text-wedding-olive flex-shrink-0 mt-0.5" />
-                    <div>
-                      <h3 className="font-medium mb-2">Assistance à la demande</h3>
-                      <p className="text-gray-700">
-                        Service client si vous en avez besoin. Pas de pression, pas de coût inutile.
-                      </p>
-                    </div>
+                </div>
+                
+                <div className="flex items-start gap-3">
+                  <div className="text-2xl">🤖</div>
+                  <div>
+                    <h3 className="font-medium mb-2">100% personnalisable</h3>
+                    <p className="text-gray-700 text-sm">
+                      Grâce à l'IA, Mariable s'adapte à votre mariage, vos envies et vos contraintes.
+                    </p>
                   </div>
                 </div>
               </div>
+
+              {/* App Mockup Section */}
+              <div className="mb-8">
+                <img 
+                  src="/lovable-uploads/9d1a3c09-e66e-4e62-bb6f-e1d5fc2e3814.png" 
+                  alt="Mockup de l'application Mariable" 
+                  className="mx-auto max-w-full h-auto rounded-lg shadow-lg"
+                />
+              </div>
+
+              <p className="text-lg text-gray-800 mb-6 max-w-3xl mx-auto font-medium">
+                Sans Mariable, vos proches sont débordés et vous finissez par régler les imprévus.<br/>
+                Avec Mariable, tout est planifié et partagé : chacun sait quoi faire, vous profitez.
+              </p>
 
               <Button asChild size="lg" className="bg-wedding-olive hover:bg-wedding-olive/90 text-white">
                 <Link to="/register">
@@ -96,157 +127,119 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Services Section - Nouvelles formules pricing */}
-        <section id="services-section" className="py-12 md:py-16 bg-gray-50 animate-fade-in">
+        {/* How it works Section */}
+        <section className="py-12 md:py-16 bg-gray-50 animate-fade-in">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif text-black mb-6">
-                Transformez l'organisation de votre mariage
+                Comment ça marche ?
               </h2>
-              <p className="text-lg text-gray-700 max-w-2xl mx-auto">
-                en une expérience simple & agréable
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 max-w-6xl mx-auto mb-8">
+              <div className="text-center">
+                <div className="bg-wedding-olive text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
+                <h3 className="font-medium mb-2">Créez votre équipe</h3>
+                <p className="text-gray-700 text-sm">proches & prestataires</p>
+              </div>
+              
+              <div className="text-center">
+                <div className="bg-wedding-olive text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
+                <h3 className="font-medium mb-2">Générez votre déroulé</h3>
+                <p className="text-gray-700 text-sm">du Jour J</p>
+              </div>
+              
+              <div className="text-center">
+                <div className="bg-wedding-olive text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
+                <h3 className="font-medium mb-2">Assignez des tâches</h3>
+                <p className="text-gray-700 text-sm">à chaque membre</p>
+              </div>
+              
+              <div className="text-center">
+                <div className="bg-wedding-olive text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">4</div>
+                <h3 className="font-medium mb-2">Ajoutez vos documents</h3>
+                <p className="text-gray-700 text-sm">plan de table, moodboard, etc.</p>
+              </div>
+              
+              <div className="text-center">
+                <div className="bg-wedding-olive text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">5</div>
+                <h3 className="font-medium mb-2">Partagez le tout</h3>
+                <p className="text-gray-700 text-sm">via un simple lien</p>
+              </div>
+            </div>
+
+            <div className="text-center mb-8">
+              <Button asChild size="lg" className="bg-wedding-olive hover:bg-wedding-olive/90 text-white">
+                <Link to="/demo-jour-m">
+                  👉 Découvrir comment ça marche
+                </Link>
+              </Button>
+            </div>
+
+            <p className="text-center text-lg italic text-gray-700 max-w-3xl mx-auto">
+              Mariable, c'est l'outil unique qui permet à vos proches et prestataires de gérer le Jour J avec ou sans vous :-)
+            </p>
+          </div>
+        </section>
+
+        {/* Complementary Services Section */}
+        <section className="py-16 md:py-20 bg-white">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-12">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif text-black mb-6">
+                Plus qu'un outil Jour J, Mariable vous accompagne dès les préparatifs.
+              </h2>
+              
+              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto mb-8">
+                <div className="flex items-start gap-3">
+                  <Check className="h-6 w-6 text-green-600 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <h3 className="font-medium mb-2">Checklist intelligente</h3>
+                    <p className="text-gray-700 text-sm">fini les oublis, tout est prévu.</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start gap-3">
+                  <Check className="h-6 w-6 text-green-600 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <h3 className="font-medium mb-2">Calculateur de budget</h3>
+                    <p className="text-gray-700 text-sm">visualisez et suivez vos dépenses.</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start gap-3">
+                  <Check className="h-6 w-6 text-green-600 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <h3 className="font-medium mb-2">Suivi de prestataires</h3>
+                    <p className="text-gray-700 text-sm">comparez facilement vos options.</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start gap-3">
+                  <Check className="h-6 w-6 text-green-600 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <h3 className="font-medium mb-2">Sélection premium</h3>
+                    <p className="text-gray-700 text-sm">des adresses validées pour leur qualité.</p>
+                  </div>
+                </div>
+              </div>
+
+              <p className="text-gray-700 italic mb-8">
+                Ces services sont inclus gratuitement pour tous les utilisateurs ayant un compte.
               </p>
             </div>
+          </div>
+        </section>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto mb-16">
-              {/* Position 1 - Le Planner Mariable (Gratuit) */}
-              <Card className="shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 flex flex-col h-full">
-                <CardHeader className="text-center pb-4">
-                  <div className="flex items-center justify-center gap-2 mb-3">
-                    <Smartphone className="h-6 w-6 text-wedding-olive" />
-                    <CardTitle className="text-xl font-bold">Le Planner Mariable</CardTitle>
-                  </div>
-                  <p className="text-sm text-gray-600">Tableau de bord pour bien démarrer</p>
-                </CardHeader>
-                
-                <CardContent className="flex-grow flex flex-col">
-                  <div className="text-center mb-6">
-                    <div className="text-3xl font-bold text-wedding-olive mb-2">Gratuit</div>
-                  </div>
-                  
-                  <div className="space-y-3 mb-6">
-                    <div className="flex items-start gap-2">
-                      <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Accès à votre espace personnel</p>
-                    </div>
-                    <div className="flex items-start gap-2">
-                      <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Sélection de prestataires Mariable</p>
-                    </div>
-                    <div className="flex items-start gap-2">
-                      <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Check-list & calculatrice budget</p>
-                    </div>
-                    <div className="flex items-start gap-2">
-                      <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Modèle de suivi budgétaire</p>
-                    </div>
-                  </div>
-                  
-                  <div className="mt-auto">
-                    <Button asChild className="w-full bg-wedding-olive text-white hover:bg-wedding-olive/90">
-                      <Link to="/register">S'inscrire gratuitement</Link>
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Position 2 - L'accompagnement Mariable (9,90€/mois) */}
-              <Card className="shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 flex flex-col h-full">
-                <CardHeader className="text-center pb-4">
-                  <div className="flex items-center justify-center gap-2 mb-3">
-                    <MessageCircle className="h-6 w-6 text-wedding-olive" />
-                    <CardTitle className="text-xl font-bold">L'accompagnement</CardTitle>
-                  </div>
-                  <p className="text-sm text-gray-600">Ligne directe avec une experte</p>
-                </CardHeader>
-                
-                <CardContent className="flex-grow flex flex-col">
-                  <div className="text-center mb-6">
-                    <div className="text-3xl font-bold text-wedding-olive mb-2">9,9€/mois</div>
-                    <div className="text-sm text-gray-600">jusqu'à votre mariage</div>
-                  </div>
-                  
-                  <div className="space-y-3 mb-6">
-                    <div className="flex items-start gap-2">
-                      <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Messages illimités WhatsApp</p>
-                    </div>
-                    <div className="flex items-start gap-2">
-                      <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Disponible 7j/7 de 9h à 22h</p>
-                    </div>
-                    <div className="flex items-start gap-2">
-                      <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Conseils personnalisés</p>
-                    </div>
-                    <div className="flex items-start gap-2">
-                      <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Soutien émotionnel & recul</p>
-                    </div>
-                  </div>
-                  
-                  <div className="mt-auto">
-                    <Button asChild className="w-full bg-wedding-olive text-white hover:bg-wedding-olive/90">
-                      <Link to="/reservation-jour-m">Envoyer une demande</Link>
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Position 3 - Libre (14,9€) */}
-              <Card className="shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 flex flex-col h-full">
-                <CardHeader className="text-center pb-4">
-                  <div className="flex items-center justify-center gap-2 mb-3">
-                    <Calendar className="h-6 w-6 text-wedding-olive" />
-                    <CardTitle className="text-xl font-bold">Coordination Jour-J</CardTitle>
-                  </div>
-                  <p className="text-sm text-gray-600">avec l'appli en ligne Mariable dédiée</p>
-                </CardHeader>
-                
-                <CardContent className="flex-grow flex flex-col">
-                  <div className="text-center mb-6">
-                    <div className="text-3xl font-bold text-wedding-olive mb-2">à partir de 14,9€</div>
-                    <div className="text-sm text-gray-600">selon formules</div>
-                  </div>
-                  
-                  <div className="space-y-3 mb-6">
-                    
-                    <div className="flex items-start gap-2">
-                      <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                       <p className="text-sm text-gray-700">Planning personnalisé</p>
-                     </div>
-                     <div className="flex items-start gap-2">
-                       <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                       <p className="text-sm text-gray-700">Assignation des tâches</p>
-                    </div>
-                    <div className="flex items-start gap-2">
-                      <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Partage des informations avec les proches</p>
-                    </div>
-                    <div className="flex items-start gap-2">
-                      <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Coordinateur à la carte </p>
-                    </div>
-                  </div>
-                  
-                  <div className="mt-auto">
-                    <Button asChild className="w-full bg-wedding-olive text-white hover:bg-wedding-olive/90">
-                      <Link to="/detail-coordination-jourm">Voir une démo</Link>
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-
-            </div>
-
-            {/* Call to Action */}
-            <div className="text-center mt-12">
+        {/* Testimonials Call to Action */}
+        <section className="py-12 md:py-16 bg-gray-50">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-12">
               <h3 className="text-2xl font-serif mb-4">
                 Prêt(e) à vivre une expérience unique pour votre mariage?
               </h3>
               <p className="text-lg text-gray-700 mb-6">
-                Plusieurs couples nous on déjà fait confiance
+                Plusieurs couples nous ont déjà fait confiance
               </p>
               {/* Section Témoignages */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
@@ -317,7 +310,9 @@ const Index = () => {
               {/* Bouton CTA après les témoignages */}
               <div className="text-center mt-12">
                 <Button asChild size="lg" className="bg-wedding-olive hover:bg-wedding-olive/90 text-white">
-                  
+                  <Link to="/register">
+                    Créer mon compte gratuit <ArrowRight className="ml-2 h-5 w-5" />
+                  </Link>
                 </Button>
               </div>
             </div>
@@ -347,6 +342,8 @@ const Index = () => {
       
       <Footer />
       <ChatbotButton />
-    </div>;
+    </div>
+  );
 };
+
 export default Index;
