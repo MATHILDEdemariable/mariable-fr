@@ -337,7 +337,7 @@ const PlanningPublic: React.FC = () => {
                 {coordination.title}
               </h1>
               <p className="text-sm md:text-base text-gray-600">
-                planning & rôle jour-j
+                Jour-J par Mariable
               </p>
               {coordination.wedding_date && (
                 <p className="text-xs md:text-sm text-wedding-olive font-medium mt-2">
@@ -383,15 +383,15 @@ const PlanningPublic: React.FC = () => {
           <Tabs defaultValue="planning" className="w-full">
             {/* Navigation desktop */}
             <TabsList className="hidden md:grid w-full grid-cols-3 mb-6">
-              <TabsTrigger value="planning" className="flex items-center gap-2">
+              <TabsTrigger value="planning" className="flex items-center gap-2 data-[state=active]:bg-wedding-olive data-[state=active]:text-white">
                 <Calendar className="h-4 w-4" />
                 Planning ({tasks.length})
               </TabsTrigger>
-              <TabsTrigger value="equipe" className="flex items-center gap-2">
+              <TabsTrigger value="equipe" className="flex items-center gap-2 data-[state=active]:bg-wedding-olive data-[state=active]:text-white">
                 <Users className="h-4 w-4" />
                 Équipe ({teamMembers.length})
               </TabsTrigger>
-              <TabsTrigger value="documents" className="flex items-center gap-2">
+              <TabsTrigger value="documents" className="flex items-center gap-2 data-[state=active]:bg-wedding-olive data-[state=active]:text-white">
                 <FileText className="h-4 w-4" />
                 Documents ({documents.length + pinterestLinks.length})
               </TabsTrigger>
@@ -402,7 +402,7 @@ const PlanningPublic: React.FC = () => {
               <TabsList className="grid w-full grid-cols-3 rounded-none h-16">
                 <TabsTrigger 
                   value="planning" 
-                  className="flex flex-col items-center gap-1 text-xs h-full data-[state=active]:bg-primary/10"
+                  className="flex flex-col items-center gap-1 text-xs h-full data-[state=active]:bg-wedding-olive data-[state=active]:text-white"
                 >
                   <Calendar className="h-4 w-4" />
                   <span>Planning</span>
@@ -410,7 +410,7 @@ const PlanningPublic: React.FC = () => {
                 </TabsTrigger>
                 <TabsTrigger 
                   value="equipe" 
-                  className="flex flex-col items-center gap-1 text-xs h-full data-[state=active]:bg-primary/10"
+                  className="flex flex-col items-center gap-1 text-xs h-full data-[state=active]:bg-wedding-olive data-[state=active]:text-white"
                 >
                   <Users className="h-4 w-4" />
                   <span>Équipe</span>
@@ -418,7 +418,7 @@ const PlanningPublic: React.FC = () => {
                 </TabsTrigger>
                 <TabsTrigger 
                   value="documents" 
-                  className="flex flex-col items-center gap-1 text-xs h-full data-[state=active]:bg-primary/10"
+                  className="flex flex-col items-center gap-1 text-xs h-full data-[state=active]:bg-wedding-olive data-[state=active]:text-white"
                 >
                   <FileText className="h-4 w-4" />
                   <span>Docs</span>

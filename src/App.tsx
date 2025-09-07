@@ -30,7 +30,7 @@ import Paiement from "./pages/Paiement";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogArticle";
 import Contact from "./pages/contact/NousContacter";
-import MentionsLegales from "./pages/MentionsLegales";
+import Prix from "./pages/Prix";
 import Prestataires from "./pages/services/Prestataires";
 import Budget from "./pages/services/Budget";
 import Prestataire from "./pages/prestataire/slug";
@@ -52,7 +52,7 @@ import Approche from "./pages/about/Approche";
 import Histoire from "./pages/about/Histoire";
 import Charte from "./pages/about/Charte";
 import Temoignages from "./pages/about/Temoignages";
-import CGV from "./pages/CGV";
+
 import FAQ from "./pages/contact/FAQ";
 import ChecklistMariage from "./pages/ChecklistMariage";
 import Accompagnement from "./pages/Accompagnement";
@@ -142,15 +142,15 @@ function App() {
 
                   {/* Static routes */}
                   <Route path="/detail-coordination-jourm" element={<Pricing />} />
+                  <Route path="/prix" element={<Prix />} />
                   <Route path="/paiement" element={<Paiement />} />
                   <Route path="/blog" element={<Blog />} />
                   <Route path="/blog/:slug" element={<BlogPost />} />
                   <Route path="/contact" element={<Contact />} />
-                  <Route path="/mentions-legales" element={<MentionsLegales />} />
                   
                   {/* Missing routes - Fixed */}
                   <Route path="/professionnels" element={<Professionnels />} />
-                  <Route path="/cgv" element={<CGV />} />
+                  
                   <Route path="/contact/faq" element={<FAQ />} />
                   <Route path="/checklist-mariage" element={<ChecklistMariage />} />
                   <Route path="/accompagnement" element={<Accompagnement />} />

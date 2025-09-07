@@ -66,8 +66,8 @@ const Footer = () => {
             © 2025 Mariable – Tous droits réservés. | Conçu avec joie pour les couples modernes 💍
           </p>
           <div className="flex gap-4 text-xs">
-            <Link to="/mentions-legales" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Mentions Légales</Link>
-            <Link to="/cgv" className="text-wedding-black/70 hover:text-wedding-black transition-colors">CGV</Link>
+            <Link to="/contact" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Nous contacter</Link>
+            <Link to="/prix" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Prix</Link>
           </div>
         </div>
       </div>
