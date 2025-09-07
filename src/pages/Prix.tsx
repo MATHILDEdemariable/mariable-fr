@@ -153,40 +153,6 @@ const Prix = () => {
               </Card>
             </div>
 
-            {/* Avantages de l'autonomie */}
-            <div className="max-w-3xl mx-auto">
-              <div className="grid md:grid-cols-3 gap-6 text-left">
-                <div className="flex items-start gap-3">
-                  <Brain className="h-6 w-6 text-wedding-olive flex-shrink-0 mt-0.5" />
-                  <div>
-                    <h3 className="font-medium mb-2">Expertise incluse</h3>
-                    <p className="text-gray-700">
-                      Les bonnes adresses et les bons outils d'un professionnel.
-                    </p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start gap-3">
-                  <Settings className="h-6 w-6 text-wedding-olive flex-shrink-0 mt-0.5" />
-                  <div>
-                    <h3 className="font-medium mb-2">Autonomie complète</h3>
-                    <p className="text-gray-700">
-                      Organisez tout à votre rythme, selon vos règles.
-                    </p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start gap-3">
-                  <Handshake className="h-6 w-6 text-wedding-olive flex-shrink-0 mt-0.5" />
-                  <div>
-                    <h3 className="font-medium mb-2">Assistance à la demande</h3>
-                    <p className="text-gray-700">
-                      Service client si vous en avez besoin. Pas de pression, pas de coût inutile.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
         </section>
 
@@ -261,57 +227,30 @@ const Prix = () => {
 
             <div className="max-w-5xl mx-auto mb-8">
               <div className={`grid gap-6 ${isMobile ? 'grid-cols-1' : 'grid-cols-2'}`}>
-                {/* Formule notification Jour-J (anciennement Sereine) */}
+                {/* Ajout des notifications en temps réel */}
                 <Card className="shadow-md hover:shadow-lg transition-shadow border-2 border-wedding-olive flex flex-col h-full">
                   <CardHeader className="text-center bg-wedding-olive text-white relative">
                     <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-wedding-olive text-white text-sm px-2 py-1 rounded-full">Recommandée</div>
-                    <CardTitle className="text-xl">Formule notification Jour-J</CardTitle>
+                    <CardTitle className="text-xl">Ajout des notifications en temps réel via l'application</CardTitle>
                     <div className="text-2xl font-bold">24,9€</div>
                   </CardHeader>
                   <CardContent className="p-6 flex flex-col flex-1">
-                    <div className="space-y-3 flex-1">
-                      <div>
-                        <span className="text-sm">Application personnalisée (à remplir)</span>
-                      </div>
-                      <div>
-                        <span className="text-sm">Checklists & planning partageables</span>
-                      </div>
-                      <div>
-                        <span className="text-sm">Notifications en temps réel J-1 et J-J</span>
-                      </div>
-                      <div>
-                        <span className="text-sm">Support hotline dédié 7J/7 jusqu'au Jour-J</span>
-                      </div>
-                    </div>
-                    
                     <div className="pt-4 border-t mt-auto">
                       <FormulaCTAButton formula="sereine" />
                     </div>
                   </CardContent>
                 </Card>
 
-                {/* Formule Privilège */}
+                {/* Présence d'un Coordinateur.rice */}
                 <Card className="shadow-md hover:shadow-lg transition-shadow flex flex-col h-full">
                   <CardHeader className="text-center bg-wedding-olive text-white">
-                    <CardTitle className="text-xl">Privilège</CardTitle>
-                    <div className="text-2xl font-bold">799€</div>
+                    <CardTitle className="text-xl">Présence d'un Coordinateur.rice le jour-j</CardTitle>
+                    <div className="text-2xl font-bold">899€</div>
                   </CardHeader>
                   <CardContent className="p-6 flex flex-col flex-1">
                     <div className="space-y-3 flex-1">
                       <div>
-                        <span className="text-sm">Application personnalisée (à remplir)</span>
-                      </div>
-                      <div>
-                        <span className="text-sm">Checklists & planning à partager</span>
-                      </div>
-                      <div>
-                        <span className="text-sm">Notifications en temps réel J-1 et J-J</span>
-                      </div>
-                      <div>
-                        <span className="text-sm">Support hotline 7J/7 jusqu'au Jour-J</span>
-                      </div>
-                      <div>
-                        <span className="text-sm">Présence d'un coordinateur le jour J</span>
+                        <span className="text-sm">Audit de votre organisation via l'appli, 2h de rdv téléphonique visio, 14H le jour-j</span>
                       </div>
                     </div>
                     
@@ -332,81 +271,6 @@ const Prix = () => {
           </div>
         </section>
 
-        {/* Options supplémentaires */}
-        <section className="py-16 bg-gray-50">
-          <div className="container mx-auto px-4">
-            <div className="text-center mb-12">
-              <h3 className="text-2xl md:text-3xl font-serif text-black mb-4">
-                Options supplémentaires
-              </h3>
-              <p className="text-lg text-gray-700">Personnalisez votre service avec nos options à la carte</p>
-            </div>
-
-            <div className="max-w-4xl mx-auto">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Card className="shadow-md hover:shadow-lg transition-shadow">
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center gap-3">
-                        <Clock className="h-6 w-6 text-wedding-olive" />
-                        <h3 className="text-lg font-semibold">Heure supplémentaire</h3>
-                      </div>
-                      <span className="text-xl font-bold text-wedding-olive">+30€</span>
-                    </div>
-                    <p className="text-sm text-gray-600">
-                      Extension de la présence du coordinateur pour les mariages nécessitant plus de temps
-                    </p>
-                  </CardContent>
-                </Card>
-
-                <Card className="shadow-md hover:shadow-lg transition-shadow">
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center gap-3">
-                        <Palette className="h-6 w-6 text-wedding-olive" />
-                        <h3 className="text-lg font-semibold">Installation décorations</h3>
-                      </div>
-                      <span className="text-xl font-bold text-wedding-olive">+200€</span>
-                    </div>
-                    <p className="text-sm text-gray-600">
-                      Mise en place de votre décoration selon vos souhaits (mobilier, objets volumineux)
-                    </p>
-                  </CardContent>
-                </Card>
-
-                <Card className="shadow-md hover:shadow-lg transition-shadow">
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center gap-3">
-                        <Building className="h-6 w-6 text-wedding-olive" />
-                        <h3 className="text-lg font-semibold">RDV visite technique</h3>
-                      </div>
-                      <span className="text-xl font-bold text-wedding-olive">+200€</span>
-                    </div>
-                    <p className="text-sm text-gray-600">
-                      Visite sur site pour optimiser l'organisation spatiale et anticiper les défis logistiques
-                    </p>
-                  </CardContent>
-                </Card>
-
-                <Card className="shadow-md hover:shadow-lg transition-shadow">
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center gap-3">
-                        <Users className="h-6 w-6 text-wedding-olive" />
-                        <h3 className="text-lg font-semibold">Mariage +180 personnes</h3>
-                      </div>
-                      <span className="text-xl font-bold text-wedding-olive">+200€</span>
-                    </div>
-                    <p className="text-sm text-gray-600">
-                      Supplément pour la coordination de mariages de plus de 180 invités nécessitant une personne en plus
-                    </p>
-                  </CardContent>
-                </Card>
-              </div>
-            </div>
-          </div>
-        </section>
 
         {/* Final CTA Section */}
         <section className="py-16 md:py-20 bg-wedding-olive text-white">
