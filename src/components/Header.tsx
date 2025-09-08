@@ -67,26 +67,23 @@ function Menus({ onClick, isLoggedIn }: { onClick?: () => void, isLoggedIn?: boo
         </HeaderDropdownMenu>
       </HeaderDropdown>
       
-      {/* Jeunes Mariés - En second */}
-      <HeaderDropdown 
-        label="Jeunes Mariés"
-        href="/jeunes-maries"
-        onClick={onClick}
-      />
-
-      {/* Conseils mariage - Anciennement Blog */}
-      <HeaderDropdown 
-        label="Conseils"
-        href="/blog"
-        onClick={onClick}
-      />
-
-      {/* Professionnels - En quatrième */}
-      <HeaderDropdown 
-        label="Professionnels"
-        href="/professionnels"
-        onClick={onClick}
-      />
+      {/* Club Mariable - Dropdown avec Jeunes Mariés et Conseils */}
+      <HeaderDropdown label="Club Mariable">
+        <HeaderDropdownMenu>
+          <HeaderDropdownItem
+            label="Jeunes Mariés"
+            description="Témoignages et expériences de couples"
+            to="/jeunes-maries"
+            onClick={onClick}
+          />
+          <HeaderDropdownItem
+            label="Conseils"
+            description="Blog et conseils pour votre mariage"
+            to="/blog"
+            onClick={onClick}
+          />
+        </HeaderDropdownMenu>
+      </HeaderDropdown>
       
       {/* Tarifs - Entre Professionnels et À propos */}
       <HeaderDropdown 

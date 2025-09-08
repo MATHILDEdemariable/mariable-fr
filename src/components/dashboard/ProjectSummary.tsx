@@ -212,20 +212,112 @@ const ProjectSummary = () => {
         <h2 className="text-2xl font-serif text-wedding-olive">Vous ne savez pas par où commencer ?</h2>
       </div>
 
-      {/* Check-list Buttons */}
-      <div className="mb-6 flex gap-3 flex-wrap">
-        <Button onClick={() => window.location.href = '/dashboard/tasks'} className="bg-wedding-olive hover:bg-wedding-olive/90 text-white">
-          Check-list de base
-        </Button>
-        <Button onClick={() => window.location.href = '/dashboard/avant-jour-j'} variant="outline" className="border-wedding-olive text-wedding-olive hover:bg-wedding-olive hover:text-white">
-          Créer votre check-liste
-        </Button>
-      </div>
-      
-      {/* Feature Cards */}
-      <div>
-        <h2 className="text-xl font-serif mb-4 text-wedding-olive">Vos outils de planification</h2>
-        <DashboardFeatureCards />
+      {/* Bloc 1: Vous ne savez pas par où commencer ? */}
+      <div className="mb-8">
+        <div className="bg-white rounded-xl shadow-sm border border-wedding-olive/20 p-6 mb-6">
+          <h3 className="text-xl font-serif text-wedding-olive mb-4">
+            Vous ne savez pas par où commencer ?
+          </h3>
+          <p className="text-gray-600 mb-4 text-sm">
+            Commencez par les outils essentiels pour organiser votre mariage
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-3">
+            {[
+              {
+                title: 'Quiz Mariage',
+                description: 'Les premières questions',
+                icon: '❓',
+                path: '/dashboard/planning',
+              },
+              {
+                title: 'Budget',
+                description: 'Gérez vos dépenses',
+                icon: '💰',
+                path: '/dashboard/budget',
+              },
+              {
+                title: 'Prestataires',
+                description: 'Trouvez vos fournisseurs',
+                icon: '🏪',
+                path: '/dashboard/prestataires',
+              },
+              {
+                title: 'Check-list',
+                description: 'Suivez vos préparatifs',
+                icon: '✅',
+                path: '/dashboard/tasks',
+              },
+              {
+                title: 'Calculatrice Boissons',
+                description: 'Estimez les quantités',
+                icon: '🥂',
+                path: '/dashboard/drinks',
+              }
+            ].map((feature, index) => (
+              <div 
+                key={index}
+                onClick={() => window.location.href = feature.path}
+                className="cursor-pointer transition-all duration-200 border border-wedding-olive/20 bg-wedding-olive/5 hover:bg-wedding-olive/15 hover:shadow-md hover:scale-105 p-4 rounded-lg text-center"
+              >
+                <div className="text-2xl mb-2">{feature.icon}</div>
+                <h4 className="font-medium text-sm text-wedding-olive mb-1 font-serif">
+                  {feature.title}
+                </h4>
+                <p className="text-xs text-gray-600">
+                  {feature.description}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Bloc 2: Vous avez tout organisé ? */}
+        <div className="bg-gradient-to-r from-wedding-olive/10 to-wedding-cream/20 rounded-xl shadow-sm border border-wedding-olive/20 p-6">
+          <h3 className="text-xl font-serif text-wedding-olive mb-4">
+            Vous avez tout organisé ? Dernière ligne droite jour J
+          </h3>
+          <p className="text-gray-600 mb-4 text-sm">
+            Finalisez votre préparation avec nos outils avancés
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[
+              {
+                title: 'Coordination Jour J',
+                description: 'Planning détaillé et coordination',
+                icon: '📅',
+                path: '/mon-jour-m',
+                bgColor: 'bg-wedding-cream/40',
+                hoverColor: 'hover:bg-wedding-cream/60',
+              },
+              {
+                title: 'Après le mariage',
+                description: 'Conseils pour l\'après jour J',
+                icon: '💕',
+                path: '/dashboard/apres-jour-j',
+                bgColor: 'bg-wedding-olive/10',
+                hoverColor: 'hover:bg-wedding-olive/20',
+              }
+            ].map((feature, index) => (
+              <div 
+                key={index}
+                onClick={() => window.location.href = feature.path}
+                className={`cursor-pointer transition-all duration-200 border border-wedding-olive/20 ${feature.bgColor} ${feature.hoverColor} hover:shadow-md hover:scale-105 p-6 rounded-lg`}
+              >
+                <div className="flex items-start space-x-4">
+                  <div className="text-3xl">{feature.icon}</div>
+                  <div className="flex-1">
+                    <h4 className="font-medium text-lg text-wedding-olive mb-2 font-serif">
+                      {feature.title}
+                    </h4>
+                    <p className="text-sm text-gray-600">
+                      {feature.description}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </div>;
 };
