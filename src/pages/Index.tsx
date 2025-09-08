@@ -6,7 +6,7 @@ import Footer from '@/components/Footer';
 import HeroSection from '@/components/home/HeroSection';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowRight, Check, Star } from 'lucide-react';
+import { ArrowRight, Check, Star, Clock, Target, DollarSign, Settings } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Index = () => {
@@ -40,6 +40,13 @@ const Index = () => {
     }
   };
 
+  const scrollToHowItWorks = () => {
+    const element = document.getElementById('how-it-works-section');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <SEO />
@@ -64,7 +71,7 @@ const Index = () => {
               
               <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 text-left mb-12">
                 <div className="flex items-start gap-3">
-                  <div className="text-2xl">⏳</div>
+                  <Clock className="w-8 h-8 text-wedding-olive flex-shrink-0 mt-1" />
                   <div>
                     <h3 className="font-medium mb-2">Plus rapide</h3>
                     <p className="text-gray-700 text-sm">
@@ -74,7 +81,7 @@ const Index = () => {
                 </div>
                 
                 <div className="flex items-start gap-3">
-                  <div className="text-2xl">🎯</div>
+                  <Target className="w-8 h-8 text-wedding-olive flex-shrink-0 mt-1" />
                   <div>
                     <h3 className="font-medium mb-2">Plus simple</h3>
                     <p className="text-gray-700 text-sm">
@@ -84,7 +91,7 @@ const Index = () => {
                 </div>
                 
                 <div className="flex items-start gap-3">
-                  <div className="text-2xl">💎</div>
+                  <DollarSign className="w-8 h-8 text-wedding-olive flex-shrink-0 mt-1" />
                   <div>
                     <h3 className="font-medium mb-2">Moins cher</h3>
                     <p className="text-gray-700 text-sm">
@@ -94,7 +101,7 @@ const Index = () => {
                 </div>
                 
                 <div className="flex items-start gap-3">
-                  <div className="text-2xl">🤖</div>
+                  <Settings className="w-8 h-8 text-wedding-olive flex-shrink-0 mt-1" />
                   <div>
                     <h3 className="font-medium mb-2">100% personnalisable</h3>
                     <p className="text-gray-700 text-sm">
@@ -105,30 +112,36 @@ const Index = () => {
               </div>
 
               {/* App Mockup Section */}
-              <div className="mb-8">
-                <img 
-                  src="/lovable-uploads/9d1a3c09-e66e-4e62-bb6f-e1d5fc2e3814.png" 
-                  alt="Mockup de l'application Mariable" 
-                  className="mx-auto max-w-full h-auto rounded-lg shadow-lg"
-                />
+              <div className="bg-white rounded-xl shadow-lg p-8 mb-8">
+                <div className="flex flex-col md:flex-row items-center gap-8">
+                  <div className="md:w-1/2 order-2 md:order-1">
+                    <p className="text-lg text-gray-700 mb-6">
+                      Avec Mariable, tout est planifié et partagé : chacun sait quoi faire, vous profitez.<br /><br />
+                      Sans Mariable, vos proches sont débordés et vous finissez par régler les imprévus.
+                    </p>
+                    <Button 
+                      onClick={scrollToHowItWorks}
+                      size="lg" 
+                      className="bg-wedding-olive hover:bg-wedding-olive/90 text-white"
+                    >
+                      Découvrir
+                    </Button>
+                  </div>
+                  <div className="md:w-1/2 order-1 md:order-2">
+                    <img 
+                      src="/lovable-uploads/0c1993a0-706e-4057-ba45-402d994541c5.png"
+                      alt="Mockup de l'application Mariable"
+                      className="w-full h-auto rounded-lg shadow-md"
+                    />
+                  </div>
+                </div>
               </div>
-
-              <p className="text-lg text-gray-800 mb-6 max-w-3xl mx-auto font-medium">
-                Sans Mariable, vos proches sont débordés et vous finissez par régler les imprévus.<br/>
-                Avec Mariable, tout est planifié et partagé : chacun sait quoi faire, vous profitez.
-              </p>
-
-              <Button asChild size="lg" className="bg-wedding-olive hover:bg-wedding-olive/90 text-white">
-                <Link to="/register">
-                  Découvrir Mariable <ArrowRight className="ml-2 h-5 w-5" />
-                </Link>
-              </Button>
             </div>
           </div>
         </section>
 
         {/* How it works Section */}
-        <section className="py-12 md:py-16 bg-gray-50 animate-fade-in">
+        <section id="how-it-works-section" className="py-12 md:py-16 bg-gray-50 animate-fade-in">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif text-black mb-6">
@@ -170,8 +183,8 @@ const Index = () => {
 
             <div className="text-center mb-8">
               <Button asChild size="lg" className="bg-wedding-olive hover:bg-wedding-olive/90 text-white">
-                <Link to="/demo-jour-m">
-                  👉 Découvrir comment ça marche
+                <Link to="/coordination-jour-j">
+                  Voir la démo
                 </Link>
               </Button>
             </div>
