@@ -257,6 +257,24 @@ const CoordinationJourJ: React.FC = () => {
           </div>
         </section>
 
+        {/* Video Demo Section */}
+        <section className="py-12 px-4 bg-white">
+          <div className="container mx-auto max-w-4xl">
+            <h2 className="text-2xl md:text-3xl font-serif text-center mb-8 text-wedding-black">
+              Découvrez Mon Jour J en action
+            </h2>
+            <div className="bg-gray-100 rounded-lg p-4 aspect-video">
+              <iframe
+                src="https://www.loom.com/embed/a0d0d52de99d4af59d67604f01c8af14?sid=a3c17f33-22ba-42a2-a046-8c73a657565f"
+                frameBorder="0"
+                allowFullScreen
+                className="w-full h-full rounded-lg"
+                title="Démonstration Mon Jour J"
+              ></iframe>
+            </div>
+          </div>
+        </section>
+
         {/* Testimonials Section */}
         <section className="py-12 px-4 bg-wedding-olive/5">
           <div className="container mx-auto max-w-4xl">
@@ -332,9 +350,8 @@ const CoordinationJourJ: React.FC = () => {
                 Réserver maintenant
               </Button>
               <Button 
-                variant="outline"
-                onClick={() => navigate('/detail-coordination-jourm')}
-                className="border-white text-white hover:bg-white hover:text-wedding-olive px-8 py-3"
+                onClick={() => navigate('/tarifs')}
+                className="bg-wedding-olive/20 text-white hover:bg-wedding-olive/30 border border-white/20 px-8 py-3"
               >
                 Voir les tarifs
               </Button>

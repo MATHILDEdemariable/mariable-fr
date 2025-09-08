@@ -15,7 +15,7 @@ const HistoireContent = () => (
       <div className="md:col-span-1 flex justify-center md:justify-end">
         <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100 max-w-xs">
           <img 
-            src="/lovable-uploads/6cd6fbde-c3c6-43ef-b913-d46e1aac7147.png" 
+            src="/lovable-uploads/bea0740d-427b-4f1b-95e3-2468f199ec77.png" 
             alt="Mathilde, fondatrice de Mariable" 
             className="w-full h-auto rounded-lg mb-2 object-cover" 
           />

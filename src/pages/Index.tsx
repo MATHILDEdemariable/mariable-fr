@@ -129,7 +129,7 @@ const Index = () => {
                   </div>
                   <div className="md:w-1/2 order-1 md:order-2">
                     <img 
-                      src="/lovable-uploads/0c1993a0-706e-4057-ba45-402d994541c5.png"
+                      src="/lovable-uploads/f6b347a1-f299-4731-8b9a-10e21c0f1b08.png"
                       alt="Mockup de l'application Mariable"
                       className="w-full h-auto rounded-lg shadow-md"
                     />
