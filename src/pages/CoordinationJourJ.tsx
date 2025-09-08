@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -23,6 +23,10 @@ import {
 
 const CoordinationJourJ: React.FC = () => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const features = [
     {
@@ -313,9 +317,9 @@ const CoordinationJourJ: React.FC = () => {
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
               {[
-                { step: 1, title: 'Réservation', description: 'Réservez votre créneau Mon Jour J', icon: <Calendar className="h-6 w-6" /> },
-                { step: 2, title: 'Préparation', description: 'Remplissez votre planning avec nos outils', icon: <Clock className="h-6 w-6" /> },
-                { step: 3, title: 'Coordination', description: 'Notre équipe prend le relais le jour J', icon: <Users className="h-6 w-6" /> },
+                { step: 1, title: 'Coordonner votre jour J en autonomie', description: 'Créez votre planning détaillé avec nos outils', icon: <Calendar className="h-6 w-6" /> },
+                { step: 2, title: 'Partager les informations à votre équipe', description: 'Tous vos prestataires ont accès au planning', icon: <Users className="h-6 w-6" /> },
+                { step: 3, title: 'Demander la présence d\'un.e coordinateur.rice mariable (optionnel)', description: 'Assistance sur site pour votre tranquillité', icon: <Shield className="h-6 w-6" /> },
                 { step: 4, title: 'Jour parfait', description: 'Profitez pleinement de votre mariage', icon: <Sparkles className="h-6 w-6" /> }
               ].map((step) => (
                 <div key={step.step} className="text-center">

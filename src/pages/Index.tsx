@@ -110,30 +110,37 @@ const Index = () => {
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        </section>
 
-              {/* App Mockup Section */}
-              <div className="bg-white rounded-xl shadow-lg p-8 mb-8">
-                <div className="flex flex-col md:flex-row items-center gap-8">
-                  <div className="md:w-1/2 order-2 md:order-1">
-                    <p className="text-lg text-gray-700 mb-6">
-                      Avec Mariable, tout est planifié et partagé : chacun sait quoi faire, vous profitez.<br /><br />
-                      Sans Mariable, vos proches sont débordés et vous finissez par régler les imprévus.
-                    </p>
-                    <Button 
-                      onClick={scrollToHowItWorks}
-                      size="lg" 
-                      className="bg-wedding-olive hover:bg-wedding-olive/90 text-white"
-                    >
-                      Découvrir
-                    </Button>
-                  </div>
-                  <div className="md:w-1/2 order-1 md:order-2">
-                    <img 
-                      src="/lovable-uploads/f6b347a1-f299-4731-8b9a-10e21c0f1b08.png"
-                      alt="Mockup de l'application Mariable"
-                      className="w-full h-auto rounded-lg shadow-md"
-                    />
-                  </div>
+        {/* App Preview Section */}
+        <section className="py-16 md:py-20 bg-gray-50">
+          <div className="container mx-auto px-4">
+            <div className="bg-white rounded-xl shadow-lg p-8 max-w-6xl mx-auto">
+              <div className="flex flex-col md:flex-row items-center gap-8">
+                <div className="md:w-1/2 order-2 md:order-1">
+                  <h3 className="text-2xl md:text-3xl font-serif text-black mb-4">
+                    Avec Mariable, tout est planifié et partagé
+                  </h3>
+                  <p className="text-lg text-gray-700 mb-6">
+                    Chacun sait quoi faire, vous profitez.<br /><br />
+                    Sans Mariable, vos proches sont débordés et vous finissez par régler les imprévus.
+                  </p>
+                  <Button 
+                    onClick={scrollToHowItWorks}
+                    size="lg" 
+                    className="bg-wedding-olive hover:bg-wedding-olive/90 text-white"
+                  >
+                    Découvrir comment ça marche
+                  </Button>
+                </div>
+                <div className="md:w-1/2 order-1 md:order-2">
+                  <img 
+                    src="https://bgidfcqktsttzlwlumtz.supabase.co/storage/v1/object/public/visuels/SALON%20DU%20MARIAGE.png"
+                    alt="Mockup de l'application Mariable - Coordination jour J"
+                    className="w-full h-auto rounded-lg shadow-md"
+                  />
                 </div>
               </div>
             </div>
