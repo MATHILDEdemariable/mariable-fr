@@ -67,7 +67,7 @@ const NousContacter = () => {
                   rel="noopener noreferrer"
                   className="text-wedding-olive hover:underline"
                 >
-                  @mariable_app
+                  @mariable.fr
                 </a>
               </div>
             </div>
