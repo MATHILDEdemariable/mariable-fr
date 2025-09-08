@@ -2,7 +2,7 @@
 import React from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { Mail, Linkedin, Calendar } from 'lucide-react';
+import { Mail, Linkedin, Calendar, Instagram } from 'lucide-react';
 
 const NousContacter = () => {
   return (
@@ -53,6 +53,21 @@ const NousContacter = () => {
                   className="text-wedding-olive hover:underline"
                 >
                   Réserver un créneau
+                </a>
+              </div>
+            </div>
+
+            <div className="flex items-center">
+              <Instagram className="mr-3 h-5 w-5 text-wedding-black" />
+              <div>
+                <p className="font-medium">Suivez-nous</p>
+                <a 
+                  href="https://www.instagram.com/mariable_app/" 
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-wedding-olive hover:underline"
+                >
+                  @mariable_app
                 </a>
               </div>
             </div>

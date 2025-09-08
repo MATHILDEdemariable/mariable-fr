@@ -143,10 +143,9 @@ const Prix = () => {
                     </div>
                   </div>
                   
-                  <div className="mt-auto space-y-3">
-                    <FormulaCTAButton formula="libre" />
-                    <Button asChild variant="outline" className="w-full border-wedding-olive text-wedding-olive hover:bg-wedding-olive hover:text-white">
-                      <Link to="/demo-jour-m">Voir la démo</Link>
+                  <div className="mt-auto">
+                    <Button asChild className="w-full bg-wedding-olive text-white hover:bg-wedding-olive/90">
+                      <Link to="/register">Découvrir l'outil - Payer plus tard</Link>
                     </Button>
                   </div>
                 </CardContent>
@@ -166,56 +165,54 @@ const Prix = () => {
               <p className="text-lg text-gray-700">Bénéficiez d'un accompagnement personnalisé pour votre mariage</p>
             </div>
 
-            {/* Ligne directe (anciennement L'accompagnement) */}
-            <div className="max-w-md mx-auto mb-12">
-              <Card className="shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 flex flex-col h-full">
-                <CardHeader className="text-center pb-4">
-                  <div className="flex items-center justify-center gap-2 mb-3">
-                    <MessageCircle className="h-6 w-6 text-wedding-olive" />
-                    <CardTitle className="text-xl font-bold">Ligne directe</CardTitle>
-                  </div>
-                  <p className="text-sm text-gray-600">Communication privilégiée avec une experte</p>
-                </CardHeader>
-                
-                <CardContent className="flex-grow flex flex-col">
-                  <div className="text-center mb-6">
-                    <div className="text-3xl font-bold text-wedding-olive mb-2">9,9€/mois</div>
-                    <div className="text-sm text-gray-600">jusqu'à votre mariage</div>
-                  </div>
+                {/* Ligne directe */}
+                <Card className="shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 flex flex-col h-full">
+                  <CardHeader className="text-center pb-4">
+                    <div className="flex items-center justify-center gap-2 mb-3">
+                      <MessageCircle className="h-6 w-6 text-wedding-olive" />
+                      <CardTitle className="text-xl font-bold">Ligne directe</CardTitle>
+                    </div>
+                    <p className="text-sm text-gray-600">Communication privilégiée avec une experte</p>
+                  </CardHeader>
                   
-                  <div className="space-y-3 mb-6">
-                    <div className="flex items-start gap-2">
-                      <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Messages illimités WhatsApp</p>
+                  <CardContent className="flex-grow flex flex-col">
+                    <div className="text-center mb-6">
+                      <div className="text-3xl font-bold text-wedding-olive mb-2">9,9€/mois</div>
+                      <div className="text-sm text-gray-600">jusqu'à votre mariage</div>
                     </div>
-                    <div className="flex items-start gap-2">
-                      <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Disponible 7j/7 de 9h à 22h</p>
+                    
+                    <div className="space-y-3 mb-6">
+                      <div className="flex items-start gap-2">
+                        <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                        <p className="text-sm text-gray-700">Messages illimités WhatsApp</p>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                        <p className="text-sm text-gray-700">Disponible 7j/7 de 9h à 22h</p>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                        <p className="text-sm text-gray-700">Conseils personnalisés</p>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                        <p className="text-sm text-gray-700">Soutien émotionnel & recul</p>
+                      </div>
                     </div>
-                    <div className="flex items-start gap-2">
-                      <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Conseils personnalisés</p>
+                    
+                    <div className="mt-auto">
+                      <Button asChild className="w-full bg-wedding-olive text-white hover:bg-wedding-olive/90">
+                        <Link to="/reservation-jour-m">Faire une demande</Link>
+                      </Button>
                     </div>
-                    <div className="flex items-start gap-2">
-                      <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700">Soutien émotionnel & recul</p>
-                    </div>
-                  </div>
-                  
-                  <div className="mt-auto">
-                    <Button asChild className="w-full bg-wedding-olive text-white hover:bg-wedding-olive/90">
-                      <Link to="/reservation-jour-m">Faire une demande</Link>
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+                  </CardContent>
+                </Card>
 
-            {/* Formules Coordination avec EFMM */}
+            {/* Section Services avec grille 3 colonnes */}
             <div className="text-center mb-8">
               <div className="flex items-center justify-center gap-3 mb-4">
                 <h3 className="text-2xl md:text-3xl font-serif text-black">
-                  Coordination Jour-J
+                  Coordination Jour-J à la carte
                 </h3>
                 <div className="flex items-center gap-2 text-sm text-gray-600">
                   <span>en partenariat avec</span>
@@ -225,16 +222,26 @@ const Prix = () => {
               <p className="text-lg text-gray-700">Des formules adaptées à vos besoins</p>
             </div>
 
-            <div className="max-w-5xl mx-auto mb-8">
-              <div className={`grid gap-6 ${isMobile ? 'grid-cols-1' : 'grid-cols-2'}`}>
-                {/* Ajout des notifications en temps réel */}
-                <Card className="shadow-md hover:shadow-lg transition-shadow border-2 border-wedding-olive flex flex-col h-full">
-                  <CardHeader className="text-center bg-wedding-olive text-white relative">
-                    <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-wedding-olive text-white text-sm px-2 py-1 rounded-full">Recommandée</div>
-                    <CardTitle className="text-xl">Ajout des notifications en temps réel via l'application</CardTitle>
+            <div className="max-w-6xl mx-auto mb-8">
+              <div className={`grid gap-6 ${isMobile ? 'grid-cols-1' : 'grid-cols-3'}`}>
+                {/* Appli avec notification */}
+                <Card className="shadow-md hover:shadow-lg transition-shadow flex flex-col h-full">
+                  <CardHeader className="text-center bg-wedding-olive text-white">
+                    <CardTitle className="text-xl">Appli avec notification</CardTitle>
                     <div className="text-2xl font-bold">24,9€</div>
                   </CardHeader>
                   <CardContent className="p-6 flex flex-col flex-1">
+                    <div className="space-y-3 flex-1">
+                      <div className="flex items-start gap-2">
+                        <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                        <p className="text-sm text-gray-700">Notification en temps réel sur WhatsApp</p>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                        <p className="text-sm text-gray-700">Hotline 7J/7J</p>
+                      </div>
+                    </div>
+                    
                     <div className="pt-4 border-t mt-auto">
                       <FormulaCTAButton formula="sereine" />
                     </div>
@@ -249,8 +256,17 @@ const Prix = () => {
                   </CardHeader>
                   <CardContent className="p-6 flex flex-col flex-1">
                     <div className="space-y-3 flex-1">
-                      <div>
-                        <span className="text-sm">Audit de votre organisation via l'appli, 2h de rdv téléphonique visio, 14H le jour-j</span>
+                      <div className="flex items-start gap-2">
+                        <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                        <p className="text-sm text-gray-700">Audit de votre organisation via l'appli</p>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                        <p className="text-sm text-gray-700">2h de rdv téléphonique visio</p>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                        <p className="text-sm text-gray-700">14H de présence le jour-j</p>
                       </div>
                     </div>
                     
