@@ -62,7 +62,7 @@ const NousContacter = () => {
               <div>
                 <p className="font-medium">Suivez-nous</p>
                 <a 
-                  href="https://www.instagram.com/mariable_app/" 
+                  href="https://www.instagram.com/mariable.fr/?hl=fr" 
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-wedding-olive hover:underline"
