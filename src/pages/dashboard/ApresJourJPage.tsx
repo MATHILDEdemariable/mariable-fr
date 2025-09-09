@@ -1,20 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Helmet } from 'react-helmet-async';
+import { Trash2, Plus, Download, Share2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Loader2, Download, Plus, Sparkles, Lightbulb } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { exportApresJourJToPDF } from "@/services/apresJourJExportService";
-import { ApresJourJShareButton } from "@/components/apres-jour-j/ApresJourJShareButton";
-import { SuggestionsModal } from "@/components/apres-jour-j/SuggestionsModal";
-import AfterWeddingAdvice from "@/components/apres-jour-j/AfterWeddingAdvice";
-import { usePremiumAction } from '@/hooks/usePremiumAction';
-import PremiumModal from '@/components/premium/PremiumModal';
+import { usePremiumAction } from "@/hooks/usePremiumAction";
+import PremiumModal from "@/components/premium/PremiumModal";
+import AfterWeddingAdvice from '@/components/apres-jour-j/AfterWeddingAdvice';
+import { SuggestionsModal } from '@/components/apres-jour-j/SuggestionsModal';
+import { ApresJourJShareButton } from '@/components/apres-jour-j/ApresJourJShareButton';
+import ApresJourJManuelle from '@/components/dashboard/ApresJourJManuelle';
+import { exportApresJourJToPDF } from '@/services/apresJourJExportService';
 
 interface Task {
   id: string;
@@ -32,30 +34,36 @@ interface ChecklistData {
   tasks: Task[];
   completed_tasks: string[];
   created_at: string;
+  icon?: string;
+  category?: string;
 }
 
 interface DatabaseChecklist {
   id: string;
   title: string;
   original_text: string;
-  tasks: Task[];
-  completed_tasks: string[];
+  tasks: Task[] | any;
+  completed_tasks: string[] | any;
   created_at: string;
+  icon?: string;
+  category?: string;
 }
 
 const ApresJourJPage: React.FC = () => {
   const [user, setUser] = useState<any>(null);
-  const { executeAction, showPremiumModal, closePremiumModal, feature, description } = usePremiumAction({
-    feature: "génération de checklist après le jour-J",
-    description: "Créez votre checklist post-mariage adaptée à vos besoins"
-  });
   const [inputText, setInputText] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [checklistData, setChecklistData] = useState<ChecklistData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [newTaskInput, setNewTaskInput] = useState('');
   const [isExporting, setIsExporting] = useState(false);
+  const [newTaskTitle, setNewTaskTitle] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [activeTab, setActiveTab] = useState('manuelle');
+  const printRef = useRef<HTMLDivElement>(null);
+  const { executeAction: handlePremiumAction, showPremiumModal, closePremiumModal } = usePremiumAction({
+    feature: "Checklist après le jour-J",
+    description: "Générez votre checklist personnalisée après le mariage"
+  });
   const { toast } = useToast();
 
   useEffect(() => {
@@ -86,14 +94,16 @@ const ApresJourJPage: React.FC = () => {
       }
 
       if (data && data.length > 0) {
-        const checklist = data[0];
+        const checklist = data[0] as DatabaseChecklist;
         setChecklistData({
           id: checklist.id,
           title: checklist.title,
           original_text: checklist.original_text,
-          tasks: (checklist.tasks as unknown as Task[]) || [],
-          completed_tasks: (checklist.completed_tasks as unknown as string[]) || [],
-          created_at: checklist.created_at
+          tasks: Array.isArray(checklist.tasks) ? checklist.tasks as Task[] : [],
+          completed_tasks: (Array.isArray(checklist.completed_tasks) ? checklist.completed_tasks : []) as string[],
+          created_at: checklist.created_at,
+          icon: checklist.icon,
+          category: checklist.category
         });
       }
     } catch (error) {
@@ -120,7 +130,9 @@ const ApresJourJPage: React.FC = () => {
         original_text: inputText,
         tasks: data.tasks || [],
         completed_tasks: [],
-        user_id: user.id
+        user_id: user.id,
+        icon: data.icon,
+        category: data.category
       };
 
       const { data: insertedData, error: insertError } = await supabase
@@ -135,9 +147,11 @@ const ApresJourJPage: React.FC = () => {
         id: insertedData.id,
         title: insertedData.title,
         original_text: insertedData.original_text,
-        tasks: (insertedData.tasks as unknown as Task[]) || [],
-        completed_tasks: (insertedData.completed_tasks as unknown as string[]) || [],
-        created_at: insertedData.created_at
+        tasks: (Array.isArray(insertedData.tasks) ? insertedData.tasks : []) as Task[],
+        completed_tasks: (Array.isArray(insertedData.completed_tasks) ? insertedData.completed_tasks : []) as string[],
+        created_at: insertedData.created_at,
+        icon: insertedData.icon,
+        category: insertedData.category
       });
 
       toast({
@@ -188,11 +202,11 @@ const ApresJourJPage: React.FC = () => {
   };
 
   const addManualTask = async () => {
-    if (!newTaskInput.trim() || !checklistData || !user) return;
+    if (!newTaskTitle.trim() || !checklistData || !user) return;
 
     const newTask: Task = {
       id: `manual-${Date.now()}`,
-      label: newTaskInput.trim(),
+      label: newTaskTitle.trim(),
       description: '',
       priority: 'medium',
       category: 'AUTRE',
@@ -214,7 +228,7 @@ const ApresJourJPage: React.FC = () => {
         tasks: updatedTasks
       } : null);
 
-      setNewTaskInput('');
+      setNewTaskTitle('');
       
       toast({
         title: "Tâche ajoutée !",
@@ -266,13 +280,13 @@ const ApresJourJPage: React.FC = () => {
 
   const getCategoryColor = (category: string) => {
     const colors = {
-      'NETTOYAGE': 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300',
-      'RÉCUPÉRATION': 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
-      'RETOURS': 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300',
-      'DISTRIBUTION': 'bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-300',
-      'COMMUNICATION': 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300',
-      'PAIEMENTS': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300',
-      'AUTRE': 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300'
+      'NETTOYAGE': 'bg-blue-100 text-blue-800',
+      'RÉCUPÉRATION': 'bg-green-100 text-green-800',
+      'RETOURS': 'bg-orange-100 text-orange-800',
+      'DISTRIBUTION': 'bg-pink-100 text-pink-800',
+      'COMMUNICATION': 'bg-purple-100 text-purple-800',
+      'PAIEMENTS': 'bg-yellow-100 text-yellow-800',
+      'AUTRE': 'bg-gray-100 text-gray-800'
     };
     return colors[category as keyof typeof colors] || colors['AUTRE'];
   };
@@ -287,19 +301,11 @@ const ApresJourJPage: React.FC = () => {
 
     setIsExporting(true);
     try {
-      const success = await exportApresJourJToPDF({
-        title: checklistData.title,
-        tasks: checklistData.tasks,
-        completed_tasks: checklistData.completed_tasks,
-        created_at: checklistData.created_at
+      await exportApresJourJToPDF(checklistData);
+      toast({
+        title: "Export réussi !",
+        description: "Votre checklist a été exportée en PDF.",
       });
-
-      if (success) {
-        toast({
-          title: "Export réussi !",
-          description: "Votre checklist a été exportée en PDF.",
-        });
-      }
     } catch (error) {
       console.error('Erreur export PDF:', error);
       toast({
@@ -341,192 +347,221 @@ const ApresJourJPage: React.FC = () => {
     }
   };
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="h-8 w-8 animate-spin" />
-        <span className="ml-2">Chargement...</span>
-      </div>
-    );
-  }
-
   return (
-    <div className="max-w-7xl mx-auto p-6 space-y-6">
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        {/* Main content */}
-        <div className="lg:col-span-3 space-y-6">
-          {!checklistData ? (
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-2xl font-bold flex items-center gap-2">
-                  <Sparkles className="h-6 w-6 text-primary" />
-                  Checklist après le jour-J
-                </CardTitle>
-                <p className="text-muted-foreground">
-                  Générez votre checklist personnalisée pour toutes les tâches à accomplir après votre mariage.
-                </p>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <label htmlFor="wedding-details" className="block text-sm font-medium mb-2">
-                    Décrivez votre situation après le mariage :
-                  </label>
-                  <Textarea
-                    id="wedding-details"
-                    placeholder="Exemple: Nous avons eu notre mariage au Château de Versailles avec 120 invités. Nous avons loué de la décoration, des tables, des chaises. Nous devons récupérer nos affaires, ranger la salle, retourner la location..."
-                    value={inputText}
-                    onChange={(e) => setInputText(e.target.value)}
-                    className="min-h-[150px]"
-                  />
-                </div>
-                <Button 
-                  onClick={() => executeAction(generateChecklist)}
-                  disabled={!inputText.trim() || isGenerating}
-                  className="w-full"
-                  size="lg"
-                >
-                  {isGenerating ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Génération en cours...
-                    </>
-                  ) : (
-                    <>
-                      <Sparkles className="mr-2 h-4 w-4" />
-                      Générer ma checklist après le jour-J
-                    </>
-                  )}
-                </Button>
-              </CardContent>
-            </Card>
-          ) : (
-            <Card>
-              <CardHeader className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-2xl font-bold">{checklistData.title}</CardTitle>
-                  <div className="flex gap-2 flex-wrap">
-                    <Button
-                      onClick={() => executeAction(() => setShowSuggestions(true))}
-                      variant="outline"
-                      size="sm"
-                    >
-                      <Lightbulb className="mr-2 h-4 w-4" />
-                      Suggestions
-                    </Button>
-                    <Button
-                      onClick={() => executeAction(resetChecklist)}
-                      variant="outline"
-                      size="sm"
-                    >
-                      <Sparkles className="mr-2 h-4 w-4" />
-                      Générer nouvelle liste
-                    </Button>
-                    <Button
-                      onClick={handleExportPDF}
-                      disabled={isExporting}
-                      variant="outline"
-                      size="sm"
-                    >
-                      {isExporting ? (
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      ) : (
-                        <Download className="mr-2 h-4 w-4" />
-                      )}
-                      Export PDF
-                    </Button>
-                    <ApresJourJShareButton checklistId={checklistData.id} />
-                  </div>
-                </div>
-                
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-sm text-muted-foreground">
-                    <span>Progression : {checklistData.completed_tasks.length}/{checklistData.tasks.length} tâches</span>
-                    <span>{getProgressPercentage()}%</span>
-                  </div>
-                  <Progress value={getProgressPercentage()} className="w-full" />
-                </div>
-              </CardHeader>
+    <>
+      <Helmet>
+        <title>Après le jour-J | Mariable</title>
+        <meta name="description" content="Gérez vos tâches post-mariage avec notre checklist intelligente" />
+      </Helmet>
+      
+      <div className="max-w-6xl mx-auto space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold text-foreground mb-2">Après le jour-J</h1>
+          <p className="text-muted-foreground">
+            Gérez vos tâches post-mariage et profitez de conseils personnalisés
+          </p>
+        </div>
 
-              <CardContent className="space-y-6">
-                <div className="space-y-3">
-                  {checklistData.tasks.map((task) => (
-                    <div key={task.id} className="flex items-start space-x-3 p-4 border rounded-lg">
-                      <Checkbox
-                        id={task.id}
-                        checked={checklistData.completed_tasks.includes(task.id)}
-                        onCheckedChange={() => toggleTaskCompletion(task.id)}
-                        className="mt-1"
-                      />
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
-                          <label
-                            htmlFor={task.id}
-                            className={`text-sm font-medium cursor-pointer ${
-                              checklistData.completed_tasks.includes(task.id) 
-                                ? 'line-through text-muted-foreground' 
-                                : ''
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="manuelle">Version manuelle</TabsTrigger>
+            <TabsTrigger value="ia">Version IA</TabsTrigger>
+            <TabsTrigger value="conseils">Conseils</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="manuelle" className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="lg:col-span-2">
+                <ApresJourJManuelle />
+              </div>
+              <div className="lg:col-span-1">
+                <AfterWeddingAdvice />
+              </div>
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="ia" className="space-y-6">
+            {isLoading ? (
+              <Card>
+                <CardContent className="text-center py-8">
+                  <div className="text-lg">Chargement...</div>
+                </CardContent>
+              </Card>
+            ) : checklistData ? (
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="lg:col-span-2">
+                  <Card>
+                    <CardHeader className="flex flex-row items-center justify-between">
+                      <CardTitle className="flex items-center gap-2">
+                        {checklistData.icon && <span>{checklistData.icon}</span>}
+                        {checklistData.title}
+                      </CardTitle>
+                      <div className="flex gap-2">
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          onClick={resetChecklist}
+                        >
+                          <Trash2 className="w-4 h-4 mr-1" />
+                          Nouvelle liste
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          onClick={handleExportPDF}
+                          disabled={isExporting}
+                        >
+                          <Download className="w-4 h-4 mr-1" />
+                          {isExporting ? 'Export...' : 'PDF'}
+                        </Button>
+                        <ApresJourJShareButton checklistId={checklistData.id} />
+                      </div>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="flex justify-between items-center">
+                        <h3 className="text-sm font-medium text-muted-foreground">Progression</h3>
+                        <span className="text-sm text-muted-foreground">
+                          {checklistData.completed_tasks.length} / {checklistData.tasks.length} tâches
+                        </span>
+                      </div>
+                      <Progress value={getProgressPercentage()} className="h-2" />
+                      
+                      <div className="space-y-2" ref={printRef}>
+                        {checklistData.tasks.map((task: Task) => (
+                          <div
+                            key={task.id}
+                            className={`flex items-start gap-3 p-3 border rounded-lg ${
+                              checklistData.completed_tasks.includes(task.id)
+                                ? 'bg-muted/50 border-muted'
+                                : 'bg-card border-border'
                             }`}
                           >
-                            {task.label}
-                          </label>
-                          <Badge variant="secondary" className={`text-xs ${getCategoryColor(task.category)}`}>
-                            {task.category}
-                          </Badge>
-                        </div>
-                        {task.description && (
-                          <p className={`text-sm text-muted-foreground ${
-                            checklistData.completed_tasks.includes(task.id) ? 'line-through' : ''
-                          }`}>
-                            {task.description}
-                          </p>
-                        )}
+                            <div className="flex items-center gap-2 flex-1">
+                              <input
+                                type="checkbox"
+                                checked={checklistData.completed_tasks.includes(task.id)}
+                                onChange={() => toggleTaskCompletion(task.id)}
+                                className="w-4 h-4 text-primary border-2 border-muted-foreground rounded focus:ring-primary focus:ring-2"
+                              />
+                              <div className="flex-1">
+                                <div className={`font-medium ${
+                                  checklistData.completed_tasks.includes(task.id) ? 'line-through text-muted-foreground' : 'text-foreground'
+                                }`}>
+                                  {task.label}
+                                </div>
+                                {task.description && (
+                                  <div className="text-sm text-muted-foreground mt-1">
+                                    {task.description}
+                                  </div>
+                                )}
+                              </div>
+                              {task.category && (
+                                <Badge 
+                                  variant="outline" 
+                                  className={getCategoryColor(task.category)}
+                                >
+                                  {task.category}
+                                </Badge>
+                              )}
+                            </div>
+                          </div>
+                        ))}
                       </div>
-                    </div>
-                  ))}
+
+                      <div className="border-t pt-4">
+                        <div className="flex gap-2">
+                          <Input
+                            type="text"
+                            placeholder="Ajouter une tâche personnalisée..."
+                            value={newTaskTitle}
+                            onChange={(e) => setNewTaskTitle(e.target.value)}
+                            onKeyPress={(e) => e.key === 'Enter' && addManualTask()}
+                            className="flex-1"
+                          />
+                          <Button onClick={addManualTask} disabled={!newTaskTitle.trim()}>
+                            <Plus className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </div>
+
+                      <div className="flex gap-2">
+                        <Button
+                          onClick={() => setShowSuggestions(true)}
+                          variant="outline"
+                          className="flex-1"
+                        >
+                          Voir les suggestions
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
                 </div>
 
-                <div className="border-t pt-4">
-                  <div className="flex gap-2">
-                    <Input
-                      placeholder="Ajouter une tâche manuellement..."
-                      value={newTaskInput}
-                      onChange={(e) => setNewTaskInput(e.target.value)}
-                      onKeyPress={(e) => e.key === 'Enter' && addManualTask()}
-                    />
-                    <Button
-                      onClick={addManualTask}
-                      disabled={!newTaskInput.trim()}
-                      size="sm"
-                    >
-                      <Plus className="h-4 w-4" />
-                    </Button>
-                  </div>
+                <div className="lg:col-span-1">
+                  <AfterWeddingAdvice />
                 </div>
-              </CardContent>
-            </Card>
-          )}
-        </div>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="lg:col-span-2">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Générer votre checklist après le mariage</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <p className="text-muted-foreground">
+                        Décrivez votre mariage et vos besoins pour générer une checklist personnalisée des tâches à accomplir après votre jour-J.
+                      </p>
+                      
+                      <Textarea
+                        placeholder="Décrivez votre mariage : nombre d'invités, style, particularités, tâches spécifiques que vous devez gérer après le mariage..."
+                        value={inputText}
+                        onChange={(e) => setInputText(e.target.value)}
+                        className="min-h-[120px]"
+                      />
+                      
+                      <Button 
+                        onClick={() => handlePremiumAction(generateChecklist)} 
+                        disabled={isGenerating || inputText.trim().length < 20}
+                        className="w-full"
+                      >
+                        {isGenerating ? 'Génération en cours...' : 'Générer ma checklist'}
+                      </Button>
 
-        {/* Sidebar with advice */}
-        <div className="lg:col-span-1">
-          <AfterWeddingAdvice />
-        </div>
+                      {inputText.trim().length < 20 && inputText.length > 0 && (
+                        <p className="text-sm text-muted-foreground">
+                          Veuillez fournir plus de détails (minimum 20 caractères)
+                        </p>
+                      )}
+                    </CardContent>
+                  </Card>
+                </div>
+
+                <div className="lg:col-span-1">
+                  <AfterWeddingAdvice />
+                </div>
+              </div>
+            )}
+          </TabsContent>
+
+          <TabsContent value="conseils" className="space-y-6">
+            <AfterWeddingAdvice />
+          </TabsContent>
+        </Tabs>
+
+        <SuggestionsModal 
+          isOpen={showSuggestions}
+          onClose={() => setShowSuggestions(false)}
+          onAddTasks={addSuggestedTasks}
+        />
+
+        <PremiumModal
+          isOpen={showPremiumModal}
+          onClose={closePremiumModal}
+          feature="Checklist après le jour-J"
+        />
       </div>
-
-      <SuggestionsModal
-        isOpen={showSuggestions}
-        onClose={() => setShowSuggestions(false)}
-        onAddTasks={addSuggestedTasks}
-        existingTasks={checklistData?.tasks || []}
-      />
-      
-      <PremiumModal
-        isOpen={showPremiumModal}
-        onClose={closePremiumModal}
-        feature={feature}
-        description={description}
-      />
-    </div>
+    </>
   );
 };
 

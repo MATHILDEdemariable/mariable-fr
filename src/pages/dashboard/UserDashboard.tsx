@@ -26,6 +26,7 @@ import VendorSelectionPage from './VendorSelectionPage';
 import CoordinatorsPage from './CoordinatorsPage';
 import AvantJourJPage from './AvantJourJPage';
 import ApresJourJPage from './ApresJourJPage';
+import ChecklistMariagePage from './ChecklistMariagePage';
 
 const UserDashboard: React.FC = () => {
   const navigate = useNavigate();

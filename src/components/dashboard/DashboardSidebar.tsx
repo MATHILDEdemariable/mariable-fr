@@ -43,9 +43,9 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
       path: '/dashboard',
     },
     {
-      label: 'Check-list',
+      label: 'Check-list Mariage',
       icon: <CheckSquare className="h-4 w-4" />,
-      path: '/dashboard/tasks',
+      path: '/dashboard/checklist-mariage',
     },
   ];
 
@@ -319,7 +319,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
           </DropdownMenuContent>
         </DropdownMenu>
 
-        {/* Check-list personnalisée */}
+        {/* Check-list intelligente */}
         <Link
           to={isReaderMode ? '#' : '/dashboard/avant-jour-j'}
           onClick={(e) => {
@@ -336,7 +336,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
           )}
         >
           <ListChecks className="h-4 w-4" />
-          <span className="ml-2 sm:ml-3 leading-tight">Check-list personnalisée</span>
+          <span className="ml-2 sm:ml-3 leading-tight">Check-list intelligente</span>
           {isReaderMode && (
             <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>
           )}

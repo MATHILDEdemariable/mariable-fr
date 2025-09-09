@@ -7,7 +7,7 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.3 (519615d)"
@@ -53,6 +53,45 @@ export type Database = {
           created_at?: string
           id?: number
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      apres_jour_j_manuel: {
+        Row: {
+          category: string
+          completed: boolean
+          created_at: string
+          description: string | null
+          due_date: string | null
+          id: string
+          position: number
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          category: string
+          completed?: boolean
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          position?: number
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          category?: string
+          completed?: boolean
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          position?: number
+          title?: string
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -278,6 +317,45 @@ export type Database = {
           item_name?: string
           payment_note?: string | null
           remaining?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      checklist_mariage_manuel: {
+        Row: {
+          category: string
+          completed: boolean
+          created_at: string
+          description: string | null
+          due_date: string | null
+          id: string
+          position: number
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          category: string
+          completed?: boolean
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          position?: number
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          category?: string
+          completed?: boolean
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          position?: number
+          title?: string
           updated_at?: string
           user_id?: string
         }
@@ -2452,19 +2530,19 @@ export type Database = {
     }
     Functions: {
       generate_coordination_slug: {
-        Args: { title_input: string; coordination_id?: string }
+        Args: { coordination_id?: string; title_input: string }
         Returns: string
       }
       generate_jeunes_maries_slug: {
-        Args: { nom_input: string; jeune_marie_id?: string }
+        Args: { jeune_marie_id?: string; nom_input: string }
         Returns: string
       }
       get_user_registrations: {
         Args: Record<PropertyKey, never>
         Returns: {
-          id: string
-          email: string
           created_at: string
+          email: string
+          id: string
           raw_user_meta_data: Json
         }[]
       }
@@ -2483,15 +2561,15 @@ export type Database = {
       validate_apres_jour_j_share_token: {
         Args: { token_value: string }
         Returns: {
-          is_valid: boolean
           checklist_id: string
+          is_valid: boolean
         }[]
       }
       validate_avant_jour_j_share_token: {
         Args: { token_value: string }
         Returns: {
-          is_valid: boolean
           checklist_id: string
+          is_valid: boolean
         }[]
       }
       validate_dashboard_share_token: {
@@ -2504,8 +2582,8 @@ export type Database = {
       validate_planning_share_token: {
         Args: { token_value: string }
         Returns: {
-          is_valid: boolean
           coordination_id: string
+          is_valid: boolean
         }[]
       }
     }
