@@ -99,7 +99,7 @@ const ApresJourJPage: React.FC = () => {
           id: checklist.id,
           title: checklist.title,
           original_text: checklist.original_text,
-          tasks: Array.isArray(checklist.tasks) ? checklist.tasks as Task[] : [],
+          tasks: Array.isArray(checklist.tasks) ? checklist.tasks as unknown as Task[] : [],
           completed_tasks: (Array.isArray(checklist.completed_tasks) ? checklist.completed_tasks : []) as string[],
           created_at: checklist.created_at,
           icon: checklist.icon,
@@ -147,7 +147,7 @@ const ApresJourJPage: React.FC = () => {
         id: insertedData.id,
         title: insertedData.title,
         original_text: insertedData.original_text,
-        tasks: (Array.isArray(insertedData.tasks) ? insertedData.tasks : []) as Task[],
+        tasks: (Array.isArray(insertedData.tasks) ? insertedData.tasks as unknown as Task[] : []),
         completed_tasks: (Array.isArray(insertedData.completed_tasks) ? insertedData.completed_tasks : []) as string[],
         created_at: insertedData.created_at,
         icon: insertedData.icon,
@@ -553,6 +553,7 @@ const ApresJourJPage: React.FC = () => {
           isOpen={showSuggestions}
           onClose={() => setShowSuggestions(false)}
           onAddTasks={addSuggestedTasks}
+          existingTasks={checklistData?.tasks || []}
         />
 
         <PremiumModal
