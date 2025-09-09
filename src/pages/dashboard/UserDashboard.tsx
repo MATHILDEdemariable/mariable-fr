@@ -80,8 +80,9 @@ const UserDashboard: React.FC = () => {
           <Route path="selection" element={<VendorSelectionPage />} />
           <Route path="selection/:region" element={<VendorSelectionPage />} />
           <Route path="coordinateurs" element={<CoordinatorsPage />} />
-            <Route path="avant-jour-j" element={<AvantJourJPage />} />
-            <Route path="apres-jour-j" element={<ApresJourJPage />} />
+          <Route path="avant-jour-j" element={<AvantJourJPage />} />
+          <Route path="apres-jour-j" element={<ApresJourJPage />} />
+          <Route path="checklist-mariage" element={<ChecklistMariagePage />} />
           <Route path="*" element={<div>Page non trouvée</div>} />
         </Route>
       </Routes>
