@@ -42,10 +42,24 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
       icon: <LayoutDashboard className="h-4 w-4" />,
       path: '/dashboard',
     },
+  ];
+
+  // Menu déroulant Check-list
+  const checklistItems = [
     {
-      label: 'Check-list Mariage',
+      label: 'En 10 étapes',
       icon: <CheckSquare className="h-4 w-4" />,
-      path: '/dashboard/checklist-mariage',
+      path: '/dashboard/checklist-mariage?tab=etapes',
+    },
+    {
+      label: 'Check-list manuelle',
+      icon: <ListChecks className="h-4 w-4" />,
+      path: '/dashboard/checklist-mariage?tab=manuelle',
+    },
+    {
+      label: 'Check-list intelligente',
+      icon: <Lightbulb className="h-4 w-4" />,
+      path: '/dashboard/checklist-mariage?tab=intelligente',
     },
   ];
 
@@ -150,6 +164,11 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
     return dashboardItems.some(item => isActive(item.path));
   };
 
+  // Vérifier si le menu Check-list doit être actif
+  const isChecklistActive = () => {
+    return location.pathname.startsWith('/dashboard/checklist-mariage');
+  };
+
   // Vérifier si le menu Calculatrice doit être actif
   const isCalculatriceActive = () => {
     return calculatriceItems.some(item => isActive(item.path));
@@ -219,6 +238,53 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
                   className={cn(
                     "flex items-center px-2 py-2 text-sm w-full",
                     isActive(subItem.path)
+                      ? 'bg-wedding-olive/10 text-wedding-olive font-medium'
+                      : 'text-gray-600 hover:bg-gray-50'
+                  )}
+                >
+                  {subItem.icon}
+                  <span className="ml-2">{subItem.label}</span>
+                </Link>
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        {/* Menu déroulant Check-list */}
+        <DropdownMenu>
+          <DropdownMenuTrigger 
+            className={cn(
+              "flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors w-full justify-start",
+              isChecklistActive()
+                ? 'bg-wedding-olive text-white shadow-sm'
+                : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive',
+              isReaderMode ? 'pointer-events-none opacity-70' : ''
+            )}
+            disabled={isReaderMode}
+          >
+            <CheckSquare className="h-4 w-4" />
+            <span className="ml-2 sm:ml-3 leading-tight">Check-list</span>
+            <ChevronDown className="ml-auto h-4 w-4" />
+            {isReaderMode && (
+              <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>
+            )}
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-56 bg-white shadow-lg border border-gray-200" align="end">
+            {checklistItems.map((subItem) => (
+              <DropdownMenuItem key={subItem.path} asChild>
+                <Link
+                  to={isReaderMode ? '#' : subItem.path}
+                  onClick={(e) => {
+                    if (isReaderMode) {
+                      e.preventDefault();
+                    }
+                  }}
+                  className={cn(
+                    "flex items-center px-2 py-2 text-sm w-full",
+                    location.pathname.startsWith('/dashboard/checklist-mariage') && 
+                    ((subItem.path.includes('tab=etapes') && (!location.search || location.search.includes('tab=etapes'))) ||
+                     (subItem.path.includes('tab=manuelle') && location.search.includes('tab=manuelle')) ||
+                     (subItem.path.includes('tab=intelligente') && location.search.includes('tab=intelligente')))
                       ? 'bg-wedding-olive/10 text-wedding-olive font-medium'
                       : 'text-gray-600 hover:bg-gray-50'
                   )}
@@ -319,28 +385,6 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
           </DropdownMenuContent>
         </DropdownMenu>
 
-        {/* Check-list intelligente */}
-        <Link
-          to={isReaderMode ? '#' : '/dashboard/avant-jour-j'}
-          onClick={(e) => {
-            if (isReaderMode) {
-              e.preventDefault();
-            }
-          }}
-          className={cn(
-            "flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors",
-            isAvantJourJActive()
-              ? 'bg-wedding-olive text-white shadow-sm'
-              : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive',
-            isReaderMode ? 'pointer-events-none opacity-70' : ''
-          )}
-        >
-          <ListChecks className="h-4 w-4" />
-          <span className="ml-2 sm:ml-3 leading-tight">Check-list intelligente</span>
-          {isReaderMode && (
-            <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>
-          )}
-        </Link>
 
         {/* Menu déroulant Jour-J */}
         <DropdownMenu>

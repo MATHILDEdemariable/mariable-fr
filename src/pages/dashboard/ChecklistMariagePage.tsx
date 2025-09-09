@@ -1,12 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useSearchParams } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import ChecklistMariageManuelle from '@/components/dashboard/ChecklistMariageManuelle';
 import ChecklistDixEtapes from '@/components/dashboard/ChecklistDixEtapes';
+import ChecklistIntelligente from '@/components/dashboard/ChecklistIntelligente';
 
 const ChecklistMariagePage: React.FC = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState('etapes');
+
+  // Synchroniser avec les paramètres URL
+  useEffect(() => {
+    const tabParam = searchParams.get('tab');
+    if (tabParam && ['etapes', 'manuelle', 'intelligente'].includes(tabParam)) {
+      setActiveTab(tabParam);
+    }
+  }, [searchParams]);
+
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    setSearchParams({ tab: value });
+  };
 
   return (
     <>
@@ -23,10 +39,26 @@ const ChecklistMariagePage: React.FC = () => {
           </p>
         </div>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="etapes">En 10 étapes</TabsTrigger>
-            <TabsTrigger value="manuelle">Check-list manuelle</TabsTrigger>
+        <Tabs value={activeTab} onValueChange={handleTabChange}>
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger 
+              value="etapes"
+              className="data-[state=active]:bg-wedding-olive data-[state=active]:text-white hover:bg-wedding-olive/20 hover:text-wedding-olive"
+            >
+              En 10 étapes
+            </TabsTrigger>
+            <TabsTrigger 
+              value="manuelle"
+              className="data-[state=active]:bg-wedding-olive data-[state=active]:text-white hover:bg-wedding-olive/20 hover:text-wedding-olive"
+            >
+              Check-list manuelle
+            </TabsTrigger>
+            <TabsTrigger 
+              value="intelligente"
+              className="data-[state=active]:bg-wedding-olive data-[state=active]:text-white hover:bg-wedding-olive/20 hover:text-wedding-olive"
+            >
+              Check-list intelligente
+            </TabsTrigger>
           </TabsList>
           
           <TabsContent value="etapes" className="space-y-6">
@@ -47,6 +79,17 @@ const ChecklistMariagePage: React.FC = () => {
               </CardHeader>
               <CardContent>
                 <ChecklistMariageManuelle />
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="intelligente" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Checklist générée par IA</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ChecklistIntelligente />
               </CardContent>
             </Card>
           </TabsContent>
