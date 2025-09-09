@@ -400,6 +400,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
           >
             <Calendar className="h-4 w-4" />
             <span className="ml-2 sm:ml-3 leading-tight">Jour-J</span>
+            <span className="ml-2 px-1.5 py-0.5 text-xs bg-wedding-olive text-white rounded-full font-semibold">Exclusif</span>
             <ChevronDown className="ml-auto h-4 w-4" />
             {isReaderMode && (
               <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>
