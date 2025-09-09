@@ -6,7 +6,6 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -31,16 +30,16 @@ interface NewItemForm {
 }
 
 const CATEGORIES = [
-  { key: 'invites', label: 'Invités', color: 'bg-blue-500' },
-  { key: 'budget', label: 'Budget', color: 'bg-green-500' },
-  { key: 'lieu', label: 'Lieu', color: 'bg-purple-500' },
-  { key: 'traiteur', label: 'Traiteur', color: 'bg-orange-500' },
-  { key: 'image', label: 'Image', color: 'bg-pink-500' },
-  { key: 'decorations', label: 'Décorations', color: 'bg-indigo-500' },
-  { key: 'jour-j', label: 'Jour-J', color: 'bg-red-500' },
-  { key: 'tenues', label: 'Tenues', color: 'bg-yellow-500' },
-  { key: 'beaute', label: 'Mise en beauté', color: 'bg-cyan-500' },
-  { key: 'autres', label: 'Autres', color: 'bg-gray-500' },
+  { key: 'invites', label: 'Invités', color: 'from-blue-100 to-blue-50', borderColor: 'border-blue-200', badgeColor: 'bg-blue-100 text-blue-800' },
+  { key: 'budget', label: 'Budget', color: 'from-green-100 to-green-50', borderColor: 'border-green-200', badgeColor: 'bg-green-100 text-green-800' },
+  { key: 'lieu', label: 'Lieu', color: 'from-purple-100 to-purple-50', borderColor: 'border-purple-200', badgeColor: 'bg-purple-100 text-purple-800' },
+  { key: 'traiteur', label: 'Traiteur', color: 'from-orange-100 to-orange-50', borderColor: 'border-orange-200', badgeColor: 'bg-orange-100 text-orange-800' },
+  { key: 'image', label: 'Image', color: 'from-pink-100 to-pink-50', borderColor: 'border-pink-200', badgeColor: 'bg-pink-100 text-pink-800' },
+  { key: 'decorations', label: 'Décorations', color: 'from-indigo-100 to-indigo-50', borderColor: 'border-indigo-200', badgeColor: 'bg-indigo-100 text-indigo-800' },
+  { key: 'jour-j', label: 'Jour-J', color: 'from-red-100 to-red-50', borderColor: 'border-red-200', badgeColor: 'bg-red-100 text-red-800' },
+  { key: 'tenues', label: 'Tenues', color: 'from-yellow-100 to-yellow-50', borderColor: 'border-yellow-200', badgeColor: 'bg-yellow-100 text-yellow-800' },
+  { key: 'beaute', label: 'Mise en beauté', color: 'from-cyan-100 to-cyan-50', borderColor: 'border-cyan-200', badgeColor: 'bg-cyan-100 text-cyan-800' },
+  { key: 'autres', label: 'Autres', color: 'from-gray-100 to-gray-50', borderColor: 'border-gray-200', badgeColor: 'bg-gray-100 text-gray-800' },
 ];
 
 const ChecklistMariageManuelle: React.FC = () => {
@@ -84,7 +83,7 @@ const ChecklistMariageManuelle: React.FC = () => {
     }
   };
 
-  const addItem = async () => {
+  const addItem = async (categoryKey?: string) => {
     if (!newItem.title || !newItem.category) {
       toast({
         title: "Erreur",
@@ -113,7 +112,7 @@ const ChecklistMariageManuelle: React.FC = () => {
 
       if (error) throw error;
 
-      setNewItem({ title: '', description: '', category: '', due_date: '' });
+      setNewItem({ title: '', description: '', category: categoryKey || '', due_date: '' });
       setShowAddDialog(false);
       loadItems();
       
@@ -129,6 +128,13 @@ const ChecklistMariageManuelle: React.FC = () => {
         variant: "destructive",
       });
     }
+  };
+
+  const openAddDialog = (categoryKey?: string) => {
+    if (categoryKey) {
+      setNewItem(prev => ({ ...prev, category: categoryKey }));
+    }
+    setShowAddDialog(true);
   };
 
   const toggleItem = async (item: ChecklistItem) => {
@@ -187,8 +193,8 @@ const ChecklistMariageManuelle: React.FC = () => {
     return Math.round((completed / items.length) * 100);
   };
 
-  const getCategoryColor = (categoryKey: string) => {
-    return CATEGORIES.find(cat => cat.key === categoryKey)?.color || 'bg-gray-500';
+  const getCategoryData = (categoryKey: string) => {
+    return CATEGORIES.find(cat => cat.key === categoryKey) || CATEGORIES[9]; // fallback to 'autres'
   };
 
   if (isLoading) {
@@ -213,152 +219,156 @@ const ChecklistMariageManuelle: React.FC = () => {
         </CardContent>
       </Card>
 
-      {/* Bouton d'ajout */}
-      <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold">Ma check-list personnalisée</h2>
-        <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
-          <DialogTrigger asChild>
-            <Button>
-              <Plus className="w-4 h-4 mr-2" />
-              Ajouter une tâche
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Ajouter une nouvelle tâche</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="title">Titre *</Label>
-                <Input
-                  id="title"
-                  value={newItem.title}
-                  onChange={(e) => setNewItem({ ...newItem, title: e.target.value })}
-                  placeholder="Titre de la tâche"
-                />
-              </div>
-              <div>
-                <Label htmlFor="category">Catégorie *</Label>
-                <Select value={newItem.category} onValueChange={(value) => setNewItem({ ...newItem, category: value })}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Sélectionner une catégorie" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {CATEGORIES.map((category) => (
-                      <SelectItem key={category.key} value={category.key}>
-                        {category.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label htmlFor="description">Description</Label>
-                <Textarea
-                  id="description"
-                  value={newItem.description}
-                  onChange={(e) => setNewItem({ ...newItem, description: e.target.value })}
-                  placeholder="Description de la tâche"
-                />
-              </div>
-              <div>
-                <Label htmlFor="due_date">Date d'échéance</Label>
-                <Input
-                  id="due_date"
-                  type="date"
-                  value={newItem.due_date}
-                  onChange={(e) => setNewItem({ ...newItem, due_date: e.target.value })}
-                />
-              </div>
-              <div className="flex justify-end gap-2">
-                <Button variant="outline" onClick={() => setShowAddDialog(false)}>
-                  Annuler
-                </Button>
-                <Button onClick={addItem}>
-                  Ajouter
-                </Button>
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog>
-      </div>
-
-      {/* Accordéons par catégorie */}
-      <Accordion type="multiple" className="w-full">
+      {/* Interface Post-it - Grille des catégories */}
+      <h2 className="text-xl font-semibold">Ma check-list personnalisée</h2>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {CATEGORIES.map((category) => {
           const categoryItems = items.filter(item => item.category === category.key);
-          if (categoryItems.length === 0) return null;
+          const categoryData = getCategoryData(category.key);
+          const completedCount = categoryItems.filter(item => item.completed).length;
+          const progress = categoryItems.length > 0 ? Math.round((completedCount / categoryItems.length) * 100) : 0;
 
           return (
-            <AccordionItem key={category.key} value={category.key}>
-              <AccordionTrigger className="hover:no-underline">
-                <div className="flex items-center gap-3 w-full">
-                  <div className={`w-4 h-4 rounded-full ${category.color}`} />
-                  <div className="flex-1 text-left">
-                    <div className="flex justify-between items-center">
-                      <span className="font-medium">{category.label}</span>
-                      <div className="flex items-center gap-2">
-                        <Badge variant="outline" className="text-xs">
-                          {categoryItems.filter(item => item.completed).length} / {categoryItems.length}
-                        </Badge>
-                        <Progress value={getProgressByCategory(category.key)} className="w-20 h-2" />
-                      </div>
+            <Card 
+              key={category.key} 
+              className={`relative overflow-hidden bg-gradient-to-br ${categoryData.color} ${categoryData.borderColor} border-2 hover:shadow-md transition-all duration-200`}
+            >
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-base font-semibold text-gray-800">
+                    {category.label}
+                  </CardTitle>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => openAddDialog(category.key)}
+                    className="h-6 w-6 p-0 rounded-full hover:bg-white/50"
+                  >
+                    <Plus className="h-3 w-3" />
+                  </Button>
+                </div>
+                
+                <div className="flex items-center gap-2">
+                  <Badge className={`text-xs px-2 py-0.5 ${categoryData.badgeColor} border-0`}>
+                    {completedCount} / {categoryItems.length}
+                  </Badge>
+                  {categoryItems.length > 0 && (
+                    <div className="flex-1">
+                      <Progress value={progress} className="h-1.5" />
                     </div>
-                  </div>
+                  )}
                 </div>
-              </AccordionTrigger>
-              <AccordionContent>
-                <div className="space-y-3 pt-4">
-                  {categoryItems.map((item) => (
-                    <Card key={item.id} className="border-l-4" style={{ borderLeftColor: getCategoryColor(category.key) }}>
-                      <CardContent className="p-4">
-                        <div className="flex items-start justify-between">
-                          <div className="flex items-start gap-3 flex-1">
-                            <button
-                              onClick={() => toggleItem(item)}
-                              className="mt-1 text-primary hover:text-primary/80"
-                            >
-                              {item.completed ? (
-                                <CheckCircle2 className="w-5 h-5" />
-                              ) : (
-                                <Circle className="w-5 h-5" />
-                              )}
-                            </button>
-                            <div className="flex-1">
-                              <h4 className={`font-medium ${item.completed ? 'line-through text-muted-foreground' : ''}`}>
-                                {item.title}
-                              </h4>
-                              {item.description && (
-                                <p className={`text-sm mt-1 ${item.completed ? 'text-muted-foreground' : 'text-muted-foreground'}`}>
-                                  {item.description}
-                                </p>
-                              )}
-                              {item.due_date && (
-                                <div className="flex items-center gap-1 mt-2 text-xs text-muted-foreground">
-                                  <Calendar className="w-3 h-3" />
-                                  {new Date(item.due_date).toLocaleDateString('fr-FR')}
-                                </div>
-                              )}
-                            </div>
+              </CardHeader>
+              
+              <CardContent className="pt-0 space-y-2 max-h-40 overflow-y-auto">
+                {categoryItems.length === 0 ? (
+                  <p className="text-xs text-gray-500 italic text-center py-4">
+                    Aucune tâche
+                  </p>
+                ) : (
+                  categoryItems.map((item) => (
+                    <div key={item.id} className="flex items-start gap-2 p-2 bg-white/40 rounded-md">
+                      <button
+                        onClick={() => toggleItem(item)}
+                        className="mt-0.5 text-gray-600 hover:text-gray-800"
+                      >
+                        {item.completed ? (
+                          <CheckCircle2 className="w-3 h-3" />
+                        ) : (
+                          <Circle className="w-3 h-3" />
+                        )}
+                      </button>
+                      <div className="flex-1 min-w-0">
+                        <p className={`text-xs font-medium ${item.completed ? 'line-through text-gray-500' : 'text-gray-700'}`}>
+                          {item.title}
+                        </p>
+                        {item.due_date && (
+                          <div className="flex items-center gap-1 mt-1">
+                            <Calendar className="w-2 h-2 text-gray-400" />
+                            <span className="text-xs text-gray-500">
+                              {new Date(item.due_date).toLocaleDateString('fr-FR')}
+                            </span>
                           </div>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => deleteItem(item.id)}
-                            className="text-destructive hover:text-destructive/80"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </AccordionContent>
-            </AccordionItem>
+                        )}
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => deleteItem(item.id)}
+                        className="h-4 w-4 p-0 text-gray-400 hover:text-red-500"
+                      >
+                        <Trash2 className="w-2.5 h-2.5" />
+                      </Button>
+                    </div>
+                  ))
+                )}
+              </CardContent>
+            </Card>
           );
         })}
-      </Accordion>
+      </div>
+
+      {/* Modal d'ajout de tâche */}
+      <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Ajouter une nouvelle tâche</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="title">Titre *</Label>
+              <Input
+                id="title"
+                value={newItem.title}
+                onChange={(e) => setNewItem({ ...newItem, title: e.target.value })}
+                placeholder="Titre de la tâche"
+              />
+            </div>
+            <div>
+              <Label htmlFor="category">Catégorie *</Label>
+              <Select value={newItem.category} onValueChange={(value) => setNewItem({ ...newItem, category: value })}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Sélectionner une catégorie" />
+                </SelectTrigger>
+                <SelectContent>
+                  {CATEGORIES.map((category) => (
+                    <SelectItem key={category.key} value={category.key}>
+                      {category.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label htmlFor="description">Description</Label>
+              <Textarea
+                id="description"
+                value={newItem.description}
+                onChange={(e) => setNewItem({ ...newItem, description: e.target.value })}
+                placeholder="Description de la tâche"
+              />
+            </div>
+            <div>
+              <Label htmlFor="due_date">Date d'échéance</Label>
+              <Input
+                id="due_date"
+                type="date"
+                value={newItem.due_date}
+                onChange={(e) => setNewItem({ ...newItem, due_date: e.target.value })}
+              />
+            </div>
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" onClick={() => setShowAddDialog(false)}>
+                Annuler
+              </Button>
+              <Button onClick={() => addItem()}>
+                Ajouter
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {items.length === 0 && (
         <Card>

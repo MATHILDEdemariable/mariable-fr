@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import ChecklistMariageManuelle from '@/components/dashboard/ChecklistMariageManuelle';
-import ChecklistWidget from '@/components/dashboard/ChecklistWidget';
+import ChecklistDixEtapes from '@/components/dashboard/ChecklistDixEtapes';
 
 const ChecklistMariagePage: React.FC = () => {
   const [activeTab, setActiveTab] = useState('etapes');
@@ -35,7 +35,7 @@ const ChecklistMariagePage: React.FC = () => {
                 <CardTitle>Checklist en 10 étapes essentielles</CardTitle>
               </CardHeader>
               <CardContent>
-                <ChecklistWidget />
+                <ChecklistDixEtapes />
               </CardContent>
             </Card>
           </TabsContent>
