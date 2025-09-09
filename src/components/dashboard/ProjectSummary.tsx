@@ -245,7 +245,7 @@ const ProjectSummary = () => {
                 title: 'Check-list',
                 description: 'Suivez vos préparatifs',
                 icon: '✅',
-                path: '/dashboard/tasks',
+                path: '/dashboard/checklist-mariage',
               },
               {
                 title: 'Calculatrice Boissons',
