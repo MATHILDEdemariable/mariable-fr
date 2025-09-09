@@ -124,8 +124,7 @@ const Index = () => {
                     Avec Mariable, tout est planifié et partagé
                   </h3>
                   <p className="text-lg text-gray-700 mb-6">
-                    Chacun sait quoi faire, vous profitez.<br /><br />
-                    Sans Mariable, vos proches sont débordés et vous finissez par régler les imprévus.
+                    Chacun sait quoi faire, vous profitez.
                   </p>
                   <Button 
                     onClick={scrollToHowItWorks}
