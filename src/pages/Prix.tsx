@@ -165,18 +165,6 @@ const Prix = () => {
               <p className="text-lg text-gray-700">Bénéficiez d'un accompagnement personnalisé pour votre mariage</p>
             </div>
 
-            <div className="text-center mb-8">
-              <div className="flex items-center justify-center gap-3 mb-4">
-                <h3 className="text-2xl md:text-3xl font-serif text-black">
-                  Coordination Jour-J à la carte
-                </h3>
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <span>en partenariat avec</span>
-                  <div className="bg-gray-100 px-2 py-1 rounded font-medium">EFMM</div>
-                </div>
-              </div>
-              <p className="text-lg text-gray-700">Des formules adaptées à vos besoins</p>
-            </div>
 
             <div className="max-w-6xl mx-auto mb-8">
               <div className={`grid gap-6 ${isMobile ? 'grid-cols-1' : 'grid-cols-3'}`}>
