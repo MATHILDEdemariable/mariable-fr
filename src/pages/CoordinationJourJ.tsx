@@ -354,7 +354,7 @@ const CoordinationJourJ: React.FC = () => {
                 Réserver maintenant
               </Button>
               <Button 
-                onClick={() => navigate('/tarifs')}
+                onClick={() => navigate('/prix')}
                 className="bg-wedding-olive/20 text-white hover:bg-wedding-olive/30 border border-white/20 px-8 py-3"
               >
                 Voir les tarifs
