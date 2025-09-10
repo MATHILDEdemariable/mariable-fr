@@ -55,6 +55,8 @@ import Temoignages from "./pages/about/Temoignages";
 
 import FAQ from "./pages/contact/FAQ";
 import ChecklistMariage from "./pages/ChecklistMariage";
+import ToDoListMariage from "./pages/ToDoListMariage";
+import ListePreparatifMariage from "./pages/ListePreparatifMariage";
 import Accompagnement from "./pages/Accompagnement";
 import LivreBlanc from "./pages/LivreBlanc";
 import CoordinateursMarriage from "./pages/CoordinateursMarriage";
@@ -153,6 +155,8 @@ function App() {
                   
                   <Route path="/contact/faq" element={<FAQ />} />
                   <Route path="/checklist-mariage" element={<ChecklistMariage />} />
+                  <Route path="/to-do-list-mariage" element={<ToDoListMariage />} />
+                  <Route path="/liste-preparatif-mariage" element={<ListePreparatifMariage />} />
                   <Route path="/accompagnement" element={<Accompagnement />} />
                   <Route path="/guidecoordinationjour-j" element={<LivreBlanc />} />
 

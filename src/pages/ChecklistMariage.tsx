@@ -360,8 +360,32 @@ const ChecklistMariage = () => {
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <Helmet>
-        <title>Checklist de mariage | Organisez votre mariage étape par étape</title>
-        <meta name="description" content="Suivez les 10 étapes clés pour organiser votre mariage sans stress. Checklist complète et personnalisée pour ne rien oublier." />
+        <title>Checklist de mariage complète | To do list et préparatifs gratuits</title>
+        <meta name="description" content="✅ Checklist de mariage gratuite avec to do list détaillée. Organisez vos préparatifs étape par étape sans rien oublier. Guide complet pour votre mariage." />
+        <meta name="keywords" content="checklist mariage, to do list mariage, liste préparatif mariage, organisation mariage, préparatifs mariage, planning mariage gratuit" />
+        <link rel="canonical" href="https://www.mariable.fr/checklist-mariage" />
+        
+        {/* Open Graph */}
+        <meta property="og:title" content="Checklist de mariage complète | To do list gratuite" />
+        <meta property="og:description" content="Checklist de mariage gratuite avec to do list détaillée. Organisez vos préparatifs étape par étape sans rien oublier." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://www.mariable.fr/checklist-mariage" />
+        
+        {/* Schema.org pour FAQ */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "HowTo",
+            "name": "Comment organiser son mariage avec une checklist complète",
+            "description": "Guide étape par étape pour organiser votre mariage avec une to do list détaillée",
+            "step": tasks.slice(0, 5).map((task, index) => ({
+              "@type": "HowToStep",
+              "position": index + 1,
+              "name": task.label,
+              "text": task.description
+            }))
+          })}
+        </script>
       </Helmet>
 
       <Header />
@@ -381,10 +405,13 @@ const ChecklistMariage = () => {
 
           <div className="text-center mb-8">
             <h1 className="text-3xl md:text-4xl font-serif mb-4 text-wedding-olive">
-              Checklist de mariage
+              Checklist de mariage complète : To do list gratuite
             </h1>
-            <p className="text-lg text-muted-foreground">
-              Organisez votre mariage en 10 étapes clés
+            <p className="text-lg text-muted-foreground mb-4">
+              Organisez vos préparatifs de mariage en 10 étapes clés avec notre liste complète
+            </p>
+            <p className="text-sm text-muted-foreground max-w-2xl mx-auto">
+              Cette to do list de mariage vous guide dans tous vos préparatifs. Cochez chaque étape pour ne rien oublier de votre liste préparatif mariage.
             </p>
             {dataSource && (
               <p className="text-sm text-muted-foreground mt-2">
@@ -460,7 +487,41 @@ const ChecklistMariage = () => {
             </CardContent>
           </Card>
 
-          <div className="flex justify-center mt-8">
+          {/* Section conseils et FAQ */}
+          <Card className="mt-8">
+            <CardHeader>
+              <CardTitle className="text-xl">Conseils pour votre to do list mariage</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid md:grid-cols-2 gap-6">
+                <div>
+                  <h3 className="font-semibold mb-2">📋 Comment utiliser cette checklist mariage ?</h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Cette liste préparatif mariage est conçue pour vous accompagner du début à la fin. Commencez par les étapes essentielles puis affinez votre organisation.
+                  </p>
+                  
+                  <h3 className="font-semibold mb-2">⏰ Quand commencer sa to do list ?</h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Idéalement 12-18 mois avant le mariage pour les prestataires clés, mais cette checklist s'adapte à tous les délais.
+                  </p>
+                </div>
+                
+                <div>
+                  <h3 className="font-semibold mb-2">💡 Astuce pour vos préparatifs mariage</h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Priorisez les 5 premières étapes de cette to do list mariage : elles conditionnent tout le reste de votre organisation.
+                  </p>
+                  
+                  <h3 className="font-semibold mb-2">🎯 Planning personnalisé</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Pour un planning de mariage encore plus détaillé, créez votre compte gratuit et accédez à nos outils avancés.
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
             <Button
               variant="wedding"
               size="lg"
@@ -474,8 +535,23 @@ const ChecklistMariage = () => {
               }}
             >
               <Calendar size={18} />
-              {isAuthenticated ? 'Aller au dashboard' : 'Créer mon compte'}
+              {isAuthenticated ? 'Aller au dashboard' : 'Créer mon compte gratuit'}
             </Button>
+            
+            <Button
+              variant="outline"
+              size="lg"
+              className="gap-2"
+              onClick={() => navigate('/coordination-jour-j')}
+            >
+              Voir le planning Jour-J
+            </Button>
+          </div>
+          
+          <div className="text-center mt-6">
+            <p className="text-sm text-muted-foreground">
+              ✨ Plus de 1000 couples utilisent déjà nos outils de planification mariage
+            </p>
           </div>
         </div>
       </main>

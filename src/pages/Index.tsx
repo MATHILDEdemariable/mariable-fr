@@ -201,51 +201,68 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Complementary Services Section */}
-        <section className="py-16 md:py-20 bg-white">
+        {/* Complementary Services Section - Outils gratuits */}
+        <section id="services-section" className="py-16 md:py-20 bg-white">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif text-black mb-6">
                 Plus qu'un outil Jour J, Mariable vous accompagne dès les préparatifs.
               </h2>
+              <p className="text-lg text-gray-700 mb-8">
+                Découvrez nos outils gratuits de planification mariage
+              </p>
               
               <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto mb-8">
-                <div className="flex items-start gap-3">
-                  <Check className="h-6 w-6 text-green-600 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <h3 className="font-medium mb-2">Checklist intelligente</h3>
-                    <p className="text-gray-700 text-sm">fini les oublis, tout est prévu.</p>
+                <Link to="/checklist-mariage" className="block group">
+                  <div className="flex flex-col items-center gap-3 p-4 rounded-lg border border-gray-200 hover:border-wedding-olive hover:shadow-lg transition-all">
+                    <Check className="h-8 w-8 text-wedding-olive" />
+                    <div className="text-center">
+                      <h3 className="font-medium mb-2 group-hover:text-wedding-olive">Checklist de mariage</h3>
+                      <p className="text-gray-700 text-sm">To do list complète avec tous vos préparatifs</p>
+                    </div>
                   </div>
-                </div>
+                </Link>
                 
-                <div className="flex items-start gap-3">
-                  <Check className="h-6 w-6 text-green-600 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <h3 className="font-medium mb-2">Calculateur de budget</h3>
-                    <p className="text-gray-700 text-sm">visualisez et suivez vos dépenses.</p>
+                <Link to="/dashboard/budget" className="block group">
+                  <div className="flex flex-col items-center gap-3 p-4 rounded-lg border border-gray-200 hover:border-wedding-olive hover:shadow-lg transition-all">
+                    <DollarSign className="h-8 w-8 text-wedding-olive" />
+                    <div className="text-center">
+                      <h3 className="font-medium mb-2 group-hover:text-wedding-olive">Calculateur de budget</h3>
+                      <p className="text-gray-700 text-sm">Visualisez et suivez vos dépenses facilement</p>
+                    </div>
                   </div>
-                </div>
+                </Link>
                 
-                <div className="flex items-start gap-3">
-                  <Check className="h-6 w-6 text-green-600 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <h3 className="font-medium mb-2">Suivi de prestataires</h3>
-                    <p className="text-gray-700 text-sm">comparez facilement vos options.</p>
+                <Link to="/dashboard/vendors" className="block group">
+                  <div className="flex flex-col items-center gap-3 p-4 rounded-lg border border-gray-200 hover:border-wedding-olive hover:shadow-lg transition-all">
+                    <Star className="h-8 w-8 text-wedding-olive" />
+                    <div className="text-center">
+                      <h3 className="font-medium mb-2 group-hover:text-wedding-olive">Suivi de prestataires</h3>
+                      <p className="text-gray-700 text-sm">Comparez et organisez vos rendez-vous</p>
+                    </div>
                   </div>
-                </div>
+                </Link>
                 
-                <div className="flex items-start gap-3">
-                  <Check className="h-6 w-6 text-green-600 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <h3 className="font-medium mb-2">Sélection premium</h3>
-                    <p className="text-gray-700 text-sm">des adresses validées pour leur qualité.</p>
+                <Link to="/coordination-jour-j" className="block group">
+                  <div className="flex flex-col items-center gap-3 p-4 rounded-lg border border-gray-200 hover:border-wedding-olive hover:shadow-lg transition-all">
+                    <Settings className="h-8 w-8 text-wedding-olive" />
+                    <div className="text-center">
+                      <h3 className="font-medium mb-2 group-hover:text-wedding-olive">Planning Jour-J</h3>
+                      <p className="text-gray-700 text-sm">Coordination personnalisée de votre mariage</p>
+                    </div>
                   </div>
-                </div>
+                </Link>
               </div>
 
-              <p className="text-gray-700 italic mb-8">
-                Ces services sont inclus gratuitement pour tous les utilisateurs ayant un compte.
+              <p className="text-gray-700 italic mb-4">
+                Ces outils de planification mariage sont inclus gratuitement pour tous les utilisateurs.
               </p>
+              
+              <Button asChild size="lg" className="bg-wedding-olive hover:bg-wedding-olive/90 text-white">
+                <Link to="/register">
+                  Accéder aux outils gratuits <ArrowRight className="ml-2 h-5 w-5" />
+                </Link>
+              </Button>
             </div>
           </div>
         </section>
