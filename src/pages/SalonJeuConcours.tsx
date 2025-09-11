@@ -11,9 +11,9 @@ const SalonJeuConcours = () => {
   return (
     <div className="min-h-screen bg-background">
       <Helmet>
-        <title>Jeu Concours - Gagnez 100€ | Salon du Mariage 2025 - Mariable</title>
-        <meta name="description" content="Participez à notre jeu concours et tentez de gagner un chèque cadeau de 100€ ! Suivez-nous sur Instagram, taggez vos proches et créez votre compte Mariable." />
-        <meta name="keywords" content="jeu concours mariage, gagner 100 euros, salon du mariage, mariable, instagram" />
+        <title>Jeu Concours - Gagnez 250€ de fleurs | Salon du Mariage 2025 - Mariable</title>
+        <meta name="description" content="Participez à notre jeu concours et tentez de gagner 250€ de fleurs ! Suivez-nous sur Instagram, taggez vos proches et créez votre compte Mariable." />
+        <meta name="keywords" content="jeu concours mariage, gagner 250€ de fleurs, salon du mariage, mariable, instagram" />
         <link rel="canonical" href="https://www.mariable.fr/salon-du-mariage-2025/jeu-concours" />
       </Helmet>
 
@@ -40,10 +40,10 @@ const SalonJeuConcours = () => {
             Jeu Concours
           </h1>
           <p className="text-2xl font-semibold text-primary mb-2">
-            🎁 Tentez de gagner 100€ !
+            🎁 Tentez de gagner 250€ de fleurs !
           </p>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Participez à notre jeu concours exclusif du Salon du Mariage 2025 et gagnez un chèque cadeau de 100€ pour vos préparatifs de mariage !
+            Participez à notre jeu concours exclusif du Salon du Mariage 2025 et gagnez 250€ de fleurs pour votre mariage !
           </p>
         </div>
 

@@ -66,11 +66,11 @@ const SalonDuMariage2025 = () => {
                     Jeu Concours
                   </h2>
                   <p className="text-lg font-semibold text-primary mb-2">
-                    🎁 Tentez de gagner 100€ !
+                    🎁 Tentez de gagner 250€ de fleurs !
                   </p>
-                  <p className="text-muted-foreground mb-6">
-                    Participez à notre jeu concours et gagnez un chèque cadeau de 100€ pour votre mariage
-                  </p>
+                   <p className="text-muted-foreground mb-6">
+                     Participez à notre jeu concours et gagnez 250€ de fleurs pour votre mariage
+                   </p>
                 </div>
                 
                 <Link to="/salon-du-mariage-2025/jeu-concours">
