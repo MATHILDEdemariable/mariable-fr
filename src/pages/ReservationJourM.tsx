@@ -352,14 +352,14 @@ const ReservationJourM = () => {
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="application_support" id="application_support" />
                         <Label htmlFor="application_support" className="flex flex-col">
-                          <span>Application + Support téléphonique (24,9€)</span>
+                          <span>Supplément notification+ support téléphonique pour l'appli (24,9€)</span>
                           <span className="text-sm text-gray-500 font-normal">Application + assistance téléphonique</span>
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="privilege" id="privilege" />
                         <Label htmlFor="privilege" className="flex flex-col">
-                          <span>Privilège (799€)</span>
+                          <span>Coordinateur jour-J (899€)</span>
                           <span className="text-sm text-gray-500 font-normal">Service complet avec présence physique</span>
                         </Label>
                       </div>

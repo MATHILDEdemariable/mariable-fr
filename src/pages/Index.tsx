@@ -64,6 +64,9 @@ const Index = () => {
                 fontFamily: 'Playfair Display, serif'
               }} className="text-3xl md:text-4xl font-serif text-black mb-4 max-w-4xl mx-auto">
                 La première appli de coordination jour-J
+                <span className="block text-lg font-normal text-wedding-olive mt-2">
+                  sans téléchargement - directement en ligne
+                </span>
               </h2>
               <p className="text-lg text-gray-700 mb-8 max-w-3xl mx-auto italic">
                 Mariable, c'est la solution innovante qui vous permet de gérer la journée du mariage avec vos proches et prestataires.
