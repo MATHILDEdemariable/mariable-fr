@@ -78,7 +78,7 @@ const SalonJeuConcours = () => {
                 <div className="flex items-start gap-3 p-3 bg-wedding-sage/5 rounded-lg">
                   <Gift className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
                   <div>
-                    <p className="font-semibold text-foreground">Étape 2 : Taggez vos proches</p>
+                    <p className="font-semibold text-foreground">Étape 2 : Taggez 2 personnes</p>
                     <p className="text-sm text-muted-foreground">Taggez votre mari/femme ou vos témoins sur la publication "Salon du Mariage"</p>
                   </div>
                 </div>
