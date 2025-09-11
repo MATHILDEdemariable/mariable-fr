@@ -48,6 +48,9 @@ import MariageNouvelleAquitaine from "./pages/MariageNouvelleAquitaine";
 
 // Import missing pages
 import Professionnels from "./pages/Professionnels";
+import SalonDuMariage2025 from "./pages/SalonDuMariage2025";
+import SalonJeuConcours from "./pages/SalonJeuConcours";
+import SalonMicroTrottoir from "./pages/SalonMicroTrottoir";
 import Approche from "./pages/about/Approche";
 import Histoire from "./pages/about/Histoire";
 import Charte from "./pages/about/Charte";
@@ -198,6 +201,11 @@ function App() {
                    
                    {/* Services routes */}
                    <Route path="/services/budget" element={<Budget />} />
+                   
+                   {/* Salon du Mariage 2025 routes */}
+                   <Route path="/salon-du-mariage-2025" element={<SalonDuMariage2025 />} />
+                   <Route path="/salon-du-mariage-2025/jeu-concours" element={<SalonJeuConcours />} />
+                   <Route path="/salon-du-mariage-2025/autorisation-micro-trottoir" element={<SalonMicroTrottoir />} />
                    
                    <Route path="*" element={<NotFound />} />
                 </Routes>
