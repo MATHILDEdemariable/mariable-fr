@@ -62,7 +62,7 @@ const SalonJeuConcours = () => {
                   <Instagram className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
                   <div>
                     <p className="font-semibold text-foreground">Étape 1 : Suivez-nous</p>
-                    <p className="text-sm text-muted-foreground">Suivez le compte Instagram @mariable.fr</p>
+                    <p className="text-sm text-muted-foreground">Suivez le compte Instagram @mariable.fr et le compte @labox.lesjoliesfeuillesles</p>
                     <a 
                       href="https://www.instagram.com/mariable.fr/" 
                       target="_blank" 
