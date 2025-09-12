@@ -85,12 +85,6 @@ function Menus({ onClick, isLoggedIn }: { onClick?: () => void, isLoggedIn?: boo
         </HeaderDropdownMenu>
       </HeaderDropdown>
       
-      {/* Tarifs - Entre Professionnels et À propos */}
-      <HeaderDropdown 
-        label="Tarifs"
-        href="/prix"
-        onClick={onClick}
-      />
       
       {/* À propos Dropdown - En dernier */}
       <HeaderDropdown label="À propos">
