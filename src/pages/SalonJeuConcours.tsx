@@ -86,7 +86,7 @@ const SalonJeuConcours = () => {
                 <div className="flex items-start gap-3 p-3 bg-wedding-olive/5 rounded-lg">
                   <CheckCircle className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
                   <div>
-                    <p className="font-semibold text-foreground">Étape 3 : Créez votre compte</p>
+                    <p className="font-semibold text-foreground">Étape 3 : Venez-nous voir au stand 74 ou complétez le formulaire ci-joint</p>
                     <p className="text-sm text-muted-foreground">Inscrivez-vous gratuitement sur mariable.fr</p>
                     <Link 
                       to="/register" 
