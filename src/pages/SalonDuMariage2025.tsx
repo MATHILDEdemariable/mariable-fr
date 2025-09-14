@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Gift, Mic, Instagram, ExternalLink } from 'lucide-react';
+import { Gift, Mic, Instagram, ExternalLink, Crown } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 
@@ -53,7 +53,7 @@ const SalonDuMariage2025 = () => {
         </div>
 
         {/* Actions Cards */}
-        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {/* Jeu Concours Card */}
           <Card className="group hover:shadow-lg transition-all duration-300 border-2 hover:border-primary/20">
             <CardContent className="p-8">
@@ -104,6 +104,37 @@ const SalonDuMariage2025 = () => {
                 <Link to="/salon-du-mariage-2025/autorisation-micro-trottoir">
                   <Button variant="outline" className="w-full group-hover:scale-105 transition-transform">
                     Donner mon autorisation
+                  </Button>
+                </Link>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Premium Card */}
+          <Card className="group hover:shadow-lg transition-all duration-300 border-2 hover:border-primary/20 bg-gradient-to-br from-primary/5 to-primary/10">
+            <CardContent className="p-8">
+              <div className="text-center">
+                <div className="mb-6">
+                  <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Crown className="w-8 h-8 text-primary" />
+                  </div>
+                  <h2 className="text-2xl font-serif text-foreground mb-3">
+                    Passez à Premium
+                  </h2>
+                  <p className="text-lg font-semibold text-primary mb-2">
+                    ✨ Accès aux fonctionnalités avancées
+                  </p>
+                  <p className="text-muted-foreground mb-2">
+                    Débloquez toutes les fonctionnalités de coordination pour votre mariage
+                  </p>
+                  <p className="text-sm text-primary font-semibold mb-4">
+                    14,90€ - Accès vie entière
+                  </p>
+                </div>
+                
+                <Link to="/paiement">
+                  <Button variant="wedding" className="w-full group-hover:scale-105 transition-transform">
+                    Découvrir Premium
                   </Button>
                 </Link>
               </div>
