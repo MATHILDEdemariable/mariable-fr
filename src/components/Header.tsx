@@ -102,6 +102,12 @@ function Menus({ onClick, isLoggedIn }: { onClick?: () => void, isLoggedIn?: boo
             onClick={onClick}
           />
           <HeaderDropdownItem
+            label="Prix"
+            description="Découvrez nos tarifs et options premium"
+            to="/prix"
+            onClick={onClick}
+          />
+          <HeaderDropdownItem
             label="Nous contacter"
             description="Discutez avec notre équipe pour toutes vos questions"
             to="/contact"
