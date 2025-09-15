@@ -497,16 +497,13 @@ const PlanningPublic: React.FC = () => {
                                     </div>
                                   )}
                                   
-                                  {/* Badges et infos secondaires */}
-                                  <div className="flex flex-wrap items-center gap-1 md:gap-2 mt-2 text-xs">
-                                    <Badge variant="outline" className="text-xs px-2 py-0.5">
-                                      {task.duration} min
-                                    </Badge>
-                                    {task.priority !== 'medium' && (
-                                      <Badge className={`text-xs px-2 py-0.5 ${getPriorityColor(task.priority)}`}>
-                                        {task.priority === 'high' ? 'Élevée' : 'Faible'}
-                                      </Badge>
-                                    )}
+                                   {/* Badges et infos secondaires */}
+                                   <div className="flex flex-wrap items-center gap-1 md:gap-2 mt-2 text-xs">
+                                     {task.priority !== 'medium' && (
+                                       <Badge className={`text-xs px-2 py-0.5 ${getPriorityColor(task.priority)}`}>
+                                         {task.priority === 'high' ? 'Élevée' : 'Faible'}
+                                       </Badge>
+                                     )}
                                     <span className="text-gray-500 capitalize text-xs">{task.category}</span>
                                   </div>
                                 </div>

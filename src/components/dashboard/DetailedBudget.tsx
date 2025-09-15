@@ -410,6 +410,75 @@ const DetailedBudget: React.FC = () => {
     }
   };
 
+  // Export budget to CSV
+  const handleExportCSV = () => {
+    if (!categories.length) {
+      toast({
+        title: "Erreur",
+        description: "Aucune donnée de budget à exporter",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      // Créer les en-têtes CSV
+      const headers = ['Catégorie', 'Article', 'Estimé (€)', 'Réel (€)', 'Acompte (€)', 'Restant (€)', 'Note de paiement'];
+      
+      // Créer les lignes de données
+      const rows = categories.flatMap(category => 
+        category.items.map(item => [
+          category.name,
+          item.name || 'Article sans nom',
+          item.estimated.toString(),
+          item.actual.toString(),
+          item.deposit.toString(),
+          item.remaining.toString(),
+          item.payment_note || ''
+        ])
+      );
+
+      // Ajouter une ligne de total
+      rows.push([
+        'TOTAL',
+        '',
+        totalEstimated.toString(),
+        totalActual.toString(),
+        totalDeposit.toString(),
+        totalRemaining.toString(),
+        ''
+      ]);
+
+      // Convertir en CSV
+      const csvContent = [headers, ...rows]
+        .map(row => row.map(field => `"${field.toString().replace(/"/g, '""')}"`).join(','))
+        .join('\n');
+
+      // Créer et télécharger le fichier
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', `budget-detaille-${new Date().toISOString().split('T')[0]}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      toast({
+        title: "Export réussi",
+        description: "Le budget a été exporté en CSV"
+      });
+    } catch (error) {
+      console.error("Erreur lors de l'export CSV:", error);
+      toast({
+        title: "Erreur d'export",
+        description: "Une erreur s'est produite lors de l'export en CSV",
+        variant: "destructive"
+      });
+    }
+  };
+
   // Add a new item to a category
   const handleAddItem = (categoryIndex: number) => {
     const newCategories = [...categories];
@@ -547,8 +616,20 @@ const DetailedBudget: React.FC = () => {
             ) : (
               <span className="flex items-center">
                 <Download className="mr-2 h-4 w-4" />
-                Exporter en PDF
+                PDF
               </span>
+            )}
+          </Button>
+
+          <Button 
+            onClick={handleExportCSV}
+            variant="outline"
+            className="bg-blue-50 hover:bg-blue-100 text-blue-700"
+          >
+            <span className="flex items-center">
+              <Download className="mr-2 h-4 w-4" />
+              CSV
+            </span>
             )}
           </Button>
         </div>

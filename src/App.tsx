@@ -157,8 +157,9 @@ function App() {
                   <Route path="/professionnels" element={<Professionnels />} />
                   
                   <Route path="/contact/faq" element={<FAQ />} />
-                  <Route path="/checklist-mariage" element={<ChecklistMariage />} />
-                  <Route path="/to-do-list-mariage" element={<ToDoListMariage />} />
+                   <Route path="/checklist-mariage" element={<ChecklistMariage />} />
+                   <Route path="/checklist-public/:userId" element={<ChecklistPublic />} />
+                   <Route path="/to-do-list-mariage" element={<ToDoListMariage />} />
                   <Route path="/liste-preparatif-mariage" element={<ListePreparatifMariage />} />
                   <Route path="/accompagnement" element={<Accompagnement />} />
                   <Route path="/guidecoordinationjour-j" element={<LivreBlanc />} />
