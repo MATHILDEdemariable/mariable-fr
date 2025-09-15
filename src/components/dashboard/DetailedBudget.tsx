@@ -630,7 +630,6 @@ const DetailedBudget: React.FC = () => {
               <Download className="mr-2 h-4 w-4" />
               CSV
             </span>
-            )}
           </Button>
         </div>
       </CardHeader>

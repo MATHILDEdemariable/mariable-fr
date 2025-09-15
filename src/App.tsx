@@ -19,6 +19,7 @@ import UserDashboard from "./pages/dashboard/UserDashboard";
 import JourMVue from "./pages/JourMVue";
 import PlanningPublic from "./pages/PlanningPublic";
 import PlanningPublicProject from "./pages/PlanningPublicProject";
+import ChecklistPublic from "./pages/ChecklistPublic";
 import MonJourM from "./pages/MonJourM";
 import MonJourMPlanningPage from "./pages/MonJourMPlanning";
 import MonJourMEquipePage from "./pages/MonJourMEquipe";
