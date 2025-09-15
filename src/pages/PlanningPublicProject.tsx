@@ -408,13 +408,16 @@ const PlanningPublicProject: React.FC = () => {
                             
                             <div className="text-right">
                               {task.start_time && (
-                                <div className="text-sm font-medium mb-2">
-                                  {formatTime(task.start_time)}
-                                  {task.end_time && (
-                                    <span className="text-gray-500 ml-1">
-                                      - {formatTime(task.end_time)}
-                                    </span>
-                                  )}
+                                <div className="flex items-center justify-end gap-1 mb-2">
+                                  <Clock className="h-4 w-4 text-primary" />
+                                  <div className="text-base font-semibold text-primary bg-primary/10 px-2 py-1 rounded">
+                                    {formatTime(task.start_time)}
+                                    {task.end_time && (
+                                      <span className="text-primary/70 ml-1">
+                                        - {formatTime(task.end_time)}
+                                      </span>
+                                    )}
+                                  </div>
                                 </div>
                               )}
                               

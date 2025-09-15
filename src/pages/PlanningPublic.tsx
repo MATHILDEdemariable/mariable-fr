@@ -475,17 +475,20 @@ const PlanningPublic: React.FC = () => {
                                     {task.title}
                                   </h3>
                                   
-                                  {/* Heure sur mobile directement sous le titre */}
-                                  {task.start_time && (
-                                    <div className="text-xs md:text-sm font-medium text-primary mt-1 md:hidden">
-                                      {formatTime(task.start_time)}
-                                      {task.end_time && (
-                                        <span className="text-gray-500 ml-1">
-                                          - {formatTime(task.end_time)}
-                                        </span>
-                                      )}
-                                    </div>
-                                  )}
+                                   {/* Heure sur mobile directement sous le titre */}
+                                   {task.start_time && (
+                                     <div className="flex items-center gap-1 mt-1 md:hidden">
+                                       <Clock className="h-3 w-3 text-wedding-olive" />
+                                       <div className="text-sm font-semibold text-wedding-olive bg-wedding-olive/10 px-2 py-1 rounded">
+                                         {formatTime(task.start_time)}
+                                         {task.end_time && (
+                                           <span className="text-wedding-olive/70 ml-1">
+                                             - {formatTime(task.end_time)}
+                                           </span>
+                                         )}
+                                       </div>
+                                     </div>
+                                   )}
                                   
                                   {/* Description - cachée par défaut sur mobile */}
                                   {hasDescription && (
@@ -511,17 +514,20 @@ const PlanningPublic: React.FC = () => {
                               
                               {/* Partie droite : heure (desktop) et assignations */}
                               <div className="flex flex-col md:text-right gap-2">
-                                {/* Heure sur desktop */}
-                                {task.start_time && (
-                                  <div className="hidden md:block text-sm font-medium">
-                                    {formatTime(task.start_time)}
-                                    {task.end_time && (
-                                      <span className="text-gray-500 ml-1">
-                                        - {formatTime(task.end_time)}
-                                      </span>
-                                    )}
-                                  </div>
-                                )}
+                                 {/* Heure sur desktop */}
+                                 {task.start_time && (
+                                   <div className="hidden md:flex md:items-center md:justify-end md:gap-1">
+                                     <Clock className="h-4 w-4 text-wedding-olive" />
+                                     <div className="text-base font-semibold text-wedding-olive bg-wedding-olive/10 px-2 py-1 rounded">
+                                       {formatTime(task.start_time)}
+                                       {task.end_time && (
+                                         <span className="text-wedding-olive/70 ml-1">
+                                           - {formatTime(task.end_time)}
+                                         </span>
+                                       )}
+                                     </div>
+                                   </div>
+                                 )}
                                 
                                 {/* Membres assignés */}
                                 {task.assigned_to && Array.isArray(task.assigned_to) && task.assigned_to.length > 0 && (
