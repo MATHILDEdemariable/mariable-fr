@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Trash2, Calendar, CheckCircle2, Circle, Share2 } from 'lucide-react';
+import { Plus, Trash2, Calendar, CheckCircle2, Circle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import ChecklistMariageShareButton from './ChecklistMariageShareButton';
+import ChecklistMariageExportButton from './ChecklistMariageExportButton';
 
 interface ChecklistItem {
   id: string;
@@ -203,14 +203,14 @@ const ChecklistMariageManuelle: React.FC = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" data-export-checklist id="checklist-export-container">
       {/* Progress global */}
       <Card>
         <CardContent className="pt-6">
           <div className="flex justify-between items-center mb-2">
             <h3 className="text-lg font-semibold">Progression globale</h3>
             <div className="flex items-center gap-2">
-              <ChecklistMariageShareButton />
+              <ChecklistMariageExportButton />
               <span className="text-sm text-muted-foreground">
                 {items.filter(item => item.completed).length} / {items.length} tâches
               </span>
