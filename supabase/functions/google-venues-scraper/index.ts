@@ -230,7 +230,7 @@ async function processGoogleMapsUrl(urlRecord: any): Promise<boolean> {
     // Prepare venue data for insertion
     const venueData = {
       nom: placeDetails.name,
-      adresse: placeDetails.formatted_address || '',
+      description: placeDetails.formatted_address || '', // Store full address in description
       ville: city,
       region: region,
       categorie: urlRecord.categorie || 'Lieu de réception',
@@ -241,9 +241,7 @@ async function processGoogleMapsUrl(urlRecord: any): Promise<boolean> {
       site_web: placeDetails.website || null,
       google_place_id: placeDetails.place_id,
       source_inscription: 'google_api',
-      visible: false, // Hidden by default for review
-      date_inscription: new Date().toISOString(),
-      statut_moderation: 'en_attente'
+      visible: false // Hidden by default for review
     };
     
     // Insert into prestataires_rows
