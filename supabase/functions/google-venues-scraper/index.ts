@@ -7,24 +7,287 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Configuration des villes françaises avec coordonnées
-const FRENCH_CITIES = {
-  paris: { lat: 48.8566, lng: 2.3522, name: 'Paris' },
-  lyon: { lat: 45.7640, lng: 4.8357, name: 'Lyon' },
-  marseille: { lat: 43.2965, lng: 5.3698, name: 'Marseille' },
-  toulouse: { lat: 43.6047, lng: 1.4442, name: 'Toulouse' },
-  bordeaux: { lat: 44.8378, lng: -0.5792, name: 'Bordeaux' },
-  nantes: { lat: 47.2184, lng: -1.5536, name: 'Nantes' },
-  strasbourg: { lat: 48.5734, lng: 7.7521, name: 'Strasbourg' },
-  lille: { lat: 50.6292, lng: 3.0573, name: 'Lille' }
+// Initialize Supabase client
+const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+const googlePlacesApiKey = Deno.env.get('GOOGLE_PLACES_API_KEY')!;
+
+const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+// French regions mapping based on postal code first 2 digits
+const REGION_MAPPING: { [key: string]: string } = {
+  '01': 'Auvergne-Rhône-Alpes', '02': 'Hauts-de-France', '03': 'Auvergne-Rhône-Alpes',
+  '04': 'Provence-Alpes-Côte d\'Azur', '05': 'Provence-Alpes-Côte d\'Azur', '06': 'Provence-Alpes-Côte d\'Azur',
+  '07': 'Auvergne-Rhône-Alpes', '08': 'Grand Est', '09': 'Occitanie',
+  '10': 'Grand Est', '11': 'Occitanie', '12': 'Occitanie',
+  '13': 'Provence-Alpes-Côte d\'Azur', '14': 'Normandie', '15': 'Auvergne-Rhône-Alpes',
+  '16': 'Nouvelle-Aquitaine', '17': 'Nouvelle-Aquitaine', '18': 'Centre-Val de Loire',
+  '19': 'Nouvelle-Aquitaine', '20': 'Corse', '21': 'Bourgogne-Franche-Comté',
+  '22': 'Bretagne', '23': 'Nouvelle-Aquitaine', '24': 'Nouvelle-Aquitaine',
+  '25': 'Bourgogne-Franche-Comté', '26': 'Auvergne-Rhône-Alpes', '27': 'Normandie',
+  '28': 'Centre-Val de Loire', '29': 'Bretagne', '30': 'Occitanie',
+  '31': 'Occitanie', '32': 'Occitanie', '33': 'Nouvelle-Aquitaine',
+  '34': 'Occitanie', '35': 'Bretagne', '36': 'Centre-Val de Loire',
+  '37': 'Centre-Val de Loire', '38': 'Auvergne-Rhône-Alpes', '39': 'Bourgogne-Franche-Comté',
+  '40': 'Nouvelle-Aquitaine', '41': 'Centre-Val de Loire', '42': 'Auvergne-Rhône-Alpes',
+  '43': 'Auvergne-Rhône-Alpes', '44': 'Pays de la Loire', '45': 'Centre-Val de Loire',
+  '46': 'Occitanie', '47': 'Nouvelle-Aquitaine', '48': 'Occitanie',
+  '49': 'Pays de la Loire', '50': 'Normandie', '51': 'Grand Est',
+  '52': 'Grand Est', '53': 'Pays de la Loire', '54': 'Grand Est',
+  '55': 'Grand Est', '56': 'Bretagne', '57': 'Grand Est',
+  '58': 'Bourgogne-Franche-Comté', '59': 'Hauts-de-France', '60': 'Hauts-de-France',
+  '61': 'Normandie', '62': 'Hauts-de-France', '63': 'Auvergne-Rhône-Alpes',
+  '64': 'Nouvelle-Aquitaine', '65': 'Occitanie', '66': 'Occitanie',
+  '67': 'Grand Est', '68': 'Grand Est', '69': 'Auvergne-Rhône-Alpes',
+  '70': 'Bourgogne-Franche-Comté', '71': 'Bourgogne-Franche-Comté', '72': 'Pays de la Loire',
+  '73': 'Auvergne-Rhône-Alpes', '74': 'Auvergne-Rhône-Alpes', '75': 'Île-de-France',
+  '76': 'Normandie', '77': 'Île-de-France', '78': 'Île-de-France',
+  '79': 'Nouvelle-Aquitaine', '80': 'Hauts-de-France', '81': 'Occitanie',
+  '82': 'Occitanie', '83': 'Provence-Alpes-Côte d\'Azur', '84': 'Provence-Alpes-Côte d\'Azur',
+  '85': 'Pays de la Loire', '86': 'Nouvelle-Aquitaine', '87': 'Nouvelle-Aquitaine',
+  '88': 'Grand Est', '89': 'Bourgogne-Franche-Comté', '90': 'Bourgogne-Franche-Comté',
+  '91': 'Île-de-France', '92': 'Île-de-France', '93': 'Île-de-France',
+  '94': 'Île-de-France', '95': 'Île-de-France'
 };
 
-// Keywords français spécifiés
-const WEDDING_KEYWORDS = [
-  "salle de réception",
-  "espace événementiel", 
-  "lieu de mariage"
-];
+function extractVenueNameFromUrl(url: string): string | null {
+  try {
+    console.log(`🔍 Processing URL: ${url}`);
+    
+    // Handle various Google Maps URL formats
+    let venueName: string | null = null;
+    
+    // Format: /place/Venue+Name/
+    const placeMatch = url.match(/\/place\/([^\/\?]+)/);
+    if (placeMatch) {
+      venueName = decodeURIComponent(placeMatch[1]).replace(/\+/g, ' ');
+    }
+    
+    if (!venueName) {
+      console.log(`❌ Could not extract venue name from URL: ${url}`);
+      return null;
+    }
+    
+    console.log(`✅ Extracted venue name: "${venueName}"`);
+    return venueName;
+  } catch (error) {
+    console.error(`❌ Error parsing URL ${url}:`, error);
+    return null;
+  }
+}
+
+function extractCityAndRegionFromAddress(address: string): { city: string; region: string } {
+  try {
+    console.log(`📍 Parsing address: ${address}`);
+    
+    // Extract postal code and city from formatted_address
+    // Format typically: "Street, Postal Code City, Country"
+    const postalCodeMatch = address.match(/(\d{5})\s+([^,]+)/);
+    
+    if (postalCodeMatch) {
+      const postalCode = postalCodeMatch[1];
+      const city = postalCodeMatch[2].trim();
+      const regionCode = postalCode.substring(0, 2);
+      const region = REGION_MAPPING[regionCode] || 'Région inconnue';
+      
+      console.log(`✅ Parsed: City="${city}", PostalCode="${postalCode}", Region="${region}"`);
+      return { city, region };
+    }
+    
+    // Fallback: try to extract city from last part before country
+    const parts = address.split(',').map(part => part.trim());
+    if (parts.length >= 2) {
+      const cityPart = parts[parts.length - 2];
+      const postalMatch = cityPart.match(/\d{5}/);
+      if (postalMatch) {
+        const region = REGION_MAPPING[postalMatch[0].substring(0, 2)] || 'Région inconnue';
+        return { city: cityPart.replace(/\d{5}\s*/, ''), region };
+      }
+    }
+    
+    console.log(`⚠️ Could not parse city/region from address: ${address}`);
+    return { city: 'Ville inconnue', region: 'Région inconnue' };
+  } catch (error) {
+    console.error(`❌ Error parsing address ${address}:`, error);
+    return { city: 'Ville inconnue', region: 'Région inconnue' };
+  }
+}
+
+async function findPlaceFromText(venueName: string): Promise<string | null> {
+  try {
+    console.log(`🔍 Searching Google Places for: "${venueName}"`);
+    
+    const findPlaceUrl = `https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${encodeURIComponent(venueName)}&inputtype=textquery&fields=place_id,name&key=${googlePlacesApiKey}`;
+    
+    const response = await fetch(findPlaceUrl);
+    const data = await response.json();
+    
+    if (data.status === 'OK' && data.candidates && data.candidates.length > 0) {
+      const placeId = data.candidates[0].place_id;
+      console.log(`✅ Found place_id: ${placeId}`);
+      return placeId;
+    }
+    
+    console.log(`⚠️ No place found for: "${venueName}"`);
+    return null;
+  } catch (error) {
+    console.error(`❌ Error finding place for "${venueName}":`, error);
+    return null;
+  }
+}
+
+async function getPlaceDetails(placeId: string): Promise<any | null> {
+  try {
+    console.log(`📋 Fetching details for place_id: ${placeId}`);
+    
+    const detailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=place_id,name,formatted_address,geometry,rating,user_ratings_total,website&key=${googlePlacesApiKey}`;
+    
+    const response = await fetch(detailsUrl);
+    const data = await response.json();
+    
+    if (data.status === 'OK' && data.result) {
+      console.log(`✅ Retrieved details for: ${data.result.name}`);
+      return data.result;
+    }
+    
+    console.log(`⚠️ No details found for place_id: ${placeId}`);
+    return null;
+  } catch (error) {
+    console.error(`❌ Error getting place details for ${placeId}:`, error);
+    return null;
+  }
+}
+
+async function processGoogleMapsUrl(urlRecord: any): Promise<boolean> {
+  try {
+    console.log(`\n🚀 Processing URL record: ${urlRecord.id}`);
+    
+    // Extract venue name from URL
+    const venueName = extractVenueNameFromUrl(urlRecord.url);
+    if (!venueName) {
+      await supabase
+        .from('google_maps_urls')
+        .update({
+          status: 'error',
+          error_message: 'Impossible d\'extraire le nom du lieu depuis l\'URL',
+          processed_at: new Date().toISOString()
+        })
+        .eq('id', urlRecord.id);
+      return false;
+    }
+    
+    // Find place using Google Places Find Place From Text
+    const placeId = await findPlaceFromText(venueName);
+    if (!placeId) {
+      await supabase
+        .from('google_maps_urls')
+        .update({
+          status: 'error',
+          error_message: 'Lieu introuvable via l\'API Google Places',
+          processed_at: new Date().toISOString()
+        })
+        .eq('id', urlRecord.id);
+      return false;
+    }
+    
+    // Get detailed information
+    const placeDetails = await getPlaceDetails(placeId);
+    if (!placeDetails) {
+      await supabase
+        .from('google_maps_urls')
+        .update({
+          status: 'error',
+          error_message: 'Impossible de récupérer les détails du lieu',
+          processed_at: new Date().toISOString()
+        })
+        .eq('id', urlRecord.id);
+      return false;
+    }
+    
+    // Check if venue already exists
+    const { data: existingVenue } = await supabase
+      .from('prestataires_rows')
+      .select('id')
+      .eq('google_place_id', placeDetails.place_id)
+      .single();
+    
+    if (existingVenue) {
+      console.log(`⚠️ Venue already exists: ${placeDetails.name}`);
+      await supabase
+        .from('google_maps_urls')
+        .update({
+          status: 'error',
+          error_message: 'Ce lieu existe déjà dans la base de données',
+          processed_at: new Date().toISOString()
+        })
+        .eq('id', urlRecord.id);
+      return false;
+    }
+    
+    // Parse city and region from address
+    const { city, region } = extractCityAndRegionFromAddress(placeDetails.formatted_address || '');
+    
+    // Prepare venue data for insertion
+    const venueData = {
+      nom: placeDetails.name,
+      adresse: placeDetails.formatted_address || '',
+      ville: city,
+      region: region,
+      categorie: urlRecord.categorie || 'Lieu de réception',
+      google_rating: placeDetails.rating || null,
+      google_reviews_count: placeDetails.user_ratings_total || null,
+      latitude: placeDetails.geometry?.location?.lat || null,
+      longitude: placeDetails.geometry?.location?.lng || null,
+      site_web: placeDetails.website || null,
+      google_place_id: placeDetails.place_id,
+      source_inscription: 'google_api',
+      visible: false, // Hidden by default for review
+      date_inscription: new Date().toISOString(),
+      statut_moderation: 'en_attente'
+    };
+    
+    // Insert into prestataires_rows
+    const { error: insertError } = await supabase
+      .from('prestataires_rows')
+      .insert([venueData]);
+    
+    if (insertError) {
+      console.error(`❌ Error inserting venue:`, insertError);
+      await supabase
+        .from('google_maps_urls')
+        .update({
+          status: 'error',
+          error_message: `Erreur lors de l'insertion: ${insertError.message}`,
+          processed_at: new Date().toISOString()
+        })
+        .eq('id', urlRecord.id);
+      return false;
+    }
+    
+    // Mark URL as processed
+    await supabase
+      .from('google_maps_urls')
+      .update({
+        status: 'processed',
+        processed_at: new Date().toISOString()
+      })
+      .eq('id', urlRecord.id);
+    
+    console.log(`✅ Successfully processed: ${placeDetails.name} (${placeDetails.rating}⭐)`);
+    return true;
+  } catch (error) {
+    console.error(`❌ Error processing URL record:`, error);
+    await supabase
+      .from('google_maps_urls')
+      .update({
+        status: 'error',
+        error_message: `Erreur technique: ${error.message}`,
+        processed_at: new Date().toISOString()
+      })
+      .eq('id', urlRecord.id);
+    return false;
+  }
+}
 
 serve(async (req) => {
   // Handle CORS preflight requests
@@ -33,196 +296,79 @@ serve(async (req) => {
   }
 
   try {
-    console.log('🚀 Starting Google Places scraper...');
+    console.log('🚀 Starting Google Maps URL processor...');
     
-    const { city = 'paris', testMode = true } = await req.json();
-    
-    // Initialiser Supabase client
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const googleApiKey = Deno.env.get('GOOGLE_PLACES_API_KEY');
-    
-    if (!googleApiKey) {
+    if (!googlePlacesApiKey) {
       throw new Error('Google Places API key not configured');
     }
     
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
     console.log('✅ Supabase client initialized');
     
-    const cityConfig = FRENCH_CITIES[city as keyof typeof FRENCH_CITIES];
-    if (!cityConfig) {
-      throw new Error(`City "${city}" not supported`);
+    // Fetch pending URLs from the database
+    const { data: pendingUrls, error: fetchError } = await supabase
+      .from('google_maps_urls')
+      .select('*')
+      .eq('status', 'pending')
+      .order('created_at', { ascending: true })
+      .limit(20); // Process max 20 at a time to avoid rate limits
+    
+    if (fetchError) {
+      throw new Error(`Error fetching URLs: ${fetchError.message}`);
     }
     
-    console.log(`🎯 Scanning ${cityConfig.name} for wedding venues...`);
-    
-    let totalInserted = 0;
-    let totalFound = 0;
-    const results = [];
-    
-    // Scanner chaque keyword
-    for (const keyword of WEDDING_KEYWORDS) {
-      console.log(`🔍 Searching for: "${keyword}" in ${cityConfig.name}`);
-      
-      // Google Places API - Nearby Search
-      const placesUrl = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?` +
-        `location=${cityConfig.lat},${cityConfig.lng}&` +
-        `radius=100000&` + // 100km en mètres
-        `type=restaurant|event_planning&` +
-        `keyword=${encodeURIComponent(keyword)}&` +
-        `key=${googleApiKey}`;
-      
-      const placesResponse = await fetch(placesUrl);
-      const placesData = await placesResponse.json();
-      
-      if (placesData.status !== 'OK' && placesData.status !== 'ZERO_RESULTS') {
-        console.error('❌ Google Places API error:', placesData.status, placesData.error_message);
-        continue;
-      }
-      
-      console.log(`📍 Found ${placesData.results?.length || 0} places for "${keyword}"`);
-      
-      if (!placesData.results || placesData.results.length === 0) {
-        continue;
-      }
-      
-      // Filtrer par rating >= 4.5
-      const highRatedVenues = placesData.results.filter((place: any) => 
-        place.rating && place.rating >= 4.5
+    if (!pendingUrls || pendingUrls.length === 0) {
+      console.log('📭 No pending URLs to process');
+      return new Response(
+        JSON.stringify({ 
+          success: true, 
+          message: 'No pending URLs to process',
+          processed: 0 
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
-      
-      console.log(`⭐ ${highRatedVenues.length} venues with rating >= 4.5`);
-      totalFound += highRatedVenues.length;
-      
-      // Traitement de chaque venue
-      for (const place of highRatedVenues) {
-        try {
-          // Vérifier si le lieu existe déjà
-          const { data: existingVenue } = await supabase
-            .from('prestataires_rows')
-            .select('id')
-            .eq('google_place_id', place.place_id)
-            .single();
-          
-          if (existingVenue) {
-            console.log(`⚠️ Venue already exists: ${place.name}`);
-            continue;
-          }
-          
-          // Récupérer les détails et photos
-          let photoUrl = null;
-          if (place.photos && place.photos.length > 0) {
-            const photoReference = place.photos[0].photo_reference;
-            photoUrl = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=800&photoreference=${photoReference}&key=${googleApiKey}`;
-          }
-          
-          // Préparer les données pour insertion
-          const venueData = {
-            nom: place.name,
-            ville: place.vicinity || cityConfig.name,
-            region: getRegionFromCity(city),
-            categorie: 'Lieu de réception',
-            description: `${keyword} trouvé via Google Places`,
-            google_rating: place.rating,
-            google_place_id: place.place_id,
-            latitude: place.geometry?.location?.lat,
-            longitude: place.geometry?.location?.lng,
-            source_inscription: 'google_api',
-            visible: false, // Nécessite validation manuelle
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
-          };
-          
-          // Insérer en base
-          const { data: insertedVenue, error: insertError } = await supabase
-            .from('prestataires_rows')
-            .insert(venueData)
-            .select('id, nom')
-            .single();
-          
-          if (insertError) {
-            console.error('❌ Insert error for', place.name, ':', insertError);
-            continue;
-          }
-          
-          // Ajouter la photo si disponible
-          if (photoUrl && insertedVenue) {
-            const { error: photoError } = await supabase
-              .from('prestataires_photos_preprod')
-              .insert({
-                prestataire_id: insertedVenue.id,
-                url: photoUrl,
-                principale: true,
-                ordre: 1,
-                created_at: new Date().toISOString()
-              });
-            
-            if (photoError) {
-              console.error('⚠️ Photo insert error:', photoError);
-            }
-          }
-          
-          console.log(`✅ Inserted: ${place.name} (${place.rating}⭐)`);
-          totalInserted++;
-          
-          results.push({
-            name: place.name,
-            rating: place.rating,
-            address: place.vicinity,
-            place_id: place.place_id,
-            photo: !!photoUrl
-          });
-          
-          // Limite pour le test
-          if (testMode && totalInserted >= 10) {
-            console.log('🚦 Test mode: stopping at 10 venues');
-            break;
-          }
-          
-        } catch (venueError) {
-          console.error('❌ Error processing venue:', place.name, venueError);
-        }
-      }
-      
-      if (testMode && totalInserted >= 10) break;
     }
     
-    console.log(`🎉 Scraping completed! Found: ${totalFound}, Inserted: ${totalInserted}`);
+    console.log(`📋 Found ${pendingUrls.length} URLs to process`);
     
-    return new Response(JSON.stringify({
-      success: true,
-      city: cityConfig.name,
-      totalFound,
-      totalInserted,
-      results: results.slice(0, 5) // Afficher les 5 premiers
-    }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    let successCount = 0;
+    let errorCount = 0;
+    
+    // Process each URL
+    for (const urlRecord of pendingUrls) {
+      const success = await processGoogleMapsUrl(urlRecord);
+      if (success) {
+        successCount++;
+      } else {
+        errorCount++;
+      }
+      
+      // Add a small delay to avoid hitting rate limits
+      await new Promise(resolve => setTimeout(resolve, 500));
+    }
+    
+    console.log(`🎉 Processing completed! Success: ${successCount}, Errors: ${errorCount}`);
+    
+    return new Response(
+      JSON.stringify({
+        success: true,
+        processed: pendingUrls.length,
+        success_count: successCount,
+        error_count: errorCount
+      }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
     
   } catch (error) {
-    console.error('❌ Error in google-venues-scraper:', error);
-    return new Response(JSON.stringify({ 
-      error: error.message,
-      success: false 
-    }), {
-      status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    console.error('❌ Error in google-venues-scraper function:', error);
+    return new Response(
+      JSON.stringify({ 
+        success: false, 
+        error: error.message 
+      }),
+      { 
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+      }
+    );
   }
 });
-
-// Helper pour déterminer la région depuis la ville
-function getRegionFromCity(city: string): string {
-  const cityRegions: Record<string, string> = {
-    paris: 'Île-de-France',
-    lyon: 'Auvergne-Rhône-Alpes',
-    marseille: 'Provence-Alpes-Côte d\'Azur',
-    toulouse: 'Occitanie',
-    bordeaux: 'Nouvelle-Aquitaine',
-    nantes: 'Pays de la Loire',
-    strasbourg: 'Grand Est',
-    lille: 'Hauts-de-France'
-  };
-  
-  return cityRegions[city] || 'France entière';
-}

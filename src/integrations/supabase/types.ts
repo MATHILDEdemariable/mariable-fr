@@ -787,6 +787,36 @@ export type Database = {
           },
         ]
       }
+      google_maps_urls: {
+        Row: {
+          categorie: string
+          created_at: string
+          error_message: string | null
+          id: string
+          processed_at: string | null
+          status: string
+          url: string
+        }
+        Insert: {
+          categorie?: string
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          processed_at?: string | null
+          status?: string
+          url: string
+        }
+        Update: {
+          categorie?: string
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          processed_at?: string | null
+          status?: string
+          url?: string
+        }
+        Relationships: []
+      }
       jeunes_maries: {
         Row: {
           accept_email_contact: boolean | null
