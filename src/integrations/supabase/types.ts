@@ -322,6 +322,42 @@ export type Database = {
         }
         Relationships: []
       }
+      carnet_adresses_requests: {
+        Row: {
+          budget_approximatif: string | null
+          created_at: string
+          date_mariage: string | null
+          email: string
+          id: string
+          nombre_invites: string | null
+          region: string | null
+          style_recherche: string | null
+          updated_at: string
+        }
+        Insert: {
+          budget_approximatif?: string | null
+          created_at?: string
+          date_mariage?: string | null
+          email: string
+          id?: string
+          nombre_invites?: string | null
+          region?: string | null
+          style_recherche?: string | null
+          updated_at?: string
+        }
+        Update: {
+          budget_approximatif?: string | null
+          created_at?: string
+          date_mariage?: string | null
+          email?: string
+          id?: string
+          nombre_invites?: string | null
+          region?: string | null
+          style_recherche?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       checklist_mariage_manuel: {
         Row: {
           category: string

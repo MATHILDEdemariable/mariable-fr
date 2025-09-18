@@ -18,7 +18,10 @@ import {
   Sparkles,
   FileText,
   Phone,
-  MapPin
+  MapPin,
+  Target,
+  DollarSign,
+  Settings
 } from 'lucide-react';
 
 const CoordinationJourJ: React.FC = () => {
@@ -178,6 +181,67 @@ const CoordinationJourJ: React.FC = () => {
       <Header />
 
       <main className="min-h-screen bg-gradient-to-b from-white to-wedding-cream/20">
+        {/* Differentiation Section */}
+        <section className="py-16 md:py-20 bg-white">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-12">
+              <h2 style={{
+                fontFamily: 'Playfair Display, serif'
+              }} className="text-3xl md:text-4xl font-serif text-black mb-4 max-w-4xl mx-auto">
+                La première appli de coordination jour-J
+                <span className="block text-lg font-normal text-wedding-olive mt-2">
+                  sans téléchargement - directement en ligne
+                </span>
+              </h2>
+              <p className="text-lg text-gray-700 mb-8 max-w-3xl mx-auto italic">
+                Mariable, c'est la solution innovante qui vous permet de gérer la journée du mariage avec vos proches et prestataires.
+              </p>
+              
+              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 text-left mb-12">
+                <div className="flex items-start gap-3">
+                  <Clock className="w-8 h-8 text-wedding-olive flex-shrink-0 mt-1" />
+                  <div>
+                    <h3 className="font-medium mb-2">Plus rapide</h3>
+                    <p className="text-gray-700 text-sm">
+                      Planifiez votre Jour J en quelques clics grâce à un outil intuitif qui centralise toutes les infos utiles.
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start gap-3">
+                  <Target className="w-8 h-8 text-wedding-olive flex-shrink-0 mt-1" />
+                  <div>
+                    <h3 className="font-medium mb-2">Plus simple</h3>
+                    <p className="text-gray-700 text-sm">
+                      Partagez l'organisation avec vos proches & prestataires, consultable à tout moment depuis leur téléphone.
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start gap-3">
+                  <DollarSign className="w-8 h-8 text-wedding-olive flex-shrink-0 mt-1" />
+                  <div>
+                    <h3 className="font-medium mb-2">Moins cher</h3>
+                    <p className="text-gray-700 text-sm">
+                      Une solution accessible, bien plus économique qu'un wedding planner ou qu'un modèle générique en ligne.
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start gap-3">
+                  <Settings className="w-8 h-8 text-wedding-olive flex-shrink-0 mt-1" />
+                  <div>
+                    <h3 className="font-medium mb-2">100% personnalisable</h3>
+                    <p className="text-gray-700 text-sm">
+                      Grâce à l'IA, Mariable s'adapte à votre mariage, vos envies et vos contraintes.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Hero Section */}
         <section className="pt-24 pb-12 px-4">
           <div className="container mx-auto max-w-6xl">

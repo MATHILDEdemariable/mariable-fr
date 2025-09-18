@@ -41,6 +41,7 @@ import MonJourMConseils from "./pages/MonJourMConseils";
 import MonJourMPenseBete from "./pages/MonJourMPenseBete";
 import OutilsPlanningMariage from "./pages/OutilsPlanningMariage";
 import CoordinationJourJ from "./pages/CoordinationJourJ";
+import LandingJourJ from "./pages/LandingJourJ";
 import MariageProvence from "./pages/MariageProvence";
 import MariageParis from "./pages/MariageParis";
 import MariageAuvergneRhoneAlpes from "./pages/MariageAuvergneRhoneAlpes";
@@ -115,7 +116,8 @@ function App() {
                    
                    {/* Nouvelles pages outils */}
           <Route path="/outils-planning-mariage" element={<OutilsPlanningMariage />} />
-          <Route path="/coordination-jour-j" element={<CoordinationJourJ />} />
+                    <Route path="/coordination-jour-j" element={<CoordinationJourJ />} />
+                    <Route path="/landingjourj" element={<LandingJourJ />} />
           
           {/* Pages régionales */}
           <Route path="/mariage-provence" element={<MariageProvence />} />
