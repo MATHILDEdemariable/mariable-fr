@@ -7,12 +7,12 @@ const HeroSection = () => {
   return <VideoBackground videoUrl="https://bgidfcqktsttzlwlumtz.supabase.co/storage/v1/object/public/background-videos//freepik__wideangle-shot-a-joyful-couple-dances-at-their-wed__74093%20(1).mp4" className="h-[65vh] flex items-center justify-center">
       <div className="absolute inset-0 flex items-center justify-center px-4">
         <div className="text-center max-w-7xl mx-auto px-8">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-3 md:mb-4 animate-fade-in leading-tight">
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-3 md:mb-4 animate-fade-in leading-tight lg:text-3xl">
             Le plus beau jour de votre vie.<br />
             Sans charge mentale.
           </h1>
           
-          <h2 className="text-base md:text-xl text-white/90 mb-6 md:mb-8 max-w-2xl mx-auto animate-fade-in">Faites de votre mariage une expérience exceptionnelle</h2>
+          <h2 className="text-base text-white/90 mb-6 md:mb-8 max-w-2xl mx-auto animate-fade-in md:text-base">Faites de votre mariage une expérience exceptionnelle</h2>
           
           <Button size="lg" className="bg-wedding-olive hover:bg-wedding-olive/90 text-white shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 w-full md:w-auto" onClick={() => {
           const threeStepsSection = document.querySelector('#three-steps-section');
