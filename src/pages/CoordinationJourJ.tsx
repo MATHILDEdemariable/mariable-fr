@@ -247,6 +247,59 @@ const CoordinationJourJ: React.FC = () => {
           </div>
         </section>
 
+        {/* How it works */}
+        <section className="py-12 md:py-16 bg-gray-50 animate-fade-in">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-12">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif text-black mb-6">
+                Comment ça marche ?
+              </h2>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 max-w-6xl mx-auto mb-8">
+              <div className="text-center">
+                <div className="bg-wedding-olive text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
+                <h3 className="font-medium mb-2">Créez votre équipe</h3>
+                <p className="text-gray-700 text-sm">proches & prestataires</p>
+              </div>
+              
+              <div className="text-center">
+                <div className="bg-wedding-olive text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
+                <h3 className="font-medium mb-2">Générez votre déroulé</h3>
+                <p className="text-gray-700 text-sm">du Jour J</p>
+              </div>
+              
+              <div className="text-center">
+                <div className="bg-wedding-olive text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
+                <h3 className="font-medium mb-2">Assignez des tâches</h3>
+                <p className="text-gray-700 text-sm">à chaque membre</p>
+              </div>
+              
+              <div className="text-center">
+                <div className="bg-wedding-olive text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">4</div>
+                <h3 className="font-medium mb-2">Ajoutez vos documents</h3>
+                <p className="text-gray-700 text-sm">plan de table, moodboard, etc.</p>
+              </div>
+              
+              <div className="text-center">
+                <div className="bg-wedding-olive text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">5</div>
+                <h3 className="font-medium mb-2">Partagez le tout</h3>
+                <p className="text-gray-700 text-sm">via un simple lien</p>
+              </div>
+            </div>
+
+            <div className="text-center mb-8">
+              <Button onClick={() => navigate('/reservation-jour-m')} size="lg" className="bg-wedding-olive hover:bg-wedding-olive/90 text-white">
+                Voir la démo
+              </Button>
+            </div>
+
+            <p className="text-center text-lg italic text-gray-700 max-w-3xl mx-auto">
+              Mariable, c'est l'outil unique qui permet à vos proches et prestataires de gérer le Jour J avec ou sans vous :-)
+            </p>
+          </div>
+        </section>
+
         {/* Testimonials Section */}
         <section className="py-12 px-4 bg-wedding-olive/5">
           <div className="container mx-auto max-w-4xl">
@@ -269,47 +322,6 @@ const CoordinationJourJ: React.FC = () => {
                     </div>
                   </CardContent>
                 </Card>)}
-            </div>
-          </div>
-        </section>
-
-        {/* How it works */}
-        <section className="py-12 px-4 bg-white">
-          <div className="container mx-auto max-w-6xl">
-            <h2 className="text-2xl md:text-3xl font-serif text-center mb-12 text-wedding-black">
-              Comment ça marche ?
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              {[{
-              step: 1,
-              title: 'Coordonner votre jour J en autonomie',
-              description: 'Créez votre planning détaillé avec nos outils',
-              icon: <Calendar className="h-6 w-6" />
-            }, {
-              step: 2,
-              title: 'Partager les informations à votre équipe',
-              description: 'Tous vos prestataires ont accès au planning',
-              icon: <Users className="h-6 w-6" />
-            }, {
-              step: 3,
-              title: 'Demander la présence d\'un.e coordinateur.rice mariable (optionnel)',
-              description: 'Assistance sur site pour votre tranquillité',
-              icon: <Shield className="h-6 w-6" />
-            }, {
-              step: 4,
-              title: 'Jour parfait',
-              description: 'Profitez pleinement de votre mariage',
-              icon: <Sparkles className="h-6 w-6" />
-            }].map(step => <div key={step.step} className="text-center">
-                  <div className="bg-wedding-olive/10 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                    <div className="text-wedding-olive">{step.icon}</div>
-                  </div>
-                  <div className="bg-wedding-olive text-white rounded-full w-8 h-8 flex items-center justify-center mx-auto mb-3 text-sm font-medium">
-                    {step.step}
-                  </div>
-                  <h3 className="font-serif text-lg mb-2 text-wedding-black">{step.title}</h3>
-                  <p className="text-sm text-muted-foreground">{step.description}</p>
-                </div>)}
             </div>
           </div>
         </section>
