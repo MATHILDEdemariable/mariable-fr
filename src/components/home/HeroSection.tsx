@@ -22,7 +22,7 @@ const HeroSection = () => {
             });
           }
         }}>
-            Arrivez à votre mariage comme un invité <ArrowRight className="ml-2 h-5 w-5" />
+            Découvrir Mariable <ArrowRight className="ml-2 h-5 w-5" />
           </Button>
         </div>
       </div>
