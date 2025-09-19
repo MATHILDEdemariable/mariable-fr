@@ -233,8 +233,16 @@ const CoordinationJourJ: React.FC = () => {
             <h2 className="text-2xl md:text-3xl font-serif text-center mb-8 text-wedding-black">
               Découvrez Mon Jour J en action
             </h2>
-            <div className="bg-gray-100 rounded-lg p-4 aspect-video">
+            <div className="bg-gray-100 rounded-lg p-4 aspect-video mb-8">
               <iframe src="https://www.loom.com/embed/a0d0d52de99d4af59d67604f01c8af14?sid=a3c17f33-22ba-42a2-a046-8c73a657565f" frameBorder="0" allowFullScreen className="w-full h-full rounded-lg" title="Démonstration Mon Jour J"></iframe>
+            </div>
+            <div className="text-center">
+              <Button 
+                onClick={() => navigate('/dashboard')} 
+                className="bg-wedding-olive text-white hover:bg-wedding-olive/90 px-8 py-3"
+              >
+                Planifier votre jour-J
+              </Button>
             </div>
           </div>
         </section>
