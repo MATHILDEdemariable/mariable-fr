@@ -141,26 +141,6 @@ const PrestataireContent = () => {
         </li>
       </ul>
       
-      {/* Section Carnet d'adresses exclusif */}
-      <div className="mt-8 py-6 px-6 bg-wedding-gold/10 rounded-lg border border-wedding-gold/20">
-        <h3 className="text-xl font-serif mb-3 text-wedding-olive">Vous n'avez pas trouvé votre bonheur ?</h3>
-        <p className="mb-4 text-muted-foreground">
-          <strong>Recevez notre carnet d'adresses exclusif sous 24H</strong> avec une sélection premium de prestataires 
-          vérifiés selon votre région, votre style et votre budget.
-        </p>
-        <Button 
-          className="bg-wedding-gold hover:bg-wedding-gold/90 text-white"
-          onClick={() => {
-            // Trigger the CarnetAdressesModal - you may need to import and add state for this
-            const event = new CustomEvent('openCarnetModal');
-            window.dispatchEvent(event);
-          }}
-        >
-          <BookOpen className="mr-2 h-4 w-4" />
-          Recevoir le carnet exclusif
-        </Button>
-      </div>
-
       <div className="mt-8 py-6 px-6 bg-wedding-cream/20 rounded-lg border border-wedding-olive/10">
         <h3 className="text-xl font-serif mb-3">Commencez votre recherche de prestataires</h3>
         <p className="mb-4">
