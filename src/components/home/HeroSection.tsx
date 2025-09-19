@@ -6,7 +6,7 @@ import VideoBackground from '@/components/VideoBackground';
 const HeroSection = () => {
   return <VideoBackground videoUrl="https://bgidfcqktsttzlwlumtz.supabase.co/storage/v1/object/public/background-videos//freepik__wideangle-shot-a-joyful-couple-dances-at-their-wed__74093%20(1).mp4" className="h-[65vh] flex items-center justify-center">
       <div className="absolute inset-0 flex items-center justify-center px-4">
-        <div className="text-center max-w-6xl mx-auto">
+        <div className="text-center max-w-7xl mx-auto px-8">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-3 md:mb-4 animate-fade-in leading-tight">
             Le plus beau jour de votre vie.<br />
             Sans charge mentale.
