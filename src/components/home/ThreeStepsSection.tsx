@@ -10,27 +10,27 @@ const ThreeStepsSection = () => {
 
   return (
     <>
-      <section className="py-16 md:py-20 bg-gray-50">
+      <section id="three-steps-section" className="py-16 md:py-20 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-serif text-black mb-4">
-              3 étapes pour un mariage réussi
+              Faites de votre mariage une expérience exceptionnelle
             </h2>
             <p className="text-lg text-gray-700 max-w-3xl mx-auto">
-              Notre approche moderne et technologique pour organiser votre mariage parfait
+              grâce à Mariable et 3 étapes clés
             </p>
           </div>
 
           <div className="grid lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
-            {/* CARD 1 - Préparation */}
+            {/* CARD 1 - Réserver */}
             <Card className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-2 bg-white border-0 shadow-lg">
-              <CardContent className="p-8">
-                <div className="mb-6">
+              <CardContent className="p-8 flex flex-col h-full min-h-[400px]">
+                <div className="flex-grow">
                   <h2 className="text-2xl md:text-3xl font-bold text-black mb-4">
-                    1. Préparation
+                    Réserver
                   </h2>
                   <h3 className="text-xl font-semibold mb-6 text-gray-800">
-                    Recevez notre carnet d'adresses exclusif
+                    les meilleurs lieux & prestataires
                   </h3>
                   
                   <ul className="space-y-3 mb-6">
@@ -51,22 +51,22 @@ const ThreeStepsSection = () => {
                 
                 <Button 
                   onClick={() => setIsCarnetModalOpen(true)}
-                  className="w-full bg-wedding-olive hover:bg-wedding-olive/90 text-white group-hover:scale-105 transition-all"
+                  className="w-full bg-wedding-olive hover:bg-wedding-olive/90 text-white group-hover:scale-105 transition-all mt-auto"
                 >
                   Recevoir le carnet
                 </Button>
               </CardContent>
             </Card>
 
-            {/* CARD 2 - Organisation */}
+            {/* CARD 2 - Organiser */}
             <Card className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-2 bg-white border-0 shadow-lg">
-              <CardContent className="p-8">
-                <div className="mb-6">
+              <CardContent className="p-8 flex flex-col h-full min-h-[400px]">
+                <div className="flex-grow">
                   <h2 className="text-2xl md:text-3xl font-bold text-black mb-4">
-                    2. Organisation
+                    Organiser
                   </h2>
                   <h3 className="text-xl font-semibold mb-6 text-gray-800">
-                    Accédez à nos outils gratuits
+                    avec nos outils gratuits
                   </h3>
                   
                   <ul className="space-y-3 mb-6">
@@ -89,7 +89,7 @@ const ThreeStepsSection = () => {
                   </ul>
                 </div>
                 
-                <Button asChild className="w-full bg-wedding-olive hover:bg-wedding-olive/90 text-white group-hover:scale-105 transition-all">
+                <Button asChild className="w-full bg-wedding-olive hover:bg-wedding-olive/90 text-white group-hover:scale-105 transition-all mt-auto">
                   <Link to="/register">
                     Créer mon compte gratuit
                   </Link>
@@ -97,15 +97,15 @@ const ThreeStepsSection = () => {
               </CardContent>
             </Card>
 
-            {/* CARD 3 - Jour J */}
+            {/* CARD 3 - Coordonner le jour J */}
             <Card className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-2 bg-white border-0 shadow-lg">
-              <CardContent className="p-8">
-                <div className="mb-6">
+              <CardContent className="p-8 flex flex-col h-full min-h-[400px]">
+                <div className="flex-grow">
                   <h2 className="text-2xl md:text-3xl font-bold text-black mb-4">
-                    3. Jour J
+                    Coordonner le jour J
                   </h2>
                   <h3 className="text-xl font-semibold mb-6 text-gray-800">
-                    Coordonnez votre jour J grâce à notre app révolutionnaire
+                    avec une appli.
                   </h3>
                   
                   <ul className="space-y-3 mb-6">
@@ -128,7 +128,7 @@ const ThreeStepsSection = () => {
                   </ul>
                 </div>
                 
-                <Button asChild className="w-full bg-wedding-olive hover:bg-wedding-olive/90 text-white group-hover:scale-105 transition-all">
+                <Button asChild className="w-full bg-wedding-olive hover:bg-wedding-olive/90 text-white group-hover:scale-105 transition-all mt-auto">
                   <Link to="/coordination-jour-j">
                     Découvrir l'app Jour J
                   </Link>
