@@ -7,7 +7,7 @@ const HeroSection = () => {
   return <VideoBackground videoUrl="https://bgidfcqktsttzlwlumtz.supabase.co/storage/v1/object/public/background-videos//freepik__wideangle-shot-a-joyful-couple-dances-at-their-wed__74093%20(1).mp4" className="h-[65vh] flex items-center justify-center">
       <div className="absolute inset-0 flex items-center justify-center px-4">
         <div className="text-center max-w-4xl mx-auto">
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-serif text-white mb-3 md:mb-4 animate-fade-in max-w-6xl mx-auto leading-tight">
+          <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-3 md:mb-4 animate-fade-in max-w-6xl mx-auto leading-tight">
             Le plus beau jour de votre vie.<br />
             Sans charge mentale.
           </h1>

@@ -26,43 +26,27 @@ const ThreeStepsSection = () => {
             <Card className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-2 bg-white border-0 shadow-lg">
               <CardContent className="p-8">
                 <div className="mb-6">
-                  <div className="inline-flex items-center px-3 py-1 rounded-full bg-wedding-olive/10 text-wedding-olive text-sm font-medium mb-4">
-                    1 - Préparation
-                  </div>
-                  <h3 className="text-xl font-semibold mb-4 text-black">
+                  <h2 className="text-2xl md:text-3xl font-bold text-black mb-4">
+                    1. Préparation
+                  </h2>
+                  <h3 className="text-xl font-semibold mb-6 text-gray-800">
                     Recevez notre carnet d'adresses exclusif
                   </h3>
                   
-                  {/* Mockup carnet d'adresses */}
-                  <div className="bg-gradient-to-br from-wedding-olive/5 to-wedding-olive/10 rounded-lg p-6 mb-6">
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="w-10 h-10 bg-wedding-olive/20 rounded-full flex items-center justify-center">
-                        <Users className="w-5 h-5 text-wedding-olive" />
-                      </div>
-                      <div>
-                        <div className="h-2 bg-wedding-olive/20 rounded w-20 mb-1"></div>
-                        <div className="h-2 bg-wedding-olive/10 rounded w-16"></div>
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-wedding-olive/30 rounded-full"></div>
-                        <div className="h-1.5 bg-wedding-olive/20 rounded w-24"></div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-wedding-olive/30 rounded-full"></div>
-                        <div className="h-1.5 bg-wedding-olive/20 rounded w-20"></div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-wedding-olive/30 rounded-full"></div>
-                        <div className="h-1.5 bg-wedding-olive/20 rounded w-28"></div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <p className="text-gray-600 text-sm mb-6">
-                    Recommandations personnalisées par région et budget, sélectionnées par nos experts
-                  </p>
+                  <ul className="space-y-3 mb-6">
+                    <li className="flex items-center gap-3">
+                      <Check className="w-5 h-5 text-wedding-olive" />
+                      <span className="text-gray-700">Prestataires sélectionnés par nos experts</span>
+                    </li>
+                    <li className="flex items-center gap-3">
+                      <Check className="w-5 h-5 text-wedding-olive" />
+                      <span className="text-gray-700">Recommandations par région et budget</span>
+                    </li>
+                    <li className="flex items-center gap-3">
+                      <Check className="w-5 h-5 text-wedding-olive" />
+                      <span className="text-gray-700">Contacts directs vérifiés</span>
+                    </li>
+                  </ul>
                 </div>
                 
                 <Button 
@@ -78,63 +62,31 @@ const ThreeStepsSection = () => {
             <Card className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-2 bg-white border-0 shadow-lg">
               <CardContent className="p-8">
                 <div className="mb-6">
-                  <div className="inline-flex items-center px-3 py-1 rounded-full bg-wedding-olive/10 text-wedding-olive text-sm font-medium mb-4">
-                    2 - Organisation
-                  </div>
-                  <h3 className="text-xl font-semibold mb-4 text-black">
+                  <h2 className="text-2xl md:text-3xl font-bold text-black mb-4">
+                    2. Organisation
+                  </h2>
+                  <h3 className="text-xl font-semibold mb-6 text-gray-800">
                     Accédez à nos outils gratuits
                   </h3>
                   
-                  <ul className="space-y-2 mb-6">
-                    <li className="flex items-center gap-2">
-                      <Check className="w-4 h-4 text-wedding-olive" />
+                  <ul className="space-y-3 mb-6">
+                    <li className="flex items-center gap-3">
+                      <Check className="w-5 h-5 text-wedding-olive" />
                       <span className="text-gray-700">Checklist personnalisée</span>
                     </li>
-                    <li className="flex items-center gap-2">
-                      <Check className="w-4 h-4 text-wedding-olive" />
+                    <li className="flex items-center gap-3">
+                      <Check className="w-5 h-5 text-wedding-olive" />
                       <span className="text-gray-700">Calculatrices budget & invités</span>
                     </li>
-                    <li className="flex items-center gap-2">
-                      <Check className="w-4 h-4 text-wedding-olive" />
+                    <li className="flex items-center gap-3">
+                      <Check className="w-5 h-5 text-wedding-olive" />
                       <span className="text-gray-700">Suivi budgétaire avancé</span>
                     </li>
-                    <li className="flex items-center gap-2">
-                      <Check className="w-4 h-4 text-wedding-olive" />
+                    <li className="flex items-center gap-3">
+                      <Check className="w-5 h-5 text-wedding-olive" />
                       <span className="text-gray-700">Gestion des prestataires</span>
                     </li>
                   </ul>
-                  
-                  {/* Mockup avec 4 widgets */}
-                  <div className="grid grid-cols-2 gap-3 mb-6">
-                    <div className="bg-gradient-to-br from-wedding-olive/5 to-wedding-olive/10 rounded-lg p-3 flex items-center gap-2">
-                      <Check className="w-4 h-4 text-wedding-olive" />
-                      <div className="flex-1">
-                        <div className="h-1.5 bg-wedding-olive/20 rounded w-full mb-1"></div>
-                        <div className="h-1 bg-wedding-olive/10 rounded w-3/4"></div>
-                      </div>
-                    </div>
-                    <div className="bg-gradient-to-br from-wedding-olive/5 to-wedding-olive/10 rounded-lg p-3 flex items-center gap-2">
-                      <Calculator className="w-4 h-4 text-wedding-olive" />
-                      <div className="flex-1">
-                        <div className="h-1.5 bg-wedding-olive/20 rounded w-full mb-1"></div>
-                        <div className="h-1 bg-wedding-olive/10 rounded w-2/3"></div>
-                      </div>
-                    </div>
-                    <div className="bg-gradient-to-br from-wedding-olive/5 to-wedding-olive/10 rounded-lg p-3 flex items-center gap-2">
-                      <div className="w-4 h-4 bg-wedding-olive/30 rounded-full"></div>
-                      <div className="flex-1">
-                        <div className="h-1.5 bg-wedding-olive/20 rounded w-full mb-1"></div>
-                        <div className="h-1 bg-wedding-olive/10 rounded w-1/2"></div>
-                      </div>
-                    </div>
-                    <div className="bg-gradient-to-br from-wedding-olive/5 to-wedding-olive/10 rounded-lg p-3 flex items-center gap-2">
-                      <Users className="w-4 h-4 text-wedding-olive" />
-                      <div className="flex-1">
-                        <div className="h-1.5 bg-wedding-olive/20 rounded w-full mb-1"></div>
-                        <div className="h-1 bg-wedding-olive/10 rounded w-4/5"></div>
-                      </div>
-                    </div>
-                  </div>
                 </div>
                 
                 <Button asChild className="w-full bg-wedding-olive hover:bg-wedding-olive/90 text-white group-hover:scale-105 transition-all">
@@ -149,58 +101,31 @@ const ThreeStepsSection = () => {
             <Card className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-2 bg-white border-0 shadow-lg">
               <CardContent className="p-8">
                 <div className="mb-6">
-                  <div className="inline-flex items-center px-3 py-1 rounded-full bg-wedding-olive/10 text-wedding-olive text-sm font-medium mb-4">
-                    3 - Jour J
-                  </div>
-                  <h3 className="text-xl font-semibold mb-4 text-black">
+                  <h2 className="text-2xl md:text-3xl font-bold text-black mb-4">
+                    3. Jour J
+                  </h2>
+                  <h3 className="text-xl font-semibold mb-6 text-gray-800">
                     Coordonnez votre jour J grâce à notre app révolutionnaire
                   </h3>
                   
-                  <ul className="space-y-2 mb-6">
-                    <li className="flex items-center gap-2">
-                      <Check className="w-4 h-4 text-wedding-olive" />
+                  <ul className="space-y-3 mb-6">
+                    <li className="flex items-center gap-3">
+                      <Check className="w-5 h-5 text-wedding-olive" />
                       <span className="text-gray-700">Planning détaillé minute par minute</span>
                     </li>
-                    <li className="flex items-center gap-2">
-                      <Check className="w-4 h-4 text-wedding-olive" />
+                    <li className="flex items-center gap-3">
+                      <Check className="w-5 h-5 text-wedding-olive" />
                       <span className="text-gray-700">Gestion équipe complète</span>
                     </li>
-                    <li className="flex items-center gap-2">
-                      <Check className="w-4 h-4 text-wedding-olive" />
+                    <li className="flex items-center gap-3">
+                      <Check className="w-5 h-5 text-wedding-olive" />
                       <span className="text-gray-700">Partage et délégation facile</span>
                     </li>
+                    <li className="flex items-center gap-3">
+                      <Check className="w-5 h-5 text-wedding-olive" />
+                      <span className="text-gray-700">Application web sans téléchargement</span>
+                    </li>
                   </ul>
-                  
-                  {/* Mockup interface mobile */}
-                  <div className="bg-gradient-to-br from-wedding-olive/5 to-wedding-olive/10 rounded-lg p-4 mb-6">
-                    <div className="bg-white rounded-lg p-3 shadow-sm">
-                      <div className="flex items-center gap-2 mb-3">
-                        <Calendar className="w-4 h-4 text-wedding-olive" />
-                        <div className="h-2 bg-wedding-olive/20 rounded w-16"></div>
-                      </div>
-                      <div className="space-y-2">
-                        <div className="flex items-center gap-2">
-                          <div className="w-6 h-6 bg-wedding-olive/20 rounded-full"></div>
-                          <div className="flex-1">
-                            <div className="h-1.5 bg-gray-200 rounded w-full mb-1"></div>
-                            <div className="h-1 bg-gray-100 rounded w-2/3"></div>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <div className="w-6 h-6 bg-wedding-olive/30 rounded-full"></div>
-                          <div className="flex-1">
-                            <div className="h-1.5 bg-gray-200 rounded w-full mb-1"></div>
-                            <div className="h-1 bg-gray-100 rounded w-3/4"></div>
-                          </div>
-                        </div>
-                        <div className="flex -space-x-1 justify-end mt-2">
-                          <div className="w-4 h-4 bg-wedding-olive/40 rounded-full border border-white"></div>
-                          <div className="w-4 h-4 bg-wedding-olive/60 rounded-full border border-white"></div>
-                          <div className="w-4 h-4 bg-wedding-olive/80 rounded-full border border-white"></div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
                 </div>
                 
                 <Button asChild className="w-full bg-wedding-olive hover:bg-wedding-olive/90 text-white group-hover:scale-105 transition-all">
