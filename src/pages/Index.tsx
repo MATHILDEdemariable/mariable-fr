@@ -4,7 +4,9 @@ import ChatbotButton from '@/components/ChatbotButton';
 import SEO from '@/components/SEO';
 import Footer from '@/components/Footer';
 import HeroSection from '@/components/home/HeroSection';
-import ThreeStepsSection from '@/components/home/ThreeStepsSection';
+import ParcoursSection from '@/components/home/ParcoursSection';
+import FeaturesSection from '@/components/home/FeaturesSection';
+import TestimonialsSection from '@/components/home/TestimonialsSection';
 
 const Index = () => {
   useEffect(() => {
@@ -20,8 +22,14 @@ const Index = () => {
         {/* Hero Section with Video Background */}
         <HeroSection />
 
-        {/* Three Steps Section */}
-        <ThreeStepsSection />
+        {/* Parcours Section (3 étapes) */}
+        <ParcoursSection />
+
+        {/* Features Section (grille 2x4) */}
+        <FeaturesSection />
+
+        {/* Testimonials Section + CTA Final */}
+        <TestimonialsSection />
       </main>
 
       <Footer />
