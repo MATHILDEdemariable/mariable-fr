@@ -120,6 +120,17 @@ const Prix = () => {
                     <div className="text-xs text-wedding-olive font-semibold mt-1">Application à vie</div>
                   </div>
                   
+                  {/* Information box pour clarification paiement */}
+                  <div className="mb-4 p-4 bg-wedding-cream/30 rounded-lg border border-wedding-olive/20">
+                    <div className="flex items-start gap-2">
+                      <div className="text-wedding-olive text-lg">💡</div>
+                      <div className="text-xs text-wedding-olive">
+                        <strong>Testez avant de payer :</strong> Découvrez tous les outils gratuitement. 
+                        Le paiement se déclenche uniquement quand vous créez votre première étape de coordination.
+                      </div>
+                    </div>
+                  </div>
+
                   <div className="space-y-3 mb-6">
                     <div className="flex items-start gap-2">
                       <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
