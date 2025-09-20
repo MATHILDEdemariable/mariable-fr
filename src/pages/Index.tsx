@@ -1,10 +1,15 @@
 import React, { useEffect } from 'react';
-import Header from '@/components/Header';
-import ChatbotButton from '@/components/ChatbotButton';
 import SEO from '@/components/SEO';
 import Footer from '@/components/Footer';
-import HeroSection from '@/components/home/HeroSection';
-import ThreeStepsSection from '@/components/home/ThreeStepsSection';
+import ChatbotButton from '@/components/ChatbotButton';
+import PremiumHeader from '@/components/home/PremiumHeader';
+import PremiumHeroSection from '@/components/home/PremiumHeroSection';
+import PremiumProcessSection from '@/components/home/PremiumProcessSection';
+import PremiumMarketplaceSection from '@/components/home/PremiumMarketplaceSection';
+import PremiumToolsSection from '@/components/home/PremiumToolsSection';
+import PremiumCoordinationSection from '@/components/home/PremiumCoordinationSection';
+import PremiumTestimonialsSection from '@/components/home/PremiumTestimonialsSection';
+import PremiumFinalCTASection from '@/components/home/PremiumFinalCTASection';
 
 const Index = () => {
   useEffect(() => {
@@ -12,16 +17,36 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col bg-white">
-      <SEO />
-      <Header />
+    <div className="min-h-screen flex flex-col bg-premium-base">
+      <SEO 
+        title="Mariable - Le Netflix du mariage : Prestataires sélectionnés & Coordination digitale"
+        description="Plateforme premium de coordination mariages. Marketplace de prestataires d'exception + outils SaaS de planification. Le plus beau jour de votre vie, sans charge mentale."
+        keywords="mariage, prestataires mariage, coordination mariage, planning mariage, organisation mariage, marketplace mariage"
+      />
       
-      <main className="flex-grow">
-        {/* Hero Section with Video Background */}
-        <HeroSection />
+      <PremiumHeader />
+      
+      <main className="flex-grow pt-16">
+        {/* Hero Section Premium */}
+        <PremiumHeroSection />
 
-        {/* Three Steps Section */}
-        <ThreeStepsSection />
+        {/* Section Process 3 Étapes */}
+        <PremiumProcessSection />
+
+        {/* Section Marketplace Focus */}
+        <PremiumMarketplaceSection />
+
+        {/* Section Outils Inclus */}
+        <PremiumToolsSection />
+
+        {/* Section Coordination Innovation */}
+        <PremiumCoordinationSection />
+
+        {/* Section Témoignages */}
+        <PremiumTestimonialsSection />
+
+        {/* Section CTA Final */}
+        <PremiumFinalCTASection />
       </main>
 
       <Footer />

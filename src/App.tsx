@@ -10,6 +10,7 @@ import PaymentSuccessHandler from '@/components/premium/PaymentSuccessHandler';
 
 // Import pages
 import Index from "./pages/Index";
+import LandingPageV0 from "./pages/LandingPageV0";
 import MoteurRecherche from "./pages/MoteurRecherche";
 import PlanningPersonnalise from "./pages/PlanningPersonnalise";
 import PlanningResultatsPersonnalises from "./pages/PlanningResultatsPersonnalises";
@@ -104,6 +105,7 @@ function App() {
                 <PaymentSuccessHandler />
                 <Routes>
                   <Route path="/" element={<Index />} />
+                  <Route path="/landingpagev0" element={<LandingPageV0 />} />
                    <Route path="/moteur-recherche" element={<MoteurRecherche />} />
           <Route path="/selection" element={<MoteurRecherche />} />
           <Route path="/mariage/:region" element={<MoteurRecherche />} />

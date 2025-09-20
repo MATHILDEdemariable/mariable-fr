@@ -62,6 +62,16 @@ export default {
 					gold: '#d4af37',
 					olive: '#7F9474'
 				},
+				premium: {
+					base: '#FEFEFE',
+					warm: '#F8F6F3',
+					charcoal: '#2D2D2D',
+					black: '#0A0A0A',
+					light: '#E5E7EB',
+					'gradient-start': '#FF6B9D',
+					'gradient-mid': '#8B5CF6',
+					'gradient-end': '#3B82F6'
+				},
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
 					foreground: 'hsl(var(--sidebar-foreground))',
