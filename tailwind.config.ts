@@ -68,9 +68,11 @@ export default {
 					charcoal: '#2D2D2D',
 					black: '#0A0A0A',
 					light: '#E5E7EB',
-					'gradient-start': '#FF6B9D',
-					'gradient-mid': '#8B5CF6',
-					'gradient-end': '#3B82F6'
+					sage: '#7F9474',
+					'sage-medium': '#9CAF88',
+					'sage-light': '#B8C5A6',
+					'sage-very-light': '#E8F0E9',
+					'sage-dark': '#6B7D62'
 				},
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',

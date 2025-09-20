@@ -10,8 +10,11 @@ import PremiumToolsSection from '@/components/home/PremiumToolsSection';
 import PremiumCoordinationSection from '@/components/home/PremiumCoordinationSection';
 import PremiumTestimonialsSection from '@/components/home/PremiumTestimonialsSection';
 import PremiumFinalCTASection from '@/components/home/PremiumFinalCTASection';
+import { useScrollEffects } from '@/hooks/useScrollEffects';
 
 const Index = () => {
+  useScrollEffects();
+  
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);

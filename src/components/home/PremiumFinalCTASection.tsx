@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 
 const PremiumFinalCTASection = () => {
   return (
-    <section className="py-24 bg-gradient-to-br from-premium-gradient-start via-premium-gradient-mid to-premium-gradient-end relative overflow-hidden">
+    <section className="py-24 bg-gradient-to-br from-premium-sage via-premium-sage-medium to-premium-sage-light relative overflow-hidden">
       {/* Background decorative elements */}
       <div className="absolute inset-0">
         <div className="absolute top-20 left-10 w-20 h-20 bg-white/10 rounded-full blur-xl"></div>
@@ -39,7 +39,7 @@ const PremiumFinalCTASection = () => {
             <Link to="/register">
               <Button
                 size="lg"
-                className="bg-white text-premium-gradient-mid hover:bg-white/90 transition-all duration-300 hover:scale-105 px-12 py-4 text-lg font-semibold shadow-xl"
+                className="btn-primary bg-white text-premium-sage px-12 py-4 text-lg font-semibold shadow-xl ripple"
               >
                 Créer mon compte gratuit
                 <ArrowRight className="ml-2 h-6 w-6" />
@@ -50,7 +50,7 @@ const PremiumFinalCTASection = () => {
               <Button
                 size="lg"
                 variant="outline"
-                className="border-2 border-white/30 text-white hover:bg-white/10 backdrop-blur-sm px-12 py-4 text-lg font-semibold"
+                className="btn-secondary border-2 border-white/30 text-white hover:bg-white/10 backdrop-blur-sm px-12 py-4 text-lg font-semibold ripple"
               >
                 Explorer les prestataires
               </Button>

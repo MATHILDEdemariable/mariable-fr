@@ -32,13 +32,13 @@ const PremiumCoordinationSection = () => {
     <section className="py-24 bg-premium-warm">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-          <Badge className="mb-4 px-4 py-2 bg-blue-100 text-blue-700 border-blue-200">
+          <Badge className="mb-4 px-4 py-2 bg-premium-sage-very-light text-premium-sage border-premium-sage-light">
             Notre innovation
           </Badge>
           <h2 className="text-4xl md:text-5xl font-bold text-premium-black mb-6">
             L'appli en ligne
             <br />
-            <span className="bg-gradient-to-r from-premium-gradient-start via-premium-gradient-mid to-premium-gradient-end bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-premium-sage via-premium-sage-medium to-premium-sage-light bg-clip-text text-transparent">
               qui change tout
             </span>
           </h2>
@@ -50,7 +50,7 @@ const PremiumCoordinationSection = () => {
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           {/* Mockup Application */}
           <div className="relative order-2 lg:order-1">
-            <div className="relative max-w-sm mx-auto">
+            <div className="app-mockup relative max-w-sm mx-auto">
               {/* Phone mockup */}
               <div className="bg-premium-black rounded-[3rem] p-2 shadow-2xl">
                 <div className="bg-white rounded-[2.5rem] overflow-hidden">
@@ -63,7 +63,7 @@ const PremiumCoordinationSection = () => {
                     </div>
                     
                     {/* App header */}
-                    <div className="bg-gradient-to-r from-premium-gradient-start via-premium-gradient-mid to-premium-gradient-end text-white p-4">
+                    <div className="bg-gradient-to-r from-premium-sage via-premium-sage-medium to-premium-sage-light text-white p-4">
                       <h3 className="font-bold text-lg">Coordination Jour J</h3>
                       <p className="text-white/80 text-sm">Mariage de Sarah & Thomas</p>
                     </div>
@@ -112,10 +112,10 @@ const PremiumCoordinationSection = () => {
               
               {/* Floating elements */}
               <div className="absolute -top-4 -right-4 bg-white rounded-full p-3 shadow-lg">
-                <Wifi className="h-6 w-6 text-premium-gradient-mid" />
+                <Wifi className="h-6 w-6 text-premium-sage-medium" />
               </div>
               <div className="absolute -bottom-4 -left-4 bg-white rounded-full p-3 shadow-lg">
-                <Users className="h-6 w-6 text-premium-gradient-start" />
+                <Users className="h-6 w-6 text-premium-sage" />
               </div>
             </div>
           </div>
@@ -123,9 +123,9 @@ const PremiumCoordinationSection = () => {
           {/* Features */}
           <div className="space-y-8 order-1 lg:order-2">
             {features.map((feature, index) => (
-              <div key={index} className="flex items-start gap-4">
-                <div className="p-3 bg-gradient-to-r from-premium-gradient-start via-premium-gradient-mid to-premium-gradient-end rounded-xl flex-shrink-0">
-                  <feature.icon className="h-6 w-6 text-white" />
+              <div key={index} className="flex items-start gap-4 section-reveal stagger-item">
+                <div className="p-3 bg-gradient-to-r from-premium-sage via-premium-sage-medium to-premium-sage-light rounded-xl flex-shrink-0">
+                  <feature.icon className="feature-icon h-6 w-6 text-white" />
                 </div>
                 <div>
                   <h3 className="text-xl font-bold text-premium-black mb-2">
@@ -145,7 +145,7 @@ const PremiumCoordinationSection = () => {
           <Link to="/coordination-jour-j">
             <Button 
               size="lg"
-              className="bg-gradient-to-r from-premium-gradient-start via-premium-gradient-mid to-premium-gradient-end text-white hover:opacity-90 transition-all duration-300 hover:scale-105 px-12 py-4 text-lg font-semibold"
+              className="btn-primary text-white px-12 py-4 text-lg font-semibold ripple"
             >
               Découvrir la coordination
             </Button>

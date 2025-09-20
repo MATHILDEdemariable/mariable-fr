@@ -13,7 +13,7 @@ const PremiumProcessSection = () => {
       description: "Notre sélection exclusive de prestataires d'exception",
       cta: "Explorer nos prestataires",
       link: "/selection",
-      gradient: "from-premium-gradient-start to-premium-gradient-mid"
+      gradient: "from-premium-sage to-premium-sage-medium"
     },
     {
       id: 2,
@@ -22,7 +22,7 @@ const PremiumProcessSection = () => {
       description: "Vos outils de planification inclus",
       cta: "Créer mon planning gratuit",
       link: "/register",
-      gradient: "from-premium-gradient-mid to-premium-gradient-end"
+      gradient: "from-premium-sage-medium to-premium-sage-light"
     },
     {
       id: 3,
@@ -31,7 +31,7 @@ const PremiumProcessSection = () => {
       description: "Coordination tech intégrée le jour J",
       cta: "Découvrir la coordination",
       link: "/coordination-jour-j",
-      gradient: "from-premium-gradient-end to-premium-gradient-start"
+      gradient: "from-premium-sage-light to-premium-sage"
     }
   ];
 
@@ -42,7 +42,7 @@ const PremiumProcessSection = () => {
           <h2 className="text-4xl md:text-5xl font-bold text-premium-black mb-4">
             De l'inspiration au jour J :
             <br />
-            <span className="bg-gradient-to-r from-premium-gradient-start via-premium-gradient-mid to-premium-gradient-end bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-premium-sage via-premium-sage-medium to-premium-sage-light bg-clip-text text-transparent">
               Votre parcours Mariable
             </span>
           </h2>
@@ -51,11 +51,11 @@ const PremiumProcessSection = () => {
         {/* Timeline horizontale */}
         <div className="relative max-w-6xl mx-auto">
           {/* Ligne de connexion */}
-          <div className="hidden lg:block absolute top-1/2 left-0 right-0 h-0.5 bg-gradient-to-r from-premium-gradient-start via-premium-gradient-mid to-premium-gradient-end transform -translate-y-1/2 z-0"></div>
+          <div className="hidden lg:block absolute top-1/2 left-0 right-0 h-0.5 bg-gradient-to-r from-premium-sage via-premium-sage-medium to-premium-sage-light transform -translate-y-1/2 z-0"></div>
           
           <div className="grid lg:grid-cols-3 gap-8 relative z-10">
             {steps.map((step, index) => (
-              <Card key={step.id} className="group hover:scale-105 transition-all duration-300 bg-white shadow-xl border-0 relative overflow-hidden">
+              <Card key={step.id} className="group stagger-item section-reveal inspiration-card bg-white shadow-xl border-0 relative overflow-hidden">
                 {/* Numérotation */}
                 <div className={`absolute top-4 left-4 w-12 h-12 rounded-full bg-gradient-to-r ${step.gradient} flex items-center justify-center text-white font-bold text-lg`}>
                   {step.id}

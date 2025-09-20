@@ -49,7 +49,7 @@ const PremiumHeader = () => {
   );
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-premium-light">
+    <header className="navbar fixed top-0 left-0 right-0 z-50">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -68,7 +68,7 @@ const PremiumHeader = () => {
             {isLoggedIn ? (
               <Button
                 onClick={() => navigate('/dashboard')}
-                className="bg-gradient-to-r from-premium-gradient-start via-premium-gradient-mid to-premium-gradient-end text-white hover:opacity-90 transition-opacity"
+                className="btn-primary text-white ripple"
               >
                 Tableau de bord
               </Button>
@@ -77,13 +77,13 @@ const PremiumHeader = () => {
                 <Button
                   variant="outline"
                   onClick={handleLogin}
-                  className="border-premium-light text-premium-charcoal hover:bg-premium-warm"
+                  className="btn-secondary border-premium-sage/30 text-premium-sage hover:bg-premium-sage/5 ripple"
                 >
                   Se connecter
                 </Button>
                 <Button
                   onClick={handleGetStarted}
-                  className="bg-gradient-to-r from-premium-gradient-start via-premium-gradient-mid to-premium-gradient-end text-white hover:opacity-90 transition-opacity"
+                  className="btn-primary text-white ripple"
                 >
                   Commencer
                 </Button>
@@ -140,7 +140,7 @@ const PremiumHeader = () => {
                         navigate('/dashboard');
                         setMobileOpen(false);
                       }}
-                      className="bg-gradient-to-r from-premium-gradient-start via-premium-gradient-mid to-premium-gradient-end text-white hover:opacity-90 transition-opacity w-full"
+                      className="btn-primary text-white ripple w-full"
                     >
                       Tableau de bord
                     </Button>
@@ -152,7 +152,7 @@ const PremiumHeader = () => {
                           handleLogin();
                           setMobileOpen(false);
                         }}
-                        className="border-premium-light text-premium-charcoal hover:bg-premium-warm w-full"
+                        className="btn-secondary border-premium-sage/30 text-premium-sage hover:bg-premium-sage/5 w-full ripple"
                       >
                         Se connecter
                       </Button>
@@ -161,7 +161,7 @@ const PremiumHeader = () => {
                           handleGetStarted();
                           setMobileOpen(false);
                         }}
-                        className="bg-gradient-to-r from-premium-gradient-start via-premium-gradient-mid to-premium-gradient-end text-white hover:opacity-90 transition-opacity w-full"
+                        className="btn-primary text-white w-full ripple"
                       >
                         Commencer
                       </Button>

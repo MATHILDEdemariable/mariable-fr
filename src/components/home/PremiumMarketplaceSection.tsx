@@ -50,7 +50,7 @@ const PremiumMarketplaceSection = () => {
           <h2 className="text-4xl md:text-5xl font-bold text-premium-black mb-6">
             Une sélection d'exception,
             <br />
-            <span className="bg-gradient-to-r from-premium-gradient-start via-premium-gradient-mid to-premium-gradient-end bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-premium-sage via-premium-sage-medium to-premium-sage-light bg-clip-text text-transparent">
               pas un annuaire
             </span>
           </h2>
@@ -62,14 +62,14 @@ const PremiumMarketplaceSection = () => {
         {/* Grid des prestataires */}
         <div className="grid md:grid-cols-3 gap-8 mb-16">
           {vendors.map((vendor) => (
-            <Card key={vendor.id} className="group hover:scale-105 transition-all duration-300 bg-white shadow-lg border-premium-light overflow-hidden">
+            <Card key={vendor.id} className="prestataire-card group bg-white shadow-lg border-premium-light overflow-hidden section-reveal stagger-item">
               <div className="relative">
                 <img 
                   src={vendor.image} 
                   alt={vendor.name}
                   className="w-full h-48 object-cover"
                 />
-                <Badge className="absolute top-4 right-4 bg-gradient-to-r from-premium-gradient-start to-premium-gradient-mid text-white border-0">
+                <Badge className="badge-certifie absolute top-4 right-4 border-0">
                   Certifié Mariable
                 </Badge>
               </div>
@@ -101,7 +101,7 @@ const PremiumMarketplaceSection = () => {
           <div className="grid md:grid-cols-4 gap-6">
             {selectionProcess.map((process, index) => (
               <div key={index} className="flex items-center gap-3">
-                <CheckCircle className="h-6 w-6 text-green-500 flex-shrink-0" />
+                <CheckCircle className="h-6 w-6 text-premium-sage flex-shrink-0" />
                 <span className="text-premium-charcoal font-medium">{process}</span>
               </div>
             ))}
@@ -113,7 +113,7 @@ const PremiumMarketplaceSection = () => {
           <Link to="/selection">
             <Button 
               size="lg"
-              className="bg-gradient-to-r from-premium-gradient-start via-premium-gradient-mid to-premium-gradient-end text-white hover:opacity-90 transition-all duration-300 hover:scale-105 px-12 py-4 text-lg font-semibold"
+              className="btn-primary text-white px-12 py-4 text-lg font-semibold ripple"
             >
               Explorer notre sélection
             </Button>

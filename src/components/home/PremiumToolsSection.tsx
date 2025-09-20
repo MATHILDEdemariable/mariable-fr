@@ -11,19 +11,19 @@ const PremiumToolsSection = () => {
       icon: CheckSquare,
       title: "Checklist intelligente",
       description: "Planning personnalisé selon votre style de mariage",
-      gradient: "from-premium-gradient-start to-premium-gradient-mid"
+      gradient: "from-premium-sage to-premium-sage-medium"
     },
     {
       icon: Calculator,
       title: "Gestion budget interactive",
       description: "Suivez vos dépenses en temps réel",
-      gradient: "from-premium-gradient-mid to-premium-gradient-end"
+      gradient: "from-premium-sage-medium to-premium-sage-light"
     },
     {
       icon: Users,
       title: "Calculatrice invités & boissons",
       description: "Estimations précises pour votre réception",
-      gradient: "from-premium-gradient-end to-premium-gradient-start"
+      gradient: "from-premium-sage-light to-premium-sage"
     }
   ];
 
@@ -31,13 +31,13 @@ const PremiumToolsSection = () => {
     <section className="py-24 bg-premium-base">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-          <Badge className="mb-4 px-4 py-2 bg-green-100 text-green-700 border-green-200">
+          <Badge className="mb-4 px-4 py-2 bg-premium-sage-very-light text-premium-sage border-premium-sage-light">
             Inclus pour tous
           </Badge>
           <h2 className="text-4xl md:text-5xl font-bold text-premium-black mb-6">
             Votre espace privé
             <br />
-            <span className="bg-gradient-to-r from-premium-gradient-start via-premium-gradient-mid to-premium-gradient-end bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-premium-sage via-premium-sage-medium to-premium-sage-light bg-clip-text text-transparent">
               offert
             </span>
           </h2>
@@ -50,11 +50,11 @@ const PremiumToolsSection = () => {
           {/* Features */}
           <div className="space-y-6">
             {tools.map((tool, index) => (
-              <Card key={index} className="group hover:scale-105 transition-all duration-300 bg-white shadow-lg border-premium-light">
+              <Card key={index} className="feature-card group bg-white shadow-lg border-premium-light section-reveal stagger-item">
                 <CardContent className="p-6">
                   <div className="flex items-start gap-4">
                     <div className={`p-3 rounded-xl bg-gradient-to-r ${tool.gradient} flex-shrink-0`}>
-                      <tool.icon className="h-6 w-6 text-white" />
+                      <tool.icon className="feature-icon h-6 w-6 text-white" />
                     </div>
                     <div>
                       <h3 className="text-xl font-bold text-premium-black mb-2">
@@ -74,7 +74,7 @@ const PremiumToolsSection = () => {
           <div className="relative">
             <div className="bg-white rounded-2xl shadow-2xl border border-premium-light overflow-hidden">
               {/* Header mockup */}
-              <div className="bg-gradient-to-r from-premium-gradient-start via-premium-gradient-mid to-premium-gradient-end p-4">
+              <div className="bg-gradient-to-r from-premium-sage via-premium-sage-medium to-premium-sage-light p-4">
                 <div className="flex items-center gap-3">
                   <div className="w-3 h-3 bg-white/30 rounded-full"></div>
                   <div className="w-3 h-3 bg-white/30 rounded-full"></div>
@@ -91,7 +91,7 @@ const PremiumToolsSection = () => {
                   <Badge className="ml-auto bg-green-100 text-green-700">Terminé</Badge>
                 </div>
                 <div className="flex items-center gap-3">
-                  <div className="w-4 h-4 bg-premium-gradient-start rounded"></div>
+                  <div className="w-4 h-4 bg-premium-sage rounded"></div>
                   <span className="text-premium-charcoal">Choisir le traiteur</span>
                   <Badge className="ml-auto bg-orange-100 text-orange-700">En cours</Badge>
                 </div>
@@ -113,7 +113,7 @@ const PremiumToolsSection = () => {
           <Link to="/register">
             <Button 
               size="lg"
-              className="bg-gradient-to-r from-premium-gradient-start via-premium-gradient-mid to-premium-gradient-end text-white hover:opacity-90 transition-all duration-300 hover:scale-105 px-12 py-4 text-lg font-semibold"
+              className="btn-primary text-white px-12 py-4 text-lg font-semibold ripple"
             >
               Créer mon espace gratuit
             </Button>
