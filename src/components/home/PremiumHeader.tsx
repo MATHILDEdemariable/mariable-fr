@@ -4,6 +4,7 @@ import { Logo } from '@/components/Logo';
 import { Link, useNavigate } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { HeaderDropdown, HeaderDropdownMenu, HeaderDropdownItem } from '@/components/HeaderDropdown';
 import { supabase } from '@/integrations/supabase/client';
 
 const PremiumHeader = () => {
@@ -36,6 +37,21 @@ const PremiumHeader = () => {
 
   const NavLinks = () => (
     <>
+      <HeaderDropdown label="Inspiration">
+        <HeaderDropdownMenu>
+          <HeaderDropdownItem 
+            label="Club Mariable" 
+            description="Communauté des jeunes mariés"
+            to="/jeunes-maries" 
+          />
+          <HeaderDropdownItem 
+            label="Conseils" 
+            description="Inspiration et tendances mariage"
+            to="/blog" 
+          />
+        </HeaderDropdownMenu>
+      </HeaderDropdown>
+      
       <Link to="/selection" className="text-premium-charcoal hover:text-premium-black transition-colors font-medium">
         Prestataires
       </Link>
@@ -45,9 +61,36 @@ const PremiumHeader = () => {
       <Link to="/coordination-jour-j" className="text-premium-charcoal hover:text-premium-black transition-colors font-medium">
         Jour J
       </Link>
-      <Link to="/about/approche" className="text-premium-charcoal hover:text-premium-black transition-colors font-medium">
-        À propos
-      </Link>
+      
+      <HeaderDropdown label="À propos">
+        <HeaderDropdownMenu>
+          <HeaderDropdownItem 
+            label="Notre histoire" 
+            description="L'histoire de Mariable"
+            to="/about/histoire" 
+          />
+          <HeaderDropdownItem 
+            label="Notre charte" 
+            description="Nos valeurs et engagements"
+            to="/about/charte" 
+          />
+          <HeaderDropdownItem 
+            label="Prix" 
+            description="Tarifs et formules"
+            to="/prix" 
+          />
+          <HeaderDropdownItem 
+            label="Nous contacter" 
+            description="Entrer en contact"
+            to="/contact" 
+          />
+          <HeaderDropdownItem 
+            label="FAQ" 
+            description="Questions fréquentes"
+            to="/contact/faq" 
+          />
+        </HeaderDropdownMenu>
+      </HeaderDropdown>
     </>
   );
 
@@ -56,9 +99,8 @@ const PremiumHeader = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2">
+          <Link to="/" className="flex items-center">
             <Logo />
-            <span className="text-xl font-bold text-premium-black">Mariable</span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -105,11 +147,10 @@ const PremiumHeader = () => {
               <div className="flex flex-col space-y-6 mt-8">
                 <Link 
                   to="/" 
-                  className="flex items-center space-x-2 mb-6"
+                  className="flex items-center mb-6"
                   onClick={() => setMobileOpen(false)}
                 >
                   <Logo />
-                  <span className="text-lg font-bold text-premium-black">Mariable</span>
                 </Link>
                 
                 <div className="flex flex-col space-y-4">
@@ -134,13 +175,69 @@ const PremiumHeader = () => {
                   >
                     Jour J
                   </Link>
-                  <Link 
-                    to="/about/approche" 
-                    className="text-premium-charcoal hover:text-premium-black transition-colors font-medium py-2"
-                    onClick={() => setMobileOpen(false)}
-                  >
-                    À propos
-                  </Link>
+                  
+                  {/* Inspiration Submenu */}
+                  <div className="py-2">
+                    <p className="font-semibold text-premium-black mb-2">Inspiration</p>
+                    <div className="ml-4 space-y-2">
+                      <Link 
+                        to="/jeunes-maries" 
+                        className="block text-premium-charcoal hover:text-premium-black transition-colors py-1"
+                        onClick={() => setMobileOpen(false)}
+                      >
+                        Club Mariable
+                      </Link>
+                      <Link 
+                        to="/blog" 
+                        className="block text-premium-charcoal hover:text-premium-black transition-colors py-1"
+                        onClick={() => setMobileOpen(false)}
+                      >
+                        Conseils
+                      </Link>
+                    </div>
+                  </div>
+                  
+                  {/* À propos Submenu */}
+                  <div className="py-2">
+                    <p className="font-semibold text-premium-black mb-2">À propos</p>
+                    <div className="ml-4 space-y-2">
+                      <Link 
+                        to="/about/histoire" 
+                        className="block text-premium-charcoal hover:text-premium-black transition-colors py-1"
+                        onClick={() => setMobileOpen(false)}
+                      >
+                        Notre histoire
+                      </Link>
+                      <Link 
+                        to="/about/charte" 
+                        className="block text-premium-charcoal hover:text-premium-black transition-colors py-1"
+                        onClick={() => setMobileOpen(false)}
+                      >
+                        Notre charte
+                      </Link>
+                      <Link 
+                        to="/prix" 
+                        className="block text-premium-charcoal hover:text-premium-black transition-colors py-1"
+                        onClick={() => setMobileOpen(false)}
+                      >
+                        Prix
+                      </Link>
+                      <Link 
+                        to="/contact" 
+                        className="block text-premium-charcoal hover:text-premium-black transition-colors py-1"
+                        onClick={() => setMobileOpen(false)}
+                      >
+                        Nous contacter
+                      </Link>
+                      <Link 
+                        to="/contact/faq" 
+                        className="block text-premium-charcoal hover:text-premium-black transition-colors py-1"
+                        onClick={() => setMobileOpen(false)}
+                      >
+                        FAQ
+                      </Link>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="flex flex-col space-y-3 pt-6 border-t border-premium-light">

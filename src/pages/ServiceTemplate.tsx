@@ -1,7 +1,8 @@
 import React from 'react';
-import Header from '@/components/Header';
+import PremiumHeader from '@/components/home/PremiumHeader';
 import { Link } from 'react-router-dom';
-import { Instagram, Mail, Linkedin } from 'lucide-react';
+import { Instagram, Mail, Linkedin, ArrowLeft } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface ServiceTemplateProps {
   title: string;
@@ -14,10 +15,19 @@ const ServiceTemplate: React.FC<ServiceTemplateProps> = ({ title, description, c
   return (
     <div className="min-h-screen flex flex-col bg-white">
       {children}
-      <Header />
+      <PremiumHeader />
       
       <main className="flex-grow py-16 container bg-white">
         <div className="max-w-4xl mx-auto">
+          <div className="mb-6">
+            <Link to="/">
+              <Button variant="outline" className="mb-4">
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Retour à l'accueil
+              </Button>
+            </Link>
+          </div>
+          
           <h1 className="text-4xl md:text-5xl font-serif mb-4">{title}</h1>
           <p className="text-xl text-muted-foreground mb-8">{description}</p>
           

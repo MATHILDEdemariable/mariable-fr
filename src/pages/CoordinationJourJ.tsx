@@ -4,9 +4,10 @@ import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import Header from '@/components/Header';
+import PremiumHeader from '@/components/home/PremiumHeader';
 import Footer from '@/components/Footer';
-import { Calendar, Clock, Users, CheckCircle, Star, ArrowRight, Shield, Heart, Sparkles, FileText, Phone, MapPin, Target, DollarSign, Settings } from 'lucide-react';
+import { Calendar, Clock, Users, CheckCircle, Star, ArrowRight, Shield, Heart, Sparkles, FileText, Phone, MapPin, Target, DollarSign, Settings, ArrowLeft } from 'lucide-react';
+import { Link } from 'react-router-dom';
 const CoordinationJourJ: React.FC = () => {
   const navigate = useNavigate();
   useEffect(() => {
@@ -131,9 +132,21 @@ const CoordinationJourJ: React.FC = () => {
         </script>
       </Helmet>
 
-      <Header />
+      <PremiumHeader />
 
       <main className="min-h-screen bg-gradient-to-b from-white to-wedding-cream/20">
+        {/* Back to home button */}
+        <section className="pt-20 pb-4">
+          <div className="container mx-auto px-4">
+            <Link to="/">
+              <Button variant="outline" className="mb-4">
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Retour à l'accueil
+              </Button>
+            </Link>
+          </div>
+        </section>
+
         {/* Differentiation Section */}
         <section className="py-16 md:py-20 bg-white">
           <div className="container mx-auto px-4">

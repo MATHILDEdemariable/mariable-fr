@@ -22,9 +22,7 @@ const PremiumHeroSection = () => {
         <h1 className="text-5xl md:text-7xl font-extrabold text-white mb-6 leading-tight">
           Faites de votre mariage
           <br />
-          <span className="bg-gradient-to-r from-premium-sage via-premium-sage-medium to-premium-sage-light bg-clip-text text-transparent">
-            une expérience exceptionnelle
-          </span>
+          une expérience exceptionnelle
         </h1>
         
         <p className="text-xl md:text-2xl text-white/90 mb-8 font-light leading-relaxed">
@@ -42,9 +40,8 @@ const PremiumHeroSection = () => {
           
           <Button
             size="lg"
-            variant="outline"
             onClick={() => window.open('/register', '_self')}
-            className="border-2 border-white/30 text-white hover:bg-white/10 hover:border-white/50 backdrop-blur-sm px-8 py-4 text-lg font-semibold ripple"
+            className="bg-white text-premium-black hover:bg-white/90 px-8 py-4 text-lg font-semibold ripple"
           >
             <Play className="mr-2 h-5 w-5" />
             Organiser
