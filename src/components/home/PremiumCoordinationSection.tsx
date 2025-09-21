@@ -3,39 +3,31 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Smartphone, Wifi, Users, Clock } from 'lucide-react';
 import { Link } from 'react-router-dom';
-
 const PremiumCoordinationSection = () => {
-  const features = [
-    {
-      icon: Smartphone,
-      title: "Application mobile",
-      description: "Interface intuitive accessible partout"
-    },
-    {
-      icon: Wifi,
-      title: "Synchronisation temps réel",
-      description: "Toute l'équipe connectée instantanément"
-    },
-    {
-      icon: Users,
-      title: "Coordination équipe",
-      description: "Chaque intervenant sait exactement quoi faire"
-    },
-    {
-      icon: Clock,
-      title: "Planning automatisé",
-      description: "Timing parfait pour chaque moment"
-    }
-  ];
-
-  return (
-    <section className="py-24 bg-premium-warm">
+  const features = [{
+    icon: Smartphone,
+    title: "Application mobile",
+    description: "Interface intuitive accessible partout"
+  }, {
+    icon: Wifi,
+    title: "Synchronisation temps réel",
+    description: "Toute l'équipe connectée instantanément"
+  }, {
+    icon: Users,
+    title: "Coordination équipe",
+    description: "Chaque intervenant sait exactement quoi faire"
+  }, {
+    icon: Clock,
+    title: "Planning automatisé",
+    description: "Timing parfait pour chaque moment"
+  }];
+  return <section className="py-24 bg-premium-warm">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <Badge className="mb-4 px-4 py-2 bg-premium-sage-very-light text-premium-sage border-premium-sage-light">
             Notre innovation
           </Badge>
-          <h2 className="text-4xl md:text-5xl font-bold text-premium-black mb-6">
+          <h2 className="text-4xl font-bold text-premium-black mb-6 md:text-4xl">
             L'appli en ligne
             <br />
             <span className="bg-gradient-to-r from-premium-sage via-premium-sage-medium to-premium-sage-light bg-clip-text text-transparent">
@@ -122,8 +114,7 @@ const PremiumCoordinationSection = () => {
 
           {/* Features */}
           <div className="space-y-8 order-1 lg:order-2">
-            {features.map((feature, index) => (
-              <div key={index} className="flex items-start gap-4 section-reveal stagger-item">
+            {features.map((feature, index) => <div key={index} className="flex items-start gap-4 section-reveal stagger-item">
                 <div className="p-3 bg-gradient-to-r from-premium-sage via-premium-sage-medium to-premium-sage-light rounded-xl flex-shrink-0">
                   <feature.icon className="feature-icon h-6 w-6 text-white" />
                 </div>
@@ -135,25 +126,19 @@ const PremiumCoordinationSection = () => {
                     {feature.description}
                   </p>
                 </div>
-              </div>
-            ))}
+              </div>)}
           </div>
         </div>
 
         {/* CTA */}
         <div className="text-center mt-16">
           <Link to="/coordination-jour-j">
-            <Button 
-              size="lg"
-              className="btn-primary text-white px-12 py-4 text-lg font-semibold ripple"
-            >
+            <Button size="lg" className="btn-primary text-white px-12 py-4 text-lg font-semibold ripple">
               Découvrir la coordination
             </Button>
           </Link>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default PremiumCoordinationSection;

@@ -1,43 +1,36 @@
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Star, Quote } from 'lucide-react';
-
 const PremiumTestimonialsSection = () => {
-  const testimonials = [
-    {
-      id: 1,
-      name: "Sarah & Thomas",
-      location: "Mariage à Provence",
-      image: "/lovable-uploads/fake-testimonial-1.jpg",
-      rating: 5,
-      text: "Mariable a transformé notre organisation de mariage. La sélection de prestataires était exceptionnelle et les outils de planification nous ont fait gagner un temps précieux.",
-      gradient: "from-premium-sage to-premium-sage-medium"
-    },
-    {
-      id: 2,
-      name: "Julie & Marc",
-      location: "Mariage à Paris",
-      image: "/lovable-uploads/fake-testimonial-2.jpg",
-      rating: 5,
-      text: "La coordination le jour J était parfaite ! Grâce à l'application, toute notre équipe était synchronisée. Nous avons pu profiter pleinement de notre journée.",
-      gradient: "from-premium-sage-medium to-premium-sage-light"
-    },
-    {
-      id: 3,
-      name: "Emma & Pierre",
-      location: "Mariage à Lyon",
-      image: "/lovable-uploads/fake-testimonial-3.jpg",
-      rating: 5,
-      text: "Les prestataires recommandés par Mariable étaient tous formidables. La qualité de service était au rendez-vous, exactement ce que nous cherchions.",
-      gradient: "from-premium-sage-light to-premium-sage"
-    }
-  ];
-
-  return (
-    <section className="py-24 bg-premium-base">
+  const testimonials = [{
+    id: 1,
+    name: "Sarah & Thomas",
+    location: "Mariage à Provence",
+    image: "/lovable-uploads/fake-testimonial-1.jpg",
+    rating: 5,
+    text: "Mariable a transformé notre organisation de mariage. La sélection de prestataires était exceptionnelle et les outils de planification nous ont fait gagner un temps précieux.",
+    gradient: "from-premium-sage to-premium-sage-medium"
+  }, {
+    id: 2,
+    name: "Julie & Marc",
+    location: "Mariage à Paris",
+    image: "/lovable-uploads/fake-testimonial-2.jpg",
+    rating: 5,
+    text: "La coordination le jour J était parfaite ! Grâce à l'application, toute notre équipe était synchronisée. Nous avons pu profiter pleinement de notre journée.",
+    gradient: "from-premium-sage-medium to-premium-sage-light"
+  }, {
+    id: 3,
+    name: "Emma & Pierre",
+    location: "Mariage à Lyon",
+    image: "/lovable-uploads/fake-testimonial-3.jpg",
+    rating: 5,
+    text: "Les prestataires recommandés par Mariable étaient tous formidables. La qualité de service était au rendez-vous, exactement ce que nous cherchions.",
+    gradient: "from-premium-sage-light to-premium-sage"
+  }];
+  return <section className="py-24 bg-premium-base">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-premium-black mb-6">
+          <h2 className="text-4xl font-bold text-premium-black mb-6 md:text-4xl">
             Ils ont vécu
             <br />
             <span className="bg-gradient-to-r from-premium-sage via-premium-sage-medium to-premium-sage-light bg-clip-text text-transparent">
@@ -50,8 +43,7 @@ const PremiumTestimonialsSection = () => {
         </div>
 
         <div className="grid md:grid-cols-3 gap-8">
-          {testimonials.map((testimonial, index) => (
-            <Card key={testimonial.id} className="group inspiration-card bg-white shadow-xl border-0 relative overflow-hidden section-reveal stagger-item">
+          {testimonials.map((testimonial, index) => <Card key={testimonial.id} className="group inspiration-card bg-white shadow-xl border-0 relative overflow-hidden section-reveal stagger-item">
               {/* Gradient accent */}
               <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${testimonial.gradient}`}></div>
               
@@ -63,9 +55,7 @@ const PremiumTestimonialsSection = () => {
                 
                 {/* Rating */}
                 <div className="flex items-center gap-1 mb-4">
-                  {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star key={i} className="h-5 w-5 fill-yellow-400 text-yellow-400" />
-                  ))}
+                  {[...Array(testimonial.rating)].map((_, i) => <Star key={i} className="h-5 w-5 fill-yellow-400 text-yellow-400" />)}
                 </div>
                 
                 {/* Testimonial text */}
@@ -75,11 +65,7 @@ const PremiumTestimonialsSection = () => {
                 
                 {/* Author */}
                 <div className="flex items-center gap-4">
-                  <img 
-                    src={testimonial.image} 
-                    alt={testimonial.name}
-                    className="w-12 h-12 rounded-full object-cover"
-                  />
+                  <img src={testimonial.image} alt={testimonial.name} className="w-12 h-12 rounded-full object-cover" />
                   <div>
                     <h4 className="font-bold text-premium-black">
                       {testimonial.name}
@@ -93,8 +79,7 @@ const PremiumTestimonialsSection = () => {
 
               {/* Hover effect */}
               <div className={`absolute inset-0 bg-gradient-to-r ${testimonial.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-300 pointer-events-none`}></div>
-            </Card>
-          ))}
+            </Card>)}
         </div>
 
         {/* Stats */}
@@ -119,8 +104,6 @@ const PremiumTestimonialsSection = () => {
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default PremiumTestimonialsSection;

@@ -2,10 +2,8 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
-
 const PremiumFinalCTASection = () => {
-  return (
-    <section className="py-24 bg-gradient-to-br from-premium-sage via-premium-sage-medium to-premium-sage-light relative overflow-hidden">
+  return <section className="py-24 bg-gradient-to-br from-premium-sage via-premium-sage-medium to-premium-sage-light relative overflow-hidden">
       {/* Background decorative elements */}
       <div className="absolute inset-0">
         <div className="absolute top-20 left-10 w-20 h-20 bg-white/10 rounded-full blur-xl"></div>
@@ -21,7 +19,7 @@ const PremiumFinalCTASection = () => {
           </div>
 
           {/* Heading */}
-          <h2 className="text-5xl md:text-6xl font-extrabold text-white mb-6 leading-tight">
+          <h2 className="text-5xl font-extrabold text-white mb-6 leading-tight md:text-5xl">
             Prêt à vivre votre
             <br />
             mariage d'exception ?
@@ -37,21 +35,14 @@ const PremiumFinalCTASection = () => {
           {/* CTAs */}
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-12">
             <Link to="/register">
-              <Button
-                size="lg"
-                className="btn-primary bg-white text-premium-sage px-12 py-4 text-lg font-semibold shadow-xl ripple"
-              >
+              <Button size="lg" className="btn-primary bg-white text-premium-sage px-12 py-4 text-lg font-semibold shadow-xl ripple">
                 Créer mon compte gratuit
                 <ArrowRight className="ml-2 h-6 w-6" />
               </Button>
             </Link>
             
             <Link to="/selection">
-              <Button
-                size="lg"
-                variant="outline"
-                className="border-2 border-white text-white bg-white/10 hover:bg-white hover:text-premium-black backdrop-blur-sm px-12 py-4 text-lg font-semibold ripple"
-              >
+              <Button size="lg" variant="outline" className="border-2 border-white text-white bg-white/10 hover:bg-white hover:text-premium-black backdrop-blur-sm px-12 py-4 text-lg font-semibold ripple">
                 Explorer les prestataires
               </Button>
             </Link>
@@ -76,8 +67,6 @@ const PremiumFinalCTASection = () => {
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default PremiumFinalCTASection;

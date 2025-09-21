@@ -4,37 +4,30 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { CheckSquare, Calculator, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
-
 const PremiumToolsSection = () => {
-  const tools = [
-    {
-      icon: CheckSquare,
-      title: "Checklist intelligente",
-      description: "Planning personnalisé selon votre style de mariage",
-      gradient: "from-premium-sage to-premium-sage-medium"
-    },
-    {
-      icon: Calculator,
-      title: "Gestion budget interactive",
-      description: "Suivez vos dépenses en temps réel",
-      gradient: "from-premium-sage-medium to-premium-sage-light"
-    },
-    {
-      icon: Users,
-      title: "Calculatrice invités & boissons",
-      description: "Estimations précises pour votre réception",
-      gradient: "from-premium-sage-light to-premium-sage"
-    }
-  ];
-
-  return (
-    <section className="py-24 bg-premium-base">
+  const tools = [{
+    icon: CheckSquare,
+    title: "Checklist intelligente",
+    description: "Planning personnalisé selon votre style de mariage",
+    gradient: "from-premium-sage to-premium-sage-medium"
+  }, {
+    icon: Calculator,
+    title: "Gestion budget interactive",
+    description: "Suivez vos dépenses en temps réel",
+    gradient: "from-premium-sage-medium to-premium-sage-light"
+  }, {
+    icon: Users,
+    title: "Calculatrice invités & boissons",
+    description: "Estimations précises pour votre réception",
+    gradient: "from-premium-sage-light to-premium-sage"
+  }];
+  return <section className="py-24 bg-premium-base">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <Badge className="mb-4 px-4 py-2 bg-premium-sage-very-light text-premium-sage border-premium-sage-light">
             Inclus pour tous
           </Badge>
-          <h2 className="text-4xl md:text-5xl font-bold text-premium-black mb-6">
+          <h2 className="text-4xl font-bold text-premium-black mb-6 md:text-4xl">
             Votre espace privé
             <br />
             <span className="bg-gradient-to-r from-premium-sage via-premium-sage-medium to-premium-sage-light bg-clip-text text-transparent">
@@ -49,8 +42,7 @@ const PremiumToolsSection = () => {
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Features */}
           <div className="space-y-6">
-            {tools.map((tool, index) => (
-              <Card key={index} className="feature-card group bg-white shadow-lg border-premium-light section-reveal stagger-item">
+            {tools.map((tool, index) => <Card key={index} className="feature-card group bg-white shadow-lg border-premium-light section-reveal stagger-item">
                 <CardContent className="p-6">
                   <div className="flex items-start gap-4">
                     <div className={`p-3 rounded-xl bg-gradient-to-r ${tool.gradient} flex-shrink-0`}>
@@ -66,8 +58,7 @@ const PremiumToolsSection = () => {
                     </div>
                   </div>
                 </CardContent>
-              </Card>
-            ))}
+              </Card>)}
           </div>
 
           {/* Mockup Interface */}
@@ -111,17 +102,12 @@ const PremiumToolsSection = () => {
         {/* CTA */}
         <div className="text-center mt-16">
           <Link to="/register">
-            <Button 
-              size="lg"
-              className="btn-primary text-white px-12 py-4 text-lg font-semibold ripple"
-            >
+            <Button size="lg" className="btn-primary text-white px-12 py-4 text-lg font-semibold ripple">
               Créer mon espace gratuit
             </Button>
           </Link>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default PremiumToolsSection;
