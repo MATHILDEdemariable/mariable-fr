@@ -4,7 +4,7 @@ import { useSearchParams, useNavigate, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Database } from '@/integrations/supabase/types';
 import { supabase } from '@/integrations/supabase/client';
-import Header from '@/components/Header';
+import PremiumHeader from '@/components/home/PremiumHeader';
 import VendorCard from '@/components/vendors/VendorCard';
 import VendorCardSkeleton from '@/components/vendors/VendorCardSkeleton';
 import LazyVendorCard from '@/components/vendors/LazyVendorCard';
@@ -196,7 +196,7 @@ const MoteurRecherche = () => {
           }
         `}</script>
       </Helmet>
-        <Header />
+        <PremiumHeader />
         <main className="container max-w-7xl px-4 py-6 md:py-8">
           <RegionSelectorPage />
         </main>
@@ -210,7 +210,7 @@ const MoteurRecherche = () => {
         <title>{getPageTitle()}</title>
         <meta name="description" content={getMetaDescription()} />
       </Helmet>
-      <Header />
+      <PremiumHeader />
       
       <main className="container max-w-7xl px-4 py-6 md:py-8">
         {/* Breadcrumb et bouton retour */}

@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
-import Header from '@/components/Header';
+import PremiumHeader from '@/components/home/PremiumHeader';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
@@ -15,7 +15,7 @@ const Charte = () => {
         <meta name="description" content="Découvrez notre charte Mariable et nos engagements" />
       </Helmet>
 
-      <Header />
+      <PremiumHeader />
 
       <main className="container mx-auto px-4 py-12 max-w-4xl">
         <h1 className="text-4xl font-serif mb-8 text-center">Notre Charte Mariable</h1>

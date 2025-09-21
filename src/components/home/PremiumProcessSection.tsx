@@ -55,32 +55,37 @@ const PremiumProcessSection = () => {
           
           <div className="grid lg:grid-cols-3 gap-8 relative z-10">
             {steps.map((step, index) => (
-              <Card key={step.id} className="group stagger-item section-reveal inspiration-card bg-white shadow-xl border-0 relative overflow-hidden">
+              <Card key={step.id} className="group stagger-item section-reveal inspiration-card bg-white shadow-xl border-0 relative overflow-hidden transform transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:-translate-y-2">
                 {/* Numérotation */}
-                <div className={`absolute top-4 left-4 w-12 h-12 rounded-full bg-gradient-to-r ${step.gradient} flex items-center justify-center text-white font-bold text-lg`}>
+                <div className={`absolute top-4 left-4 w-12 h-12 rounded-full bg-gradient-to-r ${step.gradient} flex items-center justify-center text-white font-bold text-lg transform transition-all duration-300 group-hover:scale-110 group-hover:rotate-12`}>
                   {step.id}
                 </div>
 
-                <CardContent className="p-8 pt-20">
-                  <h3 className="text-2xl font-bold text-premium-black mb-4 tracking-wide">
+                <CardContent className="p-8 pt-20 h-full flex flex-col">
+                  <h3 className="text-2xl font-bold text-premium-black mb-4 tracking-wide transform transition-all duration-300 group-hover:text-premium-sage">
                     {step.title}
                   </h3>
                   
-                  <p className="text-premium-charcoal mb-8 leading-relaxed">
+                  <p className="text-premium-charcoal mb-8 leading-relaxed flex-grow">
                     {step.description}
                   </p>
                   
-                  <Link to={step.link}>
+                  <Link to={step.link} className="mt-auto">
                     <Button 
-                      className={`w-full bg-gradient-to-r ${step.gradient} text-white hover:opacity-90 transition-all duration-300 font-semibold py-3`}
+                      className={`w-full bg-gradient-to-r ${step.gradient} text-white hover:opacity-90 hover:shadow-lg transform transition-all duration-300 font-semibold py-3 group-hover:scale-105`}
                     >
                       {step.cta}
                     </Button>
                   </Link>
                 </CardContent>
 
-                {/* Effet hover */}
-                <div className={`absolute inset-0 bg-gradient-to-r ${step.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-300 pointer-events-none`}></div>
+                {/* Effet hover renforcé */}
+                <div className={`absolute inset-0 bg-gradient-to-r ${step.gradient} opacity-0 group-hover:opacity-10 transition-all duration-500 pointer-events-none`}></div>
+                
+                {/* Effet de brillance */}
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
+                  <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                </div>
               </Card>
             ))}
           </div>
