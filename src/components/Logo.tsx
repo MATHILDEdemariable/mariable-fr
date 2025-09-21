@@ -6,7 +6,7 @@ export const Logo = () => {
     <img 
       src="/logo-mariable-clean.png" 
       alt="Mariable Logo" 
-      className="h-20 w-auto" 
+      className="h-16 w-auto" 
     />
   );
 };

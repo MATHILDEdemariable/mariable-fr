@@ -55,37 +55,33 @@ const PremiumProcessSection = () => {
           
           <div className="grid lg:grid-cols-3 gap-8 relative z-10">
             {steps.map((step, index) => (
-            <Card key={index} className="relative overflow-hidden group h-full bg-gradient-to-br from-white to-gray-50/50 border-0 shadow-sm hover:shadow-xl transition-all duration-500 hover:scale-105 hover:-translate-y-2">
-              <div className="absolute inset-0 bg-gradient-to-br opacity-5 group-hover:opacity-15 transition-opacity duration-500" style={{ backgroundImage: step.gradient }} />
-              
-              <CardContent className="p-8 flex flex-col h-full">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-br from-premium-sage-light to-premium-sage text-white font-bold text-xl shadow-lg group-hover:shadow-xl transition-shadow duration-300">
-                    {index + 1}
-                  </div>
-                  <div className="text-premium-sage opacity-70 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110">
-                    <step.icon size={36} />
-                  </div>
+              <Card key={step.id} className="group stagger-item section-reveal inspiration-card bg-white shadow-xl border-0 relative overflow-hidden">
+                {/* Numérotation */}
+                <div className={`absolute top-4 left-4 w-12 h-12 rounded-full bg-gradient-to-r ${step.gradient} flex items-center justify-center text-white font-bold text-lg`}>
+                  {step.id}
                 </div>
-                
-                <h3 className="text-xl font-serif text-premium-black mb-3 group-hover:text-premium-sage transition-colors duration-300">
-                  {step.title}
-                </h3>
-                
-                <p className="text-premium-charcoal leading-relaxed mb-6 flex-grow">
-                  {step.description}
-                </p>
-                
-                <Button 
-                  asChild 
-                  className="bg-premium-sage hover:bg-premium-sage-dark text-white border-0 w-full shadow-md hover:shadow-lg transition-all duration-300 group-hover:scale-105 mt-auto"
-                >
+
+                <CardContent className="p-8 pt-20">
+                  <h3 className="text-2xl font-bold text-premium-black mb-4 tracking-wide">
+                    {step.title}
+                  </h3>
+                  
+                  <p className="text-premium-charcoal mb-8 leading-relaxed">
+                    {step.description}
+                  </p>
+                  
                   <Link to={step.link}>
-                    {step.cta}
+                    <Button 
+                      className={`w-full bg-gradient-to-r ${step.gradient} text-white hover:opacity-90 transition-all duration-300 font-semibold py-3`}
+                    >
+                      {step.cta}
+                    </Button>
                   </Link>
-                </Button>
-              </CardContent>
-            </Card>
+                </CardContent>
+
+                {/* Effet hover */}
+                <div className={`absolute inset-0 bg-gradient-to-r ${step.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-300 pointer-events-none`}></div>
+              </Card>
             ))}
           </div>
         </div>

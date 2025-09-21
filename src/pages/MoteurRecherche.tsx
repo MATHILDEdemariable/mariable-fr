@@ -4,7 +4,7 @@ import { useSearchParams, useNavigate, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Database } from '@/integrations/supabase/types';
 import { supabase } from '@/integrations/supabase/client';
-import PremiumHeader from '@/components/home/PremiumHeader';
+import Header from '@/components/Header';
 import VendorCard from '@/components/vendors/VendorCard';
 import VendorCardSkeleton from '@/components/vendors/VendorCardSkeleton';
 import LazyVendorCard from '@/components/vendors/LazyVendorCard';
@@ -13,7 +13,6 @@ import { useOptimizedVendors } from '@/hooks/useOptimizedVendors';
 import { usePaginatedVendors } from '@/hooks/usePaginatedVendors';
 import { toast } from '@/components/ui/use-toast';
 import { Loader2, ArrowLeft, Search, MapPin } from 'lucide-react';
-import { Link } from 'react-router-dom';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from '@/components/ui/button';
 import RegionSelectorPage, { slugToRegion, regionToSlug } from '@/components/search/RegionSelectorPage';
@@ -197,15 +196,8 @@ const MoteurRecherche = () => {
           }
         `}</script>
       </Helmet>
-        <PremiumHeader />
+        <Header />
         <main className="container max-w-7xl px-4 py-6 md:py-8">
-          <Link 
-            to="/" 
-            className="inline-flex items-center gap-2 text-premium-sage hover:text-premium-sage-dark transition-colors mb-6"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Retour à l'accueil
-          </Link>
           <RegionSelectorPage />
         </main>
       </div>
@@ -218,16 +210,9 @@ const MoteurRecherche = () => {
         <title>{getPageTitle()}</title>
         <meta name="description" content={getMetaDescription()} />
       </Helmet>
-      <PremiumHeader />
+      <Header />
       
       <main className="container max-w-7xl px-4 py-6 md:py-8">
-        <Link 
-          to="/" 
-          className="inline-flex items-center gap-2 text-premium-sage hover:text-premium-sage-dark transition-colors mb-6"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Retour à l'accueil
-        </Link>
         {/* Breadcrumb et bouton retour */}
         <div className="flex items-center gap-2 mb-6 text-sm">
           <button 
