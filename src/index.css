@@ -158,11 +158,9 @@ select:focus {
   100% { left: 100%; }
 }
 
-/* Hero section with gradient flow */
+/* Hero section - removed gradient overlay */
 .hero-overlay {
-  background: linear-gradient(135deg, rgba(127,148,116,0.3) 0%, rgba(156,175,136,0.2) 50%, rgba(184,197,166,0.1) 100%);
-  background-size: 300% 300%;
-  animation: gradientFlow 8s ease infinite;
+  background: transparent;
 }
 
 /* Premium button effects */

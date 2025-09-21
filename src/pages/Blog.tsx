@@ -1,10 +1,9 @@
-
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { BlogPost } from '@/types/blog';
 import BlogPostCard from '@/components/blog/BlogPostCard';
-import Header from '@/components/Header';
+import PremiumHeader from '@/components/home/PremiumHeader';
 import Footer from '@/components/Footer';
 import SEO from '@/components/SEO';
 
@@ -76,7 +75,7 @@ const BlogPage = () => {
                     {JSON.stringify(blogSchema)}
                 </script>
             </SEO>
-            <Header />
+            <PremiumHeader />
             <main className="h-screen w-full snap-y snap-mandatory overflow-y-scroll overflow-x-hidden">
                 {posts && posts.length > 0 ? (
                     posts.map(post => <BlogPostCard key={post.id} post={post} />)

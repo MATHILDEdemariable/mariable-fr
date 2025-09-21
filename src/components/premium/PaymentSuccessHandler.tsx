@@ -22,51 +22,66 @@ const PaymentSuccessHandler = () => {
           console.log('🔄 Processing payment success...');
           
           if (sessionId) {
-            // Appeler l'edge function avec le bon nom de paramètre
-            const { data, error } = await supabase.functions.invoke('update-premium-status', {
-              body: { session_id: sessionId }  // Changé de sessionId à session_id
-            });
-
-            console.log('📤 Edge function response:', { data, error });
-
-            if (error) {
-              console.error('❌ Error updating premium status:', error);
-              toast({
-                title: "Erreur de validation",
-                description: "Le paiement a été effectué mais la validation a échoué. Contactez le support.",
-                variant: "destructive"
-              });
-              return;
-            }
-
-            if (data && !data.success) {
-              console.error('❌ Edge function failed:', data.error);
-              toast({
-                title: "Erreur de validation",
-                description: data.error || "Une erreur est survenue lors de la validation.",
-                variant: "destructive"
-              });
-              return;
-            }
-
-            console.log('✅ Premium status updated successfully');
+            // Retry logic en cas d'échec temporaire
+            let retryCount = 0;
+            const maxRetries = 3;
             
-            toast({
-              title: "Paiement confirmé !",
-              description: "Votre compte premium a été activé avec succès. Les fonctionnalités sont maintenant disponibles.",
-              duration: 5000
-            });
+            while (retryCount < maxRetries) {
+              try {
+                // Appeler l'edge function avec le bon nom de paramètre
+                const { data, error } = await supabase.functions.invoke('update-premium-status', {
+                  body: { session_id: sessionId }
+                });
 
-            // Nettoyer l'URL des paramètres de paiement
-            const cleanUrl = new URL(window.location.href);
-            cleanUrl.searchParams.delete('payment');
-            cleanUrl.searchParams.delete('session_id');
-            
-            // Forcer un rechargement complet pour rafraîchir le statut premium
-            setTimeout(() => {
-              console.log('🔄 Refreshing page to update premium status...');
-              window.location.href = cleanUrl.toString();
-            }, 2000);
+                console.log(`📤 Edge function response (attempt ${retryCount + 1}):`, { data, error });
+
+                if (error) {
+                  throw new Error(error.message);
+                }
+
+                if (data && !data.success) {
+                  throw new Error(data.error || "Edge function failed");
+                }
+
+                console.log('✅ Premium status updated successfully');
+                
+                toast({
+                  title: "Paiement confirmé !",
+                  description: "Votre compte premium a été activé avec succès. Les fonctionnalités sont maintenant disponibles.",
+                  duration: 5000
+                });
+
+                // Nettoyer l'URL des paramètres de paiement
+                const cleanUrl = new URL(window.location.href);
+                cleanUrl.searchParams.delete('payment');
+                cleanUrl.searchParams.delete('session_id');
+                
+                // Forcer un rechargement complet pour rafraîchir le statut premium
+                setTimeout(() => {
+                  console.log('🔄 Refreshing page to update premium status...');
+                  window.location.href = cleanUrl.toString();
+                }, 2000);
+
+                return; // Success, exit retry loop
+                
+              } catch (retryError) {
+                console.error(`❌ Attempt ${retryCount + 1} failed:`, retryError);
+                retryCount++;
+                
+                if (retryCount < maxRetries) {
+                  console.log(`⏳ Retrying in ${retryCount * 1000}ms...`);
+                  await new Promise(resolve => setTimeout(resolve, retryCount * 1000));
+                } else {
+                  // All retries failed
+                  toast({
+                    title: "Erreur de validation",
+                    description: `Le paiement a été effectué mais la validation a échoué après ${maxRetries} tentatives. Contactez le support.`,
+                    variant: "destructive"
+                  });
+                  return;
+                }
+              }
+            }
 
           } else {
             console.log('⚠️ No session ID found');

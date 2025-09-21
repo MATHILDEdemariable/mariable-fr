@@ -1,13 +1,13 @@
 
 import React from 'react';
-import Header from '@/components/Header';
+import PremiumHeader from '@/components/home/PremiumHeader';
 import Footer from '@/components/Footer';
 import { Mail, Linkedin, Calendar, Instagram } from 'lucide-react';
 
 const NousContacter = () => {
   return (
     <div className="min-h-screen flex flex-col bg-white">
-      <Header />
+      <PremiumHeader />
       
       <main className="flex-grow py-16 container">
         <div className="max-w-3xl mx-auto">

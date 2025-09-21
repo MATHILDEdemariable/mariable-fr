@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
-import Header from '@/components/Header';
+import PremiumHeader from '@/components/home/PremiumHeader';
 import Footer from '@/components/Footer';
 import {
   Accordion,
@@ -67,7 +67,7 @@ const FAQ = () => {
         <link rel="canonical" href="https://www.mariable.fr/contact/faq" />
       </Helmet>
 
-      <Header />
+      <PremiumHeader />
       
       <main className="container mx-auto px-4 py-12">
         <div className="max-w-4xl mx-auto">
