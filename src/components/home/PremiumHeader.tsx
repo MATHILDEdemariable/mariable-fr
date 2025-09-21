@@ -42,6 +42,9 @@ const PremiumHeader = () => {
       <Link to="/outils-planning-mariage" className="text-premium-charcoal hover:text-premium-black transition-colors font-medium">
         Planification
       </Link>
+      <Link to="/coordination-jour-j" className="text-premium-charcoal hover:text-premium-black transition-colors font-medium">
+        Jour J
+      </Link>
       <Link to="/about/approche" className="text-premium-charcoal hover:text-premium-black transition-colors font-medium">
         À propos
       </Link>
@@ -123,6 +126,13 @@ const PremiumHeader = () => {
                     onClick={() => setMobileOpen(false)}
                   >
                     Planification
+                  </Link>
+                  <Link 
+                    to="/coordination-jour-j" 
+                    className="text-premium-charcoal hover:text-premium-black transition-colors font-medium py-2"
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    Jour J
                   </Link>
                   <Link 
                     to="/about/approche" 

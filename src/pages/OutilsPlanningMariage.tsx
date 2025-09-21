@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import Header from '@/components/Header';
+import PremiumHeader from '@/components/home/PremiumHeader';
 import Footer from '@/components/Footer';
 import {
   Calculator,
@@ -164,13 +164,23 @@ const OutilsPlanningMariage: React.FC = () => {
         </script>
       </Helmet>
 
-      <Header />
+      <PremiumHeader />
 
       <main className="min-h-screen bg-gradient-to-b from-white to-wedding-cream/20">
         {/* Hero Section */}
         <section className="pt-24 pb-12 px-4">
           <div className="container mx-auto max-w-6xl">
             <div className="text-center mb-12">
+              <div className="flex items-center justify-center mb-6">
+                <Button 
+                  variant="outline"
+                  onClick={() => navigate('/')}
+                  className="border-premium-sage/30 text-premium-sage hover:bg-premium-sage/5"
+                >
+                  ← Retour à l'accueil
+                </Button>
+              </div>
+              
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-serif mb-6 text-wedding-black">
                 Outils Planning Mariage
               </h1>

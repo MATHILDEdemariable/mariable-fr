@@ -4,6 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { CheckCircle, Camera, MapPin, Utensils } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import VendorPreview from './VendorPreview';
 
 const PremiumMarketplaceSection = () => {
   const vendors = [
@@ -59,38 +60,9 @@ const PremiumMarketplaceSection = () => {
           </p>
         </div>
 
-        {/* Grid des prestataires */}
-        <div className="grid md:grid-cols-3 gap-8 mb-16">
-          {vendors.map((vendor) => (
-            <Card key={vendor.id} className="prestataire-card group bg-white shadow-lg border-premium-light overflow-hidden section-reveal stagger-item">
-              <div className="relative">
-                <img 
-                  src={vendor.image} 
-                  alt={vendor.name}
-                  className="w-full h-48 object-cover"
-                />
-                <Badge className="badge-certifie absolute top-4 right-4 border-0">
-                  Certifié Mariable
-                </Badge>
-              </div>
-              <CardContent className="p-6">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="p-2 bg-premium-warm rounded-full">
-                    <vendor.icon className="h-5 w-5 text-premium-charcoal" />
-                  </div>
-                  <span className="text-sm font-medium text-premium-charcoal uppercase tracking-wide">
-                    {vendor.category}
-                  </span>
-                </div>
-                <h3 className="text-xl font-bold text-premium-black mb-2">
-                  {vendor.name}
-                </h3>
-                <p className="text-premium-charcoal">
-                  {vendor.location}
-                </p>
-              </CardContent>
-            </Card>
-          ))}
+        {/* Aperçu des prestataires avec VendorPreview */}
+        <div className="mb-16">
+          <VendorPreview />
         </div>
 
         {/* Process de sélection */}

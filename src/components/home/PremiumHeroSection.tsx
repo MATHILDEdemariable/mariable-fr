@@ -44,25 +44,13 @@ const PremiumHeroSection = () => {
             size="lg"
             variant="outline"
             onClick={() => window.open('/register', '_self')}
-            className="btn-secondary border-2 border-white/30 text-white hover:bg-white/10 backdrop-blur-sm px-8 py-4 text-lg font-semibold ripple"
+            className="border-2 border-white/30 text-white hover:bg-white/10 hover:border-white/50 backdrop-blur-sm px-8 py-4 text-lg font-semibold ripple"
           >
             <Play className="mr-2 h-5 w-5" />
             Organiser
           </Button>
         </div>
 
-        {/* Stats Bar */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-8 text-white/80 text-sm font-medium">
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-premium-sage rounded-full"></div>
-            <span>98% satisfaction</span>
-          </div>
-          <div className="hidden sm:block w-px h-4 bg-white/30"></div>
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-premium-sage-medium rounded-full"></div>
-            <span>100+ prestataires sélectionnés</span>
-          </div>
-        </div>
       </div>
     </VideoBackground>
   );

@@ -62,10 +62,6 @@ const PremiumProcessSection = () => {
                 </div>
 
                 <CardContent className="p-8 pt-20">
-                  <div className={`inline-flex p-3 rounded-xl bg-gradient-to-r ${step.gradient} mb-6`}>
-                    <step.icon className="h-8 w-8 text-white" />
-                  </div>
-                  
                   <h3 className="text-2xl font-bold text-premium-black mb-4 tracking-wide">
                     {step.title}
                   </h3>
