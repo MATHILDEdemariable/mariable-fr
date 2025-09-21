@@ -1,11 +1,11 @@
 
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
-import Header from '@/components/Header';
+import { Link } from 'react-router-dom';
+import PremiumHeader from '@/components/home/PremiumHeader';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
-import { Link } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, ArrowLeft } from 'lucide-react';
 
 const Charte = () => {
   return (
@@ -15,9 +15,16 @@ const Charte = () => {
         <meta name="description" content="Découvrez notre charte Mariable et nos engagements" />
       </Helmet>
 
-      <Header />
+      <PremiumHeader />
 
       <main className="container mx-auto px-4 py-12 max-w-4xl">
+        <Link 
+          to="/" 
+          className="inline-flex items-center gap-2 text-premium-sage hover:text-premium-sage-dark transition-colors mb-8"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Retour à l'accueil
+        </Link>
         <h1 className="text-4xl font-serif mb-8 text-center">Notre Charte Mariable</h1>
 
         <div className="prose prose-lg mx-auto">

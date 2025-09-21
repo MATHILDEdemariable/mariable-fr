@@ -1,25 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Logo } from '@/components/Logo';
 import { Link, useNavigate } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
+import { Logo } from '@/components/Logo';
+import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { HeaderDropdown, HeaderDropdownMenu, HeaderDropdownItem } from '@/components/HeaderDropdown';
 import { supabase } from '@/integrations/supabase/client';
 
 const PremiumHeader = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const checkUser = async () => {
+    // Vérifier l'état de connexion au chargement
+    const checkSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       setIsLoggedIn(!!session);
     };
 
-    checkUser();
+    checkSession();
 
+    // Écouter les changements d'état d'authentification
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setIsLoggedIn(!!session);
     });
@@ -28,226 +29,135 @@ const PremiumHeader = () => {
   }, []);
 
   const handleLogin = () => {
-    navigate('/login');
+    navigate('/auth');
   };
 
   const handleGetStarted = () => {
-    navigate('/register');
+    navigate('/auth?mode=register');
   };
 
+  // Navigation Links pour Desktop
   const NavLinks = () => (
-    <>
+    <nav className="hidden md:flex items-center space-x-2">
       <HeaderDropdown label="Inspiration">
         <HeaderDropdownMenu>
-          <HeaderDropdownItem 
-            label="Club Mariable" 
-            description="Communauté des jeunes mariés"
-            to="/jeunes-maries" 
+          <HeaderDropdownItem
+            label="Inspirations de mariages"
+            description="Découvrez des idées et tendances pour votre jour J"
+            to="/inspirations"
           />
-          <HeaderDropdownItem 
-            label="Conseils" 
-            description="Inspiration et tendances mariage"
-            to="/blog" 
+          <HeaderDropdownItem
+            label="Témoignages"
+            description="L'expérience de couples qui nous ont fait confiance"
+            to="/temoignages"
+          />
+          <HeaderDropdownItem
+            label="Blog"
+            description="Conseils et actualités du mariage"
+            to="/blog"
           />
         </HeaderDropdownMenu>
       </HeaderDropdown>
-      
-      <Link to="/selection" className="text-premium-charcoal hover:text-premium-black transition-colors font-medium">
-        Prestataires
-      </Link>
-      <Link to="/outils-planning-mariage" className="text-premium-charcoal hover:text-premium-black transition-colors font-medium">
-        Planification
-      </Link>
-      <Link to="/coordination-jour-j" className="text-premium-charcoal hover:text-premium-black transition-colors font-medium">
-        Jour J
-      </Link>
-      
+
+      <HeaderDropdown href="/selection" label="Prestataires" />
+      <HeaderDropdown href="/planification" label="Planification" />
+      <HeaderDropdown href="/jour-m" label="Jour M" />
+
       <HeaderDropdown label="À propos">
         <HeaderDropdownMenu>
-          <HeaderDropdownItem 
-            label="Notre histoire" 
-            description="L'histoire de Mariable"
-            to="/about/histoire" 
+          <HeaderDropdownItem
+            label="Notre Histoire"
+            description="Découvrez l'équipe et la mission de Mariable"
+            to="/about"
           />
-          <HeaderDropdownItem 
-            label="Notre charte" 
-            description="Nos valeurs et engagements"
-            to="/about/charte" 
+          <HeaderDropdownItem
+            label="Notre Charte"
+            description="Nos engagements et valeurs"
+            to="/about/charte"
           />
-          <HeaderDropdownItem 
-            label="Prix" 
-            description="Tarifs et formules"
-            to="/prix" 
-          />
-          <HeaderDropdownItem 
-            label="Nous contacter" 
-            description="Entrer en contact"
-            to="/contact" 
-          />
-          <HeaderDropdownItem 
-            label="FAQ" 
-            description="Questions fréquentes"
-            to="/contact/faq" 
+          <HeaderDropdownItem
+            label="Contact"
+            description="Une question ? Contactez-nous"
+            to="/contact"
           />
         </HeaderDropdownMenu>
       </HeaderDropdown>
-    </>
+    </nav>
   );
 
   return (
-    <header className="fixed top-0 left-0 w-full z-50 bg-white border-b border-gray-200 transition-all duration-300">
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <Link to="/" className="flex items-center">
-            <Logo />
-          </Link>
+    <header className="sticky top-0 z-50 bg-white border-b border-gray-100">
+      <div className="container px-4 h-24 flex items-center justify-between">
+        {/* Logo */}
+        <Link to="/" className="flex items-center">
+          <Logo />
+        </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
-            <NavLinks />
-          </nav>
+        {/* Desktop Navigation */}
+        <NavLinks />
 
-          {/* Desktop CTAs */}
-          <div className="hidden md:flex items-center space-x-4">
-            {isLoggedIn ? (
+        {/* Desktop Actions */}
+        <div className="hidden md:flex items-center space-x-3">
+          {isLoggedIn ? (
+            <Button 
+              onClick={() => navigate('/dashboard')}
+              className="bg-premium-sage hover:bg-premium-sage-dark text-white px-6"
+            >
+              Tableau de bord
+            </Button>
+          ) : (
+            <>
               <Button
-                onClick={() => navigate('/dashboard')}
-                className="btn-primary text-white ripple"
+                variant="ghost"
+                onClick={handleLogin}
+                className="text-premium-charcoal hover:text-premium-sage"
               >
-                Tableau de bord
+                Se connecter
               </Button>
-            ) : (
-              <>
-                <Button
-                  variant="outline"
-                  onClick={handleLogin}
-                  className="btn-secondary border-premium-sage/30 text-premium-sage hover:bg-premium-sage/5 ripple"
-                >
-                  Se connecter
-                </Button>
-                <Button
-                  onClick={handleGetStarted}
-                  className="btn-primary text-white ripple"
-                >
-                  Commencer
-                </Button>
-              </>
-            )}
-          </div>
+              <Button
+                onClick={handleGetStarted}
+                className="bg-premium-sage hover:bg-premium-sage-dark text-white px-6"
+              >
+                Commencer
+              </Button>
+            </>
+          )}
+        </div>
 
-          {/* Mobile Menu */}
-          <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-            <SheetTrigger asChild className="md:hidden">
+        {/* Mobile Menu */}
+        <div className="md:hidden">
+          <Sheet>
+            <SheetTrigger asChild>
               <Button variant="ghost" size="icon">
                 <Menu className="h-6 w-6" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[300px] bg-white">
-              <div className="flex flex-col space-y-6 mt-8">
-                <Link 
-                  to="/" 
-                  className="flex items-center mb-6"
-                  onClick={() => setMobileOpen(false)}
-                >
-                  <Logo />
+            <SheetContent side="right" className="w-80">
+              <div className="flex flex-col space-y-4 mt-8">
+                <Link to="/inspirations" className="text-lg font-medium">
+                  Inspirations
                 </Link>
-                
-                <div className="flex flex-col space-y-4">
-                  <Link 
-                    to="/selection" 
-                    className="text-premium-charcoal hover:text-premium-black transition-colors font-medium py-2"
-                    onClick={() => setMobileOpen(false)}
-                  >
-                    Prestataires
-                  </Link>
-                  <Link 
-                    to="/outils-planning-mariage" 
-                    className="text-premium-charcoal hover:text-premium-black transition-colors font-medium py-2"
-                    onClick={() => setMobileOpen(false)}
-                  >
-                    Planification
-                  </Link>
-                  <Link 
-                    to="/coordination-jour-j" 
-                    className="text-premium-charcoal hover:text-premium-black transition-colors font-medium py-2"
-                    onClick={() => setMobileOpen(false)}
-                  >
-                    Jour J
-                  </Link>
-                  
-                  {/* Inspiration Submenu */}
-                  <div className="py-2">
-                    <p className="font-semibold text-premium-black mb-2">Inspiration</p>
-                    <div className="ml-4 space-y-2">
-                      <Link 
-                        to="/jeunes-maries" 
-                        className="block text-premium-charcoal hover:text-premium-black transition-colors py-1"
-                        onClick={() => setMobileOpen(false)}
-                      >
-                        Club Mariable
-                      </Link>
-                      <Link 
-                        to="/blog" 
-                        className="block text-premium-charcoal hover:text-premium-black transition-colors py-1"
-                        onClick={() => setMobileOpen(false)}
-                      >
-                        Conseils
-                      </Link>
-                    </div>
-                  </div>
-                  
-                  {/* À propos Submenu */}
-                  <div className="py-2">
-                    <p className="font-semibold text-premium-black mb-2">À propos</p>
-                    <div className="ml-4 space-y-2">
-                      <Link 
-                        to="/about/histoire" 
-                        className="block text-premium-charcoal hover:text-premium-black transition-colors py-1"
-                        onClick={() => setMobileOpen(false)}
-                      >
-                        Notre histoire
-                      </Link>
-                      <Link 
-                        to="/about/charte" 
-                        className="block text-premium-charcoal hover:text-premium-black transition-colors py-1"
-                        onClick={() => setMobileOpen(false)}
-                      >
-                        Notre charte
-                      </Link>
-                      <Link 
-                        to="/prix" 
-                        className="block text-premium-charcoal hover:text-premium-black transition-colors py-1"
-                        onClick={() => setMobileOpen(false)}
-                      >
-                        Prix
-                      </Link>
-                      <Link 
-                        to="/contact" 
-                        className="block text-premium-charcoal hover:text-premium-black transition-colors py-1"
-                        onClick={() => setMobileOpen(false)}
-                      >
-                        Nous contacter
-                      </Link>
-                      <Link 
-                        to="/contact/faq" 
-                        className="block text-premium-charcoal hover:text-premium-black transition-colors py-1"
-                        onClick={() => setMobileOpen(false)}
-                      >
-                        FAQ
-                      </Link>
-                    </div>
-                  </div>
-                </div>
+                <Link to="/selection" className="text-lg font-medium">
+                  Prestataires
+                </Link>
+                <Link to="/planification" className="text-lg font-medium">
+                  Planification
+                </Link>
+                <Link to="/jour-m" className="text-lg font-medium">
+                  Jour M
+                </Link>
+                <Link to="/about" className="text-lg font-medium">
+                  À propos
+                </Link>
+                <Link to="/contact" className="text-lg font-medium">
+                  Contact
+                </Link>
 
-                <div className="flex flex-col space-y-3 pt-6 border-t border-premium-light">
+                <div className="pt-4 border-t space-y-3">
                   {isLoggedIn ? (
-                    <Button
-                      onClick={() => {
-                        navigate('/dashboard');
-                        setMobileOpen(false);
-                      }}
-                      className="btn-primary text-white ripple w-full"
+                    <Button 
+                      onClick={() => navigate('/dashboard')}
+                      className="w-full bg-premium-sage hover:bg-premium-sage-dark text-white"
                     >
                       Tableau de bord
                     </Button>
@@ -255,20 +165,14 @@ const PremiumHeader = () => {
                     <>
                       <Button
                         variant="outline"
-                        onClick={() => {
-                          handleLogin();
-                          setMobileOpen(false);
-                        }}
-                        className="btn-secondary border-premium-sage/30 text-premium-sage hover:bg-premium-sage/5 w-full ripple"
+                        onClick={handleLogin}
+                        className="w-full"
                       >
                         Se connecter
                       </Button>
                       <Button
-                        onClick={() => {
-                          handleGetStarted();
-                          setMobileOpen(false);
-                        }}
-                        className="btn-primary text-white w-full ripple"
+                        onClick={handleGetStarted}
+                        className="w-full bg-premium-sage hover:bg-premium-sage-dark text-white"
                       >
                         Commencer
                       </Button>
