@@ -9,7 +9,7 @@ const NousContacter = () => {
     <div className="min-h-screen flex flex-col bg-white">
       <PremiumHeader />
       
-      <main className="flex-grow py-16 container">
+      <main className="flex-grow pt-28 pb-16 container">
         <div className="max-w-3xl mx-auto">
           <h1 className="text-4xl md:text-5xl font-serif mb-4">Contact</h1>
           <p className="text-xl text-muted-foreground mb-8">

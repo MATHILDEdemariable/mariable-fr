@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import DashboardSidebar from './DashboardSidebar';
 import { useIsMobile } from '@/hooks/use-mobile';
-import Header from '@/components/Header';
+import PremiumHeader from '@/components/home/PremiumHeader';
 import { PanelLeft } from 'lucide-react';
 import { useReaderMode } from '@/contexts/ReaderModeContext';
 
@@ -27,7 +27,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   return (
     <OnboardingProvider>
       <div className="min-h-screen bg-gray-50 flex flex-col">
-        <Header />
+        <PremiumHeader />
         
         <div className="flex flex-1 relative">
         {/* Mobile toggle button - using PanelLeft icon for dashboard */}
