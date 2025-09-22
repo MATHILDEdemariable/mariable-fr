@@ -2,6 +2,51 @@ import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.4';
 
+// Import slug generation utility
+async function slugify(text: string): Promise<string> {
+  return text
+    .toString()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/[^\w-]+/g, '')
+    .replace(/--+/g, '-')
+    .replace(/^-+/, '')
+    .replace(/-+$/, '');
+}
+
+async function generateUniqueSlug(nom: string, excludeId?: string, supabaseClient?: any): Promise<string> {
+  const supabaseToUse = supabaseClient || supabase;
+  let baseSlug = await slugify(nom) || "prestataire";
+  let uniqueSlug = baseSlug;
+  let i = 1;
+  
+  while (true) {
+    const { data, error } = await supabaseToUse
+      .from("prestataires_rows")
+      .select("id")
+      .eq("slug", uniqueSlug);
+
+    if (error) {
+      console.error("Error checking slug uniqueness, using timestamp fallback", error);
+      return `${baseSlug}-${Date.now()}`;
+    }
+
+    // Si aucun résultat ou uniquement le même prestataire, c'est OK
+    if (
+      !data ||
+      data.length === 0 ||
+      (excludeId && data.length === 1 && data[0].id === excludeId)
+    ) {
+      return uniqueSlug;
+    }
+    i += 1;
+    uniqueSlug = `${baseSlug}-${i}`;
+  }
+}
+
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
@@ -140,7 +185,7 @@ async function getPlaceDetails(placeId: string): Promise<any | null> {
   try {
     console.log(`📋 Fetching details for place_id: ${placeId}`);
     
-    const detailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=place_id,name,formatted_address,geometry,rating,user_ratings_total,website&key=${googlePlacesApiKey}`;
+    const detailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=place_id,name,formatted_address,geometry,rating,user_ratings_total,website,photos&key=${googlePlacesApiKey}`;
     
     const response = await fetch(detailsUrl);
     const data = await response.json();
@@ -154,6 +199,19 @@ async function getPlaceDetails(placeId: string): Promise<any | null> {
     return null;
   } catch (error) {
     console.error(`❌ Error getting place details for ${placeId}:`, error);
+    return null;
+  }
+}
+
+async function getGooglePhotoUrl(photoReference: string): Promise<string | null> {
+  try {
+    // Generate the photo URL with max width 1600px
+    const photoUrl = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=1600&photoreference=${photoReference}&key=${googlePlacesApiKey}`;
+    
+    console.log(`📸 Generated photo URL for reference: ${photoReference}`);
+    return photoUrl;
+  } catch (error) {
+    console.error(`❌ Error generating photo URL:`, error);
     return null;
   }
 }
@@ -227,9 +285,13 @@ async function processGoogleMapsUrl(urlRecord: any): Promise<boolean> {
     // Parse city and region from address
     const { city, region } = extractCityAndRegionFromAddress(placeDetails.formatted_address || '');
     
+    // Generate unique slug
+    const slug = await generateUniqueSlug(placeDetails.name, undefined, supabase);
+    
     // Prepare venue data for insertion
     const venueData = {
       nom: placeDetails.name,
+      slug: slug,
       description: placeDetails.formatted_address || '', // Store full address in description
       ville: city,
       region: region,
@@ -245,9 +307,11 @@ async function processGoogleMapsUrl(urlRecord: any): Promise<boolean> {
     };
     
     // Insert into prestataires_rows
-    const { error: insertError } = await supabase
+    const { data: insertedVenue, error: insertError } = await supabase
       .from('prestataires_rows')
-      .insert([venueData]);
+      .insert([venueData])
+      .select()
+      .single();
     
     if (insertError) {
       console.error(`❌ Error inserting venue:`, insertError);
@@ -260,6 +324,35 @@ async function processGoogleMapsUrl(urlRecord: any): Promise<boolean> {
         })
         .eq('id', urlRecord.id);
       return false;
+    }
+
+    // Insert Google photo if available
+    if (placeDetails.photos && placeDetails.photos.length > 0 && insertedVenue) {
+      try {
+        const firstPhoto = placeDetails.photos[0];
+        const photoUrl = await getGooglePhotoUrl(firstPhoto.photo_reference);
+        
+        if (photoUrl) {
+          const { error: photoError } = await supabase
+            .from('prestataires_photos_preprod')
+            .insert([{
+              prestataire_id: insertedVenue.id,
+              url: photoUrl,
+              ordre: 0,
+              principale: true,
+              filename: `google_photo_${insertedVenue.id}`,
+              type: 'image/jpeg'
+            }]);
+          
+          if (photoError) {
+            console.error(`⚠️ Error inserting photo:`, photoError);
+          } else {
+            console.log(`📸 Successfully added Google photo for: ${placeDetails.name}`);
+          }
+        }
+      } catch (photoError) {
+        console.error(`⚠️ Error processing photo:`, photoError);
+      }
     }
     
     // Mark URL as processed

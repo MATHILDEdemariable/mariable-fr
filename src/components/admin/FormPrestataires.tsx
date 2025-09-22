@@ -11,13 +11,15 @@ import {
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Prestataire } from "./types";
 import FeaturedImage from "@/components/ui/featured-image";
-import { Search, Plus, Filter } from "lucide-react";
+import { Search, Plus, Filter, Upload } from "lucide-react";
 import { useDebounce } from "@/hooks/use-debounce";
 import FrontStylePrestataireEditModal from "./FrontStylePrestataireEditModal";
+import CSVUploadTab from "./CSVUploadTab";
 
 const PrestatairesAdmin = () => {
   const [prestataires, setPrestataires] = useState<Prestataire[]>([]);
@@ -219,26 +221,39 @@ const PrestatairesAdmin = () => {
 
   return (
     <div className="p-4 bg-white rounded-lg shadow">
-      <div className="flex flex-col space-y-4 mb-6">
-        {/* Première ligne : Recherche et bouton ajouter */}
-        <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-          <div className="relative w-full sm:w-96">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-            <Input
-              placeholder="Rechercher un prestataire..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 w-full"
-            />
-          </div>
-          <Button 
-            onClick={handleAddNew} 
-            className="flex items-center gap-2 w-full sm:w-auto"
-          >
-            <Plus size={18} />
-            Ajouter un prestataire
-          </Button>
-        </div>
+      <Tabs defaultValue="list" className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="list" className="flex items-center gap-2">
+            <Filter className="h-4 w-4" />
+            Liste des prestataires
+          </TabsTrigger>
+          <TabsTrigger value="csv-upload" className="flex items-center gap-2">
+            <Upload className="h-4 w-4" />
+            Import CSV Google Maps
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="list" className="space-y-4 mt-6">
+          <div className="flex flex-col space-y-4 mb-6">
+            {/* Première ligne : Recherche et bouton ajouter */}
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+              <div className="relative w-full sm:w-96">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                <Input
+                  placeholder="Rechercher un prestataire..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10 w-full"
+                />
+              </div>
+              <Button 
+                onClick={handleAddNew} 
+                className="flex items-center gap-2 w-full sm:w-auto"
+              >
+                <Plus size={18} />
+                Ajouter un prestataire
+              </Button>
+            </div>
 
         {/* Deuxième ligne : Filtres */}
         <div className="flex flex-col sm:flex-row gap-3 items-center">
