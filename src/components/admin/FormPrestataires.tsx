@@ -406,6 +406,12 @@ const PrestatairesAdmin = () => {
           </Table>
         </div>
       )}
+      </TabsContent>
+
+      <TabsContent value="csv-upload" className="space-y-4 mt-6">
+        <CSVUploadTab onSuccess={() => fetchPrestataires()} />
+      </TabsContent>
+      </Tabs>
 
       <FrontStylePrestataireEditModal
         open={frontEditOpen}

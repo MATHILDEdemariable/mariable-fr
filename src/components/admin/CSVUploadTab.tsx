@@ -14,7 +14,11 @@ interface ParsedUrl {
   error?: string;
 }
 
-const CSVUploadTab: React.FC = () => {
+interface CSVUploadTabProps {
+  onSuccess?: () => void;
+}
+
+const CSVUploadTab: React.FC<CSVUploadTabProps> = ({ onSuccess }) => {
   const [file, setFile] = useState<File | null>(null);
   const [parsedUrls, setParsedUrls] = useState<ParsedUrl[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -162,6 +166,7 @@ const CSVUploadTab: React.FC = () => {
         toast.warning('URLs importées mais erreur lors du déclenchement du scraper');
       } else {
         toast.success(`${inserted} URLs importées et traitement en cours`);
+        onSuccess?.(); // Callback to refresh parent data
       }
 
       // Reset state
