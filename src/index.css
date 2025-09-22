@@ -350,6 +350,11 @@ main, [data-page-root] {
   scroll-margin-top: var(--header-h); 
 }
 
+/* Classe utilitaire robuste pour éviter les régressions */
+.header-safe { 
+  padding-top: 112px !important; /* pt-28 = 112px */
+}
+
 /* Classes utilitaires pour corriger le padding du dashboard */
 .dashboard-container { 
   padding-top: 0; 

@@ -166,7 +166,7 @@ const VendorSelectionPage = () => {
 
   if (showRegionSelector) {
     return (
-      <div className="space-y-6 px-4 sm:px-6">
+      <div className="space-y-6 pt-28 px-4 sm:px-6">
         <Helmet>
           <title>{getPageTitle()}</title>
           <meta name="description" content={getMetaDescription()} />
@@ -195,7 +195,7 @@ const VendorSelectionPage = () => {
   }
 
   return (
-    <div className="space-y-6 px-4 sm:px-6">
+    <div className="space-y-6 pt-28 px-4 sm:px-6">
       <Helmet>
         <title>{getPageTitle()}</title>
         <meta name="description" content={getMetaDescription()} />
