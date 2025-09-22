@@ -89,6 +89,11 @@ const PremiumHeader = () => {
             description="Questions fréquentes"
             to="/contact/faq" 
           />
+          <HeaderDropdownItem 
+            label="Comparatif" 
+            description="Seul vs Wedding Planner vs Mariable"
+            to="/comparatif" 
+          />
         </HeaderDropdownMenu>
       </HeaderDropdown>
     </>
@@ -235,6 +240,13 @@ const PremiumHeader = () => {
                         onClick={() => setMobileOpen(false)}
                       >
                         FAQ
+                      </Link>
+                      <Link 
+                        to="/comparatif" 
+                        className="block text-premium-charcoal hover:text-premium-black transition-colors py-1"
+                        onClick={() => setMobileOpen(false)}
+                      >
+                        Comparatif
                       </Link>
                     </div>
                   </div>

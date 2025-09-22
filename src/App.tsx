@@ -57,6 +57,7 @@ import Approche from "./pages/about/Approche";
 import Histoire from "./pages/about/Histoire";
 import Charte from "./pages/about/Charte";
 import Temoignages from "./pages/about/Temoignages";
+import Comparatif from "./pages/Comparatif";
 
 import FAQ from "./pages/contact/FAQ";
 import ChecklistMariage from "./pages/ChecklistMariage";
@@ -174,6 +175,7 @@ function App() {
                    <Route path="/about/histoire" element={<Histoire />} />
                    <Route path="/about/charte" element={<Charte />} />
                    <Route path="/about/temoignages" element={<Temoignages />} />
+                   <Route path="/comparatif" element={<Comparatif />} />
 
                    {/* Jeunes Mariés routes */}
                    <Route path="/jeunes-maries" element={<JeunesMaries />} />

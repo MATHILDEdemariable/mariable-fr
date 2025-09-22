@@ -53,7 +53,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         {/* Main content area - better mobile spacing */}
         <div className="flex-1 flex justify-start items-start transition-all duration-300" 
              style={{ marginLeft: (!isMobile && sidebarVisible) ? '0' : '0' }}>
-          <main className="w-full py-4 px-2 sm:py-6 sm:px-3 lg:px-4">
+          <main className="w-full pt-28 pb-4 px-2 sm:pt-32 sm:pb-6 sm:px-3 lg:px-4">
             {children || <Outlet />}
           </main>
         </div>
