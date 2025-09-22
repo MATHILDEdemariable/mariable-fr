@@ -122,6 +122,20 @@ const Professionnels = () => {
           
           <div className="border rounded-lg p-6 bg-white shadow-sm">
             <h2 className="text-2xl font-serif mb-4">Formulaire d'inscription prestataire mariage</h2>
+            <div className="mb-4 p-4 bg-premium-warm rounded-lg border border-premium-light">
+              <p className="text-sm text-muted-foreground">
+                En soumettant ce formulaire, vous acceptez nos{' '}
+                <Link 
+                  to="/cgv" 
+                  className="text-premium-sage hover:underline font-medium"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Conditions Générales d'Utilisation
+                </Link>
+                {' '}et vous engagez à respecter notre charte qualité pour garantir une expérience premium.
+              </p>
+            </div>
             <ProfessionalRegistrationForm />
           </div>
         </div>

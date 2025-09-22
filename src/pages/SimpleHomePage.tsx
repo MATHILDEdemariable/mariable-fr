@@ -3,8 +3,8 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import SEO from '@/components/SEO';
-import Footer from '@/components/Footer';
-import PremiumHeader from '@/components/home/PremiumHeader';
+
+import SimpleHeader from '@/components/SimpleHeader';
 import VideoBackground from '@/components/VideoBackground';
 
 const SimpleHomePage = () => {
@@ -20,7 +20,7 @@ const SimpleHomePage = () => {
         keywords="mariage, futurs mariés, professionnels mariage, organisation mariage, prestataires mariage"
       />
       
-      <PremiumHeader />
+      <SimpleHeader />
       
       <main className="flex-grow">
         {/* Hero Section Simple */}
@@ -29,7 +29,7 @@ const SimpleHomePage = () => {
           className="h-screen flex items-center justify-center"
         >
           <div className="relative z-20 text-center max-w-6xl mx-auto px-4">
-            <h1 className="text-6xl font-extrabold text-white mb-12 leading-tight md:text-6xl">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-white mb-8 sm:mb-12 leading-tight">
               Une expérience mariage
               <br />
               <span className="bg-gradient-to-r from-white/90 to-white bg-clip-text text-transparent">
@@ -37,27 +37,25 @@ const SimpleHomePage = () => {
               </span>
             </h1>
             
-            {/* CTAs côte à côte */}
-            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-              <Link to="/landingcouple">
-                <Button size="lg" className="btn-primary text-white px-12 py-6 text-xl font-semibold ripple min-w-[200px]">
+            {/* CTAs responsives */}
+            <div className="flex flex-col gap-4 sm:gap-6 justify-center items-center max-w-md mx-auto sm:max-w-none sm:flex-row">
+              <Link to="/landingcouple" className="w-full sm:w-auto">
+                <Button size="lg" className="btn-primary text-white px-8 sm:px-12 py-4 sm:py-6 text-lg sm:text-xl font-semibold ripple w-full sm:min-w-[200px]">
                   Futurs mariés
-                  <ArrowRight className="ml-3 h-6 w-6" />
+                  <ArrowRight className="ml-3 h-5 w-5 sm:h-6 sm:w-6" />
                 </Button>
               </Link>
               
-              <Link to="/professionnels">
-                <Button size="lg" className="bg-white text-premium-black hover:bg-white/90 px-12 py-6 text-xl font-semibold ripple min-w-[200px]">
+              <Link to="/professionnels" className="w-full sm:w-auto">
+                <Button size="lg" className="bg-white text-premium-black hover:bg-white/90 px-8 sm:px-12 py-4 sm:py-6 text-lg sm:text-xl font-semibold ripple w-full sm:min-w-[200px]">
                   Professionnels
-                  <ArrowRight className="ml-3 h-6 w-6" />
+                  <ArrowRight className="ml-3 h-5 w-5 sm:h-6 sm:w-6" />
                 </Button>
               </Link>
             </div>
           </div>
         </VideoBackground>
       </main>
-
-      <Footer />
     </div>
   );
 };

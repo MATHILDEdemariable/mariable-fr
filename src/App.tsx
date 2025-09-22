@@ -52,6 +52,7 @@ import MariageNouvelleAquitaine from "./pages/MariageNouvelleAquitaine";
 
 // Import missing pages
 import Professionnels from "./pages/Professionnels";
+import CGV from "./pages/CGV";
 import SalonDuMariage2025 from "./pages/SalonDuMariage2025";
 import SalonJeuConcours from "./pages/SalonJeuConcours";
 import SalonMicroTrottoir from "./pages/SalonMicroTrottoir";
@@ -164,6 +165,7 @@ function App() {
                   
                   {/* Missing routes - Fixed */}
                   <Route path="/professionnels" element={<Professionnels />} />
+                  <Route path="/cgv" element={<CGV />} />
                   
                   <Route path="/contact/faq" element={<FAQ />} />
                    <Route path="/checklist-mariage" element={<ChecklistMariage />} />
