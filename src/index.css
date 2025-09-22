@@ -360,6 +360,11 @@ main, [data-page-root] {
   padding-top: var(--header-h);
 }
 
+/* Classe universelle pour le contenu des pages principales */
+.page-content {
+  padding-top: var(--header-h);
+}
+
 /* Classes utilitaires pour corriger le padding du dashboard */
 .dashboard-container { 
   padding-top: 0; 

@@ -97,7 +97,7 @@ const Comparatif = () => {
       <div className="min-h-screen bg-gradient-to-br from-premium-light via-white to-premium-cream">
         <PremiumHeader />
         
-        <main className="pt-32 pb-16">
+        <main className="pb-16" style={{ paddingTop: 'var(--header-h)' }}>
           <div className="container mx-auto px-4">
             {/* Hero Section */}
             <div className="text-center mb-16">
