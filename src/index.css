@@ -330,6 +330,33 @@ select:focus {
   height: 300px;
 }
 
+/* Variables CSS pour la hauteur du header */
+:root {
+  --header-height: 96px; /* h-24 = 96px */
+  --header-offset: 112px; /* pt-28 = 112px */
+}
+
+/* Classes utilitaires robustes pour le header */
+.header-safe-top {
+  padding-top: var(--header-offset) !important;
+  margin-top: 0 !important;
+}
+
+.header-safe-spacing {
+  padding-top: calc(var(--header-height) + 16px) !important;
+}
+
+/* Debug temporaire - à supprimer après résolution */
+.debug-header {
+  outline: 2px solid red !important;
+  background-color: rgba(255, 0, 0, 0.1) !important;
+}
+
+.debug-content {
+  outline: 2px solid blue !important;
+  background-color: rgba(0, 0, 255, 0.1) !important;
+}
+
 /* Classes utilitaires pour corriger le padding du dashboard */
 .dashboard-container { 
   padding-top: 0; 
