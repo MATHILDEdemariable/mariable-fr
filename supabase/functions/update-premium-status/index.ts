@@ -112,24 +112,43 @@ serve(async (req) => {
       { auth: { persistSession: false } }
     );
 
-    // Find user by email in auth.users table
-    const { data: users, error: usersError } = await supabaseService.auth.admin.listUsers();
+    // Find user by email with pagination to handle large user base
+    let user = null;
+    let page = 1;
+    const perPage = 1000; // Maximum per page
     
-    if (usersError) {
-      console.error('❌ Error fetching users:', usersError);
-      return new Response(
-        JSON.stringify({ 
-          success: false, 
-          error: 'Erreur lors de la recherche de l\'utilisateur' 
-        }),
-        {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 500,
-        }
-      );
-    }
+    while (!user) {
+      console.log(`🔍 Searching users page ${page} for email:`, customerEmail);
+      
+      const { data: userData, error: userError } = await supabaseService.auth.admin.listUsers({
+        page: page,
+        perPage: perPage
+      });
+      
+      if (userError) {
+        console.error('❌ Error fetching users:', userError);
+        return new Response(
+          JSON.stringify({ 
+            success: false, 
+            error: 'Erreur lors de la recherche de l\'utilisateur' 
+          }),
+          {
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            status: 500,
+          }
+        );
+      }
 
-    const user = users.users.find(u => u.email === customerEmail);
+      user = userData.users.find(u => u.email === customerEmail);
+      
+      // Si on a trouvé l'utilisateur ou qu'il n'y a plus de pages
+      if (user || userData.users.length < perPage) {
+        break;
+      }
+      
+      page++;
+    }
+    
     if (!user) {
       console.error('❌ User not found for email:', customerEmail);
       return new Response(

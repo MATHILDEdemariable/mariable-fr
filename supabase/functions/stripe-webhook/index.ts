@@ -201,22 +201,40 @@ async function handleCheckoutCompleted(event: Stripe.Event, supabaseClient: any)
     throw new Error(`Payment not completed. Status: ${session.payment_status}`);
   }
 
-  // Trouver l'utilisateur par email
-  const { data: userData, error: userError } = await supabaseClient.auth.admin.listUsers();
+  // Trouver l'utilisateur par email avec pagination pour gérer une grande base d'utilisateurs
+  let user = null;
+  let page = 1;
+  const perPage = 1000; // Maximum par page
   
-  if (userError) {
-    logStep("ERROR: Failed to list users", { error: userError });
-    throw userError;
+  while (!user) {
+    logStep(`Searching users page ${page} for email`, { email: session.customer_details?.email });
+    
+    const { data: userData, error: userError } = await supabaseClient.auth.admin.listUsers({
+      page: page,
+      perPage: perPage
+    });
+    
+    if (userError) {
+      logStep("ERROR: Failed to list users", { error: userError });
+      throw userError;
+    }
+
+    user = userData.users.find(u => u.email === session.customer_details?.email);
+    
+    // Si on a trouvé l'utilisateur ou qu'il n'y a plus de pages
+    if (user || userData.users.length < perPage) {
+      break;
+    }
+    
+    page++;
   }
 
-  const user = userData.users.find(u => u.email === session.customer_details?.email);
-  
   if (!user) {
     logStep("ERROR: User not found", { email: session.customer_details?.email });
     throw new Error(`User not found with email: ${session.customer_details?.email}`);
   }
 
-  logStep("User found", { userId: user.id, email: user.email });
+  logStep("User found", { userId: user.id, email: session.customer_details?.email });
 
   // Mettre à jour le profil pour le rendre premium
   const { data: updatedProfile, error: updateError } = await supabaseClient

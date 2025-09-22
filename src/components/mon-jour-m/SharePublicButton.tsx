@@ -20,7 +20,20 @@ const SharePublicButton: React.FC<SharePublicButtonProps> = ({ coordinationId })
     return null;
   }
 
-  const publicUrl = `${window.location.origin}/planning-public/${coordinationId}`;
+  // Détection d'environnement pour générer l'URL correcte
+  const getPublicDomain = () => {
+    if (typeof window === 'undefined') return 'https://mariable.fr';
+    
+    // Si on est sur Lovable (environnement de dev), utiliser l'origine actuelle
+    if (window.location.hostname.includes('lovable.dev')) {
+      return window.location.origin;
+    }
+    
+    // Sinon, utiliser le domaine de production
+    return 'https://mariable.fr';
+  };
+  
+  const publicUrl = `${getPublicDomain()}/planning-public/${coordinationId}`;
 
   const handleCopy = async () => {
     try {
