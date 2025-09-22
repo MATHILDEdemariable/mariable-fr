@@ -96,7 +96,7 @@ const RegionSelectorPage: React.FC<RegionSelectorPageProps> = ({ onRegionSelect 
   };
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8">
+    <div className="max-w-6xl mx-auto px-4 pb-8">
       <div className="text-center mb-8">
         <h1 className="text-3xl md:text-4xl font-serif mb-4">
           Choisissez votre région

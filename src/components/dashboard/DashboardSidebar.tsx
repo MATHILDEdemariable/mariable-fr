@@ -200,7 +200,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
   };
 
   return (
-    <div className="h-full min-h-screen bg-white border-r border-gray-200">
+    <div className="h-full min-h-screen bg-white border-r border-gray-200" style={{ paddingTop: 'var(--header-h)' }}>
       <div className="flex items-center px-4 sm:px-6 py-3 sm:py-4">
         <span className="font-bold text-lg sm:text-xl">Mon espace</span>
       </div>
