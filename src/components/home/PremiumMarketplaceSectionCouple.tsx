@@ -14,7 +14,7 @@ const PremiumMarketplaceSectionCouple = () => {
     <>
       <section className="py-24 bg-white">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
+          <div className="text-center mb-8">
             <Badge className="mb-4 px-4 py-2 bg-premium-warm text-premium-charcoal border-premium-light">
               Sélection premium
             </Badge>
@@ -41,7 +41,7 @@ const PremiumMarketplaceSectionCouple = () => {
           </div>
 
           {/* Aperçu des prestataires avec VendorPreviewWidget */}
-          <div className="mb-8">
+          <div className="mb-4">
             <VendorPreviewWidget />
           </div>
 
