@@ -17,7 +17,7 @@ const PremiumToolsSection = () => {
     gradient: "from-premium-sage-medium to-premium-sage-light"
   }, {
     icon: Users,
-    title: "Calculatrice invités & boissons",
+    title: "Calculatrice budget & boissons",
     description: "Estimations précises pour votre réception",
     gradient: "from-premium-sage-light to-premium-sage"
   }];
