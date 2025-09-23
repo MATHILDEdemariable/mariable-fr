@@ -130,7 +130,6 @@ const AdminUsers = () => {
       setIsExporting(false);
     }
   };
-    }
 
   const getUserStatus = (profile: UserRegistration['profile']): UserStatus => {
     if (!profile) return 'free';
