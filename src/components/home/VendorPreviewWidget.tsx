@@ -51,11 +51,24 @@ const VendorPreviewWidget = () => {
 
         if (prestataireData) {
           const formattedVendors: Vendor[] = prestataireData.map((prestataire: any) => {
-            // Remplacer des noms spécifiques
+            // Remplacer "Kywwie Films" par les vraies données du "Domaine de la Fontaine"
+            if (prestataire.nom === 'Kywwie Films') {
+              return {
+                id: '47bfcf77-a2a0-4936-988c-08570ef1714f',
+                name: 'Domaine de la Fontaine',
+                category: 'Lieu de réception',
+                location: 'Orléans, Centre-Val de Loire',
+                rating: parseFloat((4.5 + Math.random() * 0.4).toFixed(1)),
+                reviews: Math.floor(Math.random() * 100) + 50,
+                price: 'À partir de 3600€',
+                image: 'https://bgidfcqktsttzlwlumtz.supabase.co/storage/v1/object/public/photos/47bfcf77-a2a0-4936-988c-08570ef1714f/carousel/c805b382-65fa-4e35-98d2-e7a53da8b320.jpg',
+                certified: true
+              };
+            }
+            
+            // Remplacer "Studio CRDC" par "Manoir de Kerangosquer" 
             let displayName = prestataire.nom;
-            if (displayName === 'Kywwie Films') {
-              displayName = 'Le Domaine de la Fontaine';
-            } else if (displayName === 'studio CRDC') {
+            if (displayName === 'studio CRDC') {
               displayName = 'Manoir de Kerangosquer';
             }
 
@@ -66,7 +79,7 @@ const VendorPreviewWidget = () => {
               location: `${prestataire.ville || ''}, ${prestataire.region || ''}`.replace(/^,\s*|,\s*$/g, ''),
               rating: parseFloat((4.5 + Math.random() * 0.4).toFixed(1)), // Rating arrondi à 1 décimale
               reviews: Math.floor(Math.random() * 100) + 50, // Entre 50 et 150 avis
-              price: prestataire.prix_a_partir_de || 'Sur devis',
+              price: prestataire.prix_a_partir_de ? `À partir de ${prestataire.prix_a_partir_de}€` : 'Sur devis',
               image: prestataire.prestataires_photos_preprod?.find((photo: any) => photo.is_cover)?.url || 
                       prestataire.prestataires_photos_preprod?.[0]?.url || 
                       '/placeholder.svg',
