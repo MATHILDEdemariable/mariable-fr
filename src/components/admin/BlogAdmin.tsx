@@ -13,10 +13,11 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Search, Plus, Edit, Trash2, Eye } from 'lucide-react';
+import { Search, Plus, Edit, Trash2, Eye, Upload } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import BlogPostForm from './BlogPostForm';
+import BlogCSVImport from './BlogCSVImport';
 
 interface BlogPost {
   id: string;
@@ -41,6 +42,7 @@ const BlogAdmin = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [formOpen, setFormOpen] = useState(false);
   const [editingPost, setEditingPost] = useState<BlogPost | null>(null);
+  const [showImport, setShowImport] = useState(false);
 
   useEffect(() => {
     fetchPosts();
@@ -138,6 +140,11 @@ const BlogAdmin = () => {
     setEditingPost(null);
   };
 
+  const handleImportComplete = () => {
+    fetchPosts();
+    setShowImport(false);
+  };
+
   const formatDate = (dateString?: string) => {
     if (!dateString) return 'Non publié';
     return new Date(dateString).toLocaleDateString('fr-FR');
@@ -155,17 +162,27 @@ const BlogAdmin = () => {
 
   return (
     <div className="space-y-6">
-      {!formOpen ? (
+      {!formOpen && !showImport ? (
         <>
           <div className="flex justify-between items-center">
             <div>
               <h2 className="text-2xl font-bold">Gestion des articles</h2>
               <p className="text-gray-600">Gérez le contenu de votre blog</p>
             </div>
-            <Button onClick={handleNew} className="bg-wedding-olive hover:bg-wedding-olive/80">
-              <Plus className="w-4 h-4 mr-2" />
-              Nouvel article
-            </Button>
+            <div className="flex gap-2">
+              <Button 
+                onClick={() => setShowImport(true)} 
+                variant="outline" 
+                className="flex items-center gap-2"
+              >
+                <Upload className="w-4 h-4" />
+                Import CSV
+              </Button>
+              <Button onClick={handleNew} className="bg-wedding-olive hover:bg-wedding-olive/80">
+                <Plus className="w-4 h-4 mr-2" />
+                Nouvel article
+              </Button>
+            </div>
           </div>
 
           <Card>
@@ -307,6 +324,16 @@ const BlogAdmin = () => {
             </CardContent>
           </Card>
         </>
+      ) : showImport ? (
+        <div className="space-y-4">
+          <div className="flex items-center gap-4">
+            <Button variant="outline" onClick={() => setShowImport(false)}>
+              ← Retour à la liste
+            </Button>
+            <h2 className="text-xl font-semibold">Import CSV des articles</h2>
+          </div>
+          <BlogCSVImport onImportComplete={handleImportComplete} />
+        </div>
       ) : (
         <BlogPostForm
           post={editingPost}

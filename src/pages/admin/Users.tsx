@@ -15,12 +15,13 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Search, User, Mail, Calendar, RefreshCw, AlertTriangle, Crown, Users, Phone } from 'lucide-react';
+import { Search, User, Mail, Calendar, RefreshCw, AlertTriangle, Crown, Users, Phone, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { useUserStatus, getStatusBadgeProps, UserStatus } from '@/hooks/useUserStatus';
+import { exportUsersToCSV } from '@/lib/csvExport';
 
 interface UserRegistration {
   id: string;
@@ -46,6 +47,7 @@ const AdminUsers = () => {
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isExporting, setIsExporting] = useState(false);
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
@@ -113,6 +115,22 @@ const AdminUsers = () => {
       setIsLoadingData(false);
     }
   };
+
+  const handleExportCSV = async () => {
+    console.log('🚀 handleExportCSV started:', { userCount: filteredUsers.length });
+    
+    try {
+      setIsExporting(true);
+      exportUsersToCSV(filteredUsers.length > 0 ? filteredUsers : users);
+      toast.success(`Export CSV réalisé avec succès (${filteredUsers.length > 0 ? filteredUsers.length : users.length} utilisateurs)`);
+    } catch (error) {
+      console.error('❌ Erreur lors de l\'export CSV:', error);
+      toast.error('Erreur lors de l\'export CSV');
+    } finally {
+      setIsExporting(false);
+    }
+  };
+    }
 
   const getUserStatus = (profile: UserRegistration['profile']): UserStatus => {
     if (!profile) return 'free';
@@ -204,6 +222,19 @@ const AdminUsers = () => {
           <p className="text-gray-600 mt-2">
             Gérez les comptes utilisateurs et suivez les nouvelles inscriptions.
           </p>
+        </div>
+
+        {/* Actions */}
+        <div className="flex justify-end">
+          <Button 
+            onClick={handleExportCSV}
+            disabled={isExporting || users.length === 0}
+            className="flex items-center gap-2"
+            variant="outline"
+          >
+            <Download className={`h-4 w-4 ${isExporting ? 'animate-spin' : ''}`} />
+            {isExporting ? 'Export en cours...' : `Exporter CSV (${filteredUsers.length > 0 ? filteredUsers.length : users.length})`}
+          </Button>
         </div>
 
         {/* Alerte d'erreur */}
