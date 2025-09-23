@@ -129,13 +129,13 @@ const PremiumHeader = () => {
                   onClick={handleLogin}
                   className="btn-secondary border-premium-sage/30 text-premium-sage hover:bg-premium-sage/5 ripple"
                 >
-                  Se connecter
+                  Futurs mariés
                 </Button>
                 <Button
-                  onClick={handleGetStarted}
+                  onClick={() => navigate('/professionnels')}
                   className="btn-primary text-white ripple"
                 >
-                  Commencer
+                  Professionnel
                 </Button>
               </>
             )}
@@ -273,16 +273,16 @@ const PremiumHeader = () => {
                         }}
                         className="btn-secondary border-premium-sage/30 text-premium-sage hover:bg-premium-sage/5 w-full ripple"
                       >
-                        Se connecter
+                        Futurs mariés
                       </Button>
                       <Button
                         onClick={() => {
-                          handleGetStarted();
+                          navigate('/professionnels');
                           setMobileOpen(false);
                         }}
                         className="btn-primary text-white w-full ripple"
                       >
-                        Commencer
+                        Professionnel
                       </Button>
                     </>
                   )}

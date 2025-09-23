@@ -99,9 +99,12 @@ const VendorPreviewWidget = () => {
       {vendors.map((vendor) => (
         <Card key={vendor.id} className="prestataire-card group overflow-hidden h-full">
           <div className="aspect-video relative overflow-hidden">
-            <div className="w-full h-full bg-gradient-to-br from-premium-sage-light to-premium-sage-medium flex items-center justify-center">
-              <span className="text-premium-charcoal font-medium">{vendor.name}</span>
-            </div>
+            <img
+              src={vendor.image}
+              alt={vendor.name}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              loading="lazy"
+            />
             {vendor.certified && (
               <Badge className="badge-certifie absolute top-3 left-3">
                 <CheckCircle className="w-3 h-3 mr-1" />

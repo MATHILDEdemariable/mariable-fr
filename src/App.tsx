@@ -108,8 +108,8 @@ function App() {
               <AnalyticsProvider>
                 <PaymentSuccessHandler />
                 <Routes>
-                  <Route path="/" element={<SimpleHomePage />} />
-                  <Route path="/landingcouple" element={<LandingCouple />} />
+                  <Route path="/" element={<LandingCouple />} />
+                  <Route path="/simple" element={<SimpleHomePage />} />
                   <Route path="/landingpagev0" element={<LandingPageV0 />} />
                    <Route path="/moteur-recherche" element={<MoteurRecherche />} />
           <Route path="/selection" element={<MoteurRecherche />} />

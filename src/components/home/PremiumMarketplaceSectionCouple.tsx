@@ -60,15 +60,28 @@ const PremiumMarketplaceSectionCouple = () => {
             </div>
           </div>
 
-          {/* CTA principal - Ouvre le modal carnet d'adresse */}
-          <div className="text-center">
-            <Button 
-              size="lg" 
-              className="btn-primary text-white px-12 py-4 text-lg font-semibold ripple"
-              onClick={() => setIsModalOpen(true)}
-            >
-              Recevoir notre carnet d'adresses
-            </Button>
+          {/* CTAs principaux */}
+          <div className="text-center space-y-4">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <Button 
+                size="lg" 
+                className="btn-primary text-white px-12 py-4 text-lg font-semibold ripple"
+                onClick={() => setIsModalOpen(true)}
+              >
+                Recevoir notre carnet d'adresses
+              </Button>
+              <Button 
+                size="lg" 
+                variant="outline"
+                className="btn-secondary border-premium-sage text-premium-sage hover:bg-premium-sage/5 px-12 py-4 text-lg font-semibold ripple"
+                onClick={() => window.location.href = '/register'}
+              >
+                Créer mon compte
+              </Button>
+            </div>
+            <p className="text-sm text-premium-charcoal max-w-md mx-auto">
+              Accédez à notre sélection exclusive de prestataires premium et simplifiez l'organisation de votre mariage.
+            </p>
           </div>
         </div>
       </section>
