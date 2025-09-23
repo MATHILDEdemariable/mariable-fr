@@ -35,7 +35,7 @@ const PremiumFinalCTASection = () => {
           {/* CTAs */}
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-12">
             <Link to="/register">
-              <Button size="lg" className="btn-primary bg-white text-premium-sage px-12 py-4 text-lg font-semibold shadow-xl ripple">
+              <Button size="lg" className="btn-primary bg-white text-white px-12 py-4 text-lg font-semibold shadow-xl ripple">
                 Créer mon compte gratuit
                 <ArrowRight className="ml-2 h-6 w-6" />
               </Button>
