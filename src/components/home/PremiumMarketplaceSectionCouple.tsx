@@ -25,19 +25,9 @@ const PremiumMarketplaceSectionCouple = () => {
                 pas un annuaire
               </span>
             </h2>
-            <p className="text-xl text-premium-charcoal max-w-3xl mx-auto mb-4">
+            <p className="text-xl text-premium-charcoal max-w-3xl mx-auto mb-6">
               Nous sélectionnons les meilleurs prestataires pour vous
             </p>
-            
-            {/* Nouveau texte ajouté */}
-            <div className="space-y-2 max-w-3xl mx-auto">
-              <p className="text-lg text-premium-charcoal font-medium">
-                Recommandations personnalisées par région et budget
-              </p>
-              <p className="text-lg text-premium-charcoal font-medium">
-                Professionnels d'excellence et de confiance triés sur le volet
-              </p>
-            </div>
           </div>
 
           {/* Aperçu des prestataires avec VendorPreviewWidget */}
@@ -47,14 +37,11 @@ const PremiumMarketplaceSectionCouple = () => {
 
           {/* Process de sélection - padding réduit */}
           <div className="bg-premium-warm rounded-2xl p-8 mb-12">
-            <h3 className="text-2xl font-bold text-premium-black mb-6 text-center">
-              Notre processus de sélection
-            </h3>
             <div className="grid md:grid-cols-4 gap-6">
               {selectionProcess.map((process, index) => (
                 <div key={index} className="flex items-center gap-3">
                   <CheckCircle className="h-6 w-6 text-premium-sage flex-shrink-0" />
-                  <span className="text-premium-charcoal font-medium">{process}</span>
+                  <span className="text-premium-charcoal font-medium text-sm">{process}</span>
                 </div>
               ))}
             </div>
@@ -68,7 +55,7 @@ const PremiumMarketplaceSectionCouple = () => {
                 className="btn-primary text-white px-12 py-4 text-lg font-semibold ripple"
                 onClick={() => setIsModalOpen(true)}
               >
-                Recevoir notre carnet d'adresses
+                Recevoir votre sélection personnalisée
               </Button>
               <Button 
                 size="lg" 
@@ -76,12 +63,13 @@ const PremiumMarketplaceSectionCouple = () => {
                 className="btn-secondary border-premium-sage text-premium-sage hover:bg-premium-sage/5 px-12 py-4 text-lg font-semibold ripple"
                 onClick={() => window.location.href = '/register'}
               >
-                Créer mon compte
+                Découvrir notre sélection complète
               </Button>
             </div>
-            <p className="text-sm text-premium-charcoal max-w-md mx-auto">
-              Accédez à notre sélection exclusive de prestataires premium et simplifiez l'organisation de votre mariage.
-            </p>
+            <div className="text-sm text-premium-charcoal max-w-2xl mx-auto space-y-1">
+              <p className="font-medium">Recommandations par région, budget et thématiques gratuites</p>
+              <p>Professionnels d'excellence et de confiance triés sur le volet</p>
+            </div>
           </div>
         </div>
       </section>

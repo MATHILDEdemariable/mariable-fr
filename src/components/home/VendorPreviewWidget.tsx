@@ -23,7 +23,7 @@ const VendorPreviewWidget = () => {
   useEffect(() => {
     const fetchVendors = async () => {
       try {
-        // Récupérer 4 prestataires distincts avec photos de couverture
+        // Récupérer 4 prestataires partenaires avec photos
         const { data: prestataireData, error } = await supabase
           .from('prestataires_rows')
           .select(`
@@ -36,11 +36,10 @@ const VendorPreviewWidget = () => {
             partner,
             visible,
             featured,
-            prestataires_photos_preprod!inner(url, is_cover)
+            prestataires_photos_preprod(url, is_cover)
           `)
           .eq('visible', true)
           .eq('partner', true)
-          .eq('prestataires_photos_preprod.is_cover', true)
           .not('prestataires_photos_preprod.url', 'is', null)
           .order('featured', { ascending: false })
           .limit(4);
@@ -59,7 +58,9 @@ const VendorPreviewWidget = () => {
             rating: 4.5 + Math.random() * 0.4, // Rating réaliste entre 4.5 et 4.9
             reviews: Math.floor(Math.random() * 100) + 50, // Entre 50 et 150 avis
             price: prestataire.prix_a_partir_de || 'Sur devis',
-            image: prestataire.prestataires_photos_preprod?.[0]?.url || '/placeholder.svg',
+            image: prestataire.prestataires_photos_preprod?.find((photo: any) => photo.is_cover)?.url || 
+                    prestataire.prestataires_photos_preprod?.[0]?.url || 
+                    '/placeholder.svg',
             certified: prestataire.partner
           }));
           
