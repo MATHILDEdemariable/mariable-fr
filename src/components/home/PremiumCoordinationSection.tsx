@@ -35,7 +35,7 @@ const PremiumCoordinationSection = () => {
             </span>
           </h2>
           <p className="text-xl text-premium-charcoal max-w-3xl mx-auto">
-            Première coordination qui unit digital et humain
+            Qui fait quoi ? A quelle heure ? Partager facilement les informations à vos proches & prestataires.
           </p>
         </div>
 
