@@ -24,7 +24,7 @@ const PremiumProcessSection = () => {
     id: 3,
     icon: Calendar,
     title: "VIVRE",
-    description: "Coordination tech intégrée le jour J",
+    description: "Coordination Jour-J en trois clics grâce à notre appli dédiée",
     cta: "Découvrir la coordination",
     link: "/coordination-jour-j",
     gradient: "from-premium-sage-light to-premium-sage"
