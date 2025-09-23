@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 const PremiumCoordinationSection = () => {
   const features = [{
     icon: Smartphone,
-    title: "Application mobile",
+    title: "Application mobile * sans téléchargement",
     description: "Interface intuitive accessible partout"
   }, {
     icon: Wifi,
