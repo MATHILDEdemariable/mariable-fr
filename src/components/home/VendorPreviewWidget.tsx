@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { MapPin, Star, CheckCircle } from 'lucide-react';
+import { MapPin, Star, CheckCircle, Euro } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
 interface Vendor {
@@ -50,19 +50,29 @@ const VendorPreviewWidget = () => {
         }
 
         if (prestataireData) {
-          const formattedVendors: Vendor[] = prestataireData.map((prestataire: any) => ({
-            id: prestataire.id,
-            name: prestataire.nom,
-            category: prestataire.categorie || 'Prestataire',
-            location: `${prestataire.ville || ''}, ${prestataire.region || ''}`.replace(/^,\s*|,\s*$/g, ''),
-            rating: 4.5 + Math.random() * 0.4, // Rating réaliste entre 4.5 et 4.9
-            reviews: Math.floor(Math.random() * 100) + 50, // Entre 50 et 150 avis
-            price: prestataire.prix_a_partir_de || 'Sur devis',
-            image: prestataire.prestataires_photos_preprod?.find((photo: any) => photo.is_cover)?.url || 
-                    prestataire.prestataires_photos_preprod?.[0]?.url || 
-                    '/placeholder.svg',
-            certified: prestataire.partner
-          }));
+          const formattedVendors: Vendor[] = prestataireData.map((prestataire: any) => {
+            // Remplacer des noms spécifiques
+            let displayName = prestataire.nom;
+            if (displayName === 'Kywwie Films') {
+              displayName = 'Le Domaine de la Fontaine';
+            } else if (displayName === 'studio CRDC') {
+              displayName = 'Manoir de Kerangosquer';
+            }
+
+            return {
+              id: prestataire.id,
+              name: displayName,
+              category: prestataire.categorie || 'Prestataire',
+              location: `${prestataire.ville || ''}, ${prestataire.region || ''}`.replace(/^,\s*|,\s*$/g, ''),
+              rating: parseFloat((4.5 + Math.random() * 0.4).toFixed(1)), // Rating arrondi à 1 décimale
+              reviews: Math.floor(Math.random() * 100) + 50, // Entre 50 et 150 avis
+              price: prestataire.prix_a_partir_de || 'Sur devis',
+              image: prestataire.prestataires_photos_preprod?.find((photo: any) => photo.is_cover)?.url || 
+                      prestataire.prestataires_photos_preprod?.[0]?.url || 
+                      '/placeholder.svg',
+              certified: prestataire.partner
+            };
+          });
           
           setVendors(formattedVendors);
         }
@@ -130,16 +140,17 @@ const VendorPreviewWidget = () => {
                 {vendor.location}
               </div>
               
-              <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <Star className="w-4 h-4 text-yellow-500 mr-1" />
-                  <span className="text-sm font-medium">{vendor.rating}</span>
-                  <span className="text-sm text-premium-charcoal ml-1">({vendor.reviews})</span>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <Star className="w-4 h-4 text-yellow-500 mr-1" />
+                    <span className="text-sm font-medium">{vendor.rating.toFixed(1)}</span>
+                    <span className="text-sm text-premium-charcoal ml-1">({vendor.reviews})</span>
+                  </div>
+                  <div className="flex items-center text-sm font-medium text-premium-sage">
+                    <Euro className="w-4 h-4 mr-1" />
+                    {vendor.price}
+                  </div>
                 </div>
-                <div className="text-sm font-medium text-premium-sage">
-                  {vendor.price}
-                </div>
-              </div>
             </div>
           </CardContent>
         </Card>

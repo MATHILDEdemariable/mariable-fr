@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Textarea } from '@/components/ui/textarea';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
@@ -20,7 +22,9 @@ const CarnetAdressesModal = ({ isOpen, onClose }: CarnetAdressesModalProps) => {
     region: '',
     nombre_invites: '',
     style_recherche: '',
-    budget_approximatif: ''
+    budget_approximatif: '',
+    categories_prestataires: [] as string[],
+    commentaires: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
@@ -32,7 +36,10 @@ const CarnetAdressesModal = ({ isOpen, onClose }: CarnetAdressesModalProps) => {
     try {
       const { error } = await supabase
         .from('carnet_adresses_requests')
-        .insert([formData]);
+        .insert([{
+          ...formData,
+          categories_prestataires: JSON.stringify(formData.categories_prestataires)
+        }]);
 
       if (error) throw error;
 
@@ -48,7 +55,9 @@ const CarnetAdressesModal = ({ isOpen, onClose }: CarnetAdressesModalProps) => {
         region: '',
         nombre_invites: '',
         style_recherche: '',
-        budget_approximatif: ''
+        budget_approximatif: '',
+        categories_prestataires: [],
+        commentaires: ''
       });
       onClose();
     } catch (error) {
@@ -67,6 +76,15 @@ const CarnetAdressesModal = ({ isOpen, onClose }: CarnetAdressesModalProps) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
+  const handleCategoryChange = (category: string, checked: boolean) => {
+    setFormData(prev => ({
+      ...prev,
+      categories_prestataires: checked 
+        ? [...prev.categories_prestataires, category]
+        : prev.categories_prestataires.filter(c => c !== category)
+    }));
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[500px]">
@@ -74,7 +92,10 @@ const CarnetAdressesModal = ({ isOpen, onClose }: CarnetAdressesModalProps) => {
           <DialogTitle className="text-xl font-serif text-center mb-2">
             Recevez votre carnet d'adresses exclusif
           </DialogTitle>
-          <p className="text-sm text-gray-600 text-center">
+          <p className="text-sm text-gray-600 text-center mb-2">
+            Sélection personnalisée offerte : merci de compléter les informations et vous la recevrez sous 48H
+          </p>
+          <p className="text-xs text-gray-500 text-center">
             Recommandations personnalisées par nos experts selon votre région et budget
           </p>
         </DialogHeader>
@@ -172,6 +193,44 @@ const CarnetAdressesModal = ({ isOpen, onClose }: CarnetAdressesModalProps) => {
                 <SelectItem value="30k-plus">Plus de 30 000€</SelectItem>
               </SelectContent>
             </Select>
+          </div>
+
+          <div>
+            <Label className="text-base font-medium mb-3 block">De quels prestataires avez-vous besoin ?</Label>
+            <div className="grid grid-cols-2 gap-3">
+              {[
+                { id: 'lieux', label: 'Lieux de réception' },
+                { id: 'traiteur', label: 'Traiteur' },
+                { id: 'photographe', label: 'Photographe' },
+                { id: 'coordination', label: 'Coordination' },
+                { id: 'autres', label: 'Autres' }
+              ].map((category) => (
+                <div key={category.id} className="flex items-center space-x-2">
+                  <Checkbox
+                    id={category.id}
+                    checked={formData.categories_prestataires.includes(category.id)}
+                    onCheckedChange={(checked) => handleCategoryChange(category.id, !!checked)}
+                  />
+                  <Label 
+                    htmlFor={category.id}
+                    className="text-sm font-normal cursor-pointer"
+                  >
+                    {category.label}
+                  </Label>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <Label htmlFor="commentaires">Autres commentaires ou infos utiles</Label>
+            <Textarea
+              id="commentaires"
+              value={formData.commentaires}
+              onChange={(e) => handleInputChange('commentaires', e.target.value)}
+              placeholder="Précisez vos besoins spécifiques, contraintes, ou toute information qui pourrait nous aider à mieux vous conseiller..."
+              rows={3}
+            />
           </div>
 
           <div className="flex gap-3 pt-4">

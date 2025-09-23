@@ -325,6 +325,8 @@ export type Database = {
       carnet_adresses_requests: {
         Row: {
           budget_approximatif: string | null
+          categories_prestataires: Json | null
+          commentaires: string | null
           created_at: string
           date_mariage: string | null
           email: string
@@ -336,6 +338,8 @@ export type Database = {
         }
         Insert: {
           budget_approximatif?: string | null
+          categories_prestataires?: Json | null
+          commentaires?: string | null
           created_at?: string
           date_mariage?: string | null
           email: string
@@ -347,6 +351,8 @@ export type Database = {
         }
         Update: {
           budget_approximatif?: string | null
+          categories_prestataires?: Json | null
+          commentaires?: string | null
           created_at?: string
           date_mariage?: string | null
           email?: string

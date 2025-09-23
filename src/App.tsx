@@ -89,6 +89,7 @@ import JeuneMariesDetail from "./pages/JeuneMariesDetail";
 import JeuneMariesConfirmation from "./pages/JeuneMariesConfirmation";
 import AdminJeunesMaries from "./pages/admin/AdminJeunesMaries";
 import CustomPages from "./pages/admin/CustomPages";
+import AdminCarnetAdresses from "./pages/admin/CarnetAdresses";
 import CustomPage from "./pages/CustomPage";
 import PropositionPage from "./pages/PropositionPage";
 import AvantJourJPublic from "./pages/AvantJourJPublic";
@@ -203,10 +204,11 @@ function App() {
                    <Route path="/admin/form" element={<AdminForm />} />
                    <Route path="/admin/reservations-jour-m" element={<AdminReservationsJourM />} />
                    <Route path="/admin/system-check" element={<AdminSystemCheck />} />
-                   <Route path="/admin/jeunes-maries" element={<AdminJeunesMaries />} />
-                   <Route path="/admin/custom-pages" element={<CustomPages />} />
-                  
-                   {/* Custom pages route */}
+                    <Route path="/admin/jeunes-maries" element={<AdminJeunesMaries />} />
+                    <Route path="/admin/custom-pages" element={<CustomPages />} />
+                    <Route path="/admin/carnet-adresses" element={<AdminCarnetAdresses />} />
+                   
+                    {/* Custom pages route */}
                    <Route path="/custom/:slug" element={<CustomPage />} />
                    
                    {/* Proposition pages route */}

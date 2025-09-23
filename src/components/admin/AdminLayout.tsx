@@ -12,6 +12,7 @@ import {
   Building,
   Heart,
   Globe,
+  BookOpen,
   ExternalLink,
   LogOut
 } from 'lucide-react';
@@ -85,6 +86,12 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
       href: '/admin/custom-pages',
       icon: Globe,
       current: location.pathname === '/admin/custom-pages'
+    },
+    {
+      name: 'Carnet d\'Adresses',
+      href: '/admin/carnet-adresses',
+      icon: BookOpen,
+      current: location.pathname === '/admin/carnet-adresses'
     }
   ];
 
