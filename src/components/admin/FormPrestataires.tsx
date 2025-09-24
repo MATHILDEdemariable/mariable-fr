@@ -16,10 +16,11 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Prestataire } from "./types";
 import FeaturedImage from "@/components/ui/featured-image";
-import { Search, Plus, Filter, Upload } from "lucide-react";
+import { Search, Plus, Filter, Upload, Download } from "lucide-react";
 import { useDebounce } from "@/hooks/use-debounce";
 import FrontStylePrestataireEditModal from "./FrontStylePrestataireEditModal";
 import CSVUploadTab from "./CSVUploadTab";
+import { exportPrestatairesToCSV } from '@/lib/csvExport';
 
 const PrestatairesAdmin = () => {
   const [prestataires, setPrestataires] = useState<Prestataire[]>([]);
@@ -35,6 +36,7 @@ const PrestatairesAdmin = () => {
   const [cityFilter, setCityFilter] = useState<string>('all');
   const [regionFilter, setRegionFilter] = useState<string>('all');
   const [visibilityFilter, setVisibilityFilter] = useState<string>('all');
+  const [isExporting, setIsExporting] = useState(false);
 
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
@@ -218,6 +220,21 @@ const PrestatairesAdmin = () => {
     window.open(`/prestataire/${slug}`, "_blank");
   };
 
+  const handleExportCSV = async () => {
+    console.log('🚀 handleExportCSV started:', { prestataireCount: prestataires.length });
+    
+    try {
+      setIsExporting(true);
+      exportPrestatairesToCSV(prestataires);
+      toast.success(`Export CSV prestataires réalisé avec succès (${prestataires.length} prestataires)`);
+    } catch (error) {
+      console.error('❌ Erreur lors de l\'export CSV prestataires:', error);
+      toast.error('Erreur lors de l\'export CSV');
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
 
   return (
     <div className="p-4 bg-white rounded-lg shadow">
@@ -235,7 +252,7 @@ const PrestatairesAdmin = () => {
 
         <TabsContent value="list" className="space-y-4 mt-6">
           <div className="flex flex-col space-y-4 mb-6">
-            {/* Première ligne : Recherche et bouton ajouter */}
+            {/* Première ligne : Recherche et boutons actions */}
             <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
               <div className="relative w-full sm:w-96">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
@@ -246,13 +263,24 @@ const PrestatairesAdmin = () => {
                   className="pl-10 w-full"
                 />
               </div>
-              <Button 
-                onClick={handleAddNew} 
-                className="flex items-center gap-2 w-full sm:w-auto"
-              >
-                <Plus size={18} />
-                Ajouter un prestataire
-              </Button>
+              <div className="flex gap-2 w-full sm:w-auto">
+                <Button 
+                  onClick={handleExportCSV}
+                  disabled={isExporting || prestataires.length === 0}
+                  variant="outline"
+                  className="flex items-center gap-2"
+                >
+                  <Download className={`h-4 w-4 ${isExporting ? 'animate-spin' : ''}`} />
+                  {isExporting ? 'Export...' : 'Exporter CSV'}
+                </Button>
+                <Button 
+                  onClick={handleAddNew} 
+                  className="flex items-center gap-2"
+                >
+                  <Plus size={18} />
+                  Ajouter
+                </Button>
+              </div>
             </div>
 
         {/* Deuxième ligne : Filtres */}

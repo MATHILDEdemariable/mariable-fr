@@ -81,6 +81,93 @@ export const exportUsersToCSV = (users: any[]): void => {
   }
 };
 
+export interface PrestataireExportData {
+  nom: string;
+  categorie: string;
+  ville: string;
+  region: string;
+  telephone: string;
+  email: string;
+  site_web: string;
+  prix_min: string;
+  prix_max: string;
+  description: string;
+  visible: string;
+  featured: string;
+  date_creation: string;
+}
+
+export const exportPrestatairesToCSV = (prestataires: any[]): void => {
+  console.log('🚀 exportPrestatairesToCSV started:', { prestataireCount: prestataires.length });
+  
+  try {
+    // Préparer les données pour CSV
+    const csvData: PrestataireExportData[] = prestataires.map(presta => ({
+      nom: presta.nom || 'Non renseigné',
+      categorie: presta.categorie || 'Non renseigné',
+      ville: presta.ville || 'Non renseigné',
+      region: presta.region || 'Non renseigné',
+      telephone: presta.telephone || 'Non renseigné',
+      email: presta.email || 'Non renseigné',
+      site_web: presta.site_web || 'Non renseigné',
+      prix_min: presta.prix_min?.toString() || 'Non renseigné',
+      prix_max: presta.prix_max?.toString() || 'Non renseigné',
+      description: (presta.description || 'Non renseigné').replace(/\n/g, ' ').substring(0, 500),
+      visible: presta.visible ? 'Oui' : 'Non',
+      featured: presta.featured ? 'Oui' : 'Non',
+      date_creation: presta.created_at 
+        ? new Date(presta.created_at).toLocaleDateString('fr-FR')
+        : 'Non renseigné'
+    }));
+
+    // Créer l'en-tête CSV
+    const headers = [
+      'Nom',
+      'Catégorie',
+      'Ville',
+      'Région',
+      'Téléphone',
+      'Email',
+      'Site Web',
+      'Prix Min',
+      'Prix Max',
+      'Description',
+      'Visible',
+      'Mis en avant',
+      'Date Création'
+    ];
+
+    // Convertir en CSV
+    const csvContent = [
+      headers.join(','),
+      ...csvData.map(row => 
+        Object.values(row).map(value => 
+          `"${String(value).replace(/"/g, '""')}"`
+        ).join(',')
+      )
+    ].join('\n');
+
+    // Télécharger le fichier
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    
+    link.setAttribute('href', url);
+    link.setAttribute('download', `prestataires_mariable_${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    console.log('✅ Prestataires CSV export completed successfully');
+    
+  } catch (error) {
+    console.error('❌ Erreur lors de l\'export CSV prestataires:', error);
+    throw new Error(`Impossible d'exporter les prestataires: ${error.message}`);
+  }
+};
+
 export const generateBlogCSVTemplate = (): void => {
   console.log('🚀 generateBlogCSVTemplate started');
   

@@ -48,7 +48,7 @@ export const usePaginatedVendors = ({
     setCurrentPage(1);
   };
 
-  const hasMore = vendors && vendors.length >= currentPage * pageSize;
+  const hasMore = vendors && vendors.length === currentPage * pageSize;
   const isLoadingMore = isLoading && currentPage > 1;
 
   return {

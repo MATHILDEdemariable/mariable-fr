@@ -131,6 +131,25 @@ const AdminUsers = () => {
     }
   };
 
+  const handleExportAllUsers = async () => {
+    console.log('🚀 handleExportAllUsers started - exporting all users');
+    
+    try {
+      setIsExporting(true);
+      
+      // Récupérer TOUS les utilisateurs via l'API admin
+      const allUserData = await fetchAllUsers();
+      exportUsersToCSV(allUserData);
+      
+      toast.success(`Export complet réalisé avec succès (${allUserData.length} utilisateurs)`);
+    } catch (error) {
+      console.error('❌ Erreur lors de l\'export complet:', error);
+      toast.error('Erreur lors de l\'export complet');
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   const getUserStatus = (profile: UserRegistration['profile']): UserStatus => {
     if (!profile) return 'free';
     
@@ -224,7 +243,16 @@ const AdminUsers = () => {
         </div>
 
         {/* Actions */}
-        <div className="flex justify-end">
+        <div className="flex justify-end gap-3">
+          <Button 
+            onClick={handleExportAllUsers}
+            disabled={isExporting || users.length === 0}
+            className="flex items-center gap-2"
+            variant="default"
+          >
+            <Download className={`h-4 w-4 ${isExporting ? 'animate-spin' : ''}`} />
+            {isExporting ? 'Export en cours...' : 'Exporter toute la base'}
+          </Button>
           <Button 
             onClick={handleExportCSV}
             disabled={isExporting || users.length === 0}
@@ -232,7 +260,7 @@ const AdminUsers = () => {
             variant="outline"
           >
             <Download className={`h-4 w-4 ${isExporting ? 'animate-spin' : ''}`} />
-            {isExporting ? 'Export en cours...' : `Exporter CSV (${filteredUsers.length > 0 ? filteredUsers.length : users.length})`}
+            {isExporting ? 'Export en cours...' : `Exporter filtré (${filteredUsers.length})`}
           </Button>
         </div>
 
