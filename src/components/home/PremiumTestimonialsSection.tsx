@@ -83,26 +83,7 @@ const PremiumTestimonialsSection = () => {
         </div>
 
         {/* Stats */}
-        <div className="grid md:grid-cols-3 gap-8 mt-16 text-center">
-          <div>
-            <div className="text-4xl font-bold bg-gradient-to-r from-premium-sage to-premium-sage-medium bg-clip-text text-transparent mb-2">
-              500+
-            </div>
-            <p className="text-premium-charcoal">Mariages organisés</p>
-          </div>
-          <div>
-            <div className="text-4xl font-bold bg-gradient-to-r from-premium-sage-medium to-premium-sage-light bg-clip-text text-transparent mb-2">
-              98%
-            </div>
-            <p className="text-premium-charcoal">Satisfaction client</p>
-          </div>
-          <div>
-            <div className="text-4xl font-bold bg-gradient-to-r from-premium-sage-light to-premium-sage bg-clip-text text-transparent mb-2">
-              100+
-            </div>
-            <p className="text-premium-charcoal">Prestataires certifiés</p>
-          </div>
-        </div>
+        
       </div>
     </section>;
 };
