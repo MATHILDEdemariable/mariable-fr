@@ -33,7 +33,7 @@ const PremiumProcessSection = () => {
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-premium-black mb-4 md:text-4xl">
-            De l'inspiration au jour J :
+            Organisez vous-même :
             <br />
             <span className="bg-gradient-to-r from-premium-sage via-premium-sage-medium to-premium-sage-light bg-clip-text text-transparent">Le plus beau jour de votre vie, sans charge mentale</span>
           </h2>
