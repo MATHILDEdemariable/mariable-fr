@@ -23,7 +23,7 @@ const PremiumProcessSection = () => {
   }, {
     id: 3,
     icon: Calendar,
-    title: "VIVRE",
+    title: "PROFITER",
     description: "Coordination Jour-J en trois clics grâce à notre appli dédiée",
     cta: "Découvrir la coordination",
     link: "/coordination-jour-j",
