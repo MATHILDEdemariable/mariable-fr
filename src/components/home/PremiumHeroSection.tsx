@@ -21,9 +21,7 @@ const PremiumHeroSection = () => {
           une expérience exceptionnelle
         </h1>
         
-        <p className="text-xl md:text-2xl text-white/90 mb-8 font-light leading-relaxed">
-          Le premier wedding planner digital
-        </p>
+        <p className="text-xl md:text-2xl text-white/90 mb-8 font-light leading-relaxed">Avec le premier wedding planner digital</p>
         
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
           <Button size="lg" onClick={handleDiscover} className="btn-primary text-white px-8 py-4 text-lg font-semibold ripple">
