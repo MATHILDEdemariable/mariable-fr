@@ -2286,6 +2286,7 @@ export type Database = {
           email: string
           id: string
           message: string
+          status: string | null
           updated_at: string
           vendor_id: string
           vendor_name: string | null
@@ -2296,6 +2297,7 @@ export type Database = {
           email: string
           id?: string
           message: string
+          status?: string | null
           updated_at?: string
           vendor_id: string
           vendor_name?: string | null
@@ -2306,6 +2308,7 @@ export type Database = {
           email?: string
           id?: string
           message?: string
+          status?: string | null
           updated_at?: string
           vendor_id?: string
           vendor_name?: string | null

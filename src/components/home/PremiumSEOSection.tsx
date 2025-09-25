@@ -31,6 +31,41 @@ const PremiumSEOSection = () => {
     icon: <PenTool className="h-6 w-6 text-wedding-olive" />,
     link: "/conseilsmariage"
   }];
-  return;
+  return (
+    <section className="py-16 bg-white">
+      <div className="container mx-auto px-4">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-bold text-wedding-black mb-4">
+            Découvrez nos services premium
+          </h2>
+          <p className="text-gray-600 max-w-2xl mx-auto">
+            Des solutions sur mesure pour faire de votre mariage un moment inoubliable
+          </p>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {seoSections.map((section, index) => (
+            <Card key={index} className={`hover:shadow-lg transition-shadow ${section.highlight ? 'border-wedding-olive' : ''}`}>
+              <CardHeader>
+                <div className="flex items-center gap-3">
+                  {section.icon}
+                  <CardTitle className="text-lg">{section.title}</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-600 mb-4">{section.description}</p>
+                <Button asChild variant={section.highlight ? 'default' : 'outline'}>
+                  <Link to={section.link} className="flex items-center gap-2">
+                    Découvrir
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </Button>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
 };
 export default PremiumSEOSection;

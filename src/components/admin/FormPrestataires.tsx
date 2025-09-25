@@ -36,7 +36,12 @@ const PrestatairesAdmin = () => {
   const [cityFilter, setCityFilter] = useState<string>('all');
   const [regionFilter, setRegionFilter] = useState<string>('all');
   const [visibilityFilter, setVisibilityFilter] = useState<string>('all');
+  const [sourceFilter, setSourceFilter] = useState<string>('all');
   const [isExporting, setIsExporting] = useState(false);
+  
+  // États pour sélection multiple
+  const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
+  const [isProcessingBulk, setIsProcessingBulk] = useState(false);
 
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
@@ -121,8 +126,19 @@ const PrestatairesAdmin = () => {
       filtered = filtered.filter(presta => presta.visible === isVisible);
     }
 
+    // Filtre par source
+    if (sourceFilter !== 'all') {
+      if (sourceFilter === 'google-api') {
+        filtered = filtered.filter(presta => presta.source_inscription === 'google_api');
+      } else if (sourceFilter === 'manual') {
+        filtered = filtered.filter(presta => !presta.source_inscription || presta.source_inscription === 'manual');
+      } else if (sourceFilter === 'form') {
+        filtered = filtered.filter(presta => presta.source_inscription === 'form');
+      }
+    }
+
     setFilteredPrestataires(filtered);
-  }, [debouncedSearchTerm, prestataires, categoryFilter, cityFilter, regionFilter, visibilityFilter]);
+  }, [debouncedSearchTerm, prestataires, categoryFilter, cityFilter, regionFilter, visibilityFilter, sourceFilter]);
 
   // Obtenir les valeurs uniques pour les filtres
   const uniqueCategories = [...new Set(prestataires.map(p => p.categorie).filter(Boolean))];
@@ -235,6 +251,234 @@ const PrestatairesAdmin = () => {
     }
   };
 
+  // Fonctions de sélection multiple
+  const handleSelectAll = () => {
+    if (selectedItems.size === filteredPrestataires.length) {
+      setSelectedItems(new Set());
+    } else {
+      setSelectedItems(new Set(filteredPrestataires.map(p => p.id)));
+    }
+  };
+
+  const handleSelectItem = (id: string) => {
+    const newSelected = new Set(selectedItems);
+    if (newSelected.has(id)) {
+      newSelected.delete(id);
+    } else {
+      newSelected.add(id);
+    }
+    setSelectedItems(newSelected);
+  };
+
+  // Actions en masse
+  const handleBulkPublish = async () => {
+    if (selectedItems.size === 0) return;
+    
+    setIsProcessingBulk(true);
+    let successCount = 0;
+    
+    try {
+      for (const id of selectedItems) {
+        const { error } = await supabase
+          .from("prestataires_rows")
+          .update({ visible: true })
+          .eq("id", id);
+        
+        if (!error) successCount++;
+      }
+      
+      toast.success(`${successCount} prestataires publiés avec succès`);
+      setSelectedItems(new Set());
+      fetchPrestataires();
+    } catch (err) {
+      console.error("Erreur bulk publish:", err);
+      toast.error("Erreur lors de la publication en masse");
+    } finally {
+      setIsProcessingBulk(false);
+    }
+  };
+
+  const handleBulkHide = async () => {
+    if (selectedItems.size === 0) return;
+    
+    setIsProcessingBulk(true);
+    let successCount = 0;
+    
+    try {
+      for (const id of selectedItems) {
+        const { error } = await supabase
+          .from("prestataires_rows")
+          .update({ visible: false })
+          .eq("id", id);
+        
+        if (!error) successCount++;
+      }
+      
+      toast.success(`${successCount} prestataires masqués avec succès`);
+      setSelectedItems(new Set());
+      fetchPrestataires();
+    } catch (err) {
+      console.error("Erreur bulk hide:", err);
+      toast.error("Erreur lors du masquage en masse");
+    } finally {
+      setIsProcessingBulk(false);
+    }
+  };
+
+  const handleBulkFeature = async () => {
+    if (selectedItems.size === 0) return;
+    
+    setIsProcessingBulk(true);
+    let successCount = 0;
+    
+    try {
+      for (const id of selectedItems) {
+        const { error } = await supabase
+          .from("prestataires_rows")
+          .update({ featured: true })
+          .eq("id", id);
+        
+        if (!error) successCount++;
+      }
+      
+      toast.success(`${successCount} prestataires mis en avant avec succès`);
+      setSelectedItems(new Set());
+      fetchPrestataires();
+    } catch (err) {
+      console.error("Erreur bulk feature:", err);
+      toast.error("Erreur lors de la mise en avant en masse");
+    } finally {
+      setIsProcessingBulk(false);
+    }
+  };
+
+  const handleBulkDelete = async () => {
+    if (selectedItems.size === 0) return;
+    
+    if (window.confirm(`Êtes-vous sûr de vouloir supprimer ${selectedItems.size} prestataires ?`)) {
+      setIsProcessingBulk(true);
+      let successCount = 0;
+      
+      try {
+        for (const id of selectedItems) {
+          const { error } = await supabase
+            .from("prestataires_rows")
+            .delete()
+            .eq("id", id);
+          
+          if (!error) successCount++;
+        }
+        
+        toast.success(`${successCount} prestataires supprimés avec succès`);
+        setSelectedItems(new Set());
+        fetchPrestataires();
+      } catch (err) {
+        console.error("Erreur bulk delete:", err);
+        toast.error("Erreur lors de la suppression en masse");
+      } finally {
+        setIsProcessingBulk(false);
+      }
+    }
+  };
+
+  // Actions spécifiques Google API
+  const handleGoogleApiPublishAll = async () => {
+    const googleApiItems = filteredPrestataires.filter(p => p.source_inscription === 'google_api');
+    
+    if (googleApiItems.length === 0) {
+      toast.info("Aucun prestataire Google API à publier");
+      return;
+    }
+    
+    setIsProcessingBulk(true);
+    let successCount = 0;
+    
+    try {
+      for (const presta of googleApiItems) {
+        const { error } = await supabase
+          .from("prestataires_rows")
+          .update({ visible: true })
+          .eq("id", presta.id);
+        
+        if (!error) successCount++;
+      }
+      
+      toast.success(`${successCount} prestataires Google API publiés avec succès`);
+      fetchPrestataires();
+    } catch (err) {
+      console.error("Erreur Google API publish all:", err);
+      toast.error("Erreur lors de la publication Google API");
+    } finally {
+      setIsProcessingBulk(false);
+    }
+  };
+
+  const handleGoogleApiHideAll = async () => {
+    const googleApiItems = filteredPrestataires.filter(p => p.source_inscription === 'google_api');
+    
+    if (googleApiItems.length === 0) {
+      toast.info("Aucun prestataire Google API à masquer");
+      return;
+    }
+    
+    setIsProcessingBulk(true);
+    let successCount = 0;
+    
+    try {
+      for (const presta of googleApiItems) {
+        const { error } = await supabase
+          .from("prestataires_rows")
+          .update({ visible: false })
+          .eq("id", presta.id);
+        
+        if (!error) successCount++;
+      }
+      
+      toast.success(`${successCount} prestataires Google API masqués avec succès`);
+      fetchPrestataires();
+    } catch (err) {
+      console.error("Erreur Google API hide all:", err);
+      toast.error("Erreur lors du masquage Google API");
+    } finally {
+      setIsProcessingBulk(false);
+    }
+  };
+
+  const handleGoogleApiDeleteUnpublished = async () => {
+    const googleApiUnpublished = filteredPrestataires.filter(p => 
+      p.source_inscription === 'google_api' && !p.visible
+    );
+    
+    if (googleApiUnpublished.length === 0) {
+      toast.info("Aucun prestataire Google API non-publié à supprimer");
+      return;
+    }
+    
+    if (window.confirm(`Êtes-vous sûr de vouloir supprimer ${googleApiUnpublished.length} prestataires Google API non-publiés ?`)) {
+      setIsProcessingBulk(true);
+      let successCount = 0;
+      
+      try {
+        for (const presta of googleApiUnpublished) {
+          const { error } = await supabase
+            .from("prestataires_rows")
+            .delete()
+            .eq("id", presta.id);
+          
+          if (!error) successCount++;
+        }
+        
+        toast.success(`${successCount} prestataires Google API supprimés avec succès`);
+        fetchPrestataires();
+      } catch (err) {
+        console.error("Erreur Google API delete unpublished:", err);
+        toast.error("Erreur lors de la suppression Google API");
+      } finally {
+        setIsProcessingBulk(false);
+      }
+    }
+  };
+
 
   return (
     <div className="p-4 bg-white rounded-lg shadow">
@@ -342,7 +586,100 @@ const PrestatairesAdmin = () => {
               <SelectItem value="hidden">Masqués</SelectItem>
             </SelectContent>
           </Select>
+
+          <Select value={sourceFilter} onValueChange={setSourceFilter}>
+            <SelectTrigger className="w-full sm:w-[180px]">
+              <SelectValue placeholder="Source" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Toutes sources</SelectItem>
+              <SelectItem value="manual">Manuel</SelectItem>
+              <SelectItem value="google-api">Google API</SelectItem>
+              <SelectItem value="form">Formulaire</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
+        
+        {/* Barre d'actions pour sélection multiple */}
+        {selectedItems.size > 0 && (
+          <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-white border rounded-lg shadow-lg p-4 flex items-center gap-4 z-50">
+            <span className="text-sm font-medium">
+              {selectedItems.size} élément{selectedItems.size > 1 ? 's' : ''} sélectionné{selectedItems.size > 1 ? 's' : ''}
+            </span>
+            <div className="flex gap-2">
+              <Button
+                size="sm"
+                onClick={handleBulkPublish}
+                disabled={isProcessingBulk}
+              >
+                Publier
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={handleBulkHide}
+                disabled={isProcessingBulk}
+              >
+                Masquer
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={handleBulkFeature}
+                disabled={isProcessingBulk}
+              >
+                Mettre en avant
+              </Button>
+              <Button
+                size="sm"
+                variant="destructive"
+                onClick={handleBulkDelete}
+                disabled={isProcessingBulk}
+              >
+                Supprimer
+              </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => setSelectedItems(new Set())}
+              >
+                Annuler
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {/* Actions spécifiques Google API */}
+        {sourceFilter === 'google-api' && (
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <h3 className="text-sm font-medium text-blue-900 mb-3">Actions Google API</h3>
+            <div className="flex flex-wrap gap-2">
+              <Button
+                size="sm"
+                onClick={handleGoogleApiPublishAll}
+                disabled={isProcessingBulk}
+              >
+                Publier tous les Google API
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={handleGoogleApiHideAll}
+                disabled={isProcessingBulk}
+              >
+                Masquer tous les Google API
+              </Button>
+              <Button
+                size="sm"
+                variant="destructive"
+                onClick={handleGoogleApiDeleteUnpublished}
+                disabled={isProcessingBulk}
+              >
+                Supprimer les non-publiés
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
 
       {isLoading ? (
@@ -354,6 +691,14 @@ const PrestatairesAdmin = () => {
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead className="w-12">
+                  <input
+                    type="checkbox"
+                    checked={selectedItems.size === filteredPrestataires.length && filteredPrestataires.length > 0}
+                    onChange={handleSelectAll}
+                    className="rounded"
+                  />
+                </TableHead>
                 <TableHead className="w-20">Image</TableHead>
                 <TableHead>Nom</TableHead>
                 <TableHead>Catégorie</TableHead>
@@ -367,6 +712,14 @@ const PrestatairesAdmin = () => {
             <TableBody>
               {filteredPrestataires.map((presta) => (
                 <TableRow key={presta.id} className="hover:bg-gray-50">
+                  <TableCell>
+                    <input
+                      type="checkbox"
+                      checked={selectedItems.has(presta.id)}
+                      onChange={() => handleSelectItem(presta.id)}
+                      className="rounded"
+                    />
+                  </TableCell>
                   <TableCell>
                     <FeaturedImage presta={presta} />
                   </TableCell>
