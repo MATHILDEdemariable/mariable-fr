@@ -22,7 +22,7 @@ const PremiumHeroSection = () => {
         </h1>
         
         <p className="text-xl md:text-2xl text-white/90 mb-8 font-light leading-relaxed">
-          Le plus beau jour de votre vie, sans charge mentale
+          Le premier wedding planner digital
         </p>
         
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
