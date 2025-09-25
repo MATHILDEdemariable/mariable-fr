@@ -49,7 +49,7 @@ const BlogArticlePage = () => {
             <main className="flex-grow flex flex-col items-center justify-center text-center py-20 px-4">
                 <h1 className="text-4xl font-bold mb-4">Article non trouvé</h1>
                 <p className="text-xl mb-8">Désolé, l'article que vous cherchez n'existe pas ou a été déplacé.</p>
-                <Link to="/blog">
+                <Link to="/conseilsmariage">
                     <Button>
                         <ArrowLeft className="mr-2 h-4 w-4" />
                         Retour au blog
@@ -71,7 +71,7 @@ const BlogArticlePage = () => {
         title={metaTitle}
         description={metaDescription || undefined}
         image={post.background_image_url || undefined}
-        canonical={`/blog/${post.slug}`}
+        canonical={`/conseilsmariage/${post.slug}`}
       >
         <script type="application/ld+json">{`
             {
@@ -124,7 +124,7 @@ const BlogArticlePage = () => {
             </div>
 
             <div className="mt-12 text-center">
-                <Link to="/blog">
+                <Link to="/conseilsmariage">
                     <Button variant="outline">
                         <ArrowLeft className="mr-2 h-4 w-4" />
                         Retour à tous les articles

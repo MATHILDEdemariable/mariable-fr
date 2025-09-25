@@ -4,7 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Database } from "@/integrations/supabase/types";
 import { Session } from "@supabase/supabase-js";
-import Header from "@/components/Header";
+import PremiumHeader from "@/components/home/PremiumHeader";
+import VendorContactModal from "@/components/vendors/VendorContactModal";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -78,6 +79,7 @@ const SinglePrestataire = () => {
   const [selectedPackage, setSelectedPackage] = useState<Package | null>(null);
   const [open, setOpen] = useState(false);
   const [openContact, setOpenContact] = useState(false);
+  const [openVendorContact, setOpenVendorContact] = useState(false);
 
   //check if user is connected
   const [session, setSession] = useState<Session | null>(null);
@@ -341,19 +343,14 @@ const SinglePrestataire = () => {
   };
 
   const sendMessage = async () => {
-    if (!session) {
-      toast({
-        description: "Vous devez être connecté pour effectuer cette action.",
-      });
-    } else {
-      setOpenContact(true);
-    }
+    // Plus besoin de vérifier la session - ouvrir directement le modal
+    setOpenVendorContact(true);
   };
 
   if (!slug && !isLoading) {
     return (
       <div className="min-h-screen flex flex-col bg-white">
-        <Header />
+        <PremiumHeader />
         <div className="container max-w-6xl px-4 py-12 flex justify-center">
           <Card className="p-8 text-center">
             <h1 className="text-2xl font-serif mb-4">
@@ -378,7 +375,7 @@ const SinglePrestataire = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen flex flex-col bg-white">
-        <Header />
+        <PremiumHeader />
         <div className="container max-w-6xl px-4 py-12 flex justify-center items-center">
           <div className="text-center">
             <Loader2 className="h-12 w-12 animate-spin text-wedding-olive mx-auto mb-4" />
@@ -392,7 +389,7 @@ const SinglePrestataire = () => {
   if (!vendor) {
     return (
       <div className="min-h-screen flex flex-col bg-white">
-        <Header />
+        <PremiumHeader />
         <div className="container max-w-6xl px-4 py-12 flex justify-center">
           <Card className="p-8 text-center">
             <h1 className="text-2xl font-serif mb-4">Prestataire non trouvé</h1>
@@ -448,7 +445,7 @@ const SinglePrestataire = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
-      <Header />
+      <PremiumHeader />
 
       <main className="flex-grow">
         <div className="relative h-[25vh] w-full hidden">
@@ -696,21 +693,30 @@ const SinglePrestataire = () => {
                   <MessageSquare className="mr-2 h-4 w-4" />
                   Contacter
                 </Button>
-                <Dialog open={openContact} onOpenChange={setOpenContact}>
-                  <DialogTrigger asChild></DialogTrigger>
-                  <DialogContent className="max-w-[95%] md:max-w-[70%] md:max-h-[90vh] overflow-y-auto">
-                    <DialogHeader>
-                      <DialogTitle>
-                        Demande de contact avec {vendor.nom}
-                      </DialogTitle>
-                    </DialogHeader>
-                    <ContactForm
-                      prestataire={vendor}
-                      user={session ?? session}
-                      dialogClose={() => setOpenContact(false)}
-                    />
-                  </DialogContent>
-                </Dialog>
+        {/* Modal de contact prestataire sans connexion */}
+        <VendorContactModal
+          isOpen={openVendorContact}
+          onClose={() => setOpenVendorContact(false)}
+          vendorId={vendorId}
+          vendorName={vendor?.nom || ''}
+        />
+        
+        {/* Ancien modal avec connexion obligatoire - gardé pour RDV */}
+        <Dialog open={openContact} onOpenChange={setOpenContact}>
+          <DialogTrigger asChild></DialogTrigger>
+          <DialogContent className="max-w-[95%] md:max-w-[70%] md:max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>
+                Demande de contact avec {vendor.nom}
+              </DialogTitle>
+            </DialogHeader>
+            <ContactForm
+              prestataire={vendor}
+              user={session ?? session}
+              dialogClose={() => setOpenContact(false)}
+            />
+          </DialogContent>
+        </Dialog>
                 <Button
                   id="button-rdv"
                   className="w-full mt-4 bg-wedding-olive hover:bg-wedding-olive/90"

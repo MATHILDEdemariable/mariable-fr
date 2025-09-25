@@ -71,7 +71,7 @@ const BlogPostCard: React.FC<{ post: BlogPost }> = ({ post }) => {
               viewport={{ once: true }}
               transition={{ delay: words.length * 0.1 + 0.5, duration: 0.5 }}
             >
-                <Link to={`/blog/${post.slug}`}>
+                <Link to={`/conseilsmariage/${post.slug}`}>
                     <Button>
                         Lire l'article
                     </Button>

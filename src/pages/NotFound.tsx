@@ -40,7 +40,7 @@ const NotFound: React.FC = () => {
                 </Button>
               </Link>
               
-              <Link to="/blog">
+              <Link to="/conseilsmariage">
                 <Button variant="outline" className="w-full">
                   <Calendar className="mr-2 h-4 w-4" />
                   Lire le blog

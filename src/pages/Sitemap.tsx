@@ -53,7 +53,7 @@ const SitemapPage = () => {
         { url: '/services/budget', priority: 0.9, changefreq: 'monthly' },
         { url: '/checklist-mariage', priority: 0.9, changefreq: 'monthly' },
         { url: '/detail-coordination-jourm', priority: 0.9, changefreq: 'monthly' },
-        { url: '/blog', priority: 0.9, changefreq: 'weekly' },
+        { url: '/conseilsmariage', priority: 0.9, changefreq: 'weekly' },
         { url: '/mariage-provence', priority: 0.8, changefreq: 'monthly' },
         { url: '/mariage-paris', priority: 0.8, changefreq: 'monthly' },
         { url: '/mariage-auvergne-rhone-alpes', priority: 0.8, changefreq: 'monthly' },
@@ -92,7 +92,7 @@ const SitemapPage = () => {
     </url>`).join('')}
   ${blogPosts.map(post => `
     <url>
-      <loc>${BASE_URL}/blog/${post.slug}</loc>
+      <loc>${BASE_URL}/conseilsmariage/${post.slug}</loc>
       <lastmod>${format(new Date(post.updated_at), 'yyyy-MM-dd')}</lastmod>
       <changefreq>monthly</changefreq>
       <priority>0.7</priority>

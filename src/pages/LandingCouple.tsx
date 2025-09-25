@@ -9,6 +9,7 @@ import PremiumMarketplaceSectionCouple from '@/components/home/PremiumMarketplac
 import PremiumToolsSection from '@/components/home/PremiumToolsSection';
 import PremiumCoordinationSection from '@/components/home/PremiumCoordinationSection';
 import PremiumTestimonialsSection from '@/components/home/PremiumTestimonialsSection';
+import PremiumSEOSection from '@/components/home/PremiumSEOSection';
 import PremiumFinalCTASection from '@/components/home/PremiumFinalCTASection';
 import { useScrollEffects } from '@/hooks/useScrollEffects';
 
@@ -22,9 +23,9 @@ const LandingCouple = () => {
   return (
     <div className="min-h-screen flex flex-col bg-premium-base">
       <SEO 
-        title="Mariable - Le Netflix du mariage : Prestataires sélectionnés & Coordination digitale"
-        description="Plateforme premium de coordination mariages. Marketplace de prestataires d'exception + outils SaaS de planification. Le plus beau jour de votre vie, sans charge mentale."
-        keywords="mariage, prestataires mariage, coordination mariage, planning mariage, organisation mariage, marketplace mariage"
+        title="Le premier wedding planner digital - Mariable"
+        description="Recommandations de lieux & prestataires premium, coordination jour-J et outils de planification pour organiser votre mariage facilement."
+        keywords="wedding planner digital, prestataires mariage premium, coordination mariage, planning mariage, organisation mariage paris"
       />
       
       <PremiumHeader />
@@ -44,6 +45,9 @@ const LandingCouple = () => {
 
         {/* Section Coordination Innovation */}
         <PremiumCoordinationSection />
+
+        {/* Section SEO - Le premier wedding planner digital */}
+        <PremiumSEOSection />
 
         {/* Section Témoignages */}
         <PremiumTestimonialsSection />

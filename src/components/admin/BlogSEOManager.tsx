@@ -240,7 +240,7 @@ const BlogSEOManager: React.FC<BlogSEOManagerProps> = ({
                 {metaTitle || title || 'Titre de l\'article'}
               </div>
               <div className="text-green-700 text-sm">
-                mariable.fr/blog/{slug || 'article'}
+                mariable.fr/conseilsmariage/{slug || 'article'}
               </div>
               <div className="text-gray-600 text-sm mt-1">
                 {metaDescription || 'Description de l\'article qui apparaîtra dans les résultats de recherche...'}

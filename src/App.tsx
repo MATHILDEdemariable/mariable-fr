@@ -160,8 +160,11 @@ function App() {
                   <Route path="/detail-coordination-jourm" element={<Pricing />} />
                   <Route path="/prix" element={<Prix />} />
                   <Route path="/paiement" element={<Paiement />} />
-                  <Route path="/blog" element={<Blog />} />
-                  <Route path="/blog/:slug" element={<BlogPost />} />
+                  <Route path="/conseilsmariage" element={<Blog />} />
+                  <Route path="/conseilsmariage/:slug" element={<BlogPost />} />
+                  {/* Redirection de l'ancienne route /blog vers /conseilsmariage */}
+                  <Route path="/blog" element={<Navigate to="/conseilsmariage" replace />} />
+                  <Route path="/blog/:slug" element={<Navigate to="/conseilsmariage" replace />} />
                   <Route path="/contact" element={<Contact />} />
                   
                   {/* Missing routes - Fixed */}

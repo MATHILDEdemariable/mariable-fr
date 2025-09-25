@@ -294,7 +294,7 @@ const BlogAdmin = () => {
                                 <Button
                                   variant="outline"
                                   size="sm"
-                                  onClick={() => window.open(`/blog/${post.slug}`, '_blank')}
+                                  onClick={() => window.open(`/conseilsmariage/${post.slug}`, '_blank')}
                                 >
                                   <Eye className="w-4 h-4" />
                                 </Button>

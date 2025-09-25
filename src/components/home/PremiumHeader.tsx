@@ -47,7 +47,7 @@ const PremiumHeader = () => {
           <HeaderDropdownItem 
             label="Conseils" 
             description="Inspiration et tendances mariage"
-            to="/blog" 
+            to="/conseilsmariage"
           />
         </HeaderDropdownMenu>
       </HeaderDropdown>
@@ -193,7 +193,7 @@ const PremiumHeader = () => {
                         Club Mariable
                       </Link>
                       <Link 
-                        to="/blog" 
+                        to="/conseilsmariage" 
                         className="block text-premium-charcoal hover:text-premium-black transition-colors py-1"
                         onClick={() => setMobileOpen(false)}
                       >

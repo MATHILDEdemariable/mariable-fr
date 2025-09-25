@@ -2280,6 +2280,39 @@ export type Database = {
         }
         Relationships: []
       }
+      vendor_contact_requests: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          message: string
+          updated_at: string
+          vendor_id: string
+          vendor_name: string | null
+          wedding_date_text: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          message: string
+          updated_at?: string
+          vendor_id: string
+          vendor_name?: string | null
+          wedding_date_text: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          message?: string
+          updated_at?: string
+          vendor_id?: string
+          vendor_name?: string | null
+          wedding_date_text?: string
+        }
+        Relationships: []
+      }
       vendor_wishlist: {
         Row: {
           created_at: string

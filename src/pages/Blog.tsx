@@ -1,15 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { BlogPost } from '@/types/blog';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import PremiumHeader from '@/components/home/PremiumHeader';
 import Footer from '@/components/Footer';
 import SEO from '@/components/SEO';
 import { useNavigate } from 'react-router-dom';
-import { Calendar, User, ArrowRight, Clock } from 'lucide-react';
+import { Calendar, User, ArrowRight, Clock, ChevronLeft } from 'lucide-react';
 
 const fetchPublishedBlogPosts = async (): Promise<BlogPost[]> => {
   const { data, error } = await supabase
@@ -28,7 +29,8 @@ const fetchPublishedBlogPosts = async (): Promise<BlogPost[]> => {
 };
 
 const BlogPage = () => {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
     const { data: posts, isLoading, error } = useQuery({
         queryKey: ['published_blog_posts'],
         queryFn: fetchPublishedBlogPosts,
@@ -38,9 +40,9 @@ const BlogPage = () => {
     const blogSchema = {
         "@context": "https://schema.org",
         "@type": "Blog",
-        "name": "Conseils Mariage - Blog Mariable",
+        "name": "Conseils Mariage - Mariable",
         "description": "Découvrez nos conseils d'experts pour organiser votre mariage. Outils, planning, budget, prestataires - tout pour réussir votre jour J.",
-        "url": "https://www.mariable.fr/blog",
+        "url": "https://www.mariable.fr/conseilsmariage",
         "publisher": {
             "@type": "Organization",
             "name": "Mariable",
@@ -50,7 +52,7 @@ const BlogPage = () => {
             "@type": "BlogPosting",
             "headline": post.title,
             "description": post.meta_description || post.title,
-            "url": `https://www.mariable.fr/blog/${post.slug}`,
+            "url": `https://www.mariable.fr/conseilsmariage/${post.slug}`,
             "datePublished": post.published_at,
             "dateModified": post.updated_at,
             "author": {
@@ -102,10 +104,10 @@ const BlogPage = () => {
     return (
         <>
             <SEO 
-                title="Conseils Mariage | Blog Mariable"
+                title="Conseils mariage - Mariable"
                 description="Découvrez nos conseils d'experts pour organiser votre mariage. Outils, planning, budget, prestataires - tout pour réussir votre jour J."
                 keywords="conseils mariage, blog mariage, organisation mariage, planning mariage, budget mariage, prestataires mariage, coordination jour j"
-                canonical="/blog"
+                canonical="/conseilsmariage"
             >
                 <script type="application/ld+json">
                     {JSON.stringify(blogSchema)}
@@ -118,20 +120,39 @@ const BlogPage = () => {
                 {/* Hero Section */}
                 <section className="py-20 px-4">
                     <div className="container mx-auto max-w-4xl text-center">
+                        <Button
+                            variant="ghost"
+                            onClick={() => navigate('/')}
+                            className="mb-6 hover:bg-wedding-olive/10"
+                        >
+                            <ChevronLeft className="mr-2 h-4 w-4" />
+                            Retour à l'accueil
+                        </Button>
                         <h1 className="text-4xl md:text-5xl font-serif mb-6 text-wedding-black">
-                            Conseils Mariage
+                            Conseils pour votre mariage
                         </h1>
                         <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
-                            Découvrez nos conseils d'experts pour organiser votre mariage parfait, 
-                            du budget à la coordination du jour J.
+                            Découvrez nos conseils d'experts pour organiser votre mariage parfait
                         </p>
-                        <Button 
-                            onClick={() => navigate('/')}
-                            variant="outline"
-                            className="border-wedding-olive text-wedding-olive hover:bg-wedding-olive hover:text-white"
-                        >
-                            ← Retour à l'accueil
-                        </Button>
+                        
+                        {/* Filtre par catégorie */}
+                        <div className="max-w-xs mx-auto">
+                            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Filtrer par catégorie" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">Toutes les catégories</SelectItem>
+                                    <SelectItem value="Planning">Planning</SelectItem>
+                                    <SelectItem value="Budget">Budget</SelectItem>
+                                    <SelectItem value="Prestataires">Prestataires</SelectItem>
+                                    <SelectItem value="Décoration">Décoration</SelectItem>
+                                    <SelectItem value="Tenue">Tenue</SelectItem>
+                                    <SelectItem value="Réception">Réception</SelectItem>
+                                    <SelectItem value="Coordination">Coordination</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
                     </div>
                 </section>
 
@@ -139,75 +160,86 @@ const BlogPage = () => {
                 <section className="py-12 px-4">
                     <div className="container mx-auto max-w-6xl">
                         {posts && posts.length > 0 ? (
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                                {posts.map(post => (
-                                    <Card 
-                                        key={post.id} 
-                                        className="cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-105 bg-white border-wedding-olive/10"
-                                        onClick={() => navigate(`/blog/${post.slug}`)}
-                                    >
-                                        {post.background_image_url && (
-                                            <div className="aspect-video overflow-hidden rounded-t-lg">
-                                                <img 
-                                                    src={post.background_image_url} 
-                                                    alt={post.title}
-                                                    className="w-full h-full object-cover"
-                                                />
-                                            </div>
-                                        )}
-                                        
-                                        <CardHeader className="pb-3">
-                                            <div className="flex items-center gap-2 mb-2">
-                                                {post.featured && (
-                                                    <Badge variant="secondary" className="bg-wedding-olive text-white">
-                                                        Featured
-                                                    </Badge>
-                                                )}
-                                                {post.category && (
-                                                    <Badge variant="outline" className="border-wedding-olive/30 text-wedding-olive">
-                                                        {post.category}
-                                                    </Badge>
-                                                )}
-                                            </div>
-                                            <CardTitle className="font-serif text-xl text-wedding-black line-clamp-2">
-                                                {post.title}
-                                            </CardTitle>
-                                            {post.subtitle && (
-                                                <p className="text-muted-foreground text-sm line-clamp-2">
-                                                    {post.subtitle}
-                                                </p>
+                            <>
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                                    {posts
+                                        .filter(post => selectedCategory === 'all' || post.category === selectedCategory)
+                                        .map(post => (
+                                        <Card 
+                                            key={post.id} 
+                                            className="cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-105 bg-white border-wedding-olive/10"
+                                            onClick={() => navigate(`/conseilsmariage/${post.slug}`)}
+                                        >
+                                            {post.background_image_url && (
+                                                <div className="aspect-video overflow-hidden rounded-t-lg">
+                                                    <img 
+                                                        src={post.background_image_url} 
+                                                        alt={post.title}
+                                                        className="w-full h-full object-cover"
+                                                    />
+                                                </div>
                                             )}
-                                        </CardHeader>
-                                        
-                                        <CardContent className="pt-0">
-                                            <div className="flex items-center justify-between text-sm text-muted-foreground mb-4">
-                                                <div className="flex items-center gap-4">
-                                                    <div className="flex items-center gap-1">
-                                                        <Calendar className="h-4 w-4" />
-                                                        {formatDate(post.published_at || post.created_at)}
-                                                    </div>
-                                                    <div className="flex items-center gap-1">
-                                                        <Clock className="h-4 w-4" />
-                                                        {getReadingTime(post.content || '')} min
+                                            
+                                            <CardHeader className="pb-3">
+                                                <div className="flex items-center gap-2 mb-2">
+                                                    {post.featured && (
+                                                        <Badge variant="secondary" className="bg-wedding-olive text-white">
+                                                            Featured
+                                                        </Badge>
+                                                    )}
+                                                    {post.category && (
+                                                        <Badge variant="outline" className="border-wedding-olive/30 text-wedding-olive">
+                                                            {post.category}
+                                                        </Badge>
+                                                    )}
+                                                </div>
+                                                <CardTitle className="font-serif text-xl text-wedding-black line-clamp-2">
+                                                    {post.title}
+                                                </CardTitle>
+                                                {post.subtitle && (
+                                                    <p className="text-muted-foreground text-sm line-clamp-2">
+                                                        {post.subtitle}
+                                                    </p>
+                                                )}
+                                            </CardHeader>
+                                            
+                                            <CardContent className="pt-0">
+                                                <div className="flex items-center justify-between text-sm text-muted-foreground mb-4">
+                                                    <div className="flex items-center gap-4">
+                                                        <div className="flex items-center gap-1">
+                                                            <Calendar className="h-4 w-4" />
+                                                            {formatDate(post.published_at || post.created_at)}
+                                                        </div>
+                                                        <div className="flex items-center gap-1">
+                                                            <Clock className="h-4 w-4" />
+                                                            {getReadingTime(post.content || '')} min
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            
-                                            <Button 
-                                                variant="outline" 
-                                                className="w-full border-wedding-olive text-wedding-olive hover:bg-wedding-olive hover:text-white"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    navigate(`/blog/${post.slug}`);
-                                                }}
-                                            >
-                                                Lire l'article
-                                                <ArrowRight className="ml-2 h-4 w-4" />
-                                            </Button>
-                                        </CardContent>
-                                    </Card>
-                                ))}
-                            </div>
+                                                
+                                                <Button 
+                                                    variant="outline" 
+                                                    className="w-full border-wedding-olive text-wedding-olive hover:bg-wedding-olive hover:text-white"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        navigate(`/conseilsmariage/${post.slug}`);
+                                                    }}
+                                                >
+                                                    Lire l'article
+                                                    <ArrowRight className="ml-2 h-4 w-4" />
+                                                </Button>
+                                            </CardContent>
+                                        </Card>
+                                    ))}
+                                </div>
+                                
+                                {/* Message si aucun article dans la catégorie sélectionnée */}
+                                {posts.filter(post => selectedCategory === 'all' || post.category === selectedCategory).length === 0 && (
+                                    <div className="text-center py-12">
+                                        <p className="text-muted-foreground">Aucun article trouvé dans cette catégorie.</p>
+                                    </div>
+                                )}
+                            </>
                         ) : (
                             <div className="text-center py-12">
                                 <p className="text-lg text-muted-foreground">
