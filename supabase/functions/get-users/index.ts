@@ -51,22 +51,45 @@ Deno.serve(async (req) => {
     let users: DatabaseUser[] = [];
     let method = 'unknown';
 
-    // Method 1: Try to access auth.users directly using Supabase Auth API
+    // Method 1: Try to access auth.users directly using Supabase Auth API with pagination
     try {
-      console.log('📋 Attempting to fetch users from Supabase Auth API...');
+      console.log('📋 Attempting to fetch ALL users from Supabase Auth API...');
       
-      const { data: authUsers, error: authError } = await supabase.auth.admin.listUsers();
-      
-      if (authError) {
-        console.error('❌ Auth API error:', authError);
-        throw authError;
+      let allUsers: any[] = [];
+      let page = 1;
+      const perPage = 1000;
+      let hasMoreUsers = true;
+
+      while (hasMoreUsers) {
+        console.log(`📋 Fetching page ${page} (${perPage} users per page)...`);
+        
+        const { data: authUsers, error: authError } = await supabase.auth.admin.listUsers({
+          page,
+          perPage
+        });
+        
+        if (authError) {
+          console.error('❌ Auth API error:', authError);
+          throw authError;
+        }
+        
+        if (authUsers && authUsers.users && authUsers.users.length > 0) {
+          console.log(`✅ Fetched ${authUsers.users.length} users from page ${page}`);
+          allUsers = allUsers.concat(authUsers.users);
+          
+          // If we got less than perPage users, we're on the last page
+          hasMoreUsers = authUsers.users.length === perPage;
+          page++;
+        } else {
+          hasMoreUsers = false;
+        }
       }
-      
-      if (authUsers && authUsers.users && authUsers.users.length > 0) {
-        console.log(`✅ Successfully fetched ${authUsers.users.length} users from Auth API`);
+
+      if (allUsers.length > 0) {
+        console.log(`✅ Total users fetched: ${allUsers.length}`);
         
         // Fetch profiles for all users
-        const userIds = authUsers.users.map(user => user.id);
+        const userIds = allUsers.map(user => user.id);
         const { data: profiles, error: profilesError } = await supabase
           .from('profiles')
           .select('id, first_name, last_name, subscription_type, subscription_expires_at, wedding_date, guest_count')
@@ -84,7 +107,7 @@ Deno.serve(async (req) => {
           });
         }
         
-        users = authUsers.users.map(user => ({
+        users = allUsers.map(user => ({
           id: user.id,
           email: user.email || 'Email non disponible',
           created_at: user.created_at,

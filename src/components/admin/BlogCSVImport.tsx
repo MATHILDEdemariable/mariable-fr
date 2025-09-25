@@ -126,7 +126,13 @@ const BlogCSVImport: React.FC<{ onImportComplete: () => void }> = ({ onImportCom
         setProgress(((i + 1) / csvData.length) * 100);
 
         try {
-          // Préparer les données pour Supabase
+          // Préparer les données pour Supabase (avec current user pour RLS)
+          const { data: { user } } = await supabase.auth.getUser();
+          
+          if (!user) {
+            throw new Error('Utilisateur non authentifié');
+          }
+
           const articleData = {
             title: row.title.trim(),
             subtitle: row.subtitle?.trim() || null,

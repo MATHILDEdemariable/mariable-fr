@@ -30,7 +30,7 @@ export const usePaginatedVendors = ({
   const [allVendors, setAllVendors] = useState<any[]>([]);
 
   const {
-    data: vendors,
+    data: vendorsData,
     isLoading,
     error
   } = useOptimizedVendors({
@@ -48,11 +48,12 @@ export const usePaginatedVendors = ({
     setCurrentPage(1);
   };
 
-  const hasMore = vendors && vendors.length === currentPage * pageSize;
+  const vendors = vendorsData?.vendors || [];
+  const hasMore = vendorsData?.hasMore || false;
   const isLoadingMore = isLoading && currentPage > 1;
 
   return {
-    vendors: vendors || [],
+    vendors,
     isLoading: isLoading && currentPage === 1,
     isLoadingMore,
     error,

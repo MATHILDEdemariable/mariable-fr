@@ -24,6 +24,11 @@ interface UseOptimizedVendorsOptions {
   enabled?: boolean;
 }
 
+interface VendorResult {
+  vendors: Prestataire[];
+  hasMore: boolean;
+}
+
 export const useOptimizedVendors = ({
   filters,
   debouncedSearch,
@@ -44,7 +49,7 @@ export const useOptimizedVendors = ({
       debouncedSearch,
       initialLimit
     ],
-    queryFn: async () => {
+    queryFn: async (): Promise<VendorResult> => {
       console.log('🚀 useOptimizedVendors - Chargement optimisé des prestataires');
       
       // Étape 1 : Charger d'abord les données essentielles des prestataires (sans les photos)
@@ -71,7 +76,7 @@ export const useOptimizedVendors = ({
         .eq('visible', true)
         .order('featured', { ascending: false })
         .order('nom')
-        .limit(initialLimit);
+        .limit(initialLimit + 1); // +1 pour détecter s'il y a plus de résultats
 
       // Exclure les coordinateurs
       query = query.neq('categorie', 'Coordination');
@@ -125,7 +130,15 @@ export const useOptimizedVendors = ({
       }
 
       console.log(`✅ ${data?.length || 0} prestataires chargés`);
-      return data as Prestataire[];
+      
+      // Retourner les données avec information hasMore
+      const hasMore = data && data.length > initialLimit;
+      const vendors = hasMore ? data.slice(0, initialLimit) : data || [];
+      
+      return {
+        vendors: vendors as Prestataire[],
+        hasMore: hasMore || false
+      };
     },
     staleTime: 10 * 60 * 1000, // 10 minutes
     gcTime: 15 * 60 * 1000, // 15 minutes

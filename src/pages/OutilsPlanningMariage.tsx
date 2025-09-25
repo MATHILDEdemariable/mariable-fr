@@ -258,7 +258,10 @@ const OutilsPlanningMariage: React.FC = () => {
                     <Button 
                       variant="outline" 
                       className="w-full border-wedding-olive text-wedding-olive hover:bg-wedding-olive hover:text-white"
-                      onClick={() => navigate('/register')}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate('/register');
+                      }}
                     >
                       Utiliser cet outil
                       <ArrowRight className="ml-2 h-4 w-4" />

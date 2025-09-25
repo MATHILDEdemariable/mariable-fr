@@ -135,15 +135,20 @@ const CoordinationJourJ: React.FC = () => {
       <PremiumHeader />
 
       <main className="min-h-screen bg-gradient-to-b from-white to-wedding-cream/20">
-        {/* Back to home button */}
+        {/* Back to home button and price badge */}
         <section className="pt-20 pb-4">
           <div className="container mx-auto px-4">
-            <Link to="/">
-              <Button variant="outline" className="mb-4">
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Retour à l'accueil
-              </Button>
-            </Link>
+            <div className="flex justify-between items-start mb-4">
+              <Link to="/">
+                <Button variant="outline">
+                  <ArrowLeft className="mr-2 h-4 w-4" />
+                  Retour à l'accueil
+                </Button>
+              </Link>
+              <Badge variant="secondary" className="bg-wedding-olive text-white text-lg px-4 py-2">
+                14,9€
+              </Badge>
+            </div>
           </div>
         </section>
 
@@ -243,9 +248,25 @@ const CoordinationJourJ: React.FC = () => {
             </div>
             <div className="text-center">
               <Button onClick={() => navigate('/dashboard')} className="bg-wedding-olive text-white hover:bg-wedding-olive/90 px-8 py-3">
-                Planifier votre jour-J
+                Découvrir l'outil, payer plus tard
               </Button>
             </div>
+          </div>
+        </section>
+
+        {/* Plus rapide, plus simple, moins cher Section */}
+        <section className="py-16 bg-wedding-cream/10">
+          <div className="container mx-auto px-4 max-w-4xl text-center">
+            <h2 className="text-3xl md:text-4xl font-serif text-wedding-black mb-8">
+              Plus rapide, plus simple, moins cher
+            </h2>
+            <p className="text-lg text-gray-700 mb-8 max-w-2xl mx-auto">
+              Mariable révolutionne la coordination de mariage en offrant une solution digitale intuitive, 
+              accessible et personnalisable pour organiser votre jour J en toute sérénité.
+            </p>
+            <Button onClick={() => navigate('/dashboard')} className="bg-wedding-olive text-white hover:bg-wedding-olive/90 px-8 py-3 text-lg">
+              Découvrir l'outil, payer plus tard
+            </Button>
           </div>
         </section>
 
