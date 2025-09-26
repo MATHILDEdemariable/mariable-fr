@@ -7,10 +7,6 @@ interface VendorFilter {
   region: string | null;
   minPrice?: number;
   maxPrice?: number;
-  categorieLieu?: string | null;
-  capaciteMin?: number | null;
-  hebergement?: boolean | null;
-  couchages?: number | null;
 }
 
 interface UsePaginatedVendorsOptions {

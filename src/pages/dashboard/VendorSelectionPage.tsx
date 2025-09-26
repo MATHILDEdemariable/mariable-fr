@@ -25,11 +25,6 @@ export interface VendorFilter {
   region: string | null;
   minPrice?: number;
   maxPrice?: number;
-  // Filtres pour les lieux de réception
-  categorieLieu?: string | null;
-  capaciteMin?: number | null;
-  hebergement?: boolean | null;
-  couchages?: number | null;
 }
 
 const VendorSelectionPage = () => {
@@ -49,10 +44,6 @@ const VendorSelectionPage = () => {
     region: selectedRegion || null,
     minPrice: searchParams.get('min') ? Number(searchParams.get('min')) : undefined,
     maxPrice: searchParams.get('max') ? Number(searchParams.get('max')) : undefined,
-    categorieLieu: searchParams.get('categorieLieu'),
-    capaciteMin: searchParams.get('capaciteMin') ? Number(searchParams.get('capaciteMin')) : undefined,
-    hebergement: searchParams.get('hebergement') === 'true' ? true : undefined,
-    couchages: searchParams.get('couchages') ? Number(searchParams.get('couchages')) : undefined,
   });
 
   // Synchroniser la région depuis l'URL avec les filtres
@@ -91,12 +82,6 @@ const VendorSelectionPage = () => {
     if (filters.region) newParams.set('region', filters.region);
     if (filters.minPrice) newParams.set('min', filters.minPrice.toString());
     if (filters.maxPrice) newParams.set('max', filters.maxPrice.toString());
-    
-    // Paramètres pour les lieux
-    if (filters.categorieLieu) newParams.set('categorieLieu', filters.categorieLieu);
-    if (filters.capaciteMin) newParams.set('capaciteMin', filters.capaciteMin.toString());
-    if (filters.hebergement !== undefined) newParams.set('hebergement', filters.hebergement.toString());
-    if (filters.couchages) newParams.set('couchages', filters.couchages.toString());
     
     setSearchParams(newParams);
   }, [filters, setSearchParams]);

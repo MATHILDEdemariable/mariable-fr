@@ -11,10 +11,6 @@ interface VendorFilter {
   region: string | null;
   minPrice?: number;
   maxPrice?: number;
-  categorieLieu?: string | null;
-  capaciteMin?: number | null;
-  hebergement?: boolean | null;
-  couchages?: number | null;
 }
 
 interface UseOptimizedVendorsOptions {
@@ -42,10 +38,6 @@ export const useOptimizedVendors = ({
       filters.region,
       filters.minPrice,
       filters.maxPrice,
-      filters.categorieLieu,
-      filters.capaciteMin,
-      filters.hebergement,
-      filters.couchages,
       debouncedSearch,
       initialLimit
     ],
@@ -106,21 +98,6 @@ export const useOptimizedVendors = ({
         query = query.or(`prix_a_partir_de.lte.${filters.maxPrice},prix_par_personne.lte.${filters.maxPrice}`);
       }
 
-      // Filtres spécifiques aux lieux
-      if (filters.category === 'Lieu de réception') {
-        if (filters.categorieLieu) {
-          query = query.eq('categorie_lieu', filters.categorieLieu);
-        }
-        if (filters.capaciteMin) {
-          query = query.gte('capacite_invites', filters.capaciteMin);
-        }
-        if (filters.hebergement !== undefined) {
-          query = query.eq('hebergement_inclus', filters.hebergement);
-        }
-        if (filters.couchages) {
-          query = query.gte('nombre_couchages', filters.couchages);
-        }
-      }
 
       const { data, error } = await query;
       

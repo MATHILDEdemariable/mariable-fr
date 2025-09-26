@@ -143,13 +143,12 @@ const BlogPage = () => {
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="all">Toutes les catégories</SelectItem>
-                                    <SelectItem value="Planning">Planning</SelectItem>
-                                    <SelectItem value="Budget">Budget</SelectItem>
-                                    <SelectItem value="Prestataires">Prestataires</SelectItem>
-                                    <SelectItem value="Décoration">Décoration</SelectItem>
-                                    <SelectItem value="Tenue">Tenue</SelectItem>
-                                    <SelectItem value="Réception">Réception</SelectItem>
-                                    <SelectItem value="Coordination">Coordination</SelectItem>
+                                    <SelectItem value="Administratif">Administratif</SelectItem>
+                                    <SelectItem value="Conseils">Conseils</SelectItem>
+                                    <SelectItem value="Guides pratiques">Guides pratiques</SelectItem>
+                                    <SelectItem value="Organisation">Organisation</SelectItem>
+                                    <SelectItem value="Organisation du mariage">Organisation du mariage</SelectItem>
+                                    <SelectItem value="Tendances">Tendances</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
