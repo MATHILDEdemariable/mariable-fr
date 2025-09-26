@@ -153,19 +153,20 @@ const CoordinationJourJ: React.FC = () => {
         </section>
 
         {/* Differentiation Section */}
-        <section className="py-16 md:py-20 bg-white">
+        <section className="py-8 md:py-12 bg-white">
           <div className="container mx-auto px-4">
-            <div className="text-center mb-12">
-              <h2 style={{
+            <div className="text-center mb-8">
+              <h1 style={{
               fontFamily: 'Playfair Display, serif'
             }} className="text-3xl md:text-4xl font-serif text-black mb-4 max-w-4xl mx-auto">
                 La première appli de coordination jour-J
                 <span className="block text-lg font-normal text-wedding-olive mt-2">
                   sans téléchargement - directement en ligne
                 </span>
-              </h2>
-              
-              
+              </h1>
+              <p className="text-xl md:text-2xl text-wedding-olive font-medium mt-4">
+                Plus rapide, plus simple, moins cher
+              </p>
             </div>
           </div>
         </section>
