@@ -168,39 +168,6 @@ const CoordinationJourJ: React.FC = () => {
                 Mariable, c'est la solution innovante qui vous permet de gérer la journée du mariage avec vos proches et prestataires.
               </p>
               
-              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 text-left mb-12">
-                <div className="flex items-start gap-3">
-                  <Clock className="w-8 h-8 text-wedding-olive flex-shrink-0 mt-1" />
-                  <div>
-                    <h3 className="font-medium mb-2">Plus rapide</h3>
-                    <p className="text-gray-700 text-sm">
-                      Planifiez votre Jour J en quelques clics grâce à un outil intuitif qui centralise toutes les infos utiles.
-                    </p>
-                  </div>
-                </div>
-                
-                
-                
-                <div className="flex items-start gap-3">
-                  <DollarSign className="w-8 h-8 text-wedding-olive flex-shrink-0 mt-1" />
-                  <div>
-                    <h3 className="font-medium mb-2">Moins cher</h3>
-                    <p className="text-gray-700 text-sm">
-                      Une solution accessible, bien plus économique qu'un wedding planner ou qu'un modèle générique en ligne.
-                    </p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start gap-3">
-                  <Settings className="w-8 h-8 text-wedding-olive flex-shrink-0 mt-1" />
-                  <div>
-                    <h3 className="font-medium mb-2">100% personnalisable</h3>
-                    <p className="text-gray-700 text-sm">
-                      Grâce à l'IA, Mariable s'adapte à votre mariage, vos envies et vos contraintes.
-                    </p>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </section>
