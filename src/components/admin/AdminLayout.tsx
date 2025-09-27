@@ -46,10 +46,16 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
       current: location.pathname === '/admin/users'
     },
     {
-      name: 'Paiements Accompagnement',
-      href: '/admin/paiements',
-      icon: Calendar,
-      current: location.pathname === '/admin/paiements'
+      name: 'Devis Professionnels',
+      href: '/admin/devis',
+      icon: FileText,
+      current: location.pathname === '/admin/devis'
+    },
+    {
+      name: 'Satisfaction Utilisateurs', 
+      href: '/admin/satisfaction',
+      icon: BarChart3,
+      current: location.pathname === '/admin/satisfaction'
     },
     {
       name: 'CRM Prestataires',

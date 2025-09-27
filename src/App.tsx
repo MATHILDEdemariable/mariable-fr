@@ -75,7 +75,9 @@ import CoordinateursMarriage from "./pages/CoordinateursMarriage";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminBlog from "./pages/admin/Blog";
 import AdminUsers from "./pages/admin/Users";
-import AdminPaiements from "./pages/admin/Paiements";
+import AdminDevisProfessionnels from "./pages/admin/DevisProfessionnels";
+import AdminSatisfactionUtilisateurs from "./pages/admin/SatisfactionUtilisateurs";
+import EnvoiDevis from "./pages/EnvoiDevis";
 import AdminPrestataires from "./pages/admin/Prestataires";
 import AdminForm from "./pages/admin/FormAdmin";
 import AdminReservationsJourM from "./pages/admin/ReservationsJourM";
@@ -201,7 +203,9 @@ function App() {
                    <Route path="/admin/dashboard" element={<AdminDashboard />} />
                    <Route path="/admin/blog" element={<AdminBlog />} />
                    <Route path="/admin/users" element={<AdminUsers />} />
-                   <Route path="/admin/paiements" element={<AdminPaiements />} />
+                   <Route path="/admin/devis" element={<AdminDevisProfessionnels />} />
+                   <Route path="/admin/satisfaction" element={<AdminSatisfactionUtilisateurs />} />
+                   <Route path="/envoidevis" element={<EnvoiDevis />} />
                    <Route path="/admin/prestataires" element={<AdminPrestataires />} />
                    <Route path="/admin/professional-registrations" element={<AdminProfessionalRegistrations />} />
                    <Route path="/admin/form" element={<AdminForm />} />

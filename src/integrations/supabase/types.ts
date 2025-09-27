@@ -749,6 +749,48 @@ export type Database = {
         }
         Relationships: []
       }
+      devis_professionnels: {
+        Row: {
+          created_at: string
+          email_client: string
+          email_professionnel: string
+          fichier_nom: string
+          fichier_taille: number
+          fichier_url: string
+          id: string
+          message: string | null
+          nom_professionnel: string
+          statut: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email_client: string
+          email_professionnel: string
+          fichier_nom: string
+          fichier_taille: number
+          fichier_url: string
+          id?: string
+          message?: string | null
+          nom_professionnel: string
+          statut?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email_client?: string
+          email_professionnel?: string
+          fichier_nom?: string
+          fichier_taille?: number
+          fichier_url?: string
+          id?: string
+          message?: string | null
+          nom_professionnel?: string
+          statut?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       generated_planning: {
         Row: {
           created_at: string
@@ -2277,6 +2319,33 @@ export type Database = {
           status?: string
           updated_at?: string | null
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      user_satisfaction_feedback: {
+        Row: {
+          commentaire: string | null
+          created_at: string
+          id: string
+          page_courante: string | null
+          score_nps: number
+          user_id: string
+        }
+        Insert: {
+          commentaire?: string | null
+          created_at?: string
+          id?: string
+          page_courante?: string | null
+          score_nps: number
+          user_id: string
+        }
+        Update: {
+          commentaire?: string | null
+          created_at?: string
+          id?: string
+          page_courante?: string | null
+          score_nps?: number
+          user_id?: string
         }
         Relationships: []
       }
