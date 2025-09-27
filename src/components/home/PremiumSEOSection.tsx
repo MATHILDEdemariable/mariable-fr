@@ -31,6 +31,54 @@ const PremiumSEOSection = () => {
     icon: <PenTool className="h-6 w-6 text-wedding-olive" />,
     link: "/conseilsmariage"
   }];
-  return;
+  
+  return (
+    <section className="py-16 bg-gradient-to-br from-secondary/10 via-background to-primary/5">
+      <div className="container mx-auto px-4">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+            Le premier wedding planner digital
+          </h2>
+          <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+            Découvrez tous nos services pour organiser le mariage de vos rêves
+          </p>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {seoSections.map((section, index) => (
+            <Card 
+              key={index} 
+              className={`group hover:shadow-lg transition-all duration-300 ${
+                section.highlight ? 'ring-2 ring-primary/20 bg-primary/5' : ''
+              }`}
+            >
+              <CardHeader className="pb-4">
+                <div className="flex items-center gap-3 mb-2">
+                  {section.icon}
+                  <CardTitle className="text-lg font-semibold group-hover:text-primary transition-colors">
+                    {section.title}
+                  </CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <p className="text-muted-foreground mb-4 text-sm leading-relaxed">
+                  {section.description}
+                </p>
+                <Link to={section.link}>
+                  <Button 
+                    variant={section.highlight ? "default" : "outline"} 
+                    className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
+                  >
+                    Découvrir
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
 };
 export default PremiumSEOSection;
