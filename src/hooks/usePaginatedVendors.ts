@@ -44,31 +44,29 @@ export const usePaginatedVendors = ({
       console.log('🚀 Fetching vendors page:', pageParam);
       
       let query = supabase
-        .from('prestataires')
+        .from('prestataires_rows')
         .select(`
           id,
           nom,
           description,
           ville,
-          prix_min,
-          prix_max,
+          prix_a_partir_de,
           categorie,
           region,
-          capacite_min,
-          capacite_max,
-          note_moyenne,
-          nombre_avis,
+          capacite_invites,
           telephone,
           email,
           site_web,
           instagram,
           facebook,
           linkedin,
-          photos_urls,
-          hebergement,
-          nombre_lits,
+          slug,
+          featured,
+          partner,
+          visible,
           created_at
         `)
+        .eq('visible', true)
         .range(pageParam * pageSize, (pageParam + 1) * pageSize - 1);
 
       // Appliquer les filtres
@@ -85,11 +83,11 @@ export const usePaginatedVendors = ({
       }
 
       if (filters.minPrice !== undefined) {
-        query = query.gte('prix_min', filters.minPrice);
+        query = query.gte('prix_a_partir_de', filters.minPrice);
       }
 
       if (filters.maxPrice !== undefined) {
-        query = query.lte('prix_max', filters.maxPrice);
+        query = query.lte('prix_a_partir_de', filters.maxPrice);
       }
 
       const { data: vendors, error } = await query.order('created_at', { ascending: false });
@@ -120,6 +118,11 @@ export const usePaginatedVendors = ({
       setAllVendors(flattenedVendors);
     }
   }, [data]);
+
+  // Reset des données quand les filtres changent
+  useEffect(() => {
+    setAllVendors([]);
+  }, [filters, debouncedSearch]);
 
   const loadMore = () => {
     if (hasNextPage && !isFetchingNextPage) {
