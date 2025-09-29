@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import AdminLayout from '@/components/admin/AdminLayout';
+import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -26,6 +29,8 @@ interface FeedbackData {
 }
 
 const AdminSatisfactionUtilisateurs = () => {
+  const navigate = useNavigate();
+  const { isAuthenticated, isLoading } = useAdminAuth();
   const [feedbacks, setFeedbacks] = useState<FeedbackData[]>([]);
   const [filteredFeedbacks, setFilteredFeedbacks] = useState<FeedbackData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -34,8 +39,16 @@ const AdminSatisfactionUtilisateurs = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    fetchFeedbacks();
-  }, []);
+    if (!isLoading && !isAuthenticated) {
+      navigate('/admin/dashboard');
+    }
+  }, [isAuthenticated, isLoading, navigate]);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchFeedbacks();
+    }
+  }, [isAuthenticated]);
 
   useEffect(() => {
     filterFeedbacks();
@@ -150,24 +163,31 @@ const AdminSatisfactionUtilisateurs = () => {
 
   const stats = getStats();
 
-  if (loading) {
+  if (isLoading || loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-      </div>
+      <AdminLayout>
+        <div className="flex items-center justify-center h-64">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        </div>
+      </AdminLayout>
     );
   }
 
-  return (
-    <div className="space-y-6">
-      <Helmet>
-        <title>Satisfaction Utilisateurs - Admin - Mariable</title>
-        <meta name="description" content="Analyse des retours de satisfaction des utilisateurs." />
-      </Helmet>
+  if (!isAuthenticated) {
+    return null;
+  }
 
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold">Satisfaction Utilisateurs</h1>
+  return (
+    <AdminLayout>
+      <div className="space-y-6">
+        <Helmet>
+          <title>Satisfaction Utilisateurs - Admin - Mariable</title>
+          <meta name="description" content="Analyse des retours de satisfaction des utilisateurs." />
+        </Helmet>
+
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-2xl font-bold text-wedding-black">Satisfaction Utilisateurs</h1>
           <p className="text-muted-foreground">
             Analyse des retours de satisfaction et scores NPS
           </p>
@@ -358,7 +378,8 @@ const AdminSatisfactionUtilisateurs = () => {
           )}
         </CardContent>
       </Card>
-    </div>
+      </div>
+    </AdminLayout>
   );
 };
 

@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import AdminLayout from '@/components/admin/AdminLayout';
+import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -27,6 +30,8 @@ interface DevisData {
 }
 
 const AdminDevisProfessionnels = () => {
+  const navigate = useNavigate();
+  const { isAuthenticated, isLoading } = useAdminAuth();
   const [devis, setDevis] = useState<DevisData[]>([]);
   const [filteredDevis, setFilteredDevis] = useState<DevisData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -35,8 +40,16 @@ const AdminDevisProfessionnels = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    fetchDevis();
-  }, []);
+    if (!isLoading && !isAuthenticated) {
+      navigate('/admin/dashboard');
+    }
+  }, [isAuthenticated, isLoading, navigate]);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchDevis();
+    }
+  }, [isAuthenticated]);
 
   useEffect(() => {
     filterDevis();
@@ -182,24 +195,31 @@ const AdminDevisProfessionnels = () => {
 
   const stats = getStats();
 
-  if (loading) {
+  if (isLoading || loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-      </div>
+      <AdminLayout>
+        <div className="flex items-center justify-center h-64">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        </div>
+      </AdminLayout>
     );
   }
 
-  return (
-    <div className="space-y-6">
-      <Helmet>
-        <title>Devis Professionnels - Admin - Mariable</title>
-        <meta name="description" content="Gestion des devis PDF envoyés par les professionnels." />
-      </Helmet>
+  if (!isAuthenticated) {
+    return null;
+  }
 
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold">Devis Professionnels</h1>
+  return (
+    <AdminLayout>
+      <div className="space-y-6">
+        <Helmet>
+          <title>Devis Professionnels - Admin - Mariable</title>
+          <meta name="description" content="Gestion des devis PDF envoyés par les professionnels." />
+        </Helmet>
+
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-2xl font-bold text-wedding-black">Devis Professionnels</h1>
           <p className="text-muted-foreground">
             Gestion des devis PDF envoyés par les professionnels
           </p>
@@ -398,7 +418,8 @@ const AdminDevisProfessionnels = () => {
           )}
         </CardContent>
       </Card>
-    </div>
+      </div>
+    </AdminLayout>
   );
 };
 

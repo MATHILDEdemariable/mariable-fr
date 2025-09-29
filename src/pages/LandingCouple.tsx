@@ -9,7 +9,6 @@ import PremiumMarketplaceSectionCouple from '@/components/home/PremiumMarketplac
 import PremiumToolsSection from '@/components/home/PremiumToolsSection';
 import PremiumCoordinationSection from '@/components/home/PremiumCoordinationSection';
 import PremiumTestimonialsSection from '@/components/home/PremiumTestimonialsSection';
-import PremiumSEOSection from '@/components/home/PremiumSEOSection';
 import PremiumFinalCTASection from '@/components/home/PremiumFinalCTASection';
 import { useScrollEffects } from '@/hooks/useScrollEffects';
 
@@ -45,9 +44,6 @@ const LandingCouple = () => {
 
         {/* Section Coordination Innovation */}
         <PremiumCoordinationSection />
-
-        {/* Section SEO - Le premier wedding planner digital */}
-        <PremiumSEOSection />
 
         {/* Section Témoignages */}
         <PremiumTestimonialsSection />
