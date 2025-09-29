@@ -114,16 +114,9 @@ const AdminDevisProfessionnels = () => {
 
   const downloadFile = async (devisItem: DevisData) => {
     try {
-      // Créer l'URL signée pour télécharger le fichier
-      const { data: signedUrl } = await supabase.storage
-        .from('devis-pdf')
-        .createSignedUrl(devisItem.fichier_url.split('/').pop() || '', 3600);
-
-      const downloadUrl = signedUrl?.signedUrl || devisItem.fichier_url;
-      
       // Créer un lien temporaire pour télécharger le fichier
       const link = document.createElement('a');
-      link.href = downloadUrl;
+      link.href = devisItem.fichier_url;
       link.download = devisItem.fichier_nom;
       link.target = '_blank';
       document.body.appendChild(link);
@@ -135,7 +128,6 @@ const AdminDevisProfessionnels = () => {
         updateStatut(devisItem.id, 'vu');
       }
     } catch (error) {
-      console.error('Erreur lors du téléchargement:', error);
       toast({
         variant: "destructive",
         title: "Erreur",
@@ -144,31 +136,12 @@ const AdminDevisProfessionnels = () => {
     }
   };
 
-  const viewFile = async (devisItem: DevisData) => {
-    try {
-      // Créer l'URL signée pour accéder au fichier 
-      const { data: signedUrl } = await supabase.storage
-        .from('devis-pdf')
-        .createSignedUrl(devisItem.fichier_url.split('/').pop() || '', 3600);
-
-      if (signedUrl?.signedUrl) {
-        window.open(signedUrl.signedUrl, '_blank');
-      } else {
-        // Fallback vers l'URL directe si le bucket est public
-        window.open(devisItem.fichier_url, '_blank');
-      }
-      
-      // Marquer comme vu si ce n'est pas déjà fait
-      if (devisItem.statut === 'nouveau') {
-        updateStatut(devisItem.id, 'vu');
-      }
-    } catch (error) {
-      console.error('Erreur lors de l\'accès au fichier:', error);
-      toast({
-        variant: "destructive",
-        title: "Erreur",
-        description: "Impossible d'ouvrir le fichier PDF."
-      });
+  const viewFile = (devisItem: DevisData) => {
+    window.open(devisItem.fichier_url, '_blank');
+    
+    // Marquer comme vu si ce n'est pas déjà fait
+    if (devisItem.statut === 'nouveau') {
+      updateStatut(devisItem.id, 'vu');
     }
   };
 

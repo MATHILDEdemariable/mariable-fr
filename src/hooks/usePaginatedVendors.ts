@@ -1,10 +1,5 @@
-import { useState, useEffect } from 'react';
-import { useInfiniteQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
-import type { Database } from '@/integrations/supabase/types';
-
-type Categorie = Database['public']['Enums']['prestataire_categorie'];
-type Region = Database['public']['Enums']['region_france'];
+import { useState } from 'react';
+import { useOptimizedVendors } from './useOptimizedVendors';
 
 interface VendorFilter {
   search: string;
@@ -27,121 +22,40 @@ export const usePaginatedVendors = ({
   pageSize = 12,
   enabled = true
 }: UsePaginatedVendorsOptions) => {
+  const [currentPage, setCurrentPage] = useState(1);
   const [allVendors, setAllVendors] = useState<any[]>([]);
 
-  const queryKey = ['paginatedVendors', filters, debouncedSearch];
-
   const {
-    data,
+    data: vendorsData,
     isLoading,
-    error,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-  } = useInfiniteQuery({
-    queryKey,
-    queryFn: async ({ pageParam = 0 }) => {
-      console.log('🚀 Fetching vendors page:', pageParam);
-      
-      let query = supabase
-        .from('prestataires_rows')
-        .select(`
-          id,
-          nom,
-          description,
-          ville,
-          prix_a_partir_de,
-          categorie,
-          region,
-          capacite_invites,
-          telephone,
-          email,
-          site_web,
-          instagram,
-          facebook,
-          linkedin,
-          slug,
-          featured,
-          partner,
-          visible,
-          created_at
-        `)
-        .eq('visible', true)
-        .range(pageParam * pageSize, (pageParam + 1) * pageSize - 1);
-
-      // Appliquer les filtres
-      if (debouncedSearch) {
-        query = query.or(`nom.ilike.%${debouncedSearch}%,description.ilike.%${debouncedSearch}%,ville.ilike.%${debouncedSearch}%`);
-      }
-
-      if (filters.category && filters.category !== 'all') {
-        query = query.eq('categorie', filters.category as Categorie);
-      }
-
-      if (filters.region) {
-        query = query.eq('region', filters.region as Region);
-      }
-
-      if (filters.minPrice !== undefined) {
-        query = query.gte('prix_a_partir_de', filters.minPrice);
-      }
-
-      if (filters.maxPrice !== undefined) {
-        query = query.lte('prix_a_partir_de', filters.maxPrice);
-      }
-
-      const { data: vendors, error } = await query.order('created_at', { ascending: false });
-
-      if (error) throw error;
-
-      const hasMore = vendors?.length === pageSize;
-
-      return {
-        vendors: vendors || [],
-        hasMore,
-        page: pageParam
-      };
-    },
-    getNextPageParam: (lastPage) => {
-      return lastPage.hasMore ? lastPage.page + 1 : undefined;
-    },
-    initialPageParam: 0,
-    enabled,
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    gcTime: 10 * 60 * 1000, // 10 minutes
+    error
+  } = useOptimizedVendors({
+    filters,
+    debouncedSearch,
+    initialLimit: currentPage * pageSize,
+    enabled
   });
 
-  // Fusionner toutes les pages dans allVendors
-  useEffect(() => {
-    if (data?.pages) {
-      const flattenedVendors = data.pages.flatMap(page => page.vendors);
-      setAllVendors(flattenedVendors);
-    }
-  }, [data]);
-
-  // Reset des données quand les filtres changent
-  useEffect(() => {
-    setAllVendors([]);
-  }, [filters, debouncedSearch]);
-
   const loadMore = () => {
-    if (hasNextPage && !isFetchingNextPage) {
-      fetchNextPage();
-    }
+    setCurrentPage(prev => prev + 1);
   };
 
   const reset = () => {
-    setAllVendors([]);
+    setCurrentPage(1);
   };
 
+  const vendors = vendorsData?.vendors || [];
+  const hasMore = vendorsData?.hasMore || false;
+  const isLoadingMore = isLoading && currentPage > 1;
+
   return {
-    vendors: allVendors,
-    isLoading: isLoading,
-    isLoadingMore: isFetchingNextPage,
+    vendors,
+    isLoading: isLoading && currentPage === 1,
+    isLoadingMore,
     error,
     loadMore,
     reset,
-    hasMore: hasNextPage,
-    currentPage: data?.pages?.length || 0
+    hasMore,
+    currentPage
   };
 };

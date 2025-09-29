@@ -422,22 +422,22 @@ const TasksList: React.FC = () => {
           {/* Filtres pour la source des tâches */}
           <div className="flex items-center gap-2">
             <Tabs value={viewingSource} onValueChange={(value: string) => setViewingSource(value as 'all' | 'manual' | 'quiz')}>
-              <TabsList className="grid grid-cols-1 sm:grid-cols-3 gap-1 h-auto min-h-[40px]">
+              <TabsList className="grid grid-cols-3 gap-1">
                 <TabsTrigger 
                   value="all" 
-                  className="text-xs sm:text-sm px-2 py-1 whitespace-nowrap"
+                  className="text-xs sm:text-sm"
                 >
                   Toutes
                 </TabsTrigger>
                 <TabsTrigger 
                   value="manual" 
-                  className="text-xs sm:text-sm px-2 py-1 whitespace-nowrap"
+                  className="text-xs sm:text-sm"
                 >
                   Manuelles
                 </TabsTrigger>
                 <TabsTrigger 
                   value="quiz" 
-                  className="text-xs sm:text-sm px-2 py-1 whitespace-nowrap"
+                  className="text-xs sm:text-sm"
                 >
                   Quiz
                 </TabsTrigger>
