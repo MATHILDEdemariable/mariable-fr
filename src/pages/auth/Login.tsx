@@ -133,7 +133,7 @@ const Login = () => {
       />
       <PremiumHeader />
       
-      <main className="container max-w-md mx-auto py-12 px-4">
+      <main className="container max-w-md mx-auto px-4" style={{ paddingTop: 'calc(var(--header-h) + 3rem)', paddingBottom: '3rem' }}>
         <Card className="w-full">
           <CardHeader className="space-y-1">
             <CardTitle className="text-2xl font-serif text-center">
