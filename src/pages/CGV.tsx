@@ -8,135 +8,180 @@ const CGV = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background">
-      <SEO 
-        title="Conditions Générales - Mariable"
-        description="Conditions générales d'utilisation pour les professionnels du mariage sur la plateforme Mariable."
-        keywords="conditions générales, CGV, professionnels mariage, Mariable"
+    <>
+      <SEO
+        title="Contrat de mise en relation et commission | Mariable"
+        description="Consultez les conditions contractuelles de partenariat entre Mariable et les professionnels de l'événementiel."
+        canonical="/cgv"
       />
-      
       <SimpleHeader />
-      
-      <main className="pt-32 pb-16">
-        <div className="container mx-auto px-4 max-w-4xl">
-          <h1 className="text-4xl font-bold text-foreground mb-8 text-center">
-            Conditions Générales d'Utilisation
+      <div className="min-h-screen bg-white py-12">
+        <div className="container max-w-4xl mx-auto px-4">
+          <h1 className="text-4xl font-serif mb-4 text-wedding-black">
+            CONTRAT DE MISE EN RELATION ET COMMISSION
           </h1>
-          <p className="text-muted-foreground text-center mb-12">
-            Conditions applicables aux professionnels du mariage
+          
+          <p className="text-lg text-muted-foreground mb-8">
+            Entre professionnels de l'événementiel et la plateforme Mariable.fr
           </p>
-
-          <div className="space-y-8 text-foreground">
-            
-            {/* Article 1 */}
+          
+          <div className="prose max-w-none space-y-8">
             <section>
-              <h2 className="text-2xl font-semibold mb-4 text-premium-sage">Article 1 - Objet</h2>
-              <p className="leading-relaxed mb-4">
-                Les présentes conditions générales d'utilisation (CGU) régissent les modalités d'inscription et d'utilisation de la plateforme Mariable par les professionnels du secteur du mariage.
+              <h2 className="text-2xl font-serif mb-4 text-wedding-black">Article 1 – Identification des Parties</h2>
+              <p className="text-muted-foreground mb-4">
+                <strong>MARIABLE</strong>, SASU au capital de 8000 €, immatriculée au RCS de Nanterre, dont le siège social est situé 99 avenue Achille Peretti représentée par sa Présidente, Madame Mathilde Lambert, ci-après dénommée <strong>« la Plateforme »</strong>,
               </p>
-              <p className="leading-relaxed">
-                Mariable propose un service de <strong>référencement gratuit</strong> permettant aux professionnels qualifiés d'être mis en relation avec de futurs mariés à la recherche de prestataires d'exception.
+              <p className="text-muted-foreground mb-4">
+                <strong>ET</strong>
+              </p>
+              <p className="text-muted-foreground mb-4">
+                ______________________, immatriculée au RCS de____, dont le siège social est situé à ___________, représentée par __________________, ci-après dénommée <strong>« le Prestataire »</strong>,
+              </p>
+              <p className="text-muted-foreground">
+                Ensemble dénommés <strong>« les Parties »</strong>.
               </p>
             </section>
 
-            {/* Article 2 */}
             <section>
-              <h2 className="text-2xl font-semibold mb-4 text-premium-sage">Article 2 - Processus de sélection</h2>
-              <p className="leading-relaxed mb-4">
-                L'inscription sur la plateforme Mariable est soumise à un processus de sélection rigoureux. <strong>L'équipe de Mariable se réserve le droit exclusif</strong> de décider de l'acceptation ou du refus de publication des profils des prestataires candidats.
+              <h2 className="text-2xl font-serif mb-4 text-wedding-black">Article 2 – Objet du contrat</h2>
+              <p className="text-muted-foreground mb-4">
+                Le présent contrat a pour objet de définir les conditions dans lesquelles :
               </p>
-              <p className="leading-relaxed">
-                Cette sélection s'effectue selon des critères d'excellence, de professionnalisme et d'adéquation avec les valeurs de la plateforme, garantissant ainsi une expérience premium à nos utilisateurs.
+              <ul className="list-disc pl-6 text-muted-foreground space-y-2">
+                <li>La Plateforme référence gratuitement le Prestataire sur son site internet <strong>www.mariable.fr</strong>, et met en relation ce dernier avec des couples organisant leur mariage (<strong>les « Couples Mariable »</strong>).</li>
+                <li>En contrepartie, le Prestataire s'engage à verser à la Plateforme une <strong>commission de 8% HT</strong> sur le montant total des prestations (Hors frais de livraison) effectivement réglées par les couples issus de cette mise en relation.</li>
+              </ul>
+            </section>
+
+            <section>
+              <h2 className="text-2xl font-serif mb-4 text-wedding-black">Article 3 – Définition d'un Couple Mariable</h2>
+              <p className="text-muted-foreground mb-4">
+                Est considéré comme <strong>Couple Mariable</strong> tout couple ayant :
+              </p>
+              <ul className="list-disc pl-6 text-muted-foreground space-y-2">
+                <li>été mis en relation via la plateforme Mariable.fr (formulaire, email redirigé, espace membre)</li>
+                <li>ou mentionné Mariable lors de son premier contact avec le Prestataire,</li>
+                <li>ou identifié par un identifiant lead unique généré par Mariable.</li>
+              </ul>
+            </section>
+
+            <section>
+              <h2 className="text-2xl font-serif mb-4 text-wedding-black">Article 4 – Modalités de la commission</h2>
+              <ol className="list-decimal pl-6 text-muted-foreground space-y-3">
+                <li><strong>Base de calcul</strong> : la commission est calculée sur le montant total <strong>HT du contrat signé</strong> entre le Prestataire et le Couple Mariable.</li>
+                <li><strong>Exigibilité</strong> : la commission est due <strong>15 jours après réception</strong> par le Prestataire de l'acompte</li>
+                <li><strong>Déclaration</strong> : le Prestataire déclare à Mariable tout contrat signé avec un Couple Mariable dans un délai de <strong>7 jours</strong> via le formulaire dédié (voir annexe mode opératoire Mariable)</li>
+              </ol>
+            </section>
+
+            <section>
+              <h2 className="text-2xl font-serif mb-4 text-wedding-black">Article 5 – Programme Partenaires Mariable</h2>
+              <p className="text-muted-foreground mb-4">
+                Dans le cadre du partenariat, Mariable met en place un programme d'incentives destiné à récompenser la fidélité des Prestataires :
+              </p>
+              <ul className="list-disc pl-6 text-muted-foreground space-y-2">
+                <li><strong>À partir de 5 couples signés</strong> : Mariable vous offre une mise en avant premium sur les réseaux sociaux avec notamment un <strong>pack Content Creator</strong> comprenant la création de contenus visuels : 1H de tournage pour 3 vidéos adaptées aux réseaux sociaux</li>
+              </ul>
+              <p className="text-muted-foreground mt-4">
+                Tout manquement avéré à l'obligation de déclaration (cf. article 4) entraîne la perte des avantages liés au programme partenaire.
               </p>
             </section>
 
-            {/* Article 3 */}
             <section>
-              <h2 className="text-2xl font-semibold mb-4 text-premium-sage">Article 3 - Obligations du prestataire</h2>
-              <div className="space-y-4">
-                <div>
-                  <h3 className="text-lg font-medium mb-2">3.1 Respect de la charte qualité</h3>
-                  <p className="leading-relaxed">
-                    Le prestataire s'engage à respecter la charte qualité Mariable et à <strong>garantir une expérience premium</strong> à chaque client. Cela inclut le respect des délais, la qualité du service et la courtoisie professionnelle.
-                  </p>
-                </div>
-                
-                <div>
-                  <h3 className="text-lg font-medium mb-2">3.2 Service de qualité irréprochable</h3>
-                  <p className="leading-relaxed">
-                    Le prestataire s'engage à fournir des <strong>services de qualité irréprochable</strong>, conformes aux standards d'excellence attendus par la clientèle Mariable et en accord avec sa réputation sur la plateforme.
-                  </p>
-                </div>
-
-                <div>
-                  <h3 className="text-lg font-medium mb-2">3.3 Transparence tarifaire</h3>
-                  <p className="leading-relaxed">
-                    Le prestataire s'engage à la <strong>transparence tarifaire obligatoire</strong> et accepte de <strong>partager ses prix</strong> de manière claire et honnête. Cette transparence est une condition sine qua non pour rejoindre la communauté Mariable et ses valeurs d'authenticité.
-                  </p>
-                </div>
-              </div>
-            </section>
-
-            {/* Article 4 */}
-            <section>
-              <h2 className="text-2xl font-semibold mb-4 text-premium-sage">Article 4 - Droits de Mariable</h2>
-              <div className="space-y-4">
-                <div>
-                  <h3 className="text-lg font-medium mb-2">4.1 Création et gestion des fiches</h3>
-                  <p className="leading-relaxed">
-                    Mariable se charge de la <strong>création et de la gestion des fiches prestataires</strong>. En contrepartie de cette prise en charge complète, Mariable dispose d'un <strong>droit de regard</strong> sur le contenu publié et les informations diffusées.
-                  </p>
-                </div>
-
-                <div>
-                  <h3 className="text-lg font-medium mb-2">4.2 Mise en valeur des prestataires</h3>
-                  <p className="leading-relaxed">
-                    Mariable <strong>s'engage à mettre en valeur</strong> les prestataires sélectionnés à travers diverses actions promotionnelles, tout en conservant la maîtrise éditoriale de leur présentation sur la plateforme.
-                  </p>
-                </div>
-              </div>
-            </section>
-
-            {/* Article 5 */}
-            <section>
-              <h2 className="text-2xl font-semibold mb-4 text-premium-sage">Article 5 - Modèle économique</h2>
-              <p className="leading-relaxed mb-4">
-                Mariable applique un système de <strong>commission sur les réservations</strong> réalisées grâce à la plateforme. Le taux de commission sera communiqué lors de l'acceptation du prestataire.
+              <h2 className="text-2xl font-serif mb-4 text-wedding-black">Article 6 – Clause de non-contournement</h2>
+              <p className="text-muted-foreground mb-4">
+                Le Prestataire s'interdit de conclure ou maintenir une relation commerciale directe avec un Couple Mariable dans le but d'éluder le paiement de la commission.
               </p>
-              <p className="leading-relaxed">
-                Cette commission ne s'applique que sur les contrats effectivement conclus et rémunérés suite à une mise en relation via Mariable.
+              <p className="text-muted-foreground mb-4">
+                Cette obligation s'applique pendant la durée du présent contrat et pour une période de <strong>12 mois après sa cessation</strong>.
+              </p>
+              <p className="text-muted-foreground">
+                Toute violation pourra entraîner la résiliation immédiate du contrat et le paiement de dommages et intérêts égaux au montant de la commission éludée, majoré de 50 %.
               </p>
             </section>
 
-            {/* Article 6 */}
             <section>
-              <h2 className="text-2xl font-semibold mb-4 text-premium-sage">Article 6 - Résiliation et exclusion</h2>
-              <p className="leading-relaxed mb-4">
-                Mariable se réserve le droit d'exclure du réseau tout prestataire qui ne respecterait pas les présentes conditions générales, la charte qualité ou qui porterait atteinte à l'image de la plateforme.
+              <h2 className="text-2xl font-serif mb-4 text-wedding-black">Article 7 – Obligations du Prestataire</h2>
+              <p className="text-muted-foreground mb-4">
+                Le Prestataire s'engage à :
               </p>
-              <p className="leading-relaxed">
-                Cette exclusion peut intervenir sans préavis en cas de manquement grave et entraîne la suppression immédiate du profil sur la plateforme.
+              <ul className="list-disc pl-6 text-muted-foreground space-y-2">
+                <li>fournir des informations exactes et à jour (tarifs, disponibilités, descriptifs, photos, etc.),</li>
+                <li>assurer les prestations selon les règles de l'art et la réglementation applicable,</li>
+                <li>déclarer avec exactitude toute réservation issue de la Plateforme,</li>
+                <li>autoriser la Plateforme à utiliser ses photos, logos et contenus à des fins de référencement et de communication.</li>
+                <li>mettre en place, sur son site internet un lien actif vers la page officielle www.mariable.fr, en tant que gage de partenariat et de référencement.</li>
+              </ul>
+            </section>
+
+            <section>
+              <h2 className="text-2xl font-serif mb-4 text-wedding-black">Article 8 – Obligations de la Plateforme</h2>
+              <p className="text-muted-foreground mb-4">
+                La Plateforme s'engage à :
+              </p>
+              <ul className="list-disc pl-6 text-muted-foreground space-y-2">
+                <li>référencer le Prestataire sur Mariable.fr,</li>
+                <li>transmettre des leads qualifiés et identifier clairement les Couples Mariable,</li>
+                <li>assurer la transparence des conditions de commission.</li>
+              </ul>
+            </section>
+
+            <section>
+              <h2 className="text-2xl font-serif mb-4 text-wedding-black">Article 9 – Durée et résiliation</h2>
+              <p className="text-muted-foreground mb-4">
+                Le présent contrat est conclu pour une durée de <strong>3 ans</strong>, renouvelable tacitement par périodes de même durée.
+              </p>
+              <p className="text-muted-foreground mb-4">
+                Chaque Partie peut y mettre fin à tout moment avec un <strong>préavis d'un 1 mois</strong>, notifié par écrit.
+              </p>
+              <p className="text-muted-foreground">
+                La Plateforme pourra déréférencer immédiatement le Prestataire en cas de manquement grave.
               </p>
             </section>
 
-            {/* Article 7 */}
             <section>
-              <h2 className="text-2xl font-semibold mb-4 text-premium-sage">Article 7 - Acceptation</h2>
-              <p className="leading-relaxed">
-                L'inscription sur la plateforme Mariable vaut acceptation pleine et entière des présentes conditions générales d'utilisation. Le prestataire reconnaît les avoir lues, comprises et acceptées sans réserve.
+              <h2 className="text-2xl font-serif mb-4 text-wedding-black">Article 10 – Confidentialité et données</h2>
+              <p className="text-muted-foreground">
+                Les Parties s'engagent à garder confidentielles les données échangées. Les données personnelles des couples seront traitées conformément à la réglementation applicable (RGPD).
               </p>
             </section>
 
+            <section>
+              <h2 className="text-2xl font-serif mb-4 text-wedding-black">Article 11 – Droit applicable et juridiction compétente</h2>
+              <p className="text-muted-foreground mb-4">
+                Le présent contrat est soumis au <strong>droit français</strong>.
+              </p>
+              <p className="text-muted-foreground">
+                Tout litige relatif à son interprétation ou à son exécution sera porté devant les juridictions compétentes du ressort de la Cour d'appel de Paris.
+              </p>
+            </section>
+
+            <section>
+              <h2 className="text-2xl font-serif mb-4 text-wedding-black">Article 12 – Modalités de collaboration</h2>
+              <p className="text-muted-foreground mb-4">
+                Les modalités pratiques de mise en relation, de suivi des couples et de transmission des devis sont décrites dans le <strong>mode opératoire Mariable (Annexe envoyée dès demande clients)</strong>
+              </p>
+              <p className="text-muted-foreground mb-4">
+                Cette annexe n'altère pas les obligations contractuelles définies aux articles précédents, mais a pour objet de préciser le processus opérationnel de collaboration entre Mariable et le Prestataire.
+              </p>
+              <p className="text-muted-foreground">
+                Mariable se réserve la possibilité de mettre à jour cette annexe en fonction de l'évolution de ses outils ou services, sous réserve d'en informer le Prestataire par tout moyen écrit (email suffisant).
+              </p>
+            </section>
           </div>
 
-          <div className="mt-16 p-6 bg-premium-warm rounded-lg border border-premium-light">
-            <p className="text-sm text-muted-foreground text-center">
-              Dernière mise à jour : {new Date().toLocaleDateString('fr-FR')}
+          <div className="mt-12 pt-6 border-t">
+            <p className="text-sm text-muted-foreground">
+              Dernière mise à jour : {new Date().toLocaleDateString('fr-FR', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+              })}
             </p>
           </div>
         </div>
-      </main>
-    </div>
+      </div>
+    </>
   );
 };
 

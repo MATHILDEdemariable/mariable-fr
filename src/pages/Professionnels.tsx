@@ -29,7 +29,7 @@ const Professionnels = () => {
 
           {/* Badge for free service */}
           <div className="bg-green-50 text-green-800 px-4 py-2 rounded-full inline-flex items-center mb-8">
-            <span className="font-medium">Service de référencement gratuit</span>
+            <span className="font-medium">Un partenariat gagnant-gagnant</span>
           </div>
           
           <div className="grid md:grid-cols-2 gap-8 mb-12">
@@ -53,8 +53,8 @@ const Professionnels = () => {
                 <li className="flex items-start gap-2">
                   <CheckCircle className="h-5 w-5 text-wedding-olive shrink-0 mt-0.5" />
                   <div>
-                    <h3 className="font-medium">Fonctionnalités innovantes</h3>
-                    <p className="text-sm text-muted-foreground">Accédez à des outils de gestion spécifiques pour les professionnels du mariage.</p>
+                    <h3 className="font-medium">Service de référencement gratuit</h3>
+                    <p className="text-sm text-muted-foreground">Bénéficiez d'un référencement sans frais avec un système de commission uniquement si vous signez un client provenant de Mariable.</p>
                   </div>
                 </li>
               </ul>
