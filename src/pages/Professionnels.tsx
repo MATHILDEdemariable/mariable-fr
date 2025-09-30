@@ -24,7 +24,7 @@ const Professionnels = () => {
           <h1 className="text-4xl md:text-5xl font-serif mb-4 text-wedding-black">Rejoignez notre guide de professionnels du mariage premium</h1>
           
           <p className="text-xl text-muted-foreground mb-8">
-            Faites partie des prestataires de mariage les plus recommandés par Mariable et développez votre activité.
+            Faites partie de notre sélection et développez votre activité avec des clients qualifiés
           </p>
 
           {/* Badge for free service */}
