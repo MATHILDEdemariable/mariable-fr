@@ -551,7 +551,7 @@ const ProfessionalRegistrationForm = () => {
               Envoi en cours...
             </>
           ) : (
-            "Envoyer ma demande d'inscription"
+            "Valider le partenariat"
           )}
         </Button>
       </form>
