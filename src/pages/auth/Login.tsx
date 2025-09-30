@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Loader2, Mail, Lock } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
-import PremiumHeader from '@/components/home/PremiumHeader';
+import Header from '@/components/Header';
 import { supabase } from '@/integrations/supabase/client';
 import { Session } from '@supabase/supabase-js';
 import SEO from '@/components/SEO';
@@ -131,7 +131,7 @@ const Login = () => {
         title="Connexion | Mariable"
         description="Accédez à votre espace personnel Mariable pour gérer votre projet de mariage."
       />
-      <PremiumHeader />
+      <Header />
       
       <main className="container max-w-md mx-auto py-12 px-4">
         <Card className="w-full">

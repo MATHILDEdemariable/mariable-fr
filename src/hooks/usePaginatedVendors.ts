@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useOptimizedVendors } from './useOptimizedVendors';
 
 interface VendorFilter {
@@ -36,37 +36,20 @@ export const usePaginatedVendors = ({
     enabled
   });
 
-  // Accumuler les vendors au fur et à mesure
-  useEffect(() => {
-    if (vendorsData?.vendors) {
-      if (currentPage === 1) {
-        // Première page : remplacer tous les vendors
-        setAllVendors(vendorsData.vendors);
-      } else {
-        // Pages suivantes : ajouter uniquement les nouveaux
-        setAllVendors(prev => {
-          const existingIds = new Set(prev.map(v => v.id));
-          const newVendors = vendorsData.vendors.filter(v => !existingIds.has(v.id));
-          return [...prev, ...newVendors];
-        });
-      }
-    }
-  }, [vendorsData, currentPage]);
-
   const loadMore = () => {
     setCurrentPage(prev => prev + 1);
   };
 
   const reset = () => {
     setCurrentPage(1);
-    setAllVendors([]);
   };
 
+  const vendors = vendorsData?.vendors || [];
   const hasMore = vendorsData?.hasMore || false;
   const isLoadingMore = isLoading && currentPage > 1;
 
   return {
-    vendors: allVendors,
+    vendors,
     isLoading: isLoading && currentPage === 1,
     isLoadingMore,
     error,
