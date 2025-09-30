@@ -21,7 +21,7 @@ const Professionnels = () => {
       
       <main className="flex-grow py-12 md:py-16 container bg-white">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-4xl md:text-5xl font-serif mb-4 text-wedding-black">Rejoignez une communauté de prestataires de mariage d'excellence</h1>
+          <h1 className="text-4xl md:text-5xl font-serif mb-4 text-wedding-black">Rejoignez notre guide de professionnels du mariage premium</h1>
           
           <p className="text-xl text-muted-foreground mb-8">
             Faites partie des prestataires de mariage les plus recommandés par Mariable et développez votre activité.
