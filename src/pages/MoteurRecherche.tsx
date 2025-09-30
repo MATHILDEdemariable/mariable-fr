@@ -17,6 +17,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from '@/components/ui/button';
 import RegionSelectorPage, { slugToRegion, regionToSlug } from '@/components/search/RegionSelectorPage';
 import { Helmet } from 'react-helmet-async';
+import CarnetAdressesModal from '@/components/home/CarnetAdressesModal';
 
 type Prestataire = Database['public']['Tables']['prestataires_rows']['Row'];
 type RegionFrance = Database['public']['Enums']['region_france'];
@@ -34,6 +35,7 @@ const MoteurRecherche = () => {
   const navigate = useNavigate();
   const params = useParams();
   const isMobile = useIsMobile();
+  const [isCarnetModalOpen, setIsCarnetModalOpen] = useState(false);
   
   // Déterminer si on affiche la sélection de région ou les résultats
   const regionSlug = params.region;
@@ -313,13 +315,31 @@ const MoteurRecherche = () => {
             )}
           </div>
         ) : (
-          <div className="text-center py-12">
-            <h3 className="text-lg font-medium mb-2">Aucun prestataire trouvé</h3>
-            <p className="text-muted-foreground">
-              Essayez de modifier vos critères de recherche pour obtenir plus de résultats.
-            </p>
+          <div className="text-center py-16 px-4">
+            <div className="max-w-lg mx-auto">
+              <h3 className="text-2xl font-serif mb-3">Aucun prestataire trouvé</h3>
+              <p className="text-muted-foreground mb-6">
+                Nous n'avons pas trouvé de prestataires correspondant à vos critères.
+                Recevez une sélection personnalisée par nos experts !
+              </p>
+              <Button 
+                onClick={() => setIsCarnetModalOpen(true)}
+                size="lg"
+                className="bg-wedding-olive hover:bg-wedding-olive/90"
+              >
+                Recevoir une sélection personnalisée
+              </Button>
+              <p className="text-sm text-muted-foreground mt-4">
+                Réponse sous 48h • Gratuit et sans engagement
+              </p>
+            </div>
           </div>
         )}
+        
+        <CarnetAdressesModal 
+          isOpen={isCarnetModalOpen} 
+          onClose={() => setIsCarnetModalOpen(false)} 
+        />
       </main>
     </div>
   );
