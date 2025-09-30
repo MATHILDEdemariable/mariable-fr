@@ -97,6 +97,7 @@ import PropositionPage from "./pages/PropositionPage";
 import AvantJourJPublic from "./pages/AvantJourJPublic";
 import ApresJourJPublic from "./pages/ApresJourJPublic";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
+import ContentCreatorMariage from "./pages/ContentCreatorMariage";
 
 const queryClient = new QueryClient();
 
@@ -229,6 +230,9 @@ function App() {
                    <Route path="/salon-du-mariage-2025" element={<SalonDuMariage2025 />} />
                    <Route path="/salon-du-mariage-2025/jeu-concours" element={<SalonJeuConcours />} />
                    <Route path="/salon-du-mariage-2025/autorisation-micro-trottoir" element={<SalonMicroTrottoir />} />
+                   
+                   {/* Content Creator Mariage route */}
+                   <Route path="/content-creator-mariage" element={<ContentCreatorMariage />} />
                    
                    <Route path="*" element={<NotFound />} />
                 </Routes>

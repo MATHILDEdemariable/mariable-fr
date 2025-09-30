@@ -57,6 +57,7 @@ const Footer = () => {
               <li><Link to="/about/approche" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Notre Approche</Link></li>
               <li><Link to="/about/charte" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Notre Charte</Link></li>
               <li><Link to="/salon-du-mariage-2025" className="text-wedding-black/70 hover:text-wedding-black transition-colors font-medium">Salon du Mariage 2025</Link></li>
+              <li><Link to="/content-creator-mariage" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Content Creator Mariage</Link></li>
               <li><Link to="/professionnels" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Professionnels</Link></li>
               <li><Link to="/contact" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Nous Contacter</Link></li>
             </ul>
