@@ -56,6 +56,69 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_usage_tracking: {
+        Row: {
+          created_at: string | null
+          id: string
+          last_prompt_date: string | null
+          prompts_used_today: number | null
+          session_id: string
+          total_prompts: number | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          last_prompt_date?: string | null
+          prompts_used_today?: number | null
+          session_id: string
+          total_prompts?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          last_prompt_date?: string | null
+          prompts_used_today?: number | null
+          session_id?: string
+          total_prompts?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      ai_wedding_conversations: {
+        Row: {
+          created_at: string | null
+          id: string
+          messages: Json
+          session_id: string
+          updated_at: string | null
+          user_id: string | null
+          wedding_context: Json | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          messages?: Json
+          session_id: string
+          updated_at?: string | null
+          user_id?: string | null
+          wedding_context?: Json | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          messages?: Json
+          session_id?: string
+          updated_at?: string | null
+          user_id?: string | null
+          wedding_context?: Json | null
+        }
+        Relationships: []
+      }
       apres_jour_j_manuel: {
         Row: {
           category: string
