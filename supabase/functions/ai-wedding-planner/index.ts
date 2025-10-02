@@ -2,7 +2,7 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
-const openAIApiKey = Deno.env.get('OPENAI');
+const lovableApiKey = Deno.env.get('LOVABLE_API_KEY');
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -64,16 +64,16 @@ Informations complémentaires :
 
 Crée un planning personnalisé basé sur ce scénario. Sois créatif mais pragmatique !`;
 
-    console.log('🤖 Calling OpenAI with wedding planner prompt');
+    console.log('🤖 Calling Lovable AI Gateway with wedding planner prompt');
 
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${openAIApiKey}`,
+        'Authorization': `Bearer ${lovableApiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o',
+        model: 'google/gemini-2.5-flash',
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userPrompt }
@@ -84,12 +84,26 @@ Crée un planning personnalisé basé sur ce scénario. Sois créatif mais pragm
     });
 
     if (!response.ok) {
-      console.error('❌ OpenAI API error:', response.status, response.statusText);
-      throw new Error(`OpenAI API error: ${response.status}`);
+      if (response.status === 429) {
+        console.error('❌ Rate limit exceeded');
+        return new Response(
+          JSON.stringify({ error: 'Limite de requêtes atteinte, veuillez réessayer dans quelques instants.' }),
+          { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      if (response.status === 402) {
+        console.error('❌ Payment required');
+        return new Response(
+          JSON.stringify({ error: 'Crédits épuisés, veuillez recharger votre compte Lovable AI.' }),
+          { status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      console.error('❌ Lovable AI Gateway error:', response.status, response.statusText);
+      throw new Error(`Lovable AI Gateway error: ${response.status}`);
     }
 
     const data = await response.json();
-    console.log('✅ OpenAI response received');
+    console.log('✅ Lovable AI response received');
 
     const aiResponse = data.choices[0].message.content;
     
