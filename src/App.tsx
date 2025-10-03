@@ -13,8 +13,6 @@ import Index from "./pages/Index";
 import LandingCouple from "./pages/LandingCouple";
 import SimpleHomePage from "./pages/SimpleHomePage";
 import LandingPageV0 from "./pages/LandingPageV0";
-import AIWeddingLanding from "./pages/AIWeddingLanding";
-import Landing1_0 from "./pages/Landing1_0";
 import MoteurRecherche from "./pages/MoteurRecherche";
 import PlanningPersonnalise from "./pages/PlanningPersonnalise";
 import PlanningResultatsPersonnalises from "./pages/PlanningResultatsPersonnalises";
@@ -115,8 +113,7 @@ function App() {
               <AnalyticsProvider>
                 <PaymentSuccessHandler />
                 <Routes>
-                  <Route path="/" element={<AIWeddingLanding />} />
-                  <Route path="/landing1.0" element={<Landing1_0 />} />
+                  <Route path="/" element={<LandingCouple />} />
                   <Route path="/simple" element={<SimpleHomePage />} />
                   <Route path="/landingpagev0" element={<LandingPageV0 />} />
                    <Route path="/moteur-recherche" element={<MoteurRecherche />} />

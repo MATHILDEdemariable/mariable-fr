@@ -1,9 +1,6 @@
 
 project_id = "bgidfcqktsttzlwlumtz"
 
-[functions.ai-wedding-assistant]
-verify_jwt = false
-
 [functions.stripe-webhook]
 verify_jwt = false
 
