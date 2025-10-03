@@ -12,3 +12,6 @@ verify_jwt = false
 
 [functions.google-venues-scraper]
 verify_jwt = false
+
+[functions.vibe-wedding-ai]
+verify_jwt = false
