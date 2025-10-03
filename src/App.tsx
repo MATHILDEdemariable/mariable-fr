@@ -98,6 +98,7 @@ import AvantJourJPublic from "./pages/AvantJourJPublic";
 import ApresJourJPublic from "./pages/ApresJourJPublic";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import ContentCreatorMariage from "./pages/ContentCreatorMariage";
+import VibeWedding from "./pages/VibeWedding";
 
 const queryClient = new QueryClient();
 
@@ -233,6 +234,9 @@ function App() {
                    
                    {/* Content Creator Mariage route */}
                    <Route path="/content-creator-mariage" element={<ContentCreatorMariage />} />
+                   
+                   {/* Vibe Wedding route */}
+                   <Route path="/vibewedding" element={<VibeWedding />} />
                    
                    <Route path="*" element={<NotFound />} />
                 </Routes>
