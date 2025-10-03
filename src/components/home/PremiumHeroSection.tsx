@@ -15,7 +15,7 @@ const PremiumHeroSection = () => {
       <div className="hero-overlay absolute inset-0 z-10" />
       
       <div className="relative z-20 text-center max-w-6xl mx-auto px-4">
-        <h1 className="text-5xl font-extrabold text-white mb-6 leading-tight md:text-5xl">
+        <h1 className="text-3xl font-extrabold text-white mb-6 leading-tight md:text-4xl lg:text-5xl">
           Faites de votre mariage
           <br />
           une expérience exceptionnelle
