@@ -137,7 +137,19 @@ Calcule les montants du budget en fonction du budget total fourni. Si aucun budg
     // Parser la réponse JSON
     let parsedResponse;
     try {
-      parsedResponse = JSON.parse(assistantMessage);
+      // Nettoyer la réponse avant parsing (retirer les backticks markdown)
+      let cleanedResponse = assistantMessage.trim();
+      if (cleanedResponse.startsWith('```json')) {
+        cleanedResponse = cleanedResponse
+          .replace(/^```json\n?/, '')
+          .replace(/\n?```$/, '');
+      } else if (cleanedResponse.startsWith('```')) {
+        cleanedResponse = cleanedResponse
+          .replace(/^```\n?/, '')
+          .replace(/\n?```$/, '');
+      }
+      
+      parsedResponse = JSON.parse(cleanedResponse);
     } catch (e) {
       console.error('❌ Failed to parse AI response as JSON:', assistantMessage);
       parsedResponse = {
