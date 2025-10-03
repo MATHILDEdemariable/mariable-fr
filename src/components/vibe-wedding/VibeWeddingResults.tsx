@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip as RechartsTooltip } from 'recharts';
 import { 
@@ -13,8 +14,10 @@ import {
   AlertCircle, 
   CheckCircle2,
   Star,
-  Euro
+  Euro,
+  Mail
 } from 'lucide-react';
+import VendorContactModal from '@/components/vendors/VendorContactModal';
 
 interface BudgetItem {
   category: string;
@@ -59,6 +62,8 @@ interface VibeWeddingResultsProps {
 }
 
 const VibeWeddingResults: React.FC<VibeWeddingResultsProps> = ({ project }) => {
+  const [selectedVendor, setSelectedVendor] = useState<Vendor | null>(null);
+
   const formatPrice = (amount: number): string => {
     return new Intl.NumberFormat('fr-FR', {
       style: 'currency',
@@ -352,53 +357,67 @@ const VibeWeddingResults: React.FC<VibeWeddingResultsProps> = ({ project }) => {
             >
               <Card>
                 <CardHeader>
-                  <CardTitle>Prestataires recommandés</CardTitle>
+                  <CardTitle className="flex items-center gap-2">
+                    <Star className="w-5 h-5 text-yellow-500" />
+                    Prestataires recommandés
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-4">
+                  <div className="grid gap-4 md:grid-cols-1">
                     {project.vendors.map((vendor, index) => (
                       <motion.div
                         key={vendor.id}
-                        className="p-4 border rounded-lg hover:border-primary hover:shadow-md transition-all duration-300 cursor-pointer"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 1.1 + (index * 0.1) }}
-                        whileHover={{ scale: 1.02 }}
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.3, delay: 1.1 + index * 0.1 }}
                       >
-                        <div className="flex justify-between items-start mb-2">
-                          <div>
-                            <h4 className="font-semibold">{vendor.nom}</h4>
-                            <Badge variant="secondary" className="mt-1">
-                              {vendor.categorie}
-                            </Badge>
-                          </div>
-                          {vendor.note_moyenne && (
-                            <div className="flex items-center gap-1">
-                              <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                              <span className="text-sm font-medium">
-                                {vendor.note_moyenne}/5
+                        <Card className="hover:shadow-xl hover:scale-105 transition-all duration-300">
+                          <CardContent className="p-4">
+                            <div className="flex justify-between items-start mb-2">
+                              <h4 className="font-semibold">{vendor.nom}</h4>
+                              <Badge className="text-xs bg-wedding-olive/10 text-wedding-olive border-wedding-olive">
+                                {vendor.categorie}
+                              </Badge>
+                            </div>
+                            <div className="flex items-center gap-1 mb-2">
+                              {[...Array(5)].map((_, i) => (
+                                <Star
+                                  key={i}
+                                  className={`w-3 h-3 ${
+                                    i < Math.floor(vendor.note_moyenne)
+                                      ? 'fill-yellow-400 text-yellow-400'
+                                      : 'text-gray-300'
+                                  }`}
+                                />
+                              ))}
+                              <span className="text-xs text-muted-foreground ml-1">
+                                {vendor.note_moyenne.toFixed(1)}
                               </span>
                             </div>
-                          )}
-                        </div>
-                        
-                        {vendor.description && (
-                          <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
-                            {vendor.description}
-                          </p>
-                        )}
-                        
-                        <div className="flex items-center justify-between text-sm">
-                          <span className="flex items-center gap-1 text-muted-foreground">
-                            <MapPin className="w-4 h-4" />
-                            {vendor.ville}
-                          </span>
-                          {vendor.prix_min && vendor.prix_max && (
-                            <span className="font-medium">
-                              {formatPrice(vendor.prix_min)} - {formatPrice(vendor.prix_max)}
-                            </span>
-                          )}
-                        </div>
+                            <p className="text-sm text-muted-foreground mb-2">
+                              📍 {vendor.ville}
+                            </p>
+                            <p className="text-xs text-muted-foreground line-clamp-2 mb-3">
+                              {vendor.description}
+                            </p>
+                            <div className="flex items-center justify-between mb-3">
+                              <span className="text-sm font-medium text-wedding-olive">
+                                {formatPrice(vendor.prix_min)} - {formatPrice(vendor.prix_max)}
+                              </span>
+                            </div>
+                            <Button 
+                              className="w-full bg-wedding-olive hover:bg-wedding-olive/90 text-white"
+                              size="sm"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedVendor(vendor);
+                              }}
+                            >
+                              <Mail className="w-4 h-4 mr-2" />
+                              Contacter ce prestataire
+                            </Button>
+                          </CardContent>
+                        </Card>
                       </motion.div>
                     ))}
                   </div>
@@ -408,6 +427,16 @@ const VibeWeddingResults: React.FC<VibeWeddingResultsProps> = ({ project }) => {
           )}
         </motion.div>
       </ScrollArea>
+
+      {/* Modal de contact */}
+      {selectedVendor && (
+        <VendorContactModal
+          isOpen={!!selectedVendor}
+          onClose={() => setSelectedVendor(null)}
+          vendorId={selectedVendor.id}
+          vendorName={selectedVendor.nom}
+        />
+      )}
     </aside>
   );
 };

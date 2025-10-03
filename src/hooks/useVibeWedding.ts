@@ -54,9 +54,19 @@ export const useVibeWedding = () => {
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [sessionId] = useState(() => `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
   const [isLoading, setIsLoading] = useState(false);
+  const [promptCount, setPromptCount] = useState(0);
+  const [showAuthModal, setShowAuthModal] = useState(false);
   const { toast } = useToast();
 
   const sendMessage = useCallback(async (userMessage: string) => {
+    // Vérifier l'authentification et le compteur de prompts
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (promptCount >= 1 && !user) {
+      setShowAuthModal(true);
+      return;
+    }
+
     setIsLoading(true);
 
     // Ajouter le message utilisateur immédiatement
@@ -68,7 +78,6 @@ export const useVibeWedding = () => {
     setMessages(prev => [...prev, userMsg]);
 
     try {
-      const { data: { user } } = await supabase.auth.getUser();
       
       const { data, error } = await supabase.functions.invoke('vibe-wedding-ai', {
         body: {
@@ -106,6 +115,9 @@ export const useVibeWedding = () => {
         });
       }
 
+      // Incrémenter le compteur de prompts après succès
+      setPromptCount(prev => prev + 1);
+
     } catch (error: any) {
       console.error('Error sending message:', error);
       toast({
@@ -116,12 +128,13 @@ export const useVibeWedding = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [conversationId, sessionId, toast]);
+  }, [conversationId, sessionId, toast, promptCount]);
 
   const startNewProject = useCallback(() => {
     setMessages([]);
     setProject(null);
     setConversationId(null);
+    setPromptCount(0);
   }, []);
 
   return {
@@ -129,6 +142,9 @@ export const useVibeWedding = () => {
     project,
     isLoading,
     sendMessage,
-    startNewProject
+    startNewProject,
+    promptCount,
+    showAuthModal,
+    setShowAuthModal
   };
 };

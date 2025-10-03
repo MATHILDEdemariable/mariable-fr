@@ -9,7 +9,16 @@ import { useVibeWedding } from '@/hooks/useVibeWedding';
 
 const VibeWedding: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const { messages, project, isLoading, sendMessage, startNewProject } = useVibeWedding();
+  const { 
+    messages, 
+    project, 
+    isLoading, 
+    sendMessage, 
+    startNewProject,
+    promptCount,
+    showAuthModal,
+    setShowAuthModal
+  } = useVibeWedding();
 
   const handleNewProject = () => {
     startNewProject();
@@ -57,6 +66,9 @@ const VibeWedding: React.FC = () => {
                 messages={messages}
                 onSendMessage={sendMessage}
                 isLoading={isLoading}
+                promptCount={promptCount}
+                showAuthModal={showAuthModal}
+                setShowAuthModal={setShowAuthModal}
               />
             </div>
 

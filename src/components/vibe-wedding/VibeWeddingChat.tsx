@@ -3,6 +3,8 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Send, Sparkles } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { supabase } from '@/integrations/supabase/client';
+import AuthRequiredModal from './AuthRequiredModal';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -14,15 +16,37 @@ interface VibeWeddingChatProps {
   messages: Message[];
   onSendMessage: (message: string) => void;
   isLoading: boolean;
+  promptCount: number;
+  showAuthModal: boolean;
+  setShowAuthModal: (show: boolean) => void;
 }
 
 const VibeWeddingChat: React.FC<VibeWeddingChatProps> = ({
   messages,
   onSendMessage,
-  isLoading
+  isLoading,
+  promptCount,
+  showAuthModal,
+  setShowAuthModal
 }) => {
   const [input, setInput] = useState('');
+  const [user, setUser] = useState<any>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Vérifier l'authentification
+  useEffect(() => {
+    const checkUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
+    };
+    checkUser();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   // Auto-scroll vers le bas
   useEffect(() => {
@@ -127,6 +151,11 @@ const VibeWeddingChat: React.FC<VibeWeddingChatProps> = ({
       {/* Input */}
       <div className="border-t border-border p-4 bg-card">
         <form onSubmit={handleSubmit} className="max-w-3xl mx-auto">
+          {!user && promptCount === 0 && (
+            <p className="text-xs text-muted-foreground text-center mb-2 flex items-center justify-center gap-1">
+              💡 <span>1er prompt gratuit, ensuite créez un compte pour continuer</span>
+            </p>
+          )}
           <div className="flex gap-2">
             <Textarea
               value={input}
@@ -134,11 +163,11 @@ const VibeWeddingChat: React.FC<VibeWeddingChatProps> = ({
               onKeyDown={handleKeyDown}
               placeholder="Décrivez votre projet de mariage..."
               className="min-h-[60px] resize-none"
-              disabled={isLoading}
+              disabled={isLoading || (!user && promptCount >= 1)}
             />
             <Button
               type="submit"
-              disabled={!input.trim() || isLoading}
+              disabled={!input.trim() || isLoading || (!user && promptCount >= 1)}
               className="bg-premium-sage hover:bg-premium-sage-dark text-white self-end"
             >
               <Send className="w-4 h-4" />
@@ -146,6 +175,12 @@ const VibeWeddingChat: React.FC<VibeWeddingChatProps> = ({
           </div>
         </form>
       </div>
+
+      {/* Modal d'authentification */}
+      <AuthRequiredModal 
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+      />
     </div>
   );
 };
