@@ -57,26 +57,31 @@ const VibeWeddingHero: React.FC<VibeWeddingHeroProps> = ({ onStartConversation }
   };
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-b from-white via-amber-50/40 to-amber-100/60">
-      {/* Overlay pattern */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(180,140,100,0.08)_0%,transparent_50%)]" />
+    <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-black">
+      {/* Background Image */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: 'url(https://bgidfcqktsttzlwlumtz.supabase.co/storage/v1/object/public/visuels/club%20mariable.png)' }}
+      />
+      {/* Dark Overlay for readability */}
+      <div className="absolute inset-0 bg-black/40" />
       
       <div className="relative z-10 w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         {/* Icon */}
         <div className="flex justify-center mb-6">
-          <div className="w-20 h-20 rounded-full bg-black/5 backdrop-blur-sm flex items-center justify-center animate-pulse">
-            <Sparkles className="w-10 h-10 text-black" />
+          <div className="w-20 h-20 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center animate-pulse">
+            <Sparkles className="w-10 h-10 text-white" />
           </div>
         </div>
 
         {/* Title with typing effect */}
-        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-black mb-6 leading-tight min-h-[120px] sm:min-h-[140px] flex items-center justify-center">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-white mb-6 leading-tight min-h-[120px] sm:min-h-[140px] flex items-center justify-center drop-shadow-lg">
           {displayedText}
           {isTyping && <span className="animate-pulse ml-1">|</span>}
         </h1>
 
         {/* Subtitle */}
-        <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground mb-12 max-w-2xl mx-auto font-light">
+        <p className="text-lg sm:text-xl md:text-2xl text-white/95 mb-12 max-w-2xl mx-auto font-light drop-shadow-md">
           Organisez vous-même le jour-j simplement, avec marIAble
         </p>
 
@@ -98,7 +103,7 @@ const VibeWeddingHero: React.FC<VibeWeddingHeroProps> = ({ onStartConversation }
                 type="submit"
                 disabled={!input.trim()}
                 size="lg"
-                className="bg-black hover:bg-black/90 text-white font-semibold px-8 py-6 text-lg h-auto sm:self-end"
+                className="bg-white hover:bg-white/90 text-black font-semibold px-8 py-6 text-lg h-auto sm:self-end"
               >
                 <Send className="w-5 h-5 mr-2" />
                 Lancer
@@ -117,7 +122,7 @@ const VibeWeddingHero: React.FC<VibeWeddingHeroProps> = ({ onStartConversation }
                   key={idx}
                   type="button"
                   onClick={() => setInput(example)}
-                  className="text-xs sm:text-sm px-3 py-1.5 rounded-full bg-gray-100 hover:bg-gray-200 text-black transition-colors"
+                  className="text-xs sm:text-sm px-3 py-1.5 rounded-full bg-white/20 hover:bg-white/30 text-white backdrop-blur-sm transition-colors"
                 >
                   {example}
                 </button>
@@ -127,7 +132,7 @@ const VibeWeddingHero: React.FC<VibeWeddingHeroProps> = ({ onStartConversation }
         </form>
 
         {/* Trust indicators */}
-        <div className="mt-12 flex flex-wrap justify-center gap-6 sm:gap-8 text-muted-foreground text-sm">
+        <div className="mt-12 flex flex-wrap justify-center gap-6 sm:gap-8 text-white/90 text-sm">
           <div className="flex items-center gap-2">
             <span className="text-2xl">✨</span>
             <span>Gratuit pour commencer</span>
