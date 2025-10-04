@@ -213,7 +213,7 @@ const CoordinationJourJ: React.FC = () => {
             </div>
 
             <div className="text-center mb-8">
-              <Button onClick={() => navigate('/reservation-jour-m')} size="lg" className="bg-wedding-olive hover:bg-wedding-olive/90 text-white">
+              <Button onClick={() => document.getElementById('video-demo')?.scrollIntoView({ behavior: 'smooth' })} size="lg" className="bg-wedding-olive hover:bg-wedding-olive/90 text-white">
                 Voir la démo
               </Button>
             </div>
@@ -225,7 +225,7 @@ const CoordinationJourJ: React.FC = () => {
         </section>
 
         {/* Video Demo Section */}
-        <section className="py-12 px-4 bg-white">
+        <section id="video-demo" className="py-12 px-4 bg-white">
           <div className="container mx-auto max-w-4xl">
             <h2 className="text-2xl md:text-3xl font-serif text-center mb-8 text-wedding-black">
               Découvrez Mon Jour J en action
