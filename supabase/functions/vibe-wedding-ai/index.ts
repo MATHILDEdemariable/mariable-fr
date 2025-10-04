@@ -430,12 +430,12 @@ Tu dois TOUJOURS répondre en JSON :`;
       if (searchLocation && finalCategory && parsedResponse.ask_location !== true) {
         console.log(`🔍 Searching: ${finalCategory} in region "${searchLocation}"`);
         
-        // Search by region first (most accurate)
+        // Search by region first (most accurate) - CAST region to text for ILIKE
         const { data: regionVendors, error: vendorError } = await supabase
           .from('prestataires_rows')
           .select('id, nom, categorie, ville, region, prix_a_partir_de, prix_par_personne, description, email, telephone, slug')
           .eq('categorie', finalCategory)
-          .ilike('region', `%${searchLocation}%`)
+          .filter('region', 'ilike', `%${searchLocation}%`)
           .order('created_at', { ascending: false })
           .limit(3);
 
@@ -451,7 +451,7 @@ Tu dois TOUJOURS répondre en JSON :`;
             .from('prestataires_rows')
             .select('id, nom, categorie, ville, region, prix_a_partir_de, prix_par_personne, description, email, telephone, slug')
             .eq('categorie', finalCategory)
-            .ilike('ville', `%${searchLocation}%`)
+            .filter('ville', 'ilike', `%${searchLocation}%`)
             .order('created_at', { ascending: false })
             .limit(3);
             
@@ -465,6 +465,7 @@ Tu dois TOUJOURS répondre en JSON :`;
               .from('prestataires_rows')
               .select('id, nom, categorie, ville, region, prix_a_partir_de, prix_par_personne, description, email, telephone, slug')
               .eq('categorie', finalCategory)
+              .eq('visible', true)
               .order('created_at', { ascending: false })
               .limit(3);
               
@@ -482,7 +483,8 @@ Tu dois TOUJOURS répondre en JSON :`;
       const { data: generalVendors, error: vendorError } = await supabase
         .from('prestataires_rows')
         .select('id, nom, categorie, ville, region, prix_a_partir_de, prix_par_personne, description, email, telephone, slug')
-        .ilike('region', `%${parsedResponse.weddingData.location}%`)
+        .filter('region', 'ilike', `%${parsedResponse.weddingData.location}%`)
+        .eq('visible', true)
         .order('created_at', { ascending: false })
         .limit(3);
 
