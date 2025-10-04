@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { MessageSquare, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import SimpleHeader from '@/components/SimpleHeader';
 import VibeWeddingChat from '@/components/vibe-wedding/VibeWeddingChat';
 import VibeWeddingResultsImproved from '@/components/vibe-wedding/VibeWeddingResultsImproved';
 import { useVibeWedding } from '@/hooks/useVibeWedding';
@@ -29,7 +30,9 @@ const VibeWedding: React.FC = () => {
         />
       </Helmet>
 
-      <div className="flex h-screen bg-background overflow-hidden">
+      <SimpleHeader />
+
+      <div className="flex h-screen pt-16 bg-background overflow-hidden">
         {/* Zone principale - One Pager en full page */}
         <div className="flex-1 overflow-hidden">
           {!project ? (

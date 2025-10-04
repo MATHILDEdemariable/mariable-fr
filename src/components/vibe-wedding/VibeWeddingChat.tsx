@@ -91,7 +91,7 @@ const VibeWeddingChat: React.FC<VibeWeddingChatProps> = ({
             </p>
             
             <div className="space-y-2 w-full max-w-md">
-              <p className="text-sm font-medium mb-3">Exemples de prompts :</p>
+              <p className="text-sm font-medium mb-3">Exemples de demandes :</p>
               {quickPrompts.map((prompt, idx) => (
                 <button
                   key={idx}
@@ -185,7 +185,7 @@ const VibeWeddingChat: React.FC<VibeWeddingChatProps> = ({
             <form onSubmit={handleSubmit}>
               {!user && promptCount === 0 && (
                 <div className="mb-3 text-xs text-center text-muted-foreground bg-premium-sage-very-light border border-premium-sage/20 rounded-lg px-3 py-2">
-                  💡 <span className="font-medium">1er prompt gratuit</span>, ensuite créez un compte pour continuer
+                  💡 <span className="font-medium">1ère demande gratuite</span>, ensuite créez un compte pour continuer
                 </div>
               )}
               <div className="flex gap-2">
