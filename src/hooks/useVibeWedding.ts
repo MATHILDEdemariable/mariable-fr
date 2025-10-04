@@ -239,13 +239,21 @@ export const useVibeWedding = () => {
     }
   }, [conversationId, sessionId, toast, promptCount]);
 
-  const startNewProject = useCallback(() => {
+  const startNewProject = useCallback(async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    // Bloquer si non connecté et déjà utilisé le prompt gratuit
+    if (!user && promptCount >= 1) {
+      setShowAuthModal(true);
+      return;
+    }
+    
     setMessages([]);
     setProject(null);
     setConversationId(null);
     setCurrentConversationId(null);
     setPromptCount(0);
-  }, []);
+  }, [promptCount]);
 
   return {
     messages,

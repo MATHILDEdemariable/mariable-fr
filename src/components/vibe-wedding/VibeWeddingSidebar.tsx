@@ -16,6 +16,7 @@ interface VibeWeddingSidebarProps {
   isMobileOpen?: boolean;
   onCloseMobile?: () => void;
   onSelectConversation?: (id: string) => void;
+  isNewProjectDisabled?: boolean;
 }
 
 const VibeWeddingSidebar: React.FC<VibeWeddingSidebarProps> = ({
@@ -24,7 +25,8 @@ const VibeWeddingSidebar: React.FC<VibeWeddingSidebarProps> = ({
   currentConversationId,
   isMobileOpen = true,
   onCloseMobile,
-  onSelectConversation
+  onSelectConversation,
+  isNewProjectDisabled = false
 }) => {
   return (
     <aside 
@@ -40,7 +42,9 @@ const VibeWeddingSidebar: React.FC<VibeWeddingSidebarProps> = ({
         <div className="p-4 border-b border-border">
           <Button 
             onClick={onNewProject}
-            className="w-full bg-premium-sage hover:bg-premium-sage-dark text-white"
+            disabled={isNewProjectDisabled}
+            className="w-full bg-premium-sage hover:bg-premium-sage-dark text-white disabled:opacity-50 disabled:cursor-not-allowed"
+            title={isNewProjectDisabled ? "Créez un compte gratuit pour continuer" : ""}
           >
             <Plus className="w-4 h-4 mr-2" />
             Nouveau sujet

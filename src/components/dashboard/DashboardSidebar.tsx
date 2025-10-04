@@ -42,6 +42,11 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
       icon: <LayoutDashboard className="h-4 w-4" />,
       path: '/dashboard',
     },
+    {
+      label: 'Mon Mariage',
+      icon: <Heart className="h-4 w-4" />,
+      path: '/dashboard/mon-mariage',
+    },
   ];
 
   // Menu déroulant Check-list

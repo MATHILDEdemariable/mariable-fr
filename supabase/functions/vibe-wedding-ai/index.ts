@@ -28,7 +28,7 @@ serve(async (req) => {
     let conversationHistory = [];
     if (conversationId) {
       const { data: conversation } = await supabase
-        .from('vibe_wedding_conversations')
+        .from('ai_wedding_conversations')
         .select('messages')
         .eq('id', conversationId)
         .single();
@@ -169,20 +169,32 @@ Calcule les montants du budget en fonction du budget total fourni. Si aucun budg
 
     if (conversationId) {
       await supabase
-        .from('vibe_wedding_conversations')
+        .from('ai_wedding_conversations')
         .update({ 
           messages: newMessages,
+          wedding_context: !parsedResponse.conversational ? {
+            summary: parsedResponse.summary,
+            weddingData: parsedResponse.weddingData,
+            budgetBreakdown: parsedResponse.budgetBreakdown,
+            timeline: parsedResponse.timeline
+          } : null,
           updated_at: new Date().toISOString()
         })
         .eq('id', conversationId);
     } else {
       const { data: newConv, error: convError } = await supabase
-        .from('vibe_wedding_conversations')
+        .from('ai_wedding_conversations')
         .insert({
           user_id: userId || null,
           session_id: sessionId,
           messages: newMessages,
-          wedding_data: parsedResponse.weddingData || null
+          wedding_data: parsedResponse.weddingData || null,
+          wedding_context: !parsedResponse.conversational ? {
+            summary: parsedResponse.summary,
+            weddingData: parsedResponse.weddingData,
+            budgetBreakdown: parsedResponse.budgetBreakdown,
+            timeline: parsedResponse.timeline
+          } : null
         })
         .select()
         .single();

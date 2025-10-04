@@ -2,18 +2,19 @@ import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { supabase } from '@/integrations/supabase/client';
 import VibeWeddingSidebar from '@/components/vibe-wedding/VibeWeddingSidebar';
 import VibeWeddingChat from '@/components/vibe-wedding/VibeWeddingChat';
-import VibeWeddingResults from '@/components/vibe-wedding/VibeWeddingResults';
+import VibeWeddingResultsImproved from '@/components/vibe-wedding/VibeWeddingResultsImproved';
 import { useVibeWedding } from '@/hooks/useVibeWedding';
 
 const VibeWedding: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const { 
-    messages, 
-    project, 
-    isLoading, 
-    sendMessage, 
+  const {
+    messages,
+    project,
+    isLoading,
+    sendMessage,
     startNewProject,
     promptCount,
     showAuthModal,
@@ -22,6 +23,12 @@ const VibeWedding: React.FC = () => {
     currentConversationId,
     loadConversation
   } = useVibeWedding();
+  
+  const [user, setUser] = React.useState<any>(null);
+  
+  React.useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => setUser(data.user));
+  }, []);
 
   const handleNewProject = () => {
     startNewProject();
@@ -47,6 +54,7 @@ const VibeWedding: React.FC = () => {
           onSelectConversation={loadConversation}
           isMobileOpen={isSidebarOpen}
           onCloseMobile={() => setIsSidebarOpen(false)}
+          isNewProjectDisabled={!user && promptCount >= 1}
         />
 
         {/* Main content */}
@@ -81,7 +89,7 @@ const VibeWedding: React.FC = () => {
             {/* Results panel - apparaît après génération */}
             {project && (
               <div className="flex-1 md:flex-none">
-                <VibeWeddingResults project={project} />
+                <VibeWeddingResultsImproved project={project} />
               </div>
             )}
           </div>
