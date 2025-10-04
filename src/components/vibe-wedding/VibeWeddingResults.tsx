@@ -74,8 +74,9 @@ const VibeWeddingResults: React.FC<VibeWeddingResultsProps> = ({ project }) => {
   };
 
   const formatDate = (dateString: string | null): string => {
-    if (!dateString) return "À définir";
+    if (!dateString || dateString.trim() === "") return "À définir";
     const date = new Date(dateString);
+    if (isNaN(date.getTime())) return "À définir";
     return new Intl.DateTimeFormat('fr-FR', {
       month: 'long',
       year: 'numeric'
