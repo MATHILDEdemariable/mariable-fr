@@ -6,21 +6,21 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Helper function to detect vendor categories from message
+// Helper function to detect vendor categories from message (ENRICHED)
 const detectVendorCategory = (message: string): string | null => {
   const messageLower = message.toLowerCase();
   
   const categoryKeywords: { [key: string]: string[] } = {
-    'Lieu de réception': ['lieu', 'salle', 'château', 'domaine', 'réception', 'propriété', 'venue'],
-    'Traiteur': ['traiteur', 'repas', 'buffet', 'menu', 'catering', 'nourriture', 'cuisine'],
+    'Lieu de réception': ['lieu', 'salle', 'château', 'domaine', 'réception', 'propriété', 'venue', 'reception'],
+    'Traiteur': ['traiteur', 'repas', 'buffet', 'menu', 'catering', 'nourriture', 'cuisine', 'restauration'],
     'Photographe': ['photographe', 'photo', 'photos', 'photographie', 'shooting'],
-    'Vidéaste': ['vidéaste', 'vidéo', 'film', 'cinéma', 'vidéographie'],
-    'Fleuriste': ['fleuriste', 'fleur', 'fleurs', 'bouquet', 'composition florale'],
-    'DJ': ['dj', 'musique', 'musicien', 'orchestre', 'animation musicale', 'sono'],
-    'Wedding Planner': ['wedding planner', 'organisateur', 'coordination', 'planificateur'],
-    'Décorateur': ['décorateur', 'décoration', 'déco', 'scénographie'],
-    'Coiffeur': ['coiffeur', 'coiffure', 'cheveux', 'coiffage'],
-    'Maquilleur': ['maquilleur', 'maquillage', 'beauté'],
+    'Vidéaste': ['vidéaste', 'vidéo', 'film', 'cinéma', 'vidéographie', 'videaste', 'filmeur'],
+    'Fleuriste': ['fleuriste', 'fleur', 'fleurs', 'bouquet', 'composition florale', 'floral'],
+    'DJ & Animation': ['dj', 'musique', 'musicien', 'orchestre', 'animation musicale', 'sono', 'sound', 'animation', 'animateur'],
+    'Wedding Planner': ['wedding planner', 'organisateur', 'coordination', 'planificateur', 'organisatrice'],
+    'Coiffure & Maquillage': ['coiffeur', 'coiffure', 'cheveux', 'coiffage', 'maquilleur', 'maquillage', 'beauté', 'make-up'],
+    'Décoration': ['décorateur', 'décoration', 'déco', 'scénographie', 'decoration'],
+    'Voiture de mariage': ['voiture', 'transport', 'limousine', 'véhicule', 'auto', 'automobile']
   };
   
   for (const [category, keywords] of Object.entries(categoryKeywords)) {
@@ -34,19 +34,38 @@ const detectVendorCategory = (message: string): string | null => {
   return null;
 };
 
-// Helper function to extract location from message
+// Helper function to extract location from message (ENRICHED VERSION)
 const extractLocationFromMessage = (message: string): string | null => {
   const messageLower = message.toLowerCase();
   
-  // Liste des régions et villes principales françaises
+  // Comprehensive list of French locations
   const locations = [
-    'paris', 'lyon', 'marseille', 'toulouse', 'bordeaux', 'nice', 'nantes', 'strasbourg',
-    'provence', 'ile-de-france', 'bretagne', 'normandie', 'bourgogne', 'loire', 'côte d\'azur',
-    'alsace', 'aquitaine', 'languedoc', 'rhône', 'auvergne', 'champagne', 'corse'
+    // Major cities
+    'paris', 'lyon', 'marseille', 'toulouse', 'nice', 'nantes', 'strasbourg',
+    'montpellier', 'bordeaux', 'lille', 'rennes', 'reims', 'toulon', 'angers',
+    'grenoble', 'dijon', 'nîmes', 'aix-en-provence', 'saint-étienne', 'le havre',
+    'brest', 'limoges', 'clermont-ferrand', 'tours', 'amiens', 'metz', 'besançon',
+    'orléans', 'mulhouse', 'rouen', 'caen', 'nancy', 'argenteuil', 'saint-denis',
+    'annecy', 'cannes', 'antibes', 'avignon', 'biarritz', 'pau', 'perpignan',
+    'la rochelle', 'poitiers', 'chambéry', 'colmar', 'beaune', 'carcassonne',
+    
+    // Regions (official names and variations)
+    'île-de-france', 'idf', 'ile-de-france', 'provence-alpes-côte d\'azur', 'paca',
+    'auvergne-rhône-alpes', 'nouvelle-aquitaine', 'occitanie', 'hauts-de-france',
+    'normandie', 'grand est', 'bretagne', 'pays de la loire', 'centre-val de loire',
+    'bourgogne-franche-comté', 'corse',
+    
+    // Shortened/popular region names
+    'provence', 'côte d\'azur', 'alsace', 'bourgogne', 'champagne', 'savoie',
+    'haute-savoie', 'vendée', 'charente', 'dordogne', 'var', 'vaucluse', 'loire',
+    'rhône', 'aquitaine', 'languedoc'
   ];
   
   for (const location of locations) {
     if (messageLower.includes(location)) {
+      // Normalize some variations
+      if (location === 'idf' || location === 'ile-de-france') return 'île-de-france';
+      if (location === 'paca') return 'provence-alpes-côte d\'azur';
       return location;
     }
   }
@@ -95,7 +114,7 @@ serve(async (req) => {
     // Construire les messages pour l'IA
     const systemPrompt = `Tu es un wedding planner professionnel expert basé en France. Tu maîtrises parfaitement les 10 étapes clés de l'organisation d'un mariage.
 
-Tu as TROIS modes de réponse :
+Tu as QUATRE modes de réponse :
 
 1. MODE INITIAL - Quand l'utilisateur décrit son projet pour la première fois :
 {
@@ -133,6 +152,27 @@ Tu as TROIS modes de réponse :
   "conversational": true,
   "message": "Ta réponse conversationnelle"
 }
+
+4. MODE RECHERCHE PRESTATAIRES - Quand l'utilisateur demande des prestataires spécifiques :
+{
+  "conversational": true,
+  "mode": "vendor_search",
+  "category": "Catégorie détectée (ex: Photographe)",
+  "location": "Localisation détectée ou null",
+  "message": "Voici les meilleurs [catégorie] que je vous recommande à [location] :",
+  "ask_location": false
+}
+
+RÈGLES POUR MODE RECHERCHE PRESTATAIRES :
+- Si l'utilisateur mentionne "lieu", "traiteur", "photographe", "fleuriste", "dj", etc.
+- TOUJOURS répondre en MODE RECHERCHE PRESTATAIRES
+- Message court et direct (1-2 phrases max)
+- Si localisation détectée dans le message OU dans le projet existant : ask_location = false
+- Si aucune localisation détectée : ask_location = true et message = "Parfait ! Dans quelle région se déroulera votre mariage ?"
+- Exemples de messages directs :
+  * "Voici les meilleurs lieux de réception à Paris :"
+  * "Je vous recommande ces traiteurs excellents à Lyon :"
+  * "Voici des photographes talentueux en Provence :"
 
 RÈGLES STRICTES POUR LE RÉTROPLANNING (OBLIGATOIRE) :
 
@@ -357,47 +397,77 @@ Tu dois TOUJOURS répondre en JSON :`;
       }
     }
 
-    // Recherche intelligente de prestataires
+    // Recherche intelligente de prestataires (IMPROVED VERSION)
     let vendors = [];
-    let vendorSearchPerformed = false;
+    const shouldSearchVendors = detectedCategory || parsedResponse.mode === 'vendor_search';
     
-    // Priorité 1 : Si détection de catégorie spécifique dans le message
-    if (detectedCategory) {
-      vendorSearchPerformed = true;
+    if (shouldSearchVendors) {
+      const finalCategory = detectedCategory || parsedResponse.category;
       const searchLocation = locationFromMessage || 
-                            parsedResponse.weddingData?.location || 
+                            parsedResponse.location || 
                             currentProject?.weddingData?.location;
       
-      console.log('🔍 Searching vendors:', { category: detectedCategory, location: searchLocation });
-      
-      if (searchLocation) {
-        const { data: targetedVendors } = await supabase
+      console.log('🎯 Performing vendor search:', { 
+        category: finalCategory, 
+        location: searchLocation,
+        mode: parsedResponse.mode,
+        askLocation: parsedResponse.ask_location
+      });
+
+      if (searchLocation && finalCategory) {
+        // Search in BOTH ville AND region columns for better coverage
+        const { data: targetedVendors, error: vendorError } = await supabase
           .from('prestataires_rows')
-          .select('id, nom, categorie, ville, prix_min, prix_max, description, note_moyenne, email, telephone, slug')
-          .eq('categorie', detectedCategory)
-          .ilike('ville', `%${searchLocation}%`)
+          .select('id, nom, categorie, ville, region, prix_min, prix_max, description, note_moyenne, email, telephone, slug')
+          .eq('categorie', finalCategory)
+          .or(`ville.ilike.%${searchLocation}%,region.ilike.%${searchLocation}%`)
           .order('note_moyenne', { ascending: false })
-          .limit(3);
+          .limit(4);
+
+        if (vendorError) {
+          console.error('❌ Error fetching targeted vendors:', vendorError);
+        } else {
+          vendors = targetedVendors || [];
+          console.log(`✅ Found ${vendors.length} targeted vendors for ${finalCategory} in ${searchLocation}`);
+        }
+      }
+      
+      // FALLBACK: If no location or no results, show top-rated vendors from all France
+      if (vendors.length === 0 && finalCategory) {
+        console.log('🔄 Fallback: Searching France-wide vendors');
         
-        if (targetedVendors && targetedVendors.length > 0) {
-          vendors = targetedVendors;
-          console.log('✅ Found targeted vendors:', vendors.length);
+        const { data: fallbackVendors, error: vendorError } = await supabase
+          .from('prestataires_rows')
+          .select('id, nom, categorie, ville, region, prix_min, prix_max, description, note_moyenne, email, telephone, slug')
+          .eq('categorie', finalCategory)
+          .order('note_moyenne', { ascending: false })
+          .limit(6);
+
+        if (vendorError) {
+          console.error('❌ Error fetching fallback vendors:', vendorError);
+        } else {
+          vendors = fallbackVendors || [];
+          console.log(`✅ Found ${vendors.length} fallback vendors (France-wide)`);
         }
       }
     }
     
-    // Priorité 2 : Si nouveau projet généré avec localisation
-    if (!vendorSearchPerformed && parsedResponse.weddingData?.location && !parsedResponse.conversational) {
-      const { data: vendorsData } = await supabase
+    // Legacy: general vendor search if we have a new project with location
+    if (vendors.length === 0 && parsedResponse.weddingData?.location && !parsedResponse.conversational) {
+      console.log('🔄 Performing general vendor search for new project');
+      
+      const { data: generalVendors, error: vendorError } = await supabase
         .from('prestataires_rows')
-        .select('id, nom, categorie, ville, prix_min, prix_max, description, note_moyenne, email, telephone, slug')
-        .ilike('ville', `%${parsedResponse.weddingData.location}%`)
+        .select('id, nom, categorie, ville, region, prix_min, prix_max, description, note_moyenne, email, telephone, slug')
+        .or(`ville.ilike.%${parsedResponse.weddingData.location}%,region.ilike.%${parsedResponse.weddingData.location}%`)
         .order('note_moyenne', { ascending: false })
         .limit(6);
-      
-      if (vendorsData) {
-        vendors = vendorsData;
-        console.log('✅ Found general vendors:', vendors.length);
+
+      if (vendorError) {
+        console.error('❌ Error fetching general vendors:', vendorError);
+      } else {
+        vendors = generalVendors || [];
+        console.log(`✅ Found ${vendors.length} general vendors`);
       }
     }
 
@@ -405,7 +475,8 @@ Tu dois TOUJOURS répondre en JSON :`;
       JSON.stringify({
         response: parsedResponse,
         conversationId: finalConversationId,
-        vendors
+        vendors,
+        askLocation: parsedResponse.ask_location || false
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },

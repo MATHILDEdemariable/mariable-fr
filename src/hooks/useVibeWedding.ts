@@ -47,6 +47,7 @@ interface Message {
   content: string;
   timestamp: string;
   vendors?: Vendor[];
+  askLocation?: boolean;
 }
 
 interface ConversationItem {
@@ -207,7 +208,8 @@ export const useVibeWedding = () => {
           ? data.response.message 
           : data.response.summary,
         timestamp: new Date().toISOString(),
-        vendors: data.vendors && data.vendors.length > 0 ? data.vendors : undefined
+        vendors: data.vendors && data.vendors.length > 0 ? data.vendors : undefined,
+        askLocation: data.askLocation || false
       };
 
       setMessages(prev => [...prev, assistantMsg]);

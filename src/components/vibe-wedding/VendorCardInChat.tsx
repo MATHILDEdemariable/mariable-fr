@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { MapPin, Star, Euro, Mail, Phone } from 'lucide-react';
+import { MapPin, Star, Euro, Mail, Phone, ExternalLink } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import VendorContactModal from '@/components/vendors/VendorContactModal';
 
 interface VendorCardInChatProps {
   vendor: {
@@ -21,6 +22,7 @@ interface VendorCardInChatProps {
 }
 
 const VendorCardInChat: React.FC<VendorCardInChatProps> = ({ vendor }) => {
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   return (
     <Card className="hover:shadow-md transition-shadow border-premium-sage/20">
       <CardContent className="p-4">
@@ -64,49 +66,51 @@ const VendorCardInChat: React.FC<VendorCardInChatProps> = ({ vendor }) => {
 
           {/* Actions */}
           <div className="flex flex-col gap-2">
+            <Button 
+              onClick={() => setIsContactModalOpen(true)}
+              size="sm" 
+              className="bg-premium-sage hover:bg-premium-sage-dark text-white"
+            >
+              <Mail className="w-4 h-4 mr-1" />
+              Contacter
+            </Button>
+            
             {vendor.slug && (
               <Button 
                 asChild
-                size="sm" 
-                className="bg-premium-sage hover:bg-premium-sage-dark text-white"
+                variant="outline"
+                size="sm"
               >
                 <Link to={`/prestataire/${vendor.slug}`} target="_blank">
-                  Voir le profil
+                  <ExternalLink className="w-4 h-4 mr-1" />
+                  Profil
                 </Link>
               </Button>
             )}
             
-            {(vendor.email || vendor.telephone) && (
-              <div className="flex gap-1">
-                {vendor.email && (
-                  <Button
-                    asChild
-                    variant="outline"
-                    size="icon"
-                    className="h-8 w-8"
-                  >
-                    <a href={`mailto:${vendor.email}`} title="Envoyer un email">
-                      <Mail className="w-4 h-4" />
-                    </a>
-                  </Button>
-                )}
-                {vendor.telephone && (
-                  <Button
-                    asChild
-                    variant="outline"
-                    size="icon"
-                    className="h-8 w-8"
-                  >
-                    <a href={`tel:${vendor.telephone}`} title="Appeler">
-                      <Phone className="w-4 h-4" />
-                    </a>
-                  </Button>
-                )}
-              </div>
+            {vendor.telephone && (
+              <Button
+                asChild
+                variant="outline"
+                size="icon"
+                className="h-8 w-8"
+              >
+                <a href={`tel:${vendor.telephone}`} title="Appeler">
+                  <Phone className="w-4 h-4" />
+                </a>
+              </Button>
             )}
           </div>
         </div>
       </CardContent>
+
+      {/* Contact Modal */}
+      <VendorContactModal
+        isOpen={isContactModalOpen}
+        onClose={() => setIsContactModalOpen(false)}
+        vendorId={vendor.id}
+        vendorName={vendor.nom}
+      />
     </Card>
   );
 };

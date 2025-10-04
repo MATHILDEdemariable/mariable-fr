@@ -6,6 +6,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { supabase } from '@/integrations/supabase/client';
 import AuthRequiredModal from './AuthRequiredModal';
 import VendorCardInChat from './VendorCardInChat';
+import RegionSelector from './RegionSelector';
 
 interface Vendor {
   id: string;
@@ -26,6 +27,7 @@ interface Message {
   content: string;
   timestamp: string;
   vendors?: Vendor[];
+  askLocation?: boolean;
 }
 
 interface VibeWeddingChatProps {
@@ -77,6 +79,10 @@ const VibeWeddingChat: React.FC<VibeWeddingChatProps> = ({
       onSendMessage(input.trim());
       setInput('');
     }
+  };
+
+  const handleRegionSelect = (region: string) => {
+    onSendMessage(`Je souhaite des prestataires en ${region}`);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -144,6 +150,13 @@ const VibeWeddingChat: React.FC<VibeWeddingChatProps> = ({
                     </p>
                   </div>
                 </div>
+                
+                {/* Afficher le RegionSelector si demandé */}
+                {msg.role === 'assistant' && msg.askLocation && (
+                  <div className="max-w-3xl">
+                    <RegionSelector onSelectRegion={handleRegionSelect} />
+                  </div>
+                )}
                 
                 {/* Afficher les prestataires si présents */}
                 {msg.vendors && msg.vendors.length > 0 && (
