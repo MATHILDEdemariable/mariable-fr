@@ -54,12 +54,8 @@ const VibeWeddingHero: React.FC<VibeWeddingHeroProps> = ({ onStartConversation }
         </div>
 
         {/* Title */}
-        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-serif font-bold text-white mb-6 leading-tight">
-          Créez votre mariage de rêve
-          <br />
-          <span className="bg-gradient-to-r from-white via-white to-white/80 bg-clip-text text-transparent">
-            avec l'Intelligence Artificielle
-          </span>
+        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-white mb-6 leading-tight">
+          Faites de votre mariage une expérience exceptionnelle
         </h1>
 
         {/* Subtitle */}
