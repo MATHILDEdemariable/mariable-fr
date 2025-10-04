@@ -286,7 +286,7 @@ export const useVibeWedding = () => {
       return;
     }
     
-    if (!project || !conversationId) {
+    if (!project) {
       toast({
         title: "Aucun projet à sauvegarder",
         variant: "destructive"
@@ -295,22 +295,31 @@ export const useVibeWedding = () => {
     }
     
     try {
+      // Créer un titre basé sur les données du mariage
+      const location = project.weddingData?.location || 'Non défini';
+      const guests = project.weddingData?.guests || 0;
+      const title = `Mariage ${location} - ${guests} invités`;
+      
+      // Sauvegarder dans wedding_projects avec cast pour les types JSON
       const { error } = await supabase
-        .from('ai_wedding_conversations')
-        .update({ 
-          wedding_context: project as any, // Cast to any to bypass Json type check
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', conversationId);
+        .from('wedding_projects')
+        .insert([{
+          user_id: user.id,
+          title,
+          summary: project.summary || '',
+          wedding_data: project.weddingData as any,
+          budget_breakdown: project.budgetBreakdown as any,
+          timeline: project.timeline as any,
+          vendors: project.vendors as any,
+          conversation_id: conversationId || null
+        }]);
       
       if (error) throw error;
       
       toast({ 
-        title: "✅ Projet sauvegardé", 
-        description: "Retrouvez-le dans Mon Mariage" 
+        title: "✅ Projet sauvegardé dans Mon Mariage", 
+        description: "Accédez-y depuis votre dashboard" 
       });
-      
-      await loadConversations();
       
     } catch (error: any) {
       console.error('Error saving project:', error);
@@ -320,7 +329,7 @@ export const useVibeWedding = () => {
         variant: "destructive" 
       });
     }
-  }, [project, conversationId, toast, loadConversations]);
+  }, [project, conversationId, toast]);
 
   return {
     messages,

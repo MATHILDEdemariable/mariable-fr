@@ -2794,6 +2794,48 @@ export type Database = {
         }
         Relationships: []
       }
+      wedding_projects: {
+        Row: {
+          budget_breakdown: Json
+          conversation_id: string | null
+          created_at: string
+          id: string
+          summary: string | null
+          timeline: Json
+          title: string
+          updated_at: string
+          user_id: string
+          vendors: Json
+          wedding_data: Json
+        }
+        Insert: {
+          budget_breakdown?: Json
+          conversation_id?: string | null
+          created_at?: string
+          id?: string
+          summary?: string | null
+          timeline?: Json
+          title: string
+          updated_at?: string
+          user_id: string
+          vendors?: Json
+          wedding_data?: Json
+        }
+        Update: {
+          budget_breakdown?: Json
+          conversation_id?: string | null
+          created_at?: string
+          id?: string
+          summary?: string | null
+          timeline?: Json
+          title?: string
+          updated_at?: string
+          user_id?: string
+          vendors?: Json
+          wedding_data?: Json
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
