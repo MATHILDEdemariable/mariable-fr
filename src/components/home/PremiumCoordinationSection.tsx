@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Smartphone, Wifi, Users, Clock } from 'lucide-react';
-import { Link } from 'react-router-dom';
 const PremiumCoordinationSection = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  
   const features = [{
     icon: Smartphone,
     title: "Application mobile * sans téléchargement",
@@ -132,13 +134,33 @@ const PremiumCoordinationSection = () => {
 
         {/* CTA */}
         <div className="text-center mt-16">
-          <Link to="/coordination-jour-j">
-            <Button size="lg" className="btn-primary text-white px-12 py-4 text-lg font-semibold ripple">
-              Découvrir la coordination
-            </Button>
-          </Link>
+          <Button 
+            size="lg" 
+            className="btn-primary text-white px-12 py-4 text-lg font-semibold ripple"
+            onClick={() => setIsModalOpen(true)}
+          >
+            Découvrir la coordination
+          </Button>
         </div>
       </div>
+
+      {/* Modal vidéo Loom */}
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogContent className="max-w-4xl w-full p-0">
+          <DialogHeader className="p-6 pb-0">
+            <DialogTitle>Démonstration de la coordination Jour J</DialogTitle>
+          </DialogHeader>
+          <div className="relative w-full" style={{ paddingTop: '56.25%' }}>
+            <iframe
+              src="https://www.loom.com/embed/a0d0d52de99d4af59d67604f01c8af14?sid=1287e7e4-8318-484d-a5e1-006028e2464b"
+              className="absolute top-0 left-0 w-full h-full"
+              frameBorder="0"
+              allowFullScreen
+              title="Démonstration coordination Jour J"
+            />
+          </div>
+        </DialogContent>
+      </Dialog>
     </section>;
 };
 export default PremiumCoordinationSection;
