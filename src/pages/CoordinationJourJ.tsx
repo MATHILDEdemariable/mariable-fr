@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,10 +8,25 @@ import PremiumHeader from '@/components/home/PremiumHeader';
 import Footer from '@/components/Footer';
 import { Calendar, Clock, Users, CheckCircle, Star, ArrowRight, Shield, Heart, Sparkles, FileText, Phone, MapPin, Target, DollarSign, Settings, ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
+import { User } from '@supabase/supabase-js';
+
 const CoordinationJourJ: React.FC = () => {
   const navigate = useNavigate();
+  const [user, setUser] = useState<User | null>(null);
   useEffect(() => {
     window.scrollTo(0, 0);
+    
+    // Check auth status
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setUser(user);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
   const features = [{
     title: 'Planning détaillé heure par heure',
@@ -212,9 +227,12 @@ const CoordinationJourJ: React.FC = () => {
               </div>
             </div>
 
-            <div className="text-center mb-8">
-              <Button onClick={() => document.getElementById('video-demo')?.scrollIntoView({ behavior: 'smooth' })} size="lg" className="bg-wedding-olive hover:bg-wedding-olive/90 text-white">
+            <div className="text-center mb-8 flex flex-col sm:flex-row gap-4 justify-center">
+              <Button onClick={() => document.getElementById('video-demo')?.scrollIntoView({ behavior: 'smooth' })} size="lg" variant="outline" className="border-wedding-olive text-wedding-olive hover:bg-wedding-olive/10">
                 Voir la démo
+              </Button>
+              <Button onClick={() => navigate(user ? '/dashboard' : '/auth')} size="lg" className="bg-wedding-olive hover:bg-wedding-olive/90 text-white">
+                Utiliser l'appli
               </Button>
             </div>
 
