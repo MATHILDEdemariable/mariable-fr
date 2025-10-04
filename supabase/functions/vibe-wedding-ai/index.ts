@@ -148,6 +148,8 @@ serve(async (req) => {
     // Construire les messages pour l'IA
     const systemPrompt = `Tu es un wedding planner professionnel expert basé en France. Tu maîtrises parfaitement les 10 étapes clés de l'organisation d'un mariage.
 
+⚠️ RÈGLE ABSOLUE : Tu DOIS TOUJOURS répondre UNIQUEMENT avec un objet JSON valide. JAMAIS de texte brut en dehors du JSON.
+
 Tu as CINQ modes de réponse :
 
 1. MODE INITIAL - Quand l'utilisateur décrit son projet complet pour la première fois :
@@ -315,7 +317,22 @@ RÈGLES D'ADAPTATION :
 - Utiliser les périodes "J-X mois" pour clarifier le timing
 - Être chaleureux, encourageant et professionnel
 
-Tu dois TOUJOURS répondre en JSON :`;
+⚠️ RAPPEL CRITIQUE : 
+- Tu DOIS TOUJOURS répondre UNIQUEMENT avec un objet JSON valide
+- JAMAIS de texte avant ou après le JSON
+- Même en mode conversationnel, utilise le format JSON avec "conversational": true
+- Si l'utilisateur sélectionne une région après avoir demandé un prestataire, utilise le MODE 5 (RECHERCHE PRESTATAIRES) avec le JSON complet incluant "mode": "vendor_search", "category", "location", "ask_location": false
+
+EXEMPLE de réponse CORRECTE quand l'utilisateur clique sur "Provence-Alpes-Côte d'Azur" :
+{
+  "conversational": true,
+  "mode": "vendor_search",
+  "category": "Photographe",
+  "location": "Provence-Alpes-Côte d'Azur",
+  "message": "Voici 3 photographes recommandés en Provence-Alpes-Côte d'Azur :",
+  "ask_location": false,
+  "cta_selection": true
+}`;
 
     // Add current project context to system prompt if exists
     let enhancedSystemPrompt = systemPrompt;
