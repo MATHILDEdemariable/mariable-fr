@@ -3,8 +3,7 @@ import { Link } from 'react-router-dom';
 import { Instagram, Mail, Settings } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 const Footer = () => {
-  return (
-    <footer className="py-8 bg-white text-wedding-black" role="contentinfo" aria-label="Pied de page">
+  return <footer className="py-8 bg-white text-wedding-black" role="contentinfo" aria-label="Pied de page">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Logo et description à gauche */}
@@ -56,8 +55,8 @@ const Footer = () => {
               <li><Link to="/about/histoire" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Notre Histoire</Link></li>
               <li><Link to="/about/approche" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Notre Approche</Link></li>
               <li><Link to="/about/charte" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Notre Charte</Link></li>
-              <li><Link to="/salon-du-mariage-2025" className="text-wedding-black/70 hover:text-wedding-black transition-colors font-medium">Salon du Mariage 2025</Link></li>
-              <li><Link to="/content-creator-mariage" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Content Creator Mariage</Link></li>
+              
+              
               <li><Link to="/professionnels" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Professionnels</Link></li>
               <li><Link to="/contact" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Nous Contacter</Link></li>
             </ul>
@@ -74,7 +73,6 @@ const Footer = () => {
           </div>
         </div>
       </div>
-    </footer>
-  );
+    </footer>;
 };
 export default Footer;
