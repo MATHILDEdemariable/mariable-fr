@@ -76,7 +76,7 @@ const VibeWeddingHero: React.FC<VibeWeddingHeroProps> = ({
               <Textarea value={input} onChange={e => setInput(e.target.value)} onKeyDown={handleKeyDown} placeholder={placeholders[placeholderIndex]} className="flex-1 min-h-[80px] sm:min-h-[100px] text-base sm:text-lg border-2 border-transparent focus:border-premium-sage resize-none animate-fade-in" style={{
               animation: 'fade-in 0.5s ease-in-out'
             }} />
-              <Button type="submit" disabled={!input.trim()} size="lg" className="bg-white hover:bg-white/90 text-black font-semibold px-8 py-6 text-lg h-auto sm:self-end">
+              <Button type="submit" disabled={!input.trim()} size="lg" className="font-semibold px-8 py-6 text-lg h-auto sm:self-end bg-[premium-sage-medium] bg-wedding-olive text-stone-50">
                 <Send className="w-5 h-5 mr-2" />
                 Lancer
               </Button>
@@ -85,7 +85,7 @@ const VibeWeddingHero: React.FC<VibeWeddingHeroProps> = ({
             {/* Quick examples */}
             <div className="mt-6 flex flex-wrap gap-2 justify-center">
               <span className="text-sm text-muted-foreground">Essayez :</span>
-              {["Mariage 100 invités Paris 30k€", "Champêtre Provence 80 invités", "Élégant Lyon 25k€"].map((example, idx) => <button key={idx} type="button" onClick={() => setInput(example)} className="text-xs sm:text-sm px-3 py-1.5 rounded-full bg-white/20 hover:bg-white/30 text-white backdrop-blur-sm transition-colors">
+              {["Mariage 100 invités Paris 30k€", "Champêtre Provence 80 invités", "Élégant Lyon 25k€"].map((example, idx) => <button key={idx} type="button" onClick={() => setInput(example)} className="text-xs sm:text-sm px-3 py-1.5 rounded-full text-white backdrop-blur-sm transition-colors bg-premium-sage bg-[premium-sage-medium]">
                   {example}
                 </button>)}
             </div>
