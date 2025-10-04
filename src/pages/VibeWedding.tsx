@@ -17,7 +17,10 @@ const VibeWedding: React.FC = () => {
     startNewProject,
     promptCount,
     showAuthModal,
-    setShowAuthModal
+    setShowAuthModal,
+    conversations,
+    currentConversationId,
+    loadConversation
   } = useVibeWedding();
 
   const handleNewProject = () => {
@@ -39,6 +42,9 @@ const VibeWedding: React.FC = () => {
         {/* Sidebar */}
         <VibeWeddingSidebar 
           onNewProject={handleNewProject}
+          conversations={conversations}
+          currentConversationId={currentConversationId}
+          onSelectConversation={loadConversation}
           isMobileOpen={isSidebarOpen}
           onCloseMobile={() => setIsSidebarOpen(false)}
         />

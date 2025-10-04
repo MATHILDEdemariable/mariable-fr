@@ -15,6 +15,7 @@ interface VibeWeddingSidebarProps {
   currentConversationId?: string | null;
   isMobileOpen?: boolean;
   onCloseMobile?: () => void;
+  onSelectConversation?: (id: string) => void;
 }
 
 const VibeWeddingSidebar: React.FC<VibeWeddingSidebarProps> = ({
@@ -22,7 +23,8 @@ const VibeWeddingSidebar: React.FC<VibeWeddingSidebarProps> = ({
   conversations = [],
   currentConversationId,
   isMobileOpen = true,
-  onCloseMobile
+  onCloseMobile,
+  onSelectConversation
 }) => {
   return (
     <aside 
@@ -41,7 +43,7 @@ const VibeWeddingSidebar: React.FC<VibeWeddingSidebarProps> = ({
             className="w-full bg-premium-sage hover:bg-premium-sage-dark text-white"
           >
             <Plus className="w-4 h-4 mr-2" />
-            Nouveau projet
+            Nouveau sujet
           </Button>
         </div>
 
@@ -56,8 +58,9 @@ const VibeWeddingSidebar: React.FC<VibeWeddingSidebarProps> = ({
               conversations.map((conv) => (
                 <button
                   key={conv.id}
+                  onClick={() => onSelectConversation?.(conv.id)}
                   className={`
-                    w-full text-left p-3 rounded-lg transition-colors
+                    w-full text-left p-3 rounded-lg transition-colors relative
                     ${currentConversationId === conv.id 
                       ? 'bg-premium-sage-very-light border border-premium-sage' 
                       : 'hover:bg-accent'
@@ -67,7 +70,14 @@ const VibeWeddingSidebar: React.FC<VibeWeddingSidebarProps> = ({
                   <div className="flex items-start gap-2">
                     <MessageSquare className="w-4 h-4 mt-0.5 text-premium-sage flex-shrink-0" />
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium truncate">{conv.title}</p>
+                      <div className="flex items-center gap-2">
+                        <p className="text-sm font-medium truncate flex-1">{conv.title}</p>
+                        {currentConversationId === conv.id && (
+                          <span className="text-xs bg-premium-sage text-white px-2 py-0.5 rounded-full">
+                            Actuelle
+                          </span>
+                        )}
+                      </div>
                       <p className="text-xs text-muted-foreground">{conv.timestamp}</p>
                     </div>
                   </div>

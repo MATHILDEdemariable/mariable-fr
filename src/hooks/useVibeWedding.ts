@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
@@ -48,6 +48,12 @@ interface Message {
   timestamp: string;
 }
 
+interface ConversationItem {
+  id: string;
+  title: string;
+  timestamp: string;
+}
+
 export const useVibeWedding = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [project, setProject] = useState<WeddingProject | null>(null);
@@ -56,7 +62,110 @@ export const useVibeWedding = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [promptCount, setPromptCount] = useState(0);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [conversations, setConversations] = useState<ConversationItem[]>([]);
+  const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
   const { toast } = useToast();
+
+  // Helper function to extract title from first message
+  const extractTitle = (content: string): string => {
+    if (!content) return "Nouvelle conversation";
+    const words = content.split(' ').slice(0, 6).join(' ');
+    return words.length < content.length ? `${words}...` : words;
+  };
+
+  // Helper function to format timestamp
+  const formatTimestamp = (dateString: string): string => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
+    
+    if (diffInHours < 1) return "À l'instant";
+    if (diffInHours < 24) return `Il y a ${diffInHours}h`;
+    if (diffInHours < 48) return "Hier";
+    
+    return new Intl.DateTimeFormat('fr-FR', {
+      day: 'numeric',
+      month: 'short'
+    }).format(date);
+  };
+
+  // Load conversations from database
+  const loadConversations = useCallback(async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      setConversations([]);
+      return;
+    }
+    
+    const { data, error } = await supabase
+      .from('ai_wedding_conversations')
+      .select('id, messages, created_at')
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false })
+      .limit(20);
+      
+    if (error) {
+      console.error('Error loading conversations:', error);
+      return;
+    }
+    
+    if (data) {
+      const formatted = data.map(conv => {
+        const messages = Array.isArray(conv.messages) 
+          ? (conv.messages as unknown as Message[])
+          : [];
+        return {
+          id: conv.id,
+          title: extractTitle(messages[0]?.content || ""),
+          timestamp: formatTimestamp(conv.created_at)
+        };
+      });
+      setConversations(formatted);
+    }
+  }, []);
+
+  // Load a specific conversation
+  const loadConversation = useCallback(async (convId: string) => {
+    const { data, error } = await supabase
+      .from('ai_wedding_conversations')
+      .select('*')
+      .eq('id', convId)
+      .single();
+      
+    if (error) {
+      console.error('Error loading conversation:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de charger cette conversation",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    if (data) {
+      // Parse messages with proper typing
+      const parsedMessages = Array.isArray(data.messages) 
+        ? (data.messages as unknown as Message[])
+        : [];
+      
+      setMessages(parsedMessages);
+      setConversationId(convId);
+      setCurrentConversationId(convId);
+      
+      // Reconstruct project if wedding_context exists
+      if (data.wedding_context && typeof data.wedding_context === 'object') {
+        const context = data.wedding_context as any;
+        if (context.summary && context.weddingData) {
+          setProject(context as WeddingProject);
+        }
+      }
+    }
+  }, [toast]);
+
+  // Load conversations on mount
+  useEffect(() => {
+    loadConversations();
+  }, [loadConversations]);
 
   const sendMessage = useCallback(async (userMessage: string) => {
     // Vérifier l'authentification et le compteur de prompts
@@ -134,6 +243,7 @@ export const useVibeWedding = () => {
     setMessages([]);
     setProject(null);
     setConversationId(null);
+    setCurrentConversationId(null);
     setPromptCount(0);
   }, []);
 
@@ -145,6 +255,9 @@ export const useVibeWedding = () => {
     startNewProject,
     promptCount,
     showAuthModal,
-    setShowAuthModal
+    setShowAuthModal,
+    conversations,
+    currentConversationId,
+    loadConversation
   };
 };

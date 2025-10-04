@@ -150,30 +150,64 @@ const VibeWeddingChat: React.FC<VibeWeddingChatProps> = ({
 
       {/* Input */}
       <div className="border-t border-border p-4 bg-card">
-        <form onSubmit={handleSubmit} className="max-w-3xl mx-auto">
-          {!user && promptCount === 0 && (
-            <p className="text-xs text-muted-foreground text-center mb-2 flex items-center justify-center gap-1">
-              💡 <span>1er prompt gratuit, ensuite créez un compte pour continuer</span>
-            </p>
+        <div className="max-w-3xl mx-auto">
+          {!user && promptCount >= 1 ? (
+            <div className="bg-gradient-to-r from-premium-sage to-premium-sage-dark text-white p-6 rounded-xl shadow-lg">
+              <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                <div className="flex-1 text-center md:text-left">
+                  <h3 className="font-semibold text-lg mb-2">
+                    🔒 Limite gratuite atteinte
+                  </h3>
+                  <p className="text-sm opacity-90">
+                    Créez votre compte gratuit pour continuer à utiliser Mariable et sauvegarder vos projets
+                  </p>
+                </div>
+                <div className="flex gap-2">
+                  <Button 
+                    onClick={() => window.location.href = '/auth?mode=signup'}
+                    className="bg-white text-premium-sage hover:bg-gray-100 font-medium"
+                    size="lg"
+                  >
+                    Créer mon compte
+                  </Button>
+                  <Button 
+                    onClick={() => window.location.href = '/auth?mode=login'}
+                    variant="outline"
+                    className="border-white text-white hover:bg-white/10"
+                    size="lg"
+                  >
+                    Se connecter
+                  </Button>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit}>
+              {!user && promptCount === 0 && (
+                <div className="mb-3 text-xs text-center text-muted-foreground bg-premium-sage-very-light border border-premium-sage/20 rounded-lg px-3 py-2">
+                  💡 <span className="font-medium">1er prompt gratuit</span>, ensuite créez un compte pour continuer
+                </div>
+              )}
+              <div className="flex gap-2">
+                <Textarea
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  placeholder="Décrivez votre projet de mariage..."
+                  className="min-h-[60px] resize-none"
+                  disabled={isLoading}
+                />
+                <Button
+                  type="submit"
+                  disabled={!input.trim() || isLoading}
+                  className="bg-premium-sage hover:bg-premium-sage-dark text-white self-end"
+                >
+                  <Send className="w-4 h-4" />
+                </Button>
+              </div>
+            </form>
           )}
-          <div className="flex gap-2">
-            <Textarea
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder="Décrivez votre projet de mariage..."
-              className="min-h-[60px] resize-none"
-              disabled={isLoading || (!user && promptCount >= 1)}
-            />
-            <Button
-              type="submit"
-              disabled={!input.trim() || isLoading || (!user && promptCount >= 1)}
-              className="bg-premium-sage hover:bg-premium-sage-dark text-white self-end"
-            >
-              <Send className="w-4 h-4" />
-            </Button>
-          </div>
-        </form>
+        </div>
       </div>
 
       {/* Modal d'authentification */}
