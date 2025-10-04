@@ -435,7 +435,8 @@ Tu dois TOUJOURS répondre en JSON :`;
           .from('prestataires_rows')
           .select('id, nom, categorie, ville, region, prix_a_partir_de, prix_par_personne, description, email, telephone, slug')
           .eq('categorie', finalCategory)
-          .filter('region', 'ilike', `%${searchLocation}%`)
+          .eq('visible', true)
+          .filter('region::text', 'ilike', `%${searchLocation}%`)
           .order('created_at', { ascending: false })
           .limit(3);
 
@@ -451,7 +452,8 @@ Tu dois TOUJOURS répondre en JSON :`;
             .from('prestataires_rows')
             .select('id, nom, categorie, ville, region, prix_a_partir_de, prix_par_personne, description, email, telephone, slug')
             .eq('categorie', finalCategory)
-            .filter('ville', 'ilike', `%${searchLocation}%`)
+            .eq('visible', true)
+            .filter('ville::text', 'ilike', `%${searchLocation}%`)
             .order('created_at', { ascending: false })
             .limit(3);
             
@@ -483,7 +485,7 @@ Tu dois TOUJOURS répondre en JSON :`;
       const { data: generalVendors, error: vendorError } = await supabase
         .from('prestataires_rows')
         .select('id, nom, categorie, ville, region, prix_a_partir_de, prix_par_personne, description, email, telephone, slug')
-        .filter('region', 'ilike', `%${parsedResponse.weddingData.location}%`)
+        .filter('region::text', 'ilike', `%${parsedResponse.weddingData.location}%`)
         .eq('visible', true)
         .order('created_at', { ascending: false })
         .limit(3);
