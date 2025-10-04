@@ -153,25 +153,9 @@ export const useVibeWedding = () => {
     }
     
     if (data) {
-      // Parse messages with proper typing and clean JSON if needed
+      // Parse messages - le contenu devrait maintenant être déjà propre
       const parsedMessages = Array.isArray(data.messages) 
-        ? (data.messages as unknown as Message[]).map(msg => {
-            // Si le content est du JSON stringifié, l'extraire
-            if (typeof msg.content === 'string' && msg.content.trim().startsWith('{')) {
-              try {
-                const parsed = JSON.parse(msg.content);
-                // Extraire le message ou summary du JSON
-                return {
-                  ...msg,
-                  content: parsed.message || parsed.summary || msg.content
-                };
-              } catch {
-                // Si parsing échoue, garder tel quel
-                return msg;
-              }
-            }
-            return msg;
-          })
+        ? (data.messages as unknown as Message[])
         : [];
       
       setMessages(parsedMessages);
@@ -270,6 +254,7 @@ export const useVibeWedding = () => {
     setMessages(prev => [...prev, userMsg]);
 
     try {
+      console.log('🚀 Sending message with project:', project);
       
       const { data, error } = await supabase.functions.invoke('vibe-wedding-ai', {
         body: {
@@ -282,6 +267,8 @@ export const useVibeWedding = () => {
       });
 
       if (error) throw error;
+      
+      console.log('✅ Response received:', data);
 
       const assistantMsg: Message = {
         role: 'assistant',

@@ -189,11 +189,11 @@ const MonMariage = () => {
                 )}
 
                 {/* Actions - Responsive layout */}
-                <div className="flex flex-col gap-2 pt-4 sm:flex-row">
+                <div className="flex flex-wrap gap-2 pt-4">
                   <Button
                     variant="outline"
                     size="sm"
-                    className="flex-1"
+                    className="flex-1 min-w-[100px]"
                     onClick={() => navigate(`/vibewedding?project=${project.id}`)}
                   >
                     <Eye className="w-4 h-4 mr-2" />
@@ -203,7 +203,7 @@ const MonMariage = () => {
                     <Button
                       variant="default"
                       size="sm"
-                      className="flex-1 bg-wedding-olive hover:bg-wedding-olive/90"
+                      className="flex-1 min-w-[100px] bg-wedding-olive hover:bg-wedding-olive/90"
                       onClick={() => navigate(`/vibewedding?conversationId=${project.conversation_id}`)}
                     >
                       <Edit className="w-4 h-4 mr-2" />
@@ -214,10 +214,10 @@ const MonMariage = () => {
                     variant="outline"
                     size="sm"
                     onClick={() => setProjectToDelete(project.id)}
-                    className="text-destructive hover:text-destructive hover:bg-destructive/10 sm:w-auto"
+                    className="text-destructive hover:text-destructive hover:bg-destructive/10 w-auto"
                   >
                     <Trash2 className="w-4 h-4" />
-                    <span className="sm:hidden ml-2">Supprimer</span>
+                    <span className="sr-only">Supprimer</span>
                   </Button>
                 </div>
               </CardContent>

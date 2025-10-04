@@ -402,10 +402,15 @@ Tu dois TOUJOURS répondre en JSON :`;
     }
 
     // Mettre à jour ou créer la conversation
+    // Extraire le message lisible au lieu du JSON brut
+    const readableMessage = parsedResponse.conversational 
+      ? parsedResponse.message 
+      : parsedResponse.message || parsedResponse.summary || assistantMessage;
+    
     const newMessages = [
       ...conversationHistory,
       { role: 'user', content: message, timestamp: new Date().toISOString() },
-      { role: 'assistant', content: assistantMessage, timestamp: new Date().toISOString() }
+      { role: 'assistant', content: readableMessage, timestamp: new Date().toISOString() }
     ];
 
     let finalConversationId = conversationId;
