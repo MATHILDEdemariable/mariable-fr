@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Link } from 'react-router-dom';
+import VendorCardInProject from './VendorCardInProject';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -203,9 +205,10 @@ const VibeWeddingResultsImproved: React.FC<VibeWeddingResultsImprovedProps> = ({
 
       {/* Tabs avec contenu scrollable */}
       <Tabs defaultValue="budget" className="flex-1 flex flex-col overflow-hidden">
-        <TabsList className="grid w-full grid-cols-3 mx-4 mt-4">
+        <TabsList className="grid w-full grid-cols-4 mx-4 mt-4">
           <TabsTrigger value="budget">Budget</TabsTrigger>
           <TabsTrigger value="retroplanning">Rétro-planning</TabsTrigger>
+          <TabsTrigger value="prestataires">Prestataires</TabsTrigger>
           <TabsTrigger value="actions">Actions</TabsTrigger>
         </TabsList>
 
@@ -305,6 +308,38 @@ const VibeWeddingResultsImproved: React.FC<VibeWeddingResultsImprovedProps> = ({
                 )}
               </Card>
             ))}
+          </TabsContent>
+
+          {/* TAB PRESTATAIRES */}
+          <TabsContent value="prestataires" className="space-y-3 mt-4">
+            {project.vendors && project.vendors.length > 0 ? (
+              <>
+                <div className="space-y-2">
+                  {project.vendors.map((vendor: any) => (
+                    <VendorCardInProject key={vendor.id} vendor={vendor} />
+                  ))}
+                </div>
+                
+                <Button 
+                  asChild 
+                  variant="outline" 
+                  className="w-full mt-4"
+                >
+                  <Link to="/selection">
+                    🔍 Voir la sélection entière
+                  </Link>
+                </Button>
+              </>
+            ) : (
+              <div className="text-center py-12">
+                <p className="text-sm text-muted-foreground mb-2">
+                  Aucun prestataire recommandé pour le moment.
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Continuez la conversation pour en ajouter.
+                </p>
+              </div>
+            )}
           </TabsContent>
 
           {/* TAB 3: Actions prioritaires */}

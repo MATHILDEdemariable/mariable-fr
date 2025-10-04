@@ -114,9 +114,9 @@ serve(async (req) => {
     // Construire les messages pour l'IA
     const systemPrompt = `Tu es un wedding planner professionnel expert basé en France. Tu maîtrises parfaitement les 10 étapes clés de l'organisation d'un mariage.
 
-Tu as QUATRE modes de réponse :
+Tu as CINQ modes de réponse :
 
-1. MODE INITIAL - Quand l'utilisateur décrit son projet pour la première fois :
+1. MODE INITIAL - Quand l'utilisateur décrit son projet complet pour la première fois :
 {
   "conversational": false,
   "mode": "initial",
@@ -153,26 +153,44 @@ Tu as QUATRE modes de réponse :
   "message": "Ta réponse conversationnelle"
 }
 
-4. MODE RECHERCHE PRESTATAIRES - Quand l'utilisateur demande des prestataires spécifiques :
+4. MODE PROJET PRESTATAIRE - Quand l'utilisateur demande UNIQUEMENT des prestataires (sans projet complet) :
+{
+  "conversational": false,
+  "mode": "vendor_project",
+  "summary": "Recherche de [catégorie]",
+  "category": "Catégorie détectée",
+  "ask_location": true,
+  "message": "Parfait ! Dans quelle région se déroulera votre mariage ?",
+  "weddingData": {
+    "guests": null,
+    "budget": null,
+    "location": null,
+    "date": null,
+    "style": null
+  },
+  "budgetBreakdown": [],
+  "timeline": [],
+  "vendors": []
+}
+
+5. MODE RECHERCHE PRESTATAIRES - Après sélection de région OU si localisation déjà connue :
 {
   "conversational": true,
   "mode": "vendor_search",
-  "category": "Catégorie détectée (ex: Photographe)",
-  "location": "Localisation détectée ou null",
-  "message": "Voici les meilleurs [catégorie] que je vous recommande à [location] :",
-  "ask_location": false
+  "category": "Catégorie détectée",
+  "location": "Localisation",
+  "message": "Voici 3 [catégorie] recommandés en [région] :",
+  "ask_location": false,
+  "cta_selection": true
 }
 
-RÈGLES POUR MODE RECHERCHE PRESTATAIRES :
-- Si l'utilisateur mentionne "lieu", "traiteur", "photographe", "fleuriste", "dj", etc.
-- TOUJOURS répondre en MODE RECHERCHE PRESTATAIRES
-- Message court et direct (1-2 phrases max)
-- Si localisation détectée dans le message OU dans le projet existant : ask_location = false
-- Si aucune localisation détectée : ask_location = true et message = "Parfait ! Dans quelle région se déroulera votre mariage ?"
-- Exemples de messages directs :
-  * "Voici les meilleurs lieux de réception à Paris :"
-  * "Je vous recommande ces traiteurs excellents à Lyon :"
-  * "Voici des photographes talentueux en Provence :"
+RÈGLES STRICTES POUR RECHERCHE PRESTATAIRES :
+- Si l'utilisateur demande UNIQUEMENT un prestataire (sans mentionner budget/invités/date complet) → MODE PROJET PRESTATAIRE avec ask_location = true
+- Si projet existe déjà ET location connue → MODE RECHERCHE PRESTATAIRES direct
+- Si l'utilisateur sélectionne une région après avoir demandé un prestataire → MODE RECHERCHE PRESTATAIRES
+- Message court et accueillant (1-2 phrases max)
+- TOUJOURS limiter à 3 prestataires maximum dans la réponse
+- TOUJOURS inclure cta_selection: true pour afficher le bouton "Voir la sélection entière"
 
 RÈGLES STRICTES POUR LE RÉTROPLANNING (OBLIGATOIRE) :
 
@@ -413,15 +431,16 @@ Tu dois TOUJOURS répondre en JSON :`;
         askLocation: parsedResponse.ask_location
       });
 
-      if (searchLocation && finalCategory) {
-        // Search in BOTH ville AND region columns for better coverage
+      // Only search if we have a location (otherwise wait for region selection)
+      if (searchLocation && finalCategory && parsedResponse.ask_location === false) {
+        // Search in BOTH ville AND region columns for better coverage - LIMIT 3
         const { data: targetedVendors, error: vendorError } = await supabase
           .from('prestataires_rows')
           .select('id, nom, categorie, ville, region, prix_a_partir_de, prix_par_personne, description, email, telephone, slug')
           .eq('categorie', finalCategory)
           .or(`ville.ilike.%${searchLocation}%,region.ilike.%${searchLocation}%`)
           .order('created_at', { ascending: false })
-          .limit(4);
+          .limit(3);
 
         if (vendorError) {
           console.error('❌ Error fetching targeted vendors:', vendorError);
@@ -431,8 +450,8 @@ Tu dois TOUJOURS répondre en JSON :`;
         }
       }
       
-      // FALLBACK: If no location or no results, show top-rated vendors from all France
-      if (vendors.length === 0 && finalCategory) {
+      // FALLBACK: Only if search was attempted but no results (not if waiting for region)
+      if (vendors.length === 0 && finalCategory && searchLocation) {
         console.log('🔄 Fallback: Searching France-wide vendors');
         
         const { data: fallbackVendors, error: vendorError } = await supabase

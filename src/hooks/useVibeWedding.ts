@@ -51,6 +51,8 @@ interface Message {
   timestamp: string;
   vendors?: Vendor[];
   askLocation?: boolean;
+  ctaSelection?: boolean;
+  vendorCategory?: string;
 }
 
 interface ConversationItem {
@@ -212,7 +214,9 @@ export const useVibeWedding = () => {
           : data.response.summary,
         timestamp: new Date().toISOString(),
         vendors: data.vendors && data.vendors.length > 0 ? data.vendors : undefined,
-        askLocation: data.askLocation || false
+        askLocation: data.response.ask_location || false,
+        ctaSelection: data.response.cta_selection || false,
+        vendorCategory: data.response.category
       };
 
       setMessages(prev => [...prev, assistantMsg]);
@@ -223,10 +227,22 @@ export const useVibeWedding = () => {
 
       // Gérer les différents modes de réponse
       if (!data.response.conversational) {
-        if (data.response.mode === 'update') {
-          // MODE UPDATE : Merge intelligent avec le projet existant
+        if (data.response.mode === 'update' || data.response.mode === 'vendor_project') {
+          // MODE UPDATE ou VENDOR_PROJECT : Merge intelligent avec le projet existant
           setProject(prevProject => {
-            if (!prevProject) return null;
+            if (!prevProject) {
+              // Si pas de projet existant et mode vendor_project, créer un nouveau projet
+              if (data.response.mode === 'vendor_project') {
+                return {
+                  summary: data.response.summary,
+                  weddingData: data.response.weddingData,
+                  budgetBreakdown: data.response.budgetBreakdown || [],
+                  timeline: data.response.timeline || [],
+                  vendors: data.vendors || []
+                };
+              }
+              return null;
+            }
             
             const updatedFields = data.response.updatedFields || {};
             
@@ -239,7 +255,9 @@ export const useVibeWedding = () => {
               },
               budgetBreakdown: updatedFields.budgetBreakdown || prevProject.budgetBreakdown,
               timeline: updatedFields.timeline || prevProject.timeline,
-              vendors: data.vendors || prevProject.vendors
+              vendors: data.vendors && data.vendors.length > 0 
+                ? [...(prevProject.vendors || []), ...data.vendors]
+                : prevProject.vendors
             };
           });
         } else {

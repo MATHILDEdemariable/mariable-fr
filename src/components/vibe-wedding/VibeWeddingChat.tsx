@@ -7,6 +7,7 @@ import { supabase } from '@/integrations/supabase/client';
 import AuthRequiredModal from './AuthRequiredModal';
 import VendorCardInChat from './VendorCardInChat';
 import RegionSelector from './RegionSelector';
+import { Link } from 'react-router-dom';
 
 interface Vendor {
   id: string;
@@ -28,6 +29,8 @@ interface Message {
   timestamp: string;
   vendors?: Vendor[];
   askLocation?: boolean;
+  ctaSelection?: boolean;
+  vendorCategory?: string;
 }
 
 interface VibeWeddingChatProps {
@@ -179,6 +182,26 @@ const VibeWeddingChat: React.FC<VibeWeddingChatProps> = ({
                     {msg.vendors.map((vendor) => (
                       <VendorCardInChat key={vendor.id} vendor={vendor} />
                     ))}
+                    
+                    {/* CTA to view full selection */}
+                    {msg.ctaSelection && msg.vendorCategory && (
+                      <Button 
+                        asChild 
+                        variant="outline" 
+                        className="w-full mt-3"
+                      >
+                        <Link to="/selection">
+                          🔍 Voir la sélection entière - {msg.vendorCategory}
+                        </Link>
+                      </Button>
+                    )}
+                  </div>
+                )}
+                
+                {/* Region selector */}
+                {msg.role === 'assistant' && msg.askLocation && (
+                  <div className="mt-3 max-w-3xl ml-0">
+                    <RegionSelector onSelectRegion={handleRegionSelect} />
                   </div>
                 )}
                 

@@ -24,12 +24,19 @@ const FRENCH_REGIONS = [
 
 const RegionSelector: React.FC<RegionSelectorProps> = ({ onSelectRegion }) => {
   return (
-    <div className="my-4 p-4 bg-wedding-blush/10 rounded-lg border border-wedding-blush/20">
-      <div className="flex items-center gap-2 mb-3">
-        <MapPin className="w-5 h-5 text-wedding-olive" />
-        <p className="text-sm font-medium text-wedding-charcoal">
-          Sélectionnez votre région :
-        </p>
+    <div className="my-4 p-5 bg-gradient-to-br from-wedding-blush/20 to-wedding-olive/10 rounded-xl border-2 border-wedding-blush/30 shadow-sm">
+      <div className="flex items-center gap-3 mb-4">
+        <div className="p-2 bg-white rounded-lg shadow-sm">
+          <MapPin className="w-5 h-5 text-wedding-olive" />
+        </div>
+        <div>
+          <p className="text-base font-semibold text-wedding-charcoal">
+            📍 Sélectionnez votre région
+          </p>
+          <p className="text-xs text-muted-foreground">
+            Pour trouver les meilleurs prestataires près de chez vous
+          </p>
+        </div>
       </div>
       
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
@@ -39,7 +46,7 @@ const RegionSelector: React.FC<RegionSelectorProps> = ({ onSelectRegion }) => {
             onClick={() => onSelectRegion(region.value)}
             variant="outline"
             size="sm"
-            className="justify-start text-left hover:bg-wedding-olive/10 hover:border-wedding-olive"
+            className="justify-start text-left h-auto py-2 px-3 hover:bg-wedding-olive/20 hover:border-wedding-olive hover:scale-105 transition-all"
           >
             {region.name}
           </Button>

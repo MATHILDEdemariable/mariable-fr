@@ -33,9 +33,10 @@ const VibeWedding: React.FC = () => {
       <SimpleHeader />
 
       <div className="flex h-[calc(100vh-64px)] mt-16 bg-background overflow-hidden">
-        {/* Zone principale - One Pager en full page */}
-        <div className="flex-1 overflow-hidden">
-          {!project ? (
+        {/* Layout conditionnel basé sur l'existence du projet */}
+        {!project ? (
+          /* Mode Chat uniquement - Full page */
+          <div className="flex-1 overflow-hidden">
             <VibeWeddingChat
               messages={messages}
               onSendMessage={sendMessage}
@@ -44,43 +45,33 @@ const VibeWedding: React.FC = () => {
               showAuthModal={showAuthModal}
               setShowAuthModal={setShowAuthModal}
             />
-          ) : (
-            <VibeWeddingResultsImproved 
-              project={project} 
-              onSave={saveProjectToDashboard}
-            />
-          )}
-        </div>
-
-        {/* Chat latéral déroulant à droite - visible uniquement si projet généré */}
-        {project && (
+          </div>
+        ) : (
+          /* Mode Projet + Chat - Split view uniforme */
           <>
-            {/* Bouton pour ouvrir le chat */}
-            {!isChatOpen && (
-              <Button
-                onClick={() => setIsChatOpen(true)}
-                className="fixed right-4 bottom-4 h-14 w-14 rounded-full shadow-lg bg-premium-sage hover:bg-premium-sage-dark z-50"
-                size="icon"
-              >
-                <MessageSquare className="w-6 h-6" />
-              </Button>
-            )}
+            {/* Gauche : Projet (always visible when exists) */}
+            <div className="flex-1 overflow-hidden border-r border-border">
+              <VibeWeddingResultsImproved 
+                project={project} 
+                onSave={saveProjectToDashboard}
+              />
+            </div>
 
-            {/* Panel chat latéral */}
+            {/* Droite : Conversation en sidebar fixe */}
             <div
-              className={`fixed right-0 top-0 h-full bg-card border-l border-border shadow-2xl transition-transform duration-300 z-50 ${
+              className={`fixed right-0 top-16 h-[calc(100vh-64px)] bg-card border-l border-border shadow-2xl transition-all duration-300 z-40 ${
                 isChatOpen ? 'translate-x-0' : 'translate-x-full'
               }`}
-              style={{ width: '400px' }}
+              style={{ width: '420px' }}
             >
               {/* Header du chat */}
-              <div className="flex items-center justify-between p-4 border-b border-border bg-premium-sage-very-light">
-                <h3 className="font-semibold text-lg">Conversation</h3>
+              <div className="flex items-center justify-between p-4 border-b border-border bg-muted/30">
+                <h3 className="font-semibold text-base">💬 Conversation</h3>
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={() => setIsChatOpen(false)}
-                  className="hover:bg-premium-sage/10"
+                  className="hover:bg-muted"
                 >
                   <X className="w-5 h-5" />
                 </Button>
@@ -98,6 +89,17 @@ const VibeWedding: React.FC = () => {
                 />
               </div>
             </div>
+
+            {/* Bouton flottant pour ouvrir le chat si fermé */}
+            {!isChatOpen && (
+              <Button
+                onClick={() => setIsChatOpen(true)}
+                className="fixed right-6 bottom-6 h-14 w-14 rounded-full shadow-lg bg-wedding-olive hover:bg-wedding-olive/90 z-50"
+                size="icon"
+              >
+                <MessageSquare className="w-6 h-6 text-white" />
+              </Button>
+            )}
           </>
         )}
       </div>
