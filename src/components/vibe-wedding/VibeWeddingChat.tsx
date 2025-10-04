@@ -13,9 +13,9 @@ interface Vendor {
   nom: string;
   categorie: string;
   ville?: string;
-  note_moyenne?: number;
-  prix_min?: number;
-  prix_max?: number;
+  region?: string;
+  prix_a_partir_de?: number;
+  prix_par_personne?: number;
   description?: string;
   email?: string;
   telephone?: string;
@@ -50,6 +50,7 @@ const VibeWeddingChat: React.FC<VibeWeddingChatProps> = ({
   const [input, setInput] = useState('');
   const [user, setUser] = useState<any>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
 
   // Vérifier l'authentification
   useEffect(() => {
@@ -66,12 +67,23 @@ const VibeWeddingChat: React.FC<VibeWeddingChatProps> = ({
     return () => subscription.unsubscribe();
   }, []);
 
-  // Auto-scroll vers le bas
+  // Auto-scroll vers le bas à chaque nouveau message
   useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
-  }, [messages]);
+    const scrollToBottom = () => {
+      if (scrollAreaRef.current) {
+        const viewport = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]') as HTMLElement;
+        if (viewport) {
+          viewport.scrollTop = viewport.scrollHeight;
+        }
+      }
+    };
+    
+    // Scroll immédiatement et avec un léger délai pour garantir le rendu
+    scrollToBottom();
+    const timer = setTimeout(scrollToBottom, 50);
+    
+    return () => clearTimeout(timer);
+  }, [messages, isLoading]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -101,7 +113,7 @@ const VibeWeddingChat: React.FC<VibeWeddingChatProps> = ({
   return (
     <div className="flex flex-col h-full bg-background">
       {/* Messages */}
-      <ScrollArea className="flex-1 p-4 md:p-6" ref={scrollRef}>
+      <ScrollArea className="flex-1 p-4 md:p-6" ref={scrollAreaRef}>
         {messages.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-center px-4">
             <div className="w-16 h-16 rounded-full bg-premium-sage-very-light flex items-center justify-center mb-4">
@@ -153,20 +165,29 @@ const VibeWeddingChat: React.FC<VibeWeddingChatProps> = ({
                 
                 {/* Afficher le RegionSelector si demandé */}
                 {msg.role === 'assistant' && msg.askLocation && (
-                  <div className="max-w-3xl">
+                  <div className="max-w-3xl ml-0">
                     <RegionSelector onSelectRegion={handleRegionSelect} />
                   </div>
                 )}
                 
                 {/* Afficher les prestataires si présents */}
-                {msg.vendors && msg.vendors.length > 0 && (
-                  <div className="space-y-2 max-w-3xl">
+                {msg.role === 'assistant' && msg.vendors && msg.vendors.length > 0 && (
+                  <div className="space-y-2 max-w-3xl ml-0">
                     <p className="text-sm font-medium text-muted-foreground px-2">
                       📍 Prestataires recommandés :
                     </p>
                     {msg.vendors.map((vendor) => (
                       <VendorCardInChat key={vendor.id} vendor={vendor} />
                     ))}
+                  </div>
+                )}
+                
+                {/* Message d'info si conversationnel sans projet */}
+                {msg.role === 'assistant' && !msg.vendors && !msg.askLocation && messages.indexOf(msg) === messages.length - 1 && (
+                  <div className="mt-3 p-3 bg-premium-sage-very-light border border-premium-sage/20 rounded-lg max-w-3xl ml-0">
+                    <p className="text-sm text-muted-foreground">
+                      💡 <span className="font-medium">Conseil :</span> Pour créer votre projet de mariage personnalisé avec budget et rétroplanning, décrivez-moi votre projet complet (date, lieu, nombre d'invités, budget approximatif).
+                    </p>
                   </div>
                 )}
               </div>
@@ -188,6 +209,7 @@ const VibeWeddingChat: React.FC<VibeWeddingChatProps> = ({
             )}
           </div>
         )}
+        <div ref={scrollRef} />
       </ScrollArea>
 
       {/* Input */}

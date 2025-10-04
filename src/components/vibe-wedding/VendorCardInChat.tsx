@@ -11,9 +11,9 @@ interface VendorCardInChatProps {
     nom: string;
     categorie: string;
     ville?: string;
-    note_moyenne?: number;
-    prix_min?: number;
-    prix_max?: number;
+    region?: string;
+    prix_a_partir_de?: number;
+    prix_par_personne?: number;
     description?: string;
     email?: string;
     telephone?: string;
@@ -35,24 +35,22 @@ const VendorCardInChat: React.FC<VendorCardInChatProps> = ({ vendor }) => {
             </div>
 
             <div className="flex flex-wrap gap-3 text-sm">
-              {vendor.ville && (
+              {(vendor.ville || vendor.region) && (
                 <div className="flex items-center gap-1 text-muted-foreground">
                   <MapPin className="w-4 h-4" />
-                  <span>{vendor.ville}</span>
+                  <span>{vendor.ville || vendor.region}</span>
                 </div>
               )}
               
-              {vendor.note_moyenne && (
-                <div className="flex items-center gap-1 text-premium-sage">
-                  <Star className="w-4 h-4 fill-current" />
-                  <span className="font-medium">{vendor.note_moyenne.toFixed(1)}</span>
-                </div>
-              )}
-              
-              {vendor.prix_min && vendor.prix_max && (
+              {(vendor.prix_a_partir_de || vendor.prix_par_personne) && (
                 <div className="flex items-center gap-1 text-muted-foreground">
                   <Euro className="w-4 h-4" />
-                  <span>{vendor.prix_min} - {vendor.prix_max}€</span>
+                  <span>
+                    {vendor.prix_a_partir_de 
+                      ? `À partir de ${vendor.prix_a_partir_de}€`
+                      : `${vendor.prix_par_personne}€/pers`
+                    }
+                  </span>
                 </div>
               )}
             </div>

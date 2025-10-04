@@ -36,11 +36,14 @@ interface Vendor {
   id: string;
   nom: string;
   categorie: string;
-  ville: string;
-  prix_min: number;
-  prix_max: number;
-  description: string;
-  note_moyenne: number;
+  ville?: string;
+  region?: string;
+  prix_a_partir_de?: number;
+  prix_par_personne?: number;
+  description?: string;
+  email?: string;
+  telephone?: string;
+  slug?: string;
 }
 
 interface WeddingProject {
@@ -380,32 +383,22 @@ const VibeWeddingResults: React.FC<VibeWeddingResultsProps> = ({ project }) => {
                                 {vendor.categorie}
                               </Badge>
                             </div>
-                            <div className="flex items-center gap-1 mb-2">
-                              {[...Array(5)].map((_, i) => (
-                                <Star
-                                  key={i}
-                                  className={`w-3 h-3 ${
-                                    i < Math.floor(vendor.note_moyenne)
-                                      ? 'fill-yellow-400 text-yellow-400'
-                                      : 'text-gray-300'
-                                  }`}
-                                />
-                              ))}
-                              <span className="text-xs text-muted-foreground ml-1">
-                                {vendor.note_moyenne.toFixed(1)}
-                              </span>
-                            </div>
                             <p className="text-sm text-muted-foreground mb-2">
-                              📍 {vendor.ville}
+                              📍 {vendor.ville || vendor.region}
                             </p>
                             <p className="text-xs text-muted-foreground line-clamp-2 mb-3">
                               {vendor.description}
                             </p>
-                            <div className="flex items-center justify-between mb-3">
-                              <span className="text-sm font-medium text-wedding-olive">
-                                {formatPrice(vendor.prix_min)} - {formatPrice(vendor.prix_max)}
-                              </span>
-                            </div>
+                            {(vendor.prix_a_partir_de || vendor.prix_par_personne) && (
+                              <div className="flex items-center justify-between mb-3">
+                                <span className="text-sm font-medium text-wedding-olive">
+                                  {vendor.prix_a_partir_de 
+                                    ? `À partir de ${formatPrice(vendor.prix_a_partir_de)}`
+                                    : `${formatPrice(vendor.prix_par_personne)}/pers`
+                                  }
+                                </span>
+                              </div>
+                            )}
                             <Button 
                               className="w-full bg-wedding-olive hover:bg-wedding-olive/90 text-white"
                               size="sm"

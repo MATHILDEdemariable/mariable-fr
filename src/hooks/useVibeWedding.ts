@@ -27,11 +27,14 @@ interface Vendor {
   id: string;
   nom: string;
   categorie: string;
-  ville: string;
-  prix_min: number;
-  prix_max: number;
-  description: string;
-  note_moyenne: number;
+  ville?: string;
+  region?: string;
+  prix_a_partir_de?: number;
+  prix_par_personne?: number;
+  description?: string;
+  email?: string;
+  telephone?: string;
+  slug?: string;
 }
 
 interface WeddingProject {

@@ -379,7 +379,6 @@ Tu dois TOUJOURS répondre en JSON :`;
           user_id: userId || null,
           session_id: sessionId,
           messages: newMessages,
-          wedding_data: parsedResponse.weddingData || null,
           wedding_context: !parsedResponse.conversational ? {
             summary: parsedResponse.summary,
             weddingData: parsedResponse.weddingData,
@@ -418,10 +417,10 @@ Tu dois TOUJOURS répondre en JSON :`;
         // Search in BOTH ville AND region columns for better coverage
         const { data: targetedVendors, error: vendorError } = await supabase
           .from('prestataires_rows')
-          .select('id, nom, categorie, ville, region, prix_min, prix_max, description, note_moyenne, email, telephone, slug')
+          .select('id, nom, categorie, ville, region, prix_a_partir_de, prix_par_personne, description, email, telephone, slug')
           .eq('categorie', finalCategory)
           .or(`ville.ilike.%${searchLocation}%,region.ilike.%${searchLocation}%`)
-          .order('note_moyenne', { ascending: false })
+          .order('created_at', { ascending: false })
           .limit(4);
 
         if (vendorError) {
@@ -438,9 +437,9 @@ Tu dois TOUJOURS répondre en JSON :`;
         
         const { data: fallbackVendors, error: vendorError } = await supabase
           .from('prestataires_rows')
-          .select('id, nom, categorie, ville, region, prix_min, prix_max, description, note_moyenne, email, telephone, slug')
+          .select('id, nom, categorie, ville, region, prix_a_partir_de, prix_par_personne, description, email, telephone, slug')
           .eq('categorie', finalCategory)
-          .order('note_moyenne', { ascending: false })
+          .order('created_at', { ascending: false })
           .limit(6);
 
         if (vendorError) {
@@ -458,9 +457,9 @@ Tu dois TOUJOURS répondre en JSON :`;
       
       const { data: generalVendors, error: vendorError } = await supabase
         .from('prestataires_rows')
-        .select('id, nom, categorie, ville, region, prix_min, prix_max, description, note_moyenne, email, telephone, slug')
+        .select('id, nom, categorie, ville, region, prix_a_partir_de, prix_par_personne, description, email, telephone, slug')
         .or(`ville.ilike.%${parsedResponse.weddingData.location}%,region.ilike.%${parsedResponse.weddingData.location}%`)
-        .order('note_moyenne', { ascending: false })
+        .order('created_at', { ascending: false })
         .limit(6);
 
       if (vendorError) {
