@@ -34,33 +34,72 @@ const detectVendorCategory = (message: string): string | null => {
   return null;
 };
 
-// Helper function to extract location from message (ENRICHED VERSION)
+// Helper function to extract location from message and return EXACT ENUM value
 function extractLocationFromMessage(message: string): string | null {
   const lowerMessage = message.toLowerCase();
   
-  // Map des régions avec leurs variations
-  const regionMap: { [key: string]: string[] } = {
-    'île-de-france': ['île-de-france', 'ile-de-france', 'ile de france', 'idf', 'paris'],
-    'provence-alpes-côte d\'azur': ['provence-alpes-côte d\'azur', 'provence', 'paca', 'côte d\'azur', 'cote d\'azur', 'cote d azur', 'nice', 'marseille', 'aix'],
-    'auvergne-rhône-alpes': ['auvergne-rhône-alpes', 'auvergne rhône alpes', 'auvergne', 'rhône-alpes', 'rhone alpes', 'lyon', 'grenoble', 'annecy'],
-    'nouvelle-aquitaine': ['nouvelle-aquitaine', 'nouvelle aquitaine', 'aquitaine', 'bordeaux', 'biarritz'],
-    'occitanie': ['occitanie', 'midi-pyrénées', 'midi pyrenees', 'languedoc', 'toulouse', 'montpellier'],
-    'hauts-de-france': ['hauts-de-france', 'hauts de france', 'nord', 'lille', 'amiens'],
-    'normandie': ['normandie', 'normandy', 'rouen', 'caen'],
-    'grand est': ['grand est', 'alsace', 'lorraine', 'champagne', 'strasbourg', 'reims', 'metz', 'nancy'],
-    'bretagne': ['bretagne', 'brittany', 'rennes', 'brest', 'nantes'],
-    'pays de la loire': ['pays de la loire', 'pays-de-la-loire', 'nantes', 'angers', 'le mans'],
-    'centre-val de loire': ['centre-val de loire', 'centre val de loire', 'centre', 'tours', 'orléans', 'orleans'],
-    'bourgogne-franche-comté': ['bourgogne-franche-comté', 'bourgogne franche comté', 'bourgogne', 'franche-comté', 'franche comté', 'dijon', 'besançon'],
-    'corse': ['corse', 'corsica', 'ajaccio', 'bastia']
+  // Map des régions avec leurs variations → VALEURS EXACTES DE L'ENUM
+  const regionMap: { [key: string]: { variations: string[], exactValue: string } } = {
+    'ile-de-france': {
+      variations: ['île-de-france', 'ile-de-france', 'ile de france', 'idf', 'paris'],
+      exactValue: 'Île-de-France'
+    },
+    'provence': {
+      variations: ['provence-alpes-côte d\'azur', 'provence', 'paca', 'côte d\'azur', 'cote d\'azur', 'cote d azur', 'nice', 'marseille', 'aix'],
+      exactValue: 'Provence-Alpes-Côte d\'Azur'
+    },
+    'auvergne': {
+      variations: ['auvergne-rhône-alpes', 'auvergne rhône alpes', 'auvergne', 'rhône-alpes', 'rhone alpes', 'lyon', 'grenoble', 'annecy'],
+      exactValue: 'Auvergne-Rhône-Alpes'
+    },
+    'nouvelle-aquitaine': {
+      variations: ['nouvelle-aquitaine', 'nouvelle aquitaine', 'aquitaine', 'bordeaux', 'biarritz'],
+      exactValue: 'Nouvelle-Aquitaine'
+    },
+    'occitanie': {
+      variations: ['occitanie', 'midi-pyrénées', 'midi pyrenees', 'languedoc', 'toulouse', 'montpellier'],
+      exactValue: 'Occitanie'
+    },
+    'hauts-de-france': {
+      variations: ['hauts-de-france', 'hauts de france', 'nord', 'lille', 'amiens'],
+      exactValue: 'Hauts-de-France'
+    },
+    'normandie': {
+      variations: ['normandie', 'normandy', 'rouen', 'caen'],
+      exactValue: 'Normandie'
+    },
+    'grand-est': {
+      variations: ['grand est', 'alsace', 'lorraine', 'champagne', 'strasbourg', 'reims', 'metz', 'nancy'],
+      exactValue: 'Grand Est'
+    },
+    'bretagne': {
+      variations: ['bretagne', 'brittany', 'rennes', 'brest'],
+      exactValue: 'Bretagne'
+    },
+    'pays-de-la-loire': {
+      variations: ['pays de la loire', 'pays-de-la-loire', 'angers', 'le mans'],
+      exactValue: 'Pays de la Loire'
+    },
+    'centre-val-de-loire': {
+      variations: ['centre-val de loire', 'centre val de loire', 'centre', 'tours', 'orléans', 'orleans'],
+      exactValue: 'Centre-Val de Loire'
+    },
+    'bourgogne': {
+      variations: ['bourgogne-franche-comté', 'bourgogne franche comté', 'bourgogne', 'franche-comté', 'franche comté', 'dijon', 'besançon'],
+      exactValue: 'Bourgogne-Franche-Comté'
+    },
+    'corse': {
+      variations: ['corse', 'corsica', 'ajaccio', 'bastia'],
+      exactValue: 'Corse'
+    }
   };
   
-  // Chercher la région correspondante
-  for (const [region, variations] of Object.entries(regionMap)) {
+  // Chercher la région correspondante et retourner la valeur EXACTE de l'ENUM
+  for (const [key, { variations, exactValue }] of Object.entries(regionMap)) {
     for (const variation of variations) {
       if (lowerMessage.includes(variation)) {
-        console.log(`✅ Location detected: ${variation} → ${region}`);
-        return region;
+        console.log(`✅ Location detected: ${variation} → ${exactValue} (ENUM value)`);
+        return exactValue;
       }
     }
   }
@@ -430,13 +469,13 @@ Tu dois TOUJOURS répondre en JSON :`;
       if (searchLocation && finalCategory && parsedResponse.ask_location !== true) {
         console.log(`🔍 Searching: ${finalCategory} in region "${searchLocation}"`);
         
-        // Search by region first (most accurate) - CAST region to text for ILIKE
+        // Search by region first (most accurate) - Using EXACT ENUM value with .eq()
         const { data: regionVendors, error: vendorError } = await supabase
           .from('prestataires_rows')
           .select('id, nom, categorie, ville, region, prix_a_partir_de, prix_par_personne, description, email, telephone, slug')
           .eq('categorie', finalCategory)
           .eq('visible', true)
-          .filter('region::text', 'ilike', `%${searchLocation}%`)
+          .eq('region', searchLocation)
           .order('created_at', { ascending: false })
           .limit(3);
 
@@ -453,7 +492,7 @@ Tu dois TOUJOURS répondre en JSON :`;
             .select('id, nom, categorie, ville, region, prix_a_partir_de, prix_par_personne, description, email, telephone, slug')
             .eq('categorie', finalCategory)
             .eq('visible', true)
-            .filter('ville::text', 'ilike', `%${searchLocation}%`)
+            .ilike('ville', `%${searchLocation}%`)
             .order('created_at', { ascending: false })
             .limit(3);
             
@@ -482,19 +521,24 @@ Tu dois TOUJOURS répondre en JSON :`;
     if (vendors.length === 0 && parsedResponse.weddingData?.location && !parsedResponse.conversational) {
       console.log('🔄 Performing general vendor search for new project');
       
-      const { data: generalVendors, error: vendorError } = await supabase
-        .from('prestataires_rows')
-        .select('id, nom, categorie, ville, region, prix_a_partir_de, prix_par_personne, description, email, telephone, slug')
-        .filter('region::text', 'ilike', `%${parsedResponse.weddingData.location}%`)
-        .eq('visible', true)
-        .order('created_at', { ascending: false })
-        .limit(3);
+      // Extract exact ENUM value from location
+      const exactLocation = extractLocationFromMessage(parsedResponse.weddingData.location);
+      
+      if (exactLocation) {
+        const { data: generalVendors, error: vendorError } = await supabase
+          .from('prestataires_rows')
+          .select('id, nom, categorie, ville, region, prix_a_partir_de, prix_par_personne, description, email, telephone, slug')
+          .eq('region', exactLocation)
+          .eq('visible', true)
+          .order('created_at', { ascending: false })
+          .limit(3);
 
-      if (vendorError) {
-        console.error('❌ Error fetching general vendors:', vendorError);
-      } else {
-        vendors = generalVendors || [];
-        console.log(`✅ Found ${vendors.length} general vendors`);
+        if (vendorError) {
+          console.error('❌ Error fetching general vendors:', vendorError);
+        } else {
+          vendors = generalVendors || [];
+          console.log(`✅ Found ${vendors.length} general vendors`);
+        }
       }
     }
 
