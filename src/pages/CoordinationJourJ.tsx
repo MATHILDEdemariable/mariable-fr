@@ -202,22 +202,6 @@ const CoordinationJourJ: React.FC = () => {
           </div>
         </section>
 
-        {/* Plus rapide, plus simple, moins cher Section */}
-        <section className="py-16 bg-wedding-cream/10">
-          <div className="container mx-auto px-4 max-w-4xl text-center">
-            <h2 className="text-3xl md:text-4xl font-serif text-wedding-black mb-8">
-              Plus rapide, plus simple, moins cher
-            </h2>
-            <p className="text-lg text-gray-700 mb-8 max-w-2xl mx-auto">
-              Mariable révolutionne la coordination de mariage en offrant une solution digitale intuitive, 
-              accessible et personnalisable pour organiser votre jour J en toute sérénité.
-            </p>
-            <Button onClick={() => navigate('/dashboard')} className="bg-wedding-olive text-white hover:bg-wedding-olive/90 px-8 py-3 text-lg">
-              Découvrir l'outil, payer plus tard
-            </Button>
-          </div>
-        </section>
-
         {/* How it works */}
         <section className="py-12 md:py-16 bg-gray-50 animate-fade-in">
           <div className="container mx-auto px-4">
