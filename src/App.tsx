@@ -100,6 +100,7 @@ import ApresJourJPublic from "./pages/ApresJourJPublic";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import ContentCreatorMariage from "./pages/ContentCreatorMariage";
 import VibeWedding from "./pages/VibeWedding";
+import FeaturesInteractive from "./pages/FeaturesInteractive";
 
 const queryClient = new QueryClient();
 
@@ -239,6 +240,9 @@ function App() {
                    
                    {/* Vibe Wedding route */}
                    <Route path="/vibewedding" element={<VibeWedding />} />
+                   
+                   {/* Features Interactive route */}
+                   <Route path="/fonctionnalites" element={<FeaturesInteractive />} />
                    
                    <Route path="*" element={<NotFound />} />
                 </Routes>

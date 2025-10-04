@@ -14,7 +14,7 @@ const VibeWeddingHeader = () => {
           
           <nav className="hidden md:flex items-center gap-8">
             <Link 
-              to="/landing-generale" 
+              to="/fonctionnalites" 
               className="text-sm font-medium text-foreground hover:text-premium-sage transition-colors"
             >
               Fonctionnalités

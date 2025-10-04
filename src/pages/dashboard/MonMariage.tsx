@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Heart, Plus, Calendar, Users, MapPin, Euro, Trash2, Eye } from 'lucide-react';
+import { Heart, Plus, Calendar, Users, MapPin, Euro, Trash2, Eye, Edit } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -26,6 +26,7 @@ interface WeddingProject {
   budget_breakdown: any[];
   timeline: any[];
   vendors: any[];
+  conversation_id: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -193,11 +194,22 @@ const MonMariage = () => {
                     variant="outline"
                     size="sm"
                     className="flex-1"
-                    onClick={() => navigate(`/dashboard/mon-mariage/${project.id}`)}
+                    onClick={() => navigate(`/vibewedding?project=${project.id}`)}
                   >
                     <Eye className="w-4 h-4 mr-2" />
                     Voir
                   </Button>
+                  {project.conversation_id && (
+                    <Button
+                      variant="default"
+                      size="sm"
+                      className="flex-1 bg-wedding-olive hover:bg-wedding-olive/90"
+                      onClick={() => navigate(`/vibewedding?conversationId=${project.conversation_id}`)}
+                    >
+                      <Edit className="w-4 h-4 mr-2" />
+                      Modifier
+                    </Button>
+                  )}
                   <Button
                     variant="outline"
                     size="sm"

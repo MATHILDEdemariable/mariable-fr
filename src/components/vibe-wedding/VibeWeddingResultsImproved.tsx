@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Link } from 'react-router-dom';
@@ -17,8 +17,10 @@ import {
   Euro,
   Save,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  Lock
 } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
 interface BudgetItem {
   category: string;
@@ -68,6 +70,19 @@ interface VibeWeddingResultsImprovedProps {
 
 const VibeWeddingResultsImproved: React.FC<VibeWeddingResultsImprovedProps> = ({ project, onSave }) => {
   const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>({});
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setIsAuthenticated(!!user);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      setIsAuthenticated(!!session?.user);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   const formatPrice = (amount: number): string => {
     return new Intl.NumberFormat('fr-FR', {
@@ -269,7 +284,28 @@ const VibeWeddingResultsImproved: React.FC<VibeWeddingResultsImprovedProps> = ({
 
           {/* TAB 2: Rétro-planning */}
           <TabsContent value="retroplanning" className="space-y-3 mt-4">
-            {Object.entries(timelineByCategory).map(([category, tasks]) => (
+            <div className="relative">
+              {!isAuthenticated && (
+                <div className="absolute inset-0 backdrop-blur-md bg-white/60 dark:bg-gray-900/60 flex items-center justify-center z-10 rounded-lg">
+                  <Card className="max-w-md mx-4 shadow-2xl">
+                    <CardContent className="p-8 text-center space-y-4">
+                      <Lock className="w-12 h-12 mx-auto text-wedding-olive" />
+                      <h3 className="text-2xl font-bold">Accédez au rétroplanning détaillé</h3>
+                      <p className="text-muted-foreground">
+                        Créez votre compte gratuit pour débloquer le rétroplanning complet et toutes les fonctionnalités
+                      </p>
+                      <Button 
+                        onClick={() => window.location.href = '/auth'}
+                        className="bg-wedding-olive hover:bg-wedding-olive/90 text-white w-full"
+                        size="lg"
+                      >
+                        Créer mon compte gratuit
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </div>
+              )}
+              {Object.entries(timelineByCategory).map(([category, tasks]) => (
               <Card key={category}>
                 <CardHeader 
                   className="cursor-pointer hover:bg-accent/50 transition-colors"
@@ -307,7 +343,8 @@ const VibeWeddingResultsImproved: React.FC<VibeWeddingResultsImprovedProps> = ({
                   </CardContent>
                 )}
               </Card>
-            ))}
+              ))}
+            </div>
           </TabsContent>
 
           {/* TAB PRESTATAIRES */}

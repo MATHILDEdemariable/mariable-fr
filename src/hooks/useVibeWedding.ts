@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 interface WeddingData {
   guests: number | null;
@@ -62,6 +63,8 @@ interface ConversationItem {
 }
 
 export const useVibeWedding = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [messages, setMessages] = useState<Message[]>([]);
   const [project, setProject] = useState<WeddingProject | null>(null);
   const [conversationId, setConversationId] = useState<string | null>(null);
@@ -169,10 +172,20 @@ export const useVibeWedding = () => {
     }
   }, [toast]);
 
-  // Load conversations on mount
+  // Load conversations on mount and handle URL params
   useEffect(() => {
     loadConversations();
-  }, [loadConversations]);
+    
+    // Check if there's a conversationId in the URL
+    const params = new URLSearchParams(location.search);
+    const urlConversationId = params.get('conversationId');
+    
+    if (urlConversationId) {
+      loadConversation(urlConversationId);
+      // Clean up URL after loading
+      navigate('/vibewedding', { replace: true });
+    }
+  }, [loadConversations, location.search, navigate, loadConversation]);
 
   const sendMessage = useCallback(async (userMessage: string) => {
     // Vérifier l'authentification et le compteur de prompts
