@@ -153,9 +153,25 @@ export const useVibeWedding = () => {
     }
     
     if (data) {
-      // Parse messages with proper typing
+      // Parse messages with proper typing and clean JSON if needed
       const parsedMessages = Array.isArray(data.messages) 
-        ? (data.messages as unknown as Message[])
+        ? (data.messages as unknown as Message[]).map(msg => {
+            // Si le content est du JSON stringifié, l'extraire
+            if (typeof msg.content === 'string' && msg.content.trim().startsWith('{')) {
+              try {
+                const parsed = JSON.parse(msg.content);
+                // Extraire le message ou summary du JSON
+                return {
+                  ...msg,
+                  content: parsed.message || parsed.summary || msg.content
+                };
+              } catch {
+                // Si parsing échoue, garder tel quel
+                return msg;
+              }
+            }
+            return msg;
+          })
         : [];
       
       setMessages(parsedMessages);
@@ -172,20 +188,67 @@ export const useVibeWedding = () => {
     }
   }, [toast]);
 
+  // Load a project from database
+  const loadProjectFromDatabase = useCallback(async (projectId: string) => {
+    const { data, error } = await supabase
+      .from('wedding_projects')
+      .select('*')
+      .eq('id', projectId)
+      .single();
+      
+    if (error) {
+      console.error('Error loading project:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de charger ce projet",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    if (data) {
+      // Reconstituer le projet
+      const loadedProject: WeddingProject = {
+        summary: data.summary || '',
+        weddingData: data.wedding_data as any as WeddingData,
+        budgetBreakdown: (data.budget_breakdown || []) as any as BudgetItem[],
+        timeline: (data.timeline || []) as any as TimelineItem[],
+        vendors: (data.vendors || []) as any as Vendor[]
+      };
+      
+      setProject(loadedProject);
+      
+      // Si le projet a un conversation_id, charger aussi la conversation
+      if (data.conversation_id) {
+        await loadConversation(data.conversation_id);
+      } else {
+        // Pas de conversation, juste afficher le projet
+        setMessages([]);
+        setConversationId(null);
+        setCurrentConversationId(null);
+      }
+    }
+  }, [toast, loadConversation]);
+
   // Load conversations on mount and handle URL params
   useEffect(() => {
     loadConversations();
     
-    // Check if there's a conversationId in the URL
+    // Check if there's a conversationId or project in the URL
     const params = new URLSearchParams(location.search);
     const urlConversationId = params.get('conversationId');
+    const urlProjectId = params.get('project');
     
     if (urlConversationId) {
       loadConversation(urlConversationId);
       // Clean up URL after loading
       navigate('/vibewedding', { replace: true });
+    } else if (urlProjectId) {
+      loadProjectFromDatabase(urlProjectId);
+      // Clean up URL after loading
+      navigate('/vibewedding', { replace: true });
     }
-  }, [loadConversations, location.search, navigate, loadConversation]);
+  }, [loadConversations, location.search, navigate, loadConversation, loadProjectFromDatabase]);
 
   const sendMessage = useCallback(async (userMessage: string) => {
     // Vérifier l'authentification et le compteur de prompts

@@ -188,8 +188,8 @@ const MonMariage = () => {
                   </p>
                 )}
 
-                {/* Actions */}
-                <div className="flex gap-2 pt-4">
+                {/* Actions - Responsive layout */}
+                <div className="flex flex-col gap-2 pt-4 sm:flex-row">
                   <Button
                     variant="outline"
                     size="sm"
@@ -214,9 +214,10 @@ const MonMariage = () => {
                     variant="outline"
                     size="sm"
                     onClick={() => setProjectToDelete(project.id)}
-                    className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                    className="text-destructive hover:text-destructive hover:bg-destructive/10 sm:w-auto"
                   >
                     <Trash2 className="w-4 h-4" />
+                    <span className="sm:hidden ml-2">Supprimer</span>
                   </Button>
                 </div>
               </CardContent>
