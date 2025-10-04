@@ -77,7 +77,7 @@ const VibeWeddingHero: React.FC<VibeWeddingHeroProps> = ({ onStartConversation }
 
         {/* Subtitle */}
         <p className="text-lg sm:text-xl md:text-2xl text-white/90 mb-12 max-w-2xl mx-auto font-light">
-          Budget détaillé, rétroplanning personnalisé et suggestions de prestataires en quelques minutes
+          Organisez vous-même le jour-j simplement, avec marIAble
         </p>
 
         {/* Input Form */}
