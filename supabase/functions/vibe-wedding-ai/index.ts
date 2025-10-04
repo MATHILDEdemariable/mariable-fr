@@ -6,6 +6,54 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Helper function to detect vendor categories from message
+const detectVendorCategory = (message: string): string | null => {
+  const messageLower = message.toLowerCase();
+  
+  const categoryKeywords: { [key: string]: string[] } = {
+    'Lieu de réception': ['lieu', 'salle', 'château', 'domaine', 'réception', 'propriété', 'venue'],
+    'Traiteur': ['traiteur', 'repas', 'buffet', 'menu', 'catering', 'nourriture', 'cuisine'],
+    'Photographe': ['photographe', 'photo', 'photos', 'photographie', 'shooting'],
+    'Vidéaste': ['vidéaste', 'vidéo', 'film', 'cinéma', 'vidéographie'],
+    'Fleuriste': ['fleuriste', 'fleur', 'fleurs', 'bouquet', 'composition florale'],
+    'DJ': ['dj', 'musique', 'musicien', 'orchestre', 'animation musicale', 'sono'],
+    'Wedding Planner': ['wedding planner', 'organisateur', 'coordination', 'planificateur'],
+    'Décorateur': ['décorateur', 'décoration', 'déco', 'scénographie'],
+    'Coiffeur': ['coiffeur', 'coiffure', 'cheveux', 'coiffage'],
+    'Maquilleur': ['maquilleur', 'maquillage', 'beauté'],
+  };
+  
+  for (const [category, keywords] of Object.entries(categoryKeywords)) {
+    for (const keyword of keywords) {
+      if (messageLower.includes(keyword)) {
+        return category;
+      }
+    }
+  }
+  
+  return null;
+};
+
+// Helper function to extract location from message
+const extractLocationFromMessage = (message: string): string | null => {
+  const messageLower = message.toLowerCase();
+  
+  // Liste des régions et villes principales françaises
+  const locations = [
+    'paris', 'lyon', 'marseille', 'toulouse', 'bordeaux', 'nice', 'nantes', 'strasbourg',
+    'provence', 'ile-de-france', 'bretagne', 'normandie', 'bourgogne', 'loire', 'côte d\'azur',
+    'alsace', 'aquitaine', 'languedoc', 'rhône', 'auvergne', 'champagne', 'corse'
+  ];
+  
+  for (const location of locations) {
+    if (messageLower.includes(location)) {
+      return location;
+    }
+  }
+  
+  return null;
+};
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -24,6 +72,11 @@ serve(async (req) => {
     }
 
     const supabase = createClient(SUPABASE_URL!, SUPABASE_SERVICE_KEY!);
+    
+    // Détecter si l'utilisateur demande des prestataires
+    const detectedCategory = detectVendorCategory(message);
+    const locationFromMessage = extractLocationFromMessage(message);
+    console.log('🔍 Detection:', { detectedCategory, locationFromMessage });
 
     // Récupérer l'historique de conversation
     let conversationHistory = [];
@@ -304,17 +357,47 @@ Tu dois TOUJOURS répondre en JSON :`;
       }
     }
 
-    // Si on a des données de mariage avec localisation, chercher des prestataires
+    // Recherche intelligente de prestataires
     let vendors = [];
-    if (parsedResponse.weddingData?.location && !parsedResponse.conversational) {
+    let vendorSearchPerformed = false;
+    
+    // Priorité 1 : Si détection de catégorie spécifique dans le message
+    if (detectedCategory) {
+      vendorSearchPerformed = true;
+      const searchLocation = locationFromMessage || 
+                            parsedResponse.weddingData?.location || 
+                            currentProject?.weddingData?.location;
+      
+      console.log('🔍 Searching vendors:', { category: detectedCategory, location: searchLocation });
+      
+      if (searchLocation) {
+        const { data: targetedVendors } = await supabase
+          .from('prestataires_rows')
+          .select('id, nom, categorie, ville, prix_min, prix_max, description, note_moyenne, email, telephone, slug')
+          .eq('categorie', detectedCategory)
+          .ilike('ville', `%${searchLocation}%`)
+          .order('note_moyenne', { ascending: false })
+          .limit(3);
+        
+        if (targetedVendors && targetedVendors.length > 0) {
+          vendors = targetedVendors;
+          console.log('✅ Found targeted vendors:', vendors.length);
+        }
+      }
+    }
+    
+    // Priorité 2 : Si nouveau projet généré avec localisation
+    if (!vendorSearchPerformed && parsedResponse.weddingData?.location && !parsedResponse.conversational) {
       const { data: vendorsData } = await supabase
         .from('prestataires_rows')
-        .select('id, nom, categorie, ville, prix_min, prix_max, description, note_moyenne')
+        .select('id, nom, categorie, ville, prix_min, prix_max, description, note_moyenne, email, telephone, slug')
         .ilike('ville', `%${parsedResponse.weddingData.location}%`)
+        .order('note_moyenne', { ascending: false })
         .limit(6);
       
       if (vendorsData) {
         vendors = vendorsData;
+        console.log('✅ Found general vendors:', vendors.length);
       }
     }
 

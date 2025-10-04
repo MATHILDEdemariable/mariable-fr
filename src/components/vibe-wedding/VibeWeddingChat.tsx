@@ -5,11 +5,27 @@ import { Send, Sparkles } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { supabase } from '@/integrations/supabase/client';
 import AuthRequiredModal from './AuthRequiredModal';
+import VendorCardInChat from './VendorCardInChat';
+
+interface Vendor {
+  id: string;
+  nom: string;
+  categorie: string;
+  ville?: string;
+  note_moyenne?: number;
+  prix_min?: number;
+  prix_max?: number;
+  description?: string;
+  email?: string;
+  telephone?: string;
+  slug?: string;
+}
 
 interface Message {
   role: 'user' | 'assistant';
   content: string;
   timestamp: string;
+  vendors?: Vendor[];
 }
 
 interface VibeWeddingChatProps {
@@ -106,27 +122,40 @@ const VibeWeddingChat: React.FC<VibeWeddingChatProps> = ({
         ) : (
           <div className="space-y-4 max-w-3xl mx-auto">
             {messages.map((msg, idx) => (
-              <div
-                key={idx}
-                className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
-              >
+              <div key={idx} className="space-y-3">
                 <div
-                  className={`
-                    max-w-[80%] rounded-2xl px-4 py-3
-                    ${msg.role === 'user'
-                      ? 'bg-premium-sage text-white'
-                      : 'bg-card border border-border'
-                    }
-                  `}
+                  className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
-                  <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
-                  <p className={`text-xs mt-1 ${msg.role === 'user' ? 'text-white/70' : 'text-muted-foreground'}`}>
-                    {new Date(msg.timestamp).toLocaleTimeString('fr-FR', { 
-                      hour: '2-digit', 
-                      minute: '2-digit' 
-                    })}
-                  </p>
+                  <div
+                    className={`
+                      max-w-[80%] rounded-2xl px-4 py-3
+                      ${msg.role === 'user'
+                        ? 'bg-premium-sage text-white'
+                        : 'bg-card border border-border'
+                      }
+                    `}
+                  >
+                    <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
+                    <p className={`text-xs mt-1 ${msg.role === 'user' ? 'text-white/70' : 'text-muted-foreground'}`}>
+                      {new Date(msg.timestamp).toLocaleTimeString('fr-FR', { 
+                        hour: '2-digit', 
+                        minute: '2-digit' 
+                      })}
+                    </p>
+                  </div>
                 </div>
+                
+                {/* Afficher les prestataires si présents */}
+                {msg.vendors && msg.vendors.length > 0 && (
+                  <div className="space-y-2 max-w-3xl">
+                    <p className="text-sm font-medium text-muted-foreground px-2">
+                      📍 Prestataires recommandés :
+                    </p>
+                    {msg.vendors.map((vendor) => (
+                      <VendorCardInChat key={vendor.id} vendor={vendor} />
+                    ))}
+                  </div>
+                )}
               </div>
             ))}
             

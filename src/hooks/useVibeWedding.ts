@@ -46,6 +46,7 @@ interface Message {
   role: 'user' | 'assistant';
   content: string;
   timestamp: string;
+  vendors?: Vendor[];
 }
 
 interface ConversationItem {
@@ -205,7 +206,8 @@ export const useVibeWedding = () => {
         content: data.response.conversational 
           ? data.response.message 
           : data.response.summary,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        vendors: data.vendors && data.vendors.length > 0 ? data.vendors : undefined
       };
 
       setMessages(prev => [...prev, assistantMsg]);
