@@ -193,7 +193,8 @@ export const useVibeWedding = () => {
           message: userMessage,
           conversationId,
           sessionId,
-          userId: user?.id || null
+          userId: user?.id || null,
+          currentProject: project // Passer le projet actuel pour les mises à jour
         }
       });
 
@@ -213,15 +214,37 @@ export const useVibeWedding = () => {
         setConversationId(data.conversationId);
       }
 
-      // Si ce n'est pas une réponse conversationnelle, c'est un projet complet
+      // Gérer les différents modes de réponse
       if (!data.response.conversational) {
-        setProject({
-          summary: data.response.summary,
-          weddingData: data.response.weddingData,
-          budgetBreakdown: data.response.budgetBreakdown,
-          timeline: data.response.timeline,
-          vendors: data.vendors || []
-        });
+        if (data.response.mode === 'update') {
+          // MODE UPDATE : Merge intelligent avec le projet existant
+          setProject(prevProject => {
+            if (!prevProject) return null;
+            
+            const updatedFields = data.response.updatedFields || {};
+            
+            return {
+              ...prevProject,
+              summary: data.response.message || prevProject.summary,
+              weddingData: {
+                ...prevProject.weddingData,
+                ...(updatedFields.weddingData || {})
+              },
+              budgetBreakdown: updatedFields.budgetBreakdown || prevProject.budgetBreakdown,
+              timeline: updatedFields.timeline || prevProject.timeline,
+              vendors: data.vendors || prevProject.vendors
+            };
+          });
+        } else {
+          // MODE INITIAL : Remplacement complet
+          setProject({
+            summary: data.response.summary,
+            weddingData: data.response.weddingData,
+            budgetBreakdown: data.response.budgetBreakdown,
+            timeline: data.response.timeline,
+            vendors: data.vendors || []
+          });
+        }
       }
 
       // Incrémenter le compteur de prompts après succès
@@ -255,12 +278,57 @@ export const useVibeWedding = () => {
     setPromptCount(0);
   }, [promptCount]);
 
+  const saveProjectToDashboard = useCallback(async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      setShowAuthModal(true);
+      return;
+    }
+    
+    if (!project || !conversationId) {
+      toast({
+        title: "Aucun projet à sauvegarder",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    try {
+      const { error } = await supabase
+        .from('ai_wedding_conversations')
+        .update({ 
+          wedding_context: project as any, // Cast to any to bypass Json type check
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', conversationId);
+      
+      if (error) throw error;
+      
+      toast({ 
+        title: "✅ Projet sauvegardé", 
+        description: "Retrouvez-le dans Mon Mariage" 
+      });
+      
+      await loadConversations();
+      
+    } catch (error: any) {
+      console.error('Error saving project:', error);
+      toast({ 
+        title: "Erreur lors de la sauvegarde",
+        description: error.message,
+        variant: "destructive" 
+      });
+    }
+  }, [project, conversationId, toast, loadConversations]);
+
   return {
     messages,
     project,
     isLoading,
     sendMessage,
     startNewProject,
+    saveProjectToDashboard,
     promptCount,
     showAuthModal,
     setShowAuthModal,

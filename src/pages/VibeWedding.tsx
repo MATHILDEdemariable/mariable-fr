@@ -16,6 +16,7 @@ const VibeWedding: React.FC = () => {
     isLoading,
     sendMessage,
     startNewProject,
+    saveProjectToDashboard,
     promptCount,
     showAuthModal,
     setShowAuthModal,

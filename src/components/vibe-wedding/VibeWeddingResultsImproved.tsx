@@ -58,9 +58,10 @@ interface WeddingProject {
 
 interface VibeWeddingResultsImprovedProps {
   project: WeddingProject;
+  onSave?: () => void;
 }
 
-const VibeWeddingResultsImproved: React.FC<VibeWeddingResultsImprovedProps> = ({ project }) => {
+const VibeWeddingResultsImproved: React.FC<VibeWeddingResultsImprovedProps> = ({ project, onSave }) => {
   const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>({});
 
   const formatPrice = (amount: number): string => {
@@ -146,7 +147,7 @@ const VibeWeddingResultsImproved: React.FC<VibeWeddingResultsImprovedProps> = ({
           <Button 
             size="sm" 
             className="bg-wedding-olive hover:bg-wedding-olive/90"
-            onClick={() => console.log('Save to dashboard')}
+            onClick={onSave}
           >
             <Save className="w-4 h-4 mr-1" />
             Sauvegarder
