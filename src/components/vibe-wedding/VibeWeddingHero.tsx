@@ -64,13 +64,13 @@ const VibeWeddingHero: React.FC<VibeWeddingHeroProps> = ({ onStartConversation }
       <div className="relative z-10 w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         {/* Icon */}
         <div className="flex justify-center mb-6">
-          <div className="w-20 h-20 rounded-full bg-premium-sage/10 backdrop-blur-sm flex items-center justify-center animate-pulse">
-            <Sparkles className="w-10 h-10 text-premium-sage" />
+          <div className="w-20 h-20 rounded-full bg-black/5 backdrop-blur-sm flex items-center justify-center animate-pulse">
+            <Sparkles className="w-10 h-10 text-black" />
           </div>
         </div>
 
         {/* Title with typing effect */}
-        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-premium-sage-dark mb-6 leading-tight min-h-[120px] sm:min-h-[140px] flex items-center justify-center">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-black mb-6 leading-tight min-h-[120px] sm:min-h-[140px] flex items-center justify-center">
           {displayedText}
           {isTyping && <span className="animate-pulse ml-1">|</span>}
         </h1>
@@ -98,7 +98,7 @@ const VibeWeddingHero: React.FC<VibeWeddingHeroProps> = ({ onStartConversation }
                 type="submit"
                 disabled={!input.trim()}
                 size="lg"
-                className="bg-premium-sage hover:bg-premium-sage-dark text-white font-semibold px-8 py-6 text-lg h-auto sm:self-end"
+                className="bg-black hover:bg-black/90 text-white font-semibold px-8 py-6 text-lg h-auto sm:self-end"
               >
                 <Send className="w-5 h-5 mr-2" />
                 Lancer
@@ -117,7 +117,7 @@ const VibeWeddingHero: React.FC<VibeWeddingHeroProps> = ({ onStartConversation }
                   key={idx}
                   type="button"
                   onClick={() => setInput(example)}
-                  className="text-xs sm:text-sm px-3 py-1.5 rounded-full bg-premium-sage-very-light hover:bg-premium-sage-light text-premium-sage-dark transition-colors"
+                  className="text-xs sm:text-sm px-3 py-1.5 rounded-full bg-gray-100 hover:bg-gray-200 text-black transition-colors"
                 >
                   {example}
                 </button>
