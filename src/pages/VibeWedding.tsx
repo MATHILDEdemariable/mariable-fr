@@ -4,6 +4,7 @@ import { MessageSquare, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import SimpleHeader from '@/components/SimpleHeader';
 import VibeWeddingChat from '@/components/vibe-wedding/VibeWeddingChat';
+import VibeWeddingEmbed from '@/components/vibe-wedding/VibeWeddingEmbed';
 import VibeWeddingResultsImproved from '@/components/vibe-wedding/VibeWeddingResultsImproved';
 import { useVibeWedding } from '@/hooks/useVibeWedding';
 
@@ -35,9 +36,9 @@ const VibeWedding: React.FC = () => {
       <div className="flex h-[calc(100vh-64px)] mt-16 bg-background overflow-hidden">
         {/* Layout conditionnel basé sur l'existence du projet */}
         {!project ? (
-          /* Mode Chat uniquement - Full page */
+          /* Mode Hero + Chat - Full page avec transition */
           <div className="flex-1 overflow-hidden">
-            <VibeWeddingChat
+            <VibeWeddingEmbed
               messages={messages}
               onSendMessage={sendMessage}
               isLoading={isLoading}

@@ -11,6 +11,7 @@ import PaymentSuccessHandler from '@/components/premium/PaymentSuccessHandler';
 // Import pages
 import Index from "./pages/Index";
 import LandingCouple from "./pages/LandingCouple";
+import LandingGenerale from "./pages/LandingGenerale";
 import SimpleHomePage from "./pages/SimpleHomePage";
 import LandingPageV0 from "./pages/LandingPageV0";
 import MoteurRecherche from "./pages/MoteurRecherche";
@@ -115,6 +116,7 @@ function App() {
                 <PaymentSuccessHandler />
                 <Routes>
                   <Route path="/" element={<LandingCouple />} />
+                  <Route path="/landing-generale" element={<LandingGenerale />} />
                   <Route path="/simple" element={<SimpleHomePage />} />
                   <Route path="/landingpagev0" element={<LandingPageV0 />} />
                    <Route path="/moteur-recherche" element={<MoteurRecherche />} />
