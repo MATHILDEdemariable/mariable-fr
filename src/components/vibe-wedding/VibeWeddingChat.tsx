@@ -198,13 +198,6 @@ const VibeWeddingChat: React.FC<VibeWeddingChatProps> = ({
                   </div>
                 )}
                 
-                {/* Region selector */}
-                {msg.role === 'assistant' && msg.askLocation && (
-                  <div className="mt-3 max-w-3xl ml-0">
-                    <RegionSelector onSelectRegion={handleRegionSelect} />
-                  </div>
-                )}
-                
                 {/* Message d'info si conversationnel sans projet */}
                 {msg.role === 'assistant' && !msg.vendors && !msg.askLocation && messages.indexOf(msg) === messages.length - 1 && (
                   <div className="mt-3 p-3 bg-premium-sage-very-light border border-premium-sage/20 rounded-lg max-w-3xl ml-0">

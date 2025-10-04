@@ -46,9 +46,9 @@ const RegionSelector: React.FC<RegionSelectorProps> = ({ onSelectRegion }) => {
             onClick={() => onSelectRegion(region.value)}
             variant="outline"
             size="sm"
-            className="justify-start text-left h-auto py-2 px-3 hover:bg-wedding-olive/20 hover:border-wedding-olive hover:scale-105 transition-all"
+            className="justify-center text-center h-auto py-2.5 px-2 hover:bg-wedding-olive/20 hover:border-wedding-olive hover:scale-105 transition-all text-xs leading-tight"
           >
-            {region.name}
+            <span className="line-clamp-2">{region.name}</span>
           </Button>
         ))}
       </div>

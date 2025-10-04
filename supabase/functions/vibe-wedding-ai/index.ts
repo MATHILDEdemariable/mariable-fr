@@ -35,43 +35,38 @@ const detectVendorCategory = (message: string): string | null => {
 };
 
 // Helper function to extract location from message (ENRICHED VERSION)
-const extractLocationFromMessage = (message: string): string | null => {
-  const messageLower = message.toLowerCase();
+function extractLocationFromMessage(message: string): string | null {
+  const lowerMessage = message.toLowerCase();
   
-  // Comprehensive list of French locations
-  const locations = [
-    // Major cities
-    'paris', 'lyon', 'marseille', 'toulouse', 'nice', 'nantes', 'strasbourg',
-    'montpellier', 'bordeaux', 'lille', 'rennes', 'reims', 'toulon', 'angers',
-    'grenoble', 'dijon', 'nîmes', 'aix-en-provence', 'saint-étienne', 'le havre',
-    'brest', 'limoges', 'clermont-ferrand', 'tours', 'amiens', 'metz', 'besançon',
-    'orléans', 'mulhouse', 'rouen', 'caen', 'nancy', 'argenteuil', 'saint-denis',
-    'annecy', 'cannes', 'antibes', 'avignon', 'biarritz', 'pau', 'perpignan',
-    'la rochelle', 'poitiers', 'chambéry', 'colmar', 'beaune', 'carcassonne',
-    
-    // Regions (official names and variations)
-    'île-de-france', 'idf', 'ile-de-france', 'provence-alpes-côte d\'azur', 'paca',
-    'auvergne-rhône-alpes', 'nouvelle-aquitaine', 'occitanie', 'hauts-de-france',
-    'normandie', 'grand est', 'bretagne', 'pays de la loire', 'centre-val de loire',
-    'bourgogne-franche-comté', 'corse',
-    
-    // Shortened/popular region names
-    'provence', 'côte d\'azur', 'alsace', 'bourgogne', 'champagne', 'savoie',
-    'haute-savoie', 'vendée', 'charente', 'dordogne', 'var', 'vaucluse', 'loire',
-    'rhône', 'aquitaine', 'languedoc'
-  ];
+  // Map des régions avec leurs variations
+  const regionMap: { [key: string]: string[] } = {
+    'île-de-france': ['île-de-france', 'ile-de-france', 'ile de france', 'idf', 'paris'],
+    'provence-alpes-côte d\'azur': ['provence-alpes-côte d\'azur', 'provence', 'paca', 'côte d\'azur', 'cote d\'azur', 'cote d azur', 'nice', 'marseille', 'aix'],
+    'auvergne-rhône-alpes': ['auvergne-rhône-alpes', 'auvergne rhône alpes', 'auvergne', 'rhône-alpes', 'rhone alpes', 'lyon', 'grenoble', 'annecy'],
+    'nouvelle-aquitaine': ['nouvelle-aquitaine', 'nouvelle aquitaine', 'aquitaine', 'bordeaux', 'biarritz'],
+    'occitanie': ['occitanie', 'midi-pyrénées', 'midi pyrenees', 'languedoc', 'toulouse', 'montpellier'],
+    'hauts-de-france': ['hauts-de-france', 'hauts de france', 'nord', 'lille', 'amiens'],
+    'normandie': ['normandie', 'normandy', 'rouen', 'caen'],
+    'grand est': ['grand est', 'alsace', 'lorraine', 'champagne', 'strasbourg', 'reims', 'metz', 'nancy'],
+    'bretagne': ['bretagne', 'brittany', 'rennes', 'brest', 'nantes'],
+    'pays de la loire': ['pays de la loire', 'pays-de-la-loire', 'nantes', 'angers', 'le mans'],
+    'centre-val de loire': ['centre-val de loire', 'centre val de loire', 'centre', 'tours', 'orléans', 'orleans'],
+    'bourgogne-franche-comté': ['bourgogne-franche-comté', 'bourgogne franche comté', 'bourgogne', 'franche-comté', 'franche comté', 'dijon', 'besançon'],
+    'corse': ['corse', 'corsica', 'ajaccio', 'bastia']
+  };
   
-  for (const location of locations) {
-    if (messageLower.includes(location)) {
-      // Normalize some variations
-      if (location === 'idf' || location === 'ile-de-france') return 'île-de-france';
-      if (location === 'paca') return 'provence-alpes-côte d\'azur';
-      return location;
+  // Chercher la région correspondante
+  for (const [region, variations] of Object.entries(regionMap)) {
+    for (const variation of variations) {
+      if (lowerMessage.includes(variation)) {
+        console.log(`✅ Location detected: ${variation} → ${region}`);
+        return region;
+      }
     }
   }
   
   return null;
-};
+}
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -431,55 +426,65 @@ Tu dois TOUJOURS répondre en JSON :`;
         askLocation: parsedResponse.ask_location
       });
 
-      // Only search if we have a location (otherwise wait for region selection)
-      if (searchLocation && finalCategory && parsedResponse.ask_location === false) {
-        // Search in BOTH ville AND region columns for better coverage - LIMIT 3
-        const { data: targetedVendors, error: vendorError } = await supabase
+      // Only search if we have a location AND not asking for location
+      if (searchLocation && finalCategory && parsedResponse.ask_location !== true) {
+        console.log(`🔍 Searching: ${finalCategory} in region "${searchLocation}"`);
+        
+        // Search by region first (most accurate)
+        const { data: regionVendors, error: vendorError } = await supabase
           .from('prestataires_rows')
           .select('id, nom, categorie, ville, region, prix_a_partir_de, prix_par_personne, description, email, telephone, slug')
           .eq('categorie', finalCategory)
-          .or(`ville.ilike.%${searchLocation}%,region.ilike.%${searchLocation}%`)
+          .ilike('region', `%${searchLocation}%`)
           .order('created_at', { ascending: false })
           .limit(3);
 
         if (vendorError) {
-          console.error('❌ Error fetching targeted vendors:', vendorError);
+          console.error('❌ Error fetching vendors by region:', vendorError);
+        } else if (regionVendors && regionVendors.length > 0) {
+          vendors = regionVendors;
+          console.log(`✅ Found ${vendors.length} vendors in region "${searchLocation}"`);
         } else {
-          vendors = targetedVendors || [];
-          console.log(`✅ Found ${vendors.length} targeted vendors for ${finalCategory} in ${searchLocation}`);
-        }
-      }
-      
-      // FALLBACK: Only if search was attempted but no results (not if waiting for region)
-      if (vendors.length === 0 && finalCategory && searchLocation) {
-        console.log('🔄 Fallback: Searching France-wide vendors');
-        
-        const { data: fallbackVendors, error: vendorError } = await supabase
-          .from('prestataires_rows')
-          .select('id, nom, categorie, ville, region, prix_a_partir_de, prix_par_personne, description, email, telephone, slug')
-          .eq('categorie', finalCategory)
-          .order('created_at', { ascending: false })
-          .limit(6);
-
-        if (vendorError) {
-          console.error('❌ Error fetching fallback vendors:', vendorError);
-        } else {
-          vendors = fallbackVendors || [];
-          console.log(`✅ Found ${vendors.length} fallback vendors (France-wide)`);
+          // Fallback: try by ville if region returns nothing
+          console.log(`⚠️ No vendors in region, trying by ville...`);
+          const { data: cityVendors } = await supabase
+            .from('prestataires_rows')
+            .select('id, nom, categorie, ville, region, prix_a_partir_de, prix_par_personne, description, email, telephone, slug')
+            .eq('categorie', finalCategory)
+            .ilike('ville', `%${searchLocation}%`)
+            .order('created_at', { ascending: false })
+            .limit(3);
+            
+          if (cityVendors && cityVendors.length > 0) {
+            vendors = cityVendors;
+            console.log(`✅ Found ${vendors.length} vendors by ville`);
+          } else {
+            // Last resort: any vendor in this category (limited to 3)
+            console.log(`⚠️ No vendors found, showing any from category (max 3)`);
+            const { data: anyVendors } = await supabase
+              .from('prestataires_rows')
+              .select('id, nom, categorie, ville, region, prix_a_partir_de, prix_par_personne, description, email, telephone, slug')
+              .eq('categorie', finalCategory)
+              .order('created_at', { ascending: false })
+              .limit(3);
+              
+            vendors = anyVendors || [];
+            console.log(`✅ Found ${vendors.length} vendors (any location)`);
+          }
         }
       }
     }
     
-    // Legacy: general vendor search if we have a new project with location
+    // Legacy: general vendor search if we have a new project with location (MAX 3)
     if (vendors.length === 0 && parsedResponse.weddingData?.location && !parsedResponse.conversational) {
       console.log('🔄 Performing general vendor search for new project');
       
       const { data: generalVendors, error: vendorError } = await supabase
         .from('prestataires_rows')
         .select('id, nom, categorie, ville, region, prix_a_partir_de, prix_par_personne, description, email, telephone, slug')
-        .or(`ville.ilike.%${parsedResponse.weddingData.location}%,region.ilike.%${parsedResponse.weddingData.location}%`)
+        .ilike('region', `%${parsedResponse.weddingData.location}%`)
         .order('created_at', { ascending: false })
-        .limit(6);
+        .limit(3);
 
       if (vendorError) {
         console.error('❌ Error fetching general vendors:', vendorError);

@@ -246,6 +246,10 @@ export const useVibeWedding = () => {
             
             const updatedFields = data.response.updatedFields || {};
             
+            // Fusionner les vendors intelligemment (éviter les doublons)
+            const existingVendorIds = new Set(prevProject.vendors?.map(v => v.id) || []);
+            const newVendors = (data.vendors || []).filter((v: Vendor) => !existingVendorIds.has(v.id));
+            
             return {
               ...prevProject,
               summary: data.response.message || prevProject.summary,
@@ -255,9 +259,7 @@ export const useVibeWedding = () => {
               },
               budgetBreakdown: updatedFields.budgetBreakdown || prevProject.budgetBreakdown,
               timeline: updatedFields.timeline || prevProject.timeline,
-              vendors: data.vendors && data.vendors.length > 0 
-                ? [...(prevProject.vendors || []), ...data.vendors]
-                : prevProject.vendors
+              vendors: [...(prevProject.vendors || []), ...newVendors]
             };
           });
         } else {
@@ -270,6 +272,21 @@ export const useVibeWedding = () => {
             vendors: data.vendors || []
           });
         }
+      } else if (data.vendors && data.vendors.length > 0 && project) {
+        // Mode conversationnel mais avec vendors : les ajouter au projet existant
+        setProject(prevProject => {
+          if (!prevProject) return null;
+          
+          const existingVendorIds = new Set(prevProject.vendors?.map(v => v.id) || []);
+          const newVendors = data.vendors.filter((v: Vendor) => !existingVendorIds.has(v.id));
+          
+          if (newVendors.length === 0) return prevProject;
+          
+          return {
+            ...prevProject,
+            vendors: [...(prevProject.vendors || []), ...newVendors]
+          };
+        });
       }
 
       // Incrémenter le compteur de prompts après succès
