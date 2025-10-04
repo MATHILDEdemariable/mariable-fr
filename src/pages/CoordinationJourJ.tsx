@@ -171,37 +171,6 @@ const CoordinationJourJ: React.FC = () => {
           </div>
         </section>
 
-        {/* Hero Section */}
-        
-
-        {/* Benefits Section */}
-        
-
-        {/* Features Section */}
-        <section className="py-12 px-4">
-          <div className="container mx-auto max-w-6xl">
-            
-            
-          </div>
-        </section>
-
-        {/* Video Demo Section */}
-        <section className="py-12 px-4 bg-white">
-          <div className="container mx-auto max-w-4xl">
-            <h2 className="text-2xl md:text-3xl font-serif text-center mb-8 text-wedding-black">
-              Découvrez Mon Jour J en action
-            </h2>
-            <div className="bg-gray-100 rounded-lg p-4 aspect-video mb-8">
-              <iframe src="https://www.loom.com/embed/a0d0d52de99d4af59d67604f01c8af14?sid=a3c17f33-22ba-42a2-a046-8c73a657565f" frameBorder="0" allowFullScreen className="w-full h-full rounded-lg" title="Démonstration Mon Jour J"></iframe>
-            </div>
-            <div className="text-center">
-              <Button onClick={() => navigate('/dashboard')} className="bg-wedding-olive text-white hover:bg-wedding-olive/90 px-8 py-3">
-                Découvrir l'outil, payer plus tard
-              </Button>
-            </div>
-          </div>
-        </section>
-
         {/* How it works */}
         <section className="py-12 md:py-16 bg-gray-50 animate-fade-in">
           <div className="container mx-auto px-4">
@@ -252,6 +221,23 @@ const CoordinationJourJ: React.FC = () => {
             <p className="text-center text-lg italic text-gray-700 max-w-3xl mx-auto">
               Mariable, c'est l'outil unique qui permet à vos proches et prestataires de gérer le Jour J avec ou sans vous :-)
             </p>
+          </div>
+        </section>
+
+        {/* Video Demo Section */}
+        <section className="py-12 px-4 bg-white">
+          <div className="container mx-auto max-w-4xl">
+            <h2 className="text-2xl md:text-3xl font-serif text-center mb-8 text-wedding-black">
+              Découvrez Mon Jour J en action
+            </h2>
+            <div className="bg-gray-100 rounded-lg p-4 aspect-video mb-8">
+              <iframe src="https://www.loom.com/embed/a0d0d52de99d4af59d67604f01c8af14?sid=a3c17f33-22ba-42a2-a046-8c73a657565f" frameBorder="0" allowFullScreen className="w-full h-full rounded-lg" title="Démonstration Mon Jour J"></iframe>
+            </div>
+            <div className="text-center">
+              <Button onClick={() => navigate('/dashboard')} className="bg-wedding-olive text-white hover:bg-wedding-olive/90 px-8 py-3">
+                Découvrir l'outil, payer plus tard
+              </Button>
+            </div>
           </div>
         </section>
 
