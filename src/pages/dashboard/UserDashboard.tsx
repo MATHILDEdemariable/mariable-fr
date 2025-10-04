@@ -28,6 +28,7 @@ import AvantJourJPage from './AvantJourJPage';
 import ApresJourJPage from './ApresJourJPage';
 import ChecklistMariagePage from './ChecklistMariagePage';
 import MonMariage from './MonMariage';
+import MonMariageDetail from './MonMariageDetail';
 
 const UserDashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -65,6 +66,7 @@ const UserDashboard: React.FC = () => {
         <Route path="/" element={<DashboardLayout />}>
           <Route index element={<ProjectSummary />} />
           <Route path="mon-mariage" element={<MonMariage />} />
+          <Route path="mon-mariage/:projectId" element={<MonMariageDetail />} />
           <Route path="planning" element={<PlanningPage />} />
           <Route path="tasks" element={<ChecklistPage />} />
           <Route path="budget" element={<BudgetPage />} />

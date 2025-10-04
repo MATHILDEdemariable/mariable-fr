@@ -32,7 +32,7 @@ const VibeWedding: React.FC = () => {
 
       <SimpleHeader />
 
-      <div className="flex h-screen pt-16 bg-background overflow-hidden">
+      <div className="flex h-[calc(100vh-64px)] mt-16 bg-background overflow-hidden">
         {/* Zone principale - One Pager en full page */}
         <div className="flex-1 overflow-hidden">
           {!project ? (

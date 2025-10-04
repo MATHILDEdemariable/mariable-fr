@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -114,12 +114,11 @@ const MonMariage = () => {
           <Heart className="w-8 h-8 text-premium-rose" />
           <h1 className="text-3xl font-serif font-bold">Mon Mariage</h1>
         </div>
-        <Button
-          onClick={() => navigate('/vibe-wedding')}
-          className="bg-premium-sage hover:bg-premium-sage-dark"
-        >
-          <Plus className="w-4 h-4 mr-2" />
-          Créer un nouveau projet
+        <Button asChild className="bg-premium-sage hover:bg-premium-sage-dark">
+          <Link to="/vibe-wedding">
+            <Plus className="w-4 h-4 mr-2" />
+            Créer un nouveau projet
+          </Link>
         </Button>
       </div>
 
@@ -132,12 +131,11 @@ const MonMariage = () => {
             <p className="text-muted-foreground mb-6 max-w-md">
               Créez votre premier projet de mariage avec l'IA pour générer un plan complet avec budget, planning et prestataires
             </p>
-            <Button
-              onClick={() => navigate('/vibe-wedding')}
-              className="bg-premium-sage hover:bg-premium-sage-dark"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Créer mon projet
+            <Button asChild className="bg-premium-sage hover:bg-premium-sage-dark">
+              <Link to="/vibe-wedding">
+                <Plus className="w-4 h-4 mr-2" />
+                Créer mon projet
+              </Link>
             </Button>
           </CardContent>
         </Card>
@@ -195,13 +193,7 @@ const MonMariage = () => {
                     variant="outline"
                     size="sm"
                     className="flex-1"
-                    onClick={() => {
-                      // TODO: Implémenter la vue détaillée
-                      toast({
-                        title: "Fonctionnalité à venir",
-                        description: "La vue détaillée sera bientôt disponible"
-                      });
-                    }}
+                    onClick={() => navigate(`/dashboard/mon-mariage/${project.id}`)}
                   >
                     <Eye className="w-4 h-4 mr-2" />
                     Voir
