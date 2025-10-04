@@ -10,6 +10,10 @@ interface VibeWeddingHeroProps {
 const VibeWeddingHero: React.FC<VibeWeddingHeroProps> = ({ onStartConversation }) => {
   const [input, setInput] = useState('');
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
+  const [displayedText, setDisplayedText] = useState('');
+  const [isTyping, setIsTyping] = useState(true);
+  
+  const fullText = "Faites de votre mariage une expérience exceptionnelle";
   
   const placeholders = [
     "Décrivez votre projet de mariage...",
@@ -17,6 +21,18 @@ const VibeWeddingHero: React.FC<VibeWeddingHeroProps> = ({ onStartConversation }
     "Ex: Mariage élégant à Paris pour 100 personnes",
     "Ex: Mariage bohème à Lyon, 60 invités, budget 20 000€"
   ];
+
+  // Typing effect for title
+  useEffect(() => {
+    if (displayedText.length < fullText.length) {
+      const timeout = setTimeout(() => {
+        setDisplayedText(fullText.slice(0, displayedText.length + 1));
+      }, 50);
+      return () => clearTimeout(timeout);
+    } else {
+      setIsTyping(false);
+    }
+  }, [displayedText]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -53,9 +69,10 @@ const VibeWeddingHero: React.FC<VibeWeddingHeroProps> = ({ onStartConversation }
           </div>
         </div>
 
-        {/* Title */}
-        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-white mb-6 leading-tight">
-          Faites de votre mariage une expérience exceptionnelle
+        {/* Title with typing effect */}
+        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-white mb-6 leading-tight min-h-[120px] sm:min-h-[140px] flex items-center justify-center">
+          {displayedText}
+          {isTyping && <span className="animate-pulse ml-1">|</span>}
         </h1>
 
         {/* Subtitle */}
