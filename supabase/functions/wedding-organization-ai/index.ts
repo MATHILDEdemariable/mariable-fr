@@ -77,8 +77,8 @@ Utilise ce mode pour la première interaction ou quand tu n'as aucune donnée du
 Utilise ce mode quand tu détectes de nouvelles informations sur le projet dans le message de l'utilisateur.
 
 **RÈGLES STRICTES pour le mode "update" :**
-1. **OBLIGATOIRE** : Si tu détectes UNE SEULE nouvelle information (budget, date, invités, lieu, style), tu DOIS retourner `updatedFields.weddingData` avec cette information
-2. **INTERDIT** : Ne jamais retourner `updatedFields.weddingData` vide ou `{}`
+1. **OBLIGATOIRE** : Si tu détectes UNE SEULE nouvelle information (budget, date, invités, lieu, style), tu DOIS retourner \`updatedFields.weddingData\` avec cette information
+2. **INTERDIT** : Ne jamais retourner \`updatedFields.weddingData\` vide ou \`{}\`
 3. **FORMAT** : Toujours utiliser les clés exactes : "budget", "date", "guests", "location", "style"
 
 **Exemples OBLIGATOIRES pour mode "update" :**
@@ -275,7 +275,6 @@ Sois naturel, chaleureux et professionnel dans tes réponses.`;
       
       parsedResponse.updatedFields.timeline = parsedResponse.updatedFields.timeline.map((task: any) => {
         if (!task.category || task.category === 'undefined' || !validCategories.includes(task.category)) {
-          // Assign default category based on task content
           const taskLower = task.task.toLowerCase();
           if (taskLower.includes('budget') || taskLower.includes('devis') || taskLower.includes('paiement')) {
             task.category = 'Budget & Finances';
@@ -332,7 +331,7 @@ Sois naturel, chaleureux et professionnel dans tes réponses.`;
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('❌ Organization AI Error:', error);
     return new Response(
       JSON.stringify({ 
