@@ -113,8 +113,15 @@ serve(async (req) => {
   }
 
   try {
-    const { message, conversationId, sessionId, userId, currentProject } = await req.json();
-    console.log('📨 Received request:', { conversationId, sessionId, userId, messageLength: message?.length, hasCurrentProject: !!currentProject });
+    const { message, conversationId, sessionId, userId, currentProject, organizationMode = true } = await req.json();
+    console.log('📨 Received request:', { 
+      conversationId, 
+      sessionId, 
+      userId, 
+      messageLength: message?.length, 
+      hasCurrentProject: !!currentProject,
+      organizationMode
+    });
     
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
     const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
@@ -148,17 +155,36 @@ serve(async (req) => {
     // Construire les messages pour l'IA
     const systemPrompt = `Tu es un wedding planner professionnel expert basé en France. Tu maîtrises parfaitement les 10 étapes clés de l'organisation d'un mariage.
 
+⚠️ MODE UTILISATEUR : ${organizationMode ? '📝 ORGANISATION' : '💬 CONVERSATION'}
+
+${organizationMode ? `
+🔴 MODE ORGANISATION ACTIVÉ :
+- L'utilisateur VEUT QUE TU MODIFIES SON PROJET avec ses nouvelles informations
+- Si projet existant : utilise mode "update" avec updatedFields contenant UNIQUEMENT les champs modifiés
+- Si nouveau projet : utilise mode "initial" avec weddingData complet
+- Si recherche prestataire : utilise mode "vendor_search"
+- TOUJOURS mettre à jour les champs mentionnés par l'utilisateur
+- Confirme chaque modification dans ton message
+` : `
+🟢 MODE CONVERSATION ACTIVÉ :
+- L'utilisateur NE VEUT PAS modifier son projet
+- Utilise UNIQUEMENT mode "conversational": true
+- Tu peux chercher des prestataires (mode "vendor_search") MAIS sans créer/modifier le projet
+- Réponds aux questions, donne des conseils, mais N'ALTÈRE PAS les données du projet
+- Sois chaleureux mais ne modifie JAMAIS le weddingData/budget/timeline
+`}
+
 ⚠️ FORMAT STRUCTURÉ OBLIGATOIRE :
 Tu utilises TOUJOURS la fonction "wedding_response" pour structurer ta réponse. Cette fonction garantit que tes données sont toujours exploitables.
 
 Tu as CINQ modes de réponse (champ "mode" obligatoire) :
 
-1. MODE "initial" - Première description complète du projet :
+1. MODE "initial" - Première description complète du projet (SEULEMENT si organizationMode = true) :
 - Remplis TOUS les champs : weddingData, summary, budgetBreakdown, timeline
 - Génère un rétroplanning complet basé sur les 10 étapes professionnelles
 - Message chaleureux et personnalisé
 
-2. MODE "update" - Modification d'un projet existant :
+2. MODE "update" - Modification d'un projet existant (SEULEMENT si organizationMode = true) :
 - CRITIQUE : Utilise UNIQUEMENT le champ "updatedFields" 
 - Dans updatedFields.weddingData, mets UNIQUEMENT les champs modifiés par l'utilisateur
 - Exemples :
@@ -172,8 +198,9 @@ Tu as CINQ modes de réponse (champ "mode" obligatoire) :
 - conversational: true
 - Juste un message chaleureux
 - Pas de données structurées
+- Utilise CE MODE si organizationMode = false (mode conversation)
 
-4. MODE "vendor_project" - Demande de prestataire SANS projet complet :
+4. MODE "vendor_project" - Demande de prestataire SANS projet complet (SEULEMENT si organizationMode = true) :
 - Si l'utilisateur demande UNIQUEMENT un prestataire (sans budget/invités/date)
 - Crée un projet minimal avec weddingData à null
 - ask_location: true pour demander la région
@@ -485,11 +512,12 @@ CATÉGORIES DU RÉTROPLANNING (si génération nécessaire) :
           user_id: userId || null,
           session_id: sessionId,
           messages: newMessages,
-          wedding_context: !parsedResponse.conversational ? {
+          wedding_context: !parsedResponse.conversational && organizationMode ? {
             summary: parsedResponse.summary,
             weddingData: parsedResponse.weddingData,
             budgetBreakdown: parsedResponse.budgetBreakdown,
-            timeline: parsedResponse.timeline
+            timeline: parsedResponse.timeline,
+            vendors: vendors
           } : null
         })
         .select()
@@ -502,103 +530,12 @@ CATÉGORIES DU RÉTROPLANNING (si génération nécessaire) :
       }
     }
 
-    // Recherche intelligente de prestataires (IMPROVED VERSION)
-    // vendors déjà initialisé plus haut pour éviter les erreurs de référence
-    const shouldSearchVendors = detectedCategory || parsedResponse.mode === 'vendor_search';
-    
-    if (shouldSearchVendors) {
-      const finalCategory = detectedCategory || parsedResponse.category;
-      const searchLocation = locationFromMessage || 
-                            parsedResponse.location || 
-                            currentProject?.weddingData?.location;
-      
-      console.log('🎯 Performing vendor search:', { 
-        category: finalCategory, 
-        location: searchLocation,
-        mode: parsedResponse.mode,
-        askLocation: parsedResponse.ask_location
-      });
-
-      // Only search if we have a location AND not asking for location
-      if (searchLocation && finalCategory && parsedResponse.ask_location !== true) {
-        console.log(`🔍 Searching: ${finalCategory} in region "${searchLocation}"`);
-        
-        // Search by region first (most accurate) - Using EXACT ENUM value with .eq()
-        const { data: regionVendors, error: vendorError } = await supabase
-          .from('prestataires_rows')
-          .select('id, nom, categorie, ville, region, prix_a_partir_de, prix_par_personne, description, email, telephone, slug')
-          .eq('categorie', finalCategory)
-          .eq('visible', true)
-          .eq('region', searchLocation)
-          .order('created_at', { ascending: false })
-          .limit(3);
-
-        if (vendorError) {
-          console.error('❌ Error fetching vendors by region:', vendorError);
-        } else if (regionVendors && regionVendors.length > 0) {
-          vendors = regionVendors;
-          console.log(`✅ Found ${vendors.length} vendors in region "${searchLocation}"`);
-        } else {
-          // Fallback: try by ville if region returns nothing
-          console.log(`⚠️ No vendors in region, trying by ville...`);
-          const { data: cityVendors } = await supabase
-            .from('prestataires_rows')
-            .select('id, nom, categorie, ville, region, prix_a_partir_de, prix_par_personne, description, email, telephone, slug')
-            .eq('categorie', finalCategory)
-            .eq('visible', true)
-            .ilike('ville', `%${searchLocation}%`)
-            .order('created_at', { ascending: false })
-            .limit(3);
-            
-          if (cityVendors && cityVendors.length > 0) {
-            vendors = cityVendors;
-            console.log(`✅ Found ${vendors.length} vendors by ville`);
-          } else {
-            // Last resort: any vendor in this category (limited to 3)
-            console.log(`⚠️ No vendors found, showing any from category (max 3)`);
-            const { data: anyVendors } = await supabase
-              .from('prestataires_rows')
-              .select('id, nom, categorie, ville, region, prix_a_partir_de, prix_par_personne, description, email, telephone, slug')
-              .eq('categorie', finalCategory)
-              .eq('visible', true)
-              .order('created_at', { ascending: false })
-              .limit(3);
-              
-            vendors = anyVendors || [];
-            console.log(`✅ Found ${vendors.length} vendors (any location)`);
-          }
-        }
-      }
-    }
-    
-    // Legacy: general vendor search if we have a new project with location (MAX 3)
-    if (vendors.length === 0 && parsedResponse.weddingData?.location && !parsedResponse.conversational) {
-      console.log('🔄 Performing general vendor search for new project');
-      
-      // Extract exact ENUM value from location
-      const exactLocation = extractLocationFromMessage(parsedResponse.weddingData.location);
-      
-      if (exactLocation) {
-        const { data: generalVendors, error: vendorError } = await supabase
-          .from('prestataires_rows')
-          .select('id, nom, categorie, ville, region, prix_a_partir_de, prix_par_personne, description, email, telephone, slug')
-          .eq('region', exactLocation)
-          .eq('visible', true)
-          .order('created_at', { ascending: false })
-          .limit(3);
-
-        if (vendorError) {
-          console.error('❌ Error fetching general vendors:', vendorError);
-        } else {
-          vendors = generalVendors || [];
-          console.log(`✅ Found ${vendors.length} general vendors`);
-        }
-      }
-    }
-
     return new Response(
       JSON.stringify({
-        response: parsedResponse,
+        response: {
+          ...parsedResponse,
+          organizationMode
+        },
         conversationId: finalConversationId,
         vendors,
         askLocation: parsedResponse.ask_location || false

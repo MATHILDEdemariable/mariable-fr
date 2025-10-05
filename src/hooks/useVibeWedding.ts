@@ -234,7 +234,7 @@ export const useVibeWedding = () => {
     }
   }, [loadConversations, location.search, navigate, loadConversation, loadProjectFromDatabase]);
 
-  const sendMessage = useCallback(async (userMessage: string) => {
+  const sendMessage = useCallback(async (userMessage: string, organizationMode: boolean = true) => {
     // Vérifier l'authentification et le compteur de prompts
     const { data: { user } } = await supabase.auth.getUser();
     
@@ -265,7 +265,7 @@ export const useVibeWedding = () => {
     setMessages(prev => [...prev, userMsg]);
 
     try {
-      console.log('🚀 Sending message with project:', project);
+      console.log('🚀 Sending message with project and organizationMode:', { project, organizationMode });
       
       const { data, error } = await supabase.functions.invoke('vibe-wedding-ai', {
         body: {
@@ -273,7 +273,8 @@ export const useVibeWedding = () => {
           conversationId,
           sessionId,
           userId: user?.id || null,
-          currentProject: project // Passer le projet actuel pour les mises à jour
+          currentProject: project,
+          organizationMode
         }
       });
 
@@ -300,7 +301,11 @@ export const useVibeWedding = () => {
       }
 
       // Gérer les différents modes de réponse
-      if (!data.response.conversational) {
+      if (!organizationMode) {
+        // MODE CONVERSATION : Ne jamais modifier le projet, juste afficher les vendors dans le message
+        console.log('💬 Mode Conversation - Projet non modifié');
+      } else if (!data.response.conversational) {
+        // MODE ORGANISATION : Merger intelligemment avec le projet existant
         if (data.response.mode === 'update' || data.response.mode === 'vendor_project') {
           // MODE UPDATE ou VENDOR_PROJECT : Merge intelligent avec le projet existant
           setProject(prevProject => {
@@ -336,6 +341,18 @@ export const useVibeWedding = () => {
               vendors: [...(prevProject.vendors || []), ...newVendors]
             };
           });
+
+          // Toast de confirmation des modifications
+          if (data.response.mode === 'update' && data.response.updatedFields?.weddingData) {
+            const updatedFieldNames = Object.keys(data.response.updatedFields.weddingData);
+            if (updatedFieldNames.length > 0) {
+              toast({
+                title: "✅ Projet mis à jour",
+                description: `Modifications : ${updatedFieldNames.join(', ')}`,
+                duration: 3000,
+              });
+            }
+          }
         } else {
           // MODE INITIAL : Remplacement complet
           setProject({
@@ -346,8 +363,8 @@ export const useVibeWedding = () => {
             vendors: data.vendors || []
           });
         }
-      } else if (data.vendors && data.vendors.length > 0 && project) {
-        // Mode conversationnel mais avec vendors : les ajouter au projet existant
+      } else if (data.vendors && data.vendors.length > 0 && project && organizationMode) {
+        // Mode conversationnel mais avec vendors en mode organisation : les ajouter au projet existant
         setProject(prevProject => {
           if (!prevProject) return null;
           

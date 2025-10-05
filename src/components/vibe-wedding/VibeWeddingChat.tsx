@@ -1,13 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Send, Sparkles } from 'lucide-react';
+import { Send, Sparkles, Info } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { supabase } from '@/integrations/supabase/client';
 import AuthRequiredModal from './AuthRequiredModal';
 import VendorCardInChat from './VendorCardInChat';
 import RegionSelector from './RegionSelector';
 import { Link } from 'react-router-dom';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface Vendor {
   id: string;
@@ -35,7 +36,7 @@ interface Message {
 
 interface VibeWeddingChatProps {
   messages: Message[];
-  onSendMessage: (message: string) => void;
+  onSendMessage: (message: string, organizationMode?: boolean) => void;
   isLoading: boolean;
   promptCount: number;
   showAuthModal: boolean;
@@ -52,6 +53,7 @@ const VibeWeddingChat: React.FC<VibeWeddingChatProps> = ({
 }) => {
   const [input, setInput] = useState('');
   const [user, setUser] = useState<any>(null);
+  const [organizationMode, setOrganizationMode] = useState(true);
   const scrollRef = useRef<HTMLDivElement>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
@@ -91,13 +93,13 @@ const VibeWeddingChat: React.FC<VibeWeddingChatProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (input.trim() && !isLoading) {
-      onSendMessage(input.trim());
+      onSendMessage(input.trim(), organizationMode);
       setInput('');
     }
   };
 
   const handleRegionSelect = (region: string) => {
-    onSendMessage(`Je souhaite des prestataires en ${region}`);
+    onSendMessage(`Je souhaite des prestataires en ${region}`, organizationMode);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -231,6 +233,50 @@ const VibeWeddingChat: React.FC<VibeWeddingChatProps> = ({
       {/* Input */}
       <div className="border-t border-border p-4 bg-card">
         <div className="max-w-3xl mx-auto">
+          {/* Toggle Mode Conversation / Organisation */}
+          <TooltipProvider>
+            <div className="mb-3 flex items-center justify-center gap-3 p-3 bg-card border border-border rounded-lg">
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setOrganizationMode(false)}
+                  type="button"
+                  className={`px-4 py-2 rounded-lg transition-colors text-sm font-medium ${
+                    !organizationMode 
+                      ? 'bg-premium-sage text-white' 
+                      : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                  }`}
+                >
+                  💬 Conversation
+                </button>
+                <button
+                  onClick={() => setOrganizationMode(true)}
+                  type="button"
+                  className={`px-4 py-2 rounded-lg transition-colors text-sm font-medium ${
+                    organizationMode 
+                      ? 'bg-premium-sage text-white' 
+                      : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                  }`}
+                >
+                  📝 Organisation
+                </button>
+              </div>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button type="button" className="text-muted-foreground hover:text-foreground">
+                    <Info className="w-4 h-4" />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent className="max-w-xs">
+                  <p className="text-sm">
+                    <strong>💬 Conversation :</strong> Posez des questions, recherchez des prestataires sans modifier votre projet.
+                    <br/><br/>
+                    <strong>📝 Organisation :</strong> Toutes vos demandes enrichissent automatiquement votre projet de mariage.
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </div>
+          </TooltipProvider>
+          
           {!user && promptCount >= 1 ? (
             <div className="bg-gradient-to-r from-premium-sage to-premium-sage-dark text-white p-6 rounded-xl shadow-lg">
               <div className="flex flex-col md:flex-row items-center justify-between gap-4">
