@@ -4,6 +4,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { ArrowLeft, Send } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useWeddingProject } from '@/contexts/WeddingProjectContext';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -19,10 +20,10 @@ const WeddingOrganizationChat: React.FC<WeddingOrganizationChatProps> = ({ preve
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [project, setProject] = useState<any>(null);
   const [conversationId, setConversationId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
+  const { project, updateProject } = useWeddingProject();
 
   const scrollToBottom = () => {
     if (!preventScroll) {
@@ -63,24 +64,20 @@ const WeddingOrganizationChat: React.FC<WeddingOrganizationChatProps> = ({ preve
         setConversationId(data.conversationId);
       }
 
-      // Update project if there are changes
       if (data.updatedFields) {
-        const updatedProject = {
-          ...project,
-          weddingData: { ...(project?.weddingData || {}), ...data.updatedFields.weddingData },
-          timeline: data.updatedFields.timeline || project?.timeline,
-          budgetBreakdown: data.updatedFields.budgetBreakdown || project?.budgetBreakdown
-        };
-        setProject(updatedProject);
-
-        // Show success toast for specific updates
-        if (data.updatedFields.weddingData) {
-          const updates = Object.keys(data.updatedFields.weddingData).join(', ');
-          toast({
-            title: "Projet mis à jour",
-            description: `Les informations suivantes ont été mises à jour : ${updates}`,
-          });
-        }
+        updateProject({
+          conversationId: data.conversationId,
+          weddingData: data.updatedFields.weddingData,
+          timeline: data.updatedFields.timeline,
+          budgetBreakdown: data.updatedFields.budgetBreakdown,
+        });
+        
+        setConversationId(data.conversationId);
+        
+        toast({
+          title: "✅ Projet mis à jour",
+          description: "Vos informations ont été enregistrées",
+        });
       }
 
     } catch (error: any) {

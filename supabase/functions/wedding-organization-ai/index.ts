@@ -265,6 +265,28 @@ Sois naturel, chaleureux et professionnel dans tes réponses.`;
       weddingDataKeys: Object.keys(parsedResponse.updatedFields?.weddingData || {})
     });
 
+    // Parse budget to ensure it's a number
+    if (parsedResponse.updatedFields?.weddingData) {
+      const wd = parsedResponse.updatedFields.weddingData;
+      
+      if (wd.budget) {
+        let budgetValue = wd.budget;
+        
+        if (typeof budgetValue === 'string') {
+          budgetValue = budgetValue.toLowerCase()
+            .replace(/\s/g, '')
+            .replace(/€/g, '')
+            .replace(/euros?/g, '')
+            .replace(/k/g, '000');
+          
+          budgetValue = parseFloat(budgetValue);
+        }
+        
+        wd.budget = isNaN(budgetValue) ? 0 : budgetValue;
+        console.log('💰 Budget parsed:', wd.budget);
+      }
+    }
+
     // Validate timeline categories
     if (parsedResponse.updatedFields?.timeline) {
       const validCategories = [

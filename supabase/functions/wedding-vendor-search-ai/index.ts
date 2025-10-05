@@ -33,27 +33,28 @@ const cityToRegionMap: Record<string, string> = {
 function detectVendorCategory(message: string): string | null {
   const messageLower = message.toLowerCase();
   
-  const categoryPatterns: Record<string, string[]> = {
-    'Lieu de réception': ['lieu', 'salle', 'château', 'domaine', 'réception', 'hotel', 'restaurant', 'manoir', 'propriété'],
-    'Photographe': ['photographe', 'photo', 'photographie'],
-    'Vidéaste': ['vidéaste', 'vidéo', 'film', 'cinéma'],
-    'Traiteur': ['traiteur', 'restauration', 'repas', 'buffet', 'cocktail'],
-    'DJ': ['dj', 'disc jockey', 'musique', 'animation musicale'],
-    'Groupe de musique': ['groupe', 'orchestre', 'musicien', 'band'],
-    'Fleuriste': ['fleuriste', 'fleur', 'bouquet', 'décoration florale'],
-    'Coiffeur': ['coiffeur', 'coiffure', 'cheveux'],
-    'Maquilleuse': ['maquilleuse', 'maquillage', 'beauté'],
-    'Wedding planner': ['wedding planner', 'organisateur', 'coordinateur'],
-    'Décorateur': ['décorateur', 'décoration', 'déco'],
-    'Pâtissier': ['pâtissier', 'gâteau', 'wedding cake', 'pièce montée']
+  const categoryKeywords: Record<string, string[]> = {
+    'Traiteur': ['traiteur', 'restauration', 'buffet', 'repas', 'menu', 'nourriture', 'cuisine'],
+    'Photographe': ['photographe', 'photo', 'photographie', 'shooting', 'cliché'],
+    'Vidéaste': ['vidéaste', 'vidéo', 'film', 'cinéma', 'caméra'],
+    'DJ': ['dj', 'musique', 'animation musicale', 'soirée', 'ambiance'],
+    'Fleuriste': ['fleuriste', 'fleur', 'bouquet', 'décoration florale', 'centre de table'],
+    'Salle de réception': ['salle', 'lieu', 'réception', 'domaine', 'château', 'espace', 'endroit'],
+    'Wedding planner': ['wedding planner', 'organisateur', 'coordination', 'planificateur'],
+    'Coiffeur': ['coiffeur', 'coiffure', 'maquillage', 'beauté', 'esthétique'],
+    'Robe de mariée': ['robe', 'mariée', 'couture', 'costume', 'tenue'],
+    'Officiant': ['officiant', 'cérémonie', 'célébrant'],
+    'Location': ['location', 'mobilier', 'vaisselle', 'matériel'],
   };
-
-  for (const [category, keywords] of Object.entries(categoryPatterns)) {
+  
+  for (const [category, keywords] of Object.entries(categoryKeywords)) {
     if (keywords.some(keyword => messageLower.includes(keyword))) {
+      console.log(`✅ Catégorie détectée: ${category} (mot-clé: ${keywords.find(k => messageLower.includes(k))})`);
       return category;
     }
   }
   
+  console.log('❌ Aucune catégorie détectée dans:', message);
   return null;
 }
 

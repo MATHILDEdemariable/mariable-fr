@@ -4,6 +4,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { ArrowLeft, Send } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useWeddingProject } from '@/contexts/WeddingProjectContext';
 import RegionSelector from '@/components/vibe-wedding/RegionSelector';
 import VendorSearchCard from './VendorSearchCard';
 
@@ -21,13 +22,16 @@ interface WeddingVendorSearchChatProps {
 }
 
 const WeddingVendorSearchChat: React.FC<WeddingVendorSearchChatProps> = ({ preventScroll, onBack }) => {
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<Message[]>([
+    { role: 'assistant', content: "👋 Je suis là pour vous aider à trouver les meilleurs prestataires pour votre mariage. Quel type de prestataire recherchez-vous ?" }
+  ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showRegionSelector, setShowRegionSelector] = useState(false);
   const [pendingCategory, setPendingCategory] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
+  const { addVendors } = useWeddingProject();
 
   const scrollToBottom = () => {
     if (!preventScroll) {
@@ -107,17 +111,21 @@ const WeddingVendorSearchChat: React.FC<WeddingVendorSearchChatProps> = ({ preve
         setShowRegionSelector(true);
         setMessages([...newMessages, { role: 'assistant', content: data.message, askLocation: true }]);
       } else {
-        setMessages([...newMessages, { 
-          role: 'assistant', 
-          content: data.message,
-          vendors: data.vendors || []
-        }]);
-
         if (data.vendors && data.vendors.length > 0) {
+          addVendors(data.vendors);
+          
+          setMessages([...newMessages, { 
+            role: 'assistant', 
+            content: data.message,
+            vendors: data.vendors 
+          }]);
+          
           toast({
-            title: "Résultats trouvés",
-            description: `${data.vendors.length} prestataire(s) trouvé(s)`,
+            title: "✅ Prestataires ajoutés",
+            description: `${data.vendors.length} prestataire(s) ajouté(s) à votre projet`,
           });
+        } else {
+          setMessages([...newMessages, { role: 'assistant', content: data.message }]);
         }
       }
 
