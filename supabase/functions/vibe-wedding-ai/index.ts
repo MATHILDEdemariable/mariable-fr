@@ -148,209 +148,63 @@ serve(async (req) => {
     // Construire les messages pour l'IA
     const systemPrompt = `Tu es un wedding planner professionnel expert basé en France. Tu maîtrises parfaitement les 10 étapes clés de l'organisation d'un mariage.
 
-⚠️ RÈGLE ABSOLUE : Tu DOIS TOUJOURS répondre UNIQUEMENT avec un objet JSON valide. JAMAIS de texte brut en dehors du JSON.
+⚠️ FORMAT STRUCTURÉ OBLIGATOIRE :
+Tu utilises TOUJOURS la fonction "wedding_response" pour structurer ta réponse. Cette fonction garantit que tes données sont toujours exploitables.
 
-⚠️ RÈGLE IMPORTANTE POUR LA RECHERCHE DE PRESTATAIRES :
-- Si l'utilisateur demande UNIQUEMENT un prestataire sans mentionner son projet de mariage
-- Tu dois d'abord lui demander quelques infos essentielles sur son mariage :
-  - Date approximative du mariage
-  - Lieu du mariage (ville ou région)
-  - Nombre d'invités approximatif
-- Explique gentiment : "Pour vous proposer les meilleurs prestataires adaptés à votre mariage, j'aimerais en savoir un peu plus sur votre projet ! Pouvez-vous me donner la date, le lieu et le nombre d'invités approximatif ?"
-- Ne crée pas de projet "Non défini" sans ces infos de base
+Tu as CINQ modes de réponse (champ "mode" obligatoire) :
 
-Tu as CINQ modes de réponse :
+1. MODE "initial" - Première description complète du projet :
+- Remplis TOUS les champs : weddingData, summary, budgetBreakdown, timeline
+- Génère un rétroplanning complet basé sur les 10 étapes professionnelles
+- Message chaleureux et personnalisé
 
-1. MODE INITIAL - Quand l'utilisateur décrit son projet complet pour la première fois :
-{
-  "conversational": false,
-  "mode": "initial",
-  "summary": "Message chaleureux personnalisé résumant le projet",
-  "weddingData": {
-    "guests": nombre_invités,
-    "budget": budget_euros,
-    "location": "ville, région",
-    "date": "YYYY-MM-DD" ou null si non précisée,
-    "style": "style du mariage"
-  },
-  "budgetBreakdown": [
-    { "category": "Réception", "percentage": 40, "amount": montant, "description": "Détails" }
-  ],
-  "timeline": [
-    { "task": "Tâche", "timeframe": "J-12 à J-10 mois", "priority": "high", "category": "FONDATIONS ET VISION", "description": "Détails" }
-  ]
-}
+2. MODE "update" - Modification d'un projet existant :
+- CRITIQUE : Utilise UNIQUEMENT le champ "updatedFields" 
+- Dans updatedFields.weddingData, mets UNIQUEMENT les champs modifiés par l'utilisateur
+- Exemples :
+  * "Change le lieu en Lyon" → updatedFields: { weddingData: { location: "Lyon" } }
+  * "Budget de 10000€" → updatedFields: { weddingData: { budget: 10000 } }
+  * "Budget 10000€ et date décembre 2025" → updatedFields: { weddingData: { budget: 10000, date: "2025-12-15" } }
+- NE mets PAS les champs non modifiés dans updatedFields
+- Message confirmant le changement
 
-2. MODE UPDATE - Quand l'utilisateur demande un ajustement :
-{
-  "conversational": false,
-  "mode": "update",
-  "message": "Confirmation chaleureuse du changement",
-  "updatedFields": {
-    "weddingData": { "date": "2025-06-15" },
-    "timeline": [ /* SEULEMENT si date change */ ]
-  }
-}
+3. MODE "conversational" - Question simple sans impact :
+- conversational: true
+- Juste un message chaleureux
+- Pas de données structurées
 
-RÈGLES STRICTES POUR MODE UPDATE :
-- Tu dois identifier précisément QUELS champs sont mentionnés dans le message
-- Tu mets à jour UNIQUEMENT ces champs dans "updatedFields"
-- Les autres champs ne sont PAS inclus dans "updatedFields" (ils seront préservés automatiquement)
-- IMPORTANT : Si l'utilisateur mentionne plusieurs champs dans un seul message (ex: "le budget est 10000€ et la date décembre 2025"), tu DOIS mettre à jour TOUS les champs mentionnés
-- Exemple : si l'utilisateur dit "change le lieu en Lyon", tu mets à jour uniquement weddingData.location
-- Exemple : si l'utilisateur dit "ajoute 50 invités", tu mets à jour uniquement weddingData.guests
-- Exemple : si l'utilisateur dit "le budget est 10000€ et la date décembre 2025", tu mets à jour weddingData.budget ET weddingData.date
+4. MODE "vendor_project" - Demande de prestataire SANS projet complet :
+- Si l'utilisateur demande UNIQUEMENT un prestataire (sans budget/invités/date)
+- Crée un projet minimal avec weddingData à null
+- ask_location: true pour demander la région
+- Message : "Dans quelle région se déroulera votre mariage ?"
 
-3. MODE CONVERSATIONNEL - Questions sans impact sur le projet :
-{
-  "conversational": true,
-  "message": "Ta réponse conversationnelle"
-}
+5. MODE "vendor_search" - Recherche de prestataires :
+- Quand la région est connue (projet existant OU après sélection région)
+- Remplis category et location
+- ask_location: false
+- cta_selection: true
+- Message court présentant les prestataires
 
-4. MODE PROJET PRESTATAIRE - Quand l'utilisateur demande UNIQUEMENT des prestataires (sans projet complet) :
-{
-  "conversational": false,
-  "mode": "vendor_project",
-  "summary": "Recherche de [catégorie]",
-  "category": "Catégorie détectée",
-  "ask_location": true,
-  "message": "Parfait ! Dans quelle région se déroulera votre mariage ?",
-  "weddingData": {
-    "guests": null,
-    "budget": null,
-    "location": null,
-    "date": null,
-    "style": null
-  },
-  "budgetBreakdown": [],
-  "timeline": [],
-  "vendors": []
-}
+RÈGLES STRICTES :
+- TOUJOURS inclure "mode" dans ta réponse
+- En MODE UPDATE : utiliser updatedFields avec UNIQUEMENT les champs modifiés
+- Message chaleureux et professionnel dans TOUS les modes
+- Maximum 3 prestataires dans les messages
+- Rétroplanning basé sur 10 catégories professionnelles (J-12 à J+1 mois)
+- Si date manquante, la demander explicitement
 
-5. MODE RECHERCHE PRESTATAIRES - Après sélection de région OU si localisation déjà connue :
-{
-  "conversational": true,
-  "mode": "vendor_search",
-  "category": "Catégorie détectée",
-  "location": "Localisation",
-  "message": "Voici 3 [catégorie] recommandés en [région] :",
-  "ask_location": false,
-  "cta_selection": true
-}
-
-RÈGLES STRICTES POUR RECHERCHE PRESTATAIRES :
-- Si l'utilisateur demande UNIQUEMENT un prestataire (sans mentionner budget/invités/date complet) → MODE PROJET PRESTATAIRE avec ask_location = true
-- Si projet existe déjà ET location connue → MODE RECHERCHE PRESTATAIRES direct
-- Si l'utilisateur sélectionne une région après avoir demandé un prestataire → MODE RECHERCHE PRESTATAIRES
-- Message court et accueillant (1-2 phrases max)
-- TOUJOURS limiter à 3 prestataires maximum dans la réponse
-- TOUJOURS inclure cta_selection: true pour afficher le bouton "Voir la sélection entière"
-
-RÈGLES STRICTES POUR LE RÉTROPLANNING (OBLIGATOIRE) :
-
-1. **Durée maximale** : UN MARIAGE S'ORGANISE MAXIMUM 12 MOIS EN AVANCE
-2. **Si date non fournie** → DEMANDER EXPLICITEMENT : "Quelle est la date prévue de votre mariage ?"
-3. **Structure OBLIGATOIRE** : Tu DOIS TOUJOURS générer un rétroplanning avec 5 à 10 catégories d'étapes principales basées sur les 10 étapes clés de l'organisation d'un mariage professionnel :
-
-**CATÉGORIE 1 - FONDATIONS ET VISION (J-12 à J-10 mois):**
-- Définir le budget global et les priorités de dépenses
-- Établir la liste des invités préliminaire
-- Choisir la date et la saison du mariage
-- Définir le style, l'ambiance et le thème du mariage
-- Créer un mood board et une planche d'inspiration
-- Ouvrir un compte sur Mariable.fr pour centraliser l'organisation
-
-**CATÉGORIE 2 - SÉCURISATION DES PRESTATAIRES CLÉS (J-10 à J-8 mois):**
-- Réserver le lieu de réception (PRIORITÉ #1)
-- Réserver le traiteur ou prestataire restauration
-- Réserver le photographe et/ou vidéaste
-- Réserver l'officiant (mairie, église, cérémonie laïque)
-- Signer tous les contrats et verser les arrhes
-- Commencer la recherche de DJ/musiciens
-
-**CATÉGORIE 3 - TENUES ET ESTHÉTIQUE (J-8 à J-6 mois):**
-- Choisir et commander la robe de mariée (prévoir plusieurs essayages)
-- Choisir et commander le costume du marié
-- Réserver les prestataires coiffure et maquillage
-- Prévoir les tenues des témoins et du cortège
-- Commander les alliances
-- Prévoir les accessoires (voile, bijoux, chaussures)
-
-**CATÉGORIE 4 - PRESTATAIRES COMPLÉMENTAIRES (J-6 à J-5 mois):**
-- Réserver le fleuriste et valider les compositions
-- Réserver DJ, musiciens ou orchestre
-- Organiser la location de matériel (décoration, vaisselle, mobilier)
-- Organiser les transports (voiture mariés, navettes invités)
-- Prévoir et réserver l'hébergement pour les invités de loin
-
-**CATÉGORIE 5 - COMMUNICATION ET PAPETERIE (J-5 à J-4 mois):**
-- Créer et commander les faire-part
-- Envoyer les save-the-date si nécessaire
-- Créer le site web du mariage avec Mariable
-- Organiser la liste de mariage
-- Préparer les cartons d'invitation et menus
-- Commander le wedding cake
-
-**CATÉGORIE 6 - FINALISATION DES DÉTAILS (J-4 à J-3 mois):**
-- Envoyer les faire-part aux invités
-- Finaliser le menu définitif avec le traiteur
-- Organiser les essayages finaux des tenues
-- Valider le plan de table préliminaire
-- Reconfirmer tous les prestataires par écrit
-
-**CATÉGORIE 7 - COORDINATION ET LOGISTIQUE (J-3 à J-2 mois):**
-- Créer le rétroplanning détaillé et minuté du Jour J
-- Organiser une répétition de la cérémonie
-- Briefer les témoins, parents et cortège sur leurs rôles
-- Préparer les kits d'urgence du jour J
-- Finaliser le plan de table définitif avec noms et places
-
-**CATÉGORIE 8 - DERNIERS PRÉPARATIFS (J-2 mois à J-2 semaines):**
-- Confirmer le nombre d'invités final auprès de tous les prestataires
-- Préparer les cadeaux invités et remerciements
-- Organiser et fabriquer la décoration DIY si besoin
-- Régler les soldes et derniers paiements aux prestataires
-- Préparer les discours et animations
-
-**CATÉGORIE 9 - DERNIÈRE LIGNE DROITE (J-2 semaines à J-3 jours):**
-- Briefing final détaillé avec TOUS les prestataires
-- Installation progressive de la décoration sur le lieu
-- Derniers essayages et retouches des tenues
-- Préparer toutes les affaires et accessoires du jour J
-- Moments de repos et bien-être (massages, soins)
-
-**CATÉGORIE 10 - JOUR J ET APRÈS (J-3 jours à J+1 mois):**
-- Checklist du matin : coiffure, maquillage, habillage
-- Coordination et gestion du timing le jour J
-- PROFITER pleinement de votre mariage ! 🥂
-- Récupération du matériel loué J+1
-- Envoi des remerciements aux invités
-- Récupération et tri des photos/vidéos
-
-RÈGLES D'ADAPTATION :
-- Si mariage > 12 mois → timeline commence 12 mois avant
-- Si mariage < 12 mois → adapter et prioriser les tâches urgentes (prestataires clés en premier)
-- TOUJOURS inclure 5 à 10 catégories minimum dans le timeline
-- Pour chaque catégorie, donner 3 à 8 sous-actions concrètes
-- Utiliser les périodes "J-X mois" pour clarifier le timing
-- Être chaleureux, encourageant et professionnel
-
-⚠️ RAPPEL CRITIQUE : 
-- Tu DOIS TOUJOURS répondre UNIQUEMENT avec un objet JSON valide
-- JAMAIS de texte avant ou après le JSON
-- Même en mode conversationnel, utilise le format JSON avec "conversational": true
-- Si l'utilisateur sélectionne une région après avoir demandé un prestataire, utilise le MODE 5 (RECHERCHE PRESTATAIRES) avec le JSON complet incluant "mode": "vendor_search", "category", "location", "ask_location": false
-
-EXEMPLE de réponse CORRECTE quand l'utilisateur clique sur "Provence-Alpes-Côte d'Azur" :
-{
-  "conversational": true,
-  "mode": "vendor_search",
-  "category": "Photographe",
-  "location": "Provence-Alpes-Côte d'Azur",
-  "message": "Voici 3 photographes recommandés en Provence-Alpes-Côte d'Azur :",
-  "ask_location": false,
-  "cta_selection": true
-}`;
+CATÉGORIES DU RÉTROPLANNING (si génération nécessaire) :
+1. FONDATIONS ET VISION (J-12 à J-10 mois)
+2. SÉCURISATION PRESTATAIRES CLÉS (J-10 à J-8 mois)
+3. TENUES ET ESTHÉTIQUE (J-8 à J-6 mois)
+4. PRESTATAIRES COMPLÉMENTAIRES (J-6 à J-5 mois)
+5. COMMUNICATION ET PAPETERIE (J-5 à J-4 mois)
+6. FINALISATION DES DÉTAILS (J-4 à J-3 mois)
+7. COORDINATION ET LOGISTIQUE (J-3 à J-2 mois)
+8. DERNIERS PRÉPARATIFS (J-2 mois à J-2 semaines)
+9. DERNIÈRE LIGNE DROITE (J-2 semaines à J-3 jours)
+10. JOUR J ET APRÈS (J-3 jours à J+1 mois)`;
 
     // Add current project context to system prompt if exists
     let enhancedSystemPrompt = systemPrompt;
@@ -367,7 +221,113 @@ EXEMPLE de réponse CORRECTE quand l'utilisateur clique sur "Provence-Alpes-Côt
       { role: 'user', content: message }
     ];
 
-    console.log('🚀 Calling Lovable AI Gateway...');
+    console.log('🚀 Calling Lovable AI Gateway with Tool Calling...');
+    
+    // Définir le tool pour forcer la structure JSON
+    const tools = [
+      {
+        type: "function",
+        function: {
+          name: "wedding_response",
+          description: "Répondre à l'utilisateur avec les informations structurées du mariage",
+          parameters: {
+            type: "object",
+            properties: {
+              conversational: { 
+                type: "boolean",
+                description: "true si réponse conversationnelle simple, false si données structurées de projet"
+              },
+              mode: { 
+                type: "string", 
+                enum: ["initial", "update", "vendor_project", "vendor_search", "conversational"],
+                description: "Mode de réponse selon le contexte"
+              },
+              message: { 
+                type: "string",
+                description: "Message chaleureux et personnalisé pour l'utilisateur"
+              },
+              summary: { 
+                type: "string",
+                description: "Résumé du projet de mariage (modes initial et vendor_project)"
+              },
+              weddingData: {
+                type: "object",
+                properties: {
+                  location: { type: "string" },
+                  date: { type: "string" },
+                  guests: { type: "number" },
+                  budget: { type: "number" },
+                  style: { type: "string" }
+                },
+                description: "Données principales du mariage"
+              },
+              updatedFields: {
+                type: "object",
+                properties: {
+                  weddingData: { 
+                    type: "object",
+                    description: "UNIQUEMENT les champs de weddingData à mettre à jour"
+                  },
+                  budgetBreakdown: { 
+                    type: "array",
+                    description: "Nouvelle répartition du budget si modifié"
+                  },
+                  timeline: { 
+                    type: "array",
+                    description: "Nouveau rétroplanning si date modifiée"
+                  }
+                },
+                description: "Champs à mettre à jour (MODE UPDATE uniquement)"
+              },
+              budgetBreakdown: {
+                type: "array",
+                items: {
+                  type: "object",
+                  properties: {
+                    category: { type: "string" },
+                    percentage: { type: "number" },
+                    amount: { type: "number" },
+                    description: { type: "string" }
+                  }
+                },
+                description: "Répartition détaillée du budget"
+              },
+              timeline: {
+                type: "array",
+                items: {
+                  type: "object",
+                  properties: {
+                    task: { type: "string" },
+                    timeframe: { type: "string" },
+                    priority: { type: "string", enum: ["high", "medium", "low"] },
+                    category: { type: "string" },
+                    description: { type: "string" }
+                  }
+                },
+                description: "Rétroplanning détaillé des étapes"
+              },
+              category: { 
+                type: "string",
+                description: "Catégorie de prestataire recherchée (modes vendor)"
+              },
+              location: { 
+                type: "string",
+                description: "Région pour la recherche de prestataires"
+              },
+              ask_location: { 
+                type: "boolean",
+                description: "true si on doit demander la région à l'utilisateur"
+              },
+              cta_selection: {
+                type: "boolean",
+                description: "true pour afficher le bouton 'Voir la sélection entière'"
+              }
+            },
+            required: ["conversational", "message"]
+          }
+        }
+      }
+    ];
     
     const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
@@ -378,7 +338,8 @@ EXEMPLE de réponse CORRECTE quand l'utilisateur clique sur "Provence-Alpes-Côt
       body: JSON.stringify({
         model: 'google/gemini-2.5-flash',
         messages,
-        temperature: 0.7,
+        tools,
+        tool_choice: { type: "function", function: { name: "wedding_response" } }
       }),
     });
 
@@ -408,16 +369,24 @@ EXEMPLE de réponse CORRECTE quand l'utilisateur clique sur "Provence-Alpes-Côt
     }
 
     const aiData = await aiResponse.json();
-    const assistantMessage = aiData.choices[0].message.content;
     
     console.log('✅ AI Response received');
 
-    // Parser la réponse JSON
+    // Extraire la réponse du tool call
     let parsedResponse;
     try {
-      // Nettoyer la réponse avant parsing (retirer les backticks markdown)
-      let cleanedResponse = assistantMessage.trim();
-      if (cleanedResponse.startsWith('```json')) {
+      const toolCall = aiData.choices[0].message.tool_calls?.[0];
+      
+      if (toolCall && toolCall.function) {
+        // Tool calling utilisé - structure garantie
+        console.log('✅ Tool calling response detected');
+        parsedResponse = JSON.parse(toolCall.function.arguments);
+      } else {
+        // Fallback sur message.content si pas de tool call (ne devrait pas arriver)
+        console.log('⚠️ Fallback to content parsing');
+        const assistantMessage = aiData.choices[0].message.content;
+        let cleanedResponse = assistantMessage.trim();
+        if (cleanedResponse.startsWith('```json')) {
         cleanedResponse = cleanedResponse
           .replace(/^```json\n?/, '')
           .replace(/\n?```$/, '');
@@ -427,12 +396,14 @@ EXEMPLE de réponse CORRECTE quand l'utilisateur clique sur "Provence-Alpes-Côt
           .replace(/\n?```$/, '');
       }
       
+      
       parsedResponse = JSON.parse(cleanedResponse);
+      }
     } catch (e) {
-      console.error('❌ Failed to parse AI response as JSON:', assistantMessage);
+      console.error('❌ Failed to parse fallback response:', e);
       parsedResponse = {
         conversational: true,
-        message: assistantMessage
+        message: aiData.choices[0].message.content || "Je n'ai pas pu traiter votre demande correctement."
       };
     }
 
@@ -452,11 +423,38 @@ EXEMPLE de réponse CORRECTE quand l'utilisateur clique sur "Provence-Alpes-Côt
     let vendors = []; // Initialiser vendors au début pour éviter les erreurs de référence
 
     if (conversationId) {
-      // Calculer le wedding_context mis à jour - TOUJOURS maintenir le contexte
+      // Calculer le wedding_context mis à jour selon le mode
       let updatedWeddingContext = null;
       
-      if (currentProject) {
-        // Si un projet existe, le mettre à jour même en mode conversationnel
+      if (parsedResponse.mode === "update" && currentProject) {
+        // MODE UPDATE : Merger uniquement les champs mentionnés dans updatedFields
+        console.log('🔄 MODE UPDATE detected, merging updatedFields:', parsedResponse.updatedFields);
+        
+        updatedWeddingContext = {
+          summary: currentProject.summary,
+          weddingData: { 
+            ...currentProject.weddingData, 
+            ...(parsedResponse.updatedFields?.weddingData || {})
+          },
+          budgetBreakdown: parsedResponse.updatedFields?.budgetBreakdown || currentProject.budgetBreakdown,
+          timeline: parsedResponse.updatedFields?.timeline || currentProject.timeline,
+          vendors: vendors.length > 0 ? vendors : currentProject.vendors || []
+        };
+      } else if (parsedResponse.mode === "initial" || parsedResponse.mode === "vendor_project") {
+        // MODE CREATION : Créer un nouveau contexte complet
+        console.log('✨ MODE CREATION detected, creating new context');
+        
+        updatedWeddingContext = {
+          summary: parsedResponse.summary,
+          weddingData: parsedResponse.weddingData,
+          budgetBreakdown: parsedResponse.budgetBreakdown || [],
+          timeline: parsedResponse.timeline || [],
+          vendors: vendors.length > 0 ? vendors : []
+        };
+      } else if (currentProject && !parsedResponse.conversational) {
+        // Autres modes non-conversationnels : Merger avec le projet existant
+        console.log('🔀 Merging with existing project');
+        
         updatedWeddingContext = {
           summary: parsedResponse.summary || currentProject.summary,
           weddingData: parsedResponse.weddingData || currentProject.weddingData,
@@ -464,16 +462,13 @@ EXEMPLE de réponse CORRECTE quand l'utilisateur clique sur "Provence-Alpes-Côt
           timeline: parsedResponse.timeline || currentProject.timeline,
           vendors: vendors.length > 0 ? vendors : currentProject.vendors || []
         };
-      } else if (!parsedResponse.conversational) {
-        // Si pas de projet et mode non-conversationnel, créer le contexte
-        updatedWeddingContext = {
-          summary: parsedResponse.summary,
-          weddingData: parsedResponse.weddingData,
-          budgetBreakdown: parsedResponse.budgetBreakdown,
-          timeline: parsedResponse.timeline,
-          vendors: vendors
-        };
+      } else if (currentProject) {
+        // Mode conversationnel : Préserver le projet existant
+        console.log('💬 Conversational mode, preserving existing project');
+        updatedWeddingContext = currentProject;
       }
+      
+      console.log('📦 Final wedding_context:', updatedWeddingContext ? 'Updated' : 'Null');
       
       await supabase
         .from('ai_wedding_conversations')

@@ -251,7 +251,8 @@ export const useVibeWedding = () => {
       toast({
         title: "✨ Mariable organise votre mariage",
         description: "Mariable peut mettre 1 minute à organiser votre mariage - restez ici :-)",
-        duration: 60000, // 1 minute
+        duration: 60000,
+        className: "bg-wedding-olive text-white border-wedding-olive",
       });
     }
 
