@@ -18,6 +18,7 @@ export type WeddingProject = {
   budgetBreakdown?: Array<{
     category: string;
     estimatedCost: number;
+    percentage?: number;
     description?: string;
   }>;
   vendors?: Array<{

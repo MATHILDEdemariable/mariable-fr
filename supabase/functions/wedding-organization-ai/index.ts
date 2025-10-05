@@ -287,6 +287,41 @@ Sois naturel, chaleureux et professionnel dans tes réponses.`;
       }
     }
 
+    // Calculer les montants et pourcentages pour le budget breakdown
+    if (parsedResponse.updatedFields?.budgetBreakdown && Array.isArray(parsedResponse.updatedFields.budgetBreakdown)) {
+      const totalBudget = parsedResponse.updatedFields.weddingData?.budget || 
+        parsedResponse.updatedFields.budgetBreakdown.reduce((sum: number, item: any) => {
+          let cost = 0;
+          if (typeof item.estimatedCost === 'string') {
+            const cleanAmount = item.estimatedCost.replace(/[^\d]/g, '');
+            cost = parseInt(cleanAmount) || 0;
+          } else if (typeof item.estimatedCost === 'number') {
+            cost = item.estimatedCost;
+          }
+          return sum + cost;
+        }, 0);
+
+      parsedResponse.updatedFields.budgetBreakdown = parsedResponse.updatedFields.budgetBreakdown.map((item: any) => {
+        let estimatedCost = 0;
+        
+        if (typeof item.estimatedCost === 'string') {
+          const cleanAmount = item.estimatedCost.replace(/[^\d]/g, '');
+          estimatedCost = parseInt(cleanAmount) || 0;
+        } else if (typeof item.estimatedCost === 'number') {
+          estimatedCost = item.estimatedCost;
+        }
+
+        // Calculer le pourcentage
+        const percentage = totalBudget > 0 ? Math.round((estimatedCost / totalBudget) * 100) : 0;
+
+        return {
+          ...item,
+          estimatedCost,
+          percentage
+        };
+      });
+    }
+
     // Validate timeline categories
     if (parsedResponse.updatedFields?.timeline) {
       const validCategories = [

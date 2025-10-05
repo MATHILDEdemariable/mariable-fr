@@ -33,19 +33,19 @@ const cityToRegionMap: Record<string, string> = {
 function detectVendorCategory(message: string): string | null {
   const messageLower = message.toLowerCase();
   
-  const categoryKeywords: Record<string, string[]> = {
-    'Traiteur': ['traiteur', 'restauration', 'buffet', 'repas', 'menu', 'nourriture', 'cuisine'],
-    'Photographe': ['photographe', 'photo', 'photographie', 'shooting', 'cliché'],
-    'Vidéaste': ['vidéaste', 'vidéo', 'film', 'cinéma', 'caméra'],
-    'DJ': ['dj', 'musique', 'animation musicale', 'soirée', 'ambiance'],
-    'Fleuriste': ['fleuriste', 'fleur', 'bouquet', 'décoration florale', 'centre de table'],
-    'Salle de réception': ['salle', 'lieu', 'réception', 'domaine', 'château', 'espace', 'endroit'],
-    'Wedding planner': ['wedding planner', 'organisateur', 'coordination', 'planificateur'],
-    'Coiffeur': ['coiffeur', 'coiffure', 'maquillage', 'beauté', 'esthétique'],
-    'Robe de mariée': ['robe', 'mariée', 'couture', 'costume', 'tenue'],
-    'Officiant': ['officiant', 'cérémonie', 'célébrant'],
-    'Location': ['location', 'mobilier', 'vaisselle', 'matériel'],
-  };
+const categoryKeywords: Record<string, string[]> = {
+  'Traiteur': ['traiteur', 'restauration', 'buffet', 'repas', 'menu', 'nourriture', 'cuisine'],
+  'Photographe': ['photographe', 'photo', 'photographie', 'shooting', 'cliché'],
+  'Vidéaste': ['vidéaste', 'vidéo', 'film', 'cinéma', 'caméra'],
+  'DJ': ['dj', 'musique', 'animation musicale', 'soirée', 'ambiance'],
+  'Fleuriste': ['fleuriste', 'fleur', 'bouquet', 'décoration florale', 'centre de table'],
+  'Salle de réception': ['salle', 'lieu', 'réception', 'domaine', 'château', 'espace', 'endroit'],
+  'Wedding planner': ['wedding planner', 'organisateur', 'coordination', 'planificateur'],
+  'Coiffeur': ['coiffeur', 'coiffure', 'maquillage', 'beauté', 'esthétique'],
+  'Robe de mariée': ['robe', 'mariée', 'couture', 'costume', 'tenue'],
+  'Officiant': ['officiant', 'cérémonie', 'célébrant'],
+  'Location': ['location', 'mobilier', 'vaisselle', 'matériel'],
+};
   
   for (const [category, keywords] of Object.entries(categoryKeywords)) {
     if (keywords.some(keyword => messageLower.includes(keyword))) {
@@ -201,15 +201,22 @@ Si aucun prestataire n'est trouvé, propose de chercher dans une région voisine
     }
 
     // If no category detected, use AI to help
-    const systemPrompt = `Tu es un assistant de recherche de prestataires de mariage.
-Aide l'utilisateur à trouver des prestataires en :
-1. Identifiant le type de prestataire recherché
-2. Demandant la région si nécessaire
-3. Proposant des suggestions
+    const systemPrompt = `Tu es Mariable, un assistant spécialisé dans la recherche de prestataires de mariage en France.
 
-Tu NE MODIFIES PAS le projet de mariage, tu aides uniquement à la recherche de prestataires.
+Ton rôle :
+- Identifier la catégorie de prestataire recherché (Lieu de réception, Traiteur, Photographe, DJ, Fleuriste, Wedding Planner, etc.)
+- Demander la région si elle n'est pas précisée
+- Présenter les prestataires trouvés de manière claire et utile
 
-Sois chaleureux et professionnel.`;
+IMPORTANT: Ne jamais utiliser de markdown (**, *, ~~). Toujours retourner du texte simple et clair.
+
+Si tu as des résultats, présente-les avec :
+- Leur nom et catégorie
+- Leur localisation
+- Leur fourchette de prix si disponible
+- Une brève description
+
+Reste conversationnel et aide l'utilisateur à affiner sa recherche si nécessaire.`;
 
     const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',

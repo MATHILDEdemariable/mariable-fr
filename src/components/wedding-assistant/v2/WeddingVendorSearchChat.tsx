@@ -96,6 +96,10 @@ const WeddingVendorSearchChat: React.FC<WeddingVendorSearchChatProps> = ({ preve
     const newMessages = [...messages, { role: 'user' as const, content: userMessage }];
     setMessages(newMessages);
 
+    // Message de loading
+    const loadingMessage = { role: 'assistant' as const, content: '🔍 Mariable recherche des prestataires pour vous...' };
+    setMessages([...newMessages, loadingMessage]);
+
     try {
       const { data, error } = await supabase.functions.invoke('wedding-vendor-search-ai', {
         body: {
@@ -106,6 +110,7 @@ const WeddingVendorSearchChat: React.FC<WeddingVendorSearchChatProps> = ({ preve
 
       if (error) throw error;
 
+      // Remplacer le message de loading par la vraie réponse
       if (data.askLocation) {
         setPendingCategory(data.detectedCategory);
         setShowRegionSelector(true);
@@ -131,6 +136,13 @@ const WeddingVendorSearchChat: React.FC<WeddingVendorSearchChatProps> = ({ preve
 
     } catch (error: any) {
       console.error('Error:', error);
+      
+      // Remplacer le message de loading par un message d'erreur
+      setMessages([...newMessages, { 
+        role: 'assistant', 
+        content: "Désolé, une erreur s'est produite. Veuillez réessayer." 
+      }]);
+      
       toast({
         title: "Erreur",
         description: "Une erreur s'est produite. Veuillez réessayer.",
