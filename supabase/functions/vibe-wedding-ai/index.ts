@@ -401,6 +401,14 @@ CATÉGORIES DU RÉTROPLANNING (si génération nécessaire) :
 
     const aiData = await aiResponse.json();
     
+    // 🔴 CRITIQUE: Parser la réponse de tool calling pour extraire parsedResponse
+    const toolCall = aiData.choices[0].message.tool_calls?.[0];
+    if (!toolCall) {
+      throw new Error('No tool call in AI response');
+    }
+    
+    const parsedResponse = JSON.parse(toolCall.function.arguments);
+    
     console.log('✅ AI Response received');
     console.log('🤖 AI Response details:', {
       mode: parsedResponse?.mode,
