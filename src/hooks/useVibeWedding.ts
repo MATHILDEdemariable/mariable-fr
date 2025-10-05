@@ -399,17 +399,18 @@ export const useVibeWedding = () => {
       return;
     }
     
-    // Vérifier que le projet a des données essentielles
-    const hasEssentialData = 
-      project.weddingData?.guests || 
-      project.weddingData?.location || 
-      project.weddingData?.date ||
-      project.weddingData?.budget;
+    // Vérifier que le projet a des données essentielles (au moins 2 champs remplis)
+    const filledFields = [
+      project.weddingData?.guests,
+      project.weddingData?.location,
+      project.weddingData?.date,
+      project.weddingData?.budget
+    ].filter(Boolean).length;
 
-    if (!hasEssentialData) {
+    if (filledFields < 2) {
       toast({
         title: "⚠️ Projet incomplet",
-        description: "Pour sauvegarder votre projet, ajoutez d'abord des détails essentiels (date, lieu, nombre d'invités ou budget)",
+        description: "Pour sauvegarder votre projet, ajoutez au moins 2 informations essentielles parmi : date, lieu, nombre d'invités ou budget",
         variant: "destructive"
       });
       return;

@@ -440,6 +440,7 @@ EXEMPLE de réponse CORRECTE quand l'utilisateur clique sur "Provence-Alpes-Côt
     ];
 
     let finalConversationId = conversationId;
+    let vendors = []; // Initialiser vendors au début pour éviter les erreurs de référence
 
     if (conversationId) {
       // Calculer le wedding_context mis à jour - TOUJOURS maintenir le contexte
@@ -498,7 +499,7 @@ EXEMPLE de réponse CORRECTE quand l'utilisateur clique sur "Provence-Alpes-Côt
     }
 
     // Recherche intelligente de prestataires (IMPROVED VERSION)
-    let vendors = [];
+    // vendors déjà initialisé plus haut pour éviter les erreurs de référence
     const shouldSearchVendors = detectedCategory || parsedResponse.mode === 'vendor_search';
     
     if (shouldSearchVendors) {
