@@ -244,6 +244,16 @@ export const useVibeWedding = () => {
     }
 
     setIsLoading(true);
+    
+    // Afficher un toast de chargement pour les longs traitements
+    const isLongProcess = userMessage.length > 50 || !project;
+    if (isLongProcess) {
+      toast({
+        title: "✨ Mariable organise votre mariage",
+        description: "Mariable peut mettre 1 minute à organiser votre mariage - restez ici :-)",
+        duration: 60000, // 1 minute
+      });
+    }
 
     // Ajouter le message utilisateur immédiatement
     const userMsg: Message = {
@@ -410,7 +420,7 @@ export const useVibeWedding = () => {
     if (filledFields < 2) {
       toast({
         title: "⚠️ Projet incomplet",
-        description: "Pour sauvegarder votre projet, ajoutez au moins 2 informations essentielles parmi : date, lieu, nombre d'invités ou budget",
+        description: "Dites-moi en plus dans la conversation : ajoutez au moins 2 informations essentielles (date, lieu, nombre d'invités ou budget) pour sauvegarder votre projet",
         variant: "destructive"
       });
       return;
