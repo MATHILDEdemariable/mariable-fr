@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import VibeWeddingHeader from '@/components/VibeWeddingHeader';
 import Footer from '@/components/Footer';
+import VibeWeddingHero from '@/components/vibe-wedding/VibeWeddingHero';
 import VendorMatchingPanel from '@/components/vibe-wedding/VendorMatchingPanel';
 import VendorMatchingChat from '@/components/vibe-wedding/VendorMatchingChat';
 import { useVendorMatching } from '@/hooks/useVendorMatching';
 
 const VibeWedding: React.FC = () => {
+  const [conversationStarted, setConversationStarted] = useState(false);
   const {
     messages,
     matchedVendors,
@@ -16,6 +18,29 @@ const VibeWedding: React.FC = () => {
     sendMessage,
   } = useVendorMatching();
 
+  const handleStartConversation = (message: string) => {
+    setConversationStarted(true);
+    sendMessage(message);
+  };
+
+  // Afficher le Hero si la conversation n'a pas encore commencé
+  if (!conversationStarted) {
+    return (
+      <>
+        <Helmet>
+          <title>Vibe Wedding - Matching Intelligent de Prestataires | Mariable</title>
+          <meta 
+            name="description" 
+            content="Trouvez les meilleurs prestataires pour votre mariage avec notre IA. Matching personnalisé selon vos critères et votre région." 
+          />
+        </Helmet>
+
+        <VibeWeddingHero onStartConversation={handleStartConversation} />
+      </>
+    );
+  }
+
+  // Afficher l'interface de matching une fois la conversation démarrée
   return (
     <>
       <Helmet>

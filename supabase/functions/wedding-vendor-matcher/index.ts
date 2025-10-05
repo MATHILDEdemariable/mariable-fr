@@ -130,7 +130,6 @@ serve(async (req) => {
       .select('*')
       .eq('categorie', detectedCategory)
       .eq('region', detectedRegion)
-      .eq('validation', 'validé')
       .limit(10);
 
     // Filtrer par budget si spécifié

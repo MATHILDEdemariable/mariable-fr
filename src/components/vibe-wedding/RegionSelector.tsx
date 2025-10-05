@@ -7,19 +7,19 @@ interface RegionSelectorProps {
 }
 
 const FRENCH_REGIONS = [
-  { name: 'Île-de-France', value: 'île-de-france' },
-  { name: 'Provence-Alpes-Côte d\'Azur', value: 'provence-alpes-côte d\'azur' },
-  { name: 'Auvergne-Rhône-Alpes', value: 'auvergne-rhône-alpes' },
-  { name: 'Nouvelle-Aquitaine', value: 'nouvelle-aquitaine' },
-  { name: 'Occitanie', value: 'occitanie' },
-  { name: 'Hauts-de-France', value: 'hauts-de-france' },
-  { name: 'Normandie', value: 'normandie' },
-  { name: 'Grand Est', value: 'grand est' },
-  { name: 'Bretagne', value: 'bretagne' },
-  { name: 'Pays de la Loire', value: 'pays de la loire' },
-  { name: 'Centre-Val de Loire', value: 'centre-val de loire' },
-  { name: 'Bourgogne-Franche-Comté', value: 'bourgogne-franche-comté' },
-  { name: 'Corse', value: 'corse' },
+  { name: 'Île-de-France', value: 'Île-de-France' },
+  { name: 'Provence-Alpes-Côte d\'Azur', value: 'Provence-Alpes-Côte d\'Azur' },
+  { name: 'Auvergne-Rhône-Alpes', value: 'Auvergne-Rhône-Alpes' },
+  { name: 'Nouvelle-Aquitaine', value: 'Nouvelle-Aquitaine' },
+  { name: 'Occitanie', value: 'Occitanie' },
+  { name: 'Hauts-de-France', value: 'Hauts-de-France' },
+  { name: 'Normandie', value: 'Normandie' },
+  { name: 'Grand Est', value: 'Grand Est' },
+  { name: 'Bretagne', value: 'Bretagne' },
+  { name: 'Pays de la Loire', value: 'Pays de la Loire' },
+  { name: 'Centre-Val de Loire', value: 'Centre-Val de Loire' },
+  { name: 'Bourgogne-Franche-Comté', value: 'Bourgogne-Franche-Comté' },
+  { name: 'Corse', value: 'Corse' },
 ];
 
 const RegionSelector: React.FC<RegionSelectorProps> = ({ onSelectRegion }) => {
