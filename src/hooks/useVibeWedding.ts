@@ -399,6 +399,22 @@ export const useVibeWedding = () => {
       return;
     }
     
+    // Vérifier que le projet a des données essentielles
+    const hasEssentialData = 
+      project.weddingData?.guests || 
+      project.weddingData?.location || 
+      project.weddingData?.date ||
+      project.weddingData?.budget;
+
+    if (!hasEssentialData) {
+      toast({
+        title: "⚠️ Projet incomplet",
+        description: "Pour sauvegarder votre projet, ajoutez d'abord des détails essentiels (date, lieu, nombre d'invités ou budget)",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     try {
       // Créer un titre basé sur les données du mariage
       const location = project.weddingData?.location || 'Non défini';

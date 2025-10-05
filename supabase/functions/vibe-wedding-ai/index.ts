@@ -150,6 +150,15 @@ serve(async (req) => {
 
 ⚠️ RÈGLE ABSOLUE : Tu DOIS TOUJOURS répondre UNIQUEMENT avec un objet JSON valide. JAMAIS de texte brut en dehors du JSON.
 
+⚠️ RÈGLE IMPORTANTE POUR LA RECHERCHE DE PRESTATAIRES :
+- Si l'utilisateur demande UNIQUEMENT un prestataire sans mentionner son projet de mariage
+- Tu dois d'abord lui demander quelques infos essentielles sur son mariage :
+  - Date approximative du mariage
+  - Lieu du mariage (ville ou région)
+  - Nombre d'invités approximatif
+- Explique gentiment : "Pour vous proposer les meilleurs prestataires adaptés à votre mariage, j'aimerais en savoir un peu plus sur votre projet ! Pouvez-vous me donner la date, le lieu et le nombre d'invités approximatif ?"
+- Ne crée pas de projet "Non défini" sans ces infos de base
+
 Tu as CINQ modes de réponse :
 
 1. MODE INITIAL - Quand l'utilisateur décrit son projet complet pour la première fois :
@@ -433,16 +442,34 @@ EXEMPLE de réponse CORRECTE quand l'utilisateur clique sur "Provence-Alpes-Côt
     let finalConversationId = conversationId;
 
     if (conversationId) {
+      // Calculer le wedding_context mis à jour - TOUJOURS maintenir le contexte
+      let updatedWeddingContext = null;
+      
+      if (currentProject) {
+        // Si un projet existe, le mettre à jour même en mode conversationnel
+        updatedWeddingContext = {
+          summary: parsedResponse.summary || currentProject.summary,
+          weddingData: parsedResponse.weddingData || currentProject.weddingData,
+          budgetBreakdown: parsedResponse.budgetBreakdown || currentProject.budgetBreakdown,
+          timeline: parsedResponse.timeline || currentProject.timeline,
+          vendors: vendors.length > 0 ? vendors : currentProject.vendors || []
+        };
+      } else if (!parsedResponse.conversational) {
+        // Si pas de projet et mode non-conversationnel, créer le contexte
+        updatedWeddingContext = {
+          summary: parsedResponse.summary,
+          weddingData: parsedResponse.weddingData,
+          budgetBreakdown: parsedResponse.budgetBreakdown,
+          timeline: parsedResponse.timeline,
+          vendors: vendors
+        };
+      }
+      
       await supabase
         .from('ai_wedding_conversations')
         .update({ 
           messages: newMessages,
-          wedding_context: !parsedResponse.conversational ? {
-            summary: parsedResponse.summary,
-            weddingData: parsedResponse.weddingData,
-            budgetBreakdown: parsedResponse.budgetBreakdown,
-            timeline: parsedResponse.timeline
-          } : null,
+          wedding_context: updatedWeddingContext,
           updated_at: new Date().toISOString()
         })
         .eq('id', conversationId);
