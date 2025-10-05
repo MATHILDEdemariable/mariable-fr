@@ -184,16 +184,26 @@ Tu as CINQ modes de réponse (champ "mode" obligatoire) :
 - Message chaleureux et personnalisé
 
 2. MODE "update" - Modification d'un projet existant (SEULEMENT si organizationMode = true) :
-- CRITIQUE : Utilise TOUJOURS le champ "updatedFields" avec les valeurs modifiées
-- Dans updatedFields.weddingData, mets OBLIGATOIREMENT les champs modifiés avec leurs VALEURS
-- Exemples OBLIGATOIRES :
-  * "Change le lieu en Lyon" → updatedFields: { weddingData: { location: "Lyon" } }
-  * "Budget de 10000€" → updatedFields: { weddingData: { budget: 10000 } }
-  * "Date décembre 2025" → updatedFields: { weddingData: { date: "2025-12-15" } }
-  * "100 invités" → updatedFields: { weddingData: { guestCount: 100 } }
-- JAMAIS de updatedFields.weddingData vide {} !
-- TOUJOURS inclure les valeurs numériques et textuelles exactes
-- Message confirmant le changement
+
+⚠️ RÈGLE ABSOLUE : Dans updatedFields.weddingData, tu DOIS inclure les champs ET leurs valeurs
+
+EXEMPLES OBLIGATOIRES à suivre :
+- Utilisateur dit "je veux un budget de 30000 euros"
+  → updatedFields: { weddingData: { budget: 30000 } }
+  
+- Utilisateur dit "la date sera le 15 décembre 2026"
+  → updatedFields: { weddingData: { date: "2026-12-15" } }
+  
+- Utilisateur dit "changeons le lieu pour Lyon"
+  → updatedFields: { weddingData: { location: "Lyon" } }
+  
+- Utilisateur dit "100 invités"
+  → updatedFields: { weddingData: { guests: 100 } }
+
+❌ JAMAIS : updatedFields: { weddingData: {} }
+✅ TOUJOURS : updatedFields: { weddingData: { budget: 30000 } }
+
+- Message confirmant le changement avec enthousiasme
 
 3. MODE "conversational" - Question simple sans impact :
 - conversational: true
@@ -296,18 +306,41 @@ CATÉGORIES DU RÉTROPLANNING (si génération nécessaire) :
                 properties: {
                   weddingData: { 
                     type: "object",
-                    description: "UNIQUEMENT les champs de weddingData à mettre à jour"
+                    properties: {
+                      location: { type: "string", description: "Lieu du mariage" },
+                      date: { type: "string", description: "Date au format YYYY-MM-DD" },
+                      guests: { type: "number", description: "Nombre d'invités" },
+                      budget: { type: "number", description: "Budget en euros" },
+                      style: { type: "string", description: "Style du mariage" }
+                    },
+                    description: "Champs de weddingData à mettre à jour - INCLURE UNIQUEMENT les champs modifiés avec leurs VALEURS"
                   },
                   budgetBreakdown: { 
                     type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        category: { type: "string" },
+                        percentage: { type: "number" },
+                        amount: { type: "number" }
+                      }
+                    },
                     description: "Nouvelle répartition du budget si modifié"
                   },
                   timeline: { 
                     type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        task: { type: "string" },
+                        timeframe: { type: "string" },
+                        priority: { type: "string" }
+                      }
+                    },
                     description: "Nouveau rétroplanning si date modifiée"
                   }
                 },
-                description: "Champs à mettre à jour (MODE UPDATE uniquement)"
+                description: "MODE UPDATE UNIQUEMENT : Contient les champs modifiés par l'utilisateur"
               },
               budgetBreakdown: {
                 type: "array",
@@ -409,13 +442,58 @@ CATÉGORIES DU RÉTROPLANNING (si génération nécessaire) :
     
     const parsedResponse = JSON.parse(toolCall.function.arguments);
     
+    // 🛡️ FALLBACK : Si mode "update" avec updatedFields vide, extraire depuis le message
+    if (parsedResponse.mode === "update" && 
+        parsedResponse.updatedFields && 
+        Object.keys(parsedResponse.updatedFields.weddingData || {}).length === 0) {
+      
+      console.log('⚠️ Empty updatedFields detected, attempting auto-extraction from message');
+      
+      if (!parsedResponse.updatedFields.weddingData) {
+        parsedResponse.updatedFields.weddingData = {};
+      }
+      
+      // Extraction automatique du budget
+      const budgetMatch = message.match(/(\d+)\s*(?:€|euros?|euro)/i);
+      if (budgetMatch) {
+        parsedResponse.updatedFields.weddingData.budget = parseInt(budgetMatch[1]);
+        console.log('✅ Auto-extracted budget:', parsedResponse.updatedFields.weddingData.budget);
+      }
+      
+      // Extraction automatique de la date (YYYY-MM-DD ou format français)
+      const dateMatch = message.match(/(\d{4})-(\d{2})-(\d{2})/);
+      if (dateMatch) {
+        parsedResponse.updatedFields.weddingData.date = `${dateMatch[1]}-${dateMatch[2]}-${dateMatch[3]}`;
+        console.log('✅ Auto-extracted date:', parsedResponse.updatedFields.weddingData.date);
+      }
+      
+      // Extraction automatique du nombre d'invités
+      const guestsMatch = message.match(/(\d+)\s*(?:invités?|guests?|personnes?)/i);
+      if (guestsMatch) {
+        parsedResponse.updatedFields.weddingData.guests = parseInt(guestsMatch[1]);
+        console.log('✅ Auto-extracted guests:', parsedResponse.updatedFields.weddingData.guests);
+      }
+      
+      // Extraction automatique du lieu
+      const locationPatterns = ['à ', 'en ', 'sur ', 'près de ', 'dans ', 'au '];
+      for (const pattern of locationPatterns) {
+        const locationMatch = message.match(new RegExp(pattern + '([A-ZÀ-Ü][a-zà-ü]+(?:\\s+[A-ZÀ-Ü][a-zà-ü]+)*)', 'i'));
+        if (locationMatch) {
+          parsedResponse.updatedFields.weddingData.location = locationMatch[1];
+          console.log('✅ Auto-extracted location:', parsedResponse.updatedFields.weddingData.location);
+          break;
+        }
+      }
+    }
+    
     console.log('✅ AI Response received');
     console.log('🤖 AI Response details:', {
       mode: parsedResponse?.mode,
       conversational: parsedResponse?.conversational,
       category: parsedResponse?.category,
       location: parsedResponse?.location,
-      organizationMode
+      organizationMode,
+      updatedFields: parsedResponse?.updatedFields
     });
 
     // 🔴 CRITIQUE: Rechercher les vendors IMMÉDIATEMENT après avoir reçu la réponse de l'IA

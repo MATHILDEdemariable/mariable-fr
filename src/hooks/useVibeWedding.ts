@@ -300,6 +300,14 @@ export const useVibeWedding = () => {
         setConversationId(data.conversationId);
       }
 
+      console.log('🔍 Merge data:', {
+        organizationMode: organizationMode,
+        conversational: data.response.conversational,
+        mode: data.response.mode,
+        updatedFields: data.response.updatedFields,
+        weddingData: data.response.weddingData
+      });
+
       // Gérer les différents modes de réponse
       if (!organizationMode) {
         // MODE CONVERSATION : Ne jamais modifier le projet, juste afficher les vendors dans le message
@@ -325,6 +333,15 @@ export const useVibeWedding = () => {
             
             const updatedFields = data.response.updatedFields || {};
             
+            // Merge intelligent avec fallback si updatedFields est vide
+            const mergedWeddingData = {
+              ...prevProject.weddingData,
+              ...(updatedFields.weddingData || {}),
+              ...(data.response.weddingData || {})  // Fallback si updatedFields vide
+            };
+            
+            console.log('✅ Merged weddingData:', mergedWeddingData);
+            
             // Fusionner les vendors intelligemment (éviter les doublons)
             const existingVendorIds = new Set(prevProject.vendors?.map(v => v.id) || []);
             const newVendors = (data.vendors || []).filter((v: Vendor) => !existingVendorIds.has(v.id));
@@ -332,12 +349,9 @@ export const useVibeWedding = () => {
             return {
               ...prevProject,
               summary: data.response.message || prevProject.summary,
-              weddingData: {
-                ...prevProject.weddingData,
-                ...(updatedFields.weddingData || {})
-              },
-              budgetBreakdown: updatedFields.budgetBreakdown || prevProject.budgetBreakdown,
-              timeline: updatedFields.timeline || prevProject.timeline,
+              weddingData: mergedWeddingData,
+              budgetBreakdown: updatedFields.budgetBreakdown || data.response.budgetBreakdown || prevProject.budgetBreakdown,
+              timeline: updatedFields.timeline || data.response.timeline || prevProject.timeline,
               vendors: [...(prevProject.vendors || []), ...newVendors]
             };
           });
