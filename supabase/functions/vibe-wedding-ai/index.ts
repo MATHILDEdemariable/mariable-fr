@@ -188,17 +188,19 @@ Tu as CINQ modes de réponse (champ "mode" obligatoire) :
 ⚠️ RÈGLE ABSOLUE : Dans updatedFields.weddingData, tu DOIS inclure les champs ET leurs valeurs
 
 EXEMPLES OBLIGATOIRES à suivre :
-- Utilisateur dit "je veux un budget de 30000 euros"
+- Utilisateur : "je veux un budget de 30000 euros"
   → updatedFields: { weddingData: { budget: 30000 } }
   
-- Utilisateur dit "la date sera le 15 décembre 2026"
+- Utilisateur : "la date sera le 15 décembre 2026"  
   → updatedFields: { weddingData: { date: "2026-12-15" } }
   
-- Utilisateur dit "changeons le lieu pour Lyon"
+- Utilisateur : "changeons le lieu pour Lyon"
   → updatedFields: { weddingData: { location: "Lyon" } }
   
-- Utilisateur dit "100 invités"
+- Utilisateur : "100 invités"
   → updatedFields: { weddingData: { guests: 100 } }
+
+⚠️ RÈGLE : Chaque tâche du timeline DOIT avoir une category non vide (ex: "Organisation", "Prestataires", "Administratif")
 
 ❌ JAMAIS : updatedFields: { weddingData: {} }
 ✅ TOUJOURS : updatedFields: { weddingData: { budget: 30000 } }
@@ -453,18 +455,45 @@ CATÉGORIES DU RÉTROPLANNING (si génération nécessaire) :
         parsedResponse.updatedFields.weddingData = {};
       }
       
-      // Extraction automatique du budget
-      const budgetMatch = message.match(/(\d+)\s*(?:€|euros?|euro)/i);
-      if (budgetMatch) {
-        parsedResponse.updatedFields.weddingData.budget = parseInt(budgetMatch[1]);
-        console.log('✅ Auto-extracted budget:', parsedResponse.updatedFields.weddingData.budget);
+      // Extraction automatique du budget (gère "30000 euros", "30 000 euros", "30000€")
+      const budgetMatches = [
+        message.match(/(\d{2,6})\s*000\s*(?:€|euros?)/i), // "30 000 euros"
+        message.match(/(\d{4,6})\s*(?:€|euros?)/i), // "30000 euros"
+      ];
+      
+      for (const match of budgetMatches) {
+        if (match) {
+          let budget = parseInt(match[1].replace(/\s/g, ''));
+          // Si format "30" pour "30000", multiplier par 1000
+          if (budget < 1000 && message.includes('000')) {
+            budget = budget * 1000;
+          }
+          parsedResponse.updatedFields.weddingData.budget = budget;
+          console.log('✅ Auto-extracted budget:', budget);
+          break;
+        }
       }
       
-      // Extraction automatique de la date (YYYY-MM-DD ou format français)
-      const dateMatch = message.match(/(\d{4})-(\d{2})-(\d{2})/);
-      if (dateMatch) {
-        parsedResponse.updatedFields.weddingData.date = `${dateMatch[1]}-${dateMatch[2]}-${dateMatch[3]}`;
-        console.log('✅ Auto-extracted date:', parsedResponse.updatedFields.weddingData.date);
+      // Extraction automatique de la date (formats multiples)
+      const monthNames: Record<string, string> = {
+        'janvier': '01', 'février': '02', 'fevrier': '02', 'mars': '03', 'avril': '04',
+        'mai': '05', 'juin': '06', 'juillet': '07', 'août': '08', 'aout': '08',
+        'septembre': '09', 'octobre': '10', 'novembre': '11', 'décembre': '12', 'decembre': '12'
+      };
+      
+      const dateMatches = [
+        message.match(/(\d{4})-(\d{2})-(\d{2})/), // Format ISO
+        message.match(/(janvier|février|fevrier|mars|avril|mai|juin|juillet|août|aout|septembre|octobre|novembre|décembre|decembre)\s+(\d{4})/i) // "décembre 2026"
+      ];
+      
+      if (dateMatches[0]) {
+        parsedResponse.updatedFields.weddingData.date = `${dateMatches[0][1]}-${dateMatches[0][2]}-${dateMatches[0][3]}`;
+        console.log('✅ Auto-extracted date (ISO):', parsedResponse.updatedFields.weddingData.date);
+      } else if (dateMatches[1]) {
+        const month = monthNames[dateMatches[1][1].toLowerCase()];
+        const year = dateMatches[1][2];
+        parsedResponse.updatedFields.weddingData.date = `${year}-${month}-01`;
+        console.log('✅ Auto-extracted date (French):', parsedResponse.updatedFields.weddingData.date);
       }
       
       // Extraction automatique du nombre d'invités
@@ -484,6 +513,32 @@ CATÉGORIES DU RÉTROPLANNING (si génération nécessaire) :
           break;
         }
       }
+    }
+    
+    // 🛡️ VALIDATION : S'assurer que toutes les tâches du timeline ont une catégorie
+    const timelineToValidate = parsedResponse.updatedFields?.timeline || parsedResponse.timeline;
+    if (timelineToValidate && Array.isArray(timelineToValidate)) {
+      timelineToValidate.forEach((task: any, index: number) => {
+        if (!task.category || task.category.trim() === '') {
+          // Assigner une catégorie par défaut basée sur le contenu
+          if (task.task.toLowerCase().includes('budget') || task.task.toLowerCase().includes('coût')) {
+            task.category = 'Budget & Finances';
+          } else if (task.task.toLowerCase().includes('lieu') || task.task.toLowerCase().includes('réception') || task.task.toLowerCase().includes('salle')) {
+            task.category = 'Lieu & Logistique';
+          } else if (task.task.toLowerCase().includes('traiteur') || task.task.toLowerCase().includes('fleur') || task.task.toLowerCase().includes('photo') || task.task.toLowerCase().includes('dj')) {
+            task.category = 'Prestataires';
+          } else if (task.task.toLowerCase().includes('robe') || task.task.toLowerCase().includes('costume') || task.task.toLowerCase().includes('tenue')) {
+            task.category = 'Tenues & Style';
+          } else if (task.task.toLowerCase().includes('invité') || task.task.toLowerCase().includes('faire-part') || task.task.toLowerCase().includes('guest')) {
+            task.category = 'Invités & Communication';
+          } else if (task.task.toLowerCase().includes('cérémonie') || task.task.toLowerCase().includes('mairie') || task.task.toLowerCase().includes('église')) {
+            task.category = 'Cérémonie';
+          } else {
+            task.category = 'Organisation générale';
+          }
+          console.log(`⚠️ Task ${index} missing category, assigned: ${task.category}`);
+        }
+      });
     }
     
     console.log('✅ AI Response received');

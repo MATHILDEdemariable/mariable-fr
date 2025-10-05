@@ -333,14 +333,21 @@ export const useVibeWedding = () => {
             
             const updatedFields = data.response.updatedFields || {};
             
-            // Merge intelligent avec fallback si updatedFields est vide
-            const mergedWeddingData = {
-              ...prevProject.weddingData,
-              ...(updatedFields.weddingData || {}),
-              ...(data.response.weddingData || {})  // Fallback si updatedFields vide
-            };
-            
-            console.log('✅ Merged weddingData:', mergedWeddingData);
+        // Merge intelligent avec prevProject + nettoyage des valeurs nulles
+        const mergedWeddingData = {
+          ...prevProject.weddingData,
+          ...(updatedFields.weddingData || {}),
+          ...(data.response.weddingData || {})  // Fallback si updatedFields vide
+        };
+        
+        // ✅ Nettoyer les valeurs undefined/null pour garder les anciennes valeurs
+        Object.keys(mergedWeddingData).forEach(key => {
+          if (mergedWeddingData[key] === undefined || mergedWeddingData[key] === null || mergedWeddingData[key] === '') {
+            mergedWeddingData[key] = prevProject.weddingData?.[key] || null;
+          }
+        });
+        
+        console.log('✅ Merged weddingData:', mergedWeddingData);
             
             // Fusionner les vendors intelligemment (éviter les doublons)
             const existingVendorIds = new Set(prevProject.vendors?.map(v => v.id) || []);
@@ -356,9 +363,21 @@ export const useVibeWedding = () => {
             };
           });
 
-          // Toast de confirmation des modifications
+          // Toast de confirmation avec champs modifiés et leurs labels
           if (data.response.mode === 'update' && data.response.updatedFields?.weddingData) {
-            const updatedFieldNames = Object.keys(data.response.updatedFields.weddingData);
+            const updatedKeys = Object.keys(data.response.updatedFields.weddingData)
+              .filter(key => data.response.updatedFields?.weddingData?.[key] !== null && data.response.updatedFields?.weddingData?.[key] !== undefined);
+            
+            const labels: Record<string, string> = {
+              'budget': 'budget',
+              'date': 'date',
+              'location': 'lieu',
+              'guests': 'invités',
+              'style': 'style'
+            };
+            
+            const updatedFieldNames = updatedKeys.map(key => labels[key] || key);
+            
             if (updatedFieldNames.length > 0) {
               toast({
                 title: "✅ Projet mis à jour",
@@ -441,18 +460,18 @@ export const useVibeWedding = () => {
       return;
     }
     
-    // Vérifier que le projet a des données essentielles (au moins 2 champs remplis)
+    // ✅ VALIDATION ASSOUPLIE : Au moins 1 des 4 champs essentiels doit être défini
     const filledFields = [
       project.weddingData?.guests,
       project.weddingData?.location,
       project.weddingData?.date,
       project.weddingData?.budget
-    ].filter(Boolean).length;
+    ].filter(field => field !== null && field !== undefined && field !== '').length;
 
-    if (filledFields < 2) {
+    if (filledFields < 1) {
       toast({
         title: "⚠️ Projet incomplet",
-        description: "Dites-moi en plus dans la conversation : ajoutez au moins 2 informations essentielles (date, lieu, nombre d'invités ou budget) pour sauvegarder votre projet",
+        description: "Définissez au moins une information essentielle (date, lieu, nombre d'invités ou budget) pour sauvegarder votre projet",
         variant: "destructive"
       });
       return;

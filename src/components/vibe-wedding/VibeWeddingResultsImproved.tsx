@@ -132,7 +132,10 @@ const VibeWeddingResultsImproved: React.FC<VibeWeddingResultsImprovedProps> = ({
     return null;
   }
 
-  const totalBudget = project.budgetBreakdown?.reduce((sum, item) => sum + (item.amount || 0), 0) || 0;
+  // ✅ Prioriser weddingData.budget, sinon calculer depuis budgetBreakdown
+  const totalBudget = project.weddingData?.budget || 
+    project.budgetBreakdown?.reduce((sum, item) => sum + (item.amount || 0), 0) || 
+    0;
 
   // Couleurs pour le pie chart
   const COLORS = ['hsl(var(--wedding-olive))', '#A8B89F', '#C4D3BB', '#E0E8D7', '#F4F7F2', '#D4C5B9'];
