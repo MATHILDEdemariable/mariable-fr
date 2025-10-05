@@ -312,105 +312,115 @@ export const useVibeWedding = () => {
       if (!organizationMode) {
         // MODE CONVERSATION : Ne jamais modifier le projet, juste afficher les vendors dans le message
         console.log('💬 Mode Conversation - Projet non modifié');
-      } else if (!data.response.conversational) {
-        // MODE ORGANISATION : Merger intelligemment avec le projet existant
-        if (data.response.mode === 'update' || data.response.mode === 'vendor_project') {
-          // MODE UPDATE ou VENDOR_PROJECT : Merge intelligent avec le projet existant
-          setProject(prevProject => {
-            if (!prevProject) {
-              // Si pas de projet existant et mode vendor_project, créer un nouveau projet
-              if (data.response.mode === 'vendor_project') {
-                return {
-                  summary: data.response.summary,
-                  weddingData: data.response.weddingData,
-                  budgetBreakdown: data.response.budgetBreakdown || [],
-                  timeline: data.response.timeline || [],
-                  vendors: data.vendors || []
-                };
-              }
-              return null;
-            }
-            
-            const updatedFields = data.response.updatedFields || {};
-            
-        // Merge intelligent avec prevProject + nettoyage des valeurs nulles
-        const mergedWeddingData = {
-          ...prevProject.weddingData,
-          ...(updatedFields.weddingData || {}),
-          ...(data.response.weddingData || {})  // Fallback si updatedFields vide
-        };
         
-        // ✅ Nettoyer les valeurs undefined/null pour garder les anciennes valeurs
-        Object.keys(mergedWeddingData).forEach(key => {
-          if (mergedWeddingData[key] === undefined || mergedWeddingData[key] === null || mergedWeddingData[key] === '') {
-            mergedWeddingData[key] = prevProject.weddingData?.[key] || null;
-          }
-        });
-        
-        console.log('✅ Merged weddingData:', mergedWeddingData);
-            
-            // Fusionner les vendors intelligemment (éviter les doublons)
-            const existingVendorIds = new Set(prevProject.vendors?.map(v => v.id) || []);
-            const newVendors = (data.vendors || []).filter((v: Vendor) => !existingVendorIds.has(v.id));
-            
-            return {
-              ...prevProject,
-              summary: data.response.message || prevProject.summary,
-              weddingData: mergedWeddingData,
-              budgetBreakdown: updatedFields.budgetBreakdown || data.response.budgetBreakdown || prevProject.budgetBreakdown,
-              timeline: updatedFields.timeline || data.response.timeline || prevProject.timeline,
-              vendors: [...(prevProject.vendors || []), ...newVendors]
-            };
-          });
-
-          // Toast de confirmation avec champs modifiés et leurs labels
-          if (data.response.mode === 'update' && data.response.updatedFields?.weddingData) {
-            const updatedKeys = Object.keys(data.response.updatedFields.weddingData)
-              .filter(key => data.response.updatedFields?.weddingData?.[key] !== null && data.response.updatedFields?.weddingData?.[key] !== undefined);
-            
-            const labels: Record<string, string> = {
-              'budget': 'budget',
-              'date': 'date',
-              'location': 'lieu',
-              'guests': 'invités',
-              'style': 'style'
-            };
-            
-            const updatedFieldNames = updatedKeys.map(key => labels[key] || key);
-            
-            if (updatedFieldNames.length > 0) {
-              toast({
-                title: "✅ Projet mis à jour",
-                description: `Modifications : ${updatedFieldNames.join(', ')}`,
-                duration: 3000,
-              });
-            }
-          }
-        } else {
-          // MODE INITIAL : Remplacement complet
-          setProject({
-            summary: data.response.summary,
-            weddingData: data.response.weddingData,
-            budgetBreakdown: data.response.budgetBreakdown,
-            timeline: data.response.timeline,
-            vendors: data.vendors || []
+        // Toast pour indiquer le mode conversation actif
+        if (data.vendors && data.vendors.length > 0) {
+          toast({
+            title: "💬 Mode Conversation",
+            description: `${data.vendors.length} prestataires trouvés (non ajoutés au projet)`,
+            duration: 3000,
           });
         }
-      } else if (data.vendors && data.vendors.length > 0 && project && organizationMode) {
-        // Mode conversationnel mais avec vendors en mode organisation : les ajouter au projet existant
+      } else if (!data.response.conversational) {
+        // MODE ORGANISATION : Merger intelligemment avec le projet existant
+        console.log('📝 Mode Organisation - Merge avec projet existant');
+        
         setProject(prevProject => {
-          if (!prevProject) return null;
+          // CAS 1: Pas de projet existant
+          if (!prevProject) {
+            console.log('🆕 Création nouveau projet');
+            return {
+              summary: data.response.summary || data.response.message || '',
+              weddingData: data.response.weddingData || {
+                guests: null,
+                budget: null,
+                location: null,
+                date: null,
+                style: null
+              },
+              budgetBreakdown: data.response.budgetBreakdown || [],
+              timeline: data.response.timeline || [],
+              vendors: data.vendors || []
+            };
+          }
           
+          // CAS 2: Projet existant - MERGE INTELLIGENT
+          console.log('🔄 Merge avec projet existant');
+          
+          // Merge weddingData : préserver les anciennes valeurs si nouvelles valeurs sont null/undefined
+          const updatedWeddingData = data.response.updatedFields?.weddingData || data.response.weddingData || {};
+          const mergedWeddingData = { ...prevProject.weddingData };
+          
+          // Ne remplacer QUE les champs qui ont une vraie valeur
+          Object.keys(updatedWeddingData).forEach(key => {
+            const newValue = updatedWeddingData[key];
+            if (newValue !== null && newValue !== undefined && newValue !== '') {
+              mergedWeddingData[key] = newValue;
+              console.log(`✅ Mise à jour ${key}: ${newValue}`);
+            }
+          });
+          
+          // Merge vendors : ajouter seulement les nouveaux (pas de doublons)
           const existingVendorIds = new Set(prevProject.vendors?.map(v => v.id) || []);
-          const newVendors = data.vendors.filter((v: Vendor) => !existingVendorIds.has(v.id));
+          const newVendors = (data.vendors || []).filter((v: Vendor) => !existingVendorIds.has(v.id));
+          const mergedVendors = [...(prevProject.vendors || []), ...newVendors];
           
-          if (newVendors.length === 0) return prevProject;
+          console.log(`📋 Vendors: ${prevProject.vendors?.length || 0} existants + ${newVendors.length} nouveaux = ${mergedVendors.length} total`);
+          
+          // Merge budget et timeline : utiliser les nouveaux s'ils existent, sinon garder les anciens
+          const mergedBudget = data.response.updatedFields?.budgetBreakdown || 
+                               data.response.budgetBreakdown || 
+                               prevProject.budgetBreakdown;
+          
+          const mergedTimeline = data.response.updatedFields?.timeline || 
+                                 data.response.timeline || 
+                                 prevProject.timeline;
           
           return {
             ...prevProject,
-            vendors: [...(prevProject.vendors || []), ...newVendors]
+            summary: data.response.summary || data.response.message || prevProject.summary,
+            weddingData: mergedWeddingData,
+            budgetBreakdown: mergedBudget,
+            timeline: mergedTimeline,
+            vendors: mergedVendors
           };
         });
+        
+        // Toast de feedback pour les modifications
+        if (data.response.mode === 'update' && data.response.updatedFields?.weddingData) {
+          const updatedKeys = Object.keys(data.response.updatedFields.weddingData)
+            .filter(key => {
+              const value = data.response.updatedFields?.weddingData?.[key];
+              return value !== null && value !== undefined && value !== '';
+            });
+          
+          const labels: Record<string, string> = {
+            'budget': 'budget',
+            'date': 'date',
+            'location': 'lieu',
+            'guests': 'invités',
+            'style': 'style'
+          };
+          
+          const updatedFieldNames = updatedKeys.map(key => labels[key] || key);
+          
+          if (updatedFieldNames.length > 0) {
+            toast({
+              title: "✅ Projet mis à jour",
+              description: `Modifications : ${updatedFieldNames.join(', ')}`,
+              duration: 3000,
+            });
+          }
+        }
+        
+        // Toast pour les nouveaux vendors ajoutés
+        if (data.vendors && data.vendors.length > 0) {
+          toast({
+            title: "📋 Prestataires ajoutés",
+            description: `${data.vendors.length} prestataires ajoutés à votre projet`,
+            duration: 3000,
+          });
+        }
       }
 
       // Incrémenter le compteur de prompts après succès
@@ -460,28 +470,45 @@ export const useVibeWedding = () => {
       return;
     }
     
-    // ✅ VALIDATION ASSOUPLIE : Au moins 1 des 4 champs essentiels doit être défini
-    const filledFields = [
+    // ✅ VALIDATION ASSOUPLIE : Accepter la sauvegarde dès qu'il y a du contenu
+    const hasWeddingData = [
       project.weddingData?.guests,
       project.weddingData?.location,
       project.weddingData?.date,
       project.weddingData?.budget
-    ].filter(field => field !== null && field !== undefined && field !== '').length;
-
-    if (filledFields < 1) {
+    ].some(field => field !== null && field !== undefined && field !== '');
+    
+    const hasVendors = project.vendors && project.vendors.length > 0;
+    const hasBudget = project.budgetBreakdown && project.budgetBreakdown.length > 0;
+    const hasTimeline = project.timeline && project.timeline.length > 0;
+    
+    if (!hasWeddingData && !hasVendors && !hasBudget && !hasTimeline) {
       toast({
-        title: "⚠️ Projet incomplet",
-        description: "Définissez au moins une information essentielle (date, lieu, nombre d'invités ou budget) pour sauvegarder votre projet",
+        title: "⚠️ Projet vide",
+        description: "Votre projet ne contient aucune information à sauvegarder",
         variant: "destructive"
       });
       return;
     }
     
     try {
-      // Créer un titre basé sur les données du mariage
-      const location = project.weddingData?.location || 'Non défini';
-      const guests = project.weddingData?.guests || 0;
-      const title = `Mariage ${location} - ${guests} invités`;
+      // Créer un titre intelligent basé sur les données disponibles
+      const location = project.weddingData?.location || null;
+      const guests = project.weddingData?.guests || null;
+      const date = project.weddingData?.date || null;
+      
+      let title = 'Projet de mariage';
+      if (location && guests) {
+        title = `Mariage ${location} - ${guests} invités`;
+      } else if (location) {
+        title = `Mariage à ${location}`;
+      } else if (guests) {
+        title = `Mariage - ${guests} invités`;
+      } else if (date) {
+        title = `Mariage du ${new Date(date).toLocaleDateString('fr-FR')}`;
+      } else if (hasVendors) {
+        title = `Projet avec ${project.vendors.length} prestataires`;
+      }
       
       // Sauvegarder dans wedding_projects avec cast pour les types JSON
       const { error } = await supabase

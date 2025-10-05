@@ -220,7 +220,11 @@ const VibeWeddingChat: React.FC<VibeWeddingChatProps> = ({
                       <span className="w-2 h-2 bg-premium-sage rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
                       <span className="w-2 h-2 bg-premium-sage rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
                     </div>
-                    <span className="text-sm text-muted-foreground">Mariable génère votre organisation mariage...</span>
+                    <span className="text-sm text-muted-foreground">
+                      {organizationMode 
+                        ? '🔍 Mariable organise votre mariage...' 
+                        : '🔍 Mariable recherche des prestataires pour vous...'}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -235,14 +239,14 @@ const VibeWeddingChat: React.FC<VibeWeddingChatProps> = ({
         <div className="max-w-3xl mx-auto">
           {/* Toggle Mode Conversation / Organisation */}
           <TooltipProvider>
-            <div className="mb-3 flex items-center justify-center gap-3 p-3 bg-card border border-border rounded-lg">
+            <div className="mb-3 flex items-center justify-between gap-3 p-3 bg-card border border-border rounded-lg">
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setOrganizationMode(false)}
                   type="button"
-                  className={`px-4 py-2 rounded-lg transition-colors text-sm font-medium ${
+                  className={`px-4 py-2 rounded-lg transition-all text-sm font-medium ${
                     !organizationMode 
-                      ? 'bg-premium-sage text-white' 
+                      ? 'bg-premium-sage text-white shadow-md scale-105' 
                       : 'bg-muted text-muted-foreground hover:bg-muted/80'
                   }`}
                 >
@@ -251,9 +255,9 @@ const VibeWeddingChat: React.FC<VibeWeddingChatProps> = ({
                 <button
                   onClick={() => setOrganizationMode(true)}
                   type="button"
-                  className={`px-4 py-2 rounded-lg transition-colors text-sm font-medium ${
+                  className={`px-4 py-2 rounded-lg transition-all text-sm font-medium ${
                     organizationMode 
-                      ? 'bg-premium-sage text-white' 
+                      ? 'bg-premium-sage text-white shadow-md scale-105' 
                       : 'bg-muted text-muted-foreground hover:bg-muted/80'
                   }`}
                 >
@@ -266,12 +270,17 @@ const VibeWeddingChat: React.FC<VibeWeddingChatProps> = ({
                     <Info className="w-4 h-4" />
                   </button>
                 </TooltipTrigger>
-                <TooltipContent className="max-w-xs">
-                  <p className="text-sm">
-                    <strong>💬 Conversation :</strong> Posez des questions, recherchez des prestataires sans modifier votre projet.
-                    <br/><br/>
-                    <strong>📝 Organisation :</strong> Toutes vos demandes enrichissent automatiquement votre projet de mariage.
-                  </p>
+                <TooltipContent className="max-w-xs" side="left">
+                  <div className="space-y-2">
+                    <div>
+                      <p className="text-sm font-semibold text-premium-sage">💬 Mode Conversation</p>
+                      <p className="text-xs text-muted-foreground">Recherchez des prestataires et posez des questions sans modifier votre projet.</p>
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-premium-sage">📝 Mode Organisation</p>
+                      <p className="text-xs text-muted-foreground">Chaque demande enrichit automatiquement votre projet (budget, planning, prestataires).</p>
+                    </div>
+                  </div>
                 </TooltipContent>
               </Tooltip>
             </div>
