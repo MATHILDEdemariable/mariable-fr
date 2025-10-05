@@ -15,10 +15,3 @@ verify_jwt = false
 
 [functions.vibe-wedding-ai]
 verify_jwt = false
-
-[functions.wedding-organization-ai]
-verify_jwt = false
-
-[functions.wedding-vendor-search-ai]
-verify_jwt = false
-

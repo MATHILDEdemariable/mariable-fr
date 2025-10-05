@@ -4,13 +4,23 @@ import { MessageSquare, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import VibeWeddingHeader from '@/components/VibeWeddingHeader';
 import Footer from '@/components/Footer';
-import WeddingChatbot from '@/components/wedding-assistant/v2/WeddingChatbot';
-import WeddingProjectPanel from '@/components/vibe-wedding/WeddingProjectPanel';
-import { WeddingProjectProvider, useWeddingProject } from '@/contexts/WeddingProjectContext';
+import VibeWeddingChat from '@/components/vibe-wedding/VibeWeddingChat';
+import VibeWeddingEmbed from '@/components/vibe-wedding/VibeWeddingEmbed';
+import VibeWeddingResultsImproved from '@/components/vibe-wedding/VibeWeddingResultsImproved';
+import { useVibeWedding } from '@/hooks/useVibeWedding';
 
-const VibeWeddingContent: React.FC = () => {
+const VibeWedding: React.FC = () => {
   const [isChatOpen, setIsChatOpen] = useState(true);
-  const { project } = useWeddingProject();
+  const {
+    messages,
+    project,
+    isLoading,
+    sendMessage,
+    saveProjectToDashboard,
+    promptCount,
+    showAuthModal,
+    setShowAuthModal,
+  } = useVibeWedding();
 
   return (
     <>
@@ -26,30 +36,40 @@ const VibeWeddingContent: React.FC = () => {
 
       <div className="flex flex-col min-h-screen">
         <div className="flex h-[calc(100vh-64px)] mt-16 bg-background overflow-hidden">
+          {/* Layout conditionnel basé sur l'existence du projet */}
           {!project ? (
-            /* Mode initial - Chatbot centré */
-            <div className="flex-1 flex items-center justify-center p-8">
-              <div className="w-full max-w-4xl">
-                <WeddingChatbot preventScroll={false} />
-              </div>
+            /* Mode Hero + Chat - Full page avec transition */
+            <div className="flex-1 overflow-hidden">
+              <VibeWeddingEmbed
+                messages={messages}
+                onSendMessage={sendMessage}
+                isLoading={isLoading}
+                promptCount={promptCount}
+                showAuthModal={showAuthModal}
+                setShowAuthModal={setShowAuthModal}
+              />
             </div>
           ) : (
-            /* Mode projet actif - Split view */
+            /* Mode Projet + Chat - Split view uniforme */
             <>
-              {/* Gauche : Projet */}
+              {/* Gauche : Projet (always visible when exists) */}
               <div className="flex-1 overflow-hidden border-r border-border">
-                <WeddingProjectPanel />
+                <VibeWeddingResultsImproved 
+                  project={project} 
+                  onSave={saveProjectToDashboard}
+                />
               </div>
 
-              {/* Droite : Chatbot en sidebar */}
+              {/* Droite : Conversation en sidebar fixe */}
               <div
                 className={`fixed right-0 top-16 h-[calc(100vh-64px)] bg-card border-l border-border shadow-2xl transition-all duration-300 z-40 ${
                   isChatOpen ? 'translate-x-0' : 'translate-x-full'
                 }`}
-                style={{ width: '480px' }}
+                style={{ width: '420px' }}
               >
+                {/* Header du chat */}
                 <div className="flex items-center justify-between p-4 border-b border-border bg-muted/30">
-                  <h3 className="font-semibold text-base">💬 Assistant Mariage</h3>
+                  <h3 className="font-semibold text-base">💬 Conversation</h3>
                   <Button
                     variant="ghost"
                     size="icon"
@@ -60,11 +80,20 @@ const VibeWeddingContent: React.FC = () => {
                   </Button>
                 </div>
 
+                {/* Zone de chat */}
                 <div className="h-[calc(100%-4rem)]">
-                  <WeddingChatbot preventScroll={true} />
+                  <VibeWeddingChat
+                    messages={messages}
+                    onSendMessage={sendMessage}
+                    isLoading={isLoading}
+                    promptCount={promptCount}
+                    showAuthModal={showAuthModal}
+                    setShowAuthModal={setShowAuthModal}
+                  />
                 </div>
               </div>
 
+              {/* Bouton flottant pour ouvrir le chat si fermé */}
               {!isChatOpen && (
                 <Button
                   onClick={() => setIsChatOpen(true)}
@@ -81,14 +110,6 @@ const VibeWeddingContent: React.FC = () => {
         <Footer />
       </div>
     </>
-  );
-};
-
-const VibeWedding: React.FC = () => {
-  return (
-    <WeddingProjectProvider>
-      <VibeWeddingContent />
-    </WeddingProjectProvider>
   );
 };
 
