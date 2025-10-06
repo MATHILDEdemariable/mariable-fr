@@ -1,48 +1,29 @@
 import { motion } from 'framer-motion';
 import { Feature, dashboardFeatures } from '@/data/dashboardFeatures';
-import { 
-  Heart, 
-  DollarSign, 
-  CheckCircle, 
-  Calendar, 
-  Sparkles, 
-  Clock,
-  Users,
-  FileText,
-  ChevronDown,
-  ChevronRight
-} from 'lucide-react';
+import { Heart, DollarSign, CheckCircle, Calendar, Sparkles, Clock, Users, FileText, ChevronDown, ChevronRight } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-
 interface DashboardMockupProps {
   expandedMenus: string[];
   onToggleMenu: (menuId: string) => void;
   hoveredFeature: string | null;
   onHoverFeature: (featureId: string | null) => void;
 }
-
 export const DashboardMockup = ({
   expandedMenus,
   onToggleMenu,
   hoveredFeature,
-  onHoverFeature,
+  onHoverFeature
 }: DashboardMockupProps) => {
   const isExpanded = (menuId: string) => expandedMenus.includes(menuId);
-
-  return (
-    <div className="relative w-full min-h-[800px] bg-gray-50 rounded-lg overflow-hidden border-2 border-gray-200">
+  return <div className="relative w-full min-h-[800px] bg-gray-50 rounded-lg overflow-hidden border-2 border-gray-200">
       {/* Header */}
       <div className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6">
         <div className="flex items-center gap-2">
           <Heart className="w-6 h-6 text-wedding-olive" />
           <span className="font-bold text-xl">Mon Mariage</span>
         </div>
-        <div 
-          className="flex items-center gap-2 px-4 py-2 rounded-full bg-gray-100 cursor-pointer hover:bg-gray-200 transition-colors"
-          onMouseEnter={() => onHoverFeature('user-profile')}
-          onMouseLeave={() => onHoverFeature(null)}
-        >
+        <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-gray-100 cursor-pointer hover:bg-gray-200 transition-colors" onMouseEnter={() => onHoverFeature('user-profile')} onMouseLeave={() => onHoverFeature(null)}>
           <div className="w-8 h-8 rounded-full bg-wedding-olive/20 flex items-center justify-center">
             <Users className="w-4 h-4 text-wedding-olive" />
           </div>
@@ -54,13 +35,7 @@ export const DashboardMockup = ({
         {/* Sidebar */}
         <div className="w-64 bg-white border-r border-gray-200 min-h-[744px] p-4 space-y-2">
           {/* Mon Mariage */}
-          <div
-            className={`p-3 rounded-lg cursor-pointer transition-colors ${
-              hoveredFeature === 'mon-mariage' ? 'bg-wedding-olive/10' : 'hover:bg-gray-100'
-            }`}
-            onMouseEnter={() => onHoverFeature('mon-mariage')}
-            onMouseLeave={() => onHoverFeature(null)}
-          >
+          <div className={`p-3 rounded-lg cursor-pointer transition-colors ${hoveredFeature === 'mon-mariage' ? 'bg-wedding-olive/10' : 'hover:bg-gray-100'}`} onMouseEnter={() => onHoverFeature('mon-mariage')} onMouseLeave={() => onHoverFeature(null)}>
             <div className="flex items-center gap-2">
               <Heart className="w-5 h-5 text-wedding-olive" />
               <span className="font-medium">Mon Mariage</span>
@@ -68,13 +43,7 @@ export const DashboardMockup = ({
           </div>
 
           {/* Budget */}
-          <div
-            className={`p-3 rounded-lg cursor-pointer transition-colors ${
-              hoveredFeature === 'budget' ? 'bg-wedding-olive/10' : 'hover:bg-gray-100'
-            }`}
-            onMouseEnter={() => onHoverFeature('budget')}
-            onMouseLeave={() => onHoverFeature(null)}
-          >
+          <div className={`p-3 rounded-lg cursor-pointer transition-colors ${hoveredFeature === 'budget' ? 'bg-wedding-olive/10' : 'hover:bg-gray-100'}`} onMouseEnter={() => onHoverFeature('budget')} onMouseLeave={() => onHoverFeature(null)}>
             <div className="flex items-center gap-2">
               <DollarSign className="w-5 h-5 text-wedding-olive" />
               <span className="font-medium">Budget</span>
@@ -82,13 +51,7 @@ export const DashboardMockup = ({
           </div>
 
           {/* Checklist */}
-          <div
-            className={`p-3 rounded-lg cursor-pointer transition-colors ${
-              hoveredFeature === 'checklist' ? 'bg-wedding-olive/10' : 'hover:bg-gray-100'
-            }`}
-            onMouseEnter={() => onHoverFeature('checklist')}
-            onMouseLeave={() => onHoverFeature(null)}
-          >
+          <div className={`p-3 rounded-lg cursor-pointer transition-colors ${hoveredFeature === 'checklist' ? 'bg-wedding-olive/10' : 'hover:bg-gray-100'}`} onMouseEnter={() => onHoverFeature('checklist')} onMouseLeave={() => onHoverFeature(null)}>
             <div className="flex items-center gap-2">
               <CheckCircle className="w-5 h-5 text-wedding-olive" />
               <span className="font-medium">Checklist Mariage</span>
@@ -96,98 +59,56 @@ export const DashboardMockup = ({
           </div>
 
           {/* Avant Jour J */}
-          <div
-            className={`p-3 rounded-lg cursor-pointer transition-colors ${
-              hoveredFeature === 'avant-jour-j' ? 'bg-wedding-olive/10' : 'hover:bg-gray-100'
-            }`}
-            onMouseEnter={() => onHoverFeature('avant-jour-j')}
-            onMouseLeave={() => onHoverFeature(null)}
-          >
-            <div className="flex items-center gap-2">
-              <Calendar className="w-5 h-5 text-wedding-olive" />
-              <span className="font-medium">Avant Jour J</span>
-            </div>
+          <div className={`p-3 rounded-lg cursor-pointer transition-colors ${hoveredFeature === 'avant-jour-j' ? 'bg-wedding-olive/10' : 'hover:bg-gray-100'}`} onMouseEnter={() => onHoverFeature('avant-jour-j')} onMouseLeave={() => onHoverFeature(null)}>
+            
           </div>
 
           {/* Mon Jour M (expandable) */}
           <div>
-            <div
-              className={`p-3 rounded-lg cursor-pointer transition-colors ${
-                hoveredFeature === 'mon-jour-m' ? 'bg-wedding-olive/10' : 'hover:bg-gray-100'
-              }`}
-              onClick={() => onToggleMenu('mon-jour-m')}
-              onMouseEnter={() => onHoverFeature('mon-jour-m')}
-              onMouseLeave={() => onHoverFeature(null)}
-            >
+            <div className={`p-3 rounded-lg cursor-pointer transition-colors ${hoveredFeature === 'mon-jour-m' ? 'bg-wedding-olive/10' : 'hover:bg-gray-100'}`} onClick={() => onToggleMenu('mon-jour-m')} onMouseEnter={() => onHoverFeature('mon-jour-m')} onMouseLeave={() => onHoverFeature(null)}>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Sparkles className="w-5 h-5 text-wedding-olive" />
-                  <span className="font-medium">Mon Jour M</span>
+                  <span className="font-medium">Jour-J</span>
                 </div>
-                {isExpanded('mon-jour-m') ? (
-                  <ChevronDown className="w-4 h-4" />
-                ) : (
-                  <ChevronRight className="w-4 h-4" />
-                )}
+                {isExpanded('mon-jour-m') ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
               </div>
             </div>
 
             {/* Sub-items */}
-            {isExpanded('mon-jour-m') && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: 'auto', opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                className="ml-4 mt-1 space-y-1"
-              >
-                <div
-                  className={`p-2 rounded-lg cursor-pointer transition-colors text-sm ${
-                    hoveredFeature === 'jour-m-planning' ? 'bg-wedding-olive/10' : 'hover:bg-gray-100'
-                  }`}
-                  onMouseEnter={() => onHoverFeature('jour-m-planning')}
-                  onMouseLeave={() => onHoverFeature(null)}
-                >
+            {isExpanded('mon-jour-m') && <motion.div initial={{
+            height: 0,
+            opacity: 0
+          }} animate={{
+            height: 'auto',
+            opacity: 1
+          }} exit={{
+            height: 0,
+            opacity: 0
+          }} className="ml-4 mt-1 space-y-1">
+                <div className={`p-2 rounded-lg cursor-pointer transition-colors text-sm ${hoveredFeature === 'jour-m-planning' ? 'bg-wedding-olive/10' : 'hover:bg-gray-100'}`} onMouseEnter={() => onHoverFeature('jour-m-planning')} onMouseLeave={() => onHoverFeature(null)}>
                   <div className="flex items-center gap-2">
                     <Clock className="w-4 h-4 text-wedding-olive" />
                     <span>Planning</span>
                   </div>
                 </div>
-                <div
-                  className={`p-2 rounded-lg cursor-pointer transition-colors text-sm ${
-                    hoveredFeature === 'jour-m-equipe' ? 'bg-wedding-olive/10' : 'hover:bg-gray-100'
-                  }`}
-                  onMouseEnter={() => onHoverFeature('jour-m-equipe')}
-                  onMouseLeave={() => onHoverFeature(null)}
-                >
+                <div className={`p-2 rounded-lg cursor-pointer transition-colors text-sm ${hoveredFeature === 'jour-m-equipe' ? 'bg-wedding-olive/10' : 'hover:bg-gray-100'}`} onMouseEnter={() => onHoverFeature('jour-m-equipe')} onMouseLeave={() => onHoverFeature(null)}>
                   <div className="flex items-center gap-2">
                     <Users className="w-4 h-4 text-wedding-olive" />
                     <span>Équipe</span>
                   </div>
                 </div>
-                <div
-                  className={`p-2 rounded-lg cursor-pointer transition-colors text-sm ${
-                    hoveredFeature === 'jour-m-documents' ? 'bg-wedding-olive/10' : 'hover:bg-gray-100'
-                  }`}
-                  onMouseEnter={() => onHoverFeature('jour-m-documents')}
-                  onMouseLeave={() => onHoverFeature(null)}
-                >
+                <div className={`p-2 rounded-lg cursor-pointer transition-colors text-sm ${hoveredFeature === 'jour-m-documents' ? 'bg-wedding-olive/10' : 'hover:bg-gray-100'}`} onMouseEnter={() => onHoverFeature('jour-m-documents')} onMouseLeave={() => onHoverFeature(null)}>
                   <div className="flex items-center gap-2">
                     <FileText className="w-4 h-4 text-wedding-olive" />
                     <span>Documents</span>
                   </div>
                 </div>
-              </motion.div>
-            )}
+              </motion.div>}
           </div>
 
           {/* Après Jour J */}
-          <div
-            className={`p-3 rounded-lg cursor-pointer transition-colors ${
-              hoveredFeature === 'apres-jour-j' ? 'bg-wedding-olive/10' : 'hover:bg-gray-100'
-            }`}
-            onMouseEnter={() => onHoverFeature('apres-jour-j')}
-            onMouseLeave={() => onHoverFeature(null)}
-          >
+          <div className={`p-3 rounded-lg cursor-pointer transition-colors ${hoveredFeature === 'apres-jour-j' ? 'bg-wedding-olive/10' : 'hover:bg-gray-100'}`} onMouseEnter={() => onHoverFeature('apres-jour-j')} onMouseLeave={() => onHoverFeature(null)}>
             <div className="flex items-center gap-2">
               <CheckCircle className="w-5 h-5 text-wedding-olive" />
               <span className="font-medium">Après Jour J</span>
@@ -195,13 +116,7 @@ export const DashboardMockup = ({
           </div>
 
           {/* Prestataires */}
-          <div
-            className={`p-3 rounded-lg cursor-pointer transition-colors ${
-              hoveredFeature === 'prestataires' ? 'bg-wedding-olive/10' : 'hover:bg-gray-100'
-            }`}
-            onMouseEnter={() => onHoverFeature('prestataires')}
-            onMouseLeave={() => onHoverFeature(null)}
-          >
+          <div className={`p-3 rounded-lg cursor-pointer transition-colors ${hoveredFeature === 'prestataires' ? 'bg-wedding-olive/10' : 'hover:bg-gray-100'}`} onMouseEnter={() => onHoverFeature('prestataires')} onMouseLeave={() => onHoverFeature(null)}>
             <div className="flex items-center gap-2">
               <Users className="w-5 h-5 text-wedding-olive" />
               <span className="font-medium">Mes Prestataires</span>
@@ -213,28 +128,14 @@ export const DashboardMockup = ({
         <div className="flex-1 p-6">
           {/* Share Button */}
           <div className="flex justify-end mb-6">
-            <div
-              className={`px-4 py-2 rounded-lg bg-wedding-olive text-white cursor-pointer hover:bg-wedding-olive/90 transition-colors ${
-                hoveredFeature === 'share-dashboard' ? 'ring-2 ring-wedding-olive/50' : ''
-              }`}
-              onMouseEnter={() => onHoverFeature('share-dashboard')}
-              onMouseLeave={() => onHoverFeature(null)}
-            >
+            <div className={`px-4 py-2 rounded-lg bg-wedding-olive text-white cursor-pointer hover:bg-wedding-olive/90 transition-colors ${hoveredFeature === 'share-dashboard' ? 'ring-2 ring-wedding-olive/50' : ''}`} onMouseEnter={() => onHoverFeature('share-dashboard')} onMouseLeave={() => onHoverFeature(null)}>
               Partager le dashboard
             </div>
           </div>
 
           {/* Project Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[1, 2].map((i) => (
-              <div
-                key={i}
-                className={`cursor-pointer transition-all ${
-                  hoveredFeature === 'project-cards' ? 'ring-2 ring-wedding-olive/50' : ''
-                }`}
-                onMouseEnter={() => onHoverFeature('project-cards')}
-                onMouseLeave={() => onHoverFeature(null)}
-              >
+            {[1, 2].map(i => <div key={i} className={`cursor-pointer transition-all ${hoveredFeature === 'project-cards' ? 'ring-2 ring-wedding-olive/50' : ''}`} onMouseEnter={() => onHoverFeature('project-cards')} onMouseLeave={() => onHoverFeature(null)}>
                 <Card className="hover:shadow-lg transition-shadow">
                   <CardContent className="p-6">
                     <h3 className="font-bold text-lg mb-4">Mariage Provence {i}</h3>
@@ -266,11 +167,9 @@ export const DashboardMockup = ({
                     </div>
                   </CardContent>
                 </Card>
-              </div>
-            ))}
+              </div>)}
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
