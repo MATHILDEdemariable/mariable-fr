@@ -193,12 +193,13 @@ IMPORTANT:
 
     // Recherche dans la base de données - ÉTAPE 1: Récupérer les prestataires
     console.log(`🔎 Recherche: ${extractedData.categorie} en ${extractedData.region}`);
+    console.log(`🔍 Valeurs exactes envoyées - Catégorie: "${extractedData.categorie}" | Région: "${extractedData.region}"`);
     
     let query = supabase
       .from('prestataires_rows')
       .select('id, nom, categorie, ville, region, description, prix_a_partir_de, partner, featured, site_web, email, telephone, styles')
-      .eq('categorie', extractedData.categorie)
-      .eq('region', extractedData.region)
+      .eq('categorie::text', extractedData.categorie)
+      .eq('region::text', extractedData.region)
       .eq('visible', true)
       .order('featured', { ascending: false });
 
