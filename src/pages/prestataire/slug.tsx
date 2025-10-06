@@ -107,11 +107,24 @@ const SinglePrestataire = () => {
     queryFn: async () => {
       if (!slug) return null;
 
-      const { data, error } = await supabase
+      // Essayer d'abord avec le slug
+      let { data, error } = await supabase
         .from("prestataires_rows")
         .select("*, prestataires_photos_preprod(*)")
         .eq("slug", slug)
         .maybeSingle();
+
+      // Si pas trouvé par slug, essayer par ID
+      if (!data && !error) {
+        const result = await supabase
+          .from("prestataires_rows")
+          .select("*, prestataires_photos_preprod(*)")
+          .eq("id", slug)
+          .maybeSingle();
+        
+        data = result.data;
+        error = result.error;
+      }
 
       if (error) {
         toast({
@@ -447,7 +460,7 @@ const SinglePrestataire = () => {
     <div className="min-h-screen flex flex-col bg-white">
       <PremiumHeader />
 
-      <main className="flex-grow">
+      <main className="flex-grow pt-24">
         <div className="relative h-[25vh] w-full hidden">
           <img
             src={mainImage}
