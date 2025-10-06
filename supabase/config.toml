@@ -18,3 +18,6 @@ verify_jwt = false
 
 [functions.wedding-vendor-matcher]
 verify_jwt = false
+
+[functions.generate-wedding-retroplanning]
+verify_jwt = true

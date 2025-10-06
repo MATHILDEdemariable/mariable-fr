@@ -50,6 +50,7 @@ import MariageProvence from "./pages/MariageProvence";
 import MariageParis from "./pages/MariageParis";
 import MariageAuvergneRhoneAlpes from "./pages/MariageAuvergneRhoneAlpes";
 import MariageNouvelleAquitaine from "./pages/MariageNouvelleAquitaine";
+import WeddingRetroplanning from "./pages/WeddingRetroplanning";
 
 // Import missing pages
 import Professionnels from "./pages/Professionnels";
@@ -129,6 +130,7 @@ function App() {
                   <Route path="/planning-personnalise" element={<PlanningPersonnalise />} />
                   <Route path="/planning-resultats-personnalises" element={<PlanningResultatsPersonnalises />} />
                   <Route path="/reservation-jour-m" element={<ReservationJourM />} />
+                  <Route path="/retroplanning" element={<WeddingRetroplanning />} />
                    <Route path="/dashboard/*" element={<UserDashboard />} />
                    <Route path="/jour-m-vue/:token" element={<JourMVue />} />
                    

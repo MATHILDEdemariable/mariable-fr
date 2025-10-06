@@ -8,6 +8,7 @@ import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -37,6 +38,7 @@ const MonMariage = () => {
   const { toast } = useToast();
   const [projects, setProjects] = useState<WeddingProject[]>([]);
   const [vibeConversations, setVibeConversations] = useState<any[]>([]);
+  const [retroplannings, setRetroplannings] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [projectToDelete, setProjectToDelete] = useState<string | null>(null);
 
@@ -47,6 +49,7 @@ const MonMariage = () => {
       if (!user) {
         setProjects([]);
         setVibeConversations([]);
+        setRetroplannings([]);
         setIsLoading(false);
         return;
       }
@@ -68,8 +71,18 @@ const MonMariage = () => {
 
       if (conversationsError) throw conversationsError;
 
+      // Charger les rétroplannings
+      const { data: retroplanningsData, error: retroplanningsError } = await supabase
+        .from('wedding_retroplanning')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
+      if (retroplanningsError) throw retroplanningsError;
+
       setProjects((data || []) as any);
       setVibeConversations(conversationsData || []);
+      setRetroplannings(retroplanningsData || []);
     } catch (error: any) {
       console.error('Error loading projects:', error);
       toast({
@@ -132,6 +145,35 @@ const MonMariage = () => {
       toast({
         title: "Erreur",
         description: "Impossible de supprimer la recherche",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleDeleteRetroplanning = async (retroplanningId: string) => {
+    if (!confirm("Êtes-vous sûr de vouloir supprimer ce rétroplanning ?")) {
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('wedding_retroplanning')
+        .delete()
+        .eq('id', retroplanningId);
+
+      if (error) throw error;
+
+      toast({
+        title: "✅ Rétroplanning supprimé",
+        description: "Le rétroplanning a été supprimé avec succès"
+      });
+
+      loadProjects();
+    } catch (error: any) {
+      console.error('Erreur suppression:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de supprimer le rétroplanning",
         variant: "destructive"
       });
     }
@@ -323,6 +365,60 @@ const MonMariage = () => {
                 </Card>
               );
             })}
+          </div>
+        </div>
+      )}
+
+      {/* Section Rétroplannings */}
+      {retroplannings.length > 0 && (
+        <div className="mt-12">
+          <h2 className="text-2xl font-serif font-bold mb-4 flex items-center gap-2">
+            <span>📋</span> Mes Rétroplannings
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {retroplannings.map((retro) => (
+              <Card key={retro.id} className="hover:shadow-lg transition-shadow">
+                <CardHeader>
+                  <CardTitle className="flex items-center justify-between">
+                    <span className="truncate text-lg">{retro.title}</span>
+                  </CardTitle>
+                  <CardDescription className="flex items-center gap-2 text-sm">
+                    <Calendar className="w-4 h-4" />
+                    {format(new Date(retro.wedding_date), 'PPP', { locale: fr })}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div>
+                    <div className="flex justify-between text-sm mb-2">
+                      <span className="text-muted-foreground">Progression</span>
+                      <span className="font-semibold text-premium-sage">{retro.progress}%</span>
+                    </div>
+                    <Progress value={retro.progress} className="h-2" />
+                  </div>
+
+                  <div className="flex gap-2">
+                    <Button
+                      variant="default"
+                      size="sm"
+                      className="flex-1 bg-premium-sage hover:bg-premium-sage-dark"
+                      onClick={() => navigate(`/retroplanning?id=${retro.id}`)}
+                    >
+                      <Eye className="w-4 h-4 mr-2" />
+                      Voir le planning
+                    </Button>
+                    
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleDeleteRetroplanning(retro.id)}
+                      className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </div>
       )}

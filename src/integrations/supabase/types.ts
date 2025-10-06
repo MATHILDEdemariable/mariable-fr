@@ -2836,6 +2836,45 @@ export type Database = {
         }
         Relationships: []
       }
+      wedding_retroplanning: {
+        Row: {
+          categories: Json
+          created_at: string
+          id: string
+          milestones: Json
+          progress: number
+          timeline_data: Json
+          title: string
+          updated_at: string
+          user_id: string
+          wedding_date: string
+        }
+        Insert: {
+          categories?: Json
+          created_at?: string
+          id?: string
+          milestones?: Json
+          progress?: number
+          timeline_data?: Json
+          title: string
+          updated_at?: string
+          user_id: string
+          wedding_date: string
+        }
+        Update: {
+          categories?: Json
+          created_at?: string
+          id?: string
+          milestones?: Json
+          progress?: number
+          timeline_data?: Json
+          title?: string
+          updated_at?: string
+          user_id?: string
+          wedding_date?: string
+        }
+        Relationships: []
+      }
       wedding_synonyms: {
         Row: {
           created_at: string | null
