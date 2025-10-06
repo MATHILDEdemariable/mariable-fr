@@ -37,65 +37,18 @@ const PremiumHeader = () => {
 
   const NavLinks = () => (
     <>
-      <HeaderDropdown label="Inspiration">
-        <HeaderDropdownMenu>
-          <HeaderDropdownItem 
-            label="Club Mariable" 
-            description="Communauté des jeunes mariés"
-            to="/jeunes-maries" 
-          />
-          <HeaderDropdownItem 
-            label="Conseils" 
-            description="Inspiration et tendances mariage"
-            to="/conseilsmariage"
-          />
-        </HeaderDropdownMenu>
-      </HeaderDropdown>
-      
+      <Link to="/fonctionnalites" className="text-premium-charcoal hover:text-premium-black transition-colors font-medium">
+        Fonctionnalités
+      </Link>
       <Link to="/selection" className="text-premium-charcoal hover:text-premium-black transition-colors font-medium">
         Prestataires
       </Link>
-      <Link to="/outils-planning-mariage" className="text-premium-charcoal hover:text-premium-black transition-colors font-medium">
-        Planification
+      <Link to="/prix" className="text-premium-charcoal hover:text-premium-black transition-colors font-medium">
+        Tarifs
       </Link>
-      <Link to="/coordination-jour-j" className="text-premium-charcoal hover:text-premium-black transition-colors font-medium">
-        Jour J
+      <Link to="/conseilsmariage" className="text-premium-charcoal hover:text-premium-black transition-colors font-medium">
+        Conseils
       </Link>
-      
-      <HeaderDropdown label="À propos">
-        <HeaderDropdownMenu>
-          <HeaderDropdownItem 
-            label="Notre histoire" 
-            description="L'histoire de Mariable"
-            to="/about/histoire" 
-          />
-          <HeaderDropdownItem 
-            label="Notre charte" 
-            description="Nos valeurs et engagements"
-            to="/about/charte" 
-          />
-          <HeaderDropdownItem 
-            label="Prix" 
-            description="Tarifs et formules"
-            to="/prix" 
-          />
-          <HeaderDropdownItem 
-            label="Nous contacter" 
-            description="Entrer en contact"
-            to="/contact" 
-          />
-          <HeaderDropdownItem 
-            label="FAQ" 
-            description="Questions fréquentes"
-            to="/contact/faq" 
-          />
-          <HeaderDropdownItem 
-            label="Comparatif" 
-            description="Seul vs Wedding Planner vs Mariable"
-            to="/comparatif" 
-          />
-        </HeaderDropdownMenu>
-      </HeaderDropdown>
     </>
   );
 
@@ -160,6 +113,13 @@ const PremiumHeader = () => {
                 
                 <div className="flex flex-col space-y-4">
                   <Link 
+                    to="/fonctionnalites" 
+                    className="text-premium-charcoal hover:text-premium-black transition-colors font-medium py-2"
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    Fonctionnalités
+                  </Link>
+                  <Link 
                     to="/selection" 
                     className="text-premium-charcoal hover:text-premium-black transition-colors font-medium py-2"
                     onClick={() => setMobileOpen(false)}
@@ -167,89 +127,19 @@ const PremiumHeader = () => {
                     Prestataires
                   </Link>
                   <Link 
-                    to="/outils-planning-mariage" 
+                    to="/prix" 
                     className="text-premium-charcoal hover:text-premium-black transition-colors font-medium py-2"
                     onClick={() => setMobileOpen(false)}
                   >
-                    Planification
+                    Tarifs
                   </Link>
                   <Link 
-                    to="/coordination-jour-j" 
+                    to="/conseilsmariage" 
                     className="text-premium-charcoal hover:text-premium-black transition-colors font-medium py-2"
                     onClick={() => setMobileOpen(false)}
                   >
-                    Jour J
+                    Conseils
                   </Link>
-                  
-                  {/* Inspiration Submenu */}
-                  <div className="py-2">
-                    <p className="font-semibold text-premium-black mb-2">Inspiration</p>
-                    <div className="ml-4 space-y-2">
-                      <Link 
-                        to="/jeunes-maries" 
-                        className="block text-premium-charcoal hover:text-premium-black transition-colors py-1"
-                        onClick={() => setMobileOpen(false)}
-                      >
-                        Club Mariable
-                      </Link>
-                      <Link 
-                        to="/conseilsmariage" 
-                        className="block text-premium-charcoal hover:text-premium-black transition-colors py-1"
-                        onClick={() => setMobileOpen(false)}
-                      >
-                        Conseils
-                      </Link>
-                    </div>
-                  </div>
-                  
-                  {/* À propos Submenu */}
-                  <div className="py-2">
-                    <p className="font-semibold text-premium-black mb-2">À propos</p>
-                    <div className="ml-4 space-y-2">
-                      <Link 
-                        to="/about/histoire" 
-                        className="block text-premium-charcoal hover:text-premium-black transition-colors py-1"
-                        onClick={() => setMobileOpen(false)}
-                      >
-                        Notre histoire
-                      </Link>
-                      <Link 
-                        to="/about/charte" 
-                        className="block text-premium-charcoal hover:text-premium-black transition-colors py-1"
-                        onClick={() => setMobileOpen(false)}
-                      >
-                        Notre charte
-                      </Link>
-                      <Link 
-                        to="/prix" 
-                        className="block text-premium-charcoal hover:text-premium-black transition-colors py-1"
-                        onClick={() => setMobileOpen(false)}
-                      >
-                        Prix
-                      </Link>
-                      <Link 
-                        to="/contact" 
-                        className="block text-premium-charcoal hover:text-premium-black transition-colors py-1"
-                        onClick={() => setMobileOpen(false)}
-                      >
-                        Nous contacter
-                      </Link>
-                      <Link 
-                        to="/contact/faq" 
-                        className="block text-premium-charcoal hover:text-premium-black transition-colors py-1"
-                        onClick={() => setMobileOpen(false)}
-                      >
-                        FAQ
-                      </Link>
-                      <Link 
-                        to="/comparatif" 
-                        className="block text-premium-charcoal hover:text-premium-black transition-colors py-1"
-                        onClick={() => setMobileOpen(false)}
-                      >
-                        Comparatif
-                      </Link>
-                    </div>
-                  </div>
                 </div>
 
                 <div className="flex flex-col space-y-3 pt-6 border-t border-premium-light">

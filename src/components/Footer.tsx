@@ -5,7 +5,7 @@ import { supabase } from '@/integrations/supabase/client';
 const Footer = () => {
   return <footer className="py-8 bg-white text-wedding-black" role="contentinfo" aria-label="Pied de page">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
           {/* Logo et description à gauche */}
           <div>
             <div className="flex items-center gap-2 mb-4">
@@ -35,6 +35,17 @@ const Footer = () => {
             </ul>
           </div>
 
+          {/* Découvrir */}
+          <div>
+            <h3 className="font-serif text-base mb-3">Découvrir</h3>
+            <ul className="space-y-1 text-sm">
+              <li><Link to="/jeunes-maries" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Club Mariable</Link></li>
+              <li><Link to="/conseilsmariage" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Conseils mariage</Link></li>
+              <li><Link to="/outils-planning-mariage" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Planification</Link></li>
+              <li><Link to="/coordination-jour-j" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Jour J</Link></li>
+            </ul>
+          </div>
+
           {/* Mariages par région */}
           <div>
             <h3 className="font-serif text-base mb-3">Mariages par région</h3>
@@ -51,14 +62,13 @@ const Footer = () => {
           <div>
             <h3 className="font-serif text-base mb-3">À Propos</h3>
             <ul className="space-y-1 text-sm">
-              <li><Link to="/guidecoordinationjour-j" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Livre blanc</Link></li>
-              <li><Link to="/about/histoire" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Notre Histoire</Link></li>
-              <li><Link to="/about/approche" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Notre Approche</Link></li>
-              <li><Link to="/about/charte" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Notre Charte</Link></li>
-              
-              
+              <li><Link to="/about/histoire" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Notre histoire</Link></li>
+              <li><Link to="/about/charte" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Notre charte</Link></li>
+              <li><Link to="/prix" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Prix</Link></li>
+              <li><Link to="/contact" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Nous contacter</Link></li>
+              <li><Link to="/contact/faq" className="text-wedding-black/70 hover:text-wedding-black transition-colors">FAQ</Link></li>
+              <li><Link to="/comparatif" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Comparatif</Link></li>
               <li><Link to="/professionnels" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Professionnels</Link></li>
-              <li><Link to="/contact" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Nous Contacter</Link></li>
             </ul>
           </div>
         </div>

@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
-import VibeWeddingHeader from '@/components/VibeWeddingHeader';
+import PremiumHeader from '@/components/home/PremiumHeader';
 import Footer from '@/components/Footer';
 import VibeWeddingHero from '@/components/vibe-wedding/VibeWeddingHero';
 import VendorMatchCard from '@/components/vibe-wedding/VendorMatchCard';
@@ -26,7 +26,20 @@ const VibeWedding: React.FC = () => {
     isSaving,
     sendMessage,
     saveProject,
+    loadConversation
   } = useVibeWeddingMatching();
+
+  // Charger la conversation si conversationId dans l'URL
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const conversationId = params.get('conversationId');
+    
+    if (conversationId && loadConversation) {
+      console.log('🔄 Chargement conversation depuis URL:', conversationId);
+      setConversationStarted(true);
+      loadConversation(conversationId);
+    }
+  }, [loadConversation]);
 
   const handleStartConversation = (message: string) => {
     setConversationStarted(true);
@@ -78,10 +91,10 @@ const VibeWedding: React.FC = () => {
         />
       </Helmet>
 
-      <VibeWeddingHeader />
+      <PremiumHeader />
 
       <div className="flex flex-col min-h-screen">
-        <div className="flex h-[calc(100vh-64px)] mt-16 bg-background">
+        <div className="flex h-[calc(100vh-96px)] pt-16 bg-background">
           {/* Gauche : Panneau des prestataires matchés */}
           <div className="flex-1 overflow-y-auto p-6 border-r border-border">
             <div className="max-w-6xl mx-auto">

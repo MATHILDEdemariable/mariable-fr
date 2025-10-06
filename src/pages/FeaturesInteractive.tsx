@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
-import VibeWeddingHeader from '@/components/VibeWeddingHeader';
+import PremiumHeader from '@/components/home/PremiumHeader';
 import Footer from '@/components/Footer';
 import { DashboardMockup } from '@/components/features/DashboardMockup';
 import { FeatureTooltip } from '@/components/features/FeatureTooltip';
@@ -52,7 +52,7 @@ const FeaturesInteractive = () => {
       </Helmet>
 
       <div className="min-h-screen flex flex-col">
-        <VibeWeddingHeader />
+        <PremiumHeader />
         
         <main className="flex-1 pt-16">
           <div className="container mx-auto px-4 py-12">

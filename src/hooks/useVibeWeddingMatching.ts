@@ -199,6 +199,44 @@ export const useVibeWeddingMatching = () => {
     setConversationId(null);
   };
 
+  const loadConversation = async (conversationId: string) => {
+    setIsLoading(true);
+    
+    try {
+      console.log('📥 Chargement de la conversation:', conversationId);
+      
+      const { data, error } = await supabase
+        .from('ai_wedding_conversations')
+        .select('*')
+        .eq('id', conversationId)
+        .single();
+
+      if (error) throw error;
+
+      console.log('✅ Conversation chargée:', ((data.messages as unknown) as Message[])?.length || 0, 'messages');
+
+      // Restaurer l'état complet de la conversation
+      setMessages(((data.messages as unknown) as Message[]) || []);
+      setMatchedVendors((data.wedding_context as any)?.vendors || []);
+      setDetectedCategory((data.wedding_context as any)?.criteria?.category || null);
+      setConversationId(data.id);
+      
+      toast({
+        title: "Conversation chargée",
+        description: `${((data.messages as unknown) as Message[])?.length || 0} messages restaurés`,
+      });
+    } catch (error) {
+      console.error('❌ Erreur chargement conversation:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de charger la conversation",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return {
     messages,
     matchedVendors,
@@ -210,6 +248,7 @@ export const useVibeWeddingMatching = () => {
     isSaving,
     sendMessage,
     saveProject,
-    clearMatching
+    clearMatching,
+    loadConversation
   };
 };
