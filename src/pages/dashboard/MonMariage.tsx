@@ -208,23 +208,7 @@ const MonMariage = () => {
       </div>
 
       {/* Projets sauvegardés */}
-      {projects.length === 0 ? (
-        <Card className="border-2 border-dashed">
-          <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-            <Heart className="w-16 h-16 text-muted-foreground mb-4" />
-            <h3 className="text-xl font-semibold mb-2">Aucun projet sauvegardé</h3>
-            <p className="text-muted-foreground mb-6 max-w-md">
-              Créez votre premier projet de mariage avec l'IA pour générer un plan complet avec budget, planning et prestataires
-            </p>
-            <Button asChild className="bg-premium-sage hover:bg-premium-sage-dark">
-              <Link to="/vibe-wedding">
-                <Plus className="w-4 h-4 mr-2" />
-                Créer mon projet
-              </Link>
-            </Button>
-          </CardContent>
-        </Card>
-      ) : (
+      {projects.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {projects.map((project) => (
             <Card key={project.id} className="hover:shadow-lg transition-shadow">

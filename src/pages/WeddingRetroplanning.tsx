@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Calendar as CalendarIcon, Loader2, Save, CheckCircle2, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -47,8 +47,62 @@ const WeddingRetroplanning = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [retroplanning, setRetroplanning] = useState<RetroPlanningData | null>(null);
   const [checkedTasks, setCheckedTasks] = useState<Set<string>>(new Set());
+  const [loadedRetroplanningId, setLoadedRetroplanningId] = useState<string | null>(null);
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  // Charger un retroplanning existant depuis l'URL
+  useEffect(() => {
+    const loadExistingRetroplanning = async () => {
+      const params = new URLSearchParams(window.location.search);
+      const retroId = params.get('id');
+      
+      if (!retroId) return;
+
+      try {
+        const { data, error } = await supabase
+          .from('wedding_retroplanning')
+          .select('*')
+          .eq('id', retroId)
+          .single();
+
+        if (error) throw error;
+
+        if (data) {
+          setLoadedRetroplanningId(retroId);
+          setWeddingDate(new Date(data.wedding_date));
+          setRetroplanning({
+            timeline: data.timeline_data as unknown as TimelineItem[],
+            categories: data.categories as unknown as Category[],
+            milestones: data.milestones as unknown as Milestone[]
+          });
+          
+          // Charger la progression si elle existe
+          if (data.progress && typeof data.progress === 'object') {
+            const tasksSet = new Set<string>();
+            Object.entries(data.progress as Record<string, boolean>).forEach(([key, value]) => {
+              if (value) tasksSet.add(key);
+            });
+            setCheckedTasks(tasksSet);
+          }
+
+          toast({
+            title: "Rétroplanning chargé",
+            description: "Votre rétroplanning a été chargé avec succès.",
+          });
+        }
+      } catch (error: any) {
+        console.error('Erreur lors du chargement du rétroplanning:', error);
+        toast({
+          title: "Erreur",
+          description: "Impossible de charger le rétroplanning.",
+          variant: "destructive",
+        });
+      }
+    };
+
+    loadExistingRetroplanning();
+  }, []);
 
   const handleGenerate = async () => {
     if (!weddingDate) {
@@ -95,23 +149,42 @@ const WeddingRetroplanning = () => {
     setIsSaving(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('Non authentifié');
+      if (!user) throw new Error('Créez un compte pour sauvegarder votre rétroplanning');
 
-      const progress = Math.round((checkedTasks.size / getTotalTasksCount()) * 100);
+      // Convertir le Set en objet pour la sauvegarde
+      const progressObj: Record<string, boolean> = {};
+      checkedTasks.forEach(taskId => {
+        progressObj[taskId] = true;
+      });
 
-      const { error } = await supabase
-        .from('wedding_retroplanning')
-        .insert([{
-          user_id: user.id,
-          title: `Mariage du ${format(weddingDate, 'd MMMM yyyy', { locale: fr })}`,
-          wedding_date: format(weddingDate, 'yyyy-MM-dd'),
-          timeline_data: JSON.parse(JSON.stringify(retroplanning.timeline)),
-          categories: JSON.parse(JSON.stringify(retroplanning.categories)),
-          milestones: JSON.parse(JSON.stringify(retroplanning.milestones)),
-          progress
-        }]);
+      // Si on a déjà un ID chargé, on fait un UPDATE au lieu d'un INSERT
+      if (loadedRetroplanningId) {
+        const { error } = await supabase
+          .from('wedding_retroplanning')
+          .update({
+            timeline_data: JSON.parse(JSON.stringify(retroplanning.timeline)),
+            categories: JSON.parse(JSON.stringify(retroplanning.categories)),
+            milestones: JSON.parse(JSON.stringify(retroplanning.milestones)),
+            progress: progressObj as any,
+          })
+          .eq('id', loadedRetroplanningId);
 
-      if (error) throw error;
+        if (error) throw error;
+      } else {
+        const { error } = await supabase
+          .from('wedding_retroplanning')
+          .insert([{
+            user_id: user.id,
+            title: `Mariage du ${format(weddingDate, 'd MMMM yyyy', { locale: fr })}`,
+            wedding_date: format(weddingDate, 'yyyy-MM-dd'),
+            timeline_data: JSON.parse(JSON.stringify(retroplanning.timeline)),
+            categories: JSON.parse(JSON.stringify(retroplanning.categories)),
+            milestones: JSON.parse(JSON.stringify(retroplanning.milestones)),
+            progress: progressObj as any,
+          }]);
+
+        if (error) throw error;
+      }
 
       toast({
         title: "✅ Rétroplanning sauvegardé",

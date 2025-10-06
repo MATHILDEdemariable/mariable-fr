@@ -96,7 +96,7 @@ const VibeWedding: React.FC = () => {
       <PremiumHeader />
 
       <div className="flex flex-col min-h-screen">
-        <div className="flex h-[calc(100vh-96px)] pt-16 bg-background">
+        <div className="flex h-[calc(100vh-96px)] pt-24 bg-background">
           {/* Gauche : Panneau des prestataires matchés */}
           <div className="flex-1 overflow-y-auto p-6 border-r border-border">
             <div className="max-w-6xl mx-auto">
