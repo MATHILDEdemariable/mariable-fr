@@ -198,12 +198,41 @@ const Prix = () => {
                   </CardContent>
                 </Card>
 
+                {/* Wedding Content Creator */}
+                <Card className="shadow-md hover:shadow-lg transition-shadow flex flex-col h-full">
+                  <CardHeader className="text-center bg-wedding-olive text-white">
+                    <CardTitle className="text-xl">Wedding Content Creator</CardTitle>
+                    <div className="text-2xl font-bold">800€</div>
+                  </CardHeader>
+                  <CardContent className="p-6 flex flex-col flex-1">
+                    <div className="space-y-3 flex-1">
+                      <div className="flex items-start gap-2">
+                        <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                        <p className="text-sm text-gray-700">8h de présence le jour-J</p>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                        <p className="text-sm text-gray-700">Envoi de tous les rush vidéo</p>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                        <p className="text-sm text-gray-700">2 montages réels</p>
+                      </div>
+                    </div>
+                    
+                    <div className="pt-4 border-t mt-auto">
+                      <Button asChild className="w-full bg-wedding-olive text-white hover:bg-wedding-olive/90">
+                        <Link to="/contact">Faire une demande</Link>
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
 
                 {/* Présence d'un Coordinateur.rice */}
                 <Card className="shadow-md hover:shadow-lg transition-shadow flex flex-col h-full">
                   <CardHeader className="text-center bg-wedding-olive text-white">
                     <CardTitle className="text-xl">Présence d'un Coordinateur.rice le jour-j</CardTitle>
-                    <div className="text-2xl font-bold">899€</div>
+                    <div className="text-2xl font-bold">1000€</div>
                   </CardHeader>
                   <CardContent className="p-6 flex flex-col flex-1">
                     <div className="space-y-3 flex-1">

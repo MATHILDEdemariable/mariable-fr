@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { MapPin, Star, CheckCircle, Euro } from 'lucide-react';
@@ -121,52 +122,54 @@ const VendorPreviewWidget = () => {
   return (
     <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
       {vendors.map((vendor) => (
-        <Card key={vendor.id} className="prestataire-card group overflow-hidden h-full">
-          <div className="aspect-video relative overflow-hidden">
-            <img
-              src={vendor.image}
-              alt={vendor.name}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-              loading="lazy"
-            />
-            {vendor.certified && (
-              <Badge className="badge-certifie absolute top-3 left-3">
-                <CheckCircle className="w-3 h-3 mr-1" />
-                Certifié
-              </Badge>
-            )}
-          </div>
-          
-          <CardContent className="p-4">
-            <div className="space-y-2">
-              <div className="flex items-start justify-between">
-                <div>
-                  <h3 className="font-semibold text-premium-black group-hover:text-premium-sage transition-colors">
-                    {vendor.name}
-                  </h3>
-                  <p className="text-sm text-premium-charcoal">{vendor.category}</p>
-                </div>
-              </div>
-              
-              <div className="flex items-center text-sm text-premium-charcoal">
-                <MapPin className="w-4 h-4 mr-1" />
-                {vendor.location}
-              </div>
-              
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <Star className="w-4 h-4 text-yellow-500 mr-1" />
-                    <span className="text-sm font-medium">{vendor.rating.toFixed(1)}</span>
-                    <span className="text-sm text-premium-charcoal ml-1">({vendor.reviews})</span>
-                  </div>
-                  <div className="flex items-center text-sm font-medium text-premium-sage">
-                    <Euro className="w-4 h-4 mr-1" />
-                    {vendor.price}
-                  </div>
-                </div>
+        <Link to="/register" key={vendor.id}>
+          <Card className="prestataire-card group overflow-hidden h-full cursor-pointer">
+            <div className="aspect-video relative overflow-hidden">
+              <img
+                src={vendor.image}
+                alt={vendor.name}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                loading="lazy"
+              />
+              {vendor.certified && (
+                <Badge className="badge-certifie absolute top-3 left-3">
+                  <CheckCircle className="w-3 h-3 mr-1" />
+                  Certifié
+                </Badge>
+              )}
             </div>
-          </CardContent>
-        </Card>
+            
+            <CardContent className="p-4">
+              <div className="space-y-2">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <h3 className="font-semibold text-premium-black group-hover:text-premium-sage transition-colors">
+                      {vendor.name}
+                    </h3>
+                    <p className="text-sm text-premium-charcoal">{vendor.category}</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center text-sm text-premium-charcoal">
+                  <MapPin className="w-4 h-4 mr-1" />
+                  {vendor.location}
+                </div>
+                
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      <Star className="w-4 h-4 text-yellow-500 mr-1" />
+                      <span className="text-sm font-medium">{vendor.rating.toFixed(1)}</span>
+                      <span className="text-sm text-premium-charcoal ml-1">({vendor.reviews})</span>
+                    </div>
+                    <div className="flex items-center text-sm font-medium text-premium-sage">
+                      <Euro className="w-4 h-4 mr-1" />
+                      {vendor.price}
+                    </div>
+                  </div>
+              </div>
+            </CardContent>
+          </Card>
+        </Link>
       ))}
     </div>
   );

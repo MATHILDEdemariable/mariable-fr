@@ -219,7 +219,7 @@ const ReservationJourM = () => {
         <div className="container mx-auto px-4 max-w-4xl">
           <div className="flex items-center gap-4 mb-6">
             <Button asChild variant="outline" size="sm">
-              <Link to="/">
+              <Link to="/prix">
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Retour
               </Link>
@@ -357,9 +357,16 @@ const ReservationJourM = () => {
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="wedding_content_creator" id="wedding_content_creator" />
+                        <Label htmlFor="wedding_content_creator" className="flex flex-col">
+                          <span>Wedding Content Creator (800€)</span>
+                          <span className="text-sm text-gray-500 font-normal">Service vidéo professionnel pour le jour-J</span>
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
                         <RadioGroupItem value="privilege" id="privilege" />
                         <Label htmlFor="privilege" className="flex flex-col">
-                          <span>Coordinateur jour-J (899€)</span>
+                          <span>Coordinateur jour-J (1000€)</span>
                           <span className="text-sm text-gray-500 font-normal">Service complet avec présence physique</span>
                         </Label>
                       </div>
