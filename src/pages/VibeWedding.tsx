@@ -19,7 +19,9 @@ const VibeWedding: React.FC = () => {
     isLoading,
     needsRegion,
     detectedCategory,
+    isSaving,
     sendMessage,
+    saveProject,
   } = useVibeWeddingMatching();
 
   const handleStartConversation = (message: string) => {
@@ -91,15 +93,28 @@ const VibeWedding: React.FC = () => {
                   </p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {matchedVendors.map((vendor) => (
-                    <VendorMatchCard
-                      key={vendor.id}
-                      vendor={vendor}
-                      onContact={() => handleContactVendor(vendor)}
-                    />
-                  ))}
-                </div>
+                <>
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="flex-1" />
+                    <button
+                      onClick={saveProject}
+                      disabled={isSaving}
+                      className="px-6 py-2.5 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium shadow-sm"
+                    >
+                      {isSaving ? '💾 Sauvegarde...' : '💾 Sauvegarder ce projet'}
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {matchedVendors.map((vendor) => (
+                      <VendorMatchCard
+                        key={vendor.id}
+                        vendor={vendor}
+                        onContact={() => handleContactVendor(vendor)}
+                      />
+                    ))}
+                  </div>
+                </>
               )}
             </div>
           </div>

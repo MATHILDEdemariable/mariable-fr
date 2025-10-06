@@ -191,49 +191,66 @@ IMPORTANT:
       );
     }
 
-    // Recherche dans la base de données avec JOIN sur les photos
+    // Recherche dans la base de données - ÉTAPE 1: Récupérer les prestataires
     console.log(`🔎 Recherche: ${extractedData.categorie} en ${extractedData.region}`);
     
     let query = supabase
       .from('prestataires_rows')
-      .select(`
-        id,
-        nom,
-        categorie,
-        description,
-        region,
-        ville,
-        prix_a_partir_de,
-        styles,
-        featured,
-        partner,
-        email,
-        telephone,
-        site_web,
-        prestataires_photos(url, principale)
-      `)
+      .select('id, nom, categorie, ville, region, description, prix_a_partir_de, partner, featured, site_web, email, telephone, styles')
       .eq('categorie', extractedData.categorie)
       .eq('region', extractedData.region)
       .eq('visible', true)
-      .order('featured', { ascending: false })
-      .limit(20);
+      .order('featured', { ascending: false });
 
     // Filtrer par budget si spécifié
     if (extractedData.budget_max && extractedData.budget_max > 0) {
       query = query.lte('prix_a_partir_de', extractedData.budget_max);
     }
 
-    const { data: vendors, error } = await query;
+    const { data: vendors, error: dbError } = await query.limit(20);
 
-    if (error) {
-      console.error('❌ Erreur DB:', error);
-      throw error;
+    if (dbError) {
+      console.error('❌ Erreur DB:', dbError);
+      throw dbError;
     }
 
-    console.log(`✅ ${vendors?.length || 0} prestataires trouvés`);
+    console.log(`📦 ${vendors?.length || 0} prestataires trouvés`);
 
-    // Calculer un score de match intelligent pour chaque prestataire
-    const vendorsWithScore = (vendors || []).map(vendor => {
+    // ÉTAPE 2: Récupérer les photos pour ces prestataires (requête séparée)
+    let vendorsWithPhotos = vendors || [];
+    
+    if (vendors && vendors.length > 0) {
+      const vendorIds = vendors.map(v => v.id);
+      
+      const { data: photos, error: photosError } = await supabase
+        .from('prestataires_photos')
+        .select('prestataire_id, url, principale')
+        .in('prestataire_id', vendorIds);
+
+      if (!photosError && photos) {
+        console.log(`📸 ${photos.length} photos récupérées`);
+        
+        // Fusionner les photos avec les prestataires
+        vendorsWithPhotos = vendors.map(vendor => {
+          const vendorPhotos = photos.filter(p => p.prestataire_id === vendor.id);
+          const mainPhoto = vendorPhotos.find(p => p.principale);
+          const photo_url = mainPhoto?.url || vendorPhotos[0]?.url || null;
+          
+          return {
+            ...vendor,
+            photo_url,
+            prestataires_photos: vendorPhotos
+          };
+        });
+      } else {
+        console.log('⚠️ Aucune photo trouvée ou erreur:', photosError);
+        // Ajouter photo_url null par défaut
+        vendorsWithPhotos = vendors.map(v => ({ ...v, photo_url: null, prestataires_photos: [] }));
+      }
+    }
+
+    // ÉTAPE 3: Calculer un score de match intelligent pour chaque prestataire
+    const vendorsWithScore = vendorsWithPhotos.map(vendor => {
       let matchScore = 70; // Score de base
 
       // Bonus pour les styles correspondants
@@ -264,15 +281,9 @@ IMPORTANT:
       // Bonus description détaillée
       if (vendor.description && vendor.description.length > 200) matchScore += 5;
 
-      // Extraire la photo principale
-      const principalePhoto = photos.find((p: any) => p.principale);
-      const photoUrl = principalePhoto?.url || photos[0]?.url || null;
-
       return {
         ...vendor,
-        matchScore: Math.min(matchScore, 100),
-        photo_url: photoUrl,
-        all_photos: photos
+        matchScore: Math.min(matchScore, 100)
       };
     }).sort((a, b) => b.matchScore - a.matchScore);
 
