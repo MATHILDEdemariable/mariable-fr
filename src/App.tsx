@@ -123,7 +123,7 @@ function App() {
                   <Route path="/simple" element={<SimpleHomePage />} />
                   <Route path="/landingpagev0" element={<LandingPageV0 />} />
                    <Route path="/moteur-recherche" element={<MoteurRecherche />} />
-          <Route path="/selection" element={<ProtectedRoute><MoteurRecherche /></ProtectedRoute>} />
+          <Route path="/selection" element={<ProtectedRoute><VibeWedding /></ProtectedRoute>} />
           <Route path="/mariage/:region" element={<MoteurRecherche />} />
           <Route path="/coordinateurs-mariage" element={<CoordinateursMarriage />} />
                   <Route path="/planning-personnalise" element={<PlanningPersonnalise />} />

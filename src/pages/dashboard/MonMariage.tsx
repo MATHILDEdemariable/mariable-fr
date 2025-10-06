@@ -7,6 +7,7 @@ import { Heart, Plus, Calendar, Users, MapPin, Euro, Trash2, Eye, Edit } from 'l
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import { Badge } from '@/components/ui/badge';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -240,50 +241,52 @@ const MonMariage = () => {
 
       {/* Fonctionnalités à venir */}
       <Card className="bg-premium-sage-very-light border-premium-sage/20">
-        <CardHeader>
-          <CardTitle>Fonctionnalités à venir</CardTitle>
-          <CardDescription>
-            Prochainement disponibles pour gérer vos projets de mariage
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <ul className="space-y-3">
-            <li className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-full bg-premium-sage/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                <span className="text-sm font-semibold text-premium-sage">1</span>
-              </div>
-              <div>
-                <h4 className="font-semibold">Éditer et personnaliser</h4>
-                <p className="text-sm text-muted-foreground">
-                  Modifiez chaque détail de votre planning et budget
-                </p>
-              </div>
-            </li>
-            <li className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-full bg-premium-sage/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                <span className="text-sm font-semibold text-premium-sage">2</span>
-              </div>
-              <div>
-                <h4 className="font-semibold">Exporter en PDF</h4>
-                <p className="text-sm text-muted-foreground">
-                  Téléchargez votre projet complet au format PDF
-                </p>
-              </div>
-            </li>
-            <li className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-full bg-premium-sage/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                <span className="text-sm font-semibold text-premium-sage">3</span>
-              </div>
-              <div>
-                <h4 className="font-semibold">Partager avec votre moitié</h4>
-                <p className="text-sm text-muted-foreground">
-                  Collaborez en temps réel sur votre projet de mariage
-                </p>
-              </div>
-            </li>
-          </ul>
-        </CardContent>
+...
       </Card>
+
+      {/* Section VibeWedding Conversations */}
+      {vibeConversations.length > 0 && (
+        <div className="mt-12">
+          <h2 className="text-2xl font-serif font-bold mb-4 flex items-center gap-2">
+            <span>💬</span> Recherches VibeWedding
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {vibeConversations.map((conversation) => {
+              const vendorCount = conversation.wedding_context?.vendors?.length || 0;
+              const category = conversation.wedding_context?.criteria?.category || 'Recherche';
+              
+              return (
+                <Card key={conversation.id} className="hover:shadow-lg transition-shadow">
+                  <CardHeader>
+                    <CardTitle className="flex items-center justify-between">
+                      <span className="truncate">{category}</span>
+                      <Badge variant="secondary">{vendorCount} prestataires</Badge>
+                    </CardTitle>
+                    <CardDescription className="text-xs">
+                      {format(new Date(conversation.created_at), 'dd MMM yyyy', { locale: fr })}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="text-sm text-muted-foreground">
+                      {conversation.messages?.length || 0} messages échangés
+                    </div>
+
+                    <Button
+                      variant="default"
+                      size="sm"
+                      className="w-full bg-wedding-olive hover:bg-wedding-olive/90"
+                      onClick={() => navigate(`/vibewedding?conversationId=${conversation.id}`)}
+                    >
+                      <Eye className="w-4 h-4 mr-2" />
+                      Revoir la recherche
+                    </Button>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Dialog de confirmation de suppression */}
       <AlertDialog open={!!projectToDelete} onOpenChange={() => setProjectToDelete(null)}>

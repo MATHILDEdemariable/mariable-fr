@@ -3,6 +3,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { MapPin, Star } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface VendorMatchCardProps {
   vendor: {
@@ -18,18 +19,24 @@ interface VendorMatchCardProps {
     partner?: boolean;
     featured?: boolean;
     isOutOfScope?: boolean;
+    slug?: string;
   };
   onContact: () => void;
 }
 
 const VendorMatchCard: React.FC<VendorMatchCardProps> = ({ vendor, onContact }) => {
+  const navigate = useNavigate();
+  
   const formatPrice = (price?: number) => {
     if (!price) return "Sur devis";
     return `À partir de ${price.toLocaleString('fr-FR')}€`;
   };
 
   return (
-    <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
+    <Card 
+      className="overflow-hidden hover:shadow-lg transition-shadow duration-300 cursor-pointer"
+      onClick={() => navigate(`/prestataire/${vendor.slug || vendor.id}`)}
+    >
       {/* Image principale */}
       <div className="relative h-48 bg-gray-100">
         {vendor.photo_url ? (
@@ -67,7 +74,7 @@ const VendorMatchCard: React.FC<VendorMatchCardProps> = ({ vendor, onContact }) 
           <Badge 
             className="absolute bottom-3 right-3 bg-amber-500/90 text-white text-xs"
           >
-            🌍 Autre localisation
+            📍 Autre localisation
           </Badge>
         )}
       </div>
@@ -112,7 +119,10 @@ const VendorMatchCard: React.FC<VendorMatchCardProps> = ({ vendor, onContact }) 
             {formatPrice(vendor.prix_a_partir_de)}
           </span>
           <Button 
-            onClick={onContact}
+            onClick={(e) => {
+              e.stopPropagation();
+              onContact();
+            }}
             className="bg-wedding-olive hover:bg-wedding-olive/90"
           >
             Contacter

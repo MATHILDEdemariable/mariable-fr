@@ -277,17 +277,17 @@ serve(async (req) => {
       let vendors: any[] = [];
       let searchScope = 'exact'; // 'exact', 'limitrophe', 'national'
 
-      // 1️⃣ RECHERCHE STRICTE PAR RÉGION (si région détectée)
-      if (mappedRegion) {
-        const { data: exactVendors } = await supabase
-          .from('prestataires_rows')
-          .select('*')
-          .eq('categorie::text', mappedCategorie)
-          .eq('region::text', mappedRegion)
-          .eq('visible', true)
-          .limit(8);
+  // 1️⃣ RECHERCHE STRICTE PAR RÉGION (si région détectée)
+  if (mappedRegion) {
+    const { data: exactVendors } = await supabase
+      .from('prestataires_rows')
+      .select('*')
+      .eq('categorie::text', mappedCategorie)
+      .eq('region::text', mappedRegion)
+      .eq('visible', true)
+      .limit(8);
 
-        vendors = exactVendors || [];
+    vendors = (exactVendors || []).map(v => ({ ...v, _searchScope: 'exact' }));
         console.log(`✅ Recherche exacte: ${vendors.length} résultats en ${mappedRegion}`);
 
         // 2️⃣ FALLBACK 1: Régions limitrophes (si < 4 résultats)
@@ -349,12 +349,12 @@ serve(async (req) => {
 
       console.log(`📦 ${vendors.length} prestataires trouvés`);
 
-      // Récupération des photos
-      const vendorIds = vendors.map(v => v.id);
-      const { data: photos } = await supabase
-        .from('prestataires_photos_preprod')
-        .select('*')
-        .in('prestataire_id', vendorIds);
+  // Récupération des photos + slug
+  const vendorIds = vendors.map(v => v.id);
+  const { data: photos } = await supabase
+    .from('prestataires_photos_preprod')
+    .select('*')
+    .in('prestataire_id', vendorIds);
 
       console.log(`📸 ${photos?.length || 0} photos récupérées`);
 
