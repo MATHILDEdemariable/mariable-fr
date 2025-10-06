@@ -471,7 +471,7 @@ const SinglePrestataire = () => {
         </div>
 
         <div className="container max-w-6xl px-4 py-8">
-          <Button variant="outline" onClick={() => navigate(-1)} className="mb-4">
+          <Button variant="outline" onClick={() => navigate('/professionnelsmariable')} className="mb-4">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Retour
           </Button>

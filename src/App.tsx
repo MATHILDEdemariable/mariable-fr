@@ -104,6 +104,7 @@ import VibeWedding from "./pages/VibeWedding";
 import FeaturesInteractive from "./pages/FeaturesInteractive";
 import Sitemap from "./pages/Sitemap";
 import SitemapHTML from "./pages/SitemapHTML";
+import ProfessionnelsMariable from "./pages/ProfessionnelsMariable";
 
 const queryClient = new QueryClient();
 
@@ -208,6 +209,7 @@ function App() {
                   <Route path="/prestataires" element={<Prestataires />} />
                   <Route path="/prestataires/:slug" element={<Prestataire />} />
                   <Route path="/prestataire/:slug" element={<Prestataire />} />
+                  <Route path="/professionnelsmariable" element={<ProfessionnelsMariable />} />
 
                    {/* Admin routes */}
                    <Route path="/admin/dashboard" element={<AdminDashboard />} />
