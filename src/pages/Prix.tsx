@@ -9,34 +9,25 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { Link } from 'react-router-dom';
 import FormulaCTAButton from '@/components/pricing/FormulaCTAButton';
 import CoordinatorsPreview from '@/components/coordinators/CoordinatorsPreview';
-
 const Prix = () => {
   const isMobile = useIsMobile();
-
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
-
-  const faqData = [
-    {
-      id: 1,
-      question: "Puis-je modifier la formule plus tard ?",
-      answer: "Oui, vous pouvez upgrader votre formule jusqu'à J-30. Un ajustement tarifaire sera appliqué au prorata du temps restant jusqu'à votre mariage."
-    },
-    {
-      id: 2,
-      question: "La présence terrain, c'est quoi exactement ?",
-      answer: "Un manager Mariable est physiquement présent le jour J pour superviser le déroulement, coordonner les prestataires et gérer les imprévus."
-    },
-    {
-      id: 3,
-      question: "Puis-je utiliser l'app avec ma famille ?",
-      answer: "Oui justement, l'application est faite pour être collaborative - chacun peut accéder à son planning et aux informations importantes."
-    }
-  ];
-
-  return (
-    <div className="min-h-screen flex flex-col bg-white">
+  const faqData = [{
+    id: 1,
+    question: "Puis-je modifier la formule plus tard ?",
+    answer: "Oui, vous pouvez upgrader votre formule jusqu'à J-30. Un ajustement tarifaire sera appliqué au prorata du temps restant jusqu'à votre mariage."
+  }, {
+    id: 2,
+    question: "La présence terrain, c'est quoi exactement ?",
+    answer: "Un manager Mariable est physiquement présent le jour J pour superviser le déroulement, coordonner les prestataires et gérer les imprévus."
+  }, {
+    id: 3,
+    question: "Puis-je utiliser l'app avec ma famille ?",
+    answer: "Oui justement, l'application est faite pour être collaborative - chacun peut accéder à son planning et aux informations importantes."
+  }];
+  return <div className="min-h-screen flex flex-col bg-white">
       <Helmet>
         <title>Tarifs - Services Mariable | Wedding Planner en ligne</title>
         <meta name="description" content="Découvrez nos tarifs transparents pour organiser votre mariage. Application autonome à 14,9€ et services premium sur demande." />
@@ -231,7 +222,7 @@ const Prix = () => {
                 {/* Présence d'un Coordinateur.rice */}
                 <Card className="shadow-md hover:shadow-lg transition-shadow flex flex-col h-full">
                   <CardHeader className="text-center bg-wedding-olive text-white">
-                    <CardTitle className="text-xl">Présence d'un Coordinateur.rice le jour-j</CardTitle>
+                    <CardTitle className="text-xl">Coordinateur.rice JOUR-J</CardTitle>
                     <div className="text-2xl font-bold">1000€</div>
                   </CardHeader>
                   <CardContent className="p-6 flex flex-col flex-1">
@@ -295,8 +286,6 @@ const Prix = () => {
       </main>
       
       <Footer />
-    </div>
-  );
+    </div>;
 };
-
 export default Prix;
