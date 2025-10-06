@@ -231,28 +231,13 @@ IMPORTANT:
       );
     }
 
-    // Si catégorie mais pas de région, demander la région
-    if (!extractedData.region) {
-      return new Response(
-        JSON.stringify({
-          conversationalResponse: `Super ! Je peux vous proposer des ${extractedData.categorie.toLowerCase()}. Dans quelle région organisez-vous votre mariage ?`,
-          vendors: [],
-          needsRegion: true,
-          detectedCategory: extractedData.categorie
-        }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    // Recherche dans la base de données - ÉTAPE 1: Récupérer les prestataires
-    console.log(`🔎 Recherche: ${extractedData.categorie} en ${extractedData.region}`);
-    console.log(`🔍 Valeurs exactes envoyées - Catégorie: "${extractedData.categorie}" | Région: "${extractedData.region}"`);
+    // Recherche NATIONALE (pas de filtre région strict)
+    console.log(`🔎 Recherche NATIONALE: ${extractedData.categorie}${extractedData.region ? ' (boost pour ' + extractedData.region + ')' : ''}`);
     
     let query = supabase
       .from('prestataires_rows')
       .select('id, nom, categorie, ville, region, description, prix_a_partir_de, partner, featured, site_web, email, telephone, styles')
       .eq('categorie::text', extractedData.categorie)
-      .eq('region::text', extractedData.region)
       .eq('visible', true)
       .order('featured', { ascending: false });
 
@@ -277,7 +262,7 @@ IMPORTANT:
       const vendorIds = vendors.map(v => v.id);
       
       const { data: photos, error: photosError } = await supabase
-        .from('prestataires_photos')
+        .from('prestataires_photos_preprod')
         .select('prestataire_id, url, principale')
         .in('prestataire_id', vendorIds);
 
@@ -305,7 +290,12 @@ IMPORTANT:
 
     // ÉTAPE 3: Calculer un score de match intelligent pour chaque prestataire
     const vendorsWithScore = vendorsWithPhotos.map(vendor => {
-      let matchScore = 70; // Score de base
+      let matchScore = 60; // Score de base pour tous (nationaux)
+
+      // BOOST RÉGIONAL +20 points si région correspond
+      if (extractedData.region && vendor.region === extractedData.region) {
+        matchScore += 20;
+      }
 
       // Bonus pour les styles correspondants
       if (extractedData.style && Array.isArray(extractedData.style)) {
@@ -345,11 +335,13 @@ IMPORTANT:
 
     const response = {
       conversationalResponse: extractedData.conversationalResponse || 
-        `J'ai trouvé ${topVendors.length} ${extractedData.categorie.toLowerCase()} en ${extractedData.region} qui correspondent à vos critères ! 🎉`,
+        (extractedData.region 
+          ? `J'ai trouvé ${topVendors.length} ${extractedData.categorie.toLowerCase()} qui correspondent à vos critères ! Les prestataires en ${extractedData.region} sont mis en avant. 🎉`
+          : `Voici ${topVendors.length} ${extractedData.categorie.toLowerCase()} recommandés. Précisez votre région pour affiner les résultats ! 🎉`),
       vendors: topVendors,
       category: extractedData.categorie,
       region: extractedData.region,
-      needsRegion: false
+      needsRegion: !extractedData.region
     };
 
     console.log('📤 Envoi de la réponse avec', topVendors.length, 'prestataires');

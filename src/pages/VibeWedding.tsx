@@ -6,12 +6,15 @@ import VibeWeddingHero from '@/components/vibe-wedding/VibeWeddingHero';
 import VendorMatchCard from '@/components/vibe-wedding/VendorMatchCard';
 import VendorMatchingChat from '@/components/vibe-wedding/VendorMatchingChat';
 import VendorContactModal from '@/components/vendors/VendorContactModal';
+import CarnetAdressesModal from '@/components/home/CarnetAdressesModal';
 import { useVibeWeddingMatching } from '@/hooks/useVibeWeddingMatching';
+import { Button } from '@/components/ui/button';
 
 const VibeWedding: React.FC = () => {
   const [conversationStarted, setConversationStarted] = useState(false);
   const [selectedVendor, setSelectedVendor] = useState<any>(null);
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+  const [isCarnetModalOpen, setIsCarnetModalOpen] = useState(false);
   
   const {
     messages,
@@ -38,6 +41,13 @@ const VibeWedding: React.FC = () => {
   const handleCloseContactModal = () => {
     setIsContactModalOpen(false);
     setSelectedVendor(null);
+  };
+
+  const getCarnetMessage = () => {
+    if (matchedVendors.length === 0) {
+      return "Aucun prestataire trouvé ? Demandez votre carnet d'adresse personnalisé";
+    }
+    return "La sélection n'est pas suffisante ? Demandez votre carnet d'adresse personnalisé";
   };
 
   // Afficher le Hero si la conversation n'a pas encore commencé
@@ -117,6 +127,21 @@ const VibeWedding: React.FC = () => {
                   </div>
                 </>
               )}
+
+              {/* CTA Carnet d'Adresse - Toujours visible */}
+              <div className="mt-8 text-center border-t pt-6">
+                <p className="text-muted-foreground text-sm mb-3">
+                  {getCarnetMessage()}
+                </p>
+                <Button
+                  onClick={() => setIsCarnetModalOpen(true)}
+                  variant="outline"
+                  className="inline-flex items-center gap-2"
+                >
+                  <span>📬</span>
+                  Recevoir mon carnet d'adresses personnalisé
+                </Button>
+              </div>
             </div>
           </div>
 
@@ -145,6 +170,12 @@ const VibeWedding: React.FC = () => {
           vendorName={selectedVendor.nom}
         />
       )}
+
+      {/* Modal Carnet d'Adresse */}
+      <CarnetAdressesModal 
+        isOpen={isCarnetModalOpen} 
+        onClose={() => setIsCarnetModalOpen(false)} 
+      />
     </>
   );
 };
