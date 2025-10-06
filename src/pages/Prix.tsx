@@ -198,29 +198,6 @@ const Prix = () => {
                   </CardContent>
                 </Card>
 
-                {/* Appli avec notification */}
-                <Card className="shadow-md hover:shadow-lg transition-shadow flex flex-col h-full">
-                  <CardHeader className="text-center bg-wedding-olive text-white">
-                    <CardTitle className="text-xl">Appli avec notification</CardTitle>
-                    <div className="text-2xl font-bold">24,9€</div>
-                  </CardHeader>
-                  <CardContent className="p-6 flex flex-col flex-1">
-                    <div className="space-y-3 flex-1">
-                      <div className="flex items-start gap-2">
-                        <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                        <p className="text-sm text-gray-700">Notification en temps réel sur WhatsApp</p>
-                      </div>
-                      <div className="flex items-start gap-2">
-                        <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                        <p className="text-sm text-gray-700">Hotline 7J/7J</p>
-                      </div>
-                    </div>
-                    
-                    <div className="pt-4 border-t mt-auto">
-                      <FormulaCTAButton formula="sereine" />
-                    </div>
-                  </CardContent>
-                </Card>
 
                 {/* Présence d'un Coordinateur.rice */}
                 <Card className="shadow-md hover:shadow-lg transition-shadow flex flex-col h-full">
