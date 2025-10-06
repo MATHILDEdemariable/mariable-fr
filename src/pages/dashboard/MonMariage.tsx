@@ -35,6 +35,7 @@ const MonMariage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [projects, setProjects] = useState<WeddingProject[]>([]);
+  const [vibeConversations, setVibeConversations] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [projectToDelete, setProjectToDelete] = useState<string | null>(null);
 
@@ -44,6 +45,7 @@ const MonMariage = () => {
       
       if (!user) {
         setProjects([]);
+        setVibeConversations([]);
         setIsLoading(false);
         return;
       }
@@ -56,7 +58,17 @@ const MonMariage = () => {
 
       if (error) throw error;
 
+      // Charger les conversations VibeWedding
+      const { data: conversationsData, error: conversationsError } = await supabase
+        .from('ai_wedding_conversations')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
+      if (conversationsError) throw conversationsError;
+
       setProjects((data || []) as any);
+      setVibeConversations(conversationsData || []);
     } catch (error: any) {
       console.error('Error loading projects:', error);
       toast({

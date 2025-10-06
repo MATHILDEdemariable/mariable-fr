@@ -7,6 +7,23 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Mapping des régions limitrophes
+const REGIONS_LIMITROPHES: Record<string, string[]> = {
+  'Île-de-France': ['Hauts-de-France', 'Normandie', 'Centre-Val de Loire', 'Bourgogne-Franche-Comté'],
+  'Provence-Alpes-Côte d\'Azur': ['Auvergne-Rhône-Alpes', 'Occitanie', 'Corse'],
+  'Auvergne-Rhône-Alpes': ['Bourgogne-Franche-Comté', 'Provence-Alpes-Côte d\'Azur', 'Occitanie'],
+  'Nouvelle-Aquitaine': ['Pays de la Loire', 'Centre-Val de Loire', 'Occitanie'],
+  'Occitanie': ['Nouvelle-Aquitaine', 'Auvergne-Rhône-Alpes', 'Provence-Alpes-Côte d\'Azur'],
+  'Hauts-de-France': ['Île-de-France', 'Normandie', 'Grand Est'],
+  'Normandie': ['Hauts-de-France', 'Île-de-France', 'Centre-Val de Loire', 'Pays de la Loire', 'Bretagne'],
+  'Grand Est': ['Hauts-de-France', 'Bourgogne-Franche-Comté'],
+  'Bretagne': ['Normandie', 'Pays de la Loire'],
+  'Pays de la Loire': ['Bretagne', 'Normandie', 'Centre-Val de Loire', 'Nouvelle-Aquitaine'],
+  'Centre-Val de Loire': ['Île-de-France', 'Normandie', 'Pays de la Loire', 'Nouvelle-Aquitaine', 'Bourgogne-Franche-Comté'],
+  'Bourgogne-Franche-Comté': ['Grand Est', 'Île-de-France', 'Centre-Val de Loire', 'Auvergne-Rhône-Alpes'],
+  'Corse': ['Provence-Alpes-Côte d\'Azur']
+};
+
 // Fonction de mapping intelligent via table wedding_synonyms
 async function mapToDbValue(supabase: any, inputValue: string, type: 'categorie' | 'region'): Promise<string | null> {
   if (!inputValue) return null;
@@ -125,23 +142,42 @@ serve(async (req) => {
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     // Appel à Lovable AI pour extraction des critères avec TOUT l'historique
-    const systemPrompt = `Tu es un assistant spécialisé dans le matching de prestataires de mariage.
-Analyse TOUTE la conversation avec le couple et extrais les informations suivantes en JSON STRICT (AUCUN texte en dehors du JSON) :
-{
-  "categorie": "Photographe|Lieu de réception|Traiteur|DJ|Fleuriste|Wedding planner|Coiffure|Maquillage|Robe de mariée|Costume|Pâtissier|Décorateur|Vidéaste|Animation",
-  "region": "Île-de-France|Provence-Alpes-Côte d'Azur|Auvergne-Rhône-Alpes|Bretagne|Nouvelle-Aquitaine|Occitanie|Grand Est|Hauts-de-France|Normandie|Centre-Val de Loire|Bourgogne-Franche-Comté|Pays de la Loire",
-  "style": ["champetre", "moderne", "boheme", "classique", "vintage", "romantique", "industriel", "chic"],
-  "budget_max": 5000,
-  "nombre_invites": 100,
-  "conversationalResponse": "Message naturel et encourageant pour le couple"
-}
-
-IMPORTANT:
-- GARDE EN MÉMOIRE les informations des messages précédents (ex: si "traiteur" est mentionné dans un message et "Île-de-France" dans un autre, combine les deux)
-- Si la catégorie n'est pas claire dans TOUTE la conversation, mets "categorie": null
-- Si la région n'est pas mentionnée dans TOUTE la conversation, mets "region": null
-- Le conversationalResponse doit être chaleureux et professionnel
-- RÉPONDS UNIQUEMENT EN JSON, PAS DE TEXTE AVANT OU APRÈS`;
+    const systemPrompt = `Tu es un assistant spécialisé dans le matching de prestataires de mariage français.
+    
+    🎯 TON RÔLE:
+    - Extraire la catégorie de prestataire (Photographe, Lieu de réception, Traiteur, DJ/Musicien, Fleuriste, etc.)
+    - Extraire la région en France
+    - Extraire le budget si mentionné
+    - Extraire le style si mentionné
+    
+    📊 FONCTIONNALITÉS DASHBOARD MARIABLE:
+    Si l'utilisateur pose une question sur ces sujets, TOUJOURS inclure le lien dans ta réponse:
+    - **Budget**: "Gérez votre budget sur votre [Dashboard Budget](/dashboard/budget)"
+    - **Check-list**: "Organisez vos tâches sur votre [Check-list](/dashboard/checklist-mariage)"
+    - **Prestataires**: "Suivez vos contacts sur [Mes Prestataires](/dashboard/prestataires)"
+    - **Planning Jour-J**: "Créez votre planning sur [Jour-J](/dashboard/jour-j)"
+    
+    🔍 EXEMPLES DE DÉTECTION:
+    - "Je cherche un photographe à Paris" → {categorie: "Photographe", region: "Île-de-France"}
+    - "Traiteur en Provence" → {categorie: "Traiteur", region: "Provence-Alpes-Côte d'Azur"}
+    - "Château pour mariage Lyon" → {categorie: "Lieu de réception", region: "Auvergne-Rhône-Alpes"}
+    
+    Analyse TOUTE la conversation avec le couple et extrais les informations suivantes en JSON STRICT (AUCUN texte en dehors du JSON) :
+    {
+      "categorie": "Photographe|Lieu de réception|Traiteur|DJ|Fleuriste|Wedding planner|Coiffure|Maquillage|Robe de mariée|Costume|Pâtissier|Décorateur|Vidéaste|Animation",
+      "region": "Île-de-France|Provence-Alpes-Côte d'Azur|Auvergne-Rhône-Alpes|Bretagne|Nouvelle-Aquitaine|Occitanie|Grand Est|Hauts-de-France|Normandie|Centre-Val de Loire|Bourgogne-Franche-Comté|Pays de la Loire",
+      "style": ["champetre", "moderne", "boheme", "classique", "vintage", "romantique", "industriel", "chic"],
+      "budget_max": 5000,
+      "nombre_invites": 100,
+      "conversationalResponse": "Message naturel et encourageant pour le couple"
+    }
+    
+    IMPORTANT:
+    - GARDE EN MÉMOIRE les informations des messages précédents
+    - Si la catégorie n'est pas claire, mets "categorie": null
+    - Si la région n'est pas mentionnée, mets "region": null
+    - Le conversationalResponse doit être chaleureux et professionnel
+    - RÉPONDS UNIQUEMENT EN JSON, PAS DE TEXTE AVANT OU APRÈS`;
 
     console.log('🤖 Appel à Lovable AI...');
     
@@ -231,125 +267,154 @@ IMPORTANT:
       );
     }
 
-    // Recherche NATIONALE (pas de filtre région strict)
-    console.log(`🔎 Recherche NATIONALE: ${extractedData.categorie}${extractedData.region ? ' (boost pour ' + extractedData.region + ')' : ''}`);
-    
-    let query = supabase
-      .from('prestataires_rows')
-      .select('id, nom, categorie, ville, region, description, prix_a_partir_de, partner, featured, site_web, email, telephone, styles')
-      .eq('categorie::text', extractedData.categorie)
-      .eq('visible', true)
-      .order('featured', { ascending: false });
+    const mappedCategorie = extractedData.categorie;
+    const mappedRegion = extractedData.region;
 
-    // Filtrer par budget si spécifié
-    if (extractedData.budget_max && extractedData.budget_max > 0) {
-      query = query.lte('prix_a_partir_de', extractedData.budget_max);
-    }
+    // 3. Si catégorie détectée → Recherche prestataires avec filtrage régional strict
+    if (extractedData.categorie && mappedCategorie) {
+      console.log('🔍 Recherche:', { categorie: mappedCategorie, region: mappedRegion });
 
-    const { data: vendors, error: dbError } = await query.limit(20);
+      let vendors: any[] = [];
+      let searchScope = 'exact'; // 'exact', 'limitrophe', 'national'
 
-    if (dbError) {
-      console.error('❌ Erreur DB:', dbError);
-      throw dbError;
-    }
+      // 1️⃣ RECHERCHE STRICTE PAR RÉGION (si région détectée)
+      if (mappedRegion) {
+        const { data: exactVendors } = await supabase
+          .from('prestataires_rows')
+          .select('*')
+          .eq('categorie::text', mappedCategorie)
+          .eq('region::text', mappedRegion)
+          .eq('visible', true)
+          .limit(8);
 
-    console.log(`📦 ${vendors?.length || 0} prestataires trouvés`);
+        vendors = exactVendors || [];
+        console.log(`✅ Recherche exacte: ${vendors.length} résultats en ${mappedRegion}`);
 
-    // ÉTAPE 2: Récupérer les photos pour ces prestataires (requête séparée)
-    let vendorsWithPhotos = vendors || [];
-    
-    if (vendors && vendors.length > 0) {
+        // 2️⃣ FALLBACK 1: Régions limitrophes (si < 4 résultats)
+        if (vendors.length < 4) {
+          const voisines = REGIONS_LIMITROPHES[mappedRegion] || [];
+          console.log(`🔄 Élargissement aux régions limitrophes:`, voisines);
+
+          if (voisines.length > 0) {
+            const { data: neighborVendors } = await supabase
+              .from('prestataires_rows')
+              .select('*')
+              .eq('categorie::text', mappedCategorie)
+              .in('region::text', voisines)
+              .eq('visible', true)
+              .limit(4 - vendors.length);
+
+            if (neighborVendors) {
+              vendors = [
+                ...vendors,
+                ...neighborVendors.map(v => ({ ...v, _searchScope: 'limitrophe' }))
+              ];
+              searchScope = 'limitrophe';
+            }
+          }
+        }
+
+        // 3️⃣ FALLBACK 2: National (si toujours < 4 résultats)
+        if (vendors.length < 4) {
+          console.log(`🌍 Élargissement national`);
+
+          const { data: nationalVendors } = await supabase
+            .from('prestataires_rows')
+            .select('*')
+            .eq('categorie::text', mappedCategorie)
+            .eq('visible', true)
+            .neq('region::text', mappedRegion)
+            .limit(4 - vendors.length);
+
+          if (nationalVendors) {
+            vendors = [
+              ...vendors,
+              ...nationalVendors.map(v => ({ ...v, _searchScope: 'national' }))
+            ];
+            searchScope = 'national';
+          }
+        }
+      } else {
+        // Si AUCUNE région détectée → Recherche nationale d'office
+        const { data: nationalVendors } = await supabase
+          .from('prestataires_rows')
+          .select('*')
+          .eq('categorie::text', mappedCategorie)
+          .eq('visible', true)
+          .limit(8);
+
+        vendors = (nationalVendors || []).map(v => ({ ...v, _searchScope: 'national' }));
+        searchScope = 'national';
+      }
+
+      console.log(`📦 ${vendors.length} prestataires trouvés`);
+
+      // Récupération des photos
       const vendorIds = vendors.map(v => v.id);
-      
-      const { data: photos, error: photosError } = await supabase
+      const { data: photos } = await supabase
         .from('prestataires_photos_preprod')
-        .select('prestataire_id, url, principale')
+        .select('*')
         .in('prestataire_id', vendorIds);
 
-      if (!photosError && photos) {
-        console.log(`📸 ${photos.length} photos récupérées`);
+      console.log(`📸 ${photos?.length || 0} photos récupérées`);
+
+      // Calcul des matchScores avec bonus selon la portée géographique
+      const vendorsWithScore = vendors.map(vendor => {
+        const vendorPhotos = photos?.filter(p => p.prestataire_id === vendor.id) || [];
         
-        // Fusionner les photos avec les prestataires
-        vendorsWithPhotos = vendors.map(vendor => {
-          const vendorPhotos = photos.filter(p => p.prestataire_id === vendor.id);
-          const mainPhoto = vendorPhotos.find(p => p.principale);
-          const photo_url = mainPhoto?.url || vendorPhotos[0]?.url || null;
-          
-          return {
-            ...vendor,
-            photo_url,
-            prestataires_photos: vendorPhotos
-          };
-        });
+        let baseScore = 60;
+        
+        // Bonus selon la portée de recherche
+        if (vendor._searchScope === 'exact') {
+          baseScore = 80; // Région exacte
+        } else if (vendor._searchScope === 'limitrophe') {
+          baseScore = 40; // Région voisine
+        } else {
+          baseScore = 30; // National
+        }
+
+        // Bonus additionnels
+        if (vendorPhotos.length > 0) baseScore += 10;
+        if (vendor.featured) baseScore += 5;
+        if (vendor.instagram) baseScore += 5;
+
+        return {
+          ...vendor,
+          matchScore: Math.min(baseScore, 100),
+          photo_url: vendorPhotos[0]?.url || null,
+          isOutOfScope: vendor._searchScope !== 'exact' // Pour le badge
+        };
+      });
+
+      // Limiter à 4 cartes
+      const topVendors = vendorsWithScore
+        .sort((a, b) => b.matchScore - a.matchScore)
+        .slice(0, 4);
+
+      // Message conversationnel adaptatif
+      let conversationalResponse = '';
+      if (searchScope === 'exact') {
+        conversationalResponse = `Voici ${topVendors.length} ${mappedCategorie} en ${mappedRegion} 🎯`;
+      } else if (searchScope === 'limitrophe') {
+        conversationalResponse = `Voici ${topVendors.length} ${mappedCategorie} en ${mappedRegion} et régions voisines 📍`;
       } else {
-        console.log('⚠️ Aucune photo trouvée ou erreur:', photosError);
-        // Ajouter photo_url null par défaut
-        vendorsWithPhotos = vendors.map(v => ({ ...v, photo_url: null, prestataires_photos: [] }));
+        conversationalResponse = mappedRegion 
+          ? `Voici ${topVendors.length} ${mappedCategorie} recommandés (dont certains hors ${mappedRegion}) 🌍`
+          : `Voici ${topVendors.length} ${mappedCategorie} recommandés. Précisez votre région pour affiner 🗺️`;
       }
+
+      console.log('📤 Envoi de la réponse avec', topVendors.length, 'prestataires');
+
+      return new Response(
+        JSON.stringify({
+          conversationalResponse,
+          vendors: topVendors,
+          needsRegion: !mappedRegion,
+          detectedCategory: mappedCategorie
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
-
-    // ÉTAPE 3: Calculer un score de match intelligent pour chaque prestataire
-    const vendorsWithScore = vendorsWithPhotos.map(vendor => {
-      let matchScore = 60; // Score de base pour tous (nationaux)
-
-      // BOOST RÉGIONAL +20 points si région correspond
-      if (extractedData.region && vendor.region === extractedData.region) {
-        matchScore += 20;
-      }
-
-      // Bonus pour les styles correspondants
-      if (extractedData.style && Array.isArray(extractedData.style)) {
-        const vendorStyles = vendor.styles || [];
-        const matchingStyles = extractedData.style.filter((style: string) => 
-          vendorStyles.some((vs: string) => vs.toLowerCase().includes(style.toLowerCase()))
-        );
-        matchScore += matchingStyles.length * 5;
-      }
-
-      // Bonus budget
-      if (extractedData.budget_max && vendor.prix_a_partir_de) {
-        const priceRatio = vendor.prix_a_partir_de / extractedData.budget_max;
-        if (priceRatio <= 0.7) matchScore += 10;
-        else if (priceRatio <= 1.0) matchScore += 5;
-      }
-
-      // Bonus photos
-      const photos = vendor.prestataires_photos || [];
-      if (photos.length > 0) matchScore += 5;
-      if (photos.length > 3) matchScore += 5;
-
-      // Bonus featured/partner
-      if (vendor.featured) matchScore += 10;
-      if (vendor.partner) matchScore += 5;
-
-      // Bonus description détaillée
-      if (vendor.description && vendor.description.length > 200) matchScore += 5;
-
-      return {
-        ...vendor,
-        matchScore: Math.min(matchScore, 100)
-      };
-    }).sort((a, b) => b.matchScore - a.matchScore);
-
-    const topVendors = vendorsWithScore.slice(0, 8);
-
-    const response = {
-      conversationalResponse: extractedData.conversationalResponse || 
-        (extractedData.region 
-          ? `J'ai trouvé ${topVendors.length} ${extractedData.categorie.toLowerCase()} qui correspondent à vos critères ! Les prestataires en ${extractedData.region} sont mis en avant. 🎉`
-          : `Voici ${topVendors.length} ${extractedData.categorie.toLowerCase()} recommandés. Précisez votre région pour affiner les résultats ! 🎉`),
-      vendors: topVendors,
-      category: extractedData.categorie,
-      region: extractedData.region,
-      needsRegion: !extractedData.region
-    };
-
-    console.log('📤 Envoi de la réponse avec', topVendors.length, 'prestataires');
-
-    return new Response(
-      JSON.stringify(response),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    );
 
   } catch (error) {
     console.error('❌ Erreur globale:', error);

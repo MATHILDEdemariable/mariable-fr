@@ -85,7 +85,7 @@ const VibeWeddingHero: React.FC<VibeWeddingHeroProps> = ({
             {/* Quick examples */}
             <div className="mt-6 flex flex-wrap gap-2 justify-center">
               <span className="text-sm text-muted-foreground">Essayez :</span>
-              {["Mariage 100 invités Paris 30k€", "Champêtre Provence 80 invités", "Élégant Lyon 25k€"].map((example, idx) => <button key={idx} type="button" onClick={() => setInput(example)} className="text-xs sm:text-sm px-3 py-1.5 rounded-full text-white backdrop-blur-sm transition-colors bg-premium-sage bg-[premium-sage-medium]">
+              {["Je cherche un photographe à Paris", "Je cherche un lieu en Provence", "Je cherche un traiteur à Lyon"].map((example, idx) => <button key={idx} type="button" onClick={() => setInput(example)} className="text-xs sm:text-sm px-3 py-1.5 rounded-full text-white backdrop-blur-sm transition-colors bg-premium-sage bg-[premium-sage-medium]">
                   {example}
                 </button>)}
             </div>

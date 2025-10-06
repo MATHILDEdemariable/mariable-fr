@@ -17,6 +17,7 @@ interface VendorMatchCardProps {
     photo_url?: string;
     partner?: boolean;
     featured?: boolean;
+    isOutOfScope?: boolean;
   };
   onContact: () => void;
 }
@@ -58,6 +59,15 @@ const VendorMatchCard: React.FC<VendorMatchCardProps> = ({ vendor, onContact }) 
             className="absolute top-3 right-3 bg-white/90 text-wedding-olive border border-wedding-olive"
           >
             {vendor.matchScore}% match
+          </Badge>
+        )}
+
+        {/* Badge "Autre localisation" */}
+        {vendor.isOutOfScope && (
+          <Badge 
+            className="absolute bottom-3 right-3 bg-amber-500/90 text-white text-xs"
+          >
+            🌍 Autre localisation
           </Badge>
         )}
       </div>
