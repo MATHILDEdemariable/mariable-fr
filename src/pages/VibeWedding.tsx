@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 
 const VibeWedding: React.FC = () => {
   const [conversationStarted, setConversationStarted] = useState(false);
+  const [conversationLoaded, setConversationLoaded] = useState(false);
   const [selectedVendor, setSelectedVendor] = useState<any>(null);
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const [isCarnetModalOpen, setIsCarnetModalOpen] = useState(false);
@@ -34,12 +35,13 @@ const VibeWedding: React.FC = () => {
     const params = new URLSearchParams(window.location.search);
     const conversationId = params.get('conversationId');
     
-    if (conversationId && loadConversation) {
+    if (conversationId && loadConversation && !conversationLoaded) {
       console.log('🔄 Chargement conversation depuis URL:', conversationId);
       setConversationStarted(true);
+      setConversationLoaded(true);
       loadConversation(conversationId);
     }
-  }, [loadConversation]);
+  }, []);
 
   const handleStartConversation = (message: string) => {
     setConversationStarted(true);

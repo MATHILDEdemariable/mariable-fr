@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Sparkles, Send } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
+import PremiumHeader from '@/components/home/PremiumHeader';
 interface VibeWeddingHeroProps {
   onStartConversation: (message: string) => void;
 }
@@ -44,7 +45,9 @@ const VibeWeddingHero: React.FC<VibeWeddingHeroProps> = ({
       handleSubmit(e);
     }
   };
-  return <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-black">
+  return <>
+    <PremiumHeader />
+    <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-black pt-16">
       {/* Background Image */}
       <div className="absolute inset-0 bg-cover bg-center bg-no-repeat" style={{
       backgroundImage: 'url(https://bgidfcqktsttzlwlumtz.supabase.co/storage/v1/object/public/visuels/club%20mariable.png)'
@@ -108,6 +111,7 @@ const VibeWeddingHero: React.FC<VibeWeddingHeroProps> = ({
           </div>
         </div>
       </div>
-    </div>;
+    </div>
+  </>;
 };
 export default VibeWeddingHero;

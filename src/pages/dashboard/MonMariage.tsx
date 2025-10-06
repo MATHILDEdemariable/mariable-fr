@@ -108,6 +108,35 @@ const MonMariage = () => {
     setProjectToDelete(null);
   };
 
+  const handleDeleteConversation = async (conversationId: string) => {
+    if (!confirm("Êtes-vous sûr de vouloir supprimer cette recherche ?")) {
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('ai_wedding_conversations')
+        .delete()
+        .eq('id', conversationId);
+
+      if (error) throw error;
+
+      toast({
+        title: "✅ Recherche supprimée",
+        description: "La recherche a été supprimée avec succès"
+      });
+
+      loadProjects();
+    } catch (error: any) {
+      console.error('Erreur suppression:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de supprimer la recherche",
+        variant: "destructive"
+      });
+    }
+  };
+
   useEffect(() => {
     loadProjects();
   }, []);
@@ -271,15 +300,25 @@ const MonMariage = () => {
                       {conversation.messages?.length || 0} messages échangés
                     </div>
 
-                    <Button
-                      variant="default"
-                      size="sm"
-                      className="w-full bg-wedding-olive hover:bg-wedding-olive/90"
-                      onClick={() => navigate(`/vibewedding?conversationId=${conversation.id}`)}
-                    >
-                      <Eye className="w-4 h-4 mr-2" />
-                      Revoir la recherche
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button
+                        variant="default"
+                        size="sm"
+                        className="flex-1 bg-wedding-olive hover:bg-wedding-olive/90"
+                        onClick={() => navigate(`/vibewedding?conversationId=${conversation.id}`)}
+                      >
+                        <Eye className="w-4 h-4 mr-2" />
+                        Revoir la recherche
+                      </Button>
+                      
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => handleDeleteConversation(conversation.id)}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
                   </CardContent>
                 </Card>
               );
