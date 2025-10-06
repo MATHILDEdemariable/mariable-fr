@@ -30,33 +30,27 @@ const VendorCard: React.FC<VendorCardProps> = ({
   const [isInTracking, setIsInTracking] = useState(false);
   const [isPartner, setIsPartner] = useState(vendor.partner);
 
-  // Get the main image (first photo) with safety checks
+  // Get the main image from prestataires_photos_preprod
   let mainImage = "/placeholder.svg";
 
   try {
-    // Check if styles is already an array
-    if (
-      vendor.styles &&
-      Array.isArray(vendor.styles) &&
-      vendor.styles.length > 0
-    ) {
-      mainImage = String(vendor.styles[0]);
-    }
-    // Check if styles is a string that can be parsed as JSON
-    else if (vendor.styles && typeof vendor.styles === "string") {
-      try {
-        const parsedStyles = JSON.parse(String(vendor.styles));
-        if (Array.isArray(parsedStyles) && parsedStyles.length > 0) {
-          mainImage = String(parsedStyles[0]);
+    if ((vendor as any).prestataires_photos_preprod) {
+      let photos = (vendor as any).prestataires_photos_preprod;
+      
+      // Si c'est un tableau
+      if (Array.isArray(photos) && photos.length > 0) {
+        // Chercher d'abord une photo principale ou cover
+        const mainPhoto = photos.find((p: any) => p.principale || p.is_cover);
+        if (mainPhoto?.url) {
+          mainImage = mainPhoto.url;
+        } else if (photos[0]?.url) {
+          // Sinon prendre la première photo
+          mainImage = photos[0].url;
         }
-      } catch (e) {
-        console.warn("Error parsing vendor styles:", e);
-        // Use default image
       }
     }
   } catch (error) {
-    console.warn("Error processing vendor styles:", error);
-    // Use default image
+    console.warn("Error processing vendor photos:", error);
   }
 
   // Get location
