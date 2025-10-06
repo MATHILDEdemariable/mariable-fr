@@ -81,9 +81,9 @@ serve(async (req) => {
   }
 
   try {
-    const { message } = await req.json();
+    const { messages } = await req.json();
     
-    console.log('🚀 Vibe Wedding AI - Message reçu:', message);
+    console.log('🚀 Vibe Wedding AI - Historique reçu:', messages.length, 'messages');
 
     const lovableApiKey = Deno.env.get('LOVABLE_API_KEY');
     if (!lovableApiKey) {
@@ -94,9 +94,9 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Appel à Lovable AI pour extraction des critères
+    // Appel à Lovable AI pour extraction des critères avec TOUT l'historique
     const systemPrompt = `Tu es un assistant spécialisé dans le matching de prestataires de mariage.
-Analyse le message du couple et extrais les informations suivantes en JSON :
+Analyse TOUTE la conversation avec le couple et extrais les informations suivantes en JSON STRICT (AUCUN texte en dehors du JSON) :
 {
   "categorie": "Photographe|Lieu de réception|Traiteur|DJ|Fleuriste|Wedding planner|Coiffure|Maquillage|Robe de mariée|Costume|Pâtissier|Décorateur|Vidéaste|Animation",
   "region": "Île-de-France|Provence-Alpes-Côte d'Azur|Auvergne-Rhône-Alpes|Bretagne|Nouvelle-Aquitaine|Occitanie|Grand Est|Hauts-de-France|Normandie|Centre-Val de Loire|Bourgogne-Franche-Comté|Pays de la Loire",
@@ -107,10 +107,11 @@ Analyse le message du couple et extrais les informations suivantes en JSON :
 }
 
 IMPORTANT:
-- Si la catégorie n'est pas claire, mets "categorie": null
-- Si la région n'est pas mentionnée, mets "region": null
+- GARDE EN MÉMOIRE les informations des messages précédents (ex: si "traiteur" est mentionné dans un message et "Île-de-France" dans un autre, combine les deux)
+- Si la catégorie n'est pas claire dans TOUTE la conversation, mets "categorie": null
+- Si la région n'est pas mentionnée dans TOUTE la conversation, mets "region": null
 - Le conversationalResponse doit être chaleureux et professionnel
-- Extrais tous les styles mentionnés (champêtre, bohème, moderne, etc.)`;
+- RÉPONDS UNIQUEMENT EN JSON, PAS DE TEXTE AVANT OU APRÈS`;
 
     console.log('🤖 Appel à Lovable AI...');
     
@@ -124,7 +125,7 @@ IMPORTANT:
         model: 'google/gemini-2.5-flash',
         messages: [
           { role: 'system', content: systemPrompt },
-          { role: 'user', content: message }
+          ...messages
         ],
         temperature: 0.7,
       }),
@@ -153,10 +154,11 @@ IMPORTANT:
       }
     } catch (parseError) {
       console.error('❌ Erreur parsing JSON:', parseError);
-      // Fallback: détection manuelle
+      // Fallback: détection manuelle sur le dernier message
+      const lastUserMessage = messages.filter((m: any) => m.role === 'user').pop()?.content || '';
       extractedData = {
-        categorie: detectVendorCategory(message),
-        region: extractLocationFromMessage(message),
+        categorie: detectVendorCategory(lastUserMessage),
+        region: extractLocationFromMessage(lastUserMessage),
         conversationalResponse: "Je vais vous aider à trouver le prestataire idéal ! Pouvez-vous préciser ce que vous recherchez ?"
       };
     }

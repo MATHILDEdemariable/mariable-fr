@@ -37,13 +37,14 @@ export const useVibeWeddingMatching = () => {
 
     // Ajouter le message utilisateur
     const userMessage: Message = { role: 'user', content: messageText };
-    setMessages(prev => [...prev, userMessage]);
+    const updatedMessages = [...messages, userMessage];
+    setMessages(updatedMessages);
 
     try {
-      console.log('🚀 Envoi du message à vibe-wedding-ai:', messageText);
+      console.log('🚀 Envoi de l\'historique complet à vibe-wedding-ai:', updatedMessages.length, 'messages');
 
       const { data, error } = await supabase.functions.invoke('vibe-wedding-ai', {
-        body: { message: messageText }
+        body: { messages: updatedMessages }
       });
 
       if (error) {
