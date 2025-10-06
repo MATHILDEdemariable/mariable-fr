@@ -35,7 +35,7 @@ export const DashboardMockup = ({
         {/* Sidebar */}
         <div className="w-64 bg-white border-r border-gray-200 min-h-[744px] p-4 space-y-2">
           {/* Mon Mariage */}
-          <div className={`p-3 rounded-lg cursor-pointer transition-colors ${hoveredFeature === 'mon-mariage' ? 'bg-wedding-olive/10' : 'hover:bg-gray-100'}`} onMouseEnter={() => onHoverFeature('mon-mariage')} onMouseLeave={() => onHoverFeature(null)}>
+          <div className={`p-3 rounded-lg cursor-pointer transition-colors ${hoveredFeature === 'mon-mariage' ? 'bg-wedding-olive/10' : 'hover:bg-gray-100'}`} onMouseEnter={() => onHoverFeature('mon-mariage')} onMouseLeave={() => onHoverFeature(null)} title="créer votre espace mariage 100% personnalisé">
             <div className="flex items-center gap-2">
               <Heart className="w-5 h-5 text-wedding-olive" />
               <span className="font-medium">Mon Mariage</span>
