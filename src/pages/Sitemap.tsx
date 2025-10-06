@@ -49,6 +49,7 @@ const SitemapPage = () => {
     const staticPages = [
         { url: '/', priority: 1.0, changefreq: 'daily' },
         { url: '/selection', priority: 1.0, changefreq: 'daily' },
+        { url: '/vibewedding', priority: 1.0, changefreq: 'daily' },
         { url: '/services/prestataires', priority: 1.0, changefreq: 'weekly' },
         { url: '/services/budget', priority: 0.9, changefreq: 'monthly' },
         { url: '/checklist-mariage', priority: 0.9, changefreq: 'monthly' },
@@ -65,11 +66,18 @@ const SitemapPage = () => {
         { url: '/contact', priority: 0.8, changefreq: 'yearly' },
         { url: '/professionnels', priority: 0.8, changefreq: 'monthly' },
         { url: '/planning-personnalise', priority: 0.7, changefreq: 'monthly' },
-        { url: '/assistant-v2', priority: 0.7, changefreq: 'monthly' },
         { url: '/coordinateurs-mariage', priority: 0.7, changefreq: 'monthly' },
-        { url: '/mentions-legales', priority: 0.5, changefreq: 'yearly' },
+        { url: '/fonctionnalites', priority: 0.7, changefreq: 'monthly' },
+        { url: '/jeunes-maries', priority: 0.7, changefreq: 'weekly' },
+        { url: '/coordination-jour-j', priority: 0.7, changefreq: 'monthly' },
+        { url: '/outils-planning-mariage', priority: 0.7, changefreq: 'monthly' },
+        { url: '/to-do-list-mariage', priority: 0.6, changefreq: 'monthly' },
+        { url: '/liste-preparatif-mariage', priority: 0.6, changefreq: 'monthly' },
+        { url: '/accompagnement', priority: 0.6, changefreq: 'monthly' },
+        { url: '/guidecoordinationjour-j', priority: 0.6, changefreq: 'monthly' },
         { url: '/cgv', priority: 0.5, changefreq: 'yearly' },
         { url: '/contact/faq', priority: 0.5, changefreq: 'yearly' },
+        { url: '/sitemap', priority: 0.4, changefreq: 'monthly' },
     ];
 
     useEffect(() => {

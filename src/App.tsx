@@ -101,6 +101,8 @@ import ProtectedRoute from "./components/auth/ProtectedRoute";
 import ContentCreatorMariage from "./pages/ContentCreatorMariage";
 import VibeWedding from "./pages/VibeWedding";
 import FeaturesInteractive from "./pages/FeaturesInteractive";
+import Sitemap from "./pages/Sitemap";
+import SitemapHTML from "./pages/SitemapHTML";
 
 const queryClient = new QueryClient();
 
@@ -243,6 +245,10 @@ function App() {
                    
                    {/* Features Interactive route */}
                    <Route path="/fonctionnalites" element={<FeaturesInteractive />} />
+                   
+                   {/* Sitemap routes */}
+                   <Route path="/sitemap.xml" element={<Sitemap />} />
+                   <Route path="/sitemap" element={<SitemapHTML />} />
                    
                    <Route path="*" element={<NotFound />} />
                 </Routes>
