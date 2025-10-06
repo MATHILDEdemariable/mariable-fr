@@ -63,7 +63,8 @@ export const useOptimizedVendors = ({
           featured,
           partner,
           slug,
-          categorie_lieu
+          categorie_lieu,
+          prestataires_photos_preprod(url, ordre, principale, is_cover)
         `)
         .eq('visible', true)
         .order('featured', { ascending: false })
@@ -113,7 +114,7 @@ export const useOptimizedVendors = ({
       const vendors = hasMore ? data.slice(0, initialLimit) : data || [];
       
       return {
-        vendors: vendors as Prestataire[],
+        vendors: vendors as any[],
         hasMore: hasMore || false
       };
     },

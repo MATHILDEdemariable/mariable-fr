@@ -5,9 +5,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import VendorCard from '@/components/vendors/VendorCard';
-import { usePaginatedVendors } from '@/hooks/usePaginatedVendors';
+import { useOptimizedVendors } from '@/hooks/useOptimizedVendors';
 import { useDebounce } from 'use-debounce';
-import { Loader2, Search, X } from 'lucide-react';
+import { Loader2, Search, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import PremiumHeader from '@/components/home/PremiumHeader';
 import Footer from '@/components/Footer';
 import { Database } from '@/integrations/supabase/types';
@@ -30,6 +30,8 @@ const CATEGORIES: (PrestataireCategorie | 'Tous')[] = [
   'Coordination'
 ];
 
+const ITEMS_PER_PAGE = 12;
+
 const REGIONS = [
   'Auvergne-Rhône-Alpes',
   'Bourgogne-Franche-Comté',
@@ -51,17 +53,29 @@ const ProfessionnelsMariable = () => {
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState<PrestataireCategorie | 'Tous'>('Tous');
   const [region, setRegion] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
   const [debouncedSearch] = useDebounce(search, 500);
 
-  const { vendors, isLoading, hasMore, loadMore } = usePaginatedVendors({
+  const { data: vendorsData, isLoading } = useOptimizedVendors({
     filters: {
       search,
       category,
       region,
     },
     debouncedSearch,
-    pageSize: 12,
+    initialLimit: 1000, // Charger beaucoup pour la pagination côté client
   });
+
+  const vendors = vendorsData?.vendors || [];
+  const totalPages = Math.ceil(vendors.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+  const currentVendors = vendors.slice(startIndex, endIndex);
+
+  // Reset page when filters change
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [search, category, region]);
 
   const handleReset = () => {
     setSearch('');
@@ -157,6 +171,7 @@ const ProfessionnelsMariable = () => {
             <div className="mb-6">
               <p className="text-sm text-muted-foreground">
                 {vendors.length} {vendors.length > 1 ? 'prestataires trouvés' : 'prestataire trouvé'}
+                {vendors.length > ITEMS_PER_PAGE && ` - Page ${currentPage} sur ${totalPages}`}
               </p>
             </div>
           )}
@@ -178,7 +193,7 @@ const ProfessionnelsMariable = () => {
           ) : (
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-                {vendors.map((vendor) => (
+                {currentVendors.map((vendor) => (
                   <VendorCard
                     key={vendor.id}
                     vendor={vendor}
@@ -187,16 +202,50 @@ const ProfessionnelsMariable = () => {
                 ))}
               </div>
 
-              {/* Bouton Charger plus */}
-              {hasMore && (
-                <div className="flex justify-center">
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="flex justify-center items-center gap-2">
                   <Button
-                    onClick={loadMore}
                     variant="outline"
-                    size="lg"
-                    className="min-w-[200px]"
+                    onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                    disabled={currentPage === 1}
                   >
-                    Charger plus
+                    <ChevronLeft className="h-4 w-4 mr-1" />
+                    Précédent
+                  </Button>
+
+                  <div className="flex gap-1">
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => {
+                      // Afficher seulement quelques pages autour de la page actuelle
+                      if (
+                        page === 1 ||
+                        page === totalPages ||
+                        (page >= currentPage - 1 && page <= currentPage + 1)
+                      ) {
+                        return (
+                          <Button
+                            key={page}
+                            variant={currentPage === page ? "default" : "outline"}
+                            className={currentPage === page ? "bg-wedding-olive hover:bg-wedding-olive/90" : ""}
+                            onClick={() => setCurrentPage(page)}
+                          >
+                            {page}
+                          </Button>
+                        );
+                      } else if (page === currentPage - 2 || page === currentPage + 2) {
+                        return <span key={page} className="px-2 py-2">...</span>;
+                      }
+                      return null;
+                    })}
+                  </div>
+
+                  <Button
+                    variant="outline"
+                    onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                    disabled={currentPage === totalPages}
+                  >
+                    Suivant
+                    <ChevronRight className="h-4 w-4 ml-1" />
                   </Button>
                 </div>
               )}
