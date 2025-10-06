@@ -9,17 +9,7 @@ import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 interface WeddingProject {
   id: string;
   title: string;
@@ -32,20 +22,23 @@ interface WeddingProject {
   created_at: string;
   updated_at: string;
 }
-
 const MonMariage = () => {
   const navigate = useNavigate();
-  const { toast } = useToast();
+  const {
+    toast
+  } = useToast();
   const [projects, setProjects] = useState<WeddingProject[]>([]);
   const [vibeConversations, setVibeConversations] = useState<any[]>([]);
   const [retroplannings, setRetroplannings] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [projectToDelete, setProjectToDelete] = useState<string | null>(null);
-
   const loadProjects = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      
+      const {
+        data: {
+          user
+        }
+      } = await supabase.auth.getUser();
       if (!user) {
         setProjects([]);
         setVibeConversations([]);
@@ -53,33 +46,31 @@ const MonMariage = () => {
         setIsLoading(false);
         return;
       }
-
-      const { data, error } = await supabase
-        .from('wedding_projects')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
-
+      const {
+        data,
+        error
+      } = await supabase.from('wedding_projects').select('*').eq('user_id', user.id).order('created_at', {
+        ascending: false
+      });
       if (error) throw error;
 
       // Charger les conversations VibeWedding
-      const { data: conversationsData, error: conversationsError } = await supabase
-        .from('ai_wedding_conversations')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
-
+      const {
+        data: conversationsData,
+        error: conversationsError
+      } = await supabase.from('ai_wedding_conversations').select('*').eq('user_id', user.id).order('created_at', {
+        ascending: false
+      });
       if (conversationsError) throw conversationsError;
 
       // Charger les rétroplannings
-      const { data: retroplanningsData, error: retroplanningsError } = await supabase
-        .from('wedding_retroplanning')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
-
+      const {
+        data: retroplanningsData,
+        error: retroplanningsError
+      } = await supabase.from('wedding_retroplanning').select('*').eq('user_id', user.id).order('created_at', {
+        ascending: false
+      });
       if (retroplanningsError) throw retroplanningsError;
-
       setProjects((data || []) as any);
       setVibeConversations(conversationsData || []);
       setRetroplannings(retroplanningsData || []);
@@ -94,21 +85,16 @@ const MonMariage = () => {
       setIsLoading(false);
     }
   };
-
   const deleteProject = async (projectId: string) => {
     try {
-      const { error } = await supabase
-        .from('wedding_projects')
-        .delete()
-        .eq('id', projectId);
-
+      const {
+        error
+      } = await supabase.from('wedding_projects').delete().eq('id', projectId);
       if (error) throw error;
-
       toast({
         title: "✅ Projet supprimé",
         description: "Le projet a été supprimé avec succès"
       });
-
       loadProjects();
     } catch (error: any) {
       console.error('Error deleting project:', error);
@@ -120,25 +106,19 @@ const MonMariage = () => {
     }
     setProjectToDelete(null);
   };
-
   const handleDeleteConversation = async (conversationId: string) => {
     if (!confirm("Êtes-vous sûr de vouloir supprimer cette recherche ?")) {
       return;
     }
-
     try {
-      const { error } = await supabase
-        .from('ai_wedding_conversations')
-        .delete()
-        .eq('id', conversationId);
-
+      const {
+        error
+      } = await supabase.from('ai_wedding_conversations').delete().eq('id', conversationId);
       if (error) throw error;
-
       toast({
         title: "✅ Recherche supprimée",
         description: "La recherche a été supprimée avec succès"
       });
-
       loadProjects();
     } catch (error: any) {
       console.error('Erreur suppression:', error);
@@ -149,25 +129,19 @@ const MonMariage = () => {
       });
     }
   };
-
   const handleDeleteRetroplanning = async (retroplanningId: string) => {
     if (!confirm("Êtes-vous sûr de vouloir supprimer ce rétroplanning ?")) {
       return;
     }
-
     try {
-      const { error } = await supabase
-        .from('wedding_retroplanning')
-        .delete()
-        .eq('id', retroplanningId);
-
+      const {
+        error
+      } = await supabase.from('wedding_retroplanning').delete().eq('id', retroplanningId);
       if (error) throw error;
-
       toast({
         title: "✅ Rétroplanning supprimé",
         description: "Le rétroplanning a été supprimé avec succès"
       });
-
       loadProjects();
     } catch (error: any) {
       console.error('Erreur suppression:', error);
@@ -178,257 +152,14 @@ const MonMariage = () => {
       });
     }
   };
-
   useEffect(() => {
     loadProjects();
   }, []);
-
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-96">
+    return <div className="flex items-center justify-center h-96">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-premium-sage"></div>
-      </div>
-    );
+      </div>;
   }
-
-  return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <Heart className="w-8 h-8 text-premium-rose" />
-          <h1 className="text-3xl font-serif font-bold">Mon Mariage</h1>
-        </div>
-        <Button asChild className="bg-premium-sage hover:bg-premium-sage-dark">
-          <Link to="/vibe-wedding">
-            <Plus className="w-4 h-4 mr-2" />
-            Créer un nouveau projet
-          </Link>
-        </Button>
-      </div>
-
-      {/* Projets sauvegardés */}
-      {projects.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {projects.map((project) => (
-            <Card key={project.id} className="hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <CardTitle className="flex items-center justify-between">
-                  <span className="truncate">{project.title}</span>
-                </CardTitle>
-                <CardDescription className="text-xs">
-                  Créé le {format(new Date(project.created_at), 'dd MMM yyyy', { locale: fr })}
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {/* Informations principales */}
-                <div className="space-y-2">
-                  {project.wedding_data?.guests && (
-                    <div className="flex items-center gap-2 text-sm">
-                      <Users className="w-4 h-4 text-premium-sage" />
-                      <span>{project.wedding_data.guests} invités</span>
-                    </div>
-                  )}
-                  {project.wedding_data?.budget && (
-                    <div className="flex items-center gap-2 text-sm">
-                      <Euro className="w-4 h-4 text-premium-sage" />
-                      <span>{project.wedding_data.budget.toLocaleString()} €</span>
-                    </div>
-                  )}
-                  {project.wedding_data?.location && (
-                    <div className="flex items-center gap-2 text-sm">
-                      <MapPin className="w-4 h-4 text-premium-sage" />
-                      <span className="truncate">{project.wedding_data.location}</span>
-                    </div>
-                  )}
-                  {project.wedding_data?.date && (
-                    <div className="flex items-center gap-2 text-sm">
-                      <Calendar className="w-4 h-4 text-premium-sage" />
-                      <span>{format(new Date(project.wedding_data.date), 'dd MMM yyyy', { locale: fr })}</span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Résumé */}
-                {project.summary && (
-                  <p className="text-sm text-muted-foreground line-clamp-3">
-                    {project.summary}
-                  </p>
-                )}
-
-                {/* Actions - Responsive layout */}
-                <div className="flex flex-wrap gap-2 pt-4">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="flex-1 min-w-[100px]"
-                    onClick={() => navigate(`/vibewedding?project=${project.id}`)}
-                  >
-                    <Eye className="w-4 h-4 mr-2" />
-                    Voir
-                  </Button>
-                  {project.conversation_id && (
-                    <Button
-                      variant="default"
-                      size="sm"
-                      className="flex-1 min-w-[100px] bg-wedding-olive hover:bg-wedding-olive/90"
-                      onClick={() => navigate(`/vibewedding?conversationId=${project.conversation_id}`)}
-                    >
-                      <Edit className="w-4 h-4 mr-2" />
-                      Modifier
-                    </Button>
-                  )}
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setProjectToDelete(project.id)}
-                    className="text-destructive hover:text-destructive hover:bg-destructive/10 w-auto"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                    <span className="sr-only">Supprimer</span>
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
-
-      {/* Fonctionnalités à venir */}
-      <Card className="bg-premium-sage-very-light border-premium-sage/20">
-...
-      </Card>
-
-      {/* Section VibeWedding Conversations */}
-      {vibeConversations.length > 0 && (
-        <div className="mt-12">
-          <h2 className="text-2xl font-serif font-bold mb-4 flex items-center gap-2">
-            <span>🤖</span> Recherche Agent Mariable
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {vibeConversations.map((conversation) => {
-              const vendorCount = conversation.wedding_context?.vendors?.length || 0;
-              const category = conversation.wedding_context?.criteria?.category || 'Recherche';
-              
-              return (
-                <Card key={conversation.id} className="hover:shadow-lg transition-shadow">
-                  <CardHeader>
-                    <CardTitle className="flex items-center justify-between">
-                      <span className="truncate">{category}</span>
-                      <Badge variant="secondary">{vendorCount} prestataires</Badge>
-                    </CardTitle>
-                    <CardDescription className="text-xs">
-                      {format(new Date(conversation.created_at), 'dd MMM yyyy', { locale: fr })}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="text-sm text-muted-foreground">
-                      {conversation.messages?.length || 0} messages échangés
-                    </div>
-
-                    <div className="flex gap-2">
-                      <Button
-                        variant="default"
-                        size="sm"
-                        className="flex-1 bg-wedding-olive hover:bg-wedding-olive/90"
-                        onClick={() => navigate(`/vibewedding?conversationId=${conversation.id}`)}
-                      >
-                        <Eye className="w-4 h-4 mr-2" />
-                        Revoir la recherche
-                      </Button>
-                      
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        onClick={() => handleDeleteConversation(conversation.id)}
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-      {/* Section Rétroplannings */}
-      {retroplannings.length > 0 && (
-        <div className="mt-12">
-          <h2 className="text-2xl font-serif font-bold mb-4 flex items-center gap-2">
-            <span>📋</span> Mes Rétroplannings
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {retroplannings.map((retro) => (
-              <Card key={retro.id} className="hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <CardTitle className="flex items-center justify-between">
-                    <span className="truncate text-lg">{retro.title}</span>
-                  </CardTitle>
-                  <CardDescription className="flex items-center gap-2 text-sm">
-                    <Calendar className="w-4 h-4" />
-                    {format(new Date(retro.wedding_date), 'PPP', { locale: fr })}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <div className="flex justify-between text-sm mb-2">
-                      <span className="text-muted-foreground">Progression</span>
-                      <span className="font-semibold text-premium-sage">{retro.progress}%</span>
-                    </div>
-                    <Progress value={retro.progress} className="h-2" />
-                  </div>
-
-                  <div className="flex gap-2">
-                    <Button
-                      variant="default"
-                      size="sm"
-                      className="flex-1 bg-premium-sage hover:bg-premium-sage-dark"
-                      onClick={() => navigate(`/retroplanning?id=${retro.id}`)}
-                    >
-                      <Eye className="w-4 h-4 mr-2" />
-                      Voir le planning
-                    </Button>
-                    
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleDeleteRetroplanning(retro.id)}
-                      className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Dialog de confirmation de suppression */}
-      <AlertDialog open={!!projectToDelete} onOpenChange={() => setProjectToDelete(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Supprimer ce projet ?</AlertDialogTitle>
-            <AlertDialogDescription>
-              Cette action est irréversible. Le projet sera définitivement supprimé.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Annuler</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={() => projectToDelete && deleteProject(projectToDelete)}
-              className="bg-destructive hover:bg-destructive/90"
-            >
-              Supprimer
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </div>
-  );
+  return;
 };
-
 export default MonMariage;
