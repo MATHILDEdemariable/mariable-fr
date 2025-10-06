@@ -183,7 +183,7 @@ const Prix = () => {
                     
                     <div className="pt-4 border-t mt-auto">
                       <Button asChild className="w-full bg-wedding-olive text-white hover:bg-wedding-olive/90">
-                        <Link to="/contact">Faire une demande</Link>
+                        <Link to="/reservation-jour-m">Faire une demande</Link>
                       </Button>
                     </div>
                   </CardContent>
