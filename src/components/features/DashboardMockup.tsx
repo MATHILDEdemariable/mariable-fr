@@ -58,9 +58,12 @@ export const DashboardMockup = ({
             </div>
           </div>
 
-          {/* Avant Jour J */}
+          {/* Rétroplanning */}
           <div className={`p-3 rounded-lg cursor-pointer transition-colors ${hoveredFeature === 'avant-jour-j' ? 'bg-wedding-olive/10' : 'hover:bg-gray-100'}`} onMouseEnter={() => onHoverFeature('avant-jour-j')} onMouseLeave={() => onHoverFeature(null)}>
-            
+            <div className="flex items-center gap-2">
+              <Calendar className="w-5 h-5 text-wedding-olive" />
+              <span className="font-medium">Rétroplanning</span>
+            </div>
           </div>
 
           {/* Mon Jour M (expandable) */}
