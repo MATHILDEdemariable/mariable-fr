@@ -18,6 +18,7 @@ const VibeWedding: React.FC = () => {
     matchedVendors,
     isLoading,
     needsRegion,
+    needsCategory,
     detectedCategory,
     isSaving,
     sendMessage,
@@ -126,6 +127,7 @@ const VibeWedding: React.FC = () => {
               onSendMessage={sendMessage}
               isLoading={isLoading}
               needsRegion={needsRegion}
+              needsCategory={needsCategory}
               detectedCategory={detectedCategory}
             />
           </div>

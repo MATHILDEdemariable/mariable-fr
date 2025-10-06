@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Loader2, Send, Sparkles } from 'lucide-react';
 import RegionSelector from './RegionSelector';
+import CategorySelector from './CategorySelector';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -15,6 +16,7 @@ interface VendorMatchingChatProps {
   onSendMessage: (message: string, region?: string) => void;
   isLoading: boolean;
   needsRegion: boolean;
+  needsCategory?: boolean;
   detectedCategory: string | null;
 }
 
@@ -23,6 +25,7 @@ const VendorMatchingChat: React.FC<VendorMatchingChatProps> = ({
   onSendMessage,
   isLoading,
   needsRegion,
+  needsCategory = false,
   detectedCategory,
 }) => {
   const [input, setInput] = useState('');
@@ -42,6 +45,10 @@ const VendorMatchingChat: React.FC<VendorMatchingChatProps> = ({
 
   const handleRegionSelect = (region: string) => {
     onSendMessage(`Je cherche en ${region}`, region);
+  };
+
+  const handleCategorySelect = (category: string) => {
+    onSendMessage(`Je cherche un ${category}`);
   };
 
   const quickPrompts = [
@@ -110,6 +117,12 @@ const VendorMatchingChat: React.FC<VendorMatchingChatProps> = ({
                   <Loader2 className="w-4 h-4 animate-spin" />
                   <span className="text-sm">Recherche en cours...</span>
                 </div>
+              </div>
+            )}
+
+            {needsCategory && !isLoading && (
+              <div className="flex justify-center w-full">
+                <CategorySelector onSelect={handleCategorySelect} />
               </div>
             )}
 

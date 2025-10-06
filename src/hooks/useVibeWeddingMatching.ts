@@ -30,6 +30,7 @@ export const useVibeWeddingMatching = () => {
   const [matchedVendors, setMatchedVendors] = useState<Vendor[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [needsRegion, setNeedsRegion] = useState(false);
+  const [needsCategory, setNeedsCategory] = useState(false);
   const [detectedCategory, setDetectedCategory] = useState<string | null>(null);
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
@@ -81,10 +82,19 @@ export const useVibeWeddingMatching = () => {
       // Gérer la demande de région
       if (data.needsRegion) {
         setNeedsRegion(true);
+        setNeedsCategory(false);
         setDetectedCategory(data.detectedCategory);
       } else {
         setNeedsRegion(false);
+      }
+
+      // Gérer la demande de catégorie
+      if (data.needsCategory) {
+        setNeedsCategory(true);
+        setNeedsRegion(false);
         setDetectedCategory(null);
+      } else {
+        setNeedsCategory(false);
       }
 
     } catch (error) {
@@ -184,6 +194,7 @@ export const useVibeWeddingMatching = () => {
     setMessages([]);
     setMatchedVendors([]);
     setNeedsRegion(false);
+    setNeedsCategory(false);
     setDetectedCategory(null);
     setConversationId(null);
   };
@@ -193,6 +204,7 @@ export const useVibeWeddingMatching = () => {
     matchedVendors,
     isLoading,
     needsRegion,
+    needsCategory,
     detectedCategory,
     conversationId,
     isSaving,

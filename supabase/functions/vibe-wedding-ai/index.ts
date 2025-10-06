@@ -7,7 +7,37 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Système de détection de catégorie
+// Fonction de mapping intelligent via table wedding_synonyms
+async function mapToDbValue(supabase: any, inputValue: string, type: 'categorie' | 'region'): Promise<string | null> {
+  if (!inputValue) return null;
+  
+  console.log(`🔍 Mapping "${inputValue}" (type: ${type})`);
+  
+  // Requête à la table wedding_synonyms
+  const { data, error } = await supabase
+    .from('wedding_synonyms')
+    .select('db_value, priority')
+    .eq('type', type)
+    .ilike('input_value', inputValue)
+    .order('priority', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  
+  if (error) {
+    console.error(`❌ Erreur mapping ${type}:`, error);
+    return null;
+  }
+  
+  if (data) {
+    console.log(`✅ Mapping trouvé: "${inputValue}" → "${data.db_value}"`);
+    return data.db_value;
+  }
+  
+  console.log(`⚠️ Aucun mapping trouvé pour "${inputValue}"`);
+  return null;
+}
+
+// Système de détection de catégorie (FALLBACK - non utilisé maintenant)
 function detectVendorCategory(message: string): string | null {
   const messageNormalized = message.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   
@@ -155,23 +185,46 @@ IMPORTANT:
     } catch (parseError) {
       console.error('❌ Erreur parsing JSON:', parseError);
       // Fallback: détection manuelle sur le dernier message
-      const lastUserMessage = messages.filter((m: any) => m.role === 'user').pop()?.content || '';
-      extractedData = {
-        categorie: detectVendorCategory(lastUserMessage),
-        region: extractLocationFromMessage(lastUserMessage),
-        conversationalResponse: "Je vais vous aider à trouver le prestataire idéal ! Pouvez-vous préciser ce que vous recherchez ?"
-      };
+      const lastUserMessage = messages.filter((m: any) => m.role === 'user').pop()?.content;
+      
+      if (!lastUserMessage) {
+        extractedData = {
+          categorie: null,
+          region: null,
+          conversationalResponse: "Je vais vous aider à trouver le prestataire idéal ! Pouvez-vous préciser ce que vous recherchez ?"
+        };
+      } else {
+        extractedData = {
+          categorie: detectVendorCategory(lastUserMessage),
+          region: extractLocationFromMessage(lastUserMessage),
+          conversationalResponse: "Je vais vous aider à trouver le prestataire idéal ! Pouvez-vous préciser ce que vous recherchez ?"
+        };
+      }
     }
 
-    console.log('🔍 Données extraites:', extractedData);
+    console.log('🔍 Données extraites (brutes):', extractedData);
+    
+    // Mapper les valeurs via wedding_synonyms
+    if (extractedData.categorie) {
+      const mappedCategorie = await mapToDbValue(supabase, extractedData.categorie, 'categorie');
+      extractedData.categorie = mappedCategorie || extractedData.categorie;
+    }
+    
+    if (extractedData.region) {
+      const mappedRegion = await mapToDbValue(supabase, extractedData.region, 'region');
+      extractedData.region = mappedRegion || extractedData.region;
+    }
 
-    // Si pas de catégorie, demander plus de détails
+    console.log('🔍 Données extraites (après mapping):', extractedData);
+
+    // Si pas de catégorie, demander de sélectionner
     if (!extractedData.categorie) {
       return new Response(
         JSON.stringify({
-          conversationalResponse: extractedData.conversationalResponse || "Je peux vous aider à trouver des prestataires ! Dites-moi ce que vous cherchez : un photographe, un lieu de réception, un traiteur... ?",
+          conversationalResponse: extractedData.conversationalResponse || "Je peux vous aider à trouver des prestataires ! Sélectionnez le type de prestataire que vous recherchez :",
           vendors: [],
           needsRegion: false,
+          needsCategory: true,
           detectedCategory: null
         }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

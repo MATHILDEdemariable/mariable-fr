@@ -2836,6 +2836,33 @@ export type Database = {
         }
         Relationships: []
       }
+      wedding_synonyms: {
+        Row: {
+          created_at: string | null
+          db_value: string
+          id: string
+          input_value: string
+          priority: number | null
+          type: string
+        }
+        Insert: {
+          created_at?: string | null
+          db_value: string
+          id?: string
+          input_value: string
+          priority?: number | null
+          type: string
+        }
+        Update: {
+          created_at?: string | null
+          db_value?: string
+          id?: string
+          input_value?: string
+          priority?: number | null
+          type?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
