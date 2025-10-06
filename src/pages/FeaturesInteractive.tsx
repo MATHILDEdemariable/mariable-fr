@@ -110,7 +110,7 @@ const FeaturesInteractive = () => {
                       2
                     </span>
                     <span>
-                      <strong>Cliquez</strong> sur "Mon Jour M" dans la barre latérale pour déplier ses sous-menus
+                      <strong>Cliquez</strong> sur "Jour-J" dans la barre latérale pour déplier ses sous-menus
                     </span>
                   </li>
                   <li className="flex items-start gap-3">
