@@ -68,7 +68,7 @@ export const DashboardMockup = ({
 
           {/* Mon Jour M (expandable) */}
           <div>
-            <div className={`p-3 rounded-lg cursor-pointer transition-colors ${hoveredFeature === 'mon-jour-m' ? 'bg-wedding-olive/10' : 'hover:bg-gray-100'}`} onClick={() => onToggleMenu('mon-jour-m')} onMouseEnter={() => onHoverFeature('mon-jour-m')} onMouseLeave={() => onHoverFeature(null)}>
+            <div className={`p-3 rounded-lg cursor-pointer transition-colors ${hoveredFeature === 'mon-jour-m' ? 'bg-wedding-olive/10' : 'hover:bg-gray-100'}`} onClick={() => onToggleMenu('mon-jour-m')} onMouseEnter={() => onHoverFeature('mon-jour-m')} onMouseLeave={() => onHoverFeature(null)} title="Jour-J - Seule fonctionnalité payante (voir tarifs)">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Sparkles className="w-5 h-5 text-wedding-olive" />
