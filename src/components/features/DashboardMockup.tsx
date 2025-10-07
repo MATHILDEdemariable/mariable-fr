@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { Feature, dashboardFeatures } from '@/data/dashboardFeatures';
-import { Heart, DollarSign, CheckCircle, Calendar, Sparkles, Clock, Users, FileText, ChevronDown, ChevronRight } from 'lucide-react';
+import { Heart, DollarSign, CheckCircle, Calendar, Sparkles, Clock, Users, FileText, ChevronDown, ChevronRight, UserCheck } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 interface DashboardMockupProps {
@@ -123,6 +123,17 @@ export const DashboardMockup = ({
             <div className="flex items-center gap-2">
               <Users className="w-5 h-5 text-wedding-olive" />
               <span className="font-medium">Mes Prestataires</span>
+            </div>
+          </div>
+
+          {/* RSVP Invités */}
+          <div className={`p-3 rounded-lg cursor-pointer transition-colors ${hoveredFeature === 'rsvp' ? 'bg-wedding-olive/10' : 'hover:bg-gray-100'}`} onMouseEnter={() => onHoverFeature('rsvp')} onMouseLeave={() => onHoverFeature(null)}>
+            <div className="flex items-center gap-2">
+              <UserCheck className="w-5 h-5 text-wedding-olive" />
+              <span className="font-medium">RSVP Invités</span>
+              <Badge variant="outline" className="text-[10px] px-1.5 py-0.5 bg-orange-100 text-orange-700 border-orange-300">
+                beta
+              </Badge>
             </div>
           </div>
         </div>
