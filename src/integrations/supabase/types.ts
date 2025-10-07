@@ -2875,6 +2875,104 @@ export type Database = {
         }
         Relationships: []
       }
+      wedding_rsvp_events: {
+        Row: {
+          created_at: string | null
+          event_date: string | null
+          event_location: string | null
+          event_name: string
+          id: string
+          max_guests_per_invite: number | null
+          require_dietary_restrictions: boolean | null
+          require_phone: boolean | null
+          unique_link_slug: string
+          updated_at: string | null
+          user_id: string
+          welcome_message: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          event_date?: string | null
+          event_location?: string | null
+          event_name?: string
+          id?: string
+          max_guests_per_invite?: number | null
+          require_dietary_restrictions?: boolean | null
+          require_phone?: boolean | null
+          unique_link_slug: string
+          updated_at?: string | null
+          user_id: string
+          welcome_message?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          event_date?: string | null
+          event_location?: string | null
+          event_name?: string
+          id?: string
+          max_guests_per_invite?: number | null
+          require_dietary_restrictions?: boolean | null
+          require_phone?: boolean | null
+          unique_link_slug?: string
+          updated_at?: string | null
+          user_id?: string
+          welcome_message?: string | null
+        }
+        Relationships: []
+      }
+      wedding_rsvp_responses: {
+        Row: {
+          attendance_status: string
+          dietary_restrictions: string | null
+          event_id: string
+          guest_email: string | null
+          guest_name: string
+          guest_phone: string | null
+          id: string
+          ip_address: string | null
+          message: string | null
+          number_of_guests: number | null
+          submitted_at: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          attendance_status: string
+          dietary_restrictions?: string | null
+          event_id: string
+          guest_email?: string | null
+          guest_name: string
+          guest_phone?: string | null
+          id?: string
+          ip_address?: string | null
+          message?: string | null
+          number_of_guests?: number | null
+          submitted_at?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          attendance_status?: string
+          dietary_restrictions?: string | null
+          event_id?: string
+          guest_email?: string | null
+          guest_name?: string
+          guest_phone?: string | null
+          id?: string
+          ip_address?: string | null
+          message?: string | null
+          number_of_guests?: number | null
+          submitted_at?: string | null
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wedding_rsvp_responses_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "wedding_rsvp_events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       wedding_synonyms: {
         Row: {
           created_at: string | null
