@@ -122,13 +122,21 @@ const VibeWedding: React.FC = () => {
                 <>
                   <div className="flex items-center justify-between mb-6">
                     <div className="flex-1" />
-                    <button
-                      onClick={saveProject}
-                      disabled={isSaving}
-                      className="px-6 py-2.5 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium shadow-sm"
-                    >
-                      {isSaving ? '💾 Sauvegarde...' : '💾 Sauvegarder ce projet'}
-                    </button>
+                    <div className="flex gap-3">
+                      <button
+                        onClick={() => window.location.href = '/professionnelsmariable'}
+                        className="px-6 py-2.5 bg-background border border-border text-foreground rounded-lg hover:bg-accent transition-colors font-medium shadow-sm"
+                      >
+                        Voir la sélection complète
+                      </button>
+                      <button
+                        onClick={saveProject}
+                        disabled={isSaving}
+                        className="px-6 py-2.5 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium shadow-sm"
+                      >
+                        {isSaving ? '💾 Sauvegarde...' : '💾 Sauvegarder ce projet'}
+                      </button>
+                    </div>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
