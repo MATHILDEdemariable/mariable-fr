@@ -17,7 +17,8 @@ import {
   Lightbulb,
   ChevronDown,
   Coins,
-  ListChecks
+  ListChecks,
+  UserCheck
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
@@ -197,6 +198,11 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
   // Vérifier si Après le jour-J est actif
   const isApresJourJActive = () => {
     return isActive('/dashboard/apres-jour-j');
+  };
+
+  // Vérifier si RSVP Invités est actif
+  const isRSVPActive = () => {
+    return isActive('/dashboard/rsvp');
   };
 
   // Vérifier si le menu Aide doit être actif
@@ -454,6 +460,29 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
         >
           <CheckSquare className="h-4 w-4" />
           <span className="ml-2 sm:ml-3 leading-tight">Après le jour-J</span>
+          {isReaderMode && (
+            <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>
+          )}
+        </Link>
+
+        {/* RSVP Invités */}
+        <Link
+          to={isReaderMode ? '#' : '/dashboard/rsvp'}
+          onClick={(e) => {
+            if (isReaderMode) {
+              e.preventDefault();
+            }
+          }}
+          className={cn(
+            "flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors",
+            isRSVPActive()
+              ? 'bg-wedding-olive text-white shadow-sm'
+              : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive',
+            isReaderMode ? 'pointer-events-none opacity-70' : ''
+          )}
+        >
+          <UserCheck className="h-4 w-4" />
+          <span className="ml-2 sm:ml-3 leading-tight">RSVP Invités</span>
           {isReaderMode && (
             <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>
           )}

@@ -105,6 +105,7 @@ import FeaturesInteractive from "./pages/FeaturesInteractive";
 import Sitemap from "./pages/Sitemap";
 import SitemapHTML from "./pages/SitemapHTML";
 import ProfessionnelsMariable from "./pages/ProfessionnelsMariable";
+import RSVPPublicForm from "./pages/rsvp/RSVPPublicForm";
 
 const queryClient = new QueryClient();
 
@@ -146,11 +147,14 @@ function App() {
           <Route path="/mariage-auvergne-rhone-alpes" element={<MariageAuvergneRhoneAlpes />} />
           <Route path="/mariage-nouvelle-aquitaine" element={<MariageNouvelleAquitaine />} />
                   
-                  {/* Routes publiques pour les plannings */}
+                   {/* Routes publiques pour les plannings */}
                   <Route path="/planning-public/:coordinationId" element={<PlanningPublic />} />
                   <Route path="/planning-public/project/:token" element={<PlanningPublicProject />} />
           <Route path="/avant-jour-j-public/:token" element={<AvantJourJPublic />} />
           <Route path="/apres-jour-j-public/:token" element={<ApresJourJPublic />} />
+          
+          {/* Route publique RSVP */}
+          <Route path="/rsvp/:slug" element={<RSVPPublicForm />} />
                   
                   {/* Mon Jour J routes */}
                   <Route path="/mon-jour-m" element={<Navigate to="/mon-jour-m/planning" replace />} />
