@@ -99,15 +99,15 @@ const VibeWeddingHero: React.FC<VibeWeddingHeroProps> = ({
         <div className="mt-12 flex flex-wrap justify-center gap-6 sm:gap-8 text-white/90 text-sm">
           <div className="flex items-center gap-2">
             <span className="text-2xl">✨</span>
-            <span>Gratuit pour commencer</span>
+            <span>Professionnels de confiance</span>
           </div>
           <div className="flex items-center gap-2">
             <span className="text-2xl">🎯</span>
-            <span>Budget personnalisé</span>
+            <span>Avis vérifiés</span>
           </div>
           <div className="flex items-center gap-2">
             <span className="text-2xl">📅</span>
-            <span>Planning automatique</span>
+            <span>Sélection unique</span>
           </div>
         </div>
       </div>
