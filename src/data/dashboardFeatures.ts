@@ -90,6 +90,14 @@ export const dashboardFeatures: Feature[] = [
     isExpandable: false
   },
   {
+    id: 'rsvp',
+    zone: 'sidebar',
+    position: { top: '590px', left: '20px', width: '200px', height: '40px' },
+    title: 'RSVP Invités',
+    description: 'Gérez vos confirmations de présence en ligne. Créez des formulaires RSVP personnalisés avec lien unique et QR code. Suivez en temps réel les réponses de vos invités.',
+    isExpandable: false
+  },
+  {
     id: 'user-profile',
     zone: 'header',
     position: { top: '15px', left: 'calc(100% - 200px)', width: '180px', height: '50px' },

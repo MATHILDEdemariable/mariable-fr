@@ -63,20 +63,23 @@ const RSVPEventCard: React.FC<RSVPEventCardProps> = ({ event, onDelete, onViewRe
     try {
       const { data, error } = await supabase
         .from('wedding_rsvp_responses')
-        .select('attendance_status')
+        .select('attendance_status, number_of_guests')
         .eq('event_id', event.id);
 
       if (error) throw error;
 
-      const confirmed = data?.filter(r => r.attendance_status === 'oui').length || 0;
-      const declined = data?.filter(r => r.attendance_status === 'non').length || 0;
-      const maybe = data?.filter(r => r.attendance_status === 'peut-être').length || 0;
+      const confirmedGuests = data?.filter(r => r.attendance_status === 'oui')
+        .reduce((sum, r) => sum + (r.number_of_guests || 1), 0) || 0;
+      const declinedGuests = data?.filter(r => r.attendance_status === 'non')
+        .reduce((sum, r) => sum + (r.number_of_guests || 1), 0) || 0;
+      const maybeGuests = data?.filter(r => r.attendance_status === 'peut-être')
+        .reduce((sum, r) => sum + (r.number_of_guests || 1), 0) || 0;
 
       setStats({
-        confirmed,
-        declined,
-        maybe,
-        total: data?.length || 0,
+        confirmed: confirmedGuests,
+        declined: declinedGuests,
+        maybe: maybeGuests,
+        total: confirmedGuests + declinedGuests + maybeGuests,
       });
     } catch (error) {
       console.error('Erreur lors du chargement des stats:', error);
@@ -151,7 +154,7 @@ const RSVPEventCard: React.FC<RSVPEventCardProps> = ({ event, onDelete, onViewRe
 
           <div className="pt-2">
             <Badge variant="outline" className="w-full justify-center">
-              {stats.total} réponse{stats.total > 1 ? 's' : ''} au total
+              {stats.total} personne{stats.total > 1 ? 's' : ''} au total
             </Badge>
           </div>
         </CardContent>
