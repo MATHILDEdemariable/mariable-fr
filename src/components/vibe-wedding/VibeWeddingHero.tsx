@@ -98,15 +98,15 @@ const VibeWeddingHero: React.FC<VibeWeddingHeroProps> = ({
         {/* Trust indicators */}
         <div className="mt-12 flex flex-wrap justify-center gap-6 sm:gap-8 text-white/90 text-sm">
           <div className="flex items-center gap-2">
-            <span className="text-2xl">✨</span>
+            <span className="text-2xl">🤝</span>
             <span>Professionnels de confiance</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-2xl">🎯</span>
+            <span className="text-2xl">⭐</span>
             <span>Avis vérifiés</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-2xl">📅</span>
+            <span className="text-2xl">💎</span>
             <span>Sélection unique</span>
           </div>
         </div>
