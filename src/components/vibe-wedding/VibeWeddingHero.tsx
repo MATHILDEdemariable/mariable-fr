@@ -110,6 +110,18 @@ const VibeWeddingHero: React.FC<VibeWeddingHeroProps> = ({
             <span>Sélection unique</span>
           </div>
         </div>
+
+        {/* Button to selection page */}
+        <div className="mt-8">
+          <Button
+            onClick={() => window.location.href = '/professionnelsmariable'}
+            variant="outline"
+            size="lg"
+            className="bg-white/10 backdrop-blur-sm text-white border-white/30 hover:bg-white/20 hover:border-white/50"
+          >
+            Voir la sélection complète
+          </Button>
+        </div>
       </div>
     </div>
   </>;
