@@ -140,7 +140,7 @@ const VendorCard: React.FC<VendorCardProps> = ({
           vendor_name: vendor.nom,
           category: vendor.categorie || "Prestataire",
           status: "à contacter",
-          location: vendor.ville || vendor.region,
+          location: vendor.ville || ((vendor.regions as any)?.[0] || ''),
           source: "mariable",
         });
 

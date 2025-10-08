@@ -14,7 +14,9 @@ export const PRESTATAIRE_CATEGORIES = [
   "Décoration",
   "Mise en beauté",
   "Voiture",
-  "Invités"
+  "Invités",
+  "Cocktail",
+  "Foodtruck"
 ] as const;
 
 export const PRESTATAIRE_REGIONS = [
@@ -39,7 +41,7 @@ export const DEFAULT_PRESTATAIRE: Partial<Prestataire> = {
   nom: "",
   categorie: undefined,
   ville: "",
-  region: undefined,
+  regions: [],
   capacite_invites: null,
   prix_minimum: null,
   prix_a_partir_de: null,
