@@ -14,9 +14,7 @@ export const PRESTATAIRE_CATEGORIES = [
   "Décoration",
   "Mise en beauté",
   "Voiture",
-  "Invités",
-  "Cocktail",
-  "Foodtruck"
+  "Invités"
 ] as const;
 
 export const PRESTATAIRE_REGIONS = [

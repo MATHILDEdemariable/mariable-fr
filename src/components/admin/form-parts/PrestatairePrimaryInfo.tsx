@@ -1,13 +1,8 @@
 
-import React, { useState } from "react";
+import React from "react";
 import { Prestataire } from "../types";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { PRESTATAIRE_CATEGORIES, PRESTATAIRE_REGIONS } from "./constants";
-import { ChevronDown, X } from "lucide-react";
 
 interface PrestatairePrimaryInfoProps {
   fields: Partial<Prestataire>;
@@ -16,41 +11,13 @@ interface PrestatairePrimaryInfoProps {
 }
 
 const PrestatairePrimaryInfo: React.FC<PrestatairePrimaryInfoProps> = ({ fields, handleChange, setFields }) => {
-  const [isRegionPopoverOpen, setIsRegionPopoverOpen] = useState(false);
+  // Get first region from array for display
+  const currentRegion = ((fields.regions as any)?.[0]) || '';
   
-  const regions = (fields.regions as any) || [];
-  const hasFranceEntiere = regions.includes("France entière");
-
-  const handleRegionToggle = (region: string) => {
-    const currentRegions = regions || [];
-    
-    // Si on sélectionne "France entière", désélectionner tout le reste
-    if (region === "France entière") {
-      if (hasFranceEntiere) {
-        setFields(prev => ({ ...prev, regions: [] }));
-      } else {
-        setFields(prev => ({ ...prev, regions: ["France entière"] }));
-      }
-      return;
-    }
-    
-    // Si "France entière" est sélectionné, le désélectionner
-    let newRegions = currentRegions.filter((r: string) => r !== "France entière");
-    
-    if (currentRegions.includes(region)) {
-      newRegions = newRegions.filter((r: string) => r !== region);
-    } else {
-      newRegions = [...newRegions, region];
-    }
-    
-    setFields(prev => ({ ...prev, regions: newRegions }));
-  };
-
-  const removeRegion = (region: string) => {
-    setFields(prev => ({
-      ...prev,
-      regions: (prev.regions as any || []).filter((r: string) => r !== region)
-    }));
+  const handleRegionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value;
+    // Store as array with single element
+    setFields(prev => ({ ...prev, regions: value ? [value] : [] }));
   };
 
   return (
@@ -74,66 +41,22 @@ const PrestatairePrimaryInfo: React.FC<PrestatairePrimaryInfoProps> = ({ fields,
             ))}
           </select>
 
+          <label className="block font-medium">Région *</label>
+          <select
+            name="region"
+            value={currentRegion}
+            onChange={handleRegionChange}
+            required
+            className="w-full border rounded px-3 py-2"
+          >
+            <option value="">Choisir une région</option>
+            {PRESTATAIRE_REGIONS.map((reg) => (
+              <option key={reg} value={reg}>{reg}</option>
+            ))}
+          </select>
+
           <label className="block font-medium">Ville</label>
           <Input name="ville" value={fields.ville ?? ""} onChange={handleChange} />
-
-          <div>
-            <label className="block font-medium mb-2">Régions *</label>
-            <Popover open={isRegionPopoverOpen} onOpenChange={setIsRegionPopoverOpen}>
-              <PopoverTrigger asChild>
-                <Button 
-                  variant="outline" 
-                  className="w-full justify-between"
-                  type="button"
-                >
-                  {regions.length > 0 
-                    ? `${regions.length} région(s) sélectionnée(s)`
-                    : "Sélectionner les régions"
-                  }
-                  <ChevronDown className="h-4 w-4 opacity-50" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-80 max-h-96 overflow-y-auto p-4">
-                <div className="space-y-2">
-                  {PRESTATAIRE_REGIONS.map((region) => {
-                    const isDisabled = hasFranceEntiere && region !== "France entière";
-                    return (
-                      <div key={region} className="flex items-center space-x-2">
-                        <Checkbox
-                          id={region}
-                          checked={regions.includes(region)}
-                          onCheckedChange={() => handleRegionToggle(region)}
-                          disabled={isDisabled}
-                        />
-                        <label 
-                          htmlFor={region}
-                          className={`text-sm flex-1 cursor-pointer ${isDisabled ? 'text-muted-foreground' : ''}`}
-                        >
-                          {region}
-                          {region === "France entière" && " (exclusif)"}
-                        </label>
-                      </div>
-                    );
-                  })}
-                </div>
-              </PopoverContent>
-            </Popover>
-            
-            {/* Affichage des régions sélectionnées */}
-            {regions.length > 0 && (
-              <div className="flex flex-wrap gap-2 mt-2">
-                {regions.map((region: string) => (
-                  <Badge key={region} variant="secondary" className="flex items-center gap-1">
-                    {region}
-                    <X 
-                      className="h-3 w-3 cursor-pointer hover:text-destructive" 
-                      onClick={() => removeRegion(region)}
-                    />
-                  </Badge>
-                ))}
-              </div>
-            )}
-          </div>
 
           <label className="block font-medium">Email</label>
           <Input type="email" name="email" value={fields.email ?? ""} onChange={handleChange} />

@@ -106,7 +106,7 @@ const LazyVendorCard: React.FC<LazyVendorCardProps> = ({
             vendor_name: vendor.nom,
             category: vendor.categorie || "Prestataire",
             status: "à contacter",
-            location: vendor.ville || ((vendor.regions as any)?.[0] || ''),
+            location: ((vendor.regions as any)?.[0] || vendor.ville || ''),
             source: "mariable",
           });
 

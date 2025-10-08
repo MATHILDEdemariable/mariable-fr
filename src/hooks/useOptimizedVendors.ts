@@ -88,7 +88,6 @@ export const useOptimizedVendors = ({
       }
 
       if (filters.region) {
-        // Filter by regions array using contains
         query = query.contains('regions', [filters.region]);
       }
 
