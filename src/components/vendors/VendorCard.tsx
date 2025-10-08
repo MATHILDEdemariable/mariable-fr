@@ -54,8 +54,7 @@ const VendorCard: React.FC<VendorCardProps> = ({
   }
 
   // Get location
-  const firstRegion = (vendor.regions as any)?.[0] || '';
-  const location = `${vendor.ville || ""}${firstRegion ? `, ${firstRegion}` : ''}`.trim();
+  const location = `${vendor.ville || ""}, ${vendor.region || ""}`.trim();
 
   // Get formatted price
   const getFormattedPrice = () => {
@@ -141,7 +140,7 @@ const VendorCard: React.FC<VendorCardProps> = ({
           vendor_name: vendor.nom,
           category: vendor.categorie || "Prestataire",
           status: "à contacter",
-          location: ((vendor.regions as any)?.[0] || vendor.ville || ''),
+          location: vendor.ville || vendor.region,
           source: "mariable",
         });
 

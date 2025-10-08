@@ -77,7 +77,7 @@ const CoordinatorsPage = () => {
       }
       
       if (filters.region) {
-        query = query.contains('regions', [filters.region]);
+        query = query.eq('region', filters.region as RegionFrance);
       }
       
       const { data, error } = await query;

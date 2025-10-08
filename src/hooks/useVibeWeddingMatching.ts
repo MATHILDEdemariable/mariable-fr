@@ -13,7 +13,7 @@ interface Vendor {
   nom: string;
   categorie: string;
   ville?: string;
-  regions?: string[];
+  region?: string;
   description?: string;
   prix_a_partir_de?: number;
   matchScore?: number;
@@ -137,7 +137,7 @@ export const useVibeWeddingMatching = () => {
           id: v.id,
           nom: v.nom,
           categorie: v.categorie,
-          regions: v.regions,
+          region: v.region,
           matchScore: v.matchScore
         })),
         criteria: {

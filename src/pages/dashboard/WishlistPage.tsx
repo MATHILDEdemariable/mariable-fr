@@ -177,7 +177,7 @@ const WishlistPage = () => {
                       <>
                         <div className="flex items-center text-sm text-muted-foreground">
                           <MapPin className="h-4 w-4 mr-1" /> 
-                          {item.vendor.ville || ''}, {((item.vendor.regions as any)?.[0] || '')}
+                          {item.vendor.ville || ''}, {item.vendor.region || ''}
                         </div>
                         
                         <div className="mt-2 font-medium text-sm">

@@ -40,7 +40,7 @@ const CoordinatorsPreview: React.FC = () => {
             id,
             nom,
             ville,
-            regions,
+            region,
             prix_a_partir_de,
             description,
             featured,

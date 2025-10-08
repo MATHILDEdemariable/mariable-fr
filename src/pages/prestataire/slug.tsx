@@ -483,8 +483,8 @@ const SinglePrestataire = () => {
                   <MapPin className="h-4 w-4" />
                   <span>
                     {vendor?.ville
-                      ? `${vendor.ville}, ${((vendor.regions as any)?.[0] || "")}`
-                      : ((vendor.regions as any)?.[0]) || "Non spécifié"}
+                      ? `${vendor.ville}, ${vendor.region || ""}`
+                      : vendor?.region || "Non spécifié"}
                   </span>
                 </div>
 

@@ -27,7 +27,6 @@ const VendorContactModal: React.FC<VendorContactModalProps> = ({
   vendorName,
 }) => {
   const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
   const [weddingDate, setWeddingDate] = useState('');
   const [message, setMessage] = useState(
     `Bonjour, nous aimerions avoir plus d'informations / prévoir un rdv / quelles sont vos disponibilités restantes pour un mariage en ${weddingDate || 'septembre 2026'} ?`
@@ -52,7 +51,6 @@ const VendorContactModal: React.FC<VendorContactModalProps> = ({
         .from('vendor_contact_requests')
         .insert({
           email,
-          phone: phone || null,
           wedding_date_text: weddingDate,
           message,
           vendor_id: vendorId,
@@ -61,50 +59,12 @@ const VendorContactModal: React.FC<VendorContactModalProps> = ({
 
       if (error) throw error;
 
-      // Tracking automatique : créer ou mettre à jour dans vendors_tracking_preprod
-      const { data: { user } } = await supabase.auth.getUser();
-
-      if (user) {
-        const { data: existingTracking } = await supabase
-          .from('vendors_tracking_preprod')
-          .select('id, status')
-          .eq('user_id', user.id)
-          .eq('prestataire_id', vendorId)
-          .maybeSingle();
-
-        if (existingTracking) {
-          if (existingTracking.status === 'à contacter') {
-            await supabase
-              .from('vendors_tracking_preprod')
-              .update({ 
-                status: 'contactés', 
-                contact_date: new Date().toISOString() 
-              })
-              .eq('id', existingTracking.id);
-          }
-        } else {
-          await supabase
-            .from('vendors_tracking_preprod')
-            .insert({
-              user_id: user.id,
-              prestataire_id: vendorId,
-              vendor_name: vendorName,
-              category: 'Prestataire',
-              status: 'contactés',
-              contact_date: new Date().toISOString(),
-              notes: `Premier contact via formulaire le ${new Date().toLocaleDateString('fr-FR')}`,
-              source: 'mariable'
-            });
-        }
-      }
-
       toast({
         description: 'Votre demande a été envoyée avec succès !',
       });
 
       // Reset form
       setEmail('');
-      setPhone('');
       setWeddingDate('');
       setMessage(`Bonjour, nous aimerions avoir plus d'informations / prévoir un rdv / quelles sont vos disponibilités restantes pour un mariage en septembre 2026 ?`);
       onClose();
@@ -143,19 +103,6 @@ const VendorContactModal: React.FC<VendorContactModalProps> = ({
               onChange={(e) => setEmail(e.target.value)}
               placeholder="votre.email@exemple.com"
               required
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="phone">Téléphone</Label>
-            <Input
-              id="phone"
-              type="tel"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              placeholder="06 12 34 56 78"
-              pattern="^(?:(?:\+|00)33|0)\s*[1-9](?:[\s.-]*\d{2}){4}$"
-              title="Format français : 06 12 34 56 78"
             />
           </div>
 

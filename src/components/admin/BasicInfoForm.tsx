@@ -4,11 +4,12 @@ import { Prestataire } from "./types";
 import { Input } from "@/components/ui/input";
 import { usePrestataireAutoSave } from "./hooks/usePrestataireAutoSave";
 
-type BasicField = "nom" | "ville" | "description" | "email" | "telephone" | "site_web";
+type BasicField = "nom" | "ville" | "region" | "description" | "email" | "telephone" | "site_web";
 
 const FIELD_MAP: Array<{ key: BasicField; label: string; type?: string }> = [
   { key: "nom", label: "Nom" },
   { key: "ville", label: "Ville" },
+  { key: "region", label: "Région" },
   { key: "email", label: "Email", type: "email" },
   { key: "telephone", label: "Téléphone", type: "tel" },
   { key: "site_web", label: "Site Web", type: "url" },
@@ -19,6 +20,7 @@ const BasicInfoForm: React.FC<{ prestataire: Prestataire | null }> = ({ prestata
   const [draft, setDraft] = useState<Record<BasicField, string>>({
     nom: prestataire?.nom || "",
     ville: prestataire?.ville || "",
+    region: prestataire?.region || "",
     description: prestataire?.description || "",
     email: prestataire?.email || "",
     telephone: prestataire?.telephone || "",
@@ -29,6 +31,7 @@ const BasicInfoForm: React.FC<{ prestataire: Prestataire | null }> = ({ prestata
     setDraft({
       nom: prestataire?.nom || "",
       ville: prestataire?.ville || "",
+      region: prestataire?.region || "",
       description: prestataire?.description || "",
       email: prestataire?.email || "",
       telephone: prestataire?.telephone || "",

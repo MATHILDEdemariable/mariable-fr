@@ -52,7 +52,7 @@ export const useOptimizedVendors = ({
           nom,
           description,
           ville,
-          regions,
+          region,
           categorie,
           prix_a_partir_de,
           prix_par_personne,
@@ -88,7 +88,7 @@ export const useOptimizedVendors = ({
       }
 
       if (filters.region) {
-        query = query.contains('regions', [filters.region]);
+        query = query.eq('region', filters.region as RegionFrance);
       }
 
       if (filters.minPrice) {

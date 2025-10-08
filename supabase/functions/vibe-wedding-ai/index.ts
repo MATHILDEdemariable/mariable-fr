@@ -283,7 +283,7 @@ serve(async (req) => {
       .from('prestataires_rows')
       .select('*')
       .eq('categorie::text', mappedCategorie)
-      .contains('regions', [mappedRegion])
+      .eq('region::text', mappedRegion)
       .eq('visible', true)
       .limit(8);
 
@@ -300,7 +300,7 @@ serve(async (req) => {
               .from('prestataires_rows')
               .select('*')
               .eq('categorie::text', mappedCategorie)
-              .or(voisines.map(r => `regions.cs.{"${r}"}`).join(','))
+              .in('region::text', voisines)
               .eq('visible', true)
               .limit(4 - vendors.length);
 
@@ -323,7 +323,7 @@ serve(async (req) => {
             .select('*')
             .eq('categorie::text', mappedCategorie)
             .eq('visible', true)
-            .not('regions', 'cs', `{"${mappedRegion}"}`)
+            .neq('region::text', mappedRegion)
             .limit(4 - vendors.length);
 
           if (nationalVendors) {

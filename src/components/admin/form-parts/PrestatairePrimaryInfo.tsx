@@ -11,23 +11,14 @@ interface PrestatairePrimaryInfoProps {
 }
 
 const PrestatairePrimaryInfo: React.FC<PrestatairePrimaryInfoProps> = ({ fields, handleChange, setFields }) => {
-  // Get first region from array for display
-  const currentRegion = ((fields.regions as any)?.[0]) || '';
-  
-  const handleRegionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = e.target.value;
-    // Store as array with single element
-    setFields(prev => ({ ...prev, regions: value ? [value] : [] }));
-  };
-
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-4 md:flex-row md:gap-8">
         <div className="flex-1 space-y-3">
-          <label className="block font-medium">Nom *</label>
+          <label className="block font-medium">Nom</label>
           <Input name="nom" value={fields.nom ?? ""} onChange={handleChange} required />
 
-          <label className="block font-medium">Catégorie *</label>
+          <label className="block font-medium">Catégorie</label>
           <select
             name="categorie"
             value={fields.categorie ?? ""}
@@ -41,12 +32,14 @@ const PrestatairePrimaryInfo: React.FC<PrestatairePrimaryInfoProps> = ({ fields,
             ))}
           </select>
 
-          <label className="block font-medium">Région *</label>
+          <label className="block font-medium">Ville</label>
+          <Input name="ville" value={fields.ville ?? ""} onChange={handleChange} />
+
+          <label className="block font-medium">Région</label>
           <select
             name="region"
-            value={currentRegion}
-            onChange={handleRegionChange}
-            required
+            value={fields.region ?? ""}
+            onChange={handleChange}
             className="w-full border rounded px-3 py-2"
           >
             <option value="">Choisir une région</option>
@@ -54,9 +47,6 @@ const PrestatairePrimaryInfo: React.FC<PrestatairePrimaryInfoProps> = ({ fields,
               <option key={reg} value={reg}>{reg}</option>
             ))}
           </select>
-
-          <label className="block font-medium">Ville</label>
-          <Input name="ville" value={fields.ville ?? ""} onChange={handleChange} />
 
           <label className="block font-medium">Email</label>
           <Input type="email" name="email" value={fields.email ?? ""} onChange={handleChange} />
