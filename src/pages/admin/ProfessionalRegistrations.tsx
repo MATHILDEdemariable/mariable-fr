@@ -151,6 +151,8 @@ const AdminProfessionalRegistrations = () => {
       'Mise en beauté': 'bg-red-100 text-red-800',
       'Voiture': 'bg-gray-100 text-gray-800',
       'Invités': 'bg-cyan-100 text-cyan-800',
+      'Cocktail': 'bg-pink-100 text-pink-800',
+      'Foodtruck': 'bg-orange-100 text-orange-800',
     };
     return colors[category || ''] || 'bg-gray-100 text-gray-800';
   };
@@ -356,7 +358,9 @@ const AdminProfessionalRegistrations = () => {
                             <MapPin className="h-4 w-4 text-gray-400" />
                             <div className="flex flex-col">
                               {prof.ville && <span className="text-sm">{prof.ville}</span>}
-                              {prof.region && <span className="text-xs text-gray-500">{prof.region}</span>}
+                              {(prof.regions as any)?.length > 0 && (
+                                <span className="text-xs text-gray-500">{(prof.regions as any).join(', ')}</span>
+                              )}
                             </div>
                           </div>
                         </TableCell>

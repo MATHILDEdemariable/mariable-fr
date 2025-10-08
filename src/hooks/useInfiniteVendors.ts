@@ -54,7 +54,7 @@ export const useInfiniteVendors = ({
           nom,
           description,
           ville,
-          region,
+          regions,
           categorie,
           prix_a_partir_de,
           prix_par_personne,
@@ -89,7 +89,7 @@ export const useInfiniteVendors = ({
       }
 
       if (filters.region) {
-        query = query.eq('region', filters.region as RegionFrance);
+        query = query.contains('regions', [filters.region]);
       }
 
       if (filters.minPrice) {

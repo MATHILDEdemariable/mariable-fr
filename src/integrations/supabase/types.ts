@@ -1816,7 +1816,7 @@ export type Database = {
           prix_a_partir_de: number | null
           prix_minimum: number | null
           prix_par_personne: number | null
-          region: Database["public"]["Enums"]["region_france"] | null
+          regions: Json | null
           responsable_bio: string | null
           responsable_nom: string | null
           second_price_package: number | null
@@ -1877,7 +1877,7 @@ export type Database = {
           prix_a_partir_de?: number | null
           prix_minimum?: number | null
           prix_par_personne?: number | null
-          region?: Database["public"]["Enums"]["region_france"] | null
+          regions?: Json | null
           responsable_bio?: string | null
           responsable_nom?: string | null
           second_price_package?: number | null
@@ -1938,7 +1938,7 @@ export type Database = {
           prix_a_partir_de?: number | null
           prix_minimum?: number | null
           prix_par_personne?: number | null
-          region?: Database["public"]["Enums"]["region_france"] | null
+          regions?: Json | null
           responsable_bio?: string | null
           responsable_nom?: string | null
           second_price_package?: number | null
@@ -2418,6 +2418,7 @@ export type Database = {
           email: string
           id: string
           message: string
+          phone: string | null
           status: string | null
           updated_at: string
           vendor_id: string
@@ -2429,6 +2430,7 @@ export type Database = {
           email: string
           id?: string
           message: string
+          phone?: string | null
           status?: string | null
           updated_at?: string
           vendor_id: string
@@ -2440,6 +2442,7 @@ export type Database = {
           email?: string
           id?: string
           message?: string
+          phone?: string | null
           status?: string | null
           updated_at?: string
           vendor_id?: string
@@ -3079,6 +3082,8 @@ export type Database = {
         | "Mise en beauté"
         | "Voiture"
         | "Invités"
+        | "Cocktail"
+        | "Foodtruck"
       prestataire_status:
         | "acquisition"
         | "verification"
@@ -3261,6 +3266,8 @@ export const Constants = {
         "Mise en beauté",
         "Voiture",
         "Invités",
+        "Cocktail",
+        "Foodtruck",
       ],
       prestataire_status: [
         "acquisition",

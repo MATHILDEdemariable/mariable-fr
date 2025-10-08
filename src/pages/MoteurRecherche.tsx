@@ -174,9 +174,9 @@ const MoteurRecherche = () => {
                 "name": vendor.nom,
                 "description": vendor.description,
                 "address": {
-                  "@type": "PostalAddress",
-                  "addressRegion": vendor.region
-                },
+                "@type": "PostalAddress",
+              "addressRegion": ((vendor.regions as any)?.[0] || '')
+            },
                 "url": `https://www.mariable.fr/prestataire/${vendor.slug}`
               }
             }))) : '[]'}

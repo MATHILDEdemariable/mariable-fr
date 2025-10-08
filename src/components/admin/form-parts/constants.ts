@@ -39,7 +39,7 @@ export const DEFAULT_PRESTATAIRE: Partial<Prestataire> = {
   nom: "",
   categorie: undefined,
   ville: "",
-  region: undefined,
+  regions: [],
   capacite_invites: null,
   prix_minimum: null,
   prix_a_partir_de: null,
