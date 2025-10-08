@@ -89,7 +89,7 @@ export const useInfiniteVendors = ({
       }
 
       if (filters.region) {
-        query = query.contains('regions', [filters.region]);
+        query = query.filter('regions', 'cs', `{"${filters.region}"}`);
       }
 
       if (filters.minPrice) {

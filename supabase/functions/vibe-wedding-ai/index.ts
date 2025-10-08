@@ -283,7 +283,7 @@ serve(async (req) => {
       .from('prestataires_rows')
       .select('*')
       .eq('categorie::text', mappedCategorie)
-      .contains('regions', [mappedRegion])
+      .filter('regions', 'cs', `{"${mappedRegion}"}`)
       .eq('visible', true)
       .limit(8);
 

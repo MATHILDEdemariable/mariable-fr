@@ -78,7 +78,7 @@ const CoordinateursMarriage = () => {
       }
       
       if (filters.region) {
-        query = query.eq('region', filters.region as RegionFrance);
+        query = query.filter('regions', 'cs', `{"${filters.region}"}`);
       }
       
       const { data, error } = await query;
