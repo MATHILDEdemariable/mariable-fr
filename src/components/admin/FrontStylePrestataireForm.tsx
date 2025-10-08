@@ -35,13 +35,7 @@ const FrontStylePrestataireForm: React.FC<{
       }));
       return;
     }
-    if (name === "region") {
-      setFields((prev) => ({
-        ...prev,
-        region: value === "" ? undefined : (value as Prestataire["region"]),
-      }));
-      return;
-    }
+    // regions is now handled by PrestatairePrimaryInfo multi-select
     
     const numericFields = [
       "capacite_invites", "prix_minimum", "prix_a_partir_de", "prix_par_personne",
@@ -76,7 +70,7 @@ const FrontStylePrestataireForm: React.FC<{
       ...fields,
       nom,
       categorie,
-      region: fields.region ?? undefined,
+      regions: fields.regions || [],
       styles: Array.isArray(fields.styles) ? fields.styles : [],
     };
 

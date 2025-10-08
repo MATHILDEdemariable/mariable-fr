@@ -117,7 +117,9 @@ const PrestatairesAdmin = () => {
 
     // Filtre par région
     if (regionFilter !== 'all') {
-      filtered = filtered.filter(presta => presta.region === regionFilter);
+      filtered = filtered.filter(presta => 
+        (presta.regions as any)?.includes(regionFilter)
+      );
     }
 
     // Filtre par visibilité
@@ -143,7 +145,7 @@ const PrestatairesAdmin = () => {
   // Obtenir les valeurs uniques pour les filtres
   const uniqueCategories = [...new Set(prestataires.map(p => p.categorie).filter(Boolean))];
   const uniqueCities = [...new Set(prestataires.map(p => p.ville).filter(Boolean))];
-  const uniqueRegions = [...new Set(prestataires.map(p => p.region).filter(Boolean))];
+  const uniqueRegions = [...new Set(prestataires.flatMap(p => (p.regions as any) || []))];
 
   const handleDelete = async (id: string) => {
     if (window.confirm("Êtes-vous sûr de vouloir supprimer ce prestataire ?")) {
@@ -728,7 +730,7 @@ const PrestatairesAdmin = () => {
                     {presta.categorie || "Non spécifiée"}
                   </TableCell>
                   <TableCell>{presta.ville || "Non spécifiée"}</TableCell>
-                  <TableCell>{presta.region || "Non spécifiée"}</TableCell>
+                  <TableCell>{((presta.regions as any) || []).join(', ') || "Non spécifiée"}</TableCell>
                   <TableCell className="text-center">
                     <span
                       className={`inline-block w-3 h-3 rounded-full ${

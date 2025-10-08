@@ -54,7 +54,8 @@ const VendorCard: React.FC<VendorCardProps> = ({
   }
 
   // Get location
-  const location = `${vendor.ville || ""}, ${vendor.region || ""}`.trim();
+  const firstRegion = ((vendor.regions as any)?.[0] || "");
+  const location = `${vendor.ville || ""}, ${firstRegion}`.trim();
 
   // Get formatted price
   const getFormattedPrice = () => {
