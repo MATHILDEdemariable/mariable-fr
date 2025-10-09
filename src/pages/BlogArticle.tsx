@@ -29,6 +29,23 @@ const fetchBlogPostBySlug = async (slug: string): Promise<BlogPost | null> => {
   return data;
 };
 
+const fetchRelatedPosts = async (currentSlug: string): Promise<BlogPost[]> => {
+  const { data, error } = await supabase
+    .from('blog_posts')
+    .select('*')
+    .eq('status', 'published')
+    .neq('slug', currentSlug)
+    .order('published_at', { ascending: false })
+    .limit(3);
+
+  if (error) {
+    console.error('Error fetching related posts:', error);
+    return [];
+  }
+
+  return data || [];
+};
+
 const BlogArticlePage = () => {
   const { slug } = useParams<{ slug: string }>();
 
@@ -36,6 +53,12 @@ const BlogArticlePage = () => {
     queryKey: ['blog_post', slug],
     queryFn: () => fetchBlogPostBySlug(slug!),
     enabled: !!slug,
+  });
+
+  const { data: relatedPosts = [] } = useQuery({
+    queryKey: ['related_posts', slug],
+    queryFn: () => fetchRelatedPosts(slug!),
+    enabled: !!slug && !!post,
   });
 
   if (isLoading) {
@@ -101,6 +124,15 @@ const BlogArticlePage = () => {
       <PremiumHeader />
       <main className="flex-grow bg-gray-50/50">
         <article className="max-w-4xl mx-auto px-4 py-8 sm:py-12">
+            <div className="mb-6">
+                <Link to="/conseilsmariage">
+                    <Button variant="outline" size="sm">
+                        <ArrowLeft className="mr-2 h-4 w-4" />
+                        Retour aux articles
+                    </Button>
+                </Link>
+            </div>
+
             {post.background_image_url && (
                 <div className="mb-8">
                     <img 
@@ -126,14 +158,42 @@ const BlogArticlePage = () => {
                 />
             </div>
 
-            <div className="mt-12 text-center">
-                <Link to="/conseilsmariage">
-                    <Button variant="outline">
-                        <ArrowLeft className="mr-2 h-4 w-4" />
-                        Retour à tous les articles
-                    </Button>
-                </Link>
-            </div>
+            {relatedPosts.length > 0 && (
+                <div className="mt-12 bg-white p-8 rounded-lg shadow-sm">
+                    <h2 className="text-2xl font-bold text-gray-900 mb-6">Autres articles qui pourraient vous intéresser</h2>
+                    <div className="grid gap-6 md:grid-cols-3">
+                        {relatedPosts.map((relatedPost) => (
+                            <Link 
+                                key={relatedPost.id}
+                                to={`/conseilsmariage/${relatedPost.slug}`}
+                                className="group"
+                            >
+                                <div className="overflow-hidden rounded-lg border border-gray-200 transition-all hover:shadow-md">
+                                    {relatedPost.background_image_url && (
+                                        <div className="aspect-video overflow-hidden">
+                                            <img 
+                                                src={relatedPost.background_image_url} 
+                                                alt={relatedPost.title}
+                                                className="h-full w-full object-cover transition-transform group-hover:scale-105"
+                                            />
+                                        </div>
+                                    )}
+                                    <div className="p-4">
+                                        <h3 className="font-semibold text-gray-900 group-hover:text-primary transition-colors line-clamp-2">
+                                            {relatedPost.title}
+                                        </h3>
+                                        {relatedPost.subtitle && (
+                                            <p className="mt-2 text-sm text-gray-600 line-clamp-2">
+                                                {relatedPost.subtitle}
+                                            </p>
+                                        )}
+                                    </div>
+                                </div>
+                            </Link>
+                        ))}
+                    </div>
+                </div>
+            )}
         </article>
       </main>
       <Footer />
