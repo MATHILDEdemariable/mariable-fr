@@ -55,6 +55,15 @@ const BlogHtmlImport: React.FC<BlogHtmlImportProps> = ({ open, onOpenChange, onI
     return html.trim();
   };
 
+  const extractStylesFromHtml = (html: string): string | null => {
+    // Extraire les styles CSS de la balise <style>
+    const styleMatch = html.match(/<style[^>]*>([\s\S]*?)<\/style>/i);
+    if (styleMatch) {
+      return styleMatch[1].trim();
+    }
+    return null;
+  };
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
     if (selectedFile && selectedFile.type === 'text/html') {
@@ -83,9 +92,10 @@ const BlogHtmlImport: React.FC<BlogHtmlImportProps> = ({ open, onOpenChange, onI
 
     try {
       const htmlContent = await file.text();
-      const title = extractTitleFromHtml(htmlContent);
-      const content = extractContentFromHtml(htmlContent);
-      const slug = generateSlug(title);
+    const title = extractTitleFromHtml(htmlContent);
+    const content = extractContentFromHtml(htmlContent);
+    const customStyles = extractStylesFromHtml(htmlContent);
+    const slug = generateSlug(title);
 
       console.log('📝 Parsed HTML:', { title, slug, contentLength: content.length });
 
@@ -98,6 +108,7 @@ const BlogHtmlImport: React.FC<BlogHtmlImportProps> = ({ open, onOpenChange, onI
         title,
         slug,
         content,
+        custom_styles: customStyles,
         status: 'draft',
         h1_title: title,
       }).select().single();

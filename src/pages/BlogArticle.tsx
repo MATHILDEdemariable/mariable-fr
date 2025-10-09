@@ -116,10 +116,15 @@ const BlogArticlePage = () => {
                 {post.published_at && <p className="text-sm text-gray-500 mt-4">Publié le {new Date(post.published_at).toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' })}</p>}
             </div>
 
-            <div 
-                className="bg-white p-8 rounded-lg shadow-sm prose prose-lg max-w-none"
-                dangerouslySetInnerHTML={{ __html: post.content }}
-            />
+            <div className="bg-white p-8 rounded-lg shadow-sm">
+                {post.custom_styles && (
+                    <style dangerouslySetInnerHTML={{ __html: post.custom_styles }} />
+                )}
+                <div 
+                    className={post.custom_styles ? "" : "prose prose-lg max-w-none"}
+                    dangerouslySetInnerHTML={{ __html: post.content }}
+                />
+            </div>
 
             <div className="mt-12 text-center">
                 <Link to="/conseilsmariage">

@@ -230,6 +230,7 @@ export type Database = {
           category: string | null
           content: string | null
           created_at: string
+          custom_styles: string | null
           featured: boolean
           h1_title: string | null
           h2_titles: Json | null
@@ -250,6 +251,7 @@ export type Database = {
           category?: string | null
           content?: string | null
           created_at?: string
+          custom_styles?: string | null
           featured?: boolean
           h1_title?: string | null
           h2_titles?: Json | null
@@ -270,6 +272,7 @@ export type Database = {
           category?: string | null
           content?: string | null
           created_at?: string
+          custom_styles?: string | null
           featured?: boolean
           h1_title?: string | null
           h2_titles?: Json | null
