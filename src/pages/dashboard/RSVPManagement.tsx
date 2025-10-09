@@ -366,20 +366,19 @@ const RSVPManagement: React.FC = () => {
               >
                 Annuler
               </Button>
-                <Button
-                  onClick={handleCreateEvent}
-                  disabled={creating}
-                >
-                  {creating ? (
-                    <>
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      Création...
-                    </>
-                  ) : (
-                    'Créer l\'événement'
-                  )}
-                </Button>
-              </div>
+              <Button
+                onClick={handleCreateEvent}
+                disabled={creating}
+              >
+                {creating ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Création...
+                  </>
+                ) : (
+                  'Créer l\'événement'
+                )}
+              </Button>
             </div>
           </DialogContent>
         </Dialog>
