@@ -24,7 +24,7 @@ const VendorPreviewWidget = () => {
   useEffect(() => {
     const fetchVendors = async () => {
       try {
-        // Récupérer 4 prestataires partenaires avec photos
+        // Récupérer prestataires partenaires visibles
         const { data: prestataireData, error } = await supabase
           .from('prestataires_rows')
           .select(`
@@ -41,17 +41,27 @@ const VendorPreviewWidget = () => {
           `)
           .eq('visible', true)
           .eq('partner', true)
-          .not('prestataires_photos_preprod.url', 'is', null)
           .order('featured', { ascending: false })
-          .limit(4);
+          .limit(10);
 
         if (error) {
           console.error('Erreur lors de la récupération des prestataires:', error);
           return;
         }
 
+        console.log('📊 Données brutes récupérées:', prestataireData);
+
         if (prestataireData) {
-          const formattedVendors: Vendor[] = prestataireData.map((prestataire: any) => {
+          // Filtrer côté client les prestataires qui ont des photos
+          const vendorsWithPhotos = prestataireData.filter((prestataire: any) => 
+            prestataire.prestataires_photos_preprod && 
+            prestataire.prestataires_photos_preprod.length > 0
+          );
+
+          console.log('✅ Prestataires avec photos:', vendorsWithPhotos.length);
+          
+          // Limiter à 4 prestataires après filtrage
+          const formattedVendors: Vendor[] = vendorsWithPhotos.slice(0, 4).map((prestataire: any) => {
             // Remplacer "Kywwie Films" par les vraies données du "Domaine de la Fontaine"
             if (prestataire.nom === 'Kywwie Films') {
               return {
