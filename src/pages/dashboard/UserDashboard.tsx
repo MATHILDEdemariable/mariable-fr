@@ -31,6 +31,7 @@ import MonMariage from './MonMariage';
 import MonMariageDetail from './MonMariageDetail';
 import RSVPManagement from './RSVPManagement';
 import RSVPResponses from './RSVPResponses';
+import ProfessionnelsMariableDashboard from '@/components/dashboard/ProfessionnelsMariableDashboard';
 
 const UserDashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -74,7 +75,7 @@ const UserDashboard: React.FC = () => {
           <Route path="budget" element={<BudgetPage />} />
           <Route path="budget/detailed" element={<DetailedBudget />} />
           <Route path="budget/calculator" element={<BudgetCalculator />} />
-          <Route path="prestataires" element={<VendorTracking />} />
+          <Route path="professionnelsmariable" element={<ProfessionnelsMariableDashboard />} />
           <Route path="message-history" element={<MessageHistoryPage />} />
           <Route path="wishlist" element={<WishlistPage />} />
           <Route path="coordination" element={<CoordinationPage />} />

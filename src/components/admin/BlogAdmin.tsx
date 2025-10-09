@@ -18,6 +18,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import BlogPostForm from './BlogPostForm';
 import BlogCSVImport from './BlogCSVImport';
+import BlogHtmlImport from './BlogHtmlImport';
 
 interface BlogPost {
   id: string;
@@ -43,6 +44,7 @@ const BlogAdmin = () => {
   const [formOpen, setFormOpen] = useState(false);
   const [editingPost, setEditingPost] = useState<BlogPost | null>(null);
   const [showImport, setShowImport] = useState(false);
+  const [showHtmlImport, setShowHtmlImport] = useState(false);
 
   useEffect(() => {
     fetchPosts();
@@ -162,7 +164,7 @@ const BlogAdmin = () => {
 
   return (
     <div className="space-y-6">
-      {!formOpen && !showImport ? (
+      {!formOpen && !showImport && !showHtmlImport ? (
         <>
           <div className="flex justify-between items-center">
             <div>
@@ -177,6 +179,14 @@ const BlogAdmin = () => {
               >
                 <Upload className="w-4 h-4" />
                 Import CSV
+              </Button>
+              <Button 
+                onClick={() => setShowHtmlImport(true)} 
+                variant="outline" 
+                className="flex items-center gap-2"
+              >
+                <Upload className="w-4 h-4" />
+                Import HTML
               </Button>
               <Button onClick={handleNew} className="bg-wedding-olive hover:bg-wedding-olive/80">
                 <Plus className="w-4 h-4 mr-2" />
@@ -334,6 +344,15 @@ const BlogAdmin = () => {
           </div>
           <BlogCSVImport onImportComplete={handleImportComplete} />
         </div>
+      ) : showHtmlImport ? (
+        <BlogHtmlImport
+          open={showHtmlImport}
+          onOpenChange={setShowHtmlImport}
+          onImportSuccess={() => {
+            fetchPosts();
+            setShowHtmlImport(false);
+          }}
+        />
       ) : (
         <BlogPostForm
           post={editingPost}

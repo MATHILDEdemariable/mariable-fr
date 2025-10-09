@@ -8,7 +8,7 @@ import { Switch } from '@/components/ui/switch';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
-import { Plus, Loader2 } from 'lucide-react';
+import { Plus, Loader2, Info } from 'lucide-react';
 import RSVPEventCard from '@/components/dashboard/RSVPEventCard';
 import { useNavigate } from 'react-router-dom';
 import slugify from '@/utils/slugify';
@@ -201,13 +201,63 @@ const RSVPManagement: React.FC = () => {
           </p>
         </div>
 
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
-            <Button className="bg-primary hover:bg-primary/90">
-              <Plus className="h-4 w-4 mr-2" />
-              Créer un formulaire RSVP
-            </Button>
-          </DialogTrigger>
+        <div className="flex items-center gap-3">
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline">
+                <Info className="h-4 w-4 mr-2" />
+                Tuto
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Comment utiliser le RSVP ?</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <div className="rounded-full bg-primary/10 p-2">
+                    <span className="font-bold text-primary">1</span>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold">Créer l'événement</h4>
+                    <p className="text-sm text-muted-foreground">
+                      Créez un formulaire RSVP avec vos informations (date, lieu, message personnalisé)
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="rounded-full bg-primary/10 p-2">
+                    <span className="font-bold text-primary">2</span>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold">Partager le lien ou QR code</h4>
+                    <p className="text-sm text-muted-foreground">
+                      Partagez le lien unique ou le QR code avec vos invités par email, WhatsApp, etc.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="rounded-full bg-primary/10 p-2">
+                    <span className="font-bold text-primary">3</span>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold">Gérer les réponses</h4>
+                    <p className="text-sm text-muted-foreground">
+                      Suivez en temps réel les confirmations de présence et exportez la liste des invités
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
+          
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+              <Button className="bg-primary hover:bg-primary/90">
+                <Plus className="h-4 w-4 mr-2" />
+                Créer un formulaire RSVP
+              </Button>
+            </DialogTrigger>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Créer un nouvel événement RSVP</DialogTitle>
@@ -307,14 +357,15 @@ const RSVPManagement: React.FC = () => {
                   />
                 </div>
               </div>
+            </div>
 
-              <div className="flex gap-3 justify-end pt-4">
-                <Button
-                  variant="outline"
-                  onClick={() => setIsDialogOpen(false)}
-                >
-                  Annuler
-                </Button>
+            <div className="flex gap-3 justify-end pt-4">
+              <Button
+                variant="outline"
+                onClick={() => setIsDialogOpen(false)}
+              >
+                Annuler
+              </Button>
                 <Button
                   onClick={handleCreateEvent}
                   disabled={creating}
@@ -333,6 +384,7 @@ const RSVPManagement: React.FC = () => {
           </DialogContent>
         </Dialog>
       </div>
+    </div>
 
       {events.length === 0 ? (
         <Card>

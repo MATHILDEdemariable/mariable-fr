@@ -4,7 +4,7 @@ import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { BlogPost } from '@/types/blog';
-import Header from '@/components/Header';
+import PremiumHeader from '@/components/home/PremiumHeader';
 import Footer from '@/components/Footer';
 import SEO from '@/components/SEO';
 import { Button } from '@/components/ui/button';
@@ -45,7 +45,7 @@ const BlogArticlePage = () => {
   if (error || !post) {
     return (
         <>
-            <Header />
+            <PremiumHeader />
             <main className="flex-grow flex flex-col items-center justify-center text-center py-20 px-4">
                 <h1 className="text-4xl font-bold mb-4">Article non trouvé</h1>
                 <p className="text-xl mb-8">Désolé, l'article que vous cherchez n'existe pas ou a été déplacé.</p>
@@ -98,7 +98,7 @@ const BlogArticlePage = () => {
             }
         `}</script>
       </SEO>
-      <Header />
+      <PremiumHeader />
       <main className="flex-grow bg-gray-50/50">
         <article className="max-w-4xl mx-auto px-4 py-8 sm:py-12">
             {post.background_image_url && (

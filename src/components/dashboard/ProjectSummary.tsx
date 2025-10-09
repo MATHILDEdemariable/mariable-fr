@@ -239,7 +239,13 @@ const ProjectSummary = () => {
                 title: 'Prestataires',
                 description: 'Trouvez vos fournisseurs',
                 icon: '🏪',
-                path: '/dashboard/prestataires',
+                path: '/dashboard/professionnelsmariable',
+              },
+              {
+                title: 'RSVP Invités',
+                description: 'Gérez les confirmations',
+                icon: '✉️',
+                path: '/dashboard/rsvp',
               },
               {
                 title: 'Check-list',

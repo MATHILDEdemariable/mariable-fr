@@ -25,7 +25,9 @@ import {
   MapPin,
   Euro,
   Phone,
-  Globe
+  Globe,
+  CheckCircle,
+  Eye
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -98,18 +100,34 @@ const AdminProfessionalRegistrations = () => {
       if (data.length === 0) {
         toast.error('Aucune inscription professionnelle trouvée');
       } else {
-        toast.success(`${data.length} inscriptions chargées avec succès`);
+        toast.success(`${data.length} inscriptions professionnelles chargées`);
       }
-      
-    } catch (err) {
-      console.error('❌ Erreur complète:', err);
-      
-      const errorMessage = err instanceof Error ? err.message : 'Erreur inconnue';
-      setError(`Erreur lors du chargement des inscriptions: ${errorMessage}`);
-      
-      toast.error('Erreur lors du chargement des inscriptions');
+    } catch (error) {
+      console.error('❌ Erreur lors de la récupération des inscriptions:', error);
+      setError('Erreur lors du chargement des inscriptions professionnelles');
+      toast.error('Erreur lors du chargement des données');
     } finally {
       setIsLoadingData(false);
+    }
+  };
+
+  const handleValidate = async (profId: string) => {
+    try {
+      console.log('🚀 Validation de l\'inscription:', profId);
+      
+      const { error } = await supabase
+        .from('prestataires_rows')
+        .update({ visible: true })
+        .eq('id', profId);
+
+      if (error) throw error;
+
+      console.log('✅ Inscription validée et publiée avec succès');
+      toast.success('Inscription validée et publiée avec succès');
+      fetchProfessionals();
+    } catch (error) {
+      console.error('❌ Erreur lors de la validation:', error);
+      toast.error('Erreur lors de la validation');
     }
   };
 
@@ -308,6 +326,7 @@ const AdminProfessionalRegistrations = () => {
                       <TableHead>Prix</TableHead>
                       <TableHead>Date d'inscription</TableHead>
                       <TableHead>Statut</TableHead>
+                      <TableHead>Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -388,6 +407,20 @@ const AdminProfessionalRegistrations = () => {
                           >
                             {prof.visible ? 'Publié' : 'En attente'}
                           </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex gap-2">
+                            {!prof.visible && (
+                              <Button
+                                size="sm"
+                                onClick={() => handleValidate(prof.id)}
+                                className="bg-green-600 hover:bg-green-700"
+                              >
+                                <CheckCircle className="h-4 w-4 mr-1" />
+                                Valider
+                              </Button>
+                            )}
+                          </div>
                         </TableCell>
                       </TableRow>
                     ))}
