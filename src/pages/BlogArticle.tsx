@@ -117,11 +117,9 @@ const BlogArticlePage = () => {
             </div>
 
             <div 
-                className="bg-white p-8 rounded-lg shadow-sm space-y-6 text-lg text-gray-700 leading-relaxed"
-                style={{ whiteSpace: 'pre-wrap' }}
-            >
-                {post.content}
-            </div>
+                className="bg-white p-8 rounded-lg shadow-sm prose prose-lg max-w-none"
+                dangerouslySetInnerHTML={{ __html: post.content }}
+            />
 
             <div className="mt-12 text-center">
                 <Link to="/conseilsmariage">
