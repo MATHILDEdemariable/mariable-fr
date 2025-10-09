@@ -24,6 +24,7 @@ interface BlogPost {
   id: string;
   title: string;
   subtitle?: string;
+  content?: string;
   category?: string;
   status: 'draft' | 'published';
   featured: boolean;
@@ -260,6 +261,7 @@ const BlogAdmin = () => {
                     <TableHeader>
                       <TableRow>
                         <TableHead>Titre</TableHead>
+                        <TableHead>Type</TableHead>
                         <TableHead>Catégorie</TableHead>
                         <TableHead>Statut</TableHead>
                         <TableHead>Mis en avant</TableHead>
@@ -269,21 +271,35 @@ const BlogAdmin = () => {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {filteredPosts.map((post) => (
-                        <TableRow key={post.id}>
-                          <TableCell>
-                            <div>
-                              <div className="font-medium">{post.title}</div>
-                              {post.subtitle && (
-                                <div className="text-sm text-gray-500">{post.subtitle}</div>
+                      {filteredPosts.map((post) => {
+                        const isHtmlPost = post.content && (
+                          post.content.includes('<html') || 
+                          post.content.includes('<body') || 
+                          post.content.includes('<article')
+                        );
+                        
+                        return (
+                          <TableRow key={post.id}>
+                            <TableCell>
+                              <div>
+                                <div className="font-medium">{post.title}</div>
+                                {post.subtitle && (
+                                  <div className="text-sm text-gray-500">{post.subtitle}</div>
+                                )}
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              {isHtmlPost ? (
+                                <Badge className="bg-blue-100 text-blue-800">HTML</Badge>
+                              ) : (
+                                <Badge variant="outline">Standard</Badge>
                               )}
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            {post.category && (
-                              <Badge variant="outline">{post.category}</Badge>
-                            )}
-                          </TableCell>
+                            </TableCell>
+                            <TableCell>
+                              {post.category && (
+                                <Badge variant="outline">{post.category}</Badge>
+                              )}
+                            </TableCell>
                           <TableCell>
                             <Badge className={getStatusColor(post.status)}>
                               {post.status === 'published' ? 'Publié' : 'Brouillon'}
@@ -326,7 +342,8 @@ const BlogAdmin = () => {
                             </div>
                           </TableCell>
                         </TableRow>
-                      ))}
+                      );
+                      })}
                     </TableBody>
                   </Table>
                 </div>

@@ -57,6 +57,13 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ post, onClose, onSuccess })
   
   const [newTag, setNewTag] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  
+  // Détecter si c'est un article HTML importé
+  const isHtmlArticle = formData.content && (
+    formData.content.includes('<html') || 
+    formData.content.includes('<body') || 
+    formData.content.includes('<article')
+  );
 
   useEffect(() => {
     if (post) {
@@ -188,9 +195,16 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ post, onClose, onSuccess })
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">
-          {post?.id ? 'Modifier l\'article' : 'Nouvel article'}
-        </h2>
+        <div className="flex items-center gap-3">
+          <h2 className="text-2xl font-bold">
+            {post?.id ? 'Modifier l\'article' : 'Nouvel article'}
+          </h2>
+          {isHtmlArticle && (
+            <Badge className="bg-blue-100 text-blue-800">
+              🔖 Article HTML importé
+            </Badge>
+          )}
+        </div>
         <Button variant="outline" onClick={onClose}>
           Fermer
         </Button>
@@ -243,16 +257,35 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ post, onClose, onSuccess })
 
                 <div>
                   <Label htmlFor="content">Contenu</Label>
-                  <Textarea
-                    id="content"
-                    value={formData.content || ''}
-                    onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
-                    placeholder="Contenu de l'article (utilisez # pour H1, ## pour H2, etc.)"
-                    rows={15}
-                  />
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Astuce: Utilisez # pour H1, ## pour H2, ### pour H3 dans votre contenu
-                  </p>
+                  {isHtmlArticle ? (
+                    <div className="space-y-3">
+                      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <p className="text-sm text-blue-800">
+                          ℹ️ <strong>Article HTML importé</strong> - Le contenu HTML ne peut pas être édité manuellement. 
+                          Pour modifier le contenu, importez un nouveau fichier HTML.
+                        </p>
+                      </div>
+                      <div className="bg-white border rounded-lg p-4 max-h-[400px] overflow-y-auto">
+                        <div 
+                          className="prose prose-sm max-w-none"
+                          dangerouslySetInnerHTML={{ __html: formData.content || '' }}
+                        />
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <Textarea
+                        id="content"
+                        value={formData.content || ''}
+                        onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
+                        placeholder="Contenu de l'article (utilisez # pour H1, ## pour H2, etc.)"
+                        rows={15}
+                      />
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Astuce: Utilisez # pour H1, ## pour H2, ### pour H3 dans votre contenu
+                      </p>
+                    </>
+                  )}
                 </div>
               </CardContent>
             </Card>

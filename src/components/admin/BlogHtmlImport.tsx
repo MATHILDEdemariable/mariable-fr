@@ -94,21 +94,21 @@ const BlogHtmlImport: React.FC<BlogHtmlImportProps> = ({ open, onOpenChange, onI
         throw new Error('Non authentifié');
       }
 
-      const { error } = await supabase.from('blog_posts').insert({
+      const { data: insertedPost, error } = await supabase.from('blog_posts').insert({
         title,
         slug,
         content,
         status: 'draft',
         h1_title: title,
-      });
+      }).select().single();
 
       if (error) throw error;
 
-      console.log('✅ Article HTML importé avec succès');
+      console.log('✅ Article HTML importé avec succès:', insertedPost);
       
       toast({
         title: 'Succès',
-        description: 'Article HTML importé avec succès en mode brouillon',
+        description: 'Article HTML importé avec succès. Vous pouvez maintenant ajouter une image de couverture et publier.',
       });
 
       setFile(null);
