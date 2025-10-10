@@ -35,7 +35,7 @@ const PremiumProcessSection = () => {
           <h2 className="text-4xl font-bold text-premium-black mb-4 md:text-4xl">
             Organisez vous-même :
             <br />
-            <span className="bg-gradient-to-r from-premium-sage via-premium-sage-medium to-premium-sage-light bg-clip-text text-transparent">Le plus beau jour de votre vie, sans charge mentale</span>
+            <span className="bg-gradient-to-r from-premium-sage via-premium-sage-medium to-premium-sage-light bg-clip-text text-transparent">et faites de votre mariage une expérience exceptionnelle</span>
           </h2>
         </div>
 

@@ -21,7 +21,7 @@ const PremiumHeroSection = () => {
           Sans charge mentale.
         </h1>
         
-        <p className="text-xl md:text-2xl text-white/90 mb-8 font-light leading-relaxed">Avec le premier wedding planner digital</p>
+        <p className="text-xl md:text-2xl text-white/90 mb-8 font-light leading-relaxed">Organisez votre mariage sereinement avec nos outils en ligne gratuits</p>
         
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
           <Button size="lg" onClick={handleDiscover} className="btn-primary text-white px-8 py-4 text-lg font-semibold ripple">
