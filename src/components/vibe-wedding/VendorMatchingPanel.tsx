@@ -2,14 +2,60 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Heart, ExternalLink, Phone, Mail, MapPin, Euro } from 'lucide-react';
+import { Heart, ExternalLink, Phone, Mail, MapPin, Euro, RefreshCw, MessageCircle, AlertCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 interface VendorMatchingPanelProps {
   vendors: any[];
+  error?: string;
+  onRetry?: () => void;
 }
 
-const VendorMatchingPanel: React.FC<VendorMatchingPanelProps> = ({ vendors }) => {
+const VendorMatchingPanel: React.FC<VendorMatchingPanelProps> = ({ vendors, error, onRetry }) => {
+  if (error) {
+    return (
+      <div className="h-full flex items-center justify-center p-8">
+        <div className="text-center max-w-md">
+          <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-destructive/10 flex items-center justify-center">
+            <AlertCircle className="w-12 h-12 text-destructive" />
+          </div>
+          <h3 className="text-2xl font-semibold mb-3 text-foreground">
+            Une erreur est survenue
+          </h3>
+          <p className="text-muted-foreground mb-6">
+            Nous n'avons pas pu charger les recommandations de prestataires. Veuillez réessayer ou nous contacter si le problème persiste.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Button
+              onClick={() => {
+                if (onRetry) {
+                  onRetry();
+                } else {
+                  window.location.reload();
+                }
+              }}
+              variant="default"
+              className="gap-2"
+            >
+              <RefreshCw className="w-4 h-4" />
+              Recharger la page
+            </Button>
+            <Button
+              asChild
+              variant="outline"
+              className="gap-2"
+            >
+              <Link to="/contact">
+                <MessageCircle className="w-4 h-4" />
+                Nous contacter
+              </Link>
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (vendors.length === 0) {
     return (
       <div className="h-full flex items-center justify-center p-8">

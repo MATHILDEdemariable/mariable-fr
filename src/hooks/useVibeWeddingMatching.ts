@@ -34,11 +34,13 @@ export const useVibeWeddingMatching = () => {
   const [detectedCategory, setDetectedCategory] = useState<string | null>(null);
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
   const navigate = useNavigate();
 
   const sendMessage = async (messageText: string) => {
     setIsLoading(true);
+    setError(null);
 
     // Ajouter le message utilisateur
     const userMessage: Message = { role: 'user', content: messageText };
@@ -99,6 +101,8 @@ export const useVibeWeddingMatching = () => {
 
     } catch (error) {
       console.error('❌ Erreur lors de l\'envoi du message:', error);
+      
+      setError("Une erreur s'est produite lors de la recherche de prestataires. Veuillez réessayer.");
       
       toast({
         title: "Erreur",
@@ -197,6 +201,17 @@ export const useVibeWeddingMatching = () => {
     setNeedsCategory(false);
     setDetectedCategory(null);
     setConversationId(null);
+    setError(null);
+  };
+
+  const retrySearch = () => {
+    setError(null);
+    if (messages.length > 0) {
+      const lastUserMessage = [...messages].reverse().find(m => m.role === 'user');
+      if (lastUserMessage) {
+        sendMessage(lastUserMessage.content);
+      }
+    }
   };
 
   const loadConversation = async (conversationId: string) => {
@@ -246,9 +261,11 @@ export const useVibeWeddingMatching = () => {
     detectedCategory,
     conversationId,
     isSaving,
+    error,
     sendMessage,
     saveProject,
     clearMatching,
-    loadConversation
+    loadConversation,
+    retrySearch
   };
 };

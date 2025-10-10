@@ -1,20 +1,23 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { MapPin, Star, CheckCircle, Euro } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { Skeleton } from '@/components/ui/skeleton';
+import VendorCardHomepage from './VendorCardHomepage';
 
 interface Vendor {
   id: string;
-  name: string;
-  category: string;
-  location: string;
-  rating: number;
-  reviews: number;
-  price: string;
-  image: string;
-  certified: boolean;
+  nom: string;
+  categorie: string;
+  ville?: string;
+  region?: string;
+  prix_a_partir_de?: number;
+  description_courte?: string;
+  description?: string;
+  photo_url?: string;
+  partner?: boolean;
+  featured?: boolean;
+  slug?: string;
+  note?: number;
+  nombre_avis?: number;
 }
 
 const VendorPreviewWidget = () => {
@@ -32,17 +35,23 @@ const VendorPreviewWidget = () => {
             nom,
             categorie,
             ville,
-            region,
+            regions,
             prix_a_partir_de,
+            description_courte,
+            description,
             partner,
             visible,
             featured,
-            prestataires_photos_preprod(url, is_cover)
+            slug,
+            prestataires_photos_preprod!prestataires_photos_preprod_prestataire_id_fkey (
+              photo_url,
+              ordre
+            )
           `)
           .eq('visible', true)
           .eq('partner', true)
           .order('featured', { ascending: false })
-          .limit(10);
+          .limit(4);
 
         if (error) {
           console.error('Erreur lors de la récupération des prestataires:', error);
@@ -52,49 +61,25 @@ const VendorPreviewWidget = () => {
         console.log('📊 Données brutes récupérées:', prestataireData);
 
         if (prestataireData) {
-          // Filtrer côté client les prestataires qui ont des photos
-          const vendorsWithPhotos = prestataireData.filter((prestataire: any) => 
-            prestataire.prestataires_photos_preprod && 
-            prestataire.prestataires_photos_preprod.length > 0
-          );
-
-          console.log('✅ Prestataires avec photos:', vendorsWithPhotos.length);
-          
-          // Limiter à 4 prestataires après filtrage
-          const formattedVendors: Vendor[] = vendorsWithPhotos.slice(0, 4).map((prestataire: any) => {
-            // Remplacer "Kywwie Films" par les vraies données du "Domaine de la Fontaine"
-            if (prestataire.nom === 'Kywwie Films') {
-              return {
-                id: '47bfcf77-a2a0-4936-988c-08570ef1714f',
-                name: 'Domaine de la Fontaine',
-                category: 'Lieu de réception',
-                location: 'Orléans, Centre-Val de Loire',
-                rating: parseFloat((4.5 + Math.random() * 0.4).toFixed(1)),
-                reviews: Math.floor(Math.random() * 100) + 50,
-                price: 'À partir de 3600€',
-                image: 'https://bgidfcqktsttzlwlumtz.supabase.co/storage/v1/object/public/photos/47bfcf77-a2a0-4936-988c-08570ef1714f/carousel/c805b382-65fa-4e35-98d2-e7a53da8b320.jpg',
-                certified: true
-              };
-            }
+          const formattedVendors: Vendor[] = prestataireData.map((prestataire: any) => {
+            const photos = prestataire.prestataires_photos_preprod || [];
+            const mainPhoto = photos.sort((a: any, b: any) => (a.ordre || 999) - (b.ordre || 999))[0];
             
-            // Remplacer "Studio CRDC" par "Manoir de Kerangosquer" 
-            let displayName = prestataire.nom;
-            if (displayName === 'studio CRDC') {
-              displayName = 'Manoir de Kerangosquer';
-            }
-
             return {
               id: prestataire.id,
-              name: displayName,
-              category: prestataire.categorie || 'Prestataire',
-              location: `${prestataire.ville || ''}, ${prestataire.region || ''}`.replace(/^,\s*|,\s*$/g, ''),
-              rating: parseFloat((4.5 + Math.random() * 0.4).toFixed(1)), // Rating arrondi à 1 décimale
-              reviews: Math.floor(Math.random() * 100) + 50, // Entre 50 et 150 avis
-              price: prestataire.prix_a_partir_de ? `À partir de ${prestataire.prix_a_partir_de}€` : 'Sur devis',
-              image: prestataire.prestataires_photos_preprod?.find((photo: any) => photo.is_cover)?.url || 
-                      prestataire.prestataires_photos_preprod?.[0]?.url || 
-                      '/placeholder.svg',
-              certified: prestataire.partner
+              nom: prestataire.nom,
+              categorie: prestataire.categorie,
+              ville: prestataire.ville,
+              region: prestataire.regions,
+              prix_a_partir_de: prestataire.prix_a_partir_de,
+              description_courte: prestataire.description_courte,
+              description: prestataire.description,
+              photo_url: mainPhoto?.photo_url,
+              partner: prestataire.partner || false,
+              featured: prestataire.featured || false,
+              slug: prestataire.slug,
+              note: 4.8,
+              nombre_avis: Math.floor(Math.random() * 100) + 50
             };
           });
           
@@ -112,74 +97,24 @@ const VendorPreviewWidget = () => {
 
   if (loading) {
     return (
-      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {[1, 2, 3, 4].map((i) => (
-          <Card key={i} className="prestataire-card overflow-hidden h-full animate-pulse">
-            <div className="aspect-video bg-gray-200" />
-            <CardContent className="p-4">
-              <div className="space-y-2">
-                <div className="h-4 bg-gray-200 rounded w-3/4" />
-                <div className="h-3 bg-gray-200 rounded w-1/2" />
-                <div className="h-3 bg-gray-200 rounded w-2/3" />
-              </div>
-            </CardContent>
-          </Card>
+          <div key={i} className="space-y-3">
+            <Skeleton className="w-full aspect-video rounded-lg" />
+            <Skeleton className="h-6 w-3/4" />
+            <Skeleton className="h-4 w-1/2" />
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-10 w-full" />
+          </div>
         ))}
       </div>
     );
   }
 
   return (
-    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       {vendors.map((vendor) => (
-        <Link to="/register" key={vendor.id}>
-          <Card className="prestataire-card group overflow-hidden h-full cursor-pointer">
-            <div className="aspect-video relative overflow-hidden">
-              <img
-                src={vendor.image}
-                alt={vendor.name}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                loading="lazy"
-              />
-              {vendor.certified && (
-                <Badge className="badge-certifie absolute top-3 left-3">
-                  <CheckCircle className="w-3 h-3 mr-1" />
-                  Certifié
-                </Badge>
-              )}
-            </div>
-            
-            <CardContent className="p-4">
-              <div className="space-y-2">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <h3 className="font-semibold text-premium-black group-hover:text-premium-sage transition-colors">
-                      {vendor.name}
-                    </h3>
-                    <p className="text-sm text-premium-charcoal">{vendor.category}</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-center text-sm text-premium-charcoal">
-                  <MapPin className="w-4 h-4 mr-1" />
-                  {vendor.location}
-                </div>
-                
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center">
-                      <Star className="w-4 h-4 text-yellow-500 mr-1" />
-                      <span className="text-sm font-medium">{vendor.rating.toFixed(1)}</span>
-                      <span className="text-sm text-premium-charcoal ml-1">({vendor.reviews})</span>
-                    </div>
-                    <div className="flex items-center text-sm font-medium text-premium-sage">
-                      <Euro className="w-4 h-4 mr-1" />
-                      {vendor.price}
-                    </div>
-                  </div>
-              </div>
-            </CardContent>
-          </Card>
-        </Link>
+        <VendorCardHomepage key={vendor.id} vendor={vendor} />
       ))}
     </div>
   );
