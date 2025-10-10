@@ -102,13 +102,20 @@ const ProfessionnelsMariable = () => {
       <main className="min-h-screen bg-background pt-24 pb-16">
         <div className="container max-w-7xl mx-auto px-4">
           {/* Header */}
-          <div className="text-center mb-12">
+          <div className="text-center mb-8">
             <h1 className="text-4xl md:text-5xl font-serif mb-4">
               Tous nos Professionnels
             </h1>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-6">
               Découvrez notre sélection complète de prestataires triés sur le volet pour votre mariage
             </p>
+            <Button 
+              size="lg" 
+              onClick={() => navigate('/selection')}
+              className="bg-wedding-olive hover:bg-wedding-olive/90 text-white"
+            >
+              Matching intelligent
+            </Button>
           </div>
 
           {/* Filtres */}
