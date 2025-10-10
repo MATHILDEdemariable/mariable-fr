@@ -21,6 +21,7 @@ const CATEGORIES = [
 ];
 
 const REGIONS = [
+  'France entière',
   'Île-de-France',
   'Provence-Alpes-Côte d\'Azur',
   'Auvergne-Rhône-Alpes',

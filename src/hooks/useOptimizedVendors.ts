@@ -88,7 +88,15 @@ export const useOptimizedVendors = ({
       }
 
       if (filters.region) {
-        query = query.filter('regions', 'cs', `["${filters.region}"]`);
+        if (filters.region === 'France entière') {
+          // Afficher uniquement les prestataires "France entière"
+          query = query.filter('regions', 'cs', '["France entière"]');
+        } else {
+          // Afficher les prestataires de la région demandée OU ceux avec "France entière"
+          query = query.or(
+            `regions.cs.["${filters.region}"],regions.cs.["France entière"]`
+          );
+        }
       }
 
       if (filters.minPrice) {

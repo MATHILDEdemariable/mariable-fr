@@ -44,7 +44,7 @@ const VendorPreviewWidget = () => {
             featured,
             slug,
             prestataires_photos_preprod!prestataires_photos_preprod_prestataire_id_fkey (
-              photo_url,
+              url,
               ordre
             )
           `)
@@ -74,7 +74,7 @@ const VendorPreviewWidget = () => {
               prix_a_partir_de: prestataire.prix_a_partir_de,
               description_courte: prestataire.description_courte,
               description: prestataire.description,
-              photo_url: mainPhoto?.photo_url,
+              photo_url: mainPhoto?.url,
               partner: prestataire.partner || false,
               featured: prestataire.featured || false,
               slug: prestataire.slug,

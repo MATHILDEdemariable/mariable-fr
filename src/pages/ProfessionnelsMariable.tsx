@@ -33,6 +33,7 @@ const CATEGORIES: (PrestataireCategorie | 'Tous')[] = [
 const ITEMS_PER_PAGE = 12;
 
 const REGIONS = [
+  'France entière',
   'Auvergne-Rhône-Alpes',
   'Bourgogne-Franche-Comté',
   'Bretagne',
