@@ -22,9 +22,71 @@ const Index = () => {
   return (
     <div className="min-h-screen flex flex-col bg-premium-base">
       <SEO 
-        title="Mariable - Le Netflix du mariage : Prestataires sélectionnés & Coordination digitale"
-        description="Plateforme premium de coordination mariages. Marketplace de prestataires d'exception + outils SaaS de planification. Le plus beau jour de votre vie, sans charge mentale."
-        keywords="mariage, prestataires mariage, coordination mariage, planning mariage, organisation mariage, marketplace mariage"
+        title="Mariable – Organisation mariage en ligne | Wedding planner digital"
+        description="Simplifiez l'organisation de votre mariage avec Mariable : outils intuitifs, sélection de prestataires réputés, et zéro charge mentale. Le plus beau jour de votre vie."
+        keywords="organisation mariage, wedding planner digital, outils mariage, planning mariage, prestataires mariage, budget mariage, application mariage, jour J, gestion invités, RSVP mariage"
+        image="https://www.mariable.fr/assets/cover.jpg"
+        schemas={[
+          {
+            type: 'Organization',
+            data: {
+              "@type": "WebSite",
+              name: "Mariable",
+              url: "https://www.mariable.fr",
+              potentialAction: {
+                "@type": "SearchAction",
+                target: {
+                  "@type": "EntryPoint",
+                  urlTemplate: "https://www.mariable.fr/selection?q={search_term_string}"
+                },
+                "query-input": "required name=search_term_string"
+              }
+            }
+          },
+          {
+            type: 'Organization',
+            data: {
+              "@type": "ItemList",
+              itemListElement: [
+                {
+                  "@type": "SiteNavigationElement",
+                  position: 1,
+                  name: "Organisez vous-même votre mariage",
+                  description: "Outils gratuits de planification mariage",
+                  url: "https://www.mariable.fr/dashboard"
+                },
+                {
+                  "@type": "SiteNavigationElement",
+                  position: 2,
+                  name: "Nos prestataires mariage",
+                  description: "Sélection de professionnels certifiés",
+                  url: "https://www.mariable.fr/selection"
+                },
+                {
+                  "@type": "SiteNavigationElement",
+                  position: 3,
+                  name: "Calculatrice budget mariage",
+                  description: "Gérez votre budget et calculez vos besoins",
+                  url: "https://www.mariable.fr/fonctionnalites"
+                },
+                {
+                  "@type": "SiteNavigationElement",
+                  position: 4,
+                  name: "Gestion RSVP invités",
+                  description: "Suivez les réponses de vos invités",
+                  url: "https://www.mariable.fr/fonctionnalites"
+                },
+                {
+                  "@type": "SiteNavigationElement",
+                  position: 5,
+                  name: "Coordination Jour J",
+                  description: "Coordination professionnelle le jour J",
+                  url: "https://www.mariable.fr/coordination-jour-j"
+                }
+              ]
+            }
+          }
+        ]}
       />
       
       <PremiumHeader />

@@ -16,9 +16,9 @@ const PremiumHeroSection = () => {
       
       <div className="relative z-20 text-center max-w-6xl mx-auto px-4">
         <h1 className="text-3xl font-extrabold text-white mb-6 leading-tight md:text-4xl lg:text-5xl">
-          Faites de votre mariage
+          Le plus beau jour de votre vie.
           <br />
-          une expérience exceptionnelle
+          Sans charge mentale.
         </h1>
         
         <p className="text-xl md:text-2xl text-white/90 mb-8 font-light leading-relaxed">Avec le premier wedding planner digital</p>
