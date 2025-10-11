@@ -103,14 +103,6 @@ const PremiumHeader = () => {
             </SheetTrigger>
             <SheetContent side="right" className="w-[300px] bg-white">
               <div className="flex flex-col space-y-6 mt-8">
-                <Link 
-                  to="/" 
-                  className="flex items-center mb-6"
-                  onClick={() => setMobileOpen(false)}
-                >
-                  <Logo />
-                </Link>
-                
                 <div className="flex flex-col space-y-4">
                   <Link 
                     to="/fonctionnalites" 

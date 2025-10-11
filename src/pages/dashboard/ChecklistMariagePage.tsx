@@ -6,8 +6,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import ChecklistMariageManuelle from '@/components/dashboard/ChecklistMariageManuelle';
 import ChecklistDixEtapes from '@/components/dashboard/ChecklistDixEtapes';
 import ChecklistIntelligente from '@/components/dashboard/ChecklistIntelligente';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const ChecklistMariagePage: React.FC = () => {
+  const isMobile = useIsMobile();
   const [searchParams, setSearchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState('etapes');
 
@@ -43,21 +45,21 @@ const ChecklistMariagePage: React.FC = () => {
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger 
               value="etapes"
-              className="data-[state=active]:bg-wedding-olive data-[state=active]:text-white hover:bg-wedding-olive/20 hover:text-wedding-olive"
+              className="data-[state=active]:bg-wedding-olive data-[state=active]:text-white hover:bg-wedding-olive/20 hover:text-wedding-olive text-xs sm:text-sm"
             >
-              En 10 étapes
+              {isMobile ? '10 Étapes' : 'En 10 étapes'}
             </TabsTrigger>
             <TabsTrigger 
               value="manuelle"
-              className="data-[state=active]:bg-wedding-olive data-[state=active]:text-white hover:bg-wedding-olive/20 hover:text-wedding-olive"
+              className="data-[state=active]:bg-wedding-olive data-[state=active]:text-white hover:bg-wedding-olive/20 hover:text-wedding-olive text-xs sm:text-sm"
             >
-              Check-list manuelle
+              {isMobile ? 'Manuelle' : 'Check-list manuelle'}
             </TabsTrigger>
             <TabsTrigger 
               value="intelligente"
-              className="data-[state=active]:bg-wedding-olive data-[state=active]:text-white hover:bg-wedding-olive/20 hover:text-wedding-olive"
+              className="data-[state=active]:bg-wedding-olive data-[state=active]:text-white hover:bg-wedding-olive/20 hover:text-wedding-olive text-xs sm:text-sm"
             >
-              Check-list intelligente
+              {isMobile ? 'IA' : 'Check-list intelligente'}
             </TabsTrigger>
           </TabsList>
           

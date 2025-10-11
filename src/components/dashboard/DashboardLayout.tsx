@@ -85,10 +85,11 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         {isMobile && (
           <button 
             onClick={toggleSidebar} 
-            className="fixed z-50 bottom-5 right-5 p-3 rounded-full bg-wedding-olive text-white shadow-lg"
-            aria-label={sidebarVisible ? "Hide sidebar" : "Show sidebar"}
+            className="fixed z-50 bottom-6 right-6 flex items-center gap-2 px-4 py-3 rounded-full bg-wedding-olive text-white shadow-2xl hover:shadow-3xl transition-all hover:scale-105 active:scale-95"
+            aria-label={sidebarVisible ? "Fermer le menu" : "Ouvrir le menu"}
           >
-            <PanelLeft size={24} />
+            <PanelLeft size={20} />
+            <span className="font-medium text-sm">Menu</span>
           </button>
         )}
         
