@@ -1,6 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
+import { useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
@@ -39,12 +40,32 @@ export const AccommodationForm = ({
 }: AccommodationFormProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: accommodation
-      ? {
+    defaultValues: {
+      nom_logement: '',
+      type_logement: 'hotel',
+      nombre_chambres: 1,
+      capacite_totale: 2,
+      statut: 'non_reserve',
+      prix_par_nuit: null,
+      date_arrivee: null,
+      date_depart: null,
+      adresse: null,
+      contact: null,
+      commentaires: null,
+      guests: '',
+    },
+  });
+
+  // Reset form when accommodation changes or modal opens
+  useEffect(() => {
+    if (open) {
+      if (accommodation) {
+        form.reset({
           ...accommodation,
           guests: accommodation.guests?.join(', ') || '',
-        }
-      : {
+        });
+      } else {
+        form.reset({
           nom_logement: '',
           type_logement: 'hotel',
           nombre_chambres: 1,
@@ -57,8 +78,10 @@ export const AccommodationForm = ({
           contact: null,
           commentaires: null,
           guests: '',
-        },
-  });
+        });
+      }
+    }
+  }, [accommodation, open, form]);
 
   const handleSubmit = (data: z.infer<typeof formSchema>) => {
     const guestsArray = data.guests

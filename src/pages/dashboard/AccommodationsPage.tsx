@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Button } from '@/components/ui/button';
-import { Plus, Search, Trash2, Pencil } from 'lucide-react';
+import { Plus, Search, Trash2, Pencil, FileDown } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { toast } from 'sonner';
 import {
   Table,
   TableBody,
@@ -24,6 +25,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { AccommodationStats } from '@/components/accommodations/AccommodationStats';
 import { AccommodationForm } from '@/components/accommodations/AccommodationForm';
+import { AccommodationDetailsModal } from '@/components/accommodations/AccommodationDetailsModal';
 import {
   useAccommodations,
   useCreateAccommodation,
@@ -51,6 +53,8 @@ export default function AccommodationsPage() {
   const [formOpen, setFormOpen] = useState(false);
   const [editingAccommodation, setEditingAccommodation] = useState<Accommodation | undefined>();
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [detailsOpen, setDetailsOpen] = useState(false);
+  const [selectedAccommodation, setSelectedAccommodation] = useState<Accommodation | null>(null);
 
   const { data: accommodations = [], isLoading } = useAccommodations();
   const createMutation = useCreateAccommodation();
@@ -89,6 +93,15 @@ export default function AccommodationsPage() {
     }
   };
 
+  const handleRowClick = (accommodation: Accommodation) => {
+    setSelectedAccommodation(accommodation);
+    setDetailsOpen(true);
+  };
+
+  const handleExportPDF = () => {
+    toast.info('Fonctionnalité d\'export PDF en cours de développement');
+  };
+
   return (
     <>
       <Helmet>
@@ -103,10 +116,16 @@ export default function AccommodationsPage() {
               Gérez les hébergements pour vos invités
             </p>
           </div>
-          <Button onClick={handleCreate} className="bg-wedding-olive hover:bg-wedding-olive/90">
-            <Plus className="w-4 h-4 mr-2" />
-            Ajouter un logement
-          </Button>
+          <div className="flex gap-2">
+            <Button onClick={handleExportPDF} variant="outline">
+              <FileDown className="w-4 h-4 mr-2" />
+              Export PDF
+            </Button>
+            <Button onClick={handleCreate} className="bg-wedding-olive hover:bg-wedding-olive/90">
+              <Plus className="w-4 h-4 mr-2" />
+              Ajouter un logement
+            </Button>
+          </div>
         </div>
 
         <AccommodationStats accommodations={accommodations} />
@@ -146,7 +165,11 @@ export default function AccommodationsPage() {
                 </TableHeader>
                 <TableBody>
                   {filteredAccommodations.map((accommodation) => (
-                    <TableRow key={accommodation.id}>
+                    <TableRow 
+                      key={accommodation.id}
+                      className="cursor-pointer hover:bg-muted/50"
+                      onClick={() => handleRowClick(accommodation)}
+                    >
                       <TableCell className="font-medium">{accommodation.nom_logement}</TableCell>
                       <TableCell>{typeMap[accommodation.type_logement]}</TableCell>
                       <TableCell className="text-center">{accommodation.nombre_chambres}</TableCell>
@@ -198,14 +221,20 @@ export default function AccommodationsPage() {
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => handleEdit(accommodation)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleEdit(accommodation);
+                            }}
                           >
                             <Pencil className="w-4 h-4" />
                           </Button>
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => setDeleteId(accommodation.id)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setDeleteId(accommodation.id);
+                            }}
                           >
                             <Trash2 className="w-4 h-4 text-red-600" />
                           </Button>
@@ -225,6 +254,12 @@ export default function AccommodationsPage() {
         onOpenChange={setFormOpen}
         onSubmit={handleSubmit}
         accommodation={editingAccommodation}
+      />
+
+      <AccommodationDetailsModal
+        open={detailsOpen}
+        onOpenChange={setDetailsOpen}
+        accommodation={selectedAccommodation}
       />
 
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
