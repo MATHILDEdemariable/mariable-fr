@@ -106,6 +106,7 @@ import Sitemap from "./pages/Sitemap";
 import SitemapHTML from "./pages/SitemapHTML";
 import ProfessionnelsMariable from "./pages/ProfessionnelsMariable";
 import RSVPPublicForm from "./pages/rsvp/RSVPPublicForm";
+import AccommodationsPage from "./pages/dashboard/AccommodationsPage";
 
 const queryClient = new QueryClient();
 

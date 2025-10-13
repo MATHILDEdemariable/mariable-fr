@@ -32,6 +32,7 @@ import MonMariageDetail from './MonMariageDetail';
 import RSVPManagement from './RSVPManagement';
 import RSVPResponses from './RSVPResponses';
 import ProfessionnelsMariableDashboard from '@/components/dashboard/ProfessionnelsMariableDashboard';
+import AccommodationsPage from './AccommodationsPage';
 
 const UserDashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -92,6 +93,7 @@ const UserDashboard: React.FC = () => {
           <Route path="checklist-mariage" element={<ChecklistMariagePage />} />
           <Route path="rsvp" element={<RSVPManagement />} />
           <Route path="rsvp/:eventId/responses" element={<RSVPResponses />} />
+          <Route path="accommodations" element={<AccommodationsPage />} />
           <Route path="*" element={<div>Page non trouvée</div>} />
         </Route>
       </Routes>

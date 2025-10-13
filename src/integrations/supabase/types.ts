@@ -14,6 +14,35 @@ export type Database = {
   }
   public: {
     Tables: {
+      accommodation_assignments: {
+        Row: {
+          accommodation_id: string
+          created_at: string
+          guest_name: string
+          id: string
+        }
+        Insert: {
+          accommodation_id: string
+          created_at?: string
+          guest_name: string
+          id?: string
+        }
+        Update: {
+          accommodation_id?: string
+          created_at?: string
+          guest_name?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "accommodation_assignments_accommodation_id_fkey"
+            columns: ["accommodation_id"]
+            isOneToOne: false
+            referencedRelation: "wedding_accommodations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       admin_access_tokens: {
         Row: {
           created_at: string | null
@@ -2731,6 +2760,60 @@ export type Database = {
           updated_at?: string | null
           user_id?: string | null
           wedding_data?: Json | null
+        }
+        Relationships: []
+      }
+      wedding_accommodations: {
+        Row: {
+          adresse: string | null
+          capacite_totale: number
+          commentaires: string | null
+          contact: string | null
+          created_at: string
+          date_arrivee: string | null
+          date_depart: string | null
+          id: string
+          nom_logement: string
+          nombre_chambres: number
+          prix_par_nuit: number | null
+          statut: string
+          type_logement: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          adresse?: string | null
+          capacite_totale?: number
+          commentaires?: string | null
+          contact?: string | null
+          created_at?: string
+          date_arrivee?: string | null
+          date_depart?: string | null
+          id?: string
+          nom_logement: string
+          nombre_chambres?: number
+          prix_par_nuit?: number | null
+          statut?: string
+          type_logement?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          adresse?: string | null
+          capacite_totale?: number
+          commentaires?: string | null
+          contact?: string | null
+          created_at?: string
+          date_arrivee?: string | null
+          date_depart?: string | null
+          id?: string
+          nom_logement?: string
+          nombre_chambres?: number
+          prix_par_nuit?: number | null
+          statut?: string
+          type_logement?: string
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }

@@ -18,7 +18,8 @@ import {
   ChevronDown,
   Coins,
   ListChecks,
-  UserCheck
+  UserCheck,
+  Home
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
@@ -203,6 +204,11 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
   // Vérifier si RSVP Invités est actif
   const isRSVPActive = () => {
     return isActive('/dashboard/rsvp');
+  };
+
+  // Vérifier si Gestion des logements est actif
+  const isAccommodationsActive = () => {
+    return isActive('/dashboard/accommodations');
   };
 
   // Vérifier si le menu Aide doit être actif
@@ -486,6 +492,29 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
             RSVP Invités
             <span className="text-[10px] px-1.5 py-0.5 bg-orange-100 text-orange-700 rounded font-medium">beta</span>
           </span>
+          {isReaderMode && (
+            <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>
+          )}
+        </Link>
+
+        {/* Gestion des logements */}
+        <Link
+          to={isReaderMode ? '#' : '/dashboard/accommodations'}
+          onClick={(e) => {
+            if (isReaderMode) {
+              e.preventDefault();
+            }
+          }}
+          className={cn(
+            "flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors",
+            isAccommodationsActive()
+              ? 'bg-wedding-olive text-white shadow-sm'
+              : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive',
+            isReaderMode ? 'pointer-events-none opacity-70' : ''
+          )}
+        >
+          <Home className="h-4 w-4" />
+          <span className="ml-2 sm:ml-3 leading-tight">Gestion des logements</span>
           {isReaderMode && (
             <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>
           )}
