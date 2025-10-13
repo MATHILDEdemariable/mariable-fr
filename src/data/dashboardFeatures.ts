@@ -98,6 +98,14 @@ export const dashboardFeatures: Feature[] = [
     isExpandable: false
   },
   {
+    id: 'logements',
+    zone: 'sidebar',
+    position: { top: '640px', left: '20px', width: '200px', height: '40px' },
+    title: 'Gestion de logement',
+    description: 'Organisez l\'hébergement de vos invités. Gérez les réservations, assignez les chambres, suivez les disponibilités et les tarifs. Exportez facilement vos listes d\'hébergement en PDF.',
+    isExpandable: false
+  },
+  {
     id: 'user-profile',
     zone: 'header',
     position: { top: '15px', left: 'calc(100% - 200px)', width: '180px', height: '50px' },

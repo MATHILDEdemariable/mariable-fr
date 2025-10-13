@@ -7,7 +7,7 @@ import { FeatureTooltip } from '@/components/features/FeatureTooltip';
 import { dashboardFeatures, Feature } from '@/data/dashboardFeatures';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { ChevronDown, ChevronUp, Heart, DollarSign, CheckCircle, Calendar, Sparkles, Users, UserCheck } from 'lucide-react';
+import { ChevronDown, ChevronUp, Heart, DollarSign, CheckCircle, Calendar, Sparkles, Users, UserCheck, Home } from 'lucide-react';
 
 const FeaturesInteractive = () => {
   const isMobile = useIsMobile();
@@ -56,6 +56,7 @@ const FeaturesInteractive = () => {
       'apres-jour-j': <CheckCircle className="w-5 h-5 text-wedding-olive" />,
       'prestataires': <Users className="w-5 h-5 text-wedding-olive" />,
       'rsvp': <UserCheck className="w-5 h-5 text-wedding-olive" />,
+      'logements': <Home className="w-5 h-5 text-wedding-olive" />,
     };
     return iconMap[featureId] || <Heart className="w-5 h-5 text-wedding-olive" />;
   };
