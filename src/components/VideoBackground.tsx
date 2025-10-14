@@ -18,6 +18,8 @@ const VideoBackground = ({ youtubeId, videoUrl, className = "", children }: Vide
             muted
             loop
             playsInline
+            poster="/video-poster.webp"
+            preload="metadata"
             className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none w-full h-full object-cover"
             style={{
               objectPosition: '60% 20%',

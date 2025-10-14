@@ -65,7 +65,13 @@ const PremiumTestimonialsSection = () => {
                 
                 {/* Author */}
                 <div className="flex items-center gap-4">
-                  <img src={testimonial.image} alt={testimonial.name} className="w-12 h-12 rounded-full object-cover" />
+                  <img 
+                    src={testimonial.image} 
+                    alt={testimonial.name} 
+                    loading={index === 0 ? "eager" : "lazy"}
+                    decoding="async"
+                    className="w-12 h-12 rounded-full object-cover" 
+                  />
                   <div>
                     <h4 className="font-bold text-premium-black">
                       {testimonial.name}

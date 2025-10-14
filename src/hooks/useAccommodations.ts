@@ -32,23 +32,25 @@ export const useAccommodations = () => {
 
       if (error) throw error;
 
-      // Fetch guests for each accommodation
       const accommodationsWithGuests = await Promise.all(
-        accommodations.map(async (acc) => {
+        accommodations.map(async (accommodation) => {
           const { data: assignments } = await supabase
             .from('accommodation_assignments')
             .select('guest_name')
-            .eq('accommodation_id', acc.id);
+            .eq('accommodation_id', accommodation.id);
 
           return {
-            ...acc,
-            guests: assignments?.map((a) => a.guest_name) || [],
+            ...accommodation,
+            guests: assignments?.map(a => a.guest_name) || []
           };
         })
       );
 
       return accommodationsWithGuests as Accommodation[];
     },
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
+    refetchOnWindowFocus: false,
   });
 };
 

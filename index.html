@@ -12,6 +12,10 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="light-content" />
     <meta name="apple-mobile-web-app-title" content="Mariable" />
     
+    <!-- DNS Prefetch & Preconnect for Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
     <!-- Favicons -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
@@ -20,33 +24,31 @@
     <link rel="manifest" href="/manifest.json" />
     
     <title>Mariable</title>
-    <!-- Google Tag Manager -->
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-W2X8K9V');</script>
-    <!-- End Google Tag Manager -->
-    <!-- Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2B5T8K9W7X"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-2B5T8K9W7X');
-    </script>
-    <!-- End Google Analytics -->
-    <!-- Hotjar Tracking Code for Site 6424249 -->
-    <script>
-        (function(h,o,t,j,a,r){
-            h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
-            h._hjSettings={hjid:6424249,hjsv:6};
-            a=o.getElementsByTagName('head')[0];
-            r=o.createElement('script');r.async=1;
-            r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
-            a.appendChild(r);
-        })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
-    </script>
+    
+    <!-- Critical CSS inlined for faster First Contentful Paint -->
+    <style>
+      :root {
+        --background: 0 0% 100%;
+        --foreground: 0 0% 3.9%;
+        --premium-sage: 108 22% 58%;
+        --premium-sage-light: 112 33% 82%;
+        --premium-black: 0 0% 9%;
+      }
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      body { 
+        font-family: system-ui, -apple-system, sans-serif; 
+        background: hsl(var(--background));
+        color: hsl(var(--foreground));
+        line-height: 1.5;
+      }
+      .site-header { 
+        position: sticky; 
+        top: 0; 
+        z-index: 50; 
+        background: white;
+        border-bottom: 1px solid hsl(0 0% 89.8%);
+      }
+    </style>
   </head>
   <body>
     <!-- Google Tag Manager (noscript) -->
@@ -83,5 +85,38 @@
       applyHeaderHeight();
     </script>
     <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- Analytics scripts loaded after page render (non-blocking) -->
+    <script>
+      // Lazy load analytics after 2 seconds to not block initial render
+      setTimeout(function() {
+        // Google Tag Manager
+        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+        })(window,document,'script','dataLayer','GTM-W2X8K9V');
+        
+        // Google Analytics
+        var ga = document.createElement('script');
+        ga.async = true;
+        ga.src = 'https://www.googletagmanager.com/gtag/js?id=G-2B5T8K9W7X';
+        document.head.appendChild(ga);
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-2B5T8K9W7X');
+        
+        // Hotjar
+        (function(h,o,t,j,a,r){
+          h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+          h._hjSettings={hjid:6424249,hjsv:6};
+          a=o.getElementsByTagName('head')[0];
+          r=o.createElement('script');r.async=1;
+          r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+          a.appendChild(r);
+        })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
+      }, 2000);
+    </script>
   </body>
 </html>
