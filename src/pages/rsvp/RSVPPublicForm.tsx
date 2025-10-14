@@ -37,7 +37,8 @@ const RSVPPublicForm: React.FC = () => {
   const [guestEmail, setGuestEmail] = useState('');
   const [guestPhone, setGuestPhone] = useState('');
   const [attendanceStatus, setAttendanceStatus] = useState<'oui' | 'non' | 'peut-être'>('oui');
-  const [numberOfGuests, setNumberOfGuests] = useState(1);
+  const [numberOfAdults, setNumberOfAdults] = useState(1);
+  const [numberOfChildren, setNumberOfChildren] = useState(0);
   const [dietaryRestrictions, setDietaryRestrictions] = useState('');
   const [message, setMessage] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -71,11 +72,15 @@ const RSVPPublicForm: React.FC = () => {
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
 
+    const totalGuests = numberOfAdults + numberOfChildren;
+    
     const rsvpSchema = z.object({
       guest_name: z.string().trim().min(2, 'Le nom doit contenir au moins 2 caractères').max(100),
       guest_email: z.string().email('Email invalide').optional().or(z.literal('')),
       guest_phone: z.string().optional(),
-      number_of_guests: z.number().int().min(1).max(event?.max_guests_per_invite || 10),
+      number_of_adults: z.number().int().min(1, 'Au moins 1 adulte requis'),
+      number_of_children: z.number().int().min(0),
+      total_guests: z.number().int().min(1).max(event?.max_guests_per_invite || 10, `Maximum ${event?.max_guests_per_invite || 10} personnes`),
       dietary_restrictions: z.string().max(500).optional(),
       message: z.string().max(1000).optional(),
     });
@@ -85,7 +90,9 @@ const RSVPPublicForm: React.FC = () => {
         guest_name: guestName,
         guest_email: guestEmail,
         guest_phone: guestPhone,
-        number_of_guests: numberOfGuests,
+        number_of_adults: numberOfAdults,
+        number_of_children: numberOfChildren,
+        total_guests: totalGuests,
         dietary_restrictions: dietaryRestrictions,
         message: message,
       });
@@ -124,6 +131,8 @@ const RSVPPublicForm: React.FC = () => {
     setSubmitting(true);
 
     try {
+      const totalGuests = numberOfAdults + numberOfChildren;
+      
       const { error } = await supabase
         .from('wedding_rsvp_responses')
         .insert({
@@ -132,7 +141,9 @@ const RSVPPublicForm: React.FC = () => {
           guest_email: guestEmail.trim() || null,
           guest_phone: guestPhone.trim() || null,
           attendance_status: attendanceStatus,
-          number_of_guests: attendanceStatus === 'oui' ? numberOfGuests : 1,
+          number_of_guests: attendanceStatus === 'oui' ? totalGuests : 1,
+          number_of_adults: attendanceStatus === 'oui' ? numberOfAdults : 1,
+          number_of_children: attendanceStatus === 'oui' ? numberOfChildren : 0,
           dietary_restrictions: dietaryRestrictions.trim() || null,
           message: message.trim() || null,
         });
@@ -317,18 +328,49 @@ const RSVPPublicForm: React.FC = () => {
 
               {/* Nombre d'invités */}
               {attendanceStatus === 'oui' && (
-                <div className="space-y-2">
-                  <Label htmlFor="number_of_guests">
-                    Nombre de personnes (max {event.max_guests_per_invite})
-                  </Label>
-                  <Input
-                    id="number_of_guests"
-                    type="number"
-                    min="1"
-                    max={event.max_guests_per_invite}
-                    value={numberOfGuests}
-                    onChange={(e) => setNumberOfGuests(parseInt(e.target.value) || 1)}
-                  />
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="number_of_adults">
+                      Nombre d'adultes *
+                    </Label>
+                    <Input
+                      id="number_of_adults"
+                      type="number"
+                      min="1"
+                      max={event.max_guests_per_invite}
+                      value={numberOfAdults}
+                      onChange={(e) => setNumberOfAdults(parseInt(e.target.value) || 1)}
+                      required
+                    />
+                    {errors.number_of_adults && (
+                      <p className="text-sm text-red-500">{errors.number_of_adults}</p>
+                    )}
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="number_of_children">
+                      Nombre d'enfants
+                    </Label>
+                    <Input
+                      id="number_of_children"
+                      type="number"
+                      min="0"
+                      max={event.max_guests_per_invite}
+                      value={numberOfChildren}
+                      onChange={(e) => setNumberOfChildren(parseInt(e.target.value) || 0)}
+                    />
+                  </div>
+
+                  {(numberOfAdults + numberOfChildren) > 0 && (
+                    <div className="text-sm text-muted-foreground bg-muted p-3 rounded-md">
+                      Total: <strong>{numberOfAdults + numberOfChildren} personne{(numberOfAdults + numberOfChildren) > 1 ? 's' : ''}</strong>
+                      {(numberOfAdults + numberOfChildren) > event.max_guests_per_invite && (
+                        <p className="text-red-500 mt-1">
+                          ⚠️ Maximum autorisé: {event.max_guests_per_invite} personnes
+                        </p>
+                      )}
+                    </div>
+                  )}
                 </div>
               )}
 

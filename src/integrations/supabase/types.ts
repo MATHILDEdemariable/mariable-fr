@@ -3020,6 +3020,8 @@ export type Database = {
           id: string
           ip_address: string | null
           message: string | null
+          number_of_adults: number | null
+          number_of_children: number | null
           number_of_guests: number | null
           submitted_at: string | null
           user_agent: string | null
@@ -3034,6 +3036,8 @@ export type Database = {
           id?: string
           ip_address?: string | null
           message?: string | null
+          number_of_adults?: number | null
+          number_of_children?: number | null
           number_of_guests?: number | null
           submitted_at?: string | null
           user_agent?: string | null
@@ -3048,6 +3052,8 @@ export type Database = {
           id?: string
           ip_address?: string | null
           message?: string | null
+          number_of_adults?: number | null
+          number_of_children?: number | null
           number_of_guests?: number | null
           submitted_at?: string | null
           user_agent?: string | null

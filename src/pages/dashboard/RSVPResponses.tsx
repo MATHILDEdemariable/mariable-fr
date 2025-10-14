@@ -15,6 +15,8 @@ interface RSVPResponse {
   guest_phone: string | null;
   attendance_status: 'oui' | 'non' | 'peut-être';
   number_of_guests: number;
+  number_of_adults: number | null;
+  number_of_children: number | null;
   dietary_restrictions: string | null;
   message: string | null;
   submitted_at: string;
@@ -68,13 +70,15 @@ const RSVPResponses: React.FC = () => {
   };
 
   const exportToCSV = () => {
-    const headers = ['Nom', 'Email', 'Téléphone', 'Statut', 'Nb invités', 'Restrictions', 'Message', 'Date réponse'];
+    const headers = ['Nom', 'Email', 'Téléphone', 'Statut', 'Adultes', 'Enfants', 'Total', 'Restrictions', 'Message', 'Date réponse'];
     const rows = responses.map(r => [
       r.guest_name,
       r.guest_email || '',
       r.guest_phone || '',
       r.attendance_status,
-      r.number_of_guests,
+      r.number_of_adults || r.number_of_guests || 1,
+      r.number_of_children || 0,
+      (r.number_of_adults || r.number_of_guests || 1) + (r.number_of_children || 0),
       r.dietary_restrictions || '',
       r.message || '',
       new Date(r.submitted_at).toLocaleString('fr-FR'),
@@ -107,7 +111,9 @@ const RSVPResponses: React.FC = () => {
   const declinedResponses = filteredResponses.filter(r => r.attendance_status === 'non');
   const maybeResponses = filteredResponses.filter(r => r.attendance_status === 'peut-être');
 
-  const totalConfirmedGuests = confirmedResponses.reduce((sum, r) => sum + r.number_of_guests, 0);
+  const totalConfirmedAdults = confirmedResponses.reduce((sum, r) => sum + (r.number_of_adults || r.number_of_guests || 1), 0);
+  const totalConfirmedChildren = confirmedResponses.reduce((sum, r) => sum + (r.number_of_children || 0), 0);
+  const totalConfirmedGuests = totalConfirmedAdults + totalConfirmedChildren;
 
   const ResponseCard: React.FC<{ response: RSVPResponse; statusColor: string }> = ({ response, statusColor }) => (
     <Card className="hover:shadow-md transition-shadow">
@@ -130,12 +136,15 @@ const RSVPResponses: React.FC = () => {
           </Badge>
         </div>
 
-        {response.number_of_guests > 1 && (
-          <div className="flex items-center gap-2 text-sm">
-            <Users className="h-4 w-4 text-muted-foreground" />
-            <span>{response.number_of_guests} personne{response.number_of_guests > 1 ? 's' : ''}</span>
-          </div>
-        )}
+        <div className="flex items-center gap-2 text-sm">
+          <Users className="h-4 w-4 text-muted-foreground" />
+          <span>
+            👤 {response.number_of_adults || response.number_of_guests || 1} adulte{(response.number_of_adults || response.number_of_guests || 1) > 1 ? 's' : ''}
+            {(response.number_of_children || 0) > 0 && (
+              <> • 👶 {response.number_of_children} enfant{response.number_of_children! > 1 ? 's' : ''}</>
+            )}
+          </span>
+        </div>
 
         {response.guest_email && (
           <div className="flex items-center gap-2 text-sm">
@@ -189,7 +198,10 @@ const RSVPResponses: React.FC = () => {
         <div className="flex-1">
           <h1 className="text-3xl font-bold">{eventName}</h1>
           <p className="text-muted-foreground">
-            {responses.length} réponse{responses.length > 1 ? 's' : ''} • {totalConfirmedGuests} invité{totalConfirmedGuests > 1 ? 's' : ''} confirmé{totalConfirmedGuests > 1 ? 's' : ''}
+            {responses.length} réponse{responses.length > 1 ? 's' : ''} • 
+            {totalConfirmedAdults} adulte{totalConfirmedAdults > 1 ? 's' : ''} + 
+            {totalConfirmedChildren} enfant{totalConfirmedChildren > 1 ? 's' : ''} confirmé{totalConfirmedGuests > 1 ? 's' : ''} 
+            (Total: {totalConfirmedGuests})
           </p>
         </div>
       </div>

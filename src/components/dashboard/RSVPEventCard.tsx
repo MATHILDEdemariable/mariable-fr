@@ -35,13 +35,22 @@ interface RSVPEventCardProps {
 
 interface RSVPStats {
   confirmed: number;
+  confirmedAdults: number;
+  confirmedChildren: number;
   declined: number;
   maybe: number;
   total: number;
 }
 
 const RSVPEventCard: React.FC<RSVPEventCardProps> = ({ event, onDelete, onViewResponses }) => {
-  const [stats, setStats] = useState<RSVPStats>({ confirmed: 0, declined: 0, maybe: 0, total: 0 });
+  const [stats, setStats] = useState<RSVPStats>({ 
+    confirmed: 0, 
+    confirmedAdults: 0, 
+    confirmedChildren: 0, 
+    declined: 0, 
+    maybe: 0, 
+    total: 0 
+  });
   const [loading, setLoading] = useState(true);
   const [showQRCode, setShowQRCode] = useState(false);
   const [qrCodeDataUrl, setQrCodeDataUrl] = useState('');
@@ -63,13 +72,17 @@ const RSVPEventCard: React.FC<RSVPEventCardProps> = ({ event, onDelete, onViewRe
     try {
       const { data, error } = await supabase
         .from('wedding_rsvp_responses')
-        .select('attendance_status, number_of_guests')
+        .select('attendance_status, number_of_guests, number_of_adults, number_of_children')
         .eq('event_id', event.id);
 
       if (error) throw error;
 
-      const confirmedGuests = data?.filter(r => r.attendance_status === 'oui')
-        .reduce((sum, r) => sum + (r.number_of_guests || 1), 0) || 0;
+      const confirmedAdults = data?.filter(r => r.attendance_status === 'oui')
+        .reduce((sum, r) => sum + (r.number_of_adults || r.number_of_guests || 1), 0) || 0;
+      const confirmedChildren = data?.filter(r => r.attendance_status === 'oui')
+        .reduce((sum, r) => sum + (r.number_of_children || 0), 0) || 0;
+      const confirmedGuests = confirmedAdults + confirmedChildren;
+      
       const declinedGuests = data?.filter(r => r.attendance_status === 'non')
         .reduce((sum, r) => sum + (r.number_of_guests || 1), 0) || 0;
       const maybeGuests = data?.filter(r => r.attendance_status === 'peut-être')
@@ -77,6 +90,8 @@ const RSVPEventCard: React.FC<RSVPEventCardProps> = ({ event, onDelete, onViewRe
 
       setStats({
         confirmed: confirmedGuests,
+        confirmedAdults: confirmedAdults,
+        confirmedChildren: confirmedChildren,
         declined: declinedGuests,
         maybe: maybeGuests,
         total: confirmedGuests + declinedGuests + maybeGuests,
@@ -141,6 +156,11 @@ const RSVPEventCard: React.FC<RSVPEventCardProps> = ({ event, onDelete, onViewRe
             <div className="text-center p-3 bg-green-50 rounded-lg">
               <div className="text-2xl font-bold text-green-600">{stats.confirmed}</div>
               <div className="text-xs text-muted-foreground">Confirmés</div>
+              {stats.confirmed > 0 && (
+                <div className="text-xs text-muted-foreground mt-1">
+                  👤 {stats.confirmedAdults} • 👶 {stats.confirmedChildren}
+                </div>
+              )}
             </div>
             <div className="text-center p-3 bg-red-50 rounded-lg">
               <div className="text-2xl font-bold text-red-600">{stats.declined}</div>
