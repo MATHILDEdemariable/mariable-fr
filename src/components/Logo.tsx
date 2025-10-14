@@ -4,7 +4,7 @@ import React from 'react';
 export const Logo = () => {
   return (
     <img 
-      src="/logo-mariable-optimized.webp" 
+      src="/logo-mariable-new.webp" 
       alt="Mariable - Organisation de mariages" 
       width="120"
       height="120"
