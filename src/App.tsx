@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -8,105 +9,104 @@ import { HelmetProvider } from 'react-helmet-async';
 import { ReaderModeProvider } from '@/contexts/ReaderModeContext';
 import PaymentSuccessHandler from '@/components/premium/PaymentSuccessHandler';
 
-// Import pages
-import Index from "./pages/Index";
-import LandingCouple from "./pages/LandingCouple";
-import LandingGenerale from "./pages/LandingGenerale";
-import SimpleHomePage from "./pages/SimpleHomePage";
-import LandingPageV0 from "./pages/LandingPageV0";
-import MoteurRecherche from "./pages/MoteurRecherche";
-import PlanningPersonnalise from "./pages/PlanningPersonnalise";
-import PlanningResultatsPersonnalises from "./pages/PlanningResultatsPersonnalises";
-import NotFound from "./pages/NotFound";
-import ReservationJourM from "./pages/ReservationJourM";
-import UserDashboard from "./pages/dashboard/UserDashboard";
-import JourMVue from "./pages/JourMVue";
-import PlanningPublic from "./pages/PlanningPublic";
-import PlanningPublicProject from "./pages/PlanningPublicProject";
-import MonJourM from "./pages/MonJourM";
-import MonJourMPlanningPage from "./pages/MonJourMPlanning";
-import MonJourMEquipePage from "./pages/MonJourMEquipe";
-import MonJourMDocumentsPage from "./pages/MonJourMDocuments";
-import Login from "./pages/auth/Login";
-import Register from "./pages/auth/Register";
-import Pricing from "./pages/Pricing";
-import Paiement from "./pages/Paiement";
-import Blog from "./pages/Blog";
-import BlogPost from "./pages/BlogArticle";
-import Contact from "./pages/contact/NousContacter";
-import Prix from "./pages/Prix";
-import Prestataires from "./pages/services/Prestataires";
-import Budget from "./pages/services/Budget";
-import Prestataire from "./pages/prestataire/slug";
-import EmailConfirmation from "./pages/auth/EmailConfirmation";
-import ResetPassword from "./pages/auth/ResetPassword";
-import MessageHistoryPage from "./pages/dashboard/MessageHistoryPage";
-import MonJourMConseils from "./pages/MonJourMConseils";
-import MonJourMPenseBete from "./pages/MonJourMPenseBete";
-import OutilsPlanningMariage from "./pages/OutilsPlanningMariage";
-import CoordinationJourJ from "./pages/CoordinationJourJ";
-import LandingJourJ from "./pages/LandingJourJ";
-import MariageProvence from "./pages/MariageProvence";
-import MariageParis from "./pages/MariageParis";
-import MariageAuvergneRhoneAlpes from "./pages/MariageAuvergneRhoneAlpes";
-import MariageNouvelleAquitaine from "./pages/MariageNouvelleAquitaine";
-import WeddingRetroplanning from "./pages/WeddingRetroplanning";
+// Lazy load pages
+const Index = lazy(() => import("./pages/Index"));
+const LandingCouple = lazy(() => import("./pages/LandingCouple"));
+const LandingGenerale = lazy(() => import("./pages/LandingGenerale"));
+const SimpleHomePage = lazy(() => import("./pages/SimpleHomePage"));
+const LandingPageV0 = lazy(() => import("./pages/LandingPageV0"));
+const MoteurRecherche = lazy(() => import("./pages/MoteurRecherche"));
+const PlanningPersonnalise = lazy(() => import("./pages/PlanningPersonnalise"));
+const PlanningResultatsPersonnalises = lazy(() => import("./pages/PlanningResultatsPersonnalises"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+const ReservationJourM = lazy(() => import("./pages/ReservationJourM"));
+const UserDashboard = lazy(() => import("./pages/dashboard/UserDashboard"));
+const JourMVue = lazy(() => import("./pages/JourMVue"));
+const PlanningPublic = lazy(() => import("./pages/PlanningPublic"));
+const PlanningPublicProject = lazy(() => import("./pages/PlanningPublicProject"));
+const MonJourMPlanningPage = lazy(() => import("./pages/MonJourMPlanning"));
+const MonJourMEquipePage = lazy(() => import("./pages/MonJourMEquipe"));
+const MonJourMDocumentsPage = lazy(() => import("./pages/MonJourMDocuments"));
+const Login = lazy(() => import("./pages/auth/Login"));
+const Register = lazy(() => import("./pages/auth/Register"));
+const Pricing = lazy(() => import("./pages/Pricing"));
+const Paiement = lazy(() => import("./pages/Paiement"));
+const Blog = lazy(() => import("./pages/Blog"));
+const BlogPost = lazy(() => import("./pages/BlogArticle"));
+const Contact = lazy(() => import("./pages/contact/NousContacter"));
+const Prix = lazy(() => import("./pages/Prix"));
+const Prestataires = lazy(() => import("./pages/services/Prestataires"));
+const Budget = lazy(() => import("./pages/services/Budget"));
+const Prestataire = lazy(() => import("./pages/prestataire/slug"));
+const EmailConfirmation = lazy(() => import("./pages/auth/EmailConfirmation"));
+const ResetPassword = lazy(() => import("./pages/auth/ResetPassword"));
+const MessageHistoryPage = lazy(() => import("./pages/dashboard/MessageHistoryPage"));
+const MonJourMConseils = lazy(() => import("./pages/MonJourMConseils"));
+const MonJourMPenseBete = lazy(() => import("./pages/MonJourMPenseBete"));
+const OutilsPlanningMariage = lazy(() => import("./pages/OutilsPlanningMariage"));
+const CoordinationJourJ = lazy(() => import("./pages/CoordinationJourJ"));
+const LandingJourJ = lazy(() => import("./pages/LandingJourJ"));
+const MariageProvence = lazy(() => import("./pages/MariageProvence"));
+const MariageParis = lazy(() => import("./pages/MariageParis"));
+const MariageAuvergneRhoneAlpes = lazy(() => import("./pages/MariageAuvergneRhoneAlpes"));
+const MariageNouvelleAquitaine = lazy(() => import("./pages/MariageNouvelleAquitaine"));
+const WeddingRetroplanning = lazy(() => import("./pages/WeddingRetroplanning"));
+const Professionnels = lazy(() => import("./pages/Professionnels"));
+const CGV = lazy(() => import("./pages/CGV"));
+const SalonDuMariage2025 = lazy(() => import("./pages/SalonDuMariage2025"));
+const SalonJeuConcours = lazy(() => import("./pages/SalonJeuConcours"));
+const SalonMicroTrottoir = lazy(() => import("./pages/SalonMicroTrottoir"));
+const Approche = lazy(() => import("./pages/about/Approche"));
+const Histoire = lazy(() => import("./pages/about/Histoire"));
+const Charte = lazy(() => import("./pages/about/Charte"));
+const Temoignages = lazy(() => import("./pages/about/Temoignages"));
+const Comparatif = lazy(() => import("./pages/Comparatif"));
+const FAQ = lazy(() => import("./pages/contact/FAQ"));
+const ChecklistMariage = lazy(() => import("./pages/ChecklistMariage"));
+const ChecklistPublic = lazy(() => import("./pages/ChecklistPublic"));
+const ToDoListMariage = lazy(() => import("./pages/ToDoListMariage"));
+const ListePreparatifMariage = lazy(() => import("./pages/ListePreparatifMariage"));
+const Accompagnement = lazy(() => import("./pages/Accompagnement"));
+const LivreBlanc = lazy(() => import("./pages/LivreBlanc"));
+const CoordinateursMarriage = lazy(() => import("./pages/CoordinateursMarriage"));
+const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
+const AdminBlog = lazy(() => import("./pages/admin/Blog"));
+const AdminUsers = lazy(() => import("./pages/admin/Users"));
+const AdminDevisProfessionnels = lazy(() => import("./pages/admin/DevisProfessionnels"));
+const AdminSatisfactionUtilisateurs = lazy(() => import("./pages/admin/SatisfactionUtilisateurs"));
+const EnvoiDevis = lazy(() => import("./pages/EnvoiDevis"));
+const AdminPrestataires = lazy(() => import("./pages/admin/Prestataires"));
+const AdminForm = lazy(() => import("./pages/admin/FormAdmin"));
+const AdminReservationsJourM = lazy(() => import("./pages/admin/ReservationsJourM"));
+const AdminSystemCheck = lazy(() => import("./pages/admin/SystemCheck"));
+const AdminProfessionalRegistrations = lazy(() => import("./pages/admin/ProfessionalRegistrations"));
+const JeunesMaries = lazy(() => import("./pages/JeunesMaries"));
+const JeuneMariesInscription = lazy(() => import("./pages/JeuneMariesInscription"));
+const JeuneMariesDetail = lazy(() => import("./pages/JeuneMariesDetail"));
+const JeuneMariesConfirmation = lazy(() => import("./pages/JeuneMariesConfirmation"));
+const AdminJeunesMaries = lazy(() => import("./pages/admin/AdminJeunesMaries"));
+const CustomPages = lazy(() => import("./pages/admin/CustomPages"));
+const AdminCarnetAdresses = lazy(() => import("./pages/admin/CarnetAdresses"));
+const CustomPage = lazy(() => import("./pages/CustomPage"));
+const PropositionPage = lazy(() => import("./pages/PropositionPage"));
+const AvantJourJPublic = lazy(() => import("./pages/AvantJourJPublic"));
+const ApresJourJPublic = lazy(() => import("./pages/ApresJourJPublic"));
+const ProtectedRoute = lazy(() => import("./components/auth/ProtectedRoute"));
+const ContentCreatorMariage = lazy(() => import("./pages/ContentCreatorMariage"));
+const VibeWedding = lazy(() => import("./pages/VibeWedding"));
+const FeaturesInteractive = lazy(() => import("./pages/FeaturesInteractive"));
+const Sitemap = lazy(() => import("./pages/Sitemap"));
+const SitemapHTML = lazy(() => import("./pages/SitemapHTML"));
+const ProfessionnelsMariable = lazy(() => import("./pages/ProfessionnelsMariable"));
+const RSVPPublicForm = lazy(() => import("./pages/rsvp/RSVPPublicForm"));
+const AccommodationsPage = lazy(() => import("./pages/dashboard/AccommodationsPage"));
 
-// Import missing pages
-import Professionnels from "./pages/Professionnels";
-import CGV from "./pages/CGV";
-import SalonDuMariage2025 from "./pages/SalonDuMariage2025";
-import SalonJeuConcours from "./pages/SalonJeuConcours";
-import SalonMicroTrottoir from "./pages/SalonMicroTrottoir";
-import Approche from "./pages/about/Approche";
-import Histoire from "./pages/about/Histoire";
-import Charte from "./pages/about/Charte";
-import Temoignages from "./pages/about/Temoignages";
-import Comparatif from "./pages/Comparatif";
-
-import FAQ from "./pages/contact/FAQ";
-import ChecklistMariage from "./pages/ChecklistMariage";
-import ChecklistPublic from "./pages/ChecklistPublic";
-import ToDoListMariage from "./pages/ToDoListMariage";
-import ListePreparatifMariage from "./pages/ListePreparatifMariage";
-import Accompagnement from "./pages/Accompagnement";
-import LivreBlanc from "./pages/LivreBlanc";
-import CoordinateursMarriage from "./pages/CoordinateursMarriage";
-
-// Import admin pages
-import AdminDashboard from "./pages/admin/AdminDashboard";
-import AdminBlog from "./pages/admin/Blog";
-import AdminUsers from "./pages/admin/Users";
-import AdminDevisProfessionnels from "./pages/admin/DevisProfessionnels";
-import AdminSatisfactionUtilisateurs from "./pages/admin/SatisfactionUtilisateurs";
-import EnvoiDevis from "./pages/EnvoiDevis";
-import AdminPrestataires from "./pages/admin/Prestataires";
-import AdminForm from "./pages/admin/FormAdmin";
-import AdminReservationsJourM from "./pages/admin/ReservationsJourM";
-import AdminSystemCheck from "./pages/admin/SystemCheck";
-import AdminProfessionalRegistrations from "./pages/admin/ProfessionalRegistrations";
-
-// Import Jeunes Mariés pages
-import JeunesMaries from "./pages/JeunesMaries";
-import JeuneMariesInscription from "./pages/JeuneMariesInscription";
-import JeuneMariesDetail from "./pages/JeuneMariesDetail";
-import JeuneMariesConfirmation from "./pages/JeuneMariesConfirmation";
-import AdminJeunesMaries from "./pages/admin/AdminJeunesMaries";
-import CustomPages from "./pages/admin/CustomPages";
-import AdminCarnetAdresses from "./pages/admin/CarnetAdresses";
-import CustomPage from "./pages/CustomPage";
-import PropositionPage from "./pages/PropositionPage";
-import AvantJourJPublic from "./pages/AvantJourJPublic";
-import ApresJourJPublic from "./pages/ApresJourJPublic";
-import ProtectedRoute from "./components/auth/ProtectedRoute";
-import ContentCreatorMariage from "./pages/ContentCreatorMariage";
-import VibeWedding from "./pages/VibeWedding";
-import FeaturesInteractive from "./pages/FeaturesInteractive";
-import Sitemap from "./pages/Sitemap";
-import SitemapHTML from "./pages/SitemapHTML";
-import ProfessionnelsMariable from "./pages/ProfessionnelsMariable";
-import RSVPPublicForm from "./pages/rsvp/RSVPPublicForm";
-import AccommodationsPage from "./pages/dashboard/AccommodationsPage";
+// Loading component
+const PageLoader = () => (
+  <div className="min-h-screen flex items-center justify-center bg-premium-warm">
+    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-wedding-olive" />
+  </div>
+);
 
 const queryClient = new QueryClient();
 
@@ -121,7 +121,8 @@ function App() {
             <BrowserRouter>
               <AnalyticsProvider>
                 <PaymentSuccessHandler />
-                <Routes>
+                <Suspense fallback={<PageLoader />}>
+                  <Routes>
                   <Route path="/" element={<LandingCouple />} />
                   <Route path="/landing-generale" element={<LandingGenerale />} />
                   <Route path="/simple" element={<SimpleHomePage />} />
@@ -260,7 +261,8 @@ function App() {
                    <Route path="/sitemap" element={<SitemapHTML />} />
                    
                    <Route path="*" element={<NotFound />} />
-                </Routes>
+                  </Routes>
+                </Suspense>
               </AnalyticsProvider>
             </BrowserRouter>
           </TooltipProvider>

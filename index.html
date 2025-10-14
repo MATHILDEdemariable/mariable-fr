@@ -16,6 +16,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     
+    <!-- Preload critical video -->
+    <link rel="preload" as="video" href="https://bgidfcqktsttzlwlumtz.supabase.co/storage/v1/object/public/background-videos//freepik__wideangle-shot-a-joyful-couple-dances-at-their-wed__74093%20(1).mp4" type="video/mp4">
+    
     <!-- Favicons -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
@@ -88,8 +91,12 @@
     
     <!-- Analytics scripts loaded after page render (non-blocking) -->
     <script>
-      // Lazy load analytics after 2 seconds to not block initial render
-      setTimeout(function() {
+      // Lazy load analytics after user interaction or 3 seconds
+      let analyticsLoaded = false;
+      
+      function loadAnalytics() {
+        if (analyticsLoaded) return;
+        analyticsLoaded = true;
         // Google Tag Manager
         (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
         new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -116,7 +123,13 @@
           r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
           a.appendChild(r);
         })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
-      }, 2000);
+      }
+      
+      // Load on first interaction or after 3 seconds
+      window.addEventListener('scroll', loadAnalytics, { once: true });
+      window.addEventListener('click', loadAnalytics, { once: true });
+      window.addEventListener('touchstart', loadAnalytics, { once: true });
+      setTimeout(loadAnalytics, 3000);
     </script>
   </body>
 </html>
