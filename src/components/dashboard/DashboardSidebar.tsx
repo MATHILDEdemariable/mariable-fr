@@ -19,7 +19,8 @@ import {
   Coins,
   ListChecks,
   UserCheck,
-  Home
+  Home,
+  QrCode
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
@@ -209,6 +210,11 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
   // Vérifier si Gestion des logements est actif
   const isAccommodationsActive = () => {
     return isActive('/dashboard/accommodations');
+  };
+
+  // Vérifier si QR Code est actif
+  const isQRCodeActive = () => {
+    return isActive('/dashboard/qr-code');
   };
 
   // Vérifier si le menu Aide doit être actif
@@ -518,6 +524,29 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
             Gestion des logements
             <span className="text-[10px] px-1.5 py-0.5 bg-orange-100 text-orange-700 rounded font-medium">beta</span>
           </span>
+          {isReaderMode && (
+            <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>
+          )}
+        </Link>
+
+        {/* Générateur QR Code */}
+        <Link
+          to={isReaderMode ? '#' : '/dashboard/qr-code'}
+          onClick={(e) => {
+            if (isReaderMode) {
+              e.preventDefault();
+            }
+          }}
+          className={cn(
+            "flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors",
+            isQRCodeActive()
+              ? 'bg-wedding-olive text-white shadow-sm'
+              : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive',
+            isReaderMode ? 'pointer-events-none opacity-70' : ''
+          )}
+        >
+          <QrCode className="h-4 w-4" />
+          <span className="ml-2 sm:ml-3 leading-tight">QR Code</span>
           {isReaderMode && (
             <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>
           )}

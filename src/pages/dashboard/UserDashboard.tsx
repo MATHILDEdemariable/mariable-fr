@@ -33,6 +33,7 @@ import RSVPManagement from './RSVPManagement';
 import RSVPResponses from './RSVPResponses';
 import ProfessionnelsMariableDashboard from '@/components/dashboard/ProfessionnelsMariableDashboard';
 import AccommodationsPage from './AccommodationsPage';
+import QRCodeGeneratorPage from './QRCodeGenerator';
 
 const UserDashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -94,6 +95,7 @@ const UserDashboard: React.FC = () => {
           <Route path="rsvp" element={<RSVPManagement />} />
           <Route path="rsvp/:eventId/responses" element={<RSVPResponses />} />
           <Route path="accommodations" element={<AccommodationsPage />} />
+          <Route path="qr-code" element={<QRCodeGeneratorPage />} />
           <Route path="*" element={<div>Page non trouvée</div>} />
         </Route>
       </Routes>

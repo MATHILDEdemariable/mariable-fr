@@ -100,6 +100,7 @@ const SitemapHTML = lazy(() => import("./pages/SitemapHTML"));
 const ProfessionnelsMariable = lazy(() => import("./pages/ProfessionnelsMariable"));
 const RSVPPublicForm = lazy(() => import("./pages/rsvp/RSVPPublicForm"));
 const AccommodationsPage = lazy(() => import("./pages/dashboard/AccommodationsPage"));
+const QRCodeGeneratorPage = lazy(() => import("./pages/dashboard/QRCodeGenerator"));
 
 // Loading component
 const PageLoader = () => (
