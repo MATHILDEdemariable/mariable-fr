@@ -96,7 +96,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         {/* Sidebar - conditionally visible */}
         <div 
           className={`${isMobile ? 'fixed z-40 h-full overflow-y-auto transition-transform duration-300 transform' : 'flex-shrink-0'} 
-                    ${(isMobile && !sidebarVisible) ? '-translate-x-full' : 'translate-x-0'}`}
+                    ${(isMobile && !sidebarVisible) ? '-translate-x-full' : 'translate-x-0'} pt-32`}
           style={{ width: isMobile ? '280px' : '250px' }}
         >
           <DashboardSidebar isReaderMode={isReaderMode} />
@@ -105,7 +105,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         {/* Main content area - better mobile spacing */}
         <div className="flex-1 flex justify-start items-start transition-all duration-300" 
              style={{ marginLeft: (!isMobile && sidebarVisible) ? '0' : '0' }}>
-          <main className="w-full pb-4 px-2 sm:pb-6 sm:px-3 lg:px-4 pt-32" data-page-root>
+          <main className="w-full pb-4 px-2 sm:pb-6 sm:px-3 lg:px-4 pt-40" data-page-root>
             {children || <Outlet />}
           </main>
         </div>
