@@ -161,7 +161,7 @@ const CoordinationJourJ: React.FC = () => {
                 </Button>
               </Link>
               <Badge variant="secondary" className="bg-wedding-olive text-white text-lg px-4 py-2">
-                14,9€
+                39€
               </Badge>
             </div>
           </div>

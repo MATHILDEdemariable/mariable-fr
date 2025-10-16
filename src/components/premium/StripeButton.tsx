@@ -61,7 +61,7 @@ const StripeButton: React.FC = () => {
         className="w-full"
         size="lg"
       >
-        {loading ? 'Préparation...' : 'Passer à Premium - 14,90€'}
+        {loading ? 'Préparation...' : 'Passer à Premium - 39€'}
       </Button>
       
       <div className="flex items-center justify-center gap-2 text-sm text-gray-600">

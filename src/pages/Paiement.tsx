@@ -65,7 +65,7 @@ const Paiement = () => {
           telephone_whatsapp: formData.phone,
           date_mariage: formData.weddingDate,
           statut: 'en_attente',
-          montant: 14.90,
+          montant: 39.00,
           devise: 'EUR'
         });
 
@@ -172,7 +172,7 @@ const Paiement = () => {
                     </CardTitle>
                     <div className="text-center">
                       <div className="text-4xl font-bold text-wedding-olive mb-2">
-                        14,9€ TTC
+                        39€ TTC
                       </div>
                       <p className="text-sm text-wedding-olive font-medium mt-2">💍 Application Jour-J personnalisable</p>
                     </div>
@@ -301,7 +301,7 @@ const Paiement = () => {
                     <div className="pt-4 border-t">
                       <div className="flex items-center justify-between mb-4">
                         <span className="text-lg font-semibold">Total</span>
-                        <span className="text-2xl font-bold text-wedding-olive">14,90€ TTC</span>
+                        <span className="text-2xl font-bold text-wedding-olive">39€ TTC</span>
                       </div>
                       
       <Button 

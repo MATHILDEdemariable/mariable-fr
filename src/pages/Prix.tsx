@@ -30,7 +30,7 @@ const Prix = () => {
   return <div className="min-h-screen flex flex-col bg-white">
       <Helmet>
         <title>Tarifs - Services Mariable | Wedding Planner en ligne</title>
-        <meta name="description" content="Découvrez nos tarifs transparents pour organiser votre mariage. Application autonome à 14,9€ et services premium sur demande." />
+        <meta name="description" content="Découvrez nos tarifs transparents pour organiser votre mariage. Application autonome à 39€ et services premium sur demande." />
       </Helmet>
       
       <PremiumHeader />
@@ -106,7 +106,7 @@ const Prix = () => {
                 
                 <CardContent className="flex-grow flex flex-col">
                   <div className="text-center mb-6">
-                    <div className="text-4xl font-bold text-wedding-olive mb-2">14,9€</div>
+                    <div className="text-4xl font-bold text-wedding-olive mb-2">39€</div>
                     <div className="text-sm text-gray-600 font-medium">Paiement unique</div>
                     <div className="text-xs text-wedding-olive font-semibold mt-1">Application à vie</div>
                   </div>

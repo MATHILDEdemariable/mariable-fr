@@ -128,7 +128,7 @@ const SalonDuMariage2025 = () => {
                     Débloquez toutes les fonctionnalités de coordination pour votre mariage
                   </p>
                   <p className="text-sm text-primary font-semibold mb-4">
-                    14,90€ - Accès vie entière
+                    39€ - Accès vie entière
                   </p>
                 </div>
                 

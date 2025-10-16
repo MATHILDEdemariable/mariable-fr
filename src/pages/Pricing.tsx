@@ -90,7 +90,7 @@ const Pricing = () => {
                     <Card className="shadow-md hover:shadow-lg transition-shadow flex flex-col h-full">
                       <CardHeader className="text-center bg-wedding-olive text-white">
                         <CardTitle className="text-xl">Libre</CardTitle>
-                        <div className="text-2xl font-bold">14,9€</div>
+                        <div className="text-2xl font-bold">39€</div>
                       </CardHeader>
                       <CardContent className="p-6 flex flex-col flex-1">
                         <div className="space-y-3 flex-1">

@@ -21,7 +21,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose }) => {
           </div>
           
           <DialogTitle className="text-center">
-            Formule Libre - 14,9€
+            Formule Libre - 39€
           </DialogTitle>
           
           <DialogDescription className="text-center">
