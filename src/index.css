@@ -315,7 +315,15 @@ header.site-header {
 }
 
 main, [data-page-root] {
-  padding-top: var(--header-h);
+  padding-top: var(--header-h) !important;
+  min-height: calc(100vh - var(--header-h));
+}
+
+/* Adaptation mobile du header */
+@media (max-width: 768px) {
+  :root {
+    --header-h: 96px;
+  }
 }
 
 /* Correction ancres internes */
