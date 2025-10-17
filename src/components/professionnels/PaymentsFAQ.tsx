@@ -29,7 +29,7 @@ const PaymentsFAQ = () => {
     },
     {
       question: "Quels sont les frais ?",
-      answer: "Frais de transaction Stripe (1,4% + 0,25€ par transaction) + frais plateforme Mariable selon votre volume de mariages. Détails complets communiqués lors de la démo personnalisée."
+      answer: "Les frais sont : 3,9% par prestations, ou un forfait abonnement à 49€/mois + 2,5% commission par prestations. Formules à choisir selon votre volume de mariages. Détails complets lors de la démo."
     }
   ];
 
