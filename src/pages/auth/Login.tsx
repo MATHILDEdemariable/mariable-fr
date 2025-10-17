@@ -133,7 +133,7 @@ const Login = () => {
       />
       <PremiumHeader />
       
-      <main className="container max-w-md mx-auto px-4 pt-32 pb-12">
+      <main className="container max-w-md mx-auto px-4 py-12">
         <Card className="w-full">
           <CardHeader className="space-y-1">
             <CardTitle className="text-2xl font-serif text-center">

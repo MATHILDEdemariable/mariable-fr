@@ -305,7 +305,7 @@ select:focus {
 
 /* Solution header dynamique */
 :root { 
-  --header-h: 112px; /* hauteur augmentée pour dashboard */
+  --header-h: 96px; /* hauteur corrigée pour correspondre au PremiumHeader (h-24) */
 }
 
 header.site-header {
