@@ -80,6 +80,7 @@ const AdminForm = lazy(() => import("./pages/admin/FormAdmin"));
 const AdminReservationsJourM = lazy(() => import("./pages/admin/ReservationsJourM"));
 const AdminSystemCheck = lazy(() => import("./pages/admin/SystemCheck"));
 const AdminProfessionalRegistrations = lazy(() => import("./pages/admin/ProfessionalRegistrations"));
+const AdminPaymentLeads = lazy(() => import("./pages/admin/PaymentLeads"));
 const JeunesMaries = lazy(() => import("./pages/JeunesMaries"));
 const JeuneMariesInscription = lazy(() => import("./pages/JeuneMariesInscription"));
 const JeuneMariesDetail = lazy(() => import("./pages/JeuneMariesDetail"));
@@ -227,6 +228,7 @@ function App() {
                    <Route path="/envoidevis" element={<EnvoiDevis />} />
                    <Route path="/admin/prestataires" element={<AdminPrestataires />} />
                    <Route path="/admin/professional-registrations" element={<AdminProfessionalRegistrations />} />
+                   <Route path="/admin/payment-leads" element={<AdminPaymentLeads />} />
                    <Route path="/admin/form" element={<AdminForm />} />
                    <Route path="/admin/reservations-jour-m" element={<AdminReservationsJourM />} />
                    <Route path="/admin/system-check" element={<AdminSystemCheck />} />

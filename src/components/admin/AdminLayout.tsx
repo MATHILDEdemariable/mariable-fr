@@ -70,6 +70,12 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
       current: location.pathname === '/admin/professional-registrations'
     },
     {
+      name: 'Demandes Paiements',
+      href: '/admin/payment-leads',
+      icon: FileText,
+      current: location.pathname === '/admin/payment-leads'
+    },
+    {
       name: 'Jeunes Mariés',
       href: '/admin/jeunes-maries',
       icon: Heart,
