@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import SEO from '@/components/SEO';
-import SimpleHeader from '@/components/SimpleHeader';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 
 const CGV = () => {
   useEffect(() => {
@@ -14,8 +15,8 @@ const CGV = () => {
         description="Consultez les conditions contractuelles de partenariat entre Mariable et les professionnels de l'événementiel."
         canonical="/cgv"
       />
-      <SimpleHeader />
-      <div className="min-h-screen bg-white py-12">
+      <Header />
+      <main className="min-h-screen bg-white pt-32 pb-12">
         <div className="container max-w-4xl mx-auto px-4">
           <h1 className="text-4xl font-serif mb-4 text-wedding-black">
             CONTRAT DE MISE EN RELATION ET COMMISSION
@@ -180,7 +181,8 @@ const CGV = () => {
             </p>
           </div>
         </div>
-      </div>
+      </main>
+      <Footer />
     </>
   );
 };
