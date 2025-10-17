@@ -29,7 +29,7 @@ const LandingCouple = () => {
       
       <PremiumHeader />
       
-      <main className="flex-grow pt-16">
+      <main className="flex-grow" style={{ paddingTop: 'var(--header-h)' }}>
         {/* Hero Section Premium */}
         <PremiumHeroSection />
 
