@@ -191,10 +191,10 @@ const Professionnels = () => {
                   <PainSolutionSection />
                   <HowItWorksSection />
                   <FeaturesGrid />
+                  <DemoRequestForm />
                   <SecuritySection />
                   <SocialProofSection />
                   
-                  <DemoRequestForm />
                   
                   {/* CTA Principal Calendly */}
                   <section className="max-w-4xl mx-auto py-12 text-center">
