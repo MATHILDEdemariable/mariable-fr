@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import Header from '@/components/Header';
+import PremiumHeader from '@/components/home/PremiumHeader';
 import Footer from '@/components/Footer';
 import { Link } from 'react-router-dom';
 import { FileDown, CheckCircle, Search } from 'lucide-react';
@@ -24,7 +24,7 @@ const Professionnels = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
-      <Header />
+      <PremiumHeader />
       
       <SEO 
         title="Partenaires Mariable | Référencement & Paiements pour pros du mariage"
@@ -32,7 +32,7 @@ const Professionnels = () => {
         canonical="/professionnels"
       />
       
-      <main className="flex-grow pt-32 pb-12">
+      <main className="flex-grow pt-16 pb-12">
         {/* Hero principal */}
         <section className="container mx-auto px-4 py-12 text-center">
           <h1 className="text-4xl md:text-6xl font-serif mb-4 text-wedding-black">
@@ -47,7 +47,7 @@ const Professionnels = () => {
         </section>
 
         {/* Tabs Navigation Sticky */}
-        <div className="sticky top-28 z-20 bg-white border-b shadow-sm">
+        <div className="sticky top-16 z-20 bg-white border-b shadow-sm">
           <div className="container mx-auto px-4">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
               <TabsList className="w-full max-w-2xl mx-auto grid grid-cols-2 h-auto p-2">

@@ -76,7 +76,7 @@ const DemoRequestForm = () => {
   };
 
   return (
-    <section id="demo-form" className="max-w-2xl mx-auto mb-16 scroll-mt-32">
+    <section id="demo-form" className="max-w-2xl mx-auto mb-16 scroll-mt-24">
       <Card className="p-8">
         <h2 className="text-2xl font-serif mb-2 text-center">Je veux une démo & plus d'information</h2>
         <p className="text-sm text-muted-foreground text-center mb-6">
