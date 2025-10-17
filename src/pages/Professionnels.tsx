@@ -194,6 +194,8 @@ const Professionnels = () => {
                   <SecuritySection />
                   <SocialProofSection />
                   
+                  <DemoRequestForm />
+                  
                   {/* CTA Principal Calendly */}
                   <section className="max-w-4xl mx-auto py-12 text-center">
                     <h2 className="text-3xl font-serif mb-4">Prêt à simplifier votre gestion de paiements ?</h2>
@@ -204,12 +206,8 @@ const Professionnels = () => {
                     >
                       📅 Prendre RDV avec Mathilde (30 min)
                     </Button>
-                    <p className="text-sm text-muted-foreground">
-                      Ou remplissez le formulaire ci-dessous pour être recontacté
-                    </p>
                   </section>
                   
-                  <DemoRequestForm />
                   <PaymentsFAQ />
                 </div>
               </TabsContent>
