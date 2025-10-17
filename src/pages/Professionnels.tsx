@@ -32,7 +32,7 @@ const Professionnels = () => {
         canonical="/professionnels"
       />
       
-      <main className="flex-grow pt-16 pb-12">
+      <main className="flex-grow pt-24 pb-12">
         {/* Hero principal */}
         <section className="container mx-auto px-4 py-12 text-center">
           <h1 className="text-4xl md:text-6xl font-serif mb-4 text-wedding-black">
