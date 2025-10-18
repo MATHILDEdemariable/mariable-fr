@@ -122,7 +122,7 @@ const BlogArticlePage = () => {
         `}</script>
       </SEO>
       <PremiumHeader />
-      <main className="flex-grow bg-gray-50/50">
+      <main className="flex-grow bg-gray-50/50 page-content-premium">
         <article className="max-w-4xl mx-auto px-4 py-8 sm:py-12">
             <div className="mb-6">
                 <Link to="/conseilsmariage">

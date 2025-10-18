@@ -17,7 +17,7 @@ const Charte = () => {
 
       <PremiumHeader />
 
-      <main className="container mx-auto px-4 py-12 max-w-4xl">
+      <main className="container mx-auto px-4 py-12 max-w-4xl page-content-premium">
         <h1 className="text-4xl font-serif mb-8 text-center">Notre Charte Mariable</h1>
 
         <div className="prose prose-lg mx-auto">

@@ -9,7 +9,7 @@ const NousContacter = () => {
     <div className="min-h-screen flex flex-col bg-white">
       <PremiumHeader />
       
-      <main className="flex-grow pb-16 container" style={{ paddingTop: 'var(--header-h)' }}>
+      <main className="flex-grow pb-16 container page-content-premium">
         <div className="max-w-3xl mx-auto">
           <h1 className="text-4xl md:text-5xl font-serif mb-4">Contact</h1>
           <p className="text-xl text-muted-foreground mb-8">

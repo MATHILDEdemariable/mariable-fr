@@ -116,7 +116,7 @@ const BlogPage = () => {
             
             <PremiumHeader />
             
-            <main className="min-h-screen bg-gradient-to-b from-white to-wedding-cream/20">
+            <main className="min-h-screen bg-gradient-to-b from-white to-wedding-cream/20 page-content-premium">
                 {/* Hero Section */}
                 <section className="py-20 px-4">
                     <div className="container mx-auto max-w-4xl text-center">

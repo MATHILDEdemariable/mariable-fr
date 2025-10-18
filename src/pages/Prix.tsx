@@ -35,7 +35,7 @@ const Prix = () => {
       
       <PremiumHeader />
       
-      <main className="flex-grow">
+      <main className="flex-grow page-content-premium">
         {/* Section 1 - Gérez votre mariage en autonomie */}
         <section className="py-16 md:py-20 bg-gray-50 animate-fade-in">
           <div className="container mx-auto px-4">

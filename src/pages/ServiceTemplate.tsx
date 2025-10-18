@@ -17,7 +17,7 @@ const ServiceTemplate: React.FC<ServiceTemplateProps> = ({ title, description, c
       {children}
       <PremiumHeader />
       
-      <main className="flex-grow py-16 container bg-white">
+      <main className="flex-grow py-16 container bg-white page-content-premium">
         <div className="max-w-4xl mx-auto">
           <div className="mb-6">
             <Link to="/">

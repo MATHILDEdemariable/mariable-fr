@@ -241,7 +241,7 @@ const WeddingRetroplanning = () => {
   return (
     <>
       <PremiumHeader />
-      <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 pb-12" style={{ paddingTop: 'var(--header-h-premium)' }}>
+      <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 pb-12 page-content-premium">
         <div className="container max-w-6xl mx-auto px-4">
           {/* Header */}
           <div className="text-center mb-8">

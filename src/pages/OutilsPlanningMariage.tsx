@@ -166,7 +166,7 @@ const OutilsPlanningMariage: React.FC = () => {
 
       <PremiumHeader />
 
-      <main className="min-h-screen bg-gradient-to-b from-white to-wedding-cream/20">
+      <main className="min-h-screen bg-gradient-to-b from-white to-wedding-cream/20 page-content-premium">
         {/* Hero Section */}
         <section className="pb-12 px-4" style={{ paddingTop: 'var(--header-h)' }}>
           <div className="container mx-auto max-w-6xl">

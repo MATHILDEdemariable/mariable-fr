@@ -303,12 +303,11 @@ select:focus {
 }
 
 
-/* Solution header dynamique - Updated 2025-10-17 17:00 */
+/* Solution header sticky - Classes fixes robustes */
 :root { 
   --header-h-premium: 96px;  /* PremiumHeader (h-24) */
   --header-h-simple: 64px;   /* SimpleHeader (h-16) */
   --header-h-standard: 64px; /* Header classique mobile (h-16) */
-  --header-h: 96px; /* Alias par défaut = PremiumHeader pour compatibilité */
 }
 
 /* Hauteur responsive pour Header classique sur desktop */
@@ -324,26 +323,50 @@ header.site-header {
   z-index: 1000;
 }
 
-main, [data-page-root] {
-  padding-top: var(--header-h) !important;
-  min-height: calc(100vh - var(--header-h));
+/* Classe pour pages avec PremiumHeader (96px fixe) */
+.page-content-premium {
+  padding-top: 96px !important;
+  min-height: calc(100vh - 96px);
 }
 
-/* Adaptation mobile du header */
-@media (max-width: 768px) {
-  :root {
-    --header-h: 96px;
+/* Classe pour pages avec Header standard (64px mobile / 112px desktop) */
+.page-content-standard {
+  padding-top: 64px !important;
+  min-height: calc(100vh - 64px);
+}
+
+@media (min-width: 768px) {
+  .page-content-standard {
+    padding-top: 112px !important;
+    min-height: calc(100vh - 112px);
   }
 }
 
-/* Correction ancres internes */
-[id] { 
-  scroll-margin-top: var(--header-h); 
+/* Classe générique (alias vers premium par défaut pour compatibilité) */
+.page-content {
+  padding-top: 96px !important;
+  min-height: calc(100vh - 96px);
 }
 
 /* Classe utilitaire robuste pour éviter les régressions */
 .header-safe { 
-  padding-top: var(--header-h) !important;
+  padding-top: 96px !important;
+}
+
+/* Correction ancres internes */
+[id] { 
+  scroll-margin-top: 96px;
+}
+
+/* Scroll margin adaptatif pour pages standard */
+.page-content-standard [id] {
+  scroll-margin-top: 64px;
+}
+
+@media (min-width: 768px) {
+  .page-content-standard [id] {
+    scroll-margin-top: 112px;
+  }
 }
 
 /* Sidebar dashboard avec header compensation */

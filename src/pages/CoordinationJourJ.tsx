@@ -149,7 +149,7 @@ const CoordinationJourJ: React.FC = () => {
 
       <PremiumHeader />
 
-      <main className="min-h-screen bg-gradient-to-b from-white to-wedding-cream/20" style={{ paddingTop: 'var(--header-h-premium)' }}>
+      <main className="min-h-screen bg-gradient-to-b from-white to-wedding-cream/20 page-content-premium">
         {/* Back to home button and price badge */}
         <section className="pb-4">
           <div className="container mx-auto px-4">
