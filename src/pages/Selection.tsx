@@ -65,7 +65,7 @@ const Selection: React.FC = () => {
 
       <SimpleHeader />
 
-      <div className="min-h-screen bg-background pt-20 pb-12">
+      <div className="min-h-screen bg-background pb-12" style={{ paddingTop: 'var(--header-h-simple)' }}>
         <div className="container max-w-6xl mx-auto px-4">
           {/* Header */}
           <div className="text-center mb-8">

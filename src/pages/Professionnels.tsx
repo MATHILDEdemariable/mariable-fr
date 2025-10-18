@@ -32,7 +32,7 @@ const Professionnels = () => {
         canonical="/professionnels"
       />
       
-      <main className="flex-grow pb-12">
+      <main className="flex-grow pb-12" style={{ paddingTop: 'var(--header-h-premium)' }}>
         {/* Hero principal */}
         <section className="container mx-auto px-4 pt-8 pb-12 text-center">
           <h1 className="text-4xl md:text-6xl font-serif mb-4 text-wedding-black">
@@ -47,7 +47,7 @@ const Professionnels = () => {
         </section>
 
         {/* Tabs Navigation Sticky */}
-        <div className="sticky top-24 z-20 bg-white border-b shadow-sm">
+        <div className="sticky z-20 bg-white border-b shadow-sm" style={{ top: 'var(--header-h-premium)' }}>
           <div className="container mx-auto px-4">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
               <TabsList className="w-full max-w-2xl mx-auto grid grid-cols-2 h-auto p-2">

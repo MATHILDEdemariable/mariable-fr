@@ -173,7 +173,7 @@ const ContentCreatorMariage = () => {
       <PremiumHeader />
 
       {/* Hero Section */}
-      <section className="relative pt-32 pb-20 px-4 bg-gradient-to-br from-premium-warm via-white to-premium-sage-very-light overflow-hidden">
+      <section className="relative pb-20 px-4 bg-gradient-to-br from-premium-warm via-white to-premium-sage-very-light overflow-hidden" style={{ paddingTop: 'var(--header-h-premium)' }}>
         <div className="absolute inset-0 opacity-5">
           <div className="absolute top-10 left-10 w-72 h-72 bg-premium-sage rounded-full blur-3xl" />
           <div className="absolute bottom-10 right-10 w-96 h-96 bg-wedding-gold rounded-full blur-3xl" />

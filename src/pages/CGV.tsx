@@ -16,7 +16,7 @@ const CGV = () => {
         canonical="/cgv"
       />
       <Header />
-      <main className="min-h-screen bg-white pt-32 pb-12">
+      <main className="min-h-screen bg-white pb-12" style={{ paddingTop: 'var(--header-h-standard)' }}>
         <div className="container max-w-4xl mx-auto px-4">
           <h1 className="text-4xl font-serif mb-4 text-wedding-black">
             CONTRAT DE MISE EN RELATION ET COMMISSION

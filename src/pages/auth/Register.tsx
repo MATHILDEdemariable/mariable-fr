@@ -132,7 +132,7 @@ const Register = () => {
       />
       <Header />
       
-      <main className="container max-w-md mx-auto pt-32 pb-12 px-4">
+      <main className="container max-w-md mx-auto pb-12 px-4" style={{ paddingTop: 'var(--header-h-standard)' }}>
         {showEmailAlert && (
           <Alert className="mb-6 border-wedding-olive bg-wedding-olive/10">
             <Mail className="h-4 w-4" />

@@ -99,7 +99,7 @@ const ProfessionnelsMariable = () => {
 
       <PremiumHeader />
       
-      <main className="min-h-screen bg-background pt-24 pb-16">
+      <main className="min-h-screen bg-background pb-16" style={{ paddingTop: 'var(--header-h-premium)' }}>
         <div className="container max-w-7xl mx-auto px-4">
           {/* Header */}
           <div className="text-center mb-8">

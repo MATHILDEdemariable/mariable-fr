@@ -303,9 +303,19 @@ select:focus {
 }
 
 
-/* Solution header dynamique - Updated 2025-10-17 */
+/* Solution header dynamique - Updated 2025-10-17 17:00 */
 :root { 
-  --header-h: 96px; /* hauteur corrigée pour correspondre au PremiumHeader (h-24) */
+  --header-h-premium: 96px;  /* PremiumHeader (h-24) */
+  --header-h-simple: 64px;   /* SimpleHeader (h-16) */
+  --header-h-standard: 64px; /* Header classique mobile (h-16) */
+  --header-h: 96px; /* Alias par défaut = PremiumHeader pour compatibilité */
+}
+
+/* Hauteur responsive pour Header classique sur desktop */
+@media (min-width: 768px) {
+  :root {
+    --header-h-standard: 112px; /* Header classique desktop (md:h-28) */
+  }
 }
 
 header.site-header {
