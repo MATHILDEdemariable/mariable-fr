@@ -115,7 +115,7 @@ const FeaturesInteractive = () => {
       <div className="min-h-screen flex flex-col">
         <PremiumHeader />
         
-        <main className="flex-1" style={{ paddingTop: 'var(--header-h-premium)' }}>
+        <main className="flex-1 header-safe">
           <div className="container mx-auto px-4 py-12">
             {/* Header Section */}
             <div className="text-center mb-12 space-y-4">
