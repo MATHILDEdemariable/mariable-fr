@@ -157,7 +157,7 @@ export const DashboardMockup = ({
           </div>
 
           {/* Documents */}
-          <div className={`p-3 rounded-lg cursor-pointer transition-colors ${hoveredFeature === 'documents' ? 'bg-wedding-olive/10' : 'hover:bg-gray-100'}`} onMouseEnter={() => onHoverFeature('documents')} onMouseLeave={() => onHoverFeature(null)} title="Gérer tous vos documents de mariage avec analyse IA (Premium)">
+          <div className={`p-3 rounded-lg cursor-pointer transition-colors ${hoveredFeature === 'documents' ? 'bg-wedding-olive/10' : 'hover:bg-gray-100'}`} onMouseEnter={() => onHoverFeature('documents')} onMouseLeave={() => onHoverFeature(null)} title="Stock tes documents et centralise les facilement">
             <div className="flex items-center gap-2">
               <FileText className="w-5 h-5 text-wedding-olive" />
               <span className="font-medium">Mes Documents</span>
