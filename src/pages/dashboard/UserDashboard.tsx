@@ -21,7 +21,6 @@ import { useReaderMode } from '@/contexts/ReaderModeContext';
 import ProjectManagement from '@/components/project-management/ProjectManagement';
 import HelpPage from './HelpPage';
 import PremiumBadge from '@/components/premium/PremiumBadge';
-import MessageHistoryPage from './MessageHistoryPage';
 import VendorSelectionPage from './VendorSelectionPage';
 import CoordinatorsPage from './CoordinatorsPage';
 import AvantJourJPage from './AvantJourJPage';
@@ -34,6 +33,8 @@ import RSVPResponses from './RSVPResponses';
 import ProfessionnelsMariableDashboard from '@/components/dashboard/ProfessionnelsMariableDashboard';
 import AccommodationsPage from './AccommodationsPage';
 import QRCodeGeneratorPage from './QRCodeGenerator';
+import ProfessionnelsEmbedded from './ProfessionnelsEmbedded';
+import DocumentsPage from './DocumentsPage';
 
 const UserDashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -78,7 +79,6 @@ const UserDashboard: React.FC = () => {
           <Route path="budget/detailed" element={<DetailedBudget />} />
           <Route path="budget/calculator" element={<BudgetCalculator />} />
           <Route path="professionnelsmariable" element={<ProfessionnelsMariableDashboard />} />
-          <Route path="message-history" element={<MessageHistoryPage />} />
           <Route path="wishlist" element={<WishlistPage />} />
           <Route path="coordination" element={<CoordinationPage />} />
           <Route path="drinks" element={<DrinksCalculator />} />
@@ -88,8 +88,10 @@ const UserDashboard: React.FC = () => {
           <Route path="settings" element={<UserProfile />} />
           <Route path="selection" element={<VendorSelectionPage />} />
           <Route path="selection/:region" element={<VendorSelectionPage />} />
+          <Route path="selection-embedded" element={<ProfessionnelsEmbedded />} />
           <Route path="prestataires" element={<Navigate to="/dashboard/professionnelsmariable" replace />} />
           <Route path="coordinateurs" element={<CoordinatorsPage />} />
+          <Route path="documents" element={<DocumentsPage />} />
           <Route path="avant-jour-j" element={<AvantJourJPage />} />
           <Route path="apres-jour-j" element={<ApresJourJPage />} />
           <Route path="checklist-mariage" element={<ChecklistMariagePage />} />

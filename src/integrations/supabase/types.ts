@@ -2925,6 +2925,60 @@ export type Database = {
         }
         Relationships: []
       }
+      wedding_documents: {
+        Row: {
+          ai_key_points: Json | null
+          ai_summary: string | null
+          category: string | null
+          created_at: string
+          document_type: string
+          file_name: string
+          file_path: string
+          file_size: number | null
+          file_url: string
+          id: string
+          is_analyzed: boolean | null
+          mime_type: string | null
+          updated_at: string
+          user_id: string
+          vendor_name: string | null
+        }
+        Insert: {
+          ai_key_points?: Json | null
+          ai_summary?: string | null
+          category?: string | null
+          created_at?: string
+          document_type: string
+          file_name: string
+          file_path: string
+          file_size?: number | null
+          file_url: string
+          id?: string
+          is_analyzed?: boolean | null
+          mime_type?: string | null
+          updated_at?: string
+          user_id: string
+          vendor_name?: string | null
+        }
+        Update: {
+          ai_key_points?: Json | null
+          ai_summary?: string | null
+          category?: string | null
+          created_at?: string
+          document_type?: string
+          file_name?: string
+          file_path?: string
+          file_size?: number | null
+          file_url?: string
+          id?: string
+          is_analyzed?: boolean | null
+          mime_type?: string | null
+          updated_at?: string
+          user_id?: string
+          vendor_name?: string | null
+        }
+        Relationships: []
+      }
       wedding_faq: {
         Row: {
           answer: string

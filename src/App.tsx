@@ -40,7 +40,6 @@ const Budget = lazy(() => import("./pages/services/Budget"));
 const Prestataire = lazy(() => import("./pages/prestataire/slug"));
 const EmailConfirmation = lazy(() => import("./pages/auth/EmailConfirmation"));
 const ResetPassword = lazy(() => import("./pages/auth/ResetPassword"));
-const MessageHistoryPage = lazy(() => import("./pages/dashboard/MessageHistoryPage"));
 const MonJourMConseils = lazy(() => import("./pages/MonJourMConseils"));
 const MonJourMPenseBete = lazy(() => import("./pages/MonJourMPenseBete"));
 const OutilsPlanningMariage = lazy(() => import("./pages/OutilsPlanningMariage"));

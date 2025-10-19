@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Calendar, CheckSquare, Calculator, Store, Heart, Settings, LogOut, Wine, MessageCircleQuestion, MessageSquare, Users, Lightbulb, ChevronDown, Coins, ListChecks, UserCheck, Home, QrCode } from 'lucide-react';
+import { LayoutDashboard, Calendar, CheckSquare, Calculator, Store, Heart, Settings, LogOut, Wine, MessageCircleQuestion, MessageSquare, Users, Lightbulb, ChevronDown, Coins, ListChecks, UserCheck, Home, QrCode, FileText } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
@@ -53,15 +53,11 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
   const prestatairesItems = [{
     label: 'Sélection Mariable',
     icon: <Store className="h-4 w-4" />,
-    path: '/dashboard/selection'
+    path: '/dashboard/selection-embedded'
   }, {
     label: 'Suivi',
     icon: <Settings className="h-4 w-4" />,
     path: '/dashboard/prestataires'
-  }, {
-    label: 'Historique Message',
-    icon: <MessageSquare className="h-4 w-4" />,
-    path: '/dashboard/message-history'
   }];
 
   // Menu déroulant Jour-J (seulement Jour-J et Coordinateurs)
@@ -338,6 +334,17 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
           <QrCode className="h-4 w-4" />
           <span className="ml-2 sm:ml-3 leading-tight">Liste de mariage
         </span>
+          {isReaderMode && <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>}
+        </Link>
+
+        {/* Documents */}
+        <Link to={isReaderMode ? '#' : '/dashboard/documents'} onClick={e => {
+        if (isReaderMode) {
+          e.preventDefault();
+        }
+      }} className={cn("flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors", isActive('/dashboard/documents') ? 'bg-wedding-olive text-white shadow-sm' : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive', isReaderMode ? 'pointer-events-none opacity-70' : '')}>
+          <FileText className="h-4 w-4" />
+          <span className="ml-2 sm:ml-3 leading-tight">Documents</span>
           {isReaderMode && <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>}
         </Link>
 
