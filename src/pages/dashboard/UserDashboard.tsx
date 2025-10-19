@@ -89,7 +89,8 @@ const UserDashboard: React.FC = () => {
           <Route path="selection" element={<VendorSelectionPage />} />
           <Route path="selection/:region" element={<VendorSelectionPage />} />
           <Route path="selection-embedded" element={<ProfessionnelsEmbedded />} />
-          <Route path="prestataires" element={<Navigate to="/dashboard/professionnelsmariable" replace />} />
+          <Route path="suivi" element={<VendorTracking />} />
+          <Route path="prestataires" element={<Navigate to="/dashboard/suivi" replace />} />
           <Route path="coordinateurs" element={<CoordinatorsPage />} />
           <Route path="documents" element={<DocumentsPage />} />
           <Route path="avant-jour-j" element={<AvantJourJPage />} />

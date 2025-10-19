@@ -10,7 +10,7 @@ const ProfessionnelsEmbedded = () => {
       
       <div className="h-full w-full">
         <iframe 
-          src="/professionnels-mariable"
+          src="/professionnelsmariable"
           className="w-full h-[calc(100vh-96px)] border-0"
           title="Sélection de Prestataires Mariable"
           sandbox="allow-same-origin allow-scripts allow-popups allow-forms"

@@ -57,7 +57,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
   }, {
     label: 'Suivi',
     icon: <Settings className="h-4 w-4" />,
-    path: '/dashboard/prestataires'
+    path: '/dashboard/suivi'
   }];
 
   // Menu déroulant Jour-J (seulement Jour-J et Coordinateurs)
