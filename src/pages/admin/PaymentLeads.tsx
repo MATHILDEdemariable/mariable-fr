@@ -23,8 +23,9 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { CheckCircle, Clock, Search, AlertCircle, Mail, Phone } from 'lucide-react';
+import { CheckCircle, Clock, Search, AlertCircle, Mail, Phone, Download } from 'lucide-react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { exportPaymentLeadsToCSV } from '@/lib/csvExport';
 
 interface PaymentLead {
   id: string;
@@ -235,11 +236,21 @@ const AdminPaymentLeads = () => {
   return (
     <AdminLayout>
       <div className="space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold">Demandes Paiements Simplifiés</h1>
-          <p className="text-muted-foreground mt-2">
-            Gérez les demandes de démonstration pour la solution de paiements
-          </p>
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold">Demandes Paiements Simplifiés</h1>
+            <p className="text-muted-foreground mt-2">
+              Gérez les demandes de démonstration pour la solution de paiements
+            </p>
+          </div>
+          <Button 
+            onClick={() => exportPaymentLeadsToCSV(filteredLeads)}
+            variant="outline"
+            className="gap-2"
+          >
+            <Download className="h-4 w-4" />
+            Exporter CSV
+          </Button>
         </div>
 
         {error && (

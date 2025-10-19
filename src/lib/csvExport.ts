@@ -224,3 +224,125 @@ export const generateBlogCSVTemplate = (): void => {
     throw new Error(`Impossible de générer le template: ${error.message}`);
   }
 };
+
+export interface VendorContactExportData {
+  date: string;
+  email: string;
+  prestataire: string;
+  date_mariage: string;
+  message: string;
+  statut: string;
+}
+
+export const exportVendorContactsToCSV = (contacts: any[]): void => {
+  console.log('🚀 exportVendorContactsToCSV started:', { contactCount: contacts.length });
+  
+  try {
+    const csvData: VendorContactExportData[] = contacts.map(contact => ({
+      date: new Date(contact.created_at).toLocaleDateString('fr-FR'),
+      email: contact.email,
+      prestataire: contact.vendor_name || "Non spécifié",
+      date_mariage: contact.wedding_date_text,
+      message: contact.message,
+      statut: contact.status === 'pending' ? 'En attente' : 'Traitée'
+    }));
+
+    const headers = ['Date', 'Email', 'Prestataire', 'Date Mariage', 'Message', 'Statut'];
+    const csvContent = [
+      headers.join(','),
+      ...csvData.map(row => [
+        row.date,
+        `"${row.email}"`,
+        `"${row.prestataire}"`,
+        row.date_mariage,
+        `"${row.message.replace(/"/g, '""')}"`,
+        row.statut
+      ].join(','))
+    ].join('\n');
+
+    const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    
+    link.setAttribute('href', url);
+    link.setAttribute('download', `demandes-contact-prestataires-${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    console.log('✅ Vendor contacts CSV export completed successfully');
+    
+  } catch (error) {
+    console.error('❌ Erreur lors de l\'export CSV contacts:', error);
+    throw new Error(`Impossible d'exporter les contacts: ${error.message}`);
+  }
+};
+
+export interface PaymentLeadExportData {
+  date: string;
+  nom_complet: string;
+  email: string;
+  telephone: string;
+  categorie: string;
+  message: string;
+  statut: string;
+  notes_admin: string;
+}
+
+export const exportPaymentLeadsToCSV = (leads: any[]): void => {
+  console.log('🚀 exportPaymentLeadsToCSV started:', { leadCount: leads.length });
+  
+  try {
+    const csvData: PaymentLeadExportData[] = leads.map(lead => ({
+      date: new Date(lead.created_at).toLocaleDateString('fr-FR', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      }),
+      nom_complet: lead.full_name,
+      email: lead.email,
+      telephone: lead.phone,
+      categorie: lead.category,
+      message: lead.message || 'Pas de message',
+      statut: lead.status === 'nouveau' ? 'Nouveau' : lead.status === 'en_cours' ? 'En cours' : 'Traité',
+      notes_admin: lead.admin_notes || ''
+    }));
+
+    const headers = ['Date', 'Nom complet', 'Email', 'Téléphone', 'Catégorie', 'Message', 'Statut', 'Notes Admin'];
+    const csvContent = [
+      headers.join(','),
+      ...csvData.map(row => [
+        row.date,
+        `"${row.nom_complet}"`,
+        `"${row.email}"`,
+        `"${row.telephone}"`,
+        row.categorie,
+        `"${row.message.replace(/"/g, '""')}"`,
+        row.statut,
+        `"${row.notes_admin.replace(/"/g, '""')}"`
+      ].join(','))
+    ].join('\n');
+
+    const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    
+    link.setAttribute('href', url);
+    link.setAttribute('download', `demandes-paiements-${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    console.log('✅ Payment leads CSV export completed successfully');
+    
+  } catch (error) {
+    console.error('❌ Erreur lors de l\'export CSV paiements:', error);
+    throw new Error(`Impossible d'exporter les paiements: ${error.message}`);
+  }
+};

@@ -106,6 +106,14 @@ export const dashboardFeatures: Feature[] = [
     isExpandable: false
   },
   {
+    id: 'qr-code',
+    zone: 'sidebar',
+    position: { top: '690px', left: '20px', width: '200px', height: '40px' },
+    title: 'QR Code',
+    description: 'Générez des QR codes personnalisés pour votre liste de mariage, cagnotte en ligne ou site web. Facilitez l\'accès à vos liens importants pour vos invités.',
+    isExpandable: false
+  },
+  {
     id: 'user-profile',
     zone: 'header',
     position: { top: '15px', left: 'calc(100% - 200px)', width: '180px', height: '50px' },

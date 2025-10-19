@@ -13,8 +13,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { Search, Mail, Check, Trash2, ExternalLink } from "lucide-react";
+import { Search, Mail, Check, Trash2, ExternalLink, Download } from "lucide-react";
 import { useDebounce } from "@/hooks/use-debounce";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { exportVendorContactsToCSV } from "@/lib/csvExport";
 
 interface VendorContactRequest {
   id: string;
@@ -91,16 +93,29 @@ const VendorContactsAdmin = () => {
     try {
       const { error } = await supabase
         .from("vendor_contact_requests")
-        .update({ status: 'processed' })
+        .update({ 
+          status: 'processed',
+          updated_at: new Date().toISOString()
+        })
         .eq("id", id);
         
       if (error) {
         toast.error("Erreur lors de la mise à jour");
+        console.error("Error:", error);
         return;
       }
       
+      // Mise à jour optimiste
+      setContacts(prevContacts => 
+        prevContacts.map(c => 
+          c.id === id ? { ...c, status: 'processed' as const } : c
+        )
+      );
+      
       toast.success("Demande marquée comme traitée");
-      fetchContacts();
+      
+      // Re-fetch pour garantir la cohérence
+      await fetchContacts();
     } catch (err) {
       console.error("Erreur:", err);
       toast.error("Une erreur est survenue");
@@ -171,6 +186,14 @@ const VendorContactsAdmin = () => {
               )}
             </p>
           </div>
+          <Button 
+            onClick={() => exportVendorContactsToCSV(filteredContacts)}
+            variant="outline"
+            className="gap-2"
+          >
+            <Download className="h-4 w-4" />
+            Exporter CSV
+          </Button>
         </div>
 
         <div className="flex flex-col sm:flex-row gap-4">
@@ -249,9 +272,38 @@ const VendorContactsAdmin = () => {
                   </TableCell>
                   <TableCell>{contact.wedding_date_text}</TableCell>
                   <TableCell>
-                    <div className="max-w-xs truncate" title={contact.message}>
-                      {contact.message}
-                    </div>
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button variant="link" className="text-left p-0 h-auto">
+                          <div className="max-w-xs truncate text-sm">
+                            {contact.message}
+                          </div>
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="max-w-2xl">
+                        <DialogHeader>
+                          <DialogTitle>Détails de la demande</DialogTitle>
+                        </DialogHeader>
+                        <div className="space-y-4">
+                          <div>
+                            <p className="font-semibold">Email :</p>
+                            <p>{contact.email}</p>
+                          </div>
+                          <div>
+                            <p className="font-semibold">Prestataire :</p>
+                            <p>{contact.vendor_name || "Non spécifié"}</p>
+                          </div>
+                          <div>
+                            <p className="font-semibold">Date mariage :</p>
+                            <p>{contact.wedding_date_text}</p>
+                          </div>
+                          <div>
+                            <p className="font-semibold">Message complet :</p>
+                            <p className="whitespace-pre-wrap">{contact.message}</p>
+                          </div>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
                   </TableCell>
                   <TableCell>
                     <Badge variant={contact.status === 'pending' ? 'destructive' : 'default'}>

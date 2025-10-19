@@ -1,6 +1,6 @@
 
 import React, { useEffect } from 'react';
-import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import { Routes, Route, useNavigate, useLocation, Navigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { supabase } from '@/integrations/supabase/client';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
@@ -88,6 +88,7 @@ const UserDashboard: React.FC = () => {
           <Route path="settings" element={<UserProfile />} />
           <Route path="selection" element={<VendorSelectionPage />} />
           <Route path="selection/:region" element={<VendorSelectionPage />} />
+          <Route path="prestataires" element={<Navigate to="/dashboard/professionnelsmariable" replace />} />
           <Route path="coordinateurs" element={<CoordinatorsPage />} />
           <Route path="avant-jour-j" element={<AvantJourJPage />} />
           <Route path="apres-jour-j" element={<ApresJourJPage />} />

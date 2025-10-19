@@ -7,7 +7,8 @@ import { FeatureTooltip } from '@/components/features/FeatureTooltip';
 import { dashboardFeatures, Feature } from '@/data/dashboardFeatures';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { ChevronDown, ChevronUp, Heart, DollarSign, CheckCircle, Calendar, Sparkles, Users, UserCheck, Home } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { ChevronDown, ChevronUp, Heart, DollarSign, CheckCircle, Calendar, Sparkles, Users, UserCheck, Home, QrCode } from 'lucide-react';
 
 const FeaturesInteractive = () => {
   const isMobile = useIsMobile();
@@ -57,6 +58,7 @@ const FeaturesInteractive = () => {
       'prestataires': <Users className="w-5 h-5 text-wedding-olive" />,
       'rsvp': <UserCheck className="w-5 h-5 text-wedding-olive" />,
       'logements': <Home className="w-5 h-5 text-wedding-olive" />,
+      'qr-code': <QrCode className="w-5 h-5 text-wedding-olive" />,
     };
     return iconMap[featureId] || <Heart className="w-5 h-5 text-wedding-olive" />;
   };
@@ -220,6 +222,42 @@ const FeaturesInteractive = () => {
                 </div>
               </div>
             )}
+
+            {/* CTA Section */}
+            <div className="mt-12 max-w-4xl mx-auto">
+              <div className="bg-gradient-to-r from-wedding-olive/10 to-wedding-cream/20 rounded-lg border-2 border-wedding-olive/30 p-8 text-center space-y-4">
+                <h2 className="text-3xl font-bold text-wedding-olive">
+                  Prêt à organiser votre mariage ?
+                </h2>
+                <p className="text-lg text-muted-foreground">
+                  Créez votre compte gratuit et accédez à tous ces outils dès maintenant
+                </p>
+                <Button 
+                  size="lg" 
+                  className="bg-wedding-olive hover:bg-wedding-olive/90 text-white font-semibold px-8 py-6 text-lg"
+                  onClick={() => window.location.href = '/register'}
+                >
+                  Créer un compte gratuit
+                </Button>
+                
+                <div className="mt-8 pt-6 border-t border-wedding-olive/20">
+                  <p className="text-sm text-muted-foreground mb-2">
+                    Une fonctionnalité vous manque ?
+                  </p>
+                  <p className="text-wedding-olive font-medium">
+                    📧 Écrivez-nous vos suggestions ! Nous adorons vos idées 😊
+                  </p>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    className="mt-3"
+                    onClick={() => window.location.href = '/contact'}
+                  >
+                    Nous contacter
+                  </Button>
+                </div>
+              </div>
+            </div>
           </div>
         </main>
 
