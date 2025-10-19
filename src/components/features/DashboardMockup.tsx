@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { Feature, dashboardFeatures } from '@/data/dashboardFeatures';
-import { Heart, DollarSign, CheckCircle, Calendar, Sparkles, Clock, Users, FileText, ChevronDown, ChevronRight, UserCheck } from 'lucide-react';
+import { Heart, DollarSign, CheckCircle, Calendar, Sparkles, Clock, Users, FileText, ChevronDown, ChevronRight, UserCheck, QrCode, Home } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 interface DashboardMockupProps {
@@ -134,6 +134,33 @@ export const DashboardMockup = ({
               <Badge variant="outline" className="text-[10px] px-1.5 py-0.5 bg-orange-100 text-orange-700 border-orange-300">
                 beta
               </Badge>
+            </div>
+          </div>
+
+          {/* Gestion Hébergements */}
+          <div className={`p-3 rounded-lg cursor-pointer transition-colors ${hoveredFeature === 'logements' ? 'bg-wedding-olive/10' : 'hover:bg-gray-100'}`} onMouseEnter={() => onHoverFeature('logements')} onMouseLeave={() => onHoverFeature(null)} title="Gérer les hébergements de vos invités">
+            <div className="flex items-center gap-2">
+              <Home className="w-5 h-5 text-wedding-olive" />
+              <span className="font-medium">Hébergements Invités</span>
+              <Badge variant="outline" className="text-[10px] px-1.5 py-0.5 bg-orange-100 text-orange-700 border-orange-300">
+                beta
+              </Badge>
+            </div>
+          </div>
+
+          {/* QR Code */}
+          <div className={`p-3 rounded-lg cursor-pointer transition-colors ${hoveredFeature === 'qr-code' ? 'bg-wedding-olive/10' : 'hover:bg-gray-100'}`} onMouseEnter={() => onHoverFeature('qr-code')} onMouseLeave={() => onHoverFeature(null)} title="Générer des QR codes pour liste cadeau et cagnotte">
+            <div className="flex items-center gap-2">
+              <QrCode className="w-5 h-5 text-wedding-olive" />
+              <span className="font-medium">QR Code Liste Cadeau</span>
+            </div>
+          </div>
+
+          {/* Documents */}
+          <div className={`p-3 rounded-lg cursor-pointer transition-colors ${hoveredFeature === 'documents' ? 'bg-wedding-olive/10' : 'hover:bg-gray-100'}`} onMouseEnter={() => onHoverFeature('documents')} onMouseLeave={() => onHoverFeature(null)} title="Gérer tous vos documents de mariage avec analyse IA (Premium)">
+            <div className="flex items-center gap-2">
+              <FileText className="w-5 h-5 text-wedding-olive" />
+              <span className="font-medium">Mes Documents</span>
             </div>
           </div>
         </div>
