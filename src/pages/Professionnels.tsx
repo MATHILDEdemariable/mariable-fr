@@ -191,6 +191,26 @@ const Professionnels = () => {
                   <PainSolutionSection />
                   <HowItWorksSection />
                   <FeaturesGrid />
+                  
+                  {/* CTA Voir le dashboard mockup */}
+                  <section className="max-w-4xl mx-auto mb-16 text-center">
+                    <div className="bg-gradient-to-br from-wedding-cream to-white border border-wedding-olive/20 rounded-lg p-8">
+                      <h3 className="text-2xl font-serif mb-3">Découvrez votre futur tableau de bord</h3>
+                      <p className="text-muted-foreground mb-6">
+                        Visualisez comment vous pourriez gérer vos devis, factures et échéanciers en toute simplicité
+                      </p>
+                      <Button 
+                        asChild
+                        size="lg"
+                        className="bg-wedding-olive hover:bg-wedding-olive/90"
+                      >
+                        <Link to="/pro/dashboard">
+                          👁️ Voir le dashboard en action
+                        </Link>
+                      </Button>
+                    </div>
+                  </section>
+                  
                   <DemoRequestForm />
                   <SecuritySection />
                   <SocialProofSection />

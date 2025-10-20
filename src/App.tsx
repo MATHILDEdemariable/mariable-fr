@@ -101,6 +101,7 @@ const ProfessionnelsMariable = lazy(() => import("./pages/ProfessionnelsMariable
 const RSVPPublicForm = lazy(() => import("./pages/rsvp/RSVPPublicForm"));
 const AccommodationsPage = lazy(() => import("./pages/dashboard/AccommodationsPage"));
 const QRCodeGeneratorPage = lazy(() => import("./pages/dashboard/QRCodeGenerator"));
+const ProDashboardMockup = lazy(() => import("./pages/pro/ProDashboardMockup"));
 
 // Loading component
 const PageLoader = () => (
@@ -190,6 +191,9 @@ function App() {
                   {/* Missing routes - Fixed */}
                   <Route path="/professionnels" element={<Professionnels />} />
                   <Route path="/cgv" element={<CGV />} />
+                  
+                  {/* Dashboard Professionnel Mockup */}
+                  <Route path="/pro/dashboard" element={<ProDashboardMockup />} />
                   
                   <Route path="/contact/faq" element={<FAQ />} />
                    <Route path="/checklist-mariage" element={<ChecklistMariage />} />
