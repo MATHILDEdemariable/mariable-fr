@@ -7,12 +7,15 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { useToast } from '@/components/ui/use-toast';
 import DocumentUploader from '@/components/documents/DocumentUploader';
 import DocumentCard from '@/components/documents/DocumentCard';
+import DocumentViewerModal from '@/components/documents/DocumentViewerModal';
 import { FileText, Loader2 } from 'lucide-react';
 
 const DocumentsPage = () => {
   const { toast } = useToast();
   const [selectedDocument, setSelectedDocument] = useState<any>(null);
   const [summaryDialogOpen, setSummaryDialogOpen] = useState(false);
+  const [viewerOpen, setViewerOpen] = useState(false);
+  const [viewedDocument, setViewedDocument] = useState<any>(null);
 
   const { data: documents, isLoading, refetch } = useQuery({
     queryKey: ['wedding-documents'],
@@ -61,6 +64,11 @@ const DocumentsPage = () => {
     setSummaryDialogOpen(true);
   };
 
+  const handleViewDocument = (document: any) => {
+    setViewedDocument(document);
+    setViewerOpen(true);
+  };
+
   const filterByType = (type: string) => {
     return documents?.filter(doc => doc.document_type === type) || [];
   };
@@ -102,6 +110,7 @@ const DocumentsPage = () => {
                   document={doc}
                   onDelete={handleDelete}
                   onViewSummary={handleViewSummary}
+                  onViewDocument={handleViewDocument}
                 />
               ))
             ) : (
@@ -127,6 +136,7 @@ const DocumentsPage = () => {
                     document={doc}
                     onDelete={handleDelete}
                     onViewSummary={handleViewSummary}
+                    onViewDocument={handleViewDocument}
                   />
                 ))
               ) : (
@@ -174,6 +184,12 @@ const DocumentsPage = () => {
             )}
           </DialogContent>
         </Dialog>
+
+        <DocumentViewerModal
+          isOpen={viewerOpen}
+          onClose={() => setViewerOpen(false)}
+          document={viewedDocument}
+        />
       </div>
     </>
   );

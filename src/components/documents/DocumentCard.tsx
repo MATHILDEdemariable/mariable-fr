@@ -22,9 +22,10 @@ interface DocumentCardProps {
   };
   onDelete: (id: string) => void;
   onViewSummary: (document: any) => void;
+  onViewDocument: (document: any) => void;
 }
 
-const DocumentCard: React.FC<DocumentCardProps> = ({ document, onDelete, onViewSummary }) => {
+const DocumentCard: React.FC<DocumentCardProps> = ({ document, onDelete, onViewSummary, onViewDocument }) => {
   const formatFileSize = (bytes?: number) => {
     if (!bytes) return 'Taille inconnue';
     if (bytes < 1024) return bytes + ' B';
@@ -58,6 +59,13 @@ const DocumentCard: React.FC<DocumentCardProps> = ({ document, onDelete, onViewS
               </div>
               
               <div className="flex gap-1">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => onViewDocument(document)}
+                >
+                  <Eye className="h-3 w-3" />
+                </Button>
                 <Button
                   size="sm"
                   variant="outline"
