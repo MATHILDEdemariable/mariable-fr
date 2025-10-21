@@ -102,6 +102,7 @@ const RSVPPublicForm = lazy(() => import("./pages/rsvp/RSVPPublicForm"));
 const AccommodationsPage = lazy(() => import("./pages/dashboard/AccommodationsPage"));
 const QRCodeGeneratorPage = lazy(() => import("./pages/dashboard/QRCodeGenerator"));
 const ProDashboardMockup = lazy(() => import("./pages/pro/ProDashboardMockup"));
+const GuideDuJourJ = lazy(() => import("./pages/GuideDuJourJ"));
 
 // Loading component
 const PageLoader = () => (
@@ -202,6 +203,7 @@ function App() {
                   <Route path="/liste-preparatif-mariage" element={<ListePreparatifMariage />} />
                   <Route path="/accompagnement" element={<Accompagnement />} />
                   <Route path="/guidecoordinationjour-j" element={<LivreBlanc />} />
+                  <Route path="/guide-jour-j" element={<GuideDuJourJ />} />
 
                    {/* À propos routes - Fixed */}
                    <Route path="/about/approche" element={<Approche />} />
