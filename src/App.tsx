@@ -73,6 +73,7 @@ const AdminBlog = lazy(() => import("./pages/admin/Blog"));
 const AdminUsers = lazy(() => import("./pages/admin/Users"));
 const AdminDevisProfessionnels = lazy(() => import("./pages/admin/DevisProfessionnels"));
 const AdminSatisfactionUtilisateurs = lazy(() => import("./pages/admin/SatisfactionUtilisateurs"));
+const AdminUsageStats = lazy(() => import("./pages/admin/UsageStats"));
 const EnvoiDevis = lazy(() => import("./pages/EnvoiDevis"));
 const AdminPrestataires = lazy(() => import("./pages/admin/Prestataires"));
 const AdminForm = lazy(() => import("./pages/admin/FormAdmin"));
@@ -230,6 +231,7 @@ function App() {
                    <Route path="/admin/users" element={<AdminUsers />} />
                    <Route path="/admin/devis" element={<AdminDevisProfessionnels />} />
                    <Route path="/admin/satisfaction" element={<AdminSatisfactionUtilisateurs />} />
+                   <Route path="/admin/usage-stats" element={<AdminUsageStats />} />
                    <Route path="/envoidevis" element={<EnvoiDevis />} />
                    <Route path="/admin/prestataires" element={<AdminPrestataires />} />
                    <Route path="/admin/professional-registrations" element={<AdminProfessionalRegistrations />} />
