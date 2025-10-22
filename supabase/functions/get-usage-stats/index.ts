@@ -18,17 +18,32 @@ Deno.serve(async (req) => {
       }
     )
 
+    // Get ALL users with pagination
+    let allUsers = []
+    let page = 1
+    let hasMore = true
+
+    while (hasMore) {
+      const { data, error } = await supabaseAdmin.auth.admin.listUsers({
+        page: page,
+        perPage: 1000
+      })
+      
+      if (error) throw error
+      
+      console.log(`📋 Page ${page}: ${data.users.length} utilisateurs récupérés`)
+      allUsers.push(...data.users)
+      hasMore = data.users.length === 1000
+      page++
+    }
+
+    console.log(`✅ Total: ${allUsers.length} utilisateurs`)
+
     // Get active users (last 30 days)
     const thirtyDaysAgo = new Date()
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
-    
-    const { data: authUsers, error: authError } = await supabaseAdmin.auth.admin.listUsers()
-    
-    if (authError) {
-      throw authError
-    }
 
-    const activeUsers = authUsers.users.filter(user => {
+    const activeUsers = allUsers.filter(user => {
       const lastSignIn = user.last_sign_in_at ? new Date(user.last_sign_in_at) : null
       return lastSignIn && lastSignIn >= thirtyDaysAgo
     })
@@ -42,6 +57,7 @@ Deno.serve(async (req) => {
       documentsCount,
       wishlistCount,
       vendorTrackingCount,
+      accommodationsCount,
       profilesComplete
     ] = await Promise.all([
       // Budget
@@ -49,7 +65,7 @@ Deno.serve(async (req) => {
         .from('budgets_dashboard')
         .select('user_id', { count: 'exact', head: true }),
       
-      // RSVP
+      // RSVP Events
       supabaseAdmin
         .from('wedding_rsvp_events')
         .select('user_id', { count: 'exact', head: true }),
@@ -64,9 +80,10 @@ Deno.serve(async (req) => {
         .from('wedding_coordination')
         .select('user_id', { count: 'exact', head: true }),
       
-      // Documents
+      // Documents de coordination
       supabaseAdmin
-        .rpc('count_users_with_documents'),
+        .from('coordination_documents')
+        .select('coordination_id', { count: 'exact', head: true }),
       
       // Wishlist
       supabaseAdmin
@@ -76,6 +93,11 @@ Deno.serve(async (req) => {
       // Vendor Tracking
       supabaseAdmin
         .from('vendor_tracking')
+        .select('user_id', { count: 'exact', head: true }),
+      
+      // Accommodations
+      supabaseAdmin
+        .from('wedding_accommodations')
         .select('user_id', { count: 'exact', head: true }),
       
       // Profiles complete (with wedding_date and guest_count)
@@ -92,8 +114,10 @@ Deno.serve(async (req) => {
       rsvpUsers,
       checklistUsers,
       coordinationUsers,
+      documentsUsers,
       wishlistUsers,
-      vendorUsers
+      vendorUsers,
+      accommodationsUsers
     ] = await Promise.all([
       supabaseAdmin
         .from('budgets_dashboard')
@@ -115,6 +139,20 @@ Deno.serve(async (req) => {
         .select('user_id')
         .then(({ data }) => new Set(data?.map(d => d.user_id)).size),
       
+      // Documents: compter les user_id distincts via coordination
+      supabaseAdmin
+        .from('coordination_documents')
+        .select('coordination_id')
+        .then(async ({ data: docs }) => {
+          if (!docs?.length) return 0
+          const coordIds = [...new Set(docs.map(d => d.coordination_id))]
+          const { data: coords } = await supabaseAdmin
+            .from('wedding_coordination')
+            .select('user_id')
+            .in('id', coordIds)
+          return new Set(coords?.map(c => c.user_id)).size
+        }),
+      
       supabaseAdmin
         .from('vendor_wishlist')
         .select('user_id')
@@ -123,11 +161,16 @@ Deno.serve(async (req) => {
       supabaseAdmin
         .from('vendor_tracking')
         .select('user_id')
+        .then(({ data }) => new Set(data?.map(d => d.user_id)).size),
+      
+      supabaseAdmin
+        .from('wedding_accommodations')
+        .select('user_id')
         .then(({ data }) => new Set(data?.map(d => d.user_id)).size)
     ])
 
     const stats = {
-      totalUsers: authUsers.users.length,
+      totalUsers: allUsers.length,
       activeUsers: activeUsers.length,
       modules: {
         budget: {
@@ -146,6 +189,10 @@ Deno.serve(async (req) => {
           usersCount: coordinationUsers,
           entriesCount: coordinationCount.count || 0
         },
+        documents: {
+          usersCount: documentsUsers,
+          entriesCount: documentsCount.count || 0
+        },
         wishlist: {
           usersCount: wishlistUsers,
           entriesCount: wishlistCount.count || 0
@@ -153,6 +200,10 @@ Deno.serve(async (req) => {
         vendorTracking: {
           usersCount: vendorUsers,
           entriesCount: vendorTrackingCount.count || 0
+        },
+        accommodations: {
+          usersCount: accommodationsUsers,
+          entriesCount: accommodationsCount.count || 0
         },
         profileComplete: {
           usersCount: profilesComplete.count || 0

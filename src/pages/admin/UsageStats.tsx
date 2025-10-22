@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { supabase } from '@/integrations/supabase/client';
-import { Loader2, Users, TrendingUp, CheckSquare, Calendar, FileText, Heart, ClipboardList, User } from 'lucide-react';
+import { Loader2, Users, TrendingUp, CheckSquare, Calendar, FileText, Heart, ClipboardList, User, Home, FileStack } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
 type ModuleStats = {
@@ -17,8 +17,10 @@ type UsageStats = {
     rsvp: ModuleStats;
     checklist: ModuleStats;
     coordination: ModuleStats;
+    documents: ModuleStats;
     wishlist: ModuleStats;
     vendorTracking: ModuleStats;
+    accommodations: ModuleStats;
     profileComplete: ModuleStats;
   };
 };
@@ -117,6 +119,24 @@ const UsageStats = () => {
       description: 'Plannings de coordination créés'
     },
     {
+      name: 'Documents Coordination',
+      icon: FileStack,
+      color: 'text-teal-600',
+      bgColor: 'bg-teal-50',
+      users: stats.modules.documents.usersCount,
+      entries: stats.modules.documents.entriesCount,
+      description: 'Documents uploadés pour la coordination'
+    },
+    {
+      name: 'Gestion Logements',
+      icon: Home,
+      color: 'text-cyan-600',
+      bgColor: 'bg-cyan-50',
+      users: stats.modules.accommodations.usersCount,
+      entries: stats.modules.accommodations.entriesCount,
+      description: 'Hébergements gérés'
+    },
+    {
       name: 'Wishlist Prestataires',
       icon: Heart,
       color: 'text-red-600',
@@ -138,6 +158,11 @@ const UsageStats = () => {
 
   const activeRate = stats.totalUsers > 0 
     ? ((stats.activeUsers / stats.totalUsers) * 100).toFixed(1) 
+    : 0;
+
+  const totalModuleUsers = Object.values(stats.modules).reduce((acc, m) => acc + m.usersCount, 0);
+  const avgEngagement = stats.totalUsers > 0 
+    ? ((totalModuleUsers / (stats.totalUsers * Object.keys(stats.modules).length)) * 100).toFixed(0)
     : 0;
 
   return (
@@ -181,11 +206,7 @@ const UsageStats = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Taux d'Engagement</p>
-                <p className="text-3xl font-bold text-blue-600">
-                  {stats.totalUsers > 0 
-                    ? ((Object.values(stats.modules).reduce((acc, m) => acc + m.usersCount, 0) / (stats.totalUsers * 7)) * 100).toFixed(0) 
-                    : 0}%
-                </p>
+                <p className="text-3xl font-bold text-blue-600">{avgEngagement}%</p>
                 <p className="text-xs text-muted-foreground mt-1">Moyenne sur tous les modules</p>
               </div>
               <CheckSquare className="h-10 w-10 text-blue-600 opacity-50" />
