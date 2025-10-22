@@ -3226,6 +3226,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      count_users_with_documents: { Args: never; Returns: number }
       generate_coordination_slug: {
         Args: { coordination_id?: string; title_input: string }
         Returns: string
@@ -3235,7 +3236,7 @@ export type Database = {
         Returns: string
       }
       get_user_registrations: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           created_at: string
           email: string
@@ -3243,18 +3244,9 @@ export type Database = {
           raw_user_meta_data: Json
         }[]
       }
-      is_admin: {
-        Args: Record<PropertyKey, never>
-        Returns: boolean
-      }
-      is_user_premium: {
-        Args: { user_uuid: string }
-        Returns: boolean
-      }
-      is_valid_share_token: {
-        Args: { token_value: string }
-        Returns: boolean
-      }
+      is_admin: { Args: never; Returns: boolean }
+      is_user_premium: { Args: { user_uuid: string }; Returns: boolean }
+      is_valid_share_token: { Args: { token_value: string }; Returns: boolean }
       validate_apres_jour_j_share_token: {
         Args: { token_value: string }
         Returns: {
