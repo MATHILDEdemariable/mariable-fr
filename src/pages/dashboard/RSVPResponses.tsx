@@ -218,7 +218,7 @@ const RSVPResponses: React.FC = () => {
         </div>
         <Button onClick={exportToCSV} variant="outline">
           <Download className="h-4 w-4 mr-2" />
-          Export CSV
+          Export Tableur
         </Button>
       </div>
 
