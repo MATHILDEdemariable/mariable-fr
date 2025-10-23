@@ -2289,7 +2289,8 @@ export type Database = {
           notes: string | null
           rsvp_response_id: string | null
           seat_number: number | null
-          table_id: string
+          seating_plan_id: string
+          table_id: string | null
         }
         Insert: {
           created_at?: string
@@ -2300,7 +2301,8 @@ export type Database = {
           notes?: string | null
           rsvp_response_id?: string | null
           seat_number?: number | null
-          table_id: string
+          seating_plan_id: string
+          table_id?: string | null
         }
         Update: {
           created_at?: string
@@ -2311,7 +2313,8 @@ export type Database = {
           notes?: string | null
           rsvp_response_id?: string | null
           seat_number?: number | null
-          table_id?: string
+          seating_plan_id?: string
+          table_id?: string | null
         }
         Relationships: [
           {
@@ -2319,6 +2322,13 @@ export type Database = {
             columns: ["rsvp_response_id"]
             isOneToOne: false
             referencedRelation: "wedding_rsvp_responses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "seating_assignments_seating_plan_id_fkey"
+            columns: ["seating_plan_id"]
+            isOneToOne: false
+            referencedRelation: "seating_plans"
             referencedColumns: ["id"]
           },
           {

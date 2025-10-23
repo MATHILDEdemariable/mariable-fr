@@ -92,21 +92,6 @@ const ImportRSVPDialog = ({ open, onOpenChange, planId, onImported }: ImportRSVP
 
     setLoading(true);
     try {
-      // Créer une table temporaire pour les invités importés
-      const { data: table } = await supabase
-        .from('seating_tables')
-        .insert({
-          seating_plan_id: planId,
-          table_name: 'Invités Importés',
-          table_number: 999,
-          capacity: 20,
-          shape: 'round'
-        })
-        .select()
-        .single();
-
-      if (!table) throw new Error('Erreur création table temporaire');
-
       const guestsToImport: any[] = [];
       
       for (const responseId of Array.from(selectedGuests)) {
@@ -116,7 +101,8 @@ const ImportRSVPDialog = ({ open, onOpenChange, planId, onImported }: ImportRSVP
         // Ajouter les adultes
         for (let i = 0; i < (response.number_of_adults || 0); i++) {
           guestsToImport.push({
-            table_id: null, // Pas assigné initialement
+            seating_plan_id: planId,
+            table_id: null,
             guest_name: i === 0 ? response.guest_name : `${response.guest_name} (Accompagnant ${i})`,
             rsvp_response_id: response.id,
             guest_type: 'adult',
@@ -127,6 +113,7 @@ const ImportRSVPDialog = ({ open, onOpenChange, planId, onImported }: ImportRSVP
         // Ajouter les enfants
         for (let i = 0; i < (response.number_of_children || 0); i++) {
           guestsToImport.push({
+            seating_plan_id: planId,
             table_id: null,
             guest_name: `${response.guest_name} - Enfant ${i + 1}`,
             rsvp_response_id: response.id,
@@ -144,7 +131,7 @@ const ImportRSVPDialog = ({ open, onOpenChange, planId, onImported }: ImportRSVP
 
       toast({
         title: 'Import réussi',
-        description: `${guestsToImport.length} invité(s) importé(s)`
+        description: `${guestsToImport.length} invité(s) importé(s) en "Non placés"`
       });
 
       onImported();

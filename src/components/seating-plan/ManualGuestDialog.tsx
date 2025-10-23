@@ -43,6 +43,7 @@ const ManualGuestDialog = ({ open, onOpenChange, planId, tables, onAdded }: Manu
       const { error } = await supabase
         .from('seating_assignments')
         .insert({
+          seating_plan_id: planId,
           table_id: tableId === 'unassigned' ? null : tableId,
           guest_name: guestName,
           guest_type: guestType,

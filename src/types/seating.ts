@@ -24,6 +24,7 @@ export interface SeatingTable {
 
 export interface SeatingAssignment {
   id: string;
+  seating_plan_id: string;
   table_id: string | null;
   guest_name: string;
   rsvp_response_id: string | null;

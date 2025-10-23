@@ -5,13 +5,14 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Download, Users, UserPlus } from 'lucide-react';
+import { Plus, Download, Users, UserPlus, FileSpreadsheet } from 'lucide-react';
 import SeatingPlanStats from '@/components/seating-plan/SeatingPlanStats';
 import TablesList from '@/components/seating-plan/TablesList';
 import GuestList from '@/components/seating-plan/GuestList';
 import TableEditor from '@/components/seating-plan/TableEditor';
 import ImportRSVPDialog from '@/components/seating-plan/ImportRSVPDialog';
 import ManualGuestDialog from '@/components/seating-plan/ManualGuestDialog';
+import { ImportExcelDialog } from '@/components/seating-plan/ImportExcelDialog';
 import ExportPDFButton from '@/components/seating-plan/ExportPDFButton';
 import { SeatingTable, SeatingAssignment, SeatingPlan as SeatingPlanType } from '@/types/seating';
 
@@ -23,6 +24,7 @@ const SeatingPlan = () => {
   const [showTableEditor, setShowTableEditor] = useState(false);
   const [showImportDialog, setShowImportDialog] = useState(false);
   const [showGuestDialog, setShowGuestDialog] = useState(false);
+  const [showImportExcel, setShowImportExcel] = useState(false);
   const [editingTable, setEditingTable] = useState<SeatingTable | null>(null);
 
   useEffect(() => {
@@ -65,14 +67,12 @@ const SeatingPlan = () => {
         .order('table_number');
       setTables((tablesData || []) as SeatingTable[]);
 
-      // Charger tous les invités
-      if (tablesData && tablesData.length > 0) {
-        const { data: guestsData } = await supabase
-          .from('seating_assignments')
-          .select('*')
-          .in('table_id', tablesData.map(t => t.id));
-        setGuests((guestsData || []) as SeatingAssignment[]);
-      }
+      // Charger tous les invités filtrés par seating_plan_id
+      const { data: guestsData } = await supabase
+        .from('seating_assignments')
+        .select('*')
+        .eq('seating_plan_id', planId);
+      setGuests((guestsData || []) as SeatingAssignment[]);
     } catch (error) {
       console.error('Erreur chargement plan de table:', error);
       toast({
@@ -99,7 +99,7 @@ const SeatingPlan = () => {
     if (destination.droppableId === 'unassigned') {
       const { error } = await supabase
         .from('seating_assignments')
-        .delete()
+        .update({ table_id: null })
         .eq('id', guestId);
 
       if (error) {
@@ -107,7 +107,7 @@ const SeatingPlan = () => {
         return;
       }
 
-      setGuests(guests.filter(g => g.id !== guestId));
+      setGuests(guests.map(g => g.id === guestId ? { ...g, table_id: null } : g));
       toast({ title: 'Invité retiré de la table' });
       return;
     }
@@ -220,6 +220,10 @@ const SeatingPlan = () => {
                   <Users className="h-4 w-4 mr-2" />
                   Importer depuis RSVP
                 </Button>
+                <Button onClick={() => setShowImportExcel(true)} variant="outline" className="w-full">
+                  <FileSpreadsheet className="h-4 w-4 mr-2" />
+                  Importer CSV
+                </Button>
                 <Button onClick={() => setShowGuestDialog(true)} variant="outline" className="w-full">
                   <UserPlus className="h-4 w-4 mr-2" />
                   Ajouter Invité
@@ -275,6 +279,13 @@ const SeatingPlan = () => {
           planId={plan?.id || ''}
           tables={tables}
           onAdded={loadSeatingPlan}
+        />
+
+        <ImportExcelDialog
+          open={showImportExcel}
+          onOpenChange={setShowImportExcel}
+          planId={plan?.id || ''}
+          onImported={loadSeatingPlan}
         />
       </div>
     </>
