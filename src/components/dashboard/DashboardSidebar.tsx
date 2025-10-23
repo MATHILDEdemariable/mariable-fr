@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Calendar, CheckSquare, Calculator, Store, Heart, Settings, LogOut, Wine, MessageCircleQuestion, MessageSquare, Users, Lightbulb, ChevronDown, Coins, ListChecks, UserCheck, Home, QrCode, FileText } from 'lucide-react';
+import { LayoutDashboard, Calendar, CheckSquare, Calculator, Store, Heart, Settings, LogOut, Wine, MessageCircleQuestion, MessageSquare, Users, Lightbulb, ChevronDown, Coins, ListChecks, UserCheck, Home, QrCode, FileText, Table } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
@@ -155,6 +155,11 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
   // Vérifier si Gestion des logements est actif
   const isAccommodationsActive = () => {
     return isActive('/dashboard/accommodations');
+  };
+
+  // Vérifier si Plan de table est actif
+  const isSeatingPlanActive = () => {
+    return isActive('/dashboard/seating-plan');
   };
 
   // Vérifier si QR Code est actif
@@ -320,6 +325,20 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
           <Home className="h-4 w-4" />
           <span className="ml-2 sm:ml-3 leading-tight flex items-center gap-1.5">
             Gestion des logements
+            <span className="text-[10px] px-1.5 py-0.5 bg-orange-100 text-orange-700 rounded font-medium">beta</span>
+          </span>
+          {isReaderMode && <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>}
+        </Link>
+
+        {/* Plan de table */}
+        <Link to={isReaderMode ? '#' : '/dashboard/seating-plan'} onClick={e => {
+        if (isReaderMode) {
+          e.preventDefault();
+        }
+      }} className={cn("flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors", isSeatingPlanActive() ? 'bg-wedding-olive text-white shadow-sm' : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive', isReaderMode ? 'pointer-events-none opacity-70' : '')}>
+          <Table className="h-4 w-4" />
+          <span className="ml-2 sm:ml-3 leading-tight flex items-center gap-1.5">
+            Plan de table
             <span className="text-[10px] px-1.5 py-0.5 bg-orange-100 text-orange-700 rounded font-medium">beta</span>
           </span>
           {isReaderMode && <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>}

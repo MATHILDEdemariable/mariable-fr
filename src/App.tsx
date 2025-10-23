@@ -102,6 +102,7 @@ const ProfessionnelsMariable = lazy(() => import("./pages/ProfessionnelsMariable
 const RSVPPublicForm = lazy(() => import("./pages/rsvp/RSVPPublicForm"));
 const AccommodationsPage = lazy(() => import("./pages/dashboard/AccommodationsPage"));
 const QRCodeGeneratorPage = lazy(() => import("./pages/dashboard/QRCodeGenerator"));
+const SeatingPlan = lazy(() => import("./pages/SeatingPlan"));
 const ProDashboardMockup = lazy(() => import("./pages/pro/ProDashboardMockup"));
 const GuideDuJourJ = lazy(() => import("./pages/GuideDuJourJ"));
 

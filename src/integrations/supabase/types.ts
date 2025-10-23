@@ -2279,6 +2279,137 @@ export type Database = {
         }
         Relationships: []
       }
+      seating_assignments: {
+        Row: {
+          created_at: string
+          dietary_restrictions: string | null
+          guest_name: string
+          guest_type: string
+          id: string
+          notes: string | null
+          rsvp_response_id: string | null
+          seat_number: number | null
+          table_id: string
+        }
+        Insert: {
+          created_at?: string
+          dietary_restrictions?: string | null
+          guest_name: string
+          guest_type?: string
+          id?: string
+          notes?: string | null
+          rsvp_response_id?: string | null
+          seat_number?: number | null
+          table_id: string
+        }
+        Update: {
+          created_at?: string
+          dietary_restrictions?: string | null
+          guest_name?: string
+          guest_type?: string
+          id?: string
+          notes?: string | null
+          rsvp_response_id?: string | null
+          seat_number?: number | null
+          table_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "seating_assignments_rsvp_response_id_fkey"
+            columns: ["rsvp_response_id"]
+            isOneToOne: false
+            referencedRelation: "wedding_rsvp_responses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "seating_assignments_table_id_fkey"
+            columns: ["table_id"]
+            isOneToOne: false
+            referencedRelation: "seating_tables"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      seating_plans: {
+        Row: {
+          created_at: string
+          event_date: string | null
+          id: string
+          name: string
+          notes: string | null
+          updated_at: string
+          user_id: string
+          venue_name: string | null
+        }
+        Insert: {
+          created_at?: string
+          event_date?: string | null
+          id?: string
+          name: string
+          notes?: string | null
+          updated_at?: string
+          user_id: string
+          venue_name?: string | null
+        }
+        Update: {
+          created_at?: string
+          event_date?: string | null
+          id?: string
+          name?: string
+          notes?: string | null
+          updated_at?: string
+          user_id?: string
+          venue_name?: string | null
+        }
+        Relationships: []
+      }
+      seating_tables: {
+        Row: {
+          capacity: number
+          color: string | null
+          created_at: string
+          id: string
+          position_x: number | null
+          position_y: number | null
+          seating_plan_id: string
+          shape: string
+          table_name: string
+          table_number: number
+        }
+        Insert: {
+          capacity: number
+          color?: string | null
+          created_at?: string
+          id?: string
+          position_x?: number | null
+          position_y?: number | null
+          seating_plan_id: string
+          shape?: string
+          table_name: string
+          table_number: number
+        }
+        Update: {
+          capacity?: number
+          color?: string | null
+          created_at?: string
+          id?: string
+          position_x?: number | null
+          position_y?: number | null
+          seating_plan_id?: string
+          shape?: string
+          table_name?: string
+          table_number?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "seating_tables_seating_plan_id_fkey"
+            columns: ["seating_plan_id"]
+            isOneToOne: false
+            referencedRelation: "seating_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       system_settings: {
         Row: {
           created_at: string
