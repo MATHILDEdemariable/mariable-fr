@@ -3276,6 +3276,44 @@ export type Database = {
         }
         Relationships: []
       }
+      wedding_rsvp_guests: {
+        Row: {
+          created_at: string | null
+          dietary_restrictions: string | null
+          guest_first_name: string
+          guest_last_name: string
+          guest_type: string
+          id: string
+          response_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          dietary_restrictions?: string | null
+          guest_first_name: string
+          guest_last_name: string
+          guest_type: string
+          id?: string
+          response_id: string
+        }
+        Update: {
+          created_at?: string | null
+          dietary_restrictions?: string | null
+          guest_first_name?: string
+          guest_last_name?: string
+          guest_type?: string
+          id?: string
+          response_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wedding_rsvp_guests_response_id_fkey"
+            columns: ["response_id"]
+            isOneToOne: false
+            referencedRelation: "wedding_rsvp_responses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       wedding_rsvp_responses: {
         Row: {
           attendance_status: string

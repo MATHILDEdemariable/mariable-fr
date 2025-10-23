@@ -42,6 +42,9 @@ const RSVPPublicForm: React.FC = () => {
   const [dietaryRestrictions, setDietaryRestrictions] = useState('');
   const [message, setMessage] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [adults, setAdults] = useState<Array<{ firstName: string; lastName: string }>>([
+    { firstName: '', lastName: '' }
+  ]);
 
   useEffect(() => {
     loadEvent();
@@ -133,7 +136,7 @@ const RSVPPublicForm: React.FC = () => {
     try {
       const totalGuests = numberOfAdults + numberOfChildren;
       
-      const { error } = await supabase
+      const { data: responseData, error: responseError } = await supabase
         .from('wedding_rsvp_responses')
         .insert({
           event_id: event!.id,
@@ -146,9 +149,56 @@ const RSVPPublicForm: React.FC = () => {
           number_of_children: attendanceStatus === 'oui' ? numberOfChildren : 0,
           dietary_restrictions: dietaryRestrictions.trim() || null,
           message: message.trim() || null,
+        })
+        .select()
+        .single();
+
+      if (responseError) throw responseError;
+
+      // Insérer les invités détaillés
+      if (attendanceStatus === 'oui' && numberOfAdults > 0) {
+        const guestsToInsert = [];
+
+        // Principal invité
+        const [firstName, ...lastNameParts] = guestName.trim().split(' ');
+        guestsToInsert.push({
+          response_id: responseData.id,
+          guest_first_name: firstName,
+          guest_last_name: lastNameParts.join(' ') || firstName,
+          guest_type: 'adult',
+          dietary_restrictions: dietaryRestrictions.trim() || null
         });
 
-      if (error) throw error;
+        // Accompagnants adultes
+        for (let i = 1; i < numberOfAdults; i++) {
+          if (adults[i]?.firstName && adults[i]?.lastName) {
+            guestsToInsert.push({
+              response_id: responseData.id,
+              guest_first_name: adults[i].firstName.trim(),
+              guest_last_name: adults[i].lastName.trim(),
+              guest_type: 'adult',
+              dietary_restrictions: dietaryRestrictions.trim() || null
+            });
+          }
+        }
+
+        // Enfants
+        for (let i = 0; i < numberOfChildren; i++) {
+          guestsToInsert.push({
+            response_id: responseData.id,
+            guest_first_name: `Enfant ${i + 1}`,
+            guest_last_name: lastNameParts.join(' ') || firstName,
+            guest_type: 'child',
+            dietary_restrictions: null
+          });
+        }
+
+        const { error: guestsError } = await supabase
+          .from('wedding_rsvp_guests')
+          .insert(guestsToInsert);
+
+        if (guestsError) throw guestsError;
+      }
 
       setSubmitted(true);
       toast({
@@ -339,13 +389,67 @@ const RSVPPublicForm: React.FC = () => {
                       min="1"
                       max={event.max_guests_per_invite}
                       value={numberOfAdults}
-                      onChange={(e) => setNumberOfAdults(parseInt(e.target.value) || 1)}
+                      onChange={(e) => {
+                        const newCount = parseInt(e.target.value) || 1;
+                        setNumberOfAdults(newCount);
+                        // Ajuster le tableau adults
+                        const newAdults = Array(newCount).fill(null).map((_, i) => 
+                          adults[i] || { firstName: '', lastName: '' }
+                        );
+                        setAdults(newAdults);
+                      }}
                       required
                     />
                     {errors.number_of_adults && (
                       <p className="text-sm text-red-500">{errors.number_of_adults}</p>
                     )}
                   </div>
+
+                  {/* Noms des accompagnants adultes */}
+                  {numberOfAdults > 1 && (
+                    <div className="space-y-4 border rounded-lg p-4 bg-muted/30">
+                      <Label className="text-base font-medium">
+                        Noms et prénoms des adultes accompagnants *
+                      </Label>
+                      <p className="text-sm text-muted-foreground">
+                        Personne 1 : {guestName || '(vous)'}
+                      </p>
+                      
+                      {Array.from({ length: numberOfAdults - 1 }).map((_, index) => (
+                        <div key={index} className="space-y-2 border-l-2 border-primary pl-4">
+                          <p className="text-sm font-medium">Personne {index + 2}</p>
+                          <div className="grid grid-cols-2 gap-2">
+                            <Input
+                              placeholder="Prénom"
+                              value={adults[index + 1]?.firstName || ''}
+                              onChange={(e) => {
+                                const newAdults = [...adults];
+                                newAdults[index + 1] = { 
+                                  ...newAdults[index + 1], 
+                                  firstName: e.target.value 
+                                };
+                                setAdults(newAdults);
+                              }}
+                              required
+                            />
+                            <Input
+                              placeholder="Nom"
+                              value={adults[index + 1]?.lastName || ''}
+                              onChange={(e) => {
+                                const newAdults = [...adults];
+                                newAdults[index + 1] = { 
+                                  ...newAdults[index + 1], 
+                                  lastName: e.target.value 
+                                };
+                                setAdults(newAdults);
+                              }}
+                              required
+                            />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
 
                   <div className="space-y-2">
                     <Label htmlFor="number_of_children">

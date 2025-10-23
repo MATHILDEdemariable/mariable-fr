@@ -19,6 +19,15 @@ interface RSVPEvent {
   event_date: string | null;
 }
 
+interface RSVPGuest {
+  id: string;
+  response_id: string;
+  guest_first_name: string;
+  guest_last_name: string;
+  guest_type: 'adult' | 'child';
+  dietary_restrictions: string | null;
+}
+
 interface RSVPResponse {
   id: string;
   guest_name: string;
@@ -26,6 +35,7 @@ interface RSVPResponse {
   number_of_children: number;
   dietary_restrictions: string | null;
   attendance_status: string;
+  guests?: RSVPGuest[];
 }
 
 interface ImportRSVPDialogProps {
@@ -62,14 +72,34 @@ const ImportRSVPDialog = ({ open, onOpenChange, planId, onImported }: ImportRSVP
   };
 
   const loadResponses = async (eventId: string) => {
-    const { data } = await supabase
+    const { data: responsesData } = await supabase
       .from('wedding_rsvp_responses')
       .select('*')
       .eq('event_id', eventId)
       .eq('attendance_status', 'oui');
 
-    setResponses(data || []);
-    setSelectedGuests(new Set(data?.map(r => r.id) || []));
+    if (!responsesData) {
+      setResponses([]);
+      return;
+    }
+
+    // Charger les invités détaillés
+    const { data: guestsData } = await supabase
+      .from('wedding_rsvp_guests')
+      .select('*')
+      .in('response_id', responsesData.map(r => r.id));
+
+    // Associer les invités aux réponses
+    const responsesWithGuests = responsesData.map(response => ({
+      ...response,
+      guests: (guestsData?.filter(g => g.response_id === response.id) || []).map(g => ({
+        ...g,
+        guest_type: g.guest_type as 'adult' | 'child'
+      }))
+    }));
+
+    setResponses(responsesWithGuests);
+    setSelectedGuests(new Set(responsesWithGuests.map(r => r.id)));
   };
 
   const handleEventChange = async (eventId: string) => {
@@ -98,28 +128,41 @@ const ImportRSVPDialog = ({ open, onOpenChange, planId, onImported }: ImportRSVP
         const response = responses.find(r => r.id === responseId);
         if (!response) continue;
 
-        // Ajouter les adultes
-        for (let i = 0; i < (response.number_of_adults || 0); i++) {
-          guestsToImport.push({
-            seating_plan_id: planId,
-            table_id: null,
-            guest_name: i === 0 ? response.guest_name : `${response.guest_name} (Accompagnant ${i})`,
-            rsvp_response_id: response.id,
-            guest_type: 'adult',
-            dietary_restrictions: response.dietary_restrictions
+        // Si invités détaillés disponibles
+        if (response.guests && response.guests.length > 0) {
+          response.guests.forEach(guest => {
+            guestsToImport.push({
+              seating_plan_id: planId,
+              table_id: null,
+              guest_name: `${guest.guest_first_name} ${guest.guest_last_name}`,
+              rsvp_response_id: response.id,
+              guest_type: guest.guest_type,
+              dietary_restrictions: guest.dietary_restrictions
+            });
           });
-        }
+        } else {
+          // Fallback : ancien système sans détails
+          for (let i = 0; i < (response.number_of_adults || 0); i++) {
+            guestsToImport.push({
+              seating_plan_id: planId,
+              table_id: null,
+              guest_name: i === 0 ? response.guest_name : `${response.guest_name} (Accompagnant ${i})`,
+              rsvp_response_id: response.id,
+              guest_type: 'adult',
+              dietary_restrictions: response.dietary_restrictions
+            });
+          }
 
-        // Ajouter les enfants
-        for (let i = 0; i < (response.number_of_children || 0); i++) {
-          guestsToImport.push({
-            seating_plan_id: planId,
-            table_id: null,
-            guest_name: `${response.guest_name} - Enfant ${i + 1}`,
-            rsvp_response_id: response.id,
-            guest_type: 'child',
-            dietary_restrictions: response.dietary_restrictions
-          });
+          for (let i = 0; i < (response.number_of_children || 0); i++) {
+            guestsToImport.push({
+              seating_plan_id: planId,
+              table_id: null,
+              guest_name: `${response.guest_name} - Enfant ${i + 1}`,
+              rsvp_response_id: response.id,
+              guest_type: 'child',
+              dietary_restrictions: response.dietary_restrictions
+            });
+          }
         }
       }
 
@@ -214,7 +257,10 @@ const ImportRSVPDialog = ({ open, onOpenChange, planId, onImported }: ImportRSVP
                             <div className="flex-1">
                               <p className="font-medium">{response.guest_name}</p>
                               <p className="text-sm text-muted-foreground">
-                                {totalGuests} personne(s)
+                                {response.guests && response.guests.length > 0 
+                                  ? response.guests.map(g => `${g.guest_first_name} ${g.guest_last_name}`).join(', ')
+                                  : `${totalGuests} personne(s)`
+                                }
                                 {response.dietary_restrictions && ' • Restrictions alimentaires'}
                               </p>
                             </div>

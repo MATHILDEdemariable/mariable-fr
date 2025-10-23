@@ -20,11 +20,11 @@ const ExportPDFButton = ({ plan, tables, guests }: ExportPDFButtonProps) => {
 
       // Page 1 - Vue d'ensemble
       doc.setFontSize(20);
-      doc.text('Plan de Table', 20, yPos);
+      doc.text('Plan de Table'.normalize('NFC'), 20, yPos);
       yPos += 10;
 
       doc.setFontSize(12);
-      doc.text(plan.name, 20, yPos);
+      doc.text(plan.name.normalize('NFC'), 20, yPos);
       yPos += 8;
 
       if (plan.event_date) {
@@ -71,9 +71,9 @@ const ExportPDFButton = ({ plan, tables, guests }: ExportPDFButtonProps) => {
             yPos = 20;
           }
           
-          let guestText = `  ${idx + 1}. ${guest.guest_name}`;
-          if (guest.guest_type === 'vip') guestText += ' ⭐';
-          if (guest.dietary_restrictions) guestText += ' 🍽️';
+          let guestText = `  ${idx + 1}. ${guest.guest_name.normalize('NFC')}`;
+          if (guest.guest_type === 'vip') guestText += ' [VIP]';
+          if (guest.dietary_restrictions) guestText += ' [Restrictions]';
           
           doc.text(guestText, 25, yPos);
           yPos += 5;
@@ -115,7 +115,7 @@ const ExportPDFButton = ({ plan, tables, guests }: ExportPDFButtonProps) => {
 
           doc.setFontSize(11);
           doc.setFont(undefined, 'bold');
-          doc.text(`${idx + 1}. ${guest.guest_name}`, 25, yPos);
+          doc.text(`${idx + 1}. ${guest.guest_name.normalize('NFC')}`, 25, yPos);
           doc.setFont(undefined, 'normal');
           yPos += 6;
 
@@ -125,14 +125,14 @@ const ExportPDFButton = ({ plan, tables, guests }: ExportPDFButtonProps) => {
 
           if (guest.dietary_restrictions) {
             doc.setTextColor(255, 0, 0);
-            doc.text(`Restrictions: ${guest.dietary_restrictions}`, 30, yPos);
+            doc.text(`Restrictions: ${guest.dietary_restrictions.normalize('NFC')}`, 30, yPos);
             doc.setTextColor(0, 0, 0);
             yPos += 5;
           }
 
           if (guest.notes) {
             doc.setTextColor(100, 100, 100);
-            doc.text(`Notes: ${guest.notes}`, 30, yPos);
+            doc.text(`Notes: ${guest.notes.normalize('NFC')}`, 30, yPos);
             doc.setTextColor(0, 0, 0);
             yPos += 5;
           }
