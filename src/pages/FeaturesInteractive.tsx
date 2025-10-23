@@ -59,6 +59,7 @@ const FeaturesInteractive = () => {
       'rsvp': <UserCheck className="w-5 h-5 text-wedding-olive" />,
       'logements': <Home className="w-5 h-5 text-wedding-olive" />,
       'qr-code': <QrCode className="w-5 h-5 text-wedding-olive" />,
+      'seating-plan': <Users className="w-5 h-5 text-wedding-olive" />,
     };
     return iconMap[featureId] || <Heart className="w-5 h-5 text-wedding-olive" />;
   };

@@ -130,11 +130,16 @@ const ImportRSVPDialog = ({ open, onOpenChange, planId, onImported }: ImportRSVP
 
         // Si invités détaillés disponibles
         if (response.guests && response.guests.length > 0) {
-          response.guests.forEach(guest => {
+          response.guests.forEach((guest, index) => {
+            const isMainGuest = index === 0;
+            const displayName = isMainGuest 
+              ? `${guest.guest_first_name} ${guest.guest_last_name}`
+              : `+1 ${guest.guest_first_name}`;
+            
             guestsToImport.push({
               seating_plan_id: planId,
               table_id: null,
-              guest_name: `${guest.guest_first_name} ${guest.guest_last_name}`,
+              guest_name: displayName,
               rsvp_response_id: response.id,
               guest_type: guest.guest_type,
               dietary_restrictions: guest.dietary_restrictions

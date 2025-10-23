@@ -8,6 +8,15 @@ import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, Search, Download, Loader2, Phone, Mail, Users, UtensilsCrossed, MessageSquare } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
+interface RSVPGuest {
+  id: string;
+  response_id: string;
+  guest_first_name: string;
+  guest_last_name: string;
+  guest_type: 'adult' | 'child';
+  dietary_restrictions: string | null;
+}
+
 interface RSVPResponse {
   id: string;
   guest_name: string;
@@ -20,6 +29,7 @@ interface RSVPResponse {
   dietary_restrictions: string | null;
   message: string | null;
   submitted_at: string;
+  guests?: RSVPGuest[];
 }
 
 const RSVPResponses: React.FC = () => {
@@ -56,7 +66,24 @@ const RSVPResponses: React.FC = () => {
         .order('submitted_at', { ascending: false });
 
       if (error) throw error;
-      setResponses((data || []) as RSVPResponse[]);
+
+      // Charger les invités détaillés
+      if (data && data.length > 0) {
+        const { data: guestsData } = await supabase
+          .from('wedding_rsvp_guests')
+          .select('*')
+          .in('response_id', data.map(r => r.id));
+
+        // Associer les invités aux réponses
+        const responsesWithGuests = data.map(response => ({
+          ...response,
+          guests: guestsData?.filter(g => g.response_id === response.id) || []
+        }));
+
+        setResponses(responsesWithGuests as RSVPResponse[]);
+      } else {
+        setResponses([]);
+      }
     } catch (error) {
       console.error('Erreur lors du chargement des réponses:', error);
       toast({
@@ -70,9 +97,12 @@ const RSVPResponses: React.FC = () => {
   };
 
   const exportToCSV = () => {
-    const headers = ['Nom', 'Email', 'Téléphone', 'Statut', 'Adultes', 'Enfants', 'Total', 'Restrictions', 'Message', 'Date réponse'];
+    const headers = ['Nom principal', 'Invités détaillés', 'Email', 'Téléphone', 'Statut', 'Adultes', 'Enfants', 'Total', 'Restrictions', 'Message', 'Date réponse'];
     const rows = responses.map(r => [
       r.guest_name,
+      r.guests && r.guests.length > 0 
+        ? r.guests.map(g => `${g.guest_first_name} ${g.guest_last_name}`).join(', ')
+        : '-',
       r.guest_email || '',
       r.guest_phone || '',
       r.attendance_status,
@@ -136,15 +166,28 @@ const RSVPResponses: React.FC = () => {
           </Badge>
         </div>
 
-        <div className="flex items-center gap-2 text-sm">
-          <Users className="h-4 w-4 text-muted-foreground" />
-          <span>
-            👤 {response.number_of_adults || response.number_of_guests || 1} adulte{(response.number_of_adults || response.number_of_guests || 1) > 1 ? 's' : ''}
-            {(response.number_of_children || 0) > 0 && (
-              <> • 👶 {response.number_of_children} enfant{response.number_of_children! > 1 ? 's' : ''}</>
-            )}
-          </span>
-        </div>
+        {response.guests && response.guests.length > 0 ? (
+          <div className="space-y-1">
+            {response.guests.map((guest) => (
+              <div key={guest.id} className="flex items-center gap-2 text-sm">
+                <Users className="h-4 w-4 text-muted-foreground" />
+                <span>
+                  {guest.guest_type === 'adult' ? '👤' : '👶'} {guest.guest_first_name} {guest.guest_last_name}
+                </span>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="flex items-center gap-2 text-sm">
+            <Users className="h-4 w-4 text-muted-foreground" />
+            <span>
+              👤 {response.number_of_adults || response.number_of_guests || 1} adulte{(response.number_of_adults || response.number_of_guests || 1) > 1 ? 's' : ''}
+              {(response.number_of_children || 0) > 0 && (
+                <> • 👶 {response.number_of_children} enfant{response.number_of_children! > 1 ? 's' : ''}</>
+              )}
+            </span>
+          </div>
+        )}
 
         {response.guest_email && (
           <div className="flex items-center gap-2 text-sm">

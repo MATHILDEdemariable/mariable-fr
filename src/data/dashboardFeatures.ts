@@ -114,6 +114,14 @@ export const dashboardFeatures: Feature[] = [
     isExpandable: false
   },
   {
+    id: 'seating-plan',
+    zone: 'sidebar',
+    position: { top: '740px', left: '20px', width: '200px', height: '40px' },
+    title: 'Plan de Table BETA',
+    description: '🎯 BETA - Organisez vos invités avec drag & drop. Import depuis RSVP avec noms détaillés, import CSV, et export PDF. Créez des tables personnalisées et assignez facilement vos invités.',
+    isExpandable: false
+  },
+  {
     id: 'user-profile',
     zone: 'header',
     position: { top: '15px', left: 'calc(100% - 200px)', width: '180px', height: '50px' },

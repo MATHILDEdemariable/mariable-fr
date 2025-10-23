@@ -20,6 +20,12 @@ const PremiumToolsSection = () => {
     title: "Calculatrice budget & boissons",
     description: "Estimations précises pour votre réception",
     gradient: "from-premium-sage-light to-premium-sage"
+  }, {
+    icon: Users,
+    title: "Plan de Table",
+    description: "Organisez vos invités avec drag & drop et import RSVP",
+    gradient: "from-premium-sage to-premium-sage-light",
+    badge: "BETA"
   }];
   return <section className="py-24 bg-premium-base">
       <div className="container mx-auto px-4">
@@ -41,7 +47,7 @@ const PremiumToolsSection = () => {
 
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Features */}
-          <div className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {tools.map((tool, index) => <Card key={index} className="feature-card group bg-white shadow-lg border-premium-light section-reveal stagger-item">
                 <CardContent className="p-6">
                   <div className="flex items-start gap-4">
@@ -49,8 +55,11 @@ const PremiumToolsSection = () => {
                       <tool.icon className="feature-icon h-6 w-6 text-white" />
                     </div>
                     <div>
-                      <h3 className="text-xl font-bold text-premium-black mb-2">
+                      <h3 className="text-xl font-bold text-premium-black mb-2 flex items-center gap-2">
                         {tool.title}
+                        {tool.badge && (
+                          <Badge className="text-xs bg-premium-sage text-white">{tool.badge}</Badge>
+                        )}
                       </h3>
                       <p className="text-premium-charcoal">
                         {tool.description}
