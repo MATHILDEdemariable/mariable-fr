@@ -75,10 +75,10 @@ Deno.serve(async (req) => {
         .from('checklist_mariage_manuel')
         .select('user_id', { count: 'exact', head: true }),
       
-      // Coordination
+      // Coordination (from coordination_planning)
       supabaseAdmin
-        .from('wedding_coordination')
-        .select('user_id', { count: 'exact', head: true }),
+        .from('coordination_planning')
+        .select('coordination_id', { count: 'exact', head: true }),
       
       // Documents de coordination
       supabaseAdmin
@@ -134,10 +134,19 @@ Deno.serve(async (req) => {
         .select('user_id')
         .then(({ data }) => new Set(data?.map(d => d.user_id)).size),
       
+      // Coordination: count unique user_id via coordination_planning -> wedding_coordination
       supabaseAdmin
-        .from('wedding_coordination')
-        .select('user_id')
-        .then(({ data }) => new Set(data?.map(d => d.user_id)).size),
+        .from('coordination_planning')
+        .select('coordination_id')
+        .then(async ({ data: planning }) => {
+          if (!planning?.length) return 0
+          const coordIds = [...new Set(planning.map(p => p.coordination_id))]
+          const { data: coords } = await supabaseAdmin
+            .from('wedding_coordination')
+            .select('user_id')
+            .in('id', coordIds)
+          return new Set(coords?.map(c => c.user_id)).size
+        }),
       
       // Documents: compter les user_id distincts via coordination
       supabaseAdmin
