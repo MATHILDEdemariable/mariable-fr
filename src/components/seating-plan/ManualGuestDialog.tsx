@@ -28,7 +28,7 @@ const ManualGuestDialog = ({ open, onOpenChange, planId, tables, onAdded }: Manu
   const [guestType, setGuestType] = useState<'adult' | 'child' | 'vip'>('adult');
   const [dietaryRestrictions, setDietaryRestrictions] = useState('');
   const [notes, setNotes] = useState('');
-  const [tableId, setTableId] = useState<string>('');
+  const [tableId, setTableId] = useState<string>('unassigned');
   const [loading, setLoading] = useState(false);
 
   const handleAdd = async () => {
@@ -43,7 +43,7 @@ const ManualGuestDialog = ({ open, onOpenChange, planId, tables, onAdded }: Manu
       const { error } = await supabase
         .from('seating_assignments')
         .insert({
-          table_id: tableId || null,
+          table_id: tableId === 'unassigned' ? null : tableId,
           guest_name: guestName,
           guest_type: guestType,
           dietary_restrictions: dietaryRestrictions || null,
@@ -61,7 +61,7 @@ const ManualGuestDialog = ({ open, onOpenChange, planId, tables, onAdded }: Manu
       setGuestType('adult');
       setDietaryRestrictions('');
       setNotes('');
-      setTableId('');
+      setTableId('unassigned');
     } catch (error: any) {
       toast({ title: 'Erreur', description: error.message, variant: 'destructive' });
     } finally {
@@ -108,7 +108,7 @@ const ManualGuestDialog = ({ open, onOpenChange, planId, tables, onAdded }: Manu
                 <SelectValue placeholder="Non assigné" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Non assigné</SelectItem>
+                <SelectItem value="unassigned">Non assigné</SelectItem>
                 {tables.map(table => (
                   <SelectItem key={table.id} value={table.id}>
                     {table.table_name}
