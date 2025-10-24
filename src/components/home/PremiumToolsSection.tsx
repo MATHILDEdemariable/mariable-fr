@@ -22,7 +22,7 @@ const PremiumToolsSection = () => {
     gradient: "from-premium-sage-light to-premium-sage"
   }, {
     icon: Users,
-    title: "Plan de Table",
+    title: "RSVP & plan de table",
     description: "Organisez vos invités avec drag & drop et import RSVP",
     gradient: "from-premium-sage to-premium-sage-light",
     badge: "BETA"
