@@ -132,9 +132,17 @@ const ImportRSVPDialog = ({ open, onOpenChange, planId, onImported }: ImportRSVP
         if (response.guests && response.guests.length > 0) {
           response.guests.forEach((guest, index) => {
             const isMainGuest = index === 0;
-            const displayName = isMainGuest 
-              ? `${guest.guest_first_name} ${guest.guest_last_name}`
-              : `+1 ${guest.guest_first_name}`;
+            
+            // Format d'affichage selon la position
+            let displayName: string;
+            if (isMainGuest) {
+              // Principal : "Mathilde Lambert"
+              displayName = `${guest.guest_first_name} ${guest.guest_last_name}`;
+            } else {
+              // Accompagnants : "+1 Mathilde L."
+              const lastNameInitial = guest.guest_last_name.charAt(0).toUpperCase();
+              displayName = `+1 ${guest.guest_first_name} ${lastNameInitial}.`;
+            }
             
             guestsToImport.push({
               seating_plan_id: planId,

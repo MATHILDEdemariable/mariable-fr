@@ -33,7 +33,8 @@ const RSVPPublicForm: React.FC = () => {
   const [submitted, setSubmitted] = useState(false);
 
   // Form state
-  const [guestName, setGuestName] = useState('');
+  const [guestFirstName, setGuestFirstName] = useState('');
+  const [guestLastName, setGuestLastName] = useState('');
   const [guestEmail, setGuestEmail] = useState('');
   const [guestPhone, setGuestPhone] = useState('');
   const [attendanceStatus, setAttendanceStatus] = useState<'oui' | 'non' | 'peut-être'>('oui');
@@ -78,7 +79,8 @@ const RSVPPublicForm: React.FC = () => {
     const totalGuests = numberOfAdults + numberOfChildren;
     
     const rsvpSchema = z.object({
-      guest_name: z.string().trim().min(2, 'Le nom doit contenir au moins 2 caractères').max(100),
+      guest_first_name: z.string().trim().min(2, 'Le prénom doit contenir au moins 2 caractères').max(50),
+      guest_last_name: z.string().trim().min(2, 'Le nom doit contenir au moins 2 caractères').max(50),
       guest_email: z.string().email('Email invalide').optional().or(z.literal('')),
       guest_phone: z.string().optional(),
       number_of_adults: z.number().int().min(1, 'Au moins 1 adulte requis'),
@@ -90,7 +92,8 @@ const RSVPPublicForm: React.FC = () => {
 
     try {
       rsvpSchema.parse({
-        guest_name: guestName,
+        guest_first_name: guestFirstName,
+        guest_last_name: guestLastName,
         guest_email: guestEmail,
         guest_phone: guestPhone,
         number_of_adults: numberOfAdults,
@@ -135,12 +138,13 @@ const RSVPPublicForm: React.FC = () => {
 
     try {
       const totalGuests = numberOfAdults + numberOfChildren;
+      const fullGuestName = `${guestFirstName.trim()} ${guestLastName.trim()}`;
       
       const { data: responseData, error: responseError } = await supabase
         .from('wedding_rsvp_responses')
         .insert({
           event_id: event!.id,
-          guest_name: guestName.trim(),
+          guest_name: fullGuestName,
           guest_email: guestEmail.trim() || null,
           guest_phone: guestPhone.trim() || null,
           attendance_status: attendanceStatus,
@@ -160,11 +164,10 @@ const RSVPPublicForm: React.FC = () => {
         const guestsToInsert = [];
 
         // Principal invité
-        const [firstName, ...lastNameParts] = guestName.trim().split(' ');
         guestsToInsert.push({
           response_id: responseData.id,
-          guest_first_name: firstName,
-          guest_last_name: lastNameParts.join(' ') || firstName,
+          guest_first_name: guestFirstName.trim(),
+          guest_last_name: guestLastName.trim(),
           guest_type: 'adult',
           dietary_restrictions: dietaryRestrictions.trim() || null
         });
@@ -187,7 +190,7 @@ const RSVPPublicForm: React.FC = () => {
           guestsToInsert.push({
             response_id: responseData.id,
             guest_first_name: `Enfant ${i + 1}`,
-            guest_last_name: lastNameParts.join(' ') || firstName,
+            guest_last_name: guestLastName.trim(),
             guest_type: 'child',
             dietary_restrictions: null
           });
@@ -300,18 +303,33 @@ const RSVPPublicForm: React.FC = () => {
 
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Nom */}
+              {/* Prénom */}
               <div className="space-y-2">
-                <Label htmlFor="guest_name">Votre nom *</Label>
+                <Label htmlFor="guest_first_name">Votre prénom *</Label>
                 <Input
-                  id="guest_name"
-                  value={guestName}
-                  onChange={(e) => setGuestName(e.target.value)}
-                  placeholder="Marie Dupont"
+                  id="guest_first_name"
+                  value={guestFirstName}
+                  onChange={(e) => setGuestFirstName(e.target.value)}
+                  placeholder="Marie"
                   required
                 />
-                {errors.guest_name && (
-                  <p className="text-sm text-red-500">{errors.guest_name}</p>
+                {errors.guest_first_name && (
+                  <p className="text-sm text-red-500">{errors.guest_first_name}</p>
+                )}
+              </div>
+
+              {/* Nom */}
+              <div className="space-y-2">
+                <Label htmlFor="guest_last_name">Votre nom *</Label>
+                <Input
+                  id="guest_last_name"
+                  value={guestLastName}
+                  onChange={(e) => setGuestLastName(e.target.value)}
+                  placeholder="Dupont"
+                  required
+                />
+                {errors.guest_last_name && (
+                  <p className="text-sm text-red-500">{errors.guest_last_name}</p>
                 )}
               </div>
 
@@ -412,7 +430,7 @@ const RSVPPublicForm: React.FC = () => {
                         Noms et prénoms des adultes accompagnants *
                       </Label>
                       <p className="text-sm text-muted-foreground">
-                        Personne 1 : {guestName || '(vous)'}
+                        Personne 1 : {guestFirstName || '(Prénom)'} {guestLastName || '(Nom)'}
                       </p>
                       
                       {Array.from({ length: numberOfAdults - 1 }).map((_, index) => (
