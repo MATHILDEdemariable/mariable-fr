@@ -27,11 +27,6 @@ const PremiumHeroSection = () => {
           <Button size="lg" onClick={handleDiscover} className="btn-primary text-white px-8 py-4 text-lg font-semibold ripple">
             Découvrir <ArrowRight className="ml-2 h-5 w-5" />
           </Button>
-          
-          <Button size="lg" onClick={() => window.open('/register', '_self')} className="bg-white text-premium-black hover:bg-white/90 px-8 py-4 text-lg font-semibold ripple">
-            <Play className="mr-2 h-5 w-5" />
-            Organiser
-          </Button>
         </div>
 
       </div>
