@@ -311,7 +311,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
           <UserCheck className="h-4 w-4" />
           <span className="ml-2 sm:ml-3 leading-tight flex items-center gap-1.5">
             RSVP Invités
-            <span className="text-[10px] px-1.5 py-0.5 bg-orange-100 text-orange-700 rounded font-medium">beta</span>
+            
           </span>
           {isReaderMode && <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>}
         </Link>
@@ -325,7 +325,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
           <Home className="h-4 w-4" />
           <span className="ml-2 sm:ml-3 leading-tight flex items-center gap-1.5">
             Gestion des logements
-            <span className="text-[10px] px-1.5 py-0.5 bg-orange-100 text-orange-700 rounded font-medium">beta</span>
+            
           </span>
           {isReaderMode && <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>}
         </Link>
