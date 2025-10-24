@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { Feature, dashboardFeatures } from '@/data/dashboardFeatures';
-import { Heart, DollarSign, CheckCircle, Calendar, Sparkles, Clock, Users, FileText, ChevronDown, ChevronRight, UserCheck, QrCode, Home } from 'lucide-react';
+import { Heart, DollarSign, CheckCircle, Calendar, Sparkles, Clock, Users, FileText, ChevronDown, ChevronRight, UserCheck, QrCode, Home, LayoutGrid } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 interface DashboardMockupProps {
@@ -131,9 +131,14 @@ export const DashboardMockup = ({
             <div className="flex items-center gap-2">
               <UserCheck className="w-5 h-5 text-wedding-olive" />
               <span className="font-medium">RSVP Invités</span>
-              <Badge variant="outline" className="text-[10px] px-1.5 py-0.5 bg-orange-100 text-orange-700 border-orange-300">
-                beta
-              </Badge>
+            </div>
+          </div>
+
+          {/* Plan de Table */}
+          <div className={`p-3 rounded-lg cursor-pointer transition-colors ${hoveredFeature === 'seating-plan' ? 'bg-wedding-olive/10' : 'hover:bg-gray-100'}`} onMouseEnter={() => onHoverFeature('seating-plan')} onMouseLeave={() => onHoverFeature(null)} title="Organisez le plan de table de votre mariage">
+            <div className="flex items-center gap-2">
+              <LayoutGrid className="w-5 h-5 text-wedding-olive" />
+              <span className="font-medium">Plan de Table</span>
             </div>
           </div>
 
@@ -142,9 +147,6 @@ export const DashboardMockup = ({
             <div className="flex items-center gap-2">
               <Home className="w-5 h-5 text-wedding-olive" />
               <span className="font-medium">Hébergements Invités</span>
-              <Badge variant="outline" className="text-[10px] px-1.5 py-0.5 bg-orange-100 text-orange-700 border-orange-300">
-                beta
-              </Badge>
             </div>
           </div>
 
