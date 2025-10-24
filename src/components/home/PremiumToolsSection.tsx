@@ -2,7 +2,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { CheckSquare, Calculator, Users } from 'lucide-react';
+import { CheckSquare, Calculator, Users, Home, FileText } from 'lucide-react';
 import { Link } from 'react-router-dom';
 const PremiumToolsSection = () => {
   const tools = [{
@@ -26,6 +26,16 @@ const PremiumToolsSection = () => {
     description: "Organisez vos invités avec drag & drop et import RSVP",
     gradient: "from-premium-sage to-premium-sage-light",
     badge: "BETA"
+  }, {
+    icon: Home,
+    title: "Gestion hébergements",
+    description: "Réservez et suivez les hébergements de vos invités",
+    gradient: "from-premium-sage-medium to-premium-sage"
+  }, {
+    icon: FileText,
+    title: "Stockage documents",
+    description: "Centralisez tous vos documents importants",
+    gradient: "from-premium-sage-light to-premium-sage-medium"
   }];
   return <section className="py-24 bg-premium-base">
       <div className="container mx-auto px-4">
