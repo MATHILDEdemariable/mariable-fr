@@ -129,41 +129,14 @@ const generateBudgetContent = (data: BudgetExportData): string => {
         </div>
       </div>
 
-      <!-- Budget summary - 4 totaux -->
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 40px;">
-        <div style="text-align: center; padding: 24px; background: linear-gradient(135deg, #e8f5e9, #c8e6c9); border-radius: 12px; border: 2px solid #4caf50;">
-          <h2 style="font-size: 14px; font-weight: 600; color: #2e7d32; margin: 0 0 8px 0; text-transform: uppercase;">
+      <!-- Budget summary - 1 seul total centré -->
+      <div style="display: flex; justify-content: center; margin-bottom: 24px;">
+        <div style="text-align: center; padding: 16px 32px; background: linear-gradient(135deg, #e8f5e9, #c8e6c9); border-radius: 12px; border: 2px solid #4caf50; max-width: 350px;">
+          <h2 style="font-size: 13px; font-weight: 600; color: #2e7d32; margin: 0 0 6px 0; text-transform: uppercase; letter-spacing: 0.5px;">
             Budget Total Estimé
           </h2>
-          <p style="font-size: 40px; color: #1b5e20; font-weight: 700; margin: 0;">
+          <p style="font-size: 28px; color: #1b5e20; font-weight: 700; margin: 0;">
             ${formatCurrency(data.totalEstimated)}
-          </p>
-        </div>
-        
-        <div style="text-align: center; padding: 24px; background: linear-gradient(135deg, #e3f2fd, #bbdefb); border-radius: 12px; border: 2px solid #2196f3;">
-          <h2 style="font-size: 14px; font-weight: 600; color: #1565c0; margin: 0 0 8px 0; text-transform: uppercase;">
-            Coût Total Réel
-          </h2>
-          <p style="font-size: 40px; color: #0d47a1; font-weight: 700; margin: 0;">
-            ${formatCurrency(data.totalActual)}
-          </p>
-        </div>
-        
-        <div style="text-align: center; padding: 24px; background: linear-gradient(135deg, #fff3e0, #ffe0b2); border-radius: 12px; border: 2px solid #ff9800;">
-          <h2 style="font-size: 14px; font-weight: 600; color: #e65100; margin: 0 0 8px 0; text-transform: uppercase;">
-            Acomptes Totaux Versés
-          </h2>
-          <p style="font-size: 40px; color: #bf360c; font-weight: 700; margin: 0;">
-            ${formatCurrency(data.totalDeposit)}
-          </p>
-        </div>
-        
-        <div style="text-align: center; padding: 24px; background: linear-gradient(135deg, #ffebee, #ffcdd2); border-radius: 12px; border: 2px solid #f44336;">
-          <h2 style="font-size: 14px; font-weight: 600; color: #c62828; margin: 0 0 8px 0; text-transform: uppercase;">
-            Reste Total à Payer
-          </h2>
-          <p style="font-size: 40px; color: #b71c1c; font-weight: 700; margin: 0;">
-            ${formatCurrency(data.totalRemaining)}
           </p>
         </div>
       </div>
