@@ -158,26 +158,29 @@ const generateBudgetContent = (data: BudgetExportData): string => {
         </div>
         
         ${data.categories.map(category => `
-          <!-- Category row -->
-          <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1.5fr; gap: 12px; padding: 12px 16px; background-color: #f8f6f0; font-weight: 600; border-left: 4px solid #7F9474;">
-            <div>${category.name}</div>
-            <div style="text-align: right;">${formatCurrency(category.totalEstimated)}</div>
-            <div style="text-align: right;">${formatCurrency(category.totalActual)}</div>
-            <div style="text-align: right;">${formatCurrency(category.totalDeposit)}</div>
-            <div style="text-align: right;">${formatCurrency(category.totalRemaining)}</div>
-            <div style="text-align: center;">-</div>
-          </div>
-          
-          ${category.items.filter(item => item.name).map(item => `
-            <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1.5fr; gap: 12px; padding: 8px 16px; border-bottom: 1px solid #e5e7eb; font-size: 14px; page-break-inside: avoid;">
-              <div style="padding-left: 20px;">${item.name}</div>
-              <div style="text-align: right;">${formatCurrency(item.estimated)}</div>
-              <div style="text-align: right;">${formatCurrency(item.actual)}</div>
-              <div style="text-align: right;">${formatCurrency(item.deposit)}</div>
-              <div style="text-align: right;">${formatCurrency(item.remaining)}</div>
-              <div style="text-align: center; font-size: 12px;">${item.payment_note || '-'}</div>
+          <!-- Category wrapper to prevent page breaks -->
+          <div style="page-break-inside: avoid; margin-bottom: 8px;">
+            <!-- Category row -->
+            <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1.5fr; gap: 12px; padding: 12px 16px; background-color: #f8f6f0; font-weight: 600; border-left: 4px solid #7F9474;">
+              <div>${category.name}</div>
+              <div style="text-align: right;">${formatCurrency(category.totalEstimated)}</div>
+              <div style="text-align: right;">${formatCurrency(category.totalActual)}</div>
+              <div style="text-align: right;">${formatCurrency(category.totalDeposit)}</div>
+              <div style="text-align: right;">${formatCurrency(category.totalRemaining)}</div>
+              <div style="text-align: center;">-</div>
             </div>
-          `).join('')}
+            
+            ${category.items.filter(item => item.name).map(item => `
+              <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1.5fr; gap: 12px; padding: 8px 16px; border-bottom: 1px solid #e5e7eb; font-size: 14px;">
+                <div style="padding-left: 20px;">${item.name}</div>
+                <div style="text-align: right;">${formatCurrency(item.estimated)}</div>
+                <div style="text-align: right;">${formatCurrency(item.actual)}</div>
+                <div style="text-align: right;">${formatCurrency(item.deposit)}</div>
+                <div style="text-align: right;">${formatCurrency(item.remaining)}</div>
+                <div style="text-align: center; font-size: 12px;">${item.payment_note || '-'}</div>
+              </div>
+            `).join('')}
+          </div>
         `).join('')}
         
         <!-- Total row -->
