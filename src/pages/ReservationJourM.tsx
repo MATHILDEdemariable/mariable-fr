@@ -13,7 +13,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Check, X, Phone, Users, FileText, Bell, Headphones, UserCheck, MapPin, Eye } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 
 const ReservationJourM = () => {
   const [formData, setFormData] = useState({
@@ -98,113 +98,6 @@ const ReservationJourM = () => {
       setIsSubmitting(false);
     }
   };
-
-  const pricingData = [
-    {
-      title: "Libre",
-      price: "Gratuite",
-      subtitle: "Inscrivez-vous :-)",
-      features: [
-        { icon: Phone, text: "Application de gestion Jour-J personnalisable (planning, checklist, guide)", included: true, note: "(sans partage)" },
-        { icon: Users, text: "Partage de l'application avec vos proches (mode collaboratif)", included: true },
-        { icon: UserCheck, text: "Vues personnalisées par rôle / mission assignée", included: true },
-        { icon: FileText, text: "Accès aux documents partagés & assignés", included: true },
-        { icon: Bell, text: "Notifications et rappels en temps réel (de J-3 à J+1)", included: false },
-        { icon: Headphones, text: "Hotline Mariable disponible le jour-J", included: false },
-        { icon: MapPin, text: "Coordination des prestataires en amont (J-15)", included: false },
-        { icon: Users, text: "Présence physique le jour-J (8h incluses, horaires adaptables)", included: false }
-      ]
-    },
-    {
-      title: "Sereine",
-      price: "149€",
-      subtitle: "",
-      features: [
-        { icon: Phone, text: "Application de gestion Jour-J personnalisable (planning, checklist, guide)", included: true, note: "(remplie avec notre aide lors d'un RDV visio)" },
-        { icon: Users, text: "Partage de l'application avec vos proches (mode collaboratif)", included: true },
-        { icon: UserCheck, text: "Vues personnalisées par rôle / mission assignée", included: true },
-        { icon: FileText, text: "Accès aux documents partagés & assignés", included: true },
-        { icon: Bell, text: "Notifications et rappels en temps réel (de J-3 à J+1)", included: true },
-        { icon: Headphones, text: "Hotline Mariable disponible le jour-J", included: true, note: "(option +50€ ou incluse si abonnement ligne directe)" },
-        { icon: MapPin, text: "Coordination des prestataires en amont (J-15)", included: false },
-        { icon: Users, text: "Présence physique le jour-J (8h incluses, horaires adaptables)", included: false }
-      ]
-    },
-    {
-      title: "Privilège",
-      price: "799€",
-      subtitle: "",
-      features: [
-        { icon: Phone, text: "Application de gestion Jour-J personnalisable (planning, checklist, guide)", included: true, note: "(remplie avec notre aide lors d'un RDV visio)" },
-        { icon: Users, text: "Partage de l'application avec vos proches (mode collaboratif)", included: true },
-        { icon: UserCheck, text: "Vues personnalisées par rôle / mission assignée", included: true },
-        { icon: FileText, text: "Accès aux documents partagés & assignés", included: true },
-        { icon: Bell, text: "Notifications et rappels en temps réel (de J-3 à J+1)", included: true },
-        { icon: Headphones, text: "Hotline Mariable disponible le jour-J", included: true, note: "(incluse – accès prioritaire)" },
-        { icon: MapPin, text: "Coordination des prestataires en amont (J-15)", included: true },
-        { icon: Users, text: "Présence physique le jour-J (8h incluses, horaires adaptables)", included: true, note: "(heures supplémentaires possibles)" }
-      ]
-    }
-  ];
-
-  // Component pour le tableau des formules
-  const FormulasTable = () => (
-    <Card className="shadow-lg">
-      <CardHeader>
-        <CardTitle className="text-center">Nos formules Jour-J</CardTitle>
-        <p className="text-center text-gray-600">Choisissez votre niveau de sérénité</p>
-      </CardHeader>
-      <CardContent className="p-0">
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b bg-gray-50">
-                <th className="text-left p-3 font-medium">Fonctionnalité</th>
-                {pricingData.map((plan) => (
-                  <th key={plan.title} className="text-center p-3 font-medium min-w-[120px]">
-                    <div className="font-semibold">{plan.title}</div>
-                    <div className="text-lg font-bold text-wedding-olive">{plan.price}</div>
-                    {plan.subtitle && <div className="text-xs text-gray-500">{plan.subtitle}</div>}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {pricingData[0].features.map((feature, index) => (
-                <tr key={index} className="border-b hover:bg-gray-50">
-                  <td className="p-3 text-left">
-                    <div className="flex items-start gap-2">
-                      <feature.icon className="h-4 w-4 mt-0.5 text-wedding-olive flex-shrink-0" />
-                      <span className="text-xs">{feature.text}</span>
-                    </div>
-                  </td>
-                  {pricingData.map((plan) => (
-                    <td key={plan.title} className="p-3 text-center">
-                      <div className="flex flex-col items-center">
-                        {plan.features[index].included ? (
-                          <Check className="h-5 w-5 text-green-500" />
-                        ) : (
-                          <X className="h-5 w-5 text-red-500" />
-                        )}
-                        {plan.features[index].note && (
-                          <span className="text-xs text-gray-500 mt-1 text-center">
-                            {plan.features[index].note}
-                          </span>
-                        )}
-                      </div>
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        <div className="p-4 bg-gray-50 text-center text-sm text-gray-600">
-          💡 Des options supplémentaires sont disponibles (visite technique, impression papier, hotline dédiée, etc.)
-        </div>
-      </CardContent>
-    </Card>
-  );
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
@@ -330,45 +223,50 @@ const ReservationJourM = () => {
                     <Label className="text-base font-medium mb-3">Services souhaités *</Label>
                     
                     <RadioGroup value={formData.selected_formula} onValueChange={handleFormulaChange}>
-                      <div className="space-y-2">
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="ligne_directe" id="ligne_directe" />
-                          <Label htmlFor="ligne_directe" className="flex flex-col">
-                            <span>Ligne directe (9,9€/mois jusqu'au jour du mariage)</span>
-                            <span className="text-sm text-gray-500 font-normal">Hotline dédiée avec priorité</span>
+                      <div className="space-y-3">
+                        {/* Application seule - Désactivé */}
+                        <div className="flex items-center space-x-2 opacity-50">
+                          <RadioGroupItem value="application_seule" id="application_seule" disabled />
+                          <Label htmlFor="application_seule" className="flex flex-col cursor-not-allowed">
+                            <span>Application seule (39€)</span>
+                            <span className="text-sm text-gray-500 font-normal">
+                              Paiement direct - pas de demande nécessaire
+                            </span>
                           </Label>
                         </div>
-                        <div className="ml-6 p-3 bg-orange-50 border-l-4 border-orange-400 text-sm text-orange-700">
-                          <span className="font-medium">⚠️ Attention :</span> ceci n'est pas une offre d'organisation de mariage complète ! uniquement une ligne directe pour des questions ponctuelles et des conseils
+
+                        {/* Wedding Content Creator */}
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="wedding_content_creator" id="wedding_content_creator" />
+                          <Label htmlFor="wedding_content_creator" className="flex flex-col">
+                            <span>Wedding Content Creator (800€)</span>
+                            <span className="text-sm text-gray-500 font-normal">
+                              Service vidéo professionnel pour le jour-J
+                            </span>
+                          </Label>
                         </div>
-                      </div>
-                      <div className="flex items-center space-x-2 opacity-50">
-                        <RadioGroupItem value="application_seule" id="application_seule" disabled />
-                        <Label htmlFor="application_seule" className="flex flex-col cursor-not-allowed">
-                          <span>Application seule (39€)</span>
-                          <span className="text-sm text-gray-500 font-normal">Paiement direct - pas de demande nécessaire</span>
-                        </Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="application_support" id="application_support" />
-                        <Label htmlFor="application_support" className="flex flex-col">
-                          <span>Supplément notification+ support téléphonique pour l'appli (24,9€)</span>
-                          <span className="text-sm text-gray-500 font-normal">Application + assistance téléphonique</span>
-                        </Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="wedding_content_creator" id="wedding_content_creator" />
-                        <Label htmlFor="wedding_content_creator" className="flex flex-col">
-                          <span>Wedding Content Creator (800€)</span>
-                          <span className="text-sm text-gray-500 font-normal">Service vidéo professionnel pour le jour-J</span>
-                        </Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="privilege" id="privilege" />
-                        <Label htmlFor="privilege" className="flex flex-col">
-                          <span>Coordinateur jour-J (1000€)</span>
-                          <span className="text-sm text-gray-500 font-normal">Service complet avec présence physique</span>
-                        </Label>
+
+                        {/* Coordinateur jour-J */}
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="coordinateur_jour_j" id="coordinateur_jour_j" />
+                          <Label htmlFor="coordinateur_jour_j" className="flex flex-col">
+                            <span>Coordinateur jour-J (1 000€)</span>
+                            <span className="text-sm text-gray-500 font-normal">
+                              Audit + 2h rdv + 14h présence jour-J
+                            </span>
+                          </Label>
+                        </div>
+
+                        {/* Accompagnement complet - NOUVEAU */}
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="accompagnement_complet" id="accompagnement_complet" />
+                          <Label htmlFor="accompagnement_complet" className="flex flex-col">
+                            <span>Accompagnement complet jour-J (1 800€)</span>
+                            <span className="text-sm text-gray-500 font-normal">
+                              Audit + 4h rdv + 20h présence jour-J + coordination totale
+                            </span>
+                          </Label>
+                        </div>
                       </div>
                     </RadioGroup>
                   </div>

@@ -79,82 +79,161 @@ const Prix = () => {
 
             {/* Tableau comparatif 3 colonnes */}
             <div className="max-w-7xl mx-auto mb-16">
-              {/* En-têtes des colonnes */}
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-                <div className="hidden md:block"></div>
-                
-                {/* Colonne Gratuit */}
-                <Card className="text-center p-6 border-2 border-gray-200">
-                  <CardHeader className="p-0">
-                    <CardTitle className="text-xl mb-2">Gratuit</CardTitle>
-                    <div className="text-3xl font-bold text-wedding-olive mb-2">0€</div>
-                    <p className="text-sm text-gray-600">Pour bien démarrer</p>
-                  </CardHeader>
-                </Card>
-                
-                {/* Colonne 39€ - Recommandé */}
-                <Card className="text-center p-6 bg-gradient-to-br from-wedding-olive to-wedding-olive/90 border-2 border-wedding-olive relative">
-                  <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                    <span className="bg-white text-wedding-olive px-4 py-1 rounded-full text-xs font-bold">
-                      ⭐ RECOMMANDÉ
-                    </span>
-                  </div>
-                  <CardHeader className="p-0">
-                    <CardTitle className="text-xl text-white mb-2">Application Premium</CardTitle>
-                    <div className="text-3xl font-bold text-white mb-2">39€</div>
-                    <p className="text-sm text-white/90">Paiement unique, à vie</p>
-                  </CardHeader>
-                </Card>
-                
-                {/* Colonne 1000€ */}
-                <Card className="text-center p-6 border-2 border-gray-200">
-                  <CardHeader className="p-0">
-                    <CardTitle className="text-xl mb-2">Coordinateur.rice</CardTitle>
-                    <div className="text-3xl font-bold text-wedding-olive mb-2">1000€</div>
-                    <p className="text-sm text-gray-600">Avec présence jour-J</p>
-                  </CardHeader>
-                </Card>
-              </div>
+              {isMobile ? (
+                /* VERSION MOBILE - Cards empilables */
+                <div className="space-y-6">
+                  {/* Card Gratuit */}
+                  <Card className="border-2 border-gray-200">
+                    <CardHeader className="bg-gray-50">
+                      <CardTitle className="text-center">Gratuit</CardTitle>
+                      <div className="text-3xl font-bold text-wedding-olive text-center">0€</div>
+                      <p className="text-sm text-gray-600 text-center">Pour bien démarrer</p>
+                    </CardHeader>
+                    <CardContent className="pt-4">
+                      <div className="space-y-2">
+                        {features.filter(f => f.gratuit).map((feature, idx) => (
+                          <div key={idx} className="flex items-start gap-2">
+                            <Check className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
+                            <span className="text-sm">{feature.name}</span>
+                          </div>
+                        ))}
+                      </div>
+                      <Button asChild className="w-full mt-6 bg-wedding-olive text-white hover:bg-wedding-olive/90">
+                        <Link to="/register">S'inscrire gratuitement</Link>
+                      </Button>
+                    </CardContent>
+                  </Card>
 
-              {/* Lignes de fonctionnalités */}
-              <div className="space-y-2">
-                {features.map((feature, idx) => (
-                  <div key={idx} className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                    {/* Nom de la fonctionnalité */}
-                    <div className="flex items-center p-4 bg-white rounded-lg border border-gray-200">
-                      <feature.icon className="w-5 h-5 text-wedding-olive mr-3 flex-shrink-0" />
-                      <span className="font-medium text-gray-900 text-sm">{feature.name}</span>
+                  {/* Card 39€ - Recommandé */}
+                  <Card className="border-2 border-wedding-olive bg-gradient-to-br from-wedding-olive/5 to-white relative">
+                    <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-10">
+                      <span className="bg-wedding-olive text-white px-4 py-1 rounded-full text-xs font-bold">
+                        ⭐ RECOMMANDÉ
+                      </span>
                     </div>
-                    
-                    {/* Disponibilité pour chaque formule */}
-                    <div className="flex items-center justify-center p-4 bg-white rounded-lg border border-gray-200">
-                      {feature.gratuit ? <Check className="w-6 h-6 text-green-600" /> : <X className="w-6 h-6 text-gray-300" />}
-                    </div>
-                    
-                    <div className="flex items-center justify-center p-4 bg-wedding-olive/5 rounded-lg border-2 border-wedding-olive/20">
-                      {feature.premium ? <Check className="w-6 h-6 text-green-600" /> : <X className="w-6 h-6 text-gray-300" />}
-                    </div>
-                    
-                    <div className="flex items-center justify-center p-4 bg-white rounded-lg border border-gray-200">
-                      {feature.coordinateur ? <Check className="w-6 h-6 text-green-600" /> : <X className="w-6 h-6 text-gray-300" />}
-                    </div>
-                  </div>
-                ))}
-              </div>
+                    <CardHeader className="bg-wedding-olive text-white pt-6">
+                      <CardTitle className="text-center">Application Premium</CardTitle>
+                      <div className="text-3xl font-bold text-white text-center">39€</div>
+                      <p className="text-sm text-white/90 text-center">Paiement unique, à vie</p>
+                    </CardHeader>
+                    <CardContent className="pt-4">
+                      <div className="space-y-2">
+                        {features.filter(f => f.premium).map((feature, idx) => (
+                          <div key={idx} className="flex items-start gap-2">
+                            <Check className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
+                            <span className="text-sm">{feature.name}</span>
+                          </div>
+                        ))}
+                      </div>
+                      <Button asChild className="w-full mt-6 bg-white text-wedding-olive border-2 border-wedding-olive hover:bg-wedding-olive hover:text-white">
+                        <Link to="/register">Découvrir - Payer plus tard</Link>
+                      </Button>
+                    </CardContent>
+                  </Card>
 
-              {/* Boutons CTA */}
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-8">
-                <div className="hidden md:block"></div>
-                <Button asChild className="bg-wedding-olive text-white hover:bg-wedding-olive/90">
-                  <Link to="/register">S'inscrire gratuitement</Link>
-                </Button>
-                <Button asChild className="bg-white text-wedding-olive border-2 border-wedding-olive hover:bg-wedding-olive hover:text-white">
-                  <Link to="/register">Découvrir - Payer plus tard</Link>
-                </Button>
-                <Button asChild className="bg-wedding-olive text-white hover:bg-wedding-olive/90">
-                  <Link to="/reservation-jour-m">Faire une demande</Link>
-                </Button>
-              </div>
+                  {/* Card 1000€ */}
+                  <Card className="border-2 border-gray-200">
+                    <CardHeader className="bg-gray-50">
+                      <CardTitle className="text-center">Coordinateur.rice</CardTitle>
+                      <div className="text-3xl font-bold text-wedding-olive text-center">1000€</div>
+                      <p className="text-sm text-gray-600 text-center">Avec présence jour-J</p>
+                    </CardHeader>
+                    <CardContent className="pt-4">
+                      <div className="space-y-2">
+                        {features.filter(f => f.coordinateur).map((feature, idx) => (
+                          <div key={idx} className="flex items-start gap-2">
+                            <Check className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
+                            <span className="text-sm">{feature.name}</span>
+                          </div>
+                        ))}
+                      </div>
+                      <Button asChild className="w-full mt-6 bg-wedding-olive text-white hover:bg-wedding-olive/90">
+                        <Link to="/reservation-jour-m">Faire une demande</Link>
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </div>
+              ) : (
+                /* VERSION DESKTOP - Tableau */
+                <>
+                  {/* En-têtes des colonnes */}
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                    <div className="hidden md:block"></div>
+                    
+                    {/* Colonne Gratuit */}
+                    <Card className="text-center p-6 border-2 border-gray-200">
+                      <CardHeader className="p-0">
+                        <CardTitle className="text-xl mb-2">Gratuit</CardTitle>
+                        <div className="text-3xl font-bold text-wedding-olive mb-2">0€</div>
+                        <p className="text-sm text-gray-600">Pour bien démarrer</p>
+                      </CardHeader>
+                    </Card>
+                    
+                    {/* Colonne 39€ - Recommandé */}
+                    <Card className="text-center p-6 bg-gradient-to-br from-wedding-olive to-wedding-olive/90 border-2 border-wedding-olive relative">
+                      <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                        <span className="bg-white text-wedding-olive px-4 py-1 rounded-full text-xs font-bold">
+                          ⭐ RECOMMANDÉ
+                        </span>
+                      </div>
+                      <CardHeader className="p-0">
+                        <CardTitle className="text-xl text-white mb-2">Application Premium</CardTitle>
+                        <div className="text-3xl font-bold text-white mb-2">39€</div>
+                        <p className="text-sm text-white/90">Paiement unique, à vie</p>
+                      </CardHeader>
+                    </Card>
+                    
+                    {/* Colonne 1000€ */}
+                    <Card className="text-center p-6 border-2 border-gray-200">
+                      <CardHeader className="p-0">
+                        <CardTitle className="text-xl mb-2">Coordinateur.rice</CardTitle>
+                        <div className="text-3xl font-bold text-wedding-olive mb-2">1000€</div>
+                        <p className="text-sm text-gray-600">Avec présence jour-J</p>
+                      </CardHeader>
+                    </Card>
+                  </div>
+
+                  {/* Lignes de fonctionnalités */}
+                  <div className="space-y-2">
+                    {features.map((feature, idx) => (
+                      <div key={idx} className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        {/* Nom de la fonctionnalité */}
+                        <div className="flex items-center p-4 bg-white rounded-lg border border-gray-200">
+                          <feature.icon className="w-5 h-5 text-wedding-olive mr-3 flex-shrink-0" />
+                          <span className="font-medium text-gray-900 text-sm">{feature.name}</span>
+                        </div>
+                        
+                        {/* Disponibilité pour chaque formule */}
+                        <div className="flex items-center justify-center p-4 bg-white rounded-lg border border-gray-200">
+                          {feature.gratuit ? <Check className="w-6 h-6 text-green-600" /> : <X className="w-6 h-6 text-gray-300" />}
+                        </div>
+                        
+                        <div className="flex items-center justify-center p-4 bg-wedding-olive/5 rounded-lg border-2 border-wedding-olive/20">
+                          {feature.premium ? <Check className="w-6 h-6 text-green-600" /> : <X className="w-6 h-6 text-gray-300" />}
+                        </div>
+                        
+                        <div className="flex items-center justify-center p-4 bg-white rounded-lg border border-gray-200">
+                          {feature.coordinateur ? <Check className="w-6 h-6 text-green-600" /> : <X className="w-6 h-6 text-gray-300" />}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Boutons CTA */}
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-8">
+                    <div className="hidden md:block"></div>
+                    <Button asChild className="bg-wedding-olive text-white hover:bg-wedding-olive/90">
+                      <Link to="/register">S'inscrire gratuitement</Link>
+                    </Button>
+                    <Button asChild className="bg-white text-wedding-olive border-2 border-wedding-olive hover:bg-wedding-olive hover:text-white">
+                      <Link to="/register">Découvrir - Payer plus tard</Link>
+                    </Button>
+                    <Button asChild className="bg-wedding-olive text-white hover:bg-wedding-olive/90">
+                      <Link to="/reservation-jour-m">Faire une demande</Link>
+                    </Button>
+                  </div>
+                </>
+              )}
             </div>
 
           </div>
@@ -171,38 +250,8 @@ const Prix = () => {
             </div>
 
 
-            <div className="max-w-6xl mx-auto mb-8">
-              <div className={`grid gap-6 ${isMobile ? 'grid-cols-1' : 'grid-cols-3'}`}>
-                {/* Ligne directe */}
-                <Card className="shadow-md hover:shadow-lg transition-shadow flex flex-col h-full">
-                  <CardHeader className="text-center bg-wedding-olive text-white">
-                    <CardTitle className="text-xl">Ligne directe</CardTitle>
-                    <div className="text-2xl font-bold">9,9€/mois</div>
-                  </CardHeader>
-                  <CardContent className="p-6 flex flex-col flex-1">
-                    <div className="space-y-3 flex-1">
-                      <div className="flex items-start gap-2">
-                        <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                        <p className="text-sm text-gray-700">Messages illimités WhatsApp</p>
-                      </div>
-                      <div className="flex items-start gap-2">
-                        <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                        <p className="text-sm text-gray-700">Disponible 7j/7 de 9h à 22h</p>
-                      </div>
-                      <div className="flex items-start gap-2">
-                        <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                        <p className="text-sm text-gray-700">Conseils personnalisés</p>
-                      </div>
-                    </div>
-                    
-                    <div className="pt-4 border-t mt-auto">
-                      <Button asChild className="w-full bg-wedding-olive text-white hover:bg-wedding-olive/90">
-                        <Link to="/reservation-jour-m">Faire une demande</Link>
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-
+            <div className="max-w-6xl mx-auto mb-12">
+              <div className={`grid gap-6 ${isMobile ? 'grid-cols-1' : 'grid-cols-2'}`}>
                 {/* Wedding Content Creator */}
                 <Card className="shadow-md hover:shadow-lg transition-shadow flex flex-col h-full">
                   <CardHeader className="text-center bg-wedding-olive text-white">
@@ -233,42 +282,64 @@ const Prix = () => {
                   </CardContent>
                 </Card>
 
-                {/* Présence d'un Coordinateur.rice */}
+                {/* Accompagnement complet jour-J - NOUVEAU */}
                 <Card className="shadow-md hover:shadow-lg transition-shadow flex flex-col h-full">
                   <CardHeader className="text-center bg-wedding-olive text-white">
-                    <CardTitle className="text-xl">Coordinateur.rice JOUR-J</CardTitle>
-                    <div className="text-2xl font-bold">1000€</div>
+                    <CardTitle className="text-xl">Accompagnement complet jour-J</CardTitle>
+                    <div className="text-2xl font-bold">1 800€</div>
                   </CardHeader>
                   <CardContent className="p-6 flex flex-col flex-1">
                     <div className="space-y-3 flex-1">
                       <div className="flex items-start gap-2">
                         <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                        <p className="text-sm text-gray-700">Audit de votre organisation via l'appli</p>
+                        <p className="text-sm text-gray-700">Toutes les fonctionnalités de l'application Premium</p>
                       </div>
                       <div className="flex items-start gap-2">
                         <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                        <p className="text-sm text-gray-700">2h de rdv téléphonique visio</p>
+                        <p className="text-sm text-gray-700">Audit complet de votre organisation</p>
                       </div>
                       <div className="flex items-start gap-2">
                         <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                        <p className="text-sm text-gray-700">14H de présence le jour-j</p>
+                        <p className="text-sm text-gray-700">4h de rdv téléphonique/visio</p>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                        <p className="text-sm text-gray-700">20h de présence le jour-J</p>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                        <p className="text-sm text-gray-700">Coordination complète prestataires</p>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                        <p className="text-sm text-gray-700">Gestion totale des imprévus</p>
                       </div>
                     </div>
                     
                     <div className="pt-4 border-t mt-auto">
-                      <FormulaCTAButton formula="privilege" />
+                      <Button asChild className="w-full bg-wedding-olive text-white hover:bg-wedding-olive/90">
+                        <Link to="/reservation-jour-m">Faire une demande</Link>
+                      </Button>
                     </div>
                   </CardContent>
                 </Card>
               </div>
             </div>
 
-            {/* Section Coordinateurs */}
-            <section className="py-16 bg-gray-50 rounded-xl mb-16">
-              <div className="container mx-auto px-4">
-                <CoordinatorsPreview />
-              </div>
-            </section>
+            {/* Bouton Coordinateurs Mariage */}
+            <div className="text-center mt-12">
+              <h3 className="text-2xl font-serif text-black mb-4">
+                Besoin d'un coordinateur mariage professionnel ?
+              </h3>
+              <p className="text-gray-600 mb-6">
+                Découvrez notre sélection de coordinateurs partenaires disponibles dans votre région
+              </p>
+              <Button asChild size="lg" className="bg-wedding-olive text-white hover:bg-wedding-olive/90">
+                <Link to="/professionnels?category=Coordination">
+                  Voir les coordinateurs disponibles
+                </Link>
+              </Button>
+            </div>
           </div>
         </section>
 
