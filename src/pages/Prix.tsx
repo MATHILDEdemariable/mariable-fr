@@ -4,12 +4,7 @@ import PremiumHeader from '@/components/home/PremiumHeader';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { 
-  CheckCircle, Mail, Phone, Smartphone, Users, Calendar, X, 
-  Check, Brain, Settings, Handshake, CheckSquare, Calculator, 
-  Home, Download, LayoutGrid, Share2, User, FileText, Droplet,
-  QrCode, Headphones, Clock
-} from 'lucide-react';
+import { CheckCircle, Mail, Phone, Smartphone, Users, Calendar, X, Check, Brain, Settings, Handshake, CheckSquare, Calculator, Home, Download, LayoutGrid, Share2, User, FileText, Droplet, QrCode, Headphones, Clock } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Link } from 'react-router-dom';
 import FormulaCTAButton from '@/components/pricing/FormulaCTAButton';
@@ -19,30 +14,127 @@ const Prix = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
-
-  const features = [
-    { name: "Accès espace personnel", icon: User, gratuit: true, premium: true, coordinateur: true },
-    { name: "Guide de prestataires", icon: Users, gratuit: true, premium: true, coordinateur: true },
-    { name: "Modèle de check-list version post-it", icon: CheckSquare, gratuit: true, premium: true, coordinateur: true },
-    { name: "Calculatrice budget", icon: Calculator, gratuit: true, premium: true, coordinateur: true },
-    { name: "Modèle suivi budgétaire personnalisable", icon: FileText, gratuit: true, premium: true, coordinateur: true },
-    { name: "Calculatrice boisson", icon: Droplet, gratuit: true, premium: true, coordinateur: true },
-    { name: "RSVP invité en ligne", icon: Mail, gratuit: true, premium: true, coordinateur: true },
-    { name: "Gestion hébergement", icon: Home, gratuit: true, premium: true, coordinateur: true },
-    { name: "Génération rétroplanning & check-list IA", icon: Brain, gratuit: false, premium: true, coordinateur: true },
-    { name: "Planning intelligent Jour-J", icon: Calendar, gratuit: false, premium: true, coordinateur: true },
-    { name: "Assignation tâches équipe Jour-J", icon: Users, gratuit: false, premium: true, coordinateur: true },
-    { name: "Partage temps réel infos Jour-J", icon: Share2, gratuit: false, premium: true, coordinateur: true },
-    { name: "Stockage documents", icon: FileText, gratuit: false, premium: true, coordinateur: true },
-    { name: "Génération illimitée QR code", icon: QrCode, gratuit: false, premium: true, coordinateur: true },
-    { name: "Support téléphonique & Whatsapp", icon: Headphones, gratuit: false, premium: true, coordinateur: true },
-    { name: "Audit organisation via l'appli", icon: Settings, gratuit: false, premium: false, coordinateur: true },
-    { name: "2h rdv téléphonique/visio", icon: Phone, gratuit: false, premium: false, coordinateur: true },
-    { name: "14h présence jour-J", icon: Clock, gratuit: false, premium: false, coordinateur: true },
-    { name: "Coordination prestataires terrain", icon: Handshake, gratuit: false, premium: false, coordinateur: true },
-    { name: "Gestion imprévus terrain", icon: Settings, gratuit: false, premium: false, coordinateur: true }
-  ];
-
+  const features = [{
+    name: "Accès espace personnel",
+    icon: User,
+    gratuit: true,
+    premium: true,
+    coordinateur: true
+  }, {
+    name: "Guide de prestataires",
+    icon: Users,
+    gratuit: true,
+    premium: true,
+    coordinateur: true
+  }, {
+    name: "Modèle de check-list version post-it",
+    icon: CheckSquare,
+    gratuit: true,
+    premium: true,
+    coordinateur: true
+  }, {
+    name: "Calculatrice budget",
+    icon: Calculator,
+    gratuit: true,
+    premium: true,
+    coordinateur: true
+  }, {
+    name: "Modèle suivi budgétaire personnalisable",
+    icon: FileText,
+    gratuit: true,
+    premium: true,
+    coordinateur: true
+  }, {
+    name: "Calculatrice boisson",
+    icon: Droplet,
+    gratuit: true,
+    premium: true,
+    coordinateur: true
+  }, {
+    name: "RSVP invité en ligne",
+    icon: Mail,
+    gratuit: true,
+    premium: true,
+    coordinateur: true
+  }, {
+    name: "Gestion hébergement",
+    icon: Home,
+    gratuit: true,
+    premium: true,
+    coordinateur: true
+  }, {
+    name: "Génération rétroplanning & check-list IA",
+    icon: Brain,
+    gratuit: false,
+    premium: true,
+    coordinateur: true
+  }, {
+    name: "Planning intelligent Jour-J",
+    icon: Calendar,
+    gratuit: false,
+    premium: true,
+    coordinateur: true
+  }, {
+    name: "Assignation tâches équipe Jour-J",
+    icon: Users,
+    gratuit: false,
+    premium: true,
+    coordinateur: true
+  }, {
+    name: "Partage temps réel infos Jour-J",
+    icon: Share2,
+    gratuit: false,
+    premium: true,
+    coordinateur: true
+  }, {
+    name: "Stockage documents",
+    icon: FileText,
+    gratuit: false,
+    premium: true,
+    coordinateur: true
+  }, {
+    name: "Génération illimitée QR code",
+    icon: QrCode,
+    gratuit: false,
+    premium: true,
+    coordinateur: true
+  }, {
+    name: "Support téléphonique & Whatsapp",
+    icon: Headphones,
+    gratuit: false,
+    premium: true,
+    coordinateur: true
+  }, {
+    name: "Audit organisation via l'appli",
+    icon: Settings,
+    gratuit: false,
+    premium: false,
+    coordinateur: true
+  }, {
+    name: "2h rdv téléphonique/visio",
+    icon: Phone,
+    gratuit: false,
+    premium: false,
+    coordinateur: true
+  }, {
+    name: "14h présence jour-J",
+    icon: Clock,
+    gratuit: false,
+    premium: false,
+    coordinateur: true
+  }, {
+    name: "Coordination prestataires terrain",
+    icon: Handshake,
+    gratuit: false,
+    premium: false,
+    coordinateur: true
+  }, {
+    name: "Gestion imprévus terrain",
+    icon: Settings,
+    gratuit: false,
+    premium: false,
+    coordinateur: true
+  }];
   const faqData = [{
     id: 1,
     question: "Puis-je modifier la formule plus tard ?",
@@ -79,9 +171,8 @@ const Prix = () => {
 
             {/* Tableau comparatif 3 colonnes */}
             <div className="max-w-7xl mx-auto mb-16">
-              {isMobile ? (
-                /* VERSION MOBILE - Cards empilables */
-                <div className="space-y-6">
+              {isMobile ? (/* VERSION MOBILE - Cards empilables */
+            <div className="space-y-6">
                   {/* Card Gratuit */}
                   <Card className="border-2 border-gray-200">
                     <CardHeader className="bg-gray-50">
@@ -91,12 +182,10 @@ const Prix = () => {
                     </CardHeader>
                     <CardContent className="pt-4">
                       <div className="space-y-2">
-                        {features.filter(f => f.gratuit).map((feature, idx) => (
-                          <div key={idx} className="flex items-start gap-2">
+                        {features.filter(f => f.gratuit).map((feature, idx) => <div key={idx} className="flex items-start gap-2">
                             <Check className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
                             <span className="text-sm">{feature.name}</span>
-                          </div>
-                        ))}
+                          </div>)}
                       </div>
                       <Button asChild className="w-full mt-6 bg-wedding-olive text-white hover:bg-wedding-olive/90">
                         <Link to="/register">S'inscrire gratuitement</Link>
@@ -118,12 +207,10 @@ const Prix = () => {
                     </CardHeader>
                     <CardContent className="pt-4">
                       <div className="space-y-2">
-                        {features.filter(f => f.premium).map((feature, idx) => (
-                          <div key={idx} className="flex items-start gap-2">
+                        {features.filter(f => f.premium).map((feature, idx) => <div key={idx} className="flex items-start gap-2">
                             <Check className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
                             <span className="text-sm">{feature.name}</span>
-                          </div>
-                        ))}
+                          </div>)}
                       </div>
                       <Button asChild className="w-full mt-6 bg-white text-wedding-olive border-2 border-wedding-olive hover:bg-wedding-olive hover:text-white">
                         <Link to="/register">Découvrir - Payer plus tard</Link>
@@ -140,22 +227,18 @@ const Prix = () => {
                     </CardHeader>
                     <CardContent className="pt-4">
                       <div className="space-y-2">
-                        {features.filter(f => f.coordinateur).map((feature, idx) => (
-                          <div key={idx} className="flex items-start gap-2">
+                        {features.filter(f => f.coordinateur).map((feature, idx) => <div key={idx} className="flex items-start gap-2">
                             <Check className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
                             <span className="text-sm">{feature.name}</span>
-                          </div>
-                        ))}
+                          </div>)}
                       </div>
                       <Button asChild className="w-full mt-6 bg-wedding-olive text-white hover:bg-wedding-olive/90">
                         <Link to="/reservation-jour-m">Faire une demande</Link>
                       </Button>
                     </CardContent>
                   </Card>
-                </div>
-              ) : (
-                /* VERSION DESKTOP - Tableau */
-                <>
+                </div>) : (/* VERSION DESKTOP - Tableau */
+            <>
                   {/* En-têtes des colonnes */}
                   <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
                     <div className="hidden md:block"></div>
@@ -186,7 +269,7 @@ const Prix = () => {
                     {/* Colonne 1000€ */}
                     <Card className="text-center p-6 border-2 border-gray-200">
                       <CardHeader className="p-0">
-                        <CardTitle className="text-xl mb-2">Coordinateur.rice</CardTitle>
+                        <CardTitle className="text-xl mb-2">Coordinateur.rice Renfort</CardTitle>
                         <div className="text-3xl font-bold text-wedding-olive mb-2">1000€</div>
                         <p className="text-sm text-gray-600">Avec présence jour-J</p>
                       </CardHeader>
@@ -195,8 +278,7 @@ const Prix = () => {
 
                   {/* Lignes de fonctionnalités */}
                   <div className="space-y-2">
-                    {features.map((feature, idx) => (
-                      <div key={idx} className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    {features.map((feature, idx) => <div key={idx} className="grid grid-cols-1 md:grid-cols-4 gap-4">
                         {/* Nom de la fonctionnalité */}
                         <div className="flex items-center p-4 bg-white rounded-lg border border-gray-200">
                           <feature.icon className="w-5 h-5 text-wedding-olive mr-3 flex-shrink-0" />
@@ -215,8 +297,7 @@ const Prix = () => {
                         <div className="flex items-center justify-center p-4 bg-white rounded-lg border border-gray-200">
                           {feature.coordinateur ? <Check className="w-6 h-6 text-green-600" /> : <X className="w-6 h-6 text-gray-300" />}
                         </div>
-                      </div>
-                    ))}
+                      </div>)}
                   </div>
 
                   {/* Boutons CTA */}
@@ -232,8 +313,7 @@ const Prix = () => {
                       <Link to="/reservation-jour-m">Faire une demande</Link>
                     </Button>
                   </div>
-                </>
-              )}
+                </>)}
             </div>
 
           </div>
@@ -290,21 +370,18 @@ const Prix = () => {
                   </CardHeader>
                   <CardContent className="p-6 flex flex-col flex-1">
                     <div className="space-y-3 flex-1">
+                      
                       <div className="flex items-start gap-2">
                         <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                        <p className="text-sm text-gray-700">Toutes les fonctionnalités de l'application Premium</p>
+                        <p className="text-sm text-gray-700">Création de votre planning Jour-J</p>
                       </div>
                       <div className="flex items-start gap-2">
                         <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                        <p className="text-sm text-gray-700">Audit complet de votre organisation</p>
+                        <p className="text-sm text-gray-700">Jusqu'à 5h de rdv téléphonique/visio</p>
                       </div>
                       <div className="flex items-start gap-2">
                         <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                        <p className="text-sm text-gray-700">4h de rdv téléphonique/visio</p>
-                      </div>
-                      <div className="flex items-start gap-2">
-                        <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                        <p className="text-sm text-gray-700">20h de présence le jour-J</p>
+                        <p className="text-sm text-gray-700">14h de présence le jour-J</p>
                       </div>
                       <div className="flex items-start gap-2">
                         <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
@@ -312,7 +389,7 @@ const Prix = () => {
                       </div>
                       <div className="flex items-start gap-2">
                         <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                        <p className="text-sm text-gray-700">Gestion totale des imprévus</p>
+                        <p className="text-sm text-gray-700">Gestion des imprévus</p>
                       </div>
                     </div>
                     
