@@ -169,7 +169,7 @@ const MonMariage = () => {
             Gérez vos projets de mariage et retroplannings
           </p>
         </div>
-        <Button onClick={() => navigate('/retroplanning')} className="bg-wedding-olive hover:bg-wedding-olive/90">
+        <Button onClick={() => navigate('/dashboard/mon-mariage/retroplanning')} className="bg-wedding-olive hover:bg-wedding-olive/90">
           <Clock className="h-4 w-4 mr-2" />
           Créer mon rétroplanning personnalisé
         </Button>
@@ -301,7 +301,7 @@ const MonMariage = () => {
                 Créez votre premier rétroplanning personnalisé ou démarrez un projet avec VibeWedding
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <Button onClick={() => navigate('/retroplanning')}>
+                <Button onClick={() => navigate('/dashboard/mon-mariage/retroplanning')}>
                   <Clock className="h-4 w-4 mr-2" />
                   Créer mon rétroplanning
                 </Button>

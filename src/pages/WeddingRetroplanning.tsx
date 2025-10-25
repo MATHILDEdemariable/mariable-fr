@@ -13,6 +13,8 @@ import { format, subMonths } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import PremiumHeader from '@/components/home/PremiumHeader';
 import { useNavigate } from 'react-router-dom';
+import { usePremiumAction } from '@/hooks/usePremiumAction';
+import PremiumModal from '@/components/premium/PremiumModal';
 
 interface TimelineItem {
   period: string;
@@ -50,6 +52,10 @@ const WeddingRetroplanning = () => {
   const [loadedRetroplanningId, setLoadedRetroplanningId] = useState<string | null>(null);
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { executeAction, showPremiumModal, closePremiumModal, isPremium } = usePremiumAction({
+    feature: "Rétroplanning Personnalisé",
+    description: "Créez votre rétroplanning de mariage intelligent avec l'IA"
+  });
 
   // Charger un retroplanning existant depuis l'URL
   useEffect(() => {
@@ -114,33 +120,35 @@ const WeddingRetroplanning = () => {
       return;
     }
 
-    setIsGenerating(true);
-    try {
-      const { data, error } = await supabase.functions.invoke('generate-wedding-retroplanning', {
-        body: { weddingDate: format(weddingDate, 'yyyy-MM-dd') }
-      });
+    executeAction(async () => {
+      setIsGenerating(true);
+      try {
+        const { data, error } = await supabase.functions.invoke('generate-wedding-retroplanning', {
+          body: { weddingDate: format(weddingDate, 'yyyy-MM-dd') }
+        });
 
-      if (error) throw error;
+        if (error) throw error;
 
-      if (!data.success) {
-        throw new Error(data.error || 'Erreur lors de la génération');
+        if (!data.success) {
+          throw new Error(data.error || 'Erreur lors de la génération');
+        }
+
+        setRetroplanning(data.data);
+        toast({
+          title: "✨ Rétroplanning généré",
+          description: "Votre rétroplanning personnalisé est prêt"
+        });
+      } catch (error: any) {
+        console.error('Erreur génération:', error);
+        toast({
+          title: "Erreur",
+          description: error.message || "Impossible de générer le rétroplanning",
+          variant: "destructive"
+        });
+      } finally {
+        setIsGenerating(false);
       }
-
-      setRetroplanning(data.data);
-      toast({
-        title: "✨ Rétroplanning généré",
-        description: "Votre rétroplanning personnalisé est prêt"
-      });
-    } catch (error: any) {
-      console.error('Erreur génération:', error);
-      toast({
-        title: "Erreur",
-        description: error.message || "Impossible de générer le rétroplanning",
-        variant: "destructive"
-      });
-    } finally {
-      setIsGenerating(false);
-    }
+    });
   };
 
   const handleSave = async () => {
@@ -299,6 +307,21 @@ const WeddingRetroplanning = () => {
             </CardContent>
           </Card>
 
+          {/* Message d'attente pendant la génération */}
+          {isGenerating && (
+            <Card className="border-wedding-olive/30">
+              <CardContent className="pt-6">
+                <div className="flex flex-col items-center justify-center space-y-4">
+                  <Loader2 className="h-12 w-12 animate-spin text-wedding-olive" />
+                  <p className="text-lg font-medium text-center">
+                    ⏳ Cela peut prendre une minute, notre intelligence artificielle réfléchit...
+                  </p>
+                  <Progress className="w-full h-2" />
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
           {/* Generated Retroplanning */}
           {retroplanning && (
             <>
@@ -450,6 +473,13 @@ const WeddingRetroplanning = () => {
           )}
         </div>
       </div>
+
+      <PremiumModal
+        isOpen={showPremiumModal}
+        onClose={closePremiumModal}
+        feature="Rétroplanning Personnalisé"
+        description="Créez votre rétroplanning de mariage intelligent avec l'IA"
+      />
     </>
   );
 };

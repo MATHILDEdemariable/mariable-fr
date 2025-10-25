@@ -120,7 +120,7 @@ const generateBudgetContent = (data: BudgetExportData): string => {
   return `
     <div style="min-height: 100%; display: flex; flex-direction: column;">
       <!-- Header with Mariable branding -->
-      <div style="text-align: center; margin-bottom: 40px; padding-bottom: 20px; border-bottom: 3px solid #7F9474;">
+      <div style="text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 3px solid #7F9474;">
         <div style="font-size: 32px; font-weight: 700; color: #7F9474; font-family: serif; margin-bottom: 8px;">
           Mariable
         </div>
@@ -129,14 +129,43 @@ const generateBudgetContent = (data: BudgetExportData): string => {
         </div>
       </div>
 
-      <!-- Budget summary -->
-      <div style="text-align: center; margin-bottom: 40px; padding: 20px; background-color: #f8f6f0; border-radius: 12px;">
-        <h1 style="font-size: 28px; font-weight: 700; color: #1A1F2C; margin: 0 0 12px 0; font-family: serif;">
-          Budget Total Estimé
-        </h1>
-        <p style="font-size: 32px; color: #7F9474; font-weight: 700; margin: 0;">
-          ${formatCurrency(data.totalEstimated)}
-        </p>
+      <!-- Budget summary - 4 totaux -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 40px;">
+        <div style="text-align: center; padding: 24px; background: linear-gradient(135deg, #e8f5e9, #c8e6c9); border-radius: 12px; border: 2px solid #4caf50;">
+          <h2 style="font-size: 14px; font-weight: 600; color: #2e7d32; margin: 0 0 8px 0; text-transform: uppercase;">
+            Budget Total Estimé
+          </h2>
+          <p style="font-size: 40px; color: #1b5e20; font-weight: 700; margin: 0;">
+            ${formatCurrency(data.totalEstimated)}
+          </p>
+        </div>
+        
+        <div style="text-align: center; padding: 24px; background: linear-gradient(135deg, #e3f2fd, #bbdefb); border-radius: 12px; border: 2px solid #2196f3;">
+          <h2 style="font-size: 14px; font-weight: 600; color: #1565c0; margin: 0 0 8px 0; text-transform: uppercase;">
+            Coût Total Réel
+          </h2>
+          <p style="font-size: 40px; color: #0d47a1; font-weight: 700; margin: 0;">
+            ${formatCurrency(data.totalActual)}
+          </p>
+        </div>
+        
+        <div style="text-align: center; padding: 24px; background: linear-gradient(135deg, #fff3e0, #ffe0b2); border-radius: 12px; border: 2px solid #ff9800;">
+          <h2 style="font-size: 14px; font-weight: 600; color: #e65100; margin: 0 0 8px 0; text-transform: uppercase;">
+            Acomptes Totaux Versés
+          </h2>
+          <p style="font-size: 40px; color: #bf360c; font-weight: 700; margin: 0;">
+            ${formatCurrency(data.totalDeposit)}
+          </p>
+        </div>
+        
+        <div style="text-align: center; padding: 24px; background: linear-gradient(135deg, #ffebee, #ffcdd2); border-radius: 12px; border: 2px solid #f44336;">
+          <h2 style="font-size: 14px; font-weight: 600; color: #c62828; margin: 0 0 8px 0; text-transform: uppercase;">
+            Reste Total à Payer
+          </h2>
+          <p style="font-size: 40px; color: #b71c1c; font-weight: 700; margin: 0;">
+            ${formatCurrency(data.totalRemaining)}
+          </p>
+        </div>
       </div>
 
       <!-- Budget table -->
@@ -167,7 +196,7 @@ const generateBudgetContent = (data: BudgetExportData): string => {
           </div>
           
           ${category.items.filter(item => item.name).map(item => `
-            <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1.5fr; gap: 12px; padding: 8px 16px; border-bottom: 1px solid #e5e7eb; font-size: 14px;">
+            <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1.5fr; gap: 12px; padding: 8px 16px; border-bottom: 1px solid #e5e7eb; font-size: 14px; page-break-inside: avoid;">
               <div style="padding-left: 20px;">${item.name}</div>
               <div style="text-align: right;">${formatCurrency(item.estimated)}</div>
               <div style="text-align: right;">${formatCurrency(item.actual)}</div>
@@ -179,7 +208,7 @@ const generateBudgetContent = (data: BudgetExportData): string => {
         `).join('')}
         
         <!-- Total row -->
-        <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1.5fr; gap: 12px; padding: 16px; background-color: #7F9474; color: white; font-weight: 700; font-size: 16px; border-radius: 0 0 8px 8px;">
+        <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1.5fr; gap: 12px; padding: 16px 16px 20px 16px; background-color: #7F9474; color: white; font-weight: 700; font-size: 16px; border-radius: 0 0 8px 8px; margin-bottom: 20px; page-break-inside: avoid;">
           <div>TOTAL</div>
           <div style="text-align: right;">${formatCurrency(data.totalEstimated)}</div>
           <div style="text-align: right;">${formatCurrency(data.totalActual)}</div>

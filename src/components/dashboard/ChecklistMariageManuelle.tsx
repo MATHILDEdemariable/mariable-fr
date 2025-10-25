@@ -9,6 +9,7 @@ import { Progress } from "@/components/ui/progress";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import ChecklistMariageExportButton from './ChecklistMariageExportButton';
@@ -21,6 +22,7 @@ interface ChecklistItem {
   completed: boolean;
   due_date?: string;
   position: number;
+  responsible?: string;
 }
 
 interface NewItemForm {
@@ -28,6 +30,7 @@ interface NewItemForm {
   description: string;
   category: string;
   due_date: string;
+  responsible: string;
 }
 
 const CATEGORIES = [
@@ -52,6 +55,7 @@ const ChecklistMariageManuelle: React.FC = () => {
     description: '',
     category: '',
     due_date: '',
+    responsible: '',
   });
   const { toast } = useToast();
 
@@ -109,11 +113,12 @@ const ChecklistMariageManuelle: React.FC = () => {
           user_id: user.id,
           position: maxPosition + 1,
           due_date: newItem.due_date || null,
+          responsible: newItem.responsible || null,
         });
 
       if (error) throw error;
 
-      setNewItem({ title: '', description: '', category: categoryKey || '', due_date: '' });
+      setNewItem({ title: '', description: '', category: categoryKey || '', due_date: '', responsible: '' });
       setShowAddDialog(false);
       loadItems();
       
@@ -271,41 +276,55 @@ const ChecklistMariageManuelle: React.FC = () => {
                     Aucune tâche
                   </p>
                 ) : (
-                  categoryItems.map((item) => (
-                    <div key={item.id} className="flex items-start gap-2 p-2 bg-white/40 rounded-md">
-                      <button
-                        onClick={() => toggleItem(item)}
-                        className="mt-0.5 text-gray-600 hover:text-gray-800"
-                      >
-                        {item.completed ? (
-                          <CheckCircle2 className="w-3 h-3" />
-                        ) : (
-                          <Circle className="w-3 h-3" />
-                        )}
-                      </button>
-                      <div className="flex-1 min-w-0">
-                        <p className={`text-xs font-medium ${item.completed ? 'line-through text-gray-500' : 'text-gray-700'}`}>
-                          {item.title}
-                        </p>
-                        {item.due_date && (
-                          <div className="flex items-center gap-1 mt-1">
-                            <Calendar className="w-2 h-2 text-gray-400" />
-                            <span className="text-xs text-gray-500">
-                              {new Date(item.due_date).toLocaleDateString('fr-FR')}
-                            </span>
+                  <TooltipProvider>
+                    {categoryItems.map((item) => (
+                      <Tooltip key={item.id}>
+                        <TooltipTrigger asChild>
+                          <div className="flex items-start gap-2 p-2 bg-white/40 rounded-md hover:bg-white/60 transition-colors cursor-pointer">
+                            <button
+                              onClick={() => toggleItem(item)}
+                              className="mt-0.5 text-gray-600 hover:text-gray-800"
+                            >
+                              {item.completed ? (
+                                <CheckCircle2 className="w-3 h-3" />
+                              ) : (
+                                <Circle className="w-3 h-3" />
+                              )}
+                            </button>
+                            <div className="flex-1 min-w-0">
+                              <p className={`text-xs font-medium ${item.completed ? 'line-through text-gray-500' : 'text-gray-700'}`}>
+                                {item.title}
+                              </p>
+                              {item.due_date && (
+                                <div className="flex items-center gap-1 mt-1">
+                                  <Calendar className="w-2 h-2 text-gray-400" />
+                                  <span className="text-xs text-gray-500">
+                                    {new Date(item.due_date).toLocaleDateString('fr-FR')}
+                                  </span>
+                                </div>
+                              )}
+                            </div>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => deleteItem(item.id)}
+                              className="h-4 w-4 p-0 text-gray-400 hover:text-red-500"
+                            >
+                              <Trash2 className="w-2.5 h-2.5" />
+                            </Button>
                           </div>
+                        </TooltipTrigger>
+                        {item.responsible && (
+                          <TooltipContent side="right" className="bg-gray-900 text-white border-gray-800">
+                            <p className="font-semibold flex items-center gap-1">
+                              👤 Responsable
+                            </p>
+                            <p className="text-sm">{item.responsible}</p>
+                          </TooltipContent>
                         )}
-                      </div>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => deleteItem(item.id)}
-                        className="h-4 w-4 p-0 text-gray-400 hover:text-red-500"
-                      >
-                        <Trash2 className="w-2.5 h-2.5" />
-                      </Button>
-                    </div>
-                  ))
+                      </Tooltip>
+                    ))}
+                  </TooltipProvider>
                 )}
               </CardContent>
             </Card>
@@ -351,6 +370,15 @@ const ChecklistMariageManuelle: React.FC = () => {
                 value={newItem.description}
                 onChange={(e) => setNewItem({ ...newItem, description: e.target.value })}
                 placeholder="Description de la tâche"
+              />
+            </div>
+            <div>
+              <Label htmlFor="responsible">Responsable</Label>
+              <Input
+                id="responsible"
+                value={newItem.responsible}
+                onChange={(e) => setNewItem({ ...newItem, responsible: e.target.value })}
+                placeholder="Qui est en charge de cette tâche ?"
               />
             </div>
             <div>
