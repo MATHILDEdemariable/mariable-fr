@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Loader2, Mail, Lock, User } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import Header from '@/components/Header';
@@ -20,6 +21,7 @@ const Register = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [phone, setPhone] = useState('');
+  const [referralSource, setReferralSource] = useState('');
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [session, setSession] = useState<Session | null>(null);
@@ -50,7 +52,7 @@ const Register = () => {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!email || !password || !firstName || !lastName) {
+    if (!email || !password || !firstName || !lastName || !referralSource) {
       toast({
         title: "Erreur",
         description: "Veuillez remplir tous les champs obligatoires",
@@ -83,6 +85,7 @@ const Register = () => {
             first_name: firstName,
             last_name: lastName,
             phone: phone || null,
+            referral_source: referralSource,
           },
           emailRedirectTo: redirectTo,
         },
@@ -219,6 +222,28 @@ const Register = () => {
               </div>
               
               <div className="space-y-2">
+                <Label htmlFor="referralSource">Comment nous avez-vous connu ? *</Label>
+                <Select value={referralSource} onValueChange={setReferralSource} disabled={isLoading}>
+                  <SelectTrigger id="referralSource">
+                    <SelectValue placeholder="Sélectionnez une option" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Instagram">Instagram</SelectItem>
+                    <SelectItem value="TikTok">TikTok</SelectItem>
+                    <SelectItem value="Facebook">Facebook</SelectItem>
+                    <SelectItem value="LinkedIn">LinkedIn</SelectItem>
+                    <SelectItem value="Pinterest">Pinterest</SelectItem>
+                    <SelectItem value="Google">Google</SelectItem>
+                    <SelectItem value="Bouche à oreille">Bouche à oreille</SelectItem>
+                    <SelectItem value="Autre">Autre</SelectItem>
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground">
+                  Instagram, TikTok, Facebook, LinkedIn, Pinterest, bouche à oreille, autre...
+                </p>
+              </div>
+              
+              <div className="space-y-2">
                 <Label htmlFor="password">Mot de passe *</Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -247,8 +272,8 @@ const Register = () => {
                   className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 >
                   J'accepte les{" "}
-                  <Link to="/cgv" className="text-wedding-olive hover:underline" target="_blank">
-                    conditions d'utilisation
+                  <Link to="/cgv-couples" className="text-wedding-olive hover:underline" target="_blank">
+                    conditions générales d'utilisation
                   </Link>
                 </label>
               </div>

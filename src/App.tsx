@@ -105,6 +105,7 @@ const QRCodeGeneratorPage = lazy(() => import("./pages/dashboard/QRCodeGenerator
 const SeatingPlan = lazy(() => import("./pages/SeatingPlan"));
 const ProDashboardMockup = lazy(() => import("./pages/pro/ProDashboardMockup"));
 const GuideDuJourJ = lazy(() => import("./pages/GuideDuJourJ"));
+const CGVCouples = lazy(() => import("./pages/CGVCouples"));
 
 // Loading component
 const PageLoader = () => (
@@ -194,6 +195,7 @@ function App() {
                   {/* Missing routes - Fixed */}
                   <Route path="/professionnels" element={<Professionnels />} />
                   <Route path="/cgv" element={<CGV />} />
+                  <Route path="/cgv-couples" element={<CGVCouples />} />
                   
                   {/* Dashboard Professionnel Mockup */}
                   <Route path="/pro/dashboard" element={<ProDashboardMockup />} />
