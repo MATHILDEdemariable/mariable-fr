@@ -232,7 +232,7 @@ const ProjectSummary = () => {
               className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold shadow-md hover:shadow-lg transition-all duration-200 whitespace-nowrap"
             >
               <Sparkles className="w-4 h-4 mr-2" />
-              Découvrir Premium
+              Passer premium
             </Button>
           </div>
         </div>
