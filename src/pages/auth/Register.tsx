@@ -9,7 +9,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Loader2, Mail, Lock, User } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
-import Header from '@/components/Header';
+import PremiumHeader from '@/components/home/PremiumHeader';
 import { supabase } from '@/integrations/supabase/client';
 import { Session } from '@supabase/supabase-js';
 import SEO from '@/components/SEO';
@@ -128,12 +128,12 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen bg-wedding-cream/10">
+    <div className="min-h-screen bg-premium-base">
       <SEO
         title="Inscription | Mariable"
         description="Créez votre compte Mariable pour organiser votre mariage et accéder à nos outils de planification."
       />
-      <Header />
+      <PremiumHeader />
       
       <main className="container max-w-md mx-auto pb-12 px-4" style={{ paddingTop: 'var(--header-h-standard)' }}>
         {showEmailAlert && (

@@ -35,6 +35,7 @@ interface UserRegistration {
     subscription_expires_at?: string;
     wedding_date?: string;
     guest_count?: number;
+    referral_source?: string;
   };
 }
 
@@ -190,6 +191,10 @@ const AdminUsers = () => {
 
   const getPhoneNumber = (user: UserRegistration) => {
     return user.raw_user_meta_data?.phone || 'Non renseigné';
+  };
+
+  const getReferralSource = (user: UserRegistration) => {
+    return user.profile?.referral_source || user.raw_user_meta_data?.referral_source || 'Non renseigné';
   };
 
   const getRecentUsers = () => {
@@ -386,8 +391,7 @@ const AdminUsers = () => {
                       <TableHead>Nom Complet</TableHead>
                       <TableHead>Email</TableHead>
                       <TableHead>Téléphone</TableHead>
-                      <TableHead>Date de mariage</TableHead>
-                      <TableHead>Nb. invités</TableHead>
+                      <TableHead>Source</TableHead>
                       <TableHead>Date d'inscription</TableHead>
                       <TableHead>Statut</TableHead>
                     </TableRow>
@@ -420,15 +424,9 @@ const AdminUsers = () => {
                           </div>
                         </TableCell>
                         <TableCell>
-                          {user.profile?.wedding_date ? 
-                            formatDate(user.profile.wedding_date) : 
-                            <span className="text-gray-400 italic">Non renseigné</span>
-                          }
-                        </TableCell>
-                        <TableCell>
-                          {user.profile?.guest_count || 
-                            <span className="text-gray-400 italic">Non renseigné</span>
-                          }
+                          <span className={getReferralSource(user) === 'Non renseigné' ? 'text-gray-400 italic' : ''}>
+                            {getReferralSource(user)}
+                          </span>
                         </TableCell>
                         <TableCell>
                           <div className="flex items-center gap-2">

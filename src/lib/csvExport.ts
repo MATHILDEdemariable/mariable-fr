@@ -7,9 +7,8 @@ export interface UserExportData {
   nom_complet: string;
   date_inscription: string;
   telephone: string;
-  date_mariage: string;
+  source: string;
   statut_abonnement: string;
-  nombre_invites: string;
 }
 
 export const exportUsersToCSV = (users: any[]): void => {
@@ -31,11 +30,8 @@ export const exportUsersToCSV = (users: any[]): void => {
           ? new Date(user.created_at).toLocaleDateString('fr-FR')
           : 'Non renseigné',
         telephone: profile.phone || user.raw_user_meta_data?.phone || 'Non renseigné',
-        date_mariage: profile.wedding_date 
-          ? new Date(profile.wedding_date).toLocaleDateString('fr-FR')
-          : 'Non renseigné',
-        statut_abonnement: profile.subscription_type || 'Gratuit',
-        nombre_invites: profile.guest_count?.toString() || 'Non renseigné'
+        source: profile.referral_source || user.raw_user_meta_data?.referral_source || 'Non renseigné',
+        statut_abonnement: profile.subscription_type || 'Gratuit'
       };
     });
 
@@ -45,9 +41,8 @@ export const exportUsersToCSV = (users: any[]): void => {
       'Nom Complet',
       'Date Inscription',
       'Téléphone',
-      'Date Mariage',
-      'Statut Abonnement',
-      'Nombre Invités'
+      'Source',
+      'Statut Abonnement'
     ];
 
     // Convertir en CSV
