@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar } from 'lucide-react';
+import { Calendar, Sparkles } from 'lucide-react';
 import { format, differenceInDays } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
@@ -206,6 +206,35 @@ const ProjectSummary = () => {
             </p>
           </div>}
       </div>
+
+      {/* Bloc Premium - Visible uniquement si l'utilisateur n'est pas premium */}
+      {profile && profile.subscription_type !== 'premium' && (
+        <div className="bg-gradient-to-r from-yellow-50 via-amber-50 to-yellow-50 border-2 border-yellow-300 rounded-xl p-6 shadow-lg">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="bg-yellow-400 p-3 rounded-full">
+                <Sparkles className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h3 className="text-xl font-serif text-wedding-olive font-bold">
+                  Passez à la formule Premium
+                </h3>
+                <p className="text-gray-700 text-sm mt-1">
+                  Débloquez toutes les fonctionnalités IA et coordination jour-J pour seulement 39€
+                </p>
+              </div>
+            </div>
+            <Button 
+              onClick={() => window.location.href = '/prix'}
+              size="lg"
+              className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold shadow-md hover:shadow-lg transition-all duration-200 whitespace-nowrap"
+            >
+              <Sparkles className="w-4 h-4 mr-2" />
+              Découvrir Premium
+            </Button>
+          </div>
+        </div>
+      )}
 
       {/* Initiation Title */}
       <div className="mb-6">

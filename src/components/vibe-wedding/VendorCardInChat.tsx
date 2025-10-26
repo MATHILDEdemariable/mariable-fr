@@ -18,13 +18,48 @@ interface VendorCardInChatProps {
     email?: string;
     telephone?: string;
     slug?: string;
+    prestataires_photos_preprod?: Array<{
+      url: string;
+      principale?: boolean;
+      is_cover?: boolean;
+    }>;
   };
 }
 
 const VendorCardInChat: React.FC<VendorCardInChatProps> = ({ vendor }) => {
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   return (
-    <Card className="hover:shadow-md transition-shadow border-premium-sage/20">
+    <Card className="hover:shadow-md transition-shadow border-premium-sage/20 overflow-hidden">
+      {/* Image prestataire */}
+      {vendor.prestataires_photos_preprod && vendor.prestataires_photos_preprod.length > 0 && (
+        <div className="relative w-full h-48 bg-gray-200">
+          <img
+            src={vendor.prestataires_photos_preprod[0].url}
+            alt={vendor.nom}
+            className="w-full h-full object-cover"
+            loading="lazy"
+            onError={(e) => {
+              e.currentTarget.style.display = 'none';
+            }}
+          />
+          {vendor.categorie && (
+            <div className="absolute top-2 left-2 bg-wedding-olive text-white px-2 py-1 rounded text-xs font-medium">
+              {vendor.categorie}
+            </div>
+          )}
+        </div>
+      )}
+      
+      {/* Si pas de photo, afficher un placeholder avec catégorie */}
+      {(!vendor.prestataires_photos_preprod || vendor.prestataires_photos_preprod.length === 0) && (
+        <div className="relative w-full h-48 bg-gradient-to-br from-wedding-olive/20 to-wedding-cream/40 flex items-center justify-center">
+          <div className="text-center">
+            <div className="text-4xl mb-2">📸</div>
+            <p className="text-sm text-gray-600">{vendor.categorie}</p>
+          </div>
+        </div>
+      )}
+      
       <CardContent className="p-4">
         <div className="flex items-start gap-4">
           {/* Info principale */}

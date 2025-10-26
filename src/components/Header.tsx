@@ -6,7 +6,7 @@ import {
   HeaderDropdownMenu,
   HeaderDropdownItem,
 } from "./HeaderDropdown";
-import { User2, Menu as MenuIcon } from "lucide-react";
+import { User2, Menu as MenuIcon, Sparkles } from "lucide-react";
 import { Drawer, DrawerContent } from "./ui/drawer";
 import { useIsMobile } from "../hooks/use-mobile";
 import { supabase } from '@/integrations/supabase/client';
@@ -45,6 +45,17 @@ function Menus({ onClick, isLoggedIn }: { onClick?: () => void, isLoggedIn?: boo
                 label="Mon Jour-J"
                 description="Coordonnez tous les détails de votre mariage"
                 to="/mon-jour-m"
+                onClick={onClick}
+              />
+              <HeaderDropdownItem
+                label={
+                  <span className="flex items-center gap-2 text-yellow-600 font-semibold">
+                    <Sparkles className="w-4 h-4" />
+                    Passer en Premium
+                  </span>
+                }
+                description="Débloquez toutes les fonctionnalités"
+                to="/prix"
                 onClick={onClick}
               />
             </>

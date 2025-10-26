@@ -4,7 +4,7 @@ import { ChevronDown } from "lucide-react";
 import { Link } from "react-router-dom";
 
 interface ItemProps {
-  label: string;
+  label: string | ReactNode;
   description?: string;
   to: string;
   onClick?: () => void;
@@ -102,7 +102,6 @@ export const HeaderDropdownItem: React.FC<ItemProps> = ({
     onClick={onClick}
     className="block group px-2 py-2 rounded-md hover:bg-wedding-light focus:bg-wedding-light transition"
     tabIndex={0}
-    aria-label={label}
   >
     <div className="font-semibold group-hover:underline">{label}</div>
     {description && (
