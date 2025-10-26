@@ -4,7 +4,7 @@ import path from "path";
 import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
-// Force rebuild - Fix lazy loading issue
+// Force rebuild - Prix page imports fixed
 export default defineConfig(({ mode }) => ({
   server: {
     host: "::",

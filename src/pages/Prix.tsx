@@ -4,11 +4,9 @@ import PremiumHeader from '@/components/home/PremiumHeader';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { CheckCircle, Mail, Phone, Smartphone, Users, Calendar, X, Check, Brain, Settings, Handshake, CheckSquare, Calculator, Home, Download, LayoutGrid, Share2, User, FileText, Droplet, QrCode, Headphones, Clock } from 'lucide-react';
+import { Users, Calendar, X, Check, Brain, Settings, Handshake, CheckSquare, Calculator, Home, Share2, User, FileText, Droplet, QrCode, Headphones, Clock, Phone, Mail } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Link } from 'react-router-dom';
-import FormulaCTAButton from '@/components/pricing/FormulaCTAButton';
-import CoordinatorsPreview from '@/components/coordinators/CoordinatorsPreview';
 const Prix = () => {
   const isMobile = useIsMobile();
   useEffect(() => {
