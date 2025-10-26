@@ -12,6 +12,7 @@ import DashboardFeatureCards from './DashboardFeatureCards';
 import { CheckSquare, ArrowRight, Circle, CheckCircle2, Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
+import PaymentModal from '@/components/pricing/PaymentModal';
 interface Task {
   id: string;
   label: string;
@@ -37,6 +38,7 @@ const ProjectSummary = () => {
   } = useToast();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [tasksLoading, setTasksLoading] = useState(true);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
 
   // Initialize local state from profile
   useEffect(() => {
@@ -225,7 +227,7 @@ const ProjectSummary = () => {
               </div>
             </div>
             <Button 
-              onClick={() => window.location.href = '/prix'}
+              onClick={() => setShowPaymentModal(true)}
               size="lg"
               className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold shadow-md hover:shadow-lg transition-all duration-200 whitespace-nowrap"
             >
@@ -354,6 +356,9 @@ const ProjectSummary = () => {
           </div>
         </div>
       </div>
+
+      {/* Payment Modal */}
+      <PaymentModal isOpen={showPaymentModal} onClose={() => setShowPaymentModal(false)} />
     </div>;
 };
 export default ProjectSummary;
