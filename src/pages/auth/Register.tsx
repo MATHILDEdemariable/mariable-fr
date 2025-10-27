@@ -116,11 +116,25 @@ const Register = () => {
       }, 3000);
       
     } catch (error: any) {
-      console.error('Registration error:', error);
+      console.error('🚨 Registration error:', error);
+      
+      let errorMessage = "Une erreur technique est survenue lors de l'inscription. ";
+      
+      if (error.message?.includes('Database error') || error.message?.includes('database')) {
+        errorMessage += "N'hésitez pas à nous contacter à contact@mariable.fr pour que nous puissions vous aider.";
+      } else if (error.message?.includes('already registered') || error.message?.includes('User already registered')) {
+        errorMessage = "Un compte avec cette adresse email existe déjà. Essayez de vous connecter ou de réinitialiser votre mot de passe.";
+      } else if (error.message) {
+        errorMessage = error.message;
+      } else {
+        errorMessage += "N'hésitez pas à nous contacter à contact@mariable.fr si le problème persiste.";
+      }
+      
       toast({
         title: "Erreur d'inscription",
-        description: error.message || "Une erreur est survenue lors de l'inscription",
+        description: errorMessage,
         variant: "destructive",
+        duration: 8000,
       });
     } finally {
       setIsLoading(false);
