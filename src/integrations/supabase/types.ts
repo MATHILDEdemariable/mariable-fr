@@ -2088,6 +2088,7 @@ export type Database = {
           guest_count: number | null
           id: string
           last_name: string | null
+          phone: string | null
           referral_source: string | null
           subscription_expires_at: string | null
           subscription_type: string | null
@@ -2100,6 +2101,7 @@ export type Database = {
           guest_count?: number | null
           id: string
           last_name?: string | null
+          phone?: string | null
           referral_source?: string | null
           subscription_expires_at?: string | null
           subscription_type?: string | null
@@ -2112,6 +2114,7 @@ export type Database = {
           guest_count?: number | null
           id?: string
           last_name?: string | null
+          phone?: string | null
           referral_source?: string | null
           subscription_expires_at?: string | null
           subscription_type?: string | null
