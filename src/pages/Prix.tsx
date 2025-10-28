@@ -350,6 +350,10 @@ const Prix = () => {
                         <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
                         <p className="text-sm text-gray-700">1 montage réel de 30secondes</p>
                       </div>
+                      <div className="flex items-start gap-2">
+                        <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                        <p className="text-sm text-gray-700">Autres offres sur demande dès 300€ (temps de présence modulable)</p>
+                      </div>
                     </div>
                     
                     <div className="pt-4 border-t mt-auto">
