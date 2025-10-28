@@ -93,7 +93,6 @@ const ProjectSummary = () => {
       const month = String(date.getMonth() + 1).padStart(2, '0');
       const day = String(date.getDate()).padStart(2, '0');
       const localDateString = `${year}-${month}-${day}`;
-      
       await updateProfile({
         wedding_date: localDateString
       });
@@ -210,8 +209,7 @@ const ProjectSummary = () => {
       </div>
 
       {/* Bloc Premium - Visible uniquement si l'utilisateur n'est pas premium */}
-      {profile && profile.subscription_type !== 'premium' && (
-        <div className="bg-gradient-to-r from-yellow-50 via-amber-50 to-yellow-50 border-2 border-yellow-300 rounded-xl p-6 shadow-lg">
+      {profile && profile.subscription_type !== 'premium' && <div className="bg-gradient-to-r from-yellow-50 via-amber-50 to-yellow-50 border-2 border-yellow-300 rounded-xl p-6 shadow-lg">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <div className="bg-yellow-400 p-3 rounded-full">
@@ -221,22 +219,15 @@ const ProjectSummary = () => {
                 <h3 className="text-xl font-serif text-wedding-olive font-bold">
                   Passez à la formule Premium
                 </h3>
-                <p className="text-gray-700 text-sm mt-1">
-                  Débloquez toutes les fonctionnalités IA et coordination jour-J pour seulement 39€
-                </p>
+                <p className="text-gray-700 text-sm mt-1">Débloquez toutes les fonctionnalités IA et coordination jour-J pour seulement 9,9€ par mois</p>
               </div>
             </div>
-            <Button 
-              onClick={() => setShowPaymentModal(true)}
-              size="lg"
-              className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold shadow-md hover:shadow-lg transition-all duration-200 whitespace-nowrap"
-            >
+            <Button onClick={() => setShowPaymentModal(true)} size="lg" className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold shadow-md hover:shadow-lg transition-all duration-200 whitespace-nowrap">
               <Sparkles className="w-4 h-4 mr-2" />
               Passer premium
             </Button>
           </div>
-        </div>
-      )}
+        </div>}
 
       {/* Initiation Title */}
       <div className="mb-6">
@@ -253,49 +244,37 @@ const ProjectSummary = () => {
             Commencez par les outils essentiels pour organiser votre mariage
           </p>
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-3">
-            {[
-              {
-                title: 'Quiz Mariage',
-                description: 'Les premières questions',
-                icon: '❓',
-                path: '/dashboard/planning',
-              },
-              {
-                title: 'Budget',
-                description: 'Gérez vos dépenses',
-                icon: '💰',
-                path: '/dashboard/budget',
-              },
-              {
-                title: 'Prestataires',
-                description: 'Trouvez vos fournisseurs',
-                icon: '🏪',
-                path: '/dashboard/professionnelsmariable',
-              },
-              {
-                title: 'RSVP Invités',
-                description: 'Gérez les confirmations',
-                icon: '✉️',
-                path: '/dashboard/rsvp',
-              },
-              {
-                title: 'Check-list',
-                description: 'Suivez vos préparatifs',
-                icon: '✅',
-                path: '/dashboard/checklist-mariage',
-              },
-              {
-                title: 'Calculatrice Boissons',
-                description: 'Estimez les quantités',
-                icon: '🥂',
-                path: '/dashboard/drinks',
-              }
-            ].map((feature, index) => (
-              <div 
-                key={index}
-                onClick={() => window.location.href = feature.path}
-                className="cursor-pointer transition-all duration-200 border border-wedding-olive/20 bg-wedding-olive/5 hover:bg-wedding-olive/15 hover:shadow-md hover:scale-105 p-4 rounded-lg text-center"
-              >
+            {[{
+            title: 'Quiz Mariage',
+            description: 'Les premières questions',
+            icon: '❓',
+            path: '/dashboard/planning'
+          }, {
+            title: 'Budget',
+            description: 'Gérez vos dépenses',
+            icon: '💰',
+            path: '/dashboard/budget'
+          }, {
+            title: 'Prestataires',
+            description: 'Trouvez vos fournisseurs',
+            icon: '🏪',
+            path: '/dashboard/professionnelsmariable'
+          }, {
+            title: 'RSVP Invités',
+            description: 'Gérez les confirmations',
+            icon: '✉️',
+            path: '/dashboard/rsvp'
+          }, {
+            title: 'Check-list',
+            description: 'Suivez vos préparatifs',
+            icon: '✅',
+            path: '/dashboard/checklist-mariage'
+          }, {
+            title: 'Calculatrice Boissons',
+            description: 'Estimez les quantités',
+            icon: '🥂',
+            path: '/dashboard/drinks'
+          }].map((feature, index) => <div key={index} onClick={() => window.location.href = feature.path} className="cursor-pointer transition-all duration-200 border border-wedding-olive/20 bg-wedding-olive/5 hover:bg-wedding-olive/15 hover:shadow-md hover:scale-105 p-4 rounded-lg text-center">
                 <div className="text-2xl mb-2">{feature.icon}</div>
                 <h4 className="font-medium text-sm text-wedding-olive mb-1 font-serif">
                   {feature.title}
@@ -303,8 +282,7 @@ const ProjectSummary = () => {
                 <p className="text-xs text-gray-600">
                   {feature.description}
                 </p>
-              </div>
-            ))}
+              </div>)}
           </div>
         </div>
 
@@ -317,29 +295,21 @@ const ProjectSummary = () => {
             Finalisez votre préparation avec nos outils avancés
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {[
-              {
-                title: 'Coordination Jour J',
-                description: 'Planning détaillé et coordination',
-                icon: '📅',
-                path: '/mon-jour-m',
-                bgColor: 'bg-wedding-cream/40',
-                hoverColor: 'hover:bg-wedding-cream/60',
-              },
-              {
-                title: 'Après le mariage',
-                description: 'Conseils pour l\'après jour J',
-                icon: '💕',
-                path: '/dashboard/apres-jour-j',
-                bgColor: 'bg-wedding-olive/10',
-                hoverColor: 'hover:bg-wedding-olive/20',
-              }
-            ].map((feature, index) => (
-              <div 
-                key={index}
-                onClick={() => window.location.href = feature.path}
-                className={`cursor-pointer transition-all duration-200 border border-wedding-olive/20 ${feature.bgColor} ${feature.hoverColor} hover:shadow-md hover:scale-105 p-6 rounded-lg`}
-              >
+            {[{
+            title: 'Coordination Jour J',
+            description: 'Planning détaillé et coordination',
+            icon: '📅',
+            path: '/mon-jour-m',
+            bgColor: 'bg-wedding-cream/40',
+            hoverColor: 'hover:bg-wedding-cream/60'
+          }, {
+            title: 'Après le mariage',
+            description: 'Conseils pour l\'après jour J',
+            icon: '💕',
+            path: '/dashboard/apres-jour-j',
+            bgColor: 'bg-wedding-olive/10',
+            hoverColor: 'hover:bg-wedding-olive/20'
+          }].map((feature, index) => <div key={index} onClick={() => window.location.href = feature.path} className={`cursor-pointer transition-all duration-200 border border-wedding-olive/20 ${feature.bgColor} ${feature.hoverColor} hover:shadow-md hover:scale-105 p-6 rounded-lg`}>
                 <div className="flex items-start space-x-4">
                   <div className="text-3xl">{feature.icon}</div>
                   <div className="flex-1">
@@ -351,8 +321,7 @@ const ProjectSummary = () => {
                     </p>
                   </div>
                 </div>
-              </div>
-            ))}
+              </div>)}
           </div>
         </div>
       </div>
