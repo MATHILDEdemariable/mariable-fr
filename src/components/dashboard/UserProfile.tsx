@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { LogOut, User, Crown, Calendar, Mail, Key } from 'lucide-react';
+import { LogOut, User, Crown, Calendar, Mail, Key, Settings } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -11,11 +11,12 @@ import { useUserProfile } from '@/hooks/useUserProfile';
 import StripeButton from '@/components/premium/StripeButton';
 
 const UserProfile: React.FC = () => {
-  const { profile, isPremium, loading } = useUserProfile();
+  const { profile, isPremium, loading, refetch } = useUserProfile();
   const { toast } = useToast();
   const navigate = useNavigate();
   const [showStripeButton, setShowStripeButton] = useState(false);
   const [userEmail, setUserEmail] = useState<string>('');
+  const [cancelLoading, setCancelLoading] = useState(false);
 
   const handleLogout = async () => {
     try {
@@ -106,6 +107,34 @@ const UserProfile: React.FC = () => {
     }
   };
 
+  const handleCancelSubscription = async () => {
+    if (!confirm('Êtes-vous sûr de vouloir annuler votre abonnement ? Il restera actif jusqu\'à la fin de la période en cours.')) return;
+    
+    setCancelLoading(true);
+    try {
+      const { error } = await supabase.functions.invoke('cancel-subscription');
+
+      if (error) throw error;
+
+      toast({
+        title: "Abonnement annulé",
+        description: "Votre abonnement restera actif jusqu'à la fin de la période en cours",
+        duration: 5000,
+      });
+      
+      refetch();
+    } catch (error) {
+      console.error('Error canceling subscription:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible d'annuler l'abonnement",
+        variant: "destructive",
+      });
+    } finally {
+      setCancelLoading(false);
+    }
+  };
+
   return (
     <Card className="shadow-sm">
       <CardHeader>
@@ -164,7 +193,24 @@ const UserProfile: React.FC = () => {
               {isPremium && profile.subscription_expires_at && (
                 <div className="flex items-center gap-2 text-sm text-gray-600">
                   <Calendar className="w-4 h-4" />
-                  <span>Expire le {formatExpirationDate(profile.subscription_expires_at)}</span>
+                  <span>Prochain renouvellement : {formatExpirationDate(profile.subscription_expires_at)}</span>
+                </div>
+              )}
+
+              {isPremium && profile.stripe_subscription_id && (
+                <div className="pt-2">
+                  <Button 
+                    variant="destructive"
+                    onClick={handleCancelSubscription}
+                    className="w-full"
+                    disabled={cancelLoading}
+                    size="sm"
+                  >
+                    {cancelLoading ? 'Annulation...' : 'Annuler l\'abonnement'}
+                  </Button>
+                  <p className="text-xs text-gray-500 text-center mt-2">
+                    Votre abonnement restera actif jusqu'à la fin de la période en cours
+                  </p>
                 </div>
               )}
             </div>

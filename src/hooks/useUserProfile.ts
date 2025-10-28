@@ -11,6 +11,9 @@ interface UserProfile {
   guest_count: number | null;
   subscription_type: string;
   subscription_expires_at: string | null;
+  subscription_status: string | null;
+  stripe_customer_id: string | null;
+  stripe_subscription_id: string | null;
   updated_at: string | null;
 }
 

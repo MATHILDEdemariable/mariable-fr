@@ -2090,7 +2090,10 @@ export type Database = {
           last_name: string | null
           phone: string | null
           referral_source: string | null
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
           subscription_expires_at: string | null
+          subscription_status: string | null
           subscription_type: string | null
           updated_at: string
           wedding_date: string | null
@@ -2103,7 +2106,10 @@ export type Database = {
           last_name?: string | null
           phone?: string | null
           referral_source?: string | null
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
           subscription_expires_at?: string | null
+          subscription_status?: string | null
           subscription_type?: string | null
           updated_at?: string
           wedding_date?: string | null
@@ -2116,7 +2122,10 @@ export type Database = {
           last_name?: string | null
           phone?: string | null
           referral_source?: string | null
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
           subscription_expires_at?: string | null
+          subscription_status?: string | null
           subscription_type?: string | null
           updated_at?: string
           wedding_date?: string | null

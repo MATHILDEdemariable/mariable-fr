@@ -55,18 +55,38 @@ const StripeButton: React.FC = () => {
 
   return (
     <div className="space-y-3">
+      <div className="text-center space-y-2">
+        <p className="text-2xl font-bold text-wedding-olive">9,9€/mois</p>
+        <p className="text-sm text-gray-600">
+          14,9€/mois à partir du 1er janv 2026
+        </p>
+      </div>
+      
       <Button 
         onClick={handlePayment}
         disabled={loading}
-        className="w-full"
+        className="w-full bg-wedding-olive hover:bg-wedding-olive/90 text-white"
         size="lg"
       >
-        {loading ? 'Préparation...' : 'Passer à Premium - 39€'}
+        {loading ? (
+          <span className="flex items-center gap-2">
+            <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></span>
+            Préparation...
+          </span>
+        ) : (
+          "S'abonner maintenant"
+        )}
       </Button>
       
-      <div className="flex items-center justify-center gap-2 text-sm text-gray-600">
-        <Tag className="h-4 w-4" />
-        <span>Vous avez un code promo ? Vous pourrez le saisir à l'étape suivante</span>
+      <div className="space-y-2 text-xs text-gray-600">
+        <div className="flex items-center justify-center gap-2">
+          <Tag className="h-4 w-4" />
+          <span>Code promo disponible à l'étape suivante</span>
+        </div>
+        <div className="bg-blue-50 border border-blue-200 rounded-md p-2 text-center">
+          <p>✉️ Nous vous enverrons un email pour annuler automatiquement votre abonnement à la date de votre mariage</p>
+          <p className="mt-1">🔓 Vous pouvez annuler à tout moment depuis vos paramètres</p>
+        </div>
       </div>
     </div>
   );

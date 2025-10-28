@@ -21,21 +21,23 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose }) => {
           </div>
           
           <DialogTitle className="text-center">
-            Formule Libre - 39€
+            Abonnement Premium - 9,9€/mois
           </DialogTitle>
           
           <DialogDescription className="text-center">
-            Commencez votre organisation de mariage avec notre application personnalisée
+            14,9€/mois à partir du 1er janv 2026
           </DialogDescription>
         </DialogHeader>
         
         <div className="space-y-4">
           <div className="bg-gray-50 p-4 rounded-lg">
-            <h4 className="font-medium mb-2">Inclus dans cette formule :</h4>
+            <h4 className="font-medium mb-2">Inclus dans l'abonnement :</h4>
             <ul className="text-sm text-gray-600 space-y-1">
-              <li>• Application personnalisée</li>
+              <li>• Application personnalisée complète</li>
               <li>• Checklists & planning modifiables</li>
               <li>• Interface collaborative</li>
+              <li>• Accès illimité à toutes les fonctionnalités</li>
+              <li>• Annulation simple à tout moment</li>
             </ul>
           </div>
           

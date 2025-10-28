@@ -117,24 +117,38 @@ serve(async (req) => {
       }
     };
 
-    // Traiter les différents types d'événements
-    try {
-      if (event.type === "checkout.session.completed") {
-        await handleCheckoutCompleted(event, supabaseClient);
-        await logAudit('success');
-      } else if (event.type === "payment_intent.succeeded") {
-        await handlePaymentSucceeded(event, supabaseClient);
-        await logAudit('success');
-      } else if (event.type === "payment_intent.payment_failed") {
-        await handlePaymentFailed(event, supabaseClient);
-        await logAudit('payment_failed');
-      } else if (event.type === "invoice.payment_succeeded") {
-        await handleInvoicePaymentSucceeded(event, supabaseClient);
-        await logAudit('success');
-      } else {
-        logStep("Unhandled event type", { type: event.type });
-        await logAudit('unhandled');
-      }
+  // Traiter les différents types d'événements
+  try {
+    logStep("Event received", { type: event.type, id: event.id });
+
+    if (event.type === "checkout.session.completed") {
+      await handleCheckoutCompleted(event, supabaseClient);
+      await logAudit('success');
+    } else if (event.type === "customer.subscription.created") {
+      await handleSubscriptionCreated(event, supabaseClient);
+      await logAudit('success');
+    } else if (event.type === "customer.subscription.updated") {
+      await handleSubscriptionUpdated(event, supabaseClient);
+      await logAudit('success');
+    } else if (event.type === "customer.subscription.deleted") {
+      await handleSubscriptionDeleted(event, supabaseClient);
+      await logAudit('success');
+    } else if (event.type === "invoice.payment_succeeded") {
+      await handleInvoicePaymentSucceeded(event, supabaseClient);
+      await logAudit('success');
+    } else if (event.type === "invoice.payment_failed") {
+      await handleInvoicePaymentFailed(event, supabaseClient);
+      await logAudit('payment_failed');
+    } else if (event.type === "payment_intent.succeeded") {
+      await handlePaymentSucceeded(event, supabaseClient);
+      await logAudit('success');
+    } else if (event.type === "payment_intent.payment_failed") {
+      await handlePaymentFailed(event, supabaseClient);
+      await logAudit('payment_failed');
+    } else {
+      logStep("Unhandled event type", { type: event.type });
+      await logAudit('unhandled');
+    }
 
       return new Response(
         JSON.stringify({ received: true, processed: true }),
@@ -241,6 +255,9 @@ async function handleCheckoutCompleted(event: Stripe.Event, supabaseClient: any)
     .from('profiles')
     .update({
       subscription_type: 'premium',
+      subscription_status: 'active',
+      stripe_customer_id: session.customer,
+      stripe_subscription_id: session.subscription,
       subscription_expires_at: null,
       updated_at: new Date().toISOString()
     })
@@ -284,7 +301,122 @@ async function handlePaymentFailed(event: Stripe.Event, supabaseClient: any) {
 // Gestionnaire pour invoice.payment_succeeded
 async function handleInvoicePaymentSucceeded(event: Stripe.Event, supabaseClient: any) {
   const invoice = event.data.object as Stripe.Invoice;
-  logStep("Invoice payment succeeded", { invoiceId: invoice.id });
   
-  // Logique pour les abonnements récurrents si nécessaire
+  logStep("Invoice payment succeeded", { 
+    invoiceId: invoice.id,
+    subscriptionId: invoice.subscription
+  });
+
+  if (invoice.subscription) {
+    const { error } = await supabaseClient
+      .from('profiles')
+      .update({
+        subscription_type: 'premium',
+        subscription_status: 'active',
+        subscription_expires_at: new Date(invoice.period_end * 1000).toISOString(),
+        updated_at: new Date().toISOString()
+      })
+      .eq('stripe_subscription_id', invoice.subscription);
+
+    if (error) throw error;
+    logStep("Profile updated after invoice payment", { subscriptionId: invoice.subscription });
+  }
+}
+
+async function handleInvoicePaymentFailed(event: Stripe.Event, supabaseClient: any) {
+  const invoice = event.data.object as Stripe.Invoice;
+  
+  logStep("Invoice payment failed", { 
+    invoiceId: invoice.id,
+    subscriptionId: invoice.subscription
+  });
+
+  if (invoice.subscription) {
+    const { error } = await supabaseClient
+      .from('profiles')
+      .update({
+        subscription_status: 'past_due',
+        updated_at: new Date().toISOString()
+      })
+      .eq('stripe_subscription_id', invoice.subscription);
+
+    if (error) throw error;
+    logStep("Profile marked as past_due", { subscriptionId: invoice.subscription });
+  }
+}
+
+async function handleSubscriptionCreated(event: Stripe.Event, supabaseClient: any) {
+  const subscription = event.data.object as Stripe.Subscription;
+  
+  logStep("Subscription created", { 
+    subscriptionId: subscription.id,
+    customerId: subscription.customer,
+    status: subscription.status
+  });
+
+  const { data: profile, error } = await supabaseClient
+    .from('profiles')
+    .select('*')
+    .eq('stripe_customer_id', subscription.customer)
+    .single();
+
+  if (error || !profile) {
+    logStep("Profile not found for customer", { customerId: subscription.customer });
+    return;
+  }
+
+  const { error: updateError } = await supabaseClient
+    .from('profiles')
+    .update({
+      subscription_type: 'premium',
+      subscription_status: subscription.status,
+      stripe_subscription_id: subscription.id,
+      subscription_expires_at: new Date(subscription.current_period_end * 1000).toISOString(),
+      updated_at: new Date().toISOString()
+    })
+    .eq('id', profile.id);
+
+  if (updateError) throw updateError;
+  logStep("Profile updated to premium with subscription", { userId: profile.id });
+}
+
+async function handleSubscriptionUpdated(event: Stripe.Event, supabaseClient: any) {
+  const subscription = event.data.object as Stripe.Subscription;
+  
+  logStep("Subscription updated", { 
+    subscriptionId: subscription.id,
+    status: subscription.status
+  });
+
+  const { error } = await supabaseClient
+    .from('profiles')
+    .update({
+      subscription_status: subscription.status,
+      subscription_type: subscription.status === 'active' ? 'premium' : 'free',
+      subscription_expires_at: new Date(subscription.current_period_end * 1000).toISOString(),
+      updated_at: new Date().toISOString()
+    })
+    .eq('stripe_subscription_id', subscription.id);
+
+  if (error) throw error;
+  logStep("Profile updated after subscription change", { subscriptionId: subscription.id });
+}
+
+async function handleSubscriptionDeleted(event: Stripe.Event, supabaseClient: any) {
+  const subscription = event.data.object as Stripe.Subscription;
+  
+  logStep("Subscription deleted/canceled", { subscriptionId: subscription.id });
+
+  const { error } = await supabaseClient
+    .from('profiles')
+    .update({
+      subscription_type: 'free',
+      subscription_status: 'canceled',
+      subscription_expires_at: new Date(subscription.current_period_end * 1000).toISOString(),
+      updated_at: new Date().toISOString()
+    })
+    .eq('stripe_subscription_id', subscription.id);
+
+  if (error) throw error;
+  logStep("Profile downgraded to free", { subscriptionId: subscription.id });
 }
