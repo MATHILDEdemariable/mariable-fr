@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -18,6 +19,7 @@ import {
 import AdminLayout from '@/components/admin/AdminLayout';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 import ScraperManager from '@/components/admin/ScraperManager';
+import UsageStats from './UsageStats';
 
 const AdminDashboard = () => {
   const { isAuthenticated, login, logout } = useAdminAuth();
@@ -146,6 +148,15 @@ const AdminDashboard = () => {
             Déconnexion
           </Button>
         </div>
+
+        <Tabs defaultValue="dashboard" className="w-full">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
+            <TabsTrigger value="stats">Stats d'Utilisation</TabsTrigger>
+            <TabsTrigger value="blog">Blog</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="dashboard" className="space-y-6 mt-6">
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -301,6 +312,25 @@ const AdminDashboard = () => {
             </CardContent>
           </Card>
         </div>
+          </TabsContent>
+
+          <TabsContent value="stats" className="mt-6">
+            <UsageStats />
+          </TabsContent>
+
+          <TabsContent value="blog" className="mt-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Gestion du Blog</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Button onClick={() => navigate('/admin/blog')}>
+                  Gérer les articles
+                </Button>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </div>
     </AdminLayout>
   );

@@ -1,15 +1,14 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Play } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import VideoBackground from '@/components/VideoBackground';
+
 const PremiumHeroSection = () => {
+  const navigate = useNavigate();
+  
   const handleDiscover = () => {
-    const processSection = document.querySelector('#premium-process-section');
-    if (processSection) {
-      processSection.scrollIntoView({
-        behavior: 'smooth'
-      });
-    }
+    navigate('/register');
   };
   return <VideoBackground videoUrl="https://bgidfcqktsttzlwlumtz.supabase.co/storage/v1/object/public/background-videos//freepik__wideangle-shot-a-joyful-couple-dances-at-their-wed__74093%20(1).mp4" className="h-screen flex items-center justify-center">
       <div className="hero-overlay absolute inset-0 z-10" />

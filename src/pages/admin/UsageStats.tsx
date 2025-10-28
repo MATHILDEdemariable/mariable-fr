@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
-import { Loader2, Users, TrendingUp, CheckSquare, Calendar, FileText, Heart, ClipboardList, User, Home, FileStack } from 'lucide-react';
+import { Loader2, Users, TrendingUp, CheckSquare, Calendar, FileText, Heart, ClipboardList, User, Home, FileStack, LayoutGrid, RefreshCw } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
 type ModuleStats = {
@@ -21,6 +22,7 @@ type UsageStats = {
     wishlist: ModuleStats;
     vendorTracking: ModuleStats;
     accommodations: ModuleStats;
+    seatingPlan: ModuleStats;
     profileComplete: ModuleStats;
   };
 };
@@ -31,6 +33,13 @@ const UsageStats = () => {
 
   useEffect(() => {
     loadStats();
+    
+    // Auto-refresh every 30 seconds
+    const interval = setInterval(() => {
+      loadStats();
+    }, 30000);
+
+    return () => clearInterval(interval);
   }, []);
 
   const loadStats = async () => {
@@ -153,6 +162,15 @@ const UsageStats = () => {
       users: stats.modules.vendorTracking.usersCount,
       entries: stats.modules.vendorTracking.entriesCount,
       description: 'Prestataires suivis'
+    },
+    {
+      name: 'Plan de Table',
+      icon: LayoutGrid,
+      color: 'text-amber-600',
+      bgColor: 'bg-amber-50',
+      users: stats.modules.seatingPlan.usersCount,
+      entries: stats.modules.seatingPlan.entriesCount,
+      description: 'Plans de table créés'
     }
   ];
 
@@ -167,11 +185,17 @@ const UsageStats = () => {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-serif text-wedding-black">Statistiques d'Utilisation</h1>
-        <p className="text-muted-foreground mt-2">
-          Vue d'ensemble de l'utilisation des modules par les utilisateurs
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-serif text-wedding-black">Statistiques d'Utilisation</h1>
+          <p className="text-muted-foreground mt-2">
+            Vue d'ensemble de l'utilisation des modules par les utilisateurs
+          </p>
+        </div>
+        <Button onClick={loadStats} disabled={loading} variant="outline">
+          <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+          Actualiser
+        </Button>
       </div>
 
       {/* Overview Cards */}

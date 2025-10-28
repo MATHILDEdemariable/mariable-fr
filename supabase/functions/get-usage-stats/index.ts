@@ -58,6 +58,7 @@ Deno.serve(async (req) => {
       wishlistCount,
       vendorTrackingCount,
       accommodationsCount,
+      seatingPlansCount,
       profilesComplete
     ] = await Promise.all([
       // Budget
@@ -100,6 +101,11 @@ Deno.serve(async (req) => {
         .from('wedding_accommodations')
         .select('user_id', { count: 'exact', head: true }),
       
+      // Seating Plans
+      supabaseAdmin
+        .from('seating_plans')
+        .select('user_id', { count: 'exact', head: true }),
+      
       // Profiles complete (with wedding_date and guest_count)
       supabaseAdmin
         .from('profiles')
@@ -117,7 +123,8 @@ Deno.serve(async (req) => {
       documentsUsers,
       wishlistUsers,
       vendorUsers,
-      accommodationsUsers
+      accommodationsUsers,
+      seatingPlanUsers
     ] = await Promise.all([
       supabaseAdmin
         .from('budgets_dashboard')
@@ -175,6 +182,11 @@ Deno.serve(async (req) => {
       supabaseAdmin
         .from('wedding_accommodations')
         .select('user_id')
+        .then(({ data }) => new Set(data?.map(d => d.user_id)).size),
+      
+      supabaseAdmin
+        .from('seating_plans')
+        .select('user_id')
         .then(({ data }) => new Set(data?.map(d => d.user_id)).size)
     ])
 
@@ -213,6 +225,10 @@ Deno.serve(async (req) => {
         accommodations: {
           usersCount: accommodationsUsers,
           entriesCount: accommodationsCount.count || 0
+        },
+        seatingPlan: {
+          usersCount: seatingPlanUsers,
+          entriesCount: seatingPlansCount.count || 0
         },
         profileComplete: {
           usersCount: profilesComplete.count || 0
