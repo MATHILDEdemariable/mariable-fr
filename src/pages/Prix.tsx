@@ -414,7 +414,7 @@ const Prix = () => {
                 Découvrez notre sélection de coordinateurs partenaires disponibles dans votre région
               </p>
               <Button asChild size="lg" className="bg-wedding-olive text-white hover:bg-wedding-olive/90">
-                <Link to="/professionnels?category=Coordination">
+                <Link to="/professionnelsmariable">
                   Voir les coordinateurs disponibles
                 </Link>
               </Button>
