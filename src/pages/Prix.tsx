@@ -340,7 +340,7 @@ const Prix = () => {
                     <div className="space-y-3 flex-1">
                       <div className="flex items-start gap-2">
                         <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                        <p className="text-sm text-gray-700">8h de présence le jour-J</p>
+                        <p className="text-sm text-gray-700">6h de présence le jour-J</p>
                       </div>
                       <div className="flex items-start gap-2">
                         <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
@@ -348,7 +348,7 @@ const Prix = () => {
                       </div>
                       <div className="flex items-start gap-2">
                         <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                        <p className="text-sm text-gray-700">2 montages réels</p>
+                        <p className="text-sm text-gray-700">1 montage réel de 30secondes</p>
                       </div>
                     </div>
                     
