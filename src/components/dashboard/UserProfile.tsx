@@ -123,12 +123,13 @@ const UserProfile: React.FC = () => {
       });
       
       refetch();
-    } catch (error) {
-      console.error('Error canceling subscription:', error);
+    } catch (error: any) {
+      console.error('❌ Error canceling subscription:', error);
       toast({
-        title: "Erreur",
-        description: "Impossible d'annuler l'abonnement",
+        title: "Erreur technique",
+        description: "Un petit bug technique s'est produit. Contactez mathilde@mariable.fr pour annuler votre abonnement.",
         variant: "destructive",
+        duration: 7000,
       });
     } finally {
       setCancelLoading(false);

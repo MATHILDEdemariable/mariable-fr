@@ -275,6 +275,28 @@ async function handleCheckoutCompleted(event: Stripe.Event, supabaseClient: any)
     updatedProfile: updatedProfile,
     discountApplied: !!discountInfo
   });
+
+  // Envoyer l'email de bienvenue Premium
+  try {
+    logStep("Sending welcome premium email", { email: session.customer_details?.email });
+    
+    const { error: emailError } = await supabaseClient.functions.invoke('send-welcome-premium-email', {
+      body: {
+        userEmail: session.customer_details?.email,
+        firstName: updatedProfile?.first_name,
+        lastName: updatedProfile?.last_name
+      }
+    });
+
+    if (emailError) {
+      logStep("ERROR: Failed to send welcome email (non-blocking)", { error: emailError });
+    } else {
+      logStep("Welcome email sent successfully", { email: session.customer_details?.email });
+    }
+  } catch (emailError) {
+    // Ne pas bloquer le flux si l'envoi d'email échoue
+    logStep("ERROR: Failed to send welcome email (non-blocking)", { error: emailError });
+  }
 }
 
 // Gestionnaire pour payment_intent.succeeded
@@ -308,7 +330,7 @@ async function handleInvoicePaymentSucceeded(event: Stripe.Event, supabaseClient
   });
 
   if (invoice.subscription) {
-    const { error } = await supabaseClient
+    const { data: profile, error } = await supabaseClient
       .from('profiles')
       .update({
         subscription_type: 'premium',
@@ -316,10 +338,35 @@ async function handleInvoicePaymentSucceeded(event: Stripe.Event, supabaseClient
         subscription_expires_at: new Date(invoice.period_end * 1000).toISOString(),
         updated_at: new Date().toISOString()
       })
-      .eq('stripe_subscription_id', invoice.subscription);
+      .eq('stripe_subscription_id', invoice.subscription)
+      .select('id, first_name, last_name')
+      .single();
 
     if (error) throw error;
     logStep("Profile updated after invoice payment", { subscriptionId: invoice.subscription });
+
+    // Envoyer l'email de bienvenue Premium pour les renouvellements (optionnel)
+    if (profile && invoice.customer_email) {
+      try {
+        logStep("Sending renewal welcome email", { email: invoice.customer_email });
+        
+        const { error: emailError } = await supabaseClient.functions.invoke('send-welcome-premium-email', {
+          body: {
+            userEmail: invoice.customer_email,
+            firstName: profile?.first_name,
+            lastName: profile?.last_name
+          }
+        });
+
+        if (emailError) {
+          logStep("ERROR: Failed to send renewal email (non-blocking)", { error: emailError });
+        } else {
+          logStep("Renewal email sent successfully", { email: invoice.customer_email });
+        }
+      } catch (emailError) {
+        logStep("ERROR: Failed to send renewal email (non-blocking)", { error: emailError });
+      }
+    }
   }
 }
 
