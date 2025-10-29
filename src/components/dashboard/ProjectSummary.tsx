@@ -14,6 +14,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 import PaymentModal from '@/components/pricing/PaymentModal';
 import { WhatsAppButton } from '@/components/support/WhatsAppButton';
+import { LoomVideoEmbed } from '@/components/tutorials/LoomVideoEmbed';
+import { TUTORIAL_VIDEOS } from '@/config/tutorialVideos';
 interface Task {
   id: string;
   label: string;
@@ -209,6 +211,21 @@ const ProjectSummary = () => {
           </div>}
       </div>
 
+      {/* Vidéo tutorielle principale */}
+      <div className="bg-white rounded-xl shadow-sm border border-wedding-olive/20 p-6">
+        <h3 className="text-xl font-serif text-wedding-olive mb-4 flex items-center gap-2">
+          🎬 Guide vidéo de démarrage
+        </h3>
+        <p className="text-gray-600 mb-4 text-sm">
+          Découvrez comment tirer le meilleur parti de Mariable en quelques minutes
+        </p>
+        <LoomVideoEmbed
+          videoId={TUTORIAL_VIDEOS.welcome.loomId}
+          title={TUTORIAL_VIDEOS.welcome.title}
+          description={TUTORIAL_VIDEOS.welcome.description}
+        />
+      </div>
+
       {/* Bloc Premium - Visible uniquement si l'utilisateur n'est pas premium */}
       {profile && profile.subscription_type !== 'premium' && <div className="bg-gradient-to-r from-gray-900 via-black to-gray-900 border-2 border-gray-800 rounded-xl p-6 shadow-lg">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
@@ -287,8 +304,8 @@ const ProjectSummary = () => {
           </div>
         </div>
 
-        {/* Support WhatsApp */}
-        <WhatsAppButton variant="featured" />
+        {/* Support WhatsApp - Premium uniquement */}
+        <WhatsAppButton variant="featured" requirePremium={true} />
 
         {/* Bloc 2: Vous avez tout organisé ? */}
         <div className="bg-gradient-to-r from-wedding-olive/10 to-wedding-cream/20 rounded-xl shadow-sm border border-wedding-olive/20 p-6">

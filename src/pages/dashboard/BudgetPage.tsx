@@ -2,15 +2,18 @@
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Button } from '@/components/ui/button';
 import BudgetSummary from '@/components/dashboard/BudgetSummary';
 import DetailedBudget from '@/components/dashboard/DetailedBudget';
-import { BarChart, PieChart, Calculator } from 'lucide-react';
+import { BarChart, PieChart, Calculator, Play } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import BudgetCalculator from '@/components/dashboard/BudgetCalculator';
+import { TutorialVideoModal } from '@/components/tutorials/TutorialVideoModal';
 
 const BudgetPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>('summary');
+  const [showTutorial, setShowTutorial] = useState(false);
 
   // Fetch budget data for export
   const { data: budgetData } = useQuery({
@@ -49,6 +52,15 @@ const BudgetPage: React.FC = () => {
       <div className="space-y-3 sm:space-y-6 w-full">
         <div className="flex justify-between items-center">
           <h1 className="text-xl sm:text-2xl lg:text-3xl font-serif text-wedding-olive truncate">Budget de Mariage</h1>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowTutorial(true)}
+            className="flex items-center gap-2"
+          >
+            <Play className="h-4 w-4" />
+            Tuto vidéo
+          </Button>
         </div>
 
         <Tabs defaultValue="summary" value={activeTab} onValueChange={setActiveTab} className="w-full">
@@ -86,6 +98,12 @@ const BudgetPage: React.FC = () => {
           </TabsContent>
         </Tabs>
       </div>
+
+      <TutorialVideoModal
+        isOpen={showTutorial}
+        onClose={() => setShowTutorial(false)}
+        videoId="budget"
+      />
     </>
   );
 };

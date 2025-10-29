@@ -412,9 +412,9 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
 
       </nav>
       
-      {/* Support WhatsApp - Toujours visible */}
+      {/* Support WhatsApp - Premium uniquement */}
       <div className="mt-auto px-2 sm:px-3 py-2">
-        <WhatsAppButton variant="compact" />
+        <WhatsAppButton variant="compact" requirePremium={true} />
       </div>
       
       <div className="px-2 sm:px-3 py-2">

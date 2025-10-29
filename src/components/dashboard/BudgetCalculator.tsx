@@ -241,6 +241,252 @@ const BudgetCalculator: React.FC = () => {
     );
   };
 
+  // Rendu du mode "budget inconnu" - Multi-étapes
+  const renderUnknownBudgetMode = () => {
+    // Étape 1 : Région
+    if (currentStep === 1) {
+      return (
+        <div className="space-y-6 p-4">
+          <div className="text-center">
+            <h2 className="text-xl md:text-2xl font-serif mb-4">Étape 1/4 : Localisation</h2>
+            <p className="text-sm md:text-base text-muted-foreground px-2">Où se déroulera votre mariage ?</p>
+          </div>
+          
+          <div>
+            <Label>Région</Label>
+            <Select value={region} onValueChange={setRegion}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Île-de-France">Île-de-France</SelectItem>
+                <SelectItem value="Provence-Alpes-Côte d'Azur">Provence-Alpes-Côte d'Azur</SelectItem>
+                <SelectItem value="Auvergne-Rhône-Alpes">Auvergne-Rhône-Alpes</SelectItem>
+                <SelectItem value="Nouvelle-Aquitaine">Nouvelle-Aquitaine</SelectItem>
+                <SelectItem value="Occitanie">Occitanie</SelectItem>
+                <SelectItem value="Bretagne">Bretagne</SelectItem>
+                <SelectItem value="Pays de la Loire">Pays de la Loire</SelectItem>
+                <SelectItem value="Grand Est">Grand Est</SelectItem>
+                <SelectItem value="Hauts-de-France">Hauts-de-France</SelectItem>
+                <SelectItem value="Normandie">Normandie</SelectItem>
+                <SelectItem value="Bourgogne-Franche-Comté">Bourgogne-Franche-Comté</SelectItem>
+                <SelectItem value="Centre-Val de Loire">Centre-Val de Loire</SelectItem>
+                <SelectItem value="Corse">Corse</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          
+          <Button 
+            onClick={() => setCurrentStep(2)}
+            className="w-full bg-wedding-olive hover:bg-wedding-olive/90 py-6 text-lg"
+          >
+            Suivant
+            <ArrowRight className="h-5 w-5 ml-2" />
+          </Button>
+        </div>
+      );
+    }
+    
+    // Étape 2 : Saison
+    if (currentStep === 2) {
+      return (
+        <div className="space-y-6 p-4">
+          <div className="text-center">
+            <h2 className="text-xl md:text-2xl font-serif mb-4">Étape 2/4 : Période</h2>
+            <p className="text-sm md:text-base text-muted-foreground px-2">Quand aura lieu votre mariage ?</p>
+          </div>
+          
+          <RadioGroup value={season} onValueChange={(v) => setSeason(v as Season)}>
+            <div className="space-y-4">
+              <div className="flex items-center space-x-2 border rounded-lg p-4">
+                <RadioGroupItem value="haute" id="haute" />
+                <Label htmlFor="haute" className="flex-1 cursor-pointer">
+                  <div className="font-medium">Haute saison (Mai - Septembre)</div>
+                  <p className="text-sm text-muted-foreground">Les mois les plus demandés</p>
+                </Label>
+              </div>
+              <div className="flex items-center space-x-2 border rounded-lg p-4">
+                <RadioGroupItem value="basse" id="basse" />
+                <Label htmlFor="basse" className="flex-1 cursor-pointer">
+                  <div className="font-medium">Basse saison (Octobre - Avril)</div>
+                  <p className="text-sm text-muted-foreground">Tarifs plus avantageux</p>
+                </Label>
+              </div>
+            </div>
+          </RadioGroup>
+          
+          <div className="flex gap-4">
+            <Button 
+              variant="outline"
+              onClick={() => setCurrentStep(1)}
+              className="flex-1"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Retour
+            </Button>
+            <Button 
+              onClick={() => setCurrentStep(3)}
+              className="flex-1 bg-wedding-olive hover:bg-wedding-olive/90"
+            >
+              Suivant
+              <ArrowRight className="h-4 w-4 ml-2" />
+            </Button>
+          </div>
+        </div>
+      );
+    }
+    
+    // Étape 3 : Nombre d'invités
+    if (currentStep === 3) {
+      return (
+        <div className="space-y-6 p-4">
+          <div className="text-center">
+            <h2 className="text-xl md:text-2xl font-serif mb-4">Étape 3/4 : Invités</h2>
+            <p className="text-sm md:text-base text-muted-foreground px-2">Combien d'invités prévoyez-vous ?</p>
+          </div>
+          
+          <div>
+            <Label>Nombre d'invités</Label>
+            <Input
+              type="number"
+              value={guestsCount}
+              onChange={(e) => setGuestsCount(parseInt(e.target.value) || 0)}
+              className="py-6 text-lg"
+              placeholder="100"
+              min="10"
+              max="500"
+            />
+            <p className="text-sm text-muted-foreground mt-2">
+              Le nombre d'invités impacte significativement le budget
+            </p>
+          </div>
+          
+          <div className="flex gap-4">
+            <Button 
+              variant="outline"
+              onClick={() => setCurrentStep(2)}
+              className="flex-1"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Retour
+            </Button>
+            <Button 
+              onClick={() => setCurrentStep(4)}
+              className="flex-1 bg-wedding-olive hover:bg-wedding-olive/90"
+              disabled={guestsCount < 10}
+            >
+              Suivant
+              <ArrowRight className="h-4 w-4 ml-2" />
+            </Button>
+          </div>
+        </div>
+      );
+    }
+    
+    // Étape 4 : Niveau de service
+    if (currentStep === 4) {
+      return (
+        <div className="space-y-6 p-4">
+          <div className="text-center">
+            <h2 className="text-xl md:text-2xl font-serif mb-4">Étape 4/4 : Standing</h2>
+            <p className="text-sm md:text-base text-muted-foreground px-2">Quel niveau de standing souhaitez-vous ?</p>
+          </div>
+          
+          <RadioGroup value={serviceLevel} onValueChange={(v) => setServiceLevel(v as ServiceLevel)}>
+            <div className="space-y-4">
+              {[
+                { value: 'economique', label: 'Économique', desc: 'Budget maîtrisé, ~80-100€/personne' },
+                { value: 'abordable', label: 'Abordable', desc: 'Bon rapport qualité-prix, ~100-130€/personne' },
+                { value: 'premium', label: 'Premium', desc: 'Haut de gamme, ~130-180€/personne' },
+                { value: 'luxe', label: 'Luxe', desc: 'Prestations d\'exception, ~180€+/personne' }
+              ].map((level) => (
+                <div key={level.value} className="flex items-center space-x-2 border rounded-lg p-4">
+                  <RadioGroupItem value={level.value} id={level.value} />
+                  <Label htmlFor={level.value} className="flex-1 cursor-pointer">
+                    <div className="font-medium">{level.label}</div>
+                    <p className="text-sm text-muted-foreground">{level.desc}</p>
+                  </Label>
+                </div>
+              ))}
+            </div>
+          </RadioGroup>
+          
+          <div className="flex gap-4">
+            <Button 
+              variant="outline"
+              onClick={() => setCurrentStep(3)}
+              className="flex-1"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Retour
+            </Button>
+            <Button 
+              onClick={calculateUnknownBudget}
+              className="flex-1 bg-wedding-olive hover:bg-wedding-olive/90"
+            >
+              <Calculator className="h-5 w-5 mr-2" />
+              Calculer
+            </Button>
+          </div>
+        </div>
+      );
+    }
+    
+    return null;
+  };
+
+  // Fonction de calcul pour le mode "unknown"
+  const calculateUnknownBudget = () => {
+    // Tarifs de base par personne selon le niveau
+    const basePricePerGuest: Record<ServiceLevel, number> = {
+      'economique': 90,
+      'abordable': 115,
+      'premium': 155,
+      'luxe': 200
+    };
+    
+    // Multiplicateurs régionaux
+    const regionMultipliers: Record<string, number> = {
+      'Île-de-France': 1.3,
+      'Provence-Alpes-Côte d\'Azur': 1.2,
+      'Corse': 1.15,
+      'Auvergne-Rhône-Alpes': 1.1,
+      'Bretagne': 1.0,
+      'Pays de la Loire': 1.0,
+    };
+    
+    // Multiplicateur saisonnier
+    const seasonMultiplier = season === 'haute' ? 1.15 : 1.0;
+    
+    // Calcul du prix par invité
+    const basePrice = basePricePerGuest[serviceLevel];
+    const regionMultiplier = regionMultipliers[region] || 1.0;
+    const finalPricePerGuest = basePrice * regionMultiplier * seasonMultiplier;
+    
+    // Budget total
+    const totalBudget = Math.round(finalPricePerGuest * guestsCount);
+    
+    // Répartition selon les catégories standards
+    const breakdown: BudgetLine[] = [];
+    
+    Object.entries(BUDGET_ALLOCATION_PERCENTAGES).forEach(([key, category]) => {
+      const amount = Math.round(totalBudget * category.percentage);
+      breakdown.push({
+        name: category.name,
+        amount,
+        basePrice: amount,
+        color: category.color
+      });
+    });
+    
+    setBudgetEstimate({
+      total: totalBudget,
+      breakdown
+    });
+    
+    setShowEstimate(true);
+  };
+
   // Rendu des résultats
   const renderResults = () => {
     if (!showEstimate || !budgetEstimate.breakdown.length) return null;
@@ -299,6 +545,7 @@ const BudgetCalculator: React.FC = () => {
       <CardContent>
         {!calculatorMode && renderModeSelection()}
         {calculatorMode === 'known' && !showEstimate && renderKnownBudgetMode()}
+        {calculatorMode === 'unknown' && !showEstimate && renderUnknownBudgetMode()}
         {showEstimate && renderResults()}
       </CardContent>
     </Card>

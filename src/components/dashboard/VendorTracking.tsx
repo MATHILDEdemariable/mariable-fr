@@ -29,7 +29,8 @@ import {
   RefreshCw,
   Trash,
   Edit,
-  Download
+  Download,
+  Play
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Database } from '@/integrations/supabase/types';
@@ -41,6 +42,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { exportVendorTrackingToPDF } from '@/services/vendorTrackingExportService';
 import { useUserProfile } from '@/hooks/useUserProfile';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { TutorialVideoModal } from '@/components/tutorials/TutorialVideoModal';
 
 type VendorStatus = Database['public']['Enums']['vendor_status'];
 
@@ -97,6 +99,7 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [vendorToDelete, setVendorToDelete] = useState<string | null>(null);
   const [isExporting, setIsExporting] = useState(false);
+  const [showTutorial, setShowTutorial] = useState(false);
   const { toast } = useToast();
   const { profile } = useUserProfile();
   const isMobile = useIsMobile();
@@ -278,13 +281,27 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
   };
 
   return (
-    <Card>
-      <CardHeader className="pb-2">
-        <CardTitle className="font-serif">Mes prestataires</CardTitle>
-        <CardDescription>
-          Gérez vos prestataires de mariage et suivez l'avancement de vos démarches
-        </CardDescription>
-      </CardHeader>
+    <>
+      <Card>
+        <CardHeader className="pb-2">
+          <div className="flex justify-between items-start">
+            <div>
+              <CardTitle className="font-serif">Mes prestataires</CardTitle>
+              <CardDescription>
+                Gérez vos prestataires de mariage et suivez l'avancement de vos démarches
+              </CardDescription>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowTutorial(true)}
+              className="flex items-center gap-2"
+            >
+              <Play className="h-4 w-4" />
+              Tuto vidéo
+            </Button>
+          </div>
+        </CardHeader>
       <CardContent>
         <div className="flex flex-col space-y-4">
           <div className="flex flex-col sm:flex-row gap-3">
@@ -786,7 +803,14 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+      
+      <TutorialVideoModal
+        isOpen={showTutorial}
+        onClose={() => setShowTutorial(false)}
+        videoId="vendors"
+      />
     </Card>
+    </>
   );
 };
 

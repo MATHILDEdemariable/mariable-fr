@@ -3,15 +3,19 @@ import { Helmet } from 'react-helmet-async';
 import { useSearchParams } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from '@/components/ui/button';
+import { Play } from 'lucide-react';
 import ChecklistMariageManuelle from '@/components/dashboard/ChecklistMariageManuelle';
 import ChecklistDixEtapes from '@/components/dashboard/ChecklistDixEtapes';
 import ChecklistIntelligente from '@/components/dashboard/ChecklistIntelligente';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { TutorialVideoModal } from '@/components/tutorials/TutorialVideoModal';
 
 const ChecklistMariagePage: React.FC = () => {
   const isMobile = useIsMobile();
   const [searchParams, setSearchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState('etapes');
+  const [showTutorial, setShowTutorial] = useState(false);
 
   // Synchroniser avec les paramètres URL
   useEffect(() => {
@@ -34,11 +38,22 @@ const ChecklistMariagePage: React.FC = () => {
       </Helmet>
       
       <div className="space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground mb-2">Check-list Mariage</h1>
-          <p className="text-muted-foreground">
-            Organisez votre mariage avec nos outils de check-list
-          </p>
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold text-foreground mb-2">Check-list Mariage</h1>
+            <p className="text-muted-foreground">
+              Organisez votre mariage avec nos outils de check-list
+            </p>
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowTutorial(true)}
+            className="flex items-center gap-2"
+          >
+            <Play className="h-4 w-4" />
+            Tuto vidéo
+          </Button>
         </div>
 
         <Tabs value={activeTab} onValueChange={handleTabChange}>
@@ -97,6 +112,12 @@ const ChecklistMariagePage: React.FC = () => {
           </TabsContent>
         </Tabs>
       </div>
+
+      <TutorialVideoModal
+        isOpen={showTutorial}
+        onClose={() => setShowTutorial(false)}
+        videoId="checklist"
+      />
     </>
   );
 };
