@@ -259,8 +259,8 @@ const Prix = () => {
                       </div>
                       <CardHeader className="p-0">
                         <CardTitle className="text-xl text-white mb-2">Application Premium</CardTitle>
-                        <div className="text-3xl font-bold text-white mb-2">39€</div>
-                        <p className="text-sm text-white/90">Paiement unique, à vie</p>
+                        <div className="text-3xl font-bold text-white mb-2">9,9€ /mois</div>
+                        <p className="text-sm text-white/90">Abonnement Sans Engagement</p>
                       </CardHeader>
                     </Card>
                     
