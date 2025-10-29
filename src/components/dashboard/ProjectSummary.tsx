@@ -13,6 +13,7 @@ import { CheckSquare, ArrowRight, Circle, CheckCircle2, Loader2 } from 'lucide-r
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 import PaymentModal from '@/components/pricing/PaymentModal';
+import { WhatsAppButton } from '@/components/support/WhatsAppButton';
 interface Task {
   id: string;
   label: string;
@@ -285,6 +286,9 @@ const ProjectSummary = () => {
               </div>)}
           </div>
         </div>
+
+        {/* Support WhatsApp */}
+        <WhatsAppButton variant="featured" />
 
         {/* Bloc 2: Vous avez tout organisé ? */}
         <div className="bg-gradient-to-r from-wedding-olive/10 to-wedding-cream/20 rounded-xl shadow-sm border border-wedding-olive/20 p-6">

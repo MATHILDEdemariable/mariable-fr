@@ -4,6 +4,7 @@ import { LayoutDashboard, Calendar, CheckSquare, Calculator, Store, Heart, Setti
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { WhatsAppButton } from '@/components/support/WhatsAppButton';
 interface DashboardSidebarProps {
   isReaderMode?: boolean;
 }
@@ -411,7 +412,12 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
 
       </nav>
       
+      {/* Support WhatsApp - Toujours visible */}
       <div className="mt-auto px-2 sm:px-3 py-2">
+        <WhatsAppButton variant="compact" />
+      </div>
+      
+      <div className="px-2 sm:px-3 py-2">
         <button onClick={handleLogout} className="flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md text-gray-600 hover:bg-gray-100 w-full justify-start" disabled={isReaderMode}>
           <LogOut className="h-4 w-4" />
           <span className="ml-2 sm:ml-3">Déconnexion</span>
