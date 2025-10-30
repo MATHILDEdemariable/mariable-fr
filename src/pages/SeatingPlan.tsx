@@ -5,7 +5,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Download, Users, UserPlus, FileSpreadsheet } from 'lucide-react';
+import { Plus, Download, Users, UserPlus, FileSpreadsheet, Play } from 'lucide-react';
+import { TutorialVideoModal } from '@/components/tutorials/TutorialVideoModal';
 import SeatingPlanStats from '@/components/seating-plan/SeatingPlanStats';
 import TablesList from '@/components/seating-plan/TablesList';
 import GuestList from '@/components/seating-plan/GuestList';
@@ -26,6 +27,7 @@ const SeatingPlan = () => {
   const [showGuestDialog, setShowGuestDialog] = useState(false);
   const [showImportExcel, setShowImportExcel] = useState(false);
   const [editingTable, setEditingTable] = useState<SeatingTable | null>(null);
+  const [showTutorial, setShowTutorial] = useState(false);
 
   useEffect(() => {
     loadSeatingPlan();
@@ -228,6 +230,10 @@ const SeatingPlan = () => {
                   <UserPlus className="h-4 w-4 mr-2" />
                   Ajouter Invité
                 </Button>
+                <Button onClick={() => setShowTutorial(true)} variant="outline" className="w-full">
+                  <Play className="h-4 w-4 mr-2" />
+                  Tuto vidéo
+                </Button>
                 <ExportPDFButton plan={plan} tables={tables} guests={guests} />
               </div>
 
@@ -286,6 +292,12 @@ const SeatingPlan = () => {
           onOpenChange={setShowImportExcel}
           planId={plan?.id || ''}
           onImported={loadSeatingPlan}
+        />
+
+        <TutorialVideoModal 
+          isOpen={showTutorial} 
+          onClose={() => setShowTutorial(false)} 
+          videoId="seating-plan" 
         />
       </div>
     </>

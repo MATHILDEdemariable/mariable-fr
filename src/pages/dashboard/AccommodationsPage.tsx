@@ -26,6 +26,7 @@ import {
 import { AccommodationStats } from '@/components/accommodations/AccommodationStats';
 import { AccommodationForm } from '@/components/accommodations/AccommodationForm';
 import { AccommodationDetailsModal } from '@/components/accommodations/AccommodationDetailsModal';
+import { AccommodationTutorial } from '@/components/accommodations/AccommodationTutorial';
 import {
   useAccommodations,
   useCreateAccommodation,
@@ -127,6 +128,8 @@ export default function AccommodationsPage() {
             </Button>
           </div>
         </div>
+
+        <AccommodationTutorial />
 
         <AccommodationStats accommodations={accommodations} />
 

@@ -209,11 +209,11 @@ const ProfessionalRegistrationForm = () => {
     setIsSubmitting(true);
 
     try {
-      const slug = await generateUniqueSlug(values.nom);
-      // Insérer le prestataire dans la base de données
-      const { data: prestataire, error: insertError } = await supabase
-        .from("prestataires_rows")
-        .insert({
+      console.log('🚀 Envoi des données au serveur...');
+      
+      // Appeler l'Edge Function au lieu d'insérer directement
+      const { data, error } = await supabase.functions.invoke('register-professional', {
+        body: {
           nom: values.nom,
           categorie: values.categorie,
           region: values.region,
@@ -226,24 +226,19 @@ const ProfessionalRegistrationForm = () => {
           description: values.description || null,
           accord_referencement: values.accord_referencement,
           accord_cgv: values.accord_cgv,
-          visible: false, // Le prestataire n'est pas visible par défaut
-          featured: false,
-          description_more: null,
-          partner: false,
-          first_price_package: null,
-          second_price_package: null,
-          third_price_package: null,
-          slug: slug,
-          source_inscription: 'formulaire' // Marquer comme venant du formulaire
-        })
-        .select("id")
-        .single();
+        }
+      });
 
-      if (insertError) throw insertError;
+      if (error) {
+        console.error('❌ Erreur Edge Function:', error);
+        throw error;
+      }
+
+      console.log('✅ Prestataire créé:', data);
 
       // Si un fichier a été sélectionné, le télécharger
-      if (selectedFile && prestataire) {
-        await uploadBrochure(prestataire.id);
+      if (selectedFile && data?.data?.id) {
+        await uploadBrochure(data.data.id);
       }
 
       toast({
@@ -256,7 +251,7 @@ const ProfessionalRegistrationForm = () => {
       form.reset();
       setSelectedFile(null);
     } catch (error) {
-      console.error("Erreur lors de l'inscription:", error);
+      console.error("❌ Erreur lors de l'inscription:", error);
       toast({
         title: "Erreur",
         description:
