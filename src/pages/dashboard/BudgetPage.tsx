@@ -12,7 +12,7 @@ import BudgetCalculator from '@/components/dashboard/BudgetCalculator';
 import { TutorialVideoModal } from '@/components/tutorials/TutorialVideoModal';
 
 const BudgetPage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<string>('summary');
+  const [activeTab, setActiveTab] = useState<string>('calculator');
   const [showTutorial, setShowTutorial] = useState(false);
 
   // Fetch budget data for export
@@ -63,12 +63,8 @@ const BudgetPage: React.FC = () => {
           </Button>
         </div>
 
-        <Tabs defaultValue="summary" value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="mb-4 sm:mb-6 grid w-full grid-cols-3 bg-wedding-cream/10 h-auto p-1">
-            <TabsTrigger value="summary" className="flex items-center gap-1 sm:gap-2 data-[state=active]:bg-wedding-cream/30 data-[state=active]:text-wedding-olive text-xs sm:text-sm py-2 sm:py-2.5 px-2 sm:px-3 min-h-[44px] touch-manipulation">
-              <PieChart className="h-3 w-3 sm:h-4 sm:w-4 shrink-0" />
-              <span className="truncate">Résumé</span>
-            </TabsTrigger>
+        <Tabs defaultValue="calculator" value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="mb-4 sm:mb-6 grid w-full grid-cols-2 bg-wedding-cream/10 h-auto p-1">
             <TabsTrigger value="detailed" className="flex items-center gap-1 sm:gap-2 data-[state=active]:bg-wedding-cream/30 data-[state=active]:text-wedding-olive text-xs sm:text-sm py-2 sm:py-2.5 px-2 sm:px-3 min-h-[44px] touch-manipulation">
               <BarChart className="h-3 w-3 sm:h-4 sm:w-4 shrink-0" />
               <span className="hidden sm:inline truncate">Budget Détaillé</span>
@@ -80,12 +76,6 @@ const BudgetPage: React.FC = () => {
               <span className="sm:hidden truncate">Calc</span>
             </TabsTrigger>
           </TabsList>
-
-          <TabsContent value="summary" className="mt-3 sm:mt-6">
-            <div className="bg-white p-3 sm:p-6 rounded-lg shadow-sm">
-              <BudgetSummary />
-            </div>
-          </TabsContent>
 
           <TabsContent value="detailed" className="mt-3 sm:mt-6">
             <DetailedBudget />

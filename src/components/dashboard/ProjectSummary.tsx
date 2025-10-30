@@ -227,7 +227,7 @@ const ProjectSummary = () => {
         />
         
         {/* Bandeau Instagram */}
-        <div className="mt-4 bg-gradient-to-r from-purple-50 via-pink-50 to-purple-50 border border-purple-200 rounded-lg p-4 flex items-center justify-between gap-4">
+        <div className="mt-3 bg-gradient-to-r from-purple-50 via-pink-50 to-purple-50 border border-purple-200 rounded-lg p-4 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="bg-gradient-to-br from-purple-600 via-pink-600 to-orange-500 p-2 rounded-lg">
               <svg 

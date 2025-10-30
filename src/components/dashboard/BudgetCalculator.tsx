@@ -5,11 +5,14 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Calculator, Euro, ArrowRight, ArrowLeft, Info } from 'lucide-react';
+import { Calculator, Euro, ArrowRight, ArrowLeft, Info, Download, FileText } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from '@/components/ui/use-toast';
 import { PieChart as RechartsPieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
+import { Link } from 'react-router-dom';
+import { format } from 'date-fns';
+import { supabase } from '@/integrations/supabase/client';
 
 // Types pour la calculatrice de budget
 type Step = 1 | 2 | 3 | 4 | 5;
@@ -488,6 +491,91 @@ const BudgetCalculator: React.FC = () => {
     setShowEstimate(true);
   };
 
+  // Fonction d'export PDF
+  const handleExportPDF = async () => {
+    try {
+      const { jsPDF } = await import('jspdf');
+      const doc = new jsPDF();
+      
+      // En-tête
+      doc.setFontSize(20);
+      doc.text('Estimation Budgetaire Mariage', 20, 20);
+      
+      // Budget total
+      doc.setFontSize(16);
+      doc.text(`Budget total estime : ${formatCurrency(budgetEstimate.total)}`, 20, 40);
+      
+      // Répartition détaillée
+      doc.setFontSize(12);
+      doc.text('Repartition detaillee :', 20, 55);
+      
+      let yPos = 65;
+      budgetEstimate.breakdown.forEach((item) => {
+        doc.text(`${item.name}: ${formatCurrency(item.amount)}`, 25, yPos);
+        yPos += 10;
+        if (yPos > 270) {
+          doc.addPage();
+          yPos = 20;
+        }
+      });
+      
+      // Paramètres (si mode "unknown")
+      if (calculatorMode === 'unknown') {
+        yPos += 10;
+        if (yPos > 270) {
+          doc.addPage();
+          yPos = 20;
+        }
+        doc.text('Parametres de l\'estimation :', 20, yPos);
+        yPos += 10;
+        doc.text(`Nombre d'invites: ${guestsCount}`, 25, yPos);
+        yPos += 8;
+        doc.text(`Region: ${region}`, 25, yPos);
+        yPos += 8;
+        doc.text(`Saison: ${season === 'haute' ? 'Haute saison' : 'Basse saison'}`, 25, yPos);
+        yPos += 8;
+        doc.text(`Niveau: ${serviceLevel}`, 25, yPos);
+      }
+      
+      // Télécharger
+      const fileName = `budget-mariage-${format(new Date(), 'yyyy-MM-dd')}.pdf`;
+      doc.save(fileName);
+      
+      // TODO: Enregistrer dans la BDD (nécessite la création de la table documents)
+      // await saveToDocuments(fileName, budgetEstimate);
+      
+      toast({
+        title: "Export réussi",
+        description: "Votre budget a été exporté en PDF",
+      });
+    } catch (error) {
+      console.error('Erreur export PDF:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible d'exporter le PDF",
+        variant: "destructive"
+      });
+    }
+  };
+
+  // TODO: Fonction de sauvegarde dans documents (nécessite la création de la table)
+  // const saveToDocuments = async (fileName: string, estimate: BudgetEstimate) => {
+  //   try {
+  //     const { data: { user } } = await supabase.auth.getUser();
+  //     if (!user) return;
+  //     
+  //     await supabase.from('documents').insert({
+  //       user_id: user.id,
+  //       name: fileName,
+  //       type: 'budget',
+  //       content: JSON.stringify(estimate),
+  //       created_at: new Date().toISOString()
+  //     });
+  //   } catch (error) {
+  //     console.error('Erreur sauvegarde document:', error);
+  //   }
+  // };
+
   // Rendu des résultats
   const renderResults = () => {
     if (!showEstimate || !budgetEstimate.breakdown.length) return null;
@@ -606,20 +694,36 @@ const BudgetCalculator: React.FC = () => {
           </div>
         )}
         
-        <div className="flex gap-4 pt-4">
-          <Button
-            variant="outline"
-            onClick={() => {
-              setShowEstimate(false);
-              setCalculatorMode(null);
-              setCurrentStep(1);
-            }}
-            className="flex-1"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Nouvelle estimation
-          </Button>
-        </div>
+      <div className="flex flex-col sm:flex-row gap-3 pt-6 border-t">
+        <Button
+          variant="outline"
+          onClick={() => {
+            setShowEstimate(false);
+            setCalculatorMode(null);
+            setCurrentStep(1);
+          }}
+          className="flex-1"
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Nouvelle estimation
+        </Button>
+        
+        <Button
+          onClick={handleExportPDF}
+          className="flex-1 bg-wedding-olive hover:bg-wedding-olive/90"
+        >
+          <Download className="h-4 w-4 mr-2" />
+          Exporter en PDF
+        </Button>
+      </div>
+
+      {/* Message d'information */}
+      <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+        <p className="text-sm text-blue-800 flex items-center gap-2">
+          <FileText className="h-4 w-4" />
+          Cliquez sur "Exporter en PDF" pour télécharger votre budget
+        </p>
+      </div>
       </div>
     );
   };

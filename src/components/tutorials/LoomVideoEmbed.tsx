@@ -61,7 +61,7 @@ export const LoomVideoEmbed: React.FC<LoomVideoEmbedProps> = ({
         <p className="text-sm text-muted-foreground">{description}</p>
       )}
       
-      <div className="relative w-full" style={{ paddingBottom }}>
+      <div className="relative w-full" style={{ paddingBottom: compact ? '35%' : '56.25%' }}>
         {isLoading && (
           <div className="absolute inset-0 flex items-center justify-center bg-muted rounded-lg">
             <Loader2 className="h-8 w-8 animate-spin text-wedding-olive" />
@@ -85,12 +85,8 @@ export const LoomVideoEmbed: React.FC<LoomVideoEmbedProps> = ({
           allowFullScreen
           onLoad={handleLoad}
           onError={handleError}
-          style={{ 
-            width: '100%', 
-            height: compact ? '250px' : '410px' 
-          }}
           className={cn(
-            "absolute top-0 left-0 rounded-lg",
+            "absolute top-0 left-0 w-full h-full rounded-lg",
             hasError && "hidden"
           )}
           title={title || 'Vidéo tutorielle'}

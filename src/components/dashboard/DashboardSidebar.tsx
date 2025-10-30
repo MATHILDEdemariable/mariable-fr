@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Calendar, CheckSquare, Calculator, Store, Heart, Settings, LogOut, Wine, MessageCircleQuestion, MessageSquare, Users, Lightbulb, ChevronDown, Coins, ListChecks, UserCheck, Home, QrCode, FileText, Table } from 'lucide-react';
+import { LayoutDashboard, Calendar, CheckSquare, Calculator, Store, Heart, Settings, LogOut, Wine, MessageCircleQuestion, MessageSquare, Users, Lightbulb, ChevronDown, Coins, ListChecks, UserCheck, Home, QrCode, FileText, Table, AlertCircle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { WhatsAppButton } from '@/components/support/WhatsAppButton';
+import { ProblemModal } from '@/components/support/ProblemModal';
 interface DashboardSidebarProps {
   isReaderMode?: boolean;
 }
@@ -12,6 +13,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
   isReaderMode = false
 }) => {
   const location = useLocation();
+  const [showProblemModal, setShowProblemModal] = useState(false);
 
   // Menu déroulant Tableau de bord
   const dashboardItems = [{
@@ -415,6 +417,15 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
       {/* Support WhatsApp - Premium uniquement */}
       <div className="mt-auto px-2 sm:px-3 py-2">
         <WhatsAppButton variant="compact" requirePremium={true} />
+        
+        {/* Un problème ? */}
+        <button
+          onClick={() => setShowProblemModal(true)}
+          className="flex items-center w-full px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors text-gray-600 hover:bg-red-50 hover:text-red-600 border border-transparent hover:border-red-200 mt-2"
+        >
+          <AlertCircle className="h-4 w-4 text-red-500" />
+          <span className="ml-2 sm:ml-3 leading-tight">Un problème ?</span>
+        </button>
       </div>
       
       <div className="px-2 sm:px-3 py-2">
@@ -429,6 +440,12 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
             Vous êtes en mode lecture seule. Les modifications ne sont pas possibles dans ce mode.
           </div>
         </div>}
+      
+      {/* Modal Un problème ? */}
+      <ProblemModal 
+        isOpen={showProblemModal} 
+        onClose={() => setShowProblemModal(false)} 
+      />
     </div>;
 };
 export default DashboardSidebar;
