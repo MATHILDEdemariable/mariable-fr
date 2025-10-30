@@ -43,7 +43,7 @@ serve(async (req) => {
       .insert({
         nom: body.nom,
         categorie: body.categorie,
-        region: body.region,
+        regions: body.region ? [body.region] : null,
         email: body.email,
         telephone: body.telephone || null,
         site_web: body.site_web || null,
