@@ -5,10 +5,11 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Calculator, Euro, ArrowRight, ArrowLeft } from 'lucide-react';
+import { Calculator, Euro, ArrowRight, ArrowLeft, Info } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from '@/components/ui/use-toast';
+import { PieChart as RechartsPieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 
 // Types pour la calculatrice de budget
 type Step = 1 | 2 | 3 | 4 | 5;
@@ -490,39 +491,128 @@ const BudgetCalculator: React.FC = () => {
   // Rendu des résultats
   const renderResults = () => {
     if (!showEstimate || !budgetEstimate.breakdown.length) return null;
+    
+    const isKnownMode = calculatorMode === 'known';
 
     return (
-      <div className="space-y-6 p-4">
+      <div className="space-y-6 md:space-y-8 p-4">
         <div className="text-center">
-          <h2 className="text-2xl font-serif mb-4">Votre estimation budgétaire</h2>
-          <div className="text-3xl font-bold text-wedding-olive mb-2">
+          <h2 className="text-xl md:text-2xl lg:text-3xl font-serif mb-4">
+            {isKnownMode ? 'Répartition budgétaire' : 'Estimation budgétaire'}
+          </h2>
+          <p className="text-sm md:text-base text-muted-foreground px-2">
+            {isKnownMode 
+              ? 'Voici la répartition de votre budget selon les standards du secteur'
+              : 'Voici une estimation basée sur vos critères'
+            }
+          </p>
+        </div>
+        
+        <div className="text-center py-6 md:py-8">
+          <h3 className="text-xl md:text-2xl lg:text-3xl font-serif mb-4" style={{ color: '#4CAF50' }}>
+            Budget total {isKnownMode ? 'réparti' : 'estimé'}
+          </h3>
+          <p className="text-2xl md:text-3xl lg:text-4xl text-wedding-olive font-medium">
             {formatCurrency(budgetEstimate.total)}
-          </div>
-          <p className="text-muted-foreground">Budget total estimé</p>
+          </p>
+          <p className="text-xs md:text-sm text-muted-foreground mt-2 px-2">
+            {isKnownMode 
+              ? 'Réparti selon les proportions standard du secteur'
+              : 'Ce montant est calculé selon les standards du secteur'
+            }
+          </p>
         </div>
 
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold">Répartition détaillée</h3>
-          {budgetEstimate.breakdown.map((item, index) => (
-            <div key={index} className="flex justify-between items-center py-3 px-4 border rounded-lg">
-              <div className="flex items-center gap-3">
-                <div 
-                  className="w-4 h-4 rounded-full"
-                  style={{ backgroundColor: item.color }}
-                />
-                <span className="font-medium">{item.name}</span>
+        {/* GRAPHIQUE PIE CHART */}
+        <div className="h-64 md:h-80">
+          <ResponsiveContainer width="100%" height="100%">
+            <RechartsPieChart>
+              <Pie
+                data={budgetEstimate.breakdown}
+                cx="50%"
+                cy="50%"
+                innerRadius={60}
+                outerRadius="90%"
+                paddingAngle={2}
+                dataKey="amount"
+                nameKey="name"
+                label={({ name, percent }) => `${(percent * 100).toFixed(0)}%`}
+                labelLine={{ stroke: '#7F9474', strokeWidth: 0.5 }}
+                strokeWidth={1}
+                stroke="#f8f6f0"
+              >
+                {budgetEstimate.breakdown.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.color} />
+                ))}
+              </Pie>
+            </RechartsPieChart>
+          </ResponsiveContainer>
+        </div>
+        
+        <div>
+          <h3 className="text-lg md:text-2xl font-serif mb-4">Répartition détaillée</h3>
+          <div className="space-y-4 md:space-y-6">
+            {budgetEstimate.breakdown.map((item, index) => (
+              <div key={index} className="border-b pb-3 last:border-b-0">
+                <div className="flex justify-between items-start mb-1">
+                  <div className="flex items-center space-x-2 flex-1 min-w-0">
+                    <div 
+                      className="h-3 w-3 rounded-full flex-shrink-0" 
+                      style={{ backgroundColor: item.color }}
+                    />
+                    <span className="text-sm md:text-base break-words">{item.name}</span>
+                  </div>
+                  <span className="font-medium text-sm md:text-base ml-2 flex-shrink-0">
+                    {formatCurrency(item.amount)}
+                  </span>
+                </div>
               </div>
-              <span className="text-lg font-bold">{formatCurrency(item.amount)}</span>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-
+        
+        <div className="flex items-start gap-2 text-xs md:text-sm text-muted-foreground bg-gray-50 p-4 rounded-md">
+          <Info size={18} className="shrink-0 mt-0.5" />
+          <p>
+            {isKnownMode 
+              ? 'Répartition basée sur les standards du secteur, à ajuster selon vos priorités.'
+              : 'Estimation indicative basée sur les standards, à ajuster selon vos choix et besoins spécifiques.'
+            }
+          </p>
+        </div>
+        
+        {/* Paramètres UNIQUEMENT pour le mode "unknown" */}
+        {!isKnownMode && (
+          <div>
+            <h3 className="text-lg md:text-2xl font-serif mb-4">Paramètres de votre estimation</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="border p-3 rounded">
+                <p className="text-sm font-medium">Nombre d'invités</p>
+                <p>{guestsCount} personnes</p>
+              </div>
+              <div className="border p-3 rounded">
+                <p className="text-sm font-medium">Région</p>
+                <p>{region}</p>
+              </div>
+              <div className="border p-3 rounded">
+                <p className="text-sm font-medium">Saison</p>
+                <p>{season === 'haute' ? 'Haute saison (avril-sept)' : 'Basse saison (oct-mars)'}</p>
+              </div>
+              <div className="border p-3 rounded">
+                <p className="text-sm font-medium">Niveau de prestation</p>
+                <p className="capitalize">{serviceLevel}</p>
+              </div>
+            </div>
+          </div>
+        )}
+        
         <div className="flex gap-4 pt-4">
           <Button
             variant="outline"
             onClick={() => {
               setShowEstimate(false);
               setCalculatorMode(null);
+              setCurrentStep(1);
             }}
             className="flex-1"
           >

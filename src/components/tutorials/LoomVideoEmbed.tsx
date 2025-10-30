@@ -8,6 +8,7 @@ interface LoomVideoEmbedProps {
   description?: string;
   aspectRatio?: '16:9' | '4:3';
   className?: string;
+  compact?: boolean;
 }
 
 export const LoomVideoEmbed: React.FC<LoomVideoEmbedProps> = ({
@@ -16,6 +17,7 @@ export const LoomVideoEmbed: React.FC<LoomVideoEmbedProps> = ({
   description,
   aspectRatio = '16:9',
   className,
+  compact = false,
 }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
@@ -83,8 +85,12 @@ export const LoomVideoEmbed: React.FC<LoomVideoEmbedProps> = ({
           allowFullScreen
           onLoad={handleLoad}
           onError={handleError}
+          style={{ 
+            width: '100%', 
+            height: compact ? '250px' : '410px' 
+          }}
           className={cn(
-            "absolute top-0 left-0 w-full h-full rounded-lg",
+            "absolute top-0 left-0 rounded-lg",
             hasError && "hidden"
           )}
           title={title || 'Vidéo tutorielle'}
