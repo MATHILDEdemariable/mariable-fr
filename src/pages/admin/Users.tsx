@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { fetchAllUsers } from '@/lib/supabaseAdmin';
+import { supabase } from '@/integrations/supabase/client';
 import { 
   Table, 
   TableBody, 
@@ -49,6 +50,10 @@ const AdminUsers = () => {
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isExporting, setIsExporting] = useState(false);
+  const [usageStats, setUsageStats] = useState<{
+    premiumUsers: number;
+    expiredUsers: number;
+  } | null>(null);
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
@@ -59,6 +64,7 @@ const AdminUsers = () => {
   useEffect(() => {
     if (isAuthenticated) {
       fetchUsers();
+      fetchUsageStats();
     }
   }, [isAuthenticated]);
 
@@ -114,6 +120,27 @@ const AdminUsers = () => {
       toast.error('Erreur lors du chargement des utilisateurs');
     } finally {
       setIsLoadingData(false);
+    }
+  };
+
+  const fetchUsageStats = async () => {
+    try {
+      console.log('🚀 Fetching usage stats...');
+      const { data, error } = await supabase.functions.invoke('get-usage-stats');
+      
+      if (error) throw error;
+      
+      if (data?.success && data?.stats) {
+        setUsageStats({
+          premiumUsers: data.stats.premiumUsers || 0,
+          expiredUsers: data.stats.expiredUsers || 0
+        });
+        console.log('✅ Usage stats loaded:', data.stats);
+      }
+    } catch (error) {
+      console.error('❌ Error fetching usage stats:', error);
+      // Fallback to local calculation
+      setUsageStats(null);
     }
   };
 
@@ -204,10 +231,18 @@ const AdminUsers = () => {
   };
 
   const getPremiumUsers = () => {
+    // Use usage stats if available, otherwise fallback to local calculation
+    if (usageStats) {
+      return usageStats.premiumUsers;
+    }
     return users.filter(user => getUserStatus(user.profile) === 'premium').length;
   };
 
   const getExpiredUsers = () => {
+    // Use usage stats if available, otherwise fallback to local calculation
+    if (usageStats) {
+      return usageStats.expiredUsers;
+    }
     return users.filter(user => getUserStatus(user.profile) === 'expired').length;
   };
 
@@ -308,6 +343,9 @@ const AdminUsers = () => {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-green-600">{getPremiumUsers()}</div>
+              {!usageStats && (
+                <p className="text-xs text-gray-400 mt-1">Calcul local</p>
+              )}
             </CardContent>
           </Card>
           
@@ -318,6 +356,9 @@ const AdminUsers = () => {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-orange-600">{getExpiredUsers()}</div>
+              {!usageStats && (
+                <p className="text-xs text-gray-400 mt-1">Calcul local</p>
+              )}
             </CardContent>
           </Card>
           

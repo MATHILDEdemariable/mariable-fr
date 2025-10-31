@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, Sparkles, Gift } from 'lucide-react';
-import { CallScheduleModal } from './CallScheduleModal';
 import { format, differenceInDays } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
@@ -43,7 +42,6 @@ const ProjectSummary = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [tasksLoading, setTasksLoading] = useState(true);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
-  const [showCallModal, setShowCallModal] = useState(false);
 
   // Initialize local state from profile
   useEffect(() => {
@@ -56,20 +54,6 @@ const ProjectSummary = () => {
       }
     }
   }, [profile]);
-
-  // Show call modal after 10 seconds (first visit only)
-  useEffect(() => {
-    const hasSeenCallModal = localStorage.getItem('hasSeenCallModal');
-    
-    if (!hasSeenCallModal) {
-      const timer = setTimeout(() => {
-        setShowCallModal(true);
-        localStorage.setItem('hasSeenCallModal', 'true');
-      }, 10000); // 10 seconds
-      
-      return () => clearTimeout(timer);
-    }
-  }, []);
 
   // Load tasks
   useEffect(() => {
@@ -397,12 +381,6 @@ const ProjectSummary = () => {
 
       {/* Payment Modal */}
       <PaymentModal isOpen={showPaymentModal} onClose={() => setShowPaymentModal(false)} />
-      
-      {/* Call Schedule Modal */}
-      <CallScheduleModal 
-        isOpen={showCallModal} 
-        onClose={() => setShowCallModal(false)} 
-      />
     </div>;
 };
 
