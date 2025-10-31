@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
-import { Loader2, Users, TrendingUp, CheckSquare, Calendar, FileText, Heart, ClipboardList, User, Home, FileStack, LayoutGrid, RefreshCw } from 'lucide-react';
+import { Loader2, Users, TrendingUp, CheckSquare, Calendar, FileText, Heart, ClipboardList, User, Home, FileStack, LayoutGrid, RefreshCw, Crown, AlertTriangle } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
 type ModuleStats = {
@@ -13,6 +13,8 @@ type ModuleStats = {
 type UsageStats = {
   totalUsers: number;
   activeUsers: number;
+  premiumUsers: number;
+  expiredUsers: number;
   modules: {
     budget: ModuleStats;
     rsvp: ModuleStats;
@@ -199,7 +201,7 @@ const UsageStats = () => {
       </div>
 
       {/* Overview Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
@@ -234,6 +236,35 @@ const UsageStats = () => {
                 <p className="text-xs text-muted-foreground mt-1">Moyenne sur tous les modules</p>
               </div>
               <CheckSquare className="h-10 w-10 text-blue-600 opacity-50" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Utilisateurs Premium</p>
+                <p className="text-3xl font-bold text-green-600">{stats.premiumUsers}</p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  {stats.totalUsers > 0 
+                    ? ((stats.premiumUsers / stats.totalUsers) * 100).toFixed(1) 
+                    : 0}% du total
+                </p>
+              </div>
+              <Crown className="h-10 w-10 text-green-600 opacity-50" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Abonnements Expirés</p>
+                <p className="text-3xl font-bold text-orange-600">{stats.expiredUsers}</p>
+              </div>
+              <AlertTriangle className="h-10 w-10 text-orange-600 opacity-50" />
             </div>
           </CardContent>
         </Card>

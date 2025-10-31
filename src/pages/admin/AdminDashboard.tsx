@@ -14,7 +14,8 @@ import {
   Calendar, 
   BarChart3,
   Shield,
-  User2
+  User2,
+  Crown
 } from 'lucide-react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
@@ -30,7 +31,8 @@ const AdminDashboard = () => {
     totalBlogPosts: 0,
     recentReservations: 0,
     totalUsers: 0,
-    featuredPrestataires: 0
+    featuredPrestataires: 0,
+    premiumUsers: 0
   });
   const navigate = useNavigate();
 
@@ -75,8 +77,9 @@ const AdminDashboard = () => {
         .select('*', { count: 'exact' })
         .gte('created_at', weekAgo.toISOString());
 
-      // Get total users count via Edge Function
+      // Get total users count and premium stats via Edge Functions
       let totalUsers = 0;
+      let premiumUsers = 0;
       try {
         const { data } = await supabase.functions.invoke('get-users');
         if (data && data.success && data.users) {
@@ -86,13 +89,23 @@ const AdminDashboard = () => {
         console.error('Erreur lors du chargement du nombre d\'utilisateurs:', error);
       }
 
+      try {
+        const { data: usageData } = await supabase.functions.invoke('get-usage-stats');
+        if (usageData?.success && usageData?.stats) {
+          premiumUsers = usageData.stats.premiumUsers || 0;
+        }
+      } catch (error) {
+        console.error('Erreur lors du chargement des stats premium:', error);
+      }
+
       setStats({
         totalReservations: reservations.count || 0,
         totalPrestataires: prestataires.count || 0,
         totalBlogPosts: blogPosts.count || 0,
         recentReservations: recentRes.count || 0,
         totalUsers,
-        featuredPrestataires: featuredPrestataires.count || 0
+        featuredPrestataires: featuredPrestataires.count || 0,
+        premiumUsers
       });
     } catch (error) {
       console.error('Erreur lors du chargement des statistiques:', error);
@@ -168,6 +181,18 @@ const AdminDashboard = () => {
                   <p className="text-2xl font-bold text-wedding-olive">{stats.totalUsers}</p>
                 </div>
                 <User2 className="h-8 w-8 text-wedding-olive" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Utilisateurs Premium</p>
+                  <p className="text-2xl font-bold text-green-600">{stats.premiumUsers || 0}</p>
+                </div>
+                <Crown className="h-8 w-8 text-green-600" />
               </div>
             </CardContent>
           </Card>

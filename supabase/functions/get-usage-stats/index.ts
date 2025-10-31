@@ -49,6 +49,20 @@ Deno.serve(async (req) => {
     })
 
     // Count users with data in each module
+    // Count premium and expired users
+    const { count: premiumCount } = await supabaseAdmin
+      .from('profiles')
+      .select('*', { count: 'exact', head: true })
+      .eq('subscription_type', 'premium')
+      .or('subscription_expires_at.is.null,subscription_expires_at.gt.now()')
+
+    const { count: expiredCount } = await supabaseAdmin
+      .from('profiles')
+      .select('*', { count: 'exact', head: true })
+      .eq('subscription_type', 'premium')
+      .not('subscription_expires_at', 'is', null)
+      .lt('subscription_expires_at', new Date().toISOString())
+
     const [
       budgetsCount,
       rsvpEventsCount,
@@ -193,6 +207,8 @@ Deno.serve(async (req) => {
     const stats = {
       totalUsers: allUsers.length,
       activeUsers: activeUsers.length,
+      premiumUsers: premiumCount || 0,
+      expiredUsers: expiredCount || 0,
       modules: {
         budget: {
           usersCount: budgetUsers,
