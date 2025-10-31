@@ -27,7 +27,7 @@ export const CallScheduleModal: React.FC<CallScheduleModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-2xl max-h-[85vh] overflow-y-auto mt-4">
         {!showCalendar ? (
           <>
             <DialogHeader>
@@ -93,8 +93,8 @@ export const CallScheduleModal: React.FC<CallScheduleModalProps> = ({
           </>
         ) : (
           <>
-            <DialogHeader>
-              <div className="flex items-center justify-between">
+            <DialogHeader className="pb-2">
+              <div className="flex items-center justify-between mb-2">
                 <DialogTitle className="text-xl font-serif text-wedding-olive">
                   Choisissez votre créneau
                 </DialogTitle>
@@ -108,11 +108,11 @@ export const CallScheduleModal: React.FC<CallScheduleModalProps> = ({
               </div>
             </DialogHeader>
             
-            <div className="py-4">
+            <div className="py-2">
               {/* Cal.com Iframe */}
               <iframe
                 src="https://cal.com/mathilde-mariable/appel?embed=true"
-                style={{ width: '100%', height: '600px', border: 0 }}
+                style={{ width: '100%', height: '550px', border: 0 }}
                 frameBorder="0"
                 title="Calendrier de réservation"
               />

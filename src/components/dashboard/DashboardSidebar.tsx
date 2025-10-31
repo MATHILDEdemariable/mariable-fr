@@ -361,24 +361,6 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
           {isReaderMode && <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>}
         </Link>
 
-        {/* Votre cadeau - Cal.com */}
-        <button
-          onClick={() => setShowCallModal(true)}
-          className={cn(
-            "flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors w-full justify-start",
-            "bg-gradient-to-r from-pink-500 to-pink-600 text-white hover:from-pink-600 hover:to-pink-700 shadow-sm",
-            isReaderMode ? 'pointer-events-none opacity-70' : ''
-          )}
-          disabled={isReaderMode}
-        >
-          <Gift className="h-4 w-4" />
-          <span className="ml-2 sm:ml-3 leading-tight">Votre cadeau</span>
-          <span className="ml-2 px-1.5 py-0.5 text-[10px] bg-white/30 text-white rounded-full font-semibold animate-pulse">
-            Surprise
-          </span>
-          {isReaderMode && <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>}
-        </button>
-
         {/* Documents */}
         <Link to={isReaderMode ? '#' : '/dashboard/documents'} onClick={e => {
         if (isReaderMode) {
@@ -437,6 +419,23 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
       {/* Support WhatsApp - Premium uniquement */}
       <div className="mt-auto px-2 sm:px-3 py-2">
         <WhatsAppButton variant="compact" requirePremium={true} />
+        
+        {/* Votre cadeau - Cal.com */}
+        <button
+          onClick={() => setShowCallModal(true)}
+          className={cn(
+            "flex items-center w-full px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors justify-start mt-2",
+            "bg-gradient-to-r from-pink-500 to-pink-600 text-white hover:from-pink-600 hover:to-pink-700 shadow-sm",
+            isReaderMode ? 'pointer-events-none opacity-70' : ''
+          )}
+          disabled={isReaderMode}
+        >
+          <Gift className="h-4 w-4" />
+          <span className="ml-2 sm:ml-3 leading-tight">Votre cadeau</span>
+          <span className="ml-2 px-1.5 py-0.5 text-[10px] bg-white/30 text-white rounded-full font-semibold animate-pulse">
+            Surprise
+          </span>
+        </button>
         
         {/* Un problème ? */}
         <button
