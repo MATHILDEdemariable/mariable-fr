@@ -20,22 +20,6 @@ export const CallScheduleModal: React.FC<CallScheduleModalProps> = ({
 }) => {
   const [showCalendar, setShowCalendar] = useState(false);
 
-  useEffect(() => {
-    if (isOpen && showCalendar) {
-      // Load Cal.com embed script
-      const script = document.createElement('script');
-      script.src = 'https://app.cal.com/embed/embed.js';
-      script.async = true;
-      document.body.appendChild(script);
-
-      return () => {
-        if (document.body.contains(script)) {
-          document.body.removeChild(script);
-        }
-      };
-    }
-  }, [isOpen, showCalendar]);
-
   const handleClose = () => {
     setShowCalendar(false);
     onClose();
@@ -125,11 +109,12 @@ export const CallScheduleModal: React.FC<CallScheduleModalProps> = ({
             </DialogHeader>
             
             <div className="py-4">
-              {/* Cal.com Embed */}
-              <div 
-                data-cal-link="mathilde-mariable/appel"
-                data-cal-config='{"layout":"month_view"}'
-                style={{ width: '100%', height: '600px', overflow: 'scroll' }}
+              {/* Cal.com Iframe */}
+              <iframe
+                src="https://cal.com/mathilde-mariable/appel?embed=true"
+                style={{ width: '100%', height: '600px', border: 0 }}
+                frameBorder="0"
+                title="Calendrier de réservation"
               />
             </div>
           </>
