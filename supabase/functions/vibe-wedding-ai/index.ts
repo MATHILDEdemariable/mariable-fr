@@ -353,8 +353,9 @@ serve(async (req) => {
   const vendorIds = vendors.map(v => v.id);
   const { data: photos } = await supabase
     .from('prestataires_photos_preprod')
-    .select('*')
-    .in('prestataire_id', vendorIds);
+    .select('url, principale, is_cover, ordre, prestataire_id')
+    .in('prestataire_id', vendorIds)
+    .order('ordre', { ascending: true });
 
       console.log(`📸 ${photos?.length || 0} photos récupérées`);
 
@@ -382,6 +383,11 @@ serve(async (req) => {
           ...vendor,
           matchScore: Math.min(baseScore, 100),
           photo_url: vendorPhotos[0]?.url || null,
+          prestataires_photos_preprod: vendorPhotos.map(p => ({
+            url: p.url,
+            principale: p.principale,
+            is_cover: p.is_cover
+          })),
           isOutOfScope: vendor._searchScope !== 'exact' // Pour le badge
         };
       });

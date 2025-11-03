@@ -112,11 +112,30 @@ const VibeWedding: React.FC = () => {
               </div>
 
               {matchedVendors.length === 0 ? (
-                <div className="text-center py-12 text-gray-500">
-                  <p className="text-lg mb-2">💬 Commencez la conversation</p>
-                  <p className="text-sm">
-                    Décrivez ce que vous recherchez pour votre mariage et je vous proposerai les meilleurs prestataires
-                  </p>
+                <div className="text-center py-12 px-6">
+                  <div className="max-w-md mx-auto space-y-4">
+                    <p className="text-lg font-medium text-gray-700">
+                      🔍 Nous n'avons pas encore cela dans notre sélection
+                    </p>
+                    <p className="text-gray-600">
+                      Mais nous vous conseillons de demander votre carnet d'adresse personnalisé pour recevoir des recommandations sur-mesure
+                    </p>
+                    <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
+                      <Button
+                        onClick={() => setIsCarnetModalOpen(true)}
+                        className="bg-wedding-olive hover:bg-wedding-olive/90"
+                      >
+                        📬 Recevoir mon carnet personnalisé
+                      </Button>
+                      <Button
+                        onClick={() => window.location.href = '/professionnelsmariable'}
+                        variant="outline"
+                        className="border-wedding-olive text-wedding-olive hover:bg-wedding-olive/10"
+                      >
+                        Voir la sélection complète
+                      </Button>
+                    </div>
+                  </div>
                 </div>
               ) : (
                 <>

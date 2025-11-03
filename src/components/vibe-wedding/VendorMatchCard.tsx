@@ -20,6 +20,11 @@ interface VendorMatchCardProps {
     featured?: boolean;
     isOutOfScope?: boolean;
     slug?: string;
+    prestataires_photos_preprod?: Array<{
+      url: string;
+      principale?: boolean;
+      is_cover?: boolean;
+    }>;
   };
   onContact: () => void;
 }
@@ -39,11 +44,26 @@ const VendorMatchCard: React.FC<VendorMatchCardProps> = ({ vendor, onContact }) 
     >
       {/* Image principale */}
       <div className="relative h-48 bg-gray-100">
-        {vendor.photo_url ? (
+        {vendor.prestataires_photos_preprod && vendor.prestataires_photos_preprod.length > 0 ? (
+          <img 
+            src={
+              vendor.prestataires_photos_preprod.find(p => p.principale || p.is_cover)?.url || 
+              vendor.prestataires_photos_preprod[0]?.url
+            }
+            alt={vendor.nom}
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              e.currentTarget.src = "https://placehold.co/800x600?text=Photo+indisponible";
+            }}
+          />
+        ) : vendor.photo_url ? (
           <img 
             src={vendor.photo_url} 
             alt={vendor.nom}
             className="w-full h-full object-cover"
+            onError={(e) => {
+              e.currentTarget.src = "https://placehold.co/800x600?text=Photo+indisponible";
+            }}
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
