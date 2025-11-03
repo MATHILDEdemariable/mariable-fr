@@ -107,7 +107,7 @@ Deno.serve(async (req) => {
       
       // Vendor Tracking
       supabaseAdmin
-        .from('vendor_tracking')
+        .from('vendors_tracking_preprod')
         .select('user_id', { count: 'exact', head: true }),
       
       // Accommodations
@@ -189,7 +189,7 @@ Deno.serve(async (req) => {
         .then(({ data }) => new Set(data?.map(d => d.user_id)).size),
       
       supabaseAdmin
-        .from('vendor_tracking')
+        .from('vendors_tracking_preprod')
         .select('user_id')
         .then(({ data }) => new Set(data?.map(d => d.user_id)).size),
       

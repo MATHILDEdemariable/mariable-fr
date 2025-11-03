@@ -82,10 +82,16 @@ const AdminUsers = () => {
     }
 
     if (statusFilter !== 'all') {
+      console.log('🔍 Filtering by status:', statusFilter);
       filtered = filtered.filter(user => {
         const status = getUserStatus(user.profile);
-        return status === statusFilter;
+        const matches = status === statusFilter;
+        if (matches) {
+          console.log('✅ User matches filter:', user.email, 'status:', status);
+        }
+        return matches;
       });
+      console.log('📊 Filtered results:', filtered.length, 'users with status:', statusFilter);
     }
 
     setFilteredUsers(filtered);
@@ -179,24 +185,35 @@ const AdminUsers = () => {
   };
 
   const getUserStatus = (profile: UserRegistration['profile']): UserStatus => {
-    if (!profile) return 'free';
+    if (!profile) {
+      console.log('⚠️ No profile found');
+      return 'free';
+    }
     
     const subscriptionType = profile.subscription_type;
     const expiresAt = profile.subscription_expires_at;
     
+    console.log('🔍 Checking user status:', { subscriptionType, expiresAt });
+    
     if (subscriptionType === 'premium') {
-      if (!expiresAt) return 'premium';
+      if (!expiresAt) {
+        console.log('✅ Premium user (no expiration)');
+        return 'premium';
+      }
       
       const expirationDate = new Date(expiresAt);
       const now = new Date();
       
       if (expirationDate > now) {
+        console.log('✅ Premium user (expires:', expirationDate, ')');
         return 'premium';
       } else {
+        console.log('⚠️ Expired user (expired:', expirationDate, ')');
         return 'expired';
       }
     }
     
+    console.log('ℹ️ Free user');
     return 'free';
   };
 
@@ -233,9 +250,19 @@ const AdminUsers = () => {
   const getPremiumUsers = () => {
     // Use usage stats if available, otherwise fallback to local calculation
     if (usageStats) {
+      console.log('📊 Using usage stats for premium count:', usageStats.premiumUsers);
       return usageStats.premiumUsers;
     }
-    return users.filter(user => getUserStatus(user.profile) === 'premium').length;
+    const premiumCount = users.filter(user => {
+      const status = getUserStatus(user.profile);
+      const isPremium = status === 'premium';
+      if (isPremium) {
+        console.log('👑 Premium user found:', user.email, user.profile);
+      }
+      return isPremium;
+    }).length;
+    console.log('📊 Local premium count:', premiumCount, 'out of', users.length, 'users');
+    return premiumCount;
   };
 
   const getExpiredUsers = () => {
