@@ -11,6 +11,9 @@ import { useToast } from '@/components/ui/use-toast';
 import { DrinkTier, DrinkMoment } from '@/types/drinks';
 import { calculateBottles, calculatePrice } from '@/utils/drinkCalculator';
 import { exportDrinksCalculatorToPDF } from '@/services/drinksExportService';
+import { usePremiumAction } from '@/hooks/usePremiumAction';
+import PremiumModal from '@/components/premium/PremiumModal';
+import { useUserProfile } from '@/hooks/useUserProfile';
 
 const DrinksCalculator = () => {
   const [guests, setGuests] = useState(100);
@@ -25,6 +28,17 @@ const DrinksCalculator = () => {
   const [isSharing, setIsSharing] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const { toast } = useToast();
+  const { isPremium } = useUserProfile();
+  const { 
+    executeAction, 
+    showPremiumModal, 
+    closePremiumModal, 
+    feature,
+    description 
+  } = usePremiumAction({
+    feature: "Calculatrice de Boissons",
+    description: "Calculez précisément vos besoins en boissons et exportez le résultat en PDF avec l'abonnement Premium"
+  });
 
   const moments = [
     { id: 'cocktail', label: 'Champagne au cocktail', icon: Martini },
@@ -158,7 +172,14 @@ const DrinksCalculator = () => {
   };
 
   return (
-    <Card className="p-6 max-w-2xl mx-auto">
+    <>
+      <PremiumModal
+        isOpen={showPremiumModal}
+        onClose={closePremiumModal}
+        feature={feature}
+        description={description}
+      />
+      <Card className="p-6 max-w-2xl mx-auto">
       <h2 className="text-2xl font-serif mb-6">Calculatrice boissons : quantité et budget</h2>
       
       <div className="space-y-6">
@@ -311,7 +332,7 @@ const DrinksCalculator = () => {
           <Button 
             variant="outline"
             className="w-full sm:w-auto bg-wedding-olive/10 hover:bg-wedding-olive/20 text-wedding-olive"
-            onClick={exportToPDF}
+            onClick={() => executeAction(exportToPDF)}
             disabled={isExporting}
           >
             {isExporting ? (
@@ -330,7 +351,7 @@ const DrinksCalculator = () => {
           <Button 
             variant="outline"
             className="w-full sm:w-auto bg-wedding-cream/10 hover:bg-wedding-cream/20"
-            onClick={shareLink}
+            onClick={() => executeAction(shareLink)}
             disabled={isSharing}
           >
             {isSharing ? (
@@ -348,6 +369,7 @@ const DrinksCalculator = () => {
         </div>
       </div>
     </Card>
+    </>
   );
 };
 

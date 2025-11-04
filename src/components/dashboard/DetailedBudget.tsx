@@ -9,6 +9,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { exportBudgetToPDF } from '@/services/budgetExportService';
 import { useUserProfile } from '@/hooks/useUserProfile';
+import { usePremiumAction } from '@/hooks/usePremiumAction';
+import PremiumModal from '@/components/premium/PremiumModal';
 
 // Type for budget category
 interface BudgetItem {
@@ -48,7 +50,24 @@ interface BudgetDetailDB {
 
 // Default categories with proper initialization of all required properties
 const DEFAULT_CATEGORIES: BudgetCategory[] = [
-  { name: 'Lieu de réception', items: [], totalEstimated: 0, totalActual: 0, totalDeposit: 0, totalRemaining: 0 },
+  { 
+    name: 'Lieu de réception', 
+    items: [
+      {
+        id: 'example_lieu_reception',
+        name: 'Château de mes rêves',
+        estimated: 3000,
+        actual: 5000,
+        deposit: 2000,
+        remaining: 3000,
+        payment_note: 'mes beaux parents payent'
+      }
+    ], 
+    totalEstimated: 3000, 
+    totalActual: 5000, 
+    totalDeposit: 2000, 
+    totalRemaining: 3000 
+  },
   { name: 'Traiteur & Boissons', items: [], totalEstimated: 0, totalActual: 0, totalDeposit: 0, totalRemaining: 0 },
   { name: 'Tenues & Accessoires', items: [], totalEstimated: 0, totalActual: 0, totalDeposit: 0, totalRemaining: 0 },
   { name: 'Décoration & Fleurs', items: [], totalEstimated: 0, totalActual: 0, totalDeposit: 0, totalRemaining: 0 },
@@ -64,6 +83,16 @@ const DetailedBudget: React.FC = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { isPremium, loading: loadingProfile } = useUserProfile();
+  const { 
+    executeAction, 
+    showPremiumModal, 
+    closePremiumModal, 
+    feature,
+    description 
+  } = usePremiumAction({
+    feature: "Budget Détaillé",
+    description: "Ajoutez et modifiez vos postes de budget avec l'abonnement Premium"
+  });
   const [categories, setCategories] = useState<BudgetCategory[]>(DEFAULT_CATEGORIES);
   const [totalEstimated, setTotalEstimated] = useState(0);
   const [totalActual, setTotalActual] = useState(0);
@@ -582,7 +611,14 @@ const DetailedBudget: React.FC = () => {
   }
 
   return (
-    <Card className="border shadow-sm">
+    <>
+      <PremiumModal
+        isOpen={showPremiumModal}
+        onClose={closePremiumModal}
+        feature={feature}
+        description={description}
+      />
+      <Card className="border shadow-sm">
       <CardHeader className="flex flex-row items-center justify-between bg-white sticky top-0 z-10 border-b">
         <CardTitle className="text-xl font-serif">Budget Détaillé</CardTitle>
         <div className="flex gap-2">
@@ -672,9 +708,8 @@ const DetailedBudget: React.FC = () => {
                       <Button 
                         variant="ghost" 
                         size="sm"
-                        onClick={() => handleAddItem(categoryIndex)}
+                        onClick={() => executeAction(() => handleAddItem(categoryIndex))}
                         className="h-8 text-wedding-olive hover:text-wedding-olive/70"
-                        disabled={!isPremium}
                       >
                         <Plus className="h-4 w-4 mr-1" />
                         <span>Ajouter</span>
@@ -772,6 +807,7 @@ const DetailedBudget: React.FC = () => {
         </div>
       </CardContent>
     </Card>
+    </>
   );
 };
 

@@ -33,11 +33,11 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose }) => {
           <div className="bg-gray-50 p-4 rounded-lg">
             <h4 className="font-medium mb-2">Inclus dans l'abonnement :</h4>
             <ul className="text-sm text-gray-600 space-y-1">
-              <li>• Application personnalisée complète</li>
-              <li>• Checklists & planning modifiables</li>
-              <li>• Interface collaborative</li>
-              <li>• Accès illimité à toutes les fonctionnalités</li>
-              <li>• Annulation simple à tout moment</li>
+              <li>• Toutes les fonctionnalités débloquées dont celles avec IA</li>
+              <li>• Notre appli spéciale jour j pour créer facilement votre déroulé planning et votre équipe (proches, prestataires impliqués)</li>
+              <li>• Support client whatsapp illimité</li>
+              <li>• Guide PDF inclus</li>
+              <li>• Code promo à saisir dans l'étape suivante</li>
             </ul>
           </div>
           

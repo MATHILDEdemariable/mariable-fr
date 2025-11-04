@@ -45,11 +45,11 @@ const PremiumModal: React.FC<PremiumModalProps> = ({
               Avec Premium, débloquez :
             </h4>
             <ul className="text-sm text-muted-foreground space-y-1">
-              <li>• Création d'étapes personnalisées</li>
-              <li>• Suggestions IA avancées</li>
-              <li>• Gestion d'équipe complète</li>
-              <li>• Export PDF professionnel</li>
-              <li>• Support prioritaire</li>
+              <li>• Toutes les fonctionnalités débloquées dont celles avec IA</li>
+              <li>• Notre appli spéciale jour j pour créer facilement votre déroulé planning et votre équipe (proches, prestataires impliqués)</li>
+              <li>• Support client whatsapp illimité</li>
+              <li>• Guide PDF inclus</li>
+              <li>• Code promo à saisir dans l'étape suivante</li>
             </ul>
           </div>
           
