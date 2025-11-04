@@ -73,12 +73,6 @@ const Prix = () => {
     premium: true,
     coordinateur: true
   }, {
-    name: "Plan de table",
-    icon: Table,
-    gratuit: false,
-    premium: true,
-    coordinateur: true
-  }, {
     name: "Génération rétroplanning & check-list IA",
     icon: Brain,
     gratuit: false,
