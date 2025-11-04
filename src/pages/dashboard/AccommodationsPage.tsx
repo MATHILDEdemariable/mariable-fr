@@ -34,6 +34,7 @@ import {
   useDeleteAccommodation,
   Accommodation,
 } from '@/hooks/useAccommodations';
+import PremiumGate from '@/components/premium/PremiumGate';
 
 const statusMap = {
   non_reserve: { label: 'Non réservé', variant: 'secondary' as const },
@@ -109,7 +110,11 @@ export default function AccommodationsPage() {
         <title>Gestion des Logements - Mariable</title>
       </Helmet>
 
-      <div className="container mx-auto p-6 space-y-6">
+      <PremiumGate 
+        feature="Gestion des logements"
+        description="Gérez les hébergements de vos invités : hôtels, chambres d'hôte, Airbnb, et organisez les réservations"
+      >
+        <div className="container mx-auto p-6 space-y-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
             <h1 className="text-3xl font-bold text-wedding-olive">Gestion des Logements</h1>
@@ -281,6 +286,7 @@ export default function AccommodationsPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+    </PremiumGate>
     </>
   );
 }

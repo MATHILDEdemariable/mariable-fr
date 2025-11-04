@@ -8,6 +8,7 @@ import { Plus, Trash2, Save, Download } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { exportBudgetToPDF } from '@/services/budgetExportService';
+import { useUserProfile } from '@/hooks/useUserProfile';
 
 // Type for budget category
 interface BudgetItem {
@@ -62,6 +63,7 @@ const DEFAULT_CATEGORIES: BudgetCategory[] = [
 const DetailedBudget: React.FC = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { isPremium, loading: loadingProfile } = useUserProfile();
   const [categories, setCategories] = useState<BudgetCategory[]>(DEFAULT_CATEGORIES);
   const [totalEstimated, setTotalEstimated] = useState(0);
   const [totalActual, setTotalActual] = useState(0);
@@ -587,7 +589,7 @@ const DetailedBudget: React.FC = () => {
           <Button 
             onClick={handleSaveBudget} 
             className="bg-wedding-olive hover:bg-wedding-olive/90"
-            disabled={updateBudgetMutation.isPending}
+            disabled={updateBudgetMutation.isPending || !isPremium}
           >
             {updateBudgetMutation.isPending ? (
               <span className="flex items-center">
@@ -672,6 +674,7 @@ const DetailedBudget: React.FC = () => {
                         size="sm"
                         onClick={() => handleAddItem(categoryIndex)}
                         className="h-8 text-wedding-olive hover:text-wedding-olive/70"
+                        disabled={!isPremium}
                       >
                         <Plus className="h-4 w-4 mr-1" />
                         <span>Ajouter</span>
@@ -689,6 +692,7 @@ const DetailedBudget: React.FC = () => {
                           onChange={(e) => handleItemChange(categoryIndex, itemIndex, 'name', e.target.value)}
                           className="h-8 border-gray-200"
                           placeholder="Nom de l'élément"
+                          disabled={!isPremium}
                         />
                       </td>
                       <td className="px-4 py-2">
@@ -699,6 +703,7 @@ const DetailedBudget: React.FC = () => {
                           className="h-8 text-right border-gray-200"
                           placeholder="0.00"
                           step="0.01"
+                          disabled={!isPremium}
                         />
                       </td>
                       <td className="px-4 py-2">
@@ -709,6 +714,7 @@ const DetailedBudget: React.FC = () => {
                           className="h-8 text-right border-gray-200"
                           placeholder="0.00"
                           step="0.01"
+                          disabled={!isPremium}
                         />
                       </td>
                       <td className="px-4 py-2">
@@ -719,6 +725,7 @@ const DetailedBudget: React.FC = () => {
                           className="h-8 text-right border-gray-200"
                           placeholder="0.00"
                           step="0.01"
+                          disabled={!isPremium}
                         />
                       </td>
                       <td className="px-4 py-2 text-right">
@@ -731,6 +738,7 @@ const DetailedBudget: React.FC = () => {
                           onChange={(e) => handleItemChange(categoryIndex, itemIndex, 'payment_note', e.target.value)}
                           className="h-8 border-gray-200"
                           placeholder="Ex: Mariée, Marié, Parents..."
+                          disabled={!isPremium}
                         />
                       </td>
                       <td className="px-4 py-2 text-center">
@@ -739,6 +747,7 @@ const DetailedBudget: React.FC = () => {
                           size="icon"
                           onClick={() => handleRemoveItem(categoryIndex, itemIndex)}
                           className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50"
+                          disabled={!isPremium}
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>

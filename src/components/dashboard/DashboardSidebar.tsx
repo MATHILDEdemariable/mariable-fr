@@ -296,17 +296,6 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
           </DropdownMenuContent>
         </DropdownMenu>
 
-        {/* Après le jour-J */}
-        <Link to={isReaderMode ? '#' : '/dashboard/apres-jour-j'} onClick={e => {
-        if (isReaderMode) {
-          e.preventDefault();
-        }
-      }} className={cn("flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors", isApresJourJActive() ? 'bg-wedding-olive text-white shadow-sm' : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive', isReaderMode ? 'pointer-events-none opacity-70' : '')}>
-          <CheckSquare className="h-4 w-4" />
-          <span className="ml-2 sm:ml-3 leading-tight">Après le jour-J</span>
-          {isReaderMode && <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>}
-        </Link>
-
         {/* RSVP Invités */}
         <Link to={isReaderMode ? '#' : '/dashboard/rsvp'} onClick={e => {
         if (isReaderMode) {
@@ -369,6 +358,17 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
       }} className={cn("flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors", isActive('/dashboard/documents') ? 'bg-wedding-olive text-white shadow-sm' : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive', isReaderMode ? 'pointer-events-none opacity-70' : '')}>
           <FileText className="h-4 w-4" />
           <span className="ml-2 sm:ml-3 leading-tight">Documents</span>
+          {isReaderMode && <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>}
+        </Link>
+
+        {/* Après le jour-J */}
+        <Link to={isReaderMode ? '#' : '/dashboard/apres-jour-j'} onClick={e => {
+        if (isReaderMode) {
+          e.preventDefault();
+        }
+      }} className={cn("flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors", isApresJourJActive() ? 'bg-wedding-olive text-white shadow-sm' : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive', isReaderMode ? 'pointer-events-none opacity-70' : '')}>
+          <CheckSquare className="h-4 w-4" />
+          <span className="ml-2 sm:ml-3 leading-tight">Après le jour-J</span>
           {isReaderMode && <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>}
         </Link>
 

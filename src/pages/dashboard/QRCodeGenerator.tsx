@@ -5,6 +5,7 @@ import { QRCodeForm } from '@/components/qrcode/QRCodeForm';
 import { QRCodeList } from '@/components/qrcode/QRCodeList';
 import { useQRCodes } from '@/hooks/useQRCodes';
 import { Loader2, QrCode } from 'lucide-react';
+import PremiumGate from '@/components/premium/PremiumGate';
 
 const QRCodeGeneratorPage: React.FC = () => {
   const { qrCodes, isLoading, createQRCode, deleteQRCode } = useQRCodes();
@@ -16,7 +17,11 @@ const QRCodeGeneratorPage: React.FC = () => {
         <meta name="description" content="Créez des QR codes pour votre cagnotte de mariage et autres liens importants" />
       </Helmet>
 
-      <div className="max-w-5xl mx-auto space-y-6">
+      <PremiumGate 
+        feature="Générateur QR Code"
+        description="Créez et gérez des QR codes illimités pour votre cagnotte, site web et liens importants"
+      >
+        <div className="max-w-5xl mx-auto space-y-6">
         <div className="flex items-center gap-3">
           <QrCode className="h-8 w-8 text-wedding-olive" />
           <h1 className="text-3xl font-bold text-gray-900">Générateur QR Code</h1>
@@ -62,7 +67,8 @@ const QRCodeGeneratorPage: React.FC = () => {
             )}
           </CardContent>
         </Card>
-      </div>
+        </div>
+      </PremiumGate>
     </>
   );
 };

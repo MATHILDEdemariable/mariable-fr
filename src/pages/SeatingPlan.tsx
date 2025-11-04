@@ -16,6 +16,7 @@ import ManualGuestDialog from '@/components/seating-plan/ManualGuestDialog';
 import { ImportExcelDialog } from '@/components/seating-plan/ImportExcelDialog';
 import ExportPDFButton from '@/components/seating-plan/ExportPDFButton';
 import { SeatingTable, SeatingAssignment, SeatingPlan as SeatingPlanType } from '@/types/seating';
+import PremiumGate from '@/components/premium/PremiumGate';
 
 const SeatingPlan = () => {
   const [plan, setPlan] = useState<SeatingPlanType | null>(null);
@@ -199,7 +200,11 @@ const SeatingPlan = () => {
         <meta name="description" content="Organisez votre plan de table de mariage" />
       </Helmet>
 
-      <div className="container mx-auto py-8 px-4">
+      <PremiumGate 
+        feature="Plan de table"
+        description="Organisez votre plan de table avec drag & drop, importez depuis vos RSVP et exportez en PDF"
+      >
+        <div className="container mx-auto py-8 px-4">
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-3xl font-serif text-foreground">Plan de Table</h1>
@@ -299,7 +304,8 @@ const SeatingPlan = () => {
           onClose={() => setShowTutorial(false)} 
           videoId="seating-plan" 
         />
-      </div>
+        </div>
+      </PremiumGate>
     </>
   );
 };

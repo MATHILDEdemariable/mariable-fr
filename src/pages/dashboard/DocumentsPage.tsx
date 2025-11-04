@@ -9,6 +9,7 @@ import DocumentUploader from '@/components/documents/DocumentUploader';
 import DocumentCard from '@/components/documents/DocumentCard';
 import DocumentViewerModal from '@/components/documents/DocumentViewerModal';
 import { FileText, Loader2 } from 'lucide-react';
+import PremiumGate from '@/components/premium/PremiumGate';
 
 const DocumentsPage = () => {
   const { toast } = useToast();
@@ -79,7 +80,11 @@ const DocumentsPage = () => {
         <title>Mes Documents | Dashboard Mariable</title>
       </Helmet>
 
-      <div className="space-y-6">
+      <PremiumGate 
+        feature="Stockage de documents"
+        description="Centralisez tous vos documents de mariage (devis, contrats, factures) et bénéficiez de l'analyse IA"
+      >
+        <div className="space-y-6">
         <div>
           <h1 className="text-3xl font-bold text-wedding-olive">Mes Documents</h1>
           <p className="text-muted-foreground mt-2">
@@ -190,7 +195,8 @@ const DocumentsPage = () => {
           onClose={() => setViewerOpen(false)}
           document={viewedDocument}
         />
-      </div>
+        </div>
+      </PremiumGate>
     </>
   );
 };

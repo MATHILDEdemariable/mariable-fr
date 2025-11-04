@@ -15,7 +15,7 @@ import DetailedBudget from '@/components/dashboard/DetailedBudget';
 import UserProfile from '@/components/dashboard/UserProfile';
 import AssistantPage from './AssistantPage';
 import { useToast } from '@/components/ui/use-toast';
-import DrinksCalculator from '@/components/drinks/DrinksCalculator';
+import DrinksCalculatorPage from './DrinksCalculatorPage';
 import BudgetCalculator from '@/components/dashboard/BudgetCalculator';
 import { useReaderMode } from '@/contexts/ReaderModeContext';
 import ProjectManagement from '@/components/project-management/ProjectManagement';
@@ -84,7 +84,7 @@ const UserDashboard: React.FC = () => {
           <Route path="professionnelsmariable" element={<ProfessionnelsMariableDashboard />} />
           <Route path="wishlist" element={<WishlistPage />} />
           <Route path="coordination" element={<CoordinationPage />} />
-          <Route path="drinks" element={<DrinksCalculator />} />
+          <Route path="drinks" element={<DrinksCalculatorPage />} />
           <Route path="assistant" element={<AssistantPage />} />
           <Route path="project-management/*" element={<ProjectManagement />} />
           <Route path="help" element={<HelpPage />} />

@@ -10,10 +10,13 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import BudgetCalculator from '@/components/dashboard/BudgetCalculator';
 import { TutorialVideoModal } from '@/components/tutorials/TutorialVideoModal';
+import PremiumGate from '@/components/premium/PremiumGate';
+import { useUserProfile } from '@/hooks/useUserProfile';
 
 const BudgetPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>('calculator');
   const [showTutorial, setShowTutorial] = useState(false);
+  const { isPremium, loading: loadingProfile } = useUserProfile();
 
   // Fetch budget data for export
   const { data: budgetData } = useQuery({
@@ -78,7 +81,12 @@ const BudgetPage: React.FC = () => {
           </TabsList>
 
           <TabsContent value="detailed" className="mt-3 sm:mt-6">
-            <DetailedBudget />
+            <PremiumGate 
+              feature="Budget Détaillé"
+              description="Accédez au suivi budgétaire détaillé personnalisable avec l'abonnement Premium"
+            >
+              <DetailedBudget />
+            </PremiumGate>
           </TabsContent>
 
           <TabsContent value="calculator" className="bg-white rounded-lg mt-3 sm:mt-6">

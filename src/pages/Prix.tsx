@@ -4,7 +4,7 @@ import PremiumHeader from '@/components/home/PremiumHeader';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Users, Calendar, X, Check, Brain, Settings, Handshake, CheckSquare, Calculator, Home, Share2, User, FileText, Droplet, QrCode, Headphones, Clock, Phone, Mail } from 'lucide-react';
+import { Users, Calendar, X, Check, Brain, Settings, Handshake, CheckSquare, Calculator, Home, Share2, User, FileText, Droplet, QrCode, Headphones, Clock, Phone, Mail, Table } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Link } from 'react-router-dom';
 const Prix = () => {
@@ -39,25 +39,31 @@ const Prix = () => {
   }, {
     name: "Modèle suivi budgétaire personnalisable",
     icon: FileText,
-    gratuit: true,
+    gratuit: false,
     premium: true,
     coordinateur: true
   }, {
     name: "Calculatrice boisson",
     icon: Droplet,
-    gratuit: true,
+    gratuit: false,
     premium: true,
     coordinateur: true
   }, {
     name: "RSVP invité en ligne",
     icon: Mail,
-    gratuit: true,
+    gratuit: false,
     premium: true,
     coordinateur: true
   }, {
     name: "Gestion hébergement",
     icon: Home,
-    gratuit: true,
+    gratuit: false,
+    premium: true,
+    coordinateur: true
+  }, {
+    name: "Plan de table",
+    icon: Table,
+    gratuit: false,
     premium: true,
     coordinateur: true
   }, {

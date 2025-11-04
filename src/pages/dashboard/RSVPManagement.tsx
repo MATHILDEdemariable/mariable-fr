@@ -12,6 +12,7 @@ import { Plus, Loader2, Info } from 'lucide-react';
 import RSVPEventCard from '@/components/dashboard/RSVPEventCard';
 import { useNavigate } from 'react-router-dom';
 import slugify from '@/utils/slugify';
+import PremiumGate from '@/components/premium/PremiumGate';
 
 interface RSVPEvent {
   id: string;
@@ -192,7 +193,11 @@ const RSVPManagement: React.FC = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <PremiumGate 
+      feature="RSVP Invités"
+      description="Gérez vos confirmations de présence en ligne avec des formulaires personnalisés et un suivi en temps réel"
+    >
+      <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-foreground">RSVP Invités</h1>
@@ -410,7 +415,8 @@ const RSVPManagement: React.FC = () => {
           ))}
         </div>
       )}
-    </div>
+      </div>
+    </PremiumGate>
   );
 };
 
