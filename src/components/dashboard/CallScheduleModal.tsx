@@ -96,7 +96,7 @@ export const CallScheduleModal: React.FC<CallScheduleModalProps> = ({
             <DialogHeader className="pb-2">
               <div className="flex items-center justify-between mb-2">
                 <DialogTitle className="text-xl font-serif text-wedding-olive">
-                  Choisissez votre créneau
+                  Complétez ce court formulaire et nous vous envoyons rapidement votre code promo par mail :-)
                 </DialogTitle>
                 <Button 
                   variant="ghost" 
