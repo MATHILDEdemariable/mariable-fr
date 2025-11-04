@@ -61,6 +61,18 @@ const Prix = () => {
     premium: true,
     coordinateur: true
   }, {
+    name: "Nos guides PDF",
+    icon: FileText,
+    gratuit: false,
+    premium: true,
+    coordinateur: true
+  }, {
+    name: "Plan de table",
+    icon: Table,
+    gratuit: false,
+    premium: true,
+    coordinateur: true
+  }, {
     name: "Plan de table",
     icon: Table,
     gratuit: false,

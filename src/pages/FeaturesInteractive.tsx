@@ -9,6 +9,8 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ChevronDown, ChevronUp, Heart, DollarSign, CheckCircle, Calendar, Sparkles, Users, UserCheck, Home, QrCode } from 'lucide-react';
+import { ComparatifTable } from '@/components/comparatif/ComparatifTable';
+import { Link } from 'react-router-dom';
 
 const FeaturesInteractive = () => {
   const isMobile = useIsMobile();
@@ -162,6 +164,26 @@ const FeaturesInteractive = () => {
                   />
                 </>
               )}
+            </div>
+
+            {/* Comparatif Section */}
+            <div className="mt-16 max-w-7xl mx-auto">
+              <div className="text-center mb-12">
+                <h2 className="text-3xl md:text-4xl font-bold text-wedding-olive mb-4">
+                  Comment organiser votre mariage ?
+                </h2>
+                <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+                  Découvrez les avantages et inconvénients de chaque approche
+                </p>
+              </div>
+              
+              <ComparatifTable />
+              
+              <div className="text-center mt-8">
+                <Button asChild variant="outline" className="border-wedding-olive text-wedding-olive hover:bg-wedding-olive/10">
+                  <Link to="/comparatif">Voir le comparatif détaillé</Link>
+                </Button>
+              </div>
             </div>
 
             {/* Instructions Section */}
