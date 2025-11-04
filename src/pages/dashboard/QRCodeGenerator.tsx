@@ -5,10 +5,32 @@ import { QRCodeForm } from '@/components/qrcode/QRCodeForm';
 import { QRCodeList } from '@/components/qrcode/QRCodeList';
 import { useQRCodes } from '@/hooks/useQRCodes';
 import { Loader2, QrCode } from 'lucide-react';
-import PremiumGate from '@/components/premium/PremiumGate';
+import { usePremiumAction } from '@/hooks/usePremiumAction';
+import PremiumModal from '@/components/premium/PremiumModal';
 
 const QRCodeGeneratorPage: React.FC = () => {
   const { qrCodes, isLoading, createQRCode, deleteQRCode } = useQRCodes();
+  
+  const { 
+    executeAction, 
+    showPremiumModal, 
+    closePremiumModal 
+  } = usePremiumAction({
+    feature: "Générateur QR Code",
+    description: "Créez et gérez des QR codes illimités pour votre cagnotte, site web et liens importants"
+  });
+  
+  const handleCreate = async (title: string, url: string) => {
+    executeAction(async () => {
+      await createQRCode(title, url);
+    });
+  };
+  
+  const handleDelete = async (id: string) => {
+    executeAction(async () => {
+      await deleteQRCode(id);
+    });
+  };
 
   return (
     <>
@@ -17,11 +39,7 @@ const QRCodeGeneratorPage: React.FC = () => {
         <meta name="description" content="Créez des QR codes pour votre cagnotte de mariage et autres liens importants" />
       </Helmet>
 
-      <PremiumGate 
-        feature="Générateur QR Code"
-        description="Créez et gérez des QR codes illimités pour votre cagnotte, site web et liens importants"
-      >
-        <div className="max-w-5xl mx-auto space-y-6">
+      <div className="max-w-5xl mx-auto space-y-6">
         <div className="flex items-center gap-3">
           <QrCode className="h-8 w-8 text-wedding-olive" />
           <h1 className="text-3xl font-bold text-gray-900">Générateur QR Code</h1>
@@ -46,7 +64,7 @@ const QRCodeGeneratorPage: React.FC = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <QRCodeForm onSubmit={createQRCode} />
+            <QRCodeForm onSubmit={handleCreate} />
           </CardContent>
         </Card>
 
@@ -63,12 +81,18 @@ const QRCodeGeneratorPage: React.FC = () => {
                 <Loader2 className="h-8 w-8 animate-spin text-wedding-olive" />
               </div>
             ) : (
-              <QRCodeList qrCodes={qrCodes} onDelete={deleteQRCode} />
+              <QRCodeList qrCodes={qrCodes} onDelete={handleDelete} />
             )}
           </CardContent>
         </Card>
-        </div>
-      </PremiumGate>
+      </div>
+      
+      <PremiumModal
+        isOpen={showPremiumModal}
+        onClose={closePremiumModal}
+        feature="Générateur QR Code"
+        description="Créez et gérez des QR codes illimités pour votre cagnotte, site web et liens importants"
+      />
     </>
   );
 };

@@ -12,7 +12,8 @@ import { Plus, Loader2, Info } from 'lucide-react';
 import RSVPEventCard from '@/components/dashboard/RSVPEventCard';
 import { useNavigate } from 'react-router-dom';
 import slugify from '@/utils/slugify';
-import PremiumGate from '@/components/premium/PremiumGate';
+import { usePremiumAction } from '@/hooks/usePremiumAction';
+import PremiumModal from '@/components/premium/PremiumModal';
 
 interface RSVPEvent {
   id: string;
@@ -34,6 +35,15 @@ const RSVPManagement: React.FC = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
+  
+  const { 
+    executeAction, 
+    showPremiumModal, 
+    closePremiumModal 
+  } = usePremiumAction({
+    feature: "RSVP Invités",
+    description: "Gérez vos confirmations de présence en ligne avec des formulaires personnalisés et un suivi en temps réel"
+  });
 
   // Form state
   const [eventName, setEventName] = useState('Notre Mariage');
@@ -93,19 +103,20 @@ const RSVPManagement: React.FC = () => {
     }
   };
 
-  const handleCreateEvent = async () => {
-    if (!eventName.trim()) {
-      toast({
-        title: 'Erreur',
-        description: 'Veuillez saisir un nom pour l\'événement',
-        variant: 'destructive',
-      });
-      return;
-    }
+  const handleCreateEvent = () => {
+    executeAction(async () => {
+      if (!eventName.trim()) {
+        toast({
+          title: 'Erreur',
+          description: 'Veuillez saisir un nom pour l\'événement',
+          variant: 'destructive',
+        });
+        return;
+      }
 
-    setCreating(true);
+      setCreating(true);
 
-    try {
+      try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Utilisateur non connecté');
 
@@ -144,9 +155,10 @@ const RSVPManagement: React.FC = () => {
         description: 'Impossible de créer l\'événement RSVP',
         variant: 'destructive',
       });
-    } finally {
-      setCreating(false);
-    }
+      } finally {
+        setCreating(false);
+      }
+    });
   };
 
   const resetForm = () => {
@@ -160,8 +172,9 @@ const RSVPManagement: React.FC = () => {
     setCustomSlug('');
   };
 
-  const handleDelete = async (eventId: string) => {
-    try {
+  const handleDelete = (eventId: string) => {
+    executeAction(async () => {
+      try {
       const { error } = await supabase
         .from('wedding_rsvp_events')
         .delete()
@@ -176,12 +189,13 @@ const RSVPManagement: React.FC = () => {
       });
     } catch (error) {
       console.error('Erreur lors de la suppression:', error);
-      toast({
-        title: 'Erreur',
-        description: 'Impossible de supprimer l\'événement',
-        variant: 'destructive',
-      });
-    }
+        toast({
+          title: 'Erreur',
+          description: 'Impossible de supprimer l\'événement',
+          variant: 'destructive',
+        });
+      }
+    });
   };
 
   if (loading) {
@@ -193,10 +207,7 @@ const RSVPManagement: React.FC = () => {
   }
 
   return (
-    <PremiumGate 
-      feature="RSVP Invités"
-      description="Gérez vos confirmations de présence en ligne avec des formulaires personnalisés et un suivi en temps réel"
-    >
+    <>
       <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
@@ -416,7 +427,14 @@ const RSVPManagement: React.FC = () => {
         </div>
       )}
       </div>
-    </PremiumGate>
+      
+      <PremiumModal
+        isOpen={showPremiumModal}
+        onClose={closePremiumModal}
+        feature="RSVP Invités"
+        description="Gérez vos confirmations de présence en ligne avec des formulaires personnalisés et un suivi en temps réel"
+      />
+    </>
   );
 };
 

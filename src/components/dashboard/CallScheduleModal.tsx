@@ -40,7 +40,7 @@ export const CallScheduleModal: React.FC<CallScheduleModalProps> = ({
                 Recevez un cadeau surprise 🎁
               </DialogTitle>
               <DialogDescription className="text-center text-base mt-4">
-                D'une valeur de <strong className="text-wedding-olive">10€</strong>
+                <strong className="text-wedding-olive">1 mois gratuit de Premium</strong>
               </DialogDescription>
             </DialogHeader>
             
@@ -68,7 +68,7 @@ export const CallScheduleModal: React.FC<CallScheduleModalProps> = ({
                     </li>
                     <li className="flex items-center gap-2">
                       <span className="text-green-600">✓</span>
-                      Cadeau surprise d'une valeur de 10€
+                      Code promo : 1 mois gratuit de Premium
                     </li>
                     <li className="flex items-center gap-2">
                       <span className="text-green-600">✓</span>
@@ -109,12 +109,13 @@ export const CallScheduleModal: React.FC<CallScheduleModalProps> = ({
             </DialogHeader>
             
             <div className="py-2">
-              {/* Cal.com Iframe */}
+              {/* Notion Form Iframe */}
               <iframe
-                src="https://cal.com/mathilde-mariable/appel?embed=true"
-                style={{ width: '100%', height: '550px', border: 0 }}
+                src="https://wary-grease-34e.notion.site/ebd/277894d36ac480fa995ee3b084fdf74d"
+                style={{ width: '100%', height: '600px', border: 0 }}
                 frameBorder="0"
-                title="Calendrier de réservation"
+                allowFullScreen
+                title="Formulaire de participation"
               />
             </div>
           </>

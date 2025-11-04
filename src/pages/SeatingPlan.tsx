@@ -16,7 +16,8 @@ import ManualGuestDialog from '@/components/seating-plan/ManualGuestDialog';
 import { ImportExcelDialog } from '@/components/seating-plan/ImportExcelDialog';
 import ExportPDFButton from '@/components/seating-plan/ExportPDFButton';
 import { SeatingTable, SeatingAssignment, SeatingPlan as SeatingPlanType } from '@/types/seating';
-import PremiumGate from '@/components/premium/PremiumGate';
+import { usePremiumAction } from '@/hooks/usePremiumAction';
+import PremiumModal from '@/components/premium/PremiumModal';
 
 const SeatingPlan = () => {
   const [plan, setPlan] = useState<SeatingPlanType | null>(null);
@@ -29,6 +30,15 @@ const SeatingPlan = () => {
   const [showImportExcel, setShowImportExcel] = useState(false);
   const [editingTable, setEditingTable] = useState<SeatingTable | null>(null);
   const [showTutorial, setShowTutorial] = useState(false);
+  
+  const { 
+    executeAction, 
+    showPremiumModal, 
+    closePremiumModal 
+  } = usePremiumAction({
+    feature: "Plan de table",
+    description: "Organisez votre plan de table avec drag & drop, importez depuis vos RSVP et exportez en PDF"
+  });
 
   useEffect(() => {
     loadSeatingPlan();
@@ -88,8 +98,9 @@ const SeatingPlan = () => {
     }
   };
 
-  const handleDragEnd = async (result: DropResult) => {
-    const { source, destination, draggableId } = result;
+  const handleDragEnd = (result: DropResult) => {
+    executeAction(async () => {
+      const { source, destination, draggableId } = result;
 
     if (!destination) return;
     if (source.droppableId === destination.droppableId && source.index === destination.index) return;
@@ -142,21 +153,27 @@ const SeatingPlan = () => {
       return;
     }
 
-    setGuests(guests.map(g => g.id === guestId ? { ...g, table_id: targetTableId } : g));
-    toast({ title: 'Invité déplacé avec succès' });
+      setGuests(guests.map(g => g.id === guestId ? { ...g, table_id: targetTableId } : g));
+      toast({ title: 'Invité déplacé avec succès' });
+    });
   };
 
   const handleAddTable = () => {
-    setEditingTable(null);
-    setShowTableEditor(true);
+    executeAction(() => {
+      setEditingTable(null);
+      setShowTableEditor(true);
+    });
   };
 
   const handleEditTable = (table: SeatingTable) => {
-    setEditingTable(table);
-    setShowTableEditor(true);
+    executeAction(() => {
+      setEditingTable(table);
+      setShowTableEditor(true);
+    });
   };
 
-  const handleDeleteTable = async (tableId: string) => {
+  const handleDeleteTable = (tableId: string) => {
+    executeAction(async () => {
     const tableGuests = guests.filter(g => g.table_id === tableId);
     if (tableGuests.length > 0) {
       if (!confirm(`Cette table contient ${tableGuests.length} invité(s). Voulez-vous vraiment la supprimer ?`)) {
@@ -174,9 +191,10 @@ const SeatingPlan = () => {
       return;
     }
 
-    setTables(tables.filter(t => t.id !== tableId));
-    setGuests(guests.filter(g => g.table_id !== tableId));
-    toast({ title: 'Table supprimée' });
+      setTables(tables.filter(t => t.id !== tableId));
+      setGuests(guests.filter(g => g.table_id !== tableId));
+      toast({ title: 'Table supprimée' });
+    });
   };
 
   const unassignedGuests = guests.filter(g => !g.table_id);
@@ -200,11 +218,7 @@ const SeatingPlan = () => {
         <meta name="description" content="Organisez votre plan de table de mariage" />
       </Helmet>
 
-      <PremiumGate 
-        feature="Plan de table"
-        description="Organisez votre plan de table avec drag & drop, importez depuis vos RSVP et exportez en PDF"
-      >
-        <div className="container mx-auto py-8 px-4">
+      <div className="container mx-auto py-8 px-4">
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-3xl font-serif text-foreground">Plan de Table</h1>
@@ -223,15 +237,15 @@ const SeatingPlan = () => {
                   <Plus className="h-4 w-4 mr-2" />
                   Nouvelle Table
                 </Button>
-                <Button onClick={() => setShowImportDialog(true)} variant="outline" className="w-full">
+                <Button onClick={() => executeAction(() => setShowImportDialog(true))} variant="outline" className="w-full">
                   <Users className="h-4 w-4 mr-2" />
                   Importer depuis RSVP
                 </Button>
-                <Button onClick={() => setShowImportExcel(true)} variant="outline" className="w-full">
+                <Button onClick={() => executeAction(() => setShowImportExcel(true))} variant="outline" className="w-full">
                   <FileSpreadsheet className="h-4 w-4 mr-2" />
                   Importer CSV
                 </Button>
-                <Button onClick={() => setShowGuestDialog(true)} variant="outline" className="w-full">
+                <Button onClick={() => executeAction(() => setShowGuestDialog(true))} variant="outline" className="w-full">
                   <UserPlus className="h-4 w-4 mr-2" />
                   Ajouter Invité
                 </Button>
@@ -304,8 +318,14 @@ const SeatingPlan = () => {
           onClose={() => setShowTutorial(false)} 
           videoId="seating-plan" 
         />
-        </div>
-      </PremiumGate>
+      </div>
+      
+      <PremiumModal
+        isOpen={showPremiumModal}
+        onClose={closePremiumModal}
+        feature="Plan de table"
+        description="Organisez votre plan de table avec drag & drop, importez depuis vos RSVP et exportez en PDF"
+      />
     </>
   );
 };

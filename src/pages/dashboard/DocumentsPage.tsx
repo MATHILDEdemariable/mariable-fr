@@ -9,7 +9,8 @@ import DocumentUploader from '@/components/documents/DocumentUploader';
 import DocumentCard from '@/components/documents/DocumentCard';
 import DocumentViewerModal from '@/components/documents/DocumentViewerModal';
 import { FileText, Loader2 } from 'lucide-react';
-import PremiumGate from '@/components/premium/PremiumGate';
+import { usePremiumAction } from '@/hooks/usePremiumAction';
+import PremiumModal from '@/components/premium/PremiumModal';
 
 const DocumentsPage = () => {
   const { toast } = useToast();
@@ -17,6 +18,15 @@ const DocumentsPage = () => {
   const [summaryDialogOpen, setSummaryDialogOpen] = useState(false);
   const [viewerOpen, setViewerOpen] = useState(false);
   const [viewedDocument, setViewedDocument] = useState<any>(null);
+  
+  const { 
+    executeAction, 
+    showPremiumModal, 
+    closePremiumModal 
+  } = usePremiumAction({
+    feature: "Stockage de documents",
+    description: "Centralisez tous vos documents de mariage (devis, contrats, factures) et bénéficiez de l'analyse IA"
+  });
 
   const { data: documents, isLoading, refetch } = useQuery({
     queryKey: ['wedding-documents'],
@@ -35,8 +45,9 @@ const DocumentsPage = () => {
     }
   });
 
-  const handleDelete = async (id: string) => {
-    try {
+  const handleDelete = (id: string) => {
+    executeAction(async () => {
+      try {
       const { error } = await supabase
         .from('wedding_documents')
         .delete()
@@ -52,12 +63,13 @@ const DocumentsPage = () => {
       refetch();
     } catch (error) {
       console.error("Erreur suppression:", error);
-      toast({
-        title: "Erreur",
-        description: "Impossible de supprimer le document",
-        variant: "destructive"
-      });
-    }
+        toast({
+          title: "Erreur",
+          description: "Impossible de supprimer le document",
+          variant: "destructive"
+        });
+      }
+    });
   };
 
   const handleViewSummary = (document: any) => {
@@ -80,11 +92,7 @@ const DocumentsPage = () => {
         <title>Mes Documents | Dashboard Mariable</title>
       </Helmet>
 
-      <PremiumGate 
-        feature="Stockage de documents"
-        description="Centralisez tous vos documents de mariage (devis, contrats, factures) et bénéficiez de l'analyse IA"
-      >
-        <div className="space-y-6">
+      <div className="space-y-6">
         <div>
           <h1 className="text-3xl font-bold text-wedding-olive">Mes Documents</h1>
           <p className="text-muted-foreground mt-2">
@@ -195,8 +203,14 @@ const DocumentsPage = () => {
           onClose={() => setViewerOpen(false)}
           document={viewedDocument}
         />
-        </div>
-      </PremiumGate>
+      </div>
+      
+      <PremiumModal
+        isOpen={showPremiumModal}
+        onClose={closePremiumModal}
+        feature="Stockage de documents"
+        description="Centralisez tous vos documents de mariage (devis, contrats, factures) et bénéficiez de l'analyse IA"
+      />
     </>
   );
 };

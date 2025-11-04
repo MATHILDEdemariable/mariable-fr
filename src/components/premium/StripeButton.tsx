@@ -58,7 +58,7 @@ const StripeButton: React.FC = () => {
       <div className="text-center space-y-2">
         <p className="text-2xl font-bold text-wedding-olive">9,9€/mois</p>
         <p className="text-sm text-gray-600">
-          14,9€/mois à partir du 1er janv 2026
+          Sans engagement • Annulation en 2 clics
         </p>
       </div>
       

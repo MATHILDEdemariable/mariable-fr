@@ -25,7 +25,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose }) => {
           </DialogTitle>
           
           <DialogDescription className="text-center">
-            14,9€/mois à partir du 1er janv 2026
+            Sans engagement • Annulation en 2 clics
           </DialogDescription>
         </DialogHeader>
         

@@ -81,12 +81,7 @@ const BudgetPage: React.FC = () => {
           </TabsList>
 
           <TabsContent value="detailed" className="mt-3 sm:mt-6">
-            <PremiumGate 
-              feature="Budget Détaillé"
-              description="Accédez au suivi budgétaire détaillé personnalisable avec l'abonnement Premium"
-            >
-              <DetailedBudget />
-            </PremiumGate>
+            <DetailedBudget />
           </TabsContent>
 
           <TabsContent value="calculator" className="bg-white rounded-lg mt-3 sm:mt-6">
