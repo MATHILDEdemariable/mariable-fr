@@ -92,28 +92,36 @@ Deno.serve(async (req) => {
         const userIds = allUsers.map(user => user.id);
         const { data: profiles, error: profilesError } = await supabase
           .from('profiles')
-          .select('id, first_name, last_name, subscription_type, subscription_expires_at, wedding_date, guest_count')
-          .in('id', userIds);
+          .select('user_id, id, first_name, last_name, subscription_type, subscription_expires_at, wedding_date, guest_count, referral_source')
+          .in('user_id', userIds);
 
         if (profilesError) {
           console.error('⚠️ Error fetching profiles:', profilesError);
         }
 
+        console.log(`✅ Fetched ${profiles?.length || 0} profiles`);
+
         // Map profiles to users
         const profilesMap = new Map();
         if (profiles) {
           profiles.forEach(profile => {
-            profilesMap.set(profile.id, profile);
+            profilesMap.set(profile.user_id, profile);
           });
         }
         
-        users = allUsers.map(user => ({
-          id: user.id,
-          email: user.email || 'Email non disponible',
-          created_at: user.created_at,
-          raw_user_meta_data: user.user_metadata || {},
-          profile: profilesMap.get(user.id) || null
-        }));
+        users = allUsers.map(user => {
+          const profile = profilesMap.get(user.id);
+          if (profile) {
+            console.log(`User ${user.email}: Premium=${profile.subscription_type === 'premium'}, Expires=${profile.subscription_expires_at}`);
+          }
+          return {
+            id: user.id,
+            email: user.email || 'Email non disponible',
+            created_at: user.created_at,
+            raw_user_meta_data: user.user_metadata || {},
+            profile: profile || null
+          };
+        });
         
         method = 'auth_api_with_profiles';
       } else {
