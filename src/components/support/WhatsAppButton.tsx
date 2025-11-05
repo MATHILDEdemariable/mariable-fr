@@ -15,7 +15,7 @@ interface WhatsAppButtonProps {
 export const WhatsAppButton: React.FC<WhatsAppButtonProps> = ({ 
   variant = 'compact',
   className,
-  requirePremium = false
+  requirePremium = true // Toujours vérifier le premium
 }) => {
   const whatsappNumber = '33658072755';
   const defaultMessage = encodeURIComponent("Bonjour, j'ai besoin d'aide avec mon organisation de mariage");
@@ -31,25 +31,24 @@ export const WhatsAppButton: React.FC<WhatsAppButtonProps> = ({
   };
 
   const handleClick = () => {
-    if (requirePremium) {
-      executeAction(openWhatsApp);
-    } else {
-      openWhatsApp();
-    }
+    executeAction(openWhatsApp);
   };
 
   if (variant === 'compact') {
     return (
-      <Button
-        onClick={handleClick}
-        className={cn(
-          "w-full justify-start gap-2 bg-[#25D366] hover:bg-[#20BA5A] text-white",
-          className
-        )}
-      >
-        <MessageCircle className="h-4 w-4" />
-        <span className="flex-1 text-left">Support Client</span>
-      </Button>
+      <>
+        <Button
+          onClick={handleClick}
+          className={cn(
+            "w-full justify-start gap-2 bg-[#25D366] hover:bg-[#20BA5A] text-white",
+            className
+          )}
+        >
+          <MessageCircle className="h-4 w-4" />
+          <span className="flex-1 text-left">Support Client</span>
+        </Button>
+        <PaymentModal isOpen={showPremiumModal} onClose={closePremiumModal} />
+      </>
     );
   }
 
