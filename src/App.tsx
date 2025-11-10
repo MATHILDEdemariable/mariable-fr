@@ -51,6 +51,7 @@ const MariageAuvergneRhoneAlpes = lazy(() => import("./pages/MariageAuvergneRhon
 const MariageNouvelleAquitaine = lazy(() => import("./pages/MariageNouvelleAquitaine"));
 const WeddingRetroplanning = lazy(() => import("./pages/WeddingRetroplanning"));
 const Professionnels = lazy(() => import("./pages/Professionnels"));
+const Partenariat = lazy(() => import("./pages/Partenariat"));
 const CGV = lazy(() => import("./pages/CGV"));
 const SalonDuMariage2025 = lazy(() => import("./pages/SalonDuMariage2025"));
 const SalonJeuConcours = lazy(() => import("./pages/SalonJeuConcours"));
@@ -81,6 +82,7 @@ const AdminReservationsJourM = lazy(() => import("./pages/admin/ReservationsJour
 const AdminSystemCheck = lazy(() => import("./pages/admin/SystemCheck"));
 const AdminProfessionalRegistrations = lazy(() => import("./pages/admin/ProfessionalRegistrations"));
 const AdminPaymentLeads = lazy(() => import("./pages/admin/PaymentLeads"));
+const AdminPartenariats = lazy(() => import("./pages/admin/Partenariats"));
 const JeunesMaries = lazy(() => import("./pages/JeunesMaries"));
 const JeuneMariesInscription = lazy(() => import("./pages/JeuneMariesInscription"));
 const JeuneMariesDetail = lazy(() => import("./pages/JeuneMariesDetail"));
@@ -194,6 +196,7 @@ function App() {
                   
                   {/* Missing routes - Fixed */}
                   <Route path="/professionnels" element={<Professionnels />} />
+                  <Route path="/partenariat" element={<Partenariat />} />
                   <Route path="/cgv" element={<CGV />} />
                   <Route path="/cgv-couples" element={<CGVCouples />} />
                   
@@ -239,6 +242,7 @@ function App() {
                    <Route path="/admin/prestataires" element={<AdminPrestataires />} />
                    <Route path="/admin/professional-registrations" element={<AdminProfessionalRegistrations />} />
                    <Route path="/admin/payment-leads" element={<AdminPaymentLeads />} />
+                   <Route path="/admin/partenariats" element={<AdminPartenariats />} />
                    <Route path="/admin/form" element={<AdminForm />} />
                    <Route path="/admin/reservations-jour-m" element={<AdminReservationsJourM />} />
                    <Route path="/admin/system-check" element={<AdminSystemCheck />} />
