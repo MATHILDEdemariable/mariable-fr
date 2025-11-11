@@ -3373,6 +3373,7 @@ export type Database = {
           attendance_status: string
           dietary_restrictions: string | null
           event_id: string
+          guest_address: string | null
           guest_email: string | null
           guest_name: string
           guest_phone: string | null
@@ -3389,6 +3390,7 @@ export type Database = {
           attendance_status: string
           dietary_restrictions?: string | null
           event_id: string
+          guest_address?: string | null
           guest_email?: string | null
           guest_name: string
           guest_phone?: string | null
@@ -3405,6 +3407,7 @@ export type Database = {
           attendance_status?: string
           dietary_restrictions?: string | null
           event_id?: string
+          guest_address?: string | null
           guest_email?: string | null
           guest_name?: string
           guest_phone?: string | null
