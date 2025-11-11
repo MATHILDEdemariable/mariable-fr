@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Gift, FileText, X, CheckCircle, ArrowRight, Sparkles, Check } from 'lucide-react';
+import PaymentModal from '@/components/pricing/PaymentModal';
 
 interface CallScheduleModalProps {
   isOpen: boolean;
@@ -22,6 +23,7 @@ export const CallScheduleModal: React.FC<CallScheduleModalProps> = ({
   const navigate = useNavigate();
   const [showCalendar, setShowCalendar] = useState(false);
   const [showPromoCode, setShowPromoCode] = useState(false);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
 
   const handleClose = () => {
     setShowCalendar(false);
@@ -33,15 +35,16 @@ export const CallScheduleModal: React.FC<CallScheduleModalProps> = ({
     setShowPromoCode(true);
   };
 
-  const handleGoToPricing = () => {
+  const handleOpenPayment = () => {
     handleClose();
-    navigate('/prix');
+    setShowPaymentModal(true);
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-2xl max-h-[85vh] overflow-y-auto mt-4">
-        {showPromoCode ? (
+    <>
+      <Dialog open={isOpen} onOpenChange={handleClose}>
+        <DialogContent className="sm:max-w-2xl max-h-[85vh] overflow-y-auto mt-4">
+          {showPromoCode ? (
           <>
             <DialogHeader className="pb-2">
               <Button 
@@ -88,7 +91,7 @@ export const CallScheduleModal: React.FC<CallScheduleModalProps> = ({
               </div>
               
               <Button 
-                onClick={handleGoToPricing}
+                onClick={handleOpenPayment}
                 className="w-full bg-wedding-olive hover:bg-wedding-olive/90 text-white py-4 sm:py-6 text-base sm:text-lg"
               >
                 Débloquer le Premium
@@ -196,8 +199,14 @@ export const CallScheduleModal: React.FC<CallScheduleModalProps> = ({
               </Button>
             </div>
           </>
-        )}
-      </DialogContent>
-    </Dialog>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      <PaymentModal 
+        isOpen={showPaymentModal} 
+        onClose={() => setShowPaymentModal(false)} 
+      />
+    </>
   );
 };

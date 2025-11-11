@@ -14,43 +14,57 @@ const GuidesPage = () => {
       title: 'Guide Jour-J',
       description: 'Tous les conseils pour gérer le jour de votre mariage',
       icon: FileText,
-      color: 'bg-wedding-olive/10 text-wedding-olive'
+      color: 'bg-wedding-olive/10 text-wedding-olive',
+      pdfUrl: '/guide-jour-j',
+      available: true
     },
     {
       id: 'debut-organisation',
-      title: 'Guide Début d\'Organisation',
+      title: 'Guide Organisation Débutants',
       description: 'Les premières étapes pour bien démarrer votre organisation',
       icon: FileText,
-      color: 'bg-blue-100 text-blue-600'
+      color: 'bg-blue-100 text-blue-600',
+      pdfUrl: '/guide-debutant',
+      available: true
     },
     {
       id: 'prestataires',
       title: 'Guide Prestataires',
       description: 'Comment choisir et gérer vos prestataires',
       icon: FileText,
-      color: 'bg-purple-100 text-purple-600'
+      color: 'bg-purple-100 text-purple-600',
+      pdfUrl: null,
+      available: false
     },
     {
       id: 'checklist-mariee',
       title: 'Checklist Mariée',
       description: 'La liste complète des préparatifs pour la mariée',
       icon: FileText,
-      color: 'bg-pink-100 text-pink-600'
+      color: 'bg-pink-100 text-pink-600',
+      pdfUrl: null,
+      available: false
     },
     {
       id: 'checklist-proche',
       title: 'Checklist Proche',
       description: 'Guide pour les témoins et proches aidants',
       icon: FileText,
-      color: 'bg-amber-100 text-amber-600'
+      color: 'bg-amber-100 text-amber-600',
+      pdfUrl: null,
+      available: false
     }
   ];
 
-  const handleDownload = (guideId: string) => {
-    toast({
-      title: "Document à venir",
-      description: "Ce guide PDF sera bientôt disponible au téléchargement.",
-    });
+  const handleDownload = (guide: typeof guides[0]) => {
+    if (guide.available && guide.pdfUrl) {
+      window.open(guide.pdfUrl, '_blank');
+    } else {
+      toast({
+        title: "Document à venir",
+        description: "Ce guide PDF sera bientôt disponible au téléchargement.",
+      });
+    }
   };
 
   return (
@@ -89,11 +103,12 @@ const GuidesPage = () => {
                 </CardHeader>
                 <CardContent>
                   <Button 
-                    onClick={() => handleDownload(guide.id)}
+                    onClick={() => handleDownload(guide)}
                     className="w-full bg-wedding-olive hover:bg-wedding-olive/90"
+                    disabled={!guide.available}
                   >
                     <Download className="h-4 w-4 mr-2" />
-                    Télécharger
+                    {guide.available ? 'Télécharger' : 'Bientôt disponible'}
                   </Button>
                 </CardContent>
               </Card>
@@ -102,8 +117,8 @@ const GuidesPage = () => {
 
           <div className="mt-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
             <p className="text-sm text-blue-900">
-              <strong>Note :</strong> Les guides PDF sont en cours de finalisation. 
-              Vous serez notifié(e) dès qu'ils seront disponibles au téléchargement.
+              <strong>Note :</strong> Certains guides PDF sont en cours de finalisation. 
+              Les guides disponibles s'ouvriront dans un nouvel onglet pour consultation et téléchargement.
             </p>
           </div>
         </div>
