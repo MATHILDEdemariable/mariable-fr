@@ -7,7 +7,7 @@ import {
   DialogDescription,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Gift, Phone, X } from 'lucide-react';
+import { Gift, FileText, X } from 'lucide-react';
 
 interface CallScheduleModalProps {
   isOpen: boolean;
@@ -47,14 +47,14 @@ export const CallScheduleModal: React.FC<CallScheduleModalProps> = ({
             <div className="space-y-6 py-4">
               <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-6 border border-purple-200">
                 <div className="flex items-start gap-3 mb-4">
-                  <Phone className="h-5 w-5 text-purple-600 mt-1" />
+                  <FileText className="h-5 w-5 text-purple-600 mt-1" />
                   <div>
                     <h4 className="font-semibold text-gray-900 mb-2">
                       Participez à un court échange
                     </h4>
                     <p className="text-gray-700">
-                      Nous aimerions échanger avec vous pendant <strong>10 minutes</strong> par 
-                      téléphone pour comprendre comment améliorer l'application et rendre votre 
+                      Nous aimerions que vous remplissiez le <strong>court formulaire suivant</strong> pour 
+                      comprendre comment améliorer l'application et rendre votre 
                       expérience encore plus agréable.
                     </p>
                   </div>
@@ -64,7 +64,7 @@ export const CallScheduleModal: React.FC<CallScheduleModalProps> = ({
                   <ul className="space-y-2 text-sm text-gray-700">
                     <li className="flex items-center gap-2">
                       <span className="text-green-600">✓</span>
-                      Échange rapide de 10 minutes
+                      Formulaire rapide à remplir
                     </li>
                     <li className="flex items-center gap-2">
                       <span className="text-green-600">✓</span>
@@ -87,7 +87,7 @@ export const CallScheduleModal: React.FC<CallScheduleModalProps> = ({
               </Button>
               
               <p className="text-xs text-center text-gray-500">
-                En participant, vous acceptez d'être contacté par téléphone à l'heure choisie.
+                En participant, vous recevrez votre code promo par email après avoir complété le formulaire.
               </p>
             </div>
           </>
