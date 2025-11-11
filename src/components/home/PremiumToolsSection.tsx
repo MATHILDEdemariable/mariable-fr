@@ -43,16 +43,12 @@ const PremiumToolsSection = () => {
           <Badge className="mb-4 px-4 py-2 bg-premium-sage-very-light text-premium-sage border-premium-sage-light">
             Inclus pour tous
           </Badge>
-          <h2 className="text-4xl font-bold text-premium-black mb-6 md:text-4xl">
-            Votre espace privé
-            <br />
+          <h2 className="text-4xl font-bold text-premium-black mb-6 md:text-4xl">Votre espace personnalisé<br />
             <span className="bg-gradient-to-r from-premium-sage via-premium-sage-medium to-premium-sage-light bg-clip-text text-transparent">
               offert
             </span>
           </h2>
-          <p className="text-xl text-premium-charcoal max-w-3xl mx-auto">
-            Outils gratuits pour organiser votre mariage
-          </p>
+          <p className="text-xl text-premium-charcoal max-w-3xl mx-auto">Outils pour organiser votre mariage</p>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -67,9 +63,7 @@ const PremiumToolsSection = () => {
                     <div>
                       <h3 className="text-xl font-bold text-premium-black mb-2 flex items-center gap-2">
                         {tool.title}
-                        {tool.badge && (
-                          <Badge className="text-xs bg-premium-sage text-white">{tool.badge}</Badge>
-                        )}
+                        {tool.badge && <Badge className="text-xs bg-premium-sage text-white">{tool.badge}</Badge>}
                       </h3>
                       <p className="text-premium-charcoal">
                         {tool.description}
@@ -121,9 +115,7 @@ const PremiumToolsSection = () => {
         {/* CTA */}
         <div className="text-center mt-16">
           <Link to="/register">
-            <Button size="lg" className="btn-primary text-white px-12 py-4 text-lg font-semibold ripple">
-              Créer mon espace gratuit
-            </Button>
+            <Button size="lg" className="btn-primary text-white px-12 py-4 text-lg font-semibold ripple">Créer un compte</Button>
           </Link>
         </div>
       </div>

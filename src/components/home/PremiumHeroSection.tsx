@@ -21,7 +21,7 @@ const PremiumHeroSection = () => {
         <p className="text-xl md:text-2xl text-white/90 mb-8 font-light leading-relaxed">Organisez votre mariage sereinement avec nos outils en ligne gratuits</p>
         
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
-          <Button size="lg" onClick={handleDiscover} className="btn-primary px-8 py-4 text-lg font-semibold ripple text-slate-900">
+          <Button size="lg" onClick={handleDiscover} className="btn-primary px-8 py-4 text-lg ripple font-semibold text-slate-50">
             Découvrir <ArrowRight className="ml-2 h-5 w-5" />
           </Button>
         </div>
