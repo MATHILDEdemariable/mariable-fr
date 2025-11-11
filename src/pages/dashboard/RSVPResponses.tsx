@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Search, Download, Loader2, Phone, Mail, Users, UtensilsCrossed, MessageSquare } from 'lucide-react';
+import { ArrowLeft, Search, Download, Loader2, Phone, Mail, Users, UtensilsCrossed, MessageSquare, MapPin } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface RSVPGuest {
@@ -22,6 +22,7 @@ interface RSVPResponse {
   guest_name: string;
   guest_email: string | null;
   guest_phone: string | null;
+  guest_address: string | null;
   attendance_status: 'oui' | 'non' | 'peut-être';
   number_of_guests: number;
   number_of_adults: number | null;
@@ -97,7 +98,7 @@ const RSVPResponses: React.FC = () => {
   };
 
   const exportToCSV = () => {
-    const headers = ['Nom principal', 'Invités détaillés', 'Email', 'Téléphone', 'Statut', 'Adultes', 'Enfants', 'Total', 'Restrictions', 'Message', 'Date réponse'];
+    const headers = ['Nom principal', 'Invités détaillés', 'Email', 'Téléphone', 'Adresse', 'Statut', 'Adultes', 'Enfants', 'Total', 'Restrictions', 'Message', 'Date réponse'];
     const rows = responses.map(r => [
       r.guest_name,
       r.guests && r.guests.length > 0 
@@ -105,6 +106,7 @@ const RSVPResponses: React.FC = () => {
         : '-',
       r.guest_email || '',
       r.guest_phone || '',
+      r.guest_address || '',
       r.attendance_status,
       r.number_of_adults || r.number_of_guests || 1,
       r.number_of_children || 0,
@@ -200,6 +202,13 @@ const RSVPResponses: React.FC = () => {
           <div className="flex items-center gap-2 text-sm">
             <Phone className="h-4 w-4 text-muted-foreground" />
             <span>{response.guest_phone}</span>
+          </div>
+        )}
+
+        {response.guest_address && (
+          <div className="flex items-start gap-2 text-sm">
+            <Mail className="h-4 w-4 text-muted-foreground mt-0.5" />
+            <span className="flex-1">{response.guest_address}</span>
           </div>
         )}
 

@@ -3204,6 +3204,54 @@ export type Database = {
         }
         Relationships: []
       }
+      wedding_guest_list: {
+        Row: {
+          created_at: string | null
+          guest_address: string | null
+          guest_email: string | null
+          guest_first_name: string
+          guest_last_name: string
+          guest_phone: string | null
+          guest_type: string | null
+          id: string
+          invited_to: string[] | null
+          notes: string | null
+          source: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          guest_address?: string | null
+          guest_email?: string | null
+          guest_first_name: string
+          guest_last_name: string
+          guest_phone?: string | null
+          guest_type?: string | null
+          id?: string
+          invited_to?: string[] | null
+          notes?: string | null
+          source?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          guest_address?: string | null
+          guest_email?: string | null
+          guest_first_name?: string
+          guest_last_name?: string
+          guest_phone?: string | null
+          guest_type?: string | null
+          id?: string
+          invited_to?: string[] | null
+          notes?: string | null
+          source?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       wedding_projects: {
         Row: {
           budget_breakdown: Json

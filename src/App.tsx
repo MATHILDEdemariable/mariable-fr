@@ -107,6 +107,7 @@ const QRCodeGeneratorPage = lazy(() => import("./pages/dashboard/QRCodeGenerator
 const SeatingPlan = lazy(() => import("./pages/SeatingPlan"));
 const ProDashboardMockup = lazy(() => import("./pages/pro/ProDashboardMockup"));
 const GuideDuJourJ = lazy(() => import("./pages/GuideDuJourJ"));
+const GuideDebutant = lazy(() => import("./pages/GuideDebutant"));
 const CGVCouples = lazy(() => import("./pages/CGVCouples"));
 
 // Loading component
@@ -208,11 +209,12 @@ function App() {
                    <Route path="/checklist-public/:userId" element={<ChecklistPublic />} />
                    <Route path="/to-do-list-mariage" element={<ToDoListMariage />} />
                   <Route path="/liste-preparatif-mariage" element={<ListePreparatifMariage />} />
-                  <Route path="/accompagnement" element={<Accompagnement />} />
-                  <Route path="/guidecoordinationjour-j" element={<LivreBlanc />} />
-                  <Route path="/guide-jour-j" element={<GuideDuJourJ />} />
+                   <Route path="/accompagnement" element={<Accompagnement />} />
+                   <Route path="/guidecoordinationjour-j" element={<LivreBlanc />} />
+                   <Route path="/guide-jour-j" element={<GuideDuJourJ />} />
+                   <Route path="/guide-debutant" element={<GuideDebutant />} />
 
-                   {/* À propos routes - Fixed */}
+                    {/* À propos routes - Fixed */}
                    <Route path="/about/approche" element={<Approche />} />
                    <Route path="/about/histoire" element={<Histoire />} />
                    <Route path="/about/charte" element={<Charte />} />

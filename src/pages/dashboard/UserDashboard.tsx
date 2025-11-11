@@ -28,7 +28,7 @@ import ApresJourJPage from './ApresJourJPage';
 import ChecklistMariagePage from './ChecklistMariagePage';
 import MonMariage from './MonMariage';
 import MonMariageDetail from './MonMariageDetail';
-import RSVPManagement from './RSVPManagement';
+import RSVPTabs from './RSVPTabs';
 import RSVPResponses from './RSVPResponses';
 import ProfessionnelsMariableDashboard from '@/components/dashboard/ProfessionnelsMariableDashboard';
 import AccommodationsPage from './AccommodationsPage';
@@ -100,7 +100,7 @@ const UserDashboard: React.FC = () => {
           <Route path="avant-jour-j" element={<AvantJourJPage />} />
           <Route path="apres-jour-j" element={<ApresJourJPage />} />
           <Route path="checklist-mariage" element={<ChecklistMariagePage />} />
-          <Route path="rsvp" element={<RSVPManagement />} />
+          <Route path="rsvp" element={<RSVPTabs />} />
           <Route path="rsvp/:eventId/responses" element={<RSVPResponses />} />
           <Route path="accommodations" element={<AccommodationsPage />} />
           <Route path="seating-plan" element={<SeatingPlan />} />

@@ -37,6 +37,7 @@ const RSVPPublicForm: React.FC = () => {
   const [guestLastName, setGuestLastName] = useState('');
   const [guestEmail, setGuestEmail] = useState('');
   const [guestPhone, setGuestPhone] = useState('');
+  const [guestAddress, setGuestAddress] = useState('');
   const [attendanceStatus, setAttendanceStatus] = useState<'oui' | 'non' | 'peut-être'>('oui');
   const [numberOfAdults, setNumberOfAdults] = useState(1);
   const [numberOfChildren, setNumberOfChildren] = useState(0);
@@ -83,6 +84,7 @@ const RSVPPublicForm: React.FC = () => {
       guest_last_name: z.string().trim().min(2, 'Le nom doit contenir au moins 2 caractères').max(50),
       guest_email: z.string().email('Email invalide').optional().or(z.literal('')),
       guest_phone: z.string().optional(),
+      guest_address: z.string().max(300).optional(),
       number_of_adults: z.number().int().min(1, 'Au moins 1 adulte requis'),
       number_of_children: z.number().int().min(0),
       total_guests: z.number().int().min(1).max(event?.max_guests_per_invite || 10, `Maximum ${event?.max_guests_per_invite || 10} personnes`),
@@ -96,6 +98,7 @@ const RSVPPublicForm: React.FC = () => {
         guest_last_name: guestLastName,
         guest_email: guestEmail,
         guest_phone: guestPhone,
+        guest_address: guestAddress,
         number_of_adults: numberOfAdults,
         number_of_children: numberOfChildren,
         total_guests: totalGuests,
@@ -147,6 +150,7 @@ const RSVPPublicForm: React.FC = () => {
           guest_name: fullGuestName,
           guest_email: guestEmail.trim() || null,
           guest_phone: guestPhone.trim() || null,
+          guest_address: guestAddress.trim() || null,
           attendance_status: attendanceStatus,
           number_of_guests: attendanceStatus === 'oui' ? totalGuests : 1,
           number_of_adults: attendanceStatus === 'oui' ? numberOfAdults : 1,
@@ -363,6 +367,21 @@ const RSVPPublicForm: React.FC = () => {
                 />
                 {errors.guest_phone && (
                   <p className="text-sm text-red-500">{errors.guest_phone}</p>
+                )}
+              </div>
+
+              {/* Adresse postale */}
+              <div className="space-y-2">
+                <Label htmlFor="guest_address">Adresse postale (optionnel)</Label>
+                <Textarea
+                  id="guest_address"
+                  value={guestAddress}
+                  onChange={(e) => setGuestAddress(e.target.value)}
+                  placeholder="Rue, Code postal, Ville, Pays"
+                  rows={3}
+                />
+                {errors.guest_address && (
+                  <p className="text-sm text-red-500">{errors.guest_address}</p>
                 )}
               </div>
 

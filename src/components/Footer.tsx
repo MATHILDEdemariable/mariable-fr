@@ -33,6 +33,7 @@ const Footer = () => {
               <li><Link to="/professionnelsmariable" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Sélection</Link></li>
               <li><Link to="/mon-jour-m" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Coordination du jour J</Link></li>
               <li><Link to="/guide-jour-j" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Guide Jour-J</Link></li>
+              <li><Link to="/guide-debutant" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Guide Débutant</Link></li>
               <li><Link to="/services/budget" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Calculateur de budget</Link></li>
             </ul>
           </div>
