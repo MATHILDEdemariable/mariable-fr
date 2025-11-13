@@ -9,12 +9,22 @@ import { HelmetProvider } from 'react-helmet-async';
 import { ReaderModeProvider } from '@/contexts/ReaderModeContext';
 import PaymentSuccessHandler from '@/components/premium/PaymentSuccessHandler';
 
-// Lazy load pages
+// Direct imports for SEO-critical pages (no lazy loading)
+import LandingCouple from "./pages/LandingCouple";
+import LandingGenerale from "./pages/LandingGenerale";
+import Prestataires from "./pages/services/Prestataires";
+import Prestataire from "./pages/prestataire/slug";
+import Blog from "./pages/Blog";
+import BlogPost from "./pages/BlogArticle";
+import MariageProvence from "./pages/MariageProvence";
+import MariageParis from "./pages/MariageParis";
+import MariageAuvergneRhoneAlpes from "./pages/MariageAuvergneRhoneAlpes";
+import MariageNouvelleAquitaine from "./pages/MariageNouvelleAquitaine";
+import ChecklistMariage from "./pages/ChecklistMariage";
+import CoordinationJourJ from "./pages/CoordinationJourJ";
+
+// Lazy load all other pages
 const Index = lazy(() => import("./pages/Index"));
-const LandingCouple = lazy(() => import("./pages/LandingCouple"));
-const LandingGenerale = lazy(() => import("./pages/LandingGenerale"));
-const SimpleHomePage = lazy(() => import("./pages/SimpleHomePage"));
-const LandingPageV0 = lazy(() => import("./pages/LandingPageV0"));
 const MoteurRecherche = lazy(() => import("./pages/MoteurRecherche"));
 const PlanningPersonnalise = lazy(() => import("./pages/PlanningPersonnalise"));
 const PlanningResultatsPersonnalises = lazy(() => import("./pages/PlanningResultatsPersonnalises"));
@@ -31,24 +41,15 @@ const Login = lazy(() => import("./pages/auth/Login"));
 const Register = lazy(() => import("./pages/auth/Register"));
 const Pricing = lazy(() => import("./pages/Pricing"));
 const Paiement = lazy(() => import("./pages/Paiement"));
-const Blog = lazy(() => import("./pages/Blog"));
-const BlogPost = lazy(() => import("./pages/BlogArticle"));
 const Contact = lazy(() => import("./pages/contact/NousContacter"));
 const Prix = lazy(() => import("./pages/Prix"));
-const Prestataires = lazy(() => import("./pages/services/Prestataires"));
 const Budget = lazy(() => import("./pages/services/Budget"));
-const Prestataire = lazy(() => import("./pages/prestataire/slug"));
 const EmailConfirmation = lazy(() => import("./pages/auth/EmailConfirmation"));
 const ResetPassword = lazy(() => import("./pages/auth/ResetPassword"));
 const MonJourMConseils = lazy(() => import("./pages/MonJourMConseils"));
 const MonJourMPenseBete = lazy(() => import("./pages/MonJourMPenseBete"));
 const OutilsPlanningMariage = lazy(() => import("./pages/OutilsPlanningMariage"));
-const CoordinationJourJ = lazy(() => import("./pages/CoordinationJourJ"));
 const LandingJourJ = lazy(() => import("./pages/LandingJourJ"));
-const MariageProvence = lazy(() => import("./pages/MariageProvence"));
-const MariageParis = lazy(() => import("./pages/MariageParis"));
-const MariageAuvergneRhoneAlpes = lazy(() => import("./pages/MariageAuvergneRhoneAlpes"));
-const MariageNouvelleAquitaine = lazy(() => import("./pages/MariageNouvelleAquitaine"));
 const WeddingRetroplanning = lazy(() => import("./pages/WeddingRetroplanning"));
 const Professionnels = lazy(() => import("./pages/Professionnels"));
 const Partenariat = lazy(() => import("./pages/Partenariat"));
@@ -62,7 +63,6 @@ const Charte = lazy(() => import("./pages/about/Charte"));
 const Temoignages = lazy(() => import("./pages/about/Temoignages"));
 const Comparatif = lazy(() => import("./pages/Comparatif"));
 const FAQ = lazy(() => import("./pages/contact/FAQ"));
-const ChecklistMariage = lazy(() => import("./pages/ChecklistMariage"));
 const ChecklistPublic = lazy(() => import("./pages/ChecklistPublic"));
 const ToDoListMariage = lazy(() => import("./pages/ToDoListMariage"));
 const ListePreparatifMariage = lazy(() => import("./pages/ListePreparatifMariage"));
@@ -110,10 +110,15 @@ const GuideDuJourJ = lazy(() => import("./pages/GuideDuJourJ"));
 const GuideDebutant = lazy(() => import("./pages/GuideDebutant"));
 const CGVCouples = lazy(() => import("./pages/CGVCouples"));
 
-// Loading component
+// Loading component with accessibility improvements
 const PageLoader = () => (
-  <div className="min-h-screen flex items-center justify-center bg-premium-warm">
-    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-wedding-olive" />
+  <div 
+    className="min-h-screen flex items-center justify-center bg-premium-warm" 
+    role="status" 
+    aria-label="Chargement du contenu"
+  >
+    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-wedding-olive" aria-hidden="true" />
+    <span className="sr-only">Chargement en cours...</span>
   </div>
 );
 
@@ -134,8 +139,6 @@ function App() {
                   <Routes>
                   <Route path="/" element={<LandingCouple />} />
                   <Route path="/landing-generale" element={<LandingGenerale />} />
-                  <Route path="/simple" element={<SimpleHomePage />} />
-                  <Route path="/landingpagev0" element={<LandingPageV0 />} />
                    <Route path="/moteur-recherche" element={<MoteurRecherche />} />
           <Route path="/selection" element={<ProtectedRoute><VibeWedding /></ProtectedRoute>} />
           <Route path="/mariage/:region" element={<MoteurRecherche />} />

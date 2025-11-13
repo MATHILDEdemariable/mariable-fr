@@ -17,7 +17,7 @@ const SEO: React.FC<SEOProps> = ({
   title = "Le premier wedding planner de poche – Mariable",
   description = "Mariable est la solution clé en main pour organiser votre mariage. Profitez pleinement de votre journée grâce à un outil simple, personnalisé et sans charge mentale.",
   keywords,
-  image = "/lovable-uploads/23541521-b6ff-4175-a8c8-5017e5b19312.png",
+  image = "https://www.mariable.fr/lovable-uploads/23541521-b6ff-4175-a8c8-5017e5b19312.png",
   canonical,
   schemas = [],
   children
@@ -25,6 +25,9 @@ const SEO: React.FC<SEOProps> = ({
   const fullTitle = title === "Le premier wedding planner de poche – Mariable" ? title : `${title} – Mariable`;
   const siteUrl = "https://www.mariable.fr";
   const logoUrl = `${siteUrl}/lovable-uploads/c1b39e22-fe32-4dc7-8f94-fbb929ae43fa.png`;
+  
+  // Ensure image is always absolute URL
+  const absoluteImage = image.startsWith('http') ? image : `${siteUrl}${image}`;
 
   const metaKeywords = keywords || "mariage france, organisation mariage, planificateur mariage france, prestataires mariage, checklist mariage, budget mariage, planning mariage, coordinateur mariage, témoignages mariage, outils planning mariage personnalisé";
 
@@ -34,17 +37,17 @@ const SEO: React.FC<SEOProps> = ({
         <title>{fullTitle}</title>
         <meta name="description" content={description} />
         <meta name="keywords" content={metaKeywords} />
-        <meta name="robots" content="index, follow" />
+        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
         <meta name="language" content="fr-FR" />
         <meta name="geo.region" content="FR" />
         <meta name="geo.country" content="France" />
-        {canonical && <link rel="canonical" href={`${siteUrl}${canonical}`} />}
+        <link rel="canonical" href={canonical ? `${siteUrl}${canonical}` : siteUrl} />
         
         {/* Open Graph / Facebook */}
         <meta property="og:type" content="website" />
         <meta property="og:title" content={fullTitle} />
         <meta property="og:description" content={description} />
-        <meta property="og:image" content={image} />
+        <meta property="og:image" content={absoluteImage} />
         <meta property="og:site_name" content="MARIABLE" />
         <meta property="og:locale" content="fr_FR" />
         <meta property="og:url" content={`${siteUrl}${canonical || ''}`} />
@@ -53,7 +56,9 @@ const SEO: React.FC<SEOProps> = ({
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={fullTitle} />
         <meta name="twitter:description" content={description} />
-        <meta name="twitter:image" content={image} />
+        <meta name="twitter:image" content={absoluteImage} />
+        <meta name="twitter:site" content="@mariable_fr" />
+        <meta name="twitter:creator" content="@mariable_fr" />
         
         {/* Enhanced Structured Data */}
         <script type="application/ld+json">{`

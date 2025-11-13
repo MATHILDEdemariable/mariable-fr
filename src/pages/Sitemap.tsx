@@ -47,47 +47,64 @@ const SitemapPage = () => {
     const [sitemapContent, setSitemapContent] = useState('');
 
     const staticPages = [
-        { url: '/', priority: 1.0, changefreq: 'daily' },
-        { url: '/selection', priority: 1.0, changefreq: 'daily' },
-        { url: '/vibewedding', priority: 1.0, changefreq: 'daily' },
-        { url: '/services/prestataires', priority: 1.0, changefreq: 'weekly' },
-        { url: '/services/budget', priority: 0.9, changefreq: 'monthly' },
-        { url: '/checklist-mariage', priority: 0.9, changefreq: 'monthly' },
-        { url: '/detail-coordination-jourm', priority: 0.9, changefreq: 'monthly' },
-        { url: '/conseilsmariage', priority: 0.9, changefreq: 'weekly' },
-        { url: '/mariage-provence', priority: 0.8, changefreq: 'monthly' },
-        { url: '/mariage-paris', priority: 0.8, changefreq: 'monthly' },
-        { url: '/mariage-auvergne-rhone-alpes', priority: 0.8, changefreq: 'monthly' },
-        { url: '/mariage-nouvelle-aquitaine', priority: 0.8, changefreq: 'monthly' },
-        { url: '/about/histoire', priority: 0.8, changefreq: 'yearly' },
-        { url: '/about/charte', priority: 0.8, changefreq: 'yearly' },
-        { url: '/about/approche', priority: 0.8, changefreq: 'yearly' },
-        { url: '/about/temoignages', priority: 0.8, changefreq: 'yearly' },
-        { url: '/contact', priority: 0.8, changefreq: 'yearly' },
-        { url: '/professionnels', priority: 0.8, changefreq: 'monthly' },
-        { url: '/planning-personnalise', priority: 0.7, changefreq: 'monthly' },
-        { url: '/coordinateurs-mariage', priority: 0.7, changefreq: 'monthly' },
-        { url: '/fonctionnalites', priority: 0.7, changefreq: 'monthly' },
-        { url: '/jeunes-maries', priority: 0.7, changefreq: 'weekly' },
-        { url: '/coordination-jour-j', priority: 0.7, changefreq: 'monthly' },
-        { url: '/outils-planning-mariage', priority: 0.7, changefreq: 'monthly' },
-        { url: '/to-do-list-mariage', priority: 0.6, changefreq: 'monthly' },
-        { url: '/liste-preparatif-mariage', priority: 0.6, changefreq: 'monthly' },
-        { url: '/accompagnement', priority: 0.6, changefreq: 'monthly' },
-        { url: '/guidecoordinationjour-j', priority: 0.6, changefreq: 'monthly' },
-        { url: '/cgv', priority: 0.5, changefreq: 'yearly' },
-        { url: '/contact/faq', priority: 0.5, changefreq: 'yearly' },
-        { url: '/sitemap', priority: 0.4, changefreq: 'monthly' },
+        { url: '/', lastmod: '2025-11-10', priority: 1.0, changefreq: 'daily' },
+        { url: '/selection', lastmod: '2025-11-10', priority: 1.0, changefreq: 'daily' },
+        { url: '/vibewedding', lastmod: '2025-11-10', priority: 1.0, changefreq: 'daily' },
+        { url: '/services/prestataires', lastmod: '2025-11-01', priority: 1.0, changefreq: 'weekly' },
+        { url: '/services/budget', lastmod: '2025-10-15', priority: 0.9, changefreq: 'monthly' },
+        { url: '/checklist-mariage', lastmod: '2025-10-20', priority: 0.9, changefreq: 'monthly' },
+        { url: '/detail-coordination-jourm', lastmod: '2025-10-20', priority: 0.9, changefreq: 'monthly' },
+        { url: '/conseilsmariage', lastmod: '2025-11-05', priority: 0.9, changefreq: 'weekly' },
+        { url: '/mariage-provence', lastmod: '2025-10-01', priority: 0.8, changefreq: 'monthly' },
+        { url: '/mariage-paris', lastmod: '2025-10-01', priority: 0.8, changefreq: 'monthly' },
+        { url: '/mariage-auvergne-rhone-alpes', lastmod: '2025-10-01', priority: 0.8, changefreq: 'monthly' },
+        { url: '/mariage-nouvelle-aquitaine', lastmod: '2025-10-01', priority: 0.8, changefreq: 'monthly' },
+        { url: '/about/histoire', lastmod: '2025-01-15', priority: 0.8, changefreq: 'yearly' },
+        { url: '/about/charte', lastmod: '2025-01-15', priority: 0.8, changefreq: 'yearly' },
+        { url: '/about/approche', lastmod: '2025-01-15', priority: 0.8, changefreq: 'yearly' },
+        { url: '/about/temoignages', lastmod: '2025-09-01', priority: 0.8, changefreq: 'yearly' },
+        { url: '/contact', lastmod: '2025-01-15', priority: 0.8, changefreq: 'yearly' },
+        { url: '/professionnels', lastmod: '2025-10-01', priority: 0.8, changefreq: 'monthly' },
+        { url: '/planning-personnalise', lastmod: '2025-09-15', priority: 0.7, changefreq: 'monthly' },
+        { url: '/coordinateurs-mariage', lastmod: '2025-09-15', priority: 0.7, changefreq: 'monthly' },
+        { url: '/fonctionnalites', lastmod: '2025-09-15', priority: 0.7, changefreq: 'monthly' },
+        { url: '/jeunes-maries', lastmod: '2025-11-01', priority: 0.7, changefreq: 'weekly' },
+        { url: '/coordination-jour-j', lastmod: '2025-10-20', priority: 0.7, changefreq: 'monthly' },
+        { url: '/outils-planning-mariage', lastmod: '2025-10-20', priority: 0.7, changefreq: 'monthly' },
+        { url: '/to-do-list-mariage', lastmod: '2025-09-01', priority: 0.6, changefreq: 'monthly' },
+        { url: '/liste-preparatif-mariage', lastmod: '2025-09-01', priority: 0.6, changefreq: 'monthly' },
+        { url: '/accompagnement', lastmod: '2025-09-01', priority: 0.6, changefreq: 'monthly' },
+        { url: '/guidecoordinationjour-j', lastmod: '2025-09-01', priority: 0.6, changefreq: 'monthly' },
+        { url: '/cgv', lastmod: '2025-01-15', priority: 0.5, changefreq: 'yearly' },
+        { url: '/contact/faq', lastmod: '2025-08-01', priority: 0.5, changefreq: 'yearly' },
+        { url: '/sitemap', lastmod: '2025-11-10', priority: 0.4, changefreq: 'monthly' },
     ];
 
     useEffect(() => {
+        // Generate fallback sitemap if database errors occur
+        if (prestataireError || blogError) {
+            console.warn('Error fetching data for sitemap, generating fallback sitemap');
+            const fallbackSitemap = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  ${staticPages.map(page => `
+    <url>
+      <loc>${BASE_URL}${page.url}</loc>
+      <lastmod>${page.lastmod || format(new Date(), 'yyyy-MM-dd')}</lastmod>
+      <changefreq>${page.changefreq}</changefreq>
+      <priority>${page.priority}</priority>
+    </url>`).join('')}
+</urlset>`;
+            setSitemapContent(fallbackSitemap);
+            return;
+        }
+
         if (prestataires && blogPosts) {
             const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   ${staticPages.map(page => `
     <url>
       <loc>${BASE_URL}${page.url}</loc>
-      <lastmod>${format(new Date(), 'yyyy-MM-dd')}</lastmod>
+      <lastmod>${page.lastmod || format(new Date(), 'yyyy-MM-dd')}</lastmod>
       <changefreq>${page.changefreq}</changefreq>
       <priority>${page.priority}</priority>
     </url>`).join('')}
@@ -108,7 +125,7 @@ const SitemapPage = () => {
 </urlset>`;
             setSitemapContent(sitemap);
         }
-    }, [prestataires, blogPosts]);
+    }, [prestataires, blogPosts, prestataireError, blogError]);
     
     if (prestataireLoading || blogLoading) {
         return (
