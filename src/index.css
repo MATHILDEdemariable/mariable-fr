@@ -114,10 +114,7 @@
   color: #7F9474;
 }
 
-/* Typing effect styles */
-.typing-complete {
-  border-right: none;
-}
+/* Typing effect styles - removed unused .typing-complete class */
 
 @keyframes typing {
   from { width: 0 }
@@ -196,16 +193,7 @@ select:focus {
   box-shadow: 0 8px 25px rgba(127, 148, 116, 0.2);
 }
 
-/* Card animations */
-.inspiration-card {
-  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  cursor: pointer;
-}
-
-.inspiration-card:hover {
-  transform: perspective(1000px) rotateX(-5deg) rotateY(5deg) scale(1.03);
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15);
-}
+/* Card animations - removed unused .inspiration-card class */
 
 .prestataire-card {
   border: 2px solid transparent;
@@ -265,15 +253,7 @@ select:focus {
   transform: rotate(5deg) scale(1.1);
 }
 
-/* App mockup 3D tilt */
-.app-mockup {
-  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.app-mockup:hover {
-  transform: perspective(1000px) rotateX(-10deg) rotateY(10deg) scale(1.05);
-  filter: drop-shadow(0 30px 60px rgba(127, 148, 116, 0.3));
-}
+/* App mockup - removed unused .app-mockup class */
 
 /* Scroll reveal animations */
 .section-reveal {
@@ -306,17 +286,15 @@ select:focus {
 }
 
 
-/* Solution header sticky - Classes fixes robustes */
+/* Solution header sticky - Système consolidé avec CSS variables */
 :root { 
-  --header-h-premium: 96px;  /* PremiumHeader (h-24) */
-  --header-h-simple: 64px;   /* SimpleHeader (h-16) */
-  --header-h-standard: 64px; /* Header classique mobile (h-16) */
+  --header-offset: 96px;  /* Hauteur par défaut (PremiumHeader) */
 }
 
-/* Hauteur responsive pour Header classique sur desktop */
-@media (min-width: 768px) {
+/* Hauteur responsive pour mobile */
+@media (max-width: 767px) {
   :root {
-    --header-h-standard: 112px; /* Header classique desktop (md:h-28) */
+    --header-offset: 64px; /* Headers mobiles */
   }
 }
 
@@ -326,60 +304,20 @@ header.site-header {
   z-index: 1000;
 }
 
-/* Classe pour pages avec PremiumHeader (96px fixe) */
-.page-content-premium {
-  padding-top: 96px !important;
-  min-height: calc(100vh - 96px);
-}
-
-/* Classe pour pages avec Header standard (64px mobile / 112px desktop) */
-.page-content-standard {
-  padding-top: 64px !important;
-  min-height: calc(100vh - 64px);
-}
-
-@media (min-width: 768px) {
-  .page-content-standard {
-    padding-top: 112px !important;
-    min-height: calc(100vh - 112px);
-  }
-}
-
-/* Classe générique (alias vers premium par défaut pour compatibilité) */
+/* Classe unique pour le contenu des pages */
 .page-content {
-  padding-top: 96px !important;
-  min-height: calc(100vh - 96px);
+  padding-top: var(--header-offset) !important;
+  min-height: calc(100vh - var(--header-offset));
 }
 
 /* Classe utilitaire robuste pour éviter les régressions */
 .header-safe { 
-  padding-top: 96px !important;
+  padding-top: var(--header-offset) !important;
 }
 
 /* Correction ancres internes */
 [id] { 
-  scroll-margin-top: 96px;
-}
-
-/* Scroll margin adaptatif pour pages standard */
-.page-content-standard [id] {
-  scroll-margin-top: 64px;
-}
-
-@media (min-width: 768px) {
-  .page-content-standard [id] {
-    scroll-margin-top: 112px;
-  }
-}
-
-/* Sidebar dashboard avec header compensation */
-.sidebar-safe {
-  padding-top: var(--header-h);
-}
-
-/* Classe universelle pour le contenu des pages principales */
-.page-content {
-  padding-top: var(--header-h);
+  scroll-margin-top: var(--header-offset);
 }
 
 /* Classes utilitaires pour corriger le padding du dashboard */
