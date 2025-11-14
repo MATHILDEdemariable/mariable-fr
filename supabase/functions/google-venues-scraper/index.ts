@@ -203,15 +203,55 @@ async function getPlaceDetails(placeId: string): Promise<any | null> {
   }
 }
 
-async function getGooglePhotoUrl(photoReference: string): Promise<string | null> {
+async function downloadAndUploadPhoto(
+  photoReference: string, 
+  prestataireId: string
+): Promise<string | null> {
   try {
-    // Generate the photo URL with max width 1600px
-    const photoUrl = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=1600&photoreference=${photoReference}&key=${googlePlacesApiKey}`;
+    // 1. Generate temporary Google photo URL
+    const googlePhotoUrl = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=1600&photoreference=${photoReference}&key=${googlePlacesApiKey}`;
     
-    console.log(`📸 Generated photo URL for reference: ${photoReference}`);
-    return photoUrl;
+    console.log(`📥 Downloading photo from Google for reference: ${photoReference}`);
+    
+    // 2. Download the image from Google
+    const photoResponse = await fetch(googlePhotoUrl);
+    if (!photoResponse.ok) {
+      throw new Error(`Failed to download photo: ${photoResponse.statusText}`);
+    }
+    
+    const photoBlob = await photoResponse.blob();
+    const photoArrayBuffer = await photoBlob.arrayBuffer();
+    
+    // 3. Generate unique filename
+    const filename = `${prestataireId}/${crypto.randomUUID()}.jpg`;
+    
+    console.log(`☁️ Uploading to Supabase Storage: ${filename}`);
+    
+    // 4. Upload to Supabase Storage
+    const { data: uploadData, error: uploadError } = await supabase
+      .storage
+      .from('prestataires-photos')
+      .upload(filename, photoArrayBuffer, {
+        contentType: 'image/jpeg',
+        upsert: false
+      });
+    
+    if (uploadError) {
+      console.error(`❌ Upload error:`, uploadError);
+      throw uploadError;
+    }
+    
+    // 5. Generate permanent public URL
+    const { data: publicUrlData } = supabase
+      .storage
+      .from('prestataires-photos')
+      .getPublicUrl(filename);
+    
+    console.log(`✅ Photo uploaded successfully: ${publicUrlData.publicUrl}`);
+    return publicUrlData.publicUrl;
+    
   } catch (error) {
-    console.error(`❌ Error generating photo URL:`, error);
+    console.error(`❌ Error downloading/uploading photo:`, error);
     return null;
   }
 }
@@ -326,28 +366,33 @@ async function processGoogleMapsUrl(urlRecord: any): Promise<boolean> {
       return false;
     }
 
-    // Insert Google photo if available
+    // Insert Google photo if available - Download and upload to Supabase Storage
     if (placeDetails.photos && placeDetails.photos.length > 0 && insertedVenue) {
       try {
         const firstPhoto = placeDetails.photos[0];
-        const photoUrl = await getGooglePhotoUrl(firstPhoto.photo_reference);
         
-        if (photoUrl) {
+        // Download from Google and upload to Supabase Storage
+        const permanentPhotoUrl = await downloadAndUploadPhoto(
+          firstPhoto.photo_reference,
+          insertedVenue.id
+        );
+        
+        if (permanentPhotoUrl) {
           const { error: photoError } = await supabase
             .from('prestataires_photos_preprod')
             .insert([{
               prestataire_id: insertedVenue.id,
-              url: photoUrl,
+              url: permanentPhotoUrl,
               ordre: 0,
               principale: true,
-              filename: `google_photo_${insertedVenue.id}`,
+              filename: permanentPhotoUrl.split('/').pop() || `photo_${insertedVenue.id}`,
               type: 'image/jpeg'
             }]);
           
           if (photoError) {
             console.error(`⚠️ Error inserting photo:`, photoError);
           } else {
-            console.log(`📸 Successfully added Google photo for: ${placeDetails.name}`);
+            console.log(`✅ Photo uploaded to Supabase Storage for: ${placeDetails.name}`);
           }
         }
       } catch (photoError) {
