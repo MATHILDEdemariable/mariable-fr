@@ -21,6 +21,7 @@ import AdminLayout from '@/components/admin/AdminLayout';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 import ScraperManager from '@/components/admin/ScraperManager';
 import { PhotoMigrationManager } from '@/components/admin/PhotoMigrationManager';
+import PhotoCompressionManager from '@/components/admin/PhotoCompressionManager';
 import UsageStats from './UsageStats';
 
 const AdminDashboard = () => {

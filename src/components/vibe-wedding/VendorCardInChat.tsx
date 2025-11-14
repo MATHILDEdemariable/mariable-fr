@@ -20,6 +20,7 @@ interface VendorCardInChatProps {
     slug?: string;
     prestataires_photos_preprod?: Array<{
       url: string;
+      thumbnail_url?: string;
       principale?: boolean;
       is_cover?: boolean;
     }>;
@@ -34,7 +35,12 @@ const VendorCardInChat: React.FC<VendorCardInChatProps> = ({ vendor }) => {
       {vendor.prestataires_photos_preprod && vendor.prestataires_photos_preprod.length > 0 && (
         <div className="relative w-full h-48 bg-gray-200">
           <img
-            src={vendor.prestataires_photos_preprod[0].url}
+            src={vendor.prestataires_photos_preprod[0].thumbnail_url || vendor.prestataires_photos_preprod[0].url}
+            srcSet={`
+              ${vendor.prestataires_photos_preprod[0].thumbnail_url || vendor.prestataires_photos_preprod[0].url} 400w,
+              ${vendor.prestataires_photos_preprod[0].url} 1200w
+            `}
+            sizes="(max-width: 768px) 100vw, 400px"
             alt={vendor.nom}
             className="w-full h-full object-cover"
             loading="lazy"

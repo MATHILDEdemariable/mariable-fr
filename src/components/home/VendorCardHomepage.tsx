@@ -42,6 +42,7 @@ const VendorCardHomepage: React.FC<VendorCardHomepageProps> = ({ vendor }) => {
                 <img
                   src={vendor.photo_url}
                   alt={vendor.nom}
+                  loading="lazy"
                   className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                 />
               ) : (
