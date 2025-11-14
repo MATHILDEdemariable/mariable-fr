@@ -1,40 +1,73 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
-import { ImageMagick, initializeImageMagick, MagickFormat } from "https://deno.land/x/imagemagick_deno@0.0.26/mod.ts";
+import { decode as decodeJpeg, encode as encodeJpeg } from "https://esm.sh/@jsquash/jpeg@2.0.0";
+import { decode as decodePng } from "https://esm.sh/@jsquash/png@3.0.0";
+import { decode as decodeWebp } from "https://esm.sh/@jsquash/webp@1.4.0";
+import resize from "https://esm.sh/@jsquash/resize@1.0.0";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Initialiser ImageMagick une seule fois
-await initializeImageMagick();
-
-async function compressImage(imageBuffer: ArrayBuffer, maxWidth: number, quality: number = 80): Promise<Uint8Array> {
+async function compressImage(
+  imageBuffer: ArrayBuffer,
+  maxWidth: number,
+  quality: number = 80
+): Promise<Uint8Array> {
   try {
-    const inputBytes = new Uint8Array(imageBuffer);
+    console.log(`🔧 Starting compression: maxWidth=${maxWidth}, quality=${quality}`);
     
-    return await ImageMagick.read(inputBytes, async (image) => {
-      // Calculer les nouvelles dimensions
-      const aspectRatio = image.height / image.width;
-      let newWidth = maxWidth;
-      let newHeight = Math.round(maxWidth * aspectRatio);
+    // Détecter le format de l'image
+    const uint8Array = new Uint8Array(imageBuffer);
+    let imageData;
+    
+    // Détecter le format via les magic bytes
+    if (uint8Array[0] === 0xFF && uint8Array[1] === 0xD8) {
+      // JPEG
+      console.log('📷 Detected format: JPEG');
+      imageData = await decodeJpeg(imageBuffer);
+    } else if (
+      uint8Array[0] === 0x89 &&
+      uint8Array[1] === 0x50 &&
+      uint8Array[2] === 0x4E &&
+      uint8Array[3] === 0x47
+    ) {
+      // PNG
+      console.log('📷 Detected format: PNG');
+      imageData = await decodePng(imageBuffer);
+    } else if (
+      (uint8Array[0] === 0x52 && uint8Array[1] === 0x49 && uint8Array[2] === 0x46 && uint8Array[3] === 0x46) ||
+      (uint8Array[8] === 0x57 && uint8Array[9] === 0x45 && uint8Array[10] === 0x42 && uint8Array[11] === 0x50)
+    ) {
+      // WebP
+      console.log('📷 Detected format: WebP');
+      imageData = await decodeWebp(imageBuffer);
+    } else {
+      throw new Error('Unsupported image format. Only JPEG, PNG, and WebP are supported.');
+    }
+
+    console.log(`📐 Original dimensions: ${imageData.width}x${imageData.height}`);
+
+    // Redimensionner si nécessaire
+    let resizedImageData = imageData;
+    if (imageData.width > maxWidth) {
+      const aspectRatio = imageData.height / imageData.width;
+      const newHeight = Math.round(maxWidth * aspectRatio);
       
-      // Ne pas agrandir les petites images
-      if (image.width <= maxWidth) {
-        newWidth = image.width;
-        newHeight = image.height;
-      } else {
-        image.resize(newWidth, newHeight);
-      }
-      
-      // Configurer la qualité JPEG
-      image.quality = quality;
-      
-      // Retourner en JPEG
-      return await image.write(MagickFormat.Jpg);
-    });
+      console.log(`🔄 Resizing to: ${maxWidth}x${newHeight}`);
+      resizedImageData = await resize(imageData, { width: maxWidth, height: newHeight });
+    } else {
+      console.log('✅ No resize needed (image already smaller than max width)');
+    }
+
+    // Encoder en JPEG avec la qualité spécifiée
+    console.log(`💾 Encoding to JPEG with quality ${quality}%`);
+    const compressedBuffer = await encodeJpeg(resizedImageData, { quality });
+    
+    console.log(`✅ Compression complete. Output size: ${Math.round(compressedBuffer.byteLength / 1024)} KB`);
+    return new Uint8Array(compressedBuffer);
   } catch (error) {
     console.error('❌ Error compressing image:', error);
     throw new Error(`Compression failed: ${error.message}`);
