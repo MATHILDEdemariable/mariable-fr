@@ -20,6 +20,7 @@ import {
 import AdminLayout from '@/components/admin/AdminLayout';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 import ScraperManager from '@/components/admin/ScraperManager';
+import { PhotoMigrationManager } from '@/components/admin/PhotoMigrationManager';
 import UsageStats from './UsageStats';
 
 const AdminDashboard = () => {
@@ -226,6 +227,9 @@ const AdminDashboard = () => {
 
         {/* Scraper Manager */}
         <ScraperManager />
+
+        {/* Photo Migration Manager */}
+        <PhotoMigrationManager />
 
         {/* Admin Navigation Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
