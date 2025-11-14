@@ -1,10 +1,10 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
-import { decode as decodeJpeg, encode as encodeJpeg } from "https://esm.sh/@jsquash/jpeg@2.0.0";
-import { decode as decodePng } from "https://esm.sh/@jsquash/png@3.0.0";
-import { decode as decodeWebp } from "https://esm.sh/@jsquash/webp@1.4.0";
-import resize from "https://esm.sh/@jsquash/resize@1.0.0";
+import { decode as decodeJpeg, encode as encodeJpeg } from "npm:@jsquash/jpeg@2.0.0";
+import { decode as decodePng } from "npm:@jsquash/png@3.0.0";
+import { decode as decodeWebp } from "npm:@jsquash/webp@1.4.0";
+import resize from "npm:@jsquash/resize@1.0.0";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
