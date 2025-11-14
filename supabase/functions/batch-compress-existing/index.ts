@@ -1,34 +1,40 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
-import Jimp from "https://esm.sh/jimp@0.22.10";
+import { ImageMagick, initializeImageMagick, MagickFormat } from "https://deno.land/x/imagemagick_deno@0.0.26/mod.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Initialiser ImageMagick une seule fois
+await initializeImageMagick();
+
 async function compressImage(imageBuffer: ArrayBuffer, maxWidth: number, quality: number = 80): Promise<Uint8Array> {
   try {
-    const buffer = Buffer.from(imageBuffer);
-    const image = await Jimp.read(buffer);
+    const inputBytes = new Uint8Array(imageBuffer);
     
-    // Calculer les nouvelles dimensions
-    let newWidth = maxWidth;
-    let newHeight = Math.round((image.bitmap.height / image.bitmap.width) * maxWidth);
-    
-    // Ne pas agrandir les petites images
-    if (image.bitmap.width <= maxWidth) {
-      newWidth = image.bitmap.width;
-      newHeight = image.bitmap.height;
-    }
-    
-    // Redimensionner et compresser
-    await image.resize(newWidth, newHeight, Jimp.RESIZE_BILINEAR);
-    await image.quality(quality);
-    
-    const compressed = await image.getBufferAsync(Jimp.MIME_JPEG);
-    return new Uint8Array(compressed);
+    return await ImageMagick.read(inputBytes, async (image) => {
+      // Calculer les nouvelles dimensions
+      const aspectRatio = image.height / image.width;
+      let newWidth = maxWidth;
+      let newHeight = Math.round(maxWidth * aspectRatio);
+      
+      // Ne pas agrandir les petites images
+      if (image.width <= maxWidth) {
+        newWidth = image.width;
+        newHeight = image.height;
+      } else {
+        image.resize(newWidth, newHeight);
+      }
+      
+      // Configurer la qualité JPEG
+      image.quality = quality;
+      
+      // Retourner en JPEG
+      return await image.write(MagickFormat.Jpg);
+    });
   } catch (error) {
     console.error('❌ Error compressing image:', error);
     throw new Error(`Compression failed: ${error.message}`);

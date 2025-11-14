@@ -53,41 +53,67 @@ const PhotoCompressionManager: React.FC = () => {
       let totalCompressed = 0;
       let totalSavings = 0;
       let batchResults: any[] = [];
+      let consecutiveErrors = 0;
+      const MAX_CONSECUTIVE_ERRORS = 3;
+      let batchNumber = 0;
 
       // Traiter par batch jusqu'à ce qu'il n'y ait plus de photos
-      while (true) {
+      while (consecutiveErrors < MAX_CONSECUTIVE_ERRORS) {
+        batchNumber++;
+        
         toast.info('Compression en cours...', {
-          description: `Batch ${Math.floor(totalCompressed / 20) + 1} en cours`
+          description: `Batch ${batchNumber} en cours (5 photos)`
         });
 
         const { data, error } = await supabase.functions.invoke('batch-compress-existing');
 
-        if (error) {
-          throw error;
+        if (error || !data?.success) {
+          consecutiveErrors++;
+          console.error('Batch error:', error || data?.error);
+          
+          if (consecutiveErrors >= MAX_CONSECUTIVE_ERRORS) {
+            throw new Error(`Arrêt après ${MAX_CONSECUTIVE_ERRORS} erreurs consécutives. Vérifiez les logs Supabase.`);
+          }
+          
+          toast.warning(`Erreur batch ${batchNumber}, nouvelle tentative...`, {
+            description: `Tentative ${consecutiveErrors}/${MAX_CONSECUTIVE_ERRORS}`
+          });
+          
+          // Attendre plus longtemps avant de réessayer
+          await new Promise(resolve => setTimeout(resolve, 3000));
+          continue;
         }
 
-        if (!data.success) {
-          throw new Error(data.error || 'Compression failed');
-        }
-
-        totalCompressed += data.compressed;
+        // Réinitialiser le compteur d'erreurs si succès
+        consecutiveErrors = 0;
+        totalCompressed += data.compressed || 0;
         totalSavings += data.total_savings_kb || 0;
-        batchResults = [...batchResults, ...data.results];
+        
+        if (data.results) {
+          batchResults = [...batchResults, ...data.results];
+        }
 
         setStats(prev => ({
           ...prev,
           compressed: totalCompressed,
-          remaining: data.remaining,
+          remaining: data.remaining || 0,
           totalSavingsKB: totalSavings
         }));
 
         setResults(batchResults);
         
         // Calculer le progrès
-        const progressPercent = Math.round(
-          (totalCompressed / (totalCompressed + data.remaining)) * 100
-        );
-        setProgress(progressPercent);
+        if (totalCompressed + data.remaining > 0) {
+          const progressPercent = Math.round(
+            (totalCompressed / (totalCompressed + data.remaining)) * 100
+          );
+          setProgress(progressPercent);
+        }
+
+        // Arrêter si aucune photo n'a été traitée (toutes en erreur)
+        if (data.compressed === 0 && data.remaining > 0) {
+          throw new Error('Aucune photo n\'a pu être compressée dans ce batch. Vérifiez les formats de fichiers.');
+        }
 
         // Si plus de photos à traiter, arrêter
         if (data.remaining === 0) {
