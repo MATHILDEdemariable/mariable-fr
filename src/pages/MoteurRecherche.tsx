@@ -184,7 +184,7 @@ const MoteurRecherche = () => {
         `}</script>
       </Helmet>
         <PremiumHeader />
-        <main className="container max-w-7xl px-4 pb-6 md:py-8 page-content-premium">
+        <main className="container max-w-7xl px-4 pb-6 md:py-8 page-content">
           <RegionSelectorPage />
         </main>
       </div>
@@ -199,7 +199,7 @@ const MoteurRecherche = () => {
       </Helmet>
       <PremiumHeader />
       
-      <main className="container max-w-7xl px-4 pb-6 md:py-8 page-content-premium">
+      <main className="container max-w-7xl px-4 pb-6 md:py-8 page-content">
         {/* Breadcrumb et bouton retour */}
         <div className="flex items-center gap-2 mb-6 text-sm">
           <button 

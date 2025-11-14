@@ -29,7 +29,7 @@ const LandingGenerale = () => {
       
       <PremiumHeader />
       
-      <main className="flex-grow page-content-premium">
+      <main className="flex-grow page-content">
         {/* Hero Section Premium */}
         <PremiumHeroSection />
 

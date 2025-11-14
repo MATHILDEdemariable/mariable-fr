@@ -460,7 +460,7 @@ const SinglePrestataire = () => {
     <div className="min-h-screen flex flex-col bg-white">
       <PremiumHeader />
 
-      <main className="flex-grow page-content-premium">
+      <main className="flex-grow page-content">
         <div className="relative h-[25vh] w-full hidden">
           <img
             src={mainImage}

@@ -166,7 +166,7 @@ const Prix = () => {
       
       <PremiumHeader />
       
-      <main className="flex-grow page-content-premium">
+      <main className="flex-grow page-content">
         {/* Section 1 - Tableau comparatif des formules */}
         <section className="py-16 md:py-20 bg-gray-50 animate-fade-in">
           <div className="container mx-auto px-4">
