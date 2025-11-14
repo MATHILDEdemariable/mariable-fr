@@ -1816,6 +1816,7 @@ export type Database = {
           prestataire_id: string
           principale: boolean | null
           size: number | null
+          thumbnail_url: string | null
           type: string | null
           url: string
         }
@@ -1828,6 +1829,7 @@ export type Database = {
           prestataire_id: string
           principale?: boolean | null
           size?: number | null
+          thumbnail_url?: string | null
           type?: string | null
           url: string
         }
@@ -1840,6 +1842,7 @@ export type Database = {
           prestataire_id?: string
           principale?: boolean | null
           size?: number | null
+          thumbnail_url?: string | null
           type?: string | null
           url?: string
         }
