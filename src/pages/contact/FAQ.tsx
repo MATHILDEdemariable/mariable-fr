@@ -69,7 +69,7 @@ const FAQ = () => {
 
       <PremiumHeader />
       
-      <main className="container mx-auto px-4 pb-12 page-content-premium">
+      <main className="container mx-auto px-4 pb-12 page-content">
         <div className="max-w-4xl mx-auto">
           <header className="text-center mb-12">
             <h1 className="text-4xl md:text-5xl font-serif text-foreground mb-4">
