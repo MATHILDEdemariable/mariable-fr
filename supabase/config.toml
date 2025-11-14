@@ -1,6 +1,9 @@
 
 project_id = "bgidfcqktsttzlwlumtz"
 
+[functions.migrate-google-photos]
+verify_jwt = true
+
 [functions.stripe-webhook]
 verify_jwt = false
 
