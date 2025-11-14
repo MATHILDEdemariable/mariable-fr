@@ -1,7 +1,7 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
-import { Image } from "https://deno.land/x/imagescript@1.2.15/mod.ts";
+import Jimp from "https://esm.sh/jimp@0.22.10";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -10,21 +10,28 @@ const corsHeaders = {
 
 async function compressImage(imageBuffer: ArrayBuffer, maxWidth: number, quality: number = 80): Promise<Uint8Array> {
   try {
-    const image = await Image.decode(new Uint8Array(imageBuffer));
+    const buffer = Buffer.from(imageBuffer);
+    const image = await Jimp.read(buffer);
     
+    // Calculer les nouvelles dimensions
     let newWidth = maxWidth;
-    let newHeight = Math.round((image.height / image.width) * maxWidth);
+    let newHeight = Math.round((image.bitmap.height / image.bitmap.width) * maxWidth);
     
-    if (image.width <= maxWidth) {
-      newWidth = image.width;
-      newHeight = image.height;
+    // Ne pas agrandir les petites images
+    if (image.bitmap.width <= maxWidth) {
+      newWidth = image.bitmap.width;
+      newHeight = image.bitmap.height;
     }
     
-    const resized = image.resize(newWidth, newHeight);
-    return await resized.encodeJPEG(quality);
+    // Redimensionner et compresser
+    await image.resize(newWidth, newHeight, Jimp.RESIZE_BILINEAR);
+    await image.quality(quality);
+    
+    const compressed = await image.getBufferAsync(Jimp.MIME_JPEG);
+    return new Uint8Array(compressed);
   } catch (error) {
-    console.error('Error compressing image:', error);
-    throw error;
+    console.error('❌ Error compressing image:', error);
+    throw new Error(`Compression failed: ${error.message}`);
   }
 }
 
