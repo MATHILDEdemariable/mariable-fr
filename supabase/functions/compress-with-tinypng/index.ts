@@ -10,6 +10,22 @@ const TINYPNG_API_KEY = Deno.env.get('TINYPNG_API_KEY');
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 
+function sanitizeFilename(filename: string): string {
+  const parts = filename.split('.');
+  const extension = parts.pop() || 'jpg';
+  const name = parts.join('.');
+  
+  // Remplacer les caractères spéciaux
+  const cleaned = name
+    .normalize('NFD') // Décomposer les accents
+    .replace(/[\u0300-\u036f]/g, '') // Supprimer les diacritiques
+    .replace(/[^a-zA-Z0-9._-]/g, '_') // Remplacer caractères spéciaux par _
+    .replace(/_+/g, '_') // Fusionner les underscores multiples
+    .replace(/^_|_$/g, ''); // Supprimer _ au début/fin
+  
+  return `${cleaned}.${extension}`;
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -80,13 +96,14 @@ serve(async (req) => {
         const compressedBuffer = await compressedResponse.arrayBuffer();
         stats.compressedSize += compressedBuffer.byteLength;
 
-        // Générer le nom du fichier thumbnail
-        const fileExtension = photo.filename?.split('.').pop() || 'jpg';
-        const baseFilename = photo.filename?.replace(/\.[^/.]+$/, '') || `photo_${photo.id}`;
+        // Générer le nom du fichier thumbnail avec nettoyage
+        const cleanFilename = sanitizeFilename(photo.filename || `photo_${photo.id}.jpg`);
+        const fileExtension = cleanFilename.split('.').pop() || 'jpg';
+        const baseFilename = cleanFilename.replace(/\.[^/.]+$/, '');
         const thumbnailFilename = `thumbnail_${baseFilename}.${fileExtension}`;
         const uploadPath = `${photo.prestataire_id}/${thumbnailFilename}`;
 
-        console.log(`📤 Uploading to: ${uploadPath}`);
+        console.log(`📤 Uploading: ${photo.filename} → ${thumbnailFilename}`);
 
         // Upload dans Supabase
         const { error: uploadError } = await supabase.storage
