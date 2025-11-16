@@ -17,6 +17,7 @@ serve(async (req) => {
 
   try {
     console.log('🚀 Starting TinyPNG compression batch...');
+    console.log(`🔑 TinyPNG API Key configured: ${TINYPNG_API_KEY ? 'Yes (****' + TINYPNG_API_KEY.slice(-4) + ')' : 'No'}`);
     
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
@@ -135,14 +136,30 @@ serve(async (req) => {
       }
     }
 
+    // Compter les photos restantes après traitement
+    console.log('📊 Counting remaining photos...');
+    const { count: remainingCount, error: countError } = await supabase
+      .from('prestataires_photos_preprod')
+      .select('*', { count: 'exact', head: true })
+      .is('thumbnail_url', null);
+
+    if (countError) {
+      console.error('⚠️ Error counting remaining photos:', countError);
+    }
+
+    const totalSavingsKb = Math.round((stats.originalSize - stats.compressedSize) / 1024);
+
     const summary = {
       success: true,
-      stats,
+      compressed: stats.success,
+      remaining: remainingCount || 0,
+      total_savings_kb: totalSavingsKb,
       results,
-      message: `Compressed ${stats.success}/${stats.total} photos. Saved ${((stats.originalSize - stats.compressedSize) / 1024 / 1024).toFixed(2)} MB`,
+      message: `Compressed ${stats.success}/${stats.total} photos. Saved ${(totalSavingsKb / 1024).toFixed(2)} MB. ${remainingCount || 0} photos remaining.`,
     };
 
     console.log('📊 Compression summary:', summary);
+    console.log(`✅ Batch complete: ${stats.success} compressed, ${stats.failed} failed, ${remainingCount || 0} remaining`);
 
     return new Response(JSON.stringify(summary), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
