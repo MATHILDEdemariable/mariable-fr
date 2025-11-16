@@ -33,3 +33,6 @@ verify_jwt = true
 
 [functions.register-professional]
 verify_jwt = false
+
+[functions.compress-with-tinypng]
+verify_jwt = true

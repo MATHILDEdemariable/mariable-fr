@@ -65,7 +65,7 @@ const PhotoCompressionManager: React.FC = () => {
           description: `Batch ${batchNumber} en cours (5 photos)`
         });
 
-        const { data, error } = await supabase.functions.invoke('batch-compress-existing');
+        const { data, error } = await supabase.functions.invoke('compress-with-tinypng');
 
         if (error || !data?.success) {
           consecutiveErrors++;
