@@ -1,6 +1,9 @@
 
 project_id = "bgidfcqktsttzlwlumtz"
 
+[functions.compress-photo]
+verify_jwt = true
+
 [functions.migrate-google-photos]
 verify_jwt = true
 
