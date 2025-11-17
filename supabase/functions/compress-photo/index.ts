@@ -68,13 +68,16 @@ serve(async (req) => {
     const compressedBuffer = await compressedResponse.arrayBuffer();
 
     // Créer le thumbnail (via resize de TinyPNG)
-    const resizeResponse = await fetch(compressData.output.url, {
+    const resizeResponse = await fetch('https://api.tinify.com/output', {
       method: 'POST',
       headers: {
         'Authorization': `Basic ${btoa(`api:${TINYPNG_API_KEY}`)}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
+        source: {
+          url: compressData.output.url
+        },
         resize: {
           method: 'fit',
           width: 800,
@@ -83,9 +86,13 @@ serve(async (req) => {
       }),
     });
 
-    const resizeData = await resizeResponse.json();
-    const thumbnailResponse = await fetch(resizeData.url);
-    const thumbnailBuffer = await thumbnailResponse.arrayBuffer();
+    if (!resizeResponse.ok) {
+      console.log('⚠️ Resize failed, using compressed image as thumbnail');
+      // Si le resize échoue, on utilise l'image compressée comme thumbnail
+      const thumbnailBuffer = compressedBuffer;
+    } else {
+      const thumbnailBuffer = await resizeResponse.arrayBuffer();
+    }
 
     // Générer noms de fichiers
     const timestamp = Date.now();
