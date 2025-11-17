@@ -86,12 +86,12 @@ serve(async (req) => {
       }),
     });
 
+    let thumbnailBuffer;
     if (!resizeResponse.ok) {
       console.log('⚠️ Resize failed, using compressed image as thumbnail');
-      // Si le resize échoue, on utilise l'image compressée comme thumbnail
-      const thumbnailBuffer = compressedBuffer;
+      thumbnailBuffer = compressedBuffer;
     } else {
-      const thumbnailBuffer = await resizeResponse.arrayBuffer();
+      thumbnailBuffer = await resizeResponse.arrayBuffer();
     }
 
     // Générer noms de fichiers
