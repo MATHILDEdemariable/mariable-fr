@@ -140,7 +140,7 @@ export const useVendorPhotos = (vendorId: string, enabled: boolean = true) => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('prestataires_photos_preprod')
-        .select('url, ordre, principale, is_cover')
+        .select('url, thumbnail_url, ordre, principale, is_cover')
         .eq('prestataire_id', vendorId)
         .order('ordre')
         .limit(1); // Charger seulement la photo principale

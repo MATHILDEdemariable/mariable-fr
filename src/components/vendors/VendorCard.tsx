@@ -41,11 +41,11 @@ const VendorCard: React.FC<VendorCardProps> = ({
       if (Array.isArray(photos) && photos.length > 0) {
         // Chercher d'abord une photo principale ou cover
         const mainPhoto = photos.find((p: any) => p.principale || p.is_cover);
-        if (mainPhoto?.url) {
-          mainImage = mainPhoto.url;
-        } else if (photos[0]?.url) {
+        if (mainPhoto?.thumbnail_url || mainPhoto?.url) {
+          mainImage = mainPhoto.thumbnail_url || mainPhoto.url;
+        } else if (photos[0]?.thumbnail_url || photos[0]?.url) {
           // Sinon prendre la première photo
-          mainImage = photos[0].url;
+          mainImage = photos[0].thumbnail_url || photos[0].url;
         }
       }
     }

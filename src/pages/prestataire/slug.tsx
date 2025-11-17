@@ -423,7 +423,7 @@ const SinglePrestataire = () => {
 
   const mainImage =
     photos && photos.length > 0
-      ? photos.find((p) => p.principale)?.url || photos[0].url
+      ? photos.find((p) => p.principale)?.thumbnail_url || photos.find((p) => p.principale)?.url || photos[0].thumbnail_url || photos[0].url
       : "/placeholder.svg";
 
   const renderStyleBadges = () => {

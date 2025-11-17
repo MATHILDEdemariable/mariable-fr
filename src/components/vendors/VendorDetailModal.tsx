@@ -162,9 +162,10 @@ const VendorDetailModal: React.FC<VendorDetailModalProps> = ({ isOpen, onClose, 
               <div className="relative">
                 <AspectRatio ratio={16 / 9}>
                   <img 
-                    src={photos[currentPhotoIndex].url} 
+                    src={photos[currentPhotoIndex].url}
                     alt={`${vendor.nom} - photo ${currentPhotoIndex + 1}`}
                     className="w-full h-full object-cover rounded-md"
+                    loading="lazy"
                   />
                 </AspectRatio>
                 

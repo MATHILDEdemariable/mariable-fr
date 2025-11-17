@@ -146,7 +146,7 @@ const LazyVendorCard: React.FC<LazyVendorCardProps> = ({
   const getMainImage = () => {
     if (photos && photos.length > 0) {
       const mainPhoto = photos.find(p => p.is_cover || p.principale) || photos[0];
-      return mainPhoto.url;
+      return mainPhoto.thumbnail_url || mainPhoto.url;
     }
     return "/placeholder.svg";
   };

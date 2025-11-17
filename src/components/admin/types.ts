@@ -7,6 +7,7 @@ export interface PrestatairePhoto {
   id: string;
   prestataire_id: string;
   url: string;
+  thumbnail_url?: string | null;
   ordre?: number;
   principale?: boolean;
   size?: number;
