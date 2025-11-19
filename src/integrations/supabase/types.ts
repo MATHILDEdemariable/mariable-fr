@@ -1329,6 +1329,36 @@ export type Database = {
         }
         Relationships: []
       }
+      performance_metrics: {
+        Row: {
+          created_at: string | null
+          device_type: string | null
+          id: string
+          metric_name: string
+          metric_value: number
+          page_path: string
+          user_agent: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          device_type?: string | null
+          id?: string
+          metric_name: string
+          metric_value: number
+          page_path: string
+          user_agent?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          device_type?: string | null
+          id?: string
+          metric_name?: string
+          metric_value?: number
+          page_path?: string
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       planning_apres_jour_j: {
         Row: {
           category: string | null
