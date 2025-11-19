@@ -80,6 +80,7 @@ const AdminPrestataires = lazy(() => import("./pages/admin/Prestataires"));
 const AdminForm = lazy(() => import("./pages/admin/FormAdmin"));
 const AdminReservationsJourM = lazy(() => import("./pages/admin/ReservationsJourM"));
 const AdminSystemCheck = lazy(() => import("./pages/admin/SystemCheck"));
+const AdminMaintenance = lazy(() => import("./pages/admin/Maintenance"));
 const AdminProfessionalRegistrations = lazy(() => import("./pages/admin/ProfessionalRegistrations"));
 const AdminPaymentLeads = lazy(() => import("./pages/admin/PaymentLeads"));
 const AdminPartenariats = lazy(() => import("./pages/admin/Partenariats"));
@@ -251,6 +252,7 @@ function App() {
                    <Route path="/admin/form" element={<AdminForm />} />
                    <Route path="/admin/reservations-jour-m" element={<AdminReservationsJourM />} />
                    <Route path="/admin/system-check" element={<AdminSystemCheck />} />
+                   <Route path="/admin/maintenance" element={<AdminMaintenance />} />
                     <Route path="/admin/jeunes-maries" element={<AdminJeunesMaries />} />
                     <Route path="/admin/custom-pages" element={<CustomPages />} />
                     <Route path="/admin/carnet-adresses" element={<AdminCarnetAdresses />} />
