@@ -75,18 +75,18 @@ const TABLES_INVENTORY: TableInfo[] = [
   
   // Payment & Premium
   { name: "paiement_accompagnement", estimatedSize: "~95 KB", category: "Payment", status: "healthy", usage: "active" },
-  { name: "payment_audit", estimatedSize: "~120 KB", category: "Payment", status: "issue", usage: "to-clean", issue: "Peut-être obsolète, vérifier utilisation" },
   
   // Contacts & Requests
   { name: "partnership_requests", estimatedSize: "~45 KB", category: "Requests", status: "healthy", usage: "active" },
   { name: "carnet_adresses_requests", estimatedSize: "~68 KB", category: "Requests", status: "issue", usage: "to-clean", issue: "Fonctionnalité abandonnée ?" },
   { name: "devis_professionnels", estimatedSize: "~42 KB", category: "Requests", status: "healthy", usage: "active" },
   
+  // Quiz (UTILISÉ - NE PAS SUPPRIMER)
+  { name: "quiz_questions", estimatedSize: "~25 KB", category: "Quiz", status: "healthy", usage: "active" },
+  { name: "quiz_scoring", estimatedSize: "~18 KB", category: "Quiz", status: "healthy", usage: "active" },
+  
   // Potentially obsolete
-  { name: "quiz_questions", estimatedSize: "~25 KB", category: "Quiz", status: "issue", usage: "to-clean", issue: "Quiz n'existe plus ?" },
-  { name: "quiz_scoring", estimatedSize: "~18 KB", category: "Quiz", status: "issue", usage: "to-clean", issue: "Quiz n'existe plus ?" },
-  { name: "vibe_wedding_conversations", estimatedSize: "~140 KB", category: "Legacy", status: "issue", usage: "to-clean", issue: "Remplacé par ai_wedding_conversations ?" },
-  { name: "projects", estimatedSize: "~95 KB", category: "Legacy", status: "issue", usage: "to-clean", issue: "Redondant avec wedding_coordination ?" },
+  { name: "projects", estimatedSize: "~95 KB", category: "Legacy", status: "warning", usage: "to-clean", issue: "Redondant avec wedding_coordination ?" },
 ];
 
 const DatabaseHealthView: React.FC = () => {
@@ -255,11 +255,11 @@ const DatabaseHealthView: React.FC = () => {
             </p>
           </div>
           <div>
-            <h4 className="font-semibold text-sm">Tables potentiellement obsolètes</h4>
+            <h4 className="font-semibold text-sm">✅ Nettoyage effectué</h4>
             <p className="text-sm text-muted-foreground">
-              quiz_questions, quiz_scoring, vibe_wedding_conversations, payment_audit, projects
+              Tables supprimées : vibe_wedding_conversations, payment_audit
               <br />
-              <strong>Action :</strong> Vérifier utilisation et supprimer si obsolète
+              <strong>Restant à vérifier :</strong> projects (possiblement redondant)
             </p>
           </div>
           <div>
@@ -280,13 +280,13 @@ const DatabaseHealthView: React.FC = () => {
         </CardHeader>
         <CardContent className="space-y-2">
           <p className="text-sm">
-            • <strong>Priorité 1</strong> : Analyser et supprimer tables obsolètes (quiz_*, vibe_wedding_conversations)
+            • <strong>✅ Complété</strong> : Tables obsolètes supprimées (vibe_wedding_conversations, payment_audit)
           </p>
           <p className="text-sm">
-            • <strong>Priorité 2</strong> : Refactoriser prestataires_rows en 3 tables
+            • <strong>Priorité 1</strong> : Refactoriser prestataires_rows en 3 tables normalisées
           </p>
           <p className="text-sm">
-            • <strong>Priorité 3</strong> : Vérifier utilisation payment_audit et projects
+            • <strong>Priorité 2</strong> : Vérifier utilisation de la table projects
           </p>
           <p className="text-sm">
             • <strong>Monitoring</strong> : Ajouter alertes sur croissance anormale des tables
