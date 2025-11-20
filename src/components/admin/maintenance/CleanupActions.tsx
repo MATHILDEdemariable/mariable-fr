@@ -13,7 +13,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { toast } from 'sonner';
-import { Trash2, GitMerge, Database, FileCode, HardDrive, CheckCircle } from 'lucide-react';
+import { Trash2, GitMerge, Database, FileCode, HardDrive, CheckCircle, CheckCircle2 } from 'lucide-react';
 
 interface ActionItemProps {
   title: string;
@@ -75,11 +75,6 @@ const CleanupActions: React.FC = () => {
     setShowConfirmDialog(true);
   };
 
-  const handleDeleteTables = () => {
-    setActionToConfirm('delete-tables');
-    setShowConfirmDialog(true);
-  };
-
   const handleCompressPhotos = () => {
     toast.info("Compression des photos", {
       description: "Cette action nécessite un script backend séparé"
@@ -104,11 +99,6 @@ const CleanupActions: React.FC = () => {
           description: "Cette action nécessite une migration Supabase. Voir section Database."
         });
         break;
-      case 'delete-tables':
-        toast.warning("Suppression de tables", {
-          description: "Action critique ! Vérifier d'abord qu'elles ne sont pas utilisées."
-        });
-        break;
     }
     setShowConfirmDialog(false);
   };
@@ -131,7 +121,8 @@ const CleanupActions: React.FC = () => {
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Database size</p>
-              <p className="text-2xl font-bold text-green-600">-20%</p>
+              <p className="text-2xl font-bold text-green-600">-15%</p>
+              <Badge variant="secondary" className="text-xs mt-1">✅ Déjà fait</Badge>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Cached Egress</p>
@@ -205,12 +196,11 @@ const CleanupActions: React.FC = () => {
             onAction={handleRefactorPrestataires}
           />
           <ActionItem
-            title="Supprimer tables inutilisées"
-            description="quiz_questions, quiz_scoring, vibe_wedding_conversations, payment_audit (à vérifier)"
-            impact="Économie : ~20% DB size"
-            icon={<Trash2 className="h-5 w-5 text-red-600" />}
-            danger
-            onAction={handleDeleteTables}
+            title="✅ Tables obsolètes supprimées"
+            description="vibe_wedding_conversations et payment_audit ont été supprimées avec succès"
+            impact="Économie réalisée : ~15% DB size"
+            icon={<CheckCircle2 className="h-5 w-5 text-green-600" />}
+            onAction={() => toast.success("Nettoyage déjà effectué", { description: "Tables supprimées : vibe_wedding_conversations, payment_audit" })}
           />
         </CardContent>
       </Card>
@@ -249,8 +239,8 @@ const CleanupActions: React.FC = () => {
         <CardContent>
           <ol className="space-y-2 text-sm">
             <li className="flex items-start gap-2">
-              <Badge>1</Badge>
-              <span>Analyser les tables inutilisées (vérifier queries)</span>
+              <Badge variant="secondary" className="bg-green-100">✅ 1</Badge>
+              <span className="line-through text-muted-foreground">Analyser et supprimer les tables inutilisées</span>
             </li>
             <li className="flex items-start gap-2">
               <Badge>2</Badge>
@@ -262,14 +252,10 @@ const CleanupActions: React.FC = () => {
             </li>
             <li className="flex items-start gap-2">
               <Badge>4</Badge>
-              <span>Supprimer tables confirmées inutilisées</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <Badge>5</Badge>
               <span>Refactoriser prestataires_rows (avec tests)</span>
             </li>
             <li className="flex items-start gap-2">
-              <Badge>6</Badge>
+              <Badge>5</Badge>
               <span>Nettoyer storage (fichiers orphelins)</span>
             </li>
           </ol>

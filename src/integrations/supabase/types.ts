@@ -1251,51 +1251,6 @@ export type Database = {
         }
         Relationships: []
       }
-      payment_audit: {
-        Row: {
-          amount: number | null
-          created_at: string
-          currency: string | null
-          customer_email: string | null
-          error_message: string | null
-          id: string
-          payment_intent_id: string | null
-          processed_at: string
-          session_id: string | null
-          status: string
-          stripe_event_id: string
-          stripe_event_type: string
-        }
-        Insert: {
-          amount?: number | null
-          created_at?: string
-          currency?: string | null
-          customer_email?: string | null
-          error_message?: string | null
-          id?: string
-          payment_intent_id?: string | null
-          processed_at?: string
-          session_id?: string | null
-          status: string
-          stripe_event_id: string
-          stripe_event_type: string
-        }
-        Update: {
-          amount?: number | null
-          created_at?: string
-          currency?: string | null
-          customer_email?: string | null
-          error_message?: string | null
-          id?: string
-          payment_intent_id?: string | null
-          processed_at?: string
-          session_id?: string | null
-          status?: string
-          stripe_event_id?: string
-          stripe_event_type?: string
-        }
-        Relationships: []
-      }
       pense_bete: {
         Row: {
           content: string
@@ -3032,36 +2987,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
-      }
-      vibe_wedding_conversations: {
-        Row: {
-          created_at: string | null
-          id: string
-          messages: Json
-          session_id: string
-          updated_at: string | null
-          user_id: string | null
-          wedding_data: Json | null
-        }
-        Insert: {
-          created_at?: string | null
-          id?: string
-          messages?: Json
-          session_id: string
-          updated_at?: string | null
-          user_id?: string | null
-          wedding_data?: Json | null
-        }
-        Update: {
-          created_at?: string | null
-          id?: string
-          messages?: Json
-          session_id?: string
-          updated_at?: string | null
-          user_id?: string | null
-          wedding_data?: Json | null
-        }
-        Relationships: []
       }
       wedding_accommodations: {
         Row: {
