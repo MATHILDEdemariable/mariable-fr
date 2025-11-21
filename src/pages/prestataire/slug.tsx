@@ -733,25 +733,6 @@ const SinglePrestataire = () => {
             />
           </DialogContent>
         </Dialog>
-                <div className="space-y-4 w-full mt-4">
-                  <Alert className="bg-wedding-olive/10 border-wedding-olive">
-                    <Tag className="h-4 w-4 text-wedding-olive" />
-                    <AlertDescription className="text-sm">
-                      <strong>🎁 Tarif préférentiel Mariable :</strong> En mentionnant 
-                      "Je viens de Mariable.fr", bénéficiez de{' '}
-                      <strong className="text-wedding-olive">200€ à 500€ de remise</strong> 
-                      sur votre devis.
-                    </AlertDescription>
-                  </Alert>
-                  
-                  <Button
-                    className="w-full bg-wedding-olive hover:bg-wedding-olive/90"
-                    onClick={sendMessage}
-                  >
-                    <MessageSquare className="mr-2 h-4 w-4" />
-                    Contacter et profiter de la remise
-                  </Button>
-                </div>
                 <Dialog open={open} onOpenChange={setOpen}>
                   <DialogContent className="max-w-[95%] md:max-w-[70%] md:max-h-[90vh] overflow-y-auto">
                     <DialogHeader>
