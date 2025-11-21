@@ -362,12 +362,6 @@ const ChecklistIntelligente: React.FC = () => {
                     <Button 
                       variant="outline" 
                       size="sm"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        executeAction(() => {
-                          // L'action sera gérée par le dialog si premium
-                        });
-                      }}
                     >
                       <RotateCcw className="h-4 w-4 mr-2" />
                       Générer une nouvelle liste
@@ -375,15 +369,20 @@ const ChecklistIntelligente: React.FC = () => {
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>
-                      <AlertDialogTitle>Générer une nouvelle checklist</AlertDialogTitle>
+                      <AlertDialogTitle>⚠️ Attention : Nouvelle checklist</AlertDialogTitle>
                       <AlertDialogDescription>
-                        Cela va supprimer votre liste actuelle et vous permettre d'en créer une nouvelle. Cette action est irréversible.
+                        Votre liste actuelle va disparaître. Vous pourrez ensuite saisir 
+                        un nouveau texte pour générer une checklist différente. 
+                        Cette action est irréversible.
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                       <AlertDialogCancel>Annuler</AlertDialogCancel>
-                      <AlertDialogAction onClick={startNewChecklist}>
-                        Confirmer
+                      <AlertDialogAction 
+                        onClick={() => executeAction(startNewChecklist)}
+                        className="bg-wedding-olive hover:bg-wedding-olive/90"
+                      >
+                        Oui, supprimer et recommencer
                       </AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>
