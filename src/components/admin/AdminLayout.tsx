@@ -15,7 +15,8 @@ import {
   BookOpen,
   ExternalLink,
   LogOut,
-  Handshake
+  Handshake,
+  Wrench
 } from 'lucide-react';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 
@@ -117,6 +118,12 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
       href: '/admin/partenariats',
       icon: Handshake,
       current: location.pathname === '/admin/partenariats'
+    },
+    {
+      name: 'Maintenance & Monitoring',
+      href: '/admin/maintenance',
+      icon: Wrench,
+      current: location.pathname === '/admin/maintenance'
     }
   ];
 
