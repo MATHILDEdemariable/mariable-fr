@@ -9,6 +9,7 @@ import VendorContactModal from "@/components/vendors/VendorContactModal";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -22,6 +23,7 @@ import {
   Euro,
   MessageSquare,
   ArrowLeft,
+  Tag,
 } from "lucide-react";
 import {
   Popover,
@@ -499,6 +501,17 @@ const SinglePrestataire = () => {
                   {vendor?.styles && renderStyleBadges()}
                 </div>
               </div>
+
+              <Alert className="bg-wedding-olive/10 border-wedding-olive mb-6">
+                <Tag className="h-4 w-4 text-wedding-olive" />
+                <AlertDescription className="text-sm">
+                  <strong>🎁 Tarif préférentiel Mariable :</strong> En nous contactant 
+                  via ce formulaire ou en mentionnant <strong>"Je viens de Mariable.fr"</strong> 
+                  par téléphone/email, bénéficiez de{' '}
+                  <strong className="text-wedding-olive">200€ à 500€ de remise</strong> sur 
+                  votre devis selon le montant total.
+                </AlertDescription>
+              </Alert>
 
               <Card className="p-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

@@ -256,6 +256,28 @@ const ChecklistIntelligente: React.FC = () => {
     }
   };
 
+  const startNewChecklist = async () => {
+    if (!user) return;
+
+    try {
+      // Supprimer l'ancienne checklist
+      const { error } = await supabase
+        .from('planning_avant_jour_j')
+        .delete()
+        .eq('user_id', user.id);
+
+      if (error) throw error;
+
+      // Reset l'état pour afficher le formulaire de saisie
+      setChecklist(null);
+      setInputText('');
+      toast.success('Vous pouvez maintenant générer une nouvelle checklist');
+    } catch (error) {
+      console.error('Erreur lors de la suppression:', error);
+      toast.error('Impossible de supprimer la checklist');
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -353,14 +375,14 @@ const ChecklistIntelligente: React.FC = () => {
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>
-                      <AlertDialogTitle>Êtes-vous sûr ?</AlertDialogTitle>
+                      <AlertDialogTitle>Générer une nouvelle checklist</AlertDialogTitle>
                       <AlertDialogDescription>
-                        Attention, cela va supprimer votre liste actuelle. Cette action est irréversible.
+                        Cela va supprimer votre liste actuelle et vous permettre d'en créer une nouvelle. Cette action est irréversible.
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                       <AlertDialogCancel>Annuler</AlertDialogCancel>
-                      <AlertDialogAction onClick={resetChecklist}>
+                      <AlertDialogAction onClick={startNewChecklist}>
                         Confirmer
                       </AlertDialogAction>
                     </AlertDialogFooter>
