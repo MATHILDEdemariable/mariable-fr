@@ -733,6 +733,18 @@ const SinglePrestataire = () => {
             />
           </DialogContent>
         </Dialog>
+
+                {/* Alert tarif préférentiel */}
+                <Alert className="bg-wedding-olive/10 border-wedding-olive mt-4 w-full">
+                  <Tag className="h-4 w-4 text-wedding-olive" />
+                  <AlertDescription className="text-sm">
+                    <strong>🎁 Tarif préférentiel Mariable :</strong> En mentionnant 
+                    "Je viens de Mariable.fr", bénéficiez de{' '}
+                    <strong className="text-wedding-olive">200€ à 500€ de remise</strong> 
+                    sur votre devis.
+                  </AlertDescription>
+                </Alert>
+
                 <Dialog open={open} onOpenChange={setOpen}>
                   <DialogContent className="max-w-[95%] md:max-w-[70%] md:max-h-[90vh] overflow-y-auto">
                     <DialogHeader>
