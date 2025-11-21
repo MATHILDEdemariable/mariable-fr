@@ -645,7 +645,7 @@ const SinglePrestataire = () => {
                   <AlertDescription className="text-sm">
                     <strong>🎁 Tarif préférentiel Mariable :</strong> Bénéficiez de{" "}
                     <strong className="text-wedding-olive">200€ à 500€ de remise </strong>
-                    sur votre devis selon le prix total .
+                    sur votre devis selon le prix total via notre formulaire de contact
                   </AlertDescription>
                 </Alert>
 
