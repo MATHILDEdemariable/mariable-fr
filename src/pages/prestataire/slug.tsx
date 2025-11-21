@@ -14,34 +14,13 @@ import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import {
-  MapPin,
-  Users,
-  Star,
-  Award,
-  CalendarCheck,
-  Euro,
-  MessageSquare,
-  ArrowLeft,
-  Tag,
-} from "lucide-react";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { MapPin, Users, Star, Award, CalendarCheck, Euro, MessageSquare, ArrowLeft, Tag } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { toast } from "@/components/ui/use-toast";
 import { Loader2 } from "lucide-react";
 import { se } from "date-fns/locale";
 import { set } from "date-fns";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import RdvForm from "@/components/forms/RdvForm";
 import ContactForm from "@/components/forms/ContactForm";
 import GoogleReviews from "@/components/vendors/GoogleReviews";
@@ -52,8 +31,7 @@ import VendorMoreInfo from "@/components/vendors/VendorMoreInfo";
 import { Prestataire, PrestatairePhoto } from "@/components/admin/types";
 import { PrestataireRow } from "@/components/wedding-day/utils";
 
-type VendorsTrackingPreprod =
-  Database["public"]["Tables"]["vendors_tracking_preprod"]["Row"];
+type VendorsTrackingPreprod = Database["public"]["Tables"]["vendors_tracking_preprod"]["Row"];
 
 interface Package {
   name: string;
@@ -86,23 +64,16 @@ const SinglePrestataire = () => {
   //check if user is connected
   const [session, setSession] = useState<Session | null>(null);
   useEffect(() => {
-    const subscription = supabase.auth.onAuthStateChange(
-      (_event, newSession) => {
-        setSession(newSession);
-      }
-    );
+    const subscription = supabase.auth.onAuthStateChange((_event, newSession) => {
+      setSession(newSession);
+    });
 
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
     });
   }, []);
 
-  const disabledDates = [
-    new Date(2025, 5, 15),
-    new Date(2025, 5, 16),
-    new Date(2025, 5, 17),
-    new Date(2025, 6, 1),
-  ];
+  const disabledDates = [new Date(2025, 5, 15), new Date(2025, 5, 16), new Date(2025, 5, 17), new Date(2025, 6, 1)];
 
   const { data: vendor, isLoading } = useQuery({
     queryKey: ["vendor", slug],
@@ -123,7 +94,7 @@ const SinglePrestataire = () => {
           .select("*, prestataires_photos_preprod(*)")
           .eq("id", slug)
           .maybeSingle();
-        
+
         data = result.data;
         error = result.error;
       }
@@ -253,9 +224,7 @@ const SinglePrestataire = () => {
   const handleDateSelect = (newDate: Date | undefined) => {
     setDate(newDate);
     if (newDate) {
-      const isDisabled = disabledDates.some(
-        (disabled) => disabled.toDateString() === newDate.toDateString()
-      );
+      const isDisabled = disabledDates.some((disabled) => disabled.toDateString() === newDate.toDateString());
       if (isDisabled) {
         toast({
           description: "Cette date n'est pas disponible",
@@ -263,8 +232,7 @@ const SinglePrestataire = () => {
         });
       } else {
         toast({
-          description:
-            "Date disponible ! Vous pouvez poursuivre votre réservation.",
+          description: "Date disponible ! Vous pouvez poursuivre votre réservation.",
         });
       }
     }
@@ -291,10 +259,7 @@ const SinglePrestataire = () => {
 
   const prices = calculateTotal();
 
-  const fetchCurrentRDV = async (
-    userId: string | null | undefined,
-    vendorId: string | null | undefined
-  ) => {
+  const fetchCurrentRDV = async (userId: string | null | undefined, vendorId: string | null | undefined) => {
     if (!userId || !vendorId || vendorId.trim() === "") {
       console.warn("ID(s) manquant(s) pour fetchCurrentRDV", {
         userId,
@@ -368,13 +333,8 @@ const SinglePrestataire = () => {
         <PremiumHeader />
         <div className="container max-w-6xl px-4 py-12 flex justify-center">
           <Card className="p-8 text-center">
-            <h1 className="text-2xl font-serif mb-4">
-              Aucun prestataire sélectionné
-            </h1>
-            <p className="mb-6">
-              Veuillez sélectionner un prestataire depuis notre moteur de
-              recherche.
-            </p>
+            <h1 className="text-2xl font-serif mb-4">Aucun prestataire sélectionné</h1>
+            <p className="mb-6">Veuillez sélectionner un prestataire depuis notre moteur de recherche.</p>
             <Button
               className="bg-wedding-olive hover:bg-wedding-olive/90"
               onClick={() => (window.location.href = "/recherche")}
@@ -408,9 +368,7 @@ const SinglePrestataire = () => {
         <div className="container max-w-6xl px-4 py-12 flex justify-center">
           <Card className="p-8 text-center">
             <h1 className="text-2xl font-serif mb-4">Prestataire non trouvé</h1>
-            <p className="mb-6">
-              Ce prestataire n'existe pas ou a été supprimé.
-            </p>
+            <p className="mb-6">Ce prestataire n'existe pas ou a été supprimé.</p>
             <Button
               className="bg-wedding-olive hover:bg-wedding-olive/90"
               onClick={() => (window.location.href = "/recherche")}
@@ -425,7 +383,10 @@ const SinglePrestataire = () => {
 
   const mainImage =
     photos && photos.length > 0
-      ? photos.find((p) => p.principale)?.thumbnail_url || photos.find((p) => p.principale)?.url || photos[0].thumbnail_url || photos[0].url
+      ? photos.find((p) => p.principale)?.thumbnail_url ||
+        photos.find((p) => p.principale)?.url ||
+        photos[0].thumbnail_url ||
+        photos[0].url
       : "/placeholder.svg";
 
   const renderStyleBadges = () => {
@@ -464,16 +425,12 @@ const SinglePrestataire = () => {
 
       <main className="flex-grow page-content">
         <div className="relative h-[25vh] w-full hidden">
-          <img
-            src={mainImage}
-            alt={vendor?.nom || "Prestataire de mariage"}
-            className="w-full h-full object-cover"
-          />
+          <img src={mainImage} alt={vendor?.nom || "Prestataire de mariage"} className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-black/30" />
         </div>
 
         <div className="container max-w-6xl px-4 py-8">
-          <Button variant="outline" onClick={() => navigate('/professionnelsmariable')} className="mb-4">
+          <Button variant="outline" onClick={() => navigate("/professionnelsmariable")} className="mb-4">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Retour
           </Button>
@@ -485,23 +442,19 @@ const SinglePrestataire = () => {
                   <MapPin className="h-4 w-4" />
                   <span>
                     {vendor?.ville
-                      ? `${vendor.ville}, ${((vendor.regions as any)?.[0] || "")}`
-                      : ((vendor.regions as any)?.[0]) || "Non spécifié"}
+                      ? `${vendor.ville}, ${(vendor.regions as any)?.[0] || ""}`
+                      : (vendor.regions as any)?.[0] || "Non spécifié"}
                   </span>
                 </div>
 
                 <div className="flex flex-wrap gap-2">
-                  <Badge
-                    variant="secondary"
-                    className="flex items-center gap-1"
-                  >
+                  <Badge variant="secondary" className="flex items-center gap-1">
                     <Award className="h-3 w-3" />
                     {vendor?.categorie}
                   </Badge>
                   {vendor?.styles && renderStyleBadges()}
                 </div>
               </div>
-
 
               <Card className="p-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -511,9 +464,7 @@ const SinglePrestataire = () => {
                       <Users className="h-5 w-5 text-wedding-olive" />
                       <div>
                         <p className="font-medium">Capacité</p>
-                        <p className="text-sm text-muted-foreground">
-                          Jusqu'à {vendor.capacite_invites} invités
-                        </p>
+                        <p className="text-sm text-muted-foreground">Jusqu'à {vendor.capacite_invites} invités</p>
                       </div>
                     </div>
                   )}
@@ -522,47 +473,36 @@ const SinglePrestataire = () => {
                     <div>
                       <p className="font-medium">Prix</p>
                       <p className="text-sm text-muted-foreground">
-                        {vendor.categorie === "Traiteur" &&
-                        vendor.prix_par_personne
+                        {vendor.categorie === "Traiteur" && vendor.prix_par_personne
                           ? `À partir de ${vendor.prix_par_personne}€/pers.`
                           : vendor.prix_a_partir_de
-                          ? `À partir de ${vendor.prix_a_partir_de}€`
-                          : "Prix sur demande"}
+                            ? `À partir de ${vendor.prix_a_partir_de}€`
+                            : "Prix sur demande"}
                       </p>
                     </div>
                   </div>
                 </div>
 
                 <p className="mt-4 text-muted-foreground">
-                  {vendor.description ||
-                    "Aucune description disponible pour ce prestataire."}
+                  {vendor.description || "Aucune description disponible pour ce prestataire."}
                 </p>
               </Card>
 
               {packages.length > 0 && (
                 <div className="space-y-4">
                   <h2 className="text-xl font-serif">
-                    {vendor.categorie === "Traiteur"
-                      ? "Nos menus"
-                      : "Nos formules"}
+                    {vendor.categorie === "Traiteur" ? "Nos menus" : "Nos formules"}
                   </h2>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {packages.map((pkg) => (
                       <Card
                         key={pkg.name}
-                        className={`p-4 ${
-                          selectedPackage?.name === pkg.name
-                            ? "border-wedding-olive"
-                            : ""
-                        }`}
+                        className={`p-4 ${selectedPackage?.name === pkg.name ? "border-wedding-olive" : ""}`}
                       >
                         <h3 className="font-medium mb-2">{pkg.name}</h3>
-                        <p className="text-sm text-muted-foreground mb-4">
-                          {pkg.description}
-                        </p>
+                        <p className="text-sm text-muted-foreground mb-4">{pkg.description}</p>
                         <p className="font-medium">
-                          {Math.round(pkg.basePrice)}€
-                          {vendor.categorie === "Traiteur" ? "/pers" : ""}
+                          {Math.round(pkg.basePrice)}€{vendor.categorie === "Traiteur" ? "/pers" : ""}
                         </p>
                       </Card>
                     ))}
@@ -580,10 +520,7 @@ const SinglePrestataire = () => {
               {/* Galerie photo avec visionneur avancé */}
               <div className="space-y-4">
                 <h2 className="text-xl font-serif">Galerie photo</h2>
-                <PhotoGalleryViewer
-                  photos={photos || []}
-                  vendorName={vendor.nom}
-                />
+                <PhotoGalleryViewer photos={photos || []} vendorName={vendor.nom} />
               </div>
 
               {/* Documents utiles */}
@@ -595,43 +532,28 @@ const SinglePrestataire = () => {
                       brochure.url ? (
                         <Card key={brochure.id}>
                           <p>
-                            <a
-                              href={brochure.url}
-                              target="_blank"
-                              className="p-4 block"
-                              rel="noopener noreferrer"
-                            >
+                            <a href={brochure.url} target="_blank" className="p-4 block" rel="noopener noreferrer">
                               {brochure.filename || "Télécharger le document"}
                             </a>
                           </p>
                         </Card>
-                      ) : null
+                      ) : null,
                     )}
                   </div>
                 </div>
               )}
 
               {/* Section Plus d'informations */}
-              <VendorMoreInfo
-                website={vendor.site_web}
-                vendorName={vendor.nom}
-              />
+              <VendorMoreInfo website={vendor.site_web} vendorName={vendor.nom} />
             </div>
             <div className="w-full lg:w-80 space-y-4">
               <Card className="p-4">
-                <h3 className="text-lg font-medium mb-4">
-                  Vérifier les disponibilités
-                </h3>
+                <h3 className="text-lg font-medium mb-4">Vérifier les disponibilités</h3>
 
                 <Popover>
                   <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className="w-full justify-start text-left font-normal"
-                    >
-                      {date
-                        ? date.toLocaleDateString()
-                        : "Sélectionner une date"}
+                    <Button variant="outline" className="w-full justify-start text-left font-normal">
+                      {date ? date.toLocaleDateString() : "Sélectionner une date"}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0" align="start">
@@ -661,23 +583,14 @@ const SinglePrestataire = () => {
                 {packages.length > 0 && (
                   <>
                     <div className="mt-4">
-                      <Label>
-                        {vendor.categorie === "Traiteur" ? "Menu" : "Formule"}
-                      </Label>
+                      <Label>{vendor.categorie === "Traiteur" ? "Menu" : "Formule"}</Label>
                       <RadioGroup
                         value={selectedPackage?.name || ""}
-                        onValueChange={(value) =>
-                          setSelectedPackage(
-                            packages.find((p) => p.name === value) || null
-                          )
-                        }
+                        onValueChange={(value) => setSelectedPackage(packages.find((p) => p.name === value) || null)}
                         className="mt-2"
                       >
                         {packages.map((pkg) => (
-                          <div
-                            key={pkg.name}
-                            className="flex items-center space-x-2"
-                          >
+                          <div key={pkg.name} className="flex items-center space-x-2">
                             <RadioGroupItem value={pkg.name} id={pkg.name} />
                             <Label htmlFor={pkg.name}>{pkg.name}</Label>
                           </div>
@@ -688,9 +601,7 @@ const SinglePrestataire = () => {
                     <div className="mt-6 border-t pt-4 space-y-2">
                       <div className="flex justify-between">
                         <span>
-                          {vendor.categorie === "Traiteur"
-                            ? `Prix du menu (${guests} pers.)`
-                            : "Prix de base"}
+                          {vendor.categorie === "Traiteur" ? `Prix du menu (${guests} pers.)` : "Prix de base"}
                         </span>
                         <span>{Math.round(prices.basePrice)}€</span>
                       </div>
@@ -701,56 +612,47 @@ const SinglePrestataire = () => {
                     </div>
                   </>
                 )}
-                 <Button
-                  variant="outline"
-                  className="w-full mt-4"
-                  onClick={sendMessage}
-                >
+                <Button variant="outline" className="w-full mt-4" onClick={sendMessage}>
                   <MessageSquare className="mr-2 h-4 w-4" />
                   Contacter
                 </Button>
-        {/* Modal de contact prestataire sans connexion */}
-        <VendorContactModal
-          isOpen={openVendorContact}
-          onClose={() => setOpenVendorContact(false)}
-          vendorId={vendorId}
-          vendorName={vendor?.nom || ''}
-        />
-        
-        {/* Ancien modal avec connexion obligatoire - gardé pour RDV */}
-        <Dialog open={openContact} onOpenChange={setOpenContact}>
-          <DialogTrigger asChild></DialogTrigger>
-          <DialogContent className="max-w-[95%] md:max-w-[70%] md:max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>
-                Demande de contact avec {vendor.nom}
-              </DialogTitle>
-            </DialogHeader>
-            <ContactForm
-              prestataire={vendor}
-              user={session ?? session}
-              dialogClose={() => setOpenContact(false)}
-            />
-          </DialogContent>
-        </Dialog>
+                {/* Modal de contact prestataire sans connexion */}
+                <VendorContactModal
+                  isOpen={openVendorContact}
+                  onClose={() => setOpenVendorContact(false)}
+                  vendorId={vendorId}
+                  vendorName={vendor?.nom || ""}
+                />
+
+                {/* Ancien modal avec connexion obligatoire - gardé pour RDV */}
+                <Dialog open={openContact} onOpenChange={setOpenContact}>
+                  <DialogTrigger asChild></DialogTrigger>
+                  <DialogContent className="max-w-[95%] md:max-w-[70%] md:max-h-[90vh] overflow-y-auto">
+                    <DialogHeader>
+                      <DialogTitle>Demande de contact avec {vendor.nom}</DialogTitle>
+                    </DialogHeader>
+                    <ContactForm
+                      prestataire={vendor}
+                      user={session ?? session}
+                      dialogClose={() => setOpenContact(false)}
+                    />
+                  </DialogContent>
+                </Dialog>
 
                 {/* Alert tarif préférentiel */}
                 <Alert className="bg-wedding-olive/10 border-wedding-olive mt-4 w-full">
                   <Tag className="h-4 w-4 text-wedding-olive" />
                   <AlertDescription className="text-sm">
-                    <strong>🎁 Tarif préférentiel Mariable :</strong> En mentionnant 
-                    "Je viens de Mariable.fr", bénéficiez de{' '}
-                    <strong className="text-wedding-olive">200€ à 500€ de remise</strong> 
-                    sur votre devis.
+                    <strong>🎁 Tarif préférentiel Mariable :</strong> Bénéficiez de{" "}
+                    <strong className="text-wedding-olive">200€ à 500€ de remise </strong>
+                    sur votre devis selon le prix total .
                   </AlertDescription>
                 </Alert>
 
                 <Dialog open={open} onOpenChange={setOpen}>
                   <DialogContent className="max-w-[95%] md:max-w-[70%] md:max-h-[90vh] overflow-y-auto">
                     <DialogHeader>
-                      <DialogTitle>
-                        Demande de rendez-vous avec {vendor.nom}
-                      </DialogTitle>
+                      <DialogTitle>Demande de rendez-vous avec {vendor.nom}</DialogTitle>
                     </DialogHeader>
                     <div className="flex flex-col gap-4">
                       <RdvForm
