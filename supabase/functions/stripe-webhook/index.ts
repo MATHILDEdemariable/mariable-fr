@@ -258,7 +258,7 @@ async function handleCheckoutCompleted(event: Stripe.Event, supabaseClient: any)
       subscription_status: 'active',
       stripe_customer_id: session.customer,
       stripe_subscription_id: session.subscription,
-      subscription_expires_at: null,
+      subscription_expires_at: null, // Premium permanent
       updated_at: new Date().toISOString()
     })
     .eq('id', user.id)
@@ -335,7 +335,7 @@ async function handleInvoicePaymentSucceeded(event: Stripe.Event, supabaseClient
       .update({
         subscription_type: 'premium',
         subscription_status: 'active',
-        subscription_expires_at: new Date(invoice.period_end * 1000).toISOString(),
+        subscription_expires_at: null, // Premium permanent
         updated_at: new Date().toISOString()
       })
       .eq('stripe_subscription_id', invoice.subscription)
@@ -418,7 +418,7 @@ async function handleSubscriptionCreated(event: Stripe.Event, supabaseClient: an
       subscription_type: 'premium',
       subscription_status: subscription.status,
       stripe_subscription_id: subscription.id,
-      subscription_expires_at: new Date(subscription.current_period_end * 1000).toISOString(),
+      subscription_expires_at: null, // Premium permanent
       updated_at: new Date().toISOString()
     })
     .eq('id', profile.id);
@@ -440,7 +440,7 @@ async function handleSubscriptionUpdated(event: Stripe.Event, supabaseClient: an
     .update({
       subscription_status: subscription.status,
       subscription_type: subscription.status === 'active' ? 'premium' : 'free',
-      subscription_expires_at: new Date(subscription.current_period_end * 1000).toISOString(),
+      subscription_expires_at: null, // Premium permanent
       updated_at: new Date().toISOString()
     })
     .eq('stripe_subscription_id', subscription.id);
