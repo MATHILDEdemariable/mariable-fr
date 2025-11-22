@@ -102,6 +102,12 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
       current: location.pathname === '/admin/system-check'
     },
     {
+      name: 'Maintenance & Monitoring',
+      href: '/admin/maintenance',
+      icon: Wrench,
+      current: location.pathname === '/admin/maintenance'
+    },
+    {
       name: 'Pages Personnalisées',
       href: '/admin/custom-pages',
       icon: Globe,
@@ -118,12 +124,6 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
       href: '/admin/partenariats',
       icon: Handshake,
       current: location.pathname === '/admin/partenariats'
-    },
-    {
-      name: 'Maintenance & Monitoring',
-      href: '/admin/maintenance',
-      icon: Wrench,
-      current: location.pathname === '/admin/maintenance'
     }
   ];
 
