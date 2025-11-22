@@ -127,14 +127,24 @@ Règles strictes:
     const aiData = await response.json();
     console.log('✅ Lovable AI response received');
 
-    const generatedContent = aiData.choices[0].message.content;
+    let generatedContent = aiData.choices[0].message.content;
+    
+    // Clean markdown code blocks if present
+    generatedContent = generatedContent.trim();
+    if (generatedContent.startsWith('```json')) {
+      generatedContent = generatedContent.replace(/^```json\n/, '').replace(/\n```$/, '');
+    } else if (generatedContent.startsWith('```')) {
+      generatedContent = generatedContent.replace(/^```\n/, '').replace(/\n```$/, '');
+    }
     
     // Parse the JSON response from AI
     let parsedTasks;
     try {
       parsedTasks = JSON.parse(generatedContent);
+      console.log('✅ Successfully parsed AI response');
     } catch (parseError) {
       console.error('❌ Failed to parse AI response:', parseError);
+      console.error('📄 Raw content:', generatedContent.substring(0, 500));
       throw new Error('Invalid AI response format');
     }
 
