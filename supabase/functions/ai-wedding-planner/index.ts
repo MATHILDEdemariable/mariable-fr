@@ -26,28 +26,34 @@ Ton rôle est d'analyser le scénario de mariage fourni et de créer un planning
 INSTRUCTIONS IMPORTANTES :
 - Analyse le scénario utilisateur pour comprendre ses priorités et contraintes
 - Propose un planning cohérent avec des horaires réalistes
-- Inclus les préparatifs J-1 si nécessaire (décoration, livraisons, etc.)
+- Limite-toi à 8-10 tâches ESSENTIELLES maximum
 - Assigne chaque tâche à un rôle approprié (Mariés, Témoins, Wedding Planner, Prestataires, etc.)
 - Respecte les catégories : Arrivée, Préparation, Cérémonie, Cocktail, Réception, Animation, Photos/Vidéos, Logistique, Autre
 - Donne des durées réalistes en minutes
 - Priorise selon l'importance : high, medium, low
 
+IMPÉRATIF - RÉPONSES COURTES :
+- Description : MAX 80 caractères (concis et direct)
+- Notes : MAX 60 caractères (conseil principal seulement)
+- Summary : MAX 150 caractères (résumé ultra-concis)
+- Utilise des phrases courtes et impactantes
+
 FORMAT DE RÉPONSE ATTENDU (JSON uniquement) :
 {
   "tasks": [
     {
-      "title": "Titre de la tâche",
-      "description": "Description détaillée",
+      "title": "Titre court",
+      "description": "Desc max 80 car",
       "start_time": "HH:MM",
       "duration": 60,
       "category": "Préparation",
       "priority": "high",
       "assigned_role": "Mariés",
       "day": "J" ou "J-1",
-      "notes": "Conseils personnalisés"
+      "notes": "Conseil max 60 car"
     }
   ],
-  "summary": "Résumé du planning avec conseils généraux"
+  "summary": "Résumé max 150 caractères"
 }
 
 RÔLES DISPONIBLES : Mariés, Témoin(s), Famille proche, Wedding Planner, Photographe, Vidéaste, DJ/Musiciens, Traiteur, Fleuriste, Coiffeur/Maquilleur, Célébrant, Responsable lieu, Sécurité, Transport, Autre
@@ -62,7 +68,7 @@ Informations complémentaires :
 - Nombre d'invités : ${guestCount || 'Non spécifié'}
 - Heure de cérémonie : ${ceremonyTime || 'Non spécifiée'}
 
-Crée un planning personnalisé basé sur ce scénario. Sois créatif mais pragmatique !`;
+Crée un planning avec 8-10 tâches ESSENTIELLES. Descriptions COURTES (max 80 car). Sois pragmatique et concis !`;
 
     console.log('🤖 Calling Lovable AI Gateway with wedding planner prompt');
 
@@ -78,8 +84,8 @@ Crée un planning personnalisé basé sur ce scénario. Sois créatif mais pragm
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userPrompt }
         ],
-        temperature: 0.7,
-        max_tokens: 4000,
+        temperature: 0.5,
+        max_tokens: 3000,
       }),
     });
 
