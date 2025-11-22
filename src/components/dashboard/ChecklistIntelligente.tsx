@@ -122,8 +122,20 @@ const ChecklistIntelligente: React.FC = () => {
         toast.success('Checklist générée avec succès !');
       }
     } catch (error) {
-      console.error('Erreur lors de la génération:', error);
-      toast.error('Erreur lors de la génération de la checklist');
+      console.error('❌ Error generating checklist:', error);
+      
+      const errorMessage = error?.message || '';
+      let userMessage = 'Une erreur est survenue lors de la génération.';
+      
+      if (errorMessage.includes('Rate limit') || errorMessage.includes('429')) {
+        userMessage = 'Trop de requêtes. Patientez quelques instants et réessayez.';
+      } else if (errorMessage.includes('Crédits') || errorMessage.includes('épuisés') || errorMessage.includes('402')) {
+        userMessage = 'Crédits IA épuisés.';
+      } else if (errorMessage.includes('parse') || errorMessage.includes('Invalid')) {
+        userMessage = 'Erreur de traitement de la réponse IA.';
+      }
+      
+      toast.error(`${userMessage}\n\nSi l'erreur persiste, consultez la rubrique "Un problème ?"`);
     } finally {
       setIsGenerating(false);
     }

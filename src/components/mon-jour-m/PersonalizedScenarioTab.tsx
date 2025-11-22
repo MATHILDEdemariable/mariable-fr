@@ -138,10 +138,23 @@ Instructions spécifiques :
 
     } catch (error) {
       console.error('❌ Error generating personalized planning:', error);
+      
+      const errorMessage = error?.message || '';
+      let userMessage = 'Impossible de générer le planning.';
+      
+      if (errorMessage.includes('Rate limit') || errorMessage.includes('429')) {
+        userMessage = 'Trop de requêtes en cours. Patientez quelques instants.';
+      } else if (errorMessage.includes('Crédits') || errorMessage.includes('épuisés') || errorMessage.includes('402')) {
+        userMessage = 'Crédits IA épuisés.';
+      } else if (errorMessage.includes('parse') || errorMessage.includes('Invalid')) {
+        userMessage = 'Erreur de traitement de la réponse IA.';
+      }
+      
       toast({
         title: "Erreur de génération",
-        description: "Impossible de générer le planning. Vérifiez votre connexion et réessayez.",
-        variant: "destructive"
+        description: `${userMessage}\n\nSi l'erreur persiste, consultez la rubrique "Un problème ?"`,
+        variant: "destructive",
+        duration: 7000
       });
     } finally {
       setIsGenerating(false);
