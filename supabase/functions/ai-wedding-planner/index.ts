@@ -105,21 +105,25 @@ Crée un planning personnalisé basé sur ce scénario. Sois créatif mais pragm
     const data = await response.json();
     console.log('✅ Lovable AI response received');
 
-    const aiResponse = data.choices[0].message.content;
+    let aiResponse = data.choices[0].message.content;
+    
+    // Clean markdown code blocks if present
+    aiResponse = aiResponse.trim();
+    if (aiResponse.startsWith('```json')) {
+      aiResponse = aiResponse.replace(/^```json\n/, '').replace(/\n```$/, '');
+    } else if (aiResponse.startsWith('```')) {
+      aiResponse = aiResponse.replace(/^```\n/, '').replace(/\n```$/, '');
+    }
     
     // Parse JSON response from AI
     let planningData;
     try {
       planningData = JSON.parse(aiResponse);
+      console.log('✅ Successfully parsed AI response');
     } catch (parseError) {
       console.error('❌ Failed to parse AI response as JSON:', parseError);
-      // Fallback: try to extract JSON from response
-      const jsonMatch = aiResponse.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        planningData = JSON.parse(jsonMatch[0]);
-      } else {
-        throw new Error('Failed to parse AI response');
-      }
+      console.error('📄 Raw content (first 500 chars):', aiResponse.substring(0, 500));
+      throw new Error('Failed to parse AI response');
     }
 
     console.log('🎉 Generated planning with', planningData.tasks?.length || 0, 'tasks');
