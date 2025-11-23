@@ -5,6 +5,7 @@ import ChatbotButton from '@/components/ChatbotButton';
 import PremiumHeader from '@/components/home/PremiumHeader';
 import PremiumHeroSection from '@/components/home/PremiumHeroSection';
 import PremiumProcessSection from '@/components/home/PremiumProcessSection';
+import CarnetAdressesInlineSection from '@/components/home/CarnetAdressesInlineSection';
 import PremiumMarketplaceSectionCouple from '@/components/home/PremiumMarketplaceSectionCouple';
 import PremiumToolsSection from '@/components/home/PremiumToolsSection';
 import PremiumCoordinationSection from '@/components/home/PremiumCoordinationSection';
@@ -35,6 +36,9 @@ const LandingCouple = () => {
 
         {/* Section Process 3 Étapes */}
         <PremiumProcessSection />
+
+        {/* Section Carnet d'Adresses Inline - NOUVEAU */}
+        <CarnetAdressesInlineSection />
 
         {/* Section Marketplace Focus - Version Couple avec Modal */}
         <PremiumMarketplaceSectionCouple />
