@@ -156,3 +156,20 @@ export const trackBudgetCalculation = (totalBudget: number, guestCount?: number)
     console.warn('Erreur trackBudgetCalculation:', error);
   }
 };
+
+/**
+ * Track generic events with custom parameters
+ */
+export const trackEvent = (eventName: string, parameters: Record<string, any> = {}) => {
+  try {
+    sendGTMEvent({
+      event: eventName,
+      ...parameters,
+      timestamp: Date.now()
+    });
+    
+    sendGA4Event(eventName, parameters);
+  } catch (error) {
+    console.warn(`Erreur trackEvent (${eventName}):`, error);
+  }
+};
