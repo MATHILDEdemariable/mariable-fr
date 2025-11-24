@@ -1,52 +1,60 @@
-import React from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { CheckSquare, Calculator, Users, Home, FileText } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import React from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { CheckSquare, Calculator, Users, Home, FileText } from "lucide-react";
+import { Link } from "react-router-dom";
 const PremiumToolsSection = () => {
-  const tools = [{
-    icon: CheckSquare,
-    title: "Checklist intelligente",
-    description: "Planning personnalisé selon votre style de mariage",
-    gradient: "from-premium-sage to-premium-sage-medium"
-  }, {
-    icon: Calculator,
-    title: "Gestion budget interactive",
-    description: "Suivez vos dépenses en temps réel",
-    gradient: "from-premium-sage-medium to-premium-sage-light"
-  }, {
-    icon: Users,
-    title: "Calculatrice budget & boissons",
-    description: "Estimations précises pour votre réception",
-    gradient: "from-premium-sage-light to-premium-sage"
-  }, {
-    icon: Users,
-    title: "RSVP & plan de table",
-    description: "Organisez vos invités avec drag & drop et import RSVP",
-    gradient: "from-premium-sage to-premium-sage-light",
-    badge: "BETA"
-  }, {
-    icon: Home,
-    title: "Gestion hébergements",
-    description: "Réservez et suivez les hébergements de vos invités",
-    gradient: "from-premium-sage-medium to-premium-sage"
-  }, {
-    icon: FileText,
-    title: "Stockage documents",
-    description: "Centralisez tous vos documents importants",
-    gradient: "from-premium-sage-light to-premium-sage-medium"
-  }];
-  return <section className="py-24 bg-premium-base">
+  const tools = [
+    {
+      icon: CheckSquare,
+      title: "Checklist intelligente",
+      description: "Planning personnalisé selon votre style de mariage",
+      gradient: "from-premium-sage to-premium-sage-medium",
+    },
+    {
+      icon: Calculator,
+      title: "Gestion budget interactive",
+      description: "Suivez vos dépenses en temps réel",
+      gradient: "from-premium-sage-medium to-premium-sage-light",
+    },
+    {
+      icon: Users,
+      title: "Calculatrice budget & boissons",
+      description: "Estimations précises pour votre réception",
+      gradient: "from-premium-sage-light to-premium-sage",
+    },
+    {
+      icon: Users,
+      title: "RSVP & plan de table",
+      description: "Organisez vos invités avec drag & drop et import RSVP",
+      gradient: "from-premium-sage to-premium-sage-light",
+      badge: "BETA",
+    },
+    {
+      icon: Home,
+      title: "Gestion hébergements",
+      description: "Réservez et suivez les hébergements de vos invités",
+      gradient: "from-premium-sage-medium to-premium-sage",
+    },
+    {
+      icon: FileText,
+      title: "Stockage documents",
+      description: "Centralisez tous vos documents importants",
+      gradient: "from-premium-sage-light to-premium-sage-medium",
+    },
+  ];
+  return (
+    <section className="py-24 bg-premium-base">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <Badge className="mb-4 px-4 py-2 bg-premium-sage-very-light text-premium-sage border-premium-sage-light">
             Inclus pour tous
           </Badge>
-          <h2 className="text-4xl font-bold text-premium-black mb-6 md:text-4xl">Votre espace personnalisé<br />
-            <span className="text-premium-sage">
-              offert
-            </span>
+          <h2 className="text-4xl font-bold text-premium-black mb-6 md:text-4xl">
+            Votre espace personnalisé
+            <br />
+            <span className="text-premium-sage"></span>
           </h2>
           <p className="text-xl text-premium-charcoal max-w-3xl mx-auto">Outils pour organiser votre mariage</p>
         </div>
@@ -54,7 +62,11 @@ const PremiumToolsSection = () => {
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Features */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {tools.map((tool, index) => <Card key={index} className="feature-card group bg-white shadow-lg border-premium-light section-reveal stagger-item">
+            {tools.map((tool, index) => (
+              <Card
+                key={index}
+                className="feature-card group bg-white shadow-lg border-premium-light section-reveal stagger-item"
+              >
                 <CardContent className="p-6">
                   <div className="flex items-start gap-4">
                     <div className={`p-3 rounded-xl bg-gradient-to-r ${tool.gradient} flex-shrink-0`}>
@@ -65,13 +77,12 @@ const PremiumToolsSection = () => {
                         {tool.title}
                         {tool.badge && <Badge className="text-xs bg-premium-sage text-white">{tool.badge}</Badge>}
                       </h3>
-                      <p className="text-premium-charcoal">
-                        {tool.description}
-                      </p>
+                      <p className="text-premium-charcoal">{tool.description}</p>
                     </div>
                   </div>
                 </CardContent>
-              </Card>)}
+              </Card>
+            ))}
           </div>
 
           {/* Mockup Interface */}
@@ -86,7 +97,7 @@ const PremiumToolsSection = () => {
                 </div>
                 <h4 className="text-white font-semibold mt-4">Mon Planning Mariage</h4>
               </div>
-              
+
               {/* Content mockup */}
               <div className="p-6 space-y-4">
                 <div className="flex items-center gap-3">
@@ -115,10 +126,13 @@ const PremiumToolsSection = () => {
         {/* CTA */}
         <div className="text-center mt-16">
           <Link to="/register">
-            <Button size="lg" className="btn-primary text-white px-12 py-4 text-lg font-semibold ripple">Créer un compte</Button>
+            <Button size="lg" className="btn-primary text-white px-12 py-4 text-lg font-semibold ripple">
+              Créer un compte
+            </Button>
           </Link>
         </div>
       </div>
-    </section>;
+    </section>
+  );
 };
 export default PremiumToolsSection;
