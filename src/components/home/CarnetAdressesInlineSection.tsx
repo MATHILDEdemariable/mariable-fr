@@ -5,7 +5,8 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle, Heart, Send, Users, Calendar } from 'lucide-react';
+import { Textarea } from '@/components/ui/textarea';
+import { CheckCircle, Heart, Send, Users, Calendar, MessageSquare } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { trackEvent } from '@/utils/analytics';
@@ -18,6 +19,7 @@ interface FormData {
   nombre_invites: string;
   budget_approximatif: string;
   categories_prestataires: string[];
+  commentaires: string;
 }
 
 const CarnetAdressesInlineSection = () => {
@@ -29,7 +31,8 @@ const CarnetAdressesInlineSection = () => {
     date_mariage: '',
     nombre_invites: '',
     budget_approximatif: '',
-    categories_prestataires: []
+    categories_prestataires: [],
+    commentaires: ''
   });
 
   const regions = [
@@ -43,7 +46,7 @@ const CarnetAdressesInlineSection = () => {
     'Fleuriste', 'DJ/Musiciens', 'Coiffeur/Maquilleur', 'Wedding Planner'
   ];
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
@@ -81,7 +84,8 @@ const CarnetAdressesInlineSection = () => {
           date_mariage: formData.date_mariage || null,
           nombre_invites: formData.nombre_invites || null,
           budget_approximatif: formData.budget_approximatif || null,
-          categories_prestataires: formData.categories_prestataires
+          categories_prestataires: formData.categories_prestataires,
+          commentaires: formData.commentaires || null
         }]);
 
       if (error) throw error;
@@ -225,7 +229,7 @@ const CarnetAdressesInlineSection = () => {
 
                   <div>
                     <Label htmlFor="budget_approximatif" className="text-premium-charcoal font-semibold mb-2">
-                      Budget approximatif
+                      Budget mariage total
                     </Label>
                     <select
                       id="budget_approximatif"
@@ -241,6 +245,22 @@ const CarnetAdressesInlineSection = () => {
                       <option value="Plus de 30 000€">Plus de 30 000€</option>
                     </select>
                   </div>
+                </div>
+
+                {/* Commentaires */}
+                <div>
+                  <Label htmlFor="commentaires" className="text-premium-charcoal font-semibold mb-2 flex items-center gap-2">
+                    <MessageSquare className="h-4 w-4 text-premium-sage" />
+                    Commentaires ou précisions (optionnel)
+                  </Label>
+                  <Textarea
+                    id="commentaires"
+                    name="commentaires"
+                    placeholder="Parlez-nous de vos envies, de votre style de mariage, de vos besoins spécifiques..."
+                    value={formData.commentaires}
+                    onChange={handleInputChange}
+                    className="border-premium-sage/30 focus:border-premium-sage min-h-[100px]"
+                  />
                 </div>
 
                 {/* Catégories de prestataires */}
