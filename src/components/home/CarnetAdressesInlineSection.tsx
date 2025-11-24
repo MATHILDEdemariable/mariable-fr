@@ -124,20 +124,20 @@ const CarnetAdressesInlineSection = () => {
             <h2 className="text-4xl md:text-5xl font-bold text-premium-black mb-4">
               Recevez GRATUITEMENT votre
               <br />
-              <span className="bg-gradient-to-r from-premium-sage via-premium-sage-medium to-premium-sage-light bg-clip-text text-transparent">
+              <span className="text-premium-sage">
                 sélection personnalisée de prestataires
               </span>
             </h2>
             
             <p className="text-xl text-premium-charcoal max-w-3xl mx-auto mb-6">
-              Nos experts vous envoient 5-10 prestataires d'exception triés selon votre région, budget et style sous 48H
+              Nous vous envoyons sous 48H 5 à 10 prestataires triés selon votre région, budget et style
             </p>
 
             {/* Social proof */}
             <div className="flex items-center justify-center gap-2 text-premium-charcoal">
               <Users className="h-5 w-5 text-premium-sage" />
               <p className="text-sm font-medium">
-                ✓ Déjà <span className="font-bold text-premium-sage">847 couples</span> ont reçu leur sélection ce mois-ci
+                ✓ Déjà <span className="font-bold text-premium-sage">400 couples</span> ont reçu leur sélection
               </p>
             </div>
           </div>

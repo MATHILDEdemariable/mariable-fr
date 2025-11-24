@@ -44,7 +44,7 @@ const PremiumToolsSection = () => {
             Inclus pour tous
           </Badge>
           <h2 className="text-4xl font-bold text-premium-black mb-6 md:text-4xl">Votre espace personnalisé<br />
-            <span className="bg-gradient-to-r from-premium-sage via-premium-sage-medium to-premium-sage-light bg-clip-text text-transparent">
+            <span className="text-premium-sage">
               offert
             </span>
           </h2>
