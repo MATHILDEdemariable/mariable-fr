@@ -1,6 +1,8 @@
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { Star, Quote } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Star, Quote, ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 const PremiumTestimonialsSection = () => {
   const testimonials = [{
     id: 1,
@@ -33,7 +35,7 @@ const PremiumTestimonialsSection = () => {
           <h2 className="text-4xl font-bold text-premium-black mb-6 md:text-4xl">
             Ils ont vécu
             <br />
-            <span className="bg-gradient-to-r from-premium-sage via-premium-sage-medium to-premium-sage-light bg-clip-text text-transparent">
+            <span className="text-premium-sage">
               l'expérience Mariable
             </span>
           </h2>
@@ -88,8 +90,20 @@ const PremiumTestimonialsSection = () => {
             </Card>)}
         </div>
 
-        {/* Stats */}
-        
+        {/* CTA après témoignages */}
+        <div className="text-center mt-16">
+          <Link to="/register">
+            <Button 
+              size="lg" 
+              className="btn-primary text-white px-12 py-4 text-lg font-semibold ripple"
+            >
+              Créer mon compte gratuit <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+          </Link>
+          <p className="text-sm text-premium-charcoal mt-4">
+            ✓ Gratuit • ✓ Sans engagement • ✓ En 2 minutes
+          </p>
+        </div>
       </div>
     </section>;
 };
