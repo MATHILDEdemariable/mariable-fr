@@ -25,7 +25,7 @@ interface ParsedGuest {
 const GuestImportDialog: React.FC<GuestImportDialogProps> = ({ isOpen, onClose, onImported }) => {
   const [importing, setImporting] = useState(false);
   const [preview, setPreview] = useState<ParsedGuest[]>([]);
-  const [fileType, setFileType] = useState<'csv' | 'txt' | null>(null);
+  const [fileType, setFileType] = useState<'excel' | 'txt' | null>(null);
   const { toast } = useToast();
 
   const parseCSV = (content: string): ParsedGuest[] => {
@@ -92,7 +92,7 @@ const GuestImportDialog: React.FC<GuestImportDialogProps> = ({ isOpen, onClose, 
         let parsed: ParsedGuest[] = [];
         
         if (file.name.endsWith('.csv') || file.name.endsWith('.xlsx')) {
-          setFileType('csv');
+          setFileType('excel');
           parsed = parseCSV(content);
         } else if (file.name.endsWith('.txt')) {
           setFileType('txt');
