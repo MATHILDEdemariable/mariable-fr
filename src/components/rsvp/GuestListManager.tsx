@@ -8,6 +8,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Upload, Plus, Search, Download, Loader2, Pencil, Trash2, Users } from 'lucide-react';
 import GuestImportDialog from './GuestImportDialog';
 import GuestManualAdd from './GuestManualAdd';
+import GuestEditDialog from './GuestEditDialog';
 
 interface Guest {
   id: string;
@@ -17,6 +18,8 @@ interface Guest {
   guest_phone: string | null;
   guest_address: string | null;
   guest_type: 'adult' | 'child';
+  notes: string | null;
+  rsvp_status: 'pending' | 'confirmed' | 'declined';
   source: string;
   created_at: string;
 }
@@ -27,6 +30,8 @@ const GuestListManager: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isImportOpen, setIsImportOpen] = useState(false);
   const [isAddOpen, setIsAddOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [editingGuest, setEditingGuest] = useState<Guest | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -82,8 +87,46 @@ const GuestListManager: React.FC = () => {
     }
   };
 
+  const handleEdit = (guest: Guest) => {
+    setEditingGuest(guest);
+    setIsEditOpen(true);
+  };
+
+  const handleStatusChange = async (guestId: string, newStatus: 'pending' | 'confirmed' | 'declined') => {
+    try {
+      const { error } = await supabase
+        .from('wedding_guest_list')
+        .update({ rsvp_status: newStatus })
+        .eq('id', guestId);
+
+      if (error) throw error;
+
+      setGuests(guests.map(g => g.id === guestId ? { ...g, rsvp_status: newStatus } : g));
+      toast({
+        title: 'Statut mis à jour',
+        description: 'Le statut de l\'invité a été modifié',
+      });
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour du statut:', error);
+      toast({
+        title: 'Erreur',
+        description: 'Impossible de mettre à jour le statut',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const getStatusBadge = (status: 'pending' | 'confirmed' | 'declined') => {
+    const config = {
+      pending: { label: 'En attente', variant: 'secondary' as const, color: 'bg-yellow-500/10 text-yellow-700 border-yellow-500/20' },
+      confirmed: { label: 'Confirmé', variant: 'default' as const, color: 'bg-green-500/10 text-green-700 border-green-500/20' },
+      declined: { label: 'Absent', variant: 'destructive' as const, color: 'bg-red-500/10 text-red-700 border-red-500/20' },
+    };
+    return config[status];
+  };
+
   const exportToCSV = () => {
-    const headers = ['Prénom', 'Nom', 'Email', 'Téléphone', 'Adresse', 'Type', 'Source', 'Date ajout'];
+    const headers = ['Prénom', 'Nom', 'Email', 'Téléphone', 'Adresse', 'Type', 'Statut', 'Commentaires', 'Source', 'Date ajout'];
     const rows = guests.map(g => [
       g.guest_first_name,
       g.guest_last_name,
@@ -91,6 +134,8 @@ const GuestListManager: React.FC = () => {
       g.guest_phone || '',
       g.guest_address || '',
       g.guest_type === 'adult' ? 'Adulte' : 'Enfant',
+      getStatusBadge(g.rsvp_status).label,
+      g.notes || '',
       g.source,
       new Date(g.created_at).toLocaleDateString('fr-FR'),
     ]);
@@ -136,6 +181,11 @@ const GuestListManager: React.FC = () => {
             {guests.length} invité{guests.length > 1 ? 's' : ''} • 
             {guests.filter(g => g.guest_type === 'adult').length} adulte{guests.filter(g => g.guest_type === 'adult').length > 1 ? 's' : ''} • 
             {guests.filter(g => g.guest_type === 'child').length} enfant{guests.filter(g => g.guest_type === 'child').length > 1 ? 's' : ''}
+          </p>
+          <p className="text-sm text-muted-foreground mt-1">
+            ✅ {guests.filter(g => g.rsvp_status === 'confirmed').length} confirmé{guests.filter(g => g.rsvp_status === 'confirmed').length > 1 ? 's' : ''} • 
+            ⏳ {guests.filter(g => g.rsvp_status === 'pending').length} en attente • 
+            ❌ {guests.filter(g => g.rsvp_status === 'declined').length} absent{guests.filter(g => g.rsvp_status === 'declined').length > 1 ? 's' : ''}
           </p>
         </div>
 
@@ -196,6 +246,8 @@ const GuestListManager: React.FC = () => {
                     <th className="text-left p-4 font-medium">Email</th>
                     <th className="text-left p-4 font-medium">Téléphone</th>
                     <th className="text-left p-4 font-medium">Type</th>
+                    <th className="text-left p-4 font-medium">Statut</th>
+                    <th className="text-left p-4 font-medium">Commentaire</th>
                     <th className="text-left p-4 font-medium">Source</th>
                     <th className="text-right p-4 font-medium">Actions</th>
                   </tr>
@@ -221,6 +273,24 @@ const GuestListManager: React.FC = () => {
                         </Badge>
                       </td>
                       <td className="p-4">
+                        <select
+                          value={guest.rsvp_status}
+                          onChange={(e) => handleStatusChange(guest.id, e.target.value as 'pending' | 'confirmed' | 'declined')}
+                          className={`px-3 py-1 rounded-full text-xs font-medium border cursor-pointer ${getStatusBadge(guest.rsvp_status).color}`}
+                        >
+                          <option value="pending">En attente</option>
+                          <option value="confirmed">Confirmé</option>
+                          <option value="declined">Absent</option>
+                        </select>
+                      </td>
+                      <td className="p-4 text-sm text-muted-foreground max-w-[150px]">
+                        {guest.notes ? (
+                          <span className="truncate block" title={guest.notes}>
+                            {guest.notes}
+                          </span>
+                        ) : '-'}
+                      </td>
+                      <td className="p-4">
                         <Badge variant="outline">
                           {guest.source === 'manual' && 'Manuel'}
                           {guest.source === 'excel' && 'Excel'}
@@ -228,13 +298,22 @@ const GuestListManager: React.FC = () => {
                         </Badge>
                       </td>
                       <td className="p-4 text-right">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleDelete(guest.id)}
-                        >
-                          <Trash2 className="h-4 w-4 text-red-500" />
-                        </Button>
+                        <div className="flex items-center justify-end gap-2">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleEdit(guest)}
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleDelete(guest.id)}
+                          >
+                            <Trash2 className="h-4 w-4 text-red-500" />
+                          </Button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -256,6 +335,18 @@ const GuestListManager: React.FC = () => {
         onClose={() => setIsAddOpen(false)}
         onAdded={loadGuests}
       />
+
+      {editingGuest && (
+        <GuestEditDialog
+          guest={editingGuest}
+          isOpen={isEditOpen}
+          onClose={() => {
+            setIsEditOpen(false);
+            setEditingGuest(null);
+          }}
+          onUpdated={loadGuests}
+        />
+      )}
     </div>
   );
 };

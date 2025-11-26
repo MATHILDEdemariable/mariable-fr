@@ -10,10 +10,23 @@ import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
 import { z } from 'zod';
 
-interface GuestManualAddProps {
+interface Guest {
+  id: string;
+  guest_first_name: string;
+  guest_last_name: string;
+  guest_email: string | null;
+  guest_phone: string | null;
+  guest_address: string | null;
+  guest_type: 'adult' | 'child';
+  notes: string | null;
+  rsvp_status: 'pending' | 'confirmed' | 'declined';
+}
+
+interface GuestEditDialogProps {
+  guest: Guest;
   isOpen: boolean;
   onClose: () => void;
-  onAdded: () => void;
+  onUpdated: () => void;
 }
 
 const guestSchema = z.object({
@@ -24,30 +37,21 @@ const guestSchema = z.object({
   address: z.string().max(300).optional(),
   type: z.enum(['adult', 'child']),
   notes: z.string().max(500).optional(),
+  rsvpStatus: z.enum(['pending', 'confirmed', 'declined']),
 });
 
-const GuestManualAdd: React.FC<GuestManualAddProps> = ({ isOpen, onClose, onAdded }) => {
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [address, setAddress] = useState('');
-  const [guestType, setGuestType] = useState<'adult' | 'child'>('adult');
-  const [notes, setNotes] = useState('');
+const GuestEditDialog: React.FC<GuestEditDialogProps> = ({ guest, isOpen, onClose, onUpdated }) => {
+  const [firstName, setFirstName] = useState(guest.guest_first_name);
+  const [lastName, setLastName] = useState(guest.guest_last_name);
+  const [email, setEmail] = useState(guest.guest_email || '');
+  const [phone, setPhone] = useState(guest.guest_phone || '');
+  const [address, setAddress] = useState(guest.guest_address || '');
+  const [guestType, setGuestType] = useState<'adult' | 'child'>(guest.guest_type);
+  const [notes, setNotes] = useState(guest.notes || '');
+  const [rsvpStatus, setRsvpStatus] = useState<'pending' | 'confirmed' | 'declined'>(guest.rsvp_status);
   const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const { toast } = useToast();
-
-  const resetForm = () => {
-    setFirstName('');
-    setLastName('');
-    setEmail('');
-    setPhone('');
-    setAddress('');
-    setGuestType('adult');
-    setNotes('');
-    setErrors({});
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,17 +65,14 @@ const GuestManualAdd: React.FC<GuestManualAddProps> = ({ isOpen, onClose, onAdde
         address,
         type: guestType,
         notes,
+        rsvpStatus,
       });
 
       setSubmitting(true);
 
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('Non connecté');
-
       const { error } = await supabase
         .from('wedding_guest_list')
-        .insert({
-          user_id: user.id,
+        .update({
           guest_first_name: firstName.trim(),
           guest_last_name: lastName.trim(),
           guest_email: email.trim() || null,
@@ -79,18 +80,18 @@ const GuestManualAdd: React.FC<GuestManualAddProps> = ({ isOpen, onClose, onAdde
           guest_address: address.trim() || null,
           guest_type: guestType,
           notes: notes.trim() || null,
-          source: 'manual',
-        });
+          rsvp_status: rsvpStatus,
+        })
+        .eq('id', guest.id);
 
       if (error) throw error;
 
       toast({
-        title: 'Invité ajouté',
-        description: `${firstName} ${lastName} a été ajouté à la liste`,
+        title: 'Invité modifié',
+        description: `${firstName} ${lastName} a été mis à jour`,
       });
 
-      resetForm();
-      onAdded();
+      onUpdated();
       onClose();
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -102,10 +103,10 @@ const GuestManualAdd: React.FC<GuestManualAddProps> = ({ isOpen, onClose, onAdde
         });
         setErrors(newErrors);
       } else {
-        console.error('Erreur lors de l\'ajout:', error);
+        console.error('Erreur lors de la modification:', error);
         toast({
           title: 'Erreur',
-          description: 'Impossible d\'ajouter l\'invité',
+          description: 'Impossible de modifier l\'invité',
           variant: 'destructive',
         });
       }
@@ -116,9 +117,9 @@ const GuestManualAdd: React.FC<GuestManualAddProps> = ({ isOpen, onClose, onAdde
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Ajouter un invité</DialogTitle>
+          <DialogTitle>Modifier l'invité</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4 py-4">
@@ -128,7 +129,6 @@ const GuestManualAdd: React.FC<GuestManualAddProps> = ({ isOpen, onClose, onAdde
               id="firstName"
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
-              placeholder="Marie"
               required
             />
             {errors.firstName && (
@@ -142,7 +142,6 @@ const GuestManualAdd: React.FC<GuestManualAddProps> = ({ isOpen, onClose, onAdde
               id="lastName"
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
-              placeholder="Dupont"
               required
             />
             {errors.lastName && (
@@ -157,7 +156,6 @@ const GuestManualAdd: React.FC<GuestManualAddProps> = ({ isOpen, onClose, onAdde
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="marie@exemple.com"
             />
             {errors.email && (
               <p className="text-sm text-red-500">{errors.email}</p>
@@ -171,7 +169,6 @@ const GuestManualAdd: React.FC<GuestManualAddProps> = ({ isOpen, onClose, onAdde
               type="tel"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              placeholder="06 12 34 56 78"
             />
           </div>
 
@@ -181,7 +178,6 @@ const GuestManualAdd: React.FC<GuestManualAddProps> = ({ isOpen, onClose, onAdde
               id="address"
               value={address}
               onChange={(e) => setAddress(e.target.value)}
-              placeholder="Rue, Code postal, Ville, Pays"
               rows={3}
             />
           </div>
@@ -205,6 +201,20 @@ const GuestManualAdd: React.FC<GuestManualAddProps> = ({ isOpen, onClose, onAdde
           </div>
 
           <div className="space-y-2">
+            <Label htmlFor="rsvpStatus">Statut de confirmation *</Label>
+            <select
+              id="rsvpStatus"
+              value={rsvpStatus}
+              onChange={(e) => setRsvpStatus(e.target.value as 'pending' | 'confirmed' | 'declined')}
+              className="w-full h-10 px-3 rounded-md border border-input bg-background"
+            >
+              <option value="pending">En attente</option>
+              <option value="confirmed">Confirmé</option>
+              <option value="declined">Absent</option>
+            </select>
+          </div>
+
+          <div className="space-y-2">
             <Label htmlFor="notes">Commentaires</Label>
             <Textarea
               id="notes"
@@ -223,10 +233,10 @@ const GuestManualAdd: React.FC<GuestManualAddProps> = ({ isOpen, onClose, onAdde
               {submitting ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Ajout...
+                  Enregistrement...
                 </>
               ) : (
-                'Ajouter'
+                'Enregistrer'
               )}
             </Button>
           </div>
@@ -236,4 +246,4 @@ const GuestManualAdd: React.FC<GuestManualAddProps> = ({ isOpen, onClose, onAdde
   );
 };
 
-export default GuestManualAdd;
+export default GuestEditDialog;

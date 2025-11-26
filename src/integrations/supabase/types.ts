@@ -3174,6 +3174,7 @@ export type Database = {
           id: string
           invited_to: string[] | null
           notes: string | null
+          rsvp_status: string | null
           source: string | null
           updated_at: string | null
           user_id: string
@@ -3189,6 +3190,7 @@ export type Database = {
           id?: string
           invited_to?: string[] | null
           notes?: string | null
+          rsvp_status?: string | null
           source?: string | null
           updated_at?: string | null
           user_id: string
@@ -3204,6 +3206,7 @@ export type Database = {
           id?: string
           invited_to?: string[] | null
           notes?: string | null
+          rsvp_status?: string | null
           source?: string | null
           updated_at?: string | null
           user_id?: string
