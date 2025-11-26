@@ -179,11 +179,23 @@ const GuestImportDialog: React.FC<GuestImportDialogProps> = ({ isOpen, onClose, 
           {preview.length === 0 ? (
             <>
               <div className="space-y-4">
-                <div>
-                  <Label>Format CSV/Excel</Label>
-                  <p className="text-sm text-muted-foreground mb-2">
-                    Colonnes attendues : Prénom, Nom, Email, Téléphone, Adresse, Type (adulte/enfant)
-                  </p>
+                <div className="space-y-2">
+                  <h3 className="font-medium">📋 Format CSV uniquement</h3>
+                  <div className="text-sm text-muted-foreground space-y-2">
+                    <p className="font-medium">Comment créer votre fichier CSV :</p>
+                    <ol className="list-decimal list-inside space-y-1 ml-2">
+                      <li>Créez votre liste dans Excel ou Google Sheets avec les colonnes suivantes :<br/>
+                        <span className="font-mono text-xs">Prénom | Nom | Email | Téléphone | Adresse | Type (adulte/enfant)</span>
+                      </li>
+                      <li>Enregistrez sous format CSV :
+                        <ul className="list-disc list-inside ml-4 mt-1">
+                          <li>Excel : Fichier → Enregistrer sous → Format CSV (.csv)</li>
+                          <li>Google Sheets : Fichier → Télécharger → Valeurs séparées par des virgules (.csv)</li>
+                        </ul>
+                      </li>
+                      <li>Importez le fichier .csv ici</li>
+                    </ol>
+                  </div>
                 </div>
 
                 <div>
@@ -206,12 +218,12 @@ const GuestImportDialog: React.FC<GuestImportDialogProps> = ({ isOpen, onClose, 
                 <input
                   id="file-upload"
                   type="file"
-                  accept=".csv,.txt,.xlsx"
+                  accept=".csv,.txt"
                   className="hidden"
                   onChange={handleFileUpload}
                 />
                 <p className="text-xs text-muted-foreground mt-2">
-                  CSV, Excel ou TXT (max 5MB)
+                  Fichier CSV ou TXT uniquement (max 5MB)
                 </p>
               </div>
             </>
