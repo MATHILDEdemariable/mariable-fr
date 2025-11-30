@@ -71,8 +71,10 @@ export const useOptimizedVendors = ({
         .order('nom')
         .limit(initialLimit + 1); // +1 pour détecter s'il y a plus de résultats
 
-      // Exclure les coordinateurs
-      query = query.neq('categorie', 'Coordination');
+      // Exclure les coordinateurs sauf si on filtre spécifiquement par Coordination
+      if (filters.category !== 'Coordination') {
+        query = query.neq('categorie', 'Coordination');
+      }
 
       // Filtres de recherche
       if (debouncedSearch) {
