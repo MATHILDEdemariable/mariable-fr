@@ -228,9 +228,9 @@ const ReservationJourM = () => {
                         <div className="flex items-center space-x-2 opacity-50">
                           <RadioGroupItem value="application_seule" id="application_seule" disabled />
                           <Label htmlFor="application_seule" className="flex flex-col cursor-not-allowed">
-                            <span>Application seule (39€)</span>
+                            <span>Application seule (9,9€/mois)</span>
                             <span className="text-sm text-gray-500 font-normal">
-                              Paiement direct - pas de demande nécessaire
+                              Abonnement mensuel - sans engagement
                             </span>
                           </Label>
                         </div>
