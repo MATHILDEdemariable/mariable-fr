@@ -33,8 +33,8 @@ const GuidesPage = () => {
       description: 'Comment choisir et gérer vos prestataires',
       icon: FileText,
       color: 'bg-purple-100 text-purple-600',
-      pdfUrl: null,
-      available: false
+      pdfUrl: '/guide-prestataires.pdf',
+      available: true
     },
     {
       id: 'checklist-mariee',
@@ -42,8 +42,8 @@ const GuidesPage = () => {
       description: 'La liste complète des préparatifs pour la mariée',
       icon: FileText,
       color: 'bg-pink-100 text-pink-600',
-      pdfUrl: null,
-      available: false
+      pdfUrl: '/guide-checklist-mariee.pdf',
+      available: true
     },
     {
       id: 'checklist-proche',
@@ -51,8 +51,8 @@ const GuidesPage = () => {
       description: 'Guide pour les témoins et proches aidants',
       icon: FileText,
       color: 'bg-amber-100 text-amber-600',
-      pdfUrl: null,
-      available: false
+      pdfUrl: '/guide-checklist-proche.pdf',
+      available: true
     }
   ];
 
