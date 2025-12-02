@@ -3261,7 +3261,7 @@ export type Database = {
           created_at: string
           id: string
           milestones: Json
-          progress: number
+          progress: Json
           timeline_data: Json
           title: string
           updated_at: string
@@ -3273,7 +3273,7 @@ export type Database = {
           created_at?: string
           id?: string
           milestones?: Json
-          progress?: number
+          progress?: Json
           timeline_data?: Json
           title: string
           updated_at?: string
@@ -3285,7 +3285,7 @@ export type Database = {
           created_at?: string
           id?: string
           milestones?: Json
-          progress?: number
+          progress?: Json
           timeline_data?: Json
           title?: string
           updated_at?: string
