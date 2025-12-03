@@ -422,6 +422,7 @@ export type Database = {
           budget_approximatif: string | null
           categories_prestataires: Json | null
           commentaires: string | null
+          consent_contact: boolean | null
           created_at: string
           date_mariage: string | null
           email: string
@@ -430,11 +431,13 @@ export type Database = {
           region: string | null
           style_recherche: string | null
           updated_at: string
+          whatsapp: string | null
         }
         Insert: {
           budget_approximatif?: string | null
           categories_prestataires?: Json | null
           commentaires?: string | null
+          consent_contact?: boolean | null
           created_at?: string
           date_mariage?: string | null
           email: string
@@ -443,11 +446,13 @@ export type Database = {
           region?: string | null
           style_recherche?: string | null
           updated_at?: string
+          whatsapp?: string | null
         }
         Update: {
           budget_approximatif?: string | null
           categories_prestataires?: Json | null
           commentaires?: string | null
+          consent_contact?: boolean | null
           created_at?: string
           date_mariage?: string | null
           email?: string
@@ -456,6 +461,7 @@ export type Database = {
           region?: string | null
           style_recherche?: string | null
           updated_at?: string
+          whatsapp?: string | null
         }
         Relationships: []
       }

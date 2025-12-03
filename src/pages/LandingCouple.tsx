@@ -4,11 +4,9 @@ import Footer from '@/components/Footer';
 import ChatbotButton from '@/components/ChatbotButton';
 import PremiumHeader from '@/components/home/PremiumHeader';
 import PremiumHeroSection from '@/components/home/PremiumHeroSection';
-import PremiumProcessSection from '@/components/home/PremiumProcessSection';
+import PremiumConciergerie from '@/components/home/PremiumConciergerie';
 import CarnetAdressesInlineSection from '@/components/home/CarnetAdressesInlineSection';
-
-import PremiumToolsSection from '@/components/home/PremiumToolsSection';
-import PremiumCoordinationSection from '@/components/home/PremiumCoordinationSection';
+import PremiumToolsCoordinationSection from '@/components/home/PremiumToolsCoordinationSection';
 import PremiumTestimonialsSection from '@/components/home/PremiumTestimonialsSection';
 import PremiumFinalCTASection from '@/components/home/PremiumFinalCTASection';
 import { useScrollEffects } from '@/hooks/useScrollEffects';
@@ -34,17 +32,14 @@ const LandingCouple = () => {
         {/* Hero Section Premium */}
         <PremiumHeroSection />
 
-        {/* Section Process 3 Étapes */}
-        <PremiumProcessSection />
+        {/* Section Conciergerie Premium */}
+        <PremiumConciergerie />
 
-        {/* Section Carnet d'Adresses Inline */}
+        {/* Section Carnet d'Adresses Inline (Formulaire) */}
         <CarnetAdressesInlineSection />
 
-        {/* Section Outils Inclus */}
-        <PremiumToolsSection />
-
-        {/* Section Coordination Innovation */}
-        <PremiumCoordinationSection />
+        {/* Section Outils + Coordination fusionnée */}
+        <PremiumToolsCoordinationSection />
 
         {/* Section Témoignages */}
         <PremiumTestimonialsSection />

@@ -18,19 +18,40 @@ interface CarnetAdressesModalProps {
 const CarnetAdressesModal = ({ isOpen, onClose }: CarnetAdressesModalProps) => {
   const [formData, setFormData] = useState({
     email: '',
+    whatsapp: '',
     date_mariage: '',
     region: '',
     nombre_invites: '',
     style_recherche: '',
     budget_approximatif: '',
     categories_prestataires: [] as string[],
-    commentaires: ''
+    commentaires: '',
+    consent_contact: false
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!formData.whatsapp) {
+      toast({
+        title: "Champ requis",
+        description: "Veuillez renseigner votre numéro WhatsApp",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!formData.consent_contact) {
+      toast({
+        title: "Consentement requis",
+        description: "Veuillez accepter d'être contacté pour recevoir votre sélection",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -44,20 +65,22 @@ const CarnetAdressesModal = ({ isOpen, onClose }: CarnetAdressesModalProps) => {
       if (error) throw error;
 
       toast({
-        title: "Demande envoyée !",
-        description: "Vous recevrez votre carnet d'adresses exclusif par email sous 48h.",
+        title: "📲 Nous vous recontactons sur WhatsApp !!",
+        description: "Vous recevrez votre sélection personnalisée sous 48h.",
       });
 
       // Reset form and close modal
       setFormData({
         email: '',
+        whatsapp: '',
         date_mariage: '',
         region: '',
         nombre_invites: '',
         style_recherche: '',
         budget_approximatif: '',
         categories_prestataires: [],
-        commentaires: ''
+        commentaires: '',
+        consent_contact: false
       });
       onClose();
     } catch (error) {
@@ -72,7 +95,7 @@ const CarnetAdressesModal = ({ isOpen, onClose }: CarnetAdressesModalProps) => {
     }
   };
 
-  const handleInputChange = (field: string, value: string) => {
+  const handleInputChange = (field: string, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
@@ -109,6 +132,18 @@ const CarnetAdressesModal = ({ isOpen, onClose }: CarnetAdressesModalProps) => {
               value={formData.email}
               onChange={(e) => handleInputChange('email', e.target.value)}
               placeholder="votre@email.com"
+              required
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="whatsapp">Numéro WhatsApp *</Label>
+            <Input
+              id="whatsapp"
+              type="tel"
+              value={formData.whatsapp}
+              onChange={(e) => handleInputChange('whatsapp', e.target.value)}
+              placeholder="06 12 34 56 78"
               required
             />
           </div>
@@ -231,6 +266,22 @@ const CarnetAdressesModal = ({ isOpen, onClose }: CarnetAdressesModalProps) => {
               placeholder="Précisez vos besoins spécifiques, contraintes, ou toute information qui pourrait nous aider à mieux vous conseiller..."
               rows={3}
             />
+          </div>
+
+          {/* Consentement */}
+          <div className="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg border">
+            <Checkbox
+              id="consent_contact_modal"
+              checked={formData.consent_contact}
+              onCheckedChange={(checked) => handleInputChange('consent_contact', !!checked)}
+              className="mt-0.5"
+            />
+            <Label 
+              htmlFor="consent_contact_modal"
+              className="text-sm font-normal cursor-pointer leading-relaxed"
+            >
+              J'accepte d'être contacté(e) pour l'envoi des informations relatives à l'organisation de mon mariage et aux services Mariable *
+            </Label>
           </div>
 
           <div className="flex gap-3 pt-4">
