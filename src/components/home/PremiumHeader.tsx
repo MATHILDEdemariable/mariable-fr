@@ -2,9 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/Logo';
 import { Link, useNavigate } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
+import { Menu } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { HeaderDropdown, HeaderDropdownMenu, HeaderDropdownItem } from '@/components/HeaderDropdown';
 import { supabase } from '@/integrations/supabase/client';
 
 const PremiumHeader = () => {
@@ -27,22 +26,12 @@ const PremiumHeader = () => {
     return () => subscription.unsubscribe();
   }, []);
 
-  const handleLogin = () => {
-    navigate('/login');
-  };
-
   const handleGetStarted = () => {
     navigate('/register');
   };
 
   const NavLinks = () => (
     <>
-      <Link to="/fonctionnalites" className="text-premium-charcoal hover:text-premium-black transition-colors font-medium">
-        Fonctionnalités
-      </Link>
-      <Link to="/selection" className="text-premium-charcoal hover:text-premium-black transition-colors font-medium">
-        Prestataires
-      </Link>
       <Link to="/prix" className="text-premium-charcoal hover:text-premium-black transition-colors font-medium">
         Tarifs
       </Link>
@@ -78,15 +67,15 @@ const PremiumHeader = () => {
             ) : (
               <>
                 <Button
-                  variant="outline"
-                  onClick={handleLogin}
-                  className="btn-secondary border-premium-sage/30 text-premium-sage hover:bg-premium-sage/5 ripple"
+                  onClick={handleGetStarted}
+                  className="btn-primary text-white ripple"
                 >
-                  Futurs mariés
+                  Créer mon espace
                 </Button>
                 <Button
+                  variant="outline"
                   onClick={() => navigate('/professionnels')}
-                  className="btn-primary text-white ripple"
+                  className="btn-secondary border-premium-sage/30 text-premium-sage hover:bg-premium-sage/5 ripple"
                 >
                   Professionnel
                 </Button>
@@ -104,20 +93,6 @@ const PremiumHeader = () => {
             <SheetContent side="right" className="w-[300px] bg-white">
               <div className="flex flex-col space-y-6 mt-8">
                 <div className="flex flex-col space-y-4">
-                  <Link 
-                    to="/fonctionnalites" 
-                    className="text-premium-charcoal hover:text-premium-black transition-colors font-medium py-2"
-                    onClick={() => setMobileOpen(false)}
-                  >
-                    Fonctionnalités
-                  </Link>
-                  <Link 
-                    to="/selection" 
-                    className="text-premium-charcoal hover:text-premium-black transition-colors font-medium py-2"
-                    onClick={() => setMobileOpen(false)}
-                  >
-                    Prestataires
-                  </Link>
                   <Link 
                     to="/prix" 
                     className="text-premium-charcoal hover:text-premium-black transition-colors font-medium py-2"
@@ -148,21 +123,21 @@ const PremiumHeader = () => {
                   ) : (
                     <>
                       <Button
-                        variant="outline"
                         onClick={() => {
-                          handleLogin();
+                          handleGetStarted();
                           setMobileOpen(false);
                         }}
-                        className="btn-secondary border-premium-sage/30 text-premium-sage hover:bg-premium-sage/5 w-full ripple"
+                        className="btn-primary text-white w-full ripple"
                       >
-                        Futurs mariés
+                        Créer mon espace
                       </Button>
                       <Button
+                        variant="outline"
                         onClick={() => {
                           navigate('/professionnels');
                           setMobileOpen(false);
                         }}
-                        className="btn-primary text-white w-full ripple"
+                        className="btn-secondary border-premium-sage/30 text-premium-sage hover:bg-premium-sage/5 w-full ripple"
                       >
                         Professionnel
                       </Button>

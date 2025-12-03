@@ -6,7 +6,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
-import { CheckCircle, Heart, Send, Users, Calendar, MessageSquare } from 'lucide-react';
+import { CheckCircle, Heart, Send, Users, Calendar, MessageSquare, Phone } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { trackEvent } from '@/utils/analytics';
@@ -14,12 +14,14 @@ import { useNavigate } from 'react-router-dom';
 
 interface FormData {
   email: string;
+  whatsapp: string;
   region: string;
   date_mariage: string;
   nombre_invites: string;
   budget_approximatif: string;
   categories_prestataires: string[];
   commentaires: string;
+  consent_contact: boolean;
 }
 
 const CarnetAdressesInlineSection = () => {
@@ -27,12 +29,14 @@ const CarnetAdressesInlineSection = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState<FormData>({
     email: '',
+    whatsapp: '',
     region: '',
     date_mariage: '',
     nombre_invites: '',
     budget_approximatif: '',
     categories_prestataires: [],
-    commentaires: ''
+    commentaires: '',
+    consent_contact: false
   });
 
   const regions = [
@@ -60,11 +64,25 @@ const CarnetAdressesInlineSection = () => {
     }));
   };
 
+  const handleConsentChange = (checked: boolean) => {
+    setFormData(prev => ({ ...prev, consent_contact: checked }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!formData.email || !formData.region) {
       toast.error('Veuillez renseigner au minimum votre email et votre région');
+      return;
+    }
+
+    if (!formData.whatsapp) {
+      toast.error('Veuillez renseigner votre numéro WhatsApp');
+      return;
+    }
+
+    if (!formData.consent_contact) {
+      toast.error('Veuillez accepter d\'être contacté pour recevoir votre sélection');
       return;
     }
 
@@ -80,12 +98,14 @@ const CarnetAdressesInlineSection = () => {
         .from('carnet_adresses_requests')
         .insert([{
           email: formData.email,
+          whatsapp: formData.whatsapp,
           region: formData.region,
           date_mariage: formData.date_mariage || null,
           nombre_invites: formData.nombre_invites || null,
           budget_approximatif: formData.budget_approximatif || null,
           categories_prestataires: formData.categories_prestataires,
-          commentaires: formData.commentaires || null
+          commentaires: formData.commentaires || null,
+          consent_contact: formData.consent_contact
         }]);
 
       if (error) throw error;
@@ -98,7 +118,7 @@ const CarnetAdressesInlineSection = () => {
         categories: formData.categories_prestataires.join(', ')
       });
 
-      toast.success('🎉 Votre demande a été envoyée ! Vous recevrez votre sélection sous 48H', {
+      toast.success('📲 Nous vous recontactons sur WhatsApp !!', {
         duration: 7000
       });
 
@@ -150,7 +170,7 @@ const CarnetAdressesInlineSection = () => {
           <Card className="border-2 border-premium-sage/20 shadow-2xl">
             <CardContent className="p-8 md:p-12">
               <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Email + Région */}
+                {/* Email + WhatsApp */}
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
                     <Label htmlFor="email" className="text-premium-charcoal font-semibold mb-2 flex items-center gap-2">
@@ -170,24 +190,42 @@ const CarnetAdressesInlineSection = () => {
                   </div>
 
                   <div>
-                    <Label htmlFor="region" className="text-premium-charcoal font-semibold mb-2 flex items-center gap-2">
-                      <CheckCircle className="h-4 w-4 text-premium-sage" />
-                      Région de votre mariage *
+                    <Label htmlFor="whatsapp" className="text-premium-charcoal font-semibold mb-2 flex items-center gap-2">
+                      <Phone className="h-4 w-4 text-premium-sage" />
+                      Numéro WhatsApp *
                     </Label>
-                    <select
-                      id="region"
-                      name="region"
+                    <Input
+                      id="whatsapp"
+                      name="whatsapp"
+                      type="tel"
                       required
-                      value={formData.region}
+                      placeholder="06 12 34 56 78"
+                      value={formData.whatsapp}
                       onChange={handleInputChange}
-                      className="w-full rounded-md border border-premium-sage/30 bg-white px-3 py-2 text-sm focus:border-premium-sage focus:outline-none focus:ring-2 focus:ring-premium-sage/20"
-                    >
-                      <option value="">Sélectionnez une région</option>
-                      {regions.map((region) => (
-                        <option key={region} value={region}>{region}</option>
-                      ))}
-                    </select>
+                      className="border-premium-sage/30 focus:border-premium-sage"
+                    />
                   </div>
+                </div>
+
+                {/* Région */}
+                <div>
+                  <Label htmlFor="region" className="text-premium-charcoal font-semibold mb-2 flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-premium-sage" />
+                    Région de votre mariage *
+                  </Label>
+                  <select
+                    id="region"
+                    name="region"
+                    required
+                    value={formData.region}
+                    onChange={handleInputChange}
+                    className="w-full rounded-md border border-premium-sage/30 bg-white px-3 py-2 text-sm focus:border-premium-sage focus:outline-none focus:ring-2 focus:ring-premium-sage/20"
+                  >
+                    <option value="">Sélectionnez une région</option>
+                    {regions.map((region) => (
+                      <option key={region} value={region}>{region}</option>
+                    ))}
+                  </select>
                 </div>
 
                 {/* Date + Invités + Budget */}
@@ -247,22 +285,6 @@ const CarnetAdressesInlineSection = () => {
                   </div>
                 </div>
 
-                {/* Commentaires */}
-                <div>
-                  <Label htmlFor="commentaires" className="text-premium-charcoal font-semibold mb-2 flex items-center gap-2">
-                    <MessageSquare className="h-4 w-4 text-premium-sage" />
-                    Commentaires ou précisions (optionnel)
-                  </Label>
-                  <Textarea
-                    id="commentaires"
-                    name="commentaires"
-                    placeholder="Parlez-nous de vos envies, de votre style de mariage, de vos besoins spécifiques..."
-                    value={formData.commentaires}
-                    onChange={handleInputChange}
-                    className="border-premium-sage/30 focus:border-premium-sage min-h-[100px]"
-                  />
-                </div>
-
                 {/* Catégories de prestataires */}
                 <div>
                   <Label className="text-premium-charcoal font-semibold mb-4 flex items-center gap-2">
@@ -287,6 +309,38 @@ const CarnetAdressesInlineSection = () => {
                       </div>
                     ))}
                   </div>
+                </div>
+
+                {/* Commentaires */}
+                <div>
+                  <Label htmlFor="commentaires" className="text-premium-charcoal font-semibold mb-2 flex items-center gap-2">
+                    <MessageSquare className="h-4 w-4 text-premium-sage" />
+                    Commentaires ou précisions (optionnel)
+                  </Label>
+                  <Textarea
+                    id="commentaires"
+                    name="commentaires"
+                    placeholder="Parlez-nous de vos envies, de votre style de mariage, de vos besoins spécifiques..."
+                    value={formData.commentaires}
+                    onChange={handleInputChange}
+                    className="border-premium-sage/30 focus:border-premium-sage min-h-[100px]"
+                  />
+                </div>
+
+                {/* Consentement */}
+                <div className="flex items-start space-x-3 p-4 bg-premium-sage/5 rounded-lg border border-premium-sage/20">
+                  <Checkbox
+                    id="consent_contact"
+                    checked={formData.consent_contact}
+                    onCheckedChange={(checked) => handleConsentChange(checked as boolean)}
+                    className="border-premium-sage data-[state=checked]:bg-premium-sage mt-0.5"
+                  />
+                  <label
+                    htmlFor="consent_contact"
+                    className="text-sm leading-relaxed cursor-pointer text-premium-charcoal"
+                  >
+                    J'accepte d'être contacté(e) pour l'envoi des informations relatives à l'organisation de mon mariage et aux services Mariable *
+                  </label>
                 </div>
 
                 {/* CTA Submit */}
