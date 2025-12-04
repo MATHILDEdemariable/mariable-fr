@@ -6,7 +6,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
-import { CheckCircle, Heart, Send, Users, Calendar, MessageSquare, Phone } from 'lucide-react';
+import { CheckCircle, Heart, Send, Users, Calendar, MessageSquare, Phone, Gift, Crown, Check } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { trackEvent } from '@/utils/analytics';
@@ -22,6 +22,7 @@ interface FormData {
   categories_prestataires: string[];
   commentaires: string;
   consent_contact: boolean;
+  type_selection: 'gratuite' | 'premium' | null;
 }
 
 const CarnetAdressesInlineSection = () => {
@@ -36,7 +37,8 @@ const CarnetAdressesInlineSection = () => {
     budget_approximatif: '',
     categories_prestataires: [],
     commentaires: '',
-    consent_contact: false
+    consent_contact: false,
+    type_selection: null
   });
 
   const regions = [
@@ -68,6 +70,10 @@ const CarnetAdressesInlineSection = () => {
     setFormData(prev => ({ ...prev, consent_contact: checked }));
   };
 
+  const handleTypeSelectionChange = (type: 'gratuite' | 'premium') => {
+    setFormData(prev => ({ ...prev, type_selection: type }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -83,6 +89,11 @@ const CarnetAdressesInlineSection = () => {
 
     if (!formData.consent_contact) {
       toast.error('Veuillez accepter d\'être contacté pour recevoir votre sélection');
+      return;
+    }
+
+    if (!formData.type_selection) {
+      toast.error('Veuillez choisir un type de sélection (gratuite ou premium)');
       return;
     }
 
@@ -105,7 +116,8 @@ const CarnetAdressesInlineSection = () => {
           budget_approximatif: formData.budget_approximatif || null,
           categories_prestataires: formData.categories_prestataires,
           commentaires: formData.commentaires || null,
-          consent_contact: formData.consent_contact
+          consent_contact: formData.consent_contact,
+          type_selection: formData.type_selection
         }]);
 
       if (error) throw error;
@@ -114,6 +126,7 @@ const CarnetAdressesInlineSection = () => {
       trackEvent('carnet_adresses_requested', {
         region: formData.region,
         budget: formData.budget_approximatif,
+        type_selection: formData.type_selection,
         categories_count: formData.categories_prestataires.length,
         categories: formData.categories_prestataires.join(', ')
       });
@@ -142,19 +155,19 @@ const CarnetAdressesInlineSection = () => {
           {/* Header avec social proof */}
           <div className="text-center mb-12">
             <Badge className="mb-4 px-4 py-2 bg-premium-sage text-white border-0">
-              ✨ 100% Gratuit
+              ✨ Sélection personnalisée
             </Badge>
             
             <h2 className="text-4xl md:text-5xl font-bold text-premium-black mb-4">
-              Recevez GRATUITEMENT votre
+              Recevez votre
               <br />
               <span className="text-premium-sage">
-                sélection personnalisée de prestataires
+                sélection de prestataires
               </span>
             </h2>
             
             <p className="text-xl text-premium-charcoal max-w-3xl mx-auto mb-6">
-              Nous vous envoyons sous 48H 5 à 10 prestataires triés selon votre région, budget et style
+              Choisissez votre formule et recevez une sélection adaptée à vos besoins
             </p>
 
             {/* Social proof */}
@@ -170,6 +183,98 @@ const CarnetAdressesInlineSection = () => {
           <Card className="border-2 border-premium-sage/20 shadow-2xl">
             <CardContent className="p-8 md:p-12">
               <form onSubmit={handleSubmit} className="space-y-6">
+
+                {/* Type de sélection */}
+                <div className="space-y-4">
+                  <Label className="text-premium-charcoal font-semibold mb-4 flex items-center gap-2 text-lg">
+                    Choisissez votre formule *
+                  </Label>
+                  
+                  <div className="grid md:grid-cols-2 gap-4">
+                    {/* Sélection Gratuite */}
+                    <div
+                      onClick={() => handleTypeSelectionChange('gratuite')}
+                      className={`cursor-pointer p-6 rounded-xl border-2 transition-all duration-300 ${
+                        formData.type_selection === 'gratuite'
+                          ? 'border-premium-sage bg-premium-sage/5 shadow-lg'
+                          : 'border-premium-sage/20 hover:border-premium-sage/40 bg-white'
+                      }`}
+                    >
+                      <div className="flex items-start gap-4">
+                        <div className={`p-3 rounded-full ${
+                          formData.type_selection === 'gratuite' 
+                            ? 'bg-premium-sage text-white' 
+                            : 'bg-premium-sage/10 text-premium-sage'
+                        }`}>
+                          <Gift className="h-6 w-6" />
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-2">
+                            <h4 className="font-bold text-premium-black text-lg">Sélection gratuite</h4>
+                            <Badge className="bg-green-500 text-white text-xs">GRATUIT</Badge>
+                          </div>
+                          <ul className="space-y-1 text-sm text-premium-charcoal">
+                            <li className="flex items-center gap-2">
+                              <Check className="h-4 w-4 text-premium-sage" />
+                              5-8 prestataires triés selon vos critères
+                            </li>
+                            <li className="flex items-center gap-2">
+                              <Check className="h-4 w-4 text-premium-sage" />
+                              Envoyés sous 48H par email et WhatsApp
+                            </li>
+                          </ul>
+                        </div>
+                        {formData.type_selection === 'gratuite' && (
+                          <CheckCircle className="h-6 w-6 text-premium-sage" />
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Sélection Premium */}
+                    <div
+                      onClick={() => handleTypeSelectionChange('premium')}
+                      className={`cursor-pointer p-6 rounded-xl border-2 transition-all duration-300 ${
+                        formData.type_selection === 'premium'
+                          ? 'border-premium-sage bg-premium-sage/5 shadow-lg'
+                          : 'border-premium-sage/20 hover:border-premium-sage/40 bg-white'
+                      }`}
+                    >
+                      <div className="flex items-start gap-4">
+                        <div className={`p-3 rounded-full ${
+                          formData.type_selection === 'premium' 
+                            ? 'bg-premium-sage text-white' 
+                            : 'bg-premium-sage/10 text-premium-sage'
+                        }`}>
+                          <Crown className="h-6 w-6" />
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-2">
+                            <h4 className="font-bold text-premium-black text-lg">Sélection premium</h4>
+                            <Badge className="bg-premium-sage text-white text-xs">69€</Badge>
+                          </div>
+                          <ul className="space-y-1 text-sm text-premium-charcoal">
+                            <li className="flex items-center gap-2">
+                              <Check className="h-4 w-4 text-premium-sage" />
+                              Disponibilité vérifiée à votre date
+                            </li>
+                            <li className="flex items-center gap-2">
+                              <Check className="h-4 w-4 text-premium-sage" />
+                              Comparatif détaillé des offres
+                            </li>
+                            <li className="flex items-center gap-2">
+                              <Check className="h-4 w-4 text-premium-sage" />
+                              Accompagnement personnalisé WhatsApp
+                            </li>
+                          </ul>
+                        </div>
+                        {formData.type_selection === 'premium' && (
+                          <CheckCircle className="h-6 w-6 text-premium-sage" />
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
                 {/* Email + WhatsApp */}
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
@@ -355,12 +460,12 @@ const CarnetAdressesInlineSection = () => {
                       'Envoi en cours...'
                     ) : (
                       <>
-                        Recevoir ma sélection gratuite <Send className="ml-2 h-5 w-5" />
+                        Recevoir ma sélection <Send className="ml-2 h-5 w-5" />
                       </>
                     )}
                   </Button>
                   <p className="text-sm text-premium-charcoal/70 mt-4">
-                    ✓ Sans engagement • ✓ Réponse sous 48H • ✓ 100% gratuit
+                    ✓ Sans engagement • ✓ Réponse sous 48H
                   </p>
                 </div>
               </form>

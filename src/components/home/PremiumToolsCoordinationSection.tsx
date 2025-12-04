@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { CheckSquare, Calculator, Users, Home, FileText, Smartphone, Wifi, Clock, ArrowRight } from 'lucide-react';
+import { CheckSquare, Calculator, Users, Home, FileText, Smartphone, Wifi, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const PremiumToolsCoordinationSection = () => {
@@ -42,31 +42,8 @@ const PremiumToolsCoordinationSection = () => {
     },
   ];
 
-  const coordinationFeatures = [
-    {
-      icon: Smartphone,
-      title: "Application mobile sans téléchargement",
-      description: "Interface intuitive accessible partout"
-    },
-    {
-      icon: Wifi,
-      title: "Synchronisation temps réel",
-      description: "Toute l'équipe connectée instantanément"
-    },
-    {
-      icon: Users,
-      title: "Coordination équipe",
-      description: "Chaque intervenant sait quoi faire"
-    },
-    {
-      icon: Clock,
-      title: "Planning automatisé",
-      description: "Timing parfait pour chaque moment"
-    }
-  ];
-
   return (
-    <section className="py-24 bg-premium-base">
+    <section id="premium-tools-section" className="py-24 bg-premium-base">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <Badge className="mb-4 px-4 py-2 bg-premium-sage-very-light text-premium-sage border-premium-sage-light">
@@ -198,29 +175,10 @@ const PremiumToolsCoordinationSection = () => {
               </div>
             </div>
 
-            {/* Features list */}
-            <div className="space-y-4">
-              {coordinationFeatures.map((feature, index) => (
-                <div key={index} className="flex items-start gap-3">
-                  <div className="p-2 bg-gradient-to-r from-premium-sage to-premium-sage-medium rounded-lg flex-shrink-0">
-                    <feature.icon className="h-4 w-4 text-white" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-premium-black text-sm">
-                      {feature.title}
-                    </h4>
-                    <p className="text-premium-charcoal text-xs">
-                      {feature.description}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-
             {/* Demo button */}
             <Button 
               variant="outline"
-              className="mt-6 w-full border-2 border-premium-sage text-premium-sage hover:bg-premium-sage hover:text-white"
+              className="w-full border-2 border-premium-sage text-premium-sage hover:bg-premium-sage hover:text-white"
               onClick={() => setIsModalOpen(true)}
             >
               Voir la démo

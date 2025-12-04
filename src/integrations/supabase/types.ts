@@ -430,6 +430,7 @@ export type Database = {
           nombre_invites: string | null
           region: string | null
           style_recherche: string | null
+          type_selection: string | null
           updated_at: string
           whatsapp: string | null
         }
@@ -445,6 +446,7 @@ export type Database = {
           nombre_invites?: string | null
           region?: string | null
           style_recherche?: string | null
+          type_selection?: string | null
           updated_at?: string
           whatsapp?: string | null
         }
@@ -460,6 +462,7 @@ export type Database = {
           nombre_invites?: string | null
           region?: string | null
           style_recherche?: string | null
+          type_selection?: string | null
           updated_at?: string
           whatsapp?: string | null
         }
