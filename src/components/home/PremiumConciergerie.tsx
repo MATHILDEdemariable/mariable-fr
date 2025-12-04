@@ -3,50 +3,11 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { Sparkles, Gift, Search, Clock, Check, ArrowRight, Star } from 'lucide-react';
+import { Sparkles, Gift, Search, Clock, Check, ArrowRight, Star, Wrench } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const PremiumConciergerie = () => {
   const [isPremiumModalOpen, setIsPremiumModalOpen] = useState(false);
-
-  const services = [
-    {
-      id: 1,
-      icon: Gift,
-      title: "Sélection personnalisée",
-      subtitle: "GRATUIT",
-      description: "5-8 prestataires triés selon vos critères",
-      features: [
-        "Recommandations selon votre région",
-        "Adaptées à votre budget",
-        "Envoyées sous 48H",
-        "Par email et WhatsApp"
-      ],
-      cta: "Recevoir ma sélection",
-      ctaLink: "#carnet-adresses-section",
-      gradient: "from-premium-sage to-premium-sage-medium",
-      badge: "GRATUIT",
-      badgeColor: "bg-green-500"
-    },
-    {
-      id: 2,
-      icon: Search,
-      title: "Sélection sur mesure +",
-      subtitle: "69€",
-      description: "Recherche approfondie avec vérification des disponibilités",
-      features: [
-        "Vérification disponibilité à votre date",
-        "Contact direct avec les prestataires",
-        "Comparatif détaillé des offres",
-        "Accompagnement personnalisé"
-      ],
-      cta: "Faire une demande",
-      ctaAction: () => setIsPremiumModalOpen(true),
-      gradient: "from-amber-500 to-orange-500",
-      badge: "PREMIUM",
-      badgeColor: "bg-amber-500"
-    }
-  ];
 
   const scrollToForm = () => {
     const element = document.getElementById('carnet-adresses-section');
@@ -55,23 +16,67 @@ const PremiumConciergerie = () => {
     }
   };
 
+  const scrollToTools = () => {
+    const element = document.getElementById('premium-tools-section');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const services = [
+    {
+      id: 1,
+      icon: Search,
+      title: "Trouver mes prestataires",
+      description: "Notre équipe sélectionne pour vous les meilleurs prestataires de votre région",
+      features: [
+        "Sélection gratuite sous 48H",
+        "5-8 prestataires triés",
+        "Adaptée à votre budget",
+        "Option premium avec vérification disponibilités"
+      ],
+      cta: "Recevoir ma sélection",
+      ctaAction: scrollToForm,
+      gradient: "from-premium-sage to-premium-sage-medium",
+      badge: "CONCIERGERIE",
+      badgeColor: "bg-premium-sage"
+    },
+    {
+      id: 2,
+      icon: Wrench,
+      title: "Utiliser les outils",
+      description: "Tous les outils pour organiser votre mariage et coordonner le jour J",
+      features: [
+        "Checklist & retroplanning",
+        "Gestion du budget",
+        "RSVP & plan de table",
+        "App coordination Jour J"
+      ],
+      cta: "Découvrir les outils",
+      ctaAction: scrollToTools,
+      gradient: "from-premium-sage-medium to-premium-sage-light",
+      badge: "100% GRATUIT",
+      badgeColor: "bg-premium-sage-medium"
+    }
+  ];
+
   return (
     <section id="premium-conciergerie-section" className="py-24 bg-premium-warm">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <Badge className="mb-4 px-4 py-2 bg-premium-sage-very-light text-premium-sage border-premium-sage-light">
             <Sparkles className="h-4 w-4 mr-2 inline" />
-            Conciergerie Premium
+            Comment ça marche
           </Badge>
           
           <h2 className="text-4xl font-bold text-premium-black mb-4 md:text-5xl">
-            Trouvez vos prestataires
+            Deux façons d'organiser
             <br />
-            <span className="text-premium-sage">sans effort</span>
+            <span className="text-premium-sage">votre mariage</span>
           </h2>
           
           <p className="text-xl text-premium-charcoal max-w-3xl mx-auto">
-            Notre équipe sélectionne pour vous les meilleurs prestataires de votre région
+            Trouvez vos prestataires avec notre conciergerie ou utilisez nos outils de planification
           </p>
         </div>
 
@@ -99,9 +104,6 @@ const PremiumConciergerie = () => {
                     <h3 className="text-2xl font-bold text-premium-black">
                       {service.title}
                     </h3>
-                    <p className="text-3xl font-bold text-premium-sage mt-1">
-                      {service.subtitle}
-                    </p>
                   </div>
                 </div>
 
@@ -121,21 +123,12 @@ const PremiumConciergerie = () => {
                 </ul>
 
                 {/* CTA */}
-                {service.ctaLink ? (
-                  <Button 
-                    onClick={scrollToForm}
-                    className={`w-full bg-gradient-to-r ${service.gradient} text-white hover:opacity-90 py-6 text-lg font-semibold`}
-                  >
-                    {service.cta} <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
-                ) : (
-                  <Button 
-                    onClick={service.ctaAction}
-                    className={`w-full bg-gradient-to-r ${service.gradient} text-white hover:opacity-90 py-6 text-lg font-semibold`}
-                  >
-                    {service.cta} <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
-                )}
+                <Button 
+                  onClick={service.ctaAction}
+                  className={`w-full bg-gradient-to-r ${service.gradient} text-white hover:opacity-90 py-6 text-lg font-semibold`}
+                >
+                  {service.cta} <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
               </CardContent>
             </Card>
           ))}
@@ -157,73 +150,6 @@ const PremiumConciergerie = () => {
           </div>
         </div>
       </div>
-
-      {/* Modal Premium 69€ */}
-      <Dialog open={isPremiumModalOpen} onOpenChange={setIsPremiumModalOpen}>
-        <DialogContent className="max-w-lg">
-          <DialogHeader>
-            <DialogTitle className="text-2xl font-bold text-center">
-              Sélection sur mesure + 
-            </DialogTitle>
-            <DialogDescription className="text-center text-lg">
-              Service premium à 69€
-            </DialogDescription>
-          </DialogHeader>
-          
-          <div className="space-y-6 mt-4">
-            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-              <h4 className="font-semibold text-amber-800 mb-2">Ce service inclut :</h4>
-              <ul className="space-y-2 text-amber-700">
-                <li className="flex items-center gap-2">
-                  <Check className="h-4 w-4" />
-                  Recherche approfondie de prestataires
-                </li>
-                <li className="flex items-center gap-2">
-                  <Check className="h-4 w-4" />
-                  Vérification des disponibilités à votre date
-                </li>
-                <li className="flex items-center gap-2">
-                  <Check className="h-4 w-4" />
-                  Contact direct avec les prestataires
-                </li>
-                <li className="flex items-center gap-2">
-                  <Check className="h-4 w-4" />
-                  Comparatif détaillé et recommandations
-                </li>
-                <li className="flex items-center gap-2">
-                  <Check className="h-4 w-4" />
-                  Accompagnement personnalisé par WhatsApp
-                </li>
-              </ul>
-            </div>
-
-            <p className="text-center text-premium-charcoal">
-              Pour bénéficier de ce service, contactez-nous directement :
-            </p>
-
-            <div className="flex flex-col gap-3">
-              <a 
-                href="https://wa.me/33612345678?text=Bonjour, je souhaite bénéficier de la sélection sur mesure +" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="w-full"
-              >
-                <Button className="w-full bg-green-500 hover:bg-green-600 text-white py-6 text-lg font-semibold">
-                  Contacter par WhatsApp
-                </Button>
-              </a>
-              
-              <Button 
-                variant="outline" 
-                onClick={() => setIsPremiumModalOpen(false)}
-                className="w-full"
-              >
-                Fermer
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
     </section>
   );
 };
