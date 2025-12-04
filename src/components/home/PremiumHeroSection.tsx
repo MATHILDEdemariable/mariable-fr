@@ -22,7 +22,7 @@ const PremiumHeroSection = () => {
 
 
         <br />
-          ​
+          ​et profitez du jour-J   
   
         </h1>
         
