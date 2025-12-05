@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import VideoBackground from '@/components/VideoBackground';
 const PremiumHeroSection = () => {
   const navigate = useNavigate();
-  return <VideoBackground videoUrl="https://bgidfcqktsttzlwlumtz.supabase.co/storage/v1/object/public/background-videos//freepik__wideangle-shot-a-joyful-couple-dances-at-their-wed__74093%20(1).mp4" className="h-screen flex items-center justify-center">
+  return <VideoBackground videoUrl="https://bgidfcqktsttzlwlumtz.supabase.co/storage/v1/object/public/background-videos/freepik__wideangle-shot-a-joyful-couple-dances-at-their-wed__74093%20(1).mp4" className="h-screen flex items-center justify-center">
       <div className="relative z-20 text-center max-w-6xl mx-auto px-4">
         <h1 className="text-3xl font-extrabold text-white mb-6 leading-tight md:text-4xl lg:text-5xl drop-shadow-lg">Créez le mariage qui vous ressemble
 

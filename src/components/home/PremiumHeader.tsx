@@ -30,17 +30,6 @@ const PremiumHeader = () => {
     navigate('/register');
   };
 
-  const NavLinks = () => (
-    <>
-      <Link to="/prix" className="text-premium-charcoal hover:text-premium-black transition-colors font-medium">
-        Tarifs
-      </Link>
-      <Link to="/conseilsmariage" className="text-premium-charcoal hover:text-premium-black transition-colors font-medium">
-        Conseils
-      </Link>
-    </>
-  );
-
   return (
     <header className="site-header w-full bg-white border-b border-gray-200 transition-all duration-300">
       <div className="container mx-auto px-4">
@@ -49,11 +38,6 @@ const PremiumHeader = () => {
           <Link to="/" className="flex items-center">
             <Logo />
           </Link>
-
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
-            <NavLinks />
-          </nav>
 
           {/* Desktop CTAs */}
           <div className="hidden md:flex items-center space-x-4">
@@ -70,7 +54,7 @@ const PremiumHeader = () => {
                   onClick={handleGetStarted}
                   className="btn-primary text-white ripple"
                 >
-                  Créer mon espace
+                  Créer mon mariage
                 </Button>
                 <Button
                   variant="outline"
@@ -92,24 +76,7 @@ const PremiumHeader = () => {
             </SheetTrigger>
             <SheetContent side="right" className="w-[300px] bg-white">
               <div className="flex flex-col space-y-6 mt-8">
-                <div className="flex flex-col space-y-4">
-                  <Link 
-                    to="/prix" 
-                    className="text-premium-charcoal hover:text-premium-black transition-colors font-medium py-2"
-                    onClick={() => setMobileOpen(false)}
-                  >
-                    Tarifs
-                  </Link>
-                  <Link 
-                    to="/conseilsmariage" 
-                    className="text-premium-charcoal hover:text-premium-black transition-colors font-medium py-2"
-                    onClick={() => setMobileOpen(false)}
-                  >
-                    Conseils
-                  </Link>
-                </div>
-
-                <div className="flex flex-col space-y-3 pt-6 border-t border-premium-light">
+                <div className="flex flex-col space-y-3">
                   {isLoggedIn ? (
                     <Button
                       onClick={() => {
@@ -129,7 +96,7 @@ const PremiumHeader = () => {
                         }}
                         className="btn-primary text-white w-full ripple"
                       >
-                        Créer mon espace
+                        Créer mon mariage
                       </Button>
                       <Button
                         variant="outline"
