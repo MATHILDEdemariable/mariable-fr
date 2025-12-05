@@ -22,13 +22,13 @@ const PremiumHeroSection = () => {
 
 
         <br />
-          ​et profitez du jour-J   
+          ​Vivez un moment unique               
   
         </h1>
         
         <p className="text-xl md:text-2xl text-white/90 mb-8 font-light leading-relaxed drop-shadow-md">
           
-​Imaginez, organisez et vivez un moment aussi unique que votre couple.
+​Organisez vous-même un événement exceptionnel                       
 
         </p>
         
