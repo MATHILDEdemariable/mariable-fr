@@ -28,7 +28,7 @@ const PremiumConciergerie = () => {
     icon: Search,
     title: "Trouver mes prestataires",
     description: "Notre équipe sélectionne pour vous les meilleurs prestataires de votre région",
-    features: ["Sélection gratuite sous 48H", "5-8 prestataires triés", "Adaptée à votre budget", "Option premium avec vérification disponibilités"],
+    features: ["Sélection gratuite sous 48H", "Une dizaine de prestataires triés sur le volet", "Adaptée à votre budget", "Option premium avec vérification disponibilités"],
     cta: "Recevoir ma sélection",
     ctaAction: scrollToForm,
     gradient: "from-premium-sage to-premium-sage-medium",
