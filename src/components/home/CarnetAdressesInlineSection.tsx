@@ -187,7 +187,7 @@ const CarnetAdressesInlineSection = () => {
                             <Badge className="bg-green-500 text-white text-xs">GRATUIT</Badge>
                           </div>
                           <ul className="space-y-1 text-sm text-premium-charcoal">
-                            <li className="flex items-center gap-2">Liste de prestataires de votre région triés sur le volet<Check className="h-4 w-4 text-premium-sage" />
+                            <li className="flex items-center gap-2">​<Check className="h-4 w-4 text-premium-sage" />
                               Liste de prestataires triés sur le volet                                                                               
                             </li>
                             <li className="flex items-center gap-2">
