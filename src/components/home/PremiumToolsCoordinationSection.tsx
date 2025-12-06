@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { CheckSquare, Calculator, Users, Home, FileText, Smartphone, Wifi, ArrowRight } from 'lucide-react';
+import { CheckSquare, Calculator, Users, Search, FileText, Smartphone, Wifi, ArrowRight, Sparkles, PlayCircle, MessageCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const PremiumToolsCoordinationSection = () => {
@@ -18,7 +18,7 @@ const PremiumToolsCoordinationSection = () => {
     {
       icon: Calculator,
       title: "Gestion budget",
-      description: "Suivez vos dépenses en temps réel",
+      description: "Calculatrice budget & boissons incluses",
     },
     {
       icon: Users,
@@ -26,9 +26,9 @@ const PremiumToolsCoordinationSection = () => {
       description: "Organisez vos invités facilement",
     },
     {
-      icon: Home,
-      title: "Gestion hébergements",
-      description: "Réservez pour vos invités",
+      icon: Search,
+      title: "Liste prestataires standards",
+      description: "Parcourez nos prestataires recommandés",
     },
     {
       icon: FileText,
@@ -88,6 +88,22 @@ const PremiumToolsCoordinationSection = () => {
                   </CardContent>
                 </Card>
               ))}
+            </div>
+
+            {/* 3 points clés */}
+            <div className="flex flex-wrap justify-center gap-3 mt-6">
+              <div className="flex items-center gap-2 bg-premium-sage/10 px-4 py-2 rounded-full">
+                <Sparkles className="h-4 w-4 text-premium-sage" />
+                <span className="text-sm text-premium-charcoal font-medium">Dopé à l'IA</span>
+              </div>
+              <div className="flex items-center gap-2 bg-premium-sage/10 px-4 py-2 rounded-full">
+                <PlayCircle className="h-4 w-4 text-premium-sage" />
+                <span className="text-sm text-premium-charcoal font-medium">Tutos explicatifs inclus</span>
+              </div>
+              <div className="flex items-center gap-2 bg-premium-sage/10 px-4 py-2 rounded-full">
+                <MessageCircle className="h-4 w-4 text-premium-sage" />
+                <span className="text-sm text-premium-charcoal font-medium">Support WhatsApp inclus</span>
+              </div>
             </div>
 
             {/* CTA Créer compte */}

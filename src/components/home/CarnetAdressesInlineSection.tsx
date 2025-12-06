@@ -213,12 +213,29 @@ const CarnetAdressesInlineSection = () => {
                             <Badge className="bg-premium-sage text-white text-xs">69€</Badge>
                           </div>
                           <ul className="space-y-1 text-sm text-premium-charcoal">
-                            
-                            <li className="flex items-center gap-2">En plus : un comparatif détaillé des offres (prix, formules)<Check className="h-4 w-4 text-premium-sage" />
-                              Comparatif détaillé des offres (prix, formules)  
+                            <li className="flex items-center gap-2">
+                              <Check className="h-4 w-4 text-premium-sage flex-shrink-0" />
+                              Liste de prestataires triés sur le volet
                             </li>
-                            <li className="flex items-center gap-2"><Check className="h-4 w-4 text-premium-sage" />
-                              Accompagnement personnalisé WhatsApp
+                            <li className="flex items-center gap-2">
+                              <Check className="h-4 w-4 text-premium-sage flex-shrink-0" />
+                              Envoyés sous 48H par WhatsApp
+                            </li>
+                            <li className="flex items-center gap-2">
+                              <Check className="h-4 w-4 text-premium-sage flex-shrink-0" />
+                              Vérification de disponibilité à votre date
+                            </li>
+                            <li className="flex items-center gap-2">
+                              <Check className="h-4 w-4 text-premium-sage flex-shrink-0" />
+                              Envoi des prix & formules
+                            </li>
+                            <li className="flex items-center gap-2">
+                              <Check className="h-4 w-4 text-premium-sage flex-shrink-0" />
+                              Comparatif détaillé
+                            </li>
+                            <li className="flex items-center gap-2">
+                              <Check className="h-4 w-4 text-premium-sage flex-shrink-0" />
+                              Accompagnement WhatsApp jusqu'à trouver VOS prestataires parfaits
                             </li>
                           </ul>
                         </div>
