@@ -74,7 +74,7 @@ const PremiumHeader = () => {
                 <Menu className="h-6 w-6" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[300px] bg-white pt-20">
+            <SheetContent side="right" className="w-[300px] bg-white pt-32">
               <div className="flex flex-col space-y-6">
                 <div className="flex flex-col space-y-3">
                   {isLoggedIn ? (
