@@ -27,7 +27,7 @@ const PremiumConciergerie = () => {
     {
       id: 1,
       icon: Search,
-      title: "On s'occupe de tout",
+      title: "Recommandations de professionnels",
       description: "Notre équipe sélectionne pour vous les meilleurs prestataires de votre région",
       cta: "Trouver mes prestataires",
       ctaAction: scrollToForm,
