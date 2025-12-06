@@ -38,7 +38,7 @@ const PremiumConciergerie = () => {
     {
       id: 2,
       icon: Wrench,
-      title: "Je gère moi-même",
+      title: "Organisation facile en ligne",
       description: "Accédez à tous les outils pour organiser votre mariage en toute autonomie",
       cta: "Découvrir les outils",
       ctaAction: scrollToTools,
