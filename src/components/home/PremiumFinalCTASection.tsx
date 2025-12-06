@@ -42,9 +42,7 @@ const PremiumFinalCTASection = () => {
             </Link>
             
             <Link to="/selection">
-              <Button size="lg" variant="outline" className="border-2 border-white text-white bg-white/10 hover:bg-white hover:text-premium-black backdrop-blur-sm px-12 py-4 text-lg font-semibold ripple">
-                Explorer les prestataires
-              </Button>
+              
             </Link>
           </div>
 
