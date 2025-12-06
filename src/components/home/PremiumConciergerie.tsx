@@ -28,7 +28,7 @@ const PremiumConciergerie = () => {
       id: 1,
       icon: Search,
       title: "Recommandations de professionnels",
-      description: "Notre équipe sélectionne pour vous les meilleurs prestataires de votre région",
+      description: "Recevez une sélection de lieux et/ou prestataires de votre région",
       cta: "Trouver mes prestataires",
       ctaAction: scrollToForm,
       gradient: "from-premium-sage to-premium-sage-medium",
