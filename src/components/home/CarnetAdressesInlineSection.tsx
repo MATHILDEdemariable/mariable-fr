@@ -219,7 +219,7 @@ const CarnetAdressesInlineSection = () => {
                             </li>
                             <li className="flex items-center gap-2">
                               <Check className="h-4 w-4 text-premium-sage flex-shrink-0" />
-                              Envoyés sous 48H par WhatsApp
+                              Envoyés sous 72H par WhatsApp
                             </li>
                             <li className="flex items-center gap-2">
                               <Check className="h-4 w-4 text-premium-sage flex-shrink-0" />
@@ -229,10 +229,7 @@ const CarnetAdressesInlineSection = () => {
                               <Check className="h-4 w-4 text-premium-sage flex-shrink-0" />
                               Envoi des prix & formules
                             </li>
-                            <li className="flex items-center gap-2">
-                              <Check className="h-4 w-4 text-premium-sage flex-shrink-0" />
-                              Comparatif détaillé
-                            </li>
+                            
                             <li className="flex items-center gap-2">
                               <Check className="h-4 w-4 text-premium-sage flex-shrink-0" />
                               Accompagnement WhatsApp jusqu'à trouver VOS prestataires parfaits
