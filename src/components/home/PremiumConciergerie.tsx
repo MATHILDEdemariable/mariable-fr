@@ -39,7 +39,7 @@ const PremiumConciergerie = () => {
       id: 2,
       icon: Wrench,
       title: "Organisation facile en ligne",
-      description: "Accédez à votre tableau de bord personnalisé pour planifier et coordonner votre mariage en toute autonomie",
+      description: "Accédez à votre tableau de bord personnalisé pour planifier votre mariage en toute autonomie",
       cta: "Découvrir les outils",
       ctaAction: scrollToTools,
       gradient: "from-premium-sage-medium to-premium-sage-light",
