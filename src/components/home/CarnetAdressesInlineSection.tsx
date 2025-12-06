@@ -11,7 +11,6 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { trackEvent } from '@/utils/analytics';
 import { useNavigate } from 'react-router-dom';
-
 interface FormData {
   email: string;
   whatsapp: string;
@@ -24,7 +23,6 @@ interface FormData {
   consent_contact: boolean;
   type_selection: 'gratuite' | 'premium' | null;
 }
-
 const CarnetAdressesInlineSection = () => {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -40,86 +38,74 @@ const CarnetAdressesInlineSection = () => {
     consent_contact: false,
     type_selection: null
   });
-
-  const regions = [
-    'Auvergne-Rhône-Alpes', 'Bourgogne-Franche-Comté', 'Bretagne', 'Centre-Val de Loire',
-    'Corse', 'Grand Est', 'Hauts-de-France', 'Île-de-France', 'Normandie',
-    'Nouvelle-Aquitaine', 'Occitanie', 'Pays de la Loire', "Provence-Alpes-Côte d'Azur"
-  ];
-
-  const categoriesPrestataires = [
-    'Lieu de réception', 'Photographe', 'Vidéaste', 'Traiteur',
-    'Fleuriste', 'DJ/Musiciens', 'Coiffeur/Maquilleur', 'Wedding Planner'
-  ];
-
+  const regions = ['Auvergne-Rhône-Alpes', 'Bourgogne-Franche-Comté', 'Bretagne', 'Centre-Val de Loire', 'Corse', 'Grand Est', 'Hauts-de-France', 'Île-de-France', 'Normandie', 'Nouvelle-Aquitaine', 'Occitanie', 'Pays de la Loire', "Provence-Alpes-Côte d'Azur"];
+  const categoriesPrestataires = ['Lieu de réception', 'Photographe', 'Vidéaste', 'Traiteur', 'Fleuriste', 'DJ/Musiciens', 'Coiffeur/Maquilleur', 'Wedding Planner'];
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    const {
+      name,
+      value
+    } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
   };
-
   const handleCategoryChange = (category: string, checked: boolean) => {
     setFormData(prev => ({
       ...prev,
-      categories_prestataires: checked
-        ? [...prev.categories_prestataires, category]
-        : prev.categories_prestataires.filter(c => c !== category)
+      categories_prestataires: checked ? [...prev.categories_prestataires, category] : prev.categories_prestataires.filter(c => c !== category)
     }));
   };
-
   const handleConsentChange = (checked: boolean) => {
-    setFormData(prev => ({ ...prev, consent_contact: checked }));
+    setFormData(prev => ({
+      ...prev,
+      consent_contact: checked
+    }));
   };
-
   const handleTypeSelectionChange = (type: 'gratuite' | 'premium') => {
-    setFormData(prev => ({ ...prev, type_selection: type }));
+    setFormData(prev => ({
+      ...prev,
+      type_selection: type
+    }));
   };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (!formData.email || !formData.region) {
       toast.error('Veuillez renseigner au minimum votre email et votre région');
       return;
     }
-
     if (!formData.whatsapp) {
       toast.error('Veuillez renseigner votre numéro WhatsApp');
       return;
     }
-
     if (!formData.consent_contact) {
       toast.error('Veuillez accepter d\'être contacté pour recevoir votre sélection');
       return;
     }
-
     if (!formData.type_selection) {
       toast.error('Veuillez choisir un type de sélection (gratuite ou premium)');
       return;
     }
-
     if (formData.categories_prestataires.length === 0) {
       toast.error('Veuillez sélectionner au moins un type de prestataire');
       return;
     }
-
     setIsSubmitting(true);
-
     try {
-      const { error } = await supabase
-        .from('carnet_adresses_requests')
-        .insert([{
-          email: formData.email,
-          whatsapp: formData.whatsapp,
-          region: formData.region,
-          date_mariage: formData.date_mariage || null,
-          nombre_invites: formData.nombre_invites || null,
-          budget_approximatif: formData.budget_approximatif || null,
-          categories_prestataires: formData.categories_prestataires,
-          commentaires: formData.commentaires || null,
-          consent_contact: formData.consent_contact,
-          type_selection: formData.type_selection
-        }]);
-
+      const {
+        error
+      } = await supabase.from('carnet_adresses_requests').insert([{
+        email: formData.email,
+        whatsapp: formData.whatsapp,
+        region: formData.region,
+        date_mariage: formData.date_mariage || null,
+        nombre_invites: formData.nombre_invites || null,
+        budget_approximatif: formData.budget_approximatif || null,
+        categories_prestataires: formData.categories_prestataires,
+        commentaires: formData.commentaires || null,
+        consent_contact: formData.consent_contact,
+        type_selection: formData.type_selection
+      }]);
       if (error) throw error;
 
       // Track conversion
@@ -130,7 +116,6 @@ const CarnetAdressesInlineSection = () => {
         categories_count: formData.categories_prestataires.length,
         categories: formData.categories_prestataires.join(', ')
       });
-
       toast.success('📲 Nous vous recontactons sur WhatsApp !!', {
         duration: 7000
       });
@@ -139,17 +124,16 @@ const CarnetAdressesInlineSection = () => {
       setTimeout(() => {
         navigate(`/selection?region=${encodeURIComponent(formData.region)}`);
       }, 2000);
-
     } catch (error) {
       console.error('Erreur lors de la soumission:', error);
-      toast.error('Une erreur est survenue. Veuillez réessayer.', { duration: 5000 });
+      toast.error('Une erreur est survenue. Veuillez réessayer.', {
+        duration: 5000
+      });
     } finally {
       setIsSubmitting(false);
     }
   };
-
-  return (
-    <section id="carnet-adresses-section" className="py-24 bg-gradient-to-br from-premium-warm via-white to-premium-base">
+  return <section id="carnet-adresses-section" className="py-24 bg-gradient-to-br from-premium-warm via-white to-premium-base">
       <div className="container mx-auto px-4">
         <div className="max-w-5xl mx-auto">
           {/* Header avec social proof */}
@@ -192,20 +176,9 @@ const CarnetAdressesInlineSection = () => {
                   
                   <div className="grid md:grid-cols-2 gap-4">
                     {/* Sélection Gratuite */}
-                    <div
-                      onClick={() => handleTypeSelectionChange('gratuite')}
-                      className={`cursor-pointer p-6 rounded-xl border-2 transition-all duration-300 ${
-                        formData.type_selection === 'gratuite'
-                          ? 'border-premium-sage bg-premium-sage/5 shadow-lg'
-                          : 'border-premium-sage/20 hover:border-premium-sage/40 bg-white'
-                      }`}
-                    >
+                    <div onClick={() => handleTypeSelectionChange('gratuite')} className={`cursor-pointer p-6 rounded-xl border-2 transition-all duration-300 ${formData.type_selection === 'gratuite' ? 'border-premium-sage bg-premium-sage/5 shadow-lg' : 'border-premium-sage/20 hover:border-premium-sage/40 bg-white'}`}>
                       <div className="flex items-start gap-4">
-                        <div className={`p-3 rounded-full ${
-                          formData.type_selection === 'gratuite' 
-                            ? 'bg-premium-sage text-white' 
-                            : 'bg-premium-sage/10 text-premium-sage'
-                        }`}>
+                        <div className={`p-3 rounded-full ${formData.type_selection === 'gratuite' ? 'bg-premium-sage text-white' : 'bg-premium-sage/10 text-premium-sage'}`}>
                           <Gift className="h-6 w-6" />
                         </div>
                         <div className="flex-1">
@@ -216,7 +189,7 @@ const CarnetAdressesInlineSection = () => {
                           <ul className="space-y-1 text-sm text-premium-charcoal">
                             <li className="flex items-center gap-2">
                               <Check className="h-4 w-4 text-premium-sage" />
-                              5-8 prestataires triés selon vos critères
+                              Envoi de votre liste personnalisé ( une dizaine de prestataires triés sur le volet)                                                                               
                             </li>
                             <li className="flex items-center gap-2">
                               <Check className="h-4 w-4 text-premium-sage" />
@@ -224,27 +197,14 @@ const CarnetAdressesInlineSection = () => {
                             </li>
                           </ul>
                         </div>
-                        {formData.type_selection === 'gratuite' && (
-                          <CheckCircle className="h-6 w-6 text-premium-sage" />
-                        )}
+                        {formData.type_selection === 'gratuite' && <CheckCircle className="h-6 w-6 text-premium-sage" />}
                       </div>
                     </div>
 
                     {/* Sélection Premium */}
-                    <div
-                      onClick={() => handleTypeSelectionChange('premium')}
-                      className={`cursor-pointer p-6 rounded-xl border-2 transition-all duration-300 ${
-                        formData.type_selection === 'premium'
-                          ? 'border-premium-sage bg-premium-sage/5 shadow-lg'
-                          : 'border-premium-sage/20 hover:border-premium-sage/40 bg-white'
-                      }`}
-                    >
+                    <div onClick={() => handleTypeSelectionChange('premium')} className={`cursor-pointer p-6 rounded-xl border-2 transition-all duration-300 ${formData.type_selection === 'premium' ? 'border-premium-sage bg-premium-sage/5 shadow-lg' : 'border-premium-sage/20 hover:border-premium-sage/40 bg-white'}`}>
                       <div className="flex items-start gap-4">
-                        <div className={`p-3 rounded-full ${
-                          formData.type_selection === 'premium' 
-                            ? 'bg-premium-sage text-white' 
-                            : 'bg-premium-sage/10 text-premium-sage'
-                        }`}>
+                        <div className={`p-3 rounded-full ${formData.type_selection === 'premium' ? 'bg-premium-sage text-white' : 'bg-premium-sage/10 text-premium-sage'}`}>
                           <Crown className="h-6 w-6" />
                         </div>
                         <div className="flex-1">
@@ -267,9 +227,7 @@ const CarnetAdressesInlineSection = () => {
                             </li>
                           </ul>
                         </div>
-                        {formData.type_selection === 'premium' && (
-                          <CheckCircle className="h-6 w-6 text-premium-sage" />
-                        )}
+                        {formData.type_selection === 'premium' && <CheckCircle className="h-6 w-6 text-premium-sage" />}
                       </div>
                     </div>
                   </div>
@@ -282,16 +240,7 @@ const CarnetAdressesInlineSection = () => {
                       <CheckCircle className="h-4 w-4 text-premium-sage" />
                       Votre email *
                     </Label>
-                    <Input
-                      id="email"
-                      name="email"
-                      type="email"
-                      required
-                      placeholder="votre@email.com"
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      className="border-premium-sage/30 focus:border-premium-sage"
-                    />
+                    <Input id="email" name="email" type="email" required placeholder="votre@email.com" value={formData.email} onChange={handleInputChange} className="border-premium-sage/30 focus:border-premium-sage" />
                   </div>
 
                   <div>
@@ -299,16 +248,7 @@ const CarnetAdressesInlineSection = () => {
                       <Phone className="h-4 w-4 text-premium-sage" />
                       Numéro WhatsApp *
                     </Label>
-                    <Input
-                      id="whatsapp"
-                      name="whatsapp"
-                      type="tel"
-                      required
-                      placeholder="06 12 34 56 78"
-                      value={formData.whatsapp}
-                      onChange={handleInputChange}
-                      className="border-premium-sage/30 focus:border-premium-sage"
-                    />
+                    <Input id="whatsapp" name="whatsapp" type="tel" required placeholder="06 12 34 56 78" value={formData.whatsapp} onChange={handleInputChange} className="border-premium-sage/30 focus:border-premium-sage" />
                   </div>
                 </div>
 
@@ -318,18 +258,9 @@ const CarnetAdressesInlineSection = () => {
                     <CheckCircle className="h-4 w-4 text-premium-sage" />
                     Région de votre mariage *
                   </Label>
-                  <select
-                    id="region"
-                    name="region"
-                    required
-                    value={formData.region}
-                    onChange={handleInputChange}
-                    className="w-full rounded-md border border-premium-sage/30 bg-white px-3 py-2 text-sm focus:border-premium-sage focus:outline-none focus:ring-2 focus:ring-premium-sage/20"
-                  >
+                  <select id="region" name="region" required value={formData.region} onChange={handleInputChange} className="w-full rounded-md border border-premium-sage/30 bg-white px-3 py-2 text-sm focus:border-premium-sage focus:outline-none focus:ring-2 focus:ring-premium-sage/20">
                     <option value="">Sélectionnez une région</option>
-                    {regions.map((region) => (
-                      <option key={region} value={region}>{region}</option>
-                    ))}
+                    {regions.map(region => <option key={region} value={region}>{region}</option>)}
                   </select>
                 </div>
 
@@ -340,28 +271,14 @@ const CarnetAdressesInlineSection = () => {
                       <Calendar className="h-4 w-4 text-premium-sage" />
                       Date approximative
                     </Label>
-                    <Input
-                      id="date_mariage"
-                      name="date_mariage"
-                      type="date"
-                      placeholder="MM/AAAA"
-                      value={formData.date_mariage}
-                      onChange={handleInputChange}
-                      className="border-premium-sage/30 focus:border-premium-sage"
-                    />
+                    <Input id="date_mariage" name="date_mariage" type="date" placeholder="MM/AAAA" value={formData.date_mariage} onChange={handleInputChange} className="border-premium-sage/30 focus:border-premium-sage" />
                   </div>
 
                   <div>
                     <Label htmlFor="nombre_invites" className="text-premium-charcoal font-semibold mb-2">
                       Nombre d'invités
                     </Label>
-                    <select
-                      id="nombre_invites"
-                      name="nombre_invites"
-                      value={formData.nombre_invites}
-                      onChange={handleInputChange}
-                      className="w-full rounded-md border border-premium-sage/30 bg-white px-3 py-2 text-sm focus:border-premium-sage focus:outline-none focus:ring-2 focus:ring-premium-sage/20"
-                    >
+                    <select id="nombre_invites" name="nombre_invites" value={formData.nombre_invites} onChange={handleInputChange} className="w-full rounded-md border border-premium-sage/30 bg-white px-3 py-2 text-sm focus:border-premium-sage focus:outline-none focus:ring-2 focus:ring-premium-sage/20">
                       <option value="">Choisir</option>
                       <option value="Moins de 50">Moins de 50</option>
                       <option value="50-100">50-100</option>
@@ -374,13 +291,7 @@ const CarnetAdressesInlineSection = () => {
                     <Label htmlFor="budget_approximatif" className="text-premium-charcoal font-semibold mb-2">
                       Budget mariage total
                     </Label>
-                    <select
-                      id="budget_approximatif"
-                      name="budget_approximatif"
-                      value={formData.budget_approximatif}
-                      onChange={handleInputChange}
-                      className="w-full rounded-md border border-premium-sage/30 bg-white px-3 py-2 text-sm focus:border-premium-sage focus:outline-none focus:ring-2 focus:ring-premium-sage/20"
-                    >
+                    <select id="budget_approximatif" name="budget_approximatif" value={formData.budget_approximatif} onChange={handleInputChange} className="w-full rounded-md border border-premium-sage/30 bg-white px-3 py-2 text-sm focus:border-premium-sage focus:outline-none focus:ring-2 focus:ring-premium-sage/20">
                       <option value="">Choisir</option>
                       <option value="Moins de 10 000€">Moins de 10 000€</option>
                       <option value="10 000€ - 20 000€">10 000€ - 20 000€</option>
@@ -397,22 +308,12 @@ const CarnetAdressesInlineSection = () => {
                     Quels types de prestataires recherchez-vous ? *
                   </Label>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
-                    {categoriesPrestataires.map((category) => (
-                      <div key={category} className="flex items-center space-x-2">
-                        <Checkbox
-                          id={category}
-                          checked={formData.categories_prestataires.includes(category)}
-                          onCheckedChange={(checked) => handleCategoryChange(category, checked as boolean)}
-                          className="border-premium-sage data-[state=checked]:bg-premium-sage"
-                        />
-                        <label
-                          htmlFor={category}
-                          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
-                        >
+                    {categoriesPrestataires.map(category => <div key={category} className="flex items-center space-x-2">
+                        <Checkbox id={category} checked={formData.categories_prestataires.includes(category)} onCheckedChange={checked => handleCategoryChange(category, checked as boolean)} className="border-premium-sage data-[state=checked]:bg-premium-sage" />
+                        <label htmlFor={category} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer">
                           {category}
                         </label>
-                      </div>
-                    ))}
+                      </div>)}
                   </div>
                 </div>
 
@@ -422,47 +323,23 @@ const CarnetAdressesInlineSection = () => {
                     <MessageSquare className="h-4 w-4 text-premium-sage" />
                     Commentaires ou précisions (optionnel)
                   </Label>
-                  <Textarea
-                    id="commentaires"
-                    name="commentaires"
-                    placeholder="Parlez-nous de vos envies, de votre style de mariage, de vos besoins spécifiques..."
-                    value={formData.commentaires}
-                    onChange={handleInputChange}
-                    className="border-premium-sage/30 focus:border-premium-sage min-h-[100px]"
-                  />
+                  <Textarea id="commentaires" name="commentaires" placeholder="Parlez-nous de vos envies, de votre style de mariage, de vos besoins spécifiques..." value={formData.commentaires} onChange={handleInputChange} className="border-premium-sage/30 focus:border-premium-sage min-h-[100px]" />
                 </div>
 
                 {/* Consentement */}
                 <div className="flex items-start space-x-3 p-4 bg-premium-sage/5 rounded-lg border border-premium-sage/20">
-                  <Checkbox
-                    id="consent_contact"
-                    checked={formData.consent_contact}
-                    onCheckedChange={(checked) => handleConsentChange(checked as boolean)}
-                    className="border-premium-sage data-[state=checked]:bg-premium-sage mt-0.5"
-                  />
-                  <label
-                    htmlFor="consent_contact"
-                    className="text-sm leading-relaxed cursor-pointer text-premium-charcoal"
-                  >
+                  <Checkbox id="consent_contact" checked={formData.consent_contact} onCheckedChange={checked => handleConsentChange(checked as boolean)} className="border-premium-sage data-[state=checked]:bg-premium-sage mt-0.5" />
+                  <label htmlFor="consent_contact" className="text-sm leading-relaxed cursor-pointer text-premium-charcoal">
                     J'accepte d'être contacté(e) pour l'envoi des informations relatives à l'organisation de mon mariage et aux services Mariable *
                   </label>
                 </div>
 
                 {/* CTA Submit */}
                 <div className="text-center pt-4">
-                  <Button
-                    type="submit"
-                    size="lg"
-                    disabled={isSubmitting}
-                    className="btn-primary text-white px-12 py-6 text-lg font-semibold ripple w-full md:w-auto"
-                  >
-                    {isSubmitting ? (
-                      'Envoi en cours...'
-                    ) : (
-                      <>
+                  <Button type="submit" size="lg" disabled={isSubmitting} className="btn-primary text-white px-12 py-6 text-lg font-semibold ripple w-full md:w-auto">
+                    {isSubmitting ? 'Envoi en cours...' : <>
                         Recevoir ma sélection <Send className="ml-2 h-5 w-5" />
-                      </>
-                    )}
+                      </>}
                   </Button>
                   <p className="text-sm text-premium-charcoal/70 mt-4">
                     ✓ Sans engagement • ✓ Réponse sous 48H
@@ -500,8 +377,6 @@ const CarnetAdressesInlineSection = () => {
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default CarnetAdressesInlineSection;
