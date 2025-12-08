@@ -121,7 +121,7 @@ const DomaineDeLaFontaine = () => {
       {/* SECTION 1 - HERO */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         <motion.div className="absolute inset-0 bg-cover bg-center" style={{
-        backgroundImage: "url(\"/lovable-uploads/0f3df2f2-7704-475b-846d-81ef9fc1f60a.png\")"
+        backgroundImage: "url(\"/lovable-uploads/96c55fba-99b7-4f6d-a4e1-f8e41dca9e63.png\")"
       }} initial={{
         scale: 1.1
       }} animate={{
@@ -231,7 +231,7 @@ const DomaineDeLaFontaine = () => {
         }} transition={{
           delay: 0.6
         }}>
-            <Button size="lg" onClick={() => scrollToSection('avantages')} className="bg-wedding-gold hover:bg-wedding-gold/90 text-white group shadow-lg shadow-wedding-gold/30 px-8 py-6 text-lg rounded-full">
+            <Button size="lg" onClick={() => scrollToSection('avantages')} className="text-white group shadow-lg shadow-wedding-gold/30 px-8 py-6 text-lg rounded-full bg-wedding-olive">
               Découvrir les avantages
               <motion.span animate={{
               y: [0, 5, 0]
