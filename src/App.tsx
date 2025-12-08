@@ -112,6 +112,7 @@ const GuideDebutant = lazy(() => import("./pages/GuideDebutant"));
 const CGVCouples = lazy(() => import("./pages/CGVCouples"));
 const AccueilClubMariable = lazy(() => import("./pages/AccueilClubMariable"));
 const AccueilProfessionnels = lazy(() => import("./pages/AccueilProfessionnels"));
+const DomaineDeLaFontaine = lazy(() => import("./pages/DomaineDeLaFontaine"));
 
 // Loading component with accessibility improvements
 const PageLoader = () => (
@@ -144,6 +145,7 @@ function App() {
                   <Route path="/landing-generale" element={<LandingGenerale />} />
                   <Route path="/accueilclubmariable" element={<AccueilClubMariable />} />
                   <Route path="/accueilprofessionnels" element={<AccueilProfessionnels />} />
+                  <Route path="/domainedelafontaine" element={<DomaineDeLaFontaine />} />
                    <Route path="/moteur-recherche" element={<MoteurRecherche />} />
           <Route path="/selection" element={<ProtectedRoute><VibeWedding /></ProtectedRoute>} />
           <Route path="/mariage/:region" element={<MoteurRecherche />} />
