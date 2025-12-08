@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react';
 import SEO from '@/components/SEO';
 import Footer from '@/components/Footer';
 import PremiumHeader from '@/components/home/PremiumHeader';
+import SectionNav from '@/components/club-mariable/SectionNav';
+import CouplesCarousel from '@/components/club-mariable/CouplesCarousel';
+import FeatureCardLandaa from '@/components/club-mariable/FeatureCardLandaa';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -16,14 +19,22 @@ const AccueilClubMariable = () => {
     window.scrollTo(0, 0);
   }, []);
 
+  const sections = [
+    { id: 'fonctionnement', label: 'Comment ça marche' },
+    { id: 'privileges', label: 'Privilèges' },
+    { id: 'pourquoi', label: 'Pourquoi nous' },
+    { id: 'avis', label: 'Avis' },
+    { id: 'faq', label: 'FAQ' },
+  ];
+
   const privileges = [
-    { icon: '👗', title: 'Robes & Tenues', benefit: "Jusqu'à -150€ + accessoires offerts", savings: '200€' },
-    { icon: '💍', title: 'Alliances & Bijoux', benefit: "Jusqu'à -105€ + gravure offerte", savings: '150€' },
-    { icon: '📸', title: 'Photo & Vidéo', benefit: 'Album offert ou heures supplémentaires', savings: '250-400€' },
-    { icon: '🍽️', title: 'Traiteurs', benefit: 'Vaisselle & nappes offertes', savings: '600€' },
-    { icon: '💐', title: 'Fleurs & Déco', benefit: "Jusqu'à -75€ + bouquets demoiselles offerts", savings: '150€' },
-    { icon: '🎵', title: 'DJ & Animation', benefit: '1h supplémentaire ou éclairage premium', savings: '100-150€' },
-    { icon: '📝', title: 'Papeterie & Faire-part', benefit: 'Menu tables offert ou livre d\'or', savings: '50-80€' },
+    { icon: '👗', title: 'Robes & Tenues', benefit: "Jusqu'à -150€ + accessoires offerts", savings: '200€', tags: ['Mode', 'Élégance', 'Premium'] },
+    { icon: '💍', title: 'Alliances & Bijoux', benefit: "Jusqu'à -105€ + gravure offerte", savings: '150€', tags: ['Bijoux', 'Luxe', 'Sur-mesure'] },
+    { icon: '📸', title: 'Photo & Vidéo', benefit: 'Album offert ou heures supplémentaires', savings: '250-400€', tags: ['Souvenirs', 'Artistique', 'Drone'] },
+    { icon: '🍽️', title: 'Traiteurs', benefit: 'Vaisselle & nappes offertes', savings: '600€', tags: ['Gastronomie', 'Service', 'Qualité'] },
+    { icon: '💐', title: 'Fleurs & Déco', benefit: "Jusqu'à -75€ + bouquets demoiselles offerts", savings: '150€', tags: ['Nature', 'Design', 'Ambiance'] },
+    { icon: '🎵', title: 'DJ & Animation', benefit: '1h supplémentaire ou éclairage premium', savings: '100-150€', tags: ['Fête', 'Son', 'Lumières'] },
+    { icon: '📝', title: 'Papeterie & Faire-part', benefit: 'Menu tables offert ou livre d\'or', savings: '50-80€', tags: ['Design', 'Création', 'Personnalisé'] },
   ];
 
   const steps = [
@@ -33,10 +44,10 @@ const AccueilClubMariable = () => {
   ];
 
   const whyClub = [
-    { icon: <Check className="h-6 w-6" />, title: 'Recommandés par votre lieu', description: 'Pas un annuaire générique. Ces pros sont validés par le lieu où vous vous mariez et nous. Double vérification.' },
-    { icon: <Gift className="h-6 w-6" />, title: 'Économies réelles', description: '-5 à -20% sur chaque prestation OU cadeaux/services offerts (valeur 2x supérieure). Budget mariage allégé.' },
-    { icon: <Shield className="h-6 w-6" />, title: '100% Gratuit', description: 'Aucun frais, aucun abonnement. Offert par votre lieu de réception.' },
-    { icon: <Clock className="h-6 w-6" />, title: 'Simple & Rapide', description: 'Bénéficiez de nos outils en ligne et arrêtez les heures de recherche Google. Gagnez du temps et de la sérénité.' },
+    { icon: <Check className="h-6 w-6" />, emoji: '✓', title: 'Recommandés par votre lieu', description: 'Pas un annuaire générique. Ces pros sont validés par le lieu où vous vous mariez et nous. Double vérification.', tags: ['Vérifiés', 'Qualité', 'Confiance'], badgeColor: 'bg-green-100 text-green-700' },
+    { icon: <Gift className="h-6 w-6" />, emoji: '🎁', title: 'Économies réelles', description: '-5 à -20% sur chaque prestation OU cadeaux/services offerts (valeur 2x supérieure). Budget mariage allégé.', tags: ['Réductions', 'Cadeaux', 'Budget'], badgeColor: 'bg-purple-100 text-purple-700' },
+    { icon: <Shield className="h-6 w-6" />, emoji: '🛡️', title: '100% Gratuit', description: 'Aucun frais, aucun abonnement. Offert par votre lieu de réception.', tags: ['Gratuit', 'Sans engagement', 'Liberté'], badgeColor: 'bg-blue-100 text-blue-700' },
+    { icon: <Clock className="h-6 w-6" />, emoji: '⏰', title: 'Simple & Rapide', description: 'Bénéficiez de nos outils en ligne et arrêtez les heures de recherche Google. Gagnez du temps et de la sérénité.', tags: ['Rapide', 'Simple', 'Efficace'], badgeColor: 'bg-amber-100 text-amber-700' },
   ];
 
   const testimonials = [
@@ -65,6 +76,7 @@ const AccueilClubMariable = () => {
       />
       
       <PremiumHeader />
+      <SectionNav sections={sections} />
       
       <main className="flex-grow">
         {/* Section 1: Hero avec vidéo */}
@@ -85,6 +97,22 @@ const AccueilClubMariable = () => {
             </video>
             <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70" />
           </div>
+
+          {/* Floating decorative elements */}
+          <motion.div
+            animate={{ y: [-10, 10, -10], rotate: [0, 5, 0] }}
+            transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
+            className="absolute top-20 right-20 text-4xl opacity-60 hidden lg:block"
+          >
+            ✨
+          </motion.div>
+          <motion.div
+            animate={{ y: [10, -10, 10], rotate: [0, -5, 0] }}
+            transition={{ repeat: Infinity, duration: 5, ease: "easeInOut", delay: 1 }}
+            className="absolute bottom-40 left-20 text-3xl opacity-50 hidden lg:block"
+          >
+            ★
+          </motion.div>
           
           <div className="container mx-auto px-4 relative z-10">
             <motion.div 
@@ -128,17 +156,23 @@ const AccueilClubMariable = () => {
                 className="flex flex-col gap-4 max-w-md mx-auto mb-12"
               >
                 {['Accès aux meilleurs pros au meilleur prix', 'Accès à des outils en ligne pour planifier votre mariage facilement', 'Accès aux plus belles marques avec avantages'].map((item, index) => (
-                  <div key={index} className="flex items-center gap-3 text-left bg-white/5 backdrop-blur-sm rounded-lg px-4 py-3 border border-white/10">
+                  <motion.div 
+                    key={index} 
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.7 + index * 0.1, duration: 0.4 }}
+                    className="flex items-center gap-3 text-left bg-white/5 backdrop-blur-sm rounded-lg px-4 py-3 border border-white/10 hover:bg-white/10 transition-all duration-300"
+                  >
                     <Check className="h-5 w-5 text-premium-cream flex-shrink-0" />
                     <span className="text-white">{item}</span>
-                  </div>
+                  </motion.div>
                 ))}
               </motion.div>
               
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.7, duration: 0.6 }}
+                transition={{ delay: 0.8, duration: 0.6 }}
               >
                 <Button 
                   size="lg" 
@@ -149,6 +183,9 @@ const AccueilClubMariable = () => {
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </motion.div>
+
+              {/* Couples carousel */}
+              <CouplesCarousel />
             </motion.div>
           </div>
           
@@ -190,7 +227,7 @@ const AccueilClubMariable = () => {
         </section>
 
         {/* Section 2: Comment ça marche */}
-        <section className="py-20 md:py-28 bg-white">
+        <section id="fonctionnement" className="py-20 md:py-28 bg-white scroll-mt-24">
           <div className="container mx-auto px-4">
             <motion.h2 
               initial={{ opacity: 0, y: 20 }}
@@ -209,12 +246,17 @@ const AccueilClubMariable = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.15 }}
+                  whileHover={{ y: -8, scale: 1.02 }}
                   className="relative group"
                 >
-                  <Card className="text-center p-6 h-full border-2 border-transparent hover:border-premium-sage/50 transition-all duration-500 hover:shadow-xl hover:-translate-y-2 bg-gradient-to-b from-white to-premium-cream/20">
-                    <CardContent className="pt-6">
+                  <Card className="text-center p-6 h-full border-2 border-transparent hover:border-premium-sage/50 transition-all duration-500 hover:shadow-2xl bg-gradient-to-b from-white to-premium-cream/20 overflow-hidden">
+                    {/* Shimmer effect */}
+                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                    </div>
+                    <CardContent className="pt-6 relative z-10">
                       <div className="text-6xl mb-6 group-hover:scale-110 transition-transform duration-300">{step.icon}</div>
-                      <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-premium-sage text-white font-bold mb-4 text-lg shadow-lg">
+                      <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-premium-sage text-white font-bold mb-4 text-lg shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300">
                         {step.number}
                       </div>
                       <h3 className="text-xl font-bold text-foreground mb-3 font-serif">{step.title}</h3>
@@ -223,7 +265,12 @@ const AccueilClubMariable = () => {
                   </Card>
                   {index < steps.length - 1 && (
                     <div className="hidden md:block absolute top-1/2 -right-4 transform -translate-y-1/2 z-10">
-                      <ArrowRight className="h-8 w-8 text-premium-sage animate-pulse" />
+                      <motion.div
+                        animate={{ x: [0, 5, 0] }}
+                        transition={{ repeat: Infinity, duration: 1.5 }}
+                      >
+                        <ArrowRight className="h-8 w-8 text-premium-sage" />
+                      </motion.div>
                     </div>
                   )}
                 </motion.div>
@@ -233,7 +280,7 @@ const AccueilClubMariable = () => {
         </section>
 
         {/* Section 3: Vos Privilèges */}
-        <section className="py-20 md:py-28 bg-gradient-to-b from-premium-cream/30 to-white">
+        <section id="privileges" className="py-20 md:py-28 bg-gradient-to-b from-premium-cream/30 to-white scroll-mt-24">
           <div className="container mx-auto px-4">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -257,13 +304,31 @@ const AccueilClubMariable = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.08 }}
+                  whileHover={{ y: -8, scale: 1.02 }}
+                  className="group"
                 >
-                  <Card className="hover:shadow-2xl transition-all duration-500 border-2 hover:border-premium-sage/40 group hover:-translate-y-1 h-full">
-                    <CardContent className="p-6">
-                      <div className="text-4xl mb-4 group-hover:scale-110 group-hover:animate-float transition-transform duration-300">{privilege.icon}</div>
+                  <Card className="hover:shadow-2xl transition-all duration-500 border-2 hover:border-premium-sage/40 h-full overflow-hidden relative">
+                    {/* Shimmer effect */}
+                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                    </div>
+                    <CardContent className="p-6 relative z-10">
+                      <div className="text-4xl mb-4 group-hover:scale-125 transition-transform duration-300">{privilege.icon}</div>
                       <h3 className="font-bold text-foreground mb-2 font-serif">{privilege.title}</h3>
                       <p className="text-sm text-muted-foreground mb-4">{privilege.benefit}</p>
-                      <div className="flex items-center gap-2 text-premium-sage font-semibold bg-premium-sage/10 px-3 py-2 rounded-full w-fit">
+                      
+                      {/* Tags marquee */}
+                      <div className="relative overflow-hidden h-6 mb-4">
+                        <div className="flex gap-2 animate-marquee-tags whitespace-nowrap">
+                          {[...privilege.tags, ...privilege.tags].map((tag, i) => (
+                            <span key={i} className="inline-flex items-center px-2 py-0.5 rounded-full bg-premium-sage/5 text-premium-sage text-xs">
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center gap-2 text-premium-sage font-semibold bg-premium-sage/10 px-3 py-2 rounded-full w-fit group-hover:bg-premium-sage group-hover:text-white transition-all duration-300">
                         <Gift className="h-4 w-4" />
                         <span>Économie: {privilege.savings}</span>
                       </div>
@@ -282,17 +347,31 @@ const AccueilClubMariable = () => {
               <Card className="bg-gradient-to-r from-premium-sage to-premium-sage/80 text-white overflow-hidden relative">
                 <div className="absolute inset-0 bg-[url('/placeholder.svg')] opacity-5" />
                 <CardContent className="p-8 text-center relative z-10">
-                  <div className="text-4xl mb-3 animate-float">💎</div>
+                  <motion.div 
+                    animate={{ y: [-5, 5, -5] }}
+                    transition={{ repeat: Infinity, duration: 3 }}
+                    className="text-4xl mb-3"
+                  >
+                    💎
+                  </motion.div>
                   <h3 className="text-2xl font-serif font-bold mb-2">TOTAL ÉCONOMIES</h3>
-                  <p className="text-4xl font-bold">1 500€ à 3 000€</p>
+                  <motion.p 
+                    initial={{ scale: 0.9 }}
+                    whileInView={{ scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ type: "spring", stiffness: 200 }}
+                    className="text-4xl font-bold"
+                  >
+                    1 500€ à 3 000€
+                  </motion.p>
                 </CardContent>
               </Card>
             </motion.div>
           </div>
         </section>
 
-        {/* Section 4: Pourquoi le Club */}
-        <section className="py-20 md:py-28 bg-white">
+        {/* Section 4: Pourquoi le Club - Landaa style cards */}
+        <section id="pourquoi" className="py-20 md:py-28 bg-white scroll-mt-24">
           <div className="container mx-auto px-4">
             <motion.h2 
               initial={{ opacity: 0, y: 20 }}
@@ -303,36 +382,25 @@ const AccueilClubMariable = () => {
               Pourquoi le Club Mariable ?
             </motion.h2>
             
-            <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+            <div className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
               {whyClub.map((item, index) => (
-                <motion.div
+                <FeatureCardLandaa
                   key={index}
-                  initial={{ opacity: 0, x: index % 2 === 0 ? -20 : 20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1 }}
-                >
-                  <Card className="border-2 hover:border-premium-sage/40 transition-all duration-500 hover:shadow-xl group h-full">
-                    <CardContent className="p-6">
-                      <div className="flex items-start gap-4">
-                        <div className="flex-shrink-0 w-14 h-14 rounded-full bg-premium-sage/10 flex items-center justify-center text-premium-sage group-hover:bg-premium-sage group-hover:text-white transition-all duration-300">
-                          {item.icon}
-                        </div>
-                        <div>
-                          <h3 className="font-bold text-foreground mb-2 font-serif text-lg">{item.title}</h3>
-                          <p className="text-muted-foreground">{item.description}</p>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
+                  icon={item.icon}
+                  emoji={item.emoji}
+                  badgeColor={item.badgeColor}
+                  title={item.title}
+                  description={item.description}
+                  tags={item.tags}
+                  index={index}
+                />
               ))}
             </div>
           </div>
         </section>
 
         {/* Section 5: Témoignages */}
-        <section className="py-20 md:py-28 bg-gradient-to-b from-premium-cream/30 to-white">
+        <section id="avis" className="py-20 md:py-28 bg-gradient-to-b from-premium-cream/30 to-white scroll-mt-24">
           <div className="container mx-auto px-4">
             <motion.h2 
               initial={{ opacity: 0, y: 20 }}
@@ -351,11 +419,18 @@ const AccueilClubMariable = () => {
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.3 }}
               >
-                <Card className="border-2 shadow-xl">
+                <Card className="border-2 shadow-xl hover:shadow-2xl transition-all duration-300">
                   <CardContent className="p-8">
                     <div className="flex gap-1 mb-4">
                       {[...Array(5)].map((_, i) => (
-                        <Star key={i} className="h-5 w-5 fill-yellow-400 text-yellow-400" />
+                        <motion.div
+                          key={i}
+                          initial={{ opacity: 0, scale: 0 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ delay: i * 0.1 }}
+                        >
+                          <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
+                        </motion.div>
                       ))}
                     </div>
                     <p className="text-lg text-foreground mb-6 italic leading-relaxed">
@@ -366,9 +441,14 @@ const AccueilClubMariable = () => {
                         <p className="font-bold text-foreground font-serif">{testimonials[currentTestimonial].name}</p>
                         <p className="text-sm text-muted-foreground">{testimonials[currentTestimonial].date}</p>
                       </div>
-                      <div className="bg-premium-sage/10 px-4 py-2 rounded-full">
+                      <motion.div 
+                        initial={{ scale: 0.9 }}
+                        animate={{ scale: 1 }}
+                        transition={{ type: "spring", stiffness: 200 }}
+                        className="bg-premium-sage/10 px-4 py-2 rounded-full"
+                      >
                         <span className="text-premium-sage font-bold">{testimonials[currentTestimonial].savings} économisés</span>
-                      </div>
+                      </motion.div>
                     </div>
                   </CardContent>
                 </Card>
@@ -406,7 +486,7 @@ const AccueilClubMariable = () => {
         </section>
 
         {/* Section 6: FAQ */}
-        <section className="py-20 md:py-28 bg-white">
+        <section id="faq" className="py-20 md:py-28 bg-white scroll-mt-24">
           <div className="container mx-auto px-4">
             <motion.h2 
               initial={{ opacity: 0, y: 20 }}
@@ -427,7 +507,7 @@ const AccueilClubMariable = () => {
                     viewport={{ once: true }}
                     transition={{ delay: index * 0.1 }}
                   >
-                    <AccordionItem value={`item-${index}`} className="border-2 rounded-xl px-6 hover:border-premium-sage/40 transition-all duration-300">
+                    <AccordionItem value={`item-${index}`} className="border-2 rounded-xl px-6 hover:border-premium-sage/40 hover:shadow-lg transition-all duration-300">
                       <AccordionTrigger className="text-left font-medium hover:no-underline py-5 font-serif">
                         {item.question}
                       </AccordionTrigger>
@@ -445,6 +525,23 @@ const AccueilClubMariable = () => {
         {/* Section 7: CTA Final */}
         <section className="py-20 md:py-28 bg-gradient-to-r from-premium-sage to-premium-sage/80 relative overflow-hidden">
           <div className="absolute inset-0 bg-[url('/placeholder.svg')] opacity-5" />
+          
+          {/* Floating elements */}
+          <motion.div
+            animate={{ y: [-15, 15, -15], x: [-5, 5, -5] }}
+            transition={{ repeat: Infinity, duration: 8, ease: "easeInOut" }}
+            className="absolute top-20 right-20 text-6xl opacity-20 hidden lg:block"
+          >
+            ✨
+          </motion.div>
+          <motion.div
+            animate={{ y: [15, -15, 15], x: [5, -5, 5] }}
+            transition={{ repeat: Infinity, duration: 7, ease: "easeInOut", delay: 1 }}
+            className="absolute bottom-20 left-20 text-5xl opacity-20 hidden lg:block"
+          >
+            💍
+          </motion.div>
+          
           <motion.div 
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -455,25 +552,33 @@ const AccueilClubMariable = () => {
               Prêt à profiter de privilèges exclusifs ?
             </h2>
             
-            <Button 
-              size="lg"
-              onClick={() => navigate('/register')}
-              className="bg-white text-premium-sage hover:bg-premium-cream px-10 py-7 text-lg font-semibold shadow-2xl animate-pulse-glow hover:scale-105 transition-all duration-300 mb-10"
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.98 }}
             >
-              Créer un compte
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
+              <Button 
+                size="lg"
+                onClick={() => navigate('/register')}
+                className="bg-white text-premium-sage hover:bg-premium-cream px-10 py-7 text-lg font-semibold shadow-2xl animate-pulse-glow transition-all duration-300 mb-10"
+              >
+                Créer un compte
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+            </motion.div>
             
             <div className="flex flex-wrap justify-center gap-8 text-white/90">
-              <span className="flex items-center gap-2 text-lg">
-                <Check className="h-5 w-5" /> Gratuit
-              </span>
-              <span className="flex items-center gap-2 text-lg">
-                <Check className="h-5 w-5" /> 2 minutes
-              </span>
-              <span className="flex items-center gap-2 text-lg">
-                <Check className="h-5 w-5" /> Sans engagement
-              </span>
+              {['Gratuit', '2 minutes', 'Sans engagement'].map((item, index) => (
+                <motion.span 
+                  key={index}
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.2 + index * 0.1 }}
+                  className="flex items-center gap-2 text-lg"
+                >
+                  <Check className="h-5 w-5" /> {item}
+                </motion.span>
+              ))}
             </div>
           </motion.div>
         </section>
