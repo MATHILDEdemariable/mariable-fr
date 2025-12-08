@@ -429,6 +429,7 @@ export type Database = {
           id: string
           nombre_invites: string | null
           region: string | null
+          source_lieu: string | null
           style_recherche: string | null
           type_selection: string | null
           updated_at: string
@@ -445,6 +446,7 @@ export type Database = {
           id?: string
           nombre_invites?: string | null
           region?: string | null
+          source_lieu?: string | null
           style_recherche?: string | null
           type_selection?: string | null
           updated_at?: string
@@ -461,6 +463,7 @@ export type Database = {
           id?: string
           nombre_invites?: string | null
           region?: string | null
+          source_lieu?: string | null
           style_recherche?: string | null
           type_selection?: string | null
           updated_at?: string
