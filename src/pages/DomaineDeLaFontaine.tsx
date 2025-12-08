@@ -121,7 +121,7 @@ const DomaineDeLaFontaine = () => {
       {/* SECTION 1 - HERO */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         <motion.div className="absolute inset-0 bg-cover bg-center" style={{
-        backgroundImage: "url(\"/lovable-uploads/96c55fba-99b7-4f6d-a4e1-f8e41dca9e63.png\")"
+        backgroundImage: "url(\"/lovable-uploads/69c7a322-7720-44d8-b344-e5d5b91363db.png\")"
       }} initial={{
         scale: 1.1
       }} animate={{
