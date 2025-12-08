@@ -9,7 +9,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import SEO from '@/components/SEO';
 
-const heroImage = "/lovable-uploads/69c7a322-7720-44d8-b344-e5d5b91363db.png";
+const heroImage = "https://bgidfcqktsttzlwlumtz.supabase.co/storage/v1/object/public/visuels/DOMAINEFONTAINEPAGE.png";
 
 const partners = [{
   icon: Camera,
@@ -90,8 +90,8 @@ const PartnerCard = ({ partner, index }: { partner: typeof partners[0]; index: n
     >
       {/* Header - Catégorie + Avantage */}
       <div className="p-5">
-        <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
-          <partner.icon className="h-6 w-6 text-primary" />
+        <div className="w-12 h-12 rounded-xl bg-premium-sage-very-light flex items-center justify-center mb-4 border border-premium-sage/20">
+          <partner.icon className="h-6 w-6 text-premium-sage-dark" />
         </div>
         <h3 className="font-semibold text-foreground mb-2">{partner.title}</h3>
         
