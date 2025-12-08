@@ -207,7 +207,7 @@ const DomaineDeLaFontaine = () => {
           delay: 0.2
         }}>
             Votre mariage au<br />
-            <span className="text-wedding-gold">Domaine de la Fontaine</span>
+            <span className="text-premium-sage">Domaine de la Fontaine</span>
           </motion.h1>
           
           <motion.h2 className="text-xl md:text-2xl text-white/90 mb-10 font-light" initial={{
