@@ -25,7 +25,6 @@ import {
 import PremiumHeader from '@/components/home/PremiumHeader';
 import Footer from '@/components/Footer';
 import SEO from '@/components/SEO';
-import CouplesCarousel from '@/components/club-mariable/CouplesCarousel';
 
 const VIDEO_URL = "https://bgidfcqktsttzlwlumtz.supabase.co/storage/v1/object/public/background-videos/freepik__wideangle-shot-a-joyful-couple-dances-at-their-wed__74093%20(1).mp4";
 
@@ -85,44 +84,59 @@ const HeroSection = () => (
           <span className="text-white font-medium">Accès offert par votre lieu de réception</span>
         </motion.div>
 
-        {/* CTAs */}
+        {/* CTAs - Scroll to sections */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.7, duration: 0.5 }}
           className="flex flex-col sm:flex-row gap-4 justify-center items-center"
         >
-          <Link to="/register">
+          <a href="#couples-section">
             <Button size="lg" className="bg-premium-sage hover:bg-premium-sage-dark text-white px-8 py-6 text-lg rounded-full shadow-lg hover:shadow-xl transition-all">
               Rejoindre le Club
             </Button>
-          </Link>
-          <Link to="/accueilprofessionnels">
-            <Button size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10 px-8 py-6 text-lg rounded-full backdrop-blur-sm">
+          </a>
+          <a href="#pros-section">
+            <Button size="lg" variant="outline" className="border-white/40 bg-white/10 text-white hover:bg-white/20 px-8 py-6 text-lg rounded-full backdrop-blur-sm">
               Devenir Lieu Partenaire
             </Button>
-          </Link>
-          <Link to="/accueilprofessionnels">
+          </a>
+          <a href="#pros-section">
             <Button size="lg" variant="ghost" className="text-white/80 hover:text-white hover:bg-white/10 px-6 py-6 text-lg rounded-full">
               Devenir Prestataire / Marque
             </Button>
-          </Link>
+          </a>
         </motion.div>
-
-        {/* Couples Carousel */}
-        <CouplesCarousel />
       </motion.div>
     </div>
   </section>
 );
 
-// Virtuous Circle Section
+// Virtuous Circle Section with integrated How it Works
 const VirtuousCircleSection = () => {
   const nodes = [
     { id: 'couples', label: 'Couples', icon: Heart, color: 'bg-pink-500', position: 'top' },
     { id: 'lieux', label: 'Lieux', icon: Building2, color: 'bg-amber-500', position: 'right' },
     { id: 'mariable', label: 'Mariable', icon: Sparkles, color: 'bg-premium-sage', position: 'bottom' },
     { id: 'partenaires', label: 'Partenaires', icon: Palette, color: 'bg-purple-500', position: 'left' },
+  ];
+
+  const steps = [
+    {
+      icon: Gift,
+      title: "Le lieu envoie son lien Club",
+      description: "Chaque lieu partenaire dispose d'un lien unique à partager avec ses couples"
+    },
+    {
+      icon: Users,
+      title: "Les mariés découvrent le Club",
+      description: "Accès aux prestataires & marques partenaires avec avantages exclusifs"
+    },
+    {
+      icon: Calculator,
+      title: "Commission partagée",
+      description: "Lorsqu'un couple réserve, la commission est répartie entre Mariable & le lieu"
+    }
   ];
 
   return (
@@ -133,7 +147,7 @@ const VirtuousCircleSection = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          className="text-center mb-12"
         >
           <h2 className="font-serif text-3xl md:text-5xl font-bold text-foreground mb-4">
             Un Club exclusif où chaque membre bénéficie
@@ -143,75 +157,108 @@ const VirtuousCircleSection = () => {
           </p>
         </motion.div>
 
-        {/* Circular Diagram */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-          className="relative w-full max-w-lg mx-auto aspect-square"
-        >
-          {/* SVG Circle with animated arrows */}
-          <svg className="w-full h-full" viewBox="0 0 400 400">
-            {/* Circular path */}
-            <circle
-              cx="200"
-              cy="200"
-              r="140"
-              fill="none"
-              stroke="hsl(var(--border))"
-              strokeWidth="2"
-              strokeDasharray="8 8"
-            />
-            
-            {/* Animated arrows */}
-            <motion.g
-              animate={{ rotate: 360 }}
-              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-              style={{ transformOrigin: "200px 200px" }}
-            >
-              {[0, 90, 180, 270].map((angle, i) => (
-                <g key={i} transform={`rotate(${angle} 200 200)`}>
-                  <path
-                    d="M200 60 L210 75 L200 70 L190 75 Z"
-                    fill="hsl(var(--premium-sage))"
-                    className="text-premium-sage"
-                  />
-                </g>
-              ))}
-            </motion.g>
-          </svg>
+        {/* Two columns layout */}
+        <div className="grid md:grid-cols-2 gap-12 items-center max-w-6xl mx-auto">
+          {/* Left Column: Circular Diagram (reduced size) */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="relative w-full max-w-sm mx-auto aspect-square"
+          >
+            {/* SVG Circle with animated arrows */}
+            <svg className="w-full h-full" viewBox="0 0 400 400">
+              {/* Circular path */}
+              <circle
+                cx="200"
+                cy="200"
+                r="140"
+                fill="none"
+                stroke="hsl(var(--border))"
+                strokeWidth="2"
+                strokeDasharray="8 8"
+              />
+              
+              {/* Animated arrows */}
+              <motion.g
+                animate={{ rotate: 360 }}
+                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                style={{ transformOrigin: "200px 200px" }}
+              >
+                {[0, 90, 180, 270].map((angle, i) => (
+                  <g key={i} transform={`rotate(${angle} 200 200)`}>
+                    <path
+                      d="M200 60 L210 75 L200 70 L190 75 Z"
+                      fill="hsl(var(--premium-sage))"
+                      className="text-premium-sage"
+                    />
+                  </g>
+                ))}
+              </motion.g>
+            </svg>
 
-          {/* Nodes */}
-          {nodes.map((node, index) => {
-            const positions = {
-              top: 'top-0 left-1/2 -translate-x-1/2 -translate-y-1/2',
-              right: 'right-0 top-1/2 translate-x-1/2 -translate-y-1/2',
-              bottom: 'bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2',
-              left: 'left-0 top-1/2 -translate-x-1/2 -translate-y-1/2',
-            };
+            {/* Nodes */}
+            {nodes.map((node, index) => {
+              const positions = {
+                top: 'top-0 left-1/2 -translate-x-1/2 -translate-y-1/2',
+                right: 'right-0 top-1/2 translate-x-1/2 -translate-y-1/2',
+                bottom: 'bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2',
+                left: 'left-0 top-1/2 -translate-x-1/2 -translate-y-1/2',
+              };
 
-            return (
+              return (
+                <motion.div
+                  key={node.id}
+                  initial={{ opacity: 0, scale: 0 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.15, duration: 0.5 }}
+                  className={`absolute ${positions[node.position as keyof typeof positions]}`}
+                >
+                  <div className="flex flex-col items-center gap-2">
+                    <div className={`w-14 h-14 md:w-16 md:h-16 rounded-full ${node.color} flex items-center justify-center shadow-lg`}>
+                      <node.icon className="w-7 h-7 md:w-8 md:h-8 text-white" />
+                    </div>
+                    <span className="text-xs md:text-sm font-semibold text-foreground bg-background px-2 py-0.5 rounded-full shadow-sm">
+                      {node.label}
+                    </span>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </motion.div>
+
+          {/* Right Column: 3 steps vertically */}
+          <div className="space-y-6">
+            <h3 className="font-serif text-2xl font-bold text-foreground mb-6">
+              Comment ça marche ?
+            </h3>
+            {steps.map((step, index) => (
               <motion.div
-                key={node.id}
-                initial={{ opacity: 0, scale: 0 }}
-                whileInView={{ opacity: 1, scale: 1 }}
+                key={index}
+                initial={{ opacity: 0, x: 20 }}
+                whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.15, duration: 0.5 }}
-                className={`absolute ${positions[node.position as keyof typeof positions]}`}
+                className="flex items-start gap-4"
               >
-                <div className="flex flex-col items-center gap-2">
-                  <div className={`w-16 h-16 md:w-20 md:h-20 rounded-full ${node.color} flex items-center justify-center shadow-lg`}>
-                    <node.icon className="w-8 h-8 md:w-10 md:h-10 text-white" />
+                <div className="relative flex-shrink-0">
+                  <div className="w-12 h-12 rounded-full bg-premium-sage-very-light flex items-center justify-center">
+                    <step.icon className="w-6 h-6 text-premium-sage" />
                   </div>
-                  <span className="text-sm md:text-base font-semibold text-foreground bg-background px-3 py-1 rounded-full shadow-sm">
-                    {node.label}
+                  <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-premium-sage text-white text-xs font-bold flex items-center justify-center">
+                    {index + 1}
                   </span>
                 </div>
+                <div>
+                  <h4 className="font-semibold text-foreground mb-1">{step.title}</h4>
+                  <p className="text-sm text-muted-foreground">{step.description}</p>
+                </div>
               </motion.div>
-            );
-          })}
-        </motion.div>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   );
@@ -228,7 +275,7 @@ const CouplesSection = () => {
   ];
 
   return (
-    <section className="py-20 bg-background">
+    <section id="couples-section" className="py-20 bg-background">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -242,9 +289,12 @@ const CouplesSection = () => {
             <span className="text-sm font-medium">Accès 100% gratuit</span>
           </div>
 
-          <h2 className="font-serif text-3xl md:text-5xl font-bold text-foreground mb-6">
-            Facilitez votre organisation & économisez
+          <h2 className="font-serif text-3xl md:text-5xl font-bold text-foreground mb-3">
+            Pour les Couples
           </h2>
+          <p className="text-muted-foreground text-lg mb-8">
+            Facilitez votre organisation & économisez
+          </p>
 
           <div className="grid gap-4 text-left max-w-md mx-auto mb-8">
             {benefits.map((benefit, i) => (
@@ -282,7 +332,7 @@ const CouplesSection = () => {
   );
 };
 
-// Combined Lieux & Partenaires Section
+// Combined Lieux & Partenaires Section - Uniform cards
 const LieuxPartenairesSection = () => {
   const lieuxBenefits = [
     "Mini-site personnalisé du lieu",
@@ -300,14 +350,8 @@ const LieuxPartenairesSection = () => {
     "Possibilité d'offrir un avantage exclusif aux mariés"
   ];
 
-  const pourquoiCaMarche = [
-    "Les couples veulent une sélection fiable",
-    "Vous influencez leur choix intelligemment via votre sélection prioritaire",
-    "Le club renforce votre image haut-de-gamme"
-  ];
-
   return (
-    <section className="py-20 bg-premium-sage-very-light/50">
+    <section id="pros-section" className="py-20 bg-premium-sage-very-light/50">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -320,7 +364,7 @@ const LieuxPartenairesSection = () => {
             Rejoignez le Club
           </h2>
           <p className="text-muted-foreground text-lg">
-            Que vous soyez un lieu de réception ou un prestataire
+            Pour les Professionnels : Lieux de réception, Prestataires & Marques
           </p>
         </motion.div>
 
@@ -359,19 +403,6 @@ const LieuxPartenairesSection = () => {
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
-
-            {/* Pourquoi ça marche */}
-            <div className="bg-premium-sage-very-light/50 rounded-xl p-4 mb-6">
-              <p className="font-medium text-sm text-premium-sage-dark mb-2">Pourquoi ça marche :</p>
-              <ul className="space-y-1.5">
-                {pourquoiCaMarche.map((item, i) => (
-                  <li key={i} className="text-xs text-muted-foreground flex items-start gap-2">
-                    <span className="text-premium-sage">•</span>
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
 
             <Link to="/accueilprofessionnels">
               <Button className="w-full bg-premium-sage hover:bg-premium-sage-dark text-white rounded-full">
@@ -423,92 +454,6 @@ const LieuxPartenairesSection = () => {
               </Button>
             </Link>
           </motion.div>
-        </div>
-      </div>
-    </section>
-  );
-};
-
-// How It Works Section
-const HowItWorksSection = () => {
-  const steps = [
-    {
-      number: "1",
-      icon: Gift,
-      title: "Le lieu envoie son lien Club",
-      description: "Chaque lieu partenaire dispose d'un lien unique à partager avec ses couples"
-    },
-    {
-      number: "2",
-      icon: Users,
-      title: "Les mariés découvrent le Club",
-      description: "Accès aux prestataires & marques partenaires avec avantages exclusifs"
-    },
-    {
-      number: "3",
-      icon: Calculator,
-      title: "Commission partagée",
-      description: "Lorsqu'un couple réserve, la commission est répartie entre Mariable & le lieu"
-    }
-  ];
-
-  return (
-    <section className="py-20 bg-background">
-      <div className="container mx-auto px-4">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
-        >
-          <h2 className="font-serif text-3xl md:text-5xl font-bold text-foreground mb-4">
-            Comment ça marche ?
-          </h2>
-          <p className="text-muted-foreground text-lg">
-            Simple, en 3 étapes
-          </p>
-        </motion.div>
-
-        <div className="flex flex-col md:flex-row items-center justify-center gap-8 max-w-5xl mx-auto">
-          {steps.map((step, index) => (
-            <React.Fragment key={index}>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.2, duration: 0.5 }}
-                className="flex-1 text-center max-w-xs"
-              >
-                <div className="relative inline-flex mb-4">
-                  <div className="w-20 h-20 rounded-full bg-premium-sage-very-light flex items-center justify-center">
-                    <step.icon className="w-10 h-10 text-premium-sage" />
-                  </div>
-                  <span className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-premium-sage text-white font-bold flex items-center justify-center text-sm">
-                    {step.number}
-                  </span>
-                </div>
-                <h3 className="font-serif text-xl font-bold text-foreground mb-2">
-                  {step.title}
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                  {step.description}
-                </p>
-              </motion.div>
-
-              {index < steps.length - 1 && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.2 + 0.3, duration: 0.5 }}
-                  className="hidden md:block"
-                >
-                  <ArrowRight className="w-8 h-8 text-premium-sage/50" />
-                </motion.div>
-              )}
-            </React.Fragment>
-          ))}
         </div>
       </div>
     </section>
@@ -703,7 +648,7 @@ const FinalCTASection = () => (
             </Button>
           </Link>
           <Link to="/accueilprofessionnels">
-            <Button size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10 px-8 py-6 text-lg rounded-full">
+            <Button size="lg" variant="outline" className="border-white/40 bg-white/10 text-white hover:bg-white/20 px-8 py-6 text-lg rounded-full">
               Devenir Lieu Partenaire
             </Button>
           </Link>
@@ -736,7 +681,6 @@ const Mariable = () => {
           <VirtuousCircleSection />
           <CouplesSection />
           <LieuxPartenairesSection />
-          <HowItWorksSection />
           <SavingsSimulatorSection />
           <TestimonialsSection />
           <FinalCTASection />
