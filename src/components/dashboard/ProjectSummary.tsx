@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Sparkles, Gift } from 'lucide-react';
+import { Calendar, Sparkles, Gift, ArrowRight } from 'lucide-react';
 import { format, differenceInDays } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
@@ -9,13 +9,14 @@ import { Input } from '@/components/ui/input';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useUserProfile } from '@/hooks/useUserProfile';
 import DashboardFeatureCards from './DashboardFeatureCards';
-import { CheckSquare, ArrowRight, Circle, CheckCircle2, Loader2 } from 'lucide-react';
+import { CheckSquare, Circle, CheckCircle2, Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 import PaymentModal from '@/components/pricing/PaymentModal';
 import { WhatsAppButton } from '@/components/support/WhatsAppButton';
 import { LoomVideoEmbed } from '@/components/tutorials/LoomVideoEmbed';
 import { TUTORIAL_VIDEOS } from '@/config/tutorialVideos';
+import ClubMariableModal from './ClubMariableModal';
 interface Task {
   id: string;
   label: string;
@@ -42,6 +43,7 @@ const ProjectSummary = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [tasksLoading, setTasksLoading] = useState(true);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [showClubMariableModal, setShowClubMariableModal] = useState(false);
 
   // Initialize local state from profile
   useEffect(() => {
@@ -209,6 +211,30 @@ const ProjectSummary = () => {
                 </span>}
             </p>
           </div>}
+
+        {/* CTAs Club Mariable & Outils */}
+        <div className="flex flex-wrap gap-3 mt-4">
+          <Button 
+            variant="outline"
+            onClick={() => setShowClubMariableModal(true)}
+            className="border-wedding-olive text-wedding-olive hover:bg-wedding-olive/10"
+          >
+            <Sparkles className="w-4 h-4 mr-2" />
+            Club Mariable
+            <span className="ml-2 px-1.5 py-0.5 text-xs bg-amber-100 text-amber-700 rounded font-medium">Bientôt</span>
+          </Button>
+          <Button 
+            variant="ghost" 
+            className="text-muted-foreground"
+            onClick={() => {
+              const sidebar = document.querySelector('nav');
+              if (sidebar) sidebar.scrollIntoView({ behavior: 'smooth' });
+            }}
+          >
+            Outils d'organisation via le menu à gauche
+            <ArrowRight className="w-4 h-4 ml-2" />
+          </Button>
+        </div>
       </div>
 
       {/* Vidéo tutorielle principale - COMPACT */}
@@ -381,6 +407,9 @@ const ProjectSummary = () => {
 
       {/* Payment Modal */}
       <PaymentModal isOpen={showPaymentModal} onClose={() => setShowPaymentModal(false)} />
+
+      {/* Club Mariable Modal */}
+      <ClubMariableModal isOpen={showClubMariableModal} onClose={() => setShowClubMariableModal(false)} />
     </div>;
 };
 
