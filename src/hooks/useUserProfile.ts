@@ -15,6 +15,7 @@ interface UserProfile {
   stripe_customer_id: string | null;
   stripe_subscription_id: string | null;
   updated_at: string | null;
+  notify_club_mariable: boolean | null;
 }
 
 export const useUserProfile = () => {

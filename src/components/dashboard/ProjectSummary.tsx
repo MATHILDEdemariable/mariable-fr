@@ -58,6 +58,9 @@ const ProjectSummary = () => {
       if (profile.guest_count) {
         setLocalGuestCount(profile.guest_count.toString());
       }
+      if (profile.notify_club_mariable !== undefined) {
+        setNotifyClub(profile.notify_club_mariable ?? false);
+      }
     }
   }, [profile]);
 
@@ -216,18 +219,19 @@ const ProjectSummary = () => {
             </p>
           </div>}
 
-        {/* Club Mariable avec fond noir */}
-        <div className="bg-foreground text-background rounded-lg p-4 mt-4">
+        {/* Club Mariable avec fond vert sauge */}
+        <div className="bg-premium-sage text-white rounded-lg p-4 mt-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <Sparkles className="w-5 h-5" />
               <span className="font-medium">Club Mariable</span>
-              <span className="px-2 py-0.5 text-xs bg-amber-400 text-amber-900 rounded font-medium">Bientôt</span>
+              <span className="px-2 py-0.5 text-xs bg-white/20 text-white rounded font-medium">Bientôt</span>
             </div>
             <Button 
               variant="secondary"
               size="sm"
               onClick={() => setShowClubMariableModal(true)}
+              className="bg-white/20 hover:bg-white/30 text-white border-0"
             >
               En savoir plus
             </Button>
@@ -236,8 +240,13 @@ const ProjectSummary = () => {
             <Checkbox 
               id="notify-club" 
               checked={notifyClub}
-              onCheckedChange={(checked) => setNotifyClub(checked === true)}
-              className="border-white data-[state=checked]:bg-white data-[state=checked]:text-black" 
+              onCheckedChange={async (checked) => {
+                setNotifyClub(checked === true);
+                if (updateProfile) {
+                  await updateProfile({ notify_club_mariable: checked === true });
+                }
+              }}
+              className="border-white data-[state=checked]:bg-white data-[state=checked]:text-premium-sage" 
             />
             <label htmlFor="notify-club" className="text-sm cursor-pointer">
               Me notifier dès l'ouverture du Club Mariable
@@ -316,27 +325,6 @@ const ProjectSummary = () => {
           />
         </DialogContent>
       </Dialog>
-
-      {/* Bloc Premium - Visible uniquement si l'utilisateur n'est pas premium */}
-      {profile && profile.subscription_type !== 'premium' && <div className="bg-premium-sage border-2 border-premium-sage-dark rounded-xl p-6 shadow-lg">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <div className="bg-white p-3 rounded-full">
-                <Sparkles className="w-6 h-6 text-premium-sage-dark" />
-              </div>
-              <div>
-                <h3 className="text-xl font-serif text-white font-bold">
-                  Profitez de toutes les fonctionnalités
-                </h3>
-                <p className="text-white/90 text-sm mt-1">Pour 9€ par mois ou demandez votre code Club Mariable à votre lieu</p>
-              </div>
-            </div>
-            <Button onClick={() => setShowPaymentModal(true)} size="lg" className="bg-white hover:bg-gray-100 text-premium-sage-dark font-semibold shadow-md hover:shadow-lg transition-all duration-200 whitespace-nowrap">
-              <Sparkles className="w-4 h-4 mr-2" />
-              Passer premium
-            </Button>
-          </div>
-        </div>}
 
       {/* Initiation Title */}
       <div className="mb-6">
@@ -434,9 +422,32 @@ const ProjectSummary = () => {
                   </div>
                 </div>
               </div>)}
-          </div>
+           </div>
         </div>
       </div>
+
+      {/* Bloc Premium - Visible uniquement si l'utilisateur n'est pas premium - EN DERNIER */}
+      {profile && profile.subscription_type !== 'premium' && (
+        <div className="bg-premium-sage border-2 border-premium-sage-dark rounded-xl p-6 shadow-lg">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="bg-white p-3 rounded-full">
+                <Sparkles className="w-6 h-6 text-premium-sage-dark" />
+              </div>
+              <div>
+                <h3 className="text-xl font-serif text-white font-bold">
+                  Profitez de toutes les fonctionnalités
+                </h3>
+                <p className="text-white/90 text-sm mt-1">Pour 9€ par mois ou demandez votre code Club Mariable à votre lieu</p>
+              </div>
+            </div>
+            <Button onClick={() => setShowPaymentModal(true)} size="lg" className="bg-white hover:bg-gray-100 text-premium-sage-dark font-semibold shadow-md hover:shadow-lg transition-all duration-200 whitespace-nowrap">
+              <Sparkles className="w-4 h-4 mr-2" />
+              Passer premium
+            </Button>
+          </div>
+        </div>
+      )}
 
       {/* Payment Modal */}
       <PaymentModal isOpen={showPaymentModal} onClose={() => setShowPaymentModal(false)} />
