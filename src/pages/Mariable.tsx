@@ -8,11 +8,14 @@ import {
   Building2, 
   Palette, 
   ArrowRight,
+  ArrowDown,
   Sparkles,
   Heart,
   Calculator,
   Star,
-  Quote
+  Quote,
+  ListChecks,
+  Wallet
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
@@ -28,7 +31,7 @@ import SEO from '@/components/SEO';
 
 const VIDEO_URL = "https://bgidfcqktsttzlwlumtz.supabase.co/storage/v1/object/public/background-videos/freepik__wideangle-shot-a-joyful-couple-dances-at-their-wed__74093%20(1).mp4";
 
-// Hero Section
+// Hero Section - Single CTA
 const HeroSection = () => (
   <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
     {/* Video Background */}
@@ -84,26 +87,17 @@ const HeroSection = () => (
           <span className="text-white font-medium">Accès offert par votre lieu de réception</span>
         </motion.div>
 
-        {/* CTAs - Scroll to sections */}
+        {/* Single CTA - Scroll to concept */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.7, duration: 0.5 }}
-          className="flex flex-col sm:flex-row gap-4 justify-center items-center"
+          className="flex justify-center"
         >
-          <a href="#couples-section">
+          <a href="#cercle-vertueux">
             <Button size="lg" className="bg-premium-sage hover:bg-premium-sage-dark text-white px-8 py-6 text-lg rounded-full shadow-lg hover:shadow-xl transition-all">
-              Rejoindre le Club
-            </Button>
-          </a>
-          <a href="#pros-section">
-            <Button size="lg" variant="outline" className="border-white/40 bg-white/10 text-white hover:bg-white/20 px-8 py-6 text-lg rounded-full backdrop-blur-sm">
-              Devenir Lieu Partenaire
-            </Button>
-          </a>
-          <a href="#pros-section">
-            <Button size="lg" variant="ghost" className="text-white/80 hover:text-white hover:bg-white/10 px-6 py-6 text-lg rounded-full">
-              Devenir Prestataire / Marque
+              Découvrir le concept
+              <ArrowDown className="ml-2 w-5 h-5" />
             </Button>
           </a>
         </motion.div>
@@ -116,9 +110,9 @@ const HeroSection = () => (
 const VirtuousCircleSection = () => {
   const nodes = [
     { id: 'couples', label: 'Couples', icon: Heart, color: 'bg-pink-500', position: 'top' },
-    { id: 'lieux', label: 'Lieux', icon: Building2, color: 'bg-amber-500', position: 'right' },
+    { id: 'lieux', label: 'Lieux', icon: Building2, color: 'bg-sky-400', position: 'right' },
     { id: 'mariable', label: 'Mariable', icon: Sparkles, color: 'bg-premium-sage', position: 'bottom' },
-    { id: 'partenaires', label: 'Partenaires', icon: Palette, color: 'bg-purple-500', position: 'left' },
+    { id: 'partenaires', label: 'Partenaires', icon: Palette, color: 'bg-amber-300', position: 'left' },
   ];
 
   const steps = [
@@ -140,7 +134,7 @@ const VirtuousCircleSection = () => {
   ];
 
   return (
-    <section className="py-20 bg-premium-warm">
+    <section id="cercle-vertueux" className="py-20 bg-premium-warm scroll-mt-20">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -264,14 +258,24 @@ const VirtuousCircleSection = () => {
   );
 };
 
-// Couples Section
+// Couples Section - Simplified to 3 key points
 const CouplesSection = () => {
   const benefits = [
-    "Accès aux meilleurs professionnels vérifiés",
-    "Prix préférentiels & avantages exclusifs",
-    "Outils gratuits : checklist, budget, coordination Jour-J",
-    "Support Whatsapp inclus pour toutes vos questions d'organisation",
-    "Aucun engagement"
+    {
+      icon: CheckCircle,
+      title: "Accès aux meilleurs professionnels vérifiés",
+      description: "Des prestataires sélectionnés et recommandés par votre lieu"
+    },
+    {
+      icon: Gift,
+      title: "Prix préférentiels & privilèges club",
+      description: "Des réductions exclusives de 5 à 20% chez tous nos partenaires"
+    },
+    {
+      icon: ListChecks,
+      title: "Outils en ligne pour planifier facilement",
+      description: "Gestion checklist, budget, coordination Jour-J... tout en un seul endroit"
+    }
   ];
 
   return (
@@ -282,7 +286,7 @@ const CouplesSection = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="max-w-3xl mx-auto text-center"
+          className="max-w-4xl mx-auto text-center"
         >
           <div className="inline-flex items-center gap-2 bg-premium-sage-very-light text-premium-sage-dark rounded-full px-4 py-1.5 mb-6">
             <Users className="w-4 h-4" />
@@ -292,22 +296,26 @@ const CouplesSection = () => {
           <h2 className="font-serif text-3xl md:text-5xl font-bold text-foreground mb-3">
             Pour les Couples
           </h2>
-          <p className="text-muted-foreground text-lg mb-8">
+          <p className="text-muted-foreground text-lg mb-10">
             Facilitez votre organisation & économisez
           </p>
 
-          <div className="grid gap-4 text-left max-w-md mx-auto mb-8">
+          {/* 3 Key Benefits */}
+          <div className="grid md:grid-cols-3 gap-6 mb-10">
             {benefits.map((benefit, i) => (
               <motion.div
                 key={i}
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1, duration: 0.4 }}
-                className="flex items-center gap-3"
+                className="bg-white rounded-xl p-6 shadow-sm border border-border text-left"
               >
-                <CheckCircle className="w-5 h-5 text-premium-sage flex-shrink-0" />
-                <span className="text-foreground">{benefit}</span>
+                <div className="w-12 h-12 rounded-full bg-premium-sage-very-light flex items-center justify-center mb-4">
+                  <benefit.icon className="w-6 h-6 text-premium-sage" />
+                </div>
+                <h4 className="font-semibold text-foreground mb-2">{benefit.title}</h4>
+                <p className="text-sm text-muted-foreground">{benefit.description}</p>
               </motion.div>
             ))}
           </div>
@@ -318,10 +326,17 @@ const CouplesSection = () => {
             <span className="text-premium-sage-dark font-medium">Offert par votre lieu de réception</span>
           </div>
 
-          <div>
+          {/* Double CTA */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="#simulateur">
+              <Button size="lg" variant="outline" className="border-premium-sage text-premium-sage hover:bg-premium-sage/10 px-8 py-6 text-lg rounded-full">
+                <Calculator className="mr-2 w-5 h-5" />
+                Simuler les économies
+              </Button>
+            </a>
             <Link to="/register">
               <Button size="lg" className="bg-premium-sage hover:bg-premium-sage-dark text-white px-8 py-6 text-lg rounded-full">
-                Rejoindre gratuitement
+                Rejoindre le Club
                 <ArrowRight className="ml-2 w-5 h-5" />
               </Button>
             </Link>
@@ -332,7 +347,7 @@ const CouplesSection = () => {
   );
 };
 
-// Combined Lieux & Partenaires Section - Uniform cards
+// Combined Lieux & Partenaires Section - Uniform cards with new colors
 const LieuxPartenairesSection = () => {
   const lieuxBenefits = [
     "Mini-site personnalisé du lieu",
@@ -351,7 +366,7 @@ const LieuxPartenairesSection = () => {
   ];
 
   return (
-    <section id="pros-section" className="py-20 bg-premium-sage-very-light/50">
+    <section id="pros-section" className="py-20 bg-premium-cream/30">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -361,10 +376,10 @@ const LieuxPartenairesSection = () => {
           className="text-center mb-12"
         >
           <h2 className="font-serif text-3xl md:text-5xl font-bold text-foreground mb-4">
-            Rejoignez le Club
+            Pour les Professionnels : Lieux de réception, Prestataires & Marques
           </h2>
           <p className="text-muted-foreground text-lg">
-            Pour les Professionnels : Lieux de réception, Prestataires & Marques
+            Rejoignez le réseau et développez votre activité
           </p>
         </motion.div>
 
@@ -377,9 +392,9 @@ const LieuxPartenairesSection = () => {
             transition={{ duration: 0.5 }}
             className="bg-background rounded-2xl p-8 shadow-lg border border-border"
           >
-            <div className="inline-flex items-center gap-2 bg-amber-100 text-amber-700 rounded-full px-3 py-1 mb-4">
+            <div className="inline-flex items-center gap-2 bg-sky-100 text-sky-700 rounded-full px-3 py-1 mb-4">
               <Building2 className="w-4 h-4" />
-              <span className="text-sm font-medium">Revenus passifs</span>
+              <span className="text-sm font-medium">Lieux</span>
             </div>
 
             <h3 className="font-serif text-2xl font-bold text-foreground mb-4">
@@ -404,7 +419,7 @@ const LieuxPartenairesSection = () => {
               </AccordionItem>
             </Accordion>
 
-            <Link to="/accueilprofessionnels">
+            <Link to="/mariable.ambassadeur">
               <Button className="w-full bg-premium-sage hover:bg-premium-sage-dark text-white rounded-full">
                 Devenir Lieu ambassadeur
                 <ArrowRight className="ml-2 w-4 h-4" />
@@ -420,9 +435,9 @@ const LieuxPartenairesSection = () => {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="bg-background rounded-2xl p-8 shadow-lg border border-border"
           >
-            <div className="inline-flex items-center gap-2 bg-purple-100 text-purple-700 rounded-full px-3 py-1 mb-4">
+            <div className="inline-flex items-center gap-2 bg-amber-100 text-amber-700 rounded-full px-3 py-1 mb-4">
               <Palette className="w-4 h-4" />
-              <span className="text-sm font-medium">Acquisition qualifiée</span>
+              <span className="text-sm font-medium">Prestataires ou marques</span>
             </div>
 
             <h3 className="font-serif text-2xl font-bold text-foreground mb-4">
@@ -447,7 +462,7 @@ const LieuxPartenairesSection = () => {
               </AccordionItem>
             </Accordion>
 
-            <Link to="/accueilprofessionnels">
+            <Link to="/mariable.partenaire">
               <Button className="w-full bg-premium-sage hover:bg-premium-sage-dark text-white rounded-full">
                 Devenir Partenaire
                 <ArrowRight className="ml-2 w-4 h-4" />
@@ -469,7 +484,7 @@ const SavingsSimulatorSection = () => {
   const maxSavings = Math.round(budget[0] * 0.15 * providers[0] / 8);
 
   return (
-    <section className="py-20 bg-gradient-to-br from-premium-sage-very-light via-background to-premium-sage-very-light/30">
+    <section id="simulateur" className="py-20 bg-gradient-to-br from-premium-sage-very-light via-background to-premium-sage-very-light/30 scroll-mt-20">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -625,6 +640,54 @@ const TestimonialsSection = () => {
   );
 };
 
+// FAQ Section
+const FAQSection = () => {
+  const faqItems = [
+    { question: "Mon lieu n'est pas partenaire, comment faire ?", answer: "Parlez-en à votre lieu ! S'ils rejoignent Mariable, vous aurez accès à ces avantages rapidement !" },
+    { question: "Je suis obligé d'utiliser ces pros ?", answer: "Non, c'est totalement optionnel. Mais ils sont recommandés par votre lieu et vous font économiser." },
+    { question: "Comment je récupère mes réductions ?", answer: "Via VOTRE COMPTE mariable.fr vous accédez au code promotionnel des partenaires." },
+    { question: "Les réductions sont-elles cumulables ?", answer: "Oui ! Vous pouvez cumuler les avantages de tous les partenaires du Club pour maximiser vos économies." },
+  ];
+
+  return (
+    <section className="py-20 bg-white">
+      <div className="container mx-auto px-4">
+        <motion.h2 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="font-serif text-3xl md:text-5xl font-bold text-center text-foreground mb-16"
+        >
+          Vos Questions
+        </motion.h2>
+        
+        <div className="max-w-2xl mx-auto">
+          <Accordion type="single" collapsible className="space-y-4">
+            {faqItems.map((item, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+              >
+                <AccordionItem value={`item-${index}`} className="border-2 rounded-xl px-6 hover:border-premium-sage/40 hover:shadow-lg transition-all duration-300">
+                  <AccordionTrigger className="text-left font-medium hover:no-underline py-5 font-serif">
+                    {item.question}
+                  </AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground pb-5">
+                    {item.answer}
+                  </AccordionContent>
+                </AccordionItem>
+              </motion.div>
+            ))}
+          </Accordion>
+        </div>
+      </div>
+    </section>
+  );
+};
+
 // Final CTA Section
 const FinalCTASection = () => (
   <section className="py-20 bg-gradient-to-br from-premium-sage via-premium-sage-dark to-premium-sage">
@@ -647,12 +710,12 @@ const FinalCTASection = () => (
               <Heart className="ml-2 w-5 h-5" />
             </Button>
           </Link>
-          <Link to="/accueilprofessionnels">
+          <Link to="/mariable.ambassadeur">
             <Button size="lg" variant="outline" className="border-white/40 bg-white/10 text-white hover:bg-white/20 px-8 py-6 text-lg rounded-full">
               Devenir Lieu Partenaire
             </Button>
           </Link>
-          <Link to="/accueilprofessionnels">
+          <Link to="/mariable.partenaire">
             <Button size="lg" variant="ghost" className="text-white/80 hover:text-white hover:bg-white/10 px-6 py-6 text-lg rounded-full">
               Devenir Partenaire
             </Button>
@@ -683,6 +746,7 @@ const Mariable = () => {
           <LieuxPartenairesSection />
           <SavingsSimulatorSection />
           <TestimonialsSection />
+          <FAQSection />
           <FinalCTASection />
         </main>
 
