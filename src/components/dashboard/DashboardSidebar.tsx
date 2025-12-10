@@ -442,7 +442,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
           onClick={() => setShowClubMariableModal(true)}
           className={cn(
             "flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors w-full justify-start",
-            "text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive",
+            "bg-foreground text-background hover:bg-foreground/90",
             isReaderMode ? 'pointer-events-none opacity-70' : ''
           )}
           disabled={isReaderMode}
