@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Calendar, CheckSquare, Calculator, Store, Heart, Settings, LogOut, Wine, MessageCircleQuestion, MessageSquare, Users, Lightbulb, ChevronDown, Coins, ListChecks, UserCheck, Home, QrCode, FileText, Table, AlertCircle, Gift } from 'lucide-react';
+import { LayoutDashboard, Calendar, CheckSquare, Calculator, Store, Heart, Settings, LogOut, Wine, MessageCircleQuestion, MessageSquare, Users, Lightbulb, ChevronDown, Coins, ListChecks, UserCheck, Home, QrCode, FileText, Table, AlertCircle, Gift, Sparkles } from 'lucide-react';
 import { CallScheduleModal } from './CallScheduleModal';
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { WhatsAppButton } from '@/components/support/WhatsAppButton';
 import { ProblemModal } from '@/components/support/ProblemModal';
+import ClubMariableModal from './ClubMariableModal';
 interface DashboardSidebarProps {
   isReaderMode?: boolean;
 }
@@ -16,6 +17,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
   const location = useLocation();
   const [showProblemModal, setShowProblemModal] = useState(false);
   const [showCallModal, setShowCallModal] = useState(false);
+  const [showClubMariableModal, setShowClubMariableModal] = useState(false);
 
   // Menu déroulant Tableau de bord
   const dashboardItems = [{
