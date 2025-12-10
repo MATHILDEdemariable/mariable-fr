@@ -270,7 +270,7 @@ const CouplesSection = () => {
     "Accès aux meilleurs professionnels vérifiés",
     "Prix préférentiels & avantages exclusifs",
     "Outils gratuits : checklist, budget, coordination Jour-J",
-    "Recommandations sur-mesure",
+    "Support Whatsapp inclus pour toutes vos questions d'organisation",
     "Aucun engagement"
   ];
 
