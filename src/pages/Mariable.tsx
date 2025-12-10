@@ -87,19 +87,21 @@ const HeroSection = () => (
           <span className="text-white font-medium">Accès offert par votre lieu de réception</span>
         </motion.div>
 
-        {/* Single CTA - Scroll to concept */}
+        {/* Single CTA - Scroll to concept with smooth behavior */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.7, duration: 0.5 }}
           className="flex justify-center"
         >
-          <a href="#cercle-vertueux">
-            <Button size="lg" className="bg-premium-sage hover:bg-premium-sage-dark text-white px-8 py-6 text-lg rounded-full shadow-lg hover:shadow-xl transition-all">
-              Découvrir le concept
-              <ArrowDown className="ml-2 w-5 h-5" />
-            </Button>
-          </a>
+          <Button 
+            size="lg" 
+            onClick={() => document.getElementById('cercle-vertueux')?.scrollIntoView({ behavior: 'smooth' })}
+            className="bg-premium-sage hover:bg-premium-sage-dark text-white px-8 py-6 text-lg rounded-full shadow-lg hover:shadow-xl transition-all"
+          >
+            Découvrir le concept
+            <ArrowDown className="ml-2 w-5 h-5" />
+          </Button>
         </motion.div>
       </motion.div>
     </div>
@@ -300,40 +302,52 @@ const CouplesSection = () => {
             Facilitez votre organisation & économisez
           </p>
 
-          {/* 3 Key Benefits */}
+          {/* 3 Key Benefits with enhanced animations */}
           <div className="grid md:grid-cols-3 gap-6 mb-10">
             {benefits.map((benefit, i) => (
               <motion.div
                 key={i}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.1, duration: 0.4 }}
-                className="bg-white rounded-xl p-6 shadow-sm border border-border text-left"
+                transition={{ delay: i * 0.15, duration: 0.5, ease: "easeOut" }}
+                whileHover={{ y: -8, boxShadow: "0 20px 40px rgba(0,0,0,0.1)" }}
+                className="bg-white rounded-xl p-6 shadow-sm border border-border text-left cursor-pointer transition-all"
               >
-                <div className="w-12 h-12 rounded-full bg-premium-sage-very-light flex items-center justify-center mb-4">
+                <motion.div 
+                  className="w-12 h-12 rounded-full bg-premium-sage-very-light flex items-center justify-center mb-4"
+                  whileHover={{ scale: 1.1, rotate: 5 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                >
                   <benefit.icon className="w-6 h-6 text-premium-sage" />
-                </div>
+                </motion.div>
                 <h4 className="font-semibold text-foreground mb-2">{benefit.title}</h4>
                 <p className="text-sm text-muted-foreground">{benefit.description}</p>
               </motion.div>
             ))}
           </div>
 
-          {/* Gift Badge */}
-          <div className="inline-flex items-center gap-2 bg-premium-sage/10 backdrop-blur-sm border border-premium-sage/20 rounded-xl px-5 py-3 mb-8">
+          {/* Gift Badge with pulse animation */}
+          <motion.div 
+            className="inline-flex items-center gap-2 bg-premium-sage/10 backdrop-blur-sm border border-premium-sage/20 rounded-xl px-5 py-3 mb-8"
+            animate={{ scale: [1, 1.02, 1] }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          >
             <Gift className="w-5 h-5 text-premium-sage" />
             <span className="text-premium-sage-dark font-medium">Offert par votre lieu de réception</span>
-          </div>
+          </motion.div>
 
-          {/* Double CTA */}
+          {/* Double CTA with smooth scroll */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="#simulateur">
-              <Button size="lg" variant="outline" className="border-premium-sage text-premium-sage hover:bg-premium-sage/10 px-8 py-6 text-lg rounded-full">
-                <Calculator className="mr-2 w-5 h-5" />
-                Simuler les économies
-              </Button>
-            </a>
+            <Button 
+              size="lg" 
+              variant="outline" 
+              onClick={() => document.getElementById('simulateur')?.scrollIntoView({ behavior: 'smooth' })}
+              className="border-premium-sage text-premium-sage hover:bg-premium-sage/10 px-8 py-6 text-lg rounded-full"
+            >
+              <Calculator className="mr-2 w-5 h-5" />
+              Simuler les économies
+            </Button>
             <Link to="/register">
               <Button size="lg" className="bg-premium-sage hover:bg-premium-sage-dark text-white px-8 py-6 text-lg rounded-full">
                 Rejoindre le Club
@@ -375,11 +389,11 @@ const LieuxPartenairesSection = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-12"
         >
-          <h2 className="font-serif text-3xl md:text-5xl font-bold text-foreground mb-4">
-            Pour les Professionnels : Lieux de réception, Prestataires & Marques
+          <h2 className="font-serif text-3xl md:text-5xl font-bold text-foreground mb-2">
+            Pour les Professionnels
           </h2>
-          <p className="text-muted-foreground text-lg">
-            Rejoignez le réseau et développez votre activité
+          <p className="text-lg text-muted-foreground">
+            Lieux de réception, Prestataires & Marques : développez votre activité
           </p>
         </motion.div>
 
