@@ -354,9 +354,8 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
         }
       }} className={cn("flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors", isSeatingPlanActive() ? 'bg-wedding-olive text-white shadow-sm' : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive', isReaderMode ? 'pointer-events-none opacity-70' : '')}>
           <Table className="h-4 w-4" />
-          <span className="ml-2 sm:ml-3 leading-tight flex items-center gap-1.5">
+          <span className="ml-2 sm:ml-3 leading-tight">
             Plan de table
-            <span className="text-[10px] px-1.5 py-0.5 bg-orange-100 text-orange-700 rounded font-medium">beta</span>
           </span>
           {isReaderMode && <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>}
         </Link>
@@ -437,7 +436,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
           {isReaderMode && <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>}
         </Link>
 
-        {/* Club Mariable - Bientôt disponible */}
+        {/* Club Mariable */}
         <button
           onClick={() => setShowClubMariableModal(true)}
           className={cn(
@@ -449,7 +448,6 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
         >
           <Sparkles className="h-4 w-4" />
           <span className="ml-2 sm:ml-3 leading-tight">Club Mariable</span>
-          <span className="ml-2 px-1.5 py-0.5 text-xs bg-amber-100 text-amber-700 rounded font-medium">Bientôt</span>
         </button>
 
         {/* Paramètres */}

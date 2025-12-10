@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Sparkles, Gift, ArrowRight } from 'lucide-react';
+import { Calendar, Sparkles, Gift, ArrowRight, Play } from 'lucide-react';
 import { format, differenceInDays } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
@@ -17,6 +17,8 @@ import { WhatsAppButton } from '@/components/support/WhatsAppButton';
 import { LoomVideoEmbed } from '@/components/tutorials/LoomVideoEmbed';
 import { TUTORIAL_VIDEOS } from '@/config/tutorialVideos';
 import ClubMariableModal from './ClubMariableModal';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 interface Task {
   id: string;
   label: string;
@@ -44,6 +46,8 @@ const ProjectSummary = () => {
   const [tasksLoading, setTasksLoading] = useState(true);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showClubMariableModal, setShowClubMariableModal] = useState(false);
+  const [showVideoModal, setShowVideoModal] = useState(false);
+  const [notifyClub, setNotifyClub] = useState(false);
 
   // Initialize local state from profile
   useEffect(() => {
@@ -212,45 +216,60 @@ const ProjectSummary = () => {
             </p>
           </div>}
 
-        {/* CTAs Club Mariable & Outils */}
-        <div className="flex flex-wrap gap-3 mt-4">
-          <Button 
-            variant="outline"
-            onClick={() => setShowClubMariableModal(true)}
-            className="border-wedding-olive text-wedding-olive hover:bg-wedding-olive/10"
-          >
-            <Sparkles className="w-4 h-4 mr-2" />
-            Club Mariable
-            <span className="ml-2 px-1.5 py-0.5 text-xs bg-amber-100 text-amber-700 rounded font-medium">Bientôt</span>
-          </Button>
-          <Button 
-            variant="ghost" 
-            className="text-muted-foreground"
-            onClick={() => {
-              const sidebar = document.querySelector('nav');
-              if (sidebar) sidebar.scrollIntoView({ behavior: 'smooth' });
-            }}
-          >
-            Outils d'organisation via le menu à gauche
-            <ArrowRight className="w-4 h-4 ml-2" />
-          </Button>
+        {/* Club Mariable avec fond noir */}
+        <div className="bg-foreground text-background rounded-lg p-4 mt-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <Sparkles className="w-5 h-5" />
+              <span className="font-medium">Club Mariable</span>
+              <span className="px-2 py-0.5 text-xs bg-amber-400 text-amber-900 rounded font-medium">Bientôt</span>
+            </div>
+            <Button 
+              variant="secondary"
+              size="sm"
+              onClick={() => setShowClubMariableModal(true)}
+            >
+              En savoir plus
+            </Button>
+          </div>
+          <div className="flex items-center gap-2 mt-3 pt-3 border-t border-white/20">
+            <Checkbox 
+              id="notify-club" 
+              checked={notifyClub}
+              onCheckedChange={(checked) => setNotifyClub(checked === true)}
+              className="border-white data-[state=checked]:bg-white data-[state=checked]:text-black" 
+            />
+            <label htmlFor="notify-club" className="text-sm cursor-pointer">
+              Me notifier dès l'ouverture du Club Mariable
+            </label>
+          </div>
         </div>
+
+        {/* Outils d'organisation - ligne séparée */}
+        <p className="text-sm text-muted-foreground mt-3 flex items-center gap-2">
+          <ArrowRight className="w-4 h-4" />
+          Outils d'organisation via le menu à gauche
+        </p>
       </div>
 
-      {/* Vidéo tutorielle principale - COMPACT */}
-      <div className="bg-white rounded-xl shadow-sm border border-wedding-olive/20 p-6">
-        <h3 className="text-xl font-serif text-wedding-olive mb-4 flex items-center gap-2">
-          🎬 Guide vidéo de démarrage
-        </h3>
-        <p className="text-gray-600 mb-4 text-sm">
-          Découvrez comment tirer le meilleur parti de Mariable en quelques minutes
-        </p>
-        <LoomVideoEmbed
-          videoId={TUTORIAL_VIDEOS.welcome.loomId}
-          title={TUTORIAL_VIDEOS.welcome.title}
-          description={TUTORIAL_VIDEOS.welcome.description}
-          compact={true}
-        />
+      {/* Vidéo tutorielle - clic pour modal */}
+      <div className="bg-white rounded-xl shadow-sm border border-wedding-olive/20 p-4">
+        <button
+          onClick={() => setShowVideoModal(true)}
+          className="flex items-center gap-3 w-full text-left hover:bg-gray-50 transition-colors rounded-lg p-2 -m-2"
+        >
+          <div className="w-12 h-12 rounded-lg bg-wedding-olive/10 flex items-center justify-center">
+            <Play className="w-6 h-6 text-wedding-olive" />
+          </div>
+          <div>
+            <h3 className="text-lg font-serif text-wedding-olive flex items-center gap-2">
+              🎬 Guide vidéo de démarrage
+            </h3>
+            <p className="text-gray-500 text-sm">
+              Cliquez pour voir la vidéo
+            </p>
+          </div>
+        </button>
         
         {/* Bandeau Instagram */}
         <div className="mt-3 bg-gradient-to-r from-purple-50 via-pink-50 to-purple-50 border border-purple-200 rounded-lg p-4 flex items-center justify-between gap-4">
@@ -284,21 +303,35 @@ const ProjectSummary = () => {
         </div>
       </div>
 
+      {/* Modal Vidéo */}
+      <Dialog open={showVideoModal} onOpenChange={setShowVideoModal}>
+        <DialogContent className="sm:max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>Guide vidéo de démarrage</DialogTitle>
+          </DialogHeader>
+          <LoomVideoEmbed
+            videoId={TUTORIAL_VIDEOS.welcome.loomId}
+            title={TUTORIAL_VIDEOS.welcome.title}
+            description={TUTORIAL_VIDEOS.welcome.description}
+          />
+        </DialogContent>
+      </Dialog>
+
       {/* Bloc Premium - Visible uniquement si l'utilisateur n'est pas premium */}
-      {profile && profile.subscription_type !== 'premium' && <div className="bg-gradient-to-r from-gray-900 via-black to-gray-900 border-2 border-gray-800 rounded-xl p-6 shadow-lg">
+      {profile && profile.subscription_type !== 'premium' && <div className="bg-premium-sage border-2 border-premium-sage-dark rounded-xl p-6 shadow-lg">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <div className="bg-white p-3 rounded-full">
-                <Sparkles className="w-6 h-6 text-black" />
+                <Sparkles className="w-6 h-6 text-premium-sage-dark" />
               </div>
               <div>
                 <h3 className="text-xl font-serif text-white font-bold">
-                  Passez à la formule Premium
+                  Profitez de toutes les fonctionnalités
                 </h3>
-                <p className="text-gray-300 text-sm mt-1">Débloquez toutes les fonctionnalités IA et coordination jour-J pour seulement 9,9€ par mois</p>
+                <p className="text-white/90 text-sm mt-1">Pour 9€ par mois ou demandez votre code Club Mariable à votre lieu</p>
               </div>
             </div>
-            <Button onClick={() => setShowPaymentModal(true)} size="lg" className="bg-white hover:bg-gray-100 text-black font-semibold shadow-md hover:shadow-lg transition-all duration-200 whitespace-nowrap">
+            <Button onClick={() => setShowPaymentModal(true)} size="lg" className="bg-white hover:bg-gray-100 text-premium-sage-dark font-semibold shadow-md hover:shadow-lg transition-all duration-200 whitespace-nowrap">
               <Sparkles className="w-4 h-4 mr-2" />
               Passer premium
             </Button>
