@@ -2124,6 +2124,7 @@ export type Database = {
           guest_count: number | null
           id: string
           last_name: string | null
+          notify_club_mariable: boolean | null
           phone: string | null
           referral_source: string | null
           stripe_customer_id: string | null
@@ -2140,6 +2141,7 @@ export type Database = {
           guest_count?: number | null
           id: string
           last_name?: string | null
+          notify_club_mariable?: boolean | null
           phone?: string | null
           referral_source?: string | null
           stripe_customer_id?: string | null
@@ -2156,6 +2158,7 @@ export type Database = {
           guest_count?: number | null
           id?: string
           last_name?: string | null
+          notify_club_mariable?: boolean | null
           phone?: string | null
           referral_source?: string | null
           stripe_customer_id?: string | null

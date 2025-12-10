@@ -35,9 +35,9 @@ const MariableAmbassadeur = () => {
   ];
 
   const beneficesLieux = [
-    { icon: <TrendingUp className="h-5 w-5" />, title: "REVENUS PASSIFS: 13 000€/an en moyenne", details: "30 mariages/an • 18 couples utilisent le réseau (60%) • Commission moyenne: 563€ par mariage" },
+    { icon: <TrendingUp className="h-5 w-5" />, title: "REVENUS PASSIFS: jusqu'à 13 000€/an", details: "30 mariages/an • 18 couples utilisent le réseau (60%) • Commission moyenne par mariage" },
     { icon: <Clock className="h-5 w-5" />, title: "TEMPS INVESTI: 30 secondes par couple", details: "Donner le code VIP Pass, c'est tout" },
-    { icon: <Star className="h-5 w-5" />, title: "SERVICE PREMIUM pour vos couples", details: "Ils économisent 2500€, ils vous adorent" },
+    { icon: <Star className="h-5 w-5" />, title: "SERVICE PREMIUM pour vos couples", details: "Ils économisent, ils vous adorent" },
     { icon: <BarChart3 className="h-5 w-5" />, title: "DASHBOARD TEMPS RÉEL", details: "Suivez vos commissions en direct" },
     { icon: <Shield className="h-5 w-5" />, title: "SANS RISQUE", details: "0€ d'investissement, commission uniquement" },
   ];
@@ -94,14 +94,13 @@ const MariableAmbassadeur = () => {
                 transition={{ delay: 0.3, duration: 0.6 }}
                 className="text-4xl md:text-6xl lg:text-7xl font-serif font-bold text-white mb-8 leading-tight"
               >
-                Générez{' '}
+                Générez des{' '}
                 <span className="text-sky-400 relative">
-                  13 000€/an
+                  revenus passifs
                   <svg className="absolute -bottom-2 left-0 w-full" height="8" viewBox="0 0 200 8" fill="none">
                     <path d="M2 6C50 2 150 2 198 6" stroke="currentColor" strokeWidth="3" strokeLinecap="round"/>
                   </svg>
                 </span>
-                {' '}de revenus passifs
               </motion.h1>
               
               <motion.p 
@@ -120,7 +119,7 @@ const MariableAmbassadeur = () => {
               >
                 <Button 
                   size="lg"
-                  onClick={() => navigate('/devenir-partenaire')}
+                  onClick={() => navigate('/contact')}
                   className="bg-sky-400 hover:bg-sky-500 text-white px-10 py-7 text-lg shadow-2xl hover:scale-105 transition-all duration-300"
                 >
                   <Building2 className="mr-2 h-5 w-5" />
@@ -166,7 +165,7 @@ const MariableAmbassadeur = () => {
                     </div>
                     <div className="bg-gradient-to-r from-sky-100 to-sky-50 p-5 rounded-xl border border-sky-200">
                       <p className="text-sky-700 font-semibold">
-                        💡 ET SI CES RECOMMANDATIONS GÉNÉRAIENT 13 000€/AN DE REVENUS PASSIFS ?
+                        💡 ET SI CES RECOMMANDATIONS GÉNÉRAIENT JUSQU'À 13 000€/AN DE REVENUS PASSIFS ?
                       </p>
                     </div>
                   </CardContent>
@@ -384,7 +383,7 @@ const MariableAmbassadeur = () => {
                     
                     <Button 
                       className="w-full bg-sky-500 hover:bg-sky-600 py-7 text-lg hover:scale-[1.02] transition-all duration-300 shadow-xl"
-                      onClick={() => navigate('/devenir-partenaire')}
+                      onClick={() => navigate('/contact')}
                     >
                       Demander un rendez-vous
                       <ArrowRight className="ml-2 h-5 w-5" />
@@ -451,7 +450,7 @@ const MariableAmbassadeur = () => {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button 
                 size="lg"
-                onClick={() => navigate('/devenir-partenaire')}
+                onClick={() => navigate('/contact')}
                 className="bg-sky-400 hover:bg-sky-500 text-white px-10 py-7 text-lg shadow-2xl hover:scale-105 transition-all duration-300"
               >
                 Devenir Lieu Ambassadeur

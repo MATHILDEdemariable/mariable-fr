@@ -18,17 +18,17 @@ const MariablePartenaire = () => {
   }, []);
 
   const problemesMarques = [
-    "Meta Ads vous coûte 400-500€ par future mariée",
-    "Taux de conversion: 2-3% (98% de budget gaspillé)",
+    "L'acquisition de nouveaux clients est de plus en plus coûteuse",
+    "Taux de conversion faible sur les canaux traditionnels",
     "Impossible de tracker le ROI précisément",
     "Les couples ne font plus confiance aux pubs"
   ];
 
   const beneficesMarques = [
-    { icon: <TrendingDown className="h-5 w-5" />, title: "CAC RÉDUIT DE 60%: 200€ vs 500€", details: "Couples ultra-qualifiés (ont déjà leur lieu)" },
-    { icon: <TrendingUp className="h-5 w-5" />, title: "CONVERSION ×5: 10-15% vs 2-3%", details: "Recommandation du lieu = confiance maximale" },
-    { icon: <Target className="h-5 w-5" />, title: "VOLUME PRÉDICTIBLE: 800 couples/an", details: "Accès à notre réseau de 50 lieux premium" },
-    { icon: <CreditCard className="h-5 w-5" />, title: "PAIEMENT À LA PERFORMANCE", details: "Coût total: 10% (5% avantage + 5% commission)" },
+    { icon: <TrendingDown className="h-5 w-5" />, title: "CAC RÉDUIT SIGNIFICATIVEMENT", details: "Couples ultra-qualifiés (ont déjà leur lieu)" },
+    { icon: <TrendingUp className="h-5 w-5" />, title: "CONVERSION MULTIPLIÉE", details: "Recommandation du lieu = confiance maximale" },
+    { icon: <Target className="h-5 w-5" />, title: "VOLUME PRÉDICTIBLE", details: "Accès à notre réseau de lieux premium" },
+    { icon: <CreditCard className="h-5 w-5" />, title: "PAIEMENT À LA PERFORMANCE", details: "Commission définie ensemble" },
     { icon: <BarChart3 className="h-5 w-5" />, title: "TRACKING TRANSPARENT", details: "ROI mesurable au centime près" },
     { icon: <Gift className="h-5 w-5" />, title: "FLEXIBILITÉ AVANTAGE", details: "Réduction € OU cadeau offert OU service additionnel" },
   ];
@@ -85,9 +85,9 @@ const MariablePartenaire = () => {
                 transition={{ delay: 0.3, duration: 0.6 }}
                 className="text-4xl md:text-6xl lg:text-7xl font-serif font-bold text-white mb-8 leading-tight"
               >
-                Divisez votre{' '}
+                Et si vous étiez recommandé par des{' '}
                 <span className="text-amber-300 relative">
-                  CAC par 2
+                  lieux de réception premium ?
                   <svg className="absolute -bottom-2 left-0 w-full" height="8" viewBox="0 0 200 8" fill="none">
                     <path d="M2 6C50 2 150 2 198 6" stroke="currentColor" strokeWidth="3" strokeLinecap="round"/>
                   </svg>
@@ -100,7 +100,7 @@ const MariablePartenaire = () => {
                 transition={{ delay: 0.4, duration: 0.6 }}
                 className="text-xl md:text-2xl text-slate-300 mb-12 font-light"
               >
-                200€/client au lieu de 500€. Conversion x5. Paiement à la performance.
+                Diminuer votre CAC
               </motion.p>
               
               <motion.div 
@@ -156,7 +156,7 @@ const MariablePartenaire = () => {
                     </div>
                     <div className="bg-gradient-to-r from-amber-100 to-amber-50 p-5 rounded-xl border border-amber-200">
                       <p className="text-amber-700 font-semibold">
-                        💡 ET SI VOUS TOUCHIEZ DES COUPLES DÉJÀ QUALIFIÉS POUR 200€/CLIENTE ?
+                        💡 ET SI VOUS TOUCHIEZ DES COUPLES DÉJÀ QUALIFIÉS ET PRÊTS À RÉSERVER ?
                       </p>
                     </div>
                   </CardContent>
@@ -252,16 +252,22 @@ const MariablePartenaire = () => {
                 <h4 className="font-serif font-bold text-foreground mb-6 text-center text-xl">💰 STRUCTURE DE COÛTS</h4>
                 <div className="space-y-4">
                   <div className="bg-white/80 p-4 rounded-xl">
-                    <p className="font-semibold text-foreground mb-2">Coût total: 10% du prix de vente</p>
-                    <ul className="ml-4 space-y-1 text-muted-foreground">
-                      <li className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-amber-400" /> 5% Avantage couple (réduction ou cadeau)</li>
-                      <li className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-slate-400" /> 5% Commission Mariable (tracking + orchestration)</li>
+                    <p className="font-semibold text-foreground mb-3">On définit ensemble la commission, celle-ci finance :</p>
+                    <ul className="ml-4 space-y-2 text-muted-foreground">
+                      <li className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-amber-400" /> Un avantage couple (réduction ou autre avantage si marge trop réduite)</li>
+                      <li className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-slate-400" /> La commission service Mariable + lieu redistribuée équitablement</li>
                     </ul>
                   </div>
-                  <div className="bg-white/80 p-4 rounded-xl">
-                    <p className="font-semibold text-foreground">= CAC de 200€ environ vs 500€ en Meta Ads</p>
-                    <p className="text-sm text-muted-foreground ml-4">(pour un panier moyen de 2000€)</p>
-                  </div>
+                </div>
+                <div className="mt-6 text-center">
+                  <Button 
+                    variant="outline"
+                    onClick={() => navigate('/contact')}
+                    className="border-amber-400 text-amber-700 hover:bg-amber-100"
+                  >
+                    En savoir plus - discutons en
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
                 </div>
               </CardContent>
             </Card>
@@ -394,10 +400,10 @@ const MariablePartenaire = () => {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button 
                 size="lg"
-                onClick={() => navigate('/devenir-partenaire')}
+                onClick={() => navigate('/contact')}
                 className="bg-amber-300 hover:bg-amber-400 text-slate-900 px-10 py-7 text-lg shadow-2xl hover:scale-105 transition-all duration-300 font-semibold"
               >
-                Demander une démo
+                En savoir plus - discutons en
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </div>
