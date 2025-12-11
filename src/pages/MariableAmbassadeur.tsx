@@ -9,6 +9,8 @@ import { Slider } from '@/components/ui/slider';
 import { useNavigate } from 'react-router-dom';
 import { Check, Star, ArrowRight, Building2, TrendingUp, Clock, Shield, BarChart3, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import VirtuousCircleSection from '@/components/mariable/VirtuousCircleSection';
+import LieuxPartenairesSection from '@/components/mariable/LieuxPartenairesSection';
 
 const MariableAmbassadeur = () => {
   const navigate = useNavigate();
@@ -56,7 +58,7 @@ const MariableAmbassadeur = () => {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col bg-premium-base">
+    <div className="min-h-screen flex flex-col bg-[#efeee9]">
       <SEO 
         title="Mariable Ambassadeur - Générez des revenus passifs avec votre lieu"
         description="Transformez vos recommandations en revenus passifs. 13 000€/an en moyenne pour 30 secondes d'effort par couple."
@@ -431,6 +433,12 @@ const MariableAmbassadeur = () => {
             </div>
           </div>
         </section>
+
+        {/* Virtuous Circle Section */}
+        <VirtuousCircleSection />
+
+        {/* Lieux & Partenaires Section */}
+        <LieuxPartenairesSection />
 
         {/* Section 7: CTA Final */}
         <section className="py-20 md:py-28 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 relative overflow-hidden">

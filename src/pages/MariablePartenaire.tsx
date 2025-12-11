@@ -8,6 +8,8 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { useNavigate } from 'react-router-dom';
 import { Check, Star, ArrowRight, Palette, TrendingDown, TrendingUp, Target, CreditCard, BarChart3, Gift, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import VirtuousCircleSection from '@/components/mariable/VirtuousCircleSection';
+import LieuxPartenairesSection from '@/components/mariable/LieuxPartenairesSection';
 
 const MariablePartenaire = () => {
   const navigate = useNavigate();
@@ -47,7 +49,7 @@ const MariablePartenaire = () => {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col bg-premium-base">
+    <div className="min-h-screen flex flex-col bg-[#efeee9]">
       <SEO 
         title="Mariable Partenaire - Réduisez votre CAC de 60%"
         description="Touchez des couples qualifiés pour 200€/client au lieu de 500€. Conversion x5. Paiement à la performance uniquement."
@@ -381,6 +383,12 @@ const MariablePartenaire = () => {
             </div>
           </div>
         </section>
+
+        {/* Virtuous Circle Section */}
+        <VirtuousCircleSection />
+
+        {/* Lieux & Partenaires Section */}
+        <LieuxPartenairesSection />
 
         {/* Section 7: CTA Final */}
         <section className="py-20 md:py-28 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 relative overflow-hidden">
