@@ -189,7 +189,7 @@ const SavingsSimulatorSection = () => {
   const maxSavings = Math.round(budget[0] * 0.15 * providers[0] / 8);
 
   return (
-    <section id="simulateur" className="py-20 bg-gradient-to-br from-premium-sage-very-light via-[#efeee9] to-premium-sage-very-light/30 scroll-mt-20">
+    <section id="simulateur" className="py-20 bg-[#efeee9] scroll-mt-20">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
