@@ -54,7 +54,7 @@ const PremiumHeader = () => {
                   onClick={handleGetStarted}
                   className="btn-primary text-white ripple"
                 >
-                  Créer mon mariage
+                  Club futurs mariés
                 </Button>
                 <Button
                   variant="outline"
@@ -96,7 +96,7 @@ const PremiumHeader = () => {
                         }}
                         className="btn-primary text-white w-full ripple"
                       >
-                        Créer mon mariage
+                        Club futurs mariés
                       </Button>
                       <Button
                         variant="outline"
