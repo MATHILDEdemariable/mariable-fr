@@ -16,7 +16,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Search, User, Mail, Calendar, RefreshCw, AlertTriangle, Crown, Users, Phone, Download } from 'lucide-react';
+import { Search, User, Mail, Calendar, RefreshCw, AlertTriangle, Crown, Users, Phone, Download, Bell } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -37,6 +37,7 @@ interface UserRegistration {
     wedding_date?: string;
     guest_count?: number;
     referral_source?: string;
+    notify_club_mariable?: boolean;
   };
 }
 
@@ -84,6 +85,9 @@ const AdminUsers = () => {
     if (statusFilter !== 'all') {
       console.log('🔍 Filtering by status:', statusFilter);
       filtered = filtered.filter(user => {
+        if (statusFilter === 'club_interested') {
+          return user.profile?.notify_club_mariable === true;
+        }
         const status = getUserStatus(user.profile);
         const matches = status === statusFilter;
         if (matches) {
@@ -352,7 +356,7 @@ const AdminUsers = () => {
         )}
 
         {/* Métriques */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Total Utilisateurs</CardTitle>
@@ -398,6 +402,18 @@ const AdminUsers = () => {
               <div className="text-2xl font-bold text-blue-600">{getRecentUsers()}</div>
             </CardContent>
           </Card>
+          
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Intéressés Club</CardTitle>
+              <Bell className="h-4 w-4 text-purple-600" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-purple-600">
+                {users.filter(u => u.profile?.notify_club_mariable).length}
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Filtres */}
@@ -425,6 +441,7 @@ const AdminUsers = () => {
                   <SelectItem value="premium">Premium</SelectItem>
                   <SelectItem value="expired">Expirés</SelectItem>
                   <SelectItem value="free">Gratuit</SelectItem>
+                  <SelectItem value="club_interested">Intéressés Club</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -460,6 +477,7 @@ const AdminUsers = () => {
                       <TableHead>Email</TableHead>
                       <TableHead>Téléphone</TableHead>
                       <TableHead>Source</TableHead>
+                      <TableHead>Club Notif</TableHead>
                       <TableHead>Date d'inscription</TableHead>
                       <TableHead>Statut</TableHead>
                     </TableRow>
@@ -495,6 +513,16 @@ const AdminUsers = () => {
                           <span className={getReferralSource(user) === 'Non renseigné' ? 'text-gray-400 italic' : ''}>
                             {getReferralSource(user)}
                           </span>
+                        </TableCell>
+                        <TableCell>
+                          {user.profile?.notify_club_mariable ? (
+                            <Badge variant="default" className="bg-purple-100 text-purple-700 hover:bg-purple-100">
+                              <Bell className="h-3 w-3 mr-1" />
+                              Oui
+                            </Badge>
+                          ) : (
+                            <span className="text-gray-400 text-sm">Non</span>
+                          )}
                         </TableCell>
                         <TableCell>
                           <div className="flex items-center gap-2">

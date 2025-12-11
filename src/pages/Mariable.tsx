@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/accordion";
 import PremiumHeader from '@/components/home/PremiumHeader';
 import Footer from '@/components/Footer';
+import ChatbotButton from '@/components/ChatbotButton';
 import SEO from '@/components/SEO';
 
 const VIDEO_URL = "https://bgidfcqktsttzlwlumtz.supabase.co/storage/v1/object/public/background-videos/freepik__wideangle-shot-a-joyful-couple-dances-at-their-wed__74093%20(1).mp4";
@@ -744,10 +745,11 @@ const FinalCTASection = () => (
 const Mariable = () => {
   return (
     <>
-      <SEO
-        title="Club Mariable - Le Club Privé des Futurs Mariés"
-        description="Rejoignez le Club Mariable : accès gratuit aux meilleurs professionnels et marques du mariage avec des prix préférentiels. Offert par votre lieu de réception."
-        canonical="/mariable"
+      <SEO 
+        title="Mariable - Le Club Privé des Futurs Mariés | Professionnels & Prix Préférentiels"
+        description="Rejoignez le Club Mariable : accès gratuit aux meilleurs professionnels et marques du mariage avec des prix préférentiels. Outils de planification, coordination Jour-J et accompagnement personnalisé."
+        canonical="/"
+        keywords="mariage, wedding planner digital, professionnels mariage, club mariable, organisation mariage, coordination jour-j, prestataires mariage"
       />
       
       <div className="min-h-screen">
@@ -765,6 +767,7 @@ const Mariable = () => {
         </main>
 
         <Footer />
+        <ChatbotButton />
       </div>
     </>
   );
