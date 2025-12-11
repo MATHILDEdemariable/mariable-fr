@@ -93,8 +93,8 @@ Deno.serve(async (req) => {
         const userIds = allUsers.map(user => user.id);
         const { data: profiles, error: profilesError } = await supabase
           .from('profiles')
-          .select('user_id, id, first_name, last_name, subscription_type, subscription_expires_at, wedding_date, guest_count, referral_source, notify_club_mariable')
-          .in('user_id', userIds);
+          .select('id, first_name, last_name, subscription_type, subscription_expires_at, wedding_date, guest_count, referral_source, notify_club_mariable')
+          .in('id', userIds);
 
         if (profilesError) {
           console.error('⚠️ Error fetching profiles:', profilesError);
@@ -106,7 +106,7 @@ Deno.serve(async (req) => {
         const profilesMap = new Map();
         if (profiles) {
           profiles.forEach(profile => {
-            profilesMap.set(profile.user_id, profile);
+            profilesMap.set(profile.id, profile);
           });
         }
         
