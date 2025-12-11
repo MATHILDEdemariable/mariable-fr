@@ -144,12 +144,13 @@ function App() {
                 <PaymentSuccessHandler />
                 <Suspense fallback={<PageLoader />}>
                   <Routes>
-                  <Route path="/" element={<LandingCouple />} />
+                  <Route path="/" element={<Mariable />} />
+                  <Route path="/accueil" element={<LandingCouple />} />
+                  <Route path="/mariable" element={<Mariable />} />
                   <Route path="/landing-generale" element={<LandingGenerale />} />
                   <Route path="/accueilclubmariable" element={<AccueilClubMariable />} />
                   <Route path="/accueilprofessionnels" element={<AccueilProfessionnels />} />
                   <Route path="/domainedelafontaine" element={<DomaineDeLaFontaine />} />
-                  <Route path="/mariable" element={<Mariable />} />
                   <Route path="/mariable.ambassadeur" element={<MariableAmbassadeur />} />
                   <Route path="/mariable.partenaire" element={<MariablePartenaire />} />
                    <Route path="/moteur-recherche" element={<MoteurRecherche />} />
