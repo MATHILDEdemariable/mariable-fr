@@ -125,19 +125,11 @@ const CouplesSection = () => {
           transition={{ duration: 0.6 }}
           className="max-w-4xl mx-auto text-center"
         >
-          <div className="inline-flex items-center gap-2 bg-premium-sage-very-light text-premium-sage-dark rounded-full px-4 py-1.5 mb-6">
-            <Users className="w-4 h-4" />
-            <span className="text-sm font-medium">Accès 100% gratuit</span>
-          </div>
-
-          <h2 className="font-serif text-3xl md:text-5xl font-bold text-foreground mb-3">
-            Pour les Couples
-          </h2>
-          <p className="text-muted-foreground text-lg mb-10">
+          <h2 className="font-serif text-3xl md:text-5xl font-bold text-foreground mb-12">
             Facilitez votre organisation & économisez
-          </p>
+          </h2>
 
-          {/* 3 Key Benefits with enhanced impactful cards */}
+          {/* 3 Key Benefits with white cards and black icons */}
           <div className="grid md:grid-cols-3 gap-6 mb-10">
             {benefits.map((benefit, i) => (
               <motion.div
@@ -146,30 +138,20 @@ const CouplesSection = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.15, duration: 0.5, ease: "easeOut" }}
-                whileHover={{ y: -12, scale: 1.02 }}
-                className="relative bg-gradient-to-br from-white via-white to-premium-sage-very-light/40 
-                           rounded-2xl p-8 shadow-lg border-2 border-premium-sage/20 
-                           hover:border-premium-sage/60 hover:shadow-2xl
-                           transition-all duration-500 cursor-pointer overflow-hidden group text-left"
+                whileHover={{ y: -8 }}
+                className="relative bg-white rounded-2xl p-8 shadow-lg border border-gray-200 
+                           hover:shadow-2xl transition-all duration-500 cursor-pointer text-left"
               >
-                {/* Glow effect in background */}
-                <div className="absolute inset-0 bg-gradient-to-br from-premium-sage/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                
-                {/* Icon in circle with border */}
+                {/* Icon with black background */}
                 <motion.div 
-                  className="relative z-10 w-16 h-16 rounded-full bg-premium-sage-very-light border-2 border-premium-sage/30 flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300"
-                  whileHover={{ scale: 1.1, rotate: 5 }}
-                  transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                  className="relative z-10 w-14 h-14 rounded-xl bg-black flex items-center justify-center mb-6 group-hover:scale-105 transition-all duration-300"
                 >
-                  <benefit.icon className="w-8 h-8 text-premium-sage" />
+                  <benefit.icon className="w-7 h-7 text-white" />
                 </motion.div>
                 
                 {/* Content */}
                 <h4 className="relative z-10 font-serif font-bold text-xl text-foreground mb-3">{benefit.title}</h4>
                 <p className="relative z-10 text-muted-foreground">{benefit.description}</p>
-                
-                {/* Decorative corner accent */}
-                <div className="absolute -bottom-2 -right-2 w-20 h-20 bg-premium-sage/10 rounded-full blur-xl group-hover:bg-premium-sage/20 transition-all duration-500" />
               </motion.div>
             ))}
           </div>
@@ -373,7 +355,7 @@ const FAQSection = () => {
   ];
 
   return (
-    <section className="py-20 bg-white">
+    <section className="py-20 bg-[#efeee9]">
       <div className="container mx-auto px-4">
         <motion.h2 
           initial={{ opacity: 0, y: 20 }}
