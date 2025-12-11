@@ -356,7 +356,7 @@ const ProjectSummary = () => {
             <DialogTitle>Guide de démarrage - Découvrez Mariable</DialogTitle>
           </DialogHeader>
           <iframe 
-            src="/accueil" 
+            src="/accueil?embedded=true" 
             className="w-full h-full border-0"
             title="Guide de démarrage"
           />
@@ -370,7 +370,7 @@ const ProjectSummary = () => {
             <DialogTitle>Détail des tarifs</DialogTitle>
           </DialogHeader>
           <iframe 
-            src="/prix" 
+            src="/prix?embedded=true" 
             className="w-full h-full border-0"
             title="Détail du prix"
           />
