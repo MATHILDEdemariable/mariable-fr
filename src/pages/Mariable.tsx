@@ -142,11 +142,15 @@ const CouplesSection = () => {
                 className="relative bg-white rounded-2xl p-8 shadow-lg border border-gray-200 
                            hover:shadow-2xl transition-all duration-500 cursor-pointer text-left"
               >
-                {/* Icon with black background */}
+                {/* iPhone-style floating icon */}
                 <motion.div 
-                  className="relative z-10 w-14 h-14 rounded-xl bg-black flex items-center justify-center mb-6 group-hover:scale-105 transition-all duration-300"
+                  className="relative z-10 w-14 h-14 rounded-2xl bg-gradient-to-br from-white to-gray-100 
+                             flex items-center justify-center mb-6 shadow-lg border border-gray-100
+                             hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+                  whileHover={{ scale: 1.05, y: -4 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 15 }}
                 >
-                  <benefit.icon className="w-7 h-7 text-white" />
+                  <benefit.icon className="w-7 h-7 text-premium-sage" />
                 </motion.div>
                 
                 {/* Content */}
