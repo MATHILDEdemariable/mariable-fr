@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/Logo';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Menu } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { supabase } from '@/integrations/supabase/client';
@@ -10,6 +10,14 @@ const PremiumHeader = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  
+  // Hide header when embedded in iframe
+  const isEmbedded = searchParams.get('embedded') === 'true';
+  
+  if (isEmbedded) {
+    return null;
+  }
 
   useEffect(() => {
     const checkUser = async () => {
@@ -58,10 +66,10 @@ const PremiumHeader = () => {
                 </Button>
                 <Button
                   variant="outline"
-                  onClick={() => navigate('/professionnels')}
+                  onClick={() => navigate('/contact')}
                   className="btn-secondary border-premium-sage/30 text-premium-sage hover:bg-premium-sage/5 ripple"
                 >
-                  Professionnel
+                  Contact
                 </Button>
               </>
             )}
@@ -101,12 +109,12 @@ const PremiumHeader = () => {
                       <Button
                         variant="outline"
                         onClick={() => {
-                          navigate('/professionnels');
+                          navigate('/contact');
                           setMobileOpen(false);
                         }}
                         className="btn-secondary border-premium-sage/30 text-premium-sage hover:bg-premium-sage/5 w-full ripple"
                       >
-                        Professionnel
+                        Contact
                       </Button>
                     </>
                   )}
