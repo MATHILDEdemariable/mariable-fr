@@ -91,6 +91,7 @@ const JeuneMariesConfirmation = lazy(() => import("./pages/JeuneMariesConfirmati
 const AdminJeunesMaries = lazy(() => import("./pages/admin/AdminJeunesMaries"));
 const CustomPages = lazy(() => import("./pages/admin/CustomPages"));
 const AdminCarnetAdresses = lazy(() => import("./pages/admin/CarnetAdresses"));
+const AdminContactRequests = lazy(() => import("./pages/admin/ContactRequests"));
 const CustomPage = lazy(() => import("./pages/CustomPage"));
 const PropositionPage = lazy(() => import("./pages/PropositionPage"));
 const AvantJourJPublic = lazy(() => import("./pages/AvantJourJPublic"));
@@ -269,6 +270,7 @@ function App() {
                     <Route path="/admin/jeunes-maries" element={<AdminJeunesMaries />} />
                     <Route path="/admin/custom-pages" element={<CustomPages />} />
                     <Route path="/admin/carnet-adresses" element={<AdminCarnetAdresses />} />
+                    <Route path="/admin/contact" element={<AdminContactRequests />} />
                    
                     {/* Custom pages route */}
                    <Route path="/custom/:slug" element={<CustomPage />} />

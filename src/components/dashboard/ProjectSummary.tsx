@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Sparkles, Gift, ArrowRight, Play } from 'lucide-react';
+import { Calendar, Sparkles, Gift, ArrowRight, Play, BookOpen, Info } from 'lucide-react';
 import { format, differenceInDays } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
@@ -47,6 +47,8 @@ const ProjectSummary = () => {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showClubMariableModal, setShowClubMariableModal] = useState(false);
   const [showVideoModal, setShowVideoModal] = useState(false);
+  const [showGuideModal, setShowGuideModal] = useState(false);
+  const [showPrixModal, setShowPrixModal] = useState(false);
   const [notifyClub, setNotifyClub] = useState(false);
 
   // Initialize local state from profile
@@ -261,8 +263,29 @@ const ProjectSummary = () => {
         </p>
       </div>
 
-      {/* Vidéo tutorielle - clic pour modal */}
-      <div className="bg-white rounded-xl shadow-sm border border-wedding-olive/20 p-4">
+      {/* Guide de démarrage + Vidéo tutorielle */}
+      <div className="bg-white rounded-xl shadow-sm border border-wedding-olive/20 p-4 space-y-3">
+        {/* Guide de démarrage */}
+        <button
+          onClick={() => setShowGuideModal(true)}
+          className="flex items-center gap-3 w-full text-left hover:bg-gray-50 transition-colors rounded-lg p-2 -m-2"
+        >
+          <div className="w-12 h-12 rounded-lg bg-premium-sage/10 flex items-center justify-center">
+            <BookOpen className="w-6 h-6 text-premium-sage" />
+          </div>
+          <div>
+            <h3 className="text-lg font-serif text-wedding-olive flex items-center gap-2">
+              📖 Guide de démarrage
+            </h3>
+            <p className="text-gray-500 text-sm">
+              Cliquez pour découvrir le concept Mariable
+            </p>
+          </div>
+        </button>
+
+        <div className="border-t border-gray-100" />
+
+        {/* Vidéo tutorielle */}
         <button
           onClick={() => setShowVideoModal(true)}
           className="flex items-center gap-3 w-full text-left hover:bg-gray-50 transition-colors rounded-lg p-2 -m-2"
@@ -322,6 +345,34 @@ const ProjectSummary = () => {
             videoId={TUTORIAL_VIDEOS.welcome.loomId}
             title={TUTORIAL_VIDEOS.welcome.title}
             description={TUTORIAL_VIDEOS.welcome.description}
+          />
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal Guide de démarrage */}
+      <Dialog open={showGuideModal} onOpenChange={setShowGuideModal}>
+        <DialogContent className="sm:max-w-6xl h-[85vh] p-0">
+          <DialogHeader className="p-4 border-b">
+            <DialogTitle>Guide de démarrage - Découvrez Mariable</DialogTitle>
+          </DialogHeader>
+          <iframe 
+            src="/accueil" 
+            className="w-full h-full border-0"
+            title="Guide de démarrage"
+          />
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal Détail du prix */}
+      <Dialog open={showPrixModal} onOpenChange={setShowPrixModal}>
+        <DialogContent className="sm:max-w-6xl h-[85vh] p-0">
+          <DialogHeader className="p-4 border-b">
+            <DialogTitle>Détail des tarifs</DialogTitle>
+          </DialogHeader>
+          <iframe 
+            src="/prix" 
+            className="w-full h-full border-0"
+            title="Détail du prix"
           />
         </DialogContent>
       </Dialog>
@@ -441,10 +492,21 @@ const ProjectSummary = () => {
                 <p className="text-white/90 text-sm mt-1">Pour 9€ par mois ou demandez votre code Club Mariable à votre lieu</p>
               </div>
             </div>
-            <Button onClick={() => setShowPaymentModal(true)} size="lg" className="bg-white hover:bg-gray-100 text-premium-sage-dark font-semibold shadow-md hover:shadow-lg transition-all duration-200 whitespace-nowrap">
-              <Sparkles className="w-4 h-4 mr-2" />
-              Passer premium
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-2">
+              <Button 
+                variant="outline" 
+                onClick={() => setShowPrixModal(true)} 
+                size="lg" 
+                className="bg-transparent border-white text-white hover:bg-white/20 font-semibold transition-all duration-200 whitespace-nowrap"
+              >
+                <Info className="w-4 h-4 mr-2" />
+                Détail du prix
+              </Button>
+              <Button onClick={() => setShowPaymentModal(true)} size="lg" className="bg-white hover:bg-gray-100 text-premium-sage-dark font-semibold shadow-md hover:shadow-lg transition-all duration-200 whitespace-nowrap">
+                <Sparkles className="w-4 h-4 mr-2" />
+                Passer premium
+              </Button>
+            </div>
           </div>
         </div>
       )}
