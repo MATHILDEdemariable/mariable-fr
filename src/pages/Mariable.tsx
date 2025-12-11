@@ -99,17 +99,17 @@ const HeroSection = () => (
 const CouplesSection = () => {
   const benefits = [
     {
-      icon: CheckCircle,
+      emoji: "✅",
       title: "Accès aux meilleurs professionnels vérifiés",
       description: "Des prestataires sélectionnés et recommandés par votre lieu"
     },
     {
-      icon: Gift,
+      emoji: "🎁",
       title: "Prix préférentiels & privilèges club",
       description: "Des réductions exclusives de 5 à 20% chez tous nos partenaires"
     },
     {
-      icon: ListChecks,
+      emoji: "📋",
       title: "Outils en ligne pour planifier facilement",
       description: "Gestion checklist, budget, coordination Jour-J... tout en un seul endroit"
     }
@@ -142,7 +142,7 @@ const CouplesSection = () => {
                 className="relative bg-white rounded-2xl p-8 shadow-lg border border-gray-200 
                            hover:shadow-2xl transition-all duration-500 cursor-pointer text-left"
               >
-                {/* iPhone-style floating icon */}
+                {/* iPhone-style floating emoji */}
                 <motion.div 
                   className="relative z-10 w-14 h-14 rounded-2xl bg-gradient-to-br from-white to-gray-100 
                              flex items-center justify-center mb-6 shadow-lg border border-gray-100
@@ -150,7 +150,7 @@ const CouplesSection = () => {
                   whileHover={{ scale: 1.05, y: -4 }}
                   transition={{ type: "spring", stiffness: 400, damping: 15 }}
                 >
-                  <benefit.icon className="w-7 h-7 text-premium-sage" />
+                  <span className="text-2xl">{benefit.emoji}</span>
                 </motion.div>
                 
                 {/* Content */}
