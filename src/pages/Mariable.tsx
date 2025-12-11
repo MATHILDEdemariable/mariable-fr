@@ -5,8 +5,6 @@ import {
   CheckCircle, 
   Gift, 
   Users, 
-  Building2, 
-  Palette, 
   ArrowRight,
   ArrowDown,
   Sparkles,
@@ -14,8 +12,7 @@ import {
   Calculator,
   Star,
   Quote,
-  ListChecks,
-  Wallet
+  ListChecks
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
@@ -73,20 +70,9 @@ const HeroSection = () => (
         </h1>
 
         {/* Subtitle */}
-        <p className="text-xl md:text-2xl text-white/80 mb-4 font-sans">
+        <p className="text-xl md:text-2xl text-white/80 mb-10 font-sans">
           Les meilleurs professionnels & marques. Les meilleurs prix. Gratuitement.
         </p>
-
-        {/* Gift Badge */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5, duration: 0.5 }}
-          className="inline-flex items-center gap-2 bg-premium-sage/20 backdrop-blur-sm border border-premium-sage/30 rounded-full px-5 py-2.5 mb-10"
-        >
-          <Gift className="w-5 h-5 text-premium-sage-light" />
-          <span className="text-white font-medium">Accès offert par votre lieu de réception</span>
-        </motion.div>
 
         {/* Single CTA - Scroll to concept with smooth behavior */}
         <motion.div
@@ -97,7 +83,7 @@ const HeroSection = () => (
         >
           <Button 
             size="lg" 
-            onClick={() => document.getElementById('cercle-vertueux')?.scrollIntoView({ behavior: 'smooth' })}
+            onClick={() => document.getElementById('couples-section')?.scrollIntoView({ behavior: 'smooth' })}
             className="bg-premium-sage hover:bg-premium-sage-dark text-white px-8 py-6 text-lg rounded-full shadow-lg hover:shadow-xl transition-all"
           >
             Découvrir le concept
@@ -109,159 +95,7 @@ const HeroSection = () => (
   </section>
 );
 
-// Virtuous Circle Section with integrated How it Works
-const VirtuousCircleSection = () => {
-  const nodes = [
-    { id: 'couples', label: 'Couples', icon: Heart, color: 'bg-pink-500', position: 'top' },
-    { id: 'lieux', label: 'Lieux', icon: Building2, color: 'bg-sky-400', position: 'right' },
-    { id: 'mariable', label: 'Mariable', icon: Sparkles, color: 'bg-premium-sage', position: 'bottom' },
-    { id: 'partenaires', label: 'Partenaires', icon: Palette, color: 'bg-amber-300', position: 'left' },
-  ];
-
-  const steps = [
-    {
-      icon: Gift,
-      title: "Le lieu envoie son lien Club",
-      description: "Chaque lieu partenaire dispose d'un lien unique à partager avec ses couples"
-    },
-    {
-      icon: Users,
-      title: "Les mariés découvrent le Club",
-      description: "Accès aux prestataires & marques partenaires avec avantages exclusifs"
-    },
-    {
-      icon: Calculator,
-      title: "Commission partagée",
-      description: "Lorsqu'un couple réserve, la commission est répartie entre Mariable & le lieu"
-    }
-  ];
-
-  return (
-    <section id="cercle-vertueux" className="py-20 bg-premium-warm scroll-mt-20">
-      <div className="container mx-auto px-4">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-12"
-        >
-          <h2 className="font-serif text-3xl md:text-5xl font-bold text-foreground mb-4">
-            Un Club exclusif où chaque membre bénéficie
-          </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Tout le monde gagne : avantages, visibilité, revenu passif
-          </p>
-        </motion.div>
-
-        {/* Two columns layout */}
-        <div className="grid md:grid-cols-2 gap-12 items-center max-w-6xl mx-auto">
-          {/* Left Column: Circular Diagram (reduced size) */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="relative w-full max-w-sm mx-auto aspect-square"
-          >
-            {/* SVG Circle with animated arrows */}
-            <svg className="w-full h-full" viewBox="0 0 400 400">
-              {/* Circular path */}
-              <circle
-                cx="200"
-                cy="200"
-                r="140"
-                fill="none"
-                stroke="hsl(var(--border))"
-                strokeWidth="2"
-                strokeDasharray="8 8"
-              />
-              
-              {/* Animated arrows */}
-              <motion.g
-                animate={{ rotate: 360 }}
-                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                style={{ transformOrigin: "200px 200px" }}
-              >
-                {[0, 90, 180, 270].map((angle, i) => (
-                  <g key={i} transform={`rotate(${angle} 200 200)`}>
-                    <path
-                      d="M200 60 L210 75 L200 70 L190 75 Z"
-                      fill="hsl(var(--premium-sage))"
-                      className="text-premium-sage"
-                    />
-                  </g>
-                ))}
-              </motion.g>
-            </svg>
-
-            {/* Nodes */}
-            {nodes.map((node, index) => {
-              const positions = {
-                top: 'top-0 left-1/2 -translate-x-1/2 -translate-y-1/2',
-                right: 'right-0 top-1/2 translate-x-1/2 -translate-y-1/2',
-                bottom: 'bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2',
-                left: 'left-0 top-1/2 -translate-x-1/2 -translate-y-1/2',
-              };
-
-              return (
-                <motion.div
-                  key={node.id}
-                  initial={{ opacity: 0, scale: 0 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.15, duration: 0.5 }}
-                  className={`absolute ${positions[node.position as keyof typeof positions]}`}
-                >
-                  <div className="flex flex-col items-center gap-2">
-                    <div className={`w-14 h-14 md:w-16 md:h-16 rounded-full ${node.color} flex items-center justify-center shadow-lg`}>
-                      <node.icon className="w-7 h-7 md:w-8 md:h-8 text-white" />
-                    </div>
-                    <span className="text-xs md:text-sm font-semibold text-foreground bg-background px-2 py-0.5 rounded-full shadow-sm">
-                      {node.label}
-                    </span>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </motion.div>
-
-          {/* Right Column: 3 steps vertically */}
-          <div className="space-y-6">
-            <h3 className="font-serif text-2xl font-bold text-foreground mb-6">
-              Comment ça marche ?
-            </h3>
-            {steps.map((step, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, x: 20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.15, duration: 0.5 }}
-                className="flex items-start gap-4"
-              >
-                <div className="relative flex-shrink-0">
-                  <div className="w-12 h-12 rounded-full bg-premium-sage-very-light flex items-center justify-center">
-                    <step.icon className="w-6 h-6 text-premium-sage" />
-                  </div>
-                  <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-premium-sage text-white text-xs font-bold flex items-center justify-center">
-                    {index + 1}
-                  </span>
-                </div>
-                <div>
-                  <h4 className="font-semibold text-foreground mb-1">{step.title}</h4>
-                  <p className="text-sm text-muted-foreground">{step.description}</p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-};
-
-// Couples Section - Simplified to 3 key points
+// Couples Section - Enhanced with impactful cards
 const CouplesSection = () => {
   const benefits = [
     {
@@ -282,7 +116,7 @@ const CouplesSection = () => {
   ];
 
   return (
-    <section id="couples-section" className="py-20 bg-background">
+    <section id="couples-section" className="py-20 bg-[#efeee9]">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -303,7 +137,7 @@ const CouplesSection = () => {
             Facilitez votre organisation & économisez
           </p>
 
-          {/* 3 Key Benefits with enhanced animations */}
+          {/* 3 Key Benefits with enhanced impactful cards */}
           <div className="grid md:grid-cols-3 gap-6 mb-10">
             {benefits.map((benefit, i) => (
               <motion.div
@@ -312,31 +146,33 @@ const CouplesSection = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.15, duration: 0.5, ease: "easeOut" }}
-                whileHover={{ y: -8, boxShadow: "0 20px 40px rgba(0,0,0,0.1)" }}
-                className="bg-white rounded-xl p-6 shadow-sm border border-border text-left cursor-pointer transition-all"
+                whileHover={{ y: -12, scale: 1.02 }}
+                className="relative bg-gradient-to-br from-white via-white to-premium-sage-very-light/40 
+                           rounded-2xl p-8 shadow-lg border-2 border-premium-sage/20 
+                           hover:border-premium-sage/60 hover:shadow-2xl
+                           transition-all duration-500 cursor-pointer overflow-hidden group text-left"
               >
+                {/* Glow effect in background */}
+                <div className="absolute inset-0 bg-gradient-to-br from-premium-sage/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                
+                {/* Icon in circle with border */}
                 <motion.div 
-                  className="w-12 h-12 rounded-full bg-premium-sage-very-light flex items-center justify-center mb-4"
+                  className="relative z-10 w-16 h-16 rounded-full bg-premium-sage-very-light border-2 border-premium-sage/30 flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300"
                   whileHover={{ scale: 1.1, rotate: 5 }}
                   transition={{ type: "spring", stiffness: 400, damping: 10 }}
                 >
-                  <benefit.icon className="w-6 h-6 text-premium-sage" />
+                  <benefit.icon className="w-8 h-8 text-premium-sage" />
                 </motion.div>
-                <h4 className="font-semibold text-foreground mb-2">{benefit.title}</h4>
-                <p className="text-sm text-muted-foreground">{benefit.description}</p>
+                
+                {/* Content */}
+                <h4 className="relative z-10 font-serif font-bold text-xl text-foreground mb-3">{benefit.title}</h4>
+                <p className="relative z-10 text-muted-foreground">{benefit.description}</p>
+                
+                {/* Decorative corner accent */}
+                <div className="absolute -bottom-2 -right-2 w-20 h-20 bg-premium-sage/10 rounded-full blur-xl group-hover:bg-premium-sage/20 transition-all duration-500" />
               </motion.div>
             ))}
           </div>
-
-          {/* Gift Badge with pulse animation */}
-          <motion.div 
-            className="inline-flex items-center gap-2 bg-premium-sage/10 backdrop-blur-sm border border-premium-sage/20 rounded-xl px-5 py-3 mb-8"
-            animate={{ scale: [1, 1.02, 1] }}
-            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-          >
-            <Gift className="w-5 h-5 text-premium-sage" />
-            <span className="text-premium-sage-dark font-medium">Offert par votre lieu de réception</span>
-          </motion.div>
 
           {/* Double CTA with smooth scroll */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -362,134 +198,6 @@ const CouplesSection = () => {
   );
 };
 
-// Combined Lieux & Partenaires Section - Uniform cards with new colors
-const LieuxPartenairesSection = () => {
-  const lieuxBenefits = [
-    "Mini-site personnalisé du lieu",
-    "Vos prestataires habituels mis en avant en priorité",
-    "Service premium immédiat pour vos couples",
-    "Revenu passif partagé (commissions générées)",
-    "Zéro travail, zéro risque, zéro gestion"
-  ];
-
-  const partenairesBenefits = [
-    "Référencement dans le Club Mariable",
-    "Leads pré-qualifiés via les lieux",
-    "Commission uniquement en cas de vente → 0 risque",
-    "Visibilité ciblée et premium",
-    "Possibilité d'offrir un avantage exclusif aux mariés"
-  ];
-
-  return (
-    <section id="pros-section" className="py-20 bg-premium-cream/30">
-      <div className="container mx-auto px-4">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-12"
-        >
-          <h2 className="font-serif text-3xl md:text-5xl font-bold text-foreground mb-2">
-            Pour les Professionnels
-          </h2>
-          <p className="text-lg text-muted-foreground">
-            Lieux de réception, Prestataires & Marques : développez votre activité
-          </p>
-        </motion.div>
-
-        <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-          {/* Lieux Column */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="bg-background rounded-2xl p-8 shadow-lg border border-border"
-          >
-            <div className="inline-flex items-center gap-2 bg-sky-100 text-sky-700 rounded-full px-3 py-1 mb-4">
-              <Building2 className="w-4 h-4" />
-              <span className="text-sm font-medium">Lieux</span>
-            </div>
-
-            <h3 className="font-serif text-2xl font-bold text-foreground mb-4">
-              Offrez plus, gagnez sans effort
-            </h3>
-
-            <Accordion type="single" collapsible className="mb-6">
-              <AccordionItem value="avantages" className="border-none">
-                <AccordionTrigger className="text-premium-sage-dark hover:no-underline py-2">
-                  Voir les avantages
-                </AccordionTrigger>
-                <AccordionContent>
-                  <div className="space-y-3 pt-2">
-                    {lieuxBenefits.map((benefit, i) => (
-                      <div key={i} className="flex items-start gap-3">
-                        <CheckCircle className="w-4 h-4 text-premium-sage mt-0.5 flex-shrink-0" />
-                        <span className="text-sm text-muted-foreground">{benefit}</span>
-                      </div>
-                    ))}
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-
-            <Link to="/mariable.ambassadeur">
-              <Button className="w-full bg-premium-sage hover:bg-premium-sage-dark text-white rounded-full">
-                Devenir Lieu ambassadeur
-                <ArrowRight className="ml-2 w-4 h-4" />
-              </Button>
-            </Link>
-          </motion.div>
-
-          {/* Partenaires Column */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="bg-background rounded-2xl p-8 shadow-lg border border-border"
-          >
-            <div className="inline-flex items-center gap-2 bg-amber-100 text-amber-700 rounded-full px-3 py-1 mb-4">
-              <Palette className="w-4 h-4" />
-              <span className="text-sm font-medium">Prestataires ou marques</span>
-            </div>
-
-            <h3 className="font-serif text-2xl font-bold text-foreground mb-4">
-              Plus de clients, sans prospection
-            </h3>
-
-            <Accordion type="single" collapsible className="mb-6">
-              <AccordionItem value="avantages" className="border-none">
-                <AccordionTrigger className="text-premium-sage-dark hover:no-underline py-2">
-                  Voir les avantages
-                </AccordionTrigger>
-                <AccordionContent>
-                  <div className="space-y-3 pt-2">
-                    {partenairesBenefits.map((benefit, i) => (
-                      <div key={i} className="flex items-start gap-3">
-                        <CheckCircle className="w-4 h-4 text-premium-sage mt-0.5 flex-shrink-0" />
-                        <span className="text-sm text-muted-foreground">{benefit}</span>
-                      </div>
-                    ))}
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-
-            <Link to="/mariable.partenaire">
-              <Button className="w-full bg-premium-sage hover:bg-premium-sage-dark text-white rounded-full">
-                Devenir Partenaire
-                <ArrowRight className="ml-2 w-4 h-4" />
-              </Button>
-            </Link>
-          </motion.div>
-        </div>
-      </div>
-    </section>
-  );
-};
-
 // Savings Simulator Section
 const SavingsSimulatorSection = () => {
   const [budget, setBudget] = useState([25000]);
@@ -499,7 +207,7 @@ const SavingsSimulatorSection = () => {
   const maxSavings = Math.round(budget[0] * 0.15 * providers[0] / 8);
 
   return (
-    <section id="simulateur" className="py-20 bg-gradient-to-br from-premium-sage-very-light via-background to-premium-sage-very-light/30 scroll-mt-20">
+    <section id="simulateur" className="py-20 bg-gradient-to-br from-premium-sage-very-light via-[#efeee9] to-premium-sage-very-light/30 scroll-mt-20">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -518,7 +226,7 @@ const SavingsSimulatorSection = () => {
             </h2>
           </div>
 
-          <div className="bg-background rounded-2xl p-8 shadow-xl border border-border">
+          <div className="bg-white rounded-2xl p-8 shadow-xl border border-border">
             {/* Budget Slider */}
             <div className="mb-8">
               <div className="flex justify-between mb-3">
@@ -612,7 +320,7 @@ const TestimonialsSection = () => {
   ];
 
   return (
-    <section className="py-20 bg-background">
+    <section className="py-20 bg-[#efeee9]">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -634,7 +342,7 @@ const TestimonialsSection = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1, duration: 0.5 }}
-              className="bg-premium-sage-very-light/30 rounded-2xl p-6 border border-border"
+              className="bg-white rounded-2xl p-6 border border-border shadow-lg"
             >
               <Quote className="w-8 h-8 text-premium-sage/30 mb-4" />
               <p className="text-foreground mb-4 italic">"{testimonial.quote}"</p>
@@ -752,14 +460,12 @@ const Mariable = () => {
         keywords="mariage, wedding planner digital, professionnels mariage, club mariable, organisation mariage, coordination jour-j, prestataires mariage"
       />
       
-      <div className="min-h-screen">
+      <div className="min-h-screen bg-[#efeee9]">
         <PremiumHeader />
         
         <main>
           <HeroSection />
-          <VirtuousCircleSection />
           <CouplesSection />
-          <LieuxPartenairesSection />
           <SavingsSimulatorSection />
           <TestimonialsSection />
           <FAQSection />
