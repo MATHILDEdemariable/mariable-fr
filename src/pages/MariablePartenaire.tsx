@@ -123,7 +123,13 @@ const MariablePartenaire = () => {
           </div>
         </section>
 
-        {/* Section 2: Le Problème */}
+        {/* Section 2: Club Exclusif - Cercle Vertueux */}
+        <VirtuousCircleSection />
+
+        {/* Section 3: Pour les Professionnels */}
+        <LieuxPartenairesSection />
+
+        {/* Section 4: Le Problème */}
         <section className="py-20 md:py-28 bg-white">
           <div className="container mx-auto px-4">
             <div className="max-w-3xl mx-auto">
@@ -383,12 +389,6 @@ const MariablePartenaire = () => {
             </div>
           </div>
         </section>
-
-        {/* Virtuous Circle Section */}
-        <VirtuousCircleSection />
-
-        {/* Lieux & Partenaires Section */}
-        <LieuxPartenairesSection />
 
         {/* Section 7: CTA Final */}
         <section className="py-20 md:py-28 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 relative overflow-hidden">
