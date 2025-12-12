@@ -110,7 +110,7 @@ const MariablePartenaire = () => {
               >
                 <Button 
                   size="lg"
-                  onClick={() => navigate('/devenir-partenaire')}
+                  onClick={() => navigate('/contact')}
                   className="bg-white hover:bg-white/90 text-premium-sage-dark px-10 py-7 text-lg shadow-2xl hover:scale-105 transition-all duration-300 font-semibold"
                 >
                   <Palette className="mr-2 h-5 w-5" />
@@ -123,9 +123,6 @@ const MariablePartenaire = () => {
 
         {/* Section 2: Club Exclusif - Cercle Vertueux */}
         <VirtuousCircleSection />
-
-        {/* Section 3: Pour les Professionnels */}
-        <LieuxPartenairesSection />
 
         {/* Section 4: Le Problème */}
         <section className="py-20 md:py-28 bg-white">
