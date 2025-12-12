@@ -19,6 +19,8 @@ import { TUTORIAL_VIDEOS } from '@/config/tutorialVideos';
 import ClubMariableModal from './ClubMariableModal';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import GuideStartupContent from './GuideStartupContent';
+import PricingContent from './PricingContent';
 interface Task {
   id: string;
   label: string;
@@ -351,29 +353,21 @@ const ProjectSummary = () => {
 
       {/* Modal Guide de démarrage */}
       <Dialog open={showGuideModal} onOpenChange={setShowGuideModal}>
-        <DialogContent className="sm:max-w-6xl h-[85vh] p-0">
-          <DialogHeader className="p-4 border-b">
+        <DialogContent className="sm:max-w-4xl max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
             <DialogTitle>Guide de démarrage - Découvrez Mariable</DialogTitle>
           </DialogHeader>
-          <iframe 
-            src="/accueil?embedded=true" 
-            className="w-full h-full border-0"
-            title="Guide de démarrage"
-          />
+          <GuideStartupContent />
         </DialogContent>
       </Dialog>
 
       {/* Modal Détail du prix */}
       <Dialog open={showPrixModal} onOpenChange={setShowPrixModal}>
-        <DialogContent className="sm:max-w-6xl h-[85vh] p-0">
-          <DialogHeader className="p-4 border-b">
+        <DialogContent className="sm:max-w-5xl max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
             <DialogTitle>Détail des tarifs</DialogTitle>
           </DialogHeader>
-          <iframe 
-            src="/prix?embedded=true" 
-            className="w-full h-full border-0"
-            title="Détail du prix"
-          />
+          <PricingContent />
         </DialogContent>
       </Dialog>
 
