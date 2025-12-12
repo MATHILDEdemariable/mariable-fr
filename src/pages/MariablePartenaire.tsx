@@ -60,10 +60,8 @@ const MariablePartenaire = () => {
       
       <main className="flex-grow">
         {/* Section 1: Hero */}
-        <section className="relative py-24 md:py-36 overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-          <div className="absolute inset-0">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-amber-300/20 via-transparent to-transparent" />
-          </div>
+        <section className="relative py-24 md:py-36 overflow-hidden bg-premium-sage">
+          <div className="absolute inset-0 bg-gradient-to-b from-premium-sage-dark/30 via-transparent to-premium-sage-dark/20" />
           <div className="container mx-auto px-4 relative z-10">
             <motion.div 
               initial={{ opacity: 0, y: 30 }}
@@ -75,10 +73,10 @@ const MariablePartenaire = () => {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.2 }}
-                className="inline-flex items-center gap-2 bg-amber-100 text-amber-700 rounded-full px-4 py-2 mb-8"
+                className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm border border-white/30 rounded-full px-4 py-2 mb-8"
               >
-                <Palette className="h-4 w-4" />
-                <span className="font-medium">Pour les Prestataires & Marques</span>
+                <Palette className="h-4 w-4 text-white" />
+                <span className="font-medium text-white">Pour les Prestataires & Marques</span>
               </motion.div>
 
               <motion.h1 
@@ -88,7 +86,7 @@ const MariablePartenaire = () => {
                 className="text-4xl md:text-6xl lg:text-7xl font-serif font-bold text-white mb-8 leading-tight"
               >
                 Et si vous étiez recommandé par des{' '}
-                <span className="text-amber-300 relative">
+                <span className="text-white/90 relative">
                   lieux de réception premium ?
                   <svg className="absolute -bottom-2 left-0 w-full" height="8" viewBox="0 0 200 8" fill="none">
                     <path d="M2 6C50 2 150 2 198 6" stroke="currentColor" strokeWidth="3" strokeLinecap="round"/>
@@ -100,7 +98,7 @@ const MariablePartenaire = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4, duration: 0.6 }}
-                className="text-xl md:text-2xl text-slate-300 mb-12 font-light"
+                className="text-xl md:text-2xl text-white/80 mb-12 font-light"
               >
                 Diminuer votre CAC
               </motion.p>
@@ -113,7 +111,7 @@ const MariablePartenaire = () => {
                 <Button 
                   size="lg"
                   onClick={() => navigate('/devenir-partenaire')}
-                  className="bg-amber-300 hover:bg-amber-400 text-slate-900 px-10 py-7 text-lg shadow-2xl hover:scale-105 transition-all duration-300 font-semibold"
+                  className="bg-white hover:bg-white/90 text-premium-sage-dark px-10 py-7 text-lg shadow-2xl hover:scale-105 transition-all duration-300 font-semibold"
                 >
                   <Palette className="mr-2 h-5 w-5" />
                   Devenir Partenaire
@@ -139,7 +137,7 @@ const MariablePartenaire = () => {
                 viewport={{ once: true }}
                 transition={{ duration: 0.6 }}
               >
-                <Card className="border-2 border-slate-200 hover:border-amber-300/40 transition-all duration-500 hover:shadow-xl">
+                <Card className="border-2 border-slate-200 hover:border-premium-sage/40 transition-all duration-500 hover:shadow-xl">
                   <CardContent className="p-8">
                     <div className="flex items-center gap-3 mb-6">
                       <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center">
@@ -162,8 +160,8 @@ const MariablePartenaire = () => {
                         </motion.div>
                       ))}
                     </div>
-                    <div className="bg-gradient-to-r from-amber-100 to-amber-50 p-5 rounded-xl border border-amber-200">
-                      <p className="text-amber-700 font-semibold">
+                    <div className="bg-gradient-to-r from-premium-sage-very-light to-premium-sage-very-light/50 p-5 rounded-xl border border-premium-sage/30">
+                      <p className="text-premium-sage-dark font-semibold">
                         💡 ET SI VOUS TOUCHIEZ DES COUPLES DÉJÀ QUALIFIÉS ET PRÊTS À RÉSERVER ?
                       </p>
                     </div>
@@ -199,7 +197,7 @@ const MariablePartenaire = () => {
                         transition={{ delay: index * 0.1 }}
                         className="flex items-start gap-4 p-5 bg-gradient-to-r from-slate-50 to-white rounded-xl hover:shadow-md transition-all duration-300 group"
                       >
-                        <div className="flex-shrink-0 w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center text-amber-600 group-hover:bg-amber-400 group-hover:text-white transition-all duration-300">
+                        <div className="flex-shrink-0 w-12 h-12 rounded-full bg-premium-sage-very-light flex items-center justify-center text-premium-sage group-hover:bg-premium-sage group-hover:text-white transition-all duration-300">
                           {benefice.icon}
                         </div>
                         <div>
@@ -240,10 +238,10 @@ const MariablePartenaire = () => {
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.15 }}
                 >
-                  <Card className="text-center border-2 hover:border-amber-300/40 transition-all duration-500 hover:shadow-xl hover:-translate-y-2 group h-full">
+                  <Card className="text-center border-2 hover:border-premium-sage/40 transition-all duration-500 hover:shadow-xl hover:-translate-y-2 group h-full">
                     <CardContent className="p-8">
                       <div className="text-6xl mb-6 group-hover:scale-110 transition-transform duration-300">{step.icon}</div>
-                      <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-amber-300 text-slate-900 font-bold mb-4 text-lg shadow-lg">
+                      <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-premium-sage text-white font-bold mb-4 text-lg shadow-lg">
                         {step.num}
                       </div>
                       <h3 className="font-serif font-bold text-foreground mb-2 text-lg">{step.title}</h3>
@@ -255,14 +253,14 @@ const MariablePartenaire = () => {
             </div>
 
             {/* Commission explanation */}
-            <Card className="max-w-2xl mx-auto border-2 border-amber-300/30 bg-gradient-to-br from-amber-50 to-transparent">
+            <Card className="max-w-2xl mx-auto border-2 border-premium-sage/30 bg-gradient-to-br from-premium-sage-very-light/50 to-transparent">
               <CardContent className="p-8">
                 <h4 className="font-serif font-bold text-foreground mb-6 text-center text-xl">💰 STRUCTURE DE COÛTS</h4>
                 <div className="space-y-4">
                   <div className="bg-white/80 p-4 rounded-xl">
                     <p className="font-semibold text-foreground mb-3">On définit ensemble la commission, celle-ci finance :</p>
                     <ul className="ml-4 space-y-2 text-muted-foreground">
-                      <li className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-amber-400" /> Un avantage couple (réduction ou autre avantage si marge trop réduite)</li>
+                      <li className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-premium-sage" /> Un avantage couple (réduction ou autre avantage si marge trop réduite)</li>
                       <li className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-slate-400" /> La commission service Mariable + lieu redistribuée équitablement</li>
                     </ul>
                   </div>
@@ -271,7 +269,7 @@ const MariablePartenaire = () => {
                   <Button 
                     variant="outline"
                     onClick={() => navigate('/contact')}
-                    className="border-amber-400 text-amber-700 hover:bg-amber-100"
+                    className="border-premium-sage text-premium-sage-dark hover:bg-premium-sage-very-light"
                   >
                     En savoir plus - discutons en
                     <ArrowRight className="ml-2 h-4 w-4" />
@@ -327,7 +325,7 @@ const MariablePartenaire = () => {
                   variant="outline"
                   size="icon"
                   onClick={() => setCurrentTestimonial((prev) => (prev === 0 ? testimonials.length - 1 : prev - 1))}
-                  className="hover:bg-amber-300 hover:text-slate-900 hover:border-amber-300 transition-all duration-300"
+                  className="hover:bg-premium-sage hover:text-white hover:border-premium-sage transition-all duration-300"
                 >
                   <ChevronLeft className="h-4 w-4" />
                 </Button>
@@ -335,7 +333,7 @@ const MariablePartenaire = () => {
                   {testimonials.map((_, index) => (
                     <button
                       key={index}
-                      className={`h-2 rounded-full transition-all duration-300 ${index === currentTestimonial ? 'bg-amber-400 w-6' : 'bg-muted w-2 hover:bg-amber-200'}`}
+                      className={`h-2 rounded-full transition-all duration-300 ${index === currentTestimonial ? 'bg-premium-sage w-6' : 'bg-muted w-2 hover:bg-premium-sage-light'}`}
                       onClick={() => setCurrentTestimonial(index)}
                     />
                   ))}
@@ -344,7 +342,7 @@ const MariablePartenaire = () => {
                   variant="outline"
                   size="icon"
                   onClick={() => setCurrentTestimonial((prev) => (prev === testimonials.length - 1 ? 0 : prev + 1))}
-                  className="hover:bg-amber-300 hover:text-slate-900 hover:border-amber-300 transition-all duration-300"
+                  className="hover:bg-premium-sage hover:text-white hover:border-premium-sage transition-all duration-300"
                 >
                   <ChevronRight className="h-4 w-4" />
                 </Button>
@@ -375,7 +373,7 @@ const MariablePartenaire = () => {
                     viewport={{ once: true }}
                     transition={{ delay: index * 0.1 }}
                   >
-                    <AccordionItem value={`item-${index}`} className="border-2 rounded-xl px-6 hover:border-amber-300/40 transition-all duration-300">
+                    <AccordionItem value={`item-${index}`} className="border-2 rounded-xl px-6 hover:border-premium-sage/40 transition-all duration-300">
                       <AccordionTrigger className="text-left font-medium hover:no-underline py-5 font-serif">
                         {item.question}
                       </AccordionTrigger>
@@ -391,10 +389,8 @@ const MariablePartenaire = () => {
         </section>
 
         {/* Section 7: CTA Final */}
-        <section className="py-20 md:py-28 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 relative overflow-hidden">
-          <div className="absolute inset-0">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,_var(--tw-gradient-stops))] from-amber-300/20 via-transparent to-transparent" />
-          </div>
+        <section className="py-20 md:py-28 bg-premium-sage relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-b from-premium-sage-dark/30 via-transparent to-premium-sage-dark/20" />
           <motion.div 
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -409,17 +405,17 @@ const MariablePartenaire = () => {
               <Button 
                 size="lg"
                 onClick={() => navigate('/contact')}
-                className="bg-amber-300 hover:bg-amber-400 text-slate-900 px-10 py-7 text-lg shadow-2xl hover:scale-105 transition-all duration-300 font-semibold"
+                className="bg-white hover:bg-white/90 text-premium-sage-dark px-10 py-7 text-lg shadow-2xl hover:scale-105 transition-all duration-300 font-semibold"
               >
                 En savoir plus - discutons en
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </div>
             
-            <div className="flex flex-wrap justify-center gap-6 mt-8 text-slate-400">
+            <div className="flex flex-wrap justify-center gap-6 mt-8 text-white/80">
               {['Paiement à la performance', 'ROI trackable', 'Leads qualifiés'].map((item, index) => (
-                <span key={index} className="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-full">
-                  <Check className="h-4 w-4 text-amber-300" /> {item}
+                <span key={index} className="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-full">
+                  <Check className="h-4 w-4 text-white" /> {item}
                 </span>
               ))}
             </div>

@@ -14,7 +14,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { MapPin, Users, Star, Award, CalendarCheck, Euro, MessageSquare, ArrowLeft, Tag } from "lucide-react";
+import { MapPin, Users, Star, Award, CalendarCheck, Euro, MessageSquare, ArrowLeft, Sparkles } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { toast } from "@/components/ui/use-toast";
 import { Loader2 } from "lucide-react";
@@ -639,13 +639,12 @@ const SinglePrestataire = () => {
                   </DialogContent>
                 </Dialog>
 
-                {/* Alert tarif préférentiel */}
-                <Alert className="bg-wedding-olive/10 border-wedding-olive mt-4 w-full">
-                  <Tag className="h-4 w-4 text-wedding-olive" />
+                {/* Alert Club Mariable */}
+                <Alert className="bg-premium-sage/10 border-premium-sage mt-4 w-full">
+                  <Sparkles className="h-4 w-4 text-premium-sage" />
                   <AlertDescription className="text-sm">
-                    <strong>🎁 Tarif préférentiel Mariable :</strong> Bénéficiez de{" "}
-                    <strong className="text-wedding-olive">200€ à 500€ de remise </strong>
-                    sur votre devis selon le prix total via notre formulaire de contact
+                    <strong>✨ Club Mariable :</strong> Découvrez l'avantage exclusif 
+                    via notre formulaire de contact
                   </AlertDescription>
                 </Alert>
 
