@@ -40,7 +40,7 @@ const MariableAmbassadeur = () => {
     { icon: <TrendingUp className="h-5 w-5" />, title: "REVENUS PASSIFS: jusqu'à 13 000€/an", details: "30 mariages/an • 18 couples utilisent le réseau (60%) • Commission moyenne par mariage" },
     { icon: <Clock className="h-5 w-5" />, title: "TEMPS INVESTI: 30 secondes par couple", details: "Donner le code VIP Pass, c'est tout" },
     { icon: <Star className="h-5 w-5" />, title: "SERVICE PREMIUM pour vos couples", details: "Ils économisent, ils vous adorent" },
-    { icon: <BarChart3 className="h-5 w-5" />, title: "DASHBOARD TEMPS RÉEL", details: "Suivez vos commissions en direct" },
+    { icon: <BarChart3 className="h-5 w-5" />, title: "VOTRE PAGE / MINI SITE PERSONNALISÉ", details: "Vos prestataires habituels mis en avant en priorité" },
     { icon: <Shield className="h-5 w-5" />, title: "SANS RISQUE", details: "0€ d'investissement, commission uniquement" },
   ];
 
@@ -132,9 +132,6 @@ const MariableAmbassadeur = () => {
 
         {/* Section 2: Club Exclusif - Cercle Vertueux */}
         <VirtuousCircleSection />
-
-        {/* Section 3: Pour les Professionnels */}
-        <LieuxPartenairesSection />
 
         {/* Section 4: Le Problème */}
         <section className="py-20 md:py-28 bg-white">
