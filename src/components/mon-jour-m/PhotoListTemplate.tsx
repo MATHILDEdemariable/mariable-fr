@@ -3,53 +3,34 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Plus, Trash2, Camera, Users, Save, RotateCcw } from 'lucide-react';
+import { Plus, Trash2, Camera, Save, RotateCcw, GripVertical } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
+import PhotoGuestSelector from './PhotoGuestSelector';
 
 interface PhotoItem {
   id: string;
-  text: string;
-  checked: boolean;
-}
-
-interface PhotoSection {
   title: string;
-  icon: React.ReactNode;
-  items: PhotoItem[];
+  toCapture: boolean;
+  guestIds: string[];
+  customNames: string[];
 }
 
-const DEFAULT_PHOTO_LIST: PhotoSection[] = [
-  {
-    title: "Photos de Couple",
-    icon: <Camera className="h-5 w-5" />,
-    items: [
-      { id: 'couple-1', text: "Premier regard (First Look)", checked: false },
-      { id: 'couple-2', text: "Sortie de cérémonie", checked: false },
-      { id: 'couple-3', text: "Séance couple dans les jardins", checked: false },
-      { id: 'couple-4', text: "Coucher de soleil", checked: false },
-      { id: 'couple-5', text: "Premier baiser", checked: false },
-      { id: 'couple-6', text: "Échange des alliances", checked: false },
-      { id: 'couple-7', text: "Photo devant le lieu de réception", checked: false },
-      { id: 'couple-8', text: "Photo avec les alliances", checked: false },
-    ]
-  },
-  {
-    title: "Photos de Groupe",
-    icon: <Users className="h-5 w-5" />,
-    items: [
-      { id: 'group-1', text: "Famille du marié (parents, frères/sœurs)", checked: false },
-      { id: 'group-2', text: "Famille de la mariée (parents, frères/sœurs)", checked: false },
-      { id: 'group-3', text: "Les deux familles réunies", checked: false },
-      { id: 'group-4', text: "Témoins et demoiselles d'honneur", checked: false },
-      { id: 'group-5', text: "Garçons d'honneur", checked: false },
-      { id: 'group-6', text: "Photo générale de tous les invités", checked: false },
-      { id: 'group-7', text: "Photo fun avec les amis proches", checked: false },
-      { id: 'group-8', text: "Photo avec les grands-parents", checked: false },
-      { id: 'group-9', text: "Photo avec les enfants d'honneur", checked: false },
-      { id: 'group-10', text: "Photo générationnelle (3 générations)", checked: false },
-    ]
-  }
+const DEFAULT_PHOTO_LIST: PhotoItem[] = [
+  { id: 'photo-1', title: "Premier regard (First Look)", toCapture: true, guestIds: [], customNames: [] },
+  { id: 'photo-2', title: "Sortie de cérémonie", toCapture: true, guestIds: [], customNames: [] },
+  { id: 'photo-3', title: "Échange des alliances", toCapture: true, guestIds: [], customNames: [] },
+  { id: 'photo-4', title: "Famille des mariés", toCapture: true, guestIds: [], customNames: [] },
+  { id: 'photo-5', title: "Famille de la mariée", toCapture: true, guestIds: [], customNames: [] },
+  { id: 'photo-6', title: "Les deux familles réunies", toCapture: true, guestIds: [], customNames: [] },
+  { id: 'photo-7', title: "Témoins et demoiselles d'honneur", toCapture: true, guestIds: [], customNames: [] },
+  { id: 'photo-8', title: "Garçons d'honneur", toCapture: true, guestIds: [], customNames: [] },
+  { id: 'photo-9', title: "Photo tous les invités", toCapture: true, guestIds: [], customNames: ["Tous les invités"] },
+  { id: 'photo-10', title: "Séance couple - Jardins", toCapture: true, guestIds: [], customNames: [] },
+  { id: 'photo-11', title: "Séance couple - Coucher de soleil", toCapture: true, guestIds: [], customNames: [] },
+  { id: 'photo-12', title: "Photo avec les grands-parents", toCapture: true, guestIds: [], customNames: [] },
+  { id: 'photo-13', title: "Photo fun avec les amis", toCapture: false, guestIds: [], customNames: [] },
+  { id: 'photo-14', title: "Photo avec les enfants d'honneur", toCapture: false, guestIds: [], customNames: [] },
 ];
 
 interface PhotoListTemplateProps {
@@ -58,12 +39,13 @@ interface PhotoListTemplateProps {
 
 const PhotoListTemplate: React.FC<PhotoListTemplateProps> = ({ coordinationId }) => {
   const { toast } = useToast();
-  const [sections, setSections] = useState<PhotoSection[]>(DEFAULT_PHOTO_LIST);
-  const [newItemText, setNewItemText] = useState<{ [key: string]: string }>({});
+  const [photos, setPhotos] = useState<PhotoItem[]>(DEFAULT_PHOTO_LIST);
+  const [newPhotoTitle, setNewPhotoTitle] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingTitle, setEditingTitle] = useState('');
 
-  // Charger les données sauvegardées
   useEffect(() => {
     loadSavedPhotoList();
   }, [coordinationId]);
@@ -81,8 +63,26 @@ const PhotoListTemplate: React.FC<PhotoListTemplateProps> = ({ coordinationId })
 
       if (data?.description) {
         try {
-          const savedSections = JSON.parse(data.description);
-          setSections(savedSections);
+          const savedPhotos = JSON.parse(data.description);
+          // Migration des anciennes données si nécessaire
+          if (Array.isArray(savedPhotos) && savedPhotos[0]?.items) {
+            // Ancien format avec sections
+            const flatPhotos: PhotoItem[] = [];
+            savedPhotos.forEach((section: any) => {
+              section.items?.forEach((item: any) => {
+                flatPhotos.push({
+                  id: item.id,
+                  title: item.text || item.title,
+                  toCapture: item.checked ?? item.toCapture ?? true,
+                  guestIds: item.guestIds || [],
+                  customNames: item.customNames || []
+                });
+              });
+            });
+            setPhotos(flatPhotos);
+          } else if (Array.isArray(savedPhotos)) {
+            setPhotos(savedPhotos);
+          }
         } catch (e) {
           console.error('Erreur parsing photo list:', e);
         }
@@ -95,7 +95,6 @@ const PhotoListTemplate: React.FC<PhotoListTemplateProps> = ({ coordinationId })
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      // Vérifier si un document existe déjà
       const { data: existing } = await supabase
         .from('coordination_documents')
         .select('id')
@@ -106,7 +105,7 @@ const PhotoListTemplate: React.FC<PhotoListTemplateProps> = ({ coordinationId })
       const documentData = {
         coordination_id: coordinationId,
         title: 'Liste Photos Jour-J',
-        description: JSON.stringify(sections),
+        description: JSON.stringify(photos),
         category: 'photo_list',
         file_url: ''
       };
@@ -141,63 +140,66 @@ const PhotoListTemplate: React.FC<PhotoListTemplateProps> = ({ coordinationId })
 
   const handleReset = () => {
     if (window.confirm('Réinitialiser la liste aux valeurs par défaut ?')) {
-      setSections(DEFAULT_PHOTO_LIST);
+      setPhotos(DEFAULT_PHOTO_LIST);
       setHasChanges(true);
     }
   };
 
-  const toggleItem = (sectionIndex: number, itemId: string) => {
-    setSections(prev => prev.map((section, idx) => {
-      if (idx !== sectionIndex) return section;
-      return {
-        ...section,
-        items: section.items.map(item => 
-          item.id === itemId ? { ...item, checked: !item.checked } : item
-        )
-      };
-    }));
+  const toggleCapture = (photoId: string) => {
+    setPhotos(prev => prev.map(photo =>
+      photo.id === photoId ? { ...photo, toCapture: !photo.toCapture } : photo
+    ));
     setHasChanges(true);
   };
 
-  const addItem = (sectionIndex: number) => {
-    const text = newItemText[sectionIndex]?.trim();
-    if (!text) return;
-
-    setSections(prev => prev.map((section, idx) => {
-      if (idx !== sectionIndex) return section;
-      return {
-        ...section,
-        items: [...section.items, { 
-          id: `custom-${Date.now()}`, 
-          text, 
-          checked: false 
-        }]
-      };
-    }));
-    setNewItemText(prev => ({ ...prev, [sectionIndex]: '' }));
+  const updatePhotoGuests = (photoId: string, guestIds: string[], customNames: string[]) => {
+    setPhotos(prev => prev.map(photo =>
+      photo.id === photoId ? { ...photo, guestIds, customNames } : photo
+    ));
     setHasChanges(true);
   };
 
-  const removeItem = (sectionIndex: number, itemId: string) => {
-    setSections(prev => prev.map((section, idx) => {
-      if (idx !== sectionIndex) return section;
-      return {
-        ...section,
-        items: section.items.filter(item => item.id !== itemId)
-      };
-    }));
+  const addPhoto = () => {
+    if (!newPhotoTitle.trim()) return;
+    const newPhoto: PhotoItem = {
+      id: `photo-custom-${Date.now()}`,
+      title: newPhotoTitle.trim(),
+      toCapture: true,
+      guestIds: [],
+      customNames: []
+    };
+    setPhotos(prev => [...prev, newPhoto]);
+    setNewPhotoTitle('');
     setHasChanges(true);
   };
 
-  const checkedCount = sections.reduce((acc, section) => 
-    acc + section.items.filter(item => item.checked).length, 0
-  );
-  const totalCount = sections.reduce((acc, section) => acc + section.items.length, 0);
+  const removePhoto = (photoId: string) => {
+    setPhotos(prev => prev.filter(photo => photo.id !== photoId));
+    setHasChanges(true);
+  };
+
+  const startEditing = (photo: PhotoItem) => {
+    setEditingId(photo.id);
+    setEditingTitle(photo.title);
+  };
+
+  const saveEditing = () => {
+    if (editingId && editingTitle.trim()) {
+      setPhotos(prev => prev.map(photo =>
+        photo.id === editingId ? { ...photo, title: editingTitle.trim() } : photo
+      ));
+      setHasChanges(true);
+    }
+    setEditingId(null);
+    setEditingTitle('');
+  };
+
+  const toCaptureCount = photos.filter(p => p.toCapture).length;
 
   return (
     <Card className="border-pink-200 bg-gradient-to-br from-pink-50 to-white">
       <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between flex-wrap gap-2">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-pink-100 rounded-lg">
               <Camera className="h-5 w-5 text-pink-600" />
@@ -205,7 +207,7 @@ const PhotoListTemplate: React.FC<PhotoListTemplateProps> = ({ coordinationId })
             <div>
               <CardTitle className="text-lg">📸 Liste Photos Jour-J</CardTitle>
               <p className="text-sm text-muted-foreground">
-                {checkedCount}/{totalCount} photos cochées
+                {toCaptureCount}/{photos.length} photos à faire
               </p>
             </div>
           </div>
@@ -231,68 +233,104 @@ const PhotoListTemplate: React.FC<PhotoListTemplateProps> = ({ coordinationId })
           </div>
         </div>
       </CardHeader>
-      <CardContent className="space-y-6">
-        {sections.map((section, sectionIndex) => (
-          <div key={section.title} className="space-y-3">
-            <div className="flex items-center gap-2 text-sm font-medium text-gray-700">
-              {section.icon}
-              <span>{section.title}</span>
-              <span className="text-xs text-gray-400">
-                ({section.items.filter(i => i.checked).length}/{section.items.length})
-              </span>
-            </div>
-            
-            <div className="space-y-2 pl-7">
-              {section.items.map((item) => (
-                <div key={item.id} className="flex items-center gap-3 group">
+      <CardContent>
+        {/* Tableau des photos */}
+        <div className="border rounded-lg overflow-hidden">
+          {/* En-tête */}
+          <div className="grid grid-cols-[40px_1fr_1fr_40px] gap-2 p-3 bg-gray-50 border-b text-xs font-medium text-gray-600">
+            <div className="text-center">À faire</div>
+            <div>Photo</div>
+            <div>Personnes présentes</div>
+            <div></div>
+          </div>
+
+          {/* Lignes */}
+          <div className="divide-y">
+            {photos.map((photo) => (
+              <div
+                key={photo.id}
+                className={`grid grid-cols-[40px_1fr_1fr_40px] gap-2 p-3 items-center hover:bg-gray-50 transition-colors ${
+                  !photo.toCapture ? 'bg-gray-50/50 opacity-60' : ''
+                }`}
+              >
+                {/* Checkbox */}
+                <div className="flex justify-center">
                   <Checkbox
-                    id={item.id}
-                    checked={item.checked}
-                    onCheckedChange={() => toggleItem(sectionIndex, item.id)}
+                    checked={photo.toCapture}
+                    onCheckedChange={() => toggleCapture(photo.id)}
                   />
-                  <label
-                    htmlFor={item.id}
-                    className={`flex-1 text-sm cursor-pointer ${
-                      item.checked ? 'line-through text-gray-400' : 'text-gray-700'
-                    }`}
-                  >
-                    {item.text}
-                  </label>
+                </div>
+
+                {/* Titre éditable */}
+                <div>
+                  {editingId === photo.id ? (
+                    <Input
+                      value={editingTitle}
+                      onChange={(e) => setEditingTitle(e.target.value)}
+                      onBlur={saveEditing}
+                      onKeyPress={(e) => e.key === 'Enter' && saveEditing()}
+                      autoFocus
+                      className="h-8 text-sm"
+                    />
+                  ) : (
+                    <span
+                      className={`text-sm cursor-pointer hover:text-pink-600 ${
+                        !photo.toCapture ? 'line-through text-gray-400' : ''
+                      }`}
+                      onClick={() => startEditing(photo)}
+                    >
+                      {photo.title}
+                    </span>
+                  )}
+                </div>
+
+                {/* Sélecteur de personnes */}
+                <div>
+                  <PhotoGuestSelector
+                    selectedGuestIds={photo.guestIds}
+                    customNames={photo.customNames}
+                    onGuestsChange={(guestIds, customNames) =>
+                      updatePhotoGuests(photo.id, guestIds, customNames)
+                    }
+                  />
+                </div>
+
+                {/* Supprimer */}
+                <div className="flex justify-center">
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => removeItem(sectionIndex, item.id)}
-                    className="opacity-0 group-hover:opacity-100 h-6 w-6 p-0 text-red-500 hover:text-red-700"
+                    onClick={() => removePhoto(photo.id)}
+                    className="h-6 w-6 p-0 text-red-500 hover:text-red-700 hover:bg-red-50"
                   >
                     <Trash2 className="h-3 w-3" />
                   </Button>
                 </div>
-              ))}
-              
-              {/* Ajouter un nouvel item */}
-              <div className="flex gap-2 mt-2">
-                <Input
-                  placeholder="Ajouter une photo..."
-                  value={newItemText[sectionIndex] || ''}
-                  onChange={(e) => setNewItemText(prev => ({ 
-                    ...prev, 
-                    [sectionIndex]: e.target.value 
-                  }))}
-                  onKeyPress={(e) => e.key === 'Enter' && addItem(sectionIndex)}
-                  className="text-sm h-8"
-                />
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => addItem(sectionIndex)}
-                  className="h-8"
-                >
-                  <Plus className="h-4 w-4" />
-                </Button>
               </div>
+            ))}
+          </div>
+
+          {/* Ajouter une photo */}
+          <div className="p-3 bg-gray-50 border-t">
+            <div className="flex gap-2">
+              <Input
+                placeholder="Ajouter une nouvelle photo..."
+                value={newPhotoTitle}
+                onChange={(e) => setNewPhotoTitle(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && addPhoto()}
+                className="text-sm"
+              />
+              <Button onClick={addPhoto} variant="outline">
+                <Plus className="h-4 w-4 mr-1" />
+                Ajouter
+              </Button>
             </div>
           </div>
-        ))}
+        </div>
+
+        <p className="text-xs text-muted-foreground mt-3">
+          💡 Cliquez sur le nom d'une photo pour le modifier. Ajoutez les personnes qui doivent être présentes pour chaque photo.
+        </p>
       </CardContent>
     </Card>
   );

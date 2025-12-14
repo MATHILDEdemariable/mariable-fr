@@ -4,9 +4,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Calendar, Users, FileText, Clock, CheckCircle2, Circle, User, Building, Mail, Phone, AlertCircle, Filter, Eye, ExternalLink, Download, Loader2 } from 'lucide-react';
+import { Calendar, Users, FileText, Clock, CheckCircle2, Circle, User, Building, Mail, Phone, AlertCircle, Filter, Eye, ExternalLink, Download, Loader2, Camera } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { validatePlanningShareToken, getPublicCoordinationData } from '@/utils/tokenUtils';
+import PhotoListReadOnly from '@/components/mon-jour-m/PhotoListReadOnly';
 
 interface WeddingData {
   coordination: any;
@@ -244,10 +245,14 @@ const JourMVue: React.FC = () => {
       <div className="container mx-auto px-4 py-6 max-w-6xl pb-20 md:pb-6">
         <Tabs defaultValue="planning" className="w-full">
           {/* Navigation desktop */}
-          <TabsList className="hidden md:grid w-full grid-cols-4 mb-6">
+          <TabsList className="hidden md:grid w-full grid-cols-5 mb-6">
             <TabsTrigger value="planning" className="flex items-center gap-2">
               <Calendar className="h-4 w-4" />
               Planning ({tasks.length})
+            </TabsTrigger>
+            <TabsTrigger value="photos" className="flex items-center gap-2">
+              <Camera className="h-4 w-4" />
+              Photos
             </TabsTrigger>
             <TabsTrigger value="equipe" className="flex items-center gap-2">
               <Users className="h-4 w-4" />
@@ -265,38 +270,41 @@ const JourMVue: React.FC = () => {
           
           {/* Navigation mobile fixe en bas */}
           <div className="fixed bottom-0 left-0 right-0 bg-white border-t md:hidden z-50 shadow-lg">
-            <TabsList className="grid w-full grid-cols-4 rounded-none h-20 bg-white">
+            <TabsList className="grid w-full grid-cols-5 rounded-none h-20 bg-white">
               <TabsTrigger 
                 value="planning" 
-                className="flex flex-col items-center justify-center gap-1 text-xs h-full data-[state=active]:bg-primary/10 data-[state=active]:text-primary px-2"
+                className="flex flex-col items-center justify-center gap-1 text-xs h-full data-[state=active]:bg-primary/10 data-[state=active]:text-primary px-1"
               >
                 <Calendar className="h-5 w-5" />
                 <span className="text-[10px] leading-tight text-center">Planning</span>
-                <span className="text-[9px] opacity-70">({tasks.length})</span>
+              </TabsTrigger>
+              <TabsTrigger 
+                value="photos" 
+                className="flex flex-col items-center justify-center gap-1 text-xs h-full data-[state=active]:bg-primary/10 data-[state=active]:text-primary px-1"
+              >
+                <Camera className="h-5 w-5" />
+                <span className="text-[10px] leading-tight text-center">Photos</span>
               </TabsTrigger>
               <TabsTrigger 
                 value="equipe" 
-                className="flex flex-col items-center justify-center gap-1 text-xs h-full data-[state=active]:bg-primary/10 data-[state=active]:text-primary px-2"
+                className="flex flex-col items-center justify-center gap-1 text-xs h-full data-[state=active]:bg-primary/10 data-[state=active]:text-primary px-1"
               >
                 <Users className="h-5 w-5" />
                 <span className="text-[10px] leading-tight text-center">Équipe</span>
-                <span className="text-[9px] opacity-70">({teamMembers.length})</span>
               </TabsTrigger>
               <TabsTrigger 
                 value="documents" 
-                className="flex flex-col items-center justify-center gap-1 text-xs h-full data-[state=active]:bg-primary/10 data-[state=active]:text-primary px-2"
+                className="flex flex-col items-center justify-center gap-1 text-xs h-full data-[state=active]:bg-primary/10 data-[state=active]:text-primary px-1"
               >
                 <FileText className="h-5 w-5" />
                 <span className="text-[10px] leading-tight text-center">Docs</span>
-                <span className="text-[9px] opacity-70">({documents.length})</span>
               </TabsTrigger>
               <TabsTrigger 
                 value="pinterest" 
-                className="flex flex-col items-center justify-center gap-1 text-xs h-full data-[state=active]:bg-primary/10 data-[state=active]:text-primary px-2"
+                className="flex flex-col items-center justify-center gap-1 text-xs h-full data-[state=active]:bg-primary/10 data-[state=active]:text-primary px-1"
               >
                 <ExternalLink className="h-5 w-5" />
                 <span className="text-[10px] leading-tight text-center">Pinterest</span>
-                <span className="text-[9px] opacity-70">({pinterestLinks?.length || 0})</span>
               </TabsTrigger>
             </TabsList>
           </div>
@@ -403,6 +411,11 @@ const JourMVue: React.FC = () => {
                 )}
               </CardContent>
             </Card>
+          </TabsContent>
+
+          {/* Onglet Photos */}
+          <TabsContent value="photos">
+            <PhotoListReadOnly coordinationId={coordination.id} />
           </TabsContent>
 
           {/* Onglet Équipe */}
