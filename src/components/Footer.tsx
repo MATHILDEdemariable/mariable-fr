@@ -67,7 +67,6 @@ const Footer = () => {
             <ul className="space-y-1 text-sm">
               <li><Link to="/about/histoire" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Notre histoire</Link></li>
               <li><Link to="/about/charte" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Notre charte</Link></li>
-              <li><Link to="/prix" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Prix</Link></li>
               <li><Link to="/contact" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Nous contacter</Link></li>
               <li><Link to="/contact/faq" className="text-wedding-black/70 hover:text-wedding-black transition-colors">FAQ</Link></li>
               <li><Link to="/comparatif" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Comparatif</Link></li>
@@ -83,7 +82,6 @@ const Footer = () => {
           </p>
           <div className="flex gap-4 text-xs">
             <Link to="/contact" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Nous contacter</Link>
-            <Link to="/prix" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Prix</Link>
           </div>
         </div>
       </div>

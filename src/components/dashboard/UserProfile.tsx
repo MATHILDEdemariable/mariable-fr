@@ -231,21 +231,6 @@ const UserProfile: React.FC = () => {
             )}
 
             <div className="pt-4 space-y-2">
-              {!isPremium && (
-                <div className="mb-3">
-                  {showStripeButton ? (
-                    <StripeButton />
-                  ) : (
-                    <Button 
-                      onClick={handleUpgradeToPremium}
-                      className="bg-wedding-olive hover:bg-wedding-olive/90 text-white w-full"
-                    >
-                      <Crown className="w-4 h-4 mr-2" />
-                      Passer au Premium
-                    </Button>
-                  )}
-                </div>
-              )}
               
               <Button 
                 onClick={handleLogout} 
