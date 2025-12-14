@@ -231,21 +231,11 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
         </DropdownMenu>
 
         {/* Retroplanning - lien standalone */}
-        <Link 
-          to={isReaderMode ? '#' : '/dashboard/mon-mariage/retroplanning'} 
-          onClick={e => {
-            if (isReaderMode) {
-              e.preventDefault();
-            }
-          }} 
-          className={cn(
-            "flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors", 
-            isActive('/dashboard/mon-mariage/retroplanning') 
-              ? 'bg-wedding-olive text-white shadow-sm' 
-              : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive',
-            isReaderMode ? 'pointer-events-none opacity-70' : ''
-          )}
-        >
+        <Link to={isReaderMode ? '#' : '/dashboard/mon-mariage/retroplanning'} onClick={e => {
+        if (isReaderMode) {
+          e.preventDefault();
+        }
+      }} className={cn("flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors", isActive('/dashboard/mon-mariage/retroplanning') ? 'bg-wedding-olive text-white shadow-sm' : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive', isReaderMode ? 'pointer-events-none opacity-70' : '')}>
           <Calendar className="h-4 w-4" />
           <span className="ml-2 sm:ml-3 leading-tight">Retroplanning</span>
           {isReaderMode && <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>}
@@ -437,15 +427,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
         </Link>
 
         {/* Club Mariable */}
-        <button
-          onClick={() => setShowClubMariableModal(true)}
-          className={cn(
-            "flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors w-full justify-start",
-            "bg-foreground text-background hover:bg-foreground/90",
-            isReaderMode ? 'pointer-events-none opacity-70' : ''
-          )}
-          disabled={isReaderMode}
-        >
+        <button onClick={() => setShowClubMariableModal(true)} className={cn("flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors w-full justify-start", "bg-foreground text-background hover:bg-foreground/90", isReaderMode ? 'pointer-events-none opacity-70' : '')} disabled={isReaderMode}>
           <Sparkles className="h-4 w-4" />
           <span className="ml-2 sm:ml-3 leading-tight">Club Mariable</span>
         </button>
@@ -468,27 +450,10 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
         <WhatsAppButton variant="compact" requirePremium={true} />
         
         {/* Votre cadeau - Cal.com */}
-        <button
-          onClick={() => setShowCallModal(true)}
-          className={cn(
-            "flex items-center w-full px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors justify-start mt-2",
-            "bg-gradient-to-r from-pink-500 to-pink-600 text-white hover:from-pink-600 hover:to-pink-700 shadow-sm",
-            isReaderMode ? 'pointer-events-none opacity-70' : ''
-          )}
-          disabled={isReaderMode}
-        >
-          <Gift className="h-4 w-4" />
-          <span className="ml-2 sm:ml-3 leading-tight">Votre cadeau</span>
-          <span className="ml-2 px-1.5 py-0.5 text-[10px] bg-white/30 text-white rounded-full font-semibold animate-pulse">
-            Surprise
-          </span>
-        </button>
+        
         
         {/* Un problème ? */}
-        <button
-          onClick={() => setShowProblemModal(true)}
-          className="flex items-center w-full px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors text-gray-600 hover:bg-red-50 hover:text-red-600 border border-transparent hover:border-red-200 mt-2"
-        >
+        <button onClick={() => setShowProblemModal(true)} className="flex items-center w-full px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors text-gray-600 hover:bg-red-50 hover:text-red-600 border border-transparent hover:border-red-200 mt-2">
           <AlertCircle className="h-4 w-4 text-red-500" />
           <span className="ml-2 sm:ml-3 leading-tight">Un problème ?</span>
         </button>
@@ -508,22 +473,13 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
         </div>}
       
       {/* Modal Un problème ? */}
-      <ProblemModal 
-        isOpen={showProblemModal} 
-        onClose={() => setShowProblemModal(false)} 
-      />
+      <ProblemModal isOpen={showProblemModal} onClose={() => setShowProblemModal(false)} />
       
       {/* Modal Votre cadeau */}
-      <CallScheduleModal 
-        isOpen={showCallModal} 
-        onClose={() => setShowCallModal(false)} 
-      />
+      <CallScheduleModal isOpen={showCallModal} onClose={() => setShowCallModal(false)} />
       
       {/* Modal Club Mariable */}
-      <ClubMariableModal 
-        isOpen={showClubMariableModal} 
-        onClose={() => setShowClubMariableModal(false)} 
-      />
+      <ClubMariableModal isOpen={showClubMariableModal} onClose={() => setShowClubMariableModal(false)} />
     </div>;
 };
 export default DashboardSidebar;
