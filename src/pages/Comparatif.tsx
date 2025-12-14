@@ -49,9 +49,6 @@ const Comparatif = () => {
                   <Button asChild className="btn-secondary bg-white text-premium-sage hover:bg-premium-light border-0 ripple">
                     <Link to="/register">Commencer gratuitement</Link>
                   </Button>
-                  <Button asChild variant="outline" className="border-white text-white hover:bg-white/10 ripple">
-                    <Link to="/prix">Voir les tarifs</Link>
-                  </Button>
                 </div>
               </div>
             </div>

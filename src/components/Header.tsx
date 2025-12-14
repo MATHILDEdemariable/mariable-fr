@@ -47,17 +47,6 @@ function Menus({ onClick, isLoggedIn }: { onClick?: () => void, isLoggedIn?: boo
                 to="/mon-jour-m"
                 onClick={onClick}
               />
-              <HeaderDropdownItem
-                label={
-                  <span className="flex items-center gap-2 text-yellow-600 font-semibold">
-                    <Sparkles className="w-4 h-4" />
-                    Passer en Premium
-                  </span>
-                }
-                description="Débloquez toutes les fonctionnalités"
-                to="/prix"
-                onClick={onClick}
-              />
             </>
           ) : (
             <>
@@ -110,12 +99,6 @@ function Menus({ onClick, isLoggedIn }: { onClick?: () => void, isLoggedIn?: boo
             label="Notre charte"
             description="Une méthode innovante et personnalisée pour organiser votre mariage"
             to="/about/charte"
-            onClick={onClick}
-          />
-          <HeaderDropdownItem
-            label="Prix"
-            description="Découvrez nos tarifs et options premium"
-            to="/prix"
             onClick={onClick}
           />
           <HeaderDropdownItem

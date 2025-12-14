@@ -298,9 +298,6 @@ const CoordinationJourJ: React.FC = () => {
               <Button onClick={() => navigate('/reservation-jour-m')} className="bg-white text-wedding-olive hover:bg-gray-100 px-8 py-3">
                 Réserver maintenant
               </Button>
-              <Button onClick={() => navigate('/prix')} className="bg-wedding-olive/20 text-white hover:bg-wedding-olive/30 border border-white/20 px-8 py-3">
-                Voir les tarifs
-              </Button>
             </div>
           </div>
         </section>

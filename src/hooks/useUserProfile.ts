@@ -151,8 +151,8 @@ export const useUserProfile = () => {
     });
   }, []);
 
-  const isPremium = profile?.subscription_type === 'premium' && 
-    (!profile?.subscription_expires_at || new Date(profile.subscription_expires_at) > new Date());
+  // Toutes les fonctionnalités sont désormais gratuites
+  const isPremium = true;
 
   console.log('🔍 Current profile status:', { 
     subscription_type: profile?.subscription_type, 

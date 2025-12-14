@@ -6,11 +6,13 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Plus, FileText, Download, Eye, Edit, Trash2, Upload, File, ExternalLink } from 'lucide-react';
+import { Plus, FileText, Download, Eye, Edit, Trash2, Upload, File, ExternalLink, Sparkles } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 import SharePublicButton from './SharePublicButton';
+import PhotoListTemplate from './PhotoListTemplate';
+import SeatingPlanCard from './SeatingPlanCard';
 
 interface Document {
   id: string;
@@ -606,10 +608,34 @@ const MonJourMDocuments: React.FC = () => {
       </div>
 
       <Tabs defaultValue="documents" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="documents">Documents</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="standard">Documents Standard</TabsTrigger>
+          <TabsTrigger value="documents">Mes Documents</TabsTrigger>
           <TabsTrigger value="pinterest">Pinterest (Beta)</TabsTrigger>
         </TabsList>
+
+        {/* Onglet Documents Standard */}
+        <TabsContent value="standard" className="space-y-6">
+          <div className="mb-4">
+            <div className="flex items-center gap-2 mb-2">
+              <Sparkles className="h-5 w-5 text-wedding-olive" />
+              <h3 className="text-lg font-medium">Documents pré-chargés</h3>
+            </div>
+            <p className="text-sm text-gray-600">
+              Ces documents sont prêts à l'emploi. Personnalisez-les selon vos besoins.
+            </p>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-2">
+            {/* Liste Photos Jour-J */}
+            {coordination && (
+              <PhotoListTemplate coordinationId={coordination.id} />
+            )}
+
+            {/* Plan de Table */}
+            <SeatingPlanCard />
+          </div>
+        </TabsContent>
 
         {/* Onglet Documents */}
         <TabsContent value="documents" className="space-y-6">

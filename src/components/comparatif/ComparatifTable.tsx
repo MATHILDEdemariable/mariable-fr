@@ -22,7 +22,7 @@ const comparisons: Comparison[] = [
     icon: <Crown className="w-5 h-5" />,
     seul: { value: "0€", description: "Gratuit mais chronophage", status: "ok" },
     weddingPlanner: { value: "2000-10000€", description: "Coût élevé selon prestataire", status: "warning" },
-    mariable: { value: "à partir 9,9€ par mois", description: "soit <100€ pour 10 mois d'organisation", status: "best" }
+    mariable: { value: "Gratuit", description: "Accès complet à tous les outils", status: "best" }
   },
   {
     category: "Autonomie",
