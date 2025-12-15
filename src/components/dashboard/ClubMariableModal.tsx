@@ -30,15 +30,11 @@ const ClubMariableModal: React.FC<ClubMariableModalProps> = ({ isOpen, onClose }
           <ul className="space-y-2 text-sm text-muted-foreground">
             <li className="flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-premium-sage" />
-              Accès aux meilleurs professionnels vérifiés
+              Accès à des marques (robes, champagnes, papeterie)
             </li>
             <li className="flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-premium-sage" />
-              Prix préférentiels & privilèges exclusifs
-            </li>
-            <li className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-premium-sage" />
-              Économies de 1 500€ à 3 000€ sur votre mariage
+              Bons plans lieux, prestataires ou hébergement
             </li>
           </ul>
         </div>

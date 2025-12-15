@@ -230,9 +230,9 @@ const PhotoListTemplate: React.FC<PhotoListTemplateProps> = ({ coordinationId })
         }
         
         const persons = photo.customNames.length > 0 ? photo.customNames.join(', ') : 'Couple seul';
-        doc.text(`☐ ${photo.title}`, 14, yPos);
+        doc.text(`[ ] ${photo.title}`, 14, yPos);
         doc.setTextColor(100);
-        doc.text(`   → ${persons}`, 14, yPos + 4);
+        doc.text(`    Avec : ${persons}`, 14, yPos + 4);
         doc.setTextColor(0);
         yPos += lineHeight + 4;
       });
@@ -261,7 +261,7 @@ const PhotoListTemplate: React.FC<PhotoListTemplateProps> = ({ coordinationId })
           doc.addPage();
           yPos = 20;
         }
-        doc.text(`○ ${photo.title}`, 14, yPos);
+        doc.text(`(optionnel) ${photo.title}`, 14, yPos);
         yPos += lineHeight;
       });
     }
