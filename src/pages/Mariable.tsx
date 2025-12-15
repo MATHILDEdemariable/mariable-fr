@@ -116,7 +116,7 @@ const CouplesSection = () => {
           className="max-w-4xl mx-auto text-center"
         >
           <h2 className="font-serif text-3xl md:text-5xl font-bold text-foreground mb-12">
-            Facilitez votre organisation & économisez
+            Facilitez votre organisation & trouvez des bons plans
           </h2>
 
           {/* 3 Key Benefits with white cards and black icons */}
