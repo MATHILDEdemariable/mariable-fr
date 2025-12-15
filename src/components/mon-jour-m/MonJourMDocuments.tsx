@@ -607,11 +607,11 @@ const MonJourMDocuments: React.FC = () => {
         </div>
       </div>
 
-      <Tabs defaultValue="documents" className="w-full">
+      <Tabs defaultValue="standard" className="w-full">
         <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="standard">Documents Standard</TabsTrigger>
-          <TabsTrigger value="documents">Mes Documents</TabsTrigger>
-          <TabsTrigger value="pinterest">Pinterest (Beta)</TabsTrigger>
+          <TabsTrigger value="standard" className="data-[state=active]:bg-wedding-olive data-[state=active]:text-white">Documents Standard</TabsTrigger>
+          <TabsTrigger value="documents" className="data-[state=active]:bg-wedding-olive data-[state=active]:text-white">Mes Documents</TabsTrigger>
+          <TabsTrigger value="pinterest" className="data-[state=active]:bg-wedding-olive data-[state=active]:text-white">Pinterest (Beta)</TabsTrigger>
         </TabsList>
 
         {/* Onglet Documents Standard */}
