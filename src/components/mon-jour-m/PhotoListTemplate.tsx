@@ -3,10 +3,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Plus, Trash2, Camera, Save, RotateCcw, GripVertical } from 'lucide-react';
+import { Plus, Trash2, Camera, Save, RotateCcw, Download } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 import PhotoGuestSelector from './PhotoGuestSelector';
+import { jsPDF } from 'jspdf';
 
 interface PhotoItem {
   id: string;
@@ -194,6 +195,85 @@ const PhotoListTemplate: React.FC<PhotoListTemplateProps> = ({ coordinationId })
     setEditingTitle('');
   };
 
+  const handleExportPDF = () => {
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    
+    // Titre
+    doc.setFontSize(20);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Liste Photos Jour-J', pageWidth / 2, 20, { align: 'center' });
+    
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.text(`Généré le ${new Date().toLocaleDateString('fr-FR')}`, pageWidth / 2, 28, { align: 'center' });
+    
+    let yPos = 45;
+    const lineHeight = 8;
+    const maxY = 280;
+    
+    // Photos à faire
+    const toCapturePhotos = photos.filter(p => p.toCapture);
+    if (toCapturePhotos.length > 0) {
+      doc.setFontSize(14);
+      doc.setFont('helvetica', 'bold');
+      doc.text(`Photos à faire (${toCapturePhotos.length})`, 14, yPos);
+      yPos += 10;
+      
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      
+      toCapturePhotos.forEach((photo, index) => {
+        if (yPos > maxY) {
+          doc.addPage();
+          yPos = 20;
+        }
+        
+        const persons = photo.customNames.length > 0 ? photo.customNames.join(', ') : 'Couple seul';
+        doc.text(`☐ ${photo.title}`, 14, yPos);
+        doc.setTextColor(100);
+        doc.text(`   → ${persons}`, 14, yPos + 4);
+        doc.setTextColor(0);
+        yPos += lineHeight + 4;
+      });
+    }
+    
+    // Photos optionnelles
+    const skippedPhotos = photos.filter(p => !p.toCapture);
+    if (skippedPhotos.length > 0) {
+      yPos += 10;
+      if (yPos > maxY) {
+        doc.addPage();
+        yPos = 20;
+      }
+      
+      doc.setFontSize(14);
+      doc.setFont('helvetica', 'bold');
+      doc.text(`Photos optionnelles (${skippedPhotos.length})`, 14, yPos);
+      yPos += 10;
+      
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(128);
+      
+      skippedPhotos.forEach((photo) => {
+        if (yPos > maxY) {
+          doc.addPage();
+          yPos = 20;
+        }
+        doc.text(`○ ${photo.title}`, 14, yPos);
+        yPos += lineHeight;
+      });
+    }
+    
+    doc.save('liste-photos-jour-j.pdf');
+    
+    toast({
+      title: "PDF exporté",
+      description: "La liste de photos a été téléchargée"
+    });
+  };
+
   const toCaptureCount = photos.filter(p => p.toCapture).length;
 
   return (
@@ -211,7 +291,16 @@ const PhotoListTemplate: React.FC<PhotoListTemplateProps> = ({ coordinationId })
               </p>
             </div>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-wrap">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleExportPDF}
+              className="text-gray-600"
+            >
+              <Download className="h-4 w-4 mr-1" />
+              Export PDF
+            </Button>
             <Button
               variant="outline"
               size="sm"

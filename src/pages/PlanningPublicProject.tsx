@@ -4,7 +4,8 @@ import { Helmet } from 'react-helmet-async';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Calendar, Users, FileText, Clock, CheckCircle2, Circle, User, Building, Mail, Phone, AlertCircle, Filter, Eye, ExternalLink } from 'lucide-react';
+import { Calendar, Users, FileText, Clock, CheckCircle2, Circle, User, Building, Mail, Phone, AlertCircle, Filter, Eye, ExternalLink, Camera } from 'lucide-react';
+import PhotoListReadOnly from '@/components/mon-jour-m/PhotoListReadOnly';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -306,16 +307,20 @@ const PlanningPublicProject: React.FC = () => {
         <div className="container mx-auto px-4 md:px-6 py-4 md:py-6 max-w-6xl pb-20 md:pb-6">
           <Tabs defaultValue="planning" className="w-full">
             {/* Navigation desktop */}
-            <TabsList className="hidden md:grid w-full grid-cols-3 mb-6">
-              <TabsTrigger value="planning" className="flex items-center gap-2">
+            <TabsList className="hidden md:grid w-full grid-cols-4 mb-6">
+              <TabsTrigger value="planning" className="flex items-center gap-2 data-[state=active]:bg-wedding-olive data-[state=active]:text-white">
                 <Calendar className="h-4 w-4" />
                 TO DO List ({tasks.length})
               </TabsTrigger>
-              <TabsTrigger value="equipe" className="flex items-center gap-2">
+              <TabsTrigger value="photos" className="flex items-center gap-2 data-[state=active]:bg-wedding-olive data-[state=active]:text-white">
+                <Camera className="h-4 w-4" />
+                Photos
+              </TabsTrigger>
+              <TabsTrigger value="equipe" className="flex items-center gap-2 data-[state=active]:bg-wedding-olive data-[state=active]:text-white">
                 <Users className="h-4 w-4" />
                 Équipe ({teamMembers.length})
               </TabsTrigger>
-              <TabsTrigger value="documents" className="flex items-center gap-2">
+              <TabsTrigger value="documents" className="flex items-center gap-2 data-[state=active]:bg-wedding-olive data-[state=active]:text-white">
                 <FileText className="h-4 w-4" />
                 Documents ({documents.length + pinterestLinks.length})
               </TabsTrigger>
@@ -323,18 +328,25 @@ const PlanningPublicProject: React.FC = () => {
             
             {/* Navigation mobile fixe en bas */}
             <div className="fixed bottom-0 left-0 right-0 bg-white border-t md:hidden z-50">
-              <TabsList className="grid w-full grid-cols-3 rounded-none h-16">
+              <TabsList className="grid w-full grid-cols-4 rounded-none h-16">
                 <TabsTrigger 
                   value="planning" 
-                  className="flex flex-col items-center gap-1 text-xs h-full data-[state=active]:bg-primary/10"
+                  className="flex flex-col items-center gap-1 text-xs h-full data-[state=active]:bg-wedding-olive data-[state=active]:text-white"
                 >
                   <Calendar className="h-4 w-4" />
                   <span>TO DO</span>
                   <span className="text-[10px] opacity-70">({tasks.length})</span>
                 </TabsTrigger>
                 <TabsTrigger 
+                  value="photos" 
+                  className="flex flex-col items-center gap-1 text-xs h-full data-[state=active]:bg-wedding-olive data-[state=active]:text-white"
+                >
+                  <Camera className="h-4 w-4" />
+                  <span>Photos</span>
+                </TabsTrigger>
+                <TabsTrigger 
                   value="equipe" 
-                  className="flex flex-col items-center gap-1 text-xs h-full data-[state=active]:bg-primary/10"
+                  className="flex flex-col items-center gap-1 text-xs h-full data-[state=active]:bg-wedding-olive data-[state=active]:text-white"
                 >
                   <Users className="h-4 w-4" />
                   <span>Équipe</span>
@@ -342,7 +354,7 @@ const PlanningPublicProject: React.FC = () => {
                 </TabsTrigger>
                 <TabsTrigger 
                   value="documents" 
-                  className="flex flex-col items-center gap-1 text-xs h-full data-[state=active]:bg-primary/10"
+                  className="flex flex-col items-center gap-1 text-xs h-full data-[state=active]:bg-wedding-olive data-[state=active]:text-white"
                 >
                   <FileText className="h-4 w-4" />
                   <span>Docs</span>
@@ -350,6 +362,11 @@ const PlanningPublicProject: React.FC = () => {
                 </TabsTrigger>
               </TabsList>
             </div>
+
+            {/* Onglet Photos */}
+            <TabsContent value="photos">
+              <PhotoListReadOnly coordinationId={coordination.id} />
+            </TabsContent>
 
             {/* Onglet Planning */}
             <TabsContent value="planning">
