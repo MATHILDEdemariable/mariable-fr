@@ -608,10 +608,9 @@ const MonJourMDocuments: React.FC = () => {
       </div>
 
       <Tabs defaultValue="standard" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="standard" className="data-[state=active]:bg-wedding-olive data-[state=active]:text-white">Documents Standard</TabsTrigger>
           <TabsTrigger value="documents" className="data-[state=active]:bg-wedding-olive data-[state=active]:text-white">Mes Documents</TabsTrigger>
-          <TabsTrigger value="pinterest" className="data-[state=active]:bg-wedding-olive data-[state=active]:text-white">Pinterest (Beta)</TabsTrigger>
         </TabsList>
 
         {/* Onglet Documents Standard */}
@@ -842,131 +841,6 @@ const MonJourMDocuments: React.FC = () => {
           </Card>
         </TabsContent>
 
-        {/* Onglet Pinterest */}
-        <TabsContent value="pinterest" className="space-y-6">
-          <div className="flex justify-between items-center">
-            <div>
-              <h3 className="text-lg font-medium">Liens Pinterest</h3>
-              <p className="text-sm text-gray-600">Ajoutez vos inspirations Pinterest pour votre mariage</p>
-            </div>
-            <Dialog open={showAddPinterest} onOpenChange={setShowAddPinterest}>
-              <DialogTrigger asChild>
-                <Button className="flex items-center gap-2">
-                  <Plus className="h-4 w-4" />
-                  Ajouter un lien Pinterest
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-2xl">
-                <DialogHeader>
-                  <DialogTitle>Ajouter un lien Pinterest</DialogTitle>
-                </DialogHeader>
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Titre *</label>
-                    <Input
-                      value={pinterestFormData.title}
-                      onChange={(e) => setPinterestFormData({ ...pinterestFormData, title: e.target.value })}
-                      placeholder="Ex: Inspiration décoration"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium mb-1">URL Pinterest *</label>
-                    <Input
-                      value={pinterestFormData.pinterest_url}
-                      onChange={(e) => setPinterestFormData({ ...pinterestFormData, pinterest_url: e.target.value })}
-                      placeholder="https://www.pinterest.com/pin/..."
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Description</label>
-                    <Textarea
-                      value={pinterestFormData.description}
-                      onChange={(e) => setPinterestFormData({ ...pinterestFormData, description: e.target.value })}
-                      placeholder="Description de cette inspiration"
-                      rows={3}
-                    />
-                  </div>
-
-                  <div className="flex gap-2">
-                    <Button 
-                      onClick={handleAddPinterest} 
-                      disabled={!pinterestFormData.title.trim() || !pinterestFormData.pinterest_url.trim()}
-                    >
-                      Ajouter le lien
-                    </Button>
-                    <Button variant="outline" onClick={() => {
-                      resetPinterestForm();
-                      setShowAddPinterest(false);
-                    }}>
-                      Annuler
-                    </Button>
-                  </div>
-                </div>
-              </DialogContent>
-            </Dialog>
-          </div>
-
-          <Card>
-            <CardContent className="pt-6">
-              {pinterestLinks.length > 0 ? (
-                <div className="grid gap-6 md:grid-cols-2">
-                  {pinterestLinks.map((link) => (
-                    <Card key={link.id} className="p-4">
-                      <div className="flex items-start justify-between mb-3">
-                        <div className="flex items-center gap-2">
-                          <ExternalLink className="h-5 w-5 text-pink-500" />
-                          <h3 className="font-medium">{link.title}</h3>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => window.open(link.pinterest_url, '_blank')}
-                          >
-                            <ExternalLink className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => setEditingPinterest(link)}
-                          >
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleDeletePinterest(link.id)}
-                            className="text-red-600 hover:text-red-800"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
-
-                      {link.description && (
-                        <p className="text-sm text-gray-600 mb-3">{link.description}</p>
-                      )}
-
-                      {renderPinterestPreview(link)}
-
-                      <div className="text-xs text-gray-400 mt-2">
-                        Ajouté le {new Date(link.created_at).toLocaleDateString('fr-FR')}
-                      </div>
-                    </Card>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-12 text-gray-500">
-                  <ExternalLink className="h-12 w-12 mx-auto mb-4 opacity-50 text-pink-400" />
-                  <p className="text-lg mb-2">Aucun lien Pinterest</p>
-                  <p className="text-sm">Ajoutez vos inspirations Pinterest pour votre mariage</p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
       </Tabs>
 
       {/* Modals d'édition */}
