@@ -130,8 +130,8 @@ const HeroSection = ({
           <ArrowRight className="ml-2 w-5 h-5" />
         </Button>
         
-        {isLoggedIn && <Button size="lg" variant="outline" asChild className="border-white text-white hover:bg-white/20 px-8 py-6 text-lg rounded-full">
-            <Link to="/dashboard" className="bg-primary-foreground text-premium-sage">
+        {isLoggedIn && <Button size="lg" variant="outline" asChild className="border-white/70 bg-white/10 text-white hover:bg-white/20 px-8 py-6 text-lg rounded-full backdrop-blur-sm">
+            <Link to="/dashboard">
               <LayoutDashboard className="mr-2 w-5 h-5" />
               Mes outils
             </Link>
