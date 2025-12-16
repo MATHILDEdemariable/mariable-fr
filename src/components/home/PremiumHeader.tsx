@@ -51,10 +51,10 @@ const PremiumHeader = () => {
           <div className="hidden md:flex items-center space-x-4">
             {isLoggedIn ? (
               <Button
-                onClick={() => navigate('/dashboard')}
+                onClick={() => navigate('/professionnelsmariable')}
                 className="btn-primary text-white ripple"
               >
-                Tableau de bord
+                Mon compte
               </Button>
             ) : (
               <>
@@ -88,12 +88,12 @@ const PremiumHeader = () => {
                   {isLoggedIn ? (
                     <Button
                       onClick={() => {
-                        navigate('/dashboard');
+                        navigate('/professionnelsmariable');
                         setMobileOpen(false);
                       }}
                       className="btn-primary text-white ripple w-full"
                     >
-                      Tableau de bord
+                      Mon compte
                     </Button>
                   ) : (
                     <>

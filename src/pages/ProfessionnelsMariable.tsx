@@ -62,7 +62,7 @@ const HeroSection = ({ onScrollToResults, isLoggedIn }: { onScrollToResults: () 
     {/* Background Image */}
     <div 
       className="absolute inset-0 bg-cover bg-center"
-      style={{ backgroundImage: "url('https://images.unsplash.com/photo-1519741497674-611481863552?w=1920&q=80')" }}
+      style={{ backgroundImage: "url('https://bgidfcqktsttzlwlumtz.supabase.co/storage/v1/object/public/visuels/bcb60194-059d-42c2-8b89-13e11a952c65.png')" }}
     />
     {/* Dark Overlay */}
     <div className="absolute inset-0 bg-black/50" />
@@ -95,7 +95,7 @@ const HeroSection = ({ onScrollToResults, isLoggedIn }: { onScrollToResults: () 
         <Button 
           size="lg"
           onClick={onScrollToResults}
-          className="bg-white text-foreground hover:bg-white/90 px-8 py-6 text-lg rounded-full shadow-lg"
+          className="bg-premium-sage text-white hover:bg-premium-sage-dark px-8 py-6 text-lg rounded-full shadow-lg"
         >
           Explorer les professionnels
           <ArrowRight className="ml-2 w-5 h-5" />
@@ -119,70 +119,46 @@ const HeroSection = ({ onScrollToResults, isLoggedIn }: { onScrollToResults: () 
   </section>
 );
 
-// How It Works Section
+// How It Works Section - Compact version
 const HowItWorksSection = () => {
   const steps = [
     {
       step: "1",
-      icon: <Plus className="w-6 h-6" />,
+      icon: <Plus className="w-5 h-5" />,
       title: "Ajoutez à votre tableau de bord",
-      description: "Cliquez sur le + pour sauvegarder les prestataires qui vous plaisent"
+      description: "Cliquez sur le + pour sauvegarder"
     },
     {
       step: "2",
-      icon: <MessageCircle className="w-6 h-6" />,
-      title: "Contactez-les via la plateforme",
-      description: "Demandez plus d'infos et découvrez les avantages exclusifs"
+      icon: <MessageCircle className="w-5 h-5" />,
+      title: "Contactez via la plateforme",
+      description: "Découvrez les avantages exclusifs"
     },
     {
       step: "3",
-      icon: <CalendarCheck className="w-6 h-6" />,
+      icon: <CalendarCheck className="w-5 h-5" />,
       title: "Réservez de votre côté",
-      description: "Finalisez directement avec le prestataire de votre choix"
+      description: "Donnez le code promo reçu par message !"
     }
   ];
 
   return (
-    <section className="py-12 bg-white border-y border-border">
-      <div className="container max-w-6xl mx-auto px-4">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-10"
-        >
-          <h2 className="font-serif text-2xl md:text-3xl font-bold text-foreground mb-2">
-            Comment ça marche ?
-          </h2>
-          <p className="text-muted-foreground">
-            Trouvez et contactez vos prestataires en toute simplicité
-          </p>
-        </motion.div>
-
-        <div className="grid md:grid-cols-3 gap-8">
+    <section className="py-6 bg-white border-y border-border">
+      <div className="container max-w-5xl mx-auto px-4">
+        <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8">
           {steps.map((item, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.15, duration: 0.5 }}
-              className="relative text-center"
-            >
-              {/* Step number */}
-              <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-8 h-8 bg-premium-sage text-white rounded-full flex items-center justify-center text-sm font-bold">
+            <div key={i} className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-premium-sage text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">
                 {item.step}
               </div>
-              
-              <div className="pt-8 p-6 bg-premium-sage-very-light/50 rounded-2xl border border-premium-sage/10">
-                <div className="w-14 h-14 bg-premium-sage/10 rounded-xl flex items-center justify-center text-premium-sage mx-auto mb-4">
-                  {item.icon}
-                </div>
-                <h3 className="font-semibold text-foreground mb-2">{item.title}</h3>
-                <p className="text-sm text-muted-foreground">{item.description}</p>
+              <div className="text-left">
+                <p className="font-medium text-foreground text-sm">{item.title}</p>
+                <p className="text-xs text-muted-foreground">{item.description}</p>
               </div>
-            </motion.div>
+              {i < steps.length - 1 && (
+                <ArrowRight className="hidden md:block w-4 h-4 text-muted-foreground ml-2" />
+              )}
+            </div>
           ))}
         </div>
       </div>
