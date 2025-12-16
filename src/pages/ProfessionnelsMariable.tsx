@@ -83,8 +83,8 @@ const HeroSection = ({
   isLoggedIn: boolean;
 }) => <section className="relative min-h-[50vh] flex items-center justify-center overflow-hidden">
     {/* Background Image */}
-    <div className="absolute inset-0 bg-cover bg-center" style={{
-    backgroundImage: "url('https://bgidfcqktsttzlwlumtz.supabase.co/storage/v1/object/public/visuels/bcb60194-059d-42c2-8b89-13e11a952c65.png')"
+    <div className="absolute inset-0 bg-cover bg-top" style={{
+    backgroundImage: "url('https://bgidfcqktsttzlwlumtz.supabase.co/storage/v1/object/public/visuels/SALON%20DU%20MARIAGE.png')"
   }} />
     {/* Dark Overlay */}
     <div className="absolute inset-0 bg-black/50" />
