@@ -2786,6 +2786,44 @@ export type Database = {
         }
         Relationships: []
       }
+      vendor_messages: {
+        Row: {
+          created_at: string | null
+          id: string
+          message: string
+          read_at: string | null
+          user_id: string
+          vendor_id: string
+          vendor_name: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          message: string
+          read_at?: string | null
+          user_id: string
+          vendor_id: string
+          vendor_name: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          message?: string
+          read_at?: string | null
+          user_id?: string
+          vendor_id?: string
+          vendor_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vendor_messages_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "prestataires_rows"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       vendor_wishlist: {
         Row: {
           created_at: string

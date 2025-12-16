@@ -27,7 +27,7 @@ const Login = () => {
   const location = useLocation();
   
   // Récupérer l'URL de redirection si elle existe
-  const redirectPath = location.state?.redirectAfterLogin || '/dashboard';
+  const redirectPath = location.state?.redirectAfterLogin || '/professionnelsmariable';
   
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(

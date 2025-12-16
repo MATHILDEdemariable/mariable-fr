@@ -6,6 +6,7 @@ import { Database } from "@/integrations/supabase/types";
 import { Session } from "@supabase/supabase-js";
 import PremiumHeader from "@/components/home/PremiumHeader";
 import VendorContactModal from "@/components/vendors/VendorContactModal";
+import VendorMessageModal from "@/components/vendors/VendorMessageModal";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -60,6 +61,7 @@ const SinglePrestataire = () => {
   const [open, setOpen] = useState(false);
   const [openContact, setOpenContact] = useState(false);
   const [openVendorContact, setOpenVendorContact] = useState(false);
+  const [openMessageModal, setOpenMessageModal] = useState(false);
 
   //check if user is connected
   const [session, setSession] = useState<Session | null>(null);
@@ -323,8 +325,13 @@ const SinglePrestataire = () => {
   };
 
   const sendMessage = async () => {
-    // Plus besoin de vérifier la session - ouvrir directement le modal
-    setOpenVendorContact(true);
+    // Si l'utilisateur est connecté, ouvrir le modal de message sauvegardé
+    // Sinon ouvrir le modal de contact classique
+    if (session) {
+      setOpenMessageModal(true);
+    } else {
+      setOpenVendorContact(true);
+    }
   };
 
   if (!slug && !isLoading) {
@@ -620,6 +627,14 @@ const SinglePrestataire = () => {
                 <VendorContactModal
                   isOpen={openVendorContact}
                   onClose={() => setOpenVendorContact(false)}
+                  vendorId={vendorId}
+                  vendorName={vendor?.nom || ""}
+                />
+
+                {/* Modal de message sauvegardé pour utilisateurs connectés */}
+                <VendorMessageModal
+                  isOpen={openMessageModal}
+                  onClose={() => setOpenMessageModal(false)}
                   vendorId={vendorId}
                   vendorName={vendor?.nom || ""}
                 />

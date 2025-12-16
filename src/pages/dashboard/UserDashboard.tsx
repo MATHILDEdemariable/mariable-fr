@@ -33,7 +33,7 @@ import RSVPResponses from './RSVPResponses';
 import ProfessionnelsMariableDashboard from '@/components/dashboard/ProfessionnelsMariableDashboard';
 import AccommodationsPage from './AccommodationsPage';
 import QRCodeGeneratorPage from './QRCodeGenerator';
-import ProfessionnelsEmbedded from './ProfessionnelsEmbedded';
+import MessagesPage from './MessagesPage';
 import DocumentsPage from './DocumentsPage';
 import SeatingPlan from '../SeatingPlan';
 import WeddingRetroplanningEmbed from './WeddingRetroplanningEmbed';
@@ -92,7 +92,7 @@ const UserDashboard: React.FC = () => {
           <Route path="settings" element={<UserProfile />} />
           <Route path="selection" element={<VendorSelectionPage />} />
           <Route path="selection/:region" element={<VendorSelectionPage />} />
-          <Route path="selection-embedded" element={<ProfessionnelsEmbedded />} />
+          <Route path="messages" element={<MessagesPage />} />
           <Route path="suivi" element={<VendorTracking />} />
           <Route path="prestataires" element={<Navigate to="/dashboard/suivi" replace />} />
           <Route path="coordinateurs" element={<CoordinatorsPage />} />
