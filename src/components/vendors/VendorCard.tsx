@@ -181,10 +181,10 @@ const VendorCard: React.FC<VendorCardProps> = ({
   return (
     <>
       <Card
-        className="overflow-hidden border-wedding-olive/20 hover:shadow-md transition-all cursor-pointer"
+        className="overflow-hidden border-wedding-olive/20 hover:shadow-md transition-all cursor-pointer h-full flex flex-col"
         onClick={() => onClick(vendor)}
       >
-        <div className="relative">
+        <div className="relative flex-shrink-0">
           <AspectRatio ratio={16 / 9}>
             <FeaturedImage presta={vendor} />
           </AspectRatio>
@@ -218,22 +218,23 @@ const VendorCard: React.FC<VendorCardProps> = ({
           )}
         </div>
 
-        <CardContent className="p-4">
-          <h3 className="text-lg font-serif mb-1">{vendor.nom}</h3>
+        <CardContent className="p-4 flex-grow">
+          <h3 className="text-lg font-serif mb-1 line-clamp-1">{vendor.nom}</h3>
 
-          <div className="flex items-center text-sm text-muted-foreground">
-            <MapPin className="h-4 w-4 mr-1" /> {location}
+          <div className="flex items-center text-sm text-muted-foreground min-h-[24px]">
+            <MapPin className="h-4 w-4 mr-1 flex-shrink-0" /> 
+            <span className="line-clamp-1">{location}</span>
           </div>
 
-          <div className="mt-2 font-medium text-sm">
+          <div className="mt-2 font-medium text-sm min-h-[24px]">
             <div className="flex items-center">
-              <Euro className="h-4 w-4 mr-1" />
-              {getFormattedPrice()}
+              <Euro className="h-4 w-4 mr-1 flex-shrink-0" />
+              <span className="line-clamp-1">{getFormattedPrice()}</span>
             </div>
           </div>
         </CardContent>
 
-        <CardFooter className="px-4 pb-4 pt-0">
+        <CardFooter className="px-4 pb-4 pt-0 mt-auto">
           <Button
             onClick={(e) => {
               e.stopPropagation();
