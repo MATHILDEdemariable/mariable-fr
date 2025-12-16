@@ -58,13 +58,17 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
 
   // Menu déroulant Prestataires
   const prestatairesItems = [{
-    label: 'Sélection Mariable',
+    label: 'Tous les prestataires',
     icon: <Store className="h-4 w-4" />,
-    path: '/dashboard/selection-embedded'
+    path: '/professionnelsmariable'
   }, {
     label: 'Suivi',
     icon: <Settings className="h-4 w-4" />,
     path: '/dashboard/suivi'
+  }, {
+    label: 'Mes messages',
+    icon: <MessageSquare className="h-4 w-4" />,
+    path: '/dashboard/messages'
   }];
 
   // Menu déroulant Jour-J (seulement Jour-J et Coordinateurs)

@@ -1,17 +1,18 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import VendorCard from '@/components/vendors/VendorCard';
 import { useOptimizedVendors } from '@/hooks/useOptimizedVendors';
 import { useDebounce } from 'use-debounce';
+import { supabase } from '@/integrations/supabase/client';
 import { 
   Loader2, Search, X, ChevronLeft, ChevronRight, 
   Camera, Utensils, Building2, Music, Flower2, 
   Sparkles, Star, Palette, Gift, Car, Users, Calendar,
-  CheckCircle, Percent, ListChecks, ArrowRight
+  Plus, MessageCircle, CalendarCheck, ArrowRight, LayoutDashboard
 } from 'lucide-react';
 import PremiumHeader from '@/components/home/PremiumHeader';
 import Footer from '@/components/Footer';
@@ -55,69 +56,89 @@ const REGIONS = [
   "Provence-Alpes-Côte d'Azur"
 ];
 
-// Hero Section
-const HeroSection = ({ onScrollToResults }: { onScrollToResults: () => void }) => (
-  <section className="relative py-16 md:py-24 bg-gradient-to-br from-premium-sage/10 via-background to-premium-cream/30 overflow-hidden">
-    {/* Decorative elements */}
-    <div className="absolute top-20 left-10 w-32 h-32 bg-premium-sage/5 rounded-full blur-3xl" />
-    <div className="absolute bottom-10 right-10 w-40 h-40 bg-premium-cream/40 rounded-full blur-3xl" />
+// Hero Section with background image
+const HeroSection = ({ onScrollToResults, isLoggedIn }: { onScrollToResults: () => void; isLoggedIn: boolean }) => (
+  <section className="relative min-h-[50vh] flex items-center justify-center overflow-hidden">
+    {/* Background Image */}
+    <div 
+      className="absolute inset-0 bg-cover bg-center"
+      style={{ backgroundImage: "url('https://images.unsplash.com/photo-1519741497674-611481863552?w=1920&q=80')" }}
+    />
+    {/* Dark Overlay */}
+    <div className="absolute inset-0 bg-black/50" />
     
-    <div className="container max-w-6xl mx-auto px-4 relative z-10">
-      <motion.div
+    <div className="relative z-10 text-center text-white px-4 py-12">
+      <motion.h1 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="text-center"
+        className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold mb-4 leading-tight"
       >
-        {/* Badge */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.2, duration: 0.5 }}
-          className="inline-flex items-center gap-2 bg-premium-sage/10 border border-premium-sage/20 rounded-full px-4 py-2 mb-6"
-        >
-          <Sparkles className="w-4 h-4 text-premium-sage" />
-          <span className="text-premium-sage-dark text-sm font-medium">Professionnels vérifiés</span>
-        </motion.div>
+        Trouvez vos prestataires
+      </motion.h1>
+      
+      <motion.p 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.1 }}
+        className="text-lg md:text-xl max-w-2xl mx-auto mb-8 text-white/90"
+      >
+        Les plus belles marques pour votre événement
+      </motion.p>
 
-        <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-4 leading-tight">
-          Trouvez vos prestataires
-        </h1>
-        
-        <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
-          Des professionnels triés sur le volet pour créer le mariage de vos rêves
-        </p>
-
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.2 }}
+        className="flex flex-wrap justify-center gap-4"
+      >
         <Button 
           size="lg"
           onClick={onScrollToResults}
-          className="bg-premium-sage hover:bg-premium-sage-dark text-white px-8 py-6 text-lg rounded-full shadow-lg"
+          className="bg-white text-foreground hover:bg-white/90 px-8 py-6 text-lg rounded-full shadow-lg"
         >
           Explorer les professionnels
           <ArrowRight className="ml-2 w-5 h-5" />
         </Button>
+        
+        {isLoggedIn && (
+          <Button 
+            size="lg"
+            variant="outline"
+            asChild
+            className="border-white text-white hover:bg-white/20 px-8 py-6 text-lg rounded-full"
+          >
+            <Link to="/dashboard">
+              <LayoutDashboard className="mr-2 w-5 h-5" />
+              Mes outils
+            </Link>
+          </Button>
+        )}
       </motion.div>
     </div>
   </section>
 );
 
-// Club Advantages Section
-const ClubAdvantagesSection = () => {
-  const advantages = [
+// How It Works Section
+const HowItWorksSection = () => {
+  const steps = [
     {
-      icon: <CheckCircle className="w-6 h-6" />,
-      title: "Professionnels vérifiés",
-      description: "Tous nos prestataires sont sélectionnés pour leur qualité"
+      step: "1",
+      icon: <Plus className="w-6 h-6" />,
+      title: "Ajoutez à votre tableau de bord",
+      description: "Cliquez sur le + pour sauvegarder les prestataires qui vous plaisent"
     },
     {
-      icon: <Percent className="w-6 h-6" />,
-      title: "Prix préférentiels",
-      description: "Bénéficiez de réductions exclusives Club Mariable"
+      step: "2",
+      icon: <MessageCircle className="w-6 h-6" />,
+      title: "Contactez-les via la plateforme",
+      description: "Demandez plus d'infos et découvrez les avantages exclusifs"
     },
     {
-      icon: <ListChecks className="w-6 h-6" />,
-      title: "Outils gratuits",
-      description: "Checklist, budget, plan de table et coordination Jour-J"
+      step: "3",
+      icon: <CalendarCheck className="w-6 h-6" />,
+      title: "Réservez de votre côté",
+      description: "Finalisez directement avec le prestataire de votre choix"
     }
   ];
 
@@ -129,46 +150,40 @@ const ClubAdvantagesSection = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="text-center mb-8"
+          className="text-center mb-10"
         >
           <h2 className="font-serif text-2xl md:text-3xl font-bold text-foreground mb-2">
-            Avantages exclusifs Club Mariable
+            Comment ça marche ?
           </h2>
           <p className="text-muted-foreground">
-            Rejoignez le club et profitez de tous les avantages
+            Trouvez et contactez vos prestataires en toute simplicité
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-3 gap-6 mb-8">
-          {advantages.map((advantage, i) => (
+        <div className="grid md:grid-cols-3 gap-8">
+          {steps.map((item, i) => (
             <motion.div
               key={i}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.1, duration: 0.5 }}
-              className="flex items-start gap-4 p-6 bg-premium-sage-very-light/50 rounded-2xl border border-premium-sage/10"
+              transition={{ delay: i * 0.15, duration: 0.5 }}
+              className="relative text-center"
             >
-              <div className="flex-shrink-0 w-12 h-12 bg-premium-sage/10 rounded-xl flex items-center justify-center text-premium-sage">
-                {advantage.icon}
+              {/* Step number */}
+              <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-8 h-8 bg-premium-sage text-white rounded-full flex items-center justify-center text-sm font-bold">
+                {item.step}
               </div>
-              <div>
-                <h3 className="font-semibold text-foreground mb-1">{advantage.title}</h3>
-                <p className="text-sm text-muted-foreground">{advantage.description}</p>
+              
+              <div className="pt-8 p-6 bg-premium-sage-very-light/50 rounded-2xl border border-premium-sage/10">
+                <div className="w-14 h-14 bg-premium-sage/10 rounded-xl flex items-center justify-center text-premium-sage mx-auto mb-4">
+                  {item.icon}
+                </div>
+                <h3 className="font-semibold text-foreground mb-2">{item.title}</h3>
+                <p className="text-sm text-muted-foreground">{item.description}</p>
               </div>
             </motion.div>
           ))}
-        </div>
-
-        <div className="text-center">
-          <Button
-            variant="outline"
-            className="border-premium-sage text-premium-sage hover:bg-premium-sage/10 rounded-full px-6"
-            onClick={() => window.location.href = '/'}
-          >
-            En savoir plus sur le Club
-            <ArrowRight className="ml-2 w-4 h-4" />
-          </Button>
         </div>
       </div>
     </section>
@@ -217,6 +232,22 @@ const ProfessionnelsMariable = () => {
   const [region, setRegion] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [debouncedSearch] = useDebounce(search, 500);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  // Check auth status
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setIsLoggedIn(!!session);
+    };
+    checkAuth();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsLoggedIn(!!session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   const { data: vendorsData, isLoading } = useOptimizedVendors({
     filters: {
@@ -266,10 +297,10 @@ const ProfessionnelsMariable = () => {
       
       <main className="min-h-screen bg-[#efeee9]">
         {/* Hero */}
-        <HeroSection onScrollToResults={scrollToResults} />
+        <HeroSection onScrollToResults={scrollToResults} isLoggedIn={isLoggedIn} />
 
-        {/* Club Advantages */}
-        <ClubAdvantagesSection />
+        {/* How It Works */}
+        <HowItWorksSection />
 
         {/* Results Section */}
         <div ref={resultsRef} className="scroll-mt-20 py-12">

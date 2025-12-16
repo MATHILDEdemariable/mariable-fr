@@ -223,33 +223,6 @@ const ProjectSummary = () => {
             </p>
           </div>}
 
-        {/* Club Mariable avec fond vert sauge */}
-        <div className="bg-premium-sage text-white rounded-lg p-4 mt-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <Sparkles className="w-5 h-5" />
-              <span className="font-medium">Club Mariable</span>
-              <span className="px-2 py-0.5 text-xs bg-white/20 text-white rounded font-medium">Bientôt</span>
-            </div>
-            <Button variant="secondary" size="sm" onClick={() => setShowClubMariableModal(true)} className="bg-white/20 hover:bg-white/30 text-white border-0">
-              En savoir plus
-            </Button>
-          </div>
-          <div className="flex items-center gap-2 mt-3 pt-3 border-t border-white/20">
-            <Checkbox id="notify-club" checked={notifyClub} onCheckedChange={async checked => {
-            setNotifyClub(checked === true);
-            if (updateProfile) {
-              await updateProfile({
-                notify_club_mariable: checked === true
-              });
-            }
-          }} className="border-white data-[state=checked]:bg-white data-[state=checked]:text-premium-sage" />
-            <label htmlFor="notify-club" className="text-sm cursor-pointer">
-              Me notifier dès l'ouverture du Club Mariable
-            </label>
-          </div>
-        </div>
-
         {/* Outils d'organisation - ligne séparée */}
         <p className="text-sm text-muted-foreground mt-3 flex items-center gap-2">
           <ArrowRight className="w-4 h-4" />
