@@ -68,7 +68,7 @@ const HeroSection = () => <section className="relative min-h-[100svh] flex items
           <Button size="lg" onClick={() => document.getElementById("couples-section")?.scrollIntoView({
           behavior: "smooth"
         })} className="bg-premium-sage hover:bg-premium-sage-dark text-white px-6 md:px-8 py-5 md:py-6 text-base md:text-lg rounded-full shadow-lg hover:shadow-xl transition-all w-full sm:w-auto">
-            Découvrir le concept
+            ​Accéder au club  
             <ArrowDown className="ml-2 w-4 h-4 md:w-5 md:h-5" />
           </Button>
         </motion.div>
