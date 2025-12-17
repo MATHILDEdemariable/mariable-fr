@@ -82,7 +82,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         <PremiumHeader />
         
         {/* Quick navigation bar */}
-        <div className="fixed top-20 left-4 z-40 flex gap-2">
+        <div className="fixed top-[88px] left-4 z-40 flex gap-2">
           <Link to="/">
             <Button variant="outline" size="sm" className="bg-white/90 backdrop-blur-sm shadow-sm hover:bg-premium-sage hover:text-white">
               <Home className="h-4 w-4 mr-1" />
