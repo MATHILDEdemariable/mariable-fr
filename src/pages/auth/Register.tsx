@@ -14,6 +14,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Session } from '@supabase/supabase-js';
 import SEO from '@/components/SEO';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { trackUserRegistration, trackMetaRegistration } from '@/utils/analytics';
 
 const Register = () => {
   const [email, setEmail] = useState('');
@@ -106,6 +107,10 @@ const Register = () => {
       
       // Stocker l'email pour permettre le renvoi en cas d'expiration
       localStorage.setItem('pending_verification_email', email);
+      
+      // 🎯 TRACKING META + GA4
+      trackMetaRegistration();
+      trackUserRegistration('email');
       
       // Afficher l'alerte pour vérifier les mails indésirables
       setShowEmailAlert(true);
