@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { CheckCircle, Gift, Users, ArrowRight, ArrowDown, Sparkles, Heart, Calculator, Star, Quote, ListChecks } from "lucide-react";
+import { CheckCircle, Gift, Users, ArrowRight, Sparkles, Heart, Calculator, Star, Quote, ListChecks } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -68,8 +68,8 @@ const HeroSection = () => <section className="relative min-h-[100svh] flex items
           <Button size="lg" onClick={() => document.getElementById("couples-section")?.scrollIntoView({
           behavior: "smooth"
         })} className="bg-premium-sage hover:bg-premium-sage-dark text-white px-6 md:px-8 py-5 md:py-6 text-base md:text-lg rounded-full shadow-lg hover:shadow-xl transition-all w-full sm:w-auto">
-            ​Accéder au club  
-            <ArrowDown className="ml-2 w-4 h-4 md:w-5 md:h-5" />
+            ​Créer votre mariage      
+            
           </Button>
         </motion.div>
       </motion.div>
@@ -152,7 +152,7 @@ const CouplesSection = () => {
             </Button>
             <Link to="/register" className="w-full sm:w-auto">
               <Button size="lg" className="bg-premium-sage hover:bg-premium-sage-dark text-white px-6 md:px-8 py-5 md:py-6 text-base md:text-lg rounded-full w-full">
-                Rejoindre le Club
+                Créer un compte gratuit   
                 <ArrowRight className="ml-2 w-4 h-4 md:w-5 md:h-5" />
               </Button>
             </Link>
