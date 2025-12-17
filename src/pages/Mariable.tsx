@@ -54,7 +54,7 @@ const HeroSection = () => <section className="relative min-h-[100svh] flex items
         {/* Subtitle */}
         <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/80 mb-8 md:mb-10 font-sans px-4">Les meilleurs professionnels & outils d'organisation en ligne.</p>
 
-        {/* Single CTA - Scroll to concept with smooth behavior */}
+        {/* Single CTA - Navigate to register */}
         <motion.div initial={{
         opacity: 0,
         y: 20
@@ -65,12 +65,11 @@ const HeroSection = () => <section className="relative min-h-[100svh] flex items
         delay: 0.7,
         duration: 0.5
       }} className="flex justify-center px-4">
-          <Button size="lg" onClick={() => document.getElementById("couples-section")?.scrollIntoView({
-          behavior: "smooth"
-        })} className="bg-premium-sage hover:bg-premium-sage-dark text-white px-6 md:px-8 py-5 md:py-6 text-base md:text-lg rounded-full shadow-lg hover:shadow-xl transition-all w-full sm:w-auto">
-            ​Créer votre mariage      
-            
-          </Button>
+          <Link to="/register" className="w-full sm:w-auto">
+            <Button size="lg" className="bg-premium-sage hover:bg-premium-sage-dark text-white px-6 md:px-8 py-5 md:py-6 text-base md:text-lg rounded-full shadow-lg hover:shadow-xl transition-all w-full sm:w-auto">
+              Créer votre mariage
+            </Button>
+          </Link>
         </motion.div>
       </motion.div>
     </div>
