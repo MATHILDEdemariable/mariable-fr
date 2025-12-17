@@ -5,11 +5,12 @@ export interface GTMEvent {
   [key: string]: any;
 }
 
-// Déclaration des types pour window.dataLayer et gtag
+// Déclaration des types pour window.dataLayer, gtag et fbq
 declare global {
   interface Window {
     dataLayer: any[];
     gtag: (...args: any[]) => void;
+    fbq: (...args: any[]) => void;
   }
 }
 
@@ -172,4 +173,30 @@ export const trackEvent = (eventName: string, parameters: Record<string, any> = 
   } catch (error) {
     console.warn(`Erreur trackEvent (${eventName}):`, error);
   }
+};
+
+/**
+ * Envoie un événement au Meta Pixel (Facebook)
+ */
+export const sendMetaEvent = (eventName: string, parameters: Record<string, any> = {}) => {
+  try {
+    if (typeof window !== 'undefined' && window.fbq) {
+      window.fbq('track', eventName, parameters);
+      console.log('Meta Event envoyé:', eventName, parameters);
+    }
+  } catch (error) {
+    console.warn('Erreur lors de l\'envoi Meta Event:', error);
+  }
+};
+
+/**
+ * Track CompleteRegistration pour Meta Pixel
+ */
+export const trackMetaRegistration = () => {
+  sendMetaEvent('CompleteRegistration', {
+    content_name: 'Mariable Account',
+    status: 'completed',
+    value: 0,
+    currency: 'EUR'
+  });
 };
