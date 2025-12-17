@@ -1,13 +1,14 @@
 
 import React, { useState, useEffect } from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
+import { Outlet, useLocation, Link } from 'react-router-dom';
 import DashboardSidebar from './DashboardSidebar';
 import { useIsMobile } from '@/hooks/use-mobile';
 import PremiumHeader from '@/components/home/PremiumHeader';
-import { PanelLeft } from 'lucide-react';
+import { PanelLeft, Home, Users } from 'lucide-react';
 import { useReaderMode } from '@/contexts/ReaderModeContext';
 import SatisfactionModal from './SatisfactionModal';
 import { supabase } from '@/integrations/supabase/client';
+import { Button } from '@/components/ui/button';
 
 import { OnboardingProvider } from '@/components/onboarding/OnboardingProvider';
 import { OnboardingTour } from '@/components/onboarding/OnboardingTour';
@@ -79,6 +80,22 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
     <OnboardingProvider>
       <div className="min-h-screen bg-gray-50 flex flex-col">
         <PremiumHeader />
+        
+        {/* Quick navigation bar */}
+        <div className="fixed top-20 left-4 z-40 flex gap-2">
+          <Link to="/">
+            <Button variant="outline" size="sm" className="bg-white/90 backdrop-blur-sm shadow-sm hover:bg-premium-sage hover:text-white">
+              <Home className="h-4 w-4 mr-1" />
+              Accueil
+            </Button>
+          </Link>
+          <Link to="/professionnelsmariable">
+            <Button variant="outline" size="sm" className="bg-white/90 backdrop-blur-sm shadow-sm hover:bg-premium-sage hover:text-white">
+              <Users className="h-4 w-4 mr-1" />
+              Professionnels
+            </Button>
+          </Link>
+        </div>
         
         <div className="flex flex-1 relative">
         {/* Mobile toggle button - using PanelLeft icon for dashboard */}

@@ -5,7 +5,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Download, Users, UserPlus, FileSpreadsheet, Play } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Plus, Download, Users, UserPlus, FileSpreadsheet, Play, List, LayoutGrid } from 'lucide-react';
 import { TutorialVideoModal } from '@/components/tutorials/TutorialVideoModal';
 import SeatingPlanStats from '@/components/seating-plan/SeatingPlanStats';
 import TablesList from '@/components/seating-plan/TablesList';
@@ -15,6 +16,7 @@ import ImportRSVPDialog from '@/components/seating-plan/ImportRSVPDialog';
 import ManualGuestDialog from '@/components/seating-plan/ManualGuestDialog';
 import { ImportExcelDialog } from '@/components/seating-plan/ImportExcelDialog';
 import ExportPDFButton from '@/components/seating-plan/ExportPDFButton';
+import SeatingPlanVisual from '@/components/seating-plan/SeatingPlanVisual';
 import { SeatingTable, SeatingAssignment, SeatingPlan as SeatingPlanType } from '@/types/seating';
 import { usePremiumAction } from '@/hooks/usePremiumAction';
 import PremiumModal from '@/components/premium/PremiumModal';
@@ -30,6 +32,7 @@ const SeatingPlan = () => {
   const [showImportExcel, setShowImportExcel] = useState(false);
   const [editingTable, setEditingTable] = useState<SeatingTable | null>(null);
   const [showTutorial, setShowTutorial] = useState(false);
+  const [activeView, setActiveView] = useState<'list' | 'visual'>('list');
   
   const { 
     executeAction, 
@@ -228,59 +231,109 @@ const SeatingPlan = () => {
           </div>
         </div>
 
-        <DragDropContext onDragEnd={handleDragEnd}>
-          <div className="grid grid-cols-12 gap-6">
-            {/* Colonne 1: Outils et Stats (20%) */}
-            <div className="col-span-12 lg:col-span-3 space-y-4">
-              <div className="space-y-2">
-                <Button onClick={handleAddTable} className="w-full">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Nouvelle Table
-                </Button>
-                <Button onClick={() => executeAction(() => setShowImportDialog(true))} variant="outline" className="w-full">
-                  <Users className="h-4 w-4 mr-2" />
-                  Importer depuis RSVP
-                </Button>
-                <Button onClick={() => executeAction(() => setShowImportExcel(true))} variant="outline" className="w-full">
-                  <FileSpreadsheet className="h-4 w-4 mr-2" />
-                  Importer CSV
-                </Button>
-                <Button onClick={() => executeAction(() => setShowGuestDialog(true))} variant="outline" className="w-full">
-                  <UserPlus className="h-4 w-4 mr-2" />
-                  Ajouter Invité
-                </Button>
-                <Button onClick={() => setShowTutorial(true)} variant="outline" className="w-full">
-                  <Play className="h-4 w-4 mr-2" />
-                  Tuto vidéo
-                </Button>
-                <ExportPDFButton plan={plan} tables={tables} guests={guests} />
+        {/* View toggle tabs */}
+        <Tabs value={activeView} onValueChange={(v) => setActiveView(v as 'list' | 'visual')} className="mb-6">
+          <TabsList className="bg-premium-sage/10">
+            <TabsTrigger value="list" className="data-[state=active]:bg-premium-sage data-[state=active]:text-white">
+              <List className="h-4 w-4 mr-2" />
+              Liste
+            </TabsTrigger>
+            <TabsTrigger value="visual" className="data-[state=active]:bg-premium-sage data-[state=active]:text-white">
+              <LayoutGrid className="h-4 w-4 mr-2" />
+              Vue Visuelle
+            </TabsTrigger>
+          </TabsList>
+
+          {/* List View */}
+          <TabsContent value="list">
+            <DragDropContext onDragEnd={handleDragEnd}>
+              <div className="grid grid-cols-12 gap-6">
+                {/* Colonne 1: Outils et Stats (20%) */}
+                <div className="col-span-12 lg:col-span-3 space-y-4">
+                  <div className="space-y-2">
+                    <Button onClick={handleAddTable} className="w-full">
+                      <Plus className="h-4 w-4 mr-2" />
+                      Nouvelle Table
+                    </Button>
+                    <Button onClick={() => executeAction(() => setShowImportDialog(true))} variant="outline" className="w-full">
+                      <Users className="h-4 w-4 mr-2" />
+                      Importer depuis RSVP
+                    </Button>
+                    <Button onClick={() => executeAction(() => setShowImportExcel(true))} variant="outline" className="w-full">
+                      <FileSpreadsheet className="h-4 w-4 mr-2" />
+                      Importer CSV
+                    </Button>
+                    <Button onClick={() => executeAction(() => setShowGuestDialog(true))} variant="outline" className="w-full">
+                      <UserPlus className="h-4 w-4 mr-2" />
+                      Ajouter Invité
+                    </Button>
+                    <Button onClick={() => setShowTutorial(true)} variant="outline" className="w-full">
+                      <Play className="h-4 w-4 mr-2" />
+                      Tuto vidéo
+                    </Button>
+                    <ExportPDFButton plan={plan} tables={tables} guests={guests} />
+                  </div>
+
+                  <SeatingPlanStats 
+                    totalGuests={guests.length}
+                    assignedGuests={assignedGuests.length}
+                    tablesCount={tables.length}
+                    tables={tables}
+                    guests={guests}
+                  />
+                </div>
+
+                {/* Colonne 2: Zone des tables (55%) */}
+                <div className="col-span-12 lg:col-span-6">
+                  <TablesList
+                    tables={tables}
+                    guests={guests}
+                    onEditTable={handleEditTable}
+                    onDeleteTable={handleDeleteTable}
+                  />
+                </div>
+
+                {/* Colonne 3: Invités non assignés (25%) */}
+                <div className="col-span-12 lg:col-span-3">
+                  <GuestList guests={unassignedGuests} />
+                </div>
+              </div>
+            </DragDropContext>
+          </TabsContent>
+
+          {/* Visual View */}
+          <TabsContent value="visual">
+            <div className="grid grid-cols-12 gap-6">
+              {/* Sidebar with tools */}
+              <div className="col-span-12 lg:col-span-3 space-y-4">
+                <div className="space-y-2">
+                  <Button onClick={handleAddTable} className="w-full">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Nouvelle Table
+                  </Button>
+                  <ExportPDFButton plan={plan} tables={tables} guests={guests} />
+                </div>
+
+                <SeatingPlanStats 
+                  totalGuests={guests.length}
+                  assignedGuests={assignedGuests.length}
+                  tablesCount={tables.length}
+                  tables={tables}
+                  guests={guests}
+                />
               </div>
 
-              <SeatingPlanStats 
-                totalGuests={guests.length}
-                assignedGuests={assignedGuests.length}
-                tablesCount={tables.length}
-                tables={tables}
-                guests={guests}
-              />
+              {/* Visual canvas */}
+              <div className="col-span-12 lg:col-span-9">
+                <SeatingPlanVisual
+                  tables={tables}
+                  guests={guests}
+                  onTablePositionUpdate={loadSeatingPlan}
+                />
+              </div>
             </div>
-
-            {/* Colonne 2: Zone des tables (55%) */}
-            <div className="col-span-12 lg:col-span-6">
-              <TablesList
-                tables={tables}
-                guests={guests}
-                onEditTable={handleEditTable}
-                onDeleteTable={handleDeleteTable}
-              />
-            </div>
-
-            {/* Colonne 3: Invités non assignés (25%) */}
-            <div className="col-span-12 lg:col-span-3">
-              <GuestList guests={unassignedGuests} />
-            </div>
-          </div>
-        </DragDropContext>
+          </TabsContent>
+        </Tabs>
 
         {/* Dialogs */}
         <TableEditor
