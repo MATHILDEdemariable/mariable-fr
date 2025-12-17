@@ -47,8 +47,7 @@ const HeroSection = () => <section className="relative min-h-[100svh] flex items
         </motion.div>
 
         {/* Title */}
-        <h1 className="font-serif text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-4 md:mb-6 leading-tight px-2">Vivez un Jour-J
- (vraiment) exceptionnel</h1>
+        <h1 className="font-serif text-3xl sm:text-4xl md:text-6xl font-bold text-white mb-4 md:mb-6 leading-tight px-2 lg:text-6xl">Vivez un jour-J exceptionnel</h1>
 
         {/* Subtitle */}
         <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/80 mb-8 md:mb-10 font-sans px-4">Les plus beaux lieux, les meilleurs professionnels & les bons outils d'organisation au même endroit</p>
