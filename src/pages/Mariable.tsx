@@ -43,16 +43,15 @@ const HeroSection = () => <section className="relative min-h-[100svh] flex items
         duration: 0.5
       }} className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-3 py-1.5 md:px-4 md:py-2 mb-6 md:mb-8">
           <Sparkles className="w-3 h-3 md:w-4 md:h-4 text-premium-sage-light" />
-          <span className="text-white/90 text-xs md:text-sm font-medium">Club Privé Exclusif</span>
+          <span className="text-white/90 text-xs md:text-sm font-medium"> Club des futurs mariés   </span>
         </motion.div>
 
         {/* Title */}
-        <h1 className="font-serif text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-4 md:mb-6 leading-tight px-2">
-          Le Club des Futurs Mariés
-        </h1>
+        <h1 className="font-serif text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-4 md:mb-6 leading-tight px-2">Vivez un Jour-J
+ (vraiment) exceptionnel</h1>
 
         {/* Subtitle */}
-        <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/80 mb-8 md:mb-10 font-sans px-4">Les meilleurs professionnels & outils d'organisation en ligne.</p>
+        <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/80 mb-8 md:mb-10 font-sans px-4">Les plus beaux lieux, les meilleurs professionnels & les bons outils d'organisation au même endroit</p>
 
         {/* Single CTA - Navigate to register */}
         <motion.div initial={{
@@ -67,7 +66,7 @@ const HeroSection = () => <section className="relative min-h-[100svh] flex items
       }} className="flex justify-center px-4">
           <Link to="/register" className="w-full sm:w-auto">
             <Button size="lg" className="bg-premium-sage hover:bg-premium-sage-dark text-white px-6 md:px-8 py-5 md:py-6 text-base md:text-lg rounded-full shadow-lg hover:shadow-xl transition-all w-full sm:w-auto">
-              Créer votre mariage
+              Créer votre mariage              
             </Button>
           </Link>
         </motion.div>
@@ -143,12 +142,7 @@ const CouplesSection = () => {
 
           {/* CTAs */}
           <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center px-2">
-            <Button size="lg" variant="outline" onClick={() => document.getElementById("simulateur")?.scrollIntoView({
-            behavior: "smooth"
-          })} className="border-premium-sage text-premium-sage hover:bg-premium-sage/10 px-6 md:px-8 py-5 md:py-6 text-base md:text-lg rounded-full w-full sm:w-auto">
-              <Calculator className="mr-2 w-4 h-4 md:w-5 md:h-5" />
-              Simuler les économies
-            </Button>
+            
             <Link to="/register" className="w-full sm:w-auto">
               <Button size="lg" className="bg-premium-sage hover:bg-premium-sage-dark text-white px-6 md:px-8 py-5 md:py-6 text-base md:text-lg rounded-full w-full">
                 Créer un compte gratuit   
