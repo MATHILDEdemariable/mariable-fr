@@ -29,10 +29,10 @@ const PremiumTestimonialsSection = () => {
     text: "Les prestataires recommandés par Mariable étaient tous formidables. La qualité de service était au rendez-vous, exactement ce que nous cherchions.",
     gradient: "from-premium-sage-light to-premium-sage"
   }];
-  return <section className="py-24 bg-premium-base">
+  return <section className="py-24 bg-[#efeee9]">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-premium-black mb-6 md:text-4xl">
+          <h2 className="font-serif text-4xl font-bold text-premium-black mb-6 md:text-4xl">
             Ils ont vécu
             <br />
             <span className="text-premium-sage">

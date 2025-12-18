@@ -156,90 +156,7 @@ const CouplesSection = () => {
     </section>;
 };
 
-// Savings Simulator Section
-const SavingsSimulatorSection = () => {
-  const [budget, setBudget] = useState([25000]);
-  const [providers, setProviders] = useState([4]);
-  const minSavings = Math.round(budget[0] * 0.05 * providers[0] / 8);
-  const maxSavings = Math.round(budget[0] * 0.15 * providers[0] / 8);
-  return <section id="simulateur" className="py-12 md:py-20 bg-[#efeee9] scroll-mt-20">
-      <div className="container mx-auto px-4">
-        <motion.div initial={{
-        opacity: 0,
-        y: 20
-      }} whileInView={{
-        opacity: 1,
-        y: 0
-      }} viewport={{
-        once: true
-      }} transition={{
-        duration: 0.6
-      }} className="max-w-2xl mx-auto">
-          <div className="text-center mb-6 md:mb-10">
-            <div className="inline-flex items-center gap-2 bg-premium-sage/10 text-premium-sage-dark rounded-full px-3 py-1 md:px-4 md:py-1.5 mb-4">
-              <Calculator className="w-3 h-3 md:w-4 md:h-4" />
-              <span className="text-xs md:text-sm font-medium">Simulateur d'économies</span>
-            </div>
-            <h2 className="font-serif text-2xl md:text-4xl font-bold text-foreground mb-2 px-2">
-              Combien pouvez-vous économiser ?
-            </h2>
-          </div>
-
-          <div className="bg-white rounded-2xl p-5 md:p-8 shadow-xl border border-border mx-2 md:mx-0">
-            {/* Budget Slider */}
-            <div className="mb-6 md:mb-8">
-              <div className="flex justify-between mb-3">
-                <label className="text-xs md:text-sm font-medium text-foreground">Budget global mariage</label>
-                <span className="text-base md:text-lg font-bold text-premium-sage">{budget[0].toLocaleString()}€</span>
-              </div>
-              <Slider value={budget} onValueChange={setBudget} min={15000} max={60000} step={1000} className="w-full" />
-              <div className="flex justify-between mt-1 text-xs text-muted-foreground">
-                <span>15 000€</span>
-                <span>60 000€</span>
-              </div>
-            </div>
-
-            {/* Providers Slider */}
-            <div className="mb-8 md:mb-10">
-              <div className="flex justify-between mb-3">
-                <label className="text-xs md:text-sm font-medium text-foreground">Prestataires via le Club</label>
-                <span className="text-base md:text-lg font-bold text-premium-sage">{providers[0]} prestataires</span>
-              </div>
-              <Slider value={providers} onValueChange={setProviders} min={1} max={8} step={1} className="w-full" />
-              <div className="flex justify-between mt-1 text-xs text-muted-foreground">
-                <span>1</span>
-                <span>8</span>
-              </div>
-            </div>
-
-            {/* Results */}
-            <motion.div key={`${budget[0]}-${providers[0]}`} initial={{
-            scale: 0.95
-          }} animate={{
-            scale: 1
-          }} transition={{
-            duration: 0.2
-          }} className="bg-premium-sage-very-light rounded-xl p-4 md:p-6 text-center">
-              <p className="text-xs md:text-sm text-muted-foreground mb-2">🎉 Économies estimées</p>
-              <p className="font-serif text-3xl md:text-5xl font-bold text-premium-sage-dark">
-                {minSavings.toLocaleString()}€ - {maxSavings.toLocaleString()}€
-              </p>
-              <p className="text-xs text-muted-foreground mt-2">Basé sur des réductions de 5 à 15% par prestataire</p>
-            </motion.div>
-
-            <div className="mt-6 md:mt-8 text-center">
-              <Link to="/register" className="block w-full sm:inline-block sm:w-auto">
-                <Button size="lg" className="bg-premium-sage hover:bg-premium-sage-dark text-white px-6 md:px-8 py-5 md:py-6 text-base md:text-lg rounded-full w-full sm:w-auto">
-                  Rejoindre le Club gratuitement
-                  <ArrowRight className="ml-2 w-4 h-4 md:w-5 md:h-5" />
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </motion.div>
-      </div>
-    </section>;
-};
+// Savings Simulator Section removed - not needed
 
 // Testimonials Section
 const TestimonialsSection = () => {
@@ -410,7 +327,6 @@ const Mariable = () => {
           <HeroSection />
           <CouplesSection />
           <PremiumToolsCoordinationSection />
-          <SavingsSimulatorSection />
           <PremiumTestimonialsSection />
           <FAQSection />
           <FinalCTASection />

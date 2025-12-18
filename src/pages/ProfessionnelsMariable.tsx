@@ -148,18 +148,18 @@ const HowItWorksSection = () => {
   const steps = [{
     step: "1",
     icon: <Plus className="w-5 h-5" />,
-    title: "Ajoutez à votre tableau de bord",
-    description: "Cliquez sur le + pour sauvegarder"
+    title: "Ajoutez au panier ou tableau de bord",
+    description: "Si tu ne trouves pas, clique sur 'Sélection personnalisée'"
   }, {
     step: "2",
     icon: <MessageCircle className="w-5 h-5" />,
     title: "Contactez via la plateforme",
-    description: "Découvrez les avantages exclusifs"
+    description: "Bénéficiez de l'avantage exclusif Mariable (remise ou service offert)"
   }, {
     step: "3",
     icon: <CalendarCheck className="w-5 h-5" />,
-    title: "Réservez de votre côté",
-    description: "Donnez le code promo reçu par message !"
+    title: "Réservez & envoyez le devis",
+    description: "Validez de votre côté et envoyez-nous le devis pour obtenir votre avantage"
   }];
   return <section className="py-6 bg-white border-y border-border">
       <div className="container max-w-5xl mx-auto px-4">
