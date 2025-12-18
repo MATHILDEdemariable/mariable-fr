@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Euro, ExternalLink, Plus } from "lucide-react";
+import { MapPin, Euro, ExternalLink, Plus, ShoppingCart, Check } from "lucide-react";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Database } from "@/integrations/supabase/types";
 import { useNavigate } from "react-router-dom";
@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/components/ui/use-toast";
 import FeaturedImage from "@/components/ui/featured-image";
 import AuthRequiredModal from "@/components/auth/AuthRequiredModal";
+import { useCart, PRICE_CATALOG } from "@/components/cart/CartProvider";
 
 type Prestataire = Database["public"]["Tables"]["prestataires_rows"]["Row"];
 
@@ -29,6 +30,36 @@ const VendorCard: React.FC<VendorCardProps> = ({
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [isInTracking, setIsInTracking] = useState(false);
   const [isPartner, setIsPartner] = useState(vendor.partner);
+  const { addItem, removeItem, isInCart } = useCart();
+  const inCart = isInCart(vendor.id);
+
+  const handleCartClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    
+    if (inCart) {
+      removeItem(vendor.id);
+      toast({
+        title: "Retiré du panier",
+        description: `${vendor.nom} a été retiré de votre estimation`,
+      });
+    } else {
+      // Get price from vendor or use catalog
+      const catalog = PRICE_CATALOG[vendor.categorie || ''];
+      const price = vendor.first_price_package || vendor.prix_a_partir_de || (catalog?.mid) || null;
+      
+      addItem({
+        vendorId: vendor.id,
+        vendorName: vendor.nom,
+        category: vendor.categorie || 'Autre',
+        price,
+        priceType: price ? 'fixed' : 'catalog',
+      });
+      toast({
+        title: "Ajouté au panier",
+        description: `${vendor.nom} ajouté à votre estimation budget`,
+      });
+    }
+  };
 
   // Get the main image from prestataires_photos_preprod
   let mainImage = "/placeholder.svg";
@@ -191,30 +222,42 @@ const VendorCard: React.FC<VendorCardProps> = ({
           <Badge className="absolute top-3 left-3 bg-white/80 text-black font-medium">
             {vendor.categorie || "Prestataire"}
           </Badge>
-          <Button
-            size="sm"
-            variant="secondary"
-            className={`absolute top-3 right-3 rounded-full p-2 ${
-              isInTracking
-                ? "bg-wedding-olive text-white hover:bg-wedding-olive/90"
-                : "bg-white/80 hover:bg-white text-wedding-olive"
-            }`}
-            onClick={handleTrackingClick}
-            disabled={isAddingToTracking}
-          >
-            <Plus
-              className={`h-5 w-5 ${isInTracking ? "fill-current" : ""}`}
-            />
-            <span className="sr-only">
-              {isInTracking
-                ? "Retirer du suivi"
-                : "Ajouter au suivi"}
-            </span>
-          </Button>
+          {/* Boutons en haut à droite */}
+          <div className="absolute top-3 right-3 flex gap-2">
+            {/* Bouton panier */}
+            <Button
+              size="sm"
+              variant="secondary"
+              className={`rounded-full p-2 ${
+                inCart
+                  ? "bg-premium-sage text-white hover:bg-premium-sage-dark"
+                  : "bg-white/80 hover:bg-white text-premium-sage"
+              }`}
+              onClick={handleCartClick}
+            >
+              {inCart ? <Check className="h-5 w-5" /> : <ShoppingCart className="h-5 w-5" />}
+              <span className="sr-only">{inCart ? "Dans le panier" : "Ajouter au panier"}</span>
+            </Button>
+            {/* Bouton suivi */}
+            <Button
+              size="sm"
+              variant="secondary"
+              className={`rounded-full p-2 ${
+                isInTracking
+                  ? "bg-wedding-olive text-white hover:bg-wedding-olive/90"
+                  : "bg-white/80 hover:bg-white text-wedding-olive"
+              }`}
+              onClick={handleTrackingClick}
+              disabled={isAddingToTracking}
+            >
+              <Plus className={`h-5 w-5 ${isInTracking ? "fill-current" : ""}`} />
+              <span className="sr-only">{isInTracking ? "Retirer du suivi" : "Ajouter au suivi"}</span>
+            </Button>
+          </div>
           {isPartner && (
-          <Badge className="absolute bottom-3 right-3 bg-white/80 text-black font-medium">
-            {isPartner ? 'Partenaire' : ''}
-          </Badge>
+            <Badge className="absolute bottom-3 right-3 bg-white/80 text-black font-medium">
+              Partenaire
+            </Badge>
           )}
         </div>
 

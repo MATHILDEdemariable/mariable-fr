@@ -12,24 +12,24 @@ import {
 
 const faqItems = [
   {
+    question: "Comment organiser mon mariage étape par étape ?",
+    answer: "Mariable vous accompagne à chaque étape : 1) Créez votre compte gratuit, 2) Utilisez notre checklist intelligente pour planifier les grandes étapes, 3) Parcourez nos prestataires ou demandez une sélection personnalisée, 4) Gérez votre budget avec notre calculateur, 5) Coordonnez le jour J avec notre outil de planning. Tous nos outils sont accessibles gratuitement depuis votre tableau de bord."
+  },
+  {
+    question: "Comment calculer le budget de mon mariage ?",
+    answer: "Notre calculateur de budget vous aide à estimer et répartir votre enveloppe. Il prend en compte : le nombre d'invités, la région, la saison, et vos prestataires souhaités. Vous obtenez une estimation réaliste par poste (lieu, traiteur, photo, DJ, etc.) et pouvez suivre vos dépenses en temps réel. L'outil est 100% gratuit dans votre tableau de bord."
+  },
+  {
+    question: "Mariable est-il vraiment gratuit ?",
+    answer: "Oui, Mariable est entièrement gratuit ! Tous les outils de planification sont accessibles sans frais : tableau de bord, checklist, calculateur de budget, gestion des invités, plan de table, et coordination jour J. La recherche de prestataires est également gratuite. Nous proposons optionnellement un service de sélection personnalisée premium (69€) pour ceux qui souhaitent un accompagnement plus poussé avec vérification des disponibilités et comparatif détaillé."
+  },
+  {
     question: "Qu'est-ce que Mariable ?",
     answer: "Mariable est la première plateforme française dédiée à l'organisation complète de votre mariage. Notre mission est de simplifier chaque étape de votre préparation grâce à des outils digitaux innovants : tableau de bord personnalisé, coordination du jour J, sélection de prestataires, gestion de budget et bien plus encore."
   },
   {
     question: "Comment fonctionne le tableau de bord utilisateur ?",
     answer: "Votre tableau de bord Mariable centralise tous les aspects de votre mariage. Vous y retrouvez : votre checklist personnalisée, vos prestataires sélectionnés, votre budget en temps réel, vos documents importants, votre planning jour J et la possibilité de collaborer avec vos proches. Tout est pensé pour vous faire gagner du temps et de la sérénité."
-  },
-  {
-    question: "Qu'est-ce que l'outil 'Mon Jour M' ?",
-    answer: "Mon Jour M est notre innovation phare ! C'est votre coordinateur de mariage digital qui vous permet de créer un planning minute par minute pour votre jour J. Vous pouvez assigner des tâches à vos proches, coordonner vos prestataires, partager le planning avec votre équipe et même recevoir des suggestions personnalisées par IA. Fini le stress de l'organisation !"
-  },
-  {
-    question: "Comment sélectionner mes prestataires sur Mariable ?",
-    answer: "Notre moteur de recherche intelligent vous propose des prestataires selon vos critères : localisation, budget, style, disponibilité. Chaque prestataire est vérifié selon notre charte qualité. Vous pouvez consulter leurs portfolios, lire les avis, contacter directement et suivre vos échanges dans votre tableau de bord."
-  },
-  {
-    question: "Mariable est-il gratuit ? Quelles sont les fonctionnalités premium ?",
-    answer: "Mariable propose un accès gratuit aux fonctionnalités essentielles : recherche de prestataires, tableau de bord de base, checklist standard. Les fonctionnalités premium incluent : suggestions IA personnalisées pour Mon Jour M, exports PDF brandés, coordination avancée, support prioritaire et outils d'analyse détaillés."
   },
   {
     question: "Comment créer mon planning de mariage ?",

@@ -8,11 +8,14 @@ import VendorCard from '@/components/vendors/VendorCard';
 import { useOptimizedVendors } from '@/hooks/useOptimizedVendors';
 import { useDebounce } from 'use-debounce';
 import { supabase } from '@/integrations/supabase/client';
-import { Loader2, Search, X, ChevronLeft, ChevronRight, Camera, Utensils, Building2, Music, Flower2, Sparkles, Star, Palette, Gift, Car, Users, Calendar, Plus, MessageCircle, CalendarCheck, ArrowRight, LayoutDashboard } from 'lucide-react';
+import { Loader2, Search, X, ChevronLeft, ChevronRight, Camera, Utensils, Building2, Music, Flower2, Sparkles, Star, Palette, Gift, Car, Users, Calendar, Plus, MessageCircle, CalendarCheck, ArrowRight, LayoutDashboard, HelpCircle } from 'lucide-react';
 import PremiumHeader from '@/components/home/PremiumHeader';
 import Footer from '@/components/Footer';
 import { Database } from '@/integrations/supabase/types';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
+import { CartProvider } from '@/components/cart/CartProvider';
+import CartIcon from '@/components/cart/CartIcon';
+import CarnetAdressesModal from '@/components/home/CarnetAdressesModal';
 type PrestataireCategorie = Database['public']['Enums']['prestataire_categorie'];
 const CATEGORY_CONFIG: {
   value: PrestataireCategorie | 'Tous';
@@ -207,6 +210,7 @@ const ProfessionnelsMariable = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [debouncedSearch] = useDebounce(search, 500);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [showCarnetModal, setShowCarnetModal] = useState(false);
 
   // Check auth status
   useEffect(() => {
@@ -261,7 +265,7 @@ const ProfessionnelsMariable = () => {
     });
   };
   const hasActiveFilters = search || category !== 'Tous' || region;
-  return <>
+  return <CartProvider>
       <Helmet>
         <title>Tous les Professionnels de Mariage | Mariable</title>
         <meta name="description" content="Découvrez notre sélection complète de prestataires de mariage : lieux de réception, traiteurs, photographes, DJ, fleuristes et plus encore. Trouvez les meilleurs professionnels pour votre mariage." />
@@ -269,6 +273,7 @@ const ProfessionnelsMariable = () => {
       </Helmet>
 
       <PremiumHeader />
+      <CartIcon />
       
       <main className="min-h-screen bg-[#efeee9]">
         {/* Hero */}
@@ -318,10 +323,21 @@ const ProfessionnelsMariable = () => {
                   </Button>}
               </div>
 
-              {/* Results Counter */}
-              {!isLoading && <p className="text-sm text-muted-foreground">
-                  <span className="font-semibold text-foreground">{vendors.length}</span> {vendors.length > 1 ? 'professionnels' : 'professionnel'}
-                </p>}
+              {/* Results Counter + Recherche personnalisée */}
+              {!isLoading && <div className="flex items-center gap-3">
+                  <p className="text-sm text-muted-foreground">
+                    <span className="font-semibold text-foreground">{vendors.length}</span> {vendors.length > 1 ? 'professionnels' : 'professionnel'}
+                  </p>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => setShowCarnetModal(true)}
+                    className="text-premium-sage border-premium-sage hover:bg-premium-sage hover:text-white"
+                  >
+                    <HelpCircle className="h-4 w-4 mr-1" />
+                    Sélection personnalisée
+                  </Button>
+                </div>}
             </div>
 
             {/* Vendors Grid */}
@@ -390,6 +406,7 @@ const ProfessionnelsMariable = () => {
       </main>
 
       <Footer />
-    </>;
+      <CarnetAdressesModal isOpen={showCarnetModal} onClose={() => setShowCarnetModal(false)} />
+    </CartProvider>;
 };
 export default ProfessionnelsMariable;

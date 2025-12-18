@@ -9,6 +9,8 @@ import PremiumHeader from "@/components/home/PremiumHeader";
 import Footer from "@/components/Footer";
 import ChatbotButton from "@/components/ChatbotButton";
 import SEO from "@/components/SEO";
+import PremiumTestimonialsSection from "@/components/home/PremiumTestimonialsSection";
+import PremiumToolsCoordinationSection from "@/components/home/PremiumToolsCoordinationSection";
 const VIDEO_URL = "https://bgidfcqktsttzlwlumtz.supabase.co/storage/v1/object/public/background-videos/freepik__wideangle-shot-a-joyful-couple-dances-at-their-wed__74093%20(1).mp4";
 
 // Hero Section - Single CTA
@@ -301,11 +303,14 @@ const TestimonialsSection = () => {
 // FAQ Section
 const FAQSection = () => {
   const faqItems = [{
-    question: "Mon lieu n'est pas partenaire, comment faire ?",
-    answer: "Parlez-en à votre lieu ! S'ils rejoignent Mariable, vous aurez accès à ces avantages rapidement !"
+    question: "Comment organiser mon mariage étape par étape ?",
+    answer: "Mariable vous accompagne à chaque étape : 1) Créez votre compte gratuit, 2) Utilisez notre checklist intelligente pour planifier les grandes étapes, 3) Parcourez nos prestataires ou demandez une sélection personnalisée, 4) Gérez votre budget avec notre calculateur, 5) Coordonnez le jour J avec notre outil de planning. Tous nos outils sont accessibles gratuitement."
   }, {
-    question: "Je suis obligé d'utiliser ces pros ?",
-    answer: "Non, c'est totalement optionnel. Mais ils sont recommandés par votre lieu et vous font économiser."
+    question: "Comment calculer le budget de mon mariage ?",
+    answer: "Notre calculateur de budget vous aide à estimer et répartir votre enveloppe. Il prend en compte le nombre d'invités, la région, la saison et vos prestataires. Vous obtenez une estimation réaliste par poste (lieu, traiteur, photo, DJ, etc.) et pouvez suivre vos dépenses en temps réel. L'outil est 100% gratuit."
+  }, {
+    question: "Mariable est-il vraiment gratuit ?",
+    answer: "Oui, Mariable est entièrement gratuit ! Tous les outils de planification sont accessibles sans frais : tableau de bord, checklist, calculateur de budget, gestion des invités, plan de table, coordination jour J. La recherche de prestataires est également gratuite. Nous proposons optionnellement un service de sélection personnalisée premium (69€) pour ceux qui souhaitent un accompagnement plus poussé."
   }, {
     question: "Comment je récupère mes réductions ?",
     answer: "Via VOTRE COMPTE mariable.fr vous accédez au code promotionnel des partenaires."
@@ -404,8 +409,9 @@ const Mariable = () => {
         <main>
           <HeroSection />
           <CouplesSection />
+          <PremiumToolsCoordinationSection />
           <SavingsSimulatorSection />
-          <TestimonialsSection />
+          <PremiumTestimonialsSection />
           <FAQSection />
           <FinalCTASection />
         </main>
