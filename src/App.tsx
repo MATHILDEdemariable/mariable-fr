@@ -8,7 +8,7 @@ import AnalyticsProvider from "@/components/analytics/AnalyticsProvider";
 import { HelmetProvider } from 'react-helmet-async';
 import { ReaderModeProvider } from '@/contexts/ReaderModeContext';
 import PaymentSuccessHandler from '@/components/premium/PaymentSuccessHandler';
-
+import { CartProvider } from '@/components/cart/CartProvider';
 // Direct imports for SEO-critical pages (no lazy loading)
 import LandingCouple from "./pages/LandingCouple";
 import LandingGenerale from "./pages/LandingGenerale";
@@ -137,13 +137,14 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <HelmetProvider>
         <ReaderModeProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-              <AnalyticsProvider>
-                <PaymentSuccessHandler />
-                <Suspense fallback={<PageLoader />}>
+          <CartProvider>
+            <TooltipProvider>
+              <Toaster />
+              <Sonner />
+              <BrowserRouter>
+                <AnalyticsProvider>
+                  <PaymentSuccessHandler />
+                  <Suspense fallback={<PageLoader />}>
                   <Routes>
                   <Route path="/" element={<Mariable />} />
                   <Route path="/accueil" element={<LandingCouple />} />
@@ -305,10 +306,11 @@ function App() {
               </AnalyticsProvider>
             </BrowserRouter>
           </TooltipProvider>
-        </ReaderModeProvider>
-      </HelmetProvider>
-    </QueryClientProvider>
-  );
+        </CartProvider>
+      </ReaderModeProvider>
+    </HelmetProvider>
+  </QueryClientProvider>
+);
 }
 
 export default App;
