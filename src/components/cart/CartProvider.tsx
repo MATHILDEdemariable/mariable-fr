@@ -23,6 +23,7 @@ export interface CartItem {
   price: number | null; // null = prix sur demande
   priceType: 'fixed' | 'catalog' | 'custom';
   image?: string;
+  guestCount?: number; // Pour les catégories avec prix par personne (Traiteur)
 }
 
 interface CartContextType {
@@ -30,6 +31,7 @@ interface CartContextType {
   addItem: (item: CartItem) => void;
   removeItem: (vendorId: string) => void;
   updateItemPrice: (vendorId: string, price: number) => void;
+  updateGuestCount: (vendorId: string, guestCount: number) => void;
   clearCart: () => void;
   isInCart: (vendorId: string) => boolean;
   total: number;
@@ -62,6 +64,14 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     ));
   }, []);
 
+  const updateGuestCount = useCallback((vendorId: string, guestCount: number) => {
+    setItems(prev => prev.map(item => 
+      item.vendorId === vendorId 
+        ? { ...item, guestCount }
+        : item
+    ));
+  }, []);
+
   const clearCart = useCallback(() => {
     setItems([]);
   }, []);
@@ -70,7 +80,13 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return items.some(item => item.vendorId === vendorId);
   }, [items]);
 
-  const total = items.reduce((sum, item) => sum + (item.price || 0), 0);
+  // Pour le traiteur, multiplier par le nombre d'invités
+  const total = items.reduce((sum, item) => {
+    if (item.category === 'Traiteur' && item.guestCount && item.price) {
+      return sum + (item.price * item.guestCount);
+    }
+    return sum + (item.price || 0);
+  }, 0);
   const itemCount = items.length;
 
   return (
@@ -79,6 +95,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       addItem,
       removeItem,
       updateItemPrice,
+      updateGuestCount,
       clearCart,
       isInCart,
       total,

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShoppingCart, X, Trash2, Euro, Edit2, Check } from 'lucide-react';
+import { ShoppingCart, X, Trash2, Euro, Edit2, Check, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/popover';
 
 const CartIcon = () => {
-  const { items, removeItem, updateItemPrice, clearCart, total, itemCount } = useCart();
+  const { items, removeItem, updateItemPrice, updateGuestCount, clearCart, total, itemCount } = useCart();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [customPrice, setCustomPrice] = useState<string>('');
 
@@ -40,6 +40,22 @@ const CartIcon = () => {
     }
   };
 
+  const handleGuestCountChange = (vendorId: string, value: string) => {
+    const count = parseInt(value);
+    if (!isNaN(count) && count > 0) {
+      updateGuestCount(vendorId, count);
+    }
+  };
+
+  // Calculer le prix total pour un item (pour Traiteur: prix × invités)
+  const getItemTotal = (item: typeof items[0]) => {
+    if (!item.price) return 0;
+    if (item.category === 'Traiteur' && item.guestCount) {
+      return item.price * item.guestCount;
+    }
+    return item.price;
+  };
+
   if (itemCount === 0) return null;
 
   return (
@@ -48,7 +64,7 @@ const CartIcon = () => {
         <Button 
           variant="outline" 
           size="icon" 
-          className="fixed top-24 right-4 z-50 bg-white shadow-lg border-premium-sage hover:bg-premium-sage-very-light h-12 w-12 rounded-full"
+          className="fixed top-32 right-6 z-50 bg-white shadow-lg border-premium-sage hover:bg-premium-sage-very-light h-12 w-12 rounded-full"
         >
           <ShoppingCart className="h-5 w-5 text-premium-sage" />
           <Badge className="absolute -top-2 -right-2 bg-premium-sage text-white text-xs h-6 w-6 flex items-center justify-center rounded-full p-0">
@@ -70,6 +86,8 @@ const CartIcon = () => {
         <div className="max-h-80 overflow-y-auto">
           {items.map((item) => {
             const catalog = PRICE_CATALOG[item.category];
+            const isTraiteur = item.category === 'Traiteur';
+            const itemTotal = getItemTotal(item);
             
             return (
               <div key={item.vendorId} className="p-3 border-b border-border last:border-0">
@@ -91,23 +109,48 @@ const CartIcon = () => {
                 {/* Prix section */}
                 <div className="mt-2">
                   {item.price ? (
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-semibold text-premium-sage flex items-center gap-1">
-                        <Euro className="h-3 w-3" />
-                        {item.price.toLocaleString()}€
-                      </span>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-6 px-2 text-xs text-muted-foreground"
-                        onClick={() => {
-                          setEditingId(item.vendorId);
-                          setCustomPrice(item.price?.toString() || '');
-                        }}
-                      >
-                        <Edit2 className="h-3 w-3 mr-1" />
-                        Modifier
-                      </Button>
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-semibold text-premium-sage flex items-center gap-1">
+                          <Euro className="h-3 w-3" />
+                          {item.price.toLocaleString()}€{isTraiteur ? '/pers' : ''}
+                        </span>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-6 px-2 text-xs text-muted-foreground"
+                          onClick={() => {
+                            setEditingId(item.vendorId);
+                            setCustomPrice(item.price?.toString() || '');
+                          }}
+                        >
+                          <Edit2 className="h-3 w-3 mr-1" />
+                          Modifier
+                        </Button>
+                      </div>
+                      
+                      {/* Champ nombre d'invités pour Traiteur */}
+                      {isTraiteur && (
+                        <div className="bg-premium-sage-very-light rounded-lg p-2">
+                          <div className="flex items-center gap-2">
+                            <Users className="h-4 w-4 text-premium-sage" />
+                            <span className="text-xs text-muted-foreground">Invités:</span>
+                            <Input
+                              type="number"
+                              min="1"
+                              value={item.guestCount || ''}
+                              onChange={(e) => handleGuestCountChange(item.vendorId, e.target.value)}
+                              placeholder="100"
+                              className="h-7 w-20 text-sm text-center"
+                            />
+                          </div>
+                          {item.guestCount && item.price && (
+                            <p className="text-xs text-premium-sage-dark mt-1 font-medium">
+                              {item.price}€ × {item.guestCount} = {itemTotal.toLocaleString()}€
+                            </p>
+                          )}
+                        </div>
+                      )}
                     </div>
                   ) : editingId === item.vendorId ? (
                     <div className="flex items-center gap-2">
@@ -133,13 +176,13 @@ const CartIcon = () => {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="min">
-                          Entrée de gamme: {catalog.min.toLocaleString()}€
+                          Entrée de gamme: {catalog.min.toLocaleString()}€{isTraiteur ? '/pers' : ''}
                         </SelectItem>
                         <SelectItem value="mid">
-                          Milieu de gamme: {catalog.mid.toLocaleString()}€
+                          Milieu de gamme: {catalog.mid.toLocaleString()}€{isTraiteur ? '/pers' : ''}
                         </SelectItem>
                         <SelectItem value="max">
-                          Haut de gamme: {catalog.max.toLocaleString()}€
+                          Haut de gamme: {catalog.max.toLocaleString()}€{isTraiteur ? '/pers' : ''}
                         </SelectItem>
                       </SelectContent>
                     </Select>
