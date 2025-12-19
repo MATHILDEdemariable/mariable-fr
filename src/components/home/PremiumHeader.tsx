@@ -56,7 +56,7 @@ const PremiumHeader = () => {
                     Mon compte <ChevronDown className="ml-1 w-4 h-4" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="bg-white border border-border shadow-lg z-50">
+                <DropdownMenuContent align="end" className="bg-white border border-border shadow-lg z-[1000]">
                   <DropdownMenuItem onClick={() => navigate('/dashboard')} className="cursor-pointer">
                     Mes outils
                   </DropdownMenuItem>
