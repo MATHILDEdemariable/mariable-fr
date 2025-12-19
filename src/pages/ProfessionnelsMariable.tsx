@@ -115,7 +115,7 @@ const HeroSection = ({
       duration: 0.6,
       delay: 0.1
     }} className="text-lg md:text-xl max-w-2xl mx-auto mb-8 text-white/90">
-        Les plus belles marques pour votre événement
+        Parmi notre guide de professionnels     
       </motion.p>
 
       <motion.div initial={{
@@ -328,12 +328,7 @@ const ProfessionnelsMariable = () => {
                   <p className="text-sm text-muted-foreground">
                     <span className="font-semibold text-foreground">{vendors.length}</span> {vendors.length > 1 ? 'professionnels' : 'professionnel'}
                   </p>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    onClick={() => setShowCarnetModal(true)}
-                    className="text-premium-sage border-premium-sage hover:bg-premium-sage hover:text-white"
-                  >
+                  <Button variant="outline" size="sm" onClick={() => setShowCarnetModal(true)} className="text-premium-sage border-premium-sage hover:bg-premium-sage hover:text-white">
                     <HelpCircle className="h-4 w-4 mr-1" />
                     Sélection personnalisée
                   </Button>
