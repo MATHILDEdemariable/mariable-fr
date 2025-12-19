@@ -19,6 +19,7 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
   const [draggingTable, setDraggingTable] = useState<string | null>(null);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [tablePositions, setTablePositions] = useState<Record<string, { x: number; y: number }>>({});
+  const [selectedGuest, setSelectedGuest] = useState<string | null>(null);
 
   // Initialize positions from database or default grid
   useEffect(() => {
@@ -33,7 +34,56 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
   }, [tables]);
 
   const getTableGuests = (tableId: string) => {
-    return guests.filter(g => g.table_id === tableId);
+    return guests.filter(g => g.table_id === tableId).sort((a, b) => (a.seat_number ?? 0) - (b.seat_number ?? 0));
+  };
+
+  // Handle guest click for seat swapping
+  const handleGuestClick = async (guestId: string, tableId: string) => {
+    if (selectedGuest === null) {
+      // First click: select this guest
+      setSelectedGuest(guestId);
+    } else if (selectedGuest === guestId) {
+      // Same guest clicked: deselect
+      setSelectedGuest(null);
+    } else {
+      // Different guest clicked: swap seats if same table
+      const guest1 = guests.find(g => g.id === selectedGuest);
+      const guest2 = guests.find(g => g.id === guestId);
+
+      if (guest1 && guest2 && guest1.table_id === guest2.table_id) {
+        // Swap seat numbers
+        const seat1 = guest1.seat_number ?? 0;
+        const seat2 = guest2.seat_number ?? 0;
+
+        try {
+          // Update both guests
+          await Promise.all([
+            supabase.from('seating_assignments').update({ seat_number: seat2 }).eq('id', guest1.id),
+            supabase.from('seating_assignments').update({ seat_number: seat1 }).eq('id', guest2.id)
+          ]);
+
+          toast({
+            title: 'Places échangées',
+            description: `${guest1.guest_name} et ${guest2.guest_name} ont échangé leurs places`
+          });
+
+          onTablePositionUpdate();
+        } catch (error) {
+          toast({
+            title: 'Erreur',
+            description: 'Impossible d\'échanger les places',
+            variant: 'destructive'
+          });
+        }
+      } else {
+        toast({
+          title: 'Action impossible',
+          description: 'Vous ne pouvez échanger que des invités sur la même table',
+          variant: 'destructive'
+        });
+      }
+      setSelectedGuest(null);
+    }
   };
 
   const handleMouseDown = (e: React.MouseEvent, tableId: string) => {
@@ -149,9 +199,17 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
       </div>
 
       {/* Instructions */}
-      <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-lg p-3 shadow-sm text-xs text-muted-foreground">
-        Glissez les tables pour les positionner
+      <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-lg p-3 shadow-sm text-xs text-muted-foreground max-w-[200px]">
+        <p className="mb-1">• Glissez les tables pour les positionner</p>
+        <p>• Cliquez sur 2 invités d'une même table pour échanger leurs places</p>
       </div>
+
+      {/* Selected guest indicator */}
+      {selectedGuest && (
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-premium-sage text-white px-4 py-2 rounded-full text-sm shadow-lg z-50">
+          Cliquez sur un autre invité de la même table pour échanger
+        </div>
+      )}
 
       {/* Tables */}
       {tables.map(table => {
@@ -201,21 +259,32 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
             </div>
 
             {/* Guest indicators around the table */}
-            {tableGuests.slice(0, 8).map((guest, index) => {
-              const angle = (index / Math.min(tableGuests.length, 8)) * 2 * Math.PI - Math.PI / 2;
+            {tableGuests.slice(0, 12).map((guest, index) => {
+              const totalGuests = Math.min(tableGuests.length, 12);
+              const angle = (index / totalGuests) * 2 * Math.PI - Math.PI / 2;
               const radius = Math.max(size.width, size.height) / 2 + 20;
               const guestX = Math.cos(angle) * radius;
               const guestY = Math.sin(angle) * radius;
+              const isSelected = selectedGuest === guest.id;
 
               return (
                 <div
                   key={guest.id}
-                  className="absolute w-6 h-6 bg-premium-sage-light rounded-full border-2 border-white shadow-sm flex items-center justify-center text-[8px] text-premium-sage-dark font-medium"
-                  style={{
-                    left: size.width / 2 + guestX - 12,
-                    top: size.height / 2 + guestY - 12
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleGuestClick(guest.id, table.id);
                   }}
-                  title={guest.guest_name}
+                  className={cn(
+                    "absolute w-7 h-7 rounded-full border-2 shadow-sm flex items-center justify-center text-[9px] font-medium cursor-pointer transition-all duration-200 hover:scale-110",
+                    isSelected 
+                      ? "bg-premium-sage text-white border-white ring-2 ring-premium-sage ring-offset-1 scale-110" 
+                      : "bg-premium-sage-light text-premium-sage-dark border-white hover:bg-premium-sage hover:text-white"
+                  )}
+                  style={{
+                    left: size.width / 2 + guestX - 14,
+                    top: size.height / 2 + guestY - 14
+                  }}
+                  title={`${guest.guest_name}${guest.seat_number ? ` (Place ${guest.seat_number})` : ''} - Cliquez pour échanger`}
                 >
                   {guest.guest_name.charAt(0).toUpperCase()}
                 </div>

@@ -7,8 +7,8 @@ const PremiumTestimonialsSection = () => {
   const testimonials = [{
     id: 1,
     name: "Sarah & Thomas",
-    location: "Mariage à Provence",
-    image: "/lovable-uploads/fake-testimonial-1.jpg",
+    location: "Mariage en Provence",
+    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=face",
     rating: 5,
     text: "Mariable a transformé notre organisation de mariage. La sélection de prestataires était exceptionnelle et les outils de planification nous ont fait gagner un temps précieux.",
     gradient: "from-premium-sage to-premium-sage-medium"
@@ -16,7 +16,7 @@ const PremiumTestimonialsSection = () => {
     id: 2,
     name: "Julie & Marc",
     location: "Mariage à Paris",
-    image: "/lovable-uploads/fake-testimonial-2.jpg",
+    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face",
     rating: 5,
     text: "La coordination le jour J était parfaite ! Grâce à l'application, toute notre équipe était synchronisée. Nous avons pu profiter pleinement de notre journée.",
     gradient: "from-premium-sage-medium to-premium-sage-light"
@@ -24,7 +24,7 @@ const PremiumTestimonialsSection = () => {
     id: 3,
     name: "Emma & Pierre",
     location: "Mariage à Lyon",
-    image: "/lovable-uploads/fake-testimonial-3.jpg",
+    image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face",
     rating: 5,
     text: "Les prestataires recommandés par Mariable étaient tous formidables. La qualité de service était au rendez-vous, exactement ce que nous cherchions.",
     gradient: "from-premium-sage-light to-premium-sage"

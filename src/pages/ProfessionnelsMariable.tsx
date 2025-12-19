@@ -16,6 +16,7 @@ import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { CartProvider } from '@/components/cart/CartProvider';
 import CartIcon from '@/components/cart/CartIcon';
 import CarnetAdressesModal from '@/components/home/CarnetAdressesModal';
+import { useQuery } from '@tanstack/react-query';
 type PrestataireCategorie = Database['public']['Enums']['prestataire_categorie'];
 const CATEGORY_CONFIG: {
   value: PrestataireCategorie | 'Tous';
@@ -143,37 +144,41 @@ const HeroSection = ({
     </div>
   </section>;
 
-// How It Works Section - Compact version
+// How It Works Section - Compact version with uniform design
 const HowItWorksSection = () => {
   const steps = [{
     step: "1",
     icon: <Plus className="w-5 h-5" />,
-    title: "Ajoutez au panier ou tableau de bord",
-    description: "Si vous ne trouvez pas votre bonheur, cliquez sur 'Sélection personnalisée' et nous recherchons pour vous de nouvelles pépites!"
+    title: "Ajoutez au panier",
+    description: "Pas trouvé ? Cliquez 'Sélection personnalisée'"
   }, {
     step: "2",
     icon: <MessageCircle className="w-5 h-5" />,
     title: "Contactez via la plateforme",
-    description: "Bénéficiez de l'avantage exclusif Mariable (remise ou service offert)"
+    description: "Obtenez l'avantage Mariable (remise ou cadeau)"
   }, {
     step: "3",
     icon: <CalendarCheck className="w-5 h-5" />,
     title: "Réservez & envoyez le devis",
-    description: "Validez de votre côté et envoyez-nous le devis pour obtenir votre avantage"
+    description: "Validez et envoyez pour recevoir l'avantage"
   }];
-  return <section className="py-6 bg-white border-y border-border">
+  return <section className="py-8 bg-white border-y border-border">
       <div className="container max-w-5xl mx-auto px-4">
-        <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8">
-          {steps.map((item, i) => <div key={i} className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-premium-sage text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {steps.map((item, i) => (
+            <div key={i} className="flex items-start gap-4 text-left">
+              <div className="w-10 h-10 bg-premium-sage text-white rounded-full flex items-center justify-center text-base font-bold flex-shrink-0">
                 {item.step}
               </div>
-              <div className="text-left">
-                <p className="font-medium text-foreground text-sm">{item.title}</p>
-                <p className="text-xs text-muted-foreground">{item.description}</p>
+              <div className="flex-1 min-h-[60px]">
+                <p className="font-semibold text-foreground text-sm mb-1">{item.title}</p>
+                <p className="text-xs text-muted-foreground leading-relaxed">{item.description}</p>
               </div>
-              {i < steps.length - 1 && <ArrowRight className="hidden md:block w-4 h-4 text-muted-foreground ml-2" />}
-            </div>)}
+              {i < steps.length - 1 && (
+                <ArrowRight className="hidden md:block w-5 h-5 text-premium-sage/50 flex-shrink-0 mt-2" />
+              )}
+            </div>
+          ))}
         </div>
       </div>
     </section>;
@@ -182,14 +187,21 @@ const HowItWorksSection = () => {
 // Category Pills Filter
 const CategoryPills = ({
   selected,
-  onSelect
+  onSelect,
+  categoryCounts
 }: {
   selected: PrestataireCategorie | 'Tous';
   onSelect: (cat: PrestataireCategorie | 'Tous') => void;
+  categoryCounts: Record<string, number> | undefined;
 }) => {
+  // Filter categories to only show those with vendors (or "Tous")
+  const visibleCategories = CATEGORY_CONFIG.filter(cat => 
+    cat.value === 'Tous' || (categoryCounts && (categoryCounts[cat.value] ?? 0) > 0)
+  );
+
   return <ScrollArea className="w-full whitespace-nowrap">
       <div className="flex gap-2 pb-4">
-        {CATEGORY_CONFIG.map(cat => <button key={cat.value} onClick={() => onSelect(cat.value)} className={`
+        {visibleCategories.map(cat => <button key={cat.value} onClick={() => onSelect(cat.value)} className={`
               inline-flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium
               transition-all duration-200 whitespace-nowrap flex-shrink-0
               ${selected === cat.value ? 'bg-premium-sage text-white shadow-md' : 'bg-white border border-border text-muted-foreground hover:border-premium-sage/50 hover:text-premium-sage'}
@@ -232,6 +244,28 @@ const ProfessionnelsMariable = () => {
     });
     return () => subscription.unsubscribe();
   }, []);
+
+  // Fetch category counts to hide empty categories
+  const { data: categoryCounts } = useQuery({
+    queryKey: ['category-counts'],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('prestataires_rows')
+        .select('categorie')
+        .eq('visible', true)
+        .not('categorie', 'is', null);
+      
+      const counts: Record<string, number> = {};
+      data?.forEach(p => {
+        if (p.categorie) {
+          counts[p.categorie] = (counts[p.categorie] || 0) + 1;
+        }
+      });
+      return counts;
+    },
+    staleTime: 5 * 60 * 1000 // Cache for 5 minutes
+  });
+
   const {
     data: vendorsData,
     isLoading
@@ -306,7 +340,7 @@ const ProfessionnelsMariable = () => {
 
             {/* Category Pills */}
             <div className="mb-8">
-              <CategoryPills selected={category} onSelect={setCategory} />
+              <CategoryPills selected={category} onSelect={setCategory} categoryCounts={categoryCounts} />
             </div>
 
             {/* Region Filter (optional - compact) */}
