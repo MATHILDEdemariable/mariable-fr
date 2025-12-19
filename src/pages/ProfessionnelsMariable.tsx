@@ -102,9 +102,7 @@ const HeroSection = ({
       y: 0
     }} transition={{
       duration: 0.6
-    }} className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold mb-4 leading-tight">
-        Trouvez vos prestataires
-      </motion.h1>
+    }} className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold mb-4 leading-tight">Organisez facilement votre mariage</motion.h1>
       
       <motion.p initial={{
       opacity: 0,
@@ -115,9 +113,7 @@ const HeroSection = ({
     }} transition={{
       duration: 0.6,
       delay: 0.1
-    }} className="text-lg md:text-xl max-w-2xl mx-auto mb-8 text-white/90">
-        Parmi notre guide de professionnels     
-      </motion.p>
+    }} className="text-lg md:text-xl max-w-2xl mx-auto mb-8 text-white/90">Trouvez des prestataires parmi notre guide & utilisez les outils en ligne pour coordonner le jour-J</motion.p>
 
       <motion.div initial={{
       opacity: 0,
@@ -165,8 +161,7 @@ const HowItWorksSection = () => {
   return <section className="py-8 bg-white border-y border-border">
       <div className="container max-w-5xl mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {steps.map((item, i) => (
-            <div key={i} className="flex items-start gap-4 text-left">
+          {steps.map((item, i) => <div key={i} className="flex items-start gap-4 text-left">
               <div className="w-10 h-10 bg-premium-sage text-white rounded-full flex items-center justify-center text-base font-bold flex-shrink-0">
                 {item.step}
               </div>
@@ -174,11 +169,8 @@ const HowItWorksSection = () => {
                 <p className="font-semibold text-foreground text-sm mb-1">{item.title}</p>
                 <p className="text-xs text-muted-foreground leading-relaxed">{item.description}</p>
               </div>
-              {i < steps.length - 1 && (
-                <ArrowRight className="hidden md:block w-5 h-5 text-premium-sage/50 flex-shrink-0 mt-2" />
-              )}
-            </div>
-          ))}
+              {i < steps.length - 1 && <ArrowRight className="hidden md:block w-5 h-5 text-premium-sage/50 flex-shrink-0 mt-2" />}
+            </div>)}
         </div>
       </div>
     </section>;
@@ -195,10 +187,7 @@ const CategoryPills = ({
   categoryCounts: Record<string, number> | undefined;
 }) => {
   // Filter categories to only show those with vendors (or "Tous")
-  const visibleCategories = CATEGORY_CONFIG.filter(cat => 
-    cat.value === 'Tous' || (categoryCounts && (categoryCounts[cat.value] ?? 0) > 0)
-  );
-
+  const visibleCategories = CATEGORY_CONFIG.filter(cat => cat.value === 'Tous' || categoryCounts && (categoryCounts[cat.value] ?? 0) > 0);
   return <ScrollArea className="w-full whitespace-nowrap">
       <div className="flex gap-2 pb-4">
         {visibleCategories.map(cat => <button key={cat.value} onClick={() => onSelect(cat.value)} className={`
@@ -246,15 +235,14 @@ const ProfessionnelsMariable = () => {
   }, []);
 
   // Fetch category counts to hide empty categories
-  const { data: categoryCounts } = useQuery({
+  const {
+    data: categoryCounts
+  } = useQuery({
     queryKey: ['category-counts'],
     queryFn: async () => {
-      const { data } = await supabase
-        .from('prestataires_rows')
-        .select('categorie')
-        .eq('visible', true)
-        .not('categorie', 'is', null);
-      
+      const {
+        data
+      } = await supabase.from('prestataires_rows').select('categorie').eq('visible', true).not('categorie', 'is', null);
       const counts: Record<string, number> = {};
       data?.forEach(p => {
         if (p.categorie) {
@@ -265,7 +253,6 @@ const ProfessionnelsMariable = () => {
     },
     staleTime: 5 * 60 * 1000 // Cache for 5 minutes
   });
-
   const {
     data: vendorsData,
     isLoading
