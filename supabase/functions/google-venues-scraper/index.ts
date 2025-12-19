@@ -334,7 +334,7 @@ async function processGoogleMapsUrl(urlRecord: any): Promise<boolean> {
       slug: slug,
       description: placeDetails.formatted_address || '', // Store full address in description
       ville: city,
-      region: region,
+      regions: [region],
       categorie: urlRecord.categorie || 'Lieu de réception',
       google_rating: placeDetails.rating || null,
       google_reviews_count: placeDetails.user_ratings_total || null,
