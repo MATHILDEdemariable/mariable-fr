@@ -149,7 +149,7 @@ const HowItWorksSection = () => {
     step: "1",
     icon: <Plus className="w-5 h-5" />,
     title: "Ajoutez au panier ou tableau de bord",
-    description: "Si tu ne trouves pas, clique sur 'Sélection personnalisée'"
+    description: "Si vous ne trouvez pas votre bonheur, cliquez sur 'Sélection personnalisée' et nous recherchons pour vous de nouvelles pépites!"
   }, {
     step: "2",
     icon: <MessageCircle className="w-5 h-5" />,
