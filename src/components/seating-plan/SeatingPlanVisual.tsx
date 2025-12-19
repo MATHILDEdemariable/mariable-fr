@@ -37,6 +37,11 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
     return guests.filter(g => g.table_id === tableId).sort((a, b) => (a.seat_number ?? 0) - (b.seat_number ?? 0));
   };
 
+  // Extract first name from full name
+  const getFirstName = (fullName: string) => {
+    return fullName.split(' ')[0];
+  };
+
   // Handle guest click for seat swapping
   const handleGuestClick = async (guestId: string, tableId: string) => {
     if (selectedGuest === null) {
@@ -275,18 +280,21 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
                     handleGuestClick(guest.id, table.id);
                   }}
                   className={cn(
-                    "absolute w-7 h-7 rounded-full border-2 shadow-sm flex items-center justify-center text-[9px] font-medium cursor-pointer transition-all duration-200 hover:scale-110",
+                    "absolute rounded-full border-2 shadow-sm flex items-center justify-center font-medium cursor-pointer transition-all duration-200 hover:scale-110",
                     isSelected 
-                      ? "bg-premium-sage text-white border-white ring-2 ring-premium-sage ring-offset-1 scale-110" 
-                      : "bg-premium-sage-light text-premium-sage-dark border-white hover:bg-premium-sage hover:text-white"
+                      ? "bg-premium-sage text-white border-white ring-2 ring-premium-sage ring-offset-1 scale-110 z-20 px-2 py-1 min-w-max text-[10px]" 
+                      : "bg-premium-sage-light text-premium-sage-dark border-white hover:bg-premium-sage hover:text-white w-7 h-7 text-[9px]"
                   )}
                   style={{
-                    left: size.width / 2 + guestX - 14,
-                    top: size.height / 2 + guestY - 14
+                    left: isSelected 
+                      ? size.width / 2 + guestX 
+                      : size.width / 2 + guestX - 14,
+                    top: size.height / 2 + guestY - 14,
+                    transform: isSelected ? `translateX(-50%)` : undefined
                   }}
                   title={`${guest.guest_name}${guest.seat_number ? ` (Place ${guest.seat_number})` : ''} - Cliquez pour échanger`}
                 >
-                  {guest.guest_name.charAt(0).toUpperCase()}
+                  {isSelected ? getFirstName(guest.guest_name) : guest.guest_name.charAt(0).toUpperCase()}
                 </div>
               );
             })}

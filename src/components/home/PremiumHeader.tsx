@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/Logo';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { Menu } from 'lucide-react';
+import { Menu, ChevronDown } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { supabase } from '@/integrations/supabase/client';
 const PremiumHeader = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -48,9 +49,23 @@ const PremiumHeader = () => {
 
           {/* Desktop CTAs */}
           <div className="hidden md:flex items-center space-x-4">
-            {isLoggedIn ? <Button onClick={() => navigate('/professionnelsmariable')} className="btn-primary text-white ripple">
-                Mon compte
-              </Button> : <>
+            {isLoggedIn ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button className="btn-primary text-white ripple">
+                    Mon compte <ChevronDown className="ml-1 w-4 h-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="bg-white border border-border shadow-lg z-50">
+                  <DropdownMenuItem onClick={() => navigate('/dashboard')} className="cursor-pointer">
+                    Mes outils
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/professionnelsmariable')} className="cursor-pointer">
+                    Les prestataires
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : <>
                 <Button onClick={handleGetStarted} className="btn-primary text-white ripple">
                   Futurs mariés
                 </Button>
@@ -69,13 +84,23 @@ const PremiumHeader = () => {
             </SheetTrigger>
             <SheetContent side="right" className="w-[300px] bg-white pt-32">
               <div className="flex flex-col space-y-6">
-                <div className="flex flex-col space-y-3">
-                  {isLoggedIn ? <Button onClick={() => {
-                  navigate('/professionnelsmariable');
-                  setMobileOpen(false);
-                }} className="btn-primary text-white ripple w-full">
-                      Mon compte
-                    </Button> : <>
+              <div className="flex flex-col space-y-3">
+                  {isLoggedIn ? (
+                    <>
+                      <Button onClick={() => {
+                        navigate('/dashboard');
+                        setMobileOpen(false);
+                      }} className="btn-primary text-white ripple w-full">
+                        Mes outils
+                      </Button>
+                      <Button variant="outline" onClick={() => {
+                        navigate('/professionnelsmariable');
+                        setMobileOpen(false);
+                      }} className="btn-secondary border-premium-sage/30 text-premium-sage hover:bg-premium-sage/5 w-full ripple">
+                        Les prestataires
+                      </Button>
+                    </>
+                  ) : <>
                       <Button onClick={() => {
                     handleGetStarted();
                     setMobileOpen(false);
