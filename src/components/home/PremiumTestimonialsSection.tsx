@@ -45,7 +45,7 @@ const PremiumTestimonialsSection = () => {
         </div>
 
         <div className="grid md:grid-cols-3 gap-8">
-          {testimonials.map((testimonial, index) => <Card key={testimonial.id} className="group inspiration-card bg-white shadow-xl border-0 relative overflow-hidden section-reveal stagger-item">
+          {testimonials.map((testimonial, index) => <Card key={testimonial.id} className="group bg-white shadow-xl border-0 relative overflow-hidden">
               {/* Gradient accent */}
               <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${testimonial.gradient}`}></div>
               

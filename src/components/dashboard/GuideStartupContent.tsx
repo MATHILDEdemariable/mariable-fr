@@ -25,7 +25,7 @@ const GuideStartupContent = () => {
       title: "Recommandations de professionnels",
       description: "Recevez une sélection de lieux et/ou prestataires de votre région",
       badge: "CONCIERGERIE",
-      path: '/selection'
+      path: '/professionnelsmariable'
     },
     {
       id: 2,
