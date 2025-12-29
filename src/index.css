@@ -158,6 +158,238 @@ select:focus {
   100% { left: 100%; }
 }
 
+/* Gaming Dashboard Animations */
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px hsla(var(--gaming-primary), 0.3); }
+  50% { box-shadow: 0 0 40px hsla(var(--gaming-primary), 0.5); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes countUp {
+  0% { opacity: 0; transform: scale(0.5); }
+  50% { transform: scale(1.1); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes progressFill {
+  from { width: 0%; }
+}
+
+@keyframes badge-unlock {
+  0% { transform: scale(0) rotate(-180deg); opacity: 0; }
+  50% { transform: scale(1.2) rotate(10deg); }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+@keyframes cascade-in {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Gaming CSS Variables */
+:root {
+  --gaming-primary: 160 40% 45%;
+  --gaming-secondary: 280 60% 55%;
+  --gaming-accent: 45 90% 55%;
+  --gaming-success: 145 60% 45%;
+  --gaming-glow: 160 50% 50%;
+}
+
+/* Glassmorphism */
+.glass-card {
+  background: hsla(var(--background), 0.7);
+  backdrop-filter: blur(16px);
+  border: 1px solid hsla(var(--border), 0.3);
+  box-shadow: 0 8px 32px hsla(var(--gaming-primary), 0.1);
+}
+
+.glass-card-dark {
+  background: linear-gradient(135deg, hsla(var(--gaming-primary), 0.15), hsla(var(--gaming-secondary), 0.08));
+  backdrop-filter: blur(20px);
+  border: 1px solid hsla(var(--gaming-primary), 0.2);
+}
+
+/* Gaming Cards */
+.gaming-card {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.gaming-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, hsla(var(--gaming-primary), 0.1), transparent);
+  transition: left 0.5s ease;
+}
+
+.gaming-card:hover::before {
+  left: 100%;
+}
+
+.gaming-card:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 20px 40px hsla(var(--gaming-primary), 0.2);
+}
+
+/* Hero Stats Cards */
+.stat-card {
+  background: linear-gradient(135deg, hsla(var(--gaming-primary), 0.1), hsla(var(--gaming-secondary), 0.05));
+  border: 1px solid hsla(var(--gaming-primary), 0.2);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+  border-color: hsla(var(--gaming-primary), 0.4);
+  box-shadow: 0 0 30px hsla(var(--gaming-primary), 0.15);
+}
+
+/* Shimmer Text Effect */
+.shimmer-text {
+  background: linear-gradient(
+    90deg,
+    hsl(var(--foreground)) 0%,
+    hsla(var(--gaming-accent), 1) 50%,
+    hsl(var(--foreground)) 100%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer-text 3s ease-in-out infinite;
+}
+
+@keyframes shimmer-text {
+  0%, 100% { background-position: 100% 0; }
+  50% { background-position: 0% 0; }
+}
+
+/* Progress Bar Gaming */
+.progress-gaming {
+  height: 8px;
+  border-radius: 4px;
+  background: hsla(var(--muted), 0.5);
+  overflow: hidden;
+}
+
+.progress-gaming-fill {
+  height: 100%;
+  border-radius: 4px;
+  background: linear-gradient(90deg, hsl(var(--gaming-primary)), hsl(var(--gaming-secondary)));
+  animation: progressFill 1s ease-out;
+  transition: width 0.5s ease;
+}
+
+/* Badge Styles */
+.achievement-badge {
+  transition: all 0.3s ease;
+}
+
+.achievement-badge.unlocked {
+  animation: badge-unlock 0.6s ease-out;
+}
+
+.achievement-badge.locked {
+  filter: grayscale(100%);
+  opacity: 0.4;
+}
+
+.achievement-badge:hover:not(.locked) {
+  transform: scale(1.1) rotate(5deg);
+}
+
+/* Quest Cards */
+.quest-card {
+  position: relative;
+  background: linear-gradient(135deg, hsla(var(--card), 1), hsla(var(--gaming-primary), 0.05));
+  border: 2px solid transparent;
+  border-radius: 1rem;
+  padding: 1.25rem;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.quest-card:hover {
+  border-color: hsla(var(--gaming-primary), 0.5);
+  transform: translateX(4px);
+  box-shadow: 0 10px 30px hsla(var(--gaming-primary), 0.15);
+}
+
+.quest-card.urgent {
+  border-left: 4px solid hsl(0 70% 50%);
+}
+
+.quest-card.normal {
+  border-left: 4px solid hsl(var(--gaming-primary));
+}
+
+/* XP Badge */
+.xp-badge {
+  background: linear-gradient(135deg, hsla(var(--gaming-accent), 0.2), hsla(var(--gaming-accent), 0.1));
+  color: hsl(var(--gaming-accent));
+  font-weight: 600;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+}
+
+/* Cascade Animation for children */
+.cascade-children > * {
+  animation: cascade-in 0.5s ease-out backwards;
+}
+
+.cascade-children > *:nth-child(1) { animation-delay: 0.1s; }
+.cascade-children > *:nth-child(2) { animation-delay: 0.15s; }
+.cascade-children > *:nth-child(3) { animation-delay: 0.2s; }
+.cascade-children > *:nth-child(4) { animation-delay: 0.25s; }
+.cascade-children > *:nth-child(5) { animation-delay: 0.3s; }
+.cascade-children > *:nth-child(6) { animation-delay: 0.35s; }
+
+/* Level Badge */
+.level-badge {
+  background: linear-gradient(135deg, hsl(var(--gaming-primary)), hsl(var(--gaming-secondary)));
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  box-shadow: 0 4px 15px hsla(var(--gaming-primary), 0.3);
+}
+
+/* Tool Card */
+.tool-card {
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  border-radius: 1rem;
+  padding: 1.25rem;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  cursor: pointer;
+}
+
+.tool-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 40px hsla(var(--gaming-primary), 0.15);
+  border-color: hsla(var(--gaming-primary), 0.3);
+}
+
+.tool-card .tool-icon {
+  transition: transform 0.3s ease;
+}
+
+.tool-card:hover .tool-icon {
+  transform: scale(1.15) rotate(5deg);
+}
+
 
 /* Premium button effects */
 .btn-primary {
