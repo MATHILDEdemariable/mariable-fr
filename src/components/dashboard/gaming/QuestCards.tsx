@@ -38,7 +38,7 @@ const defaultQuests: Quest[] = [
     description: 'Explorer les domaines',
     xp: 60,
     priority: 'urgent',
-    path: '/dashboard/professionnelsmariable',
+    path: '/professionnelsmariable',
     icon: '🏰'
   },
   {
@@ -73,7 +73,7 @@ const QuestCards: React.FC<QuestCardsProps> = ({ tasks = [] }) => {
         description: task.category,
         xp: task.priority === 'high' ? 50 : task.priority === 'medium' ? 35 : 20,
         priority: (task.priority === 'high' ? 'urgent' : 'normal') as 'urgent' | 'normal',
-        path: '/dashboard/checklist',
+        path: '/dashboard/checklist-mariage',
         icon: task.completed ? '✅' : ['🎯', '📋', '💡', '🔔'][index % 4],
         completed: task.completed
       }))
@@ -83,7 +83,7 @@ const QuestCards: React.FC<QuestCardsProps> = ({ tasks = [] }) => {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Zap className="w-5 h-5 text-amber-400" />
+          <Zap className="w-5 h-5 text-[#d4af37]" />
           <h2 className="text-xl font-serif text-foreground">Vos prochaines quêtes</h2>
         </div>
         <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-full">
@@ -91,7 +91,7 @@ const QuestCards: React.FC<QuestCardsProps> = ({ tasks = [] }) => {
         </span>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 cascade-children">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {quests.map((quest) => (
           <div
             key={quest.id}
@@ -104,12 +104,12 @@ const QuestCards: React.FC<QuestCardsProps> = ({ tasks = [] }) => {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
                   {quest.priority === 'urgent' && !quest.completed && (
-                    <span className="text-xs font-medium text-red-500 bg-red-500/10 px-2 py-0.5 rounded-full flex items-center gap-1">
-                      <Clock className="w-3 h-3" /> Urgent
+                    <span className="text-xs font-medium text-[#d4af37] bg-[#d4af37]/10 px-2 py-0.5 rounded-full flex items-center gap-1">
+                      <Clock className="w-3 h-3" /> Priorité
                     </span>
                   )}
                   {quest.completed && (
-                    <span className="text-xs font-medium text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-full flex items-center gap-1">
+                    <span className="text-xs font-medium text-[#7F9474] bg-[#7F9474]/10 px-2 py-0.5 rounded-full flex items-center gap-1">
                       <CheckCircle2 className="w-3 h-3" /> Fait
                     </span>
                   )}

@@ -37,6 +37,7 @@ const ProjectSummary = () => {
   const [showPrixModal, setShowPrixModal] = useState(false);
   const [totalTasksCount, setTotalTasksCount] = useState(0);
   const [completedTasksCount, setCompletedTasksCount] = useState(0);
+  const [hasSetBudget, setHasSetBudget] = useState(false);
 
   // Initialize local state from profile
   useEffect(() => {
@@ -50,9 +51,9 @@ const ProjectSummary = () => {
     }
   }, [profile]);
 
-  // Load tasks and count
+  // Load tasks and count + check budget
   useEffect(() => {
-    const loadTasks = async () => {
+    const loadData = async () => {
       try {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return;
@@ -86,13 +87,21 @@ const ProjectSummary = () => {
 
         setTotalTasksCount(total || 0);
         setCompletedTasksCount(completed || 0);
+
+        // Check if user has set budget (check budgets_detail table)
+        const { count: budgetCount } = await supabase
+          .from('budgets_detail')
+          .select('*', { count: 'exact', head: true })
+          .eq('user_id', user.id);
+
+        setHasSetBudget((budgetCount || 0) > 0);
       } catch (error) {
         console.error('Error:', error);
       } finally {
         setTasksLoading(false);
       }
     };
-    loadTasks();
+    loadData();
   }, []);
 
   // Auto-save wedding date
@@ -127,7 +136,7 @@ const ProjectSummary = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center py-12">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#7F9474]"></div>
       </div>
     );
   }
@@ -162,7 +171,7 @@ const ProjectSummary = () => {
       <AchievementBadges
         completedTasks={completedTasksCount}
         totalTasks={totalTasksCount}
-        hasSetBudget={false}
+        hasSetBudget={hasSetBudget}
         hasSetDate={!!localWeddingDate}
         guestCount={parseInt(localGuestCount) || 0}
       />

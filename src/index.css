@@ -190,27 +190,26 @@ select:focus {
   100% { opacity: 1; transform: translateY(0); }
 }
 
-/* Gaming CSS Variables */
+/* Gaming CSS Variables - Mariable Theme */
 :root {
-  --gaming-primary: 160 40% 45%;
-  --gaming-secondary: 280 60% 55%;
-  --gaming-accent: 45 90% 55%;
-  --gaming-success: 145 60% 45%;
-  --gaming-glow: 160 50% 50%;
+  --gaming-primary: 100 12% 52%;    /* Vert sauge #7F9474 */
+  --gaming-secondary: 42 40% 52%;   /* Or doux */
+  --gaming-accent: 42 56% 52%;      /* Doré wedding-gold */
+  --gaming-success: 100 20% 45%;    /* Vert sauge foncé */
+  --gaming-glow: 100 15% 55%;       /* Sauge clair */
 }
 
 /* Glassmorphism */
 .glass-card {
-  background: hsla(var(--background), 0.7);
-  backdrop-filter: blur(16px);
-  border: 1px solid hsla(var(--border), 0.3);
-  box-shadow: 0 8px 32px hsla(var(--gaming-primary), 0.1);
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  box-shadow: 0 4px 20px hsla(var(--gaming-primary), 0.08);
 }
 
 .glass-card-dark {
-  background: linear-gradient(135deg, hsla(var(--gaming-primary), 0.15), hsla(var(--gaming-secondary), 0.08));
-  backdrop-filter: blur(20px);
-  border: 1px solid hsla(var(--gaming-primary), 0.2);
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  box-shadow: 0 4px 24px hsla(var(--gaming-primary), 0.1);
 }
 
 /* Gaming Cards */
@@ -242,50 +241,35 @@ select:focus {
 
 /* Hero Stats Cards */
 .stat-card {
-  background: linear-gradient(135deg, hsla(var(--gaming-primary), 0.1), hsla(var(--gaming-secondary), 0.05));
-  border: 1px solid hsla(var(--gaming-primary), 0.2);
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
   border-radius: 1rem;
   padding: 1.5rem;
   transition: all 0.3s ease;
 }
 
 .stat-card:hover {
-  border-color: hsla(var(--gaming-primary), 0.4);
-  box-shadow: 0 0 30px hsla(var(--gaming-primary), 0.15);
+  border-color: hsla(var(--gaming-primary), 0.5);
+  box-shadow: 0 8px 24px hsla(var(--gaming-primary), 0.12);
 }
 
-/* Shimmer Text Effect */
+/* Shimmer Text Effect - Subtle for Mariable */
 .shimmer-text {
-  background: linear-gradient(
-    90deg,
-    hsl(var(--foreground)) 0%,
-    hsla(var(--gaming-accent), 1) 50%,
-    hsl(var(--foreground)) 100%
-  );
-  background-size: 200% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: shimmer-text 3s ease-in-out infinite;
-}
-
-@keyframes shimmer-text {
-  0%, 100% { background-position: 100% 0; }
-  50% { background-position: 0% 0; }
+  color: hsl(var(--foreground));
 }
 
 /* Progress Bar Gaming */
 .progress-gaming {
-  height: 8px;
-  border-radius: 4px;
-  background: hsla(var(--muted), 0.5);
+  height: 6px;
+  border-radius: 3px;
+  background: hsl(var(--muted));
   overflow: hidden;
 }
 
 .progress-gaming-fill {
   height: 100%;
-  border-radius: 4px;
-  background: linear-gradient(90deg, hsl(var(--gaming-primary)), hsl(var(--gaming-secondary)));
+  border-radius: 3px;
+  background: hsl(var(--gaming-primary));
   animation: progressFill 1s ease-out;
   transition: width 0.5s ease;
 }
@@ -311,8 +295,8 @@ select:focus {
 /* Quest Cards */
 .quest-card {
   position: relative;
-  background: linear-gradient(135deg, hsla(var(--card), 1), hsla(var(--gaming-primary), 0.05));
-  border: 2px solid transparent;
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
   border-radius: 1rem;
   padding: 1.25rem;
   transition: all 0.3s ease;
@@ -320,13 +304,13 @@ select:focus {
 }
 
 .quest-card:hover {
-  border-color: hsla(var(--gaming-primary), 0.5);
+  border-color: hsla(var(--gaming-primary), 0.6);
   transform: translateX(4px);
-  box-shadow: 0 10px 30px hsla(var(--gaming-primary), 0.15);
+  box-shadow: 0 8px 24px hsla(var(--gaming-primary), 0.1);
 }
 
 .quest-card.urgent {
-  border-left: 4px solid hsl(0 70% 50%);
+  border-left: 4px solid hsl(var(--gaming-accent));
 }
 
 .quest-card.normal {
@@ -335,8 +319,8 @@ select:focus {
 
 /* XP Badge */
 .xp-badge {
-  background: linear-gradient(135deg, hsla(var(--gaming-accent), 0.2), hsla(var(--gaming-accent), 0.1));
-  color: hsl(var(--gaming-accent));
+  background: hsla(var(--gaming-primary), 0.15);
+  color: hsl(var(--gaming-primary));
   font-weight: 600;
   font-size: 0.75rem;
   padding: 0.25rem 0.5rem;
@@ -357,13 +341,13 @@ select:focus {
 
 /* Level Badge */
 .level-badge {
-  background: linear-gradient(135deg, hsl(var(--gaming-primary)), hsl(var(--gaming-secondary)));
+  background: hsl(var(--gaming-primary));
   color: white;
   padding: 0.5rem 1rem;
   border-radius: 9999px;
   font-weight: 600;
   font-size: 0.875rem;
-  box-shadow: 0 4px 15px hsla(var(--gaming-primary), 0.3);
+  box-shadow: 0 4px 12px hsla(var(--gaming-primary), 0.25);
 }
 
 /* Tool Card */
@@ -377,9 +361,9 @@ select:focus {
 }
 
 .tool-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 20px 40px hsla(var(--gaming-primary), 0.15);
-  border-color: hsla(var(--gaming-primary), 0.3);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px hsla(var(--gaming-primary), 0.12);
+  border-color: hsl(var(--gaming-primary));
 }
 
 .tool-card .tool-icon {
@@ -387,7 +371,7 @@ select:focus {
 }
 
 .tool-card:hover .tool-icon {
-  transform: scale(1.15) rotate(5deg);
+  transform: scale(1.1);
 }
 
 

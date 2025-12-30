@@ -27,8 +27,8 @@ const QuickActions: React.FC<QuickActionsProps> = ({
           onClick={() => setShowGuideModal(true)}
           className="flex items-center gap-3 w-full text-left hover:bg-muted/50 transition-colors rounded-xl p-3 -m-1"
         >
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500/20 to-green-500/10 flex items-center justify-center">
-            <BookOpen className="w-6 h-6 text-emerald-600" />
+          <div className="w-12 h-12 rounded-xl bg-[#7F9474]/10 flex items-center justify-center">
+            <BookOpen className="w-6 h-6 text-[#7F9474]" />
           </div>
           <div className="flex-1">
             <h3 className="font-medium text-foreground flex items-center gap-2">
@@ -47,8 +47,8 @@ const QuickActions: React.FC<QuickActionsProps> = ({
           onClick={() => setShowVideoModal(true)}
           className="flex items-center gap-3 w-full text-left hover:bg-muted/50 transition-colors rounded-xl p-3 -m-1"
         >
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-500/20 to-purple-500/10 flex items-center justify-center">
-            <Play className="w-6 h-6 text-violet-600" />
+          <div className="w-12 h-12 rounded-xl bg-[#7F9474]/10 flex items-center justify-center">
+            <Play className="w-6 h-6 text-[#7F9474]" />
           </div>
           <div className="flex-1">
             <h3 className="font-medium text-foreground flex items-center gap-2">
@@ -63,7 +63,7 @@ const QuickActions: React.FC<QuickActionsProps> = ({
         <div className="border-t border-border" />
 
         {/* Instagram Banner */}
-        <div className="bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-orange-500/10 rounded-xl p-4 flex items-center justify-between gap-4">
+        <div className="bg-gradient-to-r from-[#7F9474]/10 via-[#7F9474]/5 to-[#d4af37]/10 rounded-xl p-4 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="bg-gradient-to-br from-purple-600 via-pink-600 to-orange-500 p-2 rounded-lg">
               <svg className="h-5 w-5 text-white" fill="currentColor" viewBox="0 0 24 24">
@@ -83,7 +83,7 @@ const QuickActions: React.FC<QuickActionsProps> = ({
             variant="outline"
             size="sm"
             onClick={() => window.open('https://www.instagram.com/mariable.fr/', '_blank', 'noopener,noreferrer')}
-            className="shrink-0"
+            className="shrink-0 border-[#7F9474] text-[#7F9474] hover:bg-[#7F9474]/10"
           >
             Suivre
           </Button>
