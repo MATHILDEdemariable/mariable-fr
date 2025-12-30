@@ -1,5 +1,5 @@
 import React from 'react';
-import { Calendar, Users, CheckCircle2, Trophy, Sparkles } from 'lucide-react';
+import { Calendar, Users, CheckCircle2, Trophy } from 'lucide-react';
 import { format, differenceInDays } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
@@ -29,11 +29,11 @@ const HeroStats: React.FC<HeroStatsProps> = ({
 
   // Calculate organization level based on completion
   const getLevel = () => {
-    if (completionPercentage >= 80) return { name: 'Maître Organisateur', icon: '👑', color: 'from-amber-400 to-orange-500' };
-    if (completionPercentage >= 60) return { name: 'Expert', icon: '⭐', color: 'from-purple-400 to-pink-500' };
-    if (completionPercentage >= 40) return { name: 'Avancé', icon: '🚀', color: 'from-blue-400 to-cyan-500' };
-    if (completionPercentage >= 20) return { name: 'Apprenti', icon: '📚', color: 'from-green-400 to-emerald-500' };
-    return { name: 'Débutant', icon: '🌱', color: 'from-gray-400 to-slate-500' };
+    if (completionPercentage >= 80) return { name: 'Maître Organisateur', icon: '👑' };
+    if (completionPercentage >= 60) return { name: 'Expert', icon: '⭐' };
+    if (completionPercentage >= 40) return { name: 'Avancé', icon: '🚀' };
+    if (completionPercentage >= 20) return { name: 'Apprenti', icon: '📚' };
+    return { name: 'Débutant', icon: '🌱' };
   };
 
   const level = getLevel();
@@ -44,28 +44,25 @@ const HeroStats: React.FC<HeroStatsProps> = ({
       {/* Header with greeting and level */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div className="space-y-2">
-          <div className="flex items-center gap-2">
-            <Sparkles className="w-6 h-6 text-amber-400" />
-            <h1 className="text-2xl md:text-3xl font-serif shimmer-text">{greeting}</h1>
-          </div>
+          <h1 className="text-2xl md:text-3xl font-serif text-foreground">{greeting}</h1>
           <p className="text-muted-foreground">
             {format(today, "EEEE d MMMM yyyy", { locale: fr })}
           </p>
         </div>
         
-        <div className={`level-badge bg-gradient-to-r ${level.color} flex items-center gap-2`}>
+        <div className="level-badge flex items-center gap-2">
           <span>{level.icon}</span>
           <span>{level.name}</span>
         </div>
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 cascade-children">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Countdown Card */}
         <div className="stat-card group">
           <div className="flex items-start justify-between mb-3">
-            <div className="p-2 rounded-lg bg-gradient-to-br from-rose-500/20 to-pink-500/10">
-              <Calendar className="w-5 h-5 text-rose-500" />
+            <div className="p-2 rounded-lg bg-[#7F9474]/10">
+              <Calendar className="w-5 h-5 text-[#7F9474]" />
             </div>
             <Popover>
               <PopoverTrigger asChild>
@@ -88,14 +85,14 @@ const HeroStats: React.FC<HeroStatsProps> = ({
           <div className="space-y-1">
             {daysUntilWedding !== null && daysUntilWedding > 0 ? (
               <>
-                <p className="text-4xl font-bold text-foreground" style={{ animation: 'countUp 0.8s ease-out' }}>
+                <p className="text-4xl font-bold text-foreground">
                   J-{daysUntilWedding}
                 </p>
                 <p className="text-sm text-muted-foreground">jours restants</p>
               </>
             ) : daysUntilWedding === 0 ? (
               <>
-                <p className="text-2xl font-bold text-rose-500">🎊 C'est le jour J !</p>
+                <p className="text-2xl font-bold text-[#7F9474]">🎊 C'est le jour J !</p>
                 <p className="text-sm text-muted-foreground">Félicitations !</p>
               </>
             ) : weddingDate ? (
@@ -124,8 +121,8 @@ const HeroStats: React.FC<HeroStatsProps> = ({
         {/* Guests Card */}
         <div className="stat-card group">
           <div className="flex items-start justify-between mb-3">
-            <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500/20 to-cyan-500/10">
-              <Users className="w-5 h-5 text-blue-500" />
+            <div className="p-2 rounded-lg bg-[#7F9474]/10">
+              <Users className="w-5 h-5 text-[#7F9474]" />
             </div>
           </div>
           
@@ -144,7 +141,7 @@ const HeroStats: React.FC<HeroStatsProps> = ({
           </div>
           
           <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
-            <span className="inline-block w-2 h-2 rounded-full bg-blue-500"></span>
+            <span className="inline-block w-2 h-2 rounded-full bg-[#7F9474]"></span>
             Modifiez le nombre ci-dessus
           </div>
         </div>
@@ -152,14 +149,14 @@ const HeroStats: React.FC<HeroStatsProps> = ({
         {/* Progress Card */}
         <div className="stat-card group">
           <div className="flex items-start justify-between mb-3">
-            <div className="p-2 rounded-lg bg-gradient-to-br from-emerald-500/20 to-green-500/10">
-              <CheckCircle2 className="w-5 h-5 text-emerald-500" />
+            <div className="p-2 rounded-lg bg-[#7F9474]/10">
+              <CheckCircle2 className="w-5 h-5 text-[#7F9474]" />
             </div>
-            <Trophy className="w-4 h-4 text-amber-400" />
+            <Trophy className="w-4 h-4 text-[#d4af37]" />
           </div>
           
           <div className="space-y-1">
-            <p className="text-4xl font-bold text-foreground" style={{ animation: 'countUp 0.8s ease-out 0.2s backwards' }}>
+            <p className="text-4xl font-bold text-foreground">
               {completionPercentage}%
             </p>
             <p className="text-sm text-muted-foreground">organisation complétée</p>

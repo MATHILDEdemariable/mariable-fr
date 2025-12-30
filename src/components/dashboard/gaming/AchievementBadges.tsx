@@ -87,7 +87,7 @@ const AchievementBadges: React.FC<AchievementBadgesProps> = ({
     <div className="glass-card rounded-2xl p-6 space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Trophy className="w-5 h-5 text-amber-400" />
+          <Trophy className="w-5 h-5 text-[#d4af37]" />
           <h2 className="text-xl font-serif text-foreground">Vos accomplissements</h2>
         </div>
         <span className="text-sm text-muted-foreground">
@@ -102,9 +102,9 @@ const AchievementBadges: React.FC<AchievementBadgesProps> = ({
             <Tooltip key={badge.id}>
               <TooltipTrigger asChild>
                 <div
-                  className={`achievement-badge relative w-14 h-14 rounded-xl flex items-center justify-center text-2xl cursor-pointer
+                  className={`achievement-badge relative w-14 h-14 rounded-xl flex items-center justify-center text-2xl cursor-pointer transition-all
                     ${badge.unlocked 
-                      ? 'unlocked bg-gradient-to-br from-amber-100 to-orange-100 dark:from-amber-900/30 dark:to-orange-900/30 border-2 border-amber-300/50' 
+                      ? 'unlocked bg-gradient-to-br from-[#d4af37]/20 to-[#d4af37]/10 border-2 border-[#d4af37]/40 shadow-sm' 
                       : 'locked bg-muted border-2 border-muted'
                     }`}
                 >
@@ -120,7 +120,7 @@ const AchievementBadges: React.FC<AchievementBadgesProps> = ({
                   <p className="font-semibold">{badge.name}</p>
                   <p className="text-xs text-muted-foreground">{badge.description}</p>
                   {!badge.unlocked && badge.progress !== undefined && badge.target && (
-                    <p className="text-xs text-amber-500 mt-1">
+                    <p className="text-xs text-[#d4af37] mt-1">
                       {badge.progress}/{badge.target}
                     </p>
                   )}
