@@ -128,10 +128,22 @@ const ProjectSummary = () => {
     return () => clearTimeout(timer);
   }, [localGuestCount, updateProfile]);
 
-  // Calculate completion percentage
-  const completionPercentage = totalTasksCount > 0 
-    ? Math.round((completedTasksCount / totalTasksCount) * 100) 
-    : 0;
+  // Calculate completion percentage based on multiple factors
+  const calculateCompletionPercentage = () => {
+    // Base: tasks represent 60% of total progress
+    const tasksProgress = totalTasksCount > 0 
+      ? Math.round((completedTasksCount / totalTasksCount) * 60) 
+      : 0;
+    
+    // Bonus points for key milestones (40% total)
+    const hasDateBonus = localWeddingDate ? 15 : 0;
+    const hasGuestCountBonus = parseInt(localGuestCount) > 0 ? 15 : 0;
+    const hasBudgetBonus = hasSetBudget ? 10 : 0;
+    
+    return Math.min(100, tasksProgress + hasDateBonus + hasGuestCountBonus + hasBudgetBonus);
+  };
+
+  const completionPercentage = calculateCompletionPercentage();
 
   if (loading) {
     return (

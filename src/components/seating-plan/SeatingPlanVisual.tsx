@@ -204,9 +204,15 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
       </div>
 
       {/* Instructions */}
-      <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-lg p-3 shadow-sm text-xs text-muted-foreground max-w-[200px]">
-        <p className="mb-1">• Glissez les tables pour les positionner</p>
-        <p>• Cliquez sur 2 invités d'une même table pour échanger leurs places</p>
+      <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-lg p-3 shadow-sm text-xs text-muted-foreground max-w-[220px]">
+        <p className="font-medium text-foreground mb-2">Mode Vue Visuelle</p>
+        <p className="mb-1">• Glissez les tables pour les repositionner</p>
+        <p className="mb-1">• Cliquez sur 2 invités d'une même table pour échanger leurs places</p>
+        <div className="mt-2 pt-2 border-t border-gray-200">
+          <p className="text-[#7F9474] font-medium">
+            💡 Pour déplacer un invité vers une autre table, utilisez l'onglet "Liste"
+          </p>
+        </div>
       </div>
 
       {/* Selected guest indicator */}

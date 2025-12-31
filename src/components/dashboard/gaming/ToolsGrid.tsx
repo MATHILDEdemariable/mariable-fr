@@ -44,7 +44,7 @@ const tools: Tool[] = [
     title: 'Plan de table',
     description: 'Placez vos invités',
     icon: '🪑',
-    path: '/dashboard/seating'
+    path: '/dashboard/seating-plan'
   }
 ];
 
