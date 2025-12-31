@@ -1,107 +1,79 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { CheckCircle } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { CheckCircle, Camera, MapPin, Utensils } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import VendorPreviewWidget from './VendorPreviewWidget';
-import { motion } from 'framer-motion';
-
 const PremiumMarketplaceSection = () => {
-  const selectionProcess = [
-    "Portfolio vérifié",
-    "Test qualité",
-    "Références clients",
-    "Respect des délais"
-  ];
-
-  return (
-    <section className="py-24 bg-white">
-      <div className="container mx-auto px-6">
-        {/* Editorial Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
-        >
-          <span className="inline-block px-4 py-2 text-xs tracking-[0.2em] uppercase text-editorial-gold border border-[hsl(42,56%,52%,0.3)] mb-6">
+  const vendors = [{
+    id: 1,
+    name: "Château de Vaux-le-Vicomte",
+    category: "Lieux",
+    image: "/lovable-uploads/c1b39e22-fe32-4dc7-8f94-fbb929ae43fa.png",
+    icon: MapPin,
+    location: "Seine-et-Marne"
+  }, {
+    id: 2,
+    name: "Studio Lumière",
+    category: "Photographes",
+    image: "/lovable-uploads/3d59e058-b318-46af-a10b-9a239cc218e5.png",
+    icon: Camera,
+    location: "Paris"
+  }, {
+    id: 3,
+    name: "Saveurs & Délices",
+    category: "Traiteurs",
+    image: "/lovable-uploads/bea0740d-427b-4f1b-95e3-2468f199ec77.png",
+    icon: Utensils,
+    location: "Lyon"
+  }];
+  const selectionProcess = ["Portfolio vérifié", "Test qualité", "Références clients", "Respect des délais"];
+  return <section className="py-24 bg-white">
+      <div className="container mx-auto px-4">
+        <div className="text-center mb-16">
+          <Badge className="mb-4 px-4 py-2 bg-premium-warm text-premium-charcoal border-premium-light">
             Sélection premium
-          </span>
-          
-          <h2 className="font-editorial text-3xl md:text-4xl lg:text-5xl text-editorial-charcoal mb-6 leading-tight">
+          </Badge>
+          <h2 className="text-4xl font-bold text-premium-black mb-6 md:text-4xl">
             Une sélection d'exception,
             <br />
-            <span className="font-editorial-italic text-premium-sage">pas un annuaire</span>
+            <span className="text-premium-sage">
+              pas un annuaire
+            </span>
           </h2>
-          
-          <div className="editorial-divider" />
-          
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto mt-6">
+          <p className="text-xl text-premium-charcoal max-w-3xl mx-auto">
             Nous sélectionnons les meilleurs prestataires pour vous
           </p>
-        </motion.div>
+        </div>
 
-        {/* Vendor Preview Widget */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="mb-20"
-        >
+        {/* Aperçu des prestataires avec VendorPreviewWidget */}
+        <div className="mb-16">
           <VendorPreviewWidget />
-        </motion.div>
+        </div>
 
-        {/* Selection Process - Editorial style */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          className="bg-editorial-warm rounded-none p-12 mb-16"
-        >
-          <h3 className="font-editorial text-2xl text-editorial-charcoal mb-8 text-center">
+        {/* Process de sélection */}
+        <div className="bg-premium-warm rounded-2xl p-8 mb-12">
+          <h3 className="text-2xl font-bold text-premium-black mb-6 text-center">
             Notre processus de sélection
           </h3>
-          
-          <div className="grid md:grid-cols-4 gap-8">
-            {selectionProcess.map((process, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.1 * index }}
-                className="flex items-center gap-4"
-              >
-                <CheckCircle className="h-5 w-5 text-premium-sage flex-shrink-0" />
-                <span className="text-muted-foreground">{process}</span>
-              </motion.div>
-            ))}
+          <div className="grid md:grid-cols-4 gap-6">
+            {selectionProcess.map((process, index) => <div key={index} className="flex items-center gap-3">
+                <CheckCircle className="h-6 w-6 text-premium-sage flex-shrink-0" />
+                <span className="text-premium-charcoal font-medium">{process}</span>
+              </div>)}
           </div>
-        </motion.div>
+        </div>
 
-        {/* CTA - Editorial style */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          className="text-center"
-        >
+        {/* CTA principal */}
+        <div className="text-center">
           <Link to="/selection">
-            <Button 
-              size="lg" 
-              className="bg-editorial-charcoal text-white hover:bg-foreground px-12 py-6 text-sm tracking-wide rounded-none border-0"
-              style={{ backgroundColor: 'hsl(0, 0%, 15%)' }}
-            >
+            <Button size="lg" className="btn-primary text-white px-12 py-4 text-lg font-semibold ripple">
               Explorer notre sélection
             </Button>
           </Link>
-        </motion.div>
+        </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default PremiumMarketplaceSection;

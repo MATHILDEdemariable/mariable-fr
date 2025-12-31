@@ -128,105 +128,19 @@ const ProjectSummary = () => {
     return () => clearTimeout(timer);
   }, [localGuestCount, updateProfile]);
 
-  // Module progress states
-  const [moduleProgress, setModuleProgress] = useState({
-    hasPrestataires: false,
-    hasEquipe: false,
-    hasPlanning: false,
-    hasDocumentsJourJ: false,
-    hasRsvp: false,
-    hasAccommodations: false,
-    hasSeatingPlan: false,
-    hasDocuments: false
-  });
-
-  // Load module data for progress calculation
-  useEffect(() => {
-    const loadModuleProgress = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      // Check all modules in parallel
-      const [
-        prestatairesRes,
-        equipeRes,
-        planningRes,
-        docsJourJRes,
-        rsvpRes,
-        accommodationsRes,
-        seatingRes,
-        qrCodesRes
-      ] = await Promise.all([
-        // Prestataires suivi (via coordination_team with type prestataire)
-        supabase.from('coordination_team').select('id', { count: 'exact', head: true }).eq('type', 'prestataire'),
-        // Équipe Jour-J
-        supabase.from('coordination_team').select('id', { count: 'exact', head: true }).neq('type', 'prestataire'),
-        // Planning Jour-J
-        supabase.from('coordination_planning').select('id', { count: 'exact', head: true }),
-        // Documents Jour-J
-        supabase.from('coordination_documents').select('id', { count: 'exact', head: true }),
-        // RSVP (wedding_rsvp_responses or guests)
-        supabase.from('seating_assignments').select('id', { count: 'exact', head: true }),
-        // Accommodations
-        supabase.from('wedding_accommodations').select('id', { count: 'exact', head: true }).eq('user_id', user.id),
-        // Seating Plan
-        supabase.from('seating_tables').select('id', { count: 'exact', head: true }),
-        // QR Codes/Documents
-        supabase.from('qr_codes').select('id', { count: 'exact', head: true }).eq('user_id', user.id)
-      ]);
-
-      setModuleProgress({
-        hasPrestataires: (prestatairesRes.count || 0) > 0,
-        hasEquipe: (equipeRes.count || 0) > 0,
-        hasPlanning: (planningRes.count || 0) > 0,
-        hasDocumentsJourJ: (docsJourJRes.count || 0) > 0,
-        hasRsvp: (rsvpRes.count || 0) > 0,
-        hasAccommodations: (accommodationsRes.count || 0) > 0,
-        hasSeatingPlan: (seatingRes.count || 0) > 0,
-        hasDocuments: (qrCodesRes.count || 0) > 0
-      });
-    };
-
-    loadModuleProgress();
-  }, []);
-
-  // Calculate completion percentage based on 9 modules (100% total)
+  // Calculate completion percentage based on multiple factors
   const calculateCompletionPercentage = () => {
-    let progress = 0;
+    // Base: tasks represent 60% of total progress
+    const tasksProgress = totalTasksCount > 0 
+      ? Math.round((completedTasksCount / totalTasksCount) * 60) 
+      : 0;
     
-    // 1. Infos de base (10%): date (5%) + invités (5%)
-    if (localWeddingDate) progress += 5;
-    if (parseInt(localGuestCount) > 0) progress += 5;
+    // Bonus points for key milestones (40% total)
+    const hasDateBonus = localWeddingDate ? 15 : 0;
+    const hasGuestCountBonus = parseInt(localGuestCount) > 0 ? 15 : 0;
+    const hasBudgetBonus = hasSetBudget ? 10 : 0;
     
-    // 2. Check-list (15%): basé sur tâches complétées
-    if (totalTasksCount > 0) {
-      progress += Math.round((completedTasksCount / totalTasksCount) * 15);
-    }
-    
-    // 3. Budget (10%)
-    if (hasSetBudget) progress += 10;
-    
-    // 4. Prestataires Suivi (10%)
-    if (moduleProgress.hasPrestataires) progress += 10;
-    
-    // 5. Jour-J (15%): équipe (5%) + planning (5%) + documents (5%)
-    if (moduleProgress.hasEquipe) progress += 5;
-    if (moduleProgress.hasPlanning) progress += 5;
-    if (moduleProgress.hasDocumentsJourJ) progress += 5;
-    
-    // 6. RSVP Invités (10%)
-    if (moduleProgress.hasRsvp) progress += 10;
-    
-    // 7. Gestion des logements (10%)
-    if (moduleProgress.hasAccommodations) progress += 10;
-    
-    // 8. Plan de table (10%)
-    if (moduleProgress.hasSeatingPlan) progress += 10;
-    
-    // 9. Documents/QR Code (10%)
-    if (moduleProgress.hasDocuments) progress += 10;
-    
-    return Math.min(100, progress);
+    return Math.min(100, tasksProgress + hasDateBonus + hasGuestCountBonus + hasBudgetBonus);
   };
 
   const completionPercentage = calculateCompletionPercentage();
