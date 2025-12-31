@@ -37,7 +37,19 @@ const ProjectSummary = () => {
   const [showPrixModal, setShowPrixModal] = useState(false);
   const [totalTasksCount, setTotalTasksCount] = useState(0);
   const [completedTasksCount, setCompletedTasksCount] = useState(0);
-  const [hasSetBudget, setHasSetBudget] = useState(false);
+  
+  // Module progress states for 9 categories
+  const [moduleProgress, setModuleProgress] = useState({
+    infosBase: false,      // 10% - date + invités
+    checklist: 0,          // 15% - % tâches complétées
+    budget: false,         // 10% - budget configuré
+    prestataires: false,   // 10% - au moins 1 prestataire
+    jourJ: false,          // 15% - coordination créée
+    rsvp: false,           // 10% - au moins 1 réponse RSVP
+    logements: false,      // 10% - hébergements configurés
+    planTable: false,      // 10% - plan de table créé
+    documents: false,      // 10% - au moins 1 document
+  });
 
   // Initialize local state from profile
   useEffect(() => {
@@ -51,14 +63,14 @@ const ProjectSummary = () => {
     }
   }, [profile]);
 
-  // Load tasks and count + check budget
+  // Load all module progress data
   useEffect(() => {
     const loadData = async () => {
       try {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return;
 
-        // Get recent tasks
+        // Get recent tasks for display
         const { data: recentTasks, error } = await supabase
           .from('generated_tasks')
           .select('*')
@@ -73,7 +85,7 @@ const ProjectSummary = () => {
         }
         setTasks(recentTasks || []);
 
-        // Get total counts
+        // Get tasks counts for checklist progress
         const { count: total } = await supabase
           .from('generated_tasks')
           .select('*', { count: 'exact', head: true })
@@ -88,13 +100,47 @@ const ProjectSummary = () => {
         setTotalTasksCount(total || 0);
         setCompletedTasksCount(completed || 0);
 
-        // Check if user has set budget (check budgets_detail table)
-        const { count: budgetCount } = await supabase
-          .from('budgets_detail')
-          .select('*', { count: 'exact', head: true })
-          .eq('user_id', user.id);
+        // Check all 9 modules in parallel
+        const [
+          budgetResult,
+          prestatairesResult,
+          coordinationResult,
+          rsvpResult,
+          logementsResult,
+          planTableResult,
+          documentsResult
+        ] = await Promise.all([
+          // Budget (10%)
+          supabase.from('budgets_detail').select('*', { count: 'exact', head: true }).eq('user_id', user.id),
+          // Prestataires (10%) - check coordination_team
+          supabase.from('coordination_team').select('id', { count: 'exact', head: true }).limit(1),
+          // Jour-J (15%) - check wedding_coordination
+          supabase.from('wedding_coordination').select('id', { count: 'exact', head: true }).eq('user_id', user.id),
+          // RSVP (10%) - check wedding_rsvp_responses
+          supabase.from('wedding_rsvp_responses').select('id', { count: 'exact', head: true }).limit(1),
+          // Logements (10%) - check wedding_accommodations
+          supabase.from('wedding_accommodations').select('id', { count: 'exact', head: true }).limit(1),
+          // Plan de table (10%) - check seating_plans
+          supabase.from('seating_plans').select('id', { count: 'exact', head: true }).eq('user_id', user.id),
+          // Documents (10%) - check coordination_documents
+          supabase.from('coordination_documents').select('id', { count: 'exact', head: true }).limit(1),
+        ]);
 
-        setHasSetBudget((budgetCount || 0) > 0);
+        // Calculate checklist percentage (0-100)
+        const checklistPercentage = total && total > 0 ? Math.round((completed || 0) / total * 100) : 0;
+
+        setModuleProgress({
+          infosBase: false, // Will be calculated from localWeddingDate and localGuestCount
+          checklist: checklistPercentage,
+          budget: (budgetResult.count || 0) > 0,
+          prestataires: (prestatairesResult.count || 0) > 0,
+          jourJ: (coordinationResult.count || 0) > 0,
+          rsvp: (rsvpResult.count || 0) > 0,
+          logements: (logementsResult.count || 0) > 0,
+          planTable: (planTableResult.count || 0) > 0,
+          documents: (documentsResult.count || 0) > 0,
+        });
+
       } catch (error) {
         console.error('Error:', error);
       } finally {
@@ -128,19 +174,41 @@ const ProjectSummary = () => {
     return () => clearTimeout(timer);
   }, [localGuestCount, updateProfile]);
 
-  // Calculate completion percentage based on multiple factors
+  // Calculate completion percentage based on 9 modules
+  // Infos base 10%, Checklist 15%, Budget 10%, Prestataires 10%, 
+  // Jour-J 15%, RSVP 10%, Logements 10%, Plan de table 10%, Documents 10%
   const calculateCompletionPercentage = () => {
-    // Base: tasks represent 60% of total progress
-    const tasksProgress = totalTasksCount > 0 
-      ? Math.round((completedTasksCount / totalTasksCount) * 60) 
-      : 0;
+    let total = 0;
     
-    // Bonus points for key milestones (40% total)
-    const hasDateBonus = localWeddingDate ? 15 : 0;
-    const hasGuestCountBonus = parseInt(localGuestCount) > 0 ? 15 : 0;
-    const hasBudgetBonus = hasSetBudget ? 10 : 0;
+    // 1. Infos de base (10%) - date ET invités renseignés
+    const hasInfosBase = localWeddingDate && parseInt(localGuestCount) > 0;
+    if (hasInfosBase) total += 10;
     
-    return Math.min(100, tasksProgress + hasDateBonus + hasGuestCountBonus + hasBudgetBonus);
+    // 2. Checklist (15%) - proportionnel au % de tâches complétées
+    total += Math.round((moduleProgress.checklist / 100) * 15);
+    
+    // 3. Budget (10%)
+    if (moduleProgress.budget) total += 10;
+    
+    // 4. Prestataires (10%)
+    if (moduleProgress.prestataires) total += 10;
+    
+    // 5. Jour-J / Coordination (15%)
+    if (moduleProgress.jourJ) total += 15;
+    
+    // 6. RSVP (10%)
+    if (moduleProgress.rsvp) total += 10;
+    
+    // 7. Logements (10%)
+    if (moduleProgress.logements) total += 10;
+    
+    // 8. Plan de table (10%)
+    if (moduleProgress.planTable) total += 10;
+    
+    // 9. Documents (10%)
+    if (moduleProgress.documents) total += 10;
+    
+    return Math.min(100, total);
   };
 
   const completionPercentage = calculateCompletionPercentage();
@@ -183,7 +251,7 @@ const ProjectSummary = () => {
       <AchievementBadges
         completedTasks={completedTasksCount}
         totalTasks={totalTasksCount}
-        hasSetBudget={hasSetBudget}
+        hasSetBudget={moduleProgress.budget}
         hasSetDate={!!localWeddingDate}
         guestCount={parseInt(localGuestCount) || 0}
       />
