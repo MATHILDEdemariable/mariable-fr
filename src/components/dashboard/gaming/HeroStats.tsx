@@ -27,16 +27,6 @@ const HeroStats: React.FC<HeroStatsProps> = ({
   const today = new Date();
   const daysUntilWedding = weddingDate ? differenceInDays(weddingDate, today) : null;
 
-  // Calculate organization level based on completion
-  const getLevel = () => {
-    if (completionPercentage >= 80) return { name: 'Maître Organisateur', icon: '👑' };
-    if (completionPercentage >= 60) return { name: 'Expert', icon: '⭐' };
-    if (completionPercentage >= 40) return { name: 'Avancé', icon: '🚀' };
-    if (completionPercentage >= 20) return { name: 'Apprenti', icon: '📚' };
-    return { name: 'Débutant', icon: '🌱' };
-  };
-
-  const level = getLevel();
   const greeting = firstName ? `Bienvenue, ${firstName} !` : "Bienvenue dans l'univers Mariable !";
 
   return (
@@ -48,11 +38,6 @@ const HeroStats: React.FC<HeroStatsProps> = ({
           <p className="text-muted-foreground">
             {format(today, "EEEE d MMMM yyyy", { locale: fr })}
           </p>
-        </div>
-        
-        <div className="level-badge flex items-center gap-2">
-          <span>{level.icon}</span>
-          <span>{level.name}</span>
         </div>
       </div>
 
