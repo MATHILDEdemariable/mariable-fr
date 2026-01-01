@@ -190,13 +190,18 @@ select:focus {
   100% { opacity: 1; transform: translateY(0); }
 }
 
-/* Gaming CSS Variables - Mariable Theme */
+/* Editorial CSS Variables - Mariable Theme */
 :root {
   --gaming-primary: 100 12% 52%;    /* Vert sauge #7F9474 */
   --gaming-secondary: 42 40% 52%;   /* Or doux */
   --gaming-accent: 42 56% 52%;      /* Doré wedding-gold */
   --gaming-success: 100 20% 45%;    /* Vert sauge foncé */
   --gaming-glow: 100 15% 55%;       /* Sauge clair */
+  
+  /* Editorial colors */
+  --editorial-olive: 100 10% 31%;   /* #4a5548 */
+  --editorial-noir: 60 5% 9%;       /* #1a1a18 */
+  --editorial-beige: 50 15% 93%;    /* #efeee9 */
 }
 
 /* Glassmorphism */

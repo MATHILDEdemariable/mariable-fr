@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { CheckSquare, Calculator, Users, Search, FileText, Smartphone, Wifi, ArrowRight, Sparkles, PlayCircle, MessageCircle } from 'lucide-react';
+import { CheckSquare, Calculator, Users, Search, FileText, Smartphone, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const PremiumToolsCoordinationSection = () => {
@@ -13,201 +11,157 @@ const PremiumToolsCoordinationSection = () => {
     {
       icon: CheckSquare,
       title: "Checklist intelligente",
-      description: "Planning personnalisé selon votre style",
+      description: "Planning personnalisé",
     },
     {
       icon: Calculator,
       title: "Gestion budget",
-      description: "Calculatrice budget & boissons incluses",
+      description: "Suivi de vos dépenses",
     },
     {
       icon: Users,
       title: "RSVP & plan de table",
-      description: "Organisez vos invités facilement",
+      description: "Gestion des invités",
     },
     {
       icon: Search,
-      title: "Liste prestataires standards",
-      description: "Parcourez nos prestataires recommandés",
+      title: "Sélection prestataires",
+      description: "Recommandations personnalisées",
     },
     {
       icon: FileText,
       title: "Stockage documents",
-      description: "Centralisez tous vos documents",
+      description: "Tous vos contrats centralisés",
     },
     {
       icon: Smartphone,
       title: "Coordination Jour J",
-      description: "Application mobile pour le grand jour",
+      description: "Application mobile",
     },
   ];
 
   return (
-    <section id="premium-tools-section" className="py-24 bg-premium-base">
+    <section id="premium-tools-section" className="py-24 bg-white">
       <div className="container mx-auto px-4">
+        {/* Titre éditorial */}
         <div className="text-center mb-16">
-          <Badge className="mb-4 px-4 py-2 bg-premium-sage-very-light text-premium-sage border-premium-sage-light">
-            Inclus gratuitement
-          </Badge>
-          <h2 className="text-4xl font-bold text-premium-black mb-6 md:text-5xl">
-            Vos outils de planification
-            <br />
-            <span className="text-premium-sage">& coordination Jour J</span>
+          <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl text-editorial-noir mb-4 font-normal">
+            Vos outils de planification <em>gratuits</em>
           </h2>
-          <p className="text-xl text-premium-charcoal max-w-3xl mx-auto">
-            Tout ce dont vous avez besoin pour organiser votre mariage et coordonner le jour J
+          <p className="text-editorial-noir/70 text-lg max-w-2xl mx-auto">
+            Tout ce dont vous avez besoin pour organiser votre mariage sereinement
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-16 items-start">
+        <div className="grid lg:grid-cols-2 gap-16 items-start max-w-6xl mx-auto">
           {/* Tools Grid */}
           <div>
-            <h3 className="text-2xl font-bold text-premium-black mb-6">
-              Outils de planification
-            </h3>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-6">
               {tools.map((tool, index) => (
-                <Card
+                <div
                   key={index}
-                  className="group bg-white shadow-lg border-premium-light hover:shadow-xl transition-all duration-300"
+                  className="group p-6 border border-editorial-noir/10 hover:border-editorial-olive/30 transition-colors bg-white"
                 >
-                  <CardContent className="p-5">
-                    <div className="flex items-start gap-3">
-                      <div className="p-2 rounded-xl bg-gradient-to-r from-premium-sage to-premium-sage-medium flex-shrink-0">
-                        <tool.icon className="h-5 w-5 text-white" />
-                      </div>
-                      <div>
-                        <h4 className="font-bold text-premium-black text-sm mb-1">
-                          {tool.title}
-                        </h4>
-                        <p className="text-premium-charcoal text-xs">
-                          {tool.description}
-                        </p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                  <div className="mb-4">
+                    <tool.icon className="h-8 w-8 text-editorial-olive" strokeWidth={1.5} />
+                  </div>
+                  <h4 className="font-serif text-lg text-editorial-noir mb-2">
+                    {tool.title}
+                  </h4>
+                  <p className="text-editorial-noir/60 text-sm">
+                    {tool.description}
+                  </p>
+                </div>
               ))}
             </div>
 
-            {/* 3 points clés */}
-            <div className="flex flex-wrap justify-center gap-3 mt-6">
-              <div className="flex items-center gap-2 bg-premium-sage/10 px-4 py-2 rounded-full">
-                <Sparkles className="h-4 w-4 text-premium-sage" />
-                <span className="text-sm text-premium-charcoal font-medium">Dopé à l'IA</span>
-              </div>
-              <div className="flex items-center gap-2 bg-premium-sage/10 px-4 py-2 rounded-full">
-                <PlayCircle className="h-4 w-4 text-premium-sage" />
-                <span className="text-sm text-premium-charcoal font-medium">Tutos explicatifs inclus</span>
-              </div>
-              <div className="flex items-center gap-2 bg-premium-sage/10 px-4 py-2 rounded-full">
-                <MessageCircle className="h-4 w-4 text-premium-sage" />
-                <span className="text-sm text-premium-charcoal font-medium">Support WhatsApp inclus</span>
-              </div>
-            </div>
-
-            {/* CTA Créer compte */}
+            {/* CTA */}
             <div className="mt-8">
               <Link to="/register">
-                <Button size="lg" className="btn-primary text-white px-8 py-4 text-lg font-semibold ripple w-full">
-                  Créer mon compte gratuit <ArrowRight className="ml-2 h-5 w-5" />
+                <Button 
+                  size="lg" 
+                  className="bg-editorial-olive hover:bg-editorial-noir text-white px-10 py-6 text-base font-medium rounded-none w-full"
+                >
+                  Créer mon compte gratuit <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </Link>
             </div>
           </div>
 
-          {/* Phone Mockup Coordination */}
+          {/* Phone Mockup */}
           <div className="relative">
-            <h3 className="text-2xl font-bold text-premium-black mb-6">
-              Coordination Jour J
-            </h3>
-            
-            <div className="app-mockup relative max-w-sm mx-auto mb-8">
-              {/* Phone mockup */}
-              <div className="bg-premium-black rounded-[3rem] p-2 shadow-2xl">
-                <div className="bg-white rounded-[2.5rem] overflow-hidden">
-                  {/* Screen content */}
-                  <div className="relative h-[500px]">
-                    {/* Status bar */}
-                    <div className="flex justify-between items-center p-4 text-xs text-premium-charcoal">
-                      <span>9:41</span>
-                      <span>🔋 100%</span>
-                    </div>
-                    
-                    {/* App header */}
-                    <div className="bg-gradient-to-r from-premium-sage via-premium-sage-medium to-premium-sage-light text-white p-4">
-                      <h4 className="font-bold text-lg">Coordination Jour J</h4>
-                      <p className="text-white/80 text-sm">Votre mariage</p>
-                    </div>
-                    
-                    {/* Timeline */}
-                    <div className="p-4 space-y-3">
-                      <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
-                        <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                        <div>
-                          <p className="font-semibold text-sm">14:00 - Arrivée invités</p>
-                          <p className="text-xs text-gray-600">En cours ✓</p>
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg">
-                        <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-                        <div>
-                          <p className="font-semibold text-sm">15:30 - Cérémonie</p>
-                          <p className="text-xs text-gray-600">Préparation</p>
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                        <div className="w-3 h-3 bg-gray-300 rounded-full"></div>
-                        <div>
-                          <p className="font-semibold text-sm">17:00 - Cocktail</p>
-                          <p className="text-xs text-gray-600">À venir</p>
-                        </div>
+            <div className="bg-editorial-noir rounded-[2.5rem] p-2 shadow-2xl max-w-sm mx-auto">
+              <div className="bg-white rounded-[2rem] overflow-hidden">
+                <div className="relative h-[480px]">
+                  {/* Status bar */}
+                  <div className="flex justify-between items-center p-4 text-xs text-editorial-noir/60">
+                    <span>9:41</span>
+                    <span>🔋 100%</span>
+                  </div>
+                  
+                  {/* App header */}
+                  <div className="bg-editorial-olive text-white p-4">
+                    <h4 className="font-serif text-lg">Coordination Jour J</h4>
+                    <p className="text-white/80 text-sm">Votre mariage</p>
+                  </div>
+                  
+                  {/* Timeline */}
+                  <div className="p-4 space-y-3">
+                    <div className="flex items-center gap-3 p-3 bg-green-50 border-l-2 border-green-500">
+                      <div>
+                        <p className="font-medium text-sm text-editorial-noir">14:00 - Arrivée invités</p>
+                        <p className="text-xs text-editorial-noir/60">En cours ✓</p>
                       </div>
                     </div>
                     
-                    {/* Live notification */}
-                    <div className="absolute bottom-4 left-4 right-4">
-                      <div className="bg-white border border-premium-light rounded-lg p-3 shadow-lg">
-                        <div className="flex items-center gap-2">
-                          <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                          <p className="text-xs text-premium-charcoal">
-                            <strong>Photographe:</strong> En position
-                          </p>
-                        </div>
+                    <div className="flex items-center gap-3 p-3 bg-editorial-olive/5 border-l-2 border-editorial-olive">
+                      <div>
+                        <p className="font-medium text-sm text-editorial-noir">15:30 - Cérémonie</p>
+                        <p className="text-xs text-editorial-noir/60">Préparation</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center gap-3 p-3 bg-gray-50 border-l-2 border-gray-300">
+                      <div>
+                        <p className="font-medium text-sm text-editorial-noir">17:00 - Cocktail</p>
+                        <p className="text-xs text-editorial-noir/60">À venir</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Notification */}
+                  <div className="absolute bottom-4 left-4 right-4">
+                    <div className="bg-white border border-editorial-noir/10 p-3 shadow-sm">
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                        <p className="text-xs text-editorial-noir">
+                          <strong>Photographe:</strong> En position
+                        </p>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-              
-              {/* Floating elements */}
-              <div className="absolute -top-4 -right-4 bg-white rounded-full p-3 shadow-lg">
-                <Wifi className="h-6 w-6 text-premium-sage-medium" />
-              </div>
-              <div className="absolute -bottom-4 -left-4 bg-white rounded-full p-3 shadow-lg">
-                <Users className="h-6 w-6 text-premium-sage" />
-              </div>
             </div>
 
             {/* Demo button */}
-            <Button 
-              variant="outline"
-              className="w-full border-2 border-premium-sage text-premium-sage hover:bg-premium-sage hover:text-white"
-              onClick={() => setIsModalOpen(true)}
-            >
-              Voir la démo
-            </Button>
+            <div className="text-center mt-8">
+              <button 
+                onClick={() => setIsModalOpen(true)}
+                className="text-xs tracking-widest text-editorial-olive uppercase border-b border-editorial-olive pb-1 hover:text-editorial-noir hover:border-editorial-noir transition-colors"
+              >
+                Voir la démo
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Modal vidéo Loom */}
+      {/* Modal vidéo */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="max-w-4xl w-full p-0">
+        <DialogContent className="max-w-4xl w-full p-0 rounded-none">
           <DialogHeader className="p-6 pb-0">
-            <DialogTitle>Démonstration de la coordination Jour J</DialogTitle>
+            <DialogTitle className="font-serif text-xl">Démonstration de la coordination Jour J</DialogTitle>
           </DialogHeader>
           <div className="relative w-full" style={{ paddingTop: '56.25%' }}>
             <iframe

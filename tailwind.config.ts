@@ -60,7 +60,7 @@ export default {
 					black: '#000000',
 					white: '#ffffff',
 					gold: '#d4af37',
-					olive: '#7F9474'
+					olive: '#4a5548'
 				},
 				premium: {
 					base: '#FEFEFE',
@@ -68,13 +68,16 @@ export default {
 					charcoal: '#2D2D2D',
 					black: '#0A0A0A',
 					light: '#E5E7EB',
-				sage: '#7F9474',
-				'sage-medium': '#9CAF88',
-				'sage-light': '#B8C5A6',
-				'sage-very-light': '#E8F0E9',
-				'sage-dark': '#6B7D62',
-				beige: '#efeee9'
-			},
+					beige: '#efeee9',
+					'olive-dark': '#4a5548',
+					'noir-editorial': '#1a1a18'
+				},
+				editorial: {
+					beige: '#efeee9',
+					olive: '#4a5548',
+					noir: '#1a1a18',
+					cream: '#f5f4ef'
+				},
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
 					foreground: 'hsl(var(--sidebar-foreground))',

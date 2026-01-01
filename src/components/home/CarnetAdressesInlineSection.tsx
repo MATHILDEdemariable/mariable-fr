@@ -133,38 +133,27 @@ const CarnetAdressesInlineSection = () => {
       setIsSubmitting(false);
     }
   };
-  return <section id="carnet-adresses-section" className="py-24 bg-gradient-to-br from-premium-warm via-white to-premium-base">
+  return <section id="carnet-adresses-section" className="py-24 bg-editorial-beige">
       <div className="container mx-auto px-4">
         <div className="max-w-5xl mx-auto">
-          {/* Header avec social proof */}
+          {/* Header éditorial */}
           <div className="text-center mb-12">
-            <Badge className="mb-4 px-4 py-2 bg-premium-sage text-white border-0">
-              ✨ Sélection personnalisée
-            </Badge>
-            
-            <h2 className="text-4xl md:text-5xl font-bold text-premium-black mb-4">
-              Recevez votre
-              <br />
-              <span className="text-premium-sage">
-                sélection de prestataires
-              </span>
+            <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl text-editorial-noir mb-4 font-normal">
+              Recevez votre <em>sélection de prestataires</em>
             </h2>
             
-            <p className="text-xl text-premium-charcoal max-w-3xl mx-auto mb-6">
+            <p className="text-lg text-editorial-noir/70 max-w-2xl mx-auto mb-6">
               Choisissez votre formule et recevez une sélection adaptée à vos besoins
             </p>
 
-            {/* Social proof */}
-            <div className="flex items-center justify-center gap-2 text-premium-charcoal">
-              <Users className="h-5 w-5 text-premium-sage" />
-              <p className="text-sm font-medium">
-                ✓ Déjà <span className="font-bold text-premium-sage">400 couples</span> ont reçu leur sélection
-              </p>
-            </div>
+            {/* Social proof sobre */}
+            <p className="text-sm text-editorial-noir/60">
+              Déjà 400 couples ont reçu leur sélection
+            </p>
           </div>
 
           {/* Formulaire inline */}
-          <Card className="border-2 border-premium-sage/20 shadow-2xl">
+          <Card className="border border-editorial-noir/10 shadow-lg rounded-none bg-white">
             <CardContent className="p-8 md:p-12">
               <form onSubmit={handleSubmit} className="space-y-6">
 

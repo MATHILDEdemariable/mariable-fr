@@ -1,110 +1,97 @@
 import React from 'react';
-import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Star, Quote, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
+
 const PremiumTestimonialsSection = () => {
-  const testimonials = [{
-    id: 1,
-    name: "Sarah & Thomas",
-    location: "Mariage en Provence",
-    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=face",
-    rating: 5,
-    text: "Mariable a transformé notre organisation de mariage. La sélection de prestataires était exceptionnelle et les outils de planification nous ont fait gagner un temps précieux.",
-    gradient: "from-premium-sage to-premium-sage-medium"
-  }, {
-    id: 2,
-    name: "Julie & Marc",
-    location: "Mariage à Paris",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face",
-    rating: 5,
-    text: "La coordination le jour J était parfaite ! Grâce à l'application, toute notre équipe était synchronisée. Nous avons pu profiter pleinement de notre journée.",
-    gradient: "from-premium-sage-medium to-premium-sage-light"
-  }, {
-    id: 3,
-    name: "Emma & Pierre",
-    location: "Mariage à Lyon",
-    image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face",
-    rating: 5,
-    text: "Les prestataires recommandés par Mariable étaient tous formidables. La qualité de service était au rendez-vous, exactement ce que nous cherchions.",
-    gradient: "from-premium-sage-light to-premium-sage"
-  }];
-  return <section className="py-24 bg-[#efeee9]">
+  const testimonials = [
+    {
+      id: 1,
+      name: "Sarah & Thomas",
+      location: "Provence",
+      image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=face",
+      text: "Mariable a transformé notre organisation de mariage. La sélection de prestataires était exceptionnelle.",
+    },
+    {
+      id: 2,
+      name: "Julie & Marc",
+      location: "Paris",
+      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face",
+      text: "La coordination le jour J était parfaite. Nous avons pu profiter pleinement de notre journée.",
+    },
+    {
+      id: 3,
+      name: "Emma & Pierre",
+      location: "Lyon",
+      image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face",
+      text: "Les prestataires recommandés par Mariable étaient tous formidables. Exactement ce que nous cherchions.",
+    },
+  ];
+
+  return (
+    <section className="py-24 bg-editorial-beige">
       <div className="container mx-auto px-4">
+        {/* Titre éditorial */}
         <div className="text-center mb-16">
-          <h2 className="font-serif text-4xl font-bold text-premium-black mb-6 md:text-4xl">
-            Ils ont vécu
-            <br />
-            <span className="text-premium-sage">
-              l'expérience Mariable
-            </span>
+          <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl text-editorial-noir mb-4 font-normal">
+            Ils ont vécu <em>l'expérience Mariable</em>
           </h2>
-          <p className="text-xl text-premium-charcoal max-w-3xl mx-auto">
+          <p className="text-editorial-noir/70 text-lg max-w-2xl mx-auto">
             Découvrez les témoignages de couples qui ont fait confiance à notre plateforme
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8">
-          {testimonials.map((testimonial, index) => <Card key={testimonial.id} className="group bg-white shadow-xl border-0 relative overflow-hidden">
-              {/* Gradient accent */}
-              <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${testimonial.gradient}`}></div>
+        {/* Grille de témoignages style magazine */}
+        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          {testimonials.map((testimonial, index) => (
+            <div 
+              key={testimonial.id} 
+              className="bg-white p-8 border border-gray-200 hover:border-editorial-olive/30 transition-colors"
+            >
+              {/* Citation */}
+              <blockquote className="font-serif text-lg md:text-xl text-editorial-noir leading-relaxed mb-8 italic">
+                "{testimonial.text}"
+              </blockquote>
               
-              <CardContent className="p-8">
-                {/* Quote icon */}
-                <div className={`inline-flex p-3 rounded-full bg-gradient-to-r ${testimonial.gradient} mb-6`}>
-                  <Quote className="h-6 w-6 text-white" />
+              {/* Author */}
+              <div className="flex items-center gap-4">
+                <img 
+                  src={testimonial.image} 
+                  alt={testimonial.name} 
+                  loading={index === 0 ? "eager" : "lazy"}
+                  decoding="async"
+                  className="w-12 h-12 rounded-full object-cover grayscale"
+                />
+                <div>
+                  <p className="font-medium text-editorial-noir text-sm">
+                    {testimonial.name}
+                  </p>
+                  <p className="text-editorial-noir/60 text-xs uppercase tracking-wide">
+                    {testimonial.location}
+                  </p>
                 </div>
-                
-                {/* Rating */}
-                <div className="flex items-center gap-1 mb-4">
-                  {[...Array(testimonial.rating)].map((_, i) => <Star key={i} className="h-5 w-5 fill-yellow-400 text-yellow-400" />)}
-                </div>
-                
-                {/* Testimonial text */}
-                <p className="text-premium-charcoal leading-relaxed mb-6 italic">
-                  "{testimonial.text}"
-                </p>
-                
-                {/* Author */}
-                <div className="flex items-center gap-4">
-                  <img 
-                    src={testimonial.image} 
-                    alt={testimonial.name} 
-                    loading={index === 0 ? "eager" : "lazy"}
-                    decoding="async"
-                    className="w-12 h-12 rounded-full object-cover" 
-                  />
-                  <div>
-                    <h4 className="font-bold text-premium-black">
-                      {testimonial.name}
-                    </h4>
-                    <p className="text-sm text-premium-charcoal">
-                      {testimonial.location}
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-
-              {/* Hover effect */}
-              <div className={`absolute inset-0 bg-gradient-to-r ${testimonial.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-300 pointer-events-none`}></div>
-            </Card>)}
+              </div>
+            </div>
+          ))}
         </div>
 
-        {/* CTA après témoignages */}
+        {/* CTA */}
         <div className="text-center mt-16">
           <Link to="/register">
             <Button 
               size="lg" 
-              className="btn-primary text-white px-12 py-4 text-lg font-semibold ripple"
+              className="bg-editorial-olive hover:bg-editorial-noir text-white px-12 py-6 text-base font-medium rounded-none"
             >
-              Créer mon compte gratuit <ArrowRight className="ml-2 h-5 w-5" />
+              Créer mon compte gratuit <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </Link>
-          <p className="text-sm text-premium-charcoal mt-4">
-            ✓ Gratuit • ✓ Sans engagement • ✓ En 2 minutes
+          <p className="text-sm text-editorial-noir/60 mt-4">
+            Gratuit • Sans engagement • En 2 minutes
           </p>
         </div>
       </div>
-    </section>;
+    </section>
+  );
 };
+
 export default PremiumTestimonialsSection;

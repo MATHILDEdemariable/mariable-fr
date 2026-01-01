@@ -6,57 +6,69 @@ import { Menu, ChevronDown } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { supabase } from '@/integrations/supabase/client';
+
 const PremiumHeader = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
-  // Hide header when embedded in iframe
   const isEmbedded = searchParams.get('embedded') === 'true';
   if (isEmbedded) {
     return null;
   }
+
   useEffect(() => {
     const checkUser = async () => {
-      const {
-        data: {
-          session
-        }
-      } = await supabase.auth.getSession();
+      const { data: { session } } = await supabase.auth.getSession();
       setIsLoggedIn(!!session);
     };
     checkUser();
-    const {
-      data: {
-        subscription
-      }
-    } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setIsLoggedIn(!!session);
     });
     return () => subscription.unsubscribe();
   }, []);
+
   const handleGetStarted = () => {
     navigate('/register');
   };
-  return <header className="site-header w-full bg-white border-b border-gray-200 transition-all duration-300">
+
+  return (
+    <header className="site-header w-full bg-editorial-beige border-b border-editorial-noir/10 transition-all duration-300">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-24">
+        <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center">
             <Logo />
           </Link>
+
+          {/* Navigation Desktop - Style éditorial */}
+          <nav className="hidden md:flex items-center space-x-10">
+            <Link 
+              to="/professionnelsmariable" 
+              className="text-xs tracking-widest uppercase text-editorial-noir/80 hover:text-editorial-noir transition-colors"
+            >
+              Prestataires
+            </Link>
+            <Link 
+              to="/contact" 
+              className="text-xs tracking-widest uppercase text-editorial-noir/80 hover:text-editorial-noir transition-colors"
+            >
+              Contact
+            </Link>
+          </nav>
 
           {/* Desktop CTAs */}
           <div className="hidden md:flex items-center space-x-4">
             {isLoggedIn ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button className="btn-primary text-white ripple">
+                  <Button className="bg-editorial-olive hover:bg-editorial-noir text-white rounded-none px-6">
                     Mon compte <ChevronDown className="ml-1 w-4 h-4" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="bg-white border border-border shadow-lg z-[1000]">
+                <DropdownMenuContent align="end" className="bg-white border border-editorial-noir/10 shadow-lg z-[1000] rounded-none">
                   <DropdownMenuItem onClick={() => navigate('/dashboard')} className="cursor-pointer">
                     Mes outils
                   </DropdownMenuItem>
@@ -65,61 +77,82 @@ const PremiumHeader = () => {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-            ) : <>
-                <Button onClick={handleGetStarted} className="btn-primary text-white ripple">
-                  Futurs mariés
+            ) : (
+              <>
+                <Button 
+                  variant="ghost"
+                  onClick={() => navigate('/login')} 
+                  className="text-xs tracking-widest uppercase text-editorial-noir/80 hover:text-editorial-noir hover:bg-transparent"
+                >
+                  Connexion
                 </Button>
-                <Button variant="outline" onClick={() => navigate('/contact')} className="btn-secondary border-premium-sage/30 text-premium-sage hover:bg-premium-sage/5 ripple">
-                  Contact
+                <Button 
+                  onClick={handleGetStarted} 
+                  className="bg-editorial-olive hover:bg-editorial-noir text-white rounded-none px-6"
+                >
+                  Commencer
                 </Button>
-              </>}
+              </>
+            )}
           </div>
 
           {/* Mobile Menu */}
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
             <SheetTrigger asChild className="md:hidden">
               <Button variant="ghost" size="icon">
-                <Menu className="h-6 w-6" />
+                <Menu className="h-6 w-6 text-editorial-noir" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[300px] bg-white pt-32">
+            <SheetContent side="right" className="w-[300px] bg-editorial-beige pt-20">
               <div className="flex flex-col space-y-6">
-              <div className="flex flex-col space-y-3">
-                  {isLoggedIn ? (
-                    <>
-                      <Button onClick={() => {
-                        navigate('/dashboard');
-                        setMobileOpen(false);
-                      }} className="btn-primary text-white ripple w-full">
-                        Mes outils
-                      </Button>
-                      <Button variant="outline" onClick={() => {
-                        navigate('/professionnelsmariable');
-                        setMobileOpen(false);
-                      }} className="btn-secondary border-premium-sage/30 text-premium-sage hover:bg-premium-sage/5 w-full ripple">
-                        Les prestataires
-                      </Button>
-                    </>
-                  ) : <>
-                      <Button onClick={() => {
-                    handleGetStarted();
-                    setMobileOpen(false);
-                  }} className="btn-primary text-white w-full ripple">
-                        Club futurs mariés
-                      </Button>
-                      <Button variant="outline" onClick={() => {
-                    navigate('/contact');
-                    setMobileOpen(false);
-                  }} className="btn-secondary border-premium-sage/30 text-premium-sage hover:bg-premium-sage/5 w-full ripple">
-                        Contact
-                      </Button>
-                    </>}
-                </div>
+                <Link 
+                  to="/professionnelsmariable"
+                  onClick={() => setMobileOpen(false)}
+                  className="text-sm tracking-widest uppercase text-editorial-noir/80 hover:text-editorial-noir"
+                >
+                  Prestataires
+                </Link>
+                <Link 
+                  to="/contact"
+                  onClick={() => setMobileOpen(false)}
+                  className="text-sm tracking-widest uppercase text-editorial-noir/80 hover:text-editorial-noir"
+                >
+                  Contact
+                </Link>
+                <hr className="border-editorial-noir/10" />
+                {isLoggedIn ? (
+                  <>
+                    <Button 
+                      onClick={() => { navigate('/dashboard'); setMobileOpen(false); }} 
+                      className="bg-editorial-olive text-white rounded-none w-full"
+                    >
+                      Mes outils
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button 
+                      variant="outline"
+                      onClick={() => { navigate('/login'); setMobileOpen(false); }} 
+                      className="border-editorial-noir/20 text-editorial-noir rounded-none w-full"
+                    >
+                      Connexion
+                    </Button>
+                    <Button 
+                      onClick={() => { handleGetStarted(); setMobileOpen(false); }} 
+                      className="bg-editorial-olive text-white rounded-none w-full"
+                    >
+                      Commencer
+                    </Button>
+                  </>
+                )}
               </div>
             </SheetContent>
           </Sheet>
         </div>
       </div>
-    </header>;
+    </header>
+  );
 };
+
 export default PremiumHeader;
