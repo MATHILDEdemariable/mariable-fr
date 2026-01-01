@@ -1,115 +1,94 @@
-import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Sparkles, ArrowRight, Search, Wrench } from 'lucide-react';
+import React from 'react';
+import { ArrowRight } from 'lucide-react';
 
 const PremiumConciergerie = () => {
   const scrollToForm = () => {
     const element = document.getElementById('carnet-adresses-section');
     if (element) {
-      element.scrollIntoView({
-        behavior: 'smooth'
-      });
+      element.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
   const scrollToTools = () => {
     const element = document.getElementById('premium-tools-section');
     if (element) {
-      element.scrollIntoView({
-        behavior: 'smooth'
-      });
+      element.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
   const services = [
     {
       id: 1,
-      icon: Search,
-      title: "Recommandations de professionnels",
-      description: "Recevez une sélection de lieux et/ou prestataires de votre région",
-      cta: "Trouver mes prestataires",
+      image: "https://images.unsplash.com/photo-1519741497674-611481863552?w=600&h=400&fit=crop",
+      title: "Sélection de prestataires",
+      subtitle: "Recevez une liste personnalisée",
+      cta: "DÉCOUVRIR",
       ctaAction: scrollToForm,
-      gradient: "from-premium-sage to-premium-sage-medium",
-      badge: "CONCIERGERIE",
-      badgeColor: "bg-premium-sage"
     },
     {
       id: 2,
-      icon: Wrench,
-      title: "Organisation facile en ligne",
-      description: "Accédez à votre tableau de bord personnalisé pour planifier votre mariage en toute autonomie",
-      cta: "Découvrir les outils",
+      image: "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=600&h=400&fit=crop",
+      title: "Outils de planification",
+      subtitle: "Checklist, budget, RSVP",
+      cta: "VOIR LES OUTILS",
       ctaAction: scrollToTools,
-      gradient: "from-premium-sage-medium to-premium-sage-light",
-      badge: "AUTONOME",
-      badgeColor: "bg-premium-sage-medium"
-    }
+    },
+    {
+      id: 3,
+      image: "https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=600&h=400&fit=crop",
+      title: "Coordination Jour J",
+      subtitle: "Application mobile incluse",
+      cta: "EN SAVOIR PLUS",
+      ctaAction: scrollToTools,
+    },
   ];
 
   return (
-    <section id="premium-conciergerie-section" className="py-16 bg-premium-warm">
+    <section className="py-24 bg-editorial-beige">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
-          <Badge className="mb-4 px-4 py-2 bg-premium-sage-very-light text-premium-sage border-premium-sage-light">
-            <Sparkles className="h-4 w-4 mr-2 inline" />
-            Comment ça marche
-          </Badge>
-          
-          <h2 className="text-3xl font-bold text-premium-black mb-4 md:text-4xl">
-            Transformez l'organisation de
-            <br />
-            <span className="text-premium-sage">votre mariage</span>
+        {/* Titre éditorial */}
+        <div className="text-center mb-16">
+          <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl text-editorial-noir mb-4 font-normal">
+            Nos outils de planification <em>gratuits</em>
           </h2>
-          
-          <p className="text-lg text-premium-charcoal max-w-2xl mx-auto">
-            Vous gardez le contrôle, on vous donne juste les bonnes recommandations et les bons outils.
+          <p className="text-editorial-noir/70 text-lg max-w-2xl mx-auto">
+            Tout ce dont vous avez besoin pour organiser votre mariage sereinement
           </p>
         </div>
 
-        {/* Services Cards */}
-        <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-          {services.map(service => (
-            <Card 
-              key={service.id} 
-              className="group relative overflow-hidden border-2 border-transparent hover:border-premium-sage/30 transition-all duration-500 hover:shadow-xl"
+        {/* Carrousel horizontal style éditorial */}
+        <div className="flex gap-6 overflow-x-auto pb-8 -mx-4 px-4 snap-x snap-mandatory scrollbar-hide">
+          {services.map((service) => (
+            <div 
+              key={service.id}
+              className="flex-shrink-0 w-[320px] md:w-[400px] snap-start group cursor-pointer"
+              onClick={service.ctaAction}
             >
-              <div className={`absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r ${service.gradient}`} />
+              {/* Image container */}
+              <div className="relative overflow-hidden mb-6">
+                <img 
+                  src={service.image}
+                  alt={service.title}
+                  className="w-full h-[280px] md:h-[320px] object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+                {/* Overlay on hover */}
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+              </div>
               
-              <CardContent className="p-6">
-                {/* Badge */}
-                <Badge className={`${service.badgeColor} text-white mb-3 text-xs`}>
-                  {service.badge}
-                </Badge>
-
-                {/* Icon & Title */}
-                <div className="flex items-start gap-3 mb-4">
-                  <div className={`p-3 rounded-xl bg-gradient-to-r ${service.gradient} flex-shrink-0`}>
-                    <service.icon className="h-6 w-6 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-premium-black">
-                      {service.title}
-                    </h3>
-                  </div>
-                </div>
-
-                {/* Description */}
-                <p className="text-premium-charcoal mb-5">
-                  {service.description}
+              {/* Texte */}
+              <div className="text-center">
+                <h3 className="font-serif text-xl md:text-2xl text-editorial-noir mb-2 font-normal">
+                  {service.title}
+                </h3>
+                <p className="text-editorial-noir/60 text-sm mb-4">
+                  {service.subtitle}
                 </p>
-
-                {/* CTA */}
-                <Button 
-                  onClick={service.ctaAction} 
-                  variant="outline"
-                  className="w-full border-premium-sage text-premium-sage hover:bg-premium-sage hover:text-white py-5 font-semibold"
-                >
-                  {service.cta} <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </CardContent>
-            </Card>
+                {/* CTA underline style */}
+                <button className="text-xs tracking-widest text-editorial-olive font-medium uppercase border-b border-editorial-olive pb-1 hover:border-editorial-noir hover:text-editorial-noir transition-colors">
+                  {service.cta}
+                </button>
+              </div>
+            </div>
           ))}
         </div>
       </div>

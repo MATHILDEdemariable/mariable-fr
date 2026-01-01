@@ -7,6 +7,7 @@ import PremiumHeroSection from '@/components/home/PremiumHeroSection';
 import PremiumConciergerie from '@/components/home/PremiumConciergerie';
 import CarnetAdressesInlineSection from '@/components/home/CarnetAdressesInlineSection';
 import PremiumToolsCoordinationSection from '@/components/home/PremiumToolsCoordinationSection';
+import EditorialArticlesSection from '@/components/home/EditorialArticlesSection';
 import PremiumTestimonialsSection from '@/components/home/PremiumTestimonialsSection';
 import PremiumFinalCTASection from '@/components/home/PremiumFinalCTASection';
 import { useScrollEffects } from '@/hooks/useScrollEffects';
@@ -19,7 +20,7 @@ const LandingCouple = () => {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col bg-premium-base">
+    <div className="min-h-screen flex flex-col bg-editorial-beige">
       <SEO 
         title="Le premier wedding planner digital - Mariable"
         description="Recommandations de lieux & prestataires premium, coordination jour-J et outils de planification pour organiser votre mariage facilement."
@@ -29,17 +30,20 @@ const LandingCouple = () => {
       <PremiumHeader />
       
       <main className="flex-grow page-content">
-        {/* Hero Section Premium */}
+        {/* Hero Section Editorial */}
         <PremiumHeroSection />
 
-        {/* Section Conciergerie Premium */}
+        {/* Section Outils - Carrousel Editorial */}
         <PremiumConciergerie />
 
-        {/* Section Carnet d'Adresses Inline (Formulaire) */}
+        {/* Section Formulaire - Sélection Prestataires */}
         <CarnetAdressesInlineSection />
 
-        {/* Section Outils + Coordination fusionnée */}
+        {/* Section Outils + Coordination */}
         <PremiumToolsCoordinationSection />
+
+        {/* Section Articles/Inspiration - Fond foncé */}
+        <EditorialArticlesSection />
 
         {/* Section Témoignages */}
         <PremiumTestimonialsSection />
