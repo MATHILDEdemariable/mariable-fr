@@ -83,8 +83,8 @@ const PremiumConciergerie = () => {
                 <p className="text-editorial-noir/60 text-sm mb-4">
                   {service.subtitle}
                 </p>
-                {/* CTA underline style */}
-                <button className="text-xs tracking-widest text-editorial-olive font-medium uppercase border-b border-editorial-olive pb-1 hover:border-editorial-noir hover:text-editorial-noir transition-colors">
+                {/* CTA bouton vert rectangulaire */}
+                <button className="bg-editorial-olive hover:bg-editorial-noir text-white px-8 py-3 text-xs tracking-widest uppercase transition-colors rounded-none">
                   {service.cta}
                 </button>
               </div>

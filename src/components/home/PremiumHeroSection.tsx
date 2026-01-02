@@ -51,7 +51,7 @@ const PremiumHeroSection = () => {
           <Button 
             size="lg" 
             onClick={handleGetStarted}
-            className="w-full sm:w-auto bg-white text-editorial-noir hover:bg-editorial-beige px-10 py-6 text-base font-medium rounded-none shadow-none transition-colors"
+            className="w-full sm:w-auto bg-editorial-olive text-white hover:bg-editorial-noir px-10 py-6 text-base font-medium rounded-none shadow-none transition-colors"
           >
             Commencer <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
