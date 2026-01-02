@@ -147,14 +147,14 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen bg-premium-base">
+    <div className="min-h-screen bg-[#efeee9]">
       <SEO
         title="Inscription | Mariable"
         description="Créez votre compte Mariable pour organiser votre mariage et accéder à nos outils de planification."
       />
       <PremiumHeader />
       
-      <main className="container max-w-md mx-auto pb-12 px-4" style={{ paddingTop: 'var(--header-h-standard)' }}>
+      <main className="container max-w-md mx-auto pb-12 px-4 page-content">
         {showEmailAlert && (
           <Alert className="mb-6 border-wedding-olive bg-wedding-olive/10">
             <Mail className="h-4 w-4" />
