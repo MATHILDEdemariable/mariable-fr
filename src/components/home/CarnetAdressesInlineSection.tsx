@@ -153,7 +153,7 @@ const CarnetAdressesInlineSection = () => {
           </div>
 
           {/* Formulaire inline */}
-          <Card className="border border-editorial-noir/10 shadow-lg rounded-none bg-white">
+            <Card className="border border-editorial-noir/10 shadow-lg rounded-none bg-white">
             <CardContent className="p-8 md:p-12">
               <form onSubmit={handleSubmit} className="space-y-6">
 
@@ -165,9 +165,9 @@ const CarnetAdressesInlineSection = () => {
                   
                   <div className="grid md:grid-cols-2 gap-4">
                     {/* Sélection Gratuite */}
-                    <div onClick={() => handleTypeSelectionChange('gratuite')} className={`cursor-pointer p-6 rounded-xl border-2 transition-all duration-300 ${formData.type_selection === 'gratuite' ? 'border-premium-sage bg-premium-sage/5 shadow-lg' : 'border-premium-sage/20 hover:border-premium-sage/40 bg-white'}`}>
+                    <div onClick={() => handleTypeSelectionChange('gratuite')} className={`cursor-pointer p-6 rounded-none border-2 transition-all duration-300 ${formData.type_selection === 'gratuite' ? 'border-editorial-olive bg-editorial-olive/5 shadow-lg' : 'border-editorial-olive/20 hover:border-editorial-olive/40 bg-white'}`}>
                       <div className="flex items-start gap-4">
-                        <div className={`p-3 rounded-full ${formData.type_selection === 'gratuite' ? 'bg-premium-sage text-white' : 'bg-premium-sage/10 text-premium-sage'}`}>
+                        <div className={`p-3 rounded-none ${formData.type_selection === 'gratuite' ? 'bg-editorial-olive text-white' : 'bg-editorial-olive/10 text-editorial-olive'}`}>
                           <Gift className="h-6 w-6" />
                         </div>
                         <div className="flex-1">
@@ -190,9 +190,9 @@ const CarnetAdressesInlineSection = () => {
                     </div>
 
                     {/* Sélection Premium */}
-                    <div onClick={() => handleTypeSelectionChange('premium')} className={`cursor-pointer p-6 rounded-xl border-2 transition-all duration-300 ${formData.type_selection === 'premium' ? 'border-premium-sage bg-premium-sage/5 shadow-lg' : 'border-premium-sage/20 hover:border-premium-sage/40 bg-white'}`}>
+                    <div onClick={() => handleTypeSelectionChange('premium')} className={`cursor-pointer p-6 rounded-none border-2 transition-all duration-300 ${formData.type_selection === 'premium' ? 'border-editorial-olive bg-editorial-olive/5 shadow-lg' : 'border-editorial-olive/20 hover:border-editorial-olive/40 bg-white'}`}>
                       <div className="flex items-start gap-4">
-                        <div className={`p-3 rounded-full ${formData.type_selection === 'premium' ? 'bg-premium-sage text-white' : 'bg-premium-sage/10 text-premium-sage'}`}>
+                        <div className={`p-3 rounded-none ${formData.type_selection === 'premium' ? 'bg-editorial-olive text-white' : 'bg-editorial-olive/10 text-editorial-olive'}`}>
                           <Crown className="h-6 w-6" />
                         </div>
                         <div className="flex-1">
@@ -255,7 +255,7 @@ const CarnetAdressesInlineSection = () => {
                     <CheckCircle className="h-4 w-4 text-premium-sage" />
                     Région de votre mariage *
                   </Label>
-                  <select id="region" name="region" required value={formData.region} onChange={handleInputChange} className="w-full rounded-md border border-premium-sage/30 bg-white px-3 py-2 text-sm focus:border-premium-sage focus:outline-none focus:ring-2 focus:ring-premium-sage/20">
+                  <select id="region" name="region" required value={formData.region} onChange={handleInputChange} className="w-full rounded-none border border-editorial-olive/30 bg-white px-3 py-2 text-sm focus:border-editorial-olive focus:outline-none focus:ring-2 focus:ring-editorial-olive/20">
                     <option value="">Sélectionnez une région</option>
                     {regions.map(region => <option key={region} value={region}>{region}</option>)}
                   </select>
@@ -275,7 +275,7 @@ const CarnetAdressesInlineSection = () => {
                     <Label htmlFor="nombre_invites" className="text-premium-charcoal font-semibold mb-2">
                       Nombre d'invités
                     </Label>
-                    <select id="nombre_invites" name="nombre_invites" value={formData.nombre_invites} onChange={handleInputChange} className="w-full rounded-md border border-premium-sage/30 bg-white px-3 py-2 text-sm focus:border-premium-sage focus:outline-none focus:ring-2 focus:ring-premium-sage/20">
+                    <select id="nombre_invites" name="nombre_invites" value={formData.nombre_invites} onChange={handleInputChange} className="w-full rounded-none border border-editorial-olive/30 bg-white px-3 py-2 text-sm focus:border-editorial-olive focus:outline-none focus:ring-2 focus:ring-editorial-olive/20">
                       <option value="">Choisir</option>
                       <option value="Moins de 50">Moins de 50</option>
                       <option value="50-100">50-100</option>
@@ -288,7 +288,7 @@ const CarnetAdressesInlineSection = () => {
                     <Label htmlFor="budget_approximatif" className="text-premium-charcoal font-semibold mb-2">
                       Budget mariage total
                     </Label>
-                    <select id="budget_approximatif" name="budget_approximatif" value={formData.budget_approximatif} onChange={handleInputChange} className="w-full rounded-md border border-premium-sage/30 bg-white px-3 py-2 text-sm focus:border-premium-sage focus:outline-none focus:ring-2 focus:ring-premium-sage/20">
+                    <select id="budget_approximatif" name="budget_approximatif" value={formData.budget_approximatif} onChange={handleInputChange} className="w-full rounded-none border border-editorial-olive/30 bg-white px-3 py-2 text-sm focus:border-editorial-olive focus:outline-none focus:ring-2 focus:ring-editorial-olive/20">
                       <option value="">Choisir</option>
                       <option value="Moins de 10 000€">Moins de 10 000€</option>
                       <option value="10 000€ - 20 000€">10 000€ - 20 000€</option>
@@ -324,7 +324,7 @@ const CarnetAdressesInlineSection = () => {
                 </div>
 
                 {/* Consentement */}
-                <div className="flex items-start space-x-3 p-4 bg-premium-sage/5 rounded-lg border border-premium-sage/20">
+                <div className="flex items-start space-x-3 p-4 bg-editorial-olive/5 rounded-none border border-editorial-olive/20">
                   <Checkbox id="consent_contact" checked={formData.consent_contact} onCheckedChange={checked => handleConsentChange(checked as boolean)} className="border-premium-sage data-[state=checked]:bg-premium-sage mt-0.5" />
                   <label htmlFor="consent_contact" className="text-sm leading-relaxed cursor-pointer text-premium-charcoal">
                     J'accepte d'être contacté(e) pour l'envoi des informations relatives à l'organisation de mon mariage et aux services Mariable *
@@ -333,7 +333,7 @@ const CarnetAdressesInlineSection = () => {
 
                 {/* CTA Submit */}
                 <div className="text-center pt-4">
-                  <Button type="submit" size="lg" disabled={isSubmitting} className="btn-primary text-white px-12 py-6 text-lg font-semibold ripple w-full md:w-auto">
+                  <Button type="submit" size="lg" disabled={isSubmitting} className="bg-editorial-olive hover:bg-editorial-noir text-white px-12 py-6 text-lg font-semibold rounded-none w-full md:w-auto">
                     {isSubmitting ? 'Envoi en cours...' : <>
                         Recevoir ma sélection <Send className="ml-2 h-5 w-5" />
                       </>}
@@ -349,27 +349,27 @@ const CarnetAdressesInlineSection = () => {
           {/* Bénéfices */}
           <div className="grid md:grid-cols-3 gap-6 mt-12">
             <div className="text-center">
-              <div className="bg-premium-sage/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <CheckCircle className="h-8 w-8 text-premium-sage" />
+              <div className="bg-editorial-olive/10 w-16 h-16 rounded-none flex items-center justify-center mx-auto mb-4">
+                <CheckCircle className="h-8 w-8 text-editorial-olive" />
               </div>
-              <h3 className="font-semibold text-premium-black mb-2">Prestataires vérifiés</h3>
-              <p className="text-sm text-premium-charcoal">Tous nos prestataires sont sélectionnés et testés par nos experts</p>
+              <h3 className="font-semibold text-editorial-noir mb-2">Prestataires vérifiés</h3>
+              <p className="text-sm text-editorial-noir/70">Tous nos prestataires sont sélectionnés et testés par nos experts</p>
             </div>
 
             <div className="text-center">
-              <div className="bg-premium-sage/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Heart className="h-8 w-8 text-premium-sage" />
+              <div className="bg-editorial-olive/10 w-16 h-16 rounded-none flex items-center justify-center mx-auto mb-4">
+                <Heart className="h-8 w-8 text-editorial-olive" />
               </div>
-              <h3 className="font-semibold text-premium-black mb-2">Sélection personnalisée</h3>
-              <p className="text-sm text-premium-charcoal">Des recommandations adaptées à votre style et budget</p>
+              <h3 className="font-semibold text-editorial-noir mb-2">Sélection personnalisée</h3>
+              <p className="text-sm text-editorial-noir/70">Des recommandations adaptées à votre style et budget</p>
             </div>
 
             <div className="text-center">
-              <div className="bg-premium-sage/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Users className="h-8 w-8 text-premium-sage" />
+              <div className="bg-editorial-olive/10 w-16 h-16 rounded-none flex items-center justify-center mx-auto mb-4">
+                <Users className="h-8 w-8 text-editorial-olive" />
               </div>
-              <h3 className="font-semibold text-premium-black mb-2">Gain de temps</h3>
-              <p className="text-sm text-premium-charcoal">Économisez 20H de recherche avec notre sélection experte</p>
+              <h3 className="font-semibold text-editorial-noir mb-2">Gain de temps</h3>
+              <p className="text-sm text-editorial-noir/70">Économisez 20H de recherche avec notre sélection experte</p>
             </div>
           </div>
         </div>

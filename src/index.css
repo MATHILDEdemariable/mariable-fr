@@ -380,9 +380,10 @@ select:focus {
 }
 
 
-/* Premium button effects */
+/* Premium button effects - Editorial style */
 .btn-primary {
-  background: linear-gradient(135deg, #7F9474 0%, #9CAF88 100%);
+  background: #4a5548;
+  border-radius: 0;
   transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   position: relative;
   overflow: hidden;
@@ -395,13 +396,14 @@ select:focus {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
   transition: left 0.5s ease;
 }
 
 .btn-primary:hover {
-  transform: translateY(-2px) scale(1.05);
-  box-shadow: 0 15px 40px rgba(127, 148, 116, 0.4);
+  background: #1a1a18;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(74, 85, 72, 0.3);
 }
 
 .btn-primary:hover::before {
