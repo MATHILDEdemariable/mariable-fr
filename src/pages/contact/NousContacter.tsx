@@ -71,7 +71,7 @@ const NousContacter = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-white">
+    <div className="min-h-screen flex flex-col bg-[#efeee9]">
       <PremiumHeader />
       
       <main className="flex-grow pb-16 container page-content">
@@ -159,7 +159,7 @@ const NousContacter = () => {
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="w-full btn-primary"
+              className="w-full bg-editorial-olive hover:bg-editorial-noir text-white rounded-none"
             >
               {isSubmitting ? (
                 <>Envoi en cours...</>

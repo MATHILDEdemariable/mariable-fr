@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
-import Header from '@/components/Header';
+import PremiumHeader from '@/components/home/PremiumHeader';
 import Footer from '@/components/Footer';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -358,7 +358,7 @@ const ChecklistMariage = () => {
   });
 
   return (
-    <div className="min-h-screen flex flex-col bg-white">
+    <div className="min-h-screen flex flex-col bg-[#efeee9]">
       <Helmet>
         <title>Checklist de mariage complète | To do list et préparatifs gratuits</title>
         <meta name="description" content="✅ Checklist de mariage gratuite avec to do list détaillée. Organisez vos préparatifs étape par étape sans rien oublier. Guide complet pour votre mariage." />
@@ -388,9 +388,9 @@ const ChecklistMariage = () => {
         </script>
       </Helmet>
 
-      <Header />
+      <PremiumHeader />
 
-      <main className="flex-grow container mx-auto px-4 py-8">
+      <main className="flex-grow container mx-auto px-4 py-8 page-content">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center mb-6">
             <Button

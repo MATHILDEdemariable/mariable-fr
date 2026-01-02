@@ -35,7 +35,7 @@ const PremiumHeader = () => {
   };
 
   return (
-    <header className="site-header w-full bg-editorial-beige border-b border-editorial-noir/10 transition-all duration-300">
+    <header className="site-header w-full bg-white border-b border-editorial-noir/10 transition-all duration-300">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
@@ -43,24 +43,19 @@ const PremiumHeader = () => {
             <Logo />
           </Link>
 
-          {/* Navigation Desktop - Style éditorial */}
+          {/* Navigation Desktop - Style éditorial épuré */}
           <nav className="hidden md:flex items-center space-x-10">
-            <Link 
-              to="/professionnelsmariable" 
-              className="text-xs tracking-widest uppercase text-editorial-noir/80 hover:text-editorial-noir transition-colors"
-            >
-              Prestataires
-            </Link>
-            <Link 
-              to="/contact" 
-              className="text-xs tracking-widest uppercase text-editorial-noir/80 hover:text-editorial-noir transition-colors"
-            >
-              Contact
-            </Link>
+            {/* Navigation centrale vide pour style éditorial épuré */}
           </nav>
 
           {/* Desktop CTAs */}
           <div className="hidden md:flex items-center space-x-4">
+            <Link 
+              to="/contact"
+              className="text-xs tracking-widest uppercase text-editorial-noir/80 hover:text-editorial-noir transition-colors"
+            >
+              Contact
+            </Link>
             {isLoggedIn ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -103,15 +98,8 @@ const PremiumHeader = () => {
                 <Menu className="h-6 w-6 text-editorial-noir" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[300px] bg-editorial-beige pt-20">
+            <SheetContent side="right" className="w-[300px] bg-white pt-20">
               <div className="flex flex-col space-y-6">
-                <Link 
-                  to="/professionnelsmariable"
-                  onClick={() => setMobileOpen(false)}
-                  className="text-sm tracking-widest uppercase text-editorial-noir/80 hover:text-editorial-noir"
-                >
-                  Prestataires
-                </Link>
                 <Link 
                   to="/contact"
                   onClick={() => setMobileOpen(false)}
