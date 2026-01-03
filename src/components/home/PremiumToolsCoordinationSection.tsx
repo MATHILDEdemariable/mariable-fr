@@ -121,7 +121,7 @@ const PremiumToolsCoordinationSection = () => {
                       </div>
                     </div>
                     
-                    <div className="flex items-center gap-3 p-3 bg-gray-50 border-l-2 border-gray-300">
+                    <div className="flex items-center gap-3 p-3 bg-editorial-beige border-l-2 border-editorial-noir/30">
                       <div>
                         <p className="font-medium text-sm text-editorial-noir">17:00 - Cocktail</p>
                         <p className="text-xs text-editorial-noir/60">À venir</p>
