@@ -74,9 +74,11 @@ export default {
 				},
 				editorial: {
 					beige: '#efeee9',
-					olive: '#4a5548',
-					noir: '#1a1a18',
-					cream: '#f5f4ef'
+					olive: '#3D5A3D',
+					noir: '#0F0F0F',
+					cream: '#f5f4ef',
+					gray: '#666666',
+					border: '#E8E8E8'
 				},
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
