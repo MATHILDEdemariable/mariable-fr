@@ -1,15 +1,16 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { CheckCircle, Gift, ListChecks, ArrowRight, Sparkles, Heart, Star, Quote } from "lucide-react";
+import { Sparkles, Heart, Star, Quote } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import PremiumHeader from "@/components/home/PremiumHeader";
 import Footer from "@/components/Footer";
 import ChatbotButton from "@/components/ChatbotButton";
 import SEO from "@/components/SEO";
-import PremiumTestimonialsSection from "@/components/home/PremiumTestimonialsSection";
 import PremiumToolsCoordinationSection from "@/components/home/PremiumToolsCoordinationSection";
+import VenuesSection from "@/components/home/VenuesSection";
+import BlogSection from "@/components/home/BlogSection";
 
 const VIDEO_URL = "https://bgidfcqktsttzlwlumtz.supabase.co/storage/v1/object/public/background-videos/freepik__wideangle-shot-a-joyful-couple-dances-at-their-wed__74093%20(1).mp4";
 
@@ -62,7 +63,7 @@ const HeroSection = () => (
           <Link to="/register" className="w-full sm:w-auto">
             <Button
               size="lg"
-              className="bg-editorial-olive hover:bg-editorial-noir text-white px-6 md:px-10 py-5 md:py-6 text-base md:text-lg shadow-lg hover:shadow-xl transition-all w-full sm:w-auto"
+              className="bg-[#3D5A3D] hover:bg-[#0F0F0F] text-white px-6 md:px-10 py-5 md:py-6 text-base md:text-lg shadow-lg hover:shadow-xl transition-all w-full sm:w-auto rounded-none"
             >
               Créer votre mariage
             </Button>
@@ -73,92 +74,7 @@ const HeroSection = () => (
   </section>
 );
 
-// Couples Section - Enhanced with impactful cards
-const CouplesSection = () => {
-  const benefits = [
-    {
-      icon: CheckCircle,
-      title: "Accès aux meilleurs professionnels vérifiés",
-      description: "Des prestataires sélectionnés et recommandés par votre lieu"
-    },
-    {
-      icon: Gift,
-      title: "Prix préférentiels & privilèges club",
-      description: "Des promotions et avantages exclusifs chez tous nos partenaires"
-    },
-    {
-      icon: ListChecks,
-      title: "Outils en ligne pour planifier facilement",
-      description: "Gestion budget, liste invités et plan de table, coordination Jour-J... tout en un seul endroit"
-    }
-  ];
-
-  return (
-    <section id="couples-section" className="py-12 md:py-20 bg-editorial-beige">
-      <div className="container mx-auto px-4">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="max-w-4xl mx-auto text-center"
-        >
-          <h2 className="font-serif text-2xl sm:text-3xl md:text-5xl font-bold text-editorial-noir mb-8 md:mb-12 px-2">
-            Facilitez votre organisation & bénéficiez d'avantages exclusifs
-          </h2>
-
-          {/* 3 Key Benefits with white cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-8 md:mb-10">
-            {benefits.map((benefit, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.15, duration: 0.5, ease: "easeOut" }}
-                whileHover={{ y: -8 }}
-                className="relative bg-white p-6 md:p-8 border border-editorial-noir/10 
-                           hover:shadow-lg transition-all duration-500 cursor-pointer text-left"
-              >
-                {/* Icon */}
-                <motion.div
-                  className="relative z-10 w-12 h-12 md:w-14 md:h-14 bg-editorial-olive/10 
-                             flex items-center justify-center mb-4 md:mb-6"
-                  whileHover={{ scale: 1.05, y: -4 }}
-                  transition={{ type: "spring", stiffness: 400, damping: 15 }}
-                >
-                  <benefit.icon className="w-6 h-6 md:w-7 md:h-7 text-editorial-olive" />
-                </motion.div>
-
-                <h4 className="relative z-10 font-serif font-bold text-lg md:text-xl text-editorial-noir mb-2 md:mb-3">
-                  {benefit.title}
-                </h4>
-                <p className="relative z-10 text-sm md:text-base text-editorial-noir/70">
-                  {benefit.description}
-                </p>
-              </motion.div>
-            ))}
-          </div>
-
-          {/* CTAs */}
-          <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center px-2">
-            <Link to="/register" className="w-full sm:w-auto">
-              <Button
-                size="lg"
-                className="bg-editorial-olive hover:bg-editorial-noir text-white px-6 md:px-8 py-5 md:py-6 text-base md:text-lg w-full"
-              >
-                Créer un compte gratuit
-                <ArrowRight className="ml-2 w-4 h-4 md:w-5 md:h-5" />
-              </Button>
-            </Link>
-          </div>
-        </motion.div>
-      </div>
-    </section>
-  );
-};
-
-// Testimonials Section
+// Testimonials Section - kept from original
 const TestimonialsSection = () => {
   const testimonials = [
     {
@@ -360,9 +276,10 @@ const Mariable = () => {
 
         <main>
           <HeroSection />
-          <CouplesSection />
+          <VenuesSection />
           <PremiumToolsCoordinationSection />
-          <PremiumTestimonialsSection />
+          <BlogSection />
+          <TestimonialsSection />
           <FAQSection />
           <FinalCTASection />
         </main>
