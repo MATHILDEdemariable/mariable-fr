@@ -45,10 +45,10 @@ const PremiumToolsCoordinationSection = () => {
       <div className="container mx-auto px-4">
         {/* Titre éditorial */}
         <div className="text-center mb-16">
-          <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl text-editorial-noir mb-4 font-normal">
-            Vos outils de planification <em>gratuits</em>
+          <h2 className="font-serif text-3xl md:text-5xl font-bold text-editorial-noir uppercase tracking-[2px] mb-4">
+            Vos Outils de Planification
           </h2>
-          <p className="text-editorial-noir/70 text-lg max-w-2xl mx-auto">
+          <p className="text-editorial-gray text-lg max-w-2xl mx-auto">
             Tout ce dont vous avez besoin pour organiser votre mariage sereinement
           </p>
         </div>

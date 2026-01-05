@@ -30,11 +30,21 @@ const VendorCard: React.FC<VendorCardProps> = ({
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [isInTracking, setIsInTracking] = useState(false);
   const [isPartner, setIsPartner] = useState(vendor.partner);
+  const [pendingAction, setPendingAction] = useState<'cart' | 'tracking' | null>(null);
   const { addItem, removeItem, isInCart } = useCart();
   const inCart = isInCart(vendor.id);
 
-  const handleCartClick = (e: React.MouseEvent) => {
+  const handleCartClick = async (e: React.MouseEvent) => {
     e.stopPropagation();
+    
+    // Check if user is logged in
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      setPendingAction('cart');
+      setShowAuthModal(true);
+      return;
+    }
     
     if (inCart) {
       removeItem(vendor.id);
@@ -43,7 +53,6 @@ const VendorCard: React.FC<VendorCardProps> = ({
         description: `${vendor.nom} a été retiré de votre estimation`,
       });
     } else {
-      // Get price from vendor or use catalog
       const catalog = PRICE_CATALOG[vendor.categorie || ''];
       const price = vendor.first_price_package || vendor.prix_a_partir_de || (catalog?.mid) || null;
       
@@ -60,29 +69,6 @@ const VendorCard: React.FC<VendorCardProps> = ({
       });
     }
   };
-
-  // Get the main image from prestataires_photos_preprod
-  let mainImage = "/placeholder.svg";
-
-  try {
-    if ((vendor as any).prestataires_photos_preprod) {
-      let photos = (vendor as any).prestataires_photos_preprod;
-      
-      // Si c'est un tableau
-      if (Array.isArray(photos) && photos.length > 0) {
-        // Chercher d'abord une photo principale ou cover
-        const mainPhoto = photos.find((p: any) => p.principale || p.is_cover);
-        if (mainPhoto?.thumbnail_url || mainPhoto?.url) {
-          mainImage = mainPhoto.thumbnail_url || mainPhoto.url;
-        } else if (photos[0]?.thumbnail_url || photos[0]?.url) {
-          // Sinon prendre la première photo
-          mainImage = photos[0].thumbnail_url || photos[0].url;
-        }
-      }
-    }
-  } catch (error) {
-    console.warn("Error processing vendor photos:", error);
-  }
 
   // Get location
   const firstRegion = (vendor.regions as any)?.[0] || '';
@@ -102,13 +88,10 @@ const VendorCard: React.FC<VendorCardProps> = ({
   // Check if vendor is in tracking on component mount
   React.useEffect(() => {
     const checkTrackingStatus = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+      const { data: { user } } = await supabase.auth.getUser();
 
       if (!user) return;
 
-      // Check if vendor is in tracking
       const { data } = await supabase
         .from("vendors_tracking_preprod")
         .select("id")
@@ -120,30 +103,15 @@ const VendorCard: React.FC<VendorCardProps> = ({
     };
 
     checkTrackingStatus();
-
-    // const checkIsPartner = async () => {
-    //   const { data } = await supabase
-    //     .from("prestataires_rows")
-    //     .select("meta_value")
-    //     .eq("meta_key", "partner")
-    //     .eq("prestataire_id", vendor.id)
-    //     .maybeSingle();
-
-    //   console.log(data);
-    //   setIsPartner(!!data);
-    // };
-    // checkIsPartner();
-  }, [vendor.id]);
+  }, [vendor.id, vendor.nom]);
 
   const handleTrackingClick = async (e: React.MouseEvent) => {
     e.stopPropagation();
 
-    // Check if user is logged in
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
+      setPendingAction('tracking');
       setShowAuthModal(true);
       return;
     }
@@ -152,7 +120,6 @@ const VendorCard: React.FC<VendorCardProps> = ({
       setIsAddingToTracking(true);
 
       if (isInTracking) {
-        // Remove from tracking
         await supabase
           .from("vendors_tracking_preprod")
           .delete()
@@ -166,7 +133,6 @@ const VendorCard: React.FC<VendorCardProps> = ({
 
         setIsInTracking(false);
       } else {
-        // Add to tracking with default status "à contacter"
         await supabase.from("vendors_tracking_preprod").insert({
           user_id: user.id,
           vendor_name: vendor.nom,
@@ -177,7 +143,7 @@ const VendorCard: React.FC<VendorCardProps> = ({
         });
 
         toast({
-          title: "👍 Ajouté au suivi",
+          title: "Ajouté au suivi",
           description: `${vendor.nom} a bien été ajouté à votre suivi`,
         });
 
@@ -201,25 +167,29 @@ const VendorCard: React.FC<VendorCardProps> = ({
 
   const handleAuthSuccess = () => {
     setShowAuthModal(false);
-    // After successful auth, try to add to tracking again
+    
+    // Retry the pending action after successful auth
     setTimeout(() => {
-      handleTrackingClick({
-        stopPropagation: () => {},
-      } as React.MouseEvent);
+      if (pendingAction === 'cart') {
+        handleCartClick({ stopPropagation: () => {} } as React.MouseEvent);
+      } else if (pendingAction === 'tracking') {
+        handleTrackingClick({ stopPropagation: () => {} } as React.MouseEvent);
+      }
+      setPendingAction(null);
     }, 300);
   };
 
   return (
     <>
       <Card
-        className="overflow-hidden border-wedding-olive/20 hover:shadow-md transition-all cursor-pointer h-full flex flex-col"
+        className="overflow-hidden border-editorial-border hover:shadow-md transition-all cursor-pointer h-full flex flex-col rounded-none"
         onClick={() => onClick(vendor)}
       >
         <div className="relative flex-shrink-0">
           <AspectRatio ratio={16 / 9}>
             <FeaturedImage presta={vendor} />
           </AspectRatio>
-          <Badge className="absolute top-3 left-3 bg-white/80 text-black font-medium">
+          <Badge className="absolute top-3 left-3 bg-white/90 text-editorial-noir font-medium rounded-none">
             {vendor.categorie || "Prestataire"}
           </Badge>
           {/* Boutons en haut à droite */}
@@ -228,10 +198,10 @@ const VendorCard: React.FC<VendorCardProps> = ({
             <Button
               size="sm"
               variant="secondary"
-              className={`rounded-full p-2 ${
+              className={`rounded-none p-2 ${
                 inCart
-                  ? "bg-premium-sage text-white hover:bg-premium-sage-dark"
-                  : "bg-white/80 hover:bg-white text-premium-sage"
+                  ? "bg-editorial-olive text-white hover:bg-editorial-noir"
+                  : "bg-white/90 hover:bg-white text-editorial-olive"
               }`}
               onClick={handleCartClick}
             >
@@ -242,10 +212,10 @@ const VendorCard: React.FC<VendorCardProps> = ({
             <Button
               size="sm"
               variant="secondary"
-              className={`rounded-full p-2 ${
+              className={`rounded-none p-2 ${
                 isInTracking
-                  ? "bg-wedding-olive text-white hover:bg-wedding-olive/90"
-                  : "bg-white/80 hover:bg-white text-wedding-olive"
+                  ? "bg-editorial-olive text-white hover:bg-editorial-noir"
+                  : "bg-white/90 hover:bg-white text-editorial-olive"
               }`}
               onClick={handleTrackingClick}
               disabled={isAddingToTracking}
@@ -255,21 +225,21 @@ const VendorCard: React.FC<VendorCardProps> = ({
             </Button>
           </div>
           {isPartner && (
-            <Badge className="absolute bottom-3 right-3 bg-white/80 text-black font-medium">
+            <Badge className="absolute bottom-3 right-3 bg-editorial-olive text-white font-medium rounded-none">
               Partenaire
             </Badge>
           )}
         </div>
 
         <CardContent className="p-4 flex-grow">
-          <h3 className="text-lg font-serif mb-1 line-clamp-1">{vendor.nom}</h3>
+          <h3 className="text-lg font-serif mb-1 line-clamp-1 text-editorial-noir">{vendor.nom}</h3>
 
-          <div className="flex items-center text-sm text-muted-foreground min-h-[24px]">
+          <div className="flex items-center text-sm text-editorial-gray min-h-[24px]">
             <MapPin className="h-4 w-4 mr-1 flex-shrink-0" /> 
-            <span className="line-clamp-1">{location}</span>
+            <span className="line-clamp-1">{location || 'France'}</span>
           </div>
 
-          <div className="mt-2 font-medium text-sm min-h-[24px]">
+          <div className="mt-2 font-medium text-sm min-h-[24px] text-editorial-noir">
             <div className="flex items-center">
               <Euro className="h-4 w-4 mr-1 flex-shrink-0" />
               <span className="line-clamp-1">{getFormattedPrice()}</span>
@@ -283,7 +253,7 @@ const VendorCard: React.FC<VendorCardProps> = ({
               e.stopPropagation();
               onClick(vendor);
             }}
-            className="w-full bg-wedding-olive hover:bg-wedding-olive/90"
+            className="w-full bg-editorial-olive hover:bg-editorial-noir text-white rounded-none"
           >
             <ExternalLink className="h-4 w-4 mr-1" /> En savoir plus
           </Button>
