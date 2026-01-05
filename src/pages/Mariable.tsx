@@ -78,17 +78,17 @@ const HeroSection = () => (
 const TestimonialsSection = () => {
   const testimonials = [
     {
-      quote: "On a économisé 2 400€ grâce au Club Mariable. Les avantages exclusifs sont vraiment intéressants.",
+      quote: "Les outils de planification sont incroyables ! Le budget tracker et la checklist nous ont permis de tout organiser sans stress.",
       author: "Sophie & Marc",
       location: "Mariage en Provence"
     },
     {
-      quote: "Le Club Mariable nous a fait gagner un temps fou. Tous les prestataires sont vérifiés et fiables.",
+      quote: "La sélection de prestataires est vraiment qualitative. On a trouvé notre photographe et notre DJ en quelques clics.",
       author: "Julie & Thomas",
       location: "Mariage à Paris"
     },
     {
-      quote: "Grâce aux avantages du club, on a pu s'offrir un photographe qu'on pensait hors budget !",
+      quote: "Le service WhatsApp est super pratique ! On a eu des réponses rapides et des conseils personnalisés pour notre mariage.",
       author: "Emma & Lucas",
       location: "Mariage en Bretagne"
     }
@@ -105,7 +105,7 @@ const TestimonialsSection = () => {
           className="text-center mb-8 md:mb-12"
         >
           <h2 className="font-serif text-3xl md:text-5xl font-bold text-editorial-noir uppercase tracking-[2px] mb-4">
-            Ils Ont Rejoint le Club
+            Ils Ont Organisé Leur Mariage avec Mariable
           </h2>
         </motion.div>
 
