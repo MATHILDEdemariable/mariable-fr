@@ -113,7 +113,7 @@ const VenuesSection = () => {
             className="border-editorial-olive text-editorial-olive hover:bg-editorial-olive hover:text-white px-6 py-4 text-sm uppercase tracking-widest rounded-none whitespace-nowrap"
           >
             <Gift className="w-4 h-4 mr-2" />
-            Sélection personnalisée
+            Sélection personnalisée offerte
           </Button>
         </div>
 

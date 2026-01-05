@@ -110,7 +110,7 @@ const CarnetAdressesModal = ({ isOpen, onClose }: CarnetAdressesModalProps) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-[500px] max-h-[80vh] overflow-y-auto mt-20">
         <DialogHeader>
           <DialogTitle className="text-xl font-serif text-center mb-2">
             Recevez votre carnet d'adresses exclusif
