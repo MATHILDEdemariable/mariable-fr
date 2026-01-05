@@ -60,8 +60,8 @@ const MariablePartenaire = () => {
       
       <main className="flex-grow">
         {/* Section 1: Hero */}
-        <section className="relative py-24 md:py-36 overflow-hidden bg-premium-sage">
-          <div className="absolute inset-0 bg-gradient-to-b from-premium-sage-dark/30 via-transparent to-premium-sage-dark/20" />
+        <section className="relative py-24 md:py-36 overflow-hidden bg-editorial-olive">
+          <div className="absolute inset-0 bg-gradient-to-b from-editorial-noir/30 via-transparent to-editorial-noir/20" />
           <div className="container mx-auto px-4 relative z-10">
             <motion.div 
               initial={{ opacity: 0, y: 30 }}
@@ -73,7 +73,7 @@ const MariablePartenaire = () => {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.2 }}
-                className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm border border-white/30 rounded-full px-4 py-2 mb-8"
+                className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm border border-white/30 px-4 py-2 mb-8"
               >
                 <Palette className="h-4 w-4 text-white" />
                 <span className="font-medium text-white">Pour les Prestataires & Marques</span>
@@ -111,7 +111,7 @@ const MariablePartenaire = () => {
                 <Button 
                   size="lg"
                   onClick={() => navigate('/contact')}
-                  className="bg-white hover:bg-white/90 text-premium-sage-dark px-10 py-7 text-lg shadow-2xl hover:scale-105 transition-all duration-300 font-semibold"
+                  className="bg-white hover:bg-editorial-beige text-editorial-olive px-10 py-7 text-lg shadow-2xl hover:scale-105 transition-all duration-300 font-semibold rounded-none"
                 >
                   <Palette className="mr-2 h-5 w-5" />
                   Devenir Partenaire
@@ -386,23 +386,23 @@ const MariablePartenaire = () => {
         </section>
 
         {/* Section 7: CTA Final */}
-        <section className="py-20 md:py-28 bg-premium-sage relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-b from-premium-sage-dark/30 via-transparent to-premium-sage-dark/20" />
+        <section className="py-20 md:py-28 bg-editorial-olive relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-b from-editorial-noir/30 via-transparent to-editorial-noir/20" />
           <motion.div 
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             className="container mx-auto px-4 text-center relative z-10"
           >
-            <h2 className="text-3xl md:text-5xl font-serif font-bold text-white mb-8">
-              Prêt à diviser votre CAC par 2 ?
+            <h2 className="text-3xl md:text-5xl font-serif font-bold text-white mb-8 uppercase tracking-[2px]">
+              Prêt à Diviser Votre CAC par 2 ?
             </h2>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button 
                 size="lg"
                 onClick={() => navigate('/contact')}
-                className="bg-white hover:bg-white/90 text-premium-sage-dark px-10 py-7 text-lg shadow-2xl hover:scale-105 transition-all duration-300 font-semibold"
+                className="bg-white hover:bg-editorial-beige text-editorial-olive px-10 py-7 text-lg shadow-2xl hover:scale-105 transition-all duration-300 font-semibold rounded-none"
               >
                 En savoir plus - discutons en
                 <ArrowRight className="ml-2 h-5 w-5" />
@@ -411,7 +411,7 @@ const MariablePartenaire = () => {
             
             <div className="flex flex-wrap justify-center gap-6 mt-8 text-white/80">
               {['Paiement à la performance', 'ROI trackable', 'Leads qualifiés'].map((item, index) => (
-                <span key={index} className="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-full">
+                <span key={index} className="flex items-center gap-2 bg-white/10 px-4 py-2">
                   <Check className="h-4 w-4 text-white" /> {item}
                 </span>
               ))}

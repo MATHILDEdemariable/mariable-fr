@@ -104,8 +104,8 @@ const TestimonialsSection = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-8 md:mb-12"
         >
-          <h2 className="font-serif text-2xl md:text-4xl font-bold text-editorial-noir mb-4">
-            Ils ont rejoint le Club
+          <h2 className="font-serif text-3xl md:text-5xl font-bold text-editorial-noir uppercase tracking-[2px] mb-4">
+            Ils Ont Rejoint le Club
           </h2>
         </motion.div>
 
@@ -174,7 +174,7 @@ const FAQSection = () => {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="font-serif text-2xl md:text-5xl font-bold text-center text-editorial-noir mb-8 md:mb-16 px-2"
+          className="font-serif text-3xl md:text-5xl font-bold text-center text-editorial-noir uppercase tracking-[2px] mb-8 md:mb-16 px-2"
         >
           Vos Questions
         </motion.h2>

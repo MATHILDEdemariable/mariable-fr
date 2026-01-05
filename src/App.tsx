@@ -23,6 +23,8 @@ import MariageNouvelleAquitaine from "./pages/MariageNouvelleAquitaine";
 import ChecklistMariage from "./pages/ChecklistMariage";
 import CoordinationJourJ from "./pages/CoordinationJourJ";
 
+const Callback = lazy(() => import("./pages/auth/Callback"));
+
 // Lazy load all other pages
 const Index = lazy(() => import("./pages/Index"));
 const MoteurRecherche = lazy(() => import("./pages/MoteurRecherche"));
@@ -198,7 +200,7 @@ function App() {
                    <Route path="/login" element={<Login />} />
                    <Route path="/register" element={<Register />} />
                    <Route path="/auth" element={<Login />} />
-                   <Route path="/auth/callback" element={<Navigate to="/login" replace />} />
+                   <Route path="/auth/callback" element={<Callback />} />
                    <Route path="/auth/reset-password" element={<ResetPassword />} />
                    <Route path="/email-confirmation" element={<EmailConfirmation />} />
                    <Route path="/auth/email-confirmation" element={<Navigate to="/email-confirmation" replace />} />
