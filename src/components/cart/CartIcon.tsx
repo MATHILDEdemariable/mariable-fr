@@ -64,10 +64,10 @@ const CartIcon = () => {
         <Button 
           variant="outline" 
           size="icon" 
-          className="fixed top-32 right-6 z-50 bg-white shadow-lg border-premium-sage hover:bg-premium-sage-very-light h-12 w-12 rounded-full"
+          className="fixed top-24 right-6 z-50 bg-white shadow-xl border-2 border-editorial-olive hover:bg-editorial-beige h-14 w-14 rounded-none transition-all duration-300"
         >
-          <ShoppingCart className="h-5 w-5 text-premium-sage" />
-          <Badge className="absolute -top-2 -right-2 bg-premium-sage text-white text-xs h-6 w-6 flex items-center justify-center rounded-full p-0">
+          <ShoppingCart className="h-6 w-6 text-editorial-olive" />
+          <Badge className="absolute -top-1 -right-1 bg-editorial-olive text-white text-xs h-6 w-6 flex items-center justify-center rounded-none p-0 font-bold">
             {itemCount}
           </Badge>
         </Button>
@@ -111,7 +111,7 @@ const CartIcon = () => {
                   {item.price ? (
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
-                        <span className="text-sm font-semibold text-premium-sage flex items-center gap-1">
+                        <span className="text-sm font-semibold text-editorial-olive flex items-center gap-1">
                           <Euro className="h-3 w-3" />
                           {item.price.toLocaleString()}€{isTraiteur ? '/pers' : ''}
                         </span>
@@ -131,9 +131,9 @@ const CartIcon = () => {
                       
                       {/* Champ nombre d'invités pour Traiteur */}
                       {isTraiteur && (
-                        <div className="bg-premium-sage-very-light rounded-lg p-2">
+                        <div className="bg-editorial-beige p-2">
                           <div className="flex items-center gap-2">
-                            <Users className="h-4 w-4 text-premium-sage" />
+                            <Users className="h-4 w-4 text-editorial-olive" />
                             <span className="text-xs text-muted-foreground">Invités:</span>
                             <Input
                               type="number"
@@ -145,7 +145,7 @@ const CartIcon = () => {
                             />
                           </div>
                           {item.guestCount && item.price && (
-                            <p className="text-xs text-premium-sage-dark mt-1 font-medium">
+                            <p className="text-xs text-editorial-noir mt-1 font-medium">
                               {item.price}€ × {item.guestCount} = {itemTotal.toLocaleString()}€
                             </p>
                           )}
@@ -163,7 +163,7 @@ const CartIcon = () => {
                       />
                       <Button
                         size="sm"
-                        className="h-8 bg-premium-sage hover:bg-premium-sage-dark"
+                        className="h-8 bg-editorial-olive hover:bg-editorial-noir"
                         onClick={() => handleCustomPrice(item.vendorId)}
                       >
                         <Check className="h-3 w-3" />
@@ -199,7 +199,7 @@ const CartIcon = () => {
                       {editingId === item.vendorId && (
                         <Button
                           size="sm"
-                          className="h-8 bg-premium-sage hover:bg-premium-sage-dark"
+                          className="h-8 bg-editorial-olive hover:bg-editorial-noir"
                           onClick={() => handleCustomPrice(item.vendorId)}
                         >
                           <Check className="h-3 w-3" />
@@ -214,10 +214,10 @@ const CartIcon = () => {
         </div>
 
         {/* Total */}
-        <div className="p-4 bg-premium-sage-very-light border-t border-border">
+        <div className="p-4 bg-editorial-beige border-t border-border">
           <div className="flex items-center justify-between">
             <span className="font-semibold text-foreground">Budget estimé total</span>
-            <span className="text-xl font-bold text-premium-sage">
+            <span className="text-xl font-bold text-editorial-olive">
               {total.toLocaleString()}€
             </span>
           </div>

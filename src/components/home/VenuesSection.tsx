@@ -30,15 +30,15 @@ const REGIONS = [
   "Provence-Alpes-Côte d'Azur"
 ];
 
-const CATEGORIES: { id: PrestataireCategorie | 'all'; label: string }[] = [
+// Catégories simplifiées pour la page d'accueil
+const MAIN_CATEGORIES = ['Lieu de réception', 'Photographe', 'Traiteur'];
+
+const CATEGORIES: { id: string; label: string }[] = [
   { id: 'all', label: 'Tous les prestataires' },
   { id: 'Lieu de réception', label: 'Lieux de réception' },
   { id: 'Photographe', label: 'Photographes' },
   { id: 'Traiteur', label: 'Traiteurs' },
-  { id: 'Fleuriste', label: 'Fleuristes' },
-  { id: 'DJ', label: 'DJ & Musique' },
-  { id: 'Décoration', label: 'Décoration' },
-  { id: 'Coordination', label: 'Coordination' },
+  { id: 'Autres', label: 'Autres' },
 ];
 
 const VenuesSection = () => {
@@ -60,7 +60,11 @@ const VenuesSection = () => {
         .eq('visible', true)
         .limit(6);
       
-      if (selectedCategory !== 'all') {
+      // Gestion des catégories simplifiées
+      if (selectedCategory === 'Autres') {
+        // Filtrer les prestataires qui NE SONT PAS dans les catégories principales
+        query = query.not('categorie', 'in', `("Lieu de réception","Photographe","Traiteur")`);
+      } else if (selectedCategory !== 'all') {
         query = query.eq('categorie', selectedCategory as PrestataireCategorie);
       }
 
@@ -117,49 +121,17 @@ const VenuesSection = () => {
           </Button>
         </div>
 
-        {/* Filtres en ligne */}
-        <div className="flex flex-wrap gap-3 justify-center mb-12">
+        {/* Filtre Région uniquement */}
+        <div className="flex justify-center mb-12">
           <Select value={selectedRegion} onValueChange={setSelectedRegion}>
-            <SelectTrigger className="w-[180px] md:w-[200px] bg-white border-editorial-border rounded-none">
+            <SelectTrigger className="w-[220px] md:w-[280px] bg-white border-editorial-border rounded-none">
+              <MapPin className="w-4 h-4 mr-2 text-editorial-gray" />
               <SelectValue placeholder="Région" />
             </SelectTrigger>
             <SelectContent>
               {REGIONS.map((region) => (
                 <SelectItem key={region} value={region}>{region}</SelectItem>
               ))}
-            </SelectContent>
-          </Select>
-          <Select>
-            <SelectTrigger className="w-[140px] md:w-[160px] bg-white border-editorial-border rounded-none">
-              <SelectValue placeholder="Type" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="chateau">Château</SelectItem>
-              <SelectItem value="domaine">Domaine</SelectItem>
-              <SelectItem value="mas">Mas</SelectItem>
-              <SelectItem value="hotel">Hôtel</SelectItem>
-            </SelectContent>
-          </Select>
-          <Select>
-            <SelectTrigger className="w-[140px] md:w-[160px] bg-white border-editorial-border rounded-none">
-              <SelectValue placeholder="Capacité" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="50">Jusqu'à 50</SelectItem>
-              <SelectItem value="100">50 - 100</SelectItem>
-              <SelectItem value="200">100 - 200</SelectItem>
-              <SelectItem value="300">200+</SelectItem>
-            </SelectContent>
-          </Select>
-          <Select>
-            <SelectTrigger className="w-[140px] md:w-[160px] bg-white border-editorial-border rounded-none">
-              <SelectValue placeholder="Trier par" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="popular">Popularité</SelectItem>
-              <SelectItem value="recent">Plus récent</SelectItem>
-              <SelectItem value="price-asc">Prix croissant</SelectItem>
-              <SelectItem value="price-desc">Prix décroissant</SelectItem>
             </SelectContent>
           </Select>
         </div>
