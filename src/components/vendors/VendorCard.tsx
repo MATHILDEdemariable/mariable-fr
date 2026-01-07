@@ -182,7 +182,7 @@ const VendorCard: React.FC<VendorCardProps> = ({
   return (
     <>
       <Card
-        className="overflow-hidden border-editorial-border hover:shadow-md transition-all cursor-pointer h-full flex flex-col rounded-none"
+        className="overflow-hidden border-editorial-border hover:shadow-md transition-all cursor-pointer h-full flex flex-col rounded-none w-full max-w-full"
         onClick={() => onClick(vendor)}
       >
         <div className="relative flex-shrink-0">

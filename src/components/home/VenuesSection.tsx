@@ -73,7 +73,7 @@ const VenuesSection = () => {
   const handleVendorClick = (vendor: any) => {
     navigate(`/prestataire/${vendor.slug}`);
   };
-  return <section className="py-12 md:py-24 px-4 md:px-10 bg-white">
+  return <section className="py-12 md:py-24 px-4 md:px-10 bg-white overflow-hidden">
       <div className="container max-w-7xl mx-auto">
         {/* Titre éditorial */}
         <motion.div initial={{
@@ -138,7 +138,7 @@ const VenuesSection = () => {
         </div>
 
         {/* Layout 2 colonnes */}
-        <div className="flex gap-8">
+        <div className="flex gap-4 md:gap-8 overflow-hidden">
           {/* Sidebar gauche - Catégories (desktop only) */}
           <aside className="hidden lg:block w-[250px] flex-shrink-0">
             <div className="bg-white border border-editorial-border p-6 sticky top-24">
@@ -156,7 +156,7 @@ const VenuesSection = () => {
           </aside>
 
           {/* Grid droite - Cartes prestataires */}
-          <div className="flex-1">
+          <div className="flex-1 min-w-0 w-full">
             {isLoading ? <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
                 {[...Array(4)].map((_, i) => <div key={i} className="animate-pulse">
                     <div className="aspect-[16/9] bg-gradient-to-br from-editorial-border to-editorial-border/70" />
@@ -165,7 +165,7 @@ const VenuesSection = () => {
                       <div className="h-4 bg-editorial-border rounded w-1/2" />
                     </div>
                   </div>)}
-              </div> : <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
+              </div> : <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 w-full">
                 {vendors?.map(vendor => <VendorCard key={vendor.id} vendor={vendor} onClick={handleVendorClick} />)}
               </div>}
 
