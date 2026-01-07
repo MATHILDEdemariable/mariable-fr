@@ -85,7 +85,7 @@ const ImportGuestListDialog = ({ open, onOpenChange, planId, onImported }: Impor
         selectedGuestsList.map(guest => ({
           seating_plan_id: planId,
           guest_name: `${guest.guest_first_name || ''} ${guest.guest_last_name || ''}`.trim(),
-          guest_type: 'invite',
+          guest_type: 'adult',
           table_id: null
         }))
       );
