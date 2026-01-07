@@ -58,7 +58,7 @@ const UserDashboard: React.FC = () => {
           description: "Vous devez être connecté pour accéder à votre tableau de bord",
           variant: "destructive"
         });
-        navigate('/login', { state: { from: location.pathname } });
+        navigate('/login', { state: { redirectAfterLogin: location.pathname } });
       }
     };
 
