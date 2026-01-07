@@ -92,7 +92,7 @@ const MariableAmbassadeur = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3, duration: 0.6 }}
-                className="text-4xl md:text-6xl lg:text-7xl font-serif font-bold text-white mb-8 leading-tight"
+                className="text-4xl md:text-6xl lg:text-7xl font-serif text-white mb-8 leading-tight"
               >
                 Générez des{' '}
                 <span className="text-white/90 relative">
@@ -185,7 +185,7 @@ const MariableAmbassadeur = () => {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="text-3xl md:text-5xl font-serif font-bold text-center text-foreground mb-16"
+              className="text-3xl md:text-5xl font-serif text-center text-foreground mb-16"
             >
               Vos avantages en tant que Lieu Ambassadeur
             </motion.h2>
@@ -226,7 +226,7 @@ const MariableAmbassadeur = () => {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="text-3xl md:text-5xl font-serif font-bold text-center text-foreground mb-16"
+              className="text-3xl md:text-5xl font-serif text-center text-foreground mb-16"
             >
               Ils ont rejoint le réseau
             </motion.h2>
@@ -297,7 +297,7 @@ const MariableAmbassadeur = () => {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="text-3xl md:text-5xl font-serif font-bold text-center text-foreground mb-16"
+              className="text-3xl md:text-5xl font-serif text-center text-foreground mb-16"
             >
               💰 Simulez vos revenus
             </motion.h2>
@@ -405,7 +405,7 @@ const MariableAmbassadeur = () => {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="text-3xl md:text-5xl font-serif font-bold text-center text-foreground mb-16"
+              className="text-3xl md:text-5xl font-serif text-center text-foreground mb-16"
             >
               Questions fréquentes
             </motion.h2>
@@ -444,8 +444,8 @@ const MariableAmbassadeur = () => {
             viewport={{ once: true }}
             className="container mx-auto px-4 text-center relative z-10"
           >
-            <h2 className="text-3xl md:text-5xl font-serif font-bold text-white mb-8 uppercase tracking-[2px]">
-              Prêt à Générer des Revenus Passifs ?
+            <h2 className="text-3xl md:text-5xl font-serif text-white mb-8">
+              Prêt à générer des revenus passifs ?
             </h2>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">

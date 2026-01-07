@@ -81,7 +81,7 @@ const VenuesSection = () => {
   };
 
   return (
-    <section className="py-16 md:py-24 px-4 md:px-10 bg-white">
+    <section className="py-12 md:py-24 px-4 md:px-10 bg-white">
       <div className="container max-w-7xl mx-auto">
         {/* Titre éditorial */}
         <motion.div
@@ -89,7 +89,7 @@ const VenuesSection = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-12 md:mb-16"
+          className="text-center mb-8 md:mb-16 px-2"
         >
           <h2 className="font-serif text-3xl md:text-5xl text-editorial-noir mb-4">
             Lieux & prestataires
@@ -110,8 +110,33 @@ const VenuesSection = () => {
           </Button>
         </div>
 
-        {/* Filtre Région uniquement */}
-        <div className="flex justify-center mb-12">
+        {/* Mobile Filters */}
+        <div className="lg:hidden mb-6 space-y-3">
+          <Select value={selectedCategory} onValueChange={(value) => setSelectedCategory(value)}>
+            <SelectTrigger className="w-full bg-white border-editorial-border rounded-none">
+              <SelectValue placeholder="Toutes les catégories" />
+            </SelectTrigger>
+            <SelectContent>
+              {CATEGORIES.map((cat) => (
+                <SelectItem key={cat.id} value={cat.id}>{cat.label}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={selectedRegion} onValueChange={setSelectedRegion}>
+            <SelectTrigger className="w-full bg-white border-editorial-border rounded-none">
+              <MapPin className="w-4 h-4 mr-2 text-editorial-gray" />
+              <SelectValue placeholder="Région" />
+            </SelectTrigger>
+            <SelectContent>
+              {REGIONS.map((region) => (
+                <SelectItem key={region} value={region}>{region}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Desktop Region Filter */}
+        <div className="hidden lg:flex justify-center mb-12">
           <Select value={selectedRegion} onValueChange={setSelectedRegion}>
             <SelectTrigger className="w-[220px] md:w-[280px] bg-white border-editorial-border rounded-none">
               <MapPin className="w-4 h-4 mr-2 text-editorial-gray" />
@@ -155,7 +180,7 @@ const VenuesSection = () => {
           {/* Grid droite - Cartes prestataires */}
           <div className="flex-1">
             {isLoading ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
                 {[...Array(4)].map((_, i) => (
                   <div key={i} className="animate-pulse">
                     <div className="aspect-[16/9] bg-gradient-to-br from-editorial-border to-editorial-border/70" />
@@ -167,7 +192,7 @@ const VenuesSection = () => {
                 ))}
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
                 {vendors?.map((vendor) => (
                   <VendorCard
                     key={vendor.id}

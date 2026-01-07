@@ -41,34 +41,34 @@ const PremiumToolsCoordinationSection = () => {
   ];
 
   return (
-    <section id="premium-tools-section" className="py-24 bg-white">
+    <section id="premium-tools-section" className="py-16 md:py-24 bg-white">
       <div className="container mx-auto px-4">
         {/* Titre éditorial */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-12 md:mb-16">
           <h2 className="font-serif text-3xl md:text-5xl text-editorial-noir mb-4">
             Vos outils de planification
           </h2>
-          <p className="text-editorial-gray text-lg max-w-2xl mx-auto">
+          <p className="text-editorial-gray text-base md:text-lg max-w-2xl mx-auto px-2">
             Tout ce dont vous avez besoin pour organiser votre mariage sereinement
           </p>
         </div>
 
-        <div className="flex flex-col lg:grid lg:grid-cols-2 gap-8 lg:gap-16 items-start max-w-6xl mx-auto">
+        <div className="flex flex-col lg:grid lg:grid-cols-2 gap-8 lg:gap-16 items-center max-w-6xl mx-auto">
           {/* Tools Grid */}
-          <div className="order-2 lg:order-1">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+          <div className="order-2 lg:order-1 w-full">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 max-w-lg mx-auto lg:max-w-none">
               {tools.map((tool, index) => (
                 <div
                   key={index}
-                  className="group p-6 border border-editorial-noir/10 hover:border-editorial-olive/30 transition-colors bg-white"
+                  className="group p-4 sm:p-6 border border-editorial-noir/10 hover:border-editorial-olive/30 transition-colors bg-white"
                 >
-                  <div className="mb-4">
-                    <tool.icon className="h-8 w-8 text-editorial-olive" strokeWidth={1.5} />
+                  <div className="mb-3 sm:mb-4">
+                    <tool.icon className="h-6 w-6 sm:h-8 sm:w-8 text-editorial-olive" strokeWidth={1.5} />
                   </div>
-                  <h4 className="font-serif text-lg text-editorial-noir mb-2">
+                  <h4 className="font-serif text-base sm:text-lg text-editorial-noir mb-1 sm:mb-2">
                     {tool.title}
                   </h4>
-                  <p className="text-editorial-noir/60 text-sm">
+                  <p className="text-editorial-noir/60 text-xs sm:text-sm">
                     {tool.description}
                   </p>
                 </div>
@@ -76,11 +76,11 @@ const PremiumToolsCoordinationSection = () => {
             </div>
 
             {/* CTA */}
-            <div className="mt-8">
+            <div className="mt-6 sm:mt-8 flex justify-center lg:justify-start">
               <Link to="/register">
                 <Button 
                   size="lg" 
-                  className="bg-editorial-noir hover:bg-editorial-noir/80 text-white px-10 py-6 text-base font-medium rounded-none w-full"
+                  className="bg-editorial-noir hover:bg-editorial-noir/80 text-white px-8 sm:px-10 py-5 sm:py-6 text-sm sm:text-base font-medium rounded-none"
                 >
                   Créer mon compte gratuit <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
@@ -89,39 +89,39 @@ const PremiumToolsCoordinationSection = () => {
           </div>
 
           {/* Phone Mockup */}
-          <div className="relative order-1 lg:order-2">
-            <div className="bg-editorial-noir rounded-[2.5rem] p-2 shadow-2xl max-w-[280px] sm:max-w-sm mx-auto">
-              <div className="bg-white rounded-[2rem] overflow-hidden">
-                <div className="relative h-[380px] sm:h-[480px]">
+          <div className="relative order-1 lg:order-2 flex justify-center w-full">
+            <div className="bg-editorial-noir rounded-[2rem] sm:rounded-[2.5rem] p-1.5 sm:p-2 shadow-2xl w-[220px] sm:w-[280px] lg:w-[320px]">
+              <div className="bg-white rounded-[1.75rem] sm:rounded-[2rem] overflow-hidden">
+                <div className="relative h-[280px] sm:h-[380px] lg:h-[480px]">
                   {/* Status bar */}
-                  <div className="flex justify-between items-center p-4 text-xs text-editorial-noir/60">
+                  <div className="flex justify-between items-center p-3 sm:p-4 text-xs text-editorial-noir/60">
                     <span>9:41</span>
                     <span>🔋 100%</span>
                   </div>
                   
                   {/* App header */}
-                  <div className="bg-editorial-olive text-white p-4">
-                    <h4 className="font-serif text-lg">Coordination Jour J</h4>
-                    <p className="text-white/80 text-sm">Votre mariage</p>
+                  <div className="bg-editorial-olive text-white p-3 sm:p-4">
+                    <h4 className="font-serif text-sm sm:text-lg">Coordination Jour J</h4>
+                    <p className="text-white/80 text-xs sm:text-sm">Votre mariage</p>
                   </div>
                   
                   {/* Timeline */}
-                  <div className="p-4 space-y-3">
-                    <div className="flex items-center gap-3 p-3 bg-green-50 border-l-2 border-green-500">
+                  <div className="p-3 sm:p-4 space-y-2 sm:space-y-3">
+                    <div className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 bg-green-50 border-l-2 border-green-500">
                       <div>
-                        <p className="font-medium text-sm text-editorial-noir">14:00 - Arrivée invités</p>
-                        <p className="text-xs text-editorial-noir/60">En cours ✓</p>
+                        <p className="font-medium text-xs sm:text-sm text-editorial-noir">14:00 - Arrivée invités</p>
+                        <p className="text-[10px] sm:text-xs text-editorial-noir/60">En cours ✓</p>
                       </div>
                     </div>
                     
-                    <div className="flex items-center gap-3 p-3 bg-editorial-olive/5 border-l-2 border-editorial-olive">
+                    <div className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 bg-editorial-olive/5 border-l-2 border-editorial-olive">
                       <div>
-                        <p className="font-medium text-sm text-editorial-noir">15:30 - Cérémonie</p>
-                        <p className="text-xs text-editorial-noir/60">Préparation</p>
+                        <p className="font-medium text-xs sm:text-sm text-editorial-noir">15:30 - Cérémonie</p>
+                        <p className="text-[10px] sm:text-xs text-editorial-noir/60">Préparation</p>
                       </div>
                     </div>
                     
-                    <div className="flex items-center gap-3 p-3 bg-editorial-beige border-l-2 border-editorial-noir/30">
+                    <div className="hidden sm:flex items-center gap-3 p-3 bg-editorial-beige border-l-2 border-editorial-noir/30">
                       <div>
                         <p className="font-medium text-sm text-editorial-noir">17:00 - Cocktail</p>
                         <p className="text-xs text-editorial-noir/60">À venir</p>
@@ -130,11 +130,11 @@ const PremiumToolsCoordinationSection = () => {
                   </div>
                   
                   {/* Notification */}
-                  <div className="absolute bottom-4 left-4 right-4">
-                    <div className="bg-white border border-editorial-noir/10 p-3 shadow-sm">
+                  <div className="absolute bottom-3 sm:bottom-4 left-3 sm:left-4 right-3 sm:right-4">
+                    <div className="bg-white border border-editorial-noir/10 p-2 sm:p-3 shadow-sm">
                       <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                        <p className="text-xs text-editorial-noir">
+                        <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-green-500 rounded-full animate-pulse"></div>
+                        <p className="text-[10px] sm:text-xs text-editorial-noir">
                           <strong>Photographe:</strong> En position
                         </p>
                       </div>
@@ -145,10 +145,10 @@ const PremiumToolsCoordinationSection = () => {
             </div>
 
             {/* Demo button */}
-            <div className="text-center mt-8">
+            <div className="absolute -bottom-8 sm:-bottom-10 left-1/2 -translate-x-1/2">
               <button 
                 onClick={() => setIsModalOpen(true)}
-                className="text-xs tracking-widest text-editorial-olive uppercase border-b border-editorial-olive pb-1 hover:text-editorial-noir hover:border-editorial-noir transition-colors"
+                className="text-[10px] sm:text-xs tracking-widest text-editorial-olive uppercase border-b border-editorial-olive pb-1 hover:text-editorial-noir hover:border-editorial-noir transition-colors whitespace-nowrap"
               >
                 Voir la démo
               </button>

@@ -83,7 +83,7 @@ const MariablePartenaire = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3, duration: 0.6 }}
-                className="text-4xl md:text-6xl lg:text-7xl font-serif font-bold text-white mb-8 leading-tight"
+                className="text-4xl md:text-6xl lg:text-7xl font-serif text-white mb-8 leading-tight"
               >
                 Et si vous étiez recommandé par des{' '}
                 <span className="text-white/90 relative">
@@ -176,7 +176,7 @@ const MariablePartenaire = () => {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="text-3xl md:text-5xl font-serif font-bold text-center text-foreground mb-16"
+              className="text-3xl md:text-5xl font-serif text-center text-foreground mb-16"
             >
               Vos avantages en tant que Partenaire
             </motion.h2>
@@ -217,7 +217,7 @@ const MariablePartenaire = () => {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="text-3xl md:text-5xl font-serif font-bold text-center text-foreground mb-16"
+              className="text-3xl md:text-5xl font-serif text-center text-foreground mb-16"
             >
               Comment ça marche ?
             </motion.h2>
@@ -284,7 +284,7 @@ const MariablePartenaire = () => {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="text-3xl md:text-5xl font-serif font-bold text-center text-foreground mb-16"
+              className="text-3xl md:text-5xl font-serif text-center text-foreground mb-16"
             >
               Ils ont rejoint le réseau
             </motion.h2>
@@ -355,7 +355,7 @@ const MariablePartenaire = () => {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="text-3xl md:text-5xl font-serif font-bold text-center text-foreground mb-16"
+              className="text-3xl md:text-5xl font-serif text-center text-foreground mb-16"
             >
               Questions fréquentes
             </motion.h2>
@@ -394,8 +394,8 @@ const MariablePartenaire = () => {
             viewport={{ once: true }}
             className="container mx-auto px-4 text-center relative z-10"
           >
-            <h2 className="text-3xl md:text-5xl font-serif font-bold text-white mb-8 uppercase tracking-[2px]">
-              Prêt à Diviser Votre CAC par 2 ?
+            <h2 className="text-3xl md:text-5xl font-serif text-white mb-8">
+              Prêt à diviser votre CAC par 2 ?
             </h2>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
