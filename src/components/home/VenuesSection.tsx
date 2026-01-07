@@ -9,55 +9,46 @@ import { supabase } from "@/integrations/supabase/client";
 import VendorCard from "@/components/vendors/VendorCard";
 import CarnetAdressesModal from "@/components/home/CarnetAdressesModal";
 import { Database } from "@/integrations/supabase/types";
-
 type PrestataireCategorie = Database['public']['Enums']['prestataire_categorie'];
-
-const REGIONS = [
-  'Toutes les régions',
-  'Auvergne-Rhône-Alpes',
-  'Bourgogne-Franche-Comté',
-  'Bretagne',
-  'Centre-Val de Loire',
-  'Corse',
-  'Grand Est',
-  'Hauts-de-France',
-  'Île-de-France',
-  'Normandie',
-  'Nouvelle-Aquitaine',
-  'Occitanie',
-  'Pays de la Loire',
-  "Provence-Alpes-Côte d'Azur"
-];
+const REGIONS = ['Toutes les régions', 'Auvergne-Rhône-Alpes', 'Bourgogne-Franche-Comté', 'Bretagne', 'Centre-Val de Loire', 'Corse', 'Grand Est', 'Hauts-de-France', 'Île-de-France', 'Normandie', 'Nouvelle-Aquitaine', 'Occitanie', 'Pays de la Loire', "Provence-Alpes-Côte d'Azur"];
 
 // Catégories simplifiées pour la page d'accueil
 const MAIN_CATEGORIES = ['Lieu de réception', 'Photographe', 'Traiteur'];
-
-const CATEGORIES: { id: string; label: string }[] = [
-  { id: 'all', label: 'Tous les prestataires' },
-  { id: 'Lieu de réception', label: 'Lieux de réception' },
-  { id: 'Photographe', label: 'Photographes' },
-  { id: 'Traiteur', label: 'Traiteurs' },
-  { id: 'Autres', label: 'Autres' },
-];
-
+const CATEGORIES: {
+  id: string;
+  label: string;
+}[] = [{
+  id: 'all',
+  label: 'Tous les prestataires'
+}, {
+  id: 'Lieu de réception',
+  label: 'Lieux de réception'
+}, {
+  id: 'Photographe',
+  label: 'Photographes'
+}, {
+  id: 'Traiteur',
+  label: 'Traiteurs'
+}, {
+  id: 'Autres',
+  label: 'Autres'
+}];
 const VenuesSection = () => {
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedRegion, setSelectedRegion] = useState<string>('Toutes les régions');
   const [isCarnetModalOpen, setIsCarnetModalOpen] = useState(false);
-
-  const { data: vendors, isLoading } = useQuery({
+  const {
+    data: vendors,
+    isLoading
+  } = useQuery({
     queryKey: ['homepage-vendors', selectedCategory, selectedRegion],
     queryFn: async () => {
-      let query = supabase
-        .from('prestataires_rows')
-        .select(`
+      let query = supabase.from('prestataires_rows').select(`
           *,
           prestataires_photos_preprod (url, is_cover, ordre, thumbnail_url)
-        `)
-        .eq('visible', true)
-        .limit(6);
-      
+        `).eq('visible', true).limit(6);
+
       // Gestion des catégories simplifiées
       if (selectedCategory === 'Autres') {
         // Filtrer les prestataires qui NE SONT PAS dans les catégories principales
@@ -70,27 +61,29 @@ const VenuesSection = () => {
       if (selectedRegion !== 'Toutes les régions') {
         query = query.filter('regions', 'cs', JSON.stringify([selectedRegion]));
       }
-      
-      const { data } = await query;
+      const {
+        data
+      } = await query;
       return data || [];
     }
   });
-
   const handleVendorClick = (vendor: any) => {
     navigate(`/prestataire/${vendor.slug}`);
   };
-
-  return (
-    <section className="py-12 md:py-24 px-4 md:px-10 bg-white">
+  return <section className="py-12 md:py-24 px-4 md:px-10 bg-white">
       <div className="container max-w-7xl mx-auto">
         {/* Titre éditorial */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-8 md:mb-16 px-2"
-        >
+        <motion.div initial={{
+        opacity: 0,
+        y: 20
+      }} whileInView={{
+        opacity: 1,
+        y: 0
+      }} viewport={{
+        once: true
+      }} transition={{
+        duration: 0.6
+      }} className="text-center mb-8 md:mb-16 px-2">
           <h2 className="font-serif text-3xl md:text-5xl text-editorial-noir mb-4">
             Lieux & prestataires
           </h2>
@@ -101,10 +94,7 @@ const VenuesSection = () => {
 
         {/* CTA Sélection personnalisée centré */}
         <div className="flex justify-center mb-8">
-          <Button
-            onClick={() => setIsCarnetModalOpen(true)}
-            className="bg-editorial-noir hover:bg-editorial-noir/80 text-white px-6 py-4 text-sm uppercase tracking-widest rounded-none"
-          >
+          <Button onClick={() => setIsCarnetModalOpen(true)} className="px-6 py-4 text-sm uppercase tracking-widest rounded-none bg-editorial-beige text-primary">
             <Gift className="w-4 h-4 mr-2" />
             Sélection personnalisée offerte
           </Button>
@@ -112,14 +102,12 @@ const VenuesSection = () => {
 
         {/* Mobile Filters */}
         <div className="lg:hidden mb-6 space-y-3">
-          <Select value={selectedCategory} onValueChange={(value) => setSelectedCategory(value)}>
+          <Select value={selectedCategory} onValueChange={value => setSelectedCategory(value)}>
             <SelectTrigger className="w-full bg-white border-editorial-border rounded-none">
               <SelectValue placeholder="Toutes les catégories" />
             </SelectTrigger>
             <SelectContent>
-              {CATEGORIES.map((cat) => (
-                <SelectItem key={cat.id} value={cat.id}>{cat.label}</SelectItem>
-              ))}
+              {CATEGORIES.map(cat => <SelectItem key={cat.id} value={cat.id}>{cat.label}</SelectItem>)}
             </SelectContent>
           </Select>
           <Select value={selectedRegion} onValueChange={setSelectedRegion}>
@@ -128,9 +116,7 @@ const VenuesSection = () => {
               <SelectValue placeholder="Région" />
             </SelectTrigger>
             <SelectContent>
-              {REGIONS.map((region) => (
-                <SelectItem key={region} value={region}>{region}</SelectItem>
-              ))}
+              {REGIONS.map(region => <SelectItem key={region} value={region}>{region}</SelectItem>)}
             </SelectContent>
           </Select>
         </div>
@@ -143,9 +129,7 @@ const VenuesSection = () => {
               <SelectValue placeholder="Région" />
             </SelectTrigger>
             <SelectContent>
-              {REGIONS.map((region) => (
-                <SelectItem key={region} value={region}>{region}</SelectItem>
-              ))}
+              {REGIONS.map(region => <SelectItem key={region} value={region}>{region}</SelectItem>)}
             </SelectContent>
           </Select>
         </div>
@@ -159,56 +143,32 @@ const VenuesSection = () => {
                 Catégories
               </h3>
               <ul className="space-y-1">
-                {CATEGORIES.map((cat) => (
-                  <li key={cat.id}>
-                    <button
-                      onClick={() => setSelectedCategory(cat.id)}
-                      className={`w-full text-left px-4 py-2.5 text-sm transition-colors ${
-                        selectedCategory === cat.id
-                          ? 'border-l-2 border-editorial-olive text-editorial-olive font-medium bg-editorial-olive/5'
-                          : 'text-editorial-gray hover:text-editorial-noir hover:bg-editorial-border/50'
-                      }`}
-                    >
+                {CATEGORIES.map(cat => <li key={cat.id}>
+                    <button onClick={() => setSelectedCategory(cat.id)} className={`w-full text-left px-4 py-2.5 text-sm transition-colors ${selectedCategory === cat.id ? 'border-l-2 border-editorial-olive text-editorial-olive font-medium bg-editorial-olive/5' : 'text-editorial-gray hover:text-editorial-noir hover:bg-editorial-border/50'}`}>
                       {cat.label}
                     </button>
-                  </li>
-                ))}
+                  </li>)}
               </ul>
             </div>
           </aside>
 
           {/* Grid droite - Cartes prestataires */}
           <div className="flex-1">
-            {isLoading ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
-                {[...Array(4)].map((_, i) => (
-                  <div key={i} className="animate-pulse">
+            {isLoading ? <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
+                {[...Array(4)].map((_, i) => <div key={i} className="animate-pulse">
                     <div className="aspect-[16/9] bg-gradient-to-br from-editorial-border to-editorial-border/70" />
                     <div className="p-4 bg-white border border-t-0 border-editorial-border">
                       <div className="h-5 bg-editorial-border rounded w-3/4 mb-2" />
                       <div className="h-4 bg-editorial-border rounded w-1/2" />
                     </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
-                {vendors?.map((vendor) => (
-                  <VendorCard
-                    key={vendor.id}
-                    vendor={vendor}
-                    onClick={handleVendorClick}
-                  />
-                ))}
-              </div>
-            )}
+                  </div>)}
+              </div> : <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
+                {vendors?.map(vendor => <VendorCard key={vendor.id} vendor={vendor} onClick={handleVendorClick} />)}
+              </div>}
 
             {/* CTA Explorer */}
             <div className="text-center mt-12">
-              <Button
-                onClick={() => navigate('/professionnelsmariable')}
-                className="bg-editorial-noir hover:bg-editorial-noir/80 text-white px-10 py-6 text-sm uppercase tracking-widest rounded-none"
-              >
+              <Button onClick={() => navigate('/professionnelsmariable')} className="bg-editorial-noir hover:bg-editorial-noir/80 text-white px-10 py-6 text-sm uppercase tracking-widest rounded-none">
                 Voir tous les professionnels
               </Button>
             </div>
@@ -217,12 +177,7 @@ const VenuesSection = () => {
       </div>
 
       {/* Modal Sélection personnalisée */}
-      <CarnetAdressesModal
-        isOpen={isCarnetModalOpen}
-        onClose={() => setIsCarnetModalOpen(false)}
-      />
-    </section>
-  );
+      <CarnetAdressesModal isOpen={isCarnetModalOpen} onClose={() => setIsCarnetModalOpen(false)} />
+    </section>;
 };
-
 export default VenuesSection;
