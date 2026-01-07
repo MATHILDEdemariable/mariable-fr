@@ -126,7 +126,7 @@ const TestimonialsSection = () => {
           delay: index * 0.1,
           duration: 0.5
         }} className="bg-white p-5 md:p-6 border border-editorial-noir/10">
-              <Quote className="w-6 h-6 md:w-8 md:h-8 text-editorial-olive/30 mb-3 md:mb-4" />
+              <Quote className="w-6 h-6 md:w-8 md:h-8 text-editorial-beige mb-3 md:mb-4" />
               <p className="text-sm md:text-base text-editorial-noir mb-4 italic">
                 "{testimonial.quote}"
               </p>
@@ -190,7 +190,7 @@ const FAQSection = () => {
           }} transition={{
             delay: index * 0.1
           }}>
-                <AccordionItem value={`item-${index}`} className="border border-editorial-noir/10 px-4 md:px-6 hover:border-editorial-olive transition-all duration-300 bg-white">
+                <AccordionItem value={`item-${index}`} className="border border-editorial-noir/10 px-4 md:px-6 hover:border-editorial-beige transition-all duration-300 bg-white">
                   <AccordionTrigger className="text-left font-medium hover:no-underline py-4 md:py-5 font-serif text-sm md:text-base text-editorial-noir">
                     {item.question}
                   </AccordionTrigger>
@@ -206,7 +206,7 @@ const FAQSection = () => {
 };
 
 // Final CTA Section
-const FinalCTASection = () => <section className="py-12 md:py-20 bg-editorial-olive">
+const FinalCTASection = () => <section className="py-12 md:py-20 bg-editorial-beige">
     <div className="container mx-auto px-4">
       <motion.div initial={{
       opacity: 0,
@@ -219,13 +219,13 @@ const FinalCTASection = () => <section className="py-12 md:py-20 bg-editorial-ol
     }} transition={{
       duration: 0.6
     }} className="text-center max-w-3xl mx-auto">
-        <h2 className="font-serif text-2xl sm:text-3xl md:text-5xl mb-6 md:mb-8 px-2 text-black">
+        <h2 className="font-serif text-2xl sm:text-3xl md:text-5xl mb-6 md:mb-8 px-2 text-editorial-noir">
           Rejoignez le club Mariable
         </h2>
 
         <div className="flex flex-col gap-3 md:gap-4 justify-center px-2">
           <Link to="/register" className="w-full sm:w-auto sm:mx-auto">
-            <Button size="lg" className="bg-white text-editorial-olive hover:bg-editorial-beige px-6 md:px-8 py-5 md:py-6 text-base md:text-lg shadow-lg w-full">
+            <Button size="lg" className="bg-editorial-noir text-white hover:bg-editorial-noir/80 px-6 md:px-8 py-5 md:py-6 text-base md:text-lg shadow-lg w-full rounded-none">
               Rejoindre le Club
               <Heart className="ml-2 w-4 h-4 md:w-5 md:h-5" />
             </Button>
@@ -263,7 +263,7 @@ const Mariable = () => {
           <BlogSection />
           <TestimonialsSection />
           <FAQSection />
-          <FinalCTASection className="bg-editorial-beige" />
+          <FinalCTASection />
         </main>
 
         <Footer />
