@@ -2,9 +2,8 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { MapPin, Search, Gift } from "lucide-react";
+import { MapPin, Gift } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import VendorCard from "@/components/vendors/VendorCard";
@@ -45,7 +44,6 @@ const VenuesSection = () => {
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedRegion, setSelectedRegion] = useState<string>('Toutes les régions');
-  const [searchQuery, setSearchQuery] = useState('');
   const [isCarnetModalOpen, setIsCarnetModalOpen] = useState(false);
 
   const { data: vendors, isLoading } = useQuery({
@@ -93,7 +91,7 @@ const VenuesSection = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-12 md:mb-16"
         >
-          <h2 className="font-serif text-3xl md:text-5xl font-bold text-editorial-noir uppercase tracking-[2px] mb-4">
+          <h2 className="font-serif text-3xl md:text-5xl text-editorial-noir uppercase tracking-[2px] mb-4">
             Lieux & Prestataires
           </h2>
           <p className="text-base text-editorial-gray font-sans max-w-2xl mx-auto">
@@ -101,21 +99,11 @@ const VenuesSection = () => {
           </p>
         </motion.div>
 
-        {/* Barre de recherche + Sélection personnalisée */}
-        <div className="max-w-4xl mx-auto mb-8 flex flex-col md:flex-row gap-4">
-          <div className="flex-1 bg-white border border-editorial-border p-3 md:p-4 flex items-center gap-3">
-            <Search className="w-5 h-5 text-editorial-gray" />
-            <Input
-              placeholder="Rechercher un lieu, un prestataire..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="border-0 text-base focus-visible:ring-0 focus-visible:ring-offset-0"
-            />
-          </div>
+        {/* CTA Sélection personnalisée centré */}
+        <div className="flex justify-center mb-8">
           <Button
             onClick={() => setIsCarnetModalOpen(true)}
-            variant="outline"
-            className="border-editorial-olive text-editorial-olive hover:bg-editorial-olive hover:text-white px-6 py-4 text-sm uppercase tracking-widest rounded-none whitespace-nowrap"
+            className="bg-editorial-noir hover:bg-editorial-noir/80 text-white px-6 py-4 text-sm uppercase tracking-widest rounded-none"
           >
             <Gift className="w-4 h-4 mr-2" />
             Sélection personnalisée offerte
@@ -194,7 +182,7 @@ const VenuesSection = () => {
             <div className="text-center mt-12">
               <Button
                 onClick={() => navigate('/professionnelsmariable')}
-                className="bg-editorial-olive hover:bg-editorial-noir text-white px-10 py-6 text-sm uppercase tracking-widest rounded-none"
+                className="bg-editorial-noir hover:bg-editorial-noir/80 text-white px-10 py-6 text-sm uppercase tracking-widest rounded-none"
               >
                 Voir tous les professionnels
               </Button>
