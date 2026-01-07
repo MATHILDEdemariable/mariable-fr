@@ -46,7 +46,7 @@ const HeroSection = () => (
         </motion.div>
 
         {/* Title */}
-        <h1 className="font-serif text-3xl sm:text-4xl md:text-6xl text-white mb-4 md:mb-6 leading-tight px-2 lg:text-6xl">
+        <h1 className="font-serif font-bold text-3xl sm:text-4xl md:text-6xl text-white mb-4 md:mb-6 leading-tight px-2 lg:text-6xl">
           Vivez un jour-J exceptionnel
         </h1>
 
@@ -55,7 +55,7 @@ const HeroSection = () => (
           Les plus beaux lieux, les meilleurs professionnels & les bons outils d'organisation au même endroit
         </p>
 
-        {/* Single CTA - Navigate to register */}
+        {/* Single CTA - Navigate to register - Style flag like Club badge */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -65,7 +65,7 @@ const HeroSection = () => (
           <Link to="/register" className="w-full sm:w-auto">
             <Button
               size="lg"
-              className="bg-editorial-noir hover:bg-editorial-noir/80 text-white px-6 md:px-10 py-5 md:py-6 text-base md:text-lg shadow-lg hover:shadow-xl transition-all w-full sm:w-auto rounded-none"
+              className="bg-white/10 backdrop-blur-sm border border-white/30 text-white hover:bg-white/20 px-6 md:px-10 py-5 md:py-6 text-base md:text-lg transition-all w-full sm:w-auto rounded-none"
             >
               Créer votre mariage
             </Button>
@@ -106,7 +106,7 @@ const TestimonialsSection = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-8 md:mb-12"
         >
-          <h2 className="font-serif text-3xl md:text-5xl text-editorial-noir uppercase tracking-[2px] mb-4">
+          <h2 className="font-serif font-bold text-3xl md:text-5xl text-editorial-noir uppercase tracking-[2px] mb-4">
             Ils Ont Organisé Leur Mariage avec Mariable
           </h2>
         </motion.div>
@@ -176,7 +176,7 @@ const FAQSection = () => {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="font-serif text-3xl md:text-5xl text-center text-editorial-noir uppercase tracking-[2px] mb-8 md:mb-16 px-2"
+          className="font-serif font-bold text-3xl md:text-5xl text-center text-editorial-noir uppercase tracking-[2px] mb-8 md:mb-16 px-2"
         >
           Vos Questions
         </motion.h2>
@@ -222,7 +222,7 @@ const FinalCTASection = () => (
         transition={{ duration: 0.6 }}
         className="text-center max-w-3xl mx-auto"
       >
-        <h2 className="font-serif text-2xl sm:text-3xl md:text-5xl text-white mb-6 md:mb-8 px-2">
+        <h2 className="font-serif font-bold text-2xl sm:text-3xl md:text-5xl text-white mb-6 md:mb-8 px-2">
           Rejoignez le Club Mariable
         </h2>
 

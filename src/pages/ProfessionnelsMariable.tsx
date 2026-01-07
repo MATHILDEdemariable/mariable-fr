@@ -125,12 +125,12 @@ const HeroSection = ({
       duration: 0.6,
       delay: 0.2
     }} className="flex flex-wrap justify-center gap-4">
-        <Button size="lg" onClick={onScrollToResults} className="bg-premium-sage text-white hover:bg-premium-sage-dark px-8 py-6 text-lg rounded-full shadow-lg">
+        <Button size="lg" onClick={onScrollToResults} className="bg-editorial-noir text-white hover:bg-editorial-noir/80 px-8 py-6 text-lg rounded-none shadow-lg">
           Explorer les professionnels
           <ArrowRight className="ml-2 w-5 h-5" />
         </Button>
         
-        {isLoggedIn && <Button size="lg" variant="outline" asChild className="border-white/70 bg-white/10 text-white hover:bg-white/20 px-8 py-6 text-lg rounded-full backdrop-blur-sm">
+        {isLoggedIn && <Button size="lg" variant="outline" asChild className="border-white/70 bg-white/10 text-white hover:bg-white/20 px-8 py-6 text-lg rounded-none backdrop-blur-sm">
             <Link to="/dashboard">
               <LayoutDashboard className="mr-2 w-5 h-5" />
               Mes outils
@@ -162,14 +162,14 @@ const HowItWorksSection = () => {
       <div className="container max-w-5xl mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {steps.map((item, i) => <div key={i} className="flex items-start gap-4 text-left">
-              <div className="w-10 h-10 bg-premium-sage text-white rounded-full flex items-center justify-center text-base font-bold flex-shrink-0">
+              <div className="w-10 h-10 bg-editorial-noir text-white flex items-center justify-center text-base font-bold flex-shrink-0">
                 {item.step}
               </div>
               <div className="flex-1 min-h-[60px]">
                 <p className="font-semibold text-foreground text-sm mb-1">{item.title}</p>
                 <p className="text-xs text-muted-foreground leading-relaxed">{item.description}</p>
               </div>
-              {i < steps.length - 1 && <ArrowRight className="hidden md:block w-5 h-5 text-premium-sage/50 flex-shrink-0 mt-2" />}
+              {i < steps.length - 1 && <ArrowRight className="hidden md:block w-5 h-5 text-editorial-noir/50 flex-shrink-0 mt-2" />}
             </div>)}
         </div>
       </div>
@@ -191,9 +191,9 @@ const CategoryPills = ({
   return <ScrollArea className="w-full whitespace-nowrap">
       <div className="flex gap-2 pb-4">
         {visibleCategories.map(cat => <button key={cat.value} onClick={() => onSelect(cat.value)} className={`
-              inline-flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium
+              inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium
               transition-all duration-200 whitespace-nowrap flex-shrink-0
-              ${selected === cat.value ? 'bg-premium-sage text-white shadow-md' : 'bg-white border border-border text-muted-foreground hover:border-premium-sage/50 hover:text-premium-sage'}
+              ${selected === cat.value ? 'bg-editorial-noir text-white shadow-md' : 'bg-white border border-border text-muted-foreground hover:border-editorial-noir/50 hover:text-editorial-noir'}
             `}>
             {cat.icon}
             {cat.label}
@@ -318,7 +318,7 @@ const ProfessionnelsMariable = () => {
           }} className="max-w-2xl mx-auto mb-8">
               <div className="relative">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                <Input type="text" placeholder="Rechercher une marque ou un prestataire..." value={search} onChange={e => setSearch(e.target.value)} className="pl-12 pr-12 py-6 text-lg rounded-full border-2 border-border focus:border-premium-sage bg-white shadow-sm" />
+                <Input type="text" placeholder="Rechercher une marque ou un prestataire..." value={search} onChange={e => setSearch(e.target.value)} className="pl-12 pr-12 py-6 text-lg border-2 border-border focus:border-editorial-noir bg-white shadow-sm" />
                 {search && <button onClick={() => setSearch('')} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
                     <X className="h-5 w-5" />
                   </button>}
@@ -333,7 +333,7 @@ const ProfessionnelsMariable = () => {
             {/* Region Filter (optional - compact) */}
             <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
               <div className="flex items-center gap-2">
-                <select value={region || 'all'} onChange={e => setRegion(e.target.value === 'all' ? null : e.target.value)} className="px-4 py-2 rounded-full border border-border bg-white text-sm focus:outline-none focus:ring-2 focus:ring-premium-sage/20">
+                <select value={region || 'all'} onChange={e => setRegion(e.target.value === 'all' ? null : e.target.value)} className="px-4 py-2 border border-border bg-white text-sm focus:outline-none focus:ring-2 focus:ring-editorial-noir/20">
                   <option value="all">Toutes les régions</option>
                   {REGIONS.map(reg => <option key={reg} value={reg}>{reg}</option>)}
                 </select>
@@ -349,7 +349,7 @@ const ProfessionnelsMariable = () => {
                   <p className="text-sm text-muted-foreground">
                     <span className="font-semibold text-foreground">{vendors.length}</span> {vendors.length > 1 ? 'professionnels' : 'professionnel'}
                   </p>
-                  <Button variant="outline" size="sm" onClick={() => setShowCarnetModal(true)} className="text-premium-sage border-premium-sage hover:bg-premium-sage hover:text-white">
+                  <Button variant="outline" size="sm" onClick={() => setShowCarnetModal(true)} className="text-editorial-noir border-editorial-noir hover:bg-editorial-noir hover:text-white">
                     <HelpCircle className="h-4 w-4 mr-1" />
                     Sélection personnalisée
                   </Button>
@@ -358,15 +358,15 @@ const ProfessionnelsMariable = () => {
 
             {/* Vendors Grid */}
             {isLoading ? <div className="flex justify-center items-center py-20">
-                <Loader2 className="h-10 w-10 animate-spin text-premium-sage" />
-              </div> : vendors.length === 0 ? <div className="text-center py-20 bg-white rounded-2xl border border-border">
-                <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+                <Loader2 className="h-10 w-10 animate-spin text-editorial-noir" />
+              </div> : vendors.length === 0 ? <div className="text-center py-20 bg-white border border-border">
+                <div className="w-16 h-16 bg-muted flex items-center justify-center mx-auto mb-4">
                   <Search className="w-8 h-8 text-muted-foreground" />
                 </div>
                 <p className="text-lg text-muted-foreground mb-4">
                   Aucun professionnel trouvé avec ces critères
                 </p>
-                <Button variant="outline" onClick={handleReset} className="rounded-full">
+                <Button variant="outline" onClick={handleReset}>
                   Réinitialiser les filtres
                 </Button>
               </div> : <>
@@ -393,7 +393,7 @@ const ProfessionnelsMariable = () => {
 
                 {/* Pagination */}
                 {totalPages > 1 && <div className="flex justify-center items-center gap-2">
-                    <Button variant="outline" size="sm" onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1} className="rounded-full">
+                    <Button variant="outline" size="sm" onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1}>
                       <ChevronLeft className="h-4 w-4" />
                     </Button>
 
@@ -402,7 +402,7 @@ const ProfessionnelsMariable = () => {
                   length: totalPages
                 }, (_, i) => i + 1).map(page => {
                   if (page === 1 || page === totalPages || page >= currentPage - 1 && page <= currentPage + 1) {
-                    return <Button key={page} variant={currentPage === page ? "default" : "outline"} size="sm" className={`rounded-full min-w-[40px] ${currentPage === page ? "bg-premium-sage hover:bg-premium-sage-dark" : ""}`} onClick={() => setCurrentPage(page)}>
+                    return <Button key={page} variant={currentPage === page ? "default" : "outline"} size="sm" className={`min-w-[40px] ${currentPage === page ? "bg-editorial-noir hover:bg-editorial-noir/80" : ""}`} onClick={() => setCurrentPage(page)}>
                               {page}
                             </Button>;
                   } else if (page === currentPage - 2 || page === currentPage + 2) {
@@ -412,7 +412,7 @@ const ProfessionnelsMariable = () => {
                 })}
                     </div>
 
-                    <Button variant="outline" size="sm" onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages} className="rounded-full">
+                    <Button variant="outline" size="sm" onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}>
                       <ChevronRight className="h-4 w-4" />
                     </Button>
                   </div>}

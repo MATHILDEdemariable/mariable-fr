@@ -13,6 +13,7 @@ import TablesList from '@/components/seating-plan/TablesList';
 import GuestList from '@/components/seating-plan/GuestList';
 import TableEditor from '@/components/seating-plan/TableEditor';
 import ImportRSVPDialog from '@/components/seating-plan/ImportRSVPDialog';
+import ImportGuestListDialog from '@/components/seating-plan/ImportGuestListDialog';
 import ManualGuestDialog from '@/components/seating-plan/ManualGuestDialog';
 import { ImportExcelDialog } from '@/components/seating-plan/ImportExcelDialog';
 import ExportPDFButton from '@/components/seating-plan/ExportPDFButton';
@@ -28,6 +29,7 @@ const SeatingPlan = () => {
   const [loading, setLoading] = useState(true);
   const [showTableEditor, setShowTableEditor] = useState(false);
   const [showImportDialog, setShowImportDialog] = useState(false);
+  const [showImportGuestList, setShowImportGuestList] = useState(false);
   const [showGuestDialog, setShowGuestDialog] = useState(false);
   const [showImportExcel, setShowImportExcel] = useState(false);
   const [editingTable, setEditingTable] = useState<SeatingTable | null>(null);
@@ -259,13 +261,13 @@ const SeatingPlan = () => {
                       <Users className="h-4 w-4 mr-2" />
                       Importer depuis RSVP
                     </Button>
+                    <Button onClick={() => executeAction(() => setShowImportGuestList(true))} variant="outline" className="w-full">
+                      <Users className="h-4 w-4 mr-2" />
+                      Importer liste manuelle
+                    </Button>
                     <Button onClick={() => executeAction(() => setShowImportExcel(true))} variant="outline" className="w-full">
                       <FileSpreadsheet className="h-4 w-4 mr-2" />
                       Importer CSV
-                    </Button>
-                    <Button onClick={() => executeAction(() => setShowGuestDialog(true))} variant="outline" className="w-full">
-                      <UserPlus className="h-4 w-4 mr-2" />
-                      Ajouter Invité
                     </Button>
                     <Button onClick={() => setShowTutorial(true)} variant="outline" className="w-full">
                       <Play className="h-4 w-4 mr-2" />
