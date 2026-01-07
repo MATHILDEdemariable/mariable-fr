@@ -91,8 +91,8 @@ const VenuesSection = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-12 md:mb-16"
         >
-          <h2 className="font-serif text-3xl md:text-5xl text-editorial-noir uppercase tracking-[2px] mb-4">
-            Lieux & Prestataires
+          <h2 className="font-serif text-3xl md:text-5xl text-editorial-noir mb-4">
+            Lieux & prestataires
           </h2>
           <p className="text-base text-editorial-gray font-sans max-w-2xl mx-auto">
             Explorez notre sélection de lieux d'exception et de professionnels vérifiés pour votre mariage

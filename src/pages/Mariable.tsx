@@ -45,7 +45,7 @@ const HeroSection = () => (
         </motion.div>
 
         {/* Title */}
-        <h1 className="font-serif font-bold text-3xl sm:text-4xl md:text-6xl text-white mb-4 md:mb-6 leading-tight px-2 lg:text-6xl">
+        <h1 className="font-serif text-3xl sm:text-4xl md:text-6xl text-white mb-4 md:mb-6 leading-tight px-2 lg:text-6xl">
           Vivez un jour-J exceptionnel
         </h1>
 
@@ -96,7 +96,7 @@ const TestimonialsSection = () => {
   ];
 
   return (
-    <section className="py-12 md:py-20 bg-editorial-beige">
+    <section className="py-12 md:py-20 bg-white">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -105,8 +105,8 @@ const TestimonialsSection = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-8 md:mb-12"
         >
-          <h2 className="font-serif font-bold text-3xl md:text-5xl text-editorial-noir uppercase tracking-[2px] mb-4">
-            Ils Ont Organisé Leur Mariage avec Mariable
+          <h2 className="font-serif text-3xl md:text-5xl text-editorial-noir mb-4">
+            Ils ont organisé leur mariage avec Mariable
           </h2>
         </motion.div>
 
@@ -169,15 +169,15 @@ const FAQSection = () => {
   ];
 
   return (
-    <section className="py-12 md:py-20 bg-editorial-beige">
+    <section className="py-12 md:py-20 bg-white">
       <div className="container mx-auto px-4">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="font-serif font-bold text-3xl md:text-5xl text-center text-editorial-noir uppercase tracking-[2px] mb-8 md:mb-16 px-2"
+          className="font-serif text-3xl md:text-5xl text-center text-editorial-noir mb-8 md:mb-16 px-2"
         >
-          Vos Questions
+          Vos questions
         </motion.h2>
 
         <div className="max-w-2xl mx-auto">
@@ -221,8 +221,8 @@ const FinalCTASection = () => (
         transition={{ duration: 0.6 }}
         className="text-center max-w-3xl mx-auto"
       >
-        <h2 className="font-serif font-bold text-2xl sm:text-3xl md:text-5xl text-white mb-6 md:mb-8 px-2">
-          Rejoignez le Club Mariable
+        <h2 className="font-serif text-2xl sm:text-3xl md:text-5xl text-white mb-6 md:mb-8 px-2">
+          Rejoignez le club Mariable
         </h2>
 
         <div className="flex flex-col gap-3 md:gap-4 justify-center px-2">

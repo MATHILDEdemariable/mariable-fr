@@ -45,18 +45,18 @@ const PremiumToolsCoordinationSection = () => {
       <div className="container mx-auto px-4">
         {/* Titre éditorial */}
         <div className="text-center mb-16">
-          <h2 className="font-serif text-3xl md:text-5xl text-editorial-noir uppercase tracking-[2px] mb-4">
-            Vos Outils de Planification
+          <h2 className="font-serif text-3xl md:text-5xl text-editorial-noir mb-4">
+            Vos outils de planification
           </h2>
           <p className="text-editorial-gray text-lg max-w-2xl mx-auto">
             Tout ce dont vous avez besoin pour organiser votre mariage sereinement
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-16 items-start max-w-6xl mx-auto">
+        <div className="flex flex-col lg:grid lg:grid-cols-2 gap-8 lg:gap-16 items-start max-w-6xl mx-auto">
           {/* Tools Grid */}
-          <div>
-            <div className="grid grid-cols-2 gap-6">
+          <div className="order-2 lg:order-1">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
               {tools.map((tool, index) => (
                 <div
                   key={index}
@@ -89,10 +89,10 @@ const PremiumToolsCoordinationSection = () => {
           </div>
 
           {/* Phone Mockup */}
-          <div className="relative">
-            <div className="bg-editorial-noir rounded-[2.5rem] p-2 shadow-2xl max-w-sm mx-auto">
+          <div className="relative order-1 lg:order-2">
+            <div className="bg-editorial-noir rounded-[2.5rem] p-2 shadow-2xl max-w-[280px] sm:max-w-sm mx-auto">
               <div className="bg-white rounded-[2rem] overflow-hidden">
-                <div className="relative h-[480px]">
+                <div className="relative h-[380px] sm:h-[480px]">
                   {/* Status bar */}
                   <div className="flex justify-between items-center p-4 text-xs text-editorial-noir/60">
                     <span>9:41</span>
