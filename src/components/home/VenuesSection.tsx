@@ -170,8 +170,11 @@ const VenuesSection = () => {
               </div>}
 
             {/* CTA Explorer */}
-            <div className="text-center mt-12">
-              <Button onClick={() => navigate('/professionnelsmariable')} className="bg-editorial-noir hover:bg-editorial-noir/80 text-white px-10 py-6 text-sm uppercase tracking-widest rounded-none">
+            <div className="text-center mt-12 px-4">
+              <Button 
+                onClick={() => navigate('/professionnelsmariable')} 
+                className="w-full sm:w-auto bg-editorial-noir hover:bg-editorial-noir/80 text-white px-6 py-4 sm:px-10 sm:py-6 text-xs sm:text-sm uppercase tracking-widest rounded-none max-w-full"
+              >
                 Voir tous les professionnels
               </Button>
             </div>

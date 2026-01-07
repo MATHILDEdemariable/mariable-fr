@@ -21,19 +21,25 @@ const Callback = () => {
   useEffect(() => {
     const handleAuthCallback = async () => {
       try {
-        // Check for error parameters in query params first
-        let errorParam = searchParams.get('error');
-        let errorDescription = searchParams.get('error_description');
-        let errorCode = searchParams.get('error_code');
-        const type = searchParams.get('type');
+        // Parse hash fragment params (Supabase often uses hash for auth data)
+        const hashParams = window.location.hash 
+          ? new URLSearchParams(window.location.hash.substring(1)) 
+          : new URLSearchParams();
 
-        // Also check hash fragment for errors (Supabase redirects expired OTP here)
-        if (!errorParam && window.location.hash) {
-          const hashParams = new URLSearchParams(window.location.hash.substring(1));
-          errorParam = hashParams.get('error');
-          errorDescription = hashParams.get('error_description');
-          errorCode = hashParams.get('error_code');
-        }
+        // Check for error parameters in query params OR hash fragment
+        let errorParam = searchParams.get('error') || hashParams.get('error');
+        let errorDescription = searchParams.get('error_description') || hashParams.get('error_description');
+        let errorCode = searchParams.get('error_code') || hashParams.get('error_code');
+        
+        // Get type from query OR hash (critical for recovery flow)
+        const type = searchParams.get('type') || hashParams.get('type');
+        
+        console.log('[auth/callback] Processing auth callback:', { 
+          type, 
+          hasError: !!errorParam, 
+          errorCode,
+          hasHash: !!window.location.hash 
+        });
 
         if (errorParam) {
           setLoading(false);
@@ -48,16 +54,15 @@ const Callback = () => {
         }
 
         // Get tokens from query params OR hash fragment
-        let accessToken = searchParams.get('access_token');
-        let refreshToken = searchParams.get('refresh_token');
-        const code = searchParams.get('code');
-
-        // Check hash fragment for tokens (Supabase sometimes puts them there)
-        if (!accessToken && window.location.hash) {
-          const hashParams = new URLSearchParams(window.location.hash.substring(1));
-          accessToken = hashParams.get('access_token');
-          refreshToken = hashParams.get('refresh_token');
-        }
+        const accessToken = searchParams.get('access_token') || hashParams.get('access_token');
+        const refreshToken = searchParams.get('refresh_token') || hashParams.get('refresh_token');
+        const code = searchParams.get('code') || hashParams.get('code');
+        
+        console.log('[auth/callback] Tokens found:', { 
+          hasAccessToken: !!accessToken, 
+          hasRefreshToken: !!refreshToken, 
+          hasCode: !!code 
+        });
 
         // Handle password recovery flow
         if (type === 'recovery') {
