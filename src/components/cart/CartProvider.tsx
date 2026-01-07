@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import React, { createContext, useContext, useState, useCallback, useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
 // Prix standards par catégorie extraits du livre blanc des tarifs mariage France
@@ -46,90 +46,118 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [items, setItems] = useState<CartItem[]>([]);
   const [userId, setUserId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isInitialLoadDone, setIsInitialLoadDone] = useState(false);
+  const mountedRef = useRef(true);
 
-  // Charger le panier depuis Supabase pour les utilisateurs connectés
-  useEffect(() => {
-    const loadCart = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
+  // Fonction pour charger le panier d'un utilisateur
+  const loadCartForUser = useCallback(async (uid: string) => {
+    if (!mountedRef.current) return;
+    
+    try {
+      const { data } = await supabase
+        .from('user_cart_items')
+        .select('*')
+        .eq('user_id', uid);
       
-      if (user) {
-        setUserId(user.id);
-        const { data } = await supabase
-          .from('user_cart_items')
-          .select('*')
-          .eq('user_id', user.id);
-        
-        if (data && data.length > 0) {
-          setItems(data.map(item => ({
-            vendorId: item.vendor_id,
-            vendorName: item.vendor_name,
-            category: item.category,
-            price: item.price ? Number(item.price) : null,
-            priceType: (item.price_type as 'fixed' | 'catalog' | 'custom') || 'catalog',
-            image: item.image || undefined,
-            guestCount: item.guest_count || undefined,
-          })));
-        }
+      if (!mountedRef.current) return;
+      
+      if (data && data.length > 0) {
+        setItems(data.map(item => ({
+          vendorId: item.vendor_id,
+          vendorName: item.vendor_name,
+          category: item.category,
+          price: item.price ? Number(item.price) : null,
+          priceType: (item.price_type as 'fixed' | 'catalog' | 'custom') || 'catalog',
+          image: item.image || undefined,
+          guestCount: item.guest_count || undefined,
+        })));
       }
-      setIsLoading(false);
-    };
+    } catch (error) {
+      console.error('❌ CartProvider: Failed to load cart', error);
+    }
+  }, []);
 
-    loadCart();
+  // Initialisation : setup auth listener PUIS getSession
+  useEffect(() => {
+    mountedRef.current = true;
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+    // 1. D'abord enregistrer le listener (callback 100% synchrone)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      // Ne PAS faire d'appels async ici !
       if (session?.user) {
         setUserId(session.user.id);
-        // Charger le panier de l'utilisateur
-        const { data } = await supabase
-          .from('user_cart_items')
-          .select('*')
-          .eq('user_id', session.user.id);
-        
-        if (data && data.length > 0) {
-          setItems(data.map(item => ({
-            vendorId: item.vendor_id,
-            vendorName: item.vendor_name,
-            category: item.category,
-            price: item.price ? Number(item.price) : null,
-            priceType: (item.price_type as 'fixed' | 'catalog' | 'custom') || 'catalog',
-            image: item.image || undefined,
-            guestCount: item.guest_count || undefined,
-          })));
-        }
       } else {
         setUserId(null);
         setItems([]);
       }
     });
 
-    return () => subscription.unsubscribe();
+    // 2. Ensuite récupérer la session actuelle
+    const initSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!mountedRef.current) return;
+      
+      if (session?.user) {
+        setUserId(session.user.id);
+      }
+      setIsLoading(false);
+      setIsInitialLoadDone(true);
+    };
+
+    initSession();
+
+    return () => {
+      mountedRef.current = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
-  // Synchroniser avec Supabase
-  const syncToSupabase = useCallback(async (newItems: CartItem[]) => {
-    if (!userId) return;
-
-    // Supprimer tous les items existants et réinsérer
-    await supabase
-      .from('user_cart_items')
-      .delete()
-      .eq('user_id', userId);
-
-    if (newItems.length > 0) {
-      await supabase
-        .from('user_cart_items')
-        .insert(newItems.map(item => ({
-          user_id: userId,
-          vendor_id: item.vendorId,
-          vendor_name: item.vendorName,
-          category: item.category,
-          price: item.price,
-          price_type: item.priceType,
-          image: item.image,
-          guest_count: item.guestCount,
-        })));
+  // Charger le panier quand userId change (après init)
+  useEffect(() => {
+    if (isInitialLoadDone && userId) {
+      loadCartForUser(userId);
     }
-  }, [userId]);
+  }, [userId, isInitialLoadDone, loadCartForUser]);
+
+  // Synchroniser avec Supabase (debounced)
+  const syncTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  
+  const syncToSupabase = useCallback(async (newItems: CartItem[]) => {
+    if (!userId || !isInitialLoadDone) return;
+
+    // Debounce pour éviter les appels multiples
+    if (syncTimeoutRef.current) {
+      clearTimeout(syncTimeoutRef.current);
+    }
+
+    syncTimeoutRef.current = setTimeout(async () => {
+      try {
+        // Supprimer tous les items existants et réinsérer
+        await supabase
+          .from('user_cart_items')
+          .delete()
+          .eq('user_id', userId);
+
+        if (newItems.length > 0) {
+          await supabase
+            .from('user_cart_items')
+            .insert(newItems.map(item => ({
+              user_id: userId,
+              vendor_id: item.vendorId,
+              vendor_name: item.vendorName,
+              category: item.category,
+              price: item.price,
+              price_type: item.priceType,
+              image: item.image,
+              guest_count: item.guestCount,
+            })));
+        }
+      } catch (error) {
+        console.error('❌ CartProvider: Failed to sync cart', error);
+      }
+    }, 300);
+  }, [userId, isInitialLoadDone]);
 
   const addItem = useCallback((item: CartItem) => {
     setItems(prev => {

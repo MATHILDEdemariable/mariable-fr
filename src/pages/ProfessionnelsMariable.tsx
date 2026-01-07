@@ -13,7 +13,7 @@ import PremiumHeader from '@/components/home/PremiumHeader';
 import Footer from '@/components/Footer';
 import { Database } from '@/integrations/supabase/types';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
-import { CartProvider } from '@/components/cart/CartProvider';
+
 import CartIcon from '@/components/cart/CartIcon';
 import CarnetAdressesModal from '@/components/home/CarnetAdressesModal';
 import { useQuery } from '@tanstack/react-query';
@@ -286,7 +286,7 @@ const ProfessionnelsMariable = () => {
     });
   };
   const hasActiveFilters = search || category !== 'Tous' || region;
-  return <CartProvider>
+  return <>
       <Helmet>
         <title>Tous les Professionnels de Mariage | Mariable</title>
         <meta name="description" content="Découvrez notre sélection complète de prestataires de mariage : lieux de réception, traiteurs, photographes, DJ, fleuristes et plus encore. Trouvez les meilleurs professionnels pour votre mariage." />
@@ -423,6 +423,6 @@ const ProfessionnelsMariable = () => {
 
       <Footer />
       <CarnetAdressesModal isOpen={showCarnetModal} onClose={() => setShowCarnetModal(false)} />
-    </CartProvider>;
+    </>;
 };
 export default ProfessionnelsMariable;

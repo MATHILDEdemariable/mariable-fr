@@ -11,7 +11,6 @@ import SEO from "@/components/SEO";
 import PremiumToolsCoordinationSection from "@/components/home/PremiumToolsCoordinationSection";
 import VenuesSection from "@/components/home/VenuesSection";
 import BlogSection from "@/components/home/BlogSection";
-import { CartProvider } from "@/components/cart/CartProvider";
 import CartIcon from "@/components/cart/CartIcon";
 
 const VIDEO_URL = "https://bgidfcqktsttzlwlumtz.supabase.co/storage/v1/object/public/background-videos/freepik__wideangle-shot-a-joyful-couple-dances-at-their-wed__74093%20(1).mp4";
@@ -265,7 +264,7 @@ const FinalCTASection = () => (
 // Main Page Component
 const Mariable = () => {
   return (
-    <CartProvider>
+    <>
       <SEO
         title="Mariable - Le Club Privé des Futurs Mariés | Professionnels & Prix Préférentiels"
         description="Rejoignez le Club Mariable : accès gratuit aux meilleurs professionnels et marques du mariage avec des prix préférentiels. Outils de planification, coordination Jour-J et accompagnement personnalisé."
@@ -290,7 +289,7 @@ const Mariable = () => {
         <Footer />
         <ChatbotButton />
       </div>
-    </CartProvider>
+    </>
   );
 };
 
