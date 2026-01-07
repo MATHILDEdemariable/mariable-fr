@@ -251,14 +251,19 @@ const FinalCTASection = () => <section className="py-12 md:py-20 bg-editorial-be
 const Mariable = () => {
   const navigate = useNavigate();
 
-  // Détecter les erreurs d'auth dans le hash fragment et rediriger vers /auth/callback
+  // Détecter les erreurs d'auth ou tokens de recovery dans le hash fragment et rediriger vers /auth/callback
   useEffect(() => {
     if (window.location.hash) {
       const hashParams = new URLSearchParams(window.location.hash.substring(1));
       const errorParam = hashParams.get('error');
       const errorCode = hashParams.get('error_code');
+      const type = hashParams.get('type');
+      const accessToken = hashParams.get('access_token');
+      const code = hashParams.get('code');
       
-      if (errorParam || errorCode) {
+      // Rediriger si erreur OU si c'est un flux de recovery/auth avec tokens
+      if (errorParam || errorCode || type === 'recovery' || accessToken || code) {
+        console.log('[Mariable] Redirecting auth hash to callback:', { type, hasError: !!errorParam });
         navigate(`/auth/callback${window.location.hash}`, { replace: true });
         return;
       }
