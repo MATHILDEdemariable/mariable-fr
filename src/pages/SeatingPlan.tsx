@@ -368,6 +368,13 @@ const SeatingPlan = () => {
           onImported={loadSeatingPlan}
         />
 
+        <ImportGuestListDialog
+          open={showImportGuestList}
+          onOpenChange={setShowImportGuestList}
+          planId={plan?.id || ''}
+          onImported={loadSeatingPlan}
+        />
+
         <TutorialVideoModal 
           isOpen={showTutorial} 
           onClose={() => setShowTutorial(false)} 

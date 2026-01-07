@@ -47,7 +47,10 @@ const VenuesSection = () => {
       let query = supabase.from('prestataires_rows').select(`
           *,
           prestataires_photos_preprod (url, is_cover, ordre, thumbnail_url)
-        `).eq('visible', true).limit(6);
+        `).eq('visible', true)
+        .order('partner', { ascending: false })
+        .order('featured', { ascending: false })
+        .limit(6);
 
       // Gestion des catégories simplifiées
       if (selectedCategory === 'Autres') {
