@@ -130,12 +130,21 @@ const HeroSection = ({
           <ArrowRight className="ml-2 w-5 h-5" />
         </Button>
         
-        {isLoggedIn && <Button size="lg" variant="outline" asChild className="border-white/70 bg-white/10 text-white hover:bg-white/20 px-8 py-6 text-lg rounded-none backdrop-blur-sm">
-            <Link to="/dashboard">
-              <LayoutDashboard className="mr-2 w-5 h-5" />
-              Mes outils
-            </Link>
-          </Button>}
+        <Button 
+          size="lg" 
+          variant="outline" 
+          onClick={() => {
+            if (isLoggedIn) {
+              window.location.href = '/dashboard';
+            } else {
+              window.location.href = '/register?redirect=/dashboard';
+            }
+          }}
+          className="border-white/70 bg-white/10 text-white hover:bg-white/20 px-8 py-6 text-lg rounded-none backdrop-blur-sm"
+        >
+          <LayoutDashboard className="mr-2 w-5 h-5" />
+          Mes outils
+        </Button>
       </motion.div>
     </div>
   </section>;

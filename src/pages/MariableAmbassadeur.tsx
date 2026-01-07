@@ -37,11 +37,11 @@ const MariableAmbassadeur = () => {
   ];
 
   const beneficesLieux = [
-    { icon: <TrendingUp className="h-5 w-5" />, title: "REVENUS PASSIFS: jusqu'à 13 000€/an", details: "30 mariages/an • 18 couples utilisent le réseau (60%) • Commission moyenne par mariage" },
-    { icon: <Clock className="h-5 w-5" />, title: "TEMPS INVESTI: 30 secondes par couple", details: "Donner le code VIP Pass, c'est tout" },
-    { icon: <Star className="h-5 w-5" />, title: "SERVICE PREMIUM pour vos couples", details: "Ils économisent, ils vous adorent" },
-    { icon: <BarChart3 className="h-5 w-5" />, title: "VOTRE PAGE / MINI SITE PERSONNALISÉ", details: "Vos prestataires habituels mis en avant en priorité" },
-    { icon: <Shield className="h-5 w-5" />, title: "SANS RISQUE", details: "0€ d'investissement, commission uniquement" },
+    { icon: <TrendingUp className="h-5 w-5" />, title: "Revenus passifs : jusqu'à 13 000€/an", details: "30 mariages/an • 18 couples utilisent le réseau (60%) • Commission moyenne par mariage" },
+    { icon: <Clock className="h-5 w-5" />, title: "Temps investi : 30 secondes par couple", details: "Donner le code VIP Pass, c'est tout" },
+    { icon: <Star className="h-5 w-5" />, title: "Service premium pour vos couples", details: "Ils économisent, ils vous adorent" },
+    { icon: <BarChart3 className="h-5 w-5" />, title: "Votre page / mini site personnalisé", details: "Vos prestataires habituels mis en avant en priorité" },
+    { icon: <Shield className="h-5 w-5" />, title: "Sans risque", details: "0€ d'investissement, commission uniquement" },
   ];
 
   const testimonials = [
@@ -69,8 +69,8 @@ const MariableAmbassadeur = () => {
       
       <main className="flex-grow">
         {/* Section 1: Hero */}
-        <section className="relative py-24 md:py-36 overflow-hidden bg-editorial-olive">
-          <div className="absolute inset-0 bg-gradient-to-b from-editorial-noir/30 via-transparent to-editorial-noir/20" />
+        <section className="relative py-24 md:py-36 overflow-hidden bg-editorial-beige">
+          <div className="absolute inset-0 bg-gradient-to-b from-editorial-beige/30 via-transparent to-editorial-beige/20" />
           <div className="container mx-auto px-4 relative z-10">
             <motion.div 
               initial={{ opacity: 0, y: 30 }}
@@ -82,20 +82,20 @@ const MariableAmbassadeur = () => {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.2 }}
-                className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm border border-white/30 px-4 py-2 mb-8"
+                className="inline-flex items-center gap-2 bg-editorial-noir/20 backdrop-blur-sm border border-editorial-noir/30 px-4 py-2 mb-8"
               >
-                <Building2 className="h-4 w-4 text-white" />
-                <span className="font-medium text-white">Pour les Lieux de Réception</span>
+                <Building2 className="h-4 w-4 text-editorial-noir" />
+                <span className="font-medium text-editorial-noir">Pour les lieux de réception</span>
               </motion.div>
 
               <motion.h1 
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3, duration: 0.6 }}
-                className="text-4xl md:text-6xl lg:text-7xl font-serif text-white mb-8 leading-tight"
+                className="text-4xl md:text-6xl lg:text-7xl font-serif text-editorial-noir mb-8 leading-tight"
               >
                 Générez des{' '}
-                <span className="text-white/90 relative">
+                <span className="text-editorial-noir/90 relative">
                   revenus passifs
                   <svg className="absolute -bottom-2 left-0 w-full" height="8" viewBox="0 0 200 8" fill="none">
                     <path d="M2 6C50 2 150 2 198 6" stroke="currentColor" strokeWidth="3" strokeLinecap="round"/>
@@ -107,7 +107,7 @@ const MariableAmbassadeur = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4, duration: 0.6 }}
-                className="text-xl md:text-2xl text-white/80 mb-12 font-light"
+                className="text-xl md:text-2xl text-editorial-noir/80 mb-12 font-light"
               >
                 Transformez vos recommandations en revenus. 30 secondes d'effort par couple.
               </motion.p>
@@ -120,7 +120,7 @@ const MariableAmbassadeur = () => {
                 <Button 
                   size="lg"
                   onClick={() => navigate('/contact')}
-                  className="bg-white hover:bg-editorial-beige text-editorial-olive px-10 py-7 text-lg shadow-2xl hover:scale-105 transition-all duration-300 rounded-none"
+                  className="bg-editorial-noir hover:bg-editorial-noir/80 text-white px-10 py-7 text-lg shadow-2xl hover:scale-105 transition-all duration-300 rounded-none"
                 >
                   <Building2 className="mr-2 h-5 w-5" />
                   Devenir Lieu Ambassadeur
@@ -143,13 +143,13 @@ const MariableAmbassadeur = () => {
                 viewport={{ once: true }}
                 transition={{ duration: 0.6 }}
               >
-                <Card className="border-2 border-slate-200 hover:border-premium-sage/40 transition-all duration-500 hover:shadow-xl">
+                <Card className="border-2 border-slate-200 hover:border-editorial-beige/40 transition-all duration-500 hover:shadow-xl rounded-none">
                   <CardContent className="p-8">
                     <div className="flex items-center gap-3 mb-6">
-                      <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center">
+                      <div className="w-12 h-12 bg-slate-100 flex items-center justify-center">
                         <Building2 className="h-6 w-6 text-slate-600" />
                       </div>
-                      <h3 className="text-xl font-serif font-bold text-foreground">LE PROBLÈME DES LIEUX DE RÉCEPTION</h3>
+                      <h3 className="text-xl font-serif text-foreground">Le problème des lieux de réception</h3>
                     </div>
                     <div className="space-y-4 mb-6">
                       {problemesLieux.map((probleme, index) => (
@@ -166,8 +166,8 @@ const MariableAmbassadeur = () => {
                         </motion.div>
                       ))}
                     </div>
-                    <div className="bg-gradient-to-r from-premium-sage-very-light to-premium-sage-very-light/50 p-5 rounded-xl border border-premium-sage/30">
-                      <p className="text-premium-sage-dark font-semibold">
+                    <div className="bg-gradient-to-r from-editorial-beige/50 to-editorial-beige/30 p-5 border border-editorial-beige/30">
+                      <p className="text-editorial-noir font-semibold">
                         💡 ET SI CES RECOMMANDATIONS GÉNÉRAIENT JUSQU'À 13 000€/AN DE REVENUS PASSIFS ?
                       </p>
                     </div>
@@ -191,7 +191,7 @@ const MariableAmbassadeur = () => {
             </motion.h2>
             
             <div className="max-w-3xl mx-auto">
-              <Card className="border-2">
+              <Card className="border-2 rounded-none">
                 <CardContent className="p-8">
                   <div className="space-y-4">
                     {beneficesLieux.map((benefice, index) => (
@@ -201,9 +201,9 @@ const MariableAmbassadeur = () => {
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
                         transition={{ delay: index * 0.1 }}
-                        className="flex items-start gap-4 p-5 bg-gradient-to-r from-slate-50 to-white rounded-xl hover:shadow-md transition-all duration-300 group"
+                        className="flex items-start gap-4 p-5 bg-gradient-to-r from-slate-50 to-white hover:shadow-md transition-all duration-300 group"
                       >
-                        <div className="flex-shrink-0 w-12 h-12 rounded-full bg-premium-sage-very-light flex items-center justify-center text-premium-sage group-hover:bg-premium-sage group-hover:text-white transition-all duration-300">
+                        <div className="flex-shrink-0 w-12 h-12 bg-editorial-beige/50 flex items-center justify-center text-editorial-noir group-hover:bg-editorial-noir group-hover:text-white transition-all duration-300">
                           {benefice.icon}
                         </div>
                         <div>
@@ -240,7 +240,7 @@ const MariableAmbassadeur = () => {
                   exit={{ opacity: 0, x: -20 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <Card className="border-2 shadow-xl">
+                  <Card className="border-2 shadow-xl rounded-none">
                     <CardContent className="p-8">
                       <div className="flex gap-1 mb-4">
                         {[...Array(testimonials[currentTestimonial].stars)].map((_, i) => (
@@ -264,7 +264,7 @@ const MariableAmbassadeur = () => {
                   variant="outline"
                   size="icon"
                   onClick={() => setCurrentTestimonial((prev) => (prev === 0 ? testimonials.length - 1 : prev - 1))}
-                  className="hover:bg-premium-sage hover:text-white hover:border-premium-sage transition-all duration-300"
+                  className="hover:bg-editorial-beige hover:text-editorial-noir hover:border-editorial-beige transition-all duration-300 rounded-none"
                 >
                   <ChevronLeft className="h-4 w-4" />
                 </Button>
@@ -272,7 +272,7 @@ const MariableAmbassadeur = () => {
                   {testimonials.map((_, index) => (
                     <button
                       key={index}
-                      className={`h-2 rounded-full transition-all duration-300 ${index === currentTestimonial ? 'bg-premium-sage w-6' : 'bg-muted w-2 hover:bg-premium-sage-light'}`}
+                      className={`h-2 rounded-full transition-all duration-300 ${index === currentTestimonial ? 'bg-editorial-noir w-6' : 'bg-muted w-2 hover:bg-editorial-beige'}`}
                       onClick={() => setCurrentTestimonial(index)}
                     />
                   ))}
@@ -281,7 +281,7 @@ const MariableAmbassadeur = () => {
                   variant="outline"
                   size="icon"
                   onClick={() => setCurrentTestimonial((prev) => (prev === testimonials.length - 1 ? 0 : prev + 1))}
-                  className="hover:bg-premium-sage hover:text-white hover:border-premium-sage transition-all duration-300"
+                  className="hover:bg-editorial-beige hover:text-editorial-noir hover:border-editorial-beige transition-all duration-300 rounded-none"
                 >
                   <ChevronRight className="h-4 w-4" />
                 </Button>
@@ -307,13 +307,13 @@ const MariableAmbassadeur = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
             >
-              <Card className="max-w-2xl mx-auto border-2 shadow-xl">
+              <Card className="max-w-2xl mx-auto border-2 shadow-xl rounded-none">
                 <CardContent className="p-8">
                   <div className="space-y-10">
                     <div>
                       <div className="flex justify-between mb-3">
                         <label className="font-medium text-foreground">Combien de mariages faites-vous par an ?</label>
-                        <span className="font-bold text-premium-sage text-lg">{mariagesParAn[0]} mariages</span>
+                        <span className="font-bold text-editorial-noir text-lg">{mariagesParAn[0]} mariages</span>
                       </div>
                       <Slider
                         value={mariagesParAn}
@@ -332,7 +332,7 @@ const MariableAmbassadeur = () => {
                     <div>
                       <div className="flex justify-between mb-3">
                         <label className="font-medium text-foreground">Panier moyen de vos couples ?</label>
-                        <span className="font-bold text-premium-sage text-lg">{panierMoyen[0].toLocaleString()}€</span>
+                        <span className="font-bold text-editorial-noir text-lg">{panierMoyen[0].toLocaleString()}€</span>
                       </div>
                       <Slider
                         value={panierMoyen}
@@ -348,9 +348,9 @@ const MariableAmbassadeur = () => {
                       </div>
                     </div>
                     
-                    <Card className="bg-gradient-to-br from-premium-sage to-premium-sage-dark text-white overflow-hidden relative">
+                    <Card className="bg-gradient-to-br from-editorial-noir to-editorial-noir/90 text-white overflow-hidden relative rounded-none">
                       <CardContent className="p-8 relative z-10">
-                        <h4 className="font-bold mb-6 text-center text-lg">📊 VOS REVENUS ESTIMÉS</h4>
+                        <h4 className="font-bold mb-6 text-center text-lg">📊 Vos revenus estimés</h4>
                         <div className="grid grid-cols-2 gap-4 text-sm mb-6">
                           <div className="bg-white/10 rounded-lg p-3 text-center">
                             <p className="text-white/70 text-xs mb-1">Couples utilisant le réseau</p>
@@ -385,7 +385,7 @@ const MariableAmbassadeur = () => {
                     </Card>
                     
                     <Button 
-                      className="w-full bg-premium-sage hover:bg-premium-sage-dark py-7 text-lg hover:scale-[1.02] transition-all duration-300 shadow-xl"
+                      className="w-full bg-editorial-noir hover:bg-editorial-noir/80 py-7 text-lg hover:scale-[1.02] transition-all duration-300 shadow-xl rounded-none"
                       onClick={() => navigate('/contact')}
                     >
                       Demander un rendez-vous
@@ -420,7 +420,7 @@ const MariableAmbassadeur = () => {
                     viewport={{ once: true }}
                     transition={{ delay: index * 0.1 }}
                   >
-                    <AccordionItem value={`item-${index}`} className="border-2 rounded-xl px-6 hover:border-premium-sage/40 transition-all duration-300">
+                    <AccordionItem value={`item-${index}`} className="border-2 rounded-none px-6 hover:border-editorial-beige/40 transition-all duration-300">
                       <AccordionTrigger className="text-left font-medium hover:no-underline py-5 font-serif">
                         {item.question}
                       </AccordionTrigger>
@@ -436,15 +436,14 @@ const MariableAmbassadeur = () => {
         </section>
 
         {/* Section 7: CTA Final */}
-        <section className="py-20 md:py-28 bg-editorial-olive relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-b from-editorial-noir/30 via-transparent to-editorial-noir/20" />
+        <section className="py-20 md:py-28 bg-editorial-beige relative overflow-hidden">
           <motion.div 
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             className="container mx-auto px-4 text-center relative z-10"
           >
-            <h2 className="text-3xl md:text-5xl font-serif text-white mb-8">
+            <h2 className="text-3xl md:text-5xl font-serif text-editorial-noir mb-8">
               Prêt à générer des revenus passifs ?
             </h2>
             
@@ -452,17 +451,17 @@ const MariableAmbassadeur = () => {
               <Button 
                 size="lg"
                 onClick={() => navigate('/contact')}
-                className="bg-white hover:bg-editorial-beige text-editorial-olive px-10 py-7 text-lg shadow-2xl hover:scale-105 transition-all duration-300 rounded-none"
+                className="bg-editorial-noir hover:bg-editorial-noir/80 text-white px-10 py-7 text-lg shadow-2xl hover:scale-105 transition-all duration-300 rounded-none"
               >
-                Devenir Lieu Ambassadeur
+                Devenir lieu ambassadeur
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </div>
             
-            <div className="flex flex-wrap justify-center gap-6 mt-8 text-white/80">
+            <div className="flex flex-wrap justify-center gap-6 mt-8 text-editorial-noir/80">
               {['0€ d\'investissement', 'Commission uniquement', 'Dashboard temps réel'].map((item, index) => (
-                <span key={index} className="flex items-center gap-2 bg-white/10 px-4 py-2">
-                  <Check className="h-4 w-4 text-white" /> {item}
+                <span key={index} className="flex items-center gap-2 bg-editorial-noir/10 px-4 py-2">
+                  <Check className="h-4 w-4 text-editorial-noir" /> {item}
                 </span>
               ))}
             </div>

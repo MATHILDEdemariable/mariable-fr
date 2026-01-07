@@ -144,7 +144,7 @@ const VenuesSection = () => {
               </h3>
               <ul className="space-y-1">
                 {CATEGORIES.map(cat => <li key={cat.id}>
-                    <button onClick={() => setSelectedCategory(cat.id)} className={`w-full text-left px-4 py-2.5 text-sm transition-colors ${selectedCategory === cat.id ? 'border-l-2 border-editorial-olive text-editorial-olive font-medium bg-editorial-olive/5' : 'text-editorial-gray hover:text-editorial-noir hover:bg-editorial-border/50'}`}>
+                    <button onClick={() => setSelectedCategory(cat.id)} className={`w-full text-left px-4 py-2.5 text-sm transition-colors ${selectedCategory === cat.id ? 'border-l-2 border-editorial-beige text-editorial-noir font-medium bg-editorial-beige/20' : 'text-editorial-gray hover:text-editorial-noir hover:bg-editorial-border/50'}`}>
                       {cat.label}
                     </button>
                   </li>)}

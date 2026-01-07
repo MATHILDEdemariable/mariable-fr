@@ -81,12 +81,6 @@ const PremiumHeader = () => {
                 >
                   Connexion
                 </Button>
-                <Button 
-                  onClick={handleGetStarted} 
-                  className="bg-editorial-noir hover:bg-editorial-noir/80 text-white rounded-none px-6 text-xs tracking-widest uppercase font-sans"
-                >
-                  Commencer
-                </Button>
               </>
             )}
           </div>
@@ -125,12 +119,6 @@ const PremiumHeader = () => {
                       className="border-editorial-noir/20 text-editorial-noir rounded-none w-full"
                     >
                       Connexion
-                    </Button>
-                    <Button 
-                      onClick={() => { handleGetStarted(); setMobileOpen(false); }} 
-                      className="bg-editorial-noir text-white rounded-none w-full"
-                    >
-                      Commencer
                     </Button>
                   </>
                 )}
