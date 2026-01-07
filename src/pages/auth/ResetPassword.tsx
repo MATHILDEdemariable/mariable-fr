@@ -159,9 +159,18 @@ const ResetPassword = () => {
       navigate('/dashboard');
     } catch (error: any) {
       console.error('[reset-password] Update error:', error);
+      
+      // Traduire les messages d'erreur courants en français
+      let errorMessage = "Une erreur est survenue lors de la mise à jour du mot de passe.";
+      if (error.message?.includes("different from the old password")) {
+        errorMessage = "Le nouveau mot de passe doit être différent de l'ancien.";
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
       toast({
         title: "Erreur",
-        description: error.message || "Une erreur est survenue lors de la mise à jour du mot de passe.",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {

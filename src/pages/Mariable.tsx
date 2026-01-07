@@ -87,7 +87,7 @@ const TestimonialsSection = () => {
     author: "Sophie & Marc",
     location: "Mariage en Provence"
   }, {
-    quote: "On a trouvé notre lieu sur le guide et l'appli du jour-J change la donne. On a pu tout anticipé sans rien oublier et partager les à nos témoins. Chacun pouvait gérer facilement sur son smartphone, hyper pratique on recommande",
+    quote: "On a trouvé notre lieu sur le guide et l'appli du jour-J change la donne. On a pu tout anticiper sans rien oublier et partager les infos à nos témoins. Chacun pouvait gérer facilement sur son smartphone, hyper pratique, on recommande !",
     author: "Julie & Thomas",
     location: "Mariage à Paris"
   }, {
@@ -155,13 +155,7 @@ const FAQSection = () => {
     answer: "Notre calculateur de budget vous aide à estimer et répartir votre enveloppe. Il prend en compte le nombre d'invités, la région, la saison et vos prestataires. Vous obtenez une estimation réaliste par poste (lieu, traiteur, photo, DJ, etc.) et pouvez suivre vos dépenses en temps réel. L'outil est 100% gratuit."
   }, {
     question: "Mariable est-il vraiment gratuit ?",
-    answer: "Oui, Mariable est entièrement gratuit ! Tous les outils de planification sont accessibles sans frais : tableau de bord, checklist, calculateur de budget, gestion des invités, plan de table, coordination jour J. La recherche de prestataires est également gratuite. Nous proposons optionnellement un service de sélection personnalisée premium (69€) pour ceux qui souhaitent un accompagnement plus poussé."
-  }, {
-    question: "Comment je récupère mes réductions ?",
-    answer: "Via VOTRE COMPTE mariable.fr vous accédez au code promotionnel des partenaires."
-  }, {
-    question: "Les réductions sont-elles cumulables ?",
-    answer: "Oui ! Vous pouvez cumuler les avantages de tous les partenaires du Club pour maximiser vos économies."
+    answer: "Oui, Mariable est entièrement gratuit ! Tous les outils de planification sont accessibles sans frais : tableau de bord, checklist, calculateur de budget, gestion des invités, plan de table, coordination jour J. La recherche de prestataires est également gratuite."
   }];
   return <section className="py-12 md:py-20 bg-white">
       <div className="container mx-auto px-4">
