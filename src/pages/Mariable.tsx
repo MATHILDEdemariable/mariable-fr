@@ -87,7 +87,7 @@ const TestimonialsSection = () => {
     author: "Sophie & Marc",
     location: "Mariage en Provence"
   }, {
-    quote: "La sélection de prestataires est vraiment qualitative. On a trouvé notre photographe et notre DJ en quelques clics.",
+    quote: "On a trouvé notre lieu sur le guide et l'appli du jour-J change la donne. On a pu tout anticipé sans rien oublier et partager les à nos témoins. Chacun pouvait gérer facilement sur son smartphone, hyper pratique on recommande",
     author: "Julie & Thomas",
     location: "Mariage à Paris"
   }, {
