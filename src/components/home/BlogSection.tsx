@@ -32,7 +32,7 @@ const BlogSection = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-12 md:mb-16"
         >
-          <h2 className="font-serif text-3xl md:text-5xl font-bold text-editorial-noir uppercase tracking-[2px]">
+          <h2 className="font-serif text-3xl md:text-5xl text-editorial-noir uppercase tracking-[2px]">
             Magazine & Inspirations
           </h2>
         </motion.div>

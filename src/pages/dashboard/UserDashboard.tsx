@@ -38,6 +38,7 @@ import DocumentsPage from './DocumentsPage';
 import SeatingPlan from '../SeatingPlan';
 import WeddingRetroplanningEmbed from './WeddingRetroplanningEmbed';
 import GuidesPage from './GuidesPage';
+import PanierPage from './PanierPage';
 
 const UserDashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -106,6 +107,7 @@ const UserDashboard: React.FC = () => {
           <Route path="seating-plan" element={<SeatingPlan />} />
           <Route path="qr-code" element={<QRCodeGeneratorPage />} />
           <Route path="guides" element={<GuidesPage />} />
+          <Route path="panier" element={<PanierPage />} />
           <Route path="*" element={<div>Page non trouvée</div>} />
         </Route>
       </Routes>

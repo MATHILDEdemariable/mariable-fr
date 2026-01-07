@@ -253,7 +253,7 @@ const VendorCard: React.FC<VendorCardProps> = ({
               e.stopPropagation();
               onClick(vendor);
             }}
-            className="w-full bg-editorial-olive hover:bg-editorial-noir text-white rounded-none"
+            className="w-full bg-editorial-noir hover:bg-editorial-noir/80 text-white rounded-none"
           >
             <ExternalLink className="h-4 w-4 mr-1" /> En savoir plus
           </Button>

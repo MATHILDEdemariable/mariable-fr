@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
-import { ShoppingCart, X, Trash2, Euro, Edit2, Check, Users } from 'lucide-react';
+import { ShoppingCart, X, Trash2, Euro, Edit2, Check, Users, Download, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useCart, PRICE_CATALOG } from './CartProvider';
+import { useNavigate } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
+import jsPDF from 'jspdf';
 import {
   Popover,
   PopoverContent,
@@ -15,6 +18,47 @@ const CartIcon = () => {
   const { items, removeItem, updateItemPrice, updateGuestCount, clearCart, total, itemCount } = useCart();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [customPrice, setCustomPrice] = useState<string>('');
+  const navigate = useNavigate();
+
+  // Fonction pour générer le PDF du panier
+  const handleDownloadPDF = () => {
+    const doc = new jsPDF();
+    doc.setFontSize(20);
+    doc.text('Mon Panier Mariable', 20, 20);
+    doc.setFontSize(10);
+    doc.text('Estimation indicative', 20, 28);
+    doc.setFontSize(12);
+    
+    let y = 45;
+    items.forEach((item, index) => {
+      const itemTotal = getItemTotal(item);
+      doc.text(`${index + 1}. ${item.vendorName}`, 20, y);
+      doc.setFontSize(10);
+      doc.text(`   ${item.category}`, 20, y + 5);
+      if (itemTotal > 0) {
+        doc.text(`${itemTotal.toLocaleString()} EUR`, 160, y, { align: 'right' });
+      }
+      doc.setFontSize(12);
+      y += 15;
+    });
+    
+    doc.setFontSize(14);
+    doc.text(`Budget total estime: ${total.toLocaleString()} EUR`, 20, y + 10);
+    doc.setFontSize(8);
+    doc.text('* Estimation basee sur les tarifs standards du marche francais', 20, y + 20);
+    
+    doc.save('panier-mariable.pdf');
+  };
+
+  // Fonction pour sauvegarder au dashboard
+  const handleSaveToDashboard = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+    navigate('/dashboard/panier', { state: { cartItems: items, total } });
+  };
 
   const handlePriceSelect = (vendorId: string, priceType: string) => {
     const item = items.find(i => i.vendorId === vendorId);
@@ -64,10 +108,10 @@ const CartIcon = () => {
         <Button 
           variant="outline" 
           size="icon" 
-          className="fixed top-24 right-6 z-50 bg-white shadow-xl border-2 border-editorial-olive hover:bg-editorial-beige h-14 w-14 rounded-none transition-all duration-300"
+          className="fixed top-24 right-6 z-50 bg-white shadow-xl border-2 border-editorial-noir hover:bg-editorial-beige h-14 w-14 rounded-none transition-all duration-300"
         >
-          <ShoppingCart className="h-6 w-6 text-editorial-olive" />
-          <Badge className="absolute -top-1 -right-1 bg-editorial-olive text-white text-xs h-6 w-6 flex items-center justify-center rounded-none p-0 font-bold">
+          <ShoppingCart className="h-6 w-6 text-editorial-noir" />
+          <Badge className="absolute -top-1 -right-1 bg-editorial-noir text-white text-xs h-6 w-6 flex items-center justify-center rounded-none p-0 font-bold">
             {itemCount}
           </Badge>
         </Button>
@@ -111,7 +155,7 @@ const CartIcon = () => {
                   {item.price ? (
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
-                        <span className="text-sm font-semibold text-editorial-olive flex items-center gap-1">
+                        <span className="text-sm font-semibold text-editorial-noir flex items-center gap-1">
                           <Euro className="h-3 w-3" />
                           {item.price.toLocaleString()}€{isTraiteur ? '/pers' : ''}
                         </span>
@@ -133,8 +177,8 @@ const CartIcon = () => {
                       {isTraiteur && (
                         <div className="bg-editorial-beige p-2">
                           <div className="flex items-center gap-2">
-                            <Users className="h-4 w-4 text-editorial-olive" />
-                            <span className="text-xs text-muted-foreground">Invités:</span>
+                            <Users className="h-4 w-4 text-editorial-noir" />
+                            <span className="text-xs text-editorial-noir">Invités:</span>
                             <Input
                               type="number"
                               min="1"
@@ -163,7 +207,7 @@ const CartIcon = () => {
                       />
                       <Button
                         size="sm"
-                        className="h-8 bg-editorial-olive hover:bg-editorial-noir"
+                        className="h-8 bg-editorial-noir hover:bg-editorial-noir/80"
                         onClick={() => handleCustomPrice(item.vendorId)}
                       >
                         <Check className="h-3 w-3" />
@@ -199,7 +243,7 @@ const CartIcon = () => {
                       {editingId === item.vendorId && (
                         <Button
                           size="sm"
-                          className="h-8 bg-editorial-olive hover:bg-editorial-noir"
+                          className="h-8 bg-editorial-noir hover:bg-editorial-noir/80"
                           onClick={() => handleCustomPrice(item.vendorId)}
                         >
                           <Check className="h-3 w-3" />
@@ -216,14 +260,33 @@ const CartIcon = () => {
         {/* Total */}
         <div className="p-4 bg-editorial-beige border-t border-border">
           <div className="flex items-center justify-between">
-            <span className="font-semibold text-foreground">Budget estimé total</span>
-            <span className="text-xl font-bold text-editorial-olive">
+            <span className="font-semibold text-editorial-noir">Budget estimé total</span>
+            <span className="text-xl font-bold text-editorial-noir">
               {total.toLocaleString()}€
             </span>
           </div>
-          <p className="text-xs text-muted-foreground mt-2">
+          <p className="text-xs text-editorial-noir/70 mt-2">
             * Estimation indicative basée sur les tarifs standards du marché français
           </p>
+        </div>
+
+        {/* Boutons d'action */}
+        <div className="p-4 flex gap-2 border-t border-border">
+          <Button
+            onClick={handleDownloadPDF}
+            variant="outline"
+            className="flex-1 border-editorial-noir text-editorial-noir hover:bg-editorial-noir hover:text-white rounded-none"
+          >
+            <Download className="h-4 w-4 mr-2" />
+            PDF
+          </Button>
+          <Button
+            onClick={handleSaveToDashboard}
+            className="flex-1 bg-editorial-noir hover:bg-editorial-noir/80 text-white rounded-none"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Dashboard
+          </Button>
         </div>
       </PopoverContent>
     </Popover>

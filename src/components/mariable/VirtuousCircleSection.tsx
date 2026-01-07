@@ -38,7 +38,7 @@ const VirtuousCircleSection = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-12"
         >
-          <h2 className="font-serif text-3xl md:text-5xl font-bold text-editorial-noir uppercase tracking-[2px] mb-4">
+          <h2 className="font-serif text-3xl md:text-5xl text-editorial-noir uppercase tracking-[2px] mb-4">
             Un Club Exclusif
           </h2>
           <p className="text-editorial-gray text-lg max-w-2xl mx-auto">
@@ -119,7 +119,7 @@ const VirtuousCircleSection = () => {
 
           {/* Right Column: 3 steps vertically */}
           <div className="space-y-6">
-            <h3 className="font-serif text-2xl font-bold text-editorial-noir mb-6">
+            <h3 className="font-serif text-2xl text-editorial-noir mb-6">
               Comment ça marche ?
             </h3>
             {steps.map((step, index) => (

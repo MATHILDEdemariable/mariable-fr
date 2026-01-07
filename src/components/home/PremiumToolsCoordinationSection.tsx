@@ -45,7 +45,7 @@ const PremiumToolsCoordinationSection = () => {
       <div className="container mx-auto px-4">
         {/* Titre éditorial */}
         <div className="text-center mb-16">
-          <h2 className="font-serif text-3xl md:text-5xl font-bold text-editorial-noir uppercase tracking-[2px] mb-4">
+          <h2 className="font-serif text-3xl md:text-5xl text-editorial-noir uppercase tracking-[2px] mb-4">
             Vos Outils de Planification
           </h2>
           <p className="text-editorial-gray text-lg max-w-2xl mx-auto">
@@ -80,7 +80,7 @@ const PremiumToolsCoordinationSection = () => {
               <Link to="/register">
                 <Button 
                   size="lg" 
-                  className="bg-editorial-olive hover:bg-editorial-noir text-white px-10 py-6 text-base font-medium rounded-none w-full"
+                  className="bg-editorial-noir hover:bg-editorial-noir/80 text-white px-10 py-6 text-base font-medium rounded-none w-full"
                 >
                   Créer mon compte gratuit <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>

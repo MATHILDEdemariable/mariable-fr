@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Calendar, CheckSquare, Calculator, Store, Heart, Settings, LogOut, Wine, MessageCircleQuestion, MessageSquare, Users, Lightbulb, ChevronDown, Coins, ListChecks, UserCheck, Home, QrCode, FileText, Table, AlertCircle, Gift, Sparkles } from 'lucide-react';
+import { LayoutDashboard, Calendar, CheckSquare, Calculator, Store, Heart, Settings, LogOut, Wine, MessageCircleQuestion, MessageSquare, Users, Lightbulb, ChevronDown, Coins, ListChecks, UserCheck, Home, QrCode, FileText, Table, AlertCircle, Gift, Sparkles, ShoppingCart } from 'lucide-react';
 import { CallScheduleModal } from './CallScheduleModal';
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
@@ -61,6 +61,10 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
     label: 'Tous les prestataires',
     icon: <Store className="h-4 w-4" />,
     path: '/professionnelsmariable'
+  }, {
+    label: 'Mon panier',
+    icon: <ShoppingCart className="h-4 w-4" />,
+    path: '/dashboard/panier'
   }, {
     label: 'Suivi',
     icon: <Settings className="h-4 w-4" />,
