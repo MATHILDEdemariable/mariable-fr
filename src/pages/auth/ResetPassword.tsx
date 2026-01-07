@@ -7,36 +7,117 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2, Eye, EyeOff, AlertCircle } from 'lucide-react';
+import { Loader2, Eye, EyeOff, AlertCircle, Mail } from 'lucide-react';
 
 const ResetPassword = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [hasValidSession, setHasValidSession] = useState<boolean | null>(null);
+  const [errorType, setErrorType] = useState<'expired' | 'invalid' | null>(null);
+  const [resetEmail, setResetEmail] = useState('');
+  const [sendingReset, setSendingReset] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
   useEffect(() => {
-    const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (session) {
-        setHasValidSession(true);
-      } else {
-        setHasValidSession(false);
-        toast({
-          title: "Lien invalide ou expiré",
-          description: "Ce lien de réinitialisation n'est plus valide. Veuillez en demander un nouveau.",
-          variant: "destructive",
+    const initializeSession = async () => {
+      try {
+        // Parse URL params from both query string and hash
+        const searchParams = new URLSearchParams(window.location.search);
+        const hashParams = window.location.hash 
+          ? new URLSearchParams(window.location.hash.substring(1)) 
+          : new URLSearchParams();
+
+        // Check for errors first
+        const errorParam = searchParams.get('error') || hashParams.get('error');
+        const errorCode = searchParams.get('error_code') || hashParams.get('error_code');
+        
+        console.log('[reset-password] Init:', { 
+          hasError: !!errorParam, 
+          errorCode,
+          hasHash: !!window.location.hash,
+          hasSearch: !!window.location.search
         });
+
+        if (errorParam || errorCode === 'otp_expired') {
+          setErrorType('expired');
+          setHasValidSession(false);
+          setInitialLoading(false);
+          return;
+        }
+
+        // Get tokens from query or hash
+        const accessToken = searchParams.get('access_token') || hashParams.get('access_token');
+        const refreshToken = searchParams.get('refresh_token') || hashParams.get('refresh_token');
+        const code = searchParams.get('code') || hashParams.get('code');
+
+        console.log('[reset-password] Tokens:', { 
+          hasAccessToken: !!accessToken, 
+          hasRefreshToken: !!refreshToken, 
+          hasCode: !!code 
+        });
+
+        // Try to establish session from tokens
+        if (accessToken && refreshToken) {
+          const { error: sessionError } = await supabase.auth.setSession({
+            access_token: accessToken,
+            refresh_token: refreshToken
+          });
+
+          if (sessionError) {
+            console.error('[reset-password] Session error:', sessionError.message);
+            setErrorType('invalid');
+            setHasValidSession(false);
+          } else {
+            setHasValidSession(true);
+            // Clean URL
+            window.history.replaceState({}, '', '/auth/reset-password');
+          }
+          setInitialLoading(false);
+          return;
+        }
+
+        // Try PKCE code exchange
+        if (code) {
+          const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
+          
+          if (exchangeError) {
+            console.error('[reset-password] Code exchange error:', exchangeError.message);
+            setErrorType('expired');
+            setHasValidSession(false);
+          } else {
+            setHasValidSession(true);
+            // Clean URL
+            window.history.replaceState({}, '', '/auth/reset-password');
+          }
+          setInitialLoading(false);
+          return;
+        }
+
+        // Fallback: check existing session
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (session) {
+          setHasValidSession(true);
+        } else {
+          setErrorType('invalid');
+          setHasValidSession(false);
+        }
+        setInitialLoading(false);
+      } catch (err) {
+        console.error('[reset-password] Unexpected error:', err);
+        setErrorType('invalid');
+        setHasValidSession(false);
+        setInitialLoading(false);
       }
     };
 
-    checkSession();
-  }, [toast]);
+    initializeSession();
+  }, []);
 
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -77,7 +158,7 @@ const ResetPassword = () => {
 
       navigate('/dashboard');
     } catch (error: any) {
-      console.error('Error resetting password:', error);
+      console.error('[reset-password] Update error:', error);
       toast({
         title: "Erreur",
         description: error.message || "Une erreur est survenue lors de la mise à jour du mot de passe.",
@@ -88,8 +169,48 @@ const ResetPassword = () => {
     }
   };
 
-  // Show loading state while checking session
-  if (hasValidSession === null) {
+  const handleResendResetEmail = async () => {
+    if (!resetEmail) {
+      toast({
+        title: "Email requis",
+        description: "Veuillez saisir votre adresse email.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setSendingReset(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
+        redirectTo: `${window.location.origin}/auth/reset-password`,
+      });
+
+      if (error) {
+        toast({
+          title: "Erreur",
+          description: error.message,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Email envoyé",
+          description: "Vérifiez votre boîte mail pour réinitialiser votre mot de passe.",
+        });
+      }
+    } catch (err) {
+      console.error('[reset-password] Resend error:', err);
+      toast({
+        title: "Erreur",
+        description: "Une erreur est survenue. Veuillez réessayer.",
+        variant: "destructive",
+      });
+    } finally {
+      setSendingReset(false);
+    }
+  };
+
+  // Show loading state while initializing
+  if (initialLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-editorial-beige">
         <Loader2 className="h-8 w-8 animate-spin text-editorial-olive" />
@@ -112,16 +233,43 @@ const ResetPassword = () => {
               <div className="flex justify-center mb-4">
                 <AlertCircle className="h-12 w-12 text-red-500" />
               </div>
-              <CardTitle className="text-2xl font-serif text-editorial-noir">Lien invalide ou expiré</CardTitle>
+              <CardTitle className="text-2xl font-serif text-editorial-noir">
+                {errorType === 'expired' ? 'Lien expiré' : 'Lien invalide'}
+              </CardTitle>
               <CardDescription className="text-editorial-gray">
-                Ce lien de réinitialisation n'est plus valide. Veuillez en demander un nouveau.
+                {errorType === 'expired' 
+                  ? 'Ce lien a expiré. Demandez un nouveau lien ci-dessous.'
+                  : 'Ce lien de réinitialisation n\'est plus valide. Veuillez en demander un nouveau.'}
               </CardDescription>
             </CardHeader>
             
             <CardContent className="space-y-4">
+              <div className="space-y-3">
+                <Input
+                  type="email"
+                  placeholder="Votre adresse email"
+                  value={resetEmail}
+                  onChange={(e) => setResetEmail(e.target.value)}
+                  className="border-editorial-border rounded-none"
+                />
+                <Button 
+                  onClick={handleResendResetEmail}
+                  disabled={sendingReset}
+                  className="w-full bg-editorial-olive hover:bg-editorial-noir text-white rounded-none"
+                >
+                  {sendingReset ? (
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  ) : (
+                    <Mail className="w-4 h-4 mr-2" />
+                  )}
+                  Envoyer un nouveau lien
+                </Button>
+              </div>
+              
               <Button 
+                variant="outline"
                 onClick={() => navigate('/login')}
-                className="w-full bg-editorial-olive hover:bg-editorial-noir text-white rounded-none"
+                className="w-full border-editorial-noir text-editorial-noir hover:bg-editorial-noir hover:text-white rounded-none"
               >
                 Retour à la connexion
               </Button>
