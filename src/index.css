@@ -514,10 +514,10 @@ select:focus {
   --header-offset: 96px;  /* Hauteur par défaut (PremiumHeader) */
 }
 
-/* Hauteur responsive pour mobile */
+/* Hauteur responsive pour mobile - 80px pour h-20 */
 @media (max-width: 767px) {
   :root {
-    --header-offset: 64px; /* Headers mobiles */
+    --header-offset: 80px; /* Headers mobiles h-20 = 80px */
   }
 }
 

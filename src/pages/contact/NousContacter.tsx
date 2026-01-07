@@ -74,8 +74,8 @@ const NousContacter = () => {
     <div className="min-h-screen flex flex-col bg-[#efeee9]">
       <PremiumHeader />
       
-      <main className="flex-grow pb-16 container page-content">
-        <div className="max-w-2xl mx-auto">
+      <main className="flex-grow pb-16 container page-content pt-4 md:pt-8">
+        <div className="max-w-2xl mx-auto px-4">
           <h1 className="text-4xl md:text-5xl font-serif mb-4 text-center">Contactez-nous</h1>
           <p className="text-xl text-muted-foreground mb-8 text-center">
             Au plaisir d'échanger avec vous

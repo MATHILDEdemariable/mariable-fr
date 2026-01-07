@@ -93,16 +93,17 @@ const CartIcon = () => {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button 
-          variant="outline" 
-          size="icon" 
-          className="fixed top-24 right-6 z-50 bg-white shadow-xl border-2 border-editorial-noir hover:bg-editorial-beige h-14 w-14 rounded-none transition-all duration-300"
-        >
-          <ShoppingCart className="h-6 w-6 text-editorial-noir" />
-          <Badge className="absolute -top-1 -right-1 bg-editorial-noir text-white text-xs h-6 w-6 flex items-center justify-center rounded-none p-0 font-bold">
-            {itemCount}
-          </Badge>
-        </Button>
+      <Button 
+        variant="outline" 
+        size="icon" 
+        className="fixed top-24 right-3 md:right-6 z-50 bg-white shadow-xl border-2 border-editorial-noir hover:bg-editorial-beige h-11 w-11 md:h-14 md:w-14 rounded-none transition-all duration-300"
+        aria-label="Voir le panier"
+      >
+        <ShoppingCart className="h-5 w-5 md:h-6 md:w-6 text-editorial-noir" />
+        <Badge className="absolute -top-1 -right-1 bg-editorial-noir text-white text-xs h-5 w-5 md:h-6 md:w-6 flex items-center justify-center rounded-none p-0 font-bold">
+          {itemCount}
+        </Badge>
+      </Button>
       </PopoverTrigger>
       <PopoverContent className="w-96 p-0" align="end">
         <div className="p-4 border-b border-border">
