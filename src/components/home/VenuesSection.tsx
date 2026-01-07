@@ -68,8 +68,9 @@ const VenuesSection = () => {
         query = query.eq('categorie', selectedCategory as PrestataireCategorie);
       }
 
+      // Filtre par région - utilise filter avec l'opérateur cs pour les champs JSONB
       if (selectedRegion !== 'Toutes les régions') {
-        query = query.contains('regions', [selectedRegion]);
+        query = query.filter('regions', 'cs', JSON.stringify([selectedRegion]));
       }
       
       const { data } = await query;
