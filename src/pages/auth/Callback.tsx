@@ -4,6 +4,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { Loader2, AlertCircle, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { useToast } from '@/hooks/use-toast';
 import SEO from '@/components/SEO';
 
 const Callback = () => {
@@ -11,15 +13,27 @@ const Callback = () => {
   const [searchParams] = useSearchParams();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [resetEmail, setResetEmail] = useState('');
+  const [showResetForm, setShowResetForm] = useState(false);
+  const [sendingReset, setSendingReset] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
     const handleAuthCallback = async () => {
       try {
-        // Check for error parameters first
-        const errorParam = searchParams.get('error');
-        const errorDescription = searchParams.get('error_description');
-        const errorCode = searchParams.get('error_code');
+        // Check for error parameters in query params first
+        let errorParam = searchParams.get('error');
+        let errorDescription = searchParams.get('error_description');
+        let errorCode = searchParams.get('error_code');
         const type = searchParams.get('type');
+
+        // Also check hash fragment for errors (Supabase redirects expired OTP here)
+        if (!errorParam && window.location.hash) {
+          const hashParams = new URLSearchParams(window.location.hash.substring(1));
+          errorParam = hashParams.get('error');
+          errorDescription = hashParams.get('error_description');
+          errorCode = hashParams.get('error_code');
+        }
 
         if (errorParam) {
           setLoading(false);
@@ -145,6 +159,10 @@ const Callback = () => {
         });
 
         if (!error) {
+          toast({
+            title: "Email envoyé",
+            description: "Vérifiez votre boîte mail pour confirmer votre compte.",
+          });
           setError(null);
           setLoading(true);
         }
@@ -153,6 +171,47 @@ const Callback = () => {
       }
     } else {
       navigate('/register');
+    }
+  };
+
+  const handleResendResetPassword = async () => {
+    if (!resetEmail) {
+      toast({
+        title: "Email requis",
+        description: "Veuillez saisir votre adresse email.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setSendingReset(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
+        redirectTo: `${window.location.origin}/auth/callback?type=recovery`,
+      });
+
+      if (error) {
+        toast({
+          title: "Erreur",
+          description: error.message,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Email envoyé",
+          description: "Vérifiez votre boîte mail pour réinitialiser votre mot de passe.",
+        });
+        setShowResetForm(false);
+      }
+    } catch (err) {
+      console.error('Error sending reset email:', err);
+      toast({
+        title: "Erreur",
+        description: "Une erreur est survenue. Veuillez réessayer.",
+        variant: "destructive",
+      });
+    } finally {
+      setSendingReset(false);
     }
   };
 
@@ -179,15 +238,40 @@ const Callback = () => {
             {error === 'expired' && (
               <>
                 <p className="text-editorial-gray">
-                  Le lien de confirmation a expiré. Cliquez ci-dessous pour recevoir un nouveau lien.
+                  Le lien a expiré. Vous pouvez demander un nouveau lien ci-dessous.
                 </p>
-                <Button 
-                  onClick={handleResendEmail}
-                  className="w-full bg-editorial-olive hover:bg-editorial-noir text-white rounded-none"
-                >
-                  <Mail className="w-4 h-4 mr-2" />
-                  Renvoyer l'email de confirmation
-                </Button>
+                
+                {showResetForm ? (
+                  <div className="space-y-3">
+                    <Input
+                      type="email"
+                      placeholder="Votre adresse email"
+                      value={resetEmail}
+                      onChange={(e) => setResetEmail(e.target.value)}
+                      className="border-editorial-border rounded-none"
+                    />
+                    <Button 
+                      onClick={handleResendResetPassword}
+                      disabled={sendingReset}
+                      className="w-full bg-editorial-olive hover:bg-editorial-noir text-white rounded-none"
+                    >
+                      {sendingReset ? (
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      ) : (
+                        <Mail className="w-4 h-4 mr-2" />
+                      )}
+                      Envoyer un nouveau lien
+                    </Button>
+                  </div>
+                ) : (
+                  <Button 
+                    onClick={() => setShowResetForm(true)}
+                    className="w-full bg-editorial-olive hover:bg-editorial-noir text-white rounded-none"
+                  >
+                    <Mail className="w-4 h-4 mr-2" />
+                    Demander un nouveau lien
+                  </Button>
+                )}
               </>
             )}
             

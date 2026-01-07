@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Sparkles, Heart, Star, Quote } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -249,6 +249,22 @@ const FinalCTASection = () => <section className="py-12 md:py-20 bg-editorial-be
 
 // Main Page Component
 const Mariable = () => {
+  const navigate = useNavigate();
+
+  // Détecter les erreurs d'auth dans le hash fragment et rediriger vers /auth/callback
+  useEffect(() => {
+    if (window.location.hash) {
+      const hashParams = new URLSearchParams(window.location.hash.substring(1));
+      const errorParam = hashParams.get('error');
+      const errorCode = hashParams.get('error_code');
+      
+      if (errorParam || errorCode) {
+        navigate(`/auth/callback${window.location.hash}`, { replace: true });
+        return;
+      }
+    }
+  }, [navigate]);
+
   return <>
       <SEO title="Mariable - Le Club Privé des Futurs Mariés | Professionnels & Prix Préférentiels" description="Rejoignez le Club Mariable : accès gratuit aux meilleurs professionnels et marques du mariage avec des prix préférentiels. Outils de planification, coordination Jour-J et accompagnement personnalisé." canonical="/" keywords="mariage, wedding planner digital, professionnels mariage, club mariable, organisation mariage, coordination jour-j, prestataires mariage" />
 
