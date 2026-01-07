@@ -52,14 +52,14 @@ const PremiumHeader = () => {
           <div className="hidden md:flex items-center space-x-4">
             <Link 
               to="/contact"
-              className="text-xs tracking-widest uppercase text-editorial-noir/80 hover:text-editorial-noir transition-colors"
+              className="text-xs tracking-widest uppercase text-editorial-noir/80 hover:text-editorial-noir transition-colors font-sans"
             >
               Contact
             </Link>
             {isLoggedIn ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button className="bg-editorial-olive hover:bg-editorial-noir text-white rounded-none px-6">
+                  <Button className="bg-editorial-noir hover:bg-editorial-noir/80 text-white rounded-none px-6 text-xs tracking-widest uppercase font-sans">
                     Mon compte <ChevronDown className="ml-1 w-4 h-4" />
                   </Button>
                 </DropdownMenuTrigger>
@@ -73,17 +73,17 @@ const PremiumHeader = () => {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <>
+            <>
                 <Button 
                   variant="ghost"
                   onClick={() => navigate('/login')} 
-                  className="text-xs tracking-widest uppercase text-editorial-noir/80 hover:text-editorial-noir hover:bg-transparent"
+                  className="text-xs tracking-widest uppercase text-editorial-noir/80 hover:text-editorial-noir hover:bg-transparent font-sans"
                 >
                   Connexion
                 </Button>
                 <Button 
                   onClick={handleGetStarted} 
-                  className="bg-editorial-olive hover:bg-editorial-noir text-white rounded-none px-6"
+                  className="bg-editorial-noir hover:bg-editorial-noir/80 text-white rounded-none px-6 text-xs tracking-widest uppercase font-sans"
                 >
                   Commencer
                 </Button>
@@ -112,7 +112,7 @@ const PremiumHeader = () => {
                   <>
                     <Button 
                       onClick={() => { navigate('/dashboard'); setMobileOpen(false); }} 
-                      className="bg-editorial-olive text-white rounded-none w-full"
+                      className="bg-editorial-noir text-white rounded-none w-full"
                     >
                       Mes outils
                     </Button>
@@ -128,7 +128,7 @@ const PremiumHeader = () => {
                     </Button>
                     <Button 
                       onClick={() => { handleGetStarted(); setMobileOpen(false); }} 
-                      className="bg-editorial-olive text-white rounded-none w-full"
+                      className="bg-editorial-noir text-white rounded-none w-full"
                     >
                       Commencer
                     </Button>

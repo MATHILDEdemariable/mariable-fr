@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
-import { ShoppingCart, X, Trash2, Euro, Edit2, Check, Users, Download, Plus } from 'lucide-react';
+import { ShoppingCart, X, Trash2, Euro, Edit2, Check, Users, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useCart, PRICE_CATALOG } from './CartProvider';
-import { useNavigate } from 'react-router-dom';
-import { supabase } from '@/integrations/supabase/client';
 import jsPDF from 'jspdf';
 import {
   Popover,
@@ -18,7 +16,6 @@ const CartIcon = () => {
   const { items, removeItem, updateItemPrice, updateGuestCount, clearCart, total, itemCount } = useCart();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [customPrice, setCustomPrice] = useState<string>('');
-  const navigate = useNavigate();
 
   // Fonction pour générer le PDF du panier
   const handleDownloadPDF = () => {
@@ -50,15 +47,6 @@ const CartIcon = () => {
     doc.save('panier-mariable.pdf');
   };
 
-  // Fonction pour sauvegarder au dashboard
-  const handleSaveToDashboard = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      navigate('/login');
-      return;
-    }
-    navigate('/dashboard/panier', { state: { cartItems: items, total } });
-  };
 
   const handlePriceSelect = (vendorId: string, priceType: string) => {
     const item = items.find(i => i.vendorId === vendorId);
@@ -270,22 +258,14 @@ const CartIcon = () => {
           </p>
         </div>
 
-        {/* Boutons d'action */}
-        <div className="p-4 flex gap-2 border-t border-border">
+        {/* Bouton d'action */}
+        <div className="p-4 border-t border-border">
           <Button
             onClick={handleDownloadPDF}
-            variant="outline"
-            className="flex-1 border-editorial-noir text-editorial-noir hover:bg-editorial-noir hover:text-white rounded-none"
+            className="w-full bg-editorial-noir hover:bg-editorial-noir/80 text-white rounded-none"
           >
             <Download className="h-4 w-4 mr-2" />
-            PDF
-          </Button>
-          <Button
-            onClick={handleSaveToDashboard}
-            className="flex-1 bg-editorial-noir hover:bg-editorial-noir/80 text-white rounded-none"
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            Dashboard
+            Télécharger PDF
           </Button>
         </div>
       </PopoverContent>

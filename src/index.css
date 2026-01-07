@@ -199,7 +199,7 @@ select:focus {
   --gaming-glow: 100 15% 55%;       /* Sauge clair */
   
   /* Editorial colors */
-  --editorial-olive: 120 20% 30%;   /* #3D5A3D */
+  --editorial-olive: 100 10% 31%;   /* #4A5548 - New olive/sage */
   --editorial-noir: 0 0% 6%;        /* #0F0F0F */
   --editorial-beige: 40 23% 85%;    /* #E1DACA - Chalk Beige */
 }

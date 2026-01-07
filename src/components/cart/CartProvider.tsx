@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 
 // Prix standards par catégorie extraits du livre blanc des tarifs mariage France
 export const PRICE_CATALOG: Record<string, { min: number; mid: number; max: number; label: string }> = {
@@ -20,10 +21,10 @@ export interface CartItem {
   vendorId: string;
   vendorName: string;
   category: string;
-  price: number | null; // null = prix sur demande
+  price: number | null;
   priceType: 'fixed' | 'catalog' | 'custom';
   image?: string;
-  guestCount?: number; // Pour les catégories avec prix par personne (Traiteur)
+  guestCount?: number;
 }
 
 interface CartContextType {
@@ -36,51 +37,152 @@ interface CartContextType {
   isInCart: (vendorId: string) => boolean;
   total: number;
   itemCount: number;
+  isLoading: boolean;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [items, setItems] = useState<CartItem[]>([]);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Charger le panier depuis Supabase pour les utilisateurs connectés
+  useEffect(() => {
+    const loadCart = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (user) {
+        setUserId(user.id);
+        const { data } = await supabase
+          .from('user_cart_items')
+          .select('*')
+          .eq('user_id', user.id);
+        
+        if (data && data.length > 0) {
+          setItems(data.map(item => ({
+            vendorId: item.vendor_id,
+            vendorName: item.vendor_name,
+            category: item.category,
+            price: item.price ? Number(item.price) : null,
+            priceType: (item.price_type as 'fixed' | 'catalog' | 'custom') || 'catalog',
+            image: item.image || undefined,
+            guestCount: item.guest_count || undefined,
+          })));
+        }
+      }
+      setIsLoading(false);
+    };
+
+    loadCart();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (session?.user) {
+        setUserId(session.user.id);
+        // Charger le panier de l'utilisateur
+        const { data } = await supabase
+          .from('user_cart_items')
+          .select('*')
+          .eq('user_id', session.user.id);
+        
+        if (data && data.length > 0) {
+          setItems(data.map(item => ({
+            vendorId: item.vendor_id,
+            vendorName: item.vendor_name,
+            category: item.category,
+            price: item.price ? Number(item.price) : null,
+            priceType: (item.price_type as 'fixed' | 'catalog' | 'custom') || 'catalog',
+            image: item.image || undefined,
+            guestCount: item.guest_count || undefined,
+          })));
+        }
+      } else {
+        setUserId(null);
+        setItems([]);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  // Synchroniser avec Supabase
+  const syncToSupabase = useCallback(async (newItems: CartItem[]) => {
+    if (!userId) return;
+
+    // Supprimer tous les items existants et réinsérer
+    await supabase
+      .from('user_cart_items')
+      .delete()
+      .eq('user_id', userId);
+
+    if (newItems.length > 0) {
+      await supabase
+        .from('user_cart_items')
+        .insert(newItems.map(item => ({
+          user_id: userId,
+          vendor_id: item.vendorId,
+          vendor_name: item.vendorName,
+          category: item.category,
+          price: item.price,
+          price_type: item.priceType,
+          image: item.image,
+          guest_count: item.guestCount,
+        })));
+    }
+  }, [userId]);
 
   const addItem = useCallback((item: CartItem) => {
     setItems(prev => {
       if (prev.some(i => i.vendorId === item.vendorId)) {
         return prev;
       }
-      return [...prev, item];
+      const newItems = [...prev, item];
+      syncToSupabase(newItems);
+      return newItems;
     });
-  }, []);
+  }, [syncToSupabase]);
 
   const removeItem = useCallback((vendorId: string) => {
-    setItems(prev => prev.filter(item => item.vendorId !== vendorId));
-  }, []);
+    setItems(prev => {
+      const newItems = prev.filter(item => item.vendorId !== vendorId);
+      syncToSupabase(newItems);
+      return newItems;
+    });
+  }, [syncToSupabase]);
 
   const updateItemPrice = useCallback((vendorId: string, price: number) => {
-    setItems(prev => prev.map(item => 
-      item.vendorId === vendorId 
-        ? { ...item, price, priceType: 'custom' as const }
-        : item
-    ));
-  }, []);
+    setItems(prev => {
+      const newItems = prev.map(item => 
+        item.vendorId === vendorId 
+          ? { ...item, price, priceType: 'custom' as const }
+          : item
+      );
+      syncToSupabase(newItems);
+      return newItems;
+    });
+  }, [syncToSupabase]);
 
   const updateGuestCount = useCallback((vendorId: string, guestCount: number) => {
-    setItems(prev => prev.map(item => 
-      item.vendorId === vendorId 
-        ? { ...item, guestCount }
-        : item
-    ));
-  }, []);
+    setItems(prev => {
+      const newItems = prev.map(item => 
+        item.vendorId === vendorId 
+          ? { ...item, guestCount }
+          : item
+      );
+      syncToSupabase(newItems);
+      return newItems;
+    });
+  }, [syncToSupabase]);
 
   const clearCart = useCallback(() => {
     setItems([]);
-  }, []);
+    syncToSupabase([]);
+  }, [syncToSupabase]);
 
   const isInCart = useCallback((vendorId: string) => {
     return items.some(item => item.vendorId === vendorId);
   }, [items]);
 
-  // Pour le traiteur, multiplier par le nombre d'invités
   const total = items.reduce((sum, item) => {
     if (item.category === 'Traiteur' && item.guestCount && item.price) {
       return sum + (item.price * item.guestCount);
@@ -100,6 +202,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       isInCart,
       total,
       itemCount,
+      isLoading,
     }}>
       {children}
     </CartContext.Provider>

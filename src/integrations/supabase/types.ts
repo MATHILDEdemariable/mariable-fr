@@ -2618,6 +2618,45 @@ export type Database = {
         }
         Relationships: []
       }
+      user_cart_items: {
+        Row: {
+          category: string
+          created_at: string | null
+          guest_count: number | null
+          id: string
+          image: string | null
+          price: number | null
+          price_type: string | null
+          user_id: string
+          vendor_id: string
+          vendor_name: string
+        }
+        Insert: {
+          category: string
+          created_at?: string | null
+          guest_count?: number | null
+          id?: string
+          image?: string | null
+          price?: number | null
+          price_type?: string | null
+          user_id: string
+          vendor_id: string
+          vendor_name: string
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          guest_count?: number | null
+          id?: string
+          image?: string | null
+          price?: number | null
+          price_type?: string | null
+          user_id?: string
+          vendor_id?: string
+          vendor_name?: string
+        }
+        Relationships: []
+      }
       user_planning_responses: {
         Row: {
           completed_steps: string[] | null
