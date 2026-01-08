@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { ShoppingCart, X, Trash2, Euro, Edit2, Check, Users, Download } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { ShoppingCart, X, Trash2, Euro, Edit2, Check, Users, Download, LayoutDashboard } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
@@ -13,6 +14,7 @@ import {
 } from '@/components/ui/popover';
 
 const CartIcon = () => {
+  const navigate = useNavigate();
   const { items, removeItem, updateItemPrice, updateGuestCount, clearCart, total, itemCount } = useCart();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [customPrice, setCustomPrice] = useState<string>('');
@@ -259,14 +261,22 @@ const CartIcon = () => {
           </p>
         </div>
 
-        {/* Bouton d'action */}
-        <div className="p-4 border-t border-border">
+        {/* Boutons d'action */}
+        <div className="p-4 border-t border-border space-y-2">
           <Button
             onClick={handleDownloadPDF}
             className="w-full bg-editorial-noir hover:bg-editorial-noir/80 text-white rounded-none"
           >
             <Download className="h-4 w-4 mr-2" />
             Télécharger PDF
+          </Button>
+          <Button
+            onClick={() => navigate('/dashboard/panier')}
+            variant="outline"
+            className="w-full rounded-none border-editorial-noir text-editorial-noir hover:bg-editorial-beige"
+          >
+            <LayoutDashboard className="h-4 w-4 mr-2" />
+            Voir dans le Dashboard
           </Button>
         </div>
       </PopoverContent>
