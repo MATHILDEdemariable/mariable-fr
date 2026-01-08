@@ -202,6 +202,39 @@ const SeatingPlan = () => {
     });
   };
 
+  const handleDeleteGuest = async (guestId: string) => {
+    const { error } = await supabase
+      .from('seating_assignments')
+      .delete()
+      .eq('id', guestId);
+
+    if (error) {
+      toast({ title: 'Erreur', description: error.message, variant: 'destructive' });
+      return;
+    }
+
+    setGuests(guests.filter(g => g.id !== guestId));
+    toast({ title: 'Invité supprimé' });
+  };
+
+  const handleDeleteAllUnassignedGuests = async () => {
+    const unassigned = guests.filter(g => !g.table_id);
+    if (unassigned.length === 0) return;
+
+    const { error } = await supabase
+      .from('seating_assignments')
+      .delete()
+      .in('id', unassigned.map(g => g.id));
+
+    if (error) {
+      toast({ title: 'Erreur', description: error.message, variant: 'destructive' });
+      return;
+    }
+
+    setGuests(guests.filter(g => g.table_id));
+    toast({ title: `${unassigned.length} invité(s) supprimé(s)` });
+  };
+
   const unassignedGuests = guests.filter(g => !g.table_id);
   const assignedGuests = guests.filter(g => g.table_id);
 
@@ -297,7 +330,11 @@ const SeatingPlan = () => {
 
                 {/* Colonne 3: Invités non assignés (25%) */}
                 <div className="col-span-12 lg:col-span-3">
-                  <GuestList guests={unassignedGuests} />
+                  <GuestList 
+                    guests={unassignedGuests} 
+                    onDeleteGuest={handleDeleteGuest}
+                    onDeleteAllGuests={handleDeleteAllUnassignedGuests}
+                  />
                 </div>
               </div>
             </DragDropContext>

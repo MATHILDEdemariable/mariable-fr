@@ -1,21 +1,12 @@
 import React from 'react';
-import { useLocation } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ShoppingCart, Euro } from 'lucide-react';
-
-interface CartItem {
-  vendorId: string;
-  vendorName: string;
-  category: string;
-  price: number | null;
-  guestCount?: number;
-}
+import { useCart } from '@/components/cart/CartProvider';
 
 const PanierPage: React.FC = () => {
-  const location = useLocation();
-  const { cartItems = [], total = 0 } = (location.state as { cartItems?: CartItem[]; total?: number }) || {};
+  const { items: cartItems, total } = useCart();
 
-  const getItemTotal = (item: CartItem) => {
+  const getItemTotal = (item: typeof cartItems[0]) => {
     if (!item.price) return 0;
     if (item.category === 'Traiteur' && item.guestCount) {
       return item.price * item.guestCount;
@@ -39,7 +30,7 @@ const PanierPage: React.FC = () => {
             <p className="text-editorial-noir/60">Aucun prestataire dans votre panier. Ajoutez des prestataires depuis la page d'accueil ou l'annuaire.</p>
           ) : (
             <div className="space-y-4">
-              {cartItems.map((item: CartItem) => {
+              {cartItems.map((item) => {
                 const itemTotal = getItemTotal(item);
                 return (
                   <div key={item.vendorId} className="flex justify-between items-center p-4 border border-editorial-border bg-white">

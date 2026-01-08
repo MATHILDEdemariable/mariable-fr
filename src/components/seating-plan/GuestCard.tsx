@@ -1,14 +1,16 @@
 import { Draggable } from 'react-beautiful-dnd';
 import { Badge } from '@/components/ui/badge';
-import { User, Baby, Star, Utensils } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { User, Baby, Star, Utensils, X } from 'lucide-react';
 import { SeatingAssignment } from '@/types/seating';
 
 interface GuestCardProps {
   guest: SeatingAssignment;
   index: number;
+  onDelete?: (guestId: string) => void;
 }
 
-const GuestCard = ({ guest, index }: GuestCardProps) => {
+const GuestCard = ({ guest, index, onDelete }: GuestCardProps) => {
   const getGuestIcon = () => {
     if (guest.guest_type === 'child') return <Baby className="h-3 w-3" />;
     if (guest.guest_type === 'vip') return <Star className="h-3 w-3 text-yellow-500" />;
@@ -39,6 +41,20 @@ const GuestCard = ({ guest, index }: GuestCardProps) => {
             )}
             {guest.guest_type === 'vip' && (
               <Badge variant="secondary" className="text-xs">VIP</Badge>
+            )}
+            {onDelete && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-5 w-5 text-muted-foreground hover:text-destructive"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDelete(guest.id);
+                }}
+                title="Supprimer cet invité"
+              >
+                <X className="h-3 w-3" />
+              </Button>
             )}
           </div>
         </div>

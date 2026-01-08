@@ -114,12 +114,14 @@ const MonJourMOnboardingModal: React.FC<MonJourMOnboardingModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-lg">
+      <DialogContent className="max-w-2xl bg-gradient-to-br from-[#FAF9F6] to-white border-none shadow-2xl">
         <DialogHeader>
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              {currentStepData.icon}
-              <DialogTitle className="text-lg font-semibold">
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-wedding-olive/10 rounded-full">
+                {currentStepData.icon}
+              </div>
+              <DialogTitle className="text-xl font-serif font-semibold text-wedding-olive">
                 {currentStepData.title}
               </DialogTitle>
             </div>
@@ -127,23 +129,23 @@ const MonJourMOnboardingModal: React.FC<MonJourMOnboardingModalProps> = ({
               variant="ghost" 
               size="sm" 
               onClick={handleSkip}
-              className="text-gray-500 hover:text-gray-700"
+              className="text-gray-400 hover:text-gray-600"
             >
               <X className="h-4 w-4" />
             </Button>
           </div>
           
           {/* Indicateur de progression */}
-          <div className="flex justify-center mt-4">
+          <div className="flex justify-center mt-6">
             <div className="flex gap-2">
               {steps.map((_, index) => (
                 <div
                   key={index}
-                  className={`h-2 w-8 rounded-full transition-colors ${
+                  className={`h-1.5 w-10 rounded-full transition-all duration-300 ${
                     index === currentStep
-                      ? 'bg-wedding-olive'
+                      ? 'bg-wedding-olive scale-110'
                       : index < currentStep
-                      ? 'bg-wedding-olive/60'
+                      ? 'bg-wedding-olive/50'
                       : 'bg-gray-200'
                   }`}
                 />
@@ -153,47 +155,56 @@ const MonJourMOnboardingModal: React.FC<MonJourMOnboardingModalProps> = ({
         </DialogHeader>
 
         <DialogDescription asChild>
-          <div className="space-y-4">
-            <div className="bg-gray-50 rounded-lg p-4">
-              <p className="text-gray-700 whitespace-pre-line leading-relaxed">
+          <div className="space-y-6 mt-4">
+            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+              <p className="text-gray-700 whitespace-pre-line leading-relaxed text-base">
                 {currentStepData.content}
               </p>
               
               {currentStepData.highlight && (
-                <div className="mt-3">
-                  <Badge variant="outline" className="bg-wedding-olive/10 text-wedding-olive border-wedding-olive/30">
+                <div className="mt-4">
+                  <Badge variant="outline" className="bg-wedding-olive/10 text-wedding-olive border-wedding-olive/30 px-3 py-1">
                     💡 Focus: {currentStepData.highlight}
                   </Badge>
                 </div>
               )}
             </div>
 
+            {/* Message spécial pour l'étape de partage */}
+            {currentStep === 5 && (
+              <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
+                <p className="text-amber-800 text-sm font-medium flex items-center gap-2">
+                  📱 <span>Accessible sur smartphone via un simple lien, <strong>sans téléchargement</strong> !</span>
+                </p>
+              </div>
+            )}
+
             {/* Navigation */}
-            <div className="flex justify-between items-center pt-4">
+            <div className="flex justify-between items-center pt-4 border-t border-gray-100">
               <Button
                 variant="outline"
                 onClick={prevStep}
                 disabled={currentStep === 0}
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 border-gray-200"
               >
                 <ChevronLeft className="h-4 w-4" />
                 Précédent
               </Button>
 
-              <div className="flex gap-2">
+              <div className="flex gap-3">
                 <Button
                   variant="ghost"
                   onClick={handleSkip}
-                  className="text-gray-500"
+                  className="text-gray-400 hover:text-gray-600"
                 >
-                  Passer l'introduction
+                  Passer
                 </Button>
                 
                 <Button
                   onClick={nextStep}
-                  className="bg-wedding-olive hover:bg-wedding-olive/90 flex items-center gap-2"
+                  className="bg-wedding-olive hover:bg-wedding-olive/90 flex items-center gap-2 px-6"
                 >
-                  {currentStep === steps.length - 1 ? 'Commencer' : 'Suivant'}
+                  {currentStep === steps.length - 1 ? 'Commencer ✨' : 'Suivant'}
                   {currentStep < steps.length - 1 && <ChevronRight className="h-4 w-4" />}
                 </Button>
               </div>

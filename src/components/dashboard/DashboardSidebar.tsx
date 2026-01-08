@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Calendar, CheckSquare, Calculator, Store, Heart, Settings, LogOut, Wine, MessageCircleQuestion, MessageSquare, Users, Lightbulb, ChevronDown, Coins, ListChecks, UserCheck, Home, QrCode, FileText, Table, AlertCircle, Gift, Sparkles, ShoppingCart } from 'lucide-react';
+import { LayoutDashboard, Calendar, CheckSquare, Calculator, Store, Heart, Settings, LogOut, Wine, MessageCircleQuestion, MessageSquare, Users, Lightbulb, ChevronDown, Coins, ListChecks, UserCheck, Home, QrCode, FileText, Table, AlertCircle, Gift, Sparkles, ShoppingCart, Building2 } from 'lucide-react';
 import { CallScheduleModal } from './CallScheduleModal';
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
@@ -77,7 +77,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
 
   // Menu déroulant Jour-J (seulement Jour-J et Coordinateurs)
   const jourMItems = [{
-    label: 'Jour-J',
+    label: 'Planning Jour-J',
     icon: <Calendar className="h-4 w-4" />,
     path: '/mon-jour-m'
   }, {
@@ -298,7 +298,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
         <DropdownMenu>
           <DropdownMenuTrigger className={cn("flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors w-full justify-start", isJourMActive() ? 'bg-wedding-olive text-white shadow-sm' : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive', isReaderMode ? 'pointer-events-none opacity-70' : '')} disabled={isReaderMode}>
             <Calendar className="h-4 w-4" />
-            <span className="ml-2 sm:ml-3 leading-tight">Jour-J</span>
+            <span className="ml-2 sm:ml-3 leading-tight">Planning Jour-J</span>
             <span className="ml-2 px-1.5 py-0.5 text-xs bg-wedding-olive text-white rounded-full font-semibold">Exclusif</span>
             <ChevronDown className="ml-auto h-4 w-4" />
             {isReaderMode && <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>}
@@ -355,6 +355,24 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
           <span className="ml-2 sm:ml-3 leading-tight">
             Plan de table
           </span>
+          {isReaderMode && <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>}
+        </Link>
+
+        {/* Cérémonie (bientôt disponible) */}
+        <div className="flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md text-gray-400 cursor-not-allowed">
+          <Heart className="h-4 w-4" />
+          <span className="ml-2 sm:ml-3 leading-tight">Cérémonie</span>
+          <span className="ml-2 px-1.5 py-0.5 text-xs bg-gray-200 text-gray-500 rounded-full">Bientôt</span>
+        </div>
+
+        {/* Mairie - Civil */}
+        <Link to={isReaderMode ? '#' : '/dashboard/mairie-civil'} onClick={e => {
+        if (isReaderMode) {
+          e.preventDefault();
+        }
+      }} className={cn("flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors", isActive('/dashboard/mairie-civil') ? 'bg-wedding-olive text-white shadow-sm' : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive', isReaderMode ? 'pointer-events-none opacity-70' : '')}>
+          <Building2 className="h-4 w-4" />
+          <span className="ml-2 sm:ml-3 leading-tight">Mairie - Civil</span>
           {isReaderMode && <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>}
         </Link>
 
