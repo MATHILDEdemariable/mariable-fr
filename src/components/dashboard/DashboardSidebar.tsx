@@ -358,12 +358,16 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
           {isReaderMode && <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>}
         </Link>
 
-        {/* Cérémonie (bientôt disponible) */}
-        <div className="flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md text-gray-400 cursor-not-allowed">
+        {/* Cérémonie Laïque */}
+        <Link to={isReaderMode ? '#' : '/dashboard/ceremonie'} onClick={e => {
+        if (isReaderMode) {
+          e.preventDefault();
+        }
+      }} className={cn("flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors", isActive('/dashboard/ceremonie') ? 'bg-wedding-olive text-white shadow-sm' : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive', isReaderMode ? 'pointer-events-none opacity-70' : '')}>
           <Heart className="h-4 w-4" />
           <span className="ml-2 sm:ml-3 leading-tight">Cérémonie</span>
-          <span className="ml-2 px-1.5 py-0.5 text-xs bg-gray-200 text-gray-500 rounded-full">Bientôt</span>
-        </div>
+          {isReaderMode && <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>}
+        </Link>
 
         {/* Mairie - Civil */}
         <Link to={isReaderMode ? '#' : '/dashboard/mairie-civil'} onClick={e => {
