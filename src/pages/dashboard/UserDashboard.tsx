@@ -40,6 +40,7 @@ import WeddingRetroplanningEmbed from './WeddingRetroplanningEmbed';
 import GuidesPage from './GuidesPage';
 import PanierPage from './PanierPage';
 import MairieCivilPage from './MairieCivilPage';
+import CeremoniePage from './CeremoniePage';
 
 const UserDashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -110,6 +111,7 @@ const UserDashboard: React.FC = () => {
           <Route path="guides" element={<GuidesPage />} />
           <Route path="panier" element={<PanierPage />} />
           <Route path="mairie-civil" element={<MairieCivilPage />} />
+          <Route path="ceremonie" element={<CeremoniePage />} />
           <Route path="*" element={<div>Page non trouvée</div>} />
         </Route>
       </Routes>

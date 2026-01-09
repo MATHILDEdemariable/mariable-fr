@@ -18,7 +18,8 @@ import {
   Printer,
   Heart,
   Globe,
-  UserCheck
+  UserCheck,
+  ExternalLink
 } from 'lucide-react';
 import {
   Accordion,
@@ -44,15 +45,16 @@ const MairieCivilPage: React.FC = () => {
       icon: Building2
     },
     { 
-      titre: "Commune de résidence", 
-      description: "Résidence établie depuis 1 mois minimum d'habitation continue avant la publication des bans",
-      icon: MapPin
-    },
-    { 
       titre: "Commune des parents", 
       description: "Commune de domicile du père ou de la mère de l'un des futurs époux",
       icon: Users
     },
+  ];
+
+  const liensUtiles = [
+    { titre: "Demander un acte de naissance", url: "https://www.service-public.gouv.fr/particuliers/vosdroits/R1406" },
+    { titre: "Demander un acte de mariage (après)", url: "https://www.service-public.gouv.fr/particuliers/vosdroits/R42837" },
+    { titre: "Contrat de mariage (notaire)", url: "https://www.service-public.gouv.fr/particuliers/vosdroits/F948" },
   ];
 
   const documentsIndispensables = [
@@ -165,73 +167,87 @@ const MairieCivilPage: React.FC = () => {
   const handleExportPDF = () => {
     const pdf = new jsPDF();
     
-    pdf.setFontSize(20);
+    // Header avec design Mariable
+    pdf.setFillColor(139, 137, 114); // wedding-olive
+    pdf.rect(0, 0, 210, 35, 'F');
+    
+    pdf.setTextColor(255, 255, 255);
+    pdf.setFontSize(24);
     pdf.setFont("helvetica", "bold");
-    pdf.text("Checklist Mariage Civil - Documents", 20, 20);
+    pdf.text("MARIABLE", 20, 18);
     
     pdf.setFontSize(10);
     pdf.setFont("helvetica", "normal");
-    pdf.text("Vérifiez les pièces requises sur le site de votre mairie", 20, 28);
+    pdf.text("Checklist Mariage Civil - Documents à préparer", 20, 28);
     
-    let yPosition = 45;
+    let yPosition = 50;
     
+    // Documents obligatoires
+    pdf.setTextColor(139, 137, 114);
     pdf.setFontSize(14);
     pdf.setFont("helvetica", "bold");
-    pdf.text("Documents obligatoires :", 20, yPosition);
+    pdf.text("Documents obligatoires", 20, yPosition);
     yPosition += 10;
     
+    pdf.setTextColor(60, 60, 60);
     pdf.setFontSize(11);
     pdf.setFont("helvetica", "normal");
     
     const checklistItems = [
-      "☐ Pièce d'identité époux 1 (CNI, passeport ou permis)",
-      "☐ Pièce d'identité époux 2 (CNI, passeport ou permis)",
-      "☐ Justificatif de domicile récent époux 1",
-      "☐ Justificatif de domicile récent époux 2",
-      "☐ Acte de naissance époux 1 (copie intégrale, moins de 3 mois)",
-      "☐ Acte de naissance époux 2 (copie intégrale, moins de 3 mois)",
-      "☐ Liste des témoins (1-2 par époux, noms, prénoms, date/lieu naissance, profession, domicile)",
-      "☐ Photocopie pièce d'identité témoin 1",
-      "☐ Photocopie pièce d'identité témoin 2",
-      "☐ Photocopie pièce d'identité témoin 3 (si applicable)",
-      "☐ Photocopie pièce d'identité témoin 4 (si applicable)",
+      "Pièce d'identité époux 1 (CNI, passeport ou permis)",
+      "Pièce d'identité époux 2 (CNI, passeport ou permis)",
+      "Justificatif de domicile récent époux 1",
+      "Justificatif de domicile récent époux 2",
+      "Acte de naissance époux 1 (copie intégrale, moins de 3 mois)",
+      "Acte de naissance époux 2 (copie intégrale, moins de 3 mois)",
+      "Liste des témoins (1-2 par époux)",
+      "Photocopie pièce d'identité témoin 1",
+      "Photocopie pièce d'identité témoin 2",
+      "Photocopie pièce d'identité témoin 3 (si applicable)",
+      "Photocopie pièce d'identité témoin 4 (si applicable)",
     ];
     
     checklistItems.forEach(item => {
-      pdf.text(item, 25, yPosition);
-      yPosition += 8;
+      pdf.text(`☐  ${item}`, 25, yPosition);
+      yPosition += 7;
     });
     
-    yPosition += 5;
+    yPosition += 8;
     
+    // Documents optionnels
+    pdf.setTextColor(139, 137, 114);
     pdf.setFontSize(14);
     pdf.setFont("helvetica", "bold");
-    pdf.text("Si applicable :", 20, yPosition);
+    pdf.text("Si applicable", 20, yPosition);
     yPosition += 10;
     
+    pdf.setTextColor(60, 60, 60);
     pdf.setFontSize(11);
     pdf.setFont("helvetica", "normal");
     
     const optionalItems = [
-      "☐ Certificat du notaire (si contrat de mariage)",
-      "☐ Acte de décès (si veuvage)",
-      "☐ Acte de naissance avec mention divorce (si divorce)",
-      "☐ Consentement du tuteur/curateur (si tutelle/curatelle)",
-      "☐ Documents traduits et légalisés (si époux étranger)",
+      "Certificat du notaire (si contrat de mariage)",
+      "Acte de décès (si veuvage)",
+      "Acte de naissance avec mention divorce (si divorce)",
+      "Consentement du tuteur/curateur (si tutelle/curatelle)",
+      "Documents traduits et légalisés (si époux étranger)",
     ];
     
     optionalItems.forEach(item => {
-      pdf.text(item, 25, yPosition);
-      yPosition += 8;
+      pdf.text(`☐  ${item}`, 25, yPosition);
+      yPosition += 7;
     });
     
-    yPosition += 10;
+    yPosition += 8;
     
+    // Délais
+    pdf.setTextColor(139, 137, 114);
     pdf.setFontSize(14);
     pdf.setFont("helvetica", "bold");
-    pdf.text("Délais minimum avant le mariage :", 20, yPosition);
+    pdf.text("Délais minimum avant le mariage", 20, yPosition);
     yPosition += 10;
     
+    pdf.setTextColor(60, 60, 60);
     pdf.setFontSize(11);
     pdf.setFont("helvetica", "normal");
     pdf.text("• 4 semaines si les 2 époux habitent la même commune", 25, yPosition);
@@ -240,16 +256,25 @@ const MairieCivilPage: React.FC = () => {
     yPosition += 7;
     pdf.text("• 8 semaines si l'un est domicilié à l'étranger", 25, yPosition);
     
-    yPosition += 15;
+    yPosition += 12;
     
+    // Notes importantes
     pdf.setFontSize(10);
     pdf.setFont("helvetica", "italic");
-    pdf.text("Note : Les dates et horaires de cérémonie dépendent de la disponibilité de la mairie.", 20, yPosition);
-    yPosition += 6;
-    pdf.text("La capacité des salles de mariage varie selon les mairies - renseignez-vous !", 20, yPosition);
+    pdf.setTextColor(100, 100, 100);
+    pdf.text("Note : Les dates et horaires dépendent de la disponibilité de la mairie.", 20, yPosition);
+    yPosition += 5;
+    pdf.text("La capacité des salles varie selon les mairies - renseignez-vous !", 20, yPosition);
     
-    pdf.setFontSize(8);
-    pdf.text(`Document généré le ${new Date().toLocaleDateString('fr-FR')}`, 20, 285);
+    // Footer avec design Mariable
+    pdf.setFillColor(245, 244, 240);
+    pdf.rect(0, 270, 210, 27, 'F');
+    
+    pdf.setFontSize(9);
+    pdf.setTextColor(100, 100, 100);
+    pdf.setFont("helvetica", "normal");
+    pdf.text("www.mariable.fr", 20, 282);
+    pdf.text(`Généré le ${new Date().toLocaleDateString('fr-FR')}`, 150, 282);
     
     pdf.save("checklist-mariage-civil.pdf");
     toast.success("Checklist PDF téléchargée !");
@@ -477,6 +502,35 @@ const MairieCivilPage: React.FC = () => {
                 ))}
               </div>
             </div>
+          </CardContent>
+        </Card>
+
+        {/* Liens utiles */}
+        <Card className="border-editorial-border">
+          <CardHeader>
+            <CardTitle className="font-serif text-foreground flex items-center gap-2">
+              <ExternalLink className="h-5 w-5 text-primary" />
+              Liens utiles
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid md:grid-cols-3 gap-4">
+              {liensUtiles.map((lien, index) => (
+                <a
+                  key={index}
+                  href={lien.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-3 p-4 border rounded-lg bg-white hover:bg-muted/50 transition-colors group"
+                >
+                  <ExternalLink className="h-5 w-5 text-primary group-hover:scale-110 transition-transform" />
+                  <span className="text-sm font-medium text-foreground">{lien.titre}</span>
+                </a>
+              ))}
+            </div>
+            <p className="text-xs text-muted-foreground mt-4 italic text-center">
+              Ces liens renvoient vers le site officiel service-public.gouv.fr
+            </p>
           </CardContent>
         </Card>
 
