@@ -22,9 +22,9 @@ const Index = () => {
   return (
     <div className="min-h-screen flex flex-col bg-premium-base">
       <SEO 
-        title="Mariable – Organisation mariage en ligne | Wedding planner digital"
-        description="Simplifiez l'organisation de votre mariage avec Mariable : outils intuitifs, sélection de prestataires réputés, et zéro charge mentale. Le plus beau jour de votre vie."
-        keywords="organisation mariage, wedding planner digital, outils mariage, planning mariage, prestataires mariage, budget mariage, application mariage, jour J, gestion invités, RSVP mariage"
+        title="Mariable"
+        description="L'organisation mariage facile. Outils, prestataires et conseils pour planifier votre grand jour."
+        keywords="organisation mariage, wedding planner digital, outils mariage, planning mariage, prestataires mariage, budget mariage, checklist mariage, retroplanning mariage, plan de table mariage, coordination jour J"
         image="https://www.mariable.fr/assets/cover.jpg"
         schemas={[
           {
@@ -33,6 +33,7 @@ const Index = () => {
               "@type": "WebSite",
               name: "Mariable",
               url: "https://www.mariable.fr",
+              description: "L'organisation mariage facile. Outils, prestataires et conseils pour planifier votre grand jour.",
               potentialAction: {
                 "@type": "SearchAction",
                 target: {
@@ -51,37 +52,37 @@ const Index = () => {
                 {
                   "@type": "SiteNavigationElement",
                   position: 1,
-                  name: "Organisez vous-même votre mariage",
-                  description: "Outils gratuits de planification mariage",
+                  name: "Outils Planning Mariage",
+                  description: "Checklist mariage, Retroplanning, Budget",
                   url: "https://www.mariable.fr/dashboard"
                 },
                 {
                   "@type": "SiteNavigationElement",
                   position: 2,
-                  name: "Nos prestataires mariage",
-                  description: "Sélection de professionnels certifiés",
+                  name: "Lieux de mariage & prestataires",
+                  description: "Mariable est la reference des mariages modernes et elegants et propose une selection premium de professionnels",
                   url: "https://www.mariable.fr/selection"
                 },
                 {
                   "@type": "SiteNavigationElement",
                   position: 3,
-                  name: "Calculatrice budget mariage",
-                  description: "Gérez votre budget et calculez vos besoins",
-                  url: "https://www.mariable.fr/fonctionnalites"
+                  name: "Calculer son budget mariage",
+                  description: "Chez Mariable, notre approche est centree sur la simplicite, la calculatrice et le suivi budgetaire sont ideals pour cela",
+                  url: "https://www.mariable.fr/dashboard/budget"
                 },
                 {
                   "@type": "SiteNavigationElement",
                   position: 4,
-                  name: "Gestion RSVP invités",
-                  description: "Suivez les réponses de vos invités",
-                  url: "https://www.mariable.fr/fonctionnalites"
+                  name: "Outils plan de table mariage facile",
+                  description: "Envoyez un formulaire a vos invites et faites le plan de table en ligne",
+                  url: "https://www.mariable.fr/dashboard/seating-plan"
                 },
                 {
                   "@type": "SiteNavigationElement",
                   position: 5,
-                  name: "Coordination Jour J",
-                  description: "Coordination professionnelle le jour J",
-                  url: "https://www.mariable.fr/coordination-jour-j"
+                  name: "Planning jour-j mariage & coordination jour-j",
+                  description: "Decouvrez notre application exclusive",
+                  url: "https://www.mariable.fr/mon-jour-m/planning"
                 }
               ]
             }

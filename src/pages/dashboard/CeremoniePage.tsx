@@ -2,6 +2,7 @@ import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Heart, 
   Clock, 
@@ -20,7 +21,14 @@ import {
   MapPin,
   Volume2,
   Sun,
-  CloudRain
+  CloudRain,
+  Church,
+  BookOpen,
+  Cross,
+  Crown,
+  Flower2,
+  Camera,
+  PartyPopper
 } from 'lucide-react';
 import {
   Accordion,
@@ -32,6 +40,7 @@ import jsPDF from 'jspdf';
 import { toast } from 'sonner';
 
 const CeremoniePage: React.FC = () => {
+  // ========== DONNÉES CÉRÉMONIE LAÏQUE ==========
   const fondamentaux = [
     { icon: Clock, label: "Durée optimale", value: "45 à 60 minutes" },
     { icon: AlertCircle, label: "Valeur juridique", value: "Aucune - Mariage civil obligatoire avant" },
@@ -133,11 +142,61 @@ const CeremoniePage: React.FC = () => {
     { categorie: "Après-cérémonie", items: ["Quelqu'un pour collecter les objets du rituel", "Ranger les livrets restants", "Guider vers le cocktail"] },
   ];
 
-  const handleExportPDF = () => {
+  // ========== DONNÉES CÉRÉMONIE CATHOLIQUE ==========
+  const documentsCatholicite = [
+    { document: "Acte de naissance", nature: "Extrait intégral avec filiation", validite: "Moins de 3 mois" },
+    { document: "Acte de baptême", nature: "Copie pour mariage uniquement", validite: "Demandée par le prêtre" },
+    { document: "Certificat de mariage civil", nature: "Document officiel de la mairie", validite: "Indispensable avant la cérémonie" },
+    { document: "Déclaration d'intention", nature: "Manuscrite et personnelle", validite: "Expression des 4 piliers" },
+    { document: "Autorisation de l'évêché", nature: "Dispense ou autorisation spéciale", validite: "Pour mariages mixtes ou dispars" },
+  ];
+
+  const piliersMariage = [
+    { pilier: "Liberté", definition: "Choix conscient sans contrainte externe", pratique: "Engagement mûri, exempt de pressions familiales ou sociales" },
+    { pilier: "Fidélité", definition: "Exclusivité et permanence de l'amour", pratique: "Promesse de soutien mutuel dans la santé comme dans la maladie" },
+    { pilier: "Indissolubilité", definition: "Engagement pour la vie entière", pratique: "Volonté de bâtir un foyer durable, jusqu'à ce que la mort nous sépare" },
+    { pilier: "Fécondité", definition: "Ouverture à la vie et don de soi", pratique: "Désir d'accueillir des enfants ou ouverture généreuse aux autres" },
+  ];
+
+  const derouleCatholique = [
+    { numero: 1, titre: "Procession d'entrée", description: "Le marié entre au bras de sa mère, suivi du cortège, puis la mariée au bras de son père" },
+    { numero: 2, titre: "Liturgie de la Parole", description: "Lectures bibliques (Ancien Testament, Épîtres, Évangile) et homélie du prêtre" },
+    { numero: 3, titre: "Dialogue initial", description: "Le prêtre interroge les mariés sur leur liberté et engagement" },
+    { numero: 4, titre: "Échange des consentements", description: "Les mariés se donnent mutuellement le sacrement" },
+    { numero: 5, titre: "Bénédiction des alliances", description: "Les anneaux sont bénis et échangés en signe d'alliance" },
+    { numero: 6, titre: "Bénédiction nuptiale", description: "Prière solennelle invoquant la force de l'Esprit Saint sur le couple" },
+    { numero: 7, titre: "Signature des registres", description: "Accompagnée d'un morceau de musique, puis la quête" },
+    { numero: 8, titre: "Sortie triomphale", description: "Les mariés quittent l'église sous les acclamations" },
+  ];
+
+  const musiqueSacree = [
+    { moment: "Entrée du cortège", exemples: "Marche de Mendelssohn, Canon de Pachelbel" },
+    { moment: "Psaume et Alléluia", exemples: "Psaume 127, Alléluia de Taizé ou de Haendel" },
+    { moment: "Échange des alliances", exemples: "Ave Maria (Schubert ou Gounod), Panis Angelicus" },
+    { moment: "Communion (si messe)", exemples: "Cantique de Jean Racine, Anima Christi" },
+    { moment: "Signature des registres", exemples: "Aria (Bach), Oh Happy Day (Gospel)" },
+  ];
+
+  const traditionsSortie = [
+    { tradition: "Lancer de riz", signification: "Symbole de prospérité et fertilité", contrainte: "Souvent interdit pour des raisons de nettoyage" },
+    { tradition: "Bulles de savon", signification: "Effet féerique, idéal pour les photos", contrainte: "Nécessite des flacons individuels" },
+    { tradition: "Lavande / Pétales", signification: "Parfum et romantisme naturel", contrainte: "Nécessite un balayage après" },
+    { tradition: "Baguettes à grelots", signification: "Animation sonore et visuelle", contrainte: "Écologique et sans résidus" },
+  ];
+
+  const checklistCatholique = [
+    { categorie: "Documents", items: ["Acte de naissance (moins de 3 mois)", "Acte de baptême", "Certificat mariage civil", "Déclaration d'intention"] },
+    { categorie: "Préparation", items: ["Rencontres avec le prêtre (3-4)", "Sessions CPM (week-end)", "Rédaction déclaration d'intention", "Choix des lectures"] },
+    { categorie: "Logistique église", items: ["Valider la date avec la paroisse", "Rencontrer l'organiste", "Prévoir la décoration florale", "Confirmer les témoins"] },
+    { categorie: "Jour J", items: ["Alliances", "Livrets de messe", "Arrhes/quête", "Fleuriste église"] },
+  ];
+
+  // ========== FONCTION EXPORT PDF LAÏQUE ==========
+  const handleExportPDFLaique = () => {
     const pdf = new jsPDF();
     
     // Header avec design Mariable
-    pdf.setFillColor(139, 137, 114); // wedding-olive
+    pdf.setFillColor(139, 137, 114);
     pdf.rect(0, 0, 210, 35, 'F');
     
     pdf.setTextColor(255, 255, 255);
@@ -147,13 +206,18 @@ const CeremoniePage: React.FC = () => {
     
     pdf.setFontSize(10);
     pdf.setFont("helvetica", "normal");
-    pdf.text("Checklist Cérémonie Laïque", 20, 28);
+    pdf.text("Checklist Ceremonie Laique", 20, 28);
     
     let yPosition = 50;
     
-    // Contenu
-    pdf.setTextColor(0, 0, 0);
+    // Fonction pour dessiner une checkbox
+    const drawCheckbox = (x: number, y: number) => {
+      pdf.setDrawColor(100, 100, 100);
+      pdf.setLineWidth(0.5);
+      pdf.rect(x, y - 3, 4, 4);
+    };
     
+    // Contenu
     checklistJourJ.forEach(cat => {
       pdf.setFontSize(14);
       pdf.setFont("helvetica", "bold");
@@ -166,7 +230,8 @@ const CeremoniePage: React.FC = () => {
       pdf.setTextColor(60, 60, 60);
       
       cat.items.forEach(item => {
-        pdf.text(`☐  ${item}`, 25, yPosition);
+        drawCheckbox(20, yPosition);
+        pdf.text(item, 28, yPosition);
         yPosition += 7;
       });
       
@@ -178,7 +243,7 @@ const CeremoniePage: React.FC = () => {
     pdf.setFontSize(14);
     pdf.setFont("helvetica", "bold");
     pdf.setTextColor(139, 137, 114);
-    pdf.text("Rétroplanning", 20, yPosition);
+    pdf.text("Retroplanning", 20, yPosition);
     yPosition += 10;
     
     pdf.setFontSize(10);
@@ -195,406 +260,905 @@ const CeremoniePage: React.FC = () => {
     });
     
     // Footer
-    pdf.setFillColor(245, 244, 240); // beige clair
+    pdf.setFillColor(245, 244, 240);
     pdf.rect(0, 270, 210, 27, 'F');
     
     pdf.setFontSize(9);
     pdf.setTextColor(100, 100, 100);
     pdf.text("www.mariable.fr", 20, 282);
-    pdf.text(`Généré le ${new Date().toLocaleDateString('fr-FR')}`, 150, 282);
+    pdf.text("Genere le " + new Date().toLocaleDateString('fr-FR'), 150, 282);
     
     pdf.save("checklist-ceremonie-laique.pdf");
-    toast.success("Checklist cérémonie téléchargée !");
+    toast.success("Checklist ceremonie laique telechargee !");
+  };
+
+  // ========== FONCTION EXPORT PDF CATHOLIQUE ==========
+  const handleExportPDFCatholique = () => {
+    const pdf = new jsPDF();
+    
+    // Header avec design Mariable
+    pdf.setFillColor(139, 137, 114);
+    pdf.rect(0, 0, 210, 35, 'F');
+    
+    pdf.setTextColor(255, 255, 255);
+    pdf.setFontSize(24);
+    pdf.setFont("helvetica", "bold");
+    pdf.text("MARIABLE", 20, 18);
+    
+    pdf.setFontSize(10);
+    pdf.setFont("helvetica", "normal");
+    pdf.text("Checklist Mariage Catholique", 20, 28);
+    
+    let yPosition = 50;
+    
+    // Fonction pour dessiner une checkbox
+    const drawCheckbox = (x: number, y: number) => {
+      pdf.setDrawColor(100, 100, 100);
+      pdf.setLineWidth(0.5);
+      pdf.rect(x, y - 3, 4, 4);
+    };
+    
+    // Contenu
+    checklistCatholique.forEach(cat => {
+      pdf.setFontSize(14);
+      pdf.setFont("helvetica", "bold");
+      pdf.setTextColor(139, 137, 114);
+      pdf.text(cat.categorie, 20, yPosition);
+      yPosition += 8;
+      
+      pdf.setFontSize(11);
+      pdf.setFont("helvetica", "normal");
+      pdf.setTextColor(60, 60, 60);
+      
+      cat.items.forEach(item => {
+        drawCheckbox(20, yPosition);
+        pdf.text(item, 28, yPosition);
+        yPosition += 7;
+      });
+      
+      yPosition += 5;
+    });
+    
+    // Notes importantes
+    yPosition += 10;
+    pdf.setFontSize(14);
+    pdf.setFont("helvetica", "bold");
+    pdf.setTextColor(139, 137, 114);
+    pdf.text("Notes importantes", 20, yPosition);
+    yPosition += 10;
+    
+    pdf.setFontSize(10);
+    pdf.setFont("helvetica", "normal");
+    pdf.setTextColor(60, 60, 60);
+    
+    const notes = [
+      "Preparation a commencer 6 a 12 mois avant le mariage",
+      "Le mariage civil doit obligatoirement preceder le mariage religieux",
+      "Prevoir 3 a 4 rencontres avec le pretre et des sessions CPM",
+      "La ceremonie dure environ 1h a 1h30 (messe nuptiale)"
+    ];
+    
+    notes.forEach(note => {
+      pdf.text("- " + note, 25, yPosition);
+      yPosition += 7;
+    });
+    
+    // Footer
+    pdf.setFillColor(245, 244, 240);
+    pdf.rect(0, 270, 210, 27, 'F');
+    
+    pdf.setFontSize(9);
+    pdf.setTextColor(100, 100, 100);
+    pdf.text("www.mariable.fr", 20, 282);
+    pdf.text("Genere le " + new Date().toLocaleDateString('fr-FR'), 150, 282);
+    
+    pdf.save("checklist-mariage-catholique.pdf");
+    toast.success("Checklist mariage catholique telechargee !");
   };
 
   return (
     <>
       <Helmet>
-        <title>Cérémonie Laïque - Guide Complet | Mariable</title>
-        <meta name="description" content="Guide complet pour concevoir votre cérémonie laïque : déroulé, rituels symboliques, officiant, vœux, musique et logistique." />
+        <title>Ceremonie de Mariage - Guide Complet | Mariable</title>
+        <meta name="description" content="Guide complet pour votre ceremonie de mariage : ceremonie laique, mariage catholique, rituels, voeux, musique et logistique." />
       </Helmet>
 
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between flex-wrap gap-4">
-          <div className="flex items-center gap-3">
-            <div className="p-3 rounded-full bg-primary">
-              <Heart className="h-6 w-6 text-white" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-serif text-foreground">Cérémonie Laïque</h1>
-              <p className="text-muted-foreground text-sm">Guide complet pour une célébration unique et personnalisée</p>
-            </div>
+        <div className="flex items-center gap-3">
+          <div className="p-3 rounded-full bg-primary">
+            <Heart className="h-6 w-6 text-white" />
           </div>
-          <Button 
-            onClick={handleExportPDF}
-            className="bg-black hover:bg-black/90 text-white gap-2"
-          >
-            <Download className="h-4 w-4" />
-            Télécharger la checklist
-          </Button>
+          <div>
+            <h1 className="text-2xl font-serif text-foreground">Ceremonie de Mariage</h1>
+            <p className="text-muted-foreground text-sm">Guides complets pour votre celebration</p>
+          </div>
         </div>
 
-        {/* Fondamentaux */}
-        <Card className="border-editorial-border">
-          <CardHeader>
-            <CardTitle className="font-serif text-foreground flex items-center gap-2">
-              <Sparkles className="h-5 w-5 text-primary" />
-              Les fondamentaux
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid md:grid-cols-3 gap-4">
-              {fondamentaux.map((item, index) => {
-                const Icon = item.icon;
-                return (
-                  <div key={index} className="p-4 border rounded-lg bg-muted/50 text-center">
-                    <Icon className="h-6 w-6 text-primary mx-auto mb-2" />
-                    <p className="text-sm font-medium">{item.label}</p>
-                    <p className="text-xs text-muted-foreground mt-1">{item.value}</p>
-                  </div>
-                );
-              })}
-            </div>
-            <p className="text-sm text-muted-foreground mt-4 italic text-center">
-              La cérémonie laïque est le pivot émotionnel du mariage - un espace de liberté absolue où votre histoire devient le centre de la narration.
-            </p>
-          </CardContent>
-        </Card>
+        {/* Tabs */}
+        <Tabs defaultValue="laique" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 mb-6">
+            <TabsTrigger value="laique" className="flex items-center gap-2">
+              <Sparkles className="h-4 w-4" />
+              Ceremonie Laique
+            </TabsTrigger>
+            <TabsTrigger value="catholique" className="flex items-center gap-2">
+              <Church className="h-4 w-4" />
+              Ceremonie Catholique
+            </TabsTrigger>
+          </TabsList>
 
-        {/* Déroulé en 10 étapes */}
-        <Card className="border-editorial-border">
-          <CardHeader>
-            <CardTitle className="font-serif text-foreground flex items-center gap-2">
-              <CheckCircle2 className="h-5 w-5 text-primary" />
-              Le déroulé en 10 étapes
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="relative">
-              <div className="absolute left-6 top-8 bottom-8 w-0.5 bg-primary/20" />
-              
-              <div className="space-y-4">
-                {deroulementEtapes.map((etape, index) => (
-                  <div key={index} className="relative flex items-start gap-4">
-                    <div className="relative z-10 flex items-center justify-center w-12 h-12 rounded-full bg-primary text-white font-bold shrink-0 text-sm">
-                      {etape.numero}
-                    </div>
-                    <div className="flex-1 pb-2">
-                      <h3 className="font-medium text-foreground">{etape.titre}</h3>
-                      <p className="text-sm text-muted-foreground">{etape.description}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
+          {/* ==================== ONGLET LAÏQUE ==================== */}
+          <TabsContent value="laique" className="space-y-6">
+            {/* Bouton télécharger */}
+            <div className="flex justify-end">
+              <Button 
+                onClick={handleExportPDFLaique}
+                className="bg-black hover:bg-black/90 text-white gap-2"
+              >
+                <Download className="h-4 w-4" />
+                Telecharger la checklist
+              </Button>
             </div>
-          </CardContent>
-        </Card>
 
-        {/* Choisir son officiant */}
-        <Card className="border-editorial-border">
-          <CardHeader>
-            <CardTitle className="font-serif text-foreground flex items-center gap-2">
-              <Mic className="h-5 w-5 text-primary" />
-              Choisir son officiant
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid md:grid-cols-3 gap-4">
-              {typesOfficiants.map((officiant, index) => (
-                <div key={index} className="p-4 border rounded-lg bg-white">
-                  <h4 className="font-medium text-center mb-3 text-primary">{officiant.type}</h4>
+            {/* Fondamentaux */}
+            <Card className="border-editorial-border">
+              <CardHeader>
+                <CardTitle className="font-serif text-foreground flex items-center gap-2">
+                  <Sparkles className="h-5 w-5 text-primary" />
+                  Les fondamentaux
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid md:grid-cols-3 gap-4">
+                  {fondamentaux.map((item, index) => {
+                    const Icon = item.icon;
+                    return (
+                      <div key={index} className="p-4 border rounded-lg bg-muted/50 text-center">
+                        <Icon className="h-6 w-6 text-primary mx-auto mb-2" />
+                        <p className="text-sm font-medium">{item.label}</p>
+                        <p className="text-xs text-muted-foreground mt-1">{item.value}</p>
+                      </div>
+                    );
+                  })}
+                </div>
+                <p className="text-sm text-muted-foreground mt-4 italic text-center">
+                  La ceremonie laique est le pivot emotionnel du mariage - un espace de liberte absolue ou votre histoire devient le centre de la narration.
+                </p>
+              </CardContent>
+            </Card>
+
+            {/* Déroulé en 10 étapes */}
+            <Card className="border-editorial-border">
+              <CardHeader>
+                <CardTitle className="font-serif text-foreground flex items-center gap-2">
+                  <CheckCircle2 className="h-5 w-5 text-primary" />
+                  Le deroule en 10 etapes
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="relative">
+                  <div className="absolute left-6 top-8 bottom-8 w-0.5 bg-primary/20" />
                   
-                  <div className="mb-3">
-                    <p className="text-xs font-medium text-green-700 mb-1">✓ Avantages</p>
-                    <ul className="space-y-1">
-                      {officiant.avantages.map((a, i) => (
-                        <li key={i} className="text-xs text-muted-foreground">• {a}</li>
-                      ))}
-                    </ul>
-                  </div>
-                  
-                  <div>
-                    <p className="text-xs font-medium text-amber-700 mb-1">⚠ Points de vigilance</p>
-                    <ul className="space-y-1">
-                      {officiant.vigilances.map((v, i) => (
-                        <li key={i} className="text-xs text-muted-foreground">• {v}</li>
-                      ))}
-                    </ul>
+                  <div className="space-y-4">
+                    {deroulementEtapes.map((etape, index) => (
+                      <div key={index} className="relative flex items-start gap-4">
+                        <div className="relative z-10 flex items-center justify-center w-12 h-12 rounded-full bg-primary text-white font-bold shrink-0 text-sm">
+                          {etape.numero}
+                        </div>
+                        <div className="flex-1 pb-2">
+                          <h3 className="font-medium text-foreground">{etape.titre}</h3>
+                          <p className="text-sm text-muted-foreground">{etape.description}</p>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+              </CardContent>
+            </Card>
 
-        {/* Catalogue des rituels */}
-        <Card className="border-editorial-border">
-          <CardHeader>
-            <CardTitle className="font-serif text-foreground flex items-center gap-2">
-              <TreePine className="h-5 w-5 text-primary" />
-              Catalogue des rituels symboliques
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Accordion type="single" collapsible className="w-full">
-              {rituels.map((rituel, index) => (
-                <AccordionItem key={index} value={`rituel-${index}`}>
-                  <AccordionTrigger className="text-sm font-medium">
-                    {rituel.nom}
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    <p className="text-sm text-muted-foreground mb-2">{rituel.description}</p>
-                    <p className="text-xs text-primary italic">💡 {rituel.conseils}</p>
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
-          </CardContent>
-        </Card>
-
-        {/* Impliquer les proches */}
-        <Card className="border-editorial-border">
-          <CardHeader>
-            <CardTitle className="font-serif text-foreground flex items-center gap-2">
-              <Users className="h-5 w-5 text-primary" />
-              Impliquer les proches
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid md:grid-cols-2 gap-6">
-              <div>
-                <h4 className="font-medium mb-3 text-sm">Rôles possibles</h4>
-                <div className="space-y-2">
-                  {rolesProches.map((item, index) => (
-                    <div key={index} className="flex items-start gap-2 p-2 bg-muted/50 rounded">
-                      <CheckCircle2 className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+            {/* Choisir son officiant */}
+            <Card className="border-editorial-border">
+              <CardHeader>
+                <CardTitle className="font-serif text-foreground flex items-center gap-2">
+                  <Mic className="h-5 w-5 text-primary" />
+                  Choisir son officiant
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid md:grid-cols-3 gap-4">
+                  {typesOfficiants.map((officiant, index) => (
+                    <div key={index} className="p-4 border rounded-lg bg-white">
+                      <h4 className="font-medium text-center mb-3 text-primary">{officiant.type}</h4>
+                      
+                      <div className="mb-3">
+                        <p className="text-xs font-medium text-green-700 mb-1">Avantages</p>
+                        <ul className="space-y-1">
+                          {officiant.avantages.map((a, i) => (
+                            <li key={i} className="text-xs text-muted-foreground">- {a}</li>
+                          ))}
+                        </ul>
+                      </div>
+                      
                       <div>
-                        <p className="text-sm font-medium">{item.role}</p>
-                        <p className="text-xs text-muted-foreground">{item.description}</p>
+                        <p className="text-xs font-medium text-amber-700 mb-1">Points de vigilance</p>
+                        <ul className="space-y-1">
+                          {officiant.vigilances.map((v, i) => (
+                            <li key={i} className="text-xs text-muted-foreground">- {v}</li>
+                          ))}
+                        </ul>
                       </div>
                     </div>
                   ))}
                 </div>
-              </div>
-              
-              <div>
-                <h4 className="font-medium mb-3 text-sm">Alternatives pour les timides</h4>
-                <ul className="space-y-2">
-                  {alternativesTimides.map((alt, index) => (
-                    <li key={index} className="flex items-start gap-2 text-sm text-muted-foreground">
-                      <span className="text-primary">→</span>
-                      {alt}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+              </CardContent>
+            </Card>
 
-        {/* Guide de rédaction des vœux */}
-        <Card className="border-editorial-border">
-          <CardHeader>
-            <CardTitle className="font-serif text-foreground flex items-center gap-2">
-              <MessageSquare className="h-5 w-5 text-primary" />
-              Guide de rédaction des vœux
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Accordion type="single" collapsible className="w-full">
-              <AccordionItem value="preparation">
-                <AccordionTrigger className="text-sm font-medium">Préparation</AccordionTrigger>
-                <AccordionContent>
-                  <ul className="space-y-2 text-sm text-muted-foreground">
-                    <li>• Commencer à noter des idées 2-3 mois avant dans un petit carnet</li>
-                    <li>• Recueillir des souvenirs, preuves d'amour quotidiennes, citations inspirantes</li>
-                    <li>• Finaliser la version définitive 15 jours avant pour rester connecté à l'émotion</li>
-                  </ul>
-                </AccordionContent>
-              </AccordionItem>
-              
-              <AccordionItem value="structure">
-                <AccordionTrigger className="text-sm font-medium">Structure recommandée</AccordionTrigger>
-                <AccordionContent>
-                  <div className="space-y-3 text-sm">
-                    <div className="p-2 bg-muted/50 rounded">
-                      <p className="font-medium text-primary">1. Le passé</p>
-                      <p className="text-muted-foreground">Évoquer un souvenir marquant ou la première rencontre</p>
-                    </div>
-                    <div className="p-2 bg-muted/50 rounded">
-                      <p className="font-medium text-primary">2. Le présent</p>
-                      <p className="text-muted-foreground">Ce que l'autre représente aujourd'hui (refuge, force, évidence)</p>
-                    </div>
-                    <div className="p-2 bg-muted/50 rounded">
-                      <p className="font-medium text-primary">3. Le futur</p>
-                      <p className="text-muted-foreground">Promesses concrètes, grands projets et petits détails du quotidien</p>
-                    </div>
-                    <div className="p-2 bg-muted/50 rounded">
-                      <p className="font-medium text-primary">4. La conclusion</p>
-                      <p className="text-muted-foreground">Une phrase simple scellant l'engagement</p>
+            {/* Catalogue des rituels */}
+            <Card className="border-editorial-border">
+              <CardHeader>
+                <CardTitle className="font-serif text-foreground flex items-center gap-2">
+                  <TreePine className="h-5 w-5 text-primary" />
+                  Catalogue des rituels symboliques
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Accordion type="single" collapsible className="w-full">
+                  {rituels.map((rituel, index) => (
+                    <AccordionItem key={index} value={`rituel-${index}`}>
+                      <AccordionTrigger className="text-sm font-medium">
+                        {rituel.nom}
+                      </AccordionTrigger>
+                      <AccordionContent>
+                        <p className="text-sm text-muted-foreground mb-2">{rituel.description}</p>
+                        <p className="text-xs text-primary italic">Conseil : {rituel.conseils}</p>
+                      </AccordionContent>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
+              </CardContent>
+            </Card>
+
+            {/* Impliquer les proches */}
+            <Card className="border-editorial-border">
+              <CardHeader>
+                <CardTitle className="font-serif text-foreground flex items-center gap-2">
+                  <Users className="h-5 w-5 text-primary" />
+                  Impliquer les proches
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div>
+                    <h4 className="font-medium mb-3 text-sm">Roles possibles</h4>
+                    <div className="space-y-2">
+                      {rolesProches.map((item, index) => (
+                        <div key={index} className="flex items-start gap-2 p-2 bg-muted/50 rounded">
+                          <CheckCircle2 className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                          <div>
+                            <p className="text-sm font-medium">{item.role}</p>
+                            <p className="text-xs text-muted-foreground">{item.description}</p>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </div>
-                </AccordionContent>
-              </AccordionItem>
-              
-              <AccordionItem value="conseils">
-                <AccordionTrigger className="text-sm font-medium">Conseils de proclamation</AccordionTrigger>
-                <AccordionContent>
-                  <ul className="space-y-2 text-sm text-muted-foreground">
-                    <li>• <strong>Durée :</strong> 2 à 3 minutes pour captiver sans lasser</li>
-                    <li>• <strong>Authenticité :</strong> Si vous êtes drôle, incluez de l'humour. Si vous êtes pudique, la simplicité suffit</li>
-                    <li>• <strong>Support :</strong> Éviter le téléphone ! Utiliser un beau papier pour les photos</li>
-                    <li>• <strong>Émotion :</strong> N'ayez pas peur de pleurer ou de marquer des silences - ce sont ces moments de vulnérabilité qui créent la magie</li>
-                  </ul>
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-          </CardContent>
-        </Card>
+                  
+                  <div>
+                    <h4 className="font-medium mb-3 text-sm">Alternatives pour les timides</h4>
+                    <ul className="space-y-2">
+                      {alternativesTimides.map((alt, index) => (
+                        <li key={index} className="flex items-start gap-2 text-sm text-muted-foreground">
+                          <span className="text-primary">-</span>
+                          {alt}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
-        {/* Logistique */}
-        <Card className="border-editorial-border">
-          <CardHeader>
-            <CardTitle className="font-serif text-foreground flex items-center gap-2">
-              <MapPin className="h-5 w-5 text-primary" />
-              Logistique et technique
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid md:grid-cols-3 gap-4">
-              <div className="p-4 border rounded-lg">
-                <div className="flex items-center gap-2 mb-2">
-                  <CloudRain className="h-5 w-5 text-primary" />
-                  <h4 className="font-medium text-sm">Plan B météo</h4>
-                </div>
-                <ul className="text-xs text-muted-foreground space-y-1">
-                  <li>• Prévoir un lieu de repli (salle, grange, barnum)</li>
-                  <li>• Réfléchir à la logistique de transfert</li>
-                  <li>• En cas de canicule : ombre et rafraîchissements</li>
-                </ul>
-              </div>
-              
-              <div className="p-4 border rounded-lg">
-                <div className="flex items-center gap-2 mb-2">
-                  <Volume2 className="h-5 w-5 text-primary" />
-                  <h4 className="font-medium text-sm">Sonorisation</h4>
-                </div>
-                <ul className="text-xs text-muted-foreground space-y-1">
-                  <li>• Minimum 2 micros sans fil pour +50 personnes</li>
-                  <li>• Enceintes près des invités (pas derrière les mariés)</li>
-                  <li>• Vérifier les prises ou louer un générateur silencieux</li>
-                </ul>
-              </div>
-              
-              <div className="p-4 border rounded-lg">
-                <div className="flex items-center gap-2 mb-2">
-                  <Sun className="h-5 w-5 text-primary" />
-                  <h4 className="font-medium text-sm">Aménagement</h4>
-                </div>
-                <ul className="text-xs text-muted-foreground space-y-1">
-                  <li>• Disposition en arc de cercle pour une meilleure visibilité</li>
-                  <li>• Recouvrir les chaises plastique (brûlent au soleil)</li>
-                  <li>• Mariés 3/4 face à l'assemblée</li>
-                </ul>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            {/* Guide de rédaction des vœux */}
+            <Card className="border-editorial-border">
+              <CardHeader>
+                <CardTitle className="font-serif text-foreground flex items-center gap-2">
+                  <MessageSquare className="h-5 w-5 text-primary" />
+                  Guide de redaction des voeux
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Accordion type="single" collapsible className="w-full">
+                  <AccordionItem value="preparation">
+                    <AccordionTrigger className="text-sm font-medium">Preparation</AccordionTrigger>
+                    <AccordionContent>
+                      <ul className="space-y-2 text-sm text-muted-foreground">
+                        <li>- Commencer a noter des idees 2-3 mois avant dans un petit carnet</li>
+                        <li>- Recueillir des souvenirs, preuves d'amour quotidiennes, citations inspirantes</li>
+                        <li>- Finaliser la version definitive 15 jours avant pour rester connecte a l'emotion</li>
+                      </ul>
+                    </AccordionContent>
+                  </AccordionItem>
+                  
+                  <AccordionItem value="structure">
+                    <AccordionTrigger className="text-sm font-medium">Structure recommandee</AccordionTrigger>
+                    <AccordionContent>
+                      <div className="space-y-3 text-sm">
+                        <div className="p-2 bg-muted/50 rounded">
+                          <p className="font-medium text-primary">1. Le passe</p>
+                          <p className="text-muted-foreground">Evoquer un souvenir marquant ou la premiere rencontre</p>
+                        </div>
+                        <div className="p-2 bg-muted/50 rounded">
+                          <p className="font-medium text-primary">2. Le present</p>
+                          <p className="text-muted-foreground">Ce que l'autre represente aujourd'hui (refuge, force, evidence)</p>
+                        </div>
+                        <div className="p-2 bg-muted/50 rounded">
+                          <p className="font-medium text-primary">3. Le futur</p>
+                          <p className="text-muted-foreground">Promesses concretes, grands projets et petits details du quotidien</p>
+                        </div>
+                        <div className="p-2 bg-muted/50 rounded">
+                          <p className="font-medium text-primary">4. La conclusion</p>
+                          <p className="text-muted-foreground">Une phrase simple scellant l'engagement</p>
+                        </div>
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                  
+                  <AccordionItem value="conseils">
+                    <AccordionTrigger className="text-sm font-medium">Conseils de proclamation</AccordionTrigger>
+                    <AccordionContent>
+                      <ul className="space-y-2 text-sm text-muted-foreground">
+                        <li>- Duree : 2 a 3 minutes pour captiver sans lasser</li>
+                        <li>- Authenticite : Si vous etes drole, incluez de l'humour. Si vous etes pudique, la simplicite suffit</li>
+                        <li>- Support : Eviter le telephone ! Utiliser un beau papier pour les photos</li>
+                        <li>- Emotion : N'ayez pas peur de pleurer ou de marquer des silences</li>
+                      </ul>
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
+              </CardContent>
+            </Card>
 
-        {/* Programmation musicale */}
-        <Card className="border-editorial-border">
-          <CardHeader>
-            <CardTitle className="font-serif text-foreground flex items-center gap-2">
-              <Music className="h-5 w-5 text-primary" />
-              Programmation musicale
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b">
-                    <th className="text-left py-2 px-3 font-medium">Moment</th>
-                    <th className="text-left py-2 px-3 font-medium">Type de musique</th>
-                    <th className="text-left py-2 px-3 font-medium">Recommandation</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {programmationMusicale.map((item, index) => (
-                    <tr key={index} className="border-b last:border-0">
-                      <td className="py-2 px-3 font-medium text-primary">{item.moment}</td>
-                      <td className="py-2 px-3 text-muted-foreground">{item.type}</td>
-                      <td className="py-2 px-3 text-muted-foreground text-xs">{item.conseil}</td>
-                    </tr>
+            {/* Logistique */}
+            <Card className="border-editorial-border">
+              <CardHeader>
+                <CardTitle className="font-serif text-foreground flex items-center gap-2">
+                  <MapPin className="h-5 w-5 text-primary" />
+                  Logistique et technique
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid md:grid-cols-3 gap-4">
+                  <div className="p-4 border rounded-lg">
+                    <div className="flex items-center gap-2 mb-2">
+                      <CloudRain className="h-5 w-5 text-primary" />
+                      <h4 className="font-medium text-sm">Plan B meteo</h4>
+                    </div>
+                    <ul className="text-xs text-muted-foreground space-y-1">
+                      <li>- Prevoir un lieu de repli (salle, grange, barnum)</li>
+                      <li>- Reflechir a la logistique de transfert</li>
+                      <li>- En cas de canicule : ombre et rafraichissements</li>
+                    </ul>
+                  </div>
+                  
+                  <div className="p-4 border rounded-lg">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Volume2 className="h-5 w-5 text-primary" />
+                      <h4 className="font-medium text-sm">Sonorisation</h4>
+                    </div>
+                    <ul className="text-xs text-muted-foreground space-y-1">
+                      <li>- Minimum 2 micros sans fil pour +50 personnes</li>
+                      <li>- Enceintes pres des invites (pas derriere les maries)</li>
+                      <li>- Verifier les prises ou louer un generateur silencieux</li>
+                    </ul>
+                  </div>
+                  
+                  <div className="p-4 border rounded-lg">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Sun className="h-5 w-5 text-primary" />
+                      <h4 className="font-medium text-sm">Amenagement</h4>
+                    </div>
+                    <ul className="text-xs text-muted-foreground space-y-1">
+                      <li>- Disposition en arc de cercle pour une meilleure visibilite</li>
+                      <li>- Recouvrir les chaises plastique (brulent au soleil)</li>
+                      <li>- Maries 3/4 face a l'assemblee</li>
+                    </ul>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Programmation musicale */}
+            <Card className="border-editorial-border">
+              <CardHeader>
+                <CardTitle className="font-serif text-foreground flex items-center gap-2">
+                  <Music className="h-5 w-5 text-primary" />
+                  Programmation musicale
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b">
+                        <th className="text-left py-2 px-3 font-medium">Moment</th>
+                        <th className="text-left py-2 px-3 font-medium">Type de musique</th>
+                        <th className="text-left py-2 px-3 font-medium">Recommandation</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {programmationMusicale.map((item, index) => (
+                        <tr key={index} className="border-b last:border-0">
+                          <td className="py-2 px-3 font-medium text-primary">{item.moment}</td>
+                          <td className="py-2 px-3 text-muted-foreground">{item.type}</td>
+                          <td className="py-2 px-3 text-muted-foreground text-xs">{item.conseil}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <p className="text-xs text-muted-foreground mt-4 italic">
+                  Un groupe live peut s'adapter en temps reel. Si DJ : lui transmettre le conducteur precis.
+                </p>
+              </CardContent>
+            </Card>
+
+            {/* Rétroplanning */}
+            <Card className="border-editorial-border">
+              <CardHeader>
+                <CardTitle className="font-serif text-foreground flex items-center gap-2">
+                  <Calendar className="h-5 w-5 text-primary" />
+                  Retroplanning
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {retroplanning.map((item, index) => (
+                    <div key={index} className="flex items-start gap-4 p-3 bg-muted/50 rounded-lg">
+                      <span className="px-3 py-1 bg-primary text-white text-sm font-bold rounded shrink-0">
+                        {item.delai}
+                      </span>
+                      <p className="text-sm text-muted-foreground">{item.action}</p>
+                    </div>
                   ))}
-                </tbody>
-              </table>
-            </div>
-            <p className="text-xs text-muted-foreground mt-4 italic">
-              💡 Un groupe live peut s'adapter en temps réel (faire durer un morceau, s'arrêter au bon moment). Si DJ : lui transmettre le conducteur précis.
-            </p>
-          </CardContent>
-        </Card>
-
-        {/* Rétroplanning */}
-        <Card className="border-editorial-border">
-          <CardHeader>
-            <CardTitle className="font-serif text-foreground flex items-center gap-2">
-              <Calendar className="h-5 w-5 text-primary" />
-              Rétroplanning
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {retroplanning.map((item, index) => (
-                <div key={index} className="flex items-start gap-4 p-3 bg-muted/50 rounded-lg">
-                  <span className="px-3 py-1 bg-primary text-white text-sm font-bold rounded shrink-0">
-                    {item.delai}
-                  </span>
-                  <p className="text-sm text-muted-foreground">{item.action}</p>
                 </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+              </CardContent>
+            </Card>
 
-        {/* Checklist Jour-J */}
-        <Card className="border-editorial-border">
-          <CardHeader>
-            <CardTitle className="font-serif text-foreground flex items-center gap-2">
-              <FileText className="h-5 w-5 text-primary" />
-              Checklist Jour-J
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid md:grid-cols-2 gap-4">
-              {checklistJourJ.map((cat, index) => (
-                <div key={index} className="p-4 border rounded-lg">
-                  <h4 className="font-medium text-primary mb-2">{cat.categorie}</h4>
-                  <ul className="space-y-1">
-                    {cat.items.map((item, i) => (
-                      <li key={i} className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <div className="w-4 h-4 border rounded flex-shrink-0" />
-                        {item}
-                      </li>
+            {/* Checklist Jour-J */}
+            <Card className="border-editorial-border">
+              <CardHeader>
+                <CardTitle className="font-serif text-foreground flex items-center gap-2">
+                  <FileText className="h-5 w-5 text-primary" />
+                  Checklist Jour-J
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid md:grid-cols-2 gap-4">
+                  {checklistJourJ.map((cat, index) => (
+                    <div key={index} className="p-4 border rounded-lg">
+                      <h4 className="font-medium text-primary mb-2">{cat.categorie}</h4>
+                      <ul className="space-y-1">
+                        {cat.items.map((item, i) => (
+                          <li key={i} className="flex items-center gap-2 text-sm text-muted-foreground">
+                            <div className="w-4 h-4 border rounded flex-shrink-0" />
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Citation finale */}
+            <Card className="border-primary/20 bg-primary/5">
+              <CardContent className="py-6 text-center">
+                <p className="text-sm text-muted-foreground italic">
+                  "La ceremonie laique, bien plus qu'une simple alternative au cadre religieux, est une veritable ingenierie de l'emotion. 
+                  En placant l'histoire du couple au centre, elle transforme les invites de simples spectateurs en temoins actifs de l'engagement."
+                </p>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* ==================== ONGLET CATHOLIQUE ==================== */}
+          <TabsContent value="catholique" className="space-y-6">
+            {/* Bouton télécharger */}
+            <div className="flex justify-end">
+              <Button 
+                onClick={handleExportPDFCatholique}
+                className="bg-black hover:bg-black/90 text-white gap-2"
+              >
+                <Download className="h-4 w-4" />
+                Telecharger la checklist
+              </Button>
+            </div>
+
+            {/* Introduction */}
+            <Card className="border-editorial-border">
+              <CardHeader>
+                <CardTitle className="font-serif text-foreground flex items-center gap-2">
+                  <Church className="h-5 w-5 text-primary" />
+                  Le Mariage Catholique
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid md:grid-cols-3 gap-4 mb-4">
+                  <div className="p-4 border rounded-lg bg-muted/50 text-center">
+                    <Clock className="h-6 w-6 text-primary mx-auto mb-2" />
+                    <p className="text-sm font-medium">Duree</p>
+                    <p className="text-xs text-muted-foreground mt-1">1h a 1h30 (messe nuptiale)</p>
+                  </div>
+                  <div className="p-4 border rounded-lg bg-muted/50 text-center">
+                    <Calendar className="h-6 w-6 text-primary mx-auto mb-2" />
+                    <p className="text-sm font-medium">Preparation</p>
+                    <p className="text-xs text-muted-foreground mt-1">6 a 12 mois avant le mariage</p>
+                  </div>
+                  <div className="p-4 border rounded-lg bg-muted/50 text-center">
+                    <Cross className="h-6 w-6 text-primary mx-auto mb-2" />
+                    <p className="text-sm font-medium">Nature</p>
+                    <p className="text-xs text-muted-foreground mt-1">Acte sacramentel, alliance indissoluble</p>
+                  </div>
+                </div>
+                <p className="text-sm text-muted-foreground italic text-center">
+                  Le mariage catholique represente un acte sacramentel ou le divin rencontre l'humain pour sceller une alliance indissoluble.
+                </p>
+              </CardContent>
+            </Card>
+
+            {/* Alerte importante */}
+            <Card className="border-amber-200 bg-amber-50">
+              <CardContent className="flex items-start gap-3 py-4">
+                <AlertCircle className="h-5 w-5 text-amber-600 mt-0.5 shrink-0" />
+                <div>
+                  <p className="font-medium text-amber-800">Important</p>
+                  <p className="text-sm text-amber-700">
+                    Le mariage civil doit obligatoirement preceder le mariage religieux. 
+                    La preparation doit etre initiee idealement 1 an a l'avance, ou au minimum 6 mois avant.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Dossier de catholicité */}
+            <Card className="border-editorial-border">
+              <CardHeader>
+                <CardTitle className="font-serif text-foreground flex items-center gap-2">
+                  <FileText className="h-5 w-5 text-primary" />
+                  Dossier de catholicite
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b bg-muted/50">
+                        <th className="text-left py-2 px-3 font-medium">Document</th>
+                        <th className="text-left py-2 px-3 font-medium">Nature</th>
+                        <th className="text-left py-2 px-3 font-medium">Validite</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {documentsCatholicite.map((doc, index) => (
+                        <tr key={index} className="border-b last:border-0">
+                          <td className="py-2 px-3 font-medium">{doc.document}</td>
+                          <td className="py-2 px-3 text-muted-foreground">{doc.nature}</td>
+                          <td className="py-2 px-3 text-muted-foreground text-xs">{doc.validite}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Mariages mixtes */}
+            <Card className="border-editorial-border">
+              <CardHeader>
+                <CardTitle className="font-serif text-foreground flex items-center gap-2">
+                  <Users className="h-5 w-5 text-primary" />
+                  Mariages mixtes et disparite de culte
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="p-4 border rounded-lg">
+                    <h4 className="font-medium text-primary mb-2">Mariage mixte</h4>
+                    <p className="text-sm text-muted-foreground mb-2">
+                      Union entre deux baptises (ex: catholique et protestant).
+                    </p>
+                    <p className="text-xs text-muted-foreground italic">
+                      Necessite une autorisation de l'eveque, sollicitee par le pretre.
+                    </p>
+                  </div>
+                  <div className="p-4 border rounded-lg">
+                    <h4 className="font-medium text-primary mb-2">Disparite de culte</h4>
+                    <p className="text-sm text-muted-foreground mb-2">
+                      Union entre un catholique et une personne non baptisee.
+                    </p>
+                    <p className="text-xs text-muted-foreground italic">
+                      Necessite une dispense. Le conjoint catholique s'engage pour le bapteme des enfants.
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Les 4 piliers */}
+            <Card className="border-editorial-border">
+              <CardHeader>
+                <CardTitle className="font-serif text-foreground flex items-center gap-2">
+                  <Crown className="h-5 w-5 text-primary" />
+                  Les 4 piliers du mariage catholique
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid md:grid-cols-2 gap-4">
+                  {piliersMariage.map((pilier, index) => (
+                    <div key={index} className="p-4 border rounded-lg">
+                      <h4 className="font-medium text-primary mb-1">{pilier.pilier}</h4>
+                      <p className="text-sm font-medium text-foreground mb-1">{pilier.definition}</p>
+                      <p className="text-xs text-muted-foreground">{pilier.pratique}</p>
+                    </div>
+                  ))}
+                </div>
+                <p className="text-xs text-muted-foreground mt-4 italic text-center">
+                  Chaque epoux redige une declaration d'intention manuscrite exprimant son adhesion a ces 4 piliers.
+                </p>
+              </CardContent>
+            </Card>
+
+            {/* Préparation spirituelle */}
+            <Card className="border-editorial-border">
+              <CardHeader>
+                <CardTitle className="font-serif text-foreground flex items-center gap-2">
+                  <BookOpen className="h-5 w-5 text-primary" />
+                  Preparation spirituelle
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="p-4 border rounded-lg bg-muted/50">
+                    <h4 className="font-medium mb-2">Rencontres avec le pretre</h4>
+                    <p className="text-sm text-muted-foreground">
+                      3 a 4 rencontres pour explorer la dimension spirituelle du couple, 
+                      leur comprehension du sacrement et la redaction des declarations d'intention.
+                    </p>
+                  </div>
+                  <div className="p-4 border rounded-lg bg-muted/50">
+                    <h4 className="font-medium mb-2">Sessions CPM (Centre de Preparation au Mariage)</h4>
+                    <p className="text-sm text-muted-foreground">
+                      Journees ou week-ends avec d'autres fiances pour aborder la communication, 
+                      la gestion des conflits, la sexualite et le projet de vie.
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Déroulé de la cérémonie */}
+            <Card className="border-editorial-border">
+              <CardHeader>
+                <CardTitle className="font-serif text-foreground flex items-center gap-2">
+                  <CheckCircle2 className="h-5 w-5 text-primary" />
+                  Deroule de la ceremonie
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="relative">
+                  <div className="absolute left-6 top-8 bottom-8 w-0.5 bg-primary/20" />
+                  
+                  <div className="space-y-4">
+                    {derouleCatholique.map((etape, index) => (
+                      <div key={index} className="relative flex items-start gap-4">
+                        <div className="relative z-10 flex items-center justify-center w-12 h-12 rounded-full bg-primary text-white font-bold shrink-0 text-sm">
+                          {etape.numero}
+                        </div>
+                        <div className="flex-1 pb-2">
+                          <h3 className="font-medium text-foreground">{etape.titre}</h3>
+                          <p className="text-sm text-muted-foreground">{etape.description}</p>
+                        </div>
+                      </div>
                     ))}
-                  </ul>
+                  </div>
                 </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+              </CardContent>
+            </Card>
 
-        {/* Citation finale */}
-        <Card className="border-primary/20 bg-primary/5">
-          <CardContent className="py-6 text-center">
-            <p className="text-sm text-muted-foreground italic">
-              "La cérémonie laïque, bien plus qu'une simple alternative au cadre religieux, est une véritable ingénierie de l'émotion. 
-              En plaçant l'histoire du couple au centre, elle transforme les invités de simples spectateurs en témoins actifs de l'engagement."
-            </p>
-          </CardContent>
-        </Card>
+            {/* Décoration et fleurs */}
+            <Card className="border-editorial-border">
+              <CardHeader>
+                <CardTitle className="font-serif text-foreground flex items-center gap-2">
+                  <Flower2 className="h-5 w-5 text-primary" />
+                  Decoration et fleurs
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid md:grid-cols-3 gap-4">
+                  <div className="p-4 border rounded-lg">
+                    <h4 className="font-medium text-sm mb-2">L'autel</h4>
+                    <p className="text-xs text-muted-foreground">
+                      Point focal de la liturgie. Compositions florales au pied ou sur les cotes, 
+                      jamais directement sur l'autel.
+                    </p>
+                  </div>
+                  <div className="p-4 border rounded-lg">
+                    <h4 className="font-medium text-sm mb-2">L'allee centrale</h4>
+                    <p className="text-xs text-muted-foreground">
+                      Bouquets en bout de banc, rubans de soie ou satin, 
+                      petales de fleurs si la paroisse l'autorise.
+                    </p>
+                  </div>
+                  <div className="p-4 border rounded-lg">
+                    <h4 className="font-medium text-sm mb-2">Les bougies</h4>
+                    <p className="text-xs text-muted-foreground">
+                      Symbolisent la lumiere du Christ. Rituel possible : 
+                      allumer ensemble un cierge central depuis deux bougies.
+                    </p>
+                  </div>
+                </div>
+                <p className="text-xs text-muted-foreground mt-4 italic text-center">
+                  Prevoyez une equipe pour retirer les decorations apres la ceremonie.
+                </p>
+              </CardContent>
+            </Card>
+
+            {/* Musique sacrée */}
+            <Card className="border-editorial-border">
+              <CardHeader>
+                <CardTitle className="font-serif text-foreground flex items-center gap-2">
+                  <Music className="h-5 w-5 text-primary" />
+                  Musique sacree
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b bg-muted/50">
+                        <th className="text-left py-2 px-3 font-medium">Moment</th>
+                        <th className="text-left py-2 px-3 font-medium">Exemples de repertoire</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {musiqueSacree.map((item, index) => (
+                        <tr key={index} className="border-b last:border-0">
+                          <td className="py-2 px-3 font-medium text-primary">{item.moment}</td>
+                          <td className="py-2 px-3 text-muted-foreground">{item.exemples}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <p className="text-xs text-muted-foreground mt-4 italic">
+                  L'orgue reste l'instrument par excellence. Chorale gospel ou quatuor a cordes possibles pour personnaliser.
+                </p>
+              </CardContent>
+            </Card>
+
+            {/* Rôles des participants */}
+            <Card className="border-editorial-border">
+              <CardHeader>
+                <CardTitle className="font-serif text-foreground flex items-center gap-2">
+                  <Users className="h-5 w-5 text-primary" />
+                  Roles des participants
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Accordion type="single" collapsible className="w-full">
+                  <AccordionItem value="temoins">
+                    <AccordionTrigger className="text-sm font-medium">Les temoins</AccordionTrigger>
+                    <AccordionContent>
+                      <ul className="space-y-2 text-sm text-muted-foreground">
+                        <li>- Minimum 2 temoins (1 par marie), pas obligatoirement baptises</li>
+                        <li>- Signent le registre pour certifier l'echange des consentements</li>
+                        <li>- Piliers logistiques pour la gestion des invites</li>
+                      </ul>
+                    </AccordionContent>
+                  </AccordionItem>
+                  
+                  <AccordionItem value="enfants">
+                    <AccordionTrigger className="text-sm font-medium">Enfants d'honneur</AccordionTrigger>
+                    <AccordionContent>
+                      <ul className="space-y-2 text-sm text-muted-foreground">
+                        <li>- Portent les alliances sur un coussin</li>
+                        <li>- Lancent des petales de fleurs devant la mariee</li>
+                        <li>- Tiennent la traine de la robe si necessaire</li>
+                        <li>- Age ideal : 5 a 10 ans pour minimiser les imprevus</li>
+                      </ul>
+                    </AccordionContent>
+                  </AccordionItem>
+                  
+                  <AccordionItem value="photographes">
+                    <AccordionTrigger className="text-sm font-medium">Photographes</AccordionTrigger>
+                    <AccordionContent>
+                      <ul className="space-y-2 text-sm text-muted-foreground">
+                        <li>- Se presenter au pretre avant la ceremonie</li>
+                        <li>- Rester hors du choeur, deplacements lents et discrets</li>
+                        <li>- Privilegier les teleobjectifs pour rester a distance</li>
+                        <li>- Moments cles : entree, alliances, benediction, signature</li>
+                      </ul>
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
+              </CardContent>
+            </Card>
+
+            {/* La sortie */}
+            <Card className="border-editorial-border">
+              <CardHeader>
+                <CardTitle className="font-serif text-foreground flex items-center gap-2">
+                  <PartyPopper className="h-5 w-5 text-primary" />
+                  La sortie de l'eglise
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b bg-muted/50">
+                        <th className="text-left py-2 px-3 font-medium">Tradition</th>
+                        <th className="text-left py-2 px-3 font-medium">Signification</th>
+                        <th className="text-left py-2 px-3 font-medium">Contrainte</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {traditionsSortie.map((item, index) => (
+                        <tr key={index} className="border-b last:border-0">
+                          <td className="py-2 px-3 font-medium">{item.tradition}</td>
+                          <td className="py-2 px-3 text-muted-foreground">{item.signification}</td>
+                          <td className="py-2 px-3 text-muted-foreground text-xs">{item.contrainte}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <p className="text-xs text-muted-foreground mt-4 italic text-center">
+                  Verifiez aupres de la paroisse ce qui est autorise. Prevoyez le nettoyage du parvis.
+                </p>
+              </CardContent>
+            </Card>
+
+            {/* Checklist Catholique */}
+            <Card className="border-editorial-border">
+              <CardHeader>
+                <CardTitle className="font-serif text-foreground flex items-center gap-2">
+                  <FileText className="h-5 w-5 text-primary" />
+                  Checklist mariage catholique
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid md:grid-cols-2 gap-4">
+                  {checklistCatholique.map((cat, index) => (
+                    <div key={index} className="p-4 border rounded-lg">
+                      <h4 className="font-medium text-primary mb-2">{cat.categorie}</h4>
+                      <ul className="space-y-1">
+                        {cat.items.map((item, i) => (
+                          <li key={i} className="flex items-center gap-2 text-sm text-muted-foreground">
+                            <div className="w-4 h-4 border rounded flex-shrink-0" />
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Citation finale catholique */}
+            <Card className="border-primary/20 bg-primary/5">
+              <CardContent className="py-6 text-center">
+                <p className="text-sm text-muted-foreground italic">
+                  "Le mariage catholique est un equilibre subtil entre la rigueur liturgique et l'expression d'un amour personnel. 
+                  La celebration n'est pas une fin en soi, mais le debut d'une alliance soutenue par la foi et la communaute."
+                </p>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </div>
     </>
   );
