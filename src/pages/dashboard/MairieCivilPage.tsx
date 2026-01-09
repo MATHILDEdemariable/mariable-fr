@@ -168,7 +168,7 @@ const MairieCivilPage: React.FC = () => {
     const pdf = new jsPDF();
     
     // Header avec design Mariable
-    pdf.setFillColor(139, 137, 114); // wedding-olive
+    pdf.setFillColor(139, 137, 114);
     pdf.rect(0, 0, 210, 35, 'F');
     
     pdf.setTextColor(255, 255, 255);
@@ -178,9 +178,16 @@ const MairieCivilPage: React.FC = () => {
     
     pdf.setFontSize(10);
     pdf.setFont("helvetica", "normal");
-    pdf.text("Checklist Mariage Civil - Documents à préparer", 20, 28);
+    pdf.text("Checklist Mariage Civil - Documents a preparer", 20, 28);
     
     let yPosition = 50;
+    
+    // Fonction pour dessiner une checkbox
+    const drawCheckbox = (x: number, y: number) => {
+      pdf.setDrawColor(100, 100, 100);
+      pdf.setLineWidth(0.5);
+      pdf.rect(x, y - 3, 4, 4);
+    };
     
     // Documents obligatoires
     pdf.setTextColor(139, 137, 114);
@@ -194,21 +201,22 @@ const MairieCivilPage: React.FC = () => {
     pdf.setFont("helvetica", "normal");
     
     const checklistItems = [
-      "Pièce d'identité époux 1 (CNI, passeport ou permis)",
-      "Pièce d'identité époux 2 (CNI, passeport ou permis)",
-      "Justificatif de domicile récent époux 1",
-      "Justificatif de domicile récent époux 2",
-      "Acte de naissance époux 1 (copie intégrale, moins de 3 mois)",
-      "Acte de naissance époux 2 (copie intégrale, moins de 3 mois)",
-      "Liste des témoins (1-2 par époux)",
-      "Photocopie pièce d'identité témoin 1",
-      "Photocopie pièce d'identité témoin 2",
-      "Photocopie pièce d'identité témoin 3 (si applicable)",
-      "Photocopie pièce d'identité témoin 4 (si applicable)",
+      "Piece d'identite epoux 1 (CNI, passeport ou permis)",
+      "Piece d'identite epoux 2 (CNI, passeport ou permis)",
+      "Justificatif de domicile recent epoux 1",
+      "Justificatif de domicile recent epoux 2",
+      "Acte de naissance epoux 1 (copie integrale, moins de 3 mois)",
+      "Acte de naissance epoux 2 (copie integrale, moins de 3 mois)",
+      "Liste des temoins (1-2 par epoux)",
+      "Photocopie piece d'identite temoin 1",
+      "Photocopie piece d'identite temoin 2",
+      "Photocopie piece d'identite temoin 3 (si applicable)",
+      "Photocopie piece d'identite temoin 4 (si applicable)",
     ];
     
     checklistItems.forEach(item => {
-      pdf.text(`☐  ${item}`, 25, yPosition);
+      drawCheckbox(20, yPosition);
+      pdf.text(item, 28, yPosition);
       yPosition += 7;
     });
     
@@ -227,14 +235,15 @@ const MairieCivilPage: React.FC = () => {
     
     const optionalItems = [
       "Certificat du notaire (si contrat de mariage)",
-      "Acte de décès (si veuvage)",
+      "Acte de deces (si veuvage)",
       "Acte de naissance avec mention divorce (si divorce)",
       "Consentement du tuteur/curateur (si tutelle/curatelle)",
-      "Documents traduits et légalisés (si époux étranger)",
+      "Documents traduits et legalises (si epoux etranger)",
     ];
     
     optionalItems.forEach(item => {
-      pdf.text(`☐  ${item}`, 25, yPosition);
+      drawCheckbox(20, yPosition);
+      pdf.text(item, 28, yPosition);
       yPosition += 7;
     });
     
@@ -244,17 +253,17 @@ const MairieCivilPage: React.FC = () => {
     pdf.setTextColor(139, 137, 114);
     pdf.setFontSize(14);
     pdf.setFont("helvetica", "bold");
-    pdf.text("Délais minimum avant le mariage", 20, yPosition);
+    pdf.text("Delais minimum avant le mariage", 20, yPosition);
     yPosition += 10;
     
     pdf.setTextColor(60, 60, 60);
     pdf.setFontSize(11);
     pdf.setFont("helvetica", "normal");
-    pdf.text("• 4 semaines si les 2 époux habitent la même commune", 25, yPosition);
+    pdf.text("- 4 semaines si les 2 epoux habitent la meme commune", 25, yPosition);
     yPosition += 7;
-    pdf.text("• 6 semaines si l'un habite une autre commune", 25, yPosition);
+    pdf.text("- 6 semaines si l'un habite une autre commune", 25, yPosition);
     yPosition += 7;
-    pdf.text("• 8 semaines si l'un est domicilié à l'étranger", 25, yPosition);
+    pdf.text("- 8 semaines si l'un est domicilie a l'etranger", 25, yPosition);
     
     yPosition += 12;
     
@@ -262,9 +271,9 @@ const MairieCivilPage: React.FC = () => {
     pdf.setFontSize(10);
     pdf.setFont("helvetica", "italic");
     pdf.setTextColor(100, 100, 100);
-    pdf.text("Note : Les dates et horaires dépendent de la disponibilité de la mairie.", 20, yPosition);
+    pdf.text("Note : Les dates et horaires dependent de la disponibilite de la mairie.", 20, yPosition);
     yPosition += 5;
-    pdf.text("La capacité des salles varie selon les mairies - renseignez-vous !", 20, yPosition);
+    pdf.text("La capacite des salles varie selon les mairies - renseignez-vous !", 20, yPosition);
     
     // Footer avec design Mariable
     pdf.setFillColor(245, 244, 240);
@@ -274,10 +283,10 @@ const MairieCivilPage: React.FC = () => {
     pdf.setTextColor(100, 100, 100);
     pdf.setFont("helvetica", "normal");
     pdf.text("www.mariable.fr", 20, 282);
-    pdf.text(`Généré le ${new Date().toLocaleDateString('fr-FR')}`, 150, 282);
+    pdf.text("Genere le " + new Date().toLocaleDateString('fr-FR'), 150, 282);
     
     pdf.save("checklist-mariage-civil.pdf");
-    toast.success("Checklist PDF téléchargée !");
+    toast.success("Checklist PDF telechargee !");
   };
 
   return (
