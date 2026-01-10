@@ -48,10 +48,59 @@ const CGV = () => {
               <p className="text-muted-foreground mb-4">
                 Le présent contrat a pour objet de définir les conditions dans lesquelles :
               </p>
-              <ul className="list-disc pl-6 text-muted-foreground space-y-2">
+              <ul className="list-disc pl-6 text-muted-foreground space-y-2 mb-6">
                 <li>La Plateforme référence gratuitement le Prestataire sur son site internet <strong>www.mariable.fr</strong>, et met en relation ce dernier avec des couples organisant leur mariage (<strong>les « Couples Mariable »</strong>).</li>
-                <li>En contrepartie, le Prestataire s'engage à verser à la Plateforme une <strong>commission de 8% HT</strong> sur le montant total des prestations (Hors frais de livraison) effectivement réglées par les couples issus de cette mise en relation.</li>
+                <li>En contrepartie, le Prestataire s'engage à verser à la Plateforme une commission calculée sur le montant total HT des prestations (hors frais de livraison) effectivement réglées par les couples issus de cette mise en relation.</li>
               </ul>
+              
+              <p className="text-muted-foreground mb-4">
+                <strong>Le taux de commission varie selon la catégorie du Prestataire :</strong>
+              </p>
+              
+              <div className="overflow-x-auto mb-4">
+                <table className="w-full border-collapse border border-gray-300">
+                  <thead>
+                    <tr className="bg-gray-50">
+                      <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-wedding-black">Catégorie de prestataire</th>
+                      <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-wedding-black">Taux de commission HT</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td className="border border-gray-300 px-4 py-3 text-muted-foreground">Lieu de réception</td>
+                      <td className="border border-gray-300 px-4 py-3 text-muted-foreground font-medium">8%</td>
+                    </tr>
+                    <tr className="bg-gray-50">
+                      <td className="border border-gray-300 px-4 py-3 text-muted-foreground">Traiteur</td>
+                      <td className="border border-gray-300 px-4 py-3 text-muted-foreground font-medium">2,5%</td>
+                    </tr>
+                    <tr>
+                      <td className="border border-gray-300 px-4 py-3 text-muted-foreground">Photographe</td>
+                      <td className="border border-gray-300 px-4 py-3 text-muted-foreground font-medium">4%</td>
+                    </tr>
+                    <tr className="bg-gray-50">
+                      <td className="border border-gray-300 px-4 py-3 text-muted-foreground">Vidéaste</td>
+                      <td className="border border-gray-300 px-4 py-3 text-muted-foreground font-medium">4%</td>
+                    </tr>
+                    <tr>
+                      <td className="border border-gray-300 px-4 py-3 text-muted-foreground">DJ</td>
+                      <td className="border border-gray-300 px-4 py-3 text-muted-foreground font-medium">4%</td>
+                    </tr>
+                    <tr className="bg-gray-50">
+                      <td className="border border-gray-300 px-4 py-3 text-muted-foreground">Fleuriste</td>
+                      <td className="border border-gray-300 px-4 py-3 text-muted-foreground font-medium">4%</td>
+                    </tr>
+                    <tr>
+                      <td className="border border-gray-300 px-4 py-3 text-muted-foreground">Mise en beauté</td>
+                      <td className="border border-gray-300 px-4 py-3 text-muted-foreground font-medium">4%</td>
+                    </tr>
+                    <tr className="bg-gray-50">
+                      <td className="border border-gray-300 px-4 py-3 text-muted-foreground">Autres catégories</td>
+                      <td className="border border-gray-300 px-4 py-3 text-muted-foreground font-medium">4%</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </section>
 
             <section>
@@ -76,20 +125,7 @@ const CGV = () => {
             </section>
 
             <section>
-              <h2 className="text-2xl font-serif mb-4 text-wedding-black">Article 5 – Programme Partenaires Mariable</h2>
-              <p className="text-muted-foreground mb-4">
-                Dans le cadre du partenariat, Mariable met en place un programme d'incentives destiné à récompenser la fidélité des Prestataires :
-              </p>
-              <ul className="list-disc pl-6 text-muted-foreground space-y-2">
-                <li><strong>À partir de 5 couples signés</strong> : Mariable vous offre une mise en avant premium sur les réseaux sociaux avec notamment un <strong>pack Content Creator</strong> comprenant la création de contenus visuels : 1H de tournage pour 3 vidéos adaptées aux réseaux sociaux</li>
-              </ul>
-              <p className="text-muted-foreground mt-4">
-                Tout manquement avéré à l'obligation de déclaration (cf. article 4) entraîne la perte des avantages liés au programme partenaire.
-              </p>
-            </section>
-
-            <section>
-              <h2 className="text-2xl font-serif mb-4 text-wedding-black">Article 6 – Clause de non-contournement</h2>
+              <h2 className="text-2xl font-serif mb-4 text-wedding-black">Article 5 – Clause de non-contournement</h2>
               <p className="text-muted-foreground mb-4">
                 Le Prestataire s'interdit de conclure ou maintenir une relation commerciale directe avec un Couple Mariable dans le but d'éluder le paiement de la commission.
               </p>
@@ -102,7 +138,7 @@ const CGV = () => {
             </section>
 
             <section>
-              <h2 className="text-2xl font-serif mb-4 text-wedding-black">Article 7 – Obligations du Prestataire</h2>
+              <h2 className="text-2xl font-serif mb-4 text-wedding-black">Article 6 – Obligations du Prestataire</h2>
               <p className="text-muted-foreground mb-4">
                 Le Prestataire s'engage à :
               </p>
@@ -116,7 +152,7 @@ const CGV = () => {
             </section>
 
             <section>
-              <h2 className="text-2xl font-serif mb-4 text-wedding-black">Article 8 – Obligations de la Plateforme</h2>
+              <h2 className="text-2xl font-serif mb-4 text-wedding-black">Article 7 – Obligations de la Plateforme</h2>
               <p className="text-muted-foreground mb-4">
                 La Plateforme s'engage à :
               </p>
@@ -128,7 +164,7 @@ const CGV = () => {
             </section>
 
             <section>
-              <h2 className="text-2xl font-serif mb-4 text-wedding-black">Article 9 – Durée et résiliation</h2>
+              <h2 className="text-2xl font-serif mb-4 text-wedding-black">Article 8 – Durée et résiliation</h2>
               <p className="text-muted-foreground mb-4">
                 Le présent contrat est conclu pour une durée de <strong>3 ans</strong>, renouvelable tacitement par périodes de même durée.
               </p>
@@ -141,14 +177,14 @@ const CGV = () => {
             </section>
 
             <section>
-              <h2 className="text-2xl font-serif mb-4 text-wedding-black">Article 10 – Confidentialité et données</h2>
+              <h2 className="text-2xl font-serif mb-4 text-wedding-black">Article 9 – Confidentialité et données</h2>
               <p className="text-muted-foreground">
                 Les Parties s'engagent à garder confidentielles les données échangées. Les données personnelles des couples seront traitées conformément à la réglementation applicable (RGPD).
               </p>
             </section>
 
             <section>
-              <h2 className="text-2xl font-serif mb-4 text-wedding-black">Article 11 – Droit applicable et juridiction compétente</h2>
+              <h2 className="text-2xl font-serif mb-4 text-wedding-black">Article 10 – Droit applicable et juridiction compétente</h2>
               <p className="text-muted-foreground mb-4">
                 Le présent contrat est soumis au <strong>droit français</strong>.
               </p>
@@ -158,7 +194,7 @@ const CGV = () => {
             </section>
 
             <section>
-              <h2 className="text-2xl font-serif mb-4 text-wedding-black">Article 12 – Modalités de collaboration</h2>
+              <h2 className="text-2xl font-serif mb-4 text-wedding-black">Article 11 – Modalités de collaboration</h2>
               <p className="text-muted-foreground mb-4">
                 Les modalités pratiques de mise en relation, de suivi des couples et de transmission des devis sont décrites dans le <strong>mode opératoire Mariable (Annexe envoyée dès demande clients)</strong>
               </p>

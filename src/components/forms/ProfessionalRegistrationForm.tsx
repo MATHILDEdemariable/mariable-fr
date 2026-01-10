@@ -127,9 +127,10 @@ const REGIONS: RegionFrance[] = [
 
 const ProfessionalRegistrationForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [isUploading, setIsUploading] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const [coverPhoto, setCoverPhoto] = useState<File | null>(null);
+  const [coverPhotoPreview, setCoverPhotoPreview] = useState<string | null>(null);
+  const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -149,28 +150,39 @@ const ProfessionalRegistrationForm = () => {
     },
   });
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCoverPhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files && files.length > 0) {
-      setSelectedFile(files[0]);
+      const file = files[0];
+      // Vérifier la taille (max 5Mo)
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+          title: "Fichier trop volumineux",
+          description: "La taille maximale est de 5 Mo.",
+          variant: "destructive",
+        });
+        return;
+      }
+      setCoverPhoto(file);
+      setCoverPhotoPreview(URL.createObjectURL(file));
     }
   };
 
-  const uploadBrochure = async (
+  const uploadCoverPhoto = async (
     prestataireId: string
   ): Promise<string | null> => {
-    if (!selectedFile) return null;
+    if (!coverPhoto) return null;
 
-    setIsUploading(true);
+    setIsUploadingPhoto(true);
 
     try {
-      const fileExt = selectedFile.name.split(".").pop();
+      const fileExt = coverPhoto.name.split(".").pop();
       const fileName = `${uuidv4()}.${fileExt}`;
       const filePath = `${prestataireId}/${fileName}`;
 
-      const { error: uploadError, data } = await supabase.storage
-        .from("brochures")
-        .upload(filePath, selectedFile);
+      const { error: uploadError } = await supabase.storage
+        .from("vendor-photos")
+        .upload(filePath, coverPhoto);
 
       if (uploadError) {
         throw uploadError;
@@ -179,29 +191,30 @@ const ProfessionalRegistrationForm = () => {
       // Obtenir l'URL publique du fichier
       const {
         data: { publicUrl },
-      } = supabase.storage.from("brochures").getPublicUrl(filePath);
+      } = supabase.storage.from("vendor-photos").getPublicUrl(filePath);
 
-      // Enregistrer le lien dans la table prestataires_brochures
-      await supabase.from("prestataires_brochures_preprod").insert({
+      // Enregistrer comme photo principale
+      await supabase.from("prestataires_photos_preprod").insert({
         prestataire_id: prestataireId,
         url: publicUrl,
-        filename: selectedFile.name,
-        type: selectedFile.type,
-        size: selectedFile.size,
+        filename: coverPhoto.name,
+        type: coverPhoto.type,
+        size: coverPhoto.size,
+        principale: true,
       });
 
       return publicUrl;
     } catch (error) {
-      console.error("Erreur lors du téléchargement de la brochure:", error);
+      console.error("Erreur lors du téléchargement de la photo:", error);
       toast({
         title: "Erreur",
         description:
-          "Impossible de télécharger la brochure. Veuillez réessayer.",
+          "Impossible de télécharger la photo. Veuillez réessayer.",
         variant: "destructive",
       });
       return null;
     } finally {
-      setIsUploading(false);
+      setIsUploadingPhoto(false);
     }
   };
 
@@ -236,9 +249,9 @@ const ProfessionalRegistrationForm = () => {
 
       console.log('✅ Prestataire créé:', data);
 
-      // Si un fichier a été sélectionné, le télécharger
-      if (selectedFile && data?.data?.id) {
-        await uploadBrochure(data.data.id);
+      // Si une photo de couverture a été sélectionnée, la télécharger
+      if (coverPhoto && data?.data?.id) {
+        await uploadCoverPhoto(data.data.id);
       }
 
       toast({
@@ -249,7 +262,8 @@ const ProfessionalRegistrationForm = () => {
 
       setFormSubmitted(true);
       form.reset();
-      setSelectedFile(null);
+      setCoverPhoto(null);
+      setCoverPhotoPreview(null);
     } catch (error) {
       console.error("❌ Erreur lors de l'inscription:", error);
       toast({
@@ -448,19 +462,33 @@ const ProfessionalRegistrationForm = () => {
 
           <div className="md:col-span-2">
             <FormItem>
-              <FormLabel>Brochure commerciale</FormLabel>
-              <div className="flex items-center gap-2 mt-2">
+              <FormLabel>
+                Photo de couverture *
+              </FormLabel>
+              <FormDescription className="mb-2">
+                {form.watch('categorie') === 'Lieu de réception' 
+                  ? 'Photo de votre lieu (façade, salle principale...)' 
+                  : 'Photo représentative de vos services'}
+              </FormDescription>
+              <div className="flex items-center gap-4 mt-2">
                 <Input
                   type="file"
-                  id="brochure"
+                  id="cover-photo"
                   className="max-w-md"
-                  accept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                  onChange={handleFileChange}
+                  accept="image/jpeg,image/png,image/webp"
+                  onChange={handleCoverPhotoChange}
                 />
-                {isUploading && <Loader2 className="animate-spin h-4 w-4" />}
+                {isUploadingPhoto && <Loader2 className="animate-spin h-4 w-4" />}
+                {coverPhotoPreview && (
+                  <img 
+                    src={coverPhotoPreview} 
+                    alt="Aperçu" 
+                    className="w-20 h-20 object-cover rounded border"
+                  />
+                )}
               </div>
               <FormDescription>
-                Formats acceptés : PDF, DOC, DOCX (max 5 Mo)
+                Formats acceptés : JPG, PNG, WebP (max 5 Mo)
               </FormDescription>
             </FormItem>
           </div>

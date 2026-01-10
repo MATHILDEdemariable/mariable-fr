@@ -85,7 +85,7 @@ const HeroSection = ({
 }: {
   onScrollToResults: () => void;
   isLoggedIn: boolean;
-}) => <section className="relative min-h-[50vh] flex items-center justify-center overflow-hidden">
+}) => <section className="relative min-h-[40vh] md:min-h-[50vh] flex items-center justify-center overflow-hidden">
     {/* Background Image */}
     <div className="absolute inset-0 bg-cover bg-center" style={{
     backgroundImage: "url('https://bgidfcqktsttzlwlumtz.supabase.co/storage/v1/object/public/visuels/mariablestore.png')"
@@ -93,7 +93,7 @@ const HeroSection = ({
     {/* Dark Overlay */}
     <div className="absolute inset-0 bg-black/50" />
     
-    <div className="relative z-10 text-center text-white px-4 py-12">
+    <div className="relative z-10 text-center text-white px-4 py-8 md:py-12">
       <motion.h1 initial={{
       opacity: 0,
       y: 20
@@ -102,7 +102,7 @@ const HeroSection = ({
       y: 0
     }} transition={{
       duration: 0.6
-    }} className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold mb-4 leading-tight">Organisez facilement votre mariage</motion.h1>
+    }} className="font-serif text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-4 leading-tight">Organisez facilement votre mariage</motion.h1>
       
       <motion.p initial={{
       opacity: 0,
@@ -113,7 +113,7 @@ const HeroSection = ({
     }} transition={{
       duration: 0.6,
       delay: 0.1
-    }} className="text-lg md:text-xl max-w-2xl mx-auto mb-8 text-white/90">Trouvez des prestataires parmi notre guide & utilisez les outils en ligne pour coordonner le jour-J</motion.p>
+    }} className="text-base md:text-lg lg:text-xl max-w-2xl mx-auto mb-6 md:mb-8 text-white/90">Trouvez des prestataires parmi notre guide & utilisez les outils en ligne pour coordonner le jour-J</motion.p>
 
       <motion.div initial={{
       opacity: 0,
@@ -124,8 +124,8 @@ const HeroSection = ({
     }} transition={{
       duration: 0.6,
       delay: 0.2
-    }} className="flex flex-wrap justify-center gap-4">
-        <Button size="lg" onClick={onScrollToResults} className="bg-editorial-noir text-white hover:bg-editorial-noir/80 px-8 py-6 text-lg rounded-none shadow-lg">
+    }} className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
+        <Button size="lg" onClick={onScrollToResults} className="bg-editorial-noir text-white hover:bg-editorial-noir/80 px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg rounded-none shadow-lg w-full sm:w-auto">
           Explorer les professionnels
           <ArrowRight className="ml-2 w-5 h-5" />
         </Button>
@@ -140,7 +140,7 @@ const HeroSection = ({
               window.location.href = '/register?redirect=/dashboard';
             }
           }}
-          className="border-white/70 bg-white/10 text-white hover:bg-white/20 px-8 py-6 text-lg rounded-none backdrop-blur-sm"
+          className="border-white/70 bg-white/10 text-white hover:bg-white/20 px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg rounded-none backdrop-blur-sm w-full sm:w-auto"
         >
           <LayoutDashboard className="mr-2 w-5 h-5" />
           Mes outils
@@ -305,7 +305,7 @@ const ProfessionnelsMariable = () => {
       <PremiumHeader />
       <CartIcon />
       
-      <main className="min-h-screen bg-[#efeee9]">
+      <main className="min-h-screen bg-[#efeee9] pt-16 md:pt-20">
         {/* Hero */}
         <HeroSection onScrollToResults={scrollToResults} isLoggedIn={isLoggedIn} />
 
@@ -340,25 +340,25 @@ const ProfessionnelsMariable = () => {
             </div>
 
             {/* Region Filter (optional - compact) */}
-            <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-              <div className="flex items-center gap-2">
-                <select value={region || 'all'} onChange={e => setRegion(e.target.value === 'all' ? null : e.target.value)} className="px-4 py-2 border border-border bg-white text-sm focus:outline-none focus:ring-2 focus:ring-editorial-noir/20">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                <select value={region || 'all'} onChange={e => setRegion(e.target.value === 'all' ? null : e.target.value)} className="w-full sm:w-auto px-4 py-2 border border-border bg-white text-sm focus:outline-none focus:ring-2 focus:ring-editorial-noir/20">
                   <option value="all">Toutes les régions</option>
                   {REGIONS.map(reg => <option key={reg} value={reg}>{reg}</option>)}
                 </select>
 
-                {hasActiveFilters && <Button variant="ghost" size="sm" onClick={handleReset} className="text-muted-foreground hover:text-foreground">
+                {hasActiveFilters && <Button variant="ghost" size="sm" onClick={handleReset} className="text-muted-foreground hover:text-foreground w-full sm:w-auto">
                     <X className="h-4 w-4 mr-1" />
                     Réinitialiser
                   </Button>}
               </div>
 
               {/* Results Counter + Recherche personnalisée */}
-              {!isLoading && <div className="flex items-center gap-3">
+              {!isLoading && <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3">
                   <p className="text-sm text-muted-foreground">
                     <span className="font-semibold text-foreground">{vendors.length}</span> {vendors.length > 1 ? 'professionnels' : 'professionnel'}
                   </p>
-                  <Button variant="outline" size="sm" onClick={() => setShowCarnetModal(true)} className="text-editorial-noir border-editorial-noir hover:bg-editorial-noir hover:text-white">
+                  <Button variant="outline" size="sm" onClick={() => setShowCarnetModal(true)} className="text-editorial-noir border-editorial-noir hover:bg-editorial-noir hover:text-white w-full sm:w-auto">
                     <HelpCircle className="h-4 w-4 mr-1" />
                     Sélection personnalisée
                   </Button>
@@ -385,7 +385,7 @@ const ProfessionnelsMariable = () => {
               opacity: 1
             }} transition={{
               duration: 0.3
-            }} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-10">
+            }} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 mb-10">
                   {currentVendors.map((vendor, index) => <motion.div key={vendor.id} initial={{
                 opacity: 0,
                 y: 20
