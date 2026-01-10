@@ -28,7 +28,8 @@ import {
   Crown,
   Flower2,
   Camera,
-  PartyPopper
+  PartyPopper,
+  Share2
 } from 'lucide-react';
 import {
   Accordion,
@@ -390,8 +391,19 @@ const CeremoniePage: React.FC = () => {
 
           {/* ==================== ONGLET LAÏQUE ==================== */}
           <TabsContent value="laique" className="space-y-6">
-            {/* Bouton télécharger */}
-            <div className="flex justify-end">
+            {/* Boutons télécharger et partager */}
+            <div className="flex justify-end gap-2">
+              <Button 
+                onClick={() => {
+                  navigator.clipboard.writeText('https://www.mariable.fr/ceremonie-laique');
+                  toast.success("Lien copié dans le presse-papier !");
+                }}
+                variant="outline"
+                className="gap-2"
+              >
+                <Share2 className="h-4 w-4" />
+                Partager
+              </Button>
               <Button 
                 onClick={handleExportPDFLaique}
                 className="bg-black hover:bg-black/90 text-white gap-2"

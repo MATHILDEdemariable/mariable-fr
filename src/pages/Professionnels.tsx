@@ -1,7 +1,7 @@
 import PremiumHeader from '@/components/home/PremiumHeader';
 import Footer from '@/components/Footer';
 import { Link } from 'react-router-dom';
-import { FileDown, CheckCircle, Search } from 'lucide-react';
+import { CheckCircle, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ProfessionalRegistrationForm from '@/components/forms/ProfessionalRegistrationForm';
 import SEO from '@/components/SEO';
@@ -63,19 +63,6 @@ const Professionnels = () => {
                   </li>
                 </ul>
                 
-                <div className="pt-4">
-                  <Button className="flex items-center gap-2 bg-wedding-olive hover:bg-wedding-olive/80">
-                    <FileDown size={18} />
-                    <a 
-                      href="https://gamma.app/docs/Rejoignez-la-reference-des-prestataires-dexcellence-3y3w6gbb1cowg2z" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="text-white"
-                    >
-                      Télécharger notre plaquette commerciale
-                    </a>
-                  </Button>
-                </div>
               </div>
               
               <div className="space-y-4">

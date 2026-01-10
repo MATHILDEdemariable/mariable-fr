@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { supabase } from '@/integrations/supabase/client';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -23,6 +24,7 @@ const ContactRequests = () => {
   const [requests, setRequests] = useState<ContactRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [typeFilter, setTypeFilter] = useState<string>('all');
+  const [selectedRequest, setSelectedRequest] = useState<ContactRequest | null>(null);
 
   useEffect(() => {
     loadRequests();
@@ -220,9 +222,14 @@ const ContactRequests = () => {
                         )}
                       </TableCell>
                       <TableCell className="max-w-md">
-                        <p className="truncate" title={request.message}>
-                          {request.message}
-                        </p>
+                        <button 
+                          onClick={() => setSelectedRequest(request)}
+                          className="text-left hover:text-wedding-olive transition-colors"
+                        >
+                          <p className="truncate max-w-[300px]" title="Cliquer pour voir le message complet">
+                            {request.message}
+                          </p>
+                        </button>
                       </TableCell>
                     </TableRow>
                   ))
@@ -231,6 +238,59 @@ const ContactRequests = () => {
             </Table>
           </CardContent>
         </Card>
+
+        {/* Dialog pour voir le message complet */}
+        <Dialog open={!!selectedRequest} onOpenChange={() => setSelectedRequest(null)}>
+          <DialogContent className="max-w-lg">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                {selectedRequest && getTypeIcon(selectedRequest.type)}
+                Détails de la demande
+              </DialogTitle>
+            </DialogHeader>
+            {selectedRequest && (
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <p className="text-gray-500 mb-1">Type</p>
+                    <Badge className={`${getTypeBadgeColor(selectedRequest.type)} flex items-center gap-1 w-fit`}>
+                      {getTypeIcon(selectedRequest.type)}
+                      {getTypeLabel(selectedRequest.type)}
+                    </Badge>
+                  </div>
+                  <div>
+                    <p className="text-gray-500 mb-1">Date</p>
+                    <p className="font-medium">
+                      {format(new Date(selectedRequest.created_at), 'dd MMMM yyyy à HH:mm', { locale: fr })}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-gray-500 mb-1">Email</p>
+                    <a href={`mailto:${selectedRequest.email}`} className="text-wedding-olive hover:underline font-medium">
+                      {selectedRequest.email}
+                    </a>
+                  </div>
+                  <div>
+                    <p className="text-gray-500 mb-1">Téléphone</p>
+                    {selectedRequest.phone ? (
+                      <a href={`tel:${selectedRequest.phone}`} className="text-wedding-olive hover:underline font-medium">
+                        {selectedRequest.phone}
+                      </a>
+                    ) : (
+                      <span className="text-gray-400">Non renseigné</span>
+                    )}
+                  </div>
+                </div>
+                <div>
+                  <p className="text-gray-500 mb-2">Message</p>
+                  <div className="bg-gray-50 p-4 rounded-lg whitespace-pre-wrap text-sm max-h-[300px] overflow-y-auto">
+                    {selectedRequest.message}
+                  </div>
+                </div>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
     </AdminLayout>
   );
