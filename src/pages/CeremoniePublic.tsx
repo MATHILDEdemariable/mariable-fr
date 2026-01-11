@@ -1,6 +1,6 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
-import Header from '@/components/Header';
+import PremiumHeader from '@/components/home/PremiumHeader';
 import Footer from '@/components/Footer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { 
@@ -133,7 +133,7 @@ const CeremoniePublic: React.FC = () => {
         <meta name="description" content="Guide complet pour votre cérémonie laïque de mariage : rituels, vœux, musique, déroulement et conseils pour une célébration unique et personnalisée." />
       </Helmet>
 
-      <Header />
+      <PremiumHeader />
 
       <main className="min-h-screen bg-white" style={{ paddingTop: 'var(--header-h-standard)' }}>
         <div className="container max-w-4xl mx-auto px-4 py-12">
