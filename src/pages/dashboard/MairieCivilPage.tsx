@@ -19,7 +19,8 @@ import {
   Heart,
   Globe,
   UserCheck,
-  ExternalLink
+  ExternalLink,
+  Share2
 } from 'lucide-react';
 import {
   Accordion,
@@ -308,13 +309,26 @@ const MairieCivilPage: React.FC = () => {
               <p className="text-muted-foreground text-sm">Guide complet des démarches administratives</p>
             </div>
           </div>
-          <Button 
-            onClick={handleExportPDF}
-            className="bg-black hover:bg-black/90 text-white gap-2"
-          >
-            <Download className="h-4 w-4" />
-            Télécharger la checklist PDF
-          </Button>
+          <div className="flex gap-2">
+            <Button 
+              onClick={() => {
+                navigator.clipboard.writeText('https://www.mariable.fr/mariage-civil');
+                toast.success("Lien copié dans le presse-papier !");
+              }}
+              variant="outline"
+              className="gap-2"
+            >
+              <Share2 className="h-4 w-4" />
+              Partager
+            </Button>
+            <Button 
+              onClick={handleExportPDF}
+              className="bg-black hover:bg-black/90 text-white gap-2"
+            >
+              <Download className="h-4 w-4" />
+              Télécharger la checklist PDF
+            </Button>
+          </div>
         </div>
 
         {/* Alerte importante */}

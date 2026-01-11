@@ -777,8 +777,19 @@ const CeremoniePage: React.FC = () => {
 
           {/* ==================== ONGLET CATHOLIQUE ==================== */}
           <TabsContent value="catholique" className="space-y-6">
-            {/* Bouton télécharger */}
-            <div className="flex justify-end">
+            {/* Boutons télécharger et partager */}
+            <div className="flex justify-end gap-2">
+              <Button 
+                onClick={() => {
+                  navigator.clipboard.writeText('https://www.mariable.fr/ceremonie-catholique');
+                  toast.success("Lien copié dans le presse-papier !");
+                }}
+                variant="outline"
+                className="gap-2"
+              >
+                <Share2 className="h-4 w-4" />
+                Partager
+              </Button>
               <Button 
                 onClick={handleExportPDFCatholique}
                 className="bg-black hover:bg-black/90 text-white gap-2"
