@@ -23,6 +23,7 @@ const Register = () => {
   const [lastName, setLastName] = useState('');
   const [phone, setPhone] = useState('');
   const [referralSource, setReferralSource] = useState('');
+  const [registrationPurpose, setRegistrationPurpose] = useState('');
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [session, setSession] = useState<Session | null>(null);
@@ -53,7 +54,7 @@ const Register = () => {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!email || !password || !firstName || !lastName || !referralSource) {
+    if (!email || !password || !firstName || !lastName || !referralSource || !registrationPurpose) {
       toast({
         title: "Erreur",
         description: "Veuillez remplir tous les champs obligatoires",
@@ -87,6 +88,7 @@ const Register = () => {
             last_name: lastName,
             phone: phone || null,
             referral_source: referralSource,
+            registration_purpose: registrationPurpose,
           },
           emailRedirectTo: redirectTo,
         },
@@ -257,9 +259,20 @@ const Register = () => {
                     <SelectItem value="Autre">Autre</SelectItem>
                   </SelectContent>
                 </Select>
-                <p className="text-xs text-muted-foreground">
-                  Instagram, TikTok, Facebook, LinkedIn, Pinterest, bouche à oreille, autre...
-                </p>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="registrationPurpose">Pourquoi vous inscrivez-vous ? *</Label>
+                <Select value={registrationPurpose} onValueChange={setRegistrationPurpose} disabled={isLoading}>
+                  <SelectTrigger id="registrationPurpose">
+                    <SelectValue placeholder="Sélectionnez une option" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="guide_prestataires">Pour le guide des prestataires</SelectItem>
+                    <SelectItem value="outils_en_ligne">Pour les outils en ligne</SelectItem>
+                    <SelectItem value="les_deux">Les deux</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
               
               <div className="space-y-2">

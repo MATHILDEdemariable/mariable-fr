@@ -1,10 +1,31 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ShoppingCart, Euro } from 'lucide-react';
+import { ShoppingCart, Euro, AlertCircle } from 'lucide-react';
 import { useCart } from '@/components/cart/CartProvider';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 const PanierPage: React.FC = () => {
   const { items: cartItems, total } = useCart();
+
+  // Récupérer le budget estimé depuis Supabase
+  const { data: budgetData } = useQuery({
+    queryKey: ['budgetDashboard'],
+    queryFn: async () => {
+      const { data: userData } = await supabase.auth.getUser();
+      if (!userData.user) return null;
+      
+      const { data, error } = await supabase
+        .from('budgets_dashboard')
+        .select('total_budget, guests_count, service_level')
+        .eq('user_id', userData.user.id)
+        .maybeSingle();
+        
+      if (error) return null;
+      return data;
+    }
+  });
 
   const getItemTotal = (item: typeof cartItems[0]) => {
     if (!item.price) return 0;
@@ -13,6 +34,10 @@ const PanierPage: React.FC = () => {
     }
     return item.price;
   };
+
+  const estimatedBudget = budgetData?.total_budget || 0;
+  const difference = total - estimatedBudget;
+  const hasComparison = estimatedBudget > 0 && total > 0;
 
   return (
     <div className="space-y-6">
@@ -54,6 +79,38 @@ const PanierPage: React.FC = () => {
                 <span className="font-semibold text-editorial-noir">Budget total estimé</span>
                 <span className="text-xl font-bold text-editorial-noir">{total.toLocaleString()}€</span>
               </div>
+              
+              {/* Comparatif avec le budget estimé */}
+              {hasComparison && (
+                <div className="mt-4 p-4 bg-gray-50 border border-editorial-border">
+                  <h4 className="font-medium text-editorial-noir mb-3">Comparatif Budget</h4>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-editorial-noir/70">Budget calculé (calculatrice)</span>
+                      <span className="font-medium">{estimatedBudget.toLocaleString()}€</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-editorial-noir/70">Total panier</span>
+                      <span className="font-medium">{total.toLocaleString()}€</span>
+                    </div>
+                    <div className="flex justify-between pt-2 border-t border-editorial-border">
+                      <span className="font-medium text-editorial-noir">Différence</span>
+                      <span className={`font-bold ${difference > 0 ? 'text-red-600' : 'text-green-600'}`}>
+                        {difference > 0 ? '+' : ''}{difference.toLocaleString()}€
+                      </span>
+                    </div>
+                  </div>
+                  {difference > 0 && (
+                    <Alert className="mt-3 bg-orange-50 border-orange-200">
+                      <AlertCircle className="h-4 w-4 text-orange-600" />
+                      <AlertDescription className="text-orange-800 text-xs">
+                        Votre panier dépasse le budget estimé de {difference.toLocaleString()}€
+                      </AlertDescription>
+                    </Alert>
+                  )}
+                </div>
+              )}
+              
               <p className="text-xs text-editorial-noir/50">
                 * Estimation indicative basée sur les tarifs standards du marché français
               </p>
