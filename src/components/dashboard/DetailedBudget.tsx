@@ -4,13 +4,15 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
-import { Plus, Trash2, Save, Download } from 'lucide-react';
+import { Plus, Trash2, Save, Download, ShoppingCart } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { exportBudgetToPDF } from '@/services/budgetExportService';
 import { useUserProfile } from '@/hooks/useUserProfile';
 import { usePremiumAction } from '@/hooks/usePremiumAction';
 import PremiumModal from '@/components/premium/PremiumModal';
+import { useCart } from '@/components/cart/CartProvider';
+import { mapCartCategoryToBudget } from '@/utils/categoryMapping';
 
 // Type for budget category
 interface BudgetItem {
@@ -83,6 +85,7 @@ const DetailedBudget: React.FC = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { isPremium, loading: loadingProfile } = useUserProfile();
+  const { items: cartItems } = useCart();
   const { 
     executeAction, 
     showPremiumModal, 
@@ -602,6 +605,67 @@ const DetailedBudget: React.FC = () => {
     updateBudgetMutation.mutate();
   };
 
+  // Import items from cart into the detailed budget
+  const handleImportFromCart = () => {
+    if (cartItems.length === 0) {
+      toast({
+        title: "Panier vide",
+        description: "Ajoutez d'abord des prestataires à votre panier",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const newCategories = [...categories];
+    let importedCount = 0;
+
+    cartItems.forEach(cartItem => {
+      const budgetCategoryName = mapCartCategoryToBudget(cartItem.category);
+      const categoryIndex = newCategories.findIndex(c => c.name === budgetCategoryName);
+      
+      if (categoryIndex === -1) return;
+
+      // Check if vendor already exists in the category
+      const existingItem = newCategories[categoryIndex].items.find(
+        item => item.name.toLowerCase() === cartItem.vendorName.toLowerCase()
+      );
+
+      if (!existingItem) {
+        const itemPrice = cartItem.category === 'Traiteur' && cartItem.guestCount && cartItem.price
+          ? cartItem.price * cartItem.guestCount
+          : cartItem.price || 0;
+
+        const newItem: BudgetItem = {
+          id: `cart_${cartItem.vendorId}_${Date.now()}`,
+          name: cartItem.vendorName,
+          estimated: itemPrice,
+          actual: 0,
+          deposit: 0,
+          remaining: itemPrice,
+          payment_note: `Importé depuis le panier (${cartItem.category})`
+        };
+
+        newCategories[categoryIndex].items.push(newItem);
+        importedCount++;
+      }
+    });
+
+    if (importedCount > 0) {
+      const updatedCategories = calculateTotalsFromCategories(newCategories);
+      setCategories(updatedCategories);
+      
+      toast({
+        title: "Import réussi",
+        description: `${importedCount} prestataire(s) importé(s) depuis le panier`
+      });
+    } else {
+      toast({
+        title: "Aucun import",
+        description: "Tous les prestataires du panier sont déjà dans le budget"
+      });
+    }
+  };
+
   if (isLoadingDetails) {
     return (
       <div className="text-center py-12">
@@ -621,7 +685,16 @@ const DetailedBudget: React.FC = () => {
       <Card className="border shadow-sm">
       <CardHeader className="flex flex-row items-center justify-between bg-white sticky top-0 z-10 border-b">
         <CardTitle className="text-xl font-serif">Budget Détaillé</CardTitle>
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
+          <Button 
+            onClick={handleImportFromCart}
+            variant="outline"
+            className="text-wedding-olive border-wedding-olive hover:bg-wedding-olive/10"
+            disabled={cartItems.length === 0}
+          >
+            <ShoppingCart className="mr-2 h-4 w-4" />
+            Importer du panier ({cartItems.length})
+          </Button>
           <Button 
             onClick={handleSaveBudget} 
             className="bg-wedding-olive hover:bg-wedding-olive/90"

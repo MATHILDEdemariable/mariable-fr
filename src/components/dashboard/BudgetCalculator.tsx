@@ -46,6 +46,14 @@ const BUDGET_ALLOCATION_PERCENTAGES = {
   'autres': { name: 'Autres (transport, cadeaux, imprévus)', percentage: 0.04, color: '#aaadb0' }
 };
 
+// Minimums absolus par catégorie et niveau de service
+const CATEGORY_MINIMUMS: Record<ServiceLevel, { photo: number; dj: number; traiteurParInvite: number }> = {
+  economique: { photo: 800, dj: 600, traiteurParInvite: 50 },
+  abordable: { photo: 1200, dj: 1000, traiteurParInvite: 70 },
+  premium: { photo: 1800, dj: 1800, traiteurParInvite: 100 },
+  luxe: { photo: 3000, dj: 2500, traiteurParInvite: 150 }
+};
+
 const BudgetCalculator: React.FC = () => {
   // État pour le multi-étapes de la calculatrice
   const [currentStep, setCurrentStep] = useState<Step>(1);
@@ -467,26 +475,115 @@ const BudgetCalculator: React.FC = () => {
     const regionMultiplier = regionMultipliers[region] || 1.0;
     const finalPricePerGuest = basePrice * regionMultiplier * seasonMultiplier;
     
-    // Budget total
-    const totalBudget = Math.round(finalPricePerGuest * guestsCount);
+    // Budget total initial
+    let totalBudget = Math.round(finalPricePerGuest * guestsCount);
     
-    // Répartition selon les catégories standards
-    const breakdown: BudgetLine[] = [];
+    // Récupérer les minimums pour ce niveau de service
+    const minimums = CATEGORY_MINIMUMS[serviceLevel];
     
-    Object.entries(BUDGET_ALLOCATION_PERCENTAGES).forEach(([key, category]) => {
-      const amount = Math.round(totalBudget * category.percentage);
-      breakdown.push({
-        name: category.name,
-        amount,
-        basePrice: amount,
-        color: category.color
-      });
-    });
+    // Calculer les montants minimum requis pour les postes fixes
+    const traiteurMinimum = minimums.traiteurParInvite * guestsCount;
+    const photoMinimum = minimums.photo;
+    const djMinimum = minimums.dj;
+    
+    // Calculer les montants selon pourcentages
+    const traiteurFromPercentage = totalBudget * 0.35;
+    const photoFromPercentage = totalBudget * 0.08;
+    const djFromPercentage = totalBudget * 0.04;
+    
+    // Appliquer les maximums entre pourcentage et minimum
+    const finalTraiteur = Math.max(traiteurMinimum, traiteurFromPercentage);
+    const finalPhoto = Math.max(photoMinimum, photoFromPercentage);
+    const finalDJ = Math.max(djMinimum, djFromPercentage);
+    
+    // Calculer le budget consommé par les postes fixes
+    const fixedBudget = finalTraiteur + finalPhoto + finalDJ;
+    
+    // Si les postes fixes dépassent 60% du budget, ajuster le budget total
+    let budgetAdjusted = false;
+    if (fixedBudget > totalBudget * 0.60) {
+      // Les postes fixes représentent 47% du budget (35% traiteur + 8% photo + 4% dj)
+      totalBudget = Math.round(fixedBudget / 0.47);
+      budgetAdjusted = true;
+    }
+    
+    // Calculer le reste du budget pour les autres postes
+    const remainingBudget = totalBudget - fixedBudget;
+    
+    // Pourcentages restants (après retrait des 47% des postes fixes) = 53%
+    // On les redistribue proportionnellement
+    const otherPercentages = {
+      lieu: 0.35 / 0.53,      // ~66% du reste
+      deco: 0.07 / 0.53,      // ~13% du reste
+      tenues: 0.05 / 0.53,    // ~9% du reste
+      papeterie: 0.02 / 0.53, // ~4% du reste
+      autres: 0.04 / 0.53,    // ~8% du reste
+    };
+    
+    // Répartition selon les catégories
+    const breakdown: BudgetLine[] = [
+      {
+        name: 'Lieu de réception',
+        amount: Math.round(remainingBudget * otherPercentages.lieu),
+        basePrice: Math.round(remainingBudget * otherPercentages.lieu),
+        color: '#7F9474'
+      },
+      {
+        name: `Traiteur (${minimums.traiteurParInvite}€/invité × ${guestsCount})`,
+        amount: finalTraiteur,
+        basePrice: finalTraiteur,
+        color: '#948970'
+      },
+      {
+        name: 'Photographe & Vidéaste',
+        amount: finalPhoto,
+        basePrice: finalPhoto,
+        color: '#A99E89'
+      },
+      {
+        name: 'DJ / Animation',
+        amount: finalDJ,
+        basePrice: finalDJ,
+        color: '#C6BCA9'
+      },
+      {
+        name: 'Décoration & Fleurs',
+        amount: Math.round(remainingBudget * otherPercentages.deco),
+        basePrice: Math.round(remainingBudget * otherPercentages.deco),
+        color: '#8E9196'
+      },
+      {
+        name: 'Tenues & mise en beauté',
+        amount: Math.round(remainingBudget * otherPercentages.tenues),
+        basePrice: Math.round(remainingBudget * otherPercentages.tenues),
+        color: '#1A1F2C'
+      },
+      {
+        name: 'Papeterie & faire-part',
+        amount: Math.round(remainingBudget * otherPercentages.papeterie),
+        basePrice: Math.round(remainingBudget * otherPercentages.papeterie),
+        color: '#B8A99A'
+      },
+      {
+        name: 'Autres (transport, cadeaux, imprévus)',
+        amount: Math.round(remainingBudget * otherPercentages.autres),
+        basePrice: Math.round(remainingBudget * otherPercentages.autres),
+        color: '#aaadb0'
+      }
+    ];
     
     setBudgetEstimate({
       total: totalBudget,
       breakdown
     });
+    
+    // Afficher un toast si le budget a été ajusté
+    if (budgetAdjusted) {
+      toast({
+        title: "Budget ajusté",
+        description: `Le budget a été ajusté pour respecter les tarifs minimums du marché pour une prestation de niveau ${serviceLevel}`,
+      });
+    }
     
     setShowEstimate(true);
   };
