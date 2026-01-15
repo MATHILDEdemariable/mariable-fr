@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Calendar, CheckSquare, Calculator, Store, Heart, Settings, LogOut, Wine, MessageCircleQuestion, MessageSquare, Users, Lightbulb, ChevronDown, Coins, ListChecks, UserCheck, Home, QrCode, FileText, Table, AlertCircle, Gift, Sparkles, ShoppingCart, Building2 } from 'lucide-react';
+import { LayoutDashboard, Calendar, CheckSquare, Calculator, Store, Heart, Settings, LogOut, Wine, MessageCircleQuestion, MessageSquare, Users, Lightbulb, ChevronDown, Coins, ListChecks, UserCheck, Home, QrCode, FileText, Table, AlertCircle, Gift, Sparkles, ShoppingCart, Building2, Smartphone } from 'lucide-react';
 import { CallScheduleModal } from './CallScheduleModal';
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
@@ -471,6 +471,12 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
           <Settings className="h-4 w-4" />
           <span className="ml-2 sm:ml-3 leading-tight">Paramètres</span>
           {isReaderMode && <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>}
+        </Link>
+
+        {/* Installer l'app */}
+        <Link to="/dashboard/installer-app" className={cn("flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors", isActive('/dashboard/installer-app') ? 'bg-wedding-olive text-white shadow-sm' : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive')}>
+          <Smartphone className="h-4 w-4" />
+          <span className="ml-2 sm:ml-3 leading-tight">Installer l'app</span>
         </Link>
 
       </nav>

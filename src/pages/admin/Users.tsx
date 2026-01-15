@@ -38,6 +38,7 @@ interface UserRegistration {
     guest_count?: number;
     referral_source?: string;
     notify_club_mariable?: boolean;
+    registration_purpose?: string;
   };
 }
 
@@ -48,6 +49,7 @@ const AdminUsers = () => {
   const [filteredUsers, setFilteredUsers] = useState<UserRegistration[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [purposeFilter, setPurposeFilter] = useState<string>('all');
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isExporting, setIsExporting] = useState(false);
@@ -98,8 +100,15 @@ const AdminUsers = () => {
       console.log('📊 Filtered results:', filtered.length, 'users with status:', statusFilter);
     }
 
+    if (purposeFilter !== 'all') {
+      filtered = filtered.filter(user => {
+        const purpose = getRegistrationPurpose(user);
+        return purpose.value === purposeFilter;
+      });
+    }
+
     setFilteredUsers(filtered);
-  }, [searchTerm, statusFilter, users]);
+  }, [searchTerm, statusFilter, purposeFilter, users]);
 
   const fetchUsers = async () => {
     try {
@@ -243,6 +252,19 @@ const AdminUsers = () => {
 
   const getReferralSource = (user: UserRegistration) => {
     return user.profile?.referral_source || user.raw_user_meta_data?.referral_source || 'Non renseigné';
+  };
+
+  const getRegistrationPurpose = (user: UserRegistration): { value: string; label: string } => {
+    const purpose = user.profile?.registration_purpose || user.raw_user_meta_data?.registration_purpose;
+    const labels: Record<string, string> = {
+      'guide_prestataires': 'Guide prestataires',
+      'outils_en_ligne': 'Outils en ligne',
+      'les_deux': 'Les deux'
+    };
+    return {
+      value: purpose || '',
+      label: labels[purpose] || 'Non renseigné'
+    };
   };
 
   const getRecentUsers = () => {
@@ -444,6 +466,17 @@ const AdminUsers = () => {
                   <SelectItem value="club_interested">Intéressés Club</SelectItem>
                 </SelectContent>
               </Select>
+              <Select value={purposeFilter} onValueChange={setPurposeFilter}>
+                <SelectTrigger className="w-full sm:w-[200px]">
+                  <SelectValue placeholder="Filtrer par objectif" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Tous les objectifs</SelectItem>
+                  <SelectItem value="guide_prestataires">Guide prestataires</SelectItem>
+                  <SelectItem value="outils_en_ligne">Outils en ligne</SelectItem>
+                  <SelectItem value="les_deux">Les deux</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </CardContent>
         </Card>
@@ -477,6 +510,7 @@ const AdminUsers = () => {
                       <TableHead>Email</TableHead>
                       <TableHead>Téléphone</TableHead>
                       <TableHead>Source</TableHead>
+                      <TableHead>Objectif</TableHead>
                       <TableHead>Club Notif</TableHead>
                       <TableHead>Date d'inscription</TableHead>
                       <TableHead>Statut</TableHead>
@@ -512,6 +546,11 @@ const AdminUsers = () => {
                         <TableCell>
                           <span className={getReferralSource(user) === 'Non renseigné' ? 'text-gray-400 italic' : ''}>
                             {getReferralSource(user)}
+                          </span>
+                        </TableCell>
+                        <TableCell>
+                          <span className={getRegistrationPurpose(user).label === 'Non renseigné' ? 'text-gray-400 italic' : 'text-sm'}>
+                            {getRegistrationPurpose(user).label}
                           </span>
                         </TableCell>
                         <TableCell>

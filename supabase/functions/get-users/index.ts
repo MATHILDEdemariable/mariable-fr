@@ -19,6 +19,8 @@ interface DatabaseUser {
     wedding_date?: string;
     guest_count?: number;
     notify_club_mariable?: boolean;
+    registration_purpose?: string;
+    referral_source?: string;
   };
 }
 
@@ -93,7 +95,7 @@ Deno.serve(async (req) => {
         const userIds = allUsers.map(user => user.id);
         const { data: profiles, error: profilesError } = await supabase
           .from('profiles')
-          .select('id, first_name, last_name, subscription_type, subscription_expires_at, wedding_date, guest_count, referral_source, notify_club_mariable')
+          .select('id, first_name, last_name, subscription_type, subscription_expires_at, wedding_date, guest_count, referral_source, notify_club_mariable, registration_purpose')
           .in('id', userIds);
 
         if (profilesError) {
@@ -135,7 +137,7 @@ Deno.serve(async (req) => {
       try {
         const { data: profileUsers, error: profileError } = await supabase
           .from('profiles')
-          .select('id, first_name, last_name, subscription_type, subscription_expires_at, wedding_date, guest_count, created_at, notify_club_mariable')
+          .select('id, first_name, last_name, subscription_type, subscription_expires_at, wedding_date, guest_count, created_at, notify_club_mariable, registration_purpose, referral_source')
           .order('created_at', { ascending: false });
         
         if (profileError) {
@@ -161,7 +163,9 @@ Deno.serve(async (req) => {
               subscription_expires_at: profile.subscription_expires_at,
               wedding_date: profile.wedding_date,
               guest_count: profile.guest_count,
-              notify_club_mariable: profile.notify_club_mariable
+              notify_club_mariable: profile.notify_club_mariable,
+              registration_purpose: profile.registration_purpose,
+              referral_source: profile.referral_source
             }
           }));
           
