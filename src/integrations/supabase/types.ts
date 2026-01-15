@@ -2160,6 +2160,7 @@ export type Database = {
           notify_club_mariable: boolean | null
           phone: string | null
           referral_source: string | null
+          registration_purpose: string | null
           stripe_customer_id: string | null
           stripe_subscription_id: string | null
           subscription_expires_at: string | null
@@ -2177,6 +2178,7 @@ export type Database = {
           notify_club_mariable?: boolean | null
           phone?: string | null
           referral_source?: string | null
+          registration_purpose?: string | null
           stripe_customer_id?: string | null
           stripe_subscription_id?: string | null
           subscription_expires_at?: string | null
@@ -2194,6 +2196,7 @@ export type Database = {
           notify_club_mariable?: boolean | null
           phone?: string | null
           referral_source?: string | null
+          registration_purpose?: string | null
           stripe_customer_id?: string | null
           stripe_subscription_id?: string | null
           subscription_expires_at?: string | null
