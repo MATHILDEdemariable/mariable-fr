@@ -120,6 +120,7 @@ const Mariable = lazy(() => import("./pages/Mariable"));
 const MariableAmbassadeur = lazy(() => import("./pages/MariableAmbassadeur"));
 const MariablePartenaire = lazy(() => import("./pages/MariablePartenaire"));
 const CeremoniePublic = lazy(() => import("./pages/CeremoniePublic"));
+const InstallAppPublic = lazy(() => import("./pages/InstallAppPublic"));
 
 // Loading component with accessibility improvements
 const PageLoader = () => (
@@ -166,6 +167,7 @@ function App() {
                   <Route path="/planning-resultats-personnalises" element={<PlanningResultatsPersonnalises />} />
                   <Route path="/reservation-jour-m" element={<ReservationJourM />} />
                   <Route path="/retroplanning" element={<WeddingRetroplanning />} />
+                  <Route path="/installer-app" element={<InstallAppPublic />} />
                    <Route path="/dashboard/*" element={<UserDashboard />} />
                    <Route path="/jour-m-vue/:token" element={<JourMVue />} />
                    
