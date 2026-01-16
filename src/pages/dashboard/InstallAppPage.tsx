@@ -11,7 +11,7 @@ type DeviceType = 'ios' | 'android' | 'desktop' | 'unknown';
 const InstallAppPage = () => {
   const [deviceType, setDeviceType] = useState<DeviceType>('unknown');
   const { toast } = useToast();
-  const shareableUrl = 'https://mariable-fr.lovable.app/installer-app';
+  const shareableUrl = 'https://mariable.fr/installer-app';
 
   useEffect(() => {
     const userAgent = navigator.userAgent.toLowerCase();
@@ -166,7 +166,7 @@ const InstallAppPage = () => {
         </p>
         <div className="mt-4 p-4 bg-muted rounded-lg">
           <p className="font-medium text-sm">URL à ouvrir sur mobile :</p>
-          <code className="text-sm text-wedding-olive break-all">mariable-fr.lovable.app/dashboard</code>
+          <code className="text-sm text-wedding-olive break-all">mariable.fr/dashboard</code>
         </div>
       </CardContent>
     </Card>

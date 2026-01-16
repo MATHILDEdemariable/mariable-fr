@@ -159,7 +159,7 @@ const InstallAppPublic = () => {
         </p>
         <div className="mt-4 p-4 bg-muted rounded-lg">
           <p className="font-medium text-sm">URL à ouvrir sur mobile :</p>
-          <code className="text-sm text-wedding-olive break-all">mariable-fr.lovable.app/installer-app</code>
+          <code className="text-sm text-wedding-olive break-all">mariable.fr/installer-app</code>
         </div>
       </CardContent>
     </Card>
