@@ -1,20 +1,21 @@
-import { useState, useEffect } from 'react';
-import { Calendar as CalendarIcon, Loader2, Save, CheckCircle2, Sparkles } from 'lucide-react';
+import { useState, useEffect, useMemo } from 'react';
+import { Calendar as CalendarIcon, Loader2, Save, Download, Sparkles, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { format, subMonths } from 'date-fns';
+import { format, differenceInMonths, differenceInWeeks, differenceInDays } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import PremiumHeader from '@/components/home/PremiumHeader';
 import { useNavigate } from 'react-router-dom';
 import { usePremiumAction } from '@/hooks/usePremiumAction';
 import PremiumModal from '@/components/premium/PremiumModal';
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
+import jsPDF from 'jspdf';
 
 interface TimelineItem {
   period: string;
@@ -43,21 +44,83 @@ interface RetroPlanningData {
   milestones: Milestone[];
 }
 
+// Périodes fixes pour la frise chronologique
+const TIMELINE_PERIODS = [
+  { label: '12-9 mois', monthsBeforeMin: 9, monthsBeforeMax: 12 },
+  { label: '8-6 mois', monthsBeforeMin: 6, monthsBeforeMax: 8 },
+  { label: '5-4 mois', monthsBeforeMin: 4, monthsBeforeMax: 5 },
+  { label: '3 mois', monthsBeforeMin: 3, monthsBeforeMax: 3 },
+  { label: '2 mois', monthsBeforeMin: 2, monthsBeforeMax: 2 },
+  { label: '1 mois', monthsBeforeMin: 1, monthsBeforeMax: 1 },
+  { label: '2 semaines', monthsBeforeMin: 0.5, monthsBeforeMax: 0.5 },
+  { label: 'Semaine J', monthsBeforeMin: 0.25, monthsBeforeMax: 0.25 },
+  { label: 'Jour J', monthsBeforeMin: 0, monthsBeforeMax: 0 },
+];
+
 const WeddingRetroplanning = () => {
   const [weddingDate, setWeddingDate] = useState<Date>();
   const [isGenerating, setIsGenerating] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [retroplanning, setRetroplanning] = useState<RetroPlanningData | null>(null);
   const [checkedTasks, setCheckedTasks] = useState<Set<string>>(new Set());
+  const [checkedMilestones, setCheckedMilestones] = useState<Set<string>>(new Set());
   const [loadedRetroplanningId, setLoadedRetroplanningId] = useState<string | null>(null);
+  const [selectedPeriodIndex, setSelectedPeriodIndex] = useState(0);
   const { toast } = useToast();
   const navigate = useNavigate();
-  const { executeAction, showPremiumModal, closePremiumModal, isPremium } = usePremiumAction({
+  const { executeAction, showPremiumModal, closePremiumModal } = usePremiumAction({
     feature: "Rétroplanning Personnalisé",
     description: "Créez votre rétroplanning de mariage intelligent avec l'IA"
   });
 
-  // Charger un retroplanning existant depuis l'URL
+  // Calculer la période actuelle basée sur la date du mariage
+  const getCurrentPeriodStatus = (periodIndex: number) => {
+    if (!weddingDate) return 'future';
+    
+    const now = new Date();
+    const monthsUntilWedding = differenceInMonths(weddingDate, now);
+    const weeksUntilWedding = differenceInWeeks(weddingDate, now);
+    const daysUntilWedding = differenceInDays(weddingDate, now);
+    
+    const period = TIMELINE_PERIODS[periodIndex];
+    
+    let currentMonths = monthsUntilWedding;
+    if (weeksUntilWedding <= 2 && weeksUntilWedding > 1) currentMonths = 0.5;
+    if (weeksUntilWedding <= 1 && daysUntilWedding > 0) currentMonths = 0.25;
+    if (daysUntilWedding <= 0) currentMonths = 0;
+    
+    if (currentMonths < period.monthsBeforeMin) return 'past';
+    if (currentMonths >= period.monthsBeforeMin && currentMonths <= period.monthsBeforeMax) return 'current';
+    return 'future';
+  };
+
+  // Mapper les tâches du retroplanning aux périodes fixes
+  const getTasksForPeriod = (periodIndex: number) => {
+    if (!retroplanning) return [];
+    
+    const period = TIMELINE_PERIODS[periodIndex];
+    const tasks: { task: string; taskId: string; source: string }[] = [];
+    
+    retroplanning.timeline.forEach((item, idx) => {
+      if (item.monthsBefore >= period.monthsBeforeMin && item.monthsBefore <= period.monthsBeforeMax) {
+        item.tasks.forEach((task, taskIdx) => {
+          tasks.push({
+            task,
+            taskId: `timeline-${idx}-${taskIdx}`,
+            source: item.period
+          });
+        });
+      }
+    });
+    
+    return tasks;
+  };
+
+  const periodTaskCounts = useMemo(() => {
+    if (!retroplanning) return TIMELINE_PERIODS.map(() => 0);
+    return TIMELINE_PERIODS.map((_, idx) => getTasksForPeriod(idx).length);
+  }, [retroplanning]);
+
   useEffect(() => {
     const loadExistingRetroplanning = async () => {
       const params = new URLSearchParams(window.location.search);
@@ -83,13 +146,20 @@ const WeddingRetroplanning = () => {
             milestones: data.milestones as unknown as Milestone[]
           });
           
-          // Charger la progression si elle existe
           if (data.progress && typeof data.progress === 'object') {
             const tasksSet = new Set<string>();
+            const milestonesSet = new Set<string>();
             Object.entries(data.progress as Record<string, boolean>).forEach(([key, value]) => {
-              if (value) tasksSet.add(key);
+              if (value) {
+                if (key.startsWith('milestone-')) {
+                  milestonesSet.add(key);
+                } else {
+                  tasksSet.add(key);
+                }
+              }
             });
             setCheckedTasks(tasksSet);
+            setCheckedMilestones(milestonesSet);
           }
 
           toast({
@@ -159,13 +229,14 @@ const WeddingRetroplanning = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Créez un compte pour sauvegarder votre rétroplanning');
 
-      // Convertir le Set en objet pour la sauvegarde
       const progressObj: Record<string, boolean> = {};
       checkedTasks.forEach(taskId => {
         progressObj[taskId] = true;
       });
+      checkedMilestones.forEach(milestoneId => {
+        progressObj[milestoneId] = true;
+      });
 
-      // Si on a déjà un ID chargé, on fait un UPDATE au lieu d'un INSERT
       if (loadedRetroplanningId) {
         const { error } = await supabase
           .from('wedding_retroplanning')
@@ -224,11 +295,21 @@ const WeddingRetroplanning = () => {
     });
   };
 
+  const toggleMilestone = (milestoneId: string) => {
+    setCheckedMilestones(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(milestoneId)) {
+        newSet.delete(milestoneId);
+      } else {
+        newSet.add(milestoneId);
+      }
+      return newSet;
+    });
+  };
+
   const getTotalTasksCount = () => {
     if (!retroplanning) return 0;
-    const timelineTasks = retroplanning.timeline.reduce((acc, item) => acc + item.tasks.length, 0);
-    const categoryTasks = retroplanning.categories.reduce((acc, cat) => acc + cat.tasks.length, 0);
-    return timelineTasks + categoryTasks;
+    return retroplanning.timeline.reduce((acc, item) => acc + item.tasks.length, 0);
   };
 
   const getProgress = () => {
@@ -237,14 +318,75 @@ const WeddingRetroplanning = () => {
     return Math.round((checkedTasks.size / total) * 100);
   };
 
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case 'high': return 'text-red-600 bg-red-50';
-      case 'medium': return 'text-orange-600 bg-orange-50';
-      case 'low': return 'text-blue-600 bg-blue-50';
-      default: return 'text-gray-600 bg-gray-50';
+  const handleDownloadChecklist = () => {
+    if (!retroplanning || !weddingDate) return;
+
+    const doc = new jsPDF();
+    
+    doc.setFontSize(20);
+    doc.setTextColor(107, 114, 99);
+    doc.text('Checklist Étapes Clés - Mariage', 20, 25);
+    
+    doc.setFontSize(12);
+    doc.setTextColor(100, 100, 100);
+    doc.text(`Date du mariage : ${format(weddingDate, 'd MMMM yyyy', { locale: fr })}`, 20, 35);
+    
+    doc.setLineWidth(0.5);
+    doc.setDrawColor(107, 114, 99);
+    doc.line(20, 40, 190, 40);
+    
+    let yPos = 55;
+    doc.setFontSize(14);
+    doc.setTextColor(40, 40, 40);
+    
+    retroplanning.milestones.forEach((milestone) => {
+      if (yPos > 270) {
+        doc.addPage();
+        yPos = 25;
+      }
+      
+      doc.setDrawColor(150, 150, 150);
+      doc.rect(20, yPos - 4, 5, 5);
+      
+      doc.setFontSize(12);
+      doc.setTextColor(40, 40, 40);
+      doc.text(milestone.title, 30, yPos);
+      
+      doc.setFontSize(10);
+      doc.setTextColor(100, 100, 100);
+      doc.text(`${milestone.monthsBefore} mois avant le mariage`, 30, yPos + 5);
+      
+      doc.setFontSize(9);
+      doc.setTextColor(120, 120, 120);
+      const descLines = doc.splitTextToSize(milestone.description, 155);
+      doc.text(descLines, 30, yPos + 10);
+      
+      yPos += 25 + (descLines.length - 1) * 4;
+    });
+    
+    doc.setFontSize(8);
+    doc.setTextColor(150, 150, 150);
+    doc.text('Généré par Mariable.fr', 20, 285);
+    
+    doc.save(`checklist-mariage-${format(weddingDate, 'yyyy-MM-dd')}.pdf`);
+    
+    toast({
+      title: "✅ Checklist téléchargée",
+      description: "Votre checklist PDF a été générée"
+    });
+  };
+
+  const getPeriodStatusColor = (status: string) => {
+    switch (status) {
+      case 'past': return 'bg-red-100 border-red-400 text-red-700';
+      case 'current': return 'bg-orange-100 border-orange-400 text-orange-700';
+      case 'future': return 'bg-green-100 border-green-400 text-green-700';
+      default: return 'bg-muted border-border text-muted-foreground';
     }
   };
+
+  const currentPeriodTasks = getTasksForPeriod(selectedPeriodIndex);
+  const completedTasksInPeriod = currentPeriodTasks.filter(t => checkedTasks.has(t.taskId)).length;
 
   return (
     <>
@@ -309,7 +451,7 @@ const WeddingRetroplanning = () => {
 
           {/* Message d'attente pendant la génération */}
           {isGenerating && (
-            <Card className="border-wedding-olive/30">
+            <Card className="border-wedding-olive/30 mb-8">
               <CardContent className="pt-6">
                 <div className="flex flex-col items-center justify-center space-y-4">
                   <Loader2 className="h-12 w-12 animate-spin text-wedding-olive" />
@@ -335,115 +477,172 @@ const WeddingRetroplanning = () => {
                 </CardHeader>
                 <CardContent>
                   <Progress value={getProgress()} className="h-3" />
-                  <p className="text-sm text-gray-600 mt-2">
+                  <p className="text-sm text-muted-foreground mt-2">
                     {checkedTasks.size} / {getTotalTasksCount()} tâches complétées
                   </p>
                 </CardContent>
               </Card>
 
-              {/* Timeline */}
+              {/* Frise chronologique horizontale */}
               <Card className="mb-8">
                 <CardHeader>
                   <CardTitle>📋 Timeline du projet</CardTitle>
-                  <CardDescription>Organisation chronologique par périodes</CardDescription>
+                  <CardDescription>Cliquez sur une période pour voir les tâches associées</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <Accordion type="single" collapsible className="w-full">
-                    {retroplanning.timeline.map((item, idx) => (
-                      <AccordionItem key={idx} value={`timeline-${idx}`}>
-                        <AccordionTrigger>
-                          <div className="flex items-center gap-3">
-                            <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getPriorityColor(item.priority)}`}>
-                              {item.priority === 'high' ? 'Urgent' : item.priority === 'medium' ? 'Important' : 'Normal'}
+                  {/* Navigation mobile */}
+                  <div className="flex items-center gap-2 mb-4 sm:hidden">
+                    <Button 
+                      variant="outline" 
+                      size="icon"
+                      onClick={() => setSelectedPeriodIndex(Math.max(0, selectedPeriodIndex - 1))}
+                      disabled={selectedPeriodIndex === 0}
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                    </Button>
+                    <div className="flex-1 text-center">
+                      <span className="font-semibold">{TIMELINE_PERIODS[selectedPeriodIndex].label}</span>
+                    </div>
+                    <Button 
+                      variant="outline" 
+                      size="icon"
+                      onClick={() => setSelectedPeriodIndex(Math.min(TIMELINE_PERIODS.length - 1, selectedPeriodIndex + 1))}
+                      disabled={selectedPeriodIndex === TIMELINE_PERIODS.length - 1}
+                    >
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
+                  </div>
+
+                  {/* Frise desktop */}
+                  <ScrollArea className="w-full hidden sm:block">
+                    <div className="flex items-center gap-2 pb-4 min-w-max">
+                      {TIMELINE_PERIODS.map((period, idx) => {
+                        const status = getCurrentPeriodStatus(idx);
+                        const taskCount = periodTaskCounts[idx];
+                        const isSelected = selectedPeriodIndex === idx;
+                        
+                        return (
+                          <button
+                            key={idx}
+                            onClick={() => setSelectedPeriodIndex(idx)}
+                            className={`
+                              relative flex flex-col items-center px-4 py-3 rounded-lg border-2 transition-all min-w-[100px]
+                              ${isSelected 
+                                ? 'bg-wedding-olive text-white border-wedding-olive shadow-lg scale-105' 
+                                : getPeriodStatusColor(status)
+                              }
+                              hover:scale-105 cursor-pointer
+                            `}
+                          >
+                            <span className="text-sm font-semibold whitespace-nowrap">{period.label}</span>
+                            <span className={`text-xs mt-1 ${isSelected ? 'text-white/80' : 'opacity-70'}`}>
+                              {taskCount} tâche{taskCount > 1 ? 's' : ''}
                             </span>
-                            <span className="font-semibold">{item.period}</span>
-                            <span className="text-sm text-gray-500">
-                              ({item.tasks.length} tâches)
+                            {status === 'current' && !isSelected && (
+                              <span className="absolute -top-1 -right-1 w-3 h-3 bg-orange-500 rounded-full animate-pulse" />
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
+                    <ScrollBar orientation="horizontal" />
+                  </ScrollArea>
+
+                  {/* Légende */}
+                  <div className="flex flex-wrap gap-4 mt-4 text-xs">
+                    <div className="flex items-center gap-1">
+                      <span className="w-3 h-3 rounded-full bg-red-400" />
+                      <span>Passé/Urgent</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <span className="w-3 h-3 rounded-full bg-orange-400" />
+                      <span>En cours</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <span className="w-3 h-3 rounded-full bg-green-400" />
+                      <span>À venir</span>
+                    </div>
+                  </div>
+
+                  {/* Tâches de la période sélectionnée */}
+                  <div className="mt-6 border-t pt-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="font-semibold text-lg">
+                        {TIMELINE_PERIODS[selectedPeriodIndex].label}
+                      </h3>
+                      <span className="text-sm text-muted-foreground">
+                        {completedTasksInPeriod}/{currentPeriodTasks.length} complétées
+                      </span>
+                    </div>
+                    
+                    {currentPeriodTasks.length === 0 ? (
+                      <p className="text-muted-foreground text-center py-8">
+                        Aucune tâche pour cette période
+                      </p>
+                    ) : (
+                      <div className="space-y-2">
+                        {currentPeriodTasks.map(({ task, taskId }) => (
+                          <div 
+                            key={taskId} 
+                            className="flex items-start gap-3 p-3 hover:bg-muted rounded-lg transition-colors"
+                          >
+                            <Checkbox
+                              checked={checkedTasks.has(taskId)}
+                              onCheckedChange={() => toggleTask(taskId)}
+                            />
+                            <span className={checkedTasks.has(taskId) ? 'line-through text-muted-foreground' : ''}>
+                              {task}
                             </span>
                           </div>
-                        </AccordionTrigger>
-                        <AccordionContent>
-                          <div className="space-y-2 pt-2">
-                            {item.tasks.map((task, taskIdx) => {
-                              const taskId = `timeline-${idx}-${taskIdx}`;
-                              return (
-                                <div key={taskIdx} className="flex items-start gap-3 p-2 hover:bg-gray-50 rounded">
-                                  <Checkbox
-                                    checked={checkedTasks.has(taskId)}
-                                    onCheckedChange={() => toggleTask(taskId)}
-                                  />
-                                  <span className={checkedTasks.has(taskId) ? 'line-through text-gray-400' : ''}>
-                                    {task}
-                                  </span>
-                                </div>
-                              );
-                            })}
-                          </div>
-                        </AccordionContent>
-                      </AccordionItem>
-                    ))}
-                  </Accordion>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </CardContent>
               </Card>
 
-              {/* Categories */}
-              <div className="grid md:grid-cols-2 gap-6 mb-8">
-                {retroplanning.categories.map((cat, idx) => (
-                  <Card key={idx}>
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <div 
-                          className="w-4 h-4 rounded-full" 
-                          style={{ backgroundColor: cat.color }}
-                        />
-                        {cat.name}
-                      </CardTitle>
-                      <CardDescription>
-                        À faire {cat.dueMonthsBefore} mois avant le mariage
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-2">
-                        {cat.tasks.map((task, taskIdx) => {
-                          const taskId = `cat-${idx}-${taskIdx}`;
-                          return (
-                            <div key={taskIdx} className="flex items-start gap-3 p-2 hover:bg-gray-50 rounded">
-                              <Checkbox
-                                checked={checkedTasks.has(taskId)}
-                                onCheckedChange={() => toggleTask(taskId)}
-                              />
-                              <span className={checkedTasks.has(taskId) ? 'line-through text-gray-400' : ''}>
-                                {task}
-                              </span>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-
-              {/* Milestones */}
+              {/* Étapes clés avec checklist téléchargeable */}
               <Card className="mb-8">
-                <CardHeader>
-                  <CardTitle>🎯 Étapes clés</CardTitle>
-                  <CardDescription>Les moments importants à ne pas manquer</CardDescription>
+                <CardHeader className="flex flex-row items-center justify-between flex-wrap gap-4">
+                  <div>
+                    <CardTitle>🎯 Étapes clés</CardTitle>
+                    <CardDescription>Les moments importants à ne pas manquer</CardDescription>
+                  </div>
+                  <Button variant="outline" onClick={handleDownloadChecklist}>
+                    <Download className="mr-2 h-4 w-4" />
+                    Télécharger PDF
+                  </Button>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-4">
-                    {retroplanning.milestones.map((milestone, idx) => (
-                      <div key={idx} className="flex items-start gap-4 p-4 border rounded-lg hover:bg-gray-50">
-                        <CheckCircle2 className="w-5 h-5 text-wedding-olive mt-1" />
-                        <div className="flex-1">
-                          <h4 className="font-semibold text-lg">{milestone.title}</h4>
-                          <p className="text-sm text-gray-600">{milestone.description}</p>
-                          <p className="text-xs text-gray-500 mt-1">
-                            {milestone.monthsBefore} mois avant le mariage
-                          </p>
+                  <div className="space-y-3">
+                    {retroplanning.milestones.map((milestone, idx) => {
+                      const milestoneId = `milestone-${idx}`;
+                      const isChecked = checkedMilestones.has(milestoneId);
+                      
+                      return (
+                        <div 
+                          key={idx} 
+                          className={`flex items-start gap-4 p-4 border rounded-lg transition-colors ${
+                            isChecked ? 'bg-muted/50 border-wedding-olive/30' : 'hover:bg-muted'
+                          }`}
+                        >
+                          <Checkbox
+                            checked={isChecked}
+                            onCheckedChange={() => toggleMilestone(milestoneId)}
+                            className="mt-1"
+                          />
+                          <div className="flex-1">
+                            <h4 className={`font-semibold ${isChecked ? 'line-through text-muted-foreground' : ''}`}>
+                              {milestone.title}
+                            </h4>
+                            <p className="text-sm text-muted-foreground mt-1">{milestone.description}</p>
+                            <p className="text-xs text-muted-foreground mt-2">
+                              📅 {milestone.monthsBefore} mois avant le mariage
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </CardContent>
               </Card>
