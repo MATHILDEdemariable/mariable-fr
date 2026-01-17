@@ -65,12 +65,48 @@ const WeddingRetroplanningEmbed = () => {
   const [checkedMilestones, setCheckedMilestones] = useState<Set<string>>(new Set());
   const [loadedRetroplanningId, setLoadedRetroplanningId] = useState<string | null>(null);
   const [selectedPeriodIndex, setSelectedPeriodIndex] = useState(0);
+  const [autoSaveStatus, setAutoSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
   const { toast } = useToast();
   const navigate = useNavigate();
   const { executeAction, showPremiumModal, closePremiumModal } = usePremiumAction({
     feature: "Rétroplanning Personnalisé",
     description: "Créez votre rétroplanning de mariage intelligent avec l'IA"
   });
+
+  // Sauvegarde automatique des tâches cochées
+  useEffect(() => {
+    if (!loadedRetroplanningId || !retroplanning) return;
+    
+    const saveProgress = async () => {
+      setAutoSaveStatus('saving');
+      const progressObj: Record<string, boolean> = {};
+      checkedTasks.forEach(taskId => progressObj[taskId] = true);
+      checkedMilestones.forEach(milestoneId => progressObj[milestoneId] = true);
+      
+      try {
+        const { error } = await supabase
+          .from('wedding_retroplanning')
+          .update({ progress: progressObj as any })
+          .eq('id', loadedRetroplanningId);
+        
+        if (error) {
+          console.error('Auto-save error:', error);
+          setAutoSaveStatus('idle');
+        } else {
+          setAutoSaveStatus('saved');
+          setTimeout(() => setAutoSaveStatus('idle'), 2000);
+        }
+      } catch (error) {
+        console.error('Auto-save error:', error);
+        setAutoSaveStatus('idle');
+      }
+    };
+    
+    // Debounce de 1 seconde pour éviter trop d'appels
+    const timeoutId = setTimeout(saveProgress, 1000);
+    return () => clearTimeout(timeoutId);
+    
+  }, [checkedTasks, checkedMilestones, loadedRetroplanningId, retroplanning]);
 
   // Calculer la période actuelle basée sur la date du mariage
   const getCurrentPeriodStatus = (periodIndex: number) => {
@@ -252,7 +288,7 @@ const WeddingRetroplanningEmbed = () => {
 
         if (error) throw error;
       } else {
-        const { error } = await supabase
+        const { data: insertedData, error } = await supabase
           .from('wedding_retroplanning')
           .insert([{
             user_id: user.id,
@@ -262,17 +298,22 @@ const WeddingRetroplanningEmbed = () => {
             categories: JSON.parse(JSON.stringify(retroplanning.categories)),
             milestones: JSON.parse(JSON.stringify(retroplanning.milestones)),
             progress: progressObj as any,
-          }]);
+          }])
+          .select('id')
+          .single();
 
         if (error) throw error;
+        
+        // Stocker l'ID pour les sauvegardes automatiques ultérieures
+        if (insertedData) {
+          setLoadedRetroplanningId(insertedData.id);
+        }
       }
 
       toast({
         title: "✅ Rétroplanning sauvegardé",
-        description: "Vous pouvez le retrouver dans votre dashboard"
+        description: "Vos modifications seront maintenant sauvegardées automatiquement"
       });
-
-      navigate('/dashboard/mon-mariage');
     } catch (error: any) {
       console.error('Erreur sauvegarde:', error);
       toast({
@@ -480,9 +521,22 @@ const WeddingRetroplanningEmbed = () => {
             </CardHeader>
             <CardContent>
               <Progress value={getProgress()} className="h-3" />
-              <p className="text-sm text-muted-foreground mt-2">
-                {checkedTasks.size} / {getTotalTasksCount()} tâches complétées
-              </p>
+              <div className="flex items-center justify-between mt-2">
+                <p className="text-sm text-muted-foreground">
+                  {checkedTasks.size} / {getTotalTasksCount()} tâches complétées
+                </p>
+                {autoSaveStatus === 'saving' && (
+                  <span className="text-xs text-muted-foreground flex items-center gap-1">
+                    <Loader2 className="h-3 w-3 animate-spin" />
+                    Sauvegarde...
+                  </span>
+                )}
+                {autoSaveStatus === 'saved' && (
+                  <span className="text-xs text-green-600 flex items-center gap-1">
+                    ✓ Sauvegardé
+                  </span>
+                )}
+              </div>
             </CardContent>
           </Card>
 
