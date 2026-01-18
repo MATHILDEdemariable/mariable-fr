@@ -206,7 +206,7 @@ const MonMariage = () => {
                   </div>
                   
                   <div className="flex gap-2 mt-4">
-                    <Button variant="outline" size="sm" className="flex-1" onClick={() => navigate(`/retroplanning?id=${retro.id}`)}>
+                    <Button variant="outline" size="sm" className="flex-1" onClick={() => navigate(`/dashboard/mon-mariage/retroplanning?id=${retro.id}`)}>
                       <Eye className="h-4 w-4 mr-1" />
                       Voir
                     </Button>

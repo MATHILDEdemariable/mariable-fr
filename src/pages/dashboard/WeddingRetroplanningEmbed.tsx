@@ -86,18 +86,22 @@ const WeddingRetroplanningEmbed = () => {
       try {
         const { error } = await supabase
           .from('wedding_retroplanning')
-          .update({ progress: progressObj as any })
+          .update({ 
+            progress: progressObj as any,
+            updated_at: new Date().toISOString()
+          })
           .eq('id', loadedRetroplanningId);
         
         if (error) {
-          console.error('Auto-save error:', error);
+          console.error('❌ Auto-save error:', error);
           setAutoSaveStatus('idle');
         } else {
+          console.log('✅ Auto-save success for id:', loadedRetroplanningId);
           setAutoSaveStatus('saved');
           setTimeout(() => setAutoSaveStatus('idle'), 2000);
         }
       } catch (error) {
-        console.error('Auto-save error:', error);
+        console.error('❌ Auto-save error:', error);
         setAutoSaveStatus('idle');
       }
     };
@@ -164,19 +168,44 @@ const WeddingRetroplanningEmbed = () => {
       const params = new URLSearchParams(window.location.search);
       const retroId = params.get('id');
       
-      if (!retroId) return;
-
       try {
-        const { data, error } = await supabase
-          .from('wedding_retroplanning')
-          .select('*')
-          .eq('id', retroId)
-          .single();
+        let data = null;
 
-        if (error) throw error;
+        if (retroId) {
+          // Charger par ID si présent dans l'URL
+          console.log('🔄 Loading retroplanning by id:', retroId);
+          const { data: retroData, error } = await supabase
+            .from('wedding_retroplanning')
+            .select('*')
+            .eq('id', retroId)
+            .single();
+
+          if (error) throw error;
+          data = retroData;
+        } else {
+          // Sinon, charger le dernier rétroplanning de l'utilisateur
+          const { data: { user } } = await supabase.auth.getUser();
+          if (!user) {
+            console.log('🔄 No user logged in, skipping load');
+            return;
+          }
+
+          console.log('🔄 Loading latest retroplanning for user:', user.id);
+          const { data: retroData, error } = await supabase
+            .from('wedding_retroplanning')
+            .select('*')
+            .eq('user_id', user.id)
+            .order('updated_at', { ascending: false })
+            .limit(1)
+            .maybeSingle();
+
+          if (error) throw error;
+          data = retroData;
+        }
 
         if (data) {
-          setLoadedRetroplanningId(retroId);
+          console.log('✅ Retroplanning loaded:', data.id);
+          setLoadedRetroplanningId(data.id);
           setWeddingDate(new Date(data.wedding_date));
           setRetroplanning({
             timeline: data.timeline_data as unknown as TimelineItem[],
@@ -200,13 +229,18 @@ const WeddingRetroplanningEmbed = () => {
             setCheckedMilestones(milestonesSet);
           }
 
+          // Mettre à jour l'URL avec l'ID si pas déjà présent
+          if (!retroId) {
+            navigate(`${window.location.pathname}?id=${data.id}`, { replace: true });
+          }
+
           toast({
             title: "Rétroplanning chargé",
             description: "Votre rétroplanning a été chargé avec succès.",
           });
         }
       } catch (error: any) {
-        console.error('Erreur lors du chargement du rétroplanning:', error);
+        console.error('❌ Erreur lors du chargement du rétroplanning:', error);
         toast({
           title: "Erreur",
           description: "Impossible de charger le rétroplanning.",
@@ -276,6 +310,7 @@ const WeddingRetroplanningEmbed = () => {
       });
 
       if (loadedRetroplanningId) {
+        console.log('🔄 Updating retroplanning:', loadedRetroplanningId);
         const { error } = await supabase
           .from('wedding_retroplanning')
           .update({
@@ -283,11 +318,14 @@ const WeddingRetroplanningEmbed = () => {
             categories: JSON.parse(JSON.stringify(retroplanning.categories)),
             milestones: JSON.parse(JSON.stringify(retroplanning.milestones)),
             progress: progressObj as any,
+            updated_at: new Date().toISOString(),
           })
           .eq('id', loadedRetroplanningId);
 
         if (error) throw error;
+        console.log('✅ Retroplanning updated');
       } else {
+        console.log('🔄 Inserting new retroplanning');
         const { data: insertedData, error } = await supabase
           .from('wedding_retroplanning')
           .insert([{
@@ -304,9 +342,11 @@ const WeddingRetroplanningEmbed = () => {
 
         if (error) throw error;
         
-        // Stocker l'ID pour les sauvegardes automatiques ultérieures
+        // Stocker l'ID et mettre à jour l'URL
         if (insertedData) {
+          console.log('✅ Retroplanning inserted with id:', insertedData.id);
           setLoadedRetroplanningId(insertedData.id);
+          navigate(`${window.location.pathname}?id=${insertedData.id}`, { replace: true });
         }
       }
 
