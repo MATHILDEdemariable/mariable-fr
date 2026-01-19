@@ -58,6 +58,20 @@ const faqItems = [
 ];
 
 const FAQ = () => {
+  // Schema FAQPage pour le GEO (Generative Engine Optimization)
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": faqItems.map(item => ({
+      "@type": "Question",
+      "name": item.question,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": item.answer
+      }
+    }))
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Helmet>
@@ -65,6 +79,11 @@ const FAQ = () => {
         <meta name="description" content="Trouvez les réponses à toutes vos questions sur Mariable : fonctionnalités, tableau de bord, Mon Jour M, sélection de prestataires et tarifs." />
         <meta name="keywords" content="faq mariable, questions mariage, aide organisation mariage, tableau de bord mariage, jour j coordination" />
         <link rel="canonical" href="https://www.mariable.fr/contact/faq" />
+        
+        {/* Schema FAQPage pour les moteurs de recherche et les IA */}
+        <script type="application/ld+json">
+          {JSON.stringify(faqSchema)}
+        </script>
       </Helmet>
 
       <PremiumHeader />
