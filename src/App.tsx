@@ -20,6 +20,15 @@ import MariageProvence from "./pages/MariageProvence";
 import MariageParis from "./pages/MariageParis";
 import MariageAuvergneRhoneAlpes from "./pages/MariageAuvergneRhoneAlpes";
 import MariageNouvelleAquitaine from "./pages/MariageNouvelleAquitaine";
+import MariageBretagne from "./pages/MariageBretagne";
+import MariageNormandie from "./pages/MariageNormandie";
+import MariageOccitanie from "./pages/MariageOccitanie";
+import MariagePaysLoire from "./pages/MariagePaysLoire";
+import MariageCentreValLoire from "./pages/MariageCentreValLoire";
+import MariageHautsFrance from "./pages/MariageHautsFrance";
+import MariageBourgogne from "./pages/MariageBourgogne";
+import MariageGrandEst from "./pages/MariageGrandEst";
+import MariageCorse from "./pages/MariageCorse";
 import ChecklistMariage from "./pages/ChecklistMariage";
 import CoordinationJourJ from "./pages/CoordinationJourJ";
 
@@ -181,6 +190,15 @@ function App() {
           <Route path="/mariage-paris" element={<MariageParis />} />
           <Route path="/mariage-auvergne-rhone-alpes" element={<MariageAuvergneRhoneAlpes />} />
           <Route path="/mariage-nouvelle-aquitaine" element={<MariageNouvelleAquitaine />} />
+          <Route path="/mariage-bretagne" element={<MariageBretagne />} />
+          <Route path="/mariage-normandie" element={<MariageNormandie />} />
+          <Route path="/mariage-occitanie" element={<MariageOccitanie />} />
+          <Route path="/mariage-pays-de-la-loire" element={<MariagePaysLoire />} />
+          <Route path="/mariage-centre-val-de-loire" element={<MariageCentreValLoire />} />
+          <Route path="/mariage-hauts-de-france" element={<MariageHautsFrance />} />
+          <Route path="/mariage-bourgogne-franche-comte" element={<MariageBourgogne />} />
+          <Route path="/mariage-grand-est" element={<MariageGrandEst />} />
+          <Route path="/mariage-corse" element={<MariageCorse />} />
                   
                    {/* Routes publiques pour les plannings */}
                   <Route path="/planning-public/:coordinationId" element={<PlanningPublic />} />
