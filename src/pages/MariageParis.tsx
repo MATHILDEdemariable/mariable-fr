@@ -21,22 +21,10 @@ const MariageParis = () => {
       }
     },
     "serviceArea": [
-      {
-        "@type": "City",
-        "name": "Paris"
-      },
-      {
-        "@type": "City", 
-        "name": "Versailles"
-      },
-      {
-        "@type": "City",
-        "name": "Fontainebleau"
-      },
-      {
-        "@type": "City",
-        "name": "Chantilly"
-      }
+      { "@type": "City", "name": "Paris" },
+      { "@type": "City", "name": "Versailles" },
+      { "@type": "City", "name": "Fontainebleau" },
+      { "@type": "City", "name": "Chantilly" }
     ]
   };
 
@@ -72,7 +60,7 @@ const MariageParis = () => {
                   asChild
                   className="bg-wedding-olive hover:bg-wedding-olive/90"
                 >
-                  <Link to="/selection?region=ile-de-france">
+                  <Link to="/professionnelsmariable?region=ile-de-france">
                     <MapPin className="mr-2 h-4 w-4" />
                     Voir les prestataires
                   </Link>
@@ -146,7 +134,7 @@ const MariageParis = () => {
                     témoins de l'histoire de France.
                   </p>
                   <Link 
-                    to="/selection?region=ile-de-france&category=Lieu de réception"
+                    to="/professionnelsmariable?region=ile-de-france&category=Lieu de réception"
                     className="text-wedding-olive hover:underline font-medium"
                   >
                     Découvrir les châteaux →
@@ -161,7 +149,7 @@ const MariageParis = () => {
                     uniques pour un mariage d'exception.
                   </p>
                   <Link 
-                    to="/selection/ile-de-france?category=lieu&categorieLieu=atypique"
+                    to="/professionnelsmariable?region=ile-de-france&category=Lieu de réception"
                     className="text-wedding-olive hover:underline font-medium"
                   >
                     Voir les lieux atypiques →
@@ -176,7 +164,7 @@ const MariageParis = () => {
                     de la capitale mondiale de la gastronomie.
                   </p>
                   <Link 
-                    to="/selection/ile-de-france?category=lieu&categorieLieu=restaurant"
+                    to="/professionnelsmariable?region=ile-de-france&category=Lieu de réception"
                     className="text-wedding-olive hover:underline font-medium"
                   >
                     Explorer les restaurants →
@@ -203,7 +191,7 @@ const MariageParis = () => {
                     Haute gastronomie française
                   </p>
                   <Link 
-                    to="/selection?region=ile-de-france&category=Traiteur"
+                    to="/professionnelsmariable?region=ile-de-france&category=Traiteur"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
                     Découvrir les traiteurs
@@ -217,7 +205,7 @@ const MariageParis = () => {
                     Spécialistes des mariages parisiens
                   </p>
                   <Link 
-                    to="/selection?region=ile-de-france&category=Photographe"
+                    to="/professionnelsmariable?region=ile-de-france&category=Photographe"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
                     Voir les photographes
@@ -231,7 +219,7 @@ const MariageParis = () => {
                     Organisation complète de votre mariage
                   </p>
                   <Link 
-                    to="/selection?region=ile-de-france&category=Coordination"
+                    to="/professionnelsmariable?region=ile-de-france&category=Coordination"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
                     Voir les coordinateurs
@@ -245,7 +233,7 @@ const MariageParis = () => {
                     Tous nos autres prestataires en Île-de-France
                   </p>
                   <Link 
-                    to="/selection?region=ile-de-france"
+                    to="/professionnelsmariable?region=ile-de-france"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
                     Voir tous les prestataires
@@ -272,7 +260,7 @@ const MariageParis = () => {
                   size="lg"
                   className="bg-wedding-olive hover:bg-wedding-olive/90"
                 >
-                  <Link to="/selection">
+                  <Link to="/professionnelsmariable">
                     Commencer ma recherche
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>

@@ -60,7 +60,7 @@ const MariageHautsFrance = () => {
               </p>
               <div className="flex flex-wrap justify-center gap-4">
                 <Button asChild className="bg-wedding-olive hover:bg-wedding-olive/90">
-                  <Link to="/selection?region=hauts-de-france">
+                  <Link to="/professionnelsmariable?region=hauts-de-france">
                     <MapPin className="mr-2 h-4 w-4" />
                     Voir les prestataires
                   </Link>
@@ -133,7 +133,7 @@ const MariageHautsFrance = () => {
                     entre forêts et jardins à la française.
                   </p>
                   <Link 
-                    to="/selection?region=hauts-de-france&category=Lieu de réception"
+                    to="/professionnelsmariable?region=hauts-de-france&category=Lieu de réception"
                     className="text-wedding-olive hover:underline font-medium"
                   >
                     Découvrir les châteaux →
@@ -148,7 +148,7 @@ const MariageHautsFrance = () => {
                     avec ses briques rouges et ses pignons à redents.
                   </p>
                   <Link 
-                    to="/selection/hauts-de-france?category=lieu"
+                    to="/professionnelsmariable?region=hauts-de-france&category=Lieu de réception"
                     className="text-wedding-olive hover:underline font-medium"
                   >
                     Voir les domaines →
@@ -163,7 +163,7 @@ const MariageHautsFrance = () => {
                     pour un mariage authentique.
                   </p>
                   <Link 
-                    to="/selection/hauts-de-france?category=lieu"
+                    to="/professionnelsmariable?region=hauts-de-france&category=Lieu de réception"
                     className="text-wedding-olive hover:underline font-medium"
                   >
                     Explorer les lieux →
@@ -190,7 +190,7 @@ const MariageHautsFrance = () => {
                     Gastronomie du Nord généreuse
                   </p>
                   <Link 
-                    to="/selection?region=hauts-de-france&category=Traiteur"
+                    to="/professionnelsmariable?region=hauts-de-france&category=Traiteur"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
                     Découvrir les traiteurs
@@ -204,7 +204,7 @@ const MariageHautsFrance = () => {
                     Spécialistes des mariages nordistes
                   </p>
                   <Link 
-                    to="/selection?region=hauts-de-france&category=Photographe"
+                    to="/professionnelsmariable?region=hauts-de-france&category=Photographe"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
                     Voir les photographes
@@ -218,7 +218,7 @@ const MariageHautsFrance = () => {
                     Châteaux et domaines d'exception
                   </p>
                   <Link 
-                    to="/selection?region=hauts-de-france&category=Lieu de réception"
+                    to="/professionnelsmariable?region=hauts-de-france&category=Lieu de réception"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
                     Voir les lieux
@@ -232,7 +232,7 @@ const MariageHautsFrance = () => {
                     Tous nos prestataires
                   </p>
                   <Link 
-                    to="/selection?region=hauts-de-france"
+                    to="/professionnelsmariable?region=hauts-de-france"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
                     Voir tous les prestataires
@@ -255,7 +255,7 @@ const MariageHautsFrance = () => {
               </p>
               <div className="flex flex-wrap justify-center gap-4">
                 <Button asChild size="lg" className="bg-wedding-olive hover:bg-wedding-olive/90">
-                  <Link to="/selection?region=hauts-de-france">
+                  <Link to="/professionnelsmariable?region=hauts-de-france">
                     Commencer ma recherche
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>

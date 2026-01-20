@@ -60,7 +60,7 @@ const MariageBretagne = () => {
               </p>
               <div className="flex flex-wrap justify-center gap-4">
                 <Button asChild className="bg-wedding-olive hover:bg-wedding-olive/90">
-                  <Link to="/selection?region=bretagne">
+                  <Link to="/professionnelsmariable?region=bretagne">
                     <MapPin className="mr-2 h-4 w-4" />
                     Voir les prestataires
                   </Link>
@@ -133,7 +133,7 @@ const MariageBretagne = () => {
                     témoins de l'histoire bretonne.
                   </p>
                   <Link 
-                    to="/selection?region=bretagne&category=Lieu de réception"
+                    to="/professionnelsmariable?region=bretagne&category=Lieu de réception"
                     className="text-wedding-olive hover:underline font-medium"
                   >
                     Découvrir les manoirs →
@@ -148,7 +148,7 @@ const MariageBretagne = () => {
                     dans des propriétés d'exception.
                   </p>
                   <Link 
-                    to="/selection/bretagne?category=lieu"
+                    to="/professionnelsmariable?region=bretagne&category=Lieu de réception"
                     className="text-wedding-olive hover:underline font-medium"
                   >
                     Voir les domaines →
@@ -163,7 +163,7 @@ const MariageBretagne = () => {
                     chargées d'histoire de Bretagne.
                   </p>
                   <Link 
-                    to="/selection/bretagne?category=lieu"
+                    to="/professionnelsmariable?region=bretagne&category=Lieu de réception"
                     className="text-wedding-olive hover:underline font-medium"
                   >
                     Explorer les lieux sacrés →
@@ -190,7 +190,7 @@ const MariageBretagne = () => {
                     Fruits de mer et gastronomie bretonne
                   </p>
                   <Link 
-                    to="/selection?region=bretagne&category=Traiteur"
+                    to="/professionnelsmariable?region=bretagne&category=Traiteur"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
                     Découvrir les traiteurs
@@ -204,7 +204,7 @@ const MariageBretagne = () => {
                     Spécialistes des mariages bretons
                   </p>
                   <Link 
-                    to="/selection?region=bretagne&category=Photographe"
+                    to="/professionnelsmariable?region=bretagne&category=Photographe"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
                     Voir les photographes
@@ -218,7 +218,7 @@ const MariageBretagne = () => {
                     Fest-noz et musique traditionnelle
                   </p>
                   <Link 
-                    to="/selection?region=bretagne&category=Animation"
+                    to="/professionnelsmariable?region=bretagne&category=Animation"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
                     Voir les animations
@@ -232,7 +232,7 @@ const MariageBretagne = () => {
                     Tous nos prestataires bretons
                   </p>
                   <Link 
-                    to="/selection?region=bretagne"
+                    to="/professionnelsmariable?region=bretagne"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
                     Voir tous les prestataires
@@ -255,7 +255,7 @@ const MariageBretagne = () => {
               </p>
               <div className="flex flex-wrap justify-center gap-4">
                 <Button asChild size="lg" className="bg-wedding-olive hover:bg-wedding-olive/90">
-                  <Link to="/selection?region=bretagne">
+                  <Link to="/professionnelsmariable?region=bretagne">
                     Commencer ma recherche
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>

@@ -60,7 +60,7 @@ const MariageCentreValLoire = () => {
               </p>
               <div className="flex flex-wrap justify-center gap-4">
                 <Button asChild className="bg-wedding-olive hover:bg-wedding-olive/90">
-                  <Link to="/selection?region=centre-val-de-loire">
+                  <Link to="/professionnelsmariable?region=centre-val-de-loire">
                     <MapPin className="mr-2 h-4 w-4" />
                     Voir les prestataires
                   </Link>
@@ -133,7 +133,7 @@ const MariageCentreValLoire = () => {
                     la Renaissance française.
                   </p>
                   <Link 
-                    to="/selection?region=centre-val-de-loire&category=Lieu de réception"
+                    to="/professionnelsmariable?region=centre-val-de-loire&category=Lieu de réception"
                     className="text-wedding-olive hover:underline font-medium"
                   >
                     Découvrir les châteaux →
@@ -148,7 +148,7 @@ const MariageCentreValLoire = () => {
                     au cœur de la campagne tourangelle.
                   </p>
                   <Link 
-                    to="/selection/centre-val-de-loire?category=lieu"
+                    to="/professionnelsmariable?region=centre-val-de-loire&category=Lieu de réception"
                     className="text-wedding-olive hover:underline font-medium"
                   >
                     Voir les domaines →
@@ -163,7 +163,7 @@ const MariageCentreValLoire = () => {
                     pour un mariage hors du commun.
                   </p>
                   <Link 
-                    to="/selection/centre-val-de-loire?category=lieu"
+                    to="/professionnelsmariable?region=centre-val-de-loire&category=Lieu de réception"
                     className="text-wedding-olive hover:underline font-medium"
                   >
                     Explorer les lieux →
@@ -190,7 +190,7 @@ const MariageCentreValLoire = () => {
                     Gastronomie tourangelle
                   </p>
                   <Link 
-                    to="/selection?region=centre-val-de-loire&category=Traiteur"
+                    to="/professionnelsmariable?region=centre-val-de-loire&category=Traiteur"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
                     Découvrir les traiteurs
@@ -204,7 +204,7 @@ const MariageCentreValLoire = () => {
                     Experts des châteaux de la Loire
                   </p>
                   <Link 
-                    to="/selection?region=centre-val-de-loire&category=Photographe"
+                    to="/professionnelsmariable?region=centre-val-de-loire&category=Photographe"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
                     Voir les photographes
@@ -218,7 +218,7 @@ const MariageCentreValLoire = () => {
                     Châteaux et domaines royaux
                   </p>
                   <Link 
-                    to="/selection?region=centre-val-de-loire&category=Lieu de réception"
+                    to="/professionnelsmariable?region=centre-val-de-loire&category=Lieu de réception"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
                     Voir les lieux
@@ -232,7 +232,7 @@ const MariageCentreValLoire = () => {
                     Tous nos prestataires
                   </p>
                   <Link 
-                    to="/selection?region=centre-val-de-loire"
+                    to="/professionnelsmariable?region=centre-val-de-loire"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
                     Voir tous les prestataires
@@ -255,7 +255,7 @@ const MariageCentreValLoire = () => {
               </p>
               <div className="flex flex-wrap justify-center gap-4">
                 <Button asChild size="lg" className="bg-wedding-olive hover:bg-wedding-olive/90">
-                  <Link to="/selection?region=centre-val-de-loire">
+                  <Link to="/professionnelsmariable?region=centre-val-de-loire">
                     Commencer ma recherche
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
