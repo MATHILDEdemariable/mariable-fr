@@ -60,7 +60,7 @@ const MariageOccitanie = () => {
               </p>
               <div className="flex flex-wrap justify-center gap-4">
                 <Button asChild className="bg-wedding-olive hover:bg-wedding-olive/90">
-                  <Link to="/selection?region=occitanie">
+                  <Link to="/professionnelsmariable?region=occitanie">
                     <MapPin className="mr-2 h-4 w-4" />
                     Voir les prestataires
                   </Link>
@@ -133,7 +133,7 @@ const MariageOccitanie = () => {
                     entre mystère et majesté.
                   </p>
                   <Link 
-                    to="/selection?region=occitanie&category=Lieu de réception"
+                    to="/professionnelsmariable?region=occitanie&category=Lieu de réception"
                     className="text-wedding-olive hover:underline font-medium"
                   >
                     Découvrir les châteaux →
@@ -148,7 +148,7 @@ const MariageOccitanie = () => {
                     dans des domaines producteurs renommés.
                   </p>
                   <Link 
-                    to="/selection/occitanie?category=lieu"
+                    to="/professionnelsmariable?region=occitanie&category=Lieu de réception"
                     className="text-wedding-olive hover:underline font-medium"
                   >
                     Voir les domaines →
@@ -163,7 +163,7 @@ const MariageOccitanie = () => {
                     avec oliviers et cyprès en toile de fond.
                   </p>
                   <Link 
-                    to="/selection/occitanie?category=lieu"
+                    to="/professionnelsmariable?region=occitanie&category=Lieu de réception"
                     className="text-wedding-olive hover:underline font-medium"
                   >
                     Explorer les mas →
@@ -190,7 +190,7 @@ const MariageOccitanie = () => {
                     Gastronomie du Sud-Ouest
                   </p>
                   <Link 
-                    to="/selection?region=occitanie&category=Traiteur"
+                    to="/professionnelsmariable?region=occitanie&category=Traiteur"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
                     Découvrir les traiteurs
@@ -204,7 +204,7 @@ const MariageOccitanie = () => {
                     Spécialistes lumière méditerranéenne
                   </p>
                   <Link 
-                    to="/selection?region=occitanie&category=Photographe"
+                    to="/professionnelsmariable?region=occitanie&category=Photographe"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
                     Voir les photographes
@@ -218,7 +218,7 @@ const MariageOccitanie = () => {
                     Domaines et châteaux d'exception
                   </p>
                   <Link 
-                    to="/selection?region=occitanie&category=Lieu de réception"
+                    to="/professionnelsmariable?region=occitanie&category=Lieu de réception"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
                     Voir les lieux
@@ -232,7 +232,7 @@ const MariageOccitanie = () => {
                     Tous nos prestataires occitans
                   </p>
                   <Link 
-                    to="/selection?region=occitanie"
+                    to="/professionnelsmariable?region=occitanie"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
                     Voir tous les prestataires
@@ -255,7 +255,7 @@ const MariageOccitanie = () => {
               </p>
               <div className="flex flex-wrap justify-center gap-4">
                 <Button asChild size="lg" className="bg-wedding-olive hover:bg-wedding-olive/90">
-                  <Link to="/selection?region=occitanie">
+                  <Link to="/professionnelsmariable?region=occitanie">
                     Commencer ma recherche
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>

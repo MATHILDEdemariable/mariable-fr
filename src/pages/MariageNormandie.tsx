@@ -60,7 +60,7 @@ const MariageNormandie = () => {
               </p>
               <div className="flex flex-wrap justify-center gap-4">
                 <Button asChild className="bg-wedding-olive hover:bg-wedding-olive/90">
-                  <Link to="/selection?region=normandie">
+                  <Link to="/professionnelsmariable?region=normandie">
                     <MapPin className="mr-2 h-4 w-4" />
                     Voir les prestataires
                   </Link>
@@ -133,7 +133,7 @@ const MariageNormandie = () => {
                     entre Renaissance et style Louis XIII.
                   </p>
                   <Link 
-                    to="/selection?region=normandie&category=Lieu de réception"
+                    to="/professionnelsmariable?region=normandie&category=Lieu de réception"
                     className="text-wedding-olive hover:underline font-medium"
                   >
                     Découvrir les châteaux →
@@ -148,7 +148,7 @@ const MariageNormandie = () => {
                     manoirs traditionnels et leurs jardins.
                   </p>
                   <Link 
-                    to="/selection/normandie?category=lieu"
+                    to="/professionnelsmariable?region=normandie&category=Lieu de réception"
                     className="text-wedding-olive hover:underline font-medium"
                   >
                     Voir les manoirs →
@@ -163,7 +163,7 @@ const MariageNormandie = () => {
                     face à la Manche dans des lieux d'exception.
                   </p>
                   <Link 
-                    to="/selection/normandie?category=lieu"
+                    to="/professionnelsmariable?region=normandie&category=Lieu de réception"
                     className="text-wedding-olive hover:underline font-medium"
                   >
                     Explorer les domaines →
@@ -190,7 +190,7 @@ const MariageNormandie = () => {
                     Gastronomie normande raffinée
                   </p>
                   <Link 
-                    to="/selection?region=normandie&category=Traiteur"
+                    to="/professionnelsmariable?region=normandie&category=Traiteur"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
                     Découvrir les traiteurs
@@ -204,7 +204,7 @@ const MariageNormandie = () => {
                     Spécialistes des mariages normands
                   </p>
                   <Link 
-                    to="/selection?region=normandie&category=Photographe"
+                    to="/professionnelsmariable?region=normandie&category=Photographe"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
                     Voir les photographes
@@ -218,7 +218,7 @@ const MariageNormandie = () => {
                     Producteurs locaux pour votre vin d'honneur
                   </p>
                   <Link 
-                    to="/selection?region=normandie"
+                    to="/professionnelsmariable?region=normandie"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
                     Voir les producteurs
@@ -232,7 +232,7 @@ const MariageNormandie = () => {
                     Tous nos prestataires normands
                   </p>
                   <Link 
-                    to="/selection?region=normandie"
+                    to="/professionnelsmariable?region=normandie"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
                     Voir tous les prestataires
@@ -255,7 +255,7 @@ const MariageNormandie = () => {
               </p>
               <div className="flex flex-wrap justify-center gap-4">
                 <Button asChild size="lg" className="bg-wedding-olive hover:bg-wedding-olive/90">
-                  <Link to="/selection?region=normandie">
+                  <Link to="/professionnelsmariable?region=normandie">
                     Commencer ma recherche
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>

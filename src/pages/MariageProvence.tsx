@@ -21,26 +21,11 @@ const MariageProvence = () => {
       }
     },
     "serviceArea": [
-      {
-        "@type": "City",
-        "name": "Aix-en-Provence"
-      },
-      {
-        "@type": "City", 
-        "name": "Marseille"
-      },
-      {
-        "@type": "City",
-        "name": "Avignon"
-      },
-      {
-        "@type": "City",
-        "name": "Nice"
-      },
-      {
-        "@type": "City",
-        "name": "Cannes"
-      }
+      { "@type": "City", "name": "Aix-en-Provence" },
+      { "@type": "City", "name": "Marseille" },
+      { "@type": "City", "name": "Avignon" },
+      { "@type": "City", "name": "Nice" },
+      { "@type": "City", "name": "Cannes" }
     ],
     "hasOfferCatalog": {
       "@type": "OfferCatalog",
@@ -98,7 +83,7 @@ const MariageProvence = () => {
                   asChild
                   className="bg-wedding-olive hover:bg-wedding-olive/90"
                 >
-                  <Link to="/selection?region=provence-alpes-cote-d-azur">
+                  <Link to="/professionnelsmariable?region=provence-alpes-cote-d-azur">
                     <MapPin className="mr-2 h-4 w-4" />
                     Voir les prestataires
                   </Link>
@@ -172,7 +157,7 @@ const MariageProvence = () => {
                     sur la campagne provençale.
                   </p>
                   <Link 
-                    to="/selection?region=provence-alpes-cote-d-azur&category=Lieu de réception"
+                    to="/professionnelsmariable?region=provence-alpes-cote-d-azur&category=Lieu de réception"
                     className="text-wedding-olive hover:underline font-medium"
                   >
                     Découvrir les châteaux →
@@ -187,7 +172,7 @@ const MariageProvence = () => {
                     et caves séculaires.
                   </p>
                   <Link 
-                    to="/selection?region=provence-alpes-cote-d-azur&category=Lieu de réception"
+                    to="/professionnelsmariable?region=provence-alpes-cote-d-azur&category=Lieu de réception"
                     className="text-wedding-olive hover:underline font-medium"
                   >
                     Voir les domaines →
@@ -202,7 +187,7 @@ const MariageProvence = () => {
                     nichés dans les oliviers et la garrigue.
                   </p>
                   <Link 
-                    to="/selection?region=provence-alpes-cote-d-azur&category=Lieu de réception"
+                    to="/professionnelsmariable?region=provence-alpes-cote-d-azur&category=Lieu de réception"
                     className="text-wedding-olive hover:underline font-medium"
                   >
                     Explorer les mas →
@@ -229,7 +214,7 @@ const MariageProvence = () => {
                     Cuisine méditerranéenne raffinée
                   </p>
                   <Link 
-                    to="/selection?region=provence-alpes-cote-d-azur&category=Traiteur"
+                    to="/professionnelsmariable?region=provence-alpes-cote-d-azur&category=Traiteur"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
                     Découvrir les traiteurs
@@ -243,7 +228,7 @@ const MariageProvence = () => {
                     Spécialistes des mariages en extérieur
                   </p>
                   <Link 
-                    to="/selection?region=provence-alpes-cote-d-azur&category=Photographe"
+                    to="/professionnelsmariable?region=provence-alpes-cote-d-azur&category=Photographe"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
                     Voir les photographes
@@ -257,7 +242,7 @@ const MariageProvence = () => {
                     Organisation professionnelle de votre mariage
                   </p>
                   <Link 
-                    to="/selection?region=provence-alpes-cote-d-azur&category=Coordination"
+                    to="/professionnelsmariable?region=provence-alpes-cote-d-azur&category=Coordination"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
                     Voir les coordinateurs
@@ -271,7 +256,7 @@ const MariageProvence = () => {
                     Tous nos autres prestataires en Provence
                   </p>
                   <Link 
-                    to="/selection?region=provence-alpes-cote-d-azur"
+                    to="/professionnelsmariable?region=provence-alpes-cote-d-azur"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
                     Voir tous les prestataires
@@ -298,7 +283,7 @@ const MariageProvence = () => {
                   size="lg"
                   className="bg-wedding-olive hover:bg-wedding-olive/90"
                 >
-                  <Link to="/selection">
+                  <Link to="/professionnelsmariable">
                     Commencer ma recherche
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>

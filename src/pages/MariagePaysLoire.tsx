@@ -60,7 +60,7 @@ const MariagePaysLoire = () => {
               </p>
               <div className="flex flex-wrap justify-center gap-4">
                 <Button asChild className="bg-wedding-olive hover:bg-wedding-olive/90">
-                  <Link to="/selection?region=pays-de-la-loire">
+                  <Link to="/professionnelsmariable?region=pays-de-la-loire">
                     <MapPin className="mr-2 h-4 w-4" />
                     Voir les prestataires
                   </Link>
@@ -133,7 +133,7 @@ const MariagePaysLoire = () => {
                     joyaux du patrimoine français.
                   </p>
                   <Link 
-                    to="/selection?region=pays-de-la-loire&category=Lieu de réception"
+                    to="/professionnelsmariable?region=pays-de-la-loire&category=Lieu de réception"
                     className="text-wedding-olive hover:underline font-medium"
                   >
                     Découvrir les châteaux →
@@ -148,7 +148,7 @@ const MariagePaysLoire = () => {
                     avec dégustation et vue sur les coteaux.
                   </p>
                   <Link 
-                    to="/selection/pays-de-la-loire?category=lieu"
+                    to="/professionnelsmariable?region=pays-de-la-loire&category=Lieu de réception"
                     className="text-wedding-olive hover:underline font-medium"
                   >
                     Voir les domaines →
@@ -163,7 +163,7 @@ const MariagePaysLoire = () => {
                     la sérénité des anciennes abbayes.
                   </p>
                   <Link 
-                    to="/selection/pays-de-la-loire?category=lieu"
+                    to="/professionnelsmariable?region=pays-de-la-loire&category=Lieu de réception"
                     className="text-wedding-olive hover:underline font-medium"
                   >
                     Explorer les manoirs →
@@ -190,7 +190,7 @@ const MariagePaysLoire = () => {
                     Gastronomie ligérienne raffinée
                   </p>
                   <Link 
-                    to="/selection?region=pays-de-la-loire&category=Traiteur"
+                    to="/professionnelsmariable?region=pays-de-la-loire&category=Traiteur"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
                     Découvrir les traiteurs
@@ -204,7 +204,7 @@ const MariagePaysLoire = () => {
                     Spécialistes des châteaux de la Loire
                   </p>
                   <Link 
-                    to="/selection?region=pays-de-la-loire&category=Photographe"
+                    to="/professionnelsmariable?region=pays-de-la-loire&category=Photographe"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
                     Voir les photographes
@@ -218,7 +218,7 @@ const MariagePaysLoire = () => {
                     Châteaux et domaines d'exception
                   </p>
                   <Link 
-                    to="/selection?region=pays-de-la-loire&category=Lieu de réception"
+                    to="/professionnelsmariable?region=pays-de-la-loire&category=Lieu de réception"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
                     Voir les lieux
@@ -232,7 +232,7 @@ const MariagePaysLoire = () => {
                     Tous nos prestataires ligériens
                   </p>
                   <Link 
-                    to="/selection?region=pays-de-la-loire"
+                    to="/professionnelsmariable?region=pays-de-la-loire"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
                     Voir tous les prestataires
@@ -255,7 +255,7 @@ const MariagePaysLoire = () => {
               </p>
               <div className="flex flex-wrap justify-center gap-4">
                 <Button asChild size="lg" className="bg-wedding-olive hover:bg-wedding-olive/90">
-                  <Link to="/selection?region=pays-de-la-loire">
+                  <Link to="/professionnelsmariable?region=pays-de-la-loire">
                     Commencer ma recherche
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>

@@ -21,22 +21,10 @@ const MariageAuvergneRhoneAlpes = () => {
       }
     },
     "serviceArea": [
-      {
-        "@type": "City",
-        "name": "Lyon"
-      },
-      {
-        "@type": "City", 
-        "name": "Annecy"
-      },
-      {
-        "@type": "City",
-        "name": "Chamonix"
-      },
-      {
-        "@type": "City",
-        "name": "Grenoble"
-      }
+      { "@type": "City", "name": "Lyon" },
+      { "@type": "City", "name": "Annecy" },
+      { "@type": "City", "name": "Chamonix" },
+      { "@type": "City", "name": "Grenoble" }
     ]
   };
 
@@ -72,7 +60,7 @@ const MariageAuvergneRhoneAlpes = () => {
                   asChild
                   className="bg-wedding-olive hover:bg-wedding-olive/90"
                 >
-                  <Link to="/selection?region=auvergne-rhone-alpes">
+                  <Link to="/professionnelsmariable?region=auvergne-rhone-alpes">
                     <Mountain className="mr-2 h-4 w-4" />
                     Voir les prestataires
                   </Link>
@@ -146,7 +134,7 @@ const MariageAuvergneRhoneAlpes = () => {
                     sur les plus beaux sommets des Alpes.
                   </p>
                   <Link 
-                    to="/selection?region=auvergne-rhone-alpes&category=Lieu de réception"
+                    to="/professionnelsmariable?region=auvergne-rhone-alpes&category=Lieu de réception"
                     className="text-wedding-olive hover:underline font-medium"
                   >
                     Découvrir les chalets →
@@ -161,7 +149,7 @@ const MariageAuvergneRhoneAlpes = () => {
                     nichés au cœur des vignobles du Beaujolais.
                   </p>
                   <Link 
-                    to="/selection?region=auvergne-rhone-alpes&category=Lieu de réception"
+                    to="/professionnelsmariable?region=auvergne-rhone-alpes&category=Lieu de réception"
                     className="text-wedding-olive hover:underline font-medium"
                   >
                     Voir les châteaux →
@@ -176,7 +164,7 @@ const MariageAuvergneRhoneAlpes = () => {
                     au cœur des appellations prestigieuses.
                   </p>
                   <Link 
-                    to="/selection?region=auvergne-rhone-alpes&category=Lieu de réception"
+                    to="/professionnelsmariable?region=auvergne-rhone-alpes&category=Lieu de réception"
                     className="text-wedding-olive hover:underline font-medium"
                   >
                     Explorer les domaines →
@@ -203,7 +191,7 @@ const MariageAuvergneRhoneAlpes = () => {
                     Cuisine gastronomique lyonnaise
                   </p>
                   <Link 
-                    to="/selection?region=auvergne-rhone-alpes&category=Traiteur"
+                    to="/professionnelsmariable?region=auvergne-rhone-alpes&category=Traiteur"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
                     Découvrir les traiteurs
@@ -217,7 +205,7 @@ const MariageAuvergneRhoneAlpes = () => {
                     Spécialistes des mariages montagnards
                   </p>
                   <Link 
-                    to="/selection?region=auvergne-rhone-alpes&category=Photographe"
+                    to="/professionnelsmariable?region=auvergne-rhone-alpes&category=Photographe"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
                     Voir les photographes
@@ -231,7 +219,7 @@ const MariageAuvergneRhoneAlpes = () => {
                     Organisation professionnelle en montagne
                   </p>
                   <Link 
-                    to="/selection?region=auvergne-rhone-alpes&category=Coordination"
+                    to="/professionnelsmariable?region=auvergne-rhone-alpes&category=Coordination"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
                     Voir les coordinateurs
@@ -245,7 +233,7 @@ const MariageAuvergneRhoneAlpes = () => {
                     Tous nos autres prestataires en Auvergne-Rhône-Alpes
                   </p>
                   <Link 
-                    to="/selection?region=auvergne-rhone-alpes"
+                    to="/professionnelsmariable?region=auvergne-rhone-alpes"
                     className="text-wedding-olive hover:underline text-sm font-medium"
                   >
                     Voir tous les prestataires
@@ -272,7 +260,7 @@ const MariageAuvergneRhoneAlpes = () => {
                   size="lg"
                   className="bg-wedding-olive hover:bg-wedding-olive/90"
                 >
-                  <Link to="/selection">
+                  <Link to="/professionnelsmariable">
                     Commencer ma recherche
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
