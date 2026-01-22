@@ -1,8 +1,8 @@
-
 import React from 'react';
 import { PlanningProvider } from '../wedding-day/context/PlanningContext';
 import { useMonJourMCoordination } from '@/hooks/useMonJourMCoordination';
 import MonJourMPlanningContent from './MonJourMPlanningContent';
+import { PlanningGuidePopup } from './PlanningGuidePopup';
 
 const MonJourMPlanningMVP: React.FC = () => {
   const { 
@@ -40,6 +40,7 @@ const MonJourMPlanningMVP: React.FC = () => {
   return (
     <PlanningProvider user={null}>
       <MonJourMPlanningContent coordinationId={coordination.id} />
+      <PlanningGuidePopup />
     </PlanningProvider>
   );
 };
