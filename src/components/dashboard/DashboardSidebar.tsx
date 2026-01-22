@@ -86,25 +86,17 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
     path: '/dashboard/coordinateurs'
   }];
 
-  // Menu déroulant Besoin d'aide ?
-  const helpItems = [{
-    label: 'Des questions ?',
-    icon: <MessageCircleQuestion className="h-4 w-4" />,
-    path: '/dashboard/assistant'
-  }, {
-    label: 'CHATGPT Mariage',
+  // Menu déroulant Bonus
+  const bonusItems = [{
+    label: 'ChatGPT Mariage',
     icon: <MessageSquare className="h-4 w-4" />,
     path: 'https://chatgpt.com/g/g-684071f00100819199b7b11839db48d4-assistant-mariage-by-mariable',
     external: true
   }, {
-    label: 'Club des mariés',
-    icon: <Heart className="h-4 w-4" />,
-    path: '/jeunes-maries',
-    external: false
-  }, {
-    label: 'Mode d\'emploi',
+    label: 'Assistant Virtuel',
     icon: <MessageCircleQuestion className="h-4 w-4" />,
-    path: '/dashboard/help'
+    path: '/dashboard/assistant',
+    external: false
   }];
   const handleLogout = async () => {
     try {
@@ -182,9 +174,9 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
     return isActive('/dashboard/qr-code');
   };
 
-  // Vérifier si le menu Aide doit être actif
-  const isHelpActive = () => {
-    return helpItems.some(item => !item.external && isActive(item.path));
+  // Vérifier si le menu Bonus doit être actif
+  const isBonusActive = () => {
+    return bonusItems.some(item => !item.external && isActive(item.path));
   };
   return <div className="h-full min-h-screen bg-white border-r border-gray-200" style={{
     paddingTop: 'var(--header-h)'
@@ -414,16 +406,16 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
           {isReaderMode && <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>}
         </Link>
 
-        {/* Menu déroulant Besoin d'aide ? */}
+        {/* Menu déroulant Bonus */}
         <DropdownMenu>
-          <DropdownMenuTrigger className={cn("flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors w-full justify-start", isHelpActive() ? 'bg-wedding-olive text-white shadow-sm' : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive', isReaderMode ? 'pointer-events-none opacity-70' : '')} disabled={isReaderMode}>
-            <MessageCircleQuestion className="h-4 w-4" />
-            <span className="ml-2 sm:ml-3 leading-tight">Besoin d'aide ?</span>
+          <DropdownMenuTrigger className={cn("flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors w-full justify-start", isBonusActive() ? 'bg-wedding-olive text-white shadow-sm' : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive', isReaderMode ? 'pointer-events-none opacity-70' : '')} disabled={isReaderMode}>
+            <Gift className="h-4 w-4" />
+            <span className="ml-2 sm:ml-3 leading-tight">Bonus</span>
             <ChevronDown className="ml-auto h-4 w-4" />
             {isReaderMode && <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>}
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56 bg-white shadow-lg border border-gray-200" align="end">
-            {helpItems.map(subItem => <DropdownMenuItem key={subItem.path} asChild>
+            {bonusItems.map(subItem => <DropdownMenuItem key={subItem.path} asChild>
                 {subItem.external ? <a href={isReaderMode ? '#' : subItem.path} target={isReaderMode ? undefined : "_blank"} rel={isReaderMode ? undefined : "noopener noreferrer"} onClick={e => {
               if (isReaderMode) {
                 e.preventDefault();

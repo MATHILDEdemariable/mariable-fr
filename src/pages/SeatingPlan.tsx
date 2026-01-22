@@ -268,12 +268,12 @@ const SeatingPlan = () => {
 
         {/* View toggle tabs */}
         <Tabs value={activeView} onValueChange={(v) => setActiveView(v as 'list' | 'visual')} className="mb-6">
-          <TabsList className="bg-premium-sage/10">
-            <TabsTrigger value="list" className="data-[state=active]:bg-premium-sage data-[state=active]:text-white">
+          <TabsList className="bg-gray-100 border border-gray-300">
+            <TabsTrigger value="list" className="data-[state=active]:bg-black data-[state=active]:text-white font-medium">
               <List className="h-4 w-4 mr-2" />
               Liste
             </TabsTrigger>
-            <TabsTrigger value="visual" className="data-[state=active]:bg-premium-sage data-[state=active]:text-white">
+            <TabsTrigger value="visual" className="data-[state=active]:bg-black data-[state=active]:text-white font-medium">
               <LayoutGrid className="h-4 w-4 mr-2" />
               Vue Visuelle
             </TabsTrigger>
