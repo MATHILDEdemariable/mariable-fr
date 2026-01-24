@@ -140,7 +140,8 @@ const CGV = () => {
                 <li>déclarer avec exactitude toute réservation issue de la Plateforme,</li>
                 <li>proposer un Avantage Exclusif Mariable aux couples issus de la Plateforme,</li>
                 <li>autoriser la Plateforme à utiliser ses photos, logos et contenus à des fins de référencement et de communication,</li>
-                <li>mettre en place, sur son site internet un lien actif vers la page officielle www.mariable.fr, en tant que gage de partenariat et de référencement.</li>
+                <li>mettre en place, sur son site internet un lien actif vers la page officielle www.mariable.fr, en tant que gage de partenariat et de référencement,</li>
+                <li><strong>autoriser la Plateforme à prélever et utiliser des photos publiques de ses réseaux sociaux (notamment Instagram) pour sublimer la fiche du Prestataire si les photos fournies ne respectent pas la ligne éditoriale de Mariable.</strong></li>
               </ul>
             </section>
 
@@ -197,6 +198,25 @@ const CGV = () => {
               </p>
               <p className="text-muted-foreground">
                 Mariable se réserve la possibilité de mettre à jour cette annexe en fonction de l'évolution de ses outils ou services, sous réserve d'en informer le Prestataire par tout moyen écrit (email suffisant).
+              </p>
+            </section>
+
+            <section className="bg-premium-warm p-6 rounded-lg">
+              <h2 className="text-2xl font-serif mb-4 text-wedding-black">Article 12 – Évolution des conditions tarifaires</h2>
+              <p className="text-muted-foreground mb-4">
+                Le modèle de référencement gratuit est applicable <strong>jusqu'au 30 juin 2025</strong>.
+              </p>
+              <p className="text-muted-foreground mb-4">
+                À compter de cette date, Mariable se réserve le droit de faire évoluer ses conditions 
+                tarifaires, notamment en introduisant des frais d'adhésion et de maintenance de fiche.
+              </p>
+              <p className="text-muted-foreground mb-4">
+                Tout changement sera notifié au Prestataire avec un préavis de 30 jours. Le Prestataire 
+                sera libre d'accepter les nouvelles conditions ou de résilier le contrat sans pénalité.
+              </p>
+              <p className="text-muted-foreground">
+                Le renouvellement de l'adhésion aux nouvelles conditions vaudra acceptation du nouveau 
+                tarif proposé.
               </p>
             </section>
           </div>

@@ -323,6 +323,7 @@ const AdminProfessionalRegistrations = () => {
                       <TableHead>Catégorie</TableHead>
                       <TableHead>Contact</TableHead>
                       <TableHead>Localisation</TableHead>
+                      <TableHead>Avantage proposé</TableHead>
                       <TableHead>Prix</TableHead>
                       <TableHead>Date d'inscription</TableHead>
                       <TableHead>Statut</TableHead>
@@ -381,6 +382,17 @@ const AdminProfessionalRegistrations = () => {
                                 <span className="text-xs text-gray-500">{(prof.regions as any).join(', ')}</span>
                               )}
                             </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="max-w-[180px]">
+                            {(prof as any).avantage_propose ? (
+                              <span className="text-sm line-clamp-2" title={(prof as any).avantage_propose}>
+                                {(prof as any).avantage_propose}
+                              </span>
+                            ) : (
+                              <span className="text-muted-foreground text-sm">-</span>
+                            )}
                           </div>
                         </TableCell>
                         <TableCell>

@@ -1891,6 +1891,7 @@ export type Database = {
           accord_cgv: boolean | null
           accord_referencement: boolean | null
           assurance_nom: string | null
+          avantage_propose: string | null
           capacite_invites: number | null
           categorie: Database["public"]["Enums"]["prestataire_categorie"] | null
           categorie_lieu: string | null
@@ -1950,6 +1951,7 @@ export type Database = {
           accord_cgv?: boolean | null
           accord_referencement?: boolean | null
           assurance_nom?: string | null
+          avantage_propose?: string | null
           capacite_invites?: number | null
           categorie?:
             | Database["public"]["Enums"]["prestataire_categorie"]
@@ -2011,6 +2013,7 @@ export type Database = {
           accord_cgv?: boolean | null
           accord_referencement?: boolean | null
           assurance_nom?: string | null
+          avantage_propose?: string | null
           capacite_invites?: number | null
           categorie?:
             | Database["public"]["Enums"]["prestataire_categorie"]
