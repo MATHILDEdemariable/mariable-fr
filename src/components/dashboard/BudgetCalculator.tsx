@@ -159,38 +159,38 @@ const BudgetCalculator: React.FC = () => {
   // Rendu du choix de mode initial
   const renderModeSelection = () => {
     return (
-      <div className="space-y-6 p-4">
+      <div className="space-y-6 p-3 sm:p-4 max-w-full overflow-hidden">
         <div className="text-center">
-          <h2 className="text-xl md:text-2xl font-serif mb-4">Choisissez votre méthode de calcul</h2>
-          <p className="text-sm md:text-base text-muted-foreground px-2">Sélectionnez la méthode qui vous convient le mieux</p>
+          <h2 className="text-lg sm:text-xl md:text-2xl font-serif mb-4">Choisissez votre méthode de calcul</h2>
+          <p className="text-xs sm:text-sm md:text-base text-muted-foreground px-2">Sélectionnez la méthode qui vous convient le mieux</p>
         </div>
         
-        <div className="space-y-4">
+        <div className="space-y-3 sm:space-y-4">
           <Button
             variant="outline"
-            className="w-full h-auto p-4 md:p-6 flex flex-col items-start text-left hover:bg-wedding-cream/20"
+            className="w-full h-auto p-3 sm:p-4 md:p-6 flex flex-col items-start text-left hover:bg-wedding-cream/20 overflow-hidden"
             onClick={() => handleModeSelection('known')}
           >
-            <div className="flex items-center gap-3 mb-2 w-full">
-              <Euro className="h-5 w-5 md:h-6 md:w-6 text-wedding-olive flex-shrink-0" />
-              <span className="text-base md:text-lg font-medium">Je connais mon budget total</span>
+            <div className="flex items-center gap-2 sm:gap-3 mb-2 w-full">
+              <Euro className="h-5 w-5 text-wedding-olive flex-shrink-0" />
+              <span className="text-sm sm:text-base md:text-lg font-medium break-words">Je connais mon budget</span>
             </div>
-            <p className="text-xs md:text-sm text-muted-foreground text-left">
-              Saisissez votre budget et nous le répartirons automatiquement selon les standards du secteur
+            <p className="text-xs md:text-sm text-muted-foreground text-left break-words">
+              Saisissez votre budget et nous le répartirons automatiquement
             </p>
           </Button>
           
           <Button
             variant="outline"
-            className="w-full h-auto p-4 md:p-6 flex flex-col items-start text-left hover:bg-wedding-cream/20"
+            className="w-full h-auto p-3 sm:p-4 md:p-6 flex flex-col items-start text-left hover:bg-wedding-cream/20 overflow-hidden"
             onClick={() => handleModeSelection('unknown')}
           >
-            <div className="flex items-center gap-3 mb-2 w-full">
-              <Calculator className="h-5 w-5 md:h-6 md:w-6 text-wedding-olive flex-shrink-0" />
-              <span className="text-base md:text-lg font-medium">Je ne connais pas mon budget</span>
+            <div className="flex items-center gap-2 sm:gap-3 mb-2 w-full">
+              <Calculator className="h-5 w-5 text-wedding-olive flex-shrink-0" />
+              <span className="text-sm sm:text-base md:text-lg font-medium break-words">Je ne connais pas mon budget</span>
             </div>
-            <p className="text-xs md:text-sm text-muted-foreground text-left">
-              Répondez à quelques questions et nous estimerons votre budget selon vos critères
+            <p className="text-xs md:text-sm text-muted-foreground text-left break-words">
+              Répondez à quelques questions pour estimer votre budget
             </p>
           </Button>
         </div>

@@ -86,13 +86,6 @@ const Professionnels = () => {
                   </Button>
                 </div>
 
-                {/* Note sur les photos Instagram */}
-                <div className="p-4 bg-premium-warm rounded-lg border border-premium-light max-w-2xl mx-auto">
-                  <p className="text-sm text-muted-foreground text-center">
-                    <strong>Note :</strong> Mariable se réserve le droit d'utiliser des photos de votre site Instagram 
-                    pour sublimer votre fiche si les photos fournies ne respectent pas notre ligne éditoriale.
-                  </p>
-                </div>
               </div>
             </section>
 
@@ -199,6 +192,14 @@ const Professionnels = () => {
               <div className="border rounded-lg p-6 bg-white shadow-sm max-w-2xl mx-auto">
                 <h2 className="text-2xl font-serif mb-4 text-center">Formulaire d'inscription</h2>
                 <ProfessionalRegistrationForm />
+              </div>
+              
+              {/* Note sur les photos Instagram - EN BAS DU FORMULAIRE */}
+              <div className="p-4 bg-premium-warm rounded-lg border border-premium-light max-w-2xl mx-auto mt-4">
+                <p className="text-sm text-muted-foreground text-center">
+                  <strong>Note :</strong> Mariable se réserve le droit d'utiliser des photos de votre site Instagram 
+                  pour sublimer votre fiche si les photos fournies ne respectent pas notre ligne éditoriale.
+                </p>
               </div>
             </section>
 
