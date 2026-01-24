@@ -1,12 +1,19 @@
 import PremiumHeader from '@/components/home/PremiumHeader';
 import Footer from '@/components/Footer';
 import { Link } from 'react-router-dom';
-import { CheckCircle, Search, Shield, FileText, Gift, Camera, Building2, UtensilsCrossed, Music, Flower2, Sparkles } from 'lucide-react';
+import { CheckCircle, Search, Shield, FileText, Gift, Camera, Building2, UtensilsCrossed, Music, Flower2, Sparkles, ArrowDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ProfessionalRegistrationForm from '@/components/forms/ProfessionalRegistrationForm';
 import SEO from '@/components/SEO';
 
 const Professionnels = () => {
+  const scrollToExamples = () => {
+    const element = document.getElementById('exemples-avantages');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return <div className="min-h-screen flex flex-col bg-white">
       <PremiumHeader />
       
@@ -19,7 +26,7 @@ const Professionnels = () => {
             Rejoignez notre sélection de prestataires d'excellence
           </h1>
           <p className="text-lg md:text-xl text-muted-foreground mb-6 max-w-3xl mx-auto">
-            Référencement gratuit • Commission fixe de 200€ par couple signé
+            Référencement gratuit jusqu'en juin 2025* • Commission fixe de 200€ par couple signé
           </p>
         </section>
 
@@ -57,20 +64,33 @@ const Professionnels = () => {
                 <div className="grid md:grid-cols-3 gap-6">
                   <div className="text-center p-6 border rounded-xl bg-white border-wedding-olive/20">
                     <div className="text-4xl font-bold text-wedding-olive mb-2">0€</div>
-                    <h3 className="font-medium text-wedding-black mb-1">Référencement gratuit</h3>
+                    <h3 className="font-medium text-wedding-black mb-1">Référencement gratuit*</h3>
                     <p className="text-sm text-muted-foreground">Aucun frais d'entrée ni abonnement</p>
+                    <p className="text-xs text-wedding-olive mt-2 font-medium">Gratuit jusqu'en juin 2025</p>
                   </div>
                   <div className="text-center p-6 border rounded-xl bg-white border-wedding-olive/20">
                     <div className="text-4xl font-bold text-wedding-olive mb-2">200€</div>
                     <h3 className="font-medium text-wedding-black mb-1">Commission fixe</h3>
                     <p className="text-sm text-muted-foreground">Par couple signé venant de Mariable</p>
                   </div>
-                  <div className="text-center p-6 border rounded-xl bg-white border-wedding-olive/20">
-                    <div className="text-4xl font-bold text-wedding-olive mb-2">∞</div>
-                    <h3 className="font-medium text-wedding-black mb-1">Sans limite</h3>
-                    <p className="text-sm text-muted-foreground">Pas de plafond de leads</p>
+                  <div 
+                    className="text-center p-6 border rounded-xl bg-white border-wedding-olive/20 cursor-pointer hover:border-wedding-olive transition-colors group"
+                    onClick={scrollToExamples}
+                  >
+                    <div className="flex justify-center mb-2">
+                      <Gift className="h-10 w-10 text-wedding-olive" />
+                    </div>
+                    <h3 className="font-medium text-wedding-black mb-1">Avantage Exclusif</h3>
+                    <p className="text-sm text-muted-foreground">Proposez un avantage aux couples Mariable</p>
+                    <p className="text-xs text-wedding-olive mt-2 font-medium flex items-center justify-center gap-1 group-hover:underline">
+                      Voir des exemples <ArrowDown className="h-3 w-3" />
+                    </p>
                   </div>
                 </div>
+
+                <p className="text-xs text-muted-foreground mt-4 text-center">
+                  * Les frais d'entrée pourraient évoluer après cette période. Voir les conditions générales pour plus de détails.
+                </p>
               </div>
             </section>
 
@@ -145,26 +165,25 @@ const Professionnels = () => {
                     </Link>
                   </Button>
                 </div>
+
+                {/* Note sur les photos Instagram */}
+                <div className="p-4 bg-premium-warm rounded-lg border border-premium-light">
+                  <p className="text-sm text-muted-foreground">
+                    <strong>Note :</strong> Mariable se réserve le droit d'utiliser des photos de votre site Instagram 
+                    pour sublimer votre fiche si les photos fournies ne respectent pas notre ligne éditoriale.
+                  </p>
+                </div>
               </div>
 
               {/* Colonne Formulaire */}
               <div className="border rounded-lg p-6 bg-white shadow-sm">
                 <h2 className="text-2xl font-serif mb-4">Formulaire d'inscription</h2>
-                <div className="mb-4 p-4 bg-premium-warm rounded-lg border border-premium-light">
-                  <p className="text-sm text-muted-foreground">
-                    En soumettant ce formulaire, vous acceptez nos{' '}
-                    <Link to="/cgv" className="text-premium-sage hover:underline font-medium" target="_blank" rel="noopener noreferrer">
-                      Conditions Générales d'Utilisation
-                    </Link>
-                    {' '}et vous engagez à proposer un Avantage Exclusif Mariable.
-                  </p>
-                </div>
                 <ProfessionalRegistrationForm />
               </div>
             </div>
 
             {/* Section Exemples d'avantages (après le formulaire) */}
-            <section className="mb-12">
+            <section className="mb-12" id="exemples-avantages">
               <div className="border-2 border-wedding-olive/20 rounded-xl overflow-hidden">
                 <div className="bg-wedding-olive text-white p-6">
                   <h2 className="text-2xl md:text-3xl font-serif flex items-center gap-3">
@@ -313,29 +332,25 @@ const Professionnels = () => {
                         <h4 className="font-medium">Option intelligente</h4>
                       </div>
                       <p className="text-sm text-muted-foreground">
-                        Avantage conditionné à un panier minimum (ex : prestations &gt; 3 000€ ou 5 000€)
+                        Proposez un avantage à <strong>forte valeur perçue</strong> mais à <strong>faible coût réel</strong> pour vous. 
+                        L'objectif : créer un effet "wow" pour le couple sans impacter vos marges.
                       </p>
                     </div>
-                  </div>
-
-                  <div className="mt-6 p-4 bg-gray-50 rounded-lg border-l-4 border-wedding-olive">
-                    <p className="text-sm text-wedding-black italic">
-                      "Mariable ne se positionne pas comme une plateforme de remise, mais comme un <strong>facilitateur de décision</strong>. L'avantage exclusif sert de déclencheur, la commission fixe sert de cadre clair et équitable."
-                    </p>
                   </div>
                 </div>
               </div>
             </section>
 
             {/* Contact alternatif */}
-            <div className="text-center text-muted-foreground">
-              <p>
-                Vous préférez nous contacter directement ? Envoyez un email à{' '}
-                <a href="mailto:mathilde@mariable.fr" className="text-wedding-olive hover:underline font-medium">
-                  mathilde@mariable.fr
+            <section className="text-center py-8">
+              <p className="text-muted-foreground">
+                Des questions ? Contactez-nous à{" "}
+                <a href="mailto:contact@mariable.fr" className="text-wedding-olive hover:underline">
+                  contact@mariable.fr
                 </a>
               </p>
-            </div>
+            </section>
+
           </div>
         </div>
       </main>
@@ -343,4 +358,5 @@ const Professionnels = () => {
       <Footer />
     </div>;
 };
+
 export default Professionnels;

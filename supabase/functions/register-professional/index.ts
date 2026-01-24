@@ -51,6 +51,7 @@ serve(async (req) => {
         assurance_nom: body.assurance_nom,
         prix_minimum: body.prix_minimum,
         description: body.description || null,
+        avantage_propose: body.avantage_propose || null,
         accord_referencement: body.accord_referencement,
         accord_cgv: body.accord_cgv,
         visible: false,

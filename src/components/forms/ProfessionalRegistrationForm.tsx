@@ -4,10 +4,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Database } from "@/integrations/supabase/types";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2 } from "lucide-react";
+import { Loader2, X } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 import { v4 as uuidv4 } from "uuid";
-import { Link } from "react-router-dom";
 
 import {
   Form,
@@ -29,7 +28,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { generateUniqueSlug } from '@/utils/generateUniqueSlug';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 type PrestataireCategorie =
   Database["public"]["Enums"]["prestataire_categorie"];
@@ -82,6 +88,9 @@ const formSchema = z.object({
     .string()
     .min(2, { message: "Le nom de l'assurance est requis" }),
   description: z.string().optional(),
+  avantage_propose: z
+    .string()
+    .min(10, { message: "Veuillez décrire l'avantage proposé (minimum 10 caractères)" }),
   prix_minimum: z.coerce.number().nonnegative(),
   accord_referencement: z.boolean().refine((val) => val === true, {
     message: "Vous devez accepter le référencement",
@@ -130,7 +139,10 @@ const ProfessionalRegistrationForm = () => {
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [coverPhoto, setCoverPhoto] = useState<File | null>(null);
   const [coverPhotoPreview, setCoverPhotoPreview] = useState<string | null>(null);
+  const [additionalPhoto, setAdditionalPhoto] = useState<File | null>(null);
+  const [additionalPhotoPreview, setAdditionalPhotoPreview] = useState<string | null>(null);
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
+  const [cgvModalOpen, setCgvModalOpen] = useState(false);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -144,6 +156,7 @@ const ProfessionalRegistrationForm = () => {
       siret: "",
       assurance_nom: "",
       description: "",
+      avantage_propose: "",
       prix_minimum: 0,
       accord_referencement: false,
       accord_cgv: false,
@@ -154,7 +167,6 @@ const ProfessionalRegistrationForm = () => {
     const files = e.target.files;
     if (files && files.length > 0) {
       const file = files[0];
-      // Vérifier la taille (max 5Mo)
       if (file.size > 5 * 1024 * 1024) {
         toast({
           title: "Fichier trop volumineux",
@@ -168,39 +180,64 @@ const ProfessionalRegistrationForm = () => {
     }
   };
 
-  const uploadCoverPhoto = async (
-    prestataireId: string
-  ): Promise<string | null> => {
-    if (!coverPhoto) return null;
+  const handleAdditionalPhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      const file = files[0];
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+          title: "Fichier trop volumineux",
+          description: "La taille maximale est de 5 Mo.",
+          variant: "destructive",
+        });
+        return;
+      }
+      setAdditionalPhoto(file);
+      setAdditionalPhotoPreview(URL.createObjectURL(file));
+    }
+  };
 
+  const removeCoverPhoto = () => {
+    setCoverPhoto(null);
+    setCoverPhotoPreview(null);
+  };
+
+  const removeAdditionalPhoto = () => {
+    setAdditionalPhoto(null);
+    setAdditionalPhotoPreview(null);
+  };
+
+  const uploadPhoto = async (
+    file: File,
+    prestataireId: string,
+    isPrincipal: boolean
+  ): Promise<string | null> => {
     setIsUploadingPhoto(true);
 
     try {
-      const fileExt = coverPhoto.name.split(".").pop();
+      const fileExt = file.name.split(".").pop();
       const fileName = `${uuidv4()}.${fileExt}`;
       const filePath = `${prestataireId}/${fileName}`;
 
       const { error: uploadError } = await supabase.storage
         .from("vendor-photos")
-        .upload(filePath, coverPhoto);
+        .upload(filePath, file);
 
       if (uploadError) {
         throw uploadError;
       }
 
-      // Obtenir l'URL publique du fichier
       const {
         data: { publicUrl },
       } = supabase.storage.from("vendor-photos").getPublicUrl(filePath);
 
-      // Enregistrer comme photo principale
       await supabase.from("prestataires_photos_preprod").insert({
         prestataire_id: prestataireId,
         url: publicUrl,
-        filename: coverPhoto.name,
-        type: coverPhoto.type,
-        size: coverPhoto.size,
-        principale: true,
+        filename: file.name,
+        type: file.type,
+        size: file.size,
+        principale: isPrincipal,
       });
 
       return publicUrl;
@@ -224,7 +261,6 @@ const ProfessionalRegistrationForm = () => {
     try {
       console.log('🚀 Envoi des données au serveur...');
       
-      // Appeler l'Edge Function au lieu d'insérer directement
       const { data, error } = await supabase.functions.invoke('register-professional', {
         body: {
           nom: values.nom,
@@ -237,6 +273,7 @@ const ProfessionalRegistrationForm = () => {
           assurance_nom: values.assurance_nom,
           prix_minimum: values.prix_minimum,
           description: values.description || null,
+          avantage_propose: values.avantage_propose,
           accord_referencement: values.accord_referencement,
           accord_cgv: values.accord_cgv,
         }
@@ -249,9 +286,13 @@ const ProfessionalRegistrationForm = () => {
 
       console.log('✅ Prestataire créé:', data);
 
-      // Si une photo de couverture a été sélectionnée, la télécharger
+      // Upload photos
       if (coverPhoto && data?.data?.id) {
-        await uploadCoverPhoto(data.data.id);
+        await uploadPhoto(coverPhoto, data.data.id, true);
+      }
+
+      if (additionalPhoto && data?.data?.id) {
+        await uploadPhoto(additionalPhoto, data.data.id, false);
       }
 
       toast({
@@ -264,6 +305,8 @@ const ProfessionalRegistrationForm = () => {
       form.reset();
       setCoverPhoto(null);
       setCoverPhotoPreview(null);
+      setAdditionalPhoto(null);
+      setAdditionalPhotoPreview(null);
     } catch (error) {
       console.error("❌ Erreur lors de l'inscription:", error);
       toast({
@@ -459,67 +502,132 @@ const ProfessionalRegistrationForm = () => {
               </FormItem>
             )}
           />
-
-          <div className="md:col-span-2">
-            <FormItem>
-              <FormLabel>
-                Photo de couverture *
-              </FormLabel>
-              <FormDescription className="mb-2">
-                {form.watch('categorie') === 'Lieu de réception' 
-                  ? 'Photo de votre lieu (façade, salle principale...)' 
-                  : 'Photo représentative de vos services'}
-              </FormDescription>
-              <div className="flex items-center gap-4 mt-2">
-                <Input
-                  type="file"
-                  id="cover-photo"
-                  className="max-w-md"
-                  accept="image/jpeg,image/png,image/webp"
-                  onChange={handleCoverPhotoChange}
-                />
-                {isUploadingPhoto && <Loader2 className="animate-spin h-4 w-4" />}
-                {coverPhotoPreview && (
-                  <img 
-                    src={coverPhotoPreview} 
-                    alt="Aperçu" 
-                    className="w-20 h-20 object-cover rounded border"
-                  />
-                )}
-              </div>
-              <FormDescription>
-                Formats acceptés : JPG, PNG, WebP (max 5 Mo)
-              </FormDescription>
-            </FormItem>
-          </div>
-
-          <div className="md:col-span-2">
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Description de vos services</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="Décrivez vos services, votre expérience..."
-                      className="min-h-[100px]"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
         </div>
 
-        <div className="space-y-4">
+        <FormField
+          control={form.control}
+          name="description"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Description de votre activité</FormLabel>
+              <FormControl>
+                <Textarea
+                  placeholder="Décrivez brièvement votre activité, vos spécialités..."
+                  className="min-h-[100px]"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="avantage_propose"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Avantage proposé aux couples Mariable *</FormLabel>
+              <FormControl>
+                <Textarea
+                  placeholder="Ex: Album photo offert, heure supplémentaire incluse, brunch du lendemain, séance engagement gratuite..."
+                  className="min-h-[100px]"
+                  {...field}
+                />
+              </FormControl>
+              <FormDescription>
+                Décrivez l'avantage exclusif que vous offrez aux couples du Club Mariable
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* Photo de couverture */}
+        <div>
+          <FormLabel>Photo de couverture</FormLabel>
+          <FormDescription className="mb-2">
+            {form.watch('categorie') === 'Lieu de réception' 
+              ? 'Photo de votre lieu (façade, salle principale...)' 
+              : 'Photo représentative de vos services'}
+          </FormDescription>
+          <div className="flex items-center gap-4 mt-2">
+            {coverPhotoPreview ? (
+              <div className="relative">
+                <img 
+                  src={coverPhotoPreview} 
+                  alt="Aperçu" 
+                  className="w-24 h-24 object-cover rounded border"
+                />
+                <Button
+                  type="button"
+                  variant="destructive"
+                  size="icon"
+                  className="absolute -top-2 -right-2 h-6 w-6"
+                  onClick={removeCoverPhoto}
+                >
+                  <X className="h-3 w-3" />
+                </Button>
+              </div>
+            ) : (
+              <Input
+                type="file"
+                className="max-w-md"
+                accept="image/jpeg,image/png,image/webp"
+                onChange={handleCoverPhotoChange}
+              />
+            )}
+            {isUploadingPhoto && <Loader2 className="animate-spin h-4 w-4" />}
+          </div>
+          <FormDescription className="mt-1">
+            Formats acceptés : JPG, PNG, WebP (max 5 Mo)
+          </FormDescription>
+        </div>
+
+        {/* Photo complémentaire */}
+        <div>
+          <FormLabel>Photo complémentaire (optionnel)</FormLabel>
+          <FormDescription className="mb-2">
+            Une deuxième photo pour enrichir votre fiche
+          </FormDescription>
+          <div className="flex items-center gap-4 mt-2">
+            {additionalPhotoPreview ? (
+              <div className="relative">
+                <img 
+                  src={additionalPhotoPreview} 
+                  alt="Aperçu" 
+                  className="w-24 h-24 object-cover rounded border"
+                />
+                <Button
+                  type="button"
+                  variant="destructive"
+                  size="icon"
+                  className="absolute -top-2 -right-2 h-6 w-6"
+                  onClick={removeAdditionalPhoto}
+                >
+                  <X className="h-3 w-3" />
+                </Button>
+              </div>
+            ) : (
+              <Input
+                type="file"
+                className="max-w-md"
+                accept="image/jpeg,image/png,image/webp"
+                onChange={handleAdditionalPhotoChange}
+              />
+            )}
+          </div>
+          <FormDescription className="mt-1">
+            Formats acceptés : JPG, PNG, WebP (max 5 Mo)
+          </FormDescription>
+        </div>
+
+        <div className="space-y-4 pt-4 border-t">
           <FormField
             control={form.control}
             name="accord_referencement"
             render={({ field }) => (
-              <FormItem className="flex flex-row items-start space-x-3 space-y-0 py-2">
+              <FormItem className="flex flex-row items-start space-x-3 space-y-0">
                 <FormControl>
                   <Checkbox
                     checked={field.value}
@@ -527,9 +635,10 @@ const ProfessionalRegistrationForm = () => {
                   />
                 </FormControl>
                 <div className="space-y-1 leading-none">
-                  <FormLabel>
-                    J'accepte d'être référencé sur la plateforme Mariable *
+                  <FormLabel className="text-sm font-normal">
+                    J'accepte d'être référencé sur Mariable et de payer la commission de 200€ HT par couple signé *
                   </FormLabel>
+                  <FormMessage />
                 </div>
               </FormItem>
             )}
@@ -539,7 +648,7 @@ const ProfessionalRegistrationForm = () => {
             control={form.control}
             name="accord_cgv"
             render={({ field }) => (
-              <FormItem className="flex flex-row items-start space-x-3 space-y-0 py-2">
+              <FormItem className="flex flex-row items-start space-x-3 space-y-0">
                 <FormControl>
                   <Checkbox
                     checked={field.value}
@@ -547,16 +656,31 @@ const ProfessionalRegistrationForm = () => {
                   />
                 </FormControl>
                 <div className="space-y-1 leading-none">
-                  <FormLabel>
+                  <FormLabel className="text-sm font-normal">
                     J'accepte les{" "}
-                    <Link
-                      to="/cgv"
-                      className="text-wedding-olive hover:underline"
-                    >
-                      conditions générales
-                    </Link>{" "}
-                    de Mariable *
+                    <Dialog open={cgvModalOpen} onOpenChange={setCgvModalOpen}>
+                      <DialogTrigger asChild>
+                        <button
+                          type="button"
+                          className="text-wedding-olive underline hover:no-underline"
+                        >
+                          conditions générales de vente
+                        </button>
+                      </DialogTrigger>
+                      <DialogContent className="max-w-3xl max-h-[80vh]">
+                        <DialogHeader>
+                          <DialogTitle className="text-xl font-serif">
+                            Conditions Générales de Vente - Prestataires Mariable
+                          </DialogTitle>
+                        </DialogHeader>
+                        <ScrollArea className="h-[60vh] pr-4">
+                          <CGVContent />
+                        </ScrollArea>
+                      </DialogContent>
+                    </Dialog>
+                    {" "}*
                   </FormLabel>
+                  <FormMessage />
                 </div>
               </FormItem>
             )}
@@ -565,7 +689,7 @@ const ProfessionalRegistrationForm = () => {
 
         <Button
           type="submit"
-          className="bg-wedding-olive hover:bg-wedding-olive/90"
+          className="w-full bg-wedding-olive hover:bg-wedding-olive/90"
           disabled={isSubmitting}
         >
           {isSubmitting ? (
@@ -574,12 +698,141 @@ const ProfessionalRegistrationForm = () => {
               Envoi en cours...
             </>
           ) : (
-            "Valider le partenariat"
+            "Envoyer ma candidature"
           )}
         </Button>
       </form>
     </Form>
   );
 };
+
+// CGV Content for modal
+const CGVContent = () => (
+  <div className="space-y-6 text-sm">
+    <p className="text-muted-foreground">
+      Dernière mise à jour : Janvier 2025
+    </p>
+
+    <section>
+      <h3 className="font-semibold text-wedding-black mb-2">Article 1 - Identification des Parties</h3>
+      <p className="text-muted-foreground">
+        Les présentes CGV s'appliquent entre la société Mariable (ci-après "la Plateforme") 
+        et tout prestataire de services liés au mariage (ci-après "le Prestataire") 
+        souhaitant être référencé sur la plateforme Mariable.
+      </p>
+    </section>
+
+    <section>
+      <h3 className="font-semibold text-wedding-black mb-2">Article 2 - Objet du Contrat</h3>
+      <p className="text-muted-foreground">
+        Le présent contrat définit les conditions de référencement du Prestataire sur la Plateforme 
+        et les modalités de commission applicables. Le Prestataire s'engage à verser une commission 
+        fixe de 200€ HT par couple signé venant de la Plateforme Mariable.
+      </p>
+    </section>
+
+    <section>
+      <h3 className="font-semibold text-wedding-black mb-2">Article 3 - Définition d'un "Couple Mariable"</h3>
+      <p className="text-muted-foreground">
+        Est considéré comme "Couple Mariable" tout couple ayant utilisé le code unique fourni 
+        par la Plateforme lors de sa prise de contact ou réservation avec le Prestataire.
+      </p>
+    </section>
+
+    <section>
+      <h3 className="font-semibold text-wedding-black mb-2">Article 4 - Modalités de Commission</h3>
+      <p className="text-muted-foreground">
+        La commission de 200€ HT est due par le Prestataire après validation de l'acompte par le couple. 
+        Le Prestataire dispose d'un délai de 30 jours pour régler la commission à compter de la 
+        réception de l'acompte du couple.
+      </p>
+    </section>
+
+    <section>
+      <h3 className="font-semibold text-wedding-black mb-2">Article 5 - Avantage Exclusif</h3>
+      <p className="text-muted-foreground">
+        Le Prestataire s'engage à proposer un avantage exclusif aux couples du Club Mariable 
+        (remise, prestation offerte, ou bonus équivalent). Cet avantage doit représenter une 
+        valeur perçue significative pour le couple.
+      </p>
+    </section>
+
+    <section>
+      <h3 className="font-semibold text-wedding-black mb-2">Article 6 - Obligations du Prestataire</h3>
+      <p className="text-muted-foreground mb-2">Le Prestataire s'engage à :</p>
+      <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
+        <li>Fournir des informations exactes et à jour sur son activité</li>
+        <li>Disposer d'une assurance RC professionnelle valide</li>
+        <li>Respecter le délai de règlement des commissions</li>
+        <li>Proposer l'avantage exclusif convenu à tous les couples Mariable</li>
+        <li>Autoriser la Plateforme à prélever et utiliser des photos publiques de ses réseaux sociaux 
+            (notamment Instagram) pour sublimer la fiche du Prestataire si les photos fournies 
+            ne respectent pas la ligne éditoriale de Mariable</li>
+      </ul>
+    </section>
+
+    <section>
+      <h3 className="font-semibold text-wedding-black mb-2">Article 7 - Obligations de la Plateforme</h3>
+      <p className="text-muted-foreground mb-2">La Plateforme s'engage à :</p>
+      <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
+        <li>Assurer la visibilité du Prestataire auprès de sa communauté de futurs mariés</li>
+        <li>Fournir un code unique permettant l'identification des couples Mariable</li>
+        <li>Transmettre les coordonnées des couples intéressés selon les modalités convenues</li>
+      </ul>
+    </section>
+
+    <section>
+      <h3 className="font-semibold text-wedding-black mb-2">Article 8 - Durée et Résiliation</h3>
+      <p className="text-muted-foreground">
+        Le contrat est conclu pour une durée indéterminée. Chaque partie peut y mettre fin 
+        avec un préavis de 30 jours. Les commissions dues pour les couples signés avant la 
+        résiliation restent exigibles.
+      </p>
+    </section>
+
+    <section>
+      <h3 className="font-semibold text-wedding-black mb-2">Article 9 - Confidentialité et Données</h3>
+      <p className="text-muted-foreground">
+        Les parties s'engagent à respecter la confidentialité des informations échangées 
+        et à se conformer au RGPD concernant le traitement des données personnelles.
+      </p>
+    </section>
+
+    <section>
+      <h3 className="font-semibold text-wedding-black mb-2">Article 10 - Droit Applicable</h3>
+      <p className="text-muted-foreground">
+        Les présentes CGV sont soumises au droit français. Tout litige sera soumis 
+        aux tribunaux compétents de Paris.
+      </p>
+    </section>
+
+    <section>
+      <h3 className="font-semibold text-wedding-black mb-2">Article 11 - Clause de Non-Contournement</h3>
+      <p className="text-muted-foreground">
+        Le Prestataire s'interdit de contourner la Plateforme pour éviter le paiement 
+        de la commission due sur les couples identifiés comme "Couples Mariable".
+      </p>
+    </section>
+
+    <section className="bg-premium-warm p-4 rounded-lg">
+      <h3 className="font-semibold text-wedding-black mb-2">Article 12 - Évolution des Conditions Tarifaires</h3>
+      <p className="text-muted-foreground mb-2">
+        Le modèle de référencement gratuit est applicable jusqu'au 30 juin 2025.
+      </p>
+      <p className="text-muted-foreground mb-2">
+        À compter de cette date, Mariable se réserve le droit de faire évoluer ses conditions 
+        tarifaires, notamment en introduisant des frais d'adhésion et de maintenance de fiche.
+      </p>
+      <p className="text-muted-foreground mb-2">
+        Tout changement sera notifié au Prestataire avec un préavis de 30 jours. Le Prestataire 
+        sera libre d'accepter les nouvelles conditions ou de résilier le contrat sans pénalité.
+      </p>
+      <p className="text-muted-foreground">
+        Le renouvellement de l'adhésion aux nouvelles conditions vaudra acceptation du nouveau 
+        tarif proposé.
+      </p>
+    </section>
+  </div>
+);
 
 export default ProfessionalRegistrationForm;
