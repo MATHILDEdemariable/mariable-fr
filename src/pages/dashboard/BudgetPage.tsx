@@ -67,16 +67,14 @@ const BudgetPage: React.FC = () => {
         </div>
 
         <Tabs defaultValue="calculator" value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="mb-4 sm:mb-6 grid w-full grid-cols-2 bg-gray-100 h-auto p-1">
-            <TabsTrigger value="detailed" className="flex items-center gap-1 sm:gap-2 data-[state=active]:bg-black data-[state=active]:text-white text-xs sm:text-sm py-2 sm:py-2.5 px-2 sm:px-3 min-h-[44px] touch-manipulation">
-              <BarChart className="h-3 w-3 sm:h-4 sm:w-4 shrink-0" />
-              <span className="hidden sm:inline truncate">Budget Détaillé</span>
-              <span className="sm:hidden truncate">Détaillé</span>
+          <TabsList className="mb-4 sm:mb-6 grid w-full grid-cols-2 bg-gray-100 h-auto p-1 rounded-lg">
+            <TabsTrigger value="detailed" className="flex items-center justify-center gap-1.5 data-[state=active]:bg-black data-[state=active]:text-white text-[11px] sm:text-sm py-2.5 px-2 sm:px-4 min-h-[44px] touch-manipulation rounded-md">
+              <BarChart className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
+              <span className="truncate">Détaillé</span>
             </TabsTrigger>
-            <TabsTrigger value="calculator" className="flex items-center gap-1 sm:gap-2 data-[state=active]:bg-black data-[state=active]:text-white text-xs sm:text-sm py-2 sm:py-2.5 px-2 sm:px-3 min-h-[44px] touch-manipulation">
-              <Calculator className="h-3 w-3 sm:h-4 sm:w-4 shrink-0" />
-              <span className="hidden sm:inline truncate">Calculatrice</span>
-              <span className="sm:hidden truncate">Calc</span>
+            <TabsTrigger value="calculator" className="flex items-center justify-center gap-1.5 data-[state=active]:bg-black data-[state=active]:text-white text-[11px] sm:text-sm py-2.5 px-2 sm:px-4 min-h-[44px] touch-manipulation rounded-md">
+              <Calculator className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
+              <span className="truncate">Calculer</span>
             </TabsTrigger>
           </TabsList>
 
