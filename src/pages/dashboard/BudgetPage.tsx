@@ -51,7 +51,7 @@ const BudgetPage: React.FC = () => {
         <meta name="description" content="Gérez le budget de votre mariage" />
       </Helmet>
 
-      <div className="space-y-3 sm:space-y-6 w-full">
+      <div className="space-y-3 sm:space-y-6 w-full max-w-full overflow-hidden">
         {/* Mobile recommendation banner */}
         {isMobile && (
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 flex items-start gap-2">
@@ -98,8 +98,8 @@ const BudgetPage: React.FC = () => {
             <DetailedBudget />
           </TabsContent>
 
-          <TabsContent value="calculator" className="bg-white rounded-lg mt-3 sm:mt-6">
-            <div className="bg-white rounded-lg">
+          <TabsContent value="calculator" className="bg-white rounded-lg mt-3 sm:mt-6 overflow-hidden">
+            <div className="bg-white rounded-lg overflow-hidden">
               <BudgetCalculator />
             </div>
           </TabsContent>
