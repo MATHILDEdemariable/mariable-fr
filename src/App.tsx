@@ -130,6 +130,8 @@ const MariableAmbassadeur = lazy(() => import("./pages/MariableAmbassadeur"));
 const MariablePartenaire = lazy(() => import("./pages/MariablePartenaire"));
 const CeremoniePublic = lazy(() => import("./pages/CeremoniePublic"));
 const InstallAppPublic = lazy(() => import("./pages/InstallAppPublic"));
+const MairieCivilPublic = lazy(() => import("./pages/MairieCivilPublic"));
+const CeremonieCatholiquePublic = lazy(() => import("./pages/CeremonieCatholiquePublic"));
 
 // Loading component with accessibility improvements
 const PageLoader = () => (
@@ -243,6 +245,8 @@ function App() {
                   <Route path="/cgv" element={<CGV />} />
                   <Route path="/cgv-couples" element={<CGVCouples />} />
                   <Route path="/ceremonie-laique" element={<CeremoniePublic />} />
+                  <Route path="/mariage-civil" element={<MairieCivilPublic />} />
+                  <Route path="/ceremonie-catholique" element={<CeremonieCatholiquePublic />} />
                   
                   {/* Dashboard Professionnel Mockup */}
                   <Route path="/pro/dashboard" element={<ProDashboardMockup />} />
