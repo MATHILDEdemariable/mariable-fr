@@ -304,9 +304,18 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
         </CardHeader>
       <CardContent>
         <div className="flex flex-col space-y-4">
-          <div className="flex flex-col sm:flex-row gap-3">
+          {/* Message conseil mobile */}
+          {isMobile && (
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-blue-800 flex items-start gap-2">
+              <span className="text-base">💡</span>
+              <span>Pour une meilleure expérience, nous conseillons d'utiliser cette fonctionnalité sur ordinateur.</span>
+            </div>
+          )}
+          
+          {/* Filtres */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-full sm:w-[180px]">
+              <SelectTrigger className="w-full text-sm">
                 <SelectValue placeholder="Filtrer par statut" />
               </SelectTrigger>
               <SelectContent>
@@ -321,7 +330,7 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
             </Select>
             
             <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-              <SelectTrigger className="w-full sm:w-[180px]">
+              <SelectTrigger className="w-full text-sm">
                 <SelectValue placeholder="Filtrer par catégorie" />
               </SelectTrigger>
               <SelectContent>
@@ -333,61 +342,60 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
                 ))}
               </SelectContent>
             </Select>
-            
-            <div className="flex-1 flex gap-2 justify-end">
-              <Button 
-                variant="outline"
-                onClick={handleExportPDF}
-                disabled={isExporting || filteredVendors.length === 0}
-                className="hidden sm:flex"
-              >
-                {isExporting ? (
-                  <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                ) : (
-                  <Download className="h-4 w-4 mr-2" />
-                )}
-                Export PDF
-              </Button>
-              
-              <Button 
-                variant="outline"
-                onClick={fetchVendors}
-                className="hidden sm:flex"
-              >
-                <RefreshCw className="h-4 w-4 mr-2" /> Actualiser
-              </Button>
-              
-              <Button 
-                variant="outline"
-                className="bg-wedding-olive hover:bg-wedding-olive/90 text-white"
-                onClick={() => window.location.href = '/dashboard/selection'}
-              >
-                <Plus className="h-4 w-4 mr-2" /> Sélection Mariable
-              </Button>
-              
-              <Button 
-                className="bg-wedding-olive hover:bg-wedding-olive/90"
-                onClick={() => setAddDialogOpen(true)}
-              >
-                <Plus className="h-4 w-4 mr-2" /> Sélection personnelle
-              </Button>
-            </div>
           </div>
           
-          {/* Actions mobiles */}
+          {/* Boutons d'action - Desktop */}
+          <div className="hidden sm:flex gap-2 justify-end">
+            <Button 
+              variant="outline"
+              onClick={handleExportPDF}
+              disabled={isExporting || filteredVendors.length === 0}
+            >
+              {isExporting ? (
+                <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <Download className="h-4 w-4 mr-2" />
+              )}
+              Export PDF
+            </Button>
+            
+            <Button 
+              variant="outline"
+              onClick={fetchVendors}
+            >
+              <RefreshCw className="h-4 w-4 mr-2" /> Actualiser
+            </Button>
+            
+            <Button 
+              variant="outline"
+              className="bg-wedding-olive hover:bg-wedding-olive/90 text-white"
+              onClick={() => window.location.href = '/dashboard/selection'}
+            >
+              <Plus className="h-4 w-4 mr-2" /> Sélection Mariable
+            </Button>
+            
+            <Button 
+              className="bg-wedding-olive hover:bg-wedding-olive/90"
+              onClick={() => setAddDialogOpen(true)}
+            >
+              <Plus className="h-4 w-4 mr-2" /> Sélection personnelle
+            </Button>
+          </div>
+          
+          {/* Boutons d'action - Mobile */}
           {isMobile && (
-            <div className="flex gap-2 mb-4">
+            <div className="grid grid-cols-2 gap-2">
               <Button 
                 variant="outline"
                 size="sm"
                 onClick={handleExportPDF}
                 disabled={isExporting || filteredVendors.length === 0}
-                className="flex-1"
+                className="text-xs h-10"
               >
                 {isExporting ? (
-                  <RefreshCw className="h-3 w-3 mr-1 animate-spin" />
+                  <RefreshCw className="h-3 w-3 mr-1.5 animate-spin" />
                 ) : (
-                  <Download className="h-3 w-3 mr-1" />
+                  <Download className="h-3 w-3 mr-1.5" />
                 )}
                 PDF
               </Button>
@@ -396,10 +404,27 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
                 variant="outline"
                 size="sm"
                 onClick={fetchVendors}
-                className="flex-1"
+                className="text-xs h-10"
               >
-                <RefreshCw className="h-3 w-3 mr-1" />
+                <RefreshCw className="h-3 w-3 mr-1.5" />
                 Actualiser
+              </Button>
+              
+              <Button 
+                variant="outline"
+                size="sm"
+                className="bg-wedding-olive hover:bg-wedding-olive/90 text-white text-xs h-10"
+                onClick={() => window.location.href = '/dashboard/selection'}
+              >
+                <Plus className="h-3 w-3 mr-1" /> Mariable
+              </Button>
+              
+              <Button 
+                size="sm"
+                className="bg-wedding-olive hover:bg-wedding-olive/90 text-xs h-10"
+                onClick={() => setAddDialogOpen(true)}
+              >
+                <Plus className="h-3 w-3 mr-1" /> Perso
               </Button>
             </div>
           )}

@@ -49,14 +49,14 @@ const mainNavItems: NavItem[] = [
 const drawerNavItems: NavItem[] = [
   { icon: ClipboardList, label: 'Retroplanning', path: '/dashboard/mon-mariage/retroplanning' },
   { icon: Users, label: 'RSVP Invités', path: '/dashboard/rsvp' },
-  { icon: Utensils, label: 'Plan de table', path: '/dashboard/plan-de-table' },
-  { icon: Hotel, label: 'Logements', path: '/dashboard/logements' },
-  { icon: Church, label: 'Cérémonie', path: '/dashboard/ceremonie-laique' },
+  { icon: Utensils, label: 'Plan de table', path: '/dashboard/seating-plan' },
+  { icon: Hotel, label: 'Logements', path: '/dashboard/accommodations' },
+  { icon: Church, label: 'Cérémonie', path: '/dashboard/ceremonie' },
   { icon: Building2, label: 'Mairie', path: '/dashboard/mairie-civil' },
-  { icon: Users, label: 'Prestataires', path: '/dashboard/prestataires' },
+  { icon: Users, label: 'Prestataires', path: '/dashboard/suivi' },
   { icon: FileText, label: 'Documents', path: '/dashboard/documents' },
   { icon: QrCode, label: 'QR Code', path: '/dashboard/qr-code' },
-  { icon: BookOpen, label: 'Guides PDF', path: '/dashboard/guides-pdf' },
+  { icon: BookOpen, label: 'Guides', path: '/dashboard/guides' },
 ];
 
 const bonusItems: NavItem[] = [
