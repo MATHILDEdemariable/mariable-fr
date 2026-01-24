@@ -50,57 +50,48 @@ const CGV = () => {
               </p>
               <ul className="list-disc pl-6 text-muted-foreground space-y-2 mb-6">
                 <li>La Plateforme référence gratuitement le Prestataire sur son site internet <strong>www.mariable.fr</strong>, et met en relation ce dernier avec des couples organisant leur mariage (<strong>les « Couples Mariable »</strong>).</li>
-                <li>En contrepartie, le Prestataire s'engage à verser à la Plateforme une commission calculée sur le montant total HT des prestations (hors frais de livraison) effectivement réglées par les couples issus de cette mise en relation.</li>
+                <li>En contrepartie, le Prestataire s'engage à verser à la Plateforme une <strong>commission fixe de 200€ HT</strong> par couple signé issu de cette mise en relation.</li>
+              </ul>
+              
+              <div className="bg-wedding-cream rounded-lg p-6 mb-6">
+                <h3 className="font-semibold text-wedding-black mb-3">Commission fixe applicable :</h3>
+                <div className="text-2xl font-bold text-wedding-olive mb-2">200€ HT par couple signé</div>
+                <p className="text-sm text-muted-foreground">
+                  Cette commission unique s'applique à toutes les catégories de prestataires (lieu de réception, traiteur, photographe, vidéaste, DJ, fleuriste, mise en beauté, etc.), quel que soit le montant de la prestation.
+                </p>
+              </div>
+            </section>
+
+            <section>
+              <h2 className="text-2xl font-serif mb-4 text-wedding-black">Article 2bis – L'Avantage Exclusif Mariable</h2>
+              <p className="text-muted-foreground mb-4">
+                Le Prestataire s'engage à proposer aux Couples Mariable un <strong>« Avantage Exclusif Mariable »</strong>, défini comme suit :
+              </p>
+              <ul className="list-disc pl-6 text-muted-foreground space-y-2 mb-4">
+                <li>Un bonus à forte valeur perçue et faible coût réel pour le Prestataire</li>
+                <li>Cet avantage n'est pas nécessairement une remise financière, mais peut prendre la forme d'un service additionnel, d'un upgrade, d'une prestation bonus, etc.</li>
+                <li>L'avantage peut être conditionné à un panier minimum (ex : prestations supérieures à 3 000€ ou 5 000€)</li>
               </ul>
               
               <p className="text-muted-foreground mb-4">
-                <strong>Le taux de commission varie selon la catégorie du Prestataire :</strong>
+                <strong>Exemples d'avantages acceptés :</strong>
               </p>
-              
-              <div className="overflow-x-auto mb-4">
-                <table className="w-full border-collapse border border-gray-300">
-                  <thead>
-                    <tr className="bg-gray-50">
-                      <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-wedding-black">Catégorie de prestataire</th>
-                      <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-wedding-black">Taux de commission HT</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td className="border border-gray-300 px-4 py-3 text-muted-foreground">Lieu de réception</td>
-                      <td className="border border-gray-300 px-4 py-3 text-muted-foreground font-medium">8%</td>
-                    </tr>
-                    <tr className="bg-gray-50">
-                      <td className="border border-gray-300 px-4 py-3 text-muted-foreground">Traiteur</td>
-                      <td className="border border-gray-300 px-4 py-3 text-muted-foreground font-medium">2,5%</td>
-                    </tr>
-                    <tr>
-                      <td className="border border-gray-300 px-4 py-3 text-muted-foreground">Photographe</td>
-                      <td className="border border-gray-300 px-4 py-3 text-muted-foreground font-medium">4%</td>
-                    </tr>
-                    <tr className="bg-gray-50">
-                      <td className="border border-gray-300 px-4 py-3 text-muted-foreground">Vidéaste</td>
-                      <td className="border border-gray-300 px-4 py-3 text-muted-foreground font-medium">4%</td>
-                    </tr>
-                    <tr>
-                      <td className="border border-gray-300 px-4 py-3 text-muted-foreground">DJ</td>
-                      <td className="border border-gray-300 px-4 py-3 text-muted-foreground font-medium">4%</td>
-                    </tr>
-                    <tr className="bg-gray-50">
-                      <td className="border border-gray-300 px-4 py-3 text-muted-foreground">Fleuriste</td>
-                      <td className="border border-gray-300 px-4 py-3 text-muted-foreground font-medium">4%</td>
-                    </tr>
-                    <tr>
-                      <td className="border border-gray-300 px-4 py-3 text-muted-foreground">Mise en beauté</td>
-                      <td className="border border-gray-300 px-4 py-3 text-muted-foreground font-medium">4%</td>
-                    </tr>
-                    <tr className="bg-gray-50">
-                      <td className="border border-gray-300 px-4 py-3 text-muted-foreground">Autres catégories</td>
-                      <td className="border border-gray-300 px-4 py-3 text-muted-foreground font-medium">4%</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+              <ul className="list-disc pl-6 text-muted-foreground space-y-1 mb-4">
+                <li>Photographe : album imprimé offert, séance engagement incluse</li>
+                <li>Lieu de réception : brunch du lendemain offert, nuit des mariés incluse</li>
+                <li>Traiteur : heure de service supplémentaire, cocktail premium inclus</li>
+                <li>DJ/Musicien : heure de soirée offerte, sonorisation cérémonie incluse</li>
+                <li>Fleuriste : arche ou élément signature offert, upgrade floral</li>
+              </ul>
+
+              <p className="text-muted-foreground mb-4">
+                <strong>Matérialisation de l'Avantage :</strong>
+              </p>
+              <ul className="list-disc pl-6 text-muted-foreground space-y-2">
+                <li>Mariable fournit au Prestataire un <strong>code promo unique</strong> permettant d'identifier les Couples Mariable</li>
+                <li>Ce code doit être utilisé par le couple sur le site internet du Prestataire (si existant) ou mentionné sur le devis</li>
+                <li>L'utilisation du code déclenche l'application de l'Avantage Exclusif Mariable pour le couple et l'obligation de commission pour le Prestataire</li>
+              </ul>
             </section>
 
             <section>
@@ -110,17 +101,18 @@ const CGV = () => {
               </p>
               <ul className="list-disc pl-6 text-muted-foreground space-y-2">
                 <li>été mis en relation via la plateforme Mariable.fr (formulaire, email redirigé, espace membre)</li>
-                <li>ou mentionné Mariable lors de son premier contact avec le Prestataire,</li>
-                <li>ou identifié par un identifiant lead unique généré par Mariable.</li>
+                <li>ou mentionné Mariable lors de son premier contact avec le Prestataire</li>
+                <li>ou utilisé le code promo unique Mariable attribué au Prestataire</li>
+                <li>ou identifié par un identifiant lead unique généré par Mariable</li>
               </ul>
             </section>
 
             <section>
               <h2 className="text-2xl font-serif mb-4 text-wedding-black">Article 4 – Modalités de la commission</h2>
               <ol className="list-decimal pl-6 text-muted-foreground space-y-3">
-                <li><strong>Base de calcul</strong> : la commission est calculée sur le montant total <strong>HT du contrat signé</strong> entre le Prestataire et le Couple Mariable.</li>
-                <li><strong>Exigibilité</strong> : la commission est due <strong>15 jours après réception</strong> par le Prestataire de l'acompte</li>
-                <li><strong>Déclaration</strong> : le Prestataire déclare à Mariable tout contrat signé avec un Couple Mariable dans un délai de <strong>7 jours</strong> via le formulaire dédié (voir annexe mode opératoire Mariable)</li>
+                <li><strong>Montant</strong> : la commission est fixée à <strong>200€ HT</strong> par contrat signé avec un Couple Mariable, quel que soit le montant de la prestation.</li>
+                <li><strong>Exigibilité</strong> : la commission est due <strong>15 jours après réception</strong> par le Prestataire de l'acompte du couple.</li>
+                <li><strong>Déclaration</strong> : le Prestataire déclare à Mariable tout contrat signé avec un Couple Mariable dans un délai de <strong>7 jours</strong> via le formulaire dédié (voir annexe mode opératoire Mariable).</li>
               </ol>
             </section>
 
@@ -146,7 +138,8 @@ const CGV = () => {
                 <li>fournir des informations exactes et à jour (tarifs, disponibilités, descriptifs, photos, etc.),</li>
                 <li>assurer les prestations selon les règles de l'art et la réglementation applicable,</li>
                 <li>déclarer avec exactitude toute réservation issue de la Plateforme,</li>
-                <li>autoriser la Plateforme à utiliser ses photos, logos et contenus à des fins de référencement et de communication.</li>
+                <li>proposer un Avantage Exclusif Mariable aux couples issus de la Plateforme,</li>
+                <li>autoriser la Plateforme à utiliser ses photos, logos et contenus à des fins de référencement et de communication,</li>
                 <li>mettre en place, sur son site internet un lien actif vers la page officielle www.mariable.fr, en tant que gage de partenariat et de référencement.</li>
               </ul>
             </section>
@@ -159,6 +152,7 @@ const CGV = () => {
               <ul className="list-disc pl-6 text-muted-foreground space-y-2">
                 <li>référencer le Prestataire sur Mariable.fr,</li>
                 <li>transmettre des leads qualifiés et identifier clairement les Couples Mariable,</li>
+                <li>fournir un code promo unique au Prestataire pour la traçabilité des couples,</li>
                 <li>assurer la transparence des conditions de commission.</li>
               </ul>
             </section>

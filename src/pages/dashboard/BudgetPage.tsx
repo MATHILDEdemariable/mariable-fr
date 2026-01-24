@@ -1,22 +1,21 @@
-
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import BudgetSummary from '@/components/dashboard/BudgetSummary';
 import DetailedBudget from '@/components/dashboard/DetailedBudget';
-import { BarChart, PieChart, Calculator, Play } from 'lucide-react';
+import { BarChart, Calculator, Play, Monitor } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import BudgetCalculator from '@/components/dashboard/BudgetCalculator';
 import { TutorialVideoModal } from '@/components/tutorials/TutorialVideoModal';
-import PremiumGate from '@/components/premium/PremiumGate';
 import { useUserProfile } from '@/hooks/useUserProfile';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const BudgetPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>('calculator');
   const [showTutorial, setShowTutorial] = useState(false);
   const { isPremium, loading: loadingProfile } = useUserProfile();
+  const isMobile = useIsMobile();
 
   // Fetch budget data for export
   const { data: budgetData } = useQuery({
@@ -53,6 +52,16 @@ const BudgetPage: React.FC = () => {
       </Helmet>
 
       <div className="space-y-3 sm:space-y-6 w-full">
+        {/* Mobile recommendation banner */}
+        {isMobile && (
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 flex items-start gap-2">
+            <Monitor className="h-4 w-4 text-blue-600 shrink-0 mt-0.5" />
+            <span className="text-xs text-blue-800">
+              Pour une meilleure expérience, nous recommandons d'utiliser cette fonctionnalité sur ordinateur ou tablette.
+            </span>
+          </div>
+        )}
+
         <div className="flex justify-between items-center">
           <h1 className="text-xl sm:text-2xl lg:text-3xl font-serif text-wedding-olive truncate">Budget de Mariage</h1>
           <Button
@@ -62,19 +71,26 @@ const BudgetPage: React.FC = () => {
             className="flex items-center gap-2"
           >
             <Play className="h-4 w-4" />
-            Tuto vidéo
+            <span className="hidden sm:inline">Tuto vidéo</span>
+            <span className="sm:hidden">Tuto</span>
           </Button>
         </div>
 
         <Tabs defaultValue="calculator" value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="mb-4 sm:mb-6 grid w-full grid-cols-2 bg-gray-100 h-auto p-1 rounded-lg">
-            <TabsTrigger value="detailed" className="flex items-center justify-center gap-1.5 data-[state=active]:bg-black data-[state=active]:text-white text-[11px] sm:text-sm py-2.5 px-2 sm:px-4 min-h-[44px] touch-manipulation rounded-md">
-              <BarChart className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
-              <span className="truncate">Détaillé</span>
+            <TabsTrigger 
+              value="detailed" 
+              className="flex items-center justify-center gap-1 data-[state=active]:bg-black data-[state=active]:text-white text-xs sm:text-sm py-3 px-2 min-h-[48px] touch-manipulation rounded-md font-medium"
+            >
+              <BarChart className="h-4 w-4 shrink-0" />
+              <span>Détail</span>
             </TabsTrigger>
-            <TabsTrigger value="calculator" className="flex items-center justify-center gap-1.5 data-[state=active]:bg-black data-[state=active]:text-white text-[11px] sm:text-sm py-2.5 px-2 sm:px-4 min-h-[44px] touch-manipulation rounded-md">
-              <Calculator className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
-              <span className="truncate">Calculer</span>
+            <TabsTrigger 
+              value="calculator" 
+              className="flex items-center justify-center gap-1 data-[state=active]:bg-black data-[state=active]:text-white text-xs sm:text-sm py-3 px-2 min-h-[48px] touch-manipulation rounded-md font-medium"
+            >
+              <Calculator className="h-4 w-4 shrink-0" />
+              <span>Calcul</span>
             </TabsTrigger>
           </TabsList>
 
