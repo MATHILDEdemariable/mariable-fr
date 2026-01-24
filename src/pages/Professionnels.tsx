@@ -25,9 +25,7 @@ const Professionnels = () => {
           <h1 className="text-3xl md:text-5xl lg:text-6xl font-serif mb-4 text-wedding-black">
             Rejoignez notre sélection de prestataires d'excellence
           </h1>
-          <p className="text-lg md:text-xl text-muted-foreground mb-6 max-w-3xl mx-auto">
-            Référencement gratuit jusqu'en juin 2025* • Commission fixe de 200€ par couple signé
-          </p>
+          
         </section>
 
         {/* Contenu principal */}
@@ -86,7 +84,7 @@ const Professionnels = () => {
                 </div>
 
                 <p className="text-xs text-muted-foreground mt-4 text-center">
-                  * Les frais d'entrée pourraient évoluer après cette période. Voir les conditions générales pour plus de détails.
+                  * Les frais d'entrée pourront évoluer. Voir les conditions générales pour plus de détails.
                 </p>
               </div>
             </section>
