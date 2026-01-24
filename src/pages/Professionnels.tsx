@@ -5,15 +5,15 @@ import { CheckCircle, Search, Shield, FileText, Gift, Camera, Building2, Utensil
 import { Button } from '@/components/ui/button';
 import ProfessionalRegistrationForm from '@/components/forms/ProfessionalRegistrationForm';
 import SEO from '@/components/SEO';
-
 const Professionnels = () => {
   const scrollToExamples = () => {
     const element = document.getElementById('exemples-avantages');
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+      element.scrollIntoView({
+        behavior: 'smooth'
+      });
     }
   };
-
   return <div className="min-h-screen flex flex-col bg-white">
       <PremiumHeader />
       
@@ -66,17 +66,14 @@ const Professionnels = () => {
                     <div className="text-4xl font-bold text-wedding-olive mb-2">0€</div>
                     <h3 className="font-medium text-wedding-black mb-1">Référencement gratuit*</h3>
                     <p className="text-sm text-muted-foreground">Aucun frais d'entrée ni abonnement</p>
-                    <p className="text-xs text-wedding-olive mt-2 font-medium">Gratuit jusqu'en juin 2025</p>
+                    
                   </div>
                   <div className="text-center p-6 border rounded-xl bg-white border-wedding-olive/20">
                     <div className="text-4xl font-bold text-wedding-olive mb-2">200€</div>
                     <h3 className="font-medium text-wedding-black mb-1">Commission fixe</h3>
                     <p className="text-sm text-muted-foreground">Par couple signé venant de Mariable</p>
                   </div>
-                  <div 
-                    className="text-center p-6 border rounded-xl bg-white border-wedding-olive/20 cursor-pointer hover:border-wedding-olive transition-colors group"
-                    onClick={scrollToExamples}
-                  >
+                  <div className="text-center p-6 border rounded-xl bg-white border-wedding-olive/20 cursor-pointer hover:border-wedding-olive transition-colors group" onClick={scrollToExamples}>
                     <div className="flex justify-center mb-2">
                       <Gift className="h-10 w-10 text-wedding-olive" />
                     </div>
@@ -358,5 +355,4 @@ const Professionnels = () => {
       <Footer />
     </div>;
 };
-
 export default Professionnels;
