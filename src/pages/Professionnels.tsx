@@ -1,10 +1,11 @@
 import PremiumHeader from '@/components/home/PremiumHeader';
 import Footer from '@/components/Footer';
 import { Link } from 'react-router-dom';
-import { CheckCircle, Search, Shield, FileText, Gift, Camera, Building2, UtensilsCrossed, Music, Flower2, Sparkles, ArrowDown } from 'lucide-react';
+import { CheckCircle, Search, Shield, FileText, Gift, Camera, Building2, UtensilsCrossed, Music, Flower2, Sparkles, ArrowDown, ClipboardList, Tag, Mail, Send, Receipt } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ProfessionalRegistrationForm from '@/components/forms/ProfessionalRegistrationForm';
 import SEO from '@/components/SEO';
+
 const Professionnels = () => {
   const scrollToExamples = () => {
     const element = document.getElementById('exemples-avantages');
@@ -14,6 +15,16 @@ const Professionnels = () => {
       });
     }
   };
+
+  const scrollToForm = () => {
+    const element = document.getElementById('formulaire-inscription');
+    if (element) {
+      element.scrollIntoView({
+        behavior: 'smooth'
+      });
+    }
+  };
+
   return <div className="min-h-screen flex flex-col bg-white">
       <PremiumHeader />
       
@@ -25,14 +36,67 @@ const Professionnels = () => {
           <h1 className="text-3xl md:text-5xl lg:text-6xl font-serif mb-4 text-wedding-black">
             Rejoignez notre sélection de prestataires d'excellence
           </h1>
-          
         </section>
 
         {/* Contenu principal */}
         <div className="container mx-auto px-4">
           <div className="max-w-5xl mx-auto">
             
-            {/* Section fusionnée : Notre modèle (conditions + tarifs) */}
+            {/* Section 1 : Pourquoi rejoindre Mariable ? */}
+            <section className="mb-12">
+              <div className="space-y-6">
+                <h2 className="text-2xl md:text-3xl font-serif text-wedding-black text-center">Pourquoi rejoindre Mariable ?</h2>
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div className="flex items-start gap-3 p-4 bg-premium-warm rounded-lg">
+                    <CheckCircle className="h-5 w-5 text-wedding-olive shrink-0 mt-0.5" />
+                    <div>
+                      <h4 className="font-medium">Visibilité ciblée</h4>
+                      <p className="text-sm text-muted-foreground">Touchez des futurs mariés activement à la recherche de prestataires de qualité.</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3 p-4 bg-premium-warm rounded-lg">
+                    <CheckCircle className="h-5 w-5 text-wedding-olive shrink-0 mt-0.5" />
+                    <div>
+                      <h4 className="font-medium">Label d'excellence</h4>
+                      <p className="text-sm text-muted-foreground">Différenciez-vous avec le label Mariable qui rassure les couples.</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3 p-4 bg-premium-warm rounded-lg">
+                    <CheckCircle className="h-5 w-5 text-wedding-olive shrink-0 mt-0.5" />
+                    <div>
+                      <h4 className="font-medium">Zéro risque financier</h4>
+                      <p className="text-sm text-muted-foreground">Aucun frais d'entrée, vous ne payez que si vous signez un couple Mariable.</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3 p-4 bg-premium-warm rounded-lg">
+                    <CheckCircle className="h-5 w-5 text-wedding-olive shrink-0 mt-0.5" />
+                    <div>
+                      <h4 className="font-medium">Commission fixe et prévisible</h4>
+                      <p className="text-sm text-muted-foreground">200€ HT par couple signé, quel que soit le montant de votre prestation.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex justify-center">
+                  <Button asChild variant="outline" className="border-wedding-olive/30 text-wedding-olive hover:bg-wedding-olive/10">
+                    <Link to="/professionnelsmariable" className="flex items-center gap-2">
+                      <Search className="h-4 w-4" />
+                      Voir la sélection actuelle
+                    </Link>
+                  </Button>
+                </div>
+
+                {/* Note sur les photos Instagram */}
+                <div className="p-4 bg-premium-warm rounded-lg border border-premium-light max-w-2xl mx-auto">
+                  <p className="text-sm text-muted-foreground text-center">
+                    <strong>Note :</strong> Mariable se réserve le droit d'utiliser des photos de votre site Instagram 
+                    pour sublimer votre fiche si les photos fournies ne respectent pas notre ligne éditoriale.
+                  </p>
+                </div>
+              </div>
+            </section>
+
+            {/* Section 2 : Notre modèle (conditions + tarifs) */}
             <section className="mb-12">
               <div className="bg-gradient-to-r from-wedding-cream to-premium-warm rounded-xl p-6 md:p-8">
                 <h2 className="text-2xl md:text-3xl font-serif mb-6 text-wedding-black flex items-center gap-3">
@@ -89,95 +153,56 @@ const Professionnels = () => {
               </div>
             </section>
 
-            {/* Section Comment ça fonctionne - 4 étapes */}
+            {/* Section 3 : Comment ça fonctionne - 5 étapes */}
             <section className="mb-12">
               <div className="bg-gray-50 rounded-xl p-6 md:p-8">
                 <h2 className="text-2xl font-serif mb-6 text-wedding-black text-center">
                   Comment ça fonctionne
                 </h2>
-                <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                  <div className="flex flex-col items-center text-center p-4">
-                    <div className="bg-wedding-olive text-white rounded-full h-12 w-12 flex items-center justify-center font-bold text-lg mb-3">1</div>
-                    <h3 className="font-medium text-wedding-black text-sm">Vous complétez le formulaire ci-dessous</h3>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6">
+                  <div className="flex flex-col items-center text-center p-3 md:p-4 cursor-pointer hover:bg-white rounded-lg transition-colors" onClick={scrollToForm}>
+                    <div className="bg-wedding-olive text-white rounded-full h-10 w-10 md:h-12 md:w-12 flex items-center justify-center font-bold text-base md:text-lg mb-2 md:mb-3">1</div>
+                    <ClipboardList className="h-5 w-5 text-wedding-olive mb-1" />
+                    <h3 className="font-medium text-wedding-black text-xs md:text-sm">Formulaire</h3>
+                    <p className="text-xs text-muted-foreground mt-1 hidden sm:block">Complétez ci-dessous en 3 clics</p>
                   </div>
-                  <div className="flex flex-col items-center text-center p-4">
-                    <div className="bg-wedding-olive text-white rounded-full h-12 w-12 flex items-center justify-center font-bold text-lg mb-3">2</div>
-                    <h3 className="font-medium text-wedding-black text-sm">Nous vous transmettons un code unique correspondant à votre activité</h3>
+                  <div className="flex flex-col items-center text-center p-3 md:p-4">
+                    <div className="bg-wedding-olive text-white rounded-full h-10 w-10 md:h-12 md:w-12 flex items-center justify-center font-bold text-base md:text-lg mb-2 md:mb-3">2</div>
+                    <Tag className="h-5 w-5 text-wedding-olive mb-1" />
+                    <h3 className="font-medium text-wedding-black text-xs md:text-sm">Code Avantage</h3>
+                    <p className="text-xs text-muted-foreground mt-1 hidden sm:block">Nous créons un code unique pour envoi aux couples via la messagerie</p>
                   </div>
-                  <div className="flex flex-col items-center text-center p-4">
-                    <div className="bg-wedding-olive text-white rounded-full h-12 w-12 flex items-center justify-center font-bold text-lg mb-3">3</div>
-                    <h3 className="font-medium text-wedding-black text-sm">Le couple l'utilise lors de sa réservation</h3>
+                  <div className="flex flex-col items-center text-center p-3 md:p-4">
+                    <div className="bg-wedding-olive text-white rounded-full h-10 w-10 md:h-12 md:w-12 flex items-center justify-center font-bold text-base md:text-lg mb-2 md:mb-3">3</div>
+                    <Mail className="h-5 w-5 text-wedding-olive mb-1" />
+                    <h3 className="font-medium text-wedding-black text-xs md:text-sm">Contact Couple</h3>
+                    <p className="text-xs text-muted-foreground mt-1 hidden sm:block">Le couple vous contacte par mariable.fr, vous recevez la demande par mail</p>
                   </div>
-                  <div className="flex flex-col items-center text-center p-4">
-                    <div className="bg-wedding-olive text-white rounded-full h-12 w-12 flex items-center justify-center font-bold text-lg mb-3">4</div>
-                    <h3 className="font-medium text-wedding-black text-sm">Vous nous rétrocédez la commission après validation de l'acompte</h3>
+                  <div className="flex flex-col items-center text-center p-3 md:p-4">
+                    <div className="bg-wedding-olive text-white rounded-full h-10 w-10 md:h-12 md:w-12 flex items-center justify-center font-bold text-base md:text-lg mb-2 md:mb-3">4</div>
+                    <Send className="h-5 w-5 text-wedding-olive mb-1" />
+                    <h3 className="font-medium text-wedding-black text-xs md:text-sm">Envoi Devis</h3>
+                    <p className="text-xs text-muted-foreground mt-1 hidden sm:block">Vous ou le couple nous envoyez le devis en copie avec le code</p>
+                  </div>
+                  <div className="flex flex-col items-center text-center p-3 md:p-4 col-span-2 sm:col-span-1">
+                    <div className="bg-wedding-olive text-white rounded-full h-10 w-10 md:h-12 md:w-12 flex items-center justify-center font-bold text-base md:text-lg mb-2 md:mb-3">5</div>
+                    <Receipt className="h-5 w-5 text-wedding-olive mb-1" />
+                    <h3 className="font-medium text-wedding-black text-xs md:text-sm">Facturation</h3>
+                    <p className="text-xs text-muted-foreground mt-1 hidden sm:block">Nous vous facturons les frais de commissions</p>
                   </div>
                 </div>
               </div>
             </section>
 
-            {/* Section double colonnes : Avantages + Formulaire */}
-            <div className="grid lg:grid-cols-2 gap-8 mb-12">
-              {/* Colonne Avantages */}
-              <div className="space-y-6">
-                <h3 className="text-2xl font-serif text-wedding-black">Pourquoi rejoindre Mariable ?</h3>
-                <ul className="space-y-4">
-                  <li className="flex items-start gap-3">
-                    <CheckCircle className="h-5 w-5 text-wedding-olive shrink-0 mt-0.5" />
-                    <div>
-                      <h4 className="font-medium">Visibilité ciblée</h4>
-                      <p className="text-sm text-muted-foreground">Touchez des futurs mariés activement à la recherche de prestataires de qualité.</p>
-                    </div>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <CheckCircle className="h-5 w-5 text-wedding-olive shrink-0 mt-0.5" />
-                    <div>
-                      <h4 className="font-medium">Label d'excellence</h4>
-                      <p className="text-sm text-muted-foreground">Différenciez-vous avec le label Mariable qui rassure les couples.</p>
-                    </div>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <CheckCircle className="h-5 w-5 text-wedding-olive shrink-0 mt-0.5" />
-                    <div>
-                      <h4 className="font-medium">Zéro risque financier</h4>
-                      <p className="text-sm text-muted-foreground">Aucun frais d'entrée, vous ne payez que si vous signez un couple Mariable.</p>
-                    </div>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <CheckCircle className="h-5 w-5 text-wedding-olive shrink-0 mt-0.5" />
-                    <div>
-                      <h4 className="font-medium">Commission fixe et prévisible</h4>
-                      <p className="text-sm text-muted-foreground">200€ HT par couple signé, quel que soit le montant de votre prestation.</p>
-                    </div>
-                  </li>
-                </ul>
-
-                <div className="pt-4">
-                  <Button asChild variant="outline" className="border-wedding-olive/30 text-wedding-olive hover:bg-wedding-olive/10">
-                    <Link to="/professionnelsmariable" className="flex items-center gap-2">
-                      <Search className="h-4 w-4" />
-                      Voir la sélection actuelle
-                    </Link>
-                  </Button>
-                </div>
-
-                {/* Note sur les photos Instagram */}
-                <div className="p-4 bg-premium-warm rounded-lg border border-premium-light">
-                  <p className="text-sm text-muted-foreground">
-                    <strong>Note :</strong> Mariable se réserve le droit d'utiliser des photos de votre site Instagram 
-                    pour sublimer votre fiche si les photos fournies ne respectent pas notre ligne éditoriale.
-                  </p>
-                </div>
-              </div>
-
-              {/* Colonne Formulaire */}
-              <div className="border rounded-lg p-6 bg-white shadow-sm">
-                <h2 className="text-2xl font-serif mb-4">Formulaire d'inscription</h2>
+            {/* Section 4 : Formulaire d'inscription */}
+            <section className="mb-12" id="formulaire-inscription">
+              <div className="border rounded-lg p-6 bg-white shadow-sm max-w-2xl mx-auto">
+                <h2 className="text-2xl font-serif mb-4 text-center">Formulaire d'inscription</h2>
                 <ProfessionalRegistrationForm />
               </div>
-            </div>
+            </section>
 
-            {/* Section Exemples d'avantages (après le formulaire) */}
+            {/* Section 5 : Exemples d'avantages (après le formulaire) */}
             <section className="mb-12" id="exemples-avantages">
               <div className="border-2 border-wedding-olive/20 rounded-xl overflow-hidden">
                 <div className="bg-wedding-olive text-white p-6">
@@ -315,21 +340,31 @@ const Professionnels = () => {
                         </li>
                         <li className="flex items-start gap-2">
                           <CheckCircle className="h-3 w-3 text-green-600 shrink-0 mt-1" />
-                          Upgrade floral
+                          Bouquet de mariée supplémentaire
                         </li>
                       </ul>
                     </div>
 
-                    {/* Option intelligente */}
-                    <div className="border-2 border-dashed border-wedding-olive/40 rounded-lg p-4 bg-wedding-cream/50">
+                    {/* Autres prestataires */}
+                    <div className="border rounded-lg p-4">
                       <div className="flex items-center gap-2 mb-3">
                         <Sparkles className="h-5 w-5 text-wedding-olive" />
-                        <h4 className="font-medium">Option intelligente</h4>
+                        <h4 className="font-medium">Autres prestataires</h4>
                       </div>
-                      <p className="text-sm text-muted-foreground">
-                        Proposez un avantage à <strong>forte valeur perçue</strong> mais à <strong>faible coût réel</strong> pour vous. 
-                        L'objectif : créer un effet "wow" pour le couple sans impacter vos marges.
-                      </p>
+                      <ul className="text-sm text-muted-foreground space-y-1">
+                        <li className="flex items-start gap-2">
+                          <CheckCircle className="h-3 w-3 text-green-600 shrink-0 mt-1" />
+                          Heure supplémentaire offerte
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <CheckCircle className="h-3 w-3 text-green-600 shrink-0 mt-1" />
+                          Option ou upgrade incluse
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <CheckCircle className="h-3 w-3 text-green-600 shrink-0 mt-1" />
+                          Bonus personnalisé
+                        </li>
+                      </ul>
                     </div>
                   </div>
                 </div>
@@ -337,15 +372,12 @@ const Professionnels = () => {
             </section>
 
             {/* Contact alternatif */}
-            <section className="text-center py-8">
-              <p className="text-muted-foreground">
-                Des questions ? Contactez-nous à{" "}
-                <a href="mailto:contact@mariable.fr" className="text-wedding-olive hover:underline">
-                  contact@mariable.fr
-                </a>
-              </p>
+            <section className="text-center py-8 border-t">
+              <p className="text-muted-foreground mb-2">Une question avant de vous inscrire ?</p>
+              <a href="mailto:hello@mariable.fr" className="text-wedding-olive font-medium hover:underline">
+                hello@mariable.fr
+              </a>
             </section>
-
           </div>
         </div>
       </main>
@@ -353,4 +385,5 @@ const Professionnels = () => {
       <Footer />
     </div>;
 };
+
 export default Professionnels;

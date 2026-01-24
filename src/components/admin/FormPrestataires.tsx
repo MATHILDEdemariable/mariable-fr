@@ -48,6 +48,7 @@ const PrestatairesAdmin = () => {
   const fetchPrestataires = async () => {
     setIsLoading(true);
     try {
+      // 1. Charger tous les prestataires avec leurs photos
       const { data, error } = await supabase
         .from("prestataires_rows")
         .select(`*, prestataires_photos_preprod (*)`)
@@ -62,20 +63,24 @@ const PrestatairesAdmin = () => {
       
       if (data) {
         const prestataireData = data as unknown as Prestataire[];
+        const ids = prestataireData.map(p => p.id);
+        
+        // 2. Charger TOUTES les brochures en une seule requête (batch)
+        const { data: allBrochures } = await supabase
+          .from("prestataires_brochures_preprod")
+          .select("*")
+          .in("prestataire_id", ids);
+        
+        // 3. Charger TOUTES les meta en une seule requête (batch)
+        const { data: allMeta } = await supabase
+          .from("prestataires_meta")
+          .select("*")
+          .in("prestataire_id", ids);
+        
+        // 4. Associer les données à chaque prestataire (en mémoire, pas de requête)
         for (const presta of prestataireData) {
-          // Fetch additional related data
-          const { data: brochures } = await supabase
-            .from("prestataires_brochures_preprod")
-            .select("*")
-            .eq("prestataire_id", presta.id);
-
-          const { data: meta } = await supabase
-            .from("prestataires_meta")
-            .select("*")
-            .eq("prestataire_id", presta.id);
-
-          presta.prestataires_brochures = brochures || [];
-          presta.prestataires_meta = meta || [];
+          presta.prestataires_brochures = allBrochures?.filter(b => b.prestataire_id === presta.id) || [];
+          presta.prestataires_meta = allMeta?.filter(m => m.prestataire_id === presta.id) || [];
         }
         
         setPrestataires(prestataireData);

@@ -709,19 +709,19 @@ const BudgetCalculator: React.FC = () => {
         </div>
 
         {/* GRAPHIQUE PIE CHART */}
-        <div className="h-64 md:h-80">
+        <div className="h-56 sm:h-64 md:h-80">
           <ResponsiveContainer width="100%" height="100%">
             <RechartsPieChart>
               <Pie
                 data={budgetEstimate.breakdown}
                 cx="50%"
                 cy="50%"
-                innerRadius={60}
-                outerRadius="90%"
+                innerRadius={40}
+                outerRadius="80%"
                 paddingAngle={2}
                 dataKey="amount"
                 nameKey="name"
-                label={({ name, percent }) => `${(percent * 100).toFixed(0)}%`}
+                label={({ percent }) => `${(percent * 100).toFixed(0)}%`}
                 labelLine={{ stroke: '#7F9474', strokeWidth: 0.5 }}
                 strokeWidth={1}
                 stroke="#f8f6f0"
@@ -826,14 +826,14 @@ const BudgetCalculator: React.FC = () => {
   };
 
   return (
-    <Card>
+    <Card className="overflow-hidden">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Calculator className="h-5 w-5" />
           Calculatrice Budget
         </CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="overflow-x-hidden">
         {!calculatorMode && renderModeSelection()}
         {calculatorMode === 'known' && !showEstimate && renderKnownBudgetMode()}
         {calculatorMode === 'unknown' && !showEstimate && renderUnknownBudgetMode()}
