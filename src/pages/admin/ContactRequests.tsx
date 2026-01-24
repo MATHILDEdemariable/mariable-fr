@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { supabase } from '@/integrations/supabase/client';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { Heart, Building, Briefcase, User, MessageSquare, Loader2 } from 'lucide-react';
+import { Heart, Building, Briefcase, User, MessageSquare, Loader2, Bug, HelpCircle, UserX, Lightbulb, MoreHorizontal } from 'lucide-react';
 
 interface ContactRequest {
   id: string;
@@ -52,6 +52,11 @@ const ContactRequests = () => {
       case 'lieu': return <Building className="w-4 h-4" />;
       case 'marque': return <Briefcase className="w-4 h-4" />;
       case 'prestataire': return <User className="w-4 h-4" />;
+      case 'bug': return <Bug className="w-4 h-4" />;
+      case 'feature': return <HelpCircle className="w-4 h-4" />;
+      case 'account': return <UserX className="w-4 h-4" />;
+      case 'suggestion': return <Lightbulb className="w-4 h-4" />;
+      case 'other': return <MoreHorizontal className="w-4 h-4" />;
       default: return <MessageSquare className="w-4 h-4" />;
     }
   };
@@ -62,6 +67,11 @@ const ContactRequests = () => {
       case 'lieu': return 'Lieu';
       case 'marque': return 'Marque';
       case 'prestataire': return 'Prestataire';
+      case 'bug': return 'Bug technique';
+      case 'feature': return 'Question fonctionnalité';
+      case 'account': return 'Problème compte';
+      case 'suggestion': return 'Suggestion';
+      case 'other': return 'Autre';
       default: return type;
     }
   };
@@ -72,6 +82,11 @@ const ContactRequests = () => {
       case 'lieu': return 'bg-blue-100 text-blue-700';
       case 'marque': return 'bg-purple-100 text-purple-700';
       case 'prestataire': return 'bg-amber-100 text-amber-700';
+      case 'bug': return 'bg-red-100 text-red-700';
+      case 'feature': return 'bg-cyan-100 text-cyan-700';
+      case 'account': return 'bg-orange-100 text-orange-700';
+      case 'suggestion': return 'bg-green-100 text-green-700';
+      case 'other': return 'bg-slate-100 text-slate-700';
       default: return 'bg-gray-100 text-gray-700';
     }
   };
@@ -85,7 +100,8 @@ const ContactRequests = () => {
     couples: requests.filter(r => r.type === 'couple').length,
     lieux: requests.filter(r => r.type === 'lieu').length,
     marques: requests.filter(r => r.type === 'marque').length,
-    prestataires: requests.filter(r => r.type === 'prestataire').length
+    prestataires: requests.filter(r => r.type === 'prestataire').length,
+    problemes: requests.filter(r => ['bug', 'feature', 'account', 'suggestion', 'other'].includes(r.type)).length
   };
 
   if (loading) {
@@ -107,7 +123,7 @@ const ContactRequests = () => {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-gray-500">Total</CardTitle>
@@ -156,13 +172,23 @@ const ContactRequests = () => {
               <p className="text-2xl font-bold">{stats.prestataires}</p>
             </CardContent>
           </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-red-600 flex items-center gap-2">
+                <Bug className="w-4 h-4" /> Problèmes
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-2xl font-bold">{stats.problemes}</p>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Filter */}
         <div className="flex items-center gap-4">
           <label className="text-sm font-medium">Filtrer par type :</label>
           <Select value={typeFilter} onValueChange={setTypeFilter}>
-            <SelectTrigger className="w-48">
+            <SelectTrigger className="w-56">
               <SelectValue placeholder="Tous les types" />
             </SelectTrigger>
             <SelectContent>
@@ -171,6 +197,11 @@ const ContactRequests = () => {
               <SelectItem value="lieu">Lieux</SelectItem>
               <SelectItem value="marque">Marques</SelectItem>
               <SelectItem value="prestataire">Prestataires</SelectItem>
+              <SelectItem value="bug">Bug technique</SelectItem>
+              <SelectItem value="feature">Question fonctionnalité</SelectItem>
+              <SelectItem value="account">Problème compte</SelectItem>
+              <SelectItem value="suggestion">Suggestion</SelectItem>
+              <SelectItem value="other">Autre</SelectItem>
             </SelectContent>
           </Select>
         </div>
