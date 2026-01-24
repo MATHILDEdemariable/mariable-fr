@@ -15,6 +15,17 @@ interface ProblemReportRequest {
   message: string;
 }
 
+const getSubjectLabel = (subject: string): string => {
+  const labels: Record<string, string> = {
+    'bug': 'Bug technique',
+    'feature': 'Question fonctionnalité',
+    'account': 'Problème de compte',
+    'suggestion': 'Suggestion',
+    'other': 'Autre'
+  };
+  return labels[subject] || subject;
+};
+
 const handler = async (req: Request): Promise<Response> => {
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
@@ -26,18 +37,20 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log('📧 Sending problem report from:', email, 'subject:', subject);
 
+    const subjectLabel = getSubjectLabel(subject);
+
     // Envoyer l'email à mathilde@mariable.fr
     const emailResponse = await resend.emails.send({
-      from: "Mariable <onboarding@resend.dev>",
+      from: "Mariable <noreply@mariable.fr>",
       to: ["mathilde@mariable.fr"],
-      subject: `[Problème Dashboard] ${subject}`,
+      subject: `[Problème Dashboard] ${subjectLabel}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h2 style="color: #4a5d4a;">Nouveau signalement de problème</h2>
           
           <div style="background-color: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
             <p><strong>Email de l'utilisateur :</strong> ${email}</p>
-            <p><strong>Catégorie :</strong> ${subject}</p>
+            <p><strong>Catégorie :</strong> ${subjectLabel}</p>
           </div>
           
           <div style="background-color: #fff; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
@@ -52,18 +65,18 @@ const handler = async (req: Request): Promise<Response> => {
       `,
     });
 
-    console.log("✅ Email sent successfully:", emailResponse);
+    console.log("✅ Email sent to mathilde@mariable.fr:", emailResponse);
 
     // Envoyer un email de confirmation à l'utilisateur
-    await resend.emails.send({
-      from: "Mariable <onboarding@resend.dev>",
+    const confirmationResponse = await resend.emails.send({
+      from: "Mariable <noreply@mariable.fr>",
       to: [email],
       subject: "Nous avons bien reçu votre message - Mariable",
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h2 style="color: #4a5d4a;">Merci de nous avoir contactés !</h2>
           
-          <p>Nous avons bien reçu votre message concernant : <strong>${subject}</strong></p>
+          <p>Nous avons bien reçu votre message concernant : <strong>${subjectLabel}</strong></p>
           
           <p>Notre équipe reviendra vers vous dans les plus brefs délais.</p>
           
@@ -76,6 +89,8 @@ const handler = async (req: Request): Promise<Response> => {
         </div>
       `,
     });
+
+    console.log("✅ Confirmation email sent to user:", confirmationResponse);
 
     return new Response(JSON.stringify({ success: true }), {
       status: 200,
