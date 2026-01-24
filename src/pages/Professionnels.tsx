@@ -5,17 +5,11 @@ import { CheckCircle, Search, Shield, FileText, Gift, Camera, Building2, Utensil
 import { Button } from '@/components/ui/button';
 import ProfessionalRegistrationForm from '@/components/forms/ProfessionalRegistrationForm';
 import SEO from '@/components/SEO';
-
 const Professionnels = () => {
-  return (
-    <div className="min-h-screen flex flex-col bg-white">
+  return <div className="min-h-screen flex flex-col bg-white">
       <PremiumHeader />
       
-      <SEO 
-        title="Référencement Gratuit | Prestataires Mariage Mariable"
-        description="Rejoignez notre sélection de prestataires de mariage d'excellence. Référencement gratuit, commission fixe de 200€ par couple signé."
-        canonical="/professionnels"
-      />
+      <SEO title="Référencement Gratuit | Prestataires Mariage Mariable" description="Rejoignez notre sélection de prestataires de mariage d'excellence. Référencement gratuit, commission fixe de 200€ par couple signé." canonical="/professionnels" />
       
       <main className="flex-grow pb-12 page-content">
         {/* Hero principal */}
@@ -76,7 +70,7 @@ const Professionnels = () => {
                 </div>
                 <div className="text-center p-6 border rounded-xl bg-blue-50 border-blue-200">
                   <div className="text-4xl font-bold text-blue-700 mb-2">∞</div>
-                  <h3 className="font-medium text-wedding-black mb-1">Potentiel illimité</h3>
+                  <h3 className="font-medium text-wedding-black mb-1">​Avantage exclusif </h3>
                   <p className="text-sm text-muted-foreground">Pas de plafond de leads</p>
                 </div>
               </div>
@@ -263,11 +257,7 @@ const Professionnels = () => {
                 </ul>
 
                 <div className="pt-4">
-                  <Button 
-                    asChild
-                    variant="outline"
-                    className="border-wedding-olive/30 text-wedding-olive hover:bg-wedding-olive/10"
-                  >
+                  <Button asChild variant="outline" className="border-wedding-olive/30 text-wedding-olive hover:bg-wedding-olive/10">
                     <Link to="/professionnelsmariable" className="flex items-center gap-2">
                       <Search className="h-4 w-4" />
                       Voir la sélection actuelle
@@ -282,12 +272,7 @@ const Professionnels = () => {
                 <div className="mb-4 p-4 bg-premium-warm rounded-lg border border-premium-light">
                   <p className="text-sm text-muted-foreground">
                     En soumettant ce formulaire, vous acceptez nos{' '}
-                    <Link 
-                      to="/cgv" 
-                      className="text-premium-sage hover:underline font-medium"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
+                    <Link to="/cgv" className="text-premium-sage hover:underline font-medium" target="_blank" rel="noopener noreferrer">
                       Conditions Générales d'Utilisation
                     </Link>
                     {' '}et vous engagez à proposer un Avantage Exclusif Mariable.
@@ -301,10 +286,7 @@ const Professionnels = () => {
             <div className="text-center text-muted-foreground">
               <p>
                 Vous préférez nous contacter directement ? Envoyez un email à{' '}
-                <a 
-                  href="mailto:mathilde@mariable.fr" 
-                  className="text-wedding-olive hover:underline font-medium"
-                >
+                <a href="mailto:mathilde@mariable.fr" className="text-wedding-olive hover:underline font-medium">
                   mathilde@mariable.fr
                 </a>
               </p>
@@ -314,8 +296,6 @@ const Professionnels = () => {
       </main>
       
       <Footer />
-    </div>
-  );
+    </div>;
 };
-
 export default Professionnels;
