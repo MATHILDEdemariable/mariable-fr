@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Outlet, useLocation, Link } from 'react-router-dom';
 import DashboardSidebar from './DashboardSidebar';
+import MobileBottomNav from './MobileBottomNav';
 import { useIsMobile } from '@/hooks/use-mobile';
 import PremiumHeader from '@/components/home/PremiumHeader';
-import { PanelLeft, Home, Users } from 'lucide-react';
+import { Home, Users } from 'lucide-react';
 import { useReaderMode } from '@/contexts/ReaderModeContext';
 import SatisfactionModal from './SatisfactionModal';
 import { supabase } from '@/integrations/supabase/client';
@@ -17,7 +18,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   children
 }) => {
   const isMobile = useIsMobile();
-  const [sidebarVisible, setSidebarVisible] = useState(!isMobile);
   const [showSatisfactionModal, setShowSatisfactionModal] = useState(false);
   const [currentUser, setCurrentUser] = useState<any>(null);
   const location = useLocation();
@@ -71,9 +71,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   const handleCloseSatisfactionModal = () => {
     setShowSatisfactionModal(false);
   };
-  const toggleSidebar = () => {
-    setSidebarVisible(!sidebarVisible);
-  };
+  
   return <OnboardingProvider>
       <div className="min-h-screen bg-gray-50 flex flex-col">
         <PremiumHeader />
@@ -95,31 +93,22 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         </div>
         
         <div className="flex flex-1 relative">
-        {/* Mobile toggle button - using PanelLeft icon for dashboard */}
-        {isMobile && <button onClick={toggleSidebar} className="fixed z-50 bottom-6 right-6 flex items-center gap-2 px-4 py-3 rounded-full bg-wedding-olive text-white shadow-2xl hover:shadow-3xl transition-all hover:scale-105 active:scale-95" aria-label={sidebarVisible ? "Fermer le menu" : "Ouvrir le menu"}>
-            <PanelLeft size={20} />
-            <span className="font-medium text-sm">Menu</span>
-          </button>}
-        
-        {/* Sidebar - conditionally visible */}
-        <div className={`${isMobile ? 'fixed z-40 h-full overflow-y-auto transition-transform duration-300 transform' : 'flex-shrink-0'} 
-                    ${isMobile && !sidebarVisible ? '-translate-x-full' : 'translate-x-0'} pt-32`} style={{
-          width: isMobile ? '280px' : '250px'
-        }}>
-          <DashboardSidebar isReaderMode={isReaderMode} />
-        </div>
+        {/* Sidebar - only visible on desktop */}
+        {!isMobile && (
+          <div className="flex-shrink-0 pt-32" style={{ width: '250px' }}>
+            <DashboardSidebar isReaderMode={isReaderMode} />
+          </div>
+        )}
 
-        {/* Main content area - better mobile spacing */}
-        <div className="flex-1 flex justify-start items-start transition-all duration-300" style={{
-          marginLeft: !isMobile && sidebarVisible ? '0' : '0'
-        }}>
-          <main className="w-full pb-4 px-2 sm:pb-6 sm:px-3 lg:px-4 pt-44" data-page-root>
+        {/* Main content area - with bottom padding for mobile nav */}
+        <div className="flex-1 flex justify-start items-start transition-all duration-300">
+          <main className={`w-full px-2 sm:px-3 lg:px-4 pt-44 ${isMobile ? 'pb-24' : 'pb-6'}`} data-page-root>
             {children || <Outlet />}
           </main>
         </div>
         
-        {/* Overlay to close sidebar on mobile */}
-        {isMobile && sidebarVisible && <div className="fixed inset-0 bg-black bg-opacity-50 z-30" onClick={() => setSidebarVisible(false)} />}
+        {/* Mobile Bottom Navigation */}
+        {isMobile && <MobileBottomNav />}
         </div>
 
         {/* Tour d'onboarding */}
