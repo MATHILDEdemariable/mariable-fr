@@ -374,10 +374,13 @@ const Professionnels = () => {
 
             {/* Contact alternatif */}
             <section className="text-center py-8 border-t">
-              <p className="text-muted-foreground mb-2">Une question avant de vous inscrire ?</p>
-              <a href="mailto:hello@mariable.fr" className="text-wedding-olive font-medium hover:underline">
-                hello@mariable.fr
-              </a>
+              <p className="text-muted-foreground mb-4">Une question avant de vous inscrire ?</p>
+              <Button asChild className="bg-wedding-olive hover:bg-wedding-olive/90">
+                <Link to="/contact" className="flex items-center gap-2">
+                  <Mail className="h-4 w-4" />
+                  Contactez-nous
+                </Link>
+              </Button>
             </section>
           </div>
         </div>

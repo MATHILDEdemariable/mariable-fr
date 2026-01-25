@@ -94,8 +94,10 @@ const BudgetPage: React.FC = () => {
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="detailed" className="mt-3 sm:mt-6">
-            <DetailedBudget />
+          <TabsContent value="detailed" className="mt-3 sm:mt-6 overflow-hidden max-w-full">
+            <div className="overflow-hidden max-w-full">
+              <DetailedBudget />
+            </div>
           </TabsContent>
 
           <TabsContent value="calculator" className="bg-white rounded-lg mt-3 sm:mt-6 overflow-hidden">
