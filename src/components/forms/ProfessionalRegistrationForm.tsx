@@ -679,7 +679,7 @@ const ProfessionalRegistrationForm = () => {
                 </FormControl>
                 <div className="space-y-1 leading-none">
                   <FormLabel className="text-sm font-normal">
-                    J'accepte d'être référencé sur Mariable et de payer la commission de 200€ HT par couple signé *
+                    J'accepte d'être référencé sur Mariable *
                   </FormLabel>
                   <FormMessage />
                 </div>
@@ -768,31 +768,12 @@ const CGVContent = () => (
     <section>
       <h3 className="font-semibold text-wedding-black mb-2">Article 2 - Objet du Contrat</h3>
       <p className="text-muted-foreground">
-        Le présent contrat définit les conditions de référencement du Prestataire sur la Plateforme 
-        et les modalités de commission applicables. Le Prestataire s'engage à verser une commission 
-        fixe de 200€ HT par couple signé venant de la Plateforme Mariable.
+        Le présent contrat définit les conditions de référencement du Prestataire sur la Plateforme.
       </p>
     </section>
 
     <section>
-      <h3 className="font-semibold text-wedding-black mb-2">Article 3 - Définition d'un "Couple Mariable"</h3>
-      <p className="text-muted-foreground">
-        Est considéré comme "Couple Mariable" tout couple ayant utilisé le code unique fourni 
-        par la Plateforme lors de sa prise de contact ou réservation avec le Prestataire.
-      </p>
-    </section>
-
-    <section>
-      <h3 className="font-semibold text-wedding-black mb-2">Article 4 - Modalités de Commission</h3>
-      <p className="text-muted-foreground">
-        La commission de 200€ HT est due par le Prestataire après validation de l'acompte par le couple. 
-        Le Prestataire dispose d'un délai de 30 jours pour régler la commission à compter de la 
-        réception de l'acompte du couple.
-      </p>
-    </section>
-
-    <section>
-      <h3 className="font-semibold text-wedding-black mb-2">Article 5 - Avantage Exclusif</h3>
+      <h3 className="font-semibold text-wedding-black mb-2">Article 3 - Avantage Exclusif</h3>
       <p className="text-muted-foreground">
         Le Prestataire s'engage à proposer un avantage exclusif aux couples du Club Mariable 
         (remise, prestation offerte, ou bonus équivalent). Cet avantage doit représenter une 
@@ -801,12 +782,11 @@ const CGVContent = () => (
     </section>
 
     <section>
-      <h3 className="font-semibold text-wedding-black mb-2">Article 6 - Obligations du Prestataire</h3>
+      <h3 className="font-semibold text-wedding-black mb-2">Article 4 - Obligations du Prestataire</h3>
       <p className="text-muted-foreground mb-2">Le Prestataire s'engage à :</p>
       <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
         <li>Fournir des informations exactes et à jour sur son activité</li>
         <li>Disposer d'une assurance RC professionnelle valide</li>
-        <li>Respecter le délai de règlement des commissions</li>
         <li>Proposer l'avantage exclusif convenu à tous les couples Mariable</li>
         <li>Autoriser la Plateforme à prélever et utiliser des photos publiques de ses réseaux sociaux 
             (notamment Instagram) pour sublimer la fiche du Prestataire si les photos fournies 
@@ -815,7 +795,7 @@ const CGVContent = () => (
     </section>
 
     <section>
-      <h3 className="font-semibold text-wedding-black mb-2">Article 7 - Obligations de la Plateforme</h3>
+      <h3 className="font-semibold text-wedding-black mb-2">Article 5 - Obligations de la Plateforme</h3>
       <p className="text-muted-foreground mb-2">La Plateforme s'engage à :</p>
       <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
         <li>Assurer la visibilité du Prestataire auprès de sa communauté de futurs mariés</li>
@@ -825,16 +805,15 @@ const CGVContent = () => (
     </section>
 
     <section>
-      <h3 className="font-semibold text-wedding-black mb-2">Article 8 - Durée et Résiliation</h3>
+      <h3 className="font-semibold text-wedding-black mb-2">Article 6 - Durée et Résiliation</h3>
       <p className="text-muted-foreground">
         Le contrat est conclu pour une durée indéterminée. Chaque partie peut y mettre fin 
-        avec un préavis de 30 jours. Les commissions dues pour les couples signés avant la 
-        résiliation restent exigibles.
+        avec un préavis de 30 jours.
       </p>
     </section>
 
     <section>
-      <h3 className="font-semibold text-wedding-black mb-2">Article 9 - Confidentialité et Données</h3>
+      <h3 className="font-semibold text-wedding-black mb-2">Article 7 - Confidentialité et Données</h3>
       <p className="text-muted-foreground">
         Les parties s'engagent à respecter la confidentialité des informations échangées 
         et à se conformer au RGPD concernant le traitement des données personnelles.
@@ -842,23 +821,15 @@ const CGVContent = () => (
     </section>
 
     <section>
-      <h3 className="font-semibold text-wedding-black mb-2">Article 10 - Droit Applicable</h3>
+      <h3 className="font-semibold text-wedding-black mb-2">Article 8 - Droit Applicable</h3>
       <p className="text-muted-foreground">
         Les présentes CGV sont soumises au droit français. Tout litige sera soumis 
         aux tribunaux compétents de Paris.
       </p>
     </section>
 
-    <section>
-      <h3 className="font-semibold text-wedding-black mb-2">Article 11 - Clause de Non-Contournement</h3>
-      <p className="text-muted-foreground">
-        Le Prestataire s'interdit de contourner la Plateforme pour éviter le paiement 
-        de la commission due sur les couples identifiés comme "Couples Mariable".
-      </p>
-    </section>
-
     <section className="bg-premium-warm p-4 rounded-lg">
-      <h3 className="font-semibold text-wedding-black mb-2">Article 12 - Évolution des Conditions Tarifaires</h3>
+      <h3 className="font-semibold text-wedding-black mb-2">Article 9 - Évolution des Conditions Tarifaires</h3>
       <p className="text-muted-foreground mb-2">
         Le modèle de référencement gratuit est applicable jusqu'au 30 juin 2025.
       </p>
