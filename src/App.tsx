@@ -125,6 +125,7 @@ const CGVCouples = lazy(() => import("./pages/CGVCouples"));
 const AccueilClubMariable = lazy(() => import("./pages/AccueilClubMariable"));
 const AccueilProfessionnels = lazy(() => import("./pages/AccueilProfessionnels"));
 const DomaineDeLaFontaine = lazy(() => import("./pages/DomaineDeLaFontaine"));
+const DomaineDeBadine = lazy(() => import("./pages/DomaineDeBadine"));
 const Mariable = lazy(() => import("./pages/Mariable"));
 const MariableAmbassadeur = lazy(() => import("./pages/MariableAmbassadeur"));
 const MariablePartenaire = lazy(() => import("./pages/MariablePartenaire"));
@@ -168,6 +169,7 @@ function App() {
                   <Route path="/accueilclubmariable" element={<AccueilClubMariable />} />
                   <Route path="/accueilprofessionnels" element={<AccueilProfessionnels />} />
                   <Route path="/domainedelafontaine" element={<DomaineDeLaFontaine />} />
+                  <Route path="/domainedelabadine" element={<DomaineDeBadine />} />
                   <Route path="/mariable.ambassadeur" element={<MariableAmbassadeur />} />
                   <Route path="/mariable.partenaire" element={<MariablePartenaire />} />
                    <Route path="/moteur-recherche" element={<MoteurRecherche />} />
