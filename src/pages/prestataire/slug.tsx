@@ -11,7 +11,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { MapPin, Users, Star, Award, Euro, MessageSquare, ArrowLeft, Sparkles, Images } from "lucide-react";
+import { MapPin, Users, Star, Euro, MessageSquare, ArrowLeft, Sparkles } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 import { Loader2 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -33,7 +33,7 @@ const SinglePrestataire = () => {
   const [openContact, setOpenContact] = useState(false);
   const [openVendorContact, setOpenVendorContact] = useState(false);
   const [openMessageModal, setOpenMessageModal] = useState(false);
-  const [showFullGallery, setShowFullGallery] = useState(false);
+  
 
   const [session, setSession] = useState<Session | null>(null);
   useEffect(() => {
@@ -240,8 +240,6 @@ const SinglePrestataire = () => {
     }
   };
 
-  // Get secondary photos for mosaic (excluding main)
-  const secondaryPhotos = photos?.filter((p, index) => index > 0) || [];
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
@@ -282,92 +280,6 @@ const SinglePrestataire = () => {
           </div>
         </div>
 
-        {/* Photo Mosaic - Editorial layout (adaptive) */}
-        {secondaryPhotos.length > 0 && (
-          <section className="py-8 px-4 bg-white">
-            <div className="container max-w-6xl mx-auto">
-              <div className={`grid gap-2 ${
-                secondaryPhotos.length === 1 ? 'grid-cols-1 max-w-md mx-auto' :
-                secondaryPhotos.length === 2 ? 'grid-cols-2 max-w-2xl mx-auto' :
-                secondaryPhotos.length === 3 ? 'grid-cols-3 max-w-4xl mx-auto' :
-                'grid-cols-2 md:grid-cols-4'
-              }`}>
-                {secondaryPhotos.slice(0, 6).map((photo, index) => (
-                  <div 
-                    key={photo.id}
-                    className={
-                      secondaryPhotos.length >= 4 && index === 0 
-                        ? 'col-span-2 row-span-2' 
-                        : 'col-span-1'
-                    }
-                  >
-                    <div className="relative">
-                      <img 
-                        src={photo.url} 
-                        alt={`${vendor.nom} - photo ${index + 2}`}
-                        className="w-full h-full object-cover aspect-square cursor-pointer hover:opacity-90 transition-opacity" 
-                        onClick={() => setShowFullGallery(true)}
-                      />
-                      {/* Show "more photos" overlay on the last visible photo */}
-                      {index === Math.min(secondaryPhotos.length, 6) - 1 && photos && photos.length > 6 && (
-                        <button 
-                          onClick={() => setShowFullGallery(true)}
-                          className="absolute inset-0 bg-black/50 flex items-center justify-center text-white hover:bg-black/60 transition-colors"
-                        >
-                          <span className="flex items-center gap-2">
-                            <Images className="h-5 w-5" />
-                            +{photos.length - 6} photos
-                          </span>
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* Section Avantages */}
-        <section className="py-12 px-4 bg-editorial-beige/30">
-          <div className="container max-w-6xl mx-auto">
-            <h2 className="text-2xl font-serif text-editorial-noir mb-8 text-center">
-              Les Avantages
-            </h2>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {/* Capacité */}
-              {vendor.capacite_invites && (
-                <div className="bg-white p-6 text-center">
-                  <Users className="w-8 h-8 text-premium-sage mx-auto mb-3" />
-                  <p className="font-medium text-editorial-noir">Capacité</p>
-                  <p className="text-sm text-editorial-noir/70">Jusqu'à {vendor.capacite_invites} invités</p>
-                </div>
-              )}
-              {/* Prix */}
-              <div className="bg-white p-6 text-center">
-                <Euro className="w-8 h-8 text-premium-sage mx-auto mb-3" />
-                <p className="font-medium text-editorial-noir">Prix</p>
-                <p className="text-sm text-editorial-noir/70">{prixDisplay}</p>
-              </div>
-              {/* Club Mariable */}
-              <div className="bg-white p-6 text-center">
-                <Sparkles className="w-8 h-8 text-premium-sage mx-auto mb-3" />
-                <p className="font-medium text-editorial-noir">Club Mariable</p>
-                <p className="text-sm text-editorial-noir/70">
-                  {vendor.avantage_propose || "Avantage exclusif"}
-                </p>
-              </div>
-              {/* Avis Google */}
-              {vendor.google_rating && (
-                <div className="bg-white p-6 text-center">
-                  <Star className="w-8 h-8 text-premium-sage mx-auto mb-3" />
-                  <p className="font-medium text-editorial-noir">{vendor.google_rating}/5</p>
-                  <p className="text-sm text-editorial-noir/70">{vendor.google_reviews_count} avis Google</p>
-                </div>
-              )}
-            </div>
-          </div>
-        </section>
 
         {/* Main Content */}
         <div className="container max-w-6xl px-4 py-12">
@@ -450,6 +362,45 @@ const SinglePrestataire = () => {
                   <PhotoGalleryViewer photos={photos || []} vendorName={vendor.nom} />
                 </section>
               )}
+
+              {/* Section Avantages - Après la galerie */}
+              <section className="py-8 px-6 bg-editorial-beige/30 -mx-6">
+                <h2 className="text-2xl font-serif text-editorial-noir mb-8 text-center">
+                  Les Avantages
+                </h2>
+                <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  {/* Capacité */}
+                  {vendor.capacite_invites && (
+                    <div className="bg-white p-6 text-center">
+                      <Users className="w-8 h-8 text-premium-sage mx-auto mb-3" />
+                      <p className="font-medium text-editorial-noir">Capacité</p>
+                      <p className="text-sm text-editorial-noir/70">Jusqu'à {vendor.capacite_invites} invités</p>
+                    </div>
+                  )}
+                  {/* Prix */}
+                  <div className="bg-white p-6 text-center">
+                    <Euro className="w-8 h-8 text-premium-sage mx-auto mb-3" />
+                    <p className="font-medium text-editorial-noir">Prix</p>
+                    <p className="text-sm text-editorial-noir/70">{prixDisplay}</p>
+                  </div>
+                  {/* Club Mariable */}
+                  <div className="bg-white p-6 text-center">
+                    <Sparkles className="w-8 h-8 text-premium-sage mx-auto mb-3" />
+                    <p className="font-medium text-editorial-noir">Club Mariable</p>
+                    <p className="text-sm text-editorial-noir/70">
+                      {vendor.avantage_propose || "Avantage exclusif"}
+                    </p>
+                  </div>
+                  {/* Avis Google */}
+                  {vendor.google_rating && (
+                    <div className="bg-white p-6 text-center">
+                      <Star className="w-8 h-8 text-premium-sage mx-auto mb-3" />
+                      <p className="font-medium text-editorial-noir">{vendor.google_rating}/5</p>
+                      <p className="text-sm text-editorial-noir/70">{vendor.google_reviews_count} avis Google</p>
+                    </div>
+                  )}
+                </div>
+              </section>
 
               {/* Documents */}
               {vendor && vendor.prestataires_brochures && vendor.prestataires_brochures.length > 0 && (
