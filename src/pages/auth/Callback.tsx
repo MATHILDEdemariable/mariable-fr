@@ -18,6 +18,20 @@ const Callback = () => {
   const [sendingReset, setSendingReset] = useState(false);
   const { toast } = useToast();
 
+  // Send welcome email to new couples
+  const sendWelcomeEmail = async (email: string, firstName: string) => {
+    try {
+      console.log('📧 Sending welcome email to:', email);
+      await supabase.functions.invoke('send-welcome-couple-email', {
+        body: { email, firstName }
+      });
+      console.log('✅ Welcome email sent');
+    } catch (err) {
+      console.error('❌ Error sending welcome email:', err);
+      // Don't throw - welcome email is not critical
+    }
+  };
+
   useEffect(() => {
     const handleAuthCallback = async () => {
       try {
@@ -102,6 +116,13 @@ const Callback = () => {
             return;
           }
           
+          // Get user info and send welcome email for new signups
+          const { data: { user } } = await supabase.auth.getUser();
+          if (user && type === 'signup') {
+            const firstName = user.user_metadata?.first_name || '';
+            await sendWelcomeEmail(user.email || '', firstName);
+          }
+          
           navigate('/dashboard', { replace: true });
           return;
         }
@@ -118,6 +139,13 @@ const Callback = () => {
             setError('auth_error');
             setLoading(false);
             return;
+          }
+
+          // Get user info and send welcome email for new signups (email confirmation)
+          const { data: { user } } = await supabase.auth.getUser();
+          if (user && type === 'signup') {
+            const firstName = user.user_metadata?.first_name || '';
+            await sendWelcomeEmail(user.email || '', firstName);
           }
 
           navigate('/dashboard', { replace: true });

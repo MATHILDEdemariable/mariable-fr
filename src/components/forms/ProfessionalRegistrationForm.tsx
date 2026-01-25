@@ -88,9 +88,6 @@ const formSchema = z.object({
     .string()
     .min(2, { message: "Le nom de l'assurance est requis" }),
   description: z.string().optional(),
-  avantage_propose: z
-    .string()
-    .min(10, { message: "Veuillez décrire l'avantage proposé (minimum 10 caractères)" }),
   prix_minimum: z.coerce.number().nonnegative(),
   accord_referencement: z.boolean().refine((val) => val === true, {
     message: "Vous devez accepter le référencement",
@@ -156,7 +153,6 @@ const ProfessionalRegistrationForm = () => {
       siret: "",
       assurance_nom: "",
       description: "",
-      avantage_propose: "",
       prix_minimum: 0,
       accord_referencement: false,
       accord_cgv: false,
@@ -316,7 +312,6 @@ const ProfessionalRegistrationForm = () => {
           assurance_nom: values.assurance_nom,
           prix_minimum: values.prix_minimum,
           description: values.description || null,
-          avantage_propose: values.avantage_propose,
           accord_referencement: values.accord_referencement,
           accord_cgv: values.accord_cgv,
         }
@@ -565,26 +560,6 @@ const ProfessionalRegistrationForm = () => {
           )}
         />
 
-        <FormField
-          control={form.control}
-          name="avantage_propose"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Avantage proposé aux couples Mariable *</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Ex: Album photo offert, heure supplémentaire incluse, brunch du lendemain, séance engagement gratuite..."
-                  className="min-h-[100px]"
-                  {...field}
-                />
-              </FormControl>
-              <FormDescription>
-                Décrivez l'avantage exclusif que vous offrez aux couples du Club Mariable
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
 
         {/* Photo de couverture */}
         <div>
@@ -749,11 +724,10 @@ const ProfessionalRegistrationForm = () => {
   );
 };
 
-// CGV Content for modal
 const CGVContent = () => (
   <div className="space-y-6 text-sm">
     <p className="text-muted-foreground">
-      Dernière mise à jour : Janvier 2025
+      Dernière mise à jour : Janvier 2026
     </p>
 
     <section>
@@ -773,11 +747,11 @@ const CGVContent = () => (
     </section>
 
     <section>
-      <h3 className="font-semibold text-wedding-black mb-2">Article 3 - Avantage Exclusif</h3>
+      <h3 className="font-semibold text-wedding-black mb-2">Article 3 - Référencement et Visibilité</h3>
       <p className="text-muted-foreground">
-        Le Prestataire s'engage à proposer un avantage exclusif aux couples du Club Mariable 
-        (remise, prestation offerte, ou bonus équivalent). Cet avantage doit représenter une 
-        valeur perçue significative pour le couple.
+        Le Prestataire bénéficie d'une fiche éditorialisée sur la Plateforme, d'un guide d'accueil 
+        digitalisé personnalisé et d'une visibilité sur les réseaux sociaux et newsletters de Mariable 
+        selon les modalités définies dans l'offre souscrite.
       </p>
     </section>
 
@@ -787,7 +761,6 @@ const CGVContent = () => (
       <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
         <li>Fournir des informations exactes et à jour sur son activité</li>
         <li>Disposer d'une assurance RC professionnelle valide</li>
-        <li>Proposer l'avantage exclusif convenu à tous les couples Mariable</li>
         <li>Autoriser la Plateforme à prélever et utiliser des photos publiques de ses réseaux sociaux 
             (notamment Instagram) pour sublimer la fiche du Prestataire si les photos fournies 
             ne respectent pas la ligne éditoriale de Mariable</li>
@@ -799,8 +772,8 @@ const CGVContent = () => (
       <p className="text-muted-foreground mb-2">La Plateforme s'engage à :</p>
       <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
         <li>Assurer la visibilité du Prestataire auprès de sa communauté de futurs mariés</li>
-        <li>Fournir un code unique permettant l'identification des couples Mariable</li>
-        <li>Transmettre les coordonnées des couples intéressés selon les modalités convenues</li>
+        <li>Mettre à disposition les outils inclus dans l'offre souscrite</li>
+        <li>Transmettre les demandes des couples intéressés selon les modalités convenues</li>
       </ul>
     </section>
 
@@ -831,11 +804,7 @@ const CGVContent = () => (
     <section className="bg-premium-warm p-4 rounded-lg">
       <h3 className="font-semibold text-wedding-black mb-2">Article 9 - Évolution des Conditions Tarifaires</h3>
       <p className="text-muted-foreground mb-2">
-        Le modèle de référencement gratuit est applicable jusqu'au 30 juin 2025.
-      </p>
-      <p className="text-muted-foreground mb-2">
-        À compter de cette date, Mariable se réserve le droit de faire évoluer ses conditions 
-        tarifaires, notamment en introduisant des frais d'adhésion et de maintenance de fiche.
+        Les conditions tarifaires de Mariable sont susceptibles d'évoluer.
       </p>
       <p className="text-muted-foreground mb-2">
         Tout changement sera notifié au Prestataire avec un préavis de 30 jours. Le Prestataire 
