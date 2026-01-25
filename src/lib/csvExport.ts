@@ -8,8 +8,19 @@ export interface UserExportData {
   date_inscription: string;
   telephone: string;
   source: string;
+  objectif: string;
   statut_abonnement: string;
 }
+
+// Fonction pour traduire le code objectif en label lisible
+const getObjectifLabel = (purpose: string | undefined): string => {
+  switch (purpose) {
+    case 'guide_prestataires': return 'Guide prestataires';
+    case 'outils_en_ligne': return 'Outils en ligne';
+    case 'les_deux': return 'Les deux';
+    default: return 'Non renseigné';
+  }
+};
 
 export const exportUsersToCSV = (users: any[]): void => {
   console.log('🚀 exportUsersToCSV started:', { userCount: users.length });
@@ -31,6 +42,7 @@ export const exportUsersToCSV = (users: any[]): void => {
           : 'Non renseigné',
         telephone: profile.phone || user.raw_user_meta_data?.phone || 'Non renseigné',
         source: profile.referral_source || user.raw_user_meta_data?.referral_source || 'Non renseigné',
+        objectif: getObjectifLabel(profile.registration_purpose || user.raw_user_meta_data?.registration_purpose),
         statut_abonnement: profile.subscription_type || 'Gratuit'
       };
     });
@@ -42,6 +54,7 @@ export const exportUsersToCSV = (users: any[]): void => {
       'Date Inscription',
       'Téléphone',
       'Source',
+      'Objectif',
       'Statut Abonnement'
     ];
 

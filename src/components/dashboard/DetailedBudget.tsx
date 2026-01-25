@@ -682,33 +682,36 @@ const DetailedBudget: React.FC = () => {
         feature={feature}
         description={description}
       />
-      <Card className="border shadow-sm">
-      <CardHeader className="flex flex-row items-center justify-between bg-white sticky top-0 z-10 border-b">
-        <CardTitle className="text-xl font-serif">Budget Détaillé</CardTitle>
-        <div className="flex gap-2 flex-wrap">
+      <Card className="border shadow-sm max-w-full overflow-hidden">
+      <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 bg-white sticky top-0 z-10 border-b p-3 sm:p-6">
+        <CardTitle className="text-lg sm:text-xl font-serif">Budget Détaillé</CardTitle>
+        <div className="flex gap-1 sm:gap-2 flex-wrap w-full sm:w-auto">
           <Button 
             onClick={handleImportFromCart}
             variant="outline"
-            className="text-wedding-olive border-wedding-olive hover:bg-wedding-olive/10"
+            size="sm"
+            className="text-wedding-olive border-wedding-olive hover:bg-wedding-olive/10 text-xs sm:text-sm"
             disabled={cartItems.length === 0}
           >
-            <ShoppingCart className="mr-2 h-4 w-4" />
-            Importer du panier ({cartItems.length})
+            <ShoppingCart className="h-4 w-4 sm:mr-2" />
+            <span className="hidden sm:inline">Importer ({cartItems.length})</span>
+            <span className="sm:hidden ml-1">({cartItems.length})</span>
           </Button>
           <Button 
             onClick={handleSaveBudget} 
-            className="bg-wedding-olive hover:bg-wedding-olive/90"
+            size="sm"
+            className="bg-wedding-olive hover:bg-wedding-olive/90 text-xs sm:text-sm"
             disabled={updateBudgetMutation.isPending || !isPremium}
           >
             {updateBudgetMutation.isPending ? (
               <span className="flex items-center">
-                <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-b-transparent"></span>
-                Enregistrement...
+                <span className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4 animate-spin rounded-full border-2 border-b-transparent"></span>
+                <span className="hidden sm:inline">Enregistrement...</span>
               </span>
             ) : (
               <span className="flex items-center">
-                <Save className="mr-2 h-4 w-4" />
-                Enregistrer
+                <Save className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">Enregistrer</span>
               </span>
             )}
           </Button>
@@ -716,18 +719,18 @@ const DetailedBudget: React.FC = () => {
           <Button 
             onClick={handleExportPDF}
             variant="outline"
-            className="bg-wedding-olive/10 hover:bg-wedding-olive/20 text-wedding-olive"
+            size="sm"
+            className="bg-wedding-olive/10 hover:bg-wedding-olive/20 text-wedding-olive text-xs sm:text-sm"
             disabled={isExporting}
           >
             {isExporting ? (
               <span className="flex items-center">
-                <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-b-transparent"></span>
-                Export...
+                <span className="mr-1 h-3 w-3 animate-spin rounded-full border-2 border-b-transparent"></span>
               </span>
             ) : (
               <span className="flex items-center">
-                <Download className="mr-2 h-4 w-4" />
-                PDF
+                <Download className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">PDF</span>
               </span>
             )}
           </Button>
@@ -735,16 +738,17 @@ const DetailedBudget: React.FC = () => {
           <Button 
             onClick={handleExportCSV}
             variant="outline"
-            className="bg-blue-50 hover:bg-blue-100 text-blue-700"
+            size="sm"
+            className="bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs sm:text-sm"
           >
             <span className="flex items-center">
-              <Download className="mr-2 h-4 w-4" />
-              CSV
+              <Download className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">CSV</span>
             </span>
           </Button>
         </div>
       </CardHeader>
-      <CardContent className="px-0 overflow-auto">
+      <CardContent className="p-0 max-w-full overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
