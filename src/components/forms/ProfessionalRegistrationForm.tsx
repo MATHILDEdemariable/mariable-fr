@@ -219,30 +219,73 @@ const ProfessionalRegistrationForm = () => {
       const fileName = `${uuidv4()}.${fileExt}`;
       const filePath = `${prestataireId}/${fileName}`;
 
+      console.log('📤 Upload de la photo vers prestataires-photos...');
+      
+      // 1. Upload vers le bucket prestataires-photos
       const { error: uploadError } = await supabase.storage
-        .from("vendor-photos")
+        .from("prestataires-photos")
         .upload(filePath, file);
 
       if (uploadError) {
+        console.error('❌ Erreur upload:', uploadError);
         throw uploadError;
       }
 
       const {
         data: { publicUrl },
-      } = supabase.storage.from("vendor-photos").getPublicUrl(filePath);
+      } = supabase.storage.from("prestataires-photos").getPublicUrl(filePath);
 
-      await supabase.from("prestataires_photos_preprod").insert({
+      console.log('✅ Photo uploadée:', publicUrl);
+
+      // 2. Compresser l'image via l'edge function compress-photo
+      let finalUrl = publicUrl;
+      let thumbnailUrl: string | null = null;
+      let compressedSize = file.size;
+      let finalFilename = file.name;
+
+      try {
+        console.log('🗜️ Compression de la photo...');
+        const { data: compressedData, error: compressError } = await supabase.functions.invoke(
+          'compress-photo',
+          { body: { photoUrl: publicUrl, prestataireId: prestataireId } }
+        );
+
+        if (!compressError && compressedData?.success) {
+          // Supprimer le fichier original non compressé
+          await supabase.storage.from("prestataires-photos").remove([filePath]);
+          
+          finalUrl = compressedData.fullUrl;
+          thumbnailUrl = compressedData.thumbnailUrl;
+          compressedSize = compressedData.compressedSize;
+          finalFilename = compressedData.filename;
+          
+          console.log(`✅ Photo compressée: ${compressedData.savings}% économisés`);
+        } else {
+          console.warn("⚠️ Compression échouée, utilisation de l'image originale:", compressError);
+        }
+      } catch (compressErr) {
+        console.warn("⚠️ Erreur compression, utilisation de l'image originale:", compressErr);
+      }
+
+      // 3. Enregistrer dans la base de données
+      const { error: dbError } = await supabase.from("prestataires_photos_preprod").insert({
         prestataire_id: prestataireId,
-        url: publicUrl,
-        filename: file.name,
+        url: finalUrl,
+        thumbnail_url: thumbnailUrl,
+        filename: finalFilename,
         type: file.type,
-        size: file.size,
+        size: compressedSize,
         principale: isPrincipal,
+        is_cover: isPrincipal,
       });
 
-      return publicUrl;
+      if (dbError) {
+        console.error('❌ Erreur enregistrement DB:', dbError);
+      }
+
+      return finalUrl;
     } catch (error) {
-      console.error("Erreur lors du téléchargement de la photo:", error);
+      console.error("❌ Erreur lors du téléchargement de la photo:", error);
       toast({
         title: "Erreur",
         description:
