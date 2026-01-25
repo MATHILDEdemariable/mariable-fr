@@ -54,10 +54,10 @@ const BudgetPage: React.FC = () => {
       <div className="space-y-3 sm:space-y-6 w-full max-w-full overflow-hidden">
         {/* Mobile recommendation banner */}
         {isMobile && (
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 flex items-start gap-2">
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-2 sm:p-3 flex items-start gap-2 max-w-full">
             <Monitor className="h-4 w-4 text-blue-600 shrink-0 mt-0.5" />
-            <span className="text-xs text-blue-800">
-              Pour une meilleure expérience, nous recommandons d'utiliser cette fonctionnalité sur ordinateur ou tablette.
+            <span className="text-xs text-blue-800 break-words leading-relaxed">
+              Meilleure expérience sur ordinateur
             </span>
           </div>
         )}
