@@ -105,10 +105,10 @@ const Partenariat = () => {
       icon: BookOpen,
       title: "Guide d'accueil digitalisé",
       content: [
-        "Recommandez facilement vos partenaires de confiance",
-        "Évitez les PDF peu lisibles et peu pratiques",
-        "Expérience fluide et élégante pour vos couples",
-        "Un simple lien à envoyer après signature",
+        { text: "Recommandez facilement vos partenaires de confiance" },
+        { text: "Évitez les PDF peu lisibles et peu pratiques" },
+        { text: "Expérience fluide et élégante pour vos couples" },
+        { text: "Un simple lien à envoyer après signature", link: "https://www.mariable.fr/domainedelabadine", linkText: "(voir exemple)" },
       ],
     },
     {
@@ -315,11 +315,11 @@ const Partenariat = () => {
                 </div>
                 <ul className="space-y-3 mb-8">
                   {[
-                    "Fiche éditorialisée sur-mesure",
-                    "Guide d'accueil digitalisé inclus",
-                    "Visibilité Instagram et newsletters",
-                    "Badge partenaire Mariable",
-                    "Accès aux couples qualifiés",
+                    "Fiche éditorialisée sur le site",
+                    "Guide d'accueil digitalisé personnalisé inclus (modèle Mariable)",
+                    "Votre URL dédiée mariable.fr/votrenom",
+                    "Mise en avant Instagram : posts & stories réguliers et à la demande (max 10/an)",
+                    "Article dans la newsletter futurs mariés (+1000 contacts) à la demande",
                   ].map((item, index) => (
                     <li key={index} className="flex items-start gap-2 text-sm">
                       <CheckCircle className="w-4 h-4 text-premium-sage shrink-0 mt-0.5" />
@@ -351,11 +351,9 @@ const Partenariat = () => {
                 </div>
                 <ul className="space-y-3 mb-8">
                   {[
-                    "Tout de l'adhésion partenaire",
-                    "Articles sponsorisés sur le blog",
-                    "Mise en avant prioritaire",
-                    "Campagnes réseaux sociaux dédiées",
-                    "Partenariats sur-mesure",
+                    "Guide d'accueil à la demande (modèle personnalisé)",
+                    "Création ou refonte de site internet",
+                    "Conseil en communication digitale / community management",
                   ].map((item, index) => (
                     <li key={index} className="flex items-start gap-2 text-sm">
                       <CheckCircle className="w-4 h-4 text-premium-sage shrink-0 mt-0.5" />
@@ -421,12 +419,31 @@ const Partenariat = () => {
                       >
                         <div className="px-5 pb-5">
                           <ul className="space-y-2 ml-8">
-                            {item.content.map((line, index) => (
-                              <li key={index} className="flex items-start gap-2 text-sm">
-                                <CheckCircle className="w-4 h-4 text-premium-sage shrink-0 mt-0.5" />
-                                <span className="text-editorial-noir/70">{line}</span>
-                              </li>
-                            ))}
+                            {item.content.map((line, index) => {
+                              const isObject = typeof line === 'object' && line !== null;
+                              const text = isObject ? (line as { text: string }).text : line;
+                              const link = isObject ? (line as { link?: string }).link : undefined;
+                              const linkText = isObject ? (line as { linkText?: string }).linkText : undefined;
+                              
+                              return (
+                                <li key={index} className="flex items-start gap-2 text-sm">
+                                  <CheckCircle className="w-4 h-4 text-premium-sage shrink-0 mt-0.5" />
+                                  <span className="text-editorial-noir/70">
+                                    {text}
+                                    {link && (
+                                      <a 
+                                        href={link} 
+                                        target="_blank" 
+                                        rel="noopener noreferrer"
+                                        className="ml-1 text-premium-sage underline hover:no-underline"
+                                      >
+                                        {linkText || link}
+                                      </a>
+                                    )}
+                                  </span>
+                                </li>
+                              );
+                            })}
                           </ul>
                         </div>
                       </motion.div>
