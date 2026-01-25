@@ -201,13 +201,13 @@ const BudgetCalculator: React.FC = () => {
   // Rendu du mode "budget connu"
   const renderKnownBudgetMode = () => {
     return (
-      <div className="space-y-6 p-4">
+      <div className="space-y-4 sm:space-y-6 p-2 sm:p-4 max-w-full overflow-hidden">
         <div className="text-center">
-          <h2 className="text-xl md:text-2xl font-serif mb-4">Budget connu</h2>
-          <p className="text-sm md:text-base text-muted-foreground px-2">Saisissez votre budget et sélectionnez les catégories à inclure</p>
+          <h2 className="text-lg sm:text-xl md:text-2xl font-serif mb-2 sm:mb-4">Budget connu</h2>
+          <p className="text-xs sm:text-sm md:text-base text-muted-foreground px-1 sm:px-2 break-words">Saisissez votre budget et sélectionnez les catégories</p>
         </div>
         
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6 max-w-full">
           <div>
             <Label htmlFor="knownBudget" className="text-base md:text-lg mb-4 block">Budget total (€)</Label>
             <Input
@@ -258,10 +258,10 @@ const BudgetCalculator: React.FC = () => {
     // Étape 1 : Région
     if (currentStep === 1) {
       return (
-        <div className="space-y-6 p-4">
+        <div className="space-y-4 sm:space-y-6 p-2 sm:p-4 max-w-full overflow-hidden">
           <div className="text-center">
-            <h2 className="text-xl md:text-2xl font-serif mb-4">Étape 1/4 : Localisation</h2>
-            <p className="text-sm md:text-base text-muted-foreground px-2">Où se déroulera votre mariage ?</p>
+            <h2 className="text-lg sm:text-xl md:text-2xl font-serif mb-2 sm:mb-4">Étape 1/4 : Localisation</h2>
+            <p className="text-xs sm:text-sm md:text-base text-muted-foreground px-1 sm:px-2">Où se déroulera votre mariage ?</p>
           </div>
           
           <div>
@@ -302,10 +302,10 @@ const BudgetCalculator: React.FC = () => {
     // Étape 2 : Saison
     if (currentStep === 2) {
       return (
-        <div className="space-y-6 p-4">
+        <div className="space-y-4 sm:space-y-6 p-2 sm:p-4 max-w-full overflow-hidden">
           <div className="text-center">
-            <h2 className="text-xl md:text-2xl font-serif mb-4">Étape 2/4 : Période</h2>
-            <p className="text-sm md:text-base text-muted-foreground px-2">Quand aura lieu votre mariage ?</p>
+            <h2 className="text-lg sm:text-xl md:text-2xl font-serif mb-2 sm:mb-4">Étape 2/4 : Période</h2>
+            <p className="text-xs sm:text-sm md:text-base text-muted-foreground px-1 sm:px-2">Quand aura lieu votre mariage ?</p>
           </div>
           
           <RadioGroup value={season} onValueChange={(v) => setSeason(v as Season)}>
@@ -351,10 +351,10 @@ const BudgetCalculator: React.FC = () => {
     // Étape 3 : Nombre d'invités
     if (currentStep === 3) {
       return (
-        <div className="space-y-6 p-4">
+        <div className="space-y-4 sm:space-y-6 p-2 sm:p-4 max-w-full overflow-hidden">
           <div className="text-center">
-            <h2 className="text-xl md:text-2xl font-serif mb-4">Étape 3/4 : Invités</h2>
-            <p className="text-sm md:text-base text-muted-foreground px-2">Combien d'invités prévoyez-vous ?</p>
+            <h2 className="text-lg sm:text-xl md:text-2xl font-serif mb-2 sm:mb-4">Étape 3/4 : Invités</h2>
+            <p className="text-xs sm:text-sm md:text-base text-muted-foreground px-1 sm:px-2">Combien d'invités prévoyez-vous ?</p>
           </div>
           
           <div>
@@ -398,10 +398,10 @@ const BudgetCalculator: React.FC = () => {
     // Étape 4 : Niveau de service
     if (currentStep === 4) {
       return (
-        <div className="space-y-6 p-4">
+        <div className="space-y-4 sm:space-y-6 p-2 sm:p-4 max-w-full overflow-hidden">
           <div className="text-center">
-            <h2 className="text-xl md:text-2xl font-serif mb-4">Étape 4/4 : Standing</h2>
-            <p className="text-sm md:text-base text-muted-foreground px-2">Quel niveau de standing souhaitez-vous ?</p>
+            <h2 className="text-lg sm:text-xl md:text-2xl font-serif mb-2 sm:mb-4">Étape 4/4 : Standing</h2>
+            <p className="text-xs sm:text-sm md:text-base text-muted-foreground px-1 sm:px-2">Quel niveau de standing souhaitez-vous ?</p>
           </div>
           
           <RadioGroup value={serviceLevel} onValueChange={(v) => setServiceLevel(v as ServiceLevel)}>
@@ -826,14 +826,14 @@ const BudgetCalculator: React.FC = () => {
   };
 
   return (
-    <Card className="overflow-hidden">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Calculator className="h-5 w-5" />
+    <Card className="overflow-hidden max-w-full">
+      <CardHeader className="p-3 sm:p-6">
+        <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+          <Calculator className="h-4 w-4 sm:h-5 sm:w-5" />
           Calculatrice Budget
         </CardTitle>
       </CardHeader>
-      <CardContent className="overflow-x-hidden">
+      <CardContent className="overflow-hidden p-0 sm:p-6 max-w-full">
         {!calculatorMode && renderModeSelection()}
         {calculatorMode === 'known' && !showEstimate && renderKnownBudgetMode()}
         {calculatorMode === 'unknown' && !showEstimate && renderUnknownBudgetMode()}
