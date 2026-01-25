@@ -51,6 +51,12 @@ const PremiumHeader = () => {
           {/* Desktop CTAs */}
           <div className="hidden md:flex items-center space-x-4">
             <Link 
+              to="/partenariat"
+              className="text-xs tracking-widest uppercase text-editorial-noir/80 hover:text-editorial-noir transition-colors font-sans"
+            >
+              Partenariat
+            </Link>
+            <Link 
               to="/contact"
               className="text-xs tracking-widest uppercase text-editorial-noir/80 hover:text-editorial-noir transition-colors font-sans"
             >
@@ -79,7 +85,7 @@ const PremiumHeader = () => {
                   onClick={() => navigate('/login')} 
                   className="text-xs tracking-widest uppercase text-editorial-noir/80 hover:text-editorial-noir hover:bg-transparent font-sans"
                 >
-                  Connexion
+                  Futurs mariés
                 </Button>
               </>
             )}
@@ -94,6 +100,13 @@ const PremiumHeader = () => {
             </SheetTrigger>
             <SheetContent side="right" className="w-[300px] bg-white pt-20">
               <div className="flex flex-col space-y-6">
+                <Link 
+                  to="/partenariat"
+                  onClick={() => setMobileOpen(false)}
+                  className="text-sm tracking-widest uppercase text-editorial-noir/80 hover:text-editorial-noir"
+                >
+                  Partenariat
+                </Link>
                 <Link 
                   to="/contact"
                   onClick={() => setMobileOpen(false)}
@@ -118,7 +131,7 @@ const PremiumHeader = () => {
                       onClick={() => { navigate('/login'); setMobileOpen(false); }} 
                       className="border-editorial-noir/20 text-editorial-noir rounded-none w-full"
                     >
-                      Connexion
+                      Futurs mariés
                     </Button>
                   </>
                 )}

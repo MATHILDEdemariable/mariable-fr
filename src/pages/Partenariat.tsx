@@ -303,7 +303,7 @@ const Partenariat = () => {
                 initial={{ opacity: 0, x: -20 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
-                className="bg-editorial-beige p-8 relative"
+                className="bg-editorial-beige/50 p-8 relative"
               >
                 <div className="flex items-center gap-2 mb-4">
                   <Sparkles className="w-5 h-5 text-premium-sage" />
@@ -340,7 +340,7 @@ const Partenariat = () => {
                 initial={{ opacity: 0, x: 20 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
-                className="bg-editorial-beige p-8 relative"
+                className="bg-editorial-beige/50 p-8 relative"
               >
                 <div className="flex items-center gap-2 mb-4">
                   <Award className="w-5 h-5 text-premium-sage" />
