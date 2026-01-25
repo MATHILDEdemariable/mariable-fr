@@ -75,7 +75,7 @@ const PhotoGalleryViewer: React.FC<PhotoGalleryViewerProps> = ({
 
   if (!photos || photos.length === 0) {
     return (
-      <div className="w-full h-64 bg-gray-100 flex items-center justify-center rounded-md">
+      <div className="w-full h-64 bg-gray-100 flex items-center justify-center">
         <p className="text-gray-500">Aucune photo disponible</p>
       </div>
     );
@@ -88,7 +88,7 @@ const PhotoGalleryViewer: React.FC<PhotoGalleryViewerProps> = ({
         {photos.map((photo, index) => (
           <div
             key={photo.id}
-            className="relative group cursor-pointer overflow-hidden rounded-lg"
+            className="relative group cursor-pointer overflow-hidden"
             onClick={() => openFullscreen(index)}
           >
             <img
