@@ -87,6 +87,14 @@ const PrestatairePrimaryInfo: React.FC<PrestatairePrimaryInfoProps> = ({ fields,
               styles: e.target.value.split(",").map(s => s.trim()).filter(Boolean),
             }))}
           />
+
+          <label className="block font-medium">Avantage proposé (Club Mariable)</label>
+          <Input 
+            name="avantage_propose" 
+            value={fields.avantage_propose ?? ""} 
+            onChange={handleChange}
+            placeholder="Ex: -10% sur la formule découverte"
+          />
         </div>
       </div>
 
