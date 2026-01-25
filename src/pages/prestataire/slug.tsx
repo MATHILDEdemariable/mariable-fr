@@ -282,54 +282,34 @@ const SinglePrestataire = () => {
           </div>
         </div>
 
-        {/* Photo Mosaic - Editorial layout */}
-        {secondaryPhotos.length >= 4 && (
+        {/* Photo Mosaic - Editorial layout (adaptive) */}
+        {secondaryPhotos.length > 0 && (
           <section className="py-8 px-4 bg-white">
             <div className="container max-w-6xl mx-auto">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                {/* Large photo left */}
-                <div className="col-span-2 row-span-2">
-                  <img 
-                    src={secondaryPhotos[0]?.url} 
-                    alt={`${vendor.nom} - photo 2`}
-                    className="w-full h-full object-cover aspect-square cursor-pointer hover:opacity-90 transition-opacity" 
-                    onClick={() => setShowFullGallery(true)}
-                  />
-                </div>
-                {/* Small photos right */}
-                <div className="col-span-1">
-                  <img 
-                    src={secondaryPhotos[1]?.url} 
-                    alt={`${vendor.nom} - photo 3`}
-                    className="w-full h-full object-cover aspect-square cursor-pointer hover:opacity-90 transition-opacity" 
-                    onClick={() => setShowFullGallery(true)}
-                  />
-                </div>
-                <div className="col-span-1">
-                  <img 
-                    src={secondaryPhotos[2]?.url} 
-                    alt={`${vendor.nom} - photo 4`}
-                    className="w-full h-full object-cover aspect-square cursor-pointer hover:opacity-90 transition-opacity" 
-                    onClick={() => setShowFullGallery(true)}
-                  />
-                </div>
-                <div className="col-span-1">
-                  <img 
-                    src={secondaryPhotos[3]?.url} 
-                    alt={`${vendor.nom} - photo 5`}
-                    className="w-full h-full object-cover aspect-square cursor-pointer hover:opacity-90 transition-opacity" 
-                    onClick={() => setShowFullGallery(true)}
-                  />
-                </div>
-                <div className="col-span-1 relative">
-                  {secondaryPhotos[4] ? (
-                    <>
+              <div className={`grid gap-2 ${
+                secondaryPhotos.length === 1 ? 'grid-cols-1 max-w-md mx-auto' :
+                secondaryPhotos.length === 2 ? 'grid-cols-2 max-w-2xl mx-auto' :
+                secondaryPhotos.length === 3 ? 'grid-cols-3 max-w-4xl mx-auto' :
+                'grid-cols-2 md:grid-cols-4'
+              }`}>
+                {secondaryPhotos.slice(0, 6).map((photo, index) => (
+                  <div 
+                    key={photo.id}
+                    className={
+                      secondaryPhotos.length >= 4 && index === 0 
+                        ? 'col-span-2 row-span-2' 
+                        : 'col-span-1'
+                    }
+                  >
+                    <div className="relative">
                       <img 
-                        src={secondaryPhotos[4]?.url} 
-                        alt={`${vendor.nom} - photo 6`}
-                        className="w-full h-full object-cover aspect-square" 
+                        src={photo.url} 
+                        alt={`${vendor.nom} - photo ${index + 2}`}
+                        className="w-full h-full object-cover aspect-square cursor-pointer hover:opacity-90 transition-opacity" 
+                        onClick={() => setShowFullGallery(true)}
                       />
-                      {photos && photos.length > 6 && (
+                      {/* Show "more photos" overlay on the last visible photo */}
+                      {index === Math.min(secondaryPhotos.length, 6) - 1 && photos && photos.length > 6 && (
                         <button 
                           onClick={() => setShowFullGallery(true)}
                           className="absolute inset-0 bg-black/50 flex items-center justify-center text-white hover:bg-black/60 transition-colors"
@@ -340,19 +320,9 @@ const SinglePrestataire = () => {
                           </span>
                         </button>
                       )}
-                    </>
-                  ) : (
-                    <div className="w-full h-full bg-editorial-beige/30 aspect-square flex items-center justify-center">
-                      <button 
-                        onClick={() => setShowFullGallery(true)}
-                        className="text-editorial-noir/60 hover:text-editorial-noir transition-colors flex items-center gap-2"
-                      >
-                        <Images className="h-5 w-5" />
-                        Voir toutes
-                      </button>
                     </div>
-                  )}
-                </div>
+                  </div>
+                ))}
               </div>
             </div>
           </section>
@@ -383,7 +353,9 @@ const SinglePrestataire = () => {
               <div className="bg-white p-6 text-center">
                 <Sparkles className="w-8 h-8 text-premium-sage mx-auto mb-3" />
                 <p className="font-medium text-editorial-noir">Club Mariable</p>
-                <p className="text-sm text-editorial-noir/70">Avantage exclusif</p>
+                <p className="text-sm text-editorial-noir/70">
+                  {vendor.avantage_propose || "Avantage exclusif"}
+                </p>
               </div>
               {/* Avis Google */}
               {vendor.google_rating && (
@@ -471,8 +443,8 @@ const SinglePrestataire = () => {
                 businessUrl={vendor.google_business_url}
               />
 
-              {/* Full Gallery */}
-              {showFullGallery && photos && photos.length > 0 && (
+              {/* Full Gallery - Always visible */}
+              {photos && photos.length > 0 && (
                 <section>
                   <h2 className="text-2xl font-serif text-editorial-noir mb-6">Galerie photo</h2>
                   <PhotoGalleryViewer photos={photos || []} vendorName={vendor.nom} />
@@ -504,7 +476,7 @@ const SinglePrestataire = () => {
             {/* Right Column - Simplified Contact Sidebar */}
             <div className="w-full lg:w-80 space-y-4">
               <Card className="p-6 rounded-none sticky top-4">
-                <h3 className="text-lg font-serif text-editorial-noir mb-4">Contacter ce prestataire</h3>
+                <h3 className="text-lg font-serif text-editorial-noir mb-4">Demander les disponibilités</h3>
                 
                 <Button 
                   className="w-full bg-editorial-noir text-white hover:bg-editorial-noir/90 rounded-none" 

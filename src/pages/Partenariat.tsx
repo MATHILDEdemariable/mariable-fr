@@ -18,7 +18,7 @@ import {
   Award,
   Target,
 } from "lucide-react";
-import Header from "@/components/Header";
+import PremiumHeader from "@/components/home/PremiumHeader";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import ProfessionalRegistrationForm from "@/components/forms/ProfessionalRegistrationForm";
@@ -124,6 +124,37 @@ const Partenariat = () => {
     },
   ];
 
+  const faqItems = [
+    {
+      question: "Quelle est la différence avec mariages.net ?",
+      answer: "Le positionnement et la cible. Nous ne sommes pas un annuaire. Nous souhaitons mettre en avant un guide de prestataires qui correspond à notre univers éditorial et à nos valeurs d'excellence."
+    },
+    {
+      question: "Quelles sont les conditions pour être référencé ?",
+      answer: "Avoir un numéro de SIRET, une assurance professionnelle et partager nos valeurs : service d'excellence, sens du relationnel et de l'humain, et professionnalisme."
+    },
+    {
+      question: "Comment est créée ma fiche ?",
+      answer: "La fiche est créée à partir des informations envoyées via le formulaire. Nous nous réservons le droit de choisir les photos via votre Instagram ou site web pour mettre en valeur votre activité selon notre ligne éditoriale."
+    },
+    {
+      question: "Quelles informations faut-il transmettre ?",
+      answer: "Idéalement, tout ce qui est disponible sur votre brochure commerciale (incluant les prix de vos différents services ou prestations). Plus il y a d'informations disponibles, plus vous serez contacté par des clients qualifiés."
+    },
+    {
+      question: "Comment mettre à jour mon guide d'accueil ?",
+      answer: "En nous écrivant par mail ou WhatsApp (service partenaire), tout simplement :-)"
+    },
+    {
+      question: "Est-ce que le guide d'accueil peut être téléchargeable ?",
+      answer: "Oui, bien sûr ! L'export PDF est une fonctionnalité intégrée."
+    },
+    {
+      question: "Quelles informations mettre dans le guide d'accueil ?",
+      answer: "Toutes les informations que vous communiquez habituellement à vos clients : vos prestations, tarifs, conditions, et tout ce qui peut les aider à mieux vous connaître."
+    }
+  ];
+
   return (
     <>
       <Helmet>
@@ -133,7 +164,7 @@ const Partenariat = () => {
           content="Rejoignez le Club Mariable, la référence des professionnels premium du mariage. Bénéficiez d'une visibilité ciblée et de leads qualifiés."
         />
       </Helmet>
-      <Header />
+      <PremiumHeader />
       <main className="min-h-screen">
         {/* Hero Section - White background */}
         <motion.section
@@ -499,6 +530,56 @@ const Partenariat = () => {
                 "Ce n'est pas une plateforme de volume. C'est une plateforme d'expérience."
               </p>
             </motion.div>
+          </div>
+        </section>
+
+        {/* Section FAQ */}
+        <section className="py-16 px-4 bg-white">
+          <div className="container mx-auto max-w-4xl">
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-2xl md:text-3xl font-serif text-editorial-noir text-center mb-10"
+            >
+              Questions fréquentes
+            </motion.h2>
+            <div className="space-y-3">
+              {faqItems.map((item, index) => (
+                <motion.div
+                  key={`faq-${index}`}
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  className="border-b border-editorial-noir/10"
+                >
+                  <button
+                    onClick={() => toggleAccordion(`faq-${index}`)}
+                    className="w-full flex items-center justify-between py-4 text-left hover:bg-editorial-beige/10 transition-colors px-2"
+                  >
+                    <span className="font-medium text-editorial-noir pr-4">{item.question}</span>
+                    {openAccordion === `faq-${index}` ? (
+                      <ChevronUp className="w-5 h-5 text-editorial-noir/50 shrink-0" />
+                    ) : (
+                      <ChevronDown className="w-5 h-5 text-editorial-noir/50 shrink-0" />
+                    )}
+                  </button>
+                  <AnimatePresence>
+                    {openAccordion === `faq-${index}` && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="overflow-hidden"
+                      >
+                        <p className="text-editorial-noir/70 px-2 pb-4">{item.answer}</p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
+              ))}
+            </div>
           </div>
         </section>
 
