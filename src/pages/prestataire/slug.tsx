@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useSearchParams, useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Database } from "@/integrations/supabase/types";
@@ -11,59 +11,30 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Calendar } from "@/components/ui/calendar";
-import { Input } from "@/components/ui/input";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
-import { MapPin, Users, Star, Award, CalendarCheck, Euro, MessageSquare, ArrowLeft, Sparkles } from "lucide-react";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { MapPin, Users, Star, Award, Euro, MessageSquare, ArrowLeft, Sparkles, Images } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 import { Loader2 } from "lucide-react";
-import { se } from "date-fns/locale";
-import { set } from "date-fns";
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import RdvForm from "@/components/forms/RdvForm";
 import ContactForm from "@/components/forms/ContactForm";
 import GoogleReviews from "@/components/vendors/GoogleReviews";
 import PhotoGalleryViewer from "@/components/vendors/PhotoGalleryViewer";
 import VendorMoreInfo from "@/components/vendors/VendorMoreInfo";
 
-// Import the Prestataire type and PrestatairePhoto
 import { Prestataire, PrestatairePhoto } from "@/components/admin/types";
-import { PrestataireRow } from "@/components/wedding-day/utils";
 
 type VendorsTrackingPreprod = Database["public"]["Tables"]["vendors_tracking_preprod"]["Row"];
-
-interface Package {
-  name: string;
-  basePrice: number;
-  description: string;
-}
-
-const DEFAULT_PACKAGES: Package[] = [
-  {
-    name: "Classique",
-    basePrice: 3200,
-    description: "Location simple du domaine",
-  },
-  { name: "Premium", basePrice: 4500, description: "Location + coordination" },
-  { name: "Luxe", basePrice: 6000, description: "Service tout inclus" },
-];
 
 const SinglePrestataire = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
   const [vendorId, setVendorId] = useState<string>("");
-  const [date, setDate] = useState<Date | undefined>(undefined);
-  const [guests, setGuests] = useState<number>(100);
-  const [packages, setPackages] = useState<Package[]>([]);
-  const [selectedPackage, setSelectedPackage] = useState<Package | null>(null);
   const [open, setOpen] = useState(false);
   const [openContact, setOpenContact] = useState(false);
   const [openVendorContact, setOpenVendorContact] = useState(false);
   const [openMessageModal, setOpenMessageModal] = useState(false);
+  const [showFullGallery, setShowFullGallery] = useState(false);
 
-  //check if user is connected
   const [session, setSession] = useState<Session | null>(null);
   useEffect(() => {
     const subscription = supabase.auth.onAuthStateChange((_event, newSession) => {
@@ -75,21 +46,17 @@ const SinglePrestataire = () => {
     });
   }, []);
 
-  const disabledDates = [new Date(2025, 5, 15), new Date(2025, 5, 16), new Date(2025, 5, 17), new Date(2025, 6, 1)];
-
   const { data: vendor, isLoading } = useQuery({
     queryKey: ["vendor", slug],
     queryFn: async () => {
       if (!slug) return null;
 
-      // Essayer d'abord avec le slug
       let { data, error } = await supabase
         .from("prestataires_rows")
         .select("*, prestataires_photos_preprod(*)")
         .eq("slug", slug)
         .maybeSingle();
 
-      // Si pas trouvé par slug, essayer par ID
       if (!data && !error) {
         const result = await supabase
           .from("prestataires_rows")
@@ -109,7 +76,6 @@ const SinglePrestataire = () => {
         throw new Error(error.message);
       }
 
-      // If no match or multiple, warn frontend.
       if (!data) {
         toast({
           description: `Ce prestataire n'existe pas ou a été supprimé.`,
@@ -151,9 +117,9 @@ const SinglePrestataire = () => {
   }, [vendor]);
 
   const { data: photos } = useQuery({
-    queryKey: ["vendor-photos", slug],
+    queryKey: ["vendor-photos", slug, vendorId],
     queryFn: async () => {
-      if (!slug) return [];
+      if (!vendorId) return [];
 
       const { data, error } = await supabase
         .from("prestataires_photos_preprod")
@@ -170,163 +136,7 @@ const SinglePrestataire = () => {
     enabled: !!vendorId,
   });
 
-  useEffect(() => {
-    if (vendor) {
-      const newPackages: Package[] = [];
-
-      if (vendor.show_prices) {
-        if (vendor.first_price_package_name && vendor.first_price_package) {
-          newPackages.push({
-            name: vendor.first_price_package_name,
-            basePrice: vendor.first_price_package,
-            description: vendor.first_price_package_description || "",
-          });
-        }
-        if (vendor.second_price_package_name && vendor.second_price_package) {
-          newPackages.push({
-            name: vendor.second_price_package_name,
-            basePrice: vendor.second_price_package,
-            description: vendor.second_price_package_description || "",
-          });
-        }
-        if (vendor.third_price_package_name && vendor.third_price_package) {
-          newPackages.push({
-            name: vendor.third_price_package_name,
-            basePrice: vendor.third_price_package,
-            description: vendor.third_price_package_description || "",
-          });
-        }
-        if (vendor.fourth_price_package_name && vendor.fourth_price_package) {
-          newPackages.push({
-            name: vendor.fourth_price_package_name,
-            basePrice: vendor.fourth_price_package,
-            description: vendor.fourth_price_package_description || "",
-          });
-        }
-      }
-
-      setPackages(newPackages);
-
-      if (newPackages.length > 0) {
-        setSelectedPackage(newPackages[0]);
-      } else {
-        setSelectedPackage(null);
-      }
-    }
-  }, [vendor]);
-
-  // Effet pour recalculer le prix lorsque le nombre d'invités change (pour les traiteurs)
-  useEffect(() => {
-    if (vendor?.categorie === "Traiteur") {
-      // Mise à jour de la formule sélectionnée pour forcer le recalcul des prix
-      setSelectedPackage((prev) => (prev ? { ...prev } : null));
-    }
-  }, [guests, vendor?.categorie]);
-
-  const handleDateSelect = (newDate: Date | undefined) => {
-    setDate(newDate);
-    if (newDate) {
-      const isDisabled = disabledDates.some((disabled) => disabled.toDateString() === newDate.toDateString());
-      if (isDisabled) {
-        toast({
-          description: "Cette date n'est pas disponible",
-          variant: "destructive",
-        });
-      } else {
-        toast({
-          description: "Date disponible ! Vous pouvez poursuivre votre réservation.",
-        });
-      }
-    }
-  };
-
-  const calculateTotal = () => {
-    if (!selectedPackage) {
-      return { basePrice: 0, total: 0 };
-    }
-    const basePrice = selectedPackage.basePrice;
-
-    // Calcul spécifique pour les traiteurs (prix par personne × nombre d'invités)
-    let calculatedBasePrice = basePrice;
-    if (vendor?.categorie === "Traiteur") {
-      calculatedBasePrice = basePrice * guests;
-    }
-
-    // Removed 4% commission calculation
-    return {
-      basePrice: calculatedBasePrice,
-      total: calculatedBasePrice,
-    };
-  };
-
-  const prices = calculateTotal();
-
-  const fetchCurrentRDV = async (userId: string | null | undefined, vendorId: string | null | undefined) => {
-    if (!userId || !vendorId || vendorId.trim() === "") {
-      console.warn("ID(s) manquant(s) pour fetchCurrentRDV", {
-        userId,
-        vendorId,
-      });
-      return null;
-    }
-
-    const { data, error } = await supabase
-      .from("vendors_tracking_preprod")
-      .select("*")
-      .eq("user_id", userId)
-      .eq("prestataire_id", vendorId)
-      .maybeSingle();
-
-    if (error) {
-      return null;
-    }
-
-    return data;
-  };
-
-  const checkCurrentRDV = async () => {
-    if (!session || !vendorId || vendorId.trim() === "") {
-      toast({
-        description: "Vous devez être connecté pour effectuer cette action.",
-      });
-      return null;
-    }
-
-    const data = await fetchCurrentRDV(session.user.id, vendorId);
-
-    if (!data || data.status === "annuler") {
-      setOpen(true);
-      return data;
-    } else {
-      toast({
-        description: "Vous devez être connecté pour effectuer cette action.",
-      });
-      return null;
-    }
-  };
-  const [hasCurrentRDV, setHasCurrentRDV] = useState(false);
-
-  useEffect(() => {
-    if (!session || !vendorId || vendorId.trim() === "") return;
-
-    const fetchRDV = async () => {
-      const data = await fetchCurrentRDV(session.user.id, vendorId);
-      console.log(data);
-
-      setHasCurrentRDV(!!data && data.status !== "annuler");
-    };
-
-    fetchRDV();
-  }, [session, vendorId]);
-
-  const handleGuestsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newGuests = parseInt(e.target.value) || 0;
-    setGuests(newGuests);
-  };
-
   const sendMessage = async () => {
-    // Si l'utilisateur est connecté, ouvrir le modal de message sauvegardé
-    // Sinon ouvrir le modal de contact classique
     if (session) {
       setOpenMessageModal(true);
     } else {
@@ -339,12 +149,12 @@ const SinglePrestataire = () => {
       <div className="min-h-screen flex flex-col bg-white">
         <PremiumHeader />
         <div className="container max-w-6xl px-4 py-12 flex justify-center">
-          <Card className="p-8 text-center">
+          <Card className="p-8 text-center rounded-none">
             <h1 className="text-2xl font-serif mb-4">Aucun prestataire sélectionné</h1>
             <p className="mb-6">Veuillez sélectionner un prestataire depuis notre moteur de recherche.</p>
             <Button
-              className="bg-wedding-olive hover:bg-wedding-olive/90"
-              onClick={() => (window.location.href = "/recherche")}
+              className="bg-editorial-noir text-white hover:bg-editorial-noir/90 rounded-none"
+              onClick={() => navigate("/recherche")}
             >
               Retour à la recherche
             </Button>
@@ -360,7 +170,7 @@ const SinglePrestataire = () => {
         <PremiumHeader />
         <div className="container max-w-6xl px-4 py-12 flex justify-center items-center">
           <div className="text-center">
-            <Loader2 className="h-12 w-12 animate-spin text-wedding-olive mx-auto mb-4" />
+            <Loader2 className="h-12 w-12 animate-spin text-editorial-noir mx-auto mb-4" />
             <p>Chargement des informations...</p>
           </div>
         </div>
@@ -373,12 +183,12 @@ const SinglePrestataire = () => {
       <div className="min-h-screen flex flex-col bg-white">
         <PremiumHeader />
         <div className="container max-w-6xl px-4 py-12 flex justify-center">
-          <Card className="p-8 text-center">
+          <Card className="p-8 text-center rounded-none">
             <h1 className="text-2xl font-serif mb-4">Prestataire non trouvé</h1>
             <p className="mb-6">Ce prestataire n'existe pas ou a été supprimé.</p>
             <Button
-              className="bg-wedding-olive hover:bg-wedding-olive/90"
-              onClick={() => (window.location.href = "/recherche")}
+              className="bg-editorial-noir text-white hover:bg-editorial-noir/90 rounded-none"
+              onClick={() => navigate("/recherche")}
             >
               Retour à la recherche
             </Button>
@@ -390,17 +200,23 @@ const SinglePrestataire = () => {
 
   const mainImage =
     photos && photos.length > 0
-      ? photos.find((p) => p.principale)?.thumbnail_url ||
-        photos.find((p) => p.principale)?.url ||
-        photos[0].thumbnail_url ||
+      ? photos.find((p) => p.principale)?.url ||
         photos[0].url
       : "/placeholder.svg";
+
+  const regionDisplay = (vendor.regions as any)?.[0] || "";
+
+  const prixDisplay = vendor.categorie === "Traiteur" && vendor.prix_par_personne
+    ? `À partir de ${vendor.prix_par_personne}€/pers.`
+    : vendor.prix_a_partir_de
+      ? `À partir de ${vendor.prix_a_partir_de}€`
+      : "Prix sur demande";
 
   const renderStyleBadges = () => {
     try {
       if (vendor?.styles && Array.isArray(vendor.styles)) {
         return vendor.styles.map((style, index) => (
-          <Badge key={index} variant="outline">
+          <Badge key={index} variant="outline" className="rounded-none">
             {String(style)}
           </Badge>
         ));
@@ -409,221 +225,296 @@ const SinglePrestataire = () => {
           const styles = JSON.parse(String(vendor.styles));
           if (Array.isArray(styles)) {
             return styles.map((style, index) => (
-              <Badge key={index} variant="outline">
+              <Badge key={index} variant="outline" className="rounded-none">
                 {String(style)}
               </Badge>
             ));
           }
         } catch (e) {
-          console.warn("Error parsing vendor styles in Demo:", e);
-          return <Badge variant="outline">{String(vendor.styles)}</Badge>;
+          return <Badge variant="outline" className="rounded-none">{String(vendor.styles)}</Badge>;
         }
       }
-      return <Badge variant="outline">Style non spécifié</Badge>;
+      return null;
     } catch (error) {
-      console.warn("Error processing vendor styles:", error);
       return null;
     }
   };
+
+  // Get secondary photos for mosaic (excluding main)
+  const secondaryPhotos = photos?.filter((p, index) => index > 0) || [];
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <PremiumHeader />
 
-      <main className="flex-grow page-content">
-        <div className="relative h-[25vh] w-full hidden">
-          <img src={mainImage} alt={vendor?.nom || "Prestataire de mariage"} className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-black/30" />
-        </div>
-
-        <div className="container max-w-6xl px-4 py-8">
-          <Button variant="outline" onClick={() => navigate("/professionnelsmariable")} className="mb-4">
+      <main className="flex-grow">
+        {/* Hero Photo - Full width cover */}
+        <div className="relative h-[50vh] md:h-[60vh] w-full">
+          <img 
+            src={mainImage} 
+            alt={vendor?.nom || "Prestataire de mariage"} 
+            className="w-full h-full object-cover" 
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+          
+          {/* Back button */}
+          <Button 
+            variant="ghost" 
+            onClick={() => navigate("/professionnelsmariable")} 
+            className="absolute top-4 left-4 text-white hover:bg-white/20"
+          >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Retour
           </Button>
-          <div className="flex flex-col lg:flex-row gap-8">
-            <div className="flex-grow space-y-6">
-              <div>
-                <h1 className="text-3xl font-serif mb-2">{vendor?.nom}</h1>
-                <div className="flex items-center text-muted-foreground gap-2 mb-4">
-                  <MapPin className="h-4 w-4" />
-                  <span>
-                    {vendor?.ville
-                      ? `${vendor.ville}, ${(vendor.regions as any)?.[0] || ""}`
-                      : (vendor.regions as any)?.[0] || "Non spécifié"}
-                  </span>
-                </div>
 
-                <div className="flex flex-wrap gap-2">
-                  <Badge variant="secondary" className="flex items-center gap-1">
-                    <Award className="h-3 w-3" />
-                    {vendor?.categorie}
-                  </Badge>
-                  {vendor?.styles && renderStyleBadges()}
-                </div>
-              </div>
+          {/* Vendor info overlay */}
+          <div className="absolute bottom-8 left-4 md:left-8 text-white max-w-2xl">
+            <Badge className="bg-white/20 text-white border-white/30 mb-3 rounded-none">
+              {vendor?.categorie}
+            </Badge>
+            <h1 className="text-3xl md:text-5xl font-serif mb-3">{vendor?.nom}</h1>
+            <div className="flex items-center gap-2 text-white/90">
+              <MapPin className="h-4 w-4" />
+              <span>
+                {vendor?.ville ? `${vendor.ville}, ${regionDisplay}` : regionDisplay || "Non spécifié"}
+              </span>
+            </div>
+          </div>
+        </div>
 
-              <Card className="p-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* CORRECTION POUR LA CAPACITÉ */}
-                  {vendor.capacite_invites && (
-                    <div className="flex items-center gap-2">
-                      <Users className="h-5 w-5 text-wedding-olive" />
-                      <div>
-                        <p className="font-medium">Capacité</p>
-                        <p className="text-sm text-muted-foreground">Jusqu'à {vendor.capacite_invites} invités</p>
-                      </div>
+        {/* Photo Mosaic - Editorial layout */}
+        {secondaryPhotos.length >= 4 && (
+          <section className="py-8 px-4 bg-white">
+            <div className="container max-w-6xl mx-auto">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                {/* Large photo left */}
+                <div className="col-span-2 row-span-2">
+                  <img 
+                    src={secondaryPhotos[0]?.url} 
+                    alt={`${vendor.nom} - photo 2`}
+                    className="w-full h-full object-cover aspect-square cursor-pointer hover:opacity-90 transition-opacity" 
+                    onClick={() => setShowFullGallery(true)}
+                  />
+                </div>
+                {/* Small photos right */}
+                <div className="col-span-1">
+                  <img 
+                    src={secondaryPhotos[1]?.url} 
+                    alt={`${vendor.nom} - photo 3`}
+                    className="w-full h-full object-cover aspect-square cursor-pointer hover:opacity-90 transition-opacity" 
+                    onClick={() => setShowFullGallery(true)}
+                  />
+                </div>
+                <div className="col-span-1">
+                  <img 
+                    src={secondaryPhotos[2]?.url} 
+                    alt={`${vendor.nom} - photo 4`}
+                    className="w-full h-full object-cover aspect-square cursor-pointer hover:opacity-90 transition-opacity" 
+                    onClick={() => setShowFullGallery(true)}
+                  />
+                </div>
+                <div className="col-span-1">
+                  <img 
+                    src={secondaryPhotos[3]?.url} 
+                    alt={`${vendor.nom} - photo 5`}
+                    className="w-full h-full object-cover aspect-square cursor-pointer hover:opacity-90 transition-opacity" 
+                    onClick={() => setShowFullGallery(true)}
+                  />
+                </div>
+                <div className="col-span-1 relative">
+                  {secondaryPhotos[4] ? (
+                    <>
+                      <img 
+                        src={secondaryPhotos[4]?.url} 
+                        alt={`${vendor.nom} - photo 6`}
+                        className="w-full h-full object-cover aspect-square" 
+                      />
+                      {photos && photos.length > 6 && (
+                        <button 
+                          onClick={() => setShowFullGallery(true)}
+                          className="absolute inset-0 bg-black/50 flex items-center justify-center text-white hover:bg-black/60 transition-colors"
+                        >
+                          <span className="flex items-center gap-2">
+                            <Images className="h-5 w-5" />
+                            +{photos.length - 6} photos
+                          </span>
+                        </button>
+                      )}
+                    </>
+                  ) : (
+                    <div className="w-full h-full bg-editorial-beige/30 aspect-square flex items-center justify-center">
+                      <button 
+                        onClick={() => setShowFullGallery(true)}
+                        className="text-editorial-noir/60 hover:text-editorial-noir transition-colors flex items-center gap-2"
+                      >
+                        <Images className="h-5 w-5" />
+                        Voir toutes
+                      </button>
                     </div>
                   )}
-                  <div className="flex items-center gap-2">
-                    <Euro className="h-5 w-5 text-wedding-olive" />
-                    <div>
-                      <p className="font-medium">Prix</p>
-                      <p className="text-sm text-muted-foreground">
-                        {vendor.categorie === "Traiteur" && vendor.prix_par_personne
-                          ? `À partir de ${vendor.prix_par_personne}€/pers.`
-                          : vendor.prix_a_partir_de
-                            ? `À partir de ${vendor.prix_a_partir_de}€`
-                            : "Prix sur demande"}
-                      </p>
-                    </div>
-                  </div>
                 </div>
+              </div>
+            </div>
+          </section>
+        )}
 
-                <p className="mt-4 text-muted-foreground">
-                  {vendor.description || "Aucune description disponible pour ce prestataire."}
-                </p>
-              </Card>
-
-              {packages.length > 0 && (
-                <div className="space-y-4">
-                  <h2 className="text-xl font-serif">
-                    {vendor.categorie === "Traiteur" ? "Nos menus" : "Nos formules"}
-                  </h2>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {packages.map((pkg) => (
-                      <Card
-                        key={pkg.name}
-                        className={`p-4 ${selectedPackage?.name === pkg.name ? "border-wedding-olive" : ""}`}
-                      >
-                        <h3 className="font-medium mb-2">{pkg.name}</h3>
-                        <p className="text-sm text-muted-foreground mb-4">{pkg.description}</p>
-                        <p className="font-medium">
-                          {Math.round(pkg.basePrice)}€{vendor.categorie === "Traiteur" ? "/pers" : ""}
-                        </p>
-                      </Card>
-                    ))}
-                  </div>
+        {/* Section Avantages */}
+        <section className="py-12 px-4 bg-editorial-beige/30">
+          <div className="container max-w-6xl mx-auto">
+            <h2 className="text-2xl font-serif text-editorial-noir mb-8 text-center">
+              Les Avantages
+            </h2>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {/* Capacité */}
+              {vendor.capacite_invites && (
+                <div className="bg-white p-6 text-center">
+                  <Users className="w-8 h-8 text-premium-sage mx-auto mb-3" />
+                  <p className="font-medium text-editorial-noir">Capacité</p>
+                  <p className="text-sm text-editorial-noir/70">Jusqu'à {vendor.capacite_invites} invités</p>
                 </div>
               )}
+              {/* Prix */}
+              <div className="bg-white p-6 text-center">
+                <Euro className="w-8 h-8 text-premium-sage mx-auto mb-3" />
+                <p className="font-medium text-editorial-noir">Prix</p>
+                <p className="text-sm text-editorial-noir/70">{prixDisplay}</p>
+              </div>
+              {/* Club Mariable */}
+              <div className="bg-white p-6 text-center">
+                <Sparkles className="w-8 h-8 text-premium-sage mx-auto mb-3" />
+                <p className="font-medium text-editorial-noir">Club Mariable</p>
+                <p className="text-sm text-editorial-noir/70">Avantage exclusif</p>
+              </div>
+              {/* Avis Google */}
+              {vendor.google_rating && (
+                <div className="bg-white p-6 text-center">
+                  <Star className="w-8 h-8 text-premium-sage mx-auto mb-3" />
+                  <p className="font-medium text-editorial-noir">{vendor.google_rating}/5</p>
+                  <p className="text-sm text-editorial-noir/70">{vendor.google_reviews_count} avis Google</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
 
-              {/* Section Avis Google */}
+        {/* Main Content */}
+        <div className="container max-w-6xl px-4 py-12">
+          <div className="flex flex-col lg:flex-row gap-8">
+            {/* Left Column - Content */}
+            <div className="flex-grow space-y-8">
+              {/* Description */}
+              <section>
+                <h2 className="text-2xl font-serif text-editorial-noir mb-4">À propos</h2>
+                <p className="text-editorial-noir/70 leading-relaxed">
+                  {vendor.description || "Aucune description disponible pour ce prestataire."}
+                </p>
+                
+                {/* Styles */}
+                {vendor.styles && (
+                  <div className="flex flex-wrap gap-2 mt-6">
+                    {renderStyleBadges()}
+                  </div>
+                )}
+              </section>
+
+              {/* Formules / Packages */}
+              {vendor.show_prices && (vendor.first_price_package || vendor.second_price_package || vendor.third_price_package || vendor.fourth_price_package) && (
+                <section>
+                  <h2 className="text-2xl font-serif text-editorial-noir mb-6">
+                    {vendor.categorie === "Traiteur" ? "Nos menus" : "Nos formules"}
+                  </h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {vendor.first_price_package_name && vendor.first_price_package && (
+                      <Card className="p-6 rounded-none border-editorial-noir/10">
+                        <h3 className="font-medium text-editorial-noir mb-2">{vendor.first_price_package_name}</h3>
+                        <p className="text-sm text-editorial-noir/60 mb-4">{vendor.first_price_package_description}</p>
+                        <p className="font-medium text-editorial-noir">
+                          {Math.round(vendor.first_price_package)}€{vendor.categorie === "Traiteur" ? "/pers" : ""}
+                        </p>
+                      </Card>
+                    )}
+                    {vendor.second_price_package_name && vendor.second_price_package && (
+                      <Card className="p-6 rounded-none border-editorial-noir/10">
+                        <h3 className="font-medium text-editorial-noir mb-2">{vendor.second_price_package_name}</h3>
+                        <p className="text-sm text-editorial-noir/60 mb-4">{vendor.second_price_package_description}</p>
+                        <p className="font-medium text-editorial-noir">
+                          {Math.round(vendor.second_price_package)}€{vendor.categorie === "Traiteur" ? "/pers" : ""}
+                        </p>
+                      </Card>
+                    )}
+                    {vendor.third_price_package_name && vendor.third_price_package && (
+                      <Card className="p-6 rounded-none border-editorial-noir/10">
+                        <h3 className="font-medium text-editorial-noir mb-2">{vendor.third_price_package_name}</h3>
+                        <p className="text-sm text-editorial-noir/60 mb-4">{vendor.third_price_package_description}</p>
+                        <p className="font-medium text-editorial-noir">
+                          {Math.round(vendor.third_price_package)}€{vendor.categorie === "Traiteur" ? "/pers" : ""}
+                        </p>
+                      </Card>
+                    )}
+                    {vendor.fourth_price_package_name && vendor.fourth_price_package && (
+                      <Card className="p-6 rounded-none border-editorial-noir/10">
+                        <h3 className="font-medium text-editorial-noir mb-2">{vendor.fourth_price_package_name}</h3>
+                        <p className="text-sm text-editorial-noir/60 mb-4">{vendor.fourth_price_package_description}</p>
+                        <p className="font-medium text-editorial-noir">
+                          {Math.round(vendor.fourth_price_package)}€{vendor.categorie === "Traiteur" ? "/pers" : ""}
+                        </p>
+                      </Card>
+                    )}
+                  </div>
+                </section>
+              )}
+
+              {/* Google Reviews */}
               <GoogleReviews
                 rating={vendor.google_rating}
                 reviewsCount={vendor.google_reviews_count}
                 businessUrl={vendor.google_business_url}
               />
 
-              {/* Galerie photo avec visionneur avancé */}
-              <div className="space-y-4">
-                <h2 className="text-xl font-serif">Galerie photo</h2>
-                <PhotoGalleryViewer photos={photos || []} vendorName={vendor.nom} />
-              </div>
+              {/* Full Gallery */}
+              {showFullGallery && photos && photos.length > 0 && (
+                <section>
+                  <h2 className="text-2xl font-serif text-editorial-noir mb-6">Galerie photo</h2>
+                  <PhotoGalleryViewer photos={photos || []} vendorName={vendor.nom} />
+                </section>
+              )}
 
-              {/* Documents utiles */}
+              {/* Documents */}
               {vendor && vendor.prestataires_brochures && vendor.prestataires_brochures.length > 0 && (
-                <div className="space-y-4">
-                  <h2 className="text-xl font-serif">Documents utiles</h2>
+                <section>
+                  <h2 className="text-2xl font-serif text-editorial-noir mb-6">Documents utiles</h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {vendor.prestataires_brochures.map((brochure) =>
                       brochure.url ? (
-                        <Card key={brochure.id}>
-                          <p>
-                            <a href={brochure.url} target="_blank" className="p-4 block" rel="noopener noreferrer">
-                              {brochure.filename || "Télécharger le document"}
-                            </a>
-                          </p>
+                        <Card key={brochure.id} className="rounded-none">
+                          <a href={brochure.url} target="_blank" className="p-4 block hover:bg-editorial-beige/20 transition-colors" rel="noopener noreferrer">
+                            {brochure.filename || "Télécharger le document"}
+                          </a>
                         </Card>
                       ) : null,
                     )}
                   </div>
-                </div>
+                </section>
               )}
 
-              {/* Section Plus d'informations */}
+              {/* More Info */}
               <VendorMoreInfo website={vendor.site_web} vendorName={vendor.nom} />
             </div>
+
+            {/* Right Column - Simplified Contact Sidebar */}
             <div className="w-full lg:w-80 space-y-4">
-              <Card className="p-4">
-                <h3 className="text-lg font-medium mb-4">Vérifier les disponibilités</h3>
-
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button variant="outline" className="w-full justify-start text-left font-normal">
-                      {date ? date.toLocaleDateString() : "Sélectionner une date"}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={date}
-                      onSelect={handleDateSelect}
-                      disabled={disabledDates}
-                      className="pointer-events-auto"
-                    />
-                  </PopoverContent>
-                </Popover>
-
-                <div className="mt-4">
-                  <Label htmlFor="guests">Nombre d'invités</Label>
-                  <Input
-                    id="guests"
-                    type="number"
-                    value={guests}
-                    onChange={handleGuestsChange}
-                    min={1}
-                    max={200}
-                    className="mt-1"
-                  />
-                </div>
-
-                {packages.length > 0 && (
-                  <>
-                    <div className="mt-4">
-                      <Label>{vendor.categorie === "Traiteur" ? "Menu" : "Formule"}</Label>
-                      <RadioGroup
-                        value={selectedPackage?.name || ""}
-                        onValueChange={(value) => setSelectedPackage(packages.find((p) => p.name === value) || null)}
-                        className="mt-2"
-                      >
-                        {packages.map((pkg) => (
-                          <div key={pkg.name} className="flex items-center space-x-2">
-                            <RadioGroupItem value={pkg.name} id={pkg.name} />
-                            <Label htmlFor={pkg.name}>{pkg.name}</Label>
-                          </div>
-                        ))}
-                      </RadioGroup>
-                    </div>
-
-                    <div className="mt-6 border-t pt-4 space-y-2">
-                      <div className="flex justify-between">
-                        <span>
-                          {vendor.categorie === "Traiteur" ? `Prix du menu (${guests} pers.)` : "Prix de base"}
-                        </span>
-                        <span>{Math.round(prices.basePrice)}€</span>
-                      </div>
-                      <div className="flex justify-between font-medium text-lg border-t pt-2">
-                        <span>Total</span>
-                        <span>{Math.round(prices.total)}€</span>
-                      </div>
-                    </div>
-                  </>
-                )}
-                <Button variant="outline" className="w-full mt-4" onClick={sendMessage}>
+              <Card className="p-6 rounded-none sticky top-4">
+                <h3 className="text-lg font-serif text-editorial-noir mb-4">Contacter ce prestataire</h3>
+                
+                <Button 
+                  className="w-full bg-editorial-noir text-white hover:bg-editorial-noir/90 rounded-none" 
+                  onClick={sendMessage}
+                >
                   <MessageSquare className="mr-2 h-4 w-4" />
                   Contacter
                 </Button>
-                {/* Modal de contact prestataire sans connexion */}
+
+                {/* Contact Modals */}
                 <VendorContactModal
                   isOpen={openVendorContact}
                   onClose={() => setOpenVendorContact(false)}
@@ -631,7 +522,6 @@ const SinglePrestataire = () => {
                   vendorName={vendor?.nom || ""}
                 />
 
-                {/* Modal de message sauvegardé pour utilisateurs connectés */}
                 <VendorMessageModal
                   isOpen={openMessageModal}
                   onClose={() => setOpenMessageModal(false)}
@@ -639,7 +529,6 @@ const SinglePrestataire = () => {
                   vendorName={vendor?.nom || ""}
                 />
 
-                {/* Ancien modal avec connexion obligatoire - gardé pour RDV */}
                 <Dialog open={openContact} onOpenChange={setOpenContact}>
                   <DialogTrigger asChild></DialogTrigger>
                   <DialogContent className="max-w-[95%] md:max-w-[70%] md:max-h-[90vh] overflow-y-auto">
@@ -654,8 +543,8 @@ const SinglePrestataire = () => {
                   </DialogContent>
                 </Dialog>
 
-                {/* Alert Club Mariable */}
-                <Alert className="bg-premium-sage/10 border-premium-sage mt-4 w-full">
+                {/* Club Mariable Alert */}
+                <Alert className="bg-premium-sage/10 border-premium-sage mt-4 rounded-none">
                   <Sparkles className="h-4 w-4 text-premium-sage" />
                   <AlertDescription className="text-sm">
                     <strong>✨ Club Mariable :</strong> Découvrez l'avantage exclusif 
@@ -663,6 +552,7 @@ const SinglePrestataire = () => {
                   </AlertDescription>
                 </Alert>
 
+                {/* RDV Dialog */}
                 <Dialog open={open} onOpenChange={setOpen}>
                   <DialogContent className="max-w-[95%] md:max-w-[70%] md:max-h-[90vh] overflow-y-auto">
                     <DialogHeader>
@@ -672,7 +562,7 @@ const SinglePrestataire = () => {
                       <RdvForm
                         prestataire_id={vendor.id}
                         prestataire_name={vendor.nom}
-                        contact_date={date ? date.toISOString() : undefined}
+                        contact_date={undefined}
                         email_prestataire={vendor.email}
                         dialogClose={() => setOpen(false)}
                       />
