@@ -1,135 +1,200 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Helmet } from 'react-helmet-async';
-import { Link } from 'react-router-dom';
-import { 
-  Handshake, 
-  Users, 
-  FileText, 
-  CheckCircle2,
-  Sparkles,
-  Heart,
-  Target,
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Helmet } from "react-helmet-async";
+import { Link } from "react-router-dom";
+import {
   Instagram,
-  Newspaper,
-  Wrench,
-  Network,
-  PenTool,
-  Eye,
-  Link as LinkIcon,
-  Camera,
-  Megaphone,
-  BookOpen,
   Search,
-  DollarSign,
-  MessageCircle,
+  Wrench,
+  Heart,
+  Sparkles,
+  CheckCircle,
+  Palette,
+  BookOpen,
+  Share2,
   ChevronDown,
-  ChevronUp
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
-import ProfessionalRegistrationForm from '@/components/forms/ProfessionalRegistrationForm';
+  ChevronUp,
+  Users,
+  Award,
+  Target,
+} from "lucide-react";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import { Button } from "@/components/ui/button";
+import ProfessionalRegistrationForm from "@/components/forms/ProfessionalRegistrationForm";
 
 const Partenariat = () => {
   const [openAccordion, setOpenAccordion] = useState<string | null>(null);
 
   const scrollToForm = () => {
-    document.getElementById('formulaire-inscription')?.scrollIntoView({ behavior: 'smooth' });
+    document.getElementById("formulaire-inscription")?.scrollIntoView({
+      behavior: "smooth",
+    });
   };
 
   const scrollToOffers = () => {
-    document.getElementById('offres')?.scrollIntoView({ behavior: 'smooth' });
+    document.getElementById("offres")?.scrollIntoView({
+      behavior: "smooth",
+    });
   };
 
   const toggleAccordion = (id: string) => {
     setOpenAccordion(openAccordion === id ? null : id);
   };
 
+  const constatSteps = [
+    {
+      icon: Instagram,
+      title: "Inspiration",
+      description: "Les mariés recherchent des inspirations via Instagram et les réseaux sociaux",
+    },
+    {
+      icon: Search,
+      title: "Informations",
+      description: "Ils ont besoin d'informations complètes (prix inclus) sur les services",
+    },
+    {
+      icon: Wrench,
+      title: "Outils",
+      description: "Des outils pour simplifier les démarches et l'organisation",
+    },
+    {
+      icon: Heart,
+      title: "Feeling",
+      description: "Et du feeling via une rencontre avec les prestataires",
+    },
+  ];
+
+  const whyJoinReasons = [
+    {
+      icon: Target,
+      title: "Visibilité ciblée",
+      description: "Touchez des futurs mariés activement à la recherche de prestataires de qualité.",
+    },
+    {
+      icon: Award,
+      title: "Label d'excellence",
+      description: "Différenciez-vous avec le label Mariable, gage de qualité et de confiance.",
+    },
+    {
+      icon: Palette,
+      title: "Fiches éditorialisées",
+      description: "Contenu rédigé par notre équipe, pas automatisé ni standardisé.",
+    },
+    {
+      icon: BookOpen,
+      title: "Guide d'accueil digitalisé",
+      description: "Outil inclus pour recommander vos partenaires à vos couples.",
+    },
+  ];
+
+  const accordionContent = [
+    {
+      id: "contenu",
+      icon: Palette,
+      title: "Contenu sur-mesure",
+      content: [
+        "Fiches éditorialisées rédigées par l'équipe Mariable",
+        "Mise en valeur de votre univers, positionnement et tarifs",
+        "Pas de contenu automatique ou standardisé",
+        "Objectif : moins de demandes, mais mieux ciblées",
+      ],
+    },
+    {
+      id: "guide",
+      icon: BookOpen,
+      title: "Guide d'accueil digitalisé",
+      content: [
+        "Recommandez facilement vos partenaires de confiance",
+        "Évitez les PDF peu lisibles et peu pratiques",
+        "Expérience fluide et élégante pour vos couples",
+        "Un simple lien à envoyer après signature",
+      ],
+    },
+    {
+      id: "visibilite",
+      icon: Share2,
+      title: "Visibilité Instagram et newsletters",
+      content: [
+        "+4 500 futurs mariés dans notre communauté",
+        "+1M vues cumulées sur nos contenus",
+        "Mises en avant stories et posts (jusqu'à 10/an)",
+        "Présence durable et non éphémère",
+      ],
+    },
+  ];
+
   return (
     <>
       <Helmet>
-        <title>Rejoignez le Club Mariable | Plateforme éditoriale pour professionnels du mariage</title>
-        <meta 
-          name="description" 
-          content="Rejoignez le Club Mariable : fiches éditorialisées, visibilité intégrée, guide d'accueil digitalisé et mises en avant sur nos réseaux. Adhésion partenaire 120€/an." 
+        <title>Rejoignez le Club Mariable | Partenariat Professionnels du Mariage</title>
+        <meta
+          name="description"
+          content="Rejoignez le Club Mariable, la référence des professionnels premium du mariage. Bénéficiez d'une visibilité ciblée et de leads qualifiés."
         />
       </Helmet>
-
       <Header />
-
-      <div className="min-h-screen bg-white">
-        {/* Hero Section - Rejoignez le Club Mariable */}
-        <motion.section 
+      <main className="min-h-screen">
+        {/* Hero Section - White background */}
+        <motion.section
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.8 }}
-          className="relative overflow-hidden bg-editorial-beige py-20 md:py-28 px-4"
+          transition={{ duration: 0.6 }}
+          className="py-20 px-4 bg-white"
         >
-          <div className="container mx-auto max-w-5xl relative z-10">
-            <motion.div
-              initial={{ y: 30, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.2, duration: 0.8 }}
-              className="text-center space-y-6"
+          <div className="container mx-auto max-w-4xl text-center">
+            <span className="inline-block px-4 py-1 bg-editorial-beige text-editorial-noir text-sm mb-6">
+              Club Mariable
+            </span>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-editorial-noir mb-6">
+              Rejoignez le Club Mariable
+            </h1>
+            <p className="text-xl md:text-2xl text-editorial-noir/70 mb-8">
+              La référence des professionnels premium
+            </p>
+            <Button
+              onClick={scrollToOffers}
+              className="bg-editorial-noir text-white hover:bg-editorial-noir/90"
             >
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 0.3, type: "spring", stiffness: 200 }}
-                className="inline-flex items-center gap-2 bg-white/70 backdrop-blur-sm px-5 py-2"
-              >
-                <Handshake className="w-4 h-4 text-premium-sage" />
-                <span className="text-sm font-medium text-editorial-noir">Club Mariable</span>
-              </motion.div>
-              
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-editorial-noir leading-tight">
-                Rejoignez le Club Mariable
-              </h1>
-              
-              <p className="text-lg md:text-xl text-editorial-noir/70 max-w-3xl mx-auto">
-                Une plateforme à triple vocation
-              </p>
-
-              {/* 3 piliers en mini-cartes horizontales */}
-              <div className="grid md:grid-cols-3 gap-4 max-w-3xl mx-auto pt-6">
-                {[
-                  { icon: Newspaper, label: "Média" },
-                  { icon: Wrench, label: "Outils pour les mariés" },
-                  { icon: Network, label: "Écosystème" }
-                ].map((item, idx) => (
-                  <motion.div
-                    key={idx}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.4 + idx * 0.1 }}
-                    className="bg-white/80 backdrop-blur-sm px-4 py-3 flex items-center justify-center gap-2"
-                  >
-                    <item.icon className="w-4 h-4 text-premium-sage" />
-                    <span className="text-sm font-medium text-editorial-noir">{item.label}</span>
-                  </motion.div>
-                ))}
-              </div>
-
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.7 }}
-                className="pt-4"
-              >
-                <Button 
-                  onClick={scrollToOffers}
-                  className="bg-editorial-noir hover:bg-editorial-noir/90 text-white px-8 py-6 text-lg"
-                >
-                  Découvrir nos offres
-                </Button>
-              </motion.div>
-            </motion.div>
+              Découvrir nos offres
+            </Button>
           </div>
         </motion.section>
 
-        {/* Section: Le Constat - Parcours des mariés */}
-        <section className="py-16 md:py-20 px-4 bg-white">
+        {/* Section Pourquoi rejoindre Mariable */}
+        <section className="py-16 px-4 bg-white border-t border-editorial-beige">
+          <div className="container mx-auto max-w-5xl">
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-2xl md:text-3xl font-serif text-editorial-noir text-center mb-10"
+            >
+              Pourquoi rejoindre Mariable ?
+            </motion.h2>
+            <div className="grid sm:grid-cols-2 gap-4">
+              {whyJoinReasons.map((reason, index) => (
+                <motion.div
+                  key={reason.title}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1 }}
+                  className="flex items-start gap-3 p-5 bg-editorial-beige/50"
+                >
+                  <reason.icon className="h-5 w-5 text-premium-sage shrink-0 mt-0.5" />
+                  <div>
+                    <h4 className="font-medium text-editorial-noir mb-1">{reason.title}</h4>
+                    <p className="text-sm text-editorial-noir/70">{reason.description}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Section Le Constat */}
+        <section className="py-20 px-4 bg-editorial-beige/30">
           <div className="container mx-auto max-w-5xl">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -137,83 +202,55 @@ const Partenariat = () => {
               viewport={{ once: true }}
               className="text-center mb-12"
             >
-              <h2 className="text-3xl md:text-4xl font-serif text-editorial-noir mb-4">
-                Le constat
+              <h2 className="text-2xl md:text-3xl font-serif text-editorial-noir mb-4">
+                Le Constat
               </h2>
-              <p className="text-editorial-noir/70 text-lg max-w-2xl mx-auto">
-                Le parcours d'organisation des futurs mariés
+              <p className="text-editorial-noir/70 max-w-2xl mx-auto">
+                Le parcours d'organisation d'un mariage est complexe et multifacettes
               </p>
             </motion.div>
 
-            {/* 4 étapes du parcours */}
-            <div className="grid md:grid-cols-4 gap-6 mb-12">
-              {[
-                { 
-                  icon: Instagram, 
-                  step: "1",
-                  title: "Inspiration via Instagram", 
-                  description: "Les mariés recherchent des inspirations via les réseaux sociaux" 
-                },
-                { 
-                  icon: Search, 
-                  step: "2",
-                  title: "Informations complètes", 
-                  description: "Besoin d'informations détaillées (prix inclus) sur les services" 
-                },
-                { 
-                  icon: Wrench, 
-                  step: "3",
-                  title: "Outils pour simplifier", 
-                  description: "Des outils pour simplifier les démarches d'organisation" 
-                },
-                { 
-                  icon: MessageCircle, 
-                  step: "4",
-                  title: "Feeling via rencontre", 
-                  description: "Le feeling lors de la rencontre avec le prestataire" 
-                }
-              ].map((item, idx) => (
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {constatSteps.map((item, index) => (
                 <motion.div
-                  key={idx}
+                  key={item.title}
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ delay: idx * 0.1 }}
-                  className="bg-editorial-beige p-6 text-center relative"
+                  transition={{ delay: index * 0.1 }}
+                  className="bg-editorial-beige/40 p-6 text-center relative"
                 >
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-6 h-6 bg-editorial-noir text-white text-xs flex items-center justify-center font-medium">
-                    {item.step}
+                  <div className="absolute -top-3 -left-3 w-8 h-8 bg-premium-sage text-white flex items-center justify-center text-sm font-medium">
+                    {index + 1}
                   </div>
-                  <div className="w-12 h-12 bg-white flex items-center justify-center mx-auto mb-4 mt-2">
+                  <div className="w-12 h-12 flex items-center justify-center mx-auto mb-4 mt-2">
                     <item.icon className="w-6 h-6 text-premium-sage" />
                   </div>
-                  <h3 className="text-sm font-medium text-editorial-noir mb-2">{item.title}</h3>
-                  <p className="text-xs text-editorial-noir/60">{item.description}</p>
+                  <h3 className="font-medium text-editorial-noir mb-2">{item.title}</h3>
+                  <p className="text-sm text-editorial-noir/70">{item.description}</p>
                 </motion.div>
               ))}
             </div>
 
-            {/* Conclusion + Ambition */}
             <motion.div
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="text-center space-y-6"
+              className="mt-12 text-center"
             >
-              <div className="bg-editorial-noir text-white py-4 px-6 inline-block">
-                <p className="text-lg font-medium">
-                  Un parcours d'organisation complet grâce à Mariable
-                </p>
-              </div>
-              <p className="text-lg text-editorial-noir/80 italic max-w-2xl mx-auto">
-                Notre ambition : créer des expériences mariages réussies grâce à des rencontres plus justes, plus alignées et plus qualitatives.
+              <p className="text-lg font-medium text-editorial-noir mb-4">
+                = Un parcours d'organisation complet grâce à Mariable
+              </p>
+              <p className="text-editorial-noir/70 italic max-w-2xl mx-auto">
+                "Notre ambition : créer des expériences mariages réussies grâce à des rencontres 
+                plus justes, plus alignées et plus qualitatives."
               </p>
             </motion.div>
           </div>
         </section>
 
-        {/* Section: Les offres Mariable */}
-        <section id="offres" className="py-16 md:py-20 px-4 bg-editorial-beige">
+        {/* Section Les Offres */}
+        <section id="offres" className="py-20 px-4 bg-white">
           <div className="container mx-auto max-w-5xl">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -221,393 +258,274 @@ const Partenariat = () => {
               viewport={{ once: true }}
               className="text-center mb-12"
             >
-              <h2 className="text-3xl md:text-4xl font-serif text-editorial-noir mb-4">
+              <h2 className="text-2xl md:text-3xl font-serif text-editorial-noir mb-4">
                 Les offres Mariable
               </h2>
+              <p className="text-editorial-noir/70">
+                Deux formules adaptées à vos besoins
+              </p>
             </motion.div>
 
-            <div className="grid md:grid-cols-2 gap-8">
-              {/* Offre Adhésion partenaire */}
+            <div className="grid md:grid-cols-2 gap-6">
+              {/* Adhésion partenaire */}
               <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: 0.1 }}
-                className="bg-white p-8 relative"
+                className="bg-editorial-beige p-8 relative"
               >
-                <div className="absolute top-4 right-4">
-                  <Sparkles className="w-6 h-6 text-premium-sage" />
+                <div className="flex items-center gap-2 mb-4">
+                  <Sparkles className="w-5 h-5 text-premium-sage" />
+                  <span className="text-sm font-medium text-premium-sage">Adhésion partenaire</span>
                 </div>
-
-                <h3 className="text-2xl font-serif text-editorial-noir mb-2">
-                  Adhésion partenaire
-                </h3>
-                
                 <div className="mb-6">
-                  <p className="text-4xl font-serif text-premium-sage">120 €</p>
-                  <p className="text-editorial-noir/60">par an</p>
+                  <span className="text-3xl font-serif text-editorial-noir">120€</span>
+                  <span className="text-editorial-noir/70">/an</span>
                 </div>
-
                 <ul className="space-y-3 mb-8">
                   {[
-                    "Fiche éditorialisée rédigée par Mariable",
-                    "Maintenance incluse",
-                    "Badge partenaire",
-                    "Mise en avant newsletter mariés (+1 000 personnes)",
-                    "Mises en avant réseaux sociaux (stories & posts, jusqu'à 10/an)",
-                    "Guide d'accueil digitalisé personnalisé"
-                  ].map((item, idx) => (
-                    <li key={idx} className="flex items-start gap-3">
-                      <CheckCircle2 className="w-5 h-5 text-premium-sage mt-0.5 flex-shrink-0" />
-                      <span className="text-editorial-noir/80 text-sm">{item}</span>
-                    </li>
-                  ))}
-                </ul>
-
-                <Button 
-                  onClick={scrollToForm}
-                  className="w-full bg-editorial-noir hover:bg-editorial-noir/90 text-white"
-                >
-                  Rejoindre Mariable
-                </Button>
-              </motion.div>
-
-              {/* Offres premium */}
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.2 }}
-                className="bg-white border border-editorial-noir/10 p-8"
-              >
-                <div className="inline-block bg-editorial-noir text-white text-xs px-3 py-1 mb-4">
-                  Sur demande
-                </div>
-
-                <h3 className="text-2xl font-serif text-editorial-noir mb-6">
-                  Offres premium
-                </h3>
-
-                <ul className="space-y-4 mb-8">
-                  {[
-                    { icon: Camera, text: "Création de contenu avancée (photo / vidéo / interview)" },
-                    { icon: BookOpen, text: "Personnalisation avancée du guide digitalisé" },
-                    { icon: Megaphone, text: "Accompagnement communication digitale / community manager" }
-                  ].map((item, idx) => (
-                    <li key={idx} className="flex items-start gap-4 p-4 bg-editorial-beige/30">
-                      <item.icon className="w-5 h-5 text-premium-sage mt-0.5 flex-shrink-0" />
-                      <span className="text-editorial-noir/80">{item.text}</span>
-                    </li>
-                  ))}
-                </ul>
-
-                <Link to="/contact">
-                  <Button 
-                    variant="outline"
-                    className="w-full border-editorial-noir text-editorial-noir hover:bg-editorial-noir hover:text-white"
-                  >
-                    Devis sur mesure
-                  </Button>
-                </Link>
-              </motion.div>
-            </div>
-          </div>
-        </section>
-
-        {/* Section: Éléments inclus - Accordions */}
-        <section className="py-16 md:py-20 px-4 bg-white">
-          <div className="container mx-auto max-w-4xl">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="text-center mb-12"
-            >
-              <h2 className="text-3xl md:text-4xl font-serif text-editorial-noir mb-4">
-                Ce qui est inclus
-              </h2>
-              <p className="text-editorial-noir/70">
-                Cliquez pour en savoir plus
-              </p>
-            </motion.div>
-
-            <div className="space-y-4">
-              {/* Accordion: Contenu sur-mesure */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                className="border border-editorial-noir/10"
-              >
-                <button
-                  onClick={() => toggleAccordion('contenu')}
-                  className="w-full flex items-center justify-between p-6 bg-editorial-beige hover:bg-editorial-beige/80 transition-colors"
-                >
-                  <div className="flex items-center gap-3">
-                    <PenTool className="w-5 h-5 text-premium-sage" />
-                    <span className="font-serif text-lg text-editorial-noir">Contenu sur-mesure : fiches éditorialisées</span>
-                  </div>
-                  {openAccordion === 'contenu' ? (
-                    <ChevronUp className="w-5 h-5 text-editorial-noir" />
-                  ) : (
-                    <ChevronDown className="w-5 h-5 text-editorial-noir" />
-                  )}
-                </button>
-                {openAccordion === 'contenu' && (
-                  <div className="p-6 bg-white space-y-4">
-                    <p className="text-editorial-noir/70">
-                      Sur Mariable, les fiches prestataires ne sont pas remplies automatiquement ni standardisées. 
-                      Elles sont rédigées par notre équipe.
-                    </p>
-                    <div className="space-y-3">
-                      {[
-                        "Mise en valeur de votre univers unique",
-                        "Explication claire de votre positionnement",
-                        "Prestations et tarifs affichés (ou fourchettes)",
-                        "Projection facilitée pour les couples"
-                      ].map((item, idx) => (
-                        <div key={idx} className="flex items-start gap-3">
-                          <CheckCircle2 className="w-5 h-5 text-premium-sage mt-0.5 flex-shrink-0" />
-                          <span className="text-editorial-noir">{item}</span>
-                        </div>
-                      ))}
-                    </div>
-                    <div className="bg-premium-sage/10 p-4 border-l-4 border-premium-sage mt-4">
-                      <p className="text-premium-sage-dark font-medium">
-                        👉 Objectif : moins de demandes, mais mieux ciblées.
-                      </p>
-                    </div>
-                  </div>
-                )}
-              </motion.div>
-
-              {/* Accordion: Guide d'accueil digitalisé */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.1 }}
-                className="border border-editorial-noir/10"
-              >
-                <button
-                  onClick={() => toggleAccordion('guide')}
-                  className="w-full flex items-center justify-between p-6 bg-editorial-beige hover:bg-editorial-beige/80 transition-colors"
-                >
-                  <div className="flex items-center gap-3">
-                    <BookOpen className="w-5 h-5 text-premium-sage" />
-                    <span className="font-serif text-lg text-editorial-noir">Guide d'accueil digitalisé</span>
-                  </div>
-                  {openAccordion === 'guide' ? (
-                    <ChevronUp className="w-5 h-5 text-editorial-noir" />
-                  ) : (
-                    <ChevronDown className="w-5 h-5 text-editorial-noir" />
-                  )}
-                </button>
-                {openAccordion === 'guide' && (
-                  <div className="p-6 bg-white space-y-4">
-                    <p className="text-editorial-noir/70">
-                      En tant que partenaire Mariable, vous bénéficiez d'un guide d'accueil digitalisé à votre nom.
-                    </p>
-                    <div className="grid md:grid-cols-2 gap-4">
-                      {[
-                        { icon: Users, text: "Recommandez vos prestataires partenaires" },
-                        { icon: FileText, text: "Évitez les PDF et mails peu lisibles" },
-                        { icon: Sparkles, text: "Offrez une expérience fluide et élégante" },
-                        { icon: LinkIcon, text: "Un lien simple à envoyer après signature" }
-                      ].map((item, idx) => (
-                        <div key={idx} className="flex items-start gap-3 p-4 bg-editorial-beige/50">
-                          <item.icon className="w-5 h-5 text-premium-sage mt-0.5 flex-shrink-0" />
-                          <span className="text-editorial-noir text-sm">{item.text}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </motion.div>
-
-              {/* Accordion: Visibilité Instagram et newsletters */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.2 }}
-                className="border border-editorial-noir/10"
-              >
-                <button
-                  onClick={() => toggleAccordion('visibilite')}
-                  className="w-full flex items-center justify-between p-6 bg-editorial-beige hover:bg-editorial-beige/80 transition-colors"
-                >
-                  <div className="flex items-center gap-3">
-                    <Instagram className="w-5 h-5 text-premium-sage" />
-                    <span className="font-serif text-lg text-editorial-noir">Visibilité Instagram et newsletters</span>
-                  </div>
-                  {openAccordion === 'visibilite' ? (
-                    <ChevronUp className="w-5 h-5 text-editorial-noir" />
-                  ) : (
-                    <ChevronDown className="w-5 h-5 text-editorial-noir" />
-                  )}
-                </button>
-                {openAccordion === 'visibilite' && (
-                  <div className="p-6 bg-white space-y-4">
-                    <p className="text-editorial-noir/70">
-                      Mariable est aussi un média social en croissance avec une ligne éditoriale qualitative.
-                    </p>
-                    <div className="grid grid-cols-3 gap-4 py-4">
-                      {[
-                        { value: "+4 500", label: "futurs mariés" },
-                        { value: "+1M", label: "vues cumulées" },
-                        { value: "10/an", label: "mises en avant" }
-                      ].map((stat, idx) => (
-                        <div key={idx} className="text-center p-4 bg-editorial-beige/50">
-                          <p className="text-2xl font-serif text-premium-sage">{stat.value}</p>
-                          <p className="text-xs text-editorial-noir/60">{stat.label}</p>
-                        </div>
-                      ))}
-                    </div>
-                    <div className="space-y-3">
-                      {[
-                        "Mises en avant sur nos réseaux (stories et posts)",
-                        "Visibilité cohérente avec votre image",
-                        "Présence durable, non éphémère"
-                      ].map((item, idx) => (
-                        <div key={idx} className="flex items-start gap-3">
-                          <CheckCircle2 className="w-5 h-5 text-premium-sage mt-0.5 flex-shrink-0" />
-                          <span className="text-editorial-noir">{item}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </motion.div>
-            </div>
-          </div>
-        </section>
-
-        {/* Section: Alternative aux articles sponsorisés */}
-        <section className="py-16 px-4 bg-editorial-beige/50">
-          <div className="container mx-auto max-w-4xl">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="bg-white p-8 md:p-12"
-            >
-              <div className="text-center mb-8">
-                <h2 className="text-2xl md:text-3xl font-serif text-editorial-noir mb-4">
-                  Une alternative accessible aux articles sponsorisés et aux autres plateformes / annuaires
-                </h2>
-              </div>
-              
-              <div className="grid md:grid-cols-2 gap-8 items-center">
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3 text-editorial-noir/60">
-                    <DollarSign className="w-5 h-5" />
-                    <span>Articles sponsorisés blogs</span>
-                  </div>
-                  <p className="text-3xl font-serif text-editorial-noir">400 - 600 €</p>
-                  <p className="text-editorial-noir/60 text-sm">pour une publication ponctuelle</p>
-                </div>
-                <div className="space-y-3">
-                  <p className="font-medium text-editorial-noir mb-4">Mariable propose une approche différente :</p>
-                  {[
-                    "Plus durable dans le temps",
-                    "Plus accessible financièrement",
-                    "Intégrée à des outils concrets",
-                    "Pas de logique d'annuaire / volume"
-                  ].map((item, idx) => (
-                    <div key={idx} className="flex items-center gap-2">
-                      <CheckCircle2 className="w-4 h-4 text-premium-sage flex-shrink-0" />
+                    "Fiche éditorialisée sur-mesure",
+                    "Guide d'accueil digitalisé inclus",
+                    "Visibilité Instagram et newsletters",
+                    "Badge partenaire Mariable",
+                    "Accès aux couples qualifiés",
+                  ].map((item, index) => (
+                    <li key={index} className="flex items-start gap-2 text-sm">
+                      <CheckCircle className="w-4 h-4 text-premium-sage shrink-0 mt-0.5" />
                       <span className="text-editorial-noir/80">{item}</span>
-                    </div>
+                    </li>
                   ))}
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        </section>
-
-        {/* Section: En résumé */}
-        <section className="py-16 px-4 bg-white">
-          <div className="container mx-auto max-w-3xl text-center">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="space-y-6"
-            >
-              <h2 className="text-3xl md:text-4xl font-serif text-editorial-noir">
-                En résumé
-              </h2>
-              <p className="text-lg text-editorial-noir/80">
-                Mariable s'adresse aux professionnels qui souhaitent :
-              </p>
-              <div className="flex flex-wrap justify-center gap-4">
-                {[
-                  "Une image plus forte",
-                  "Des leads qualifiés",
-                  "Une présence qualitative"
-                ].map((item, idx) => (
-                  <span key={idx} className="bg-editorial-beige px-4 py-2 text-editorial-noir">
-                    {item}
-                  </span>
-                ))}
-              </div>
-              <div className="pt-6 space-y-2">
-                <p className="text-editorial-noir/70">
-                  👉 Ce n'est pas une plateforme de volume.
-                </p>
-                <p className="text-xl font-serif text-premium-sage">
-                  C'est une plateforme d'expérience.
-                </p>
-              </div>
-
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                className="pt-8"
-              >
-                <Button 
+                </ul>
+                <Button
                   onClick={scrollToForm}
-                  className="bg-editorial-noir hover:bg-editorial-noir/90 text-white px-8 py-6 text-lg"
+                  className="w-full bg-editorial-noir text-white hover:bg-editorial-noir/90"
                 >
                   Rejoindre Mariable
                 </Button>
               </motion.div>
-            </motion.div>
+
+              {/* Offres Premium */}
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                className="bg-editorial-beige p-8 relative"
+              >
+                <div className="flex items-center gap-2 mb-4">
+                  <Award className="w-5 h-5 text-premium-sage" />
+                  <span className="text-sm font-medium text-premium-sage">Offres premium</span>
+                </div>
+                <div className="mb-6">
+                  <span className="text-3xl font-serif text-editorial-noir">Sur demande</span>
+                </div>
+                <ul className="space-y-3 mb-8">
+                  {[
+                    "Tout de l'adhésion partenaire",
+                    "Articles sponsorisés sur le blog",
+                    "Mise en avant prioritaire",
+                    "Campagnes réseaux sociaux dédiées",
+                    "Partenariats sur-mesure",
+                  ].map((item, index) => (
+                    <li key={index} className="flex items-start gap-2 text-sm">
+                      <CheckCircle className="w-4 h-4 text-premium-sage shrink-0 mt-0.5" />
+                      <span className="text-editorial-noir/80">{item}</span>
+                    </li>
+                  ))}
+                </ul>
+                <Button
+                  asChild
+                  variant="outline"
+                  className="w-full border-editorial-noir text-editorial-noir hover:bg-editorial-noir hover:text-white"
+                >
+                  <Link to="/contact">Devis sur mesure</Link>
+                </Button>
+              </motion.div>
+            </div>
           </div>
         </section>
 
-        {/* Section: Formulaire d'inscription professionnel */}
-        <section id="formulaire-inscription" className="py-20 px-4 bg-premium-sage">
+        {/* Section Éléments inclus - Accordions */}
+        <section className="py-20 px-4 bg-editorial-beige/30">
           <div className="container mx-auto max-w-3xl">
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-2xl md:text-3xl font-serif text-editorial-noir text-center mb-10"
+            >
+              Éléments inclus
+            </motion.h2>
+
+            <div className="space-y-3">
+              {accordionContent.map((item) => (
+                <motion.div
+                  key={item.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  className="bg-white"
+                >
+                  <button
+                    onClick={() => toggleAccordion(item.id)}
+                    className="w-full flex items-center justify-between p-5 text-left hover:bg-editorial-beige/20 transition-colors"
+                  >
+                    <div className="flex items-center gap-3">
+                      <item.icon className="w-5 h-5 text-premium-sage" />
+                      <span className="font-medium text-editorial-noir">{item.title}</span>
+                    </div>
+                    {openAccordion === item.id ? (
+                      <ChevronUp className="w-5 h-5 text-editorial-noir/50" />
+                    ) : (
+                      <ChevronDown className="w-5 h-5 text-editorial-noir/50" />
+                    )}
+                  </button>
+                  <AnimatePresence>
+                    {openAccordion === item.id && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="overflow-hidden"
+                      >
+                        <div className="px-5 pb-5">
+                          <ul className="space-y-2 ml-8">
+                            {item.content.map((line, index) => (
+                              <li key={index} className="flex items-start gap-2 text-sm">
+                                <CheckCircle className="w-4 h-4 text-premium-sage shrink-0 mt-0.5" />
+                                <span className="text-editorial-noir/70">{line}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Section Alternative accessible */}
+        <section className="py-20 px-4 bg-white">
+          <div className="container mx-auto max-w-4xl">
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               className="text-center mb-10"
             >
-              <h2 className="text-3xl md:text-4xl font-serif text-white mb-4">
-                Rejoindre le Club Mariable
+              <h2 className="text-2xl md:text-3xl font-serif text-editorial-noir mb-4">
+                Une alternative accessible aux articles sponsorisés
               </h2>
-              <p className="text-white/90">
-                Remplissez le formulaire ci-dessous pour nous rejoindre
+              <p className="text-editorial-noir/70">
+                Et aux autres plateformes / annuaires
               </p>
             </motion.div>
 
+            <div className="grid md:grid-cols-2 gap-8">
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                className="p-6 border border-editorial-noir/10"
+              >
+                <h3 className="font-medium text-editorial-noir mb-3">Articles sponsorisés blogs</h3>
+                <p className="text-editorial-noir/70 text-sm mb-4">
+                  400€ - 600€ pour une publication ponctuelle avec une visibilité limitée dans le temps.
+                </p>
+                <span className="text-xs text-editorial-noir/50">Impact éphémère</span>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                className="p-6 bg-premium-sage/10 border border-premium-sage/20"
+              >
+                <h3 className="font-medium text-editorial-noir mb-3">Mariable propose</h3>
+                <ul className="space-y-2 text-sm text-editorial-noir/70">
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-premium-sage" />
+                    Plus durable : présence annuelle
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-premium-sage" />
+                    Plus accessible : 120€/an
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-premium-sage" />
+                    Intégrée à des outils concrets
+                  </li>
+                </ul>
+              </motion.div>
+            </div>
+          </div>
+        </section>
+
+        {/* Section En résumé */}
+        <section className="py-20 px-4 bg-editorial-beige/30">
+          <div className="container mx-auto max-w-4xl">
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: 0.2 }}
-              className="bg-white p-8"
+              className="text-center"
             >
-              <ProfessionalRegistrationForm />
+              <h2 className="text-2xl md:text-3xl font-serif text-editorial-noir mb-8">
+                En résumé
+              </h2>
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-10">
+                {[
+                  { icon: Users, text: "Image plus forte" },
+                  { icon: Target, text: "Leads qualifiés" },
+                  { icon: Award, text: "Présence qualitative" },
+                ].map((item, index) => (
+                  <motion.div
+                    key={item.text}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.1 }}
+                    className="flex items-center justify-center gap-3 p-4 bg-white"
+                  >
+                    <item.icon className="w-5 h-5 text-premium-sage" />
+                    <span className="text-editorial-noir font-medium">{item.text}</span>
+                  </motion.div>
+                ))}
+              </div>
+              <p className="text-editorial-noir/70 italic text-lg">
+                "Ce n'est pas une plateforme de volume. C'est une plateforme d'expérience."
+              </p>
             </motion.div>
           </div>
         </section>
-      </div>
 
+        {/* Section Formulaire */}
+        <section id="formulaire-inscription" className="py-20 px-4 bg-white">
+          <div className="container mx-auto max-w-3xl">
+            <div className="bg-editorial-beige p-8 md:p-12">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="text-center mb-10"
+              >
+                <h2 className="text-3xl md:text-4xl font-serif text-editorial-noir mb-4">
+                  Rejoindre le Club Mariable
+                </h2>
+                <p className="text-editorial-noir/70">
+                  Remplissez le formulaire ci-dessous pour nous rejoindre
+                </p>
+              </motion.div>
+              <div className="bg-white p-6 md:p-8">
+                <ProfessionalRegistrationForm />
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
       <Footer />
     </>
   );
