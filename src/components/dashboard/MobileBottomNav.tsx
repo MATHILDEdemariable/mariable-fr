@@ -19,7 +19,8 @@ import {
   LogOut,
   X,
   Sparkles,
-  MessageSquare
+  MessageSquare,
+  Palette
 } from 'lucide-react';
 import {
   Drawer,
@@ -60,6 +61,7 @@ const drawerNavItems: NavItem[] = [
 ];
 
 const bonusItems: NavItem[] = [
+  { icon: Palette, label: 'Moodboard', path: '/dashboard/moodboard' },
   { icon: Sparkles, label: 'ChatGPT Mariage', path: '/dashboard/chat-gpt-mariage' },
   { icon: MessageSquare, label: 'Assistant IA', path: '/dashboard/assistant-mariage' },
 ];

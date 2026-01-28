@@ -42,6 +42,7 @@ import PanierPage from './PanierPage';
 import MairieCivilPage from './MairieCivilPage';
 import CeremoniePage from './CeremoniePage';
 import InstallAppPage from './InstallAppPage';
+import MoodboardPage from './MoodboardPage';
 
 const UserDashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -114,6 +115,7 @@ const UserDashboard: React.FC = () => {
           <Route path="mairie-civil" element={<MairieCivilPage />} />
           <Route path="ceremonie" element={<CeremoniePage />} />
           <Route path="installer-app" element={<InstallAppPage />} />
+          <Route path="moodboard" element={<MoodboardPage />} />
           <Route path="*" element={<div>Page non trouvée</div>} />
         </Route>
       </Routes>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Calendar, CheckSquare, Calculator, Store, Heart, Settings, LogOut, Wine, MessageCircleQuestion, MessageSquare, Users, Lightbulb, ChevronDown, Coins, ListChecks, UserCheck, Home, QrCode, FileText, Table, AlertCircle, Gift, Sparkles, ShoppingCart, Building2, Smartphone } from 'lucide-react';
+import { LayoutDashboard, Calendar, CheckSquare, Calculator, Store, Heart, Settings, LogOut, Wine, MessageCircleQuestion, MessageSquare, Users, Lightbulb, ChevronDown, Coins, ListChecks, UserCheck, Home, QrCode, FileText, Table, AlertCircle, Gift, Sparkles, ShoppingCart, Building2, Smartphone, Palette } from 'lucide-react';
 import { CallScheduleModal } from './CallScheduleModal';
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
@@ -88,6 +88,11 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
 
   // Menu déroulant Bonus
   const bonusItems = [{
+    label: 'Moodboard',
+    icon: <Palette className="h-4 w-4" />,
+    path: '/dashboard/moodboard',
+    external: false
+  }, {
     label: 'ChatGPT Mariage',
     icon: <MessageSquare className="h-4 w-4" />,
     path: 'https://chatgpt.com/g/g-684071f00100819199b7b11839db48d4-assistant-mariage-by-mariable',
