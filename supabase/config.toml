@@ -42,3 +42,9 @@ verify_jwt = false
 
 [functions.compress-with-tinypng]
 verify_jwt = true
+
+[functions.analyze-moodboard-colors]
+verify_jwt = false
+
+[functions.send-welcome-couple-email]
+verify_jwt = false
