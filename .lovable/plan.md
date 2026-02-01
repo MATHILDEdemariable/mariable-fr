@@ -1,252 +1,312 @@
 
-## Fonctionnalite Moodboard - Creation de planche d'inspiration avec palette de couleurs IA
 
-### Vision du projet
+## Plan de corrections et nouvelles fonctionnalites
 
-Creer une nouvelle fonctionnalite dans le dashboard permettant aux couples de :
-1. Uploader 5 a 10 photos d'inspiration
-2. Analyser automatiquement les couleurs dominantes via IA
-3. Generer un moodboard avec disposition editoriale (tailles variees)
-4. Exporter en PDF avec nom des maries, date et palette de couleurs
+### Resume des demandes
+
+| Demande | Type | Priorite |
+|---------|------|----------|
+| 1. Moodboard absent du menu dashboard | Bug | Haute |
+| 2. Export PDF moodboard deforme les images | Bug | Haute |
+| 3. Double RSVP (Jour-J + Brunch) | Nouvelle fonctionnalite | Moyenne |
+| 4. Page mini-site /severineetolivier | Nouvelle fonctionnalite | Moyenne |
 
 ---
 
-### Architecture technique
+### 1. Correction : Moodboard absent du menu dashboard
 
-```text
-┌─────────────────────────────────────────────────────────────────┐
-│                      FRONTEND                                    │
-│  ┌─────────────────────────────────────────────────────────────┐│
-│  │ src/pages/dashboard/MoodboardPage.tsx                        ││
-│  │ - Upload de 5-10 photos                                      ││
-│  │ - Preview des photos                                         ││
-│  │ - Formulaire (nom maries, date)                             ││
-│  │ - Bouton "Generer le moodboard"                             ││
-│  └─────────────────────────────────────────────────────────────┘│
-│  ┌─────────────────────────────────────────────────────────────┐│
-│  │ src/components/moodboard/MoodboardCanvas.tsx                 ││
-│  │ - Affichage du moodboard genere                             ││
-│  │ - Layout editorial avec photos tailles variees              ││
-│  │ - Palette de couleurs affichee                              ││
-│  │ - Bouton export PDF                                         ││
-│  └─────────────────────────────────────────────────────────────┘│
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                      BACKEND                                     │
-│  ┌─────────────────────────────────────────────────────────────┐│
-│  │ supabase/functions/analyze-moodboard-colors/index.ts         ││
-│  │ - Recoit les URLs des images                                ││
-│  │ - Appelle Lovable AI (Gemini) pour analyser les couleurs    ││
-│  │ - Retourne palette de 5-6 couleurs dominantes en HEX        ││
-│  └─────────────────────────────────────────────────────────────┘│
-└─────────────────────────────────────────────────────────────────┘
+**Analyse du probleme** :
+En verifiant `DashboardSidebar.tsx`, le lien Moodboard est bien present dans le menu "Bonus" (lignes 91-95). Le probleme pourrait etre :
+- Le dropdown "Bonus" n'est pas visible ou est mal positionne
+- Le lien existe mais n'est pas accessible au clic
+
+**Solution** :
+Ajouter le Moodboard comme lien standalone dans la sidebar (comme les autres liens directs) en plus du menu Bonus pour une meilleure visibilite.
+
+**Fichier a modifier** : `src/components/dashboard/DashboardSidebar.tsx`
+
+```typescript
+// Ajouter apres le lien "Plan de table" (ligne 356) :
+{/* Moodboard */}
+<Link 
+  to={isReaderMode ? '#' : '/dashboard/moodboard'} 
+  onClick={e => { if (isReaderMode) { e.preventDefault(); } }}
+  className={cn(
+    "flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors",
+    isActive('/dashboard/moodboard') 
+      ? 'bg-wedding-olive text-white shadow-sm' 
+      : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive',
+    isReaderMode ? 'pointer-events-none opacity-70' : ''
+  )}
+>
+  <Palette className="h-4 w-4" />
+  <span className="ml-2 sm:ml-3 leading-tight">Moodboard</span>
+</Link>
 ```
 
 ---
 
-### Fichiers a creer
+### 2. Correction : Export PDF moodboard deforme les images
+
+**Analyse du probleme** :
+Dans `moodboardPdfService.ts`, l'export utilise `jsPDF.addImage()` avec des dimensions fixes calculees en grille. Le probleme est que les images sont inserees avec des ratios fixes qui ne respectent pas le ratio original de chaque image.
+
+**Solution** :
+Utiliser `html2canvas` pour capturer le moodboard visuellement tel qu'affiche a l'ecran, puis l'ajouter au PDF comme une seule image. Cela preserve exactement l'apparence du moodboard.
+
+**Fichier a modifier** : `src/services/moodboardPdfService.ts`
+
+**Nouvelle approche** :
+```typescript
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
+
+export const generateMoodboardPdf = async (data: MoodboardPdfData): Promise<void> => {
+  // Capturer le canvas HTML avec html2canvas
+  const element = document.getElementById('moodboard-canvas');
+  if (!element) {
+    throw new Error('Moodboard canvas not found');
+  }
+
+  // Render avec scale elevee pour qualite
+  const canvas = await html2canvas(element, {
+    scale: 2,
+    useCORS: true,
+    logging: false,
+    backgroundColor: '#ffffff',
+  });
+
+  // Creer PDF A4
+  const pdf = new jsPDF({
+    orientation: 'portrait',
+    unit: 'mm',
+    format: 'a4',
+  });
+
+  const imgWidth = 210; // A4 width
+  const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+  // Ajouter l'image capturee au PDF
+  const imgData = canvas.toDataURL('image/png', 1.0);
+  pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+
+  // Sauvegarder
+  const fileName = `moodboard-${(data.coupleName || 'mariage').toLowerCase().replace(/[^a-z0-9]/g, '-')}.pdf`;
+  pdf.save(fileName);
+};
+```
+
+Cette approche capture exactement ce que l'utilisateur voit a l'ecran, sans deformation.
+
+---
+
+### 3. Nouvelle fonctionnalite : Double RSVP (Jour-J + Brunch)
+
+**Objectif** : Permettre aux couples de creer un formulaire RSVP qui collecte les reponses pour 2 evenements distincts (ex: mariage + brunch lendemain) avec des decomptes separes.
+
+**Architecture proposee** :
+
+#### Option A : Multi-evenements dans un seul formulaire (Recommandee)
+
+Ajouter un systeme d'evenements secondaires lies a un evenement principal.
+
+**Modifications BDD** :
+```sql
+-- Nouvelle table pour les sous-evenements
+CREATE TABLE wedding_rsvp_sub_events (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  parent_event_id UUID REFERENCES wedding_rsvp_events(id) ON DELETE CASCADE,
+  sub_event_name TEXT NOT NULL, -- "Brunch du lendemain"
+  sub_event_date DATE,
+  sub_event_time TEXT,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- Nouvelle table pour les reponses aux sous-evenements
+CREATE TABLE wedding_rsvp_sub_responses (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  response_id UUID REFERENCES wedding_rsvp_responses(id) ON DELETE CASCADE,
+  sub_event_id UUID REFERENCES wedding_rsvp_sub_events(id) ON DELETE CASCADE,
+  attending BOOLEAN DEFAULT false,
+  number_of_adults INTEGER DEFAULT 0,
+  number_of_children INTEGER DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+```
+
+**Fichiers a modifier/creer** :
+
+| Fichier | Action |
+|---------|--------|
+| Migration SQL | Creer les nouvelles tables |
+| `src/pages/dashboard/RSVPManagement.tsx` | Ajouter option "Ajouter un evenement secondaire" |
+| `src/pages/rsvp/RSVPPublicForm.tsx` | Afficher les sous-evenements avec cases a cocher |
+| `src/pages/dashboard/RSVPResponses.tsx` | Afficher les decomptes par sous-evenement |
+
+**Interface utilisateur - Formulaire de creation** :
+
+```
+[x] Ajouter un evenement secondaire
+
+Nom du 2eme evenement : [Brunch du lendemain        ]
+Date (optionnel) :      [01/07/2026                 ]
+Horaire (optionnel) :   [11h00                      ]
+
+[+ Ajouter un autre evenement]
+```
+
+**Interface utilisateur - Formulaire public RSVP** :
+
+```
+--- Participation aux evenements ---
+
+[ ] Mariage de Severine & Olivier - 30 juin 2026
+    Nombre d'adultes : [2]  Enfants : [0]
+
+[ ] Brunch du lendemain - 1er juillet 2026  
+    Nombre d'adultes : [2]  Enfants : [0]
+```
+
+**Affichage des resultats** :
+
+```
+SYNTHESE DES REPONSES
+
+Mariage (30 juin 2026)
+- 45 adultes confirmes
+- 8 enfants confirmes
+- Total : 53 personnes
+
+Brunch (1er juillet 2026)
+- 32 adultes confirmes
+- 6 enfants confirmes
+- Total : 38 personnes
+```
+
+---
+
+### 4. Nouvelle fonctionnalite : Page mini-site /severineetolivier
+
+**Objectif** : Creer une page one-pager mobile-friendly pour le mariage de Severine et Olivier avec :
+- Header avec navigation par ancres
+- Section planning du mariage
+- Lien RSVP
+- Informations sur les logements
+
+**Architecture** :
+
+**Fichiers a creer** :
 
 | Fichier | Description |
 |---------|-------------|
-| `src/pages/dashboard/MoodboardPage.tsx` | Page principale du moodboard dans le dashboard |
-| `src/components/moodboard/MoodboardUploader.tsx` | Composant d'upload multiple de photos |
-| `src/components/moodboard/MoodboardCanvas.tsx` | Affichage du moodboard avec layout editorial |
-| `src/components/moodboard/ColorPalette.tsx` | Affichage de la palette de couleurs extraites |
-| `src/components/moodboard/MoodboardPDFExport.tsx` | Logique d'export PDF avec jsPDF |
-| `src/services/moodboardPdfService.ts` | Service d'export PDF specifique moodboard |
-| `supabase/functions/analyze-moodboard-colors/index.ts` | Edge function pour analyse IA des couleurs |
-| `src/hooks/useMoodboard.ts` | Hook custom pour gerer l'etat du moodboard |
+| `src/pages/WeddingMiniSite.tsx` | Page mini-site template |
+| Route dans `src/App.tsx` | `/severineetolivier` |
 
----
+**Structure de la page** :
 
-### Fichiers a modifier
-
-| Fichier | Modification |
-|---------|--------------|
-| `src/pages/dashboard/UserDashboard.tsx` | Ajouter route `/dashboard/moodboard` |
-| `src/components/dashboard/DashboardSidebar.tsx` | Ajouter lien "Moodboard" dans la sidebar |
-| `src/components/dashboard/MobileBottomNav.tsx` | Ajouter dans le menu "Plus" |
-
----
-
-### Structure detaillee
-
-#### 1. Page MoodboardPage.tsx
-
-Interface principale avec 3 etapes :
-
-**Etape 1 - Informations du mariage**
-- Champ : Nom des maries (ex: "Marie & Pierre")
-- Champ : Date du mariage (pre-rempli depuis le profil si disponible)
-
-**Etape 2 - Upload des photos**
-- Zone drag & drop pour 5-10 photos
-- Preview des photos avec possibilite de supprimer
-- Validation : minimum 5 photos requises
-
-**Etape 3 - Generation et export**
-- Bouton "Analyser les couleurs" → appel Edge Function
-- Affichage du moodboard genere
-- Bouton "Telecharger en PDF"
-
----
-
-#### 2. Layout editorial du moodboard
-
-Disposition asymetrique des photos pour un effet "magazine" :
-
-```text
+```
 ┌─────────────────────────────────────────────────────────────┐
-│                    MARIAGE                                   │
-│               Marie & Pierre                                │
-│                12 Juillet 2026                              │
+│  HEADER STICKY (mobile-friendly)                            │
+│  [Accueil] [Programme] [RSVP] [Logements] [Contact]        │
 ├─────────────────────────────────────────────────────────────┤
-│  ┌───────────────┐  ┌──────────────────────────────────┐    │
-│  │               │  │                                   │    │
-│  │   Photo 1     │  │          Photo 2 (grande)        │    │
-│  │   (moyenne)   │  │                                   │    │
-│  │               │  │                                   │    │
-│  └───────────────┘  └──────────────────────────────────┘    │
-│  ┌──────────────────────────────────┐  ┌───────────────┐    │
-│  │                                   │  │               │    │
-│  │          Photo 3 (grande)        │  │   Photo 4     │    │
-│  │                                   │  │   (moyenne)   │    │
-│  │                                   │  │               │    │
-│  └──────────────────────────────────┘  └───────────────┘    │
-│  ┌───────────────┐  ┌───────────────┐  ┌───────────────┐    │
-│  │   Photo 5     │  │   Photo 6     │  │   Photo 7     │    │
-│  │   (petite)    │  │   (petite)    │  │   (petite)    │    │
-│  └───────────────┘  └───────────────┘  └───────────────┘    │
+│                                                             │
+│  HERO SECTION                                               │
+│  Photo + Noms des maries + Date + Countdown                │
+│                                                             │
 ├─────────────────────────────────────────────────────────────┤
-│                    PALETTE DE COULEURS                       │
-│  ┌─────┐ ┌─────┐ ┌─────┐ ┌─────┐ ┌─────┐ ┌─────┐           │
-│  │#F5C6│ │#D4A5│ │#8B7B│ │#C9B8│ │#E8D8│ │#A69B│           │
-│  └─────┘ └─────┘ └─────┘ └─────┘ └─────┘ └─────┘           │
-│   Rose    Peche   Olive   Beige   Creme   Taupe            │
+│                                                             │
+│  PROGRAMME / PLANNING                                       │
+│  Timeline verticale avec :                                  │
+│  - Ceremonie civile (horaire, lieu)                        │
+│  - Ceremonie religieuse (horaire, lieu)                    │
+│  - Vin d'honneur                                           │
+│  - Diner                                                   │
+│  - Soiree dansante                                         │
+│  - Brunch lendemain                                        │
+│                                                             │
 ├─────────────────────────────────────────────────────────────┤
-│                    mariable.fr                               │
+│                                                             │
+│  RSVP                                                       │
+│  - Message d'introduction                                   │
+│  - Bouton CTA "Confirmer ma presence"                      │
+│    (lien vers /rsvp/severine-olivier)                      │
+│  - Date limite de reponse                                   │
+│                                                             │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  LOGEMENTS                                                  │
+│  - Liste des hebergements recommandes                      │
+│  - Adresses et liens de reservation                        │
+│  - Carte ou indication de distance                         │
+│                                                             │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  CONTACT                                                    │
+│  - Coordonnees des maries ou temoin                        │
+│  - WhatsApp / Email                                        │
+│                                                             │
+├─────────────────────────────────────────────────────────────┤
+│  FOOTER                                                     │
+│  Severine & Olivier - 30 juin 2026                         │
+│  Powered by Mariable                                       │
 └─────────────────────────────────────────────────────────────┘
 ```
 
----
+**Design mobile-first** :
+- Navigation hamburger sur mobile
+- Sections en full-width
+- Touch-friendly (boutons larges)
+- Police serif pour les titres
+- Style editorial coherent avec Mariable
 
-#### 3. Edge Function : analyze-moodboard-colors
-
-Utilise Lovable AI (Gemini avec vision) pour analyser les couleurs :
+**Exemple de contenu (a personnaliser)** :
 
 ```typescript
-// Prompt pour l'IA
-const systemPrompt = `Tu es un expert en design de mariage et colorimetrie.
-Analyse ces images et extrait les 6 couleurs dominantes qui definissent 
-l'ambiance generale.
-
-Pour chaque couleur, fournis :
-- Le code HEX
-- Un nom poetique en francais (ex: "Rose poudre", "Vert sauge", "Beige lin")
-
-Reponds en JSON strict :
-{
-  "colors": [
-    { "hex": "#F5C6D6", "name": "Rose poudre" },
-    { "hex": "#D4A574", "name": "Caramel dore" },
-    ...
+const weddingData = {
+  couple: "Severine & Olivier",
+  date: "30 juin 2026",
+  rsvpSlug: "severine-olivier", // Lien vers /rsvp/severine-olivier
+  rsvpDeadline: "15 mai 2026",
+  schedule: [
+    { time: "14h30", event: "Ceremonie civile", location: "Mairie de Bordeaux" },
+    { time: "16h00", event: "Ceremonie religieuse", location: "Eglise St-Michel" },
+    { time: "17h30", event: "Vin d'honneur", location: "Domaine de Badine" },
+    { time: "20h00", event: "Diner", location: "Domaine de Badine" },
+    { time: "23h00", event: "Soiree dansante" },
+    { time: "11h00 (+1)", event: "Brunch", location: "Domaine de Badine" },
   ],
-  "ambiance": "Description en 1 phrase de l'ambiance generale"
-}`;
+  accommodations: [
+    { name: "Hotel Mercure Libourne", address: "...", link: "...", distance: "5 km" },
+    { name: "Airbnb recommandes", link: "...", note: "Liste curee par les maries" },
+  ],
+  contact: {
+    email: "severineetolivier@gmail.com",
+    phone: "06 XX XX XX XX",
+  }
+};
 ```
 
 ---
 
-#### 4. Export PDF
+### Resume des fichiers a modifier/creer
 
-Utilise jsPDF (deja installe) pour generer un PDF A4 portrait :
-
-- En-tete : Titre "MOODBOARD" + nom des maries + date
-- Corps : Mosaique des photos avec layout editorial
-- Pied : Palette de couleurs avec codes HEX + noms
-- Footer : Logo Mariable
-
----
-
-### Integration dans le dashboard
-
-#### Sidebar (desktop)
-
-Ajouter dans la section "Bonus" ou creer une nouvelle section "Inspiration" :
-
-```typescript
-{
-  label: 'Moodboard',
-  icon: <Palette className="h-4 w-4" />,
-  path: '/dashboard/moodboard'
-}
-```
-
-#### Mobile Bottom Nav
-
-Ajouter dans le drawer "Plus" du menu mobile.
+| Fichier | Action | Demande |
+|---------|--------|---------|
+| `src/components/dashboard/DashboardSidebar.tsx` | Modifier | 1 |
+| `src/services/moodboardPdfService.ts` | Modifier | 2 |
+| Migration SQL (sub_events, sub_responses) | Creer | 3 |
+| `src/pages/dashboard/RSVPManagement.tsx` | Modifier | 3 |
+| `src/pages/rsvp/RSVPPublicForm.tsx` | Modifier | 3 |
+| `src/pages/dashboard/RSVPResponses.tsx` | Modifier | 3 |
+| `src/pages/WeddingSeverineOlivier.tsx` | Creer | 4 |
+| `src/App.tsx` | Modifier (route) | 4 |
 
 ---
 
-### Flux utilisateur
+### Ordre d'implementation recommande
 
-1. L'utilisateur accede a `/dashboard/moodboard`
-2. Il renseigne le nom des maries (ou utilise celui du profil)
-3. Il uploade 5 a 10 photos d'inspiration
-4. Il clique sur "Generer mon moodboard"
-5. L'IA analyse les photos et extrait la palette
-6. Le moodboard s'affiche avec le layout editorial
-7. L'utilisateur peut telecharger le PDF
+1. **Correction Moodboard menu** (5 min) - Impact immediat
+2. **Correction PDF export** (15 min) - Resolution du bug critique
+3. **Page /severineetolivier** (30 min) - Nouvelle page autonome
+4. **Double RSVP** (45 min) - Fonctionnalite plus complexe avec BDD
 
----
-
-### Gestion des images
-
-**Option 1 - Upload temporaire (recommande pour MVP)**
-- Les images sont converties en base64 cote client
-- Envoyees a l'Edge Function pour analyse
-- Pas de stockage permanent (privacy-friendly)
-
-**Option 2 - Stockage Supabase (pour evolution future)**
-- Upload dans bucket `moodboards`
-- Sauvegarde des moodboards pour consultation ulterieure
-- Historique des moodboards crees
-
-Pour le MVP, je recommande l'option 1 (pas de stockage).
-
----
-
-### Estimation technique
-
-| Composant | Complexite |
-|-----------|------------|
-| Page principale | Moyenne |
-| Composant upload | Faible |
-| Layout moodboard | Moyenne |
-| Extraction couleurs IA | Moyenne |
-| Export PDF | Moyenne |
-| Integration dashboard | Faible |
-
----
-
-### Coherence avec la charte graphique
-
-- Utilisation de `font-serif` (Playfair Display) pour le titre du moodboard
-- Boutons `rounded-none` selon la charte editoriale
-- Couleurs `premium-sage` et `editorial-beige` pour l'interface
-- Style minimal et elegant coherent avec le reste du dashboard
-
----
-
-### Resume des actions
-
-1. Creer l'Edge Function `analyze-moodboard-colors` pour l'analyse IA
-2. Creer le composant `MoodboardUploader` pour l'upload multiple
-3. Creer le composant `MoodboardCanvas` pour le layout editorial
-4. Creer le composant `ColorPalette` pour afficher les couleurs
-5. Creer le service `moodboardPdfService` pour l'export PDF
-6. Creer la page `MoodboardPage` assemblant le tout
-7. Ajouter la route dans `UserDashboard.tsx`
-8. Ajouter le lien dans la sidebar et le menu mobile
