@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Search, Download, Loader2, Phone, Mail, Users, UtensilsCrossed, MessageSquare, MapPin } from 'lucide-react';
+import { ArrowLeft, Search, Download, Loader2, Phone, Mail, Users, UtensilsCrossed, MessageSquare, Calendar } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface RSVPGuest {
@@ -15,6 +15,21 @@ interface RSVPGuest {
   guest_last_name: string;
   guest_type: 'adult' | 'child';
   dietary_restrictions: string | null;
+}
+
+interface SubEvent {
+  id: string;
+  sub_event_name: string;
+  sub_event_date: string | null;
+  sub_event_time: string | null;
+}
+
+interface SubResponse {
+  id: string;
+  sub_event_id: string;
+  attending: boolean;
+  number_of_adults: number;
+  number_of_children: number;
 }
 
 interface RSVPResponse {
@@ -31,6 +46,7 @@ interface RSVPResponse {
   message: string | null;
   submitted_at: string;
   guests?: RSVPGuest[];
+  sub_responses?: SubResponse[];
 }
 
 const RSVPResponses: React.FC = () => {
@@ -39,6 +55,7 @@ const RSVPResponses: React.FC = () => {
   const { toast } = useToast();
 
   const [responses, setResponses] = useState<RSVPResponse[]>([]);
+  const [subEvents, setSubEvents] = useState<SubEvent[]>([]);
   const [eventName, setEventName] = useState('');
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -59,6 +76,15 @@ const RSVPResponses: React.FC = () => {
       if (eventError) throw eventError;
       setEventName(eventData.event_name);
 
+      // Charger les sous-événements
+      const { data: subEventsData } = await supabase
+        .from('wedding_rsvp_sub_events')
+        .select('*')
+        .eq('parent_event_id', eventId)
+        .order('sub_event_date', { ascending: true });
+
+      setSubEvents(subEventsData || []);
+
       // Charger les réponses
       const { data, error } = await supabase
         .from('wedding_rsvp_responses')
@@ -68,20 +94,28 @@ const RSVPResponses: React.FC = () => {
 
       if (error) throw error;
 
-      // Charger les invités détaillés
+      // Charger les invités détaillés et les sous-réponses
       if (data && data.length > 0) {
+        const responseIds = data.map(r => r.id);
+        
         const { data: guestsData } = await supabase
           .from('wedding_rsvp_guests')
           .select('*')
-          .in('response_id', data.map(r => r.id));
+          .in('response_id', responseIds);
 
-        // Associer les invités aux réponses
-        const responsesWithGuests = data.map(response => ({
+        const { data: subResponsesData } = await supabase
+          .from('wedding_rsvp_sub_responses')
+          .select('*')
+          .in('response_id', responseIds);
+
+        // Associer les invités et sous-réponses aux réponses
+        const responsesWithData = data.map(response => ({
           ...response,
-          guests: guestsData?.filter(g => g.response_id === response.id) || []
+          guests: guestsData?.filter(g => g.response_id === response.id) || [],
+          sub_responses: subResponsesData?.filter(sr => sr.response_id === response.id) || []
         }));
 
-        setResponses(responsesWithGuests as RSVPResponse[]);
+        setResponses(responsesWithData as RSVPResponse[]);
       } else {
         setResponses([]);
       }
@@ -99,22 +133,42 @@ const RSVPResponses: React.FC = () => {
 
   const exportToCSV = () => {
     const headers = ['Nom principal', 'Invités détaillés', 'Email', 'Téléphone', 'Adresse', 'Statut', 'Adultes', 'Enfants', 'Total', 'Restrictions', 'Message', 'Date réponse'];
-    const rows = responses.map(r => [
-      r.guest_name,
-      r.guests && r.guests.length > 0 
-        ? r.guests.map(g => `${g.guest_first_name} ${g.guest_last_name}`).join(', ')
-        : '-',
-      r.guest_email || '',
-      r.guest_phone || '',
-      r.guest_address || '',
-      r.attendance_status,
-      r.number_of_adults || r.number_of_guests || 1,
-      r.number_of_children || 0,
-      (r.number_of_adults || r.number_of_guests || 1) + (r.number_of_children || 0),
-      r.dietary_restrictions || '',
-      r.message || '',
-      new Date(r.submitted_at).toLocaleString('fr-FR'),
-    ]);
+    
+    // Ajouter les colonnes pour les sous-événements
+    subEvents.forEach(se => {
+      headers.push(`${se.sub_event_name} - Présent`, `${se.sub_event_name} - Adultes`, `${se.sub_event_name} - Enfants`);
+    });
+
+    const rows = responses.map(r => {
+      const baseRow = [
+        r.guest_name,
+        r.guests && r.guests.length > 0 
+          ? r.guests.map(g => `${g.guest_first_name} ${g.guest_last_name}`).join(', ')
+          : '-',
+        r.guest_email || '',
+        r.guest_phone || '',
+        r.guest_address || '',
+        r.attendance_status,
+        r.number_of_adults || r.number_of_guests || 1,
+        r.number_of_children || 0,
+        (r.number_of_adults || r.number_of_guests || 1) + (r.number_of_children || 0),
+        r.dietary_restrictions || '',
+        r.message || '',
+        new Date(r.submitted_at).toLocaleString('fr-FR'),
+      ];
+
+      // Ajouter les données des sous-événements
+      subEvents.forEach(se => {
+        const subResp = r.sub_responses?.find(sr => sr.sub_event_id === se.id);
+        if (subResp && subResp.attending) {
+          baseRow.push('Oui', String(subResp.number_of_adults), String(subResp.number_of_children));
+        } else {
+          baseRow.push('Non', '0', '0');
+        }
+      });
+
+      return baseRow;
+    });
 
     const csvContent = [
       headers.join(','),
@@ -146,6 +200,20 @@ const RSVPResponses: React.FC = () => {
   const totalConfirmedAdults = confirmedResponses.reduce((sum, r) => sum + (r.number_of_adults || r.number_of_guests || 1), 0);
   const totalConfirmedChildren = confirmedResponses.reduce((sum, r) => sum + (r.number_of_children || 0), 0);
   const totalConfirmedGuests = totalConfirmedAdults + totalConfirmedChildren;
+
+  // Calculer les totaux par sous-événement
+  const subEventTotals = subEvents.map(se => {
+    let adults = 0;
+    let children = 0;
+    confirmedResponses.forEach(r => {
+      const subResp = r.sub_responses?.find(sr => sr.sub_event_id === se.id);
+      if (subResp && subResp.attending) {
+        adults += subResp.number_of_adults;
+        children += subResp.number_of_children;
+      }
+    });
+    return { ...se, adults, children, total: adults + children };
+  });
 
   const ResponseCard: React.FC<{ response: RSVPResponse; statusColor: string }> = ({ response, statusColor }) => (
     <Card className="hover:shadow-md transition-shadow">
@@ -191,6 +259,21 @@ const RSVPResponses: React.FC = () => {
           </div>
         )}
 
+        {/* Afficher les sous-événements */}
+        {response.sub_responses && response.sub_responses.length > 0 && (
+          <div className="border-t pt-2 space-y-1">
+            {response.sub_responses.filter(sr => sr.attending).map(sr => {
+              const subEvent = subEvents.find(se => se.id === sr.sub_event_id);
+              return (
+                <div key={sr.id} className="flex items-center gap-2 text-sm text-wedding-olive">
+                  <Calendar className="h-3 w-3" />
+                  <span>{subEvent?.sub_event_name}: {sr.number_of_adults} ad. + {sr.number_of_children} enf.</span>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
         {response.guest_email && (
           <div className="flex items-center gap-2 text-sm">
             <Mail className="h-4 w-4 text-muted-foreground" />
@@ -202,13 +285,6 @@ const RSVPResponses: React.FC = () => {
           <div className="flex items-center gap-2 text-sm">
             <Phone className="h-4 w-4 text-muted-foreground" />
             <span>{response.guest_phone}</span>
-          </div>
-        )}
-
-        {response.guest_address && (
-          <div className="flex items-start gap-2 text-sm">
-            <Mail className="h-4 w-4 text-muted-foreground mt-0.5" />
-            <span className="flex-1">{response.guest_address}</span>
           </div>
         )}
 
@@ -257,6 +333,28 @@ const RSVPResponses: React.FC = () => {
           </p>
         </div>
       </div>
+
+      {/* Résumé des sous-événements */}
+      {subEventTotals.length > 0 && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {subEventTotals.map(se => (
+            <Card key={se.id}>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Calendar className="h-4 w-4 text-wedding-olive" />
+                  {se.sub_event_name}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-2xl font-bold text-wedding-olive">{se.total}</p>
+                <p className="text-sm text-muted-foreground">
+                  {se.adults} adulte{se.adults > 1 ? 's' : ''} + {se.children} enfant{se.children > 1 ? 's' : ''}
+                </p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
 
       <div className="flex items-center gap-4">
         <div className="relative flex-1">

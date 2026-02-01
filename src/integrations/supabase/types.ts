@@ -3570,6 +3570,92 @@ export type Database = {
           },
         ]
       }
+      wedding_rsvp_sub_events: {
+        Row: {
+          created_at: string | null
+          id: string
+          parent_event_id: string
+          sub_event_date: string | null
+          sub_event_location: string | null
+          sub_event_name: string
+          sub_event_time: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          parent_event_id: string
+          sub_event_date?: string | null
+          sub_event_location?: string | null
+          sub_event_name: string
+          sub_event_time?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          parent_event_id?: string
+          sub_event_date?: string | null
+          sub_event_location?: string | null
+          sub_event_name?: string
+          sub_event_time?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wedding_rsvp_sub_events_parent_event_id_fkey"
+            columns: ["parent_event_id"]
+            isOneToOne: false
+            referencedRelation: "wedding_rsvp_events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      wedding_rsvp_sub_responses: {
+        Row: {
+          attending: boolean | null
+          created_at: string | null
+          id: string
+          number_of_adults: number | null
+          number_of_children: number | null
+          response_id: string
+          sub_event_id: string
+        }
+        Insert: {
+          attending?: boolean | null
+          created_at?: string | null
+          id?: string
+          number_of_adults?: number | null
+          number_of_children?: number | null
+          response_id: string
+          sub_event_id: string
+        }
+        Update: {
+          attending?: boolean | null
+          created_at?: string | null
+          id?: string
+          number_of_adults?: number | null
+          number_of_children?: number | null
+          response_id?: string
+          sub_event_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wedding_rsvp_sub_responses_response_id_fkey"
+            columns: ["response_id"]
+            isOneToOne: false
+            referencedRelation: "wedding_rsvp_responses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "wedding_rsvp_sub_responses_sub_event_id_fkey"
+            columns: ["sub_event_id"]
+            isOneToOne: false
+            referencedRelation: "wedding_rsvp_sub_events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       wedding_synonyms: {
         Row: {
           created_at: string | null
