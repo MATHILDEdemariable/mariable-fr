@@ -7,10 +7,19 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, CheckCircle, Heart } from 'lucide-react';
+import { Loader2, CheckCircle, Heart, Calendar, MapPin } from 'lucide-react';
 import { z } from 'zod';
 import { Helmet } from 'react-helmet-async';
+
+interface SubEvent {
+  id: string;
+  sub_event_name: string;
+  sub_event_date: string | null;
+  sub_event_time: string | null;
+  sub_event_location: string | null;
+}
 
 interface RSVPEvent {
   id: string;
@@ -23,11 +32,19 @@ interface RSVPEvent {
   max_guests_per_invite: number;
 }
 
+interface SubEventResponse {
+  sub_event_id: string;
+  attending: boolean;
+  number_of_adults: number;
+  number_of_children: number;
+}
+
 const RSVPPublicForm: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const { toast } = useToast();
 
   const [event, setEvent] = useState<RSVPEvent | null>(null);
+  const [subEvents, setSubEvents] = useState<SubEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -48,6 +65,9 @@ const RSVPPublicForm: React.FC = () => {
     { firstName: '', lastName: '' }
   ]);
 
+  // Sub-events responses
+  const [subEventResponses, setSubEventResponses] = useState<SubEventResponse[]>([]);
+
   useEffect(() => {
     loadEvent();
   }, [slug]);
@@ -62,6 +82,28 @@ const RSVPPublicForm: React.FC = () => {
 
       if (error) throw error;
       setEvent(data);
+
+      // Charger les sous-événements
+      if (data) {
+        const { data: subEventsData } = await supabase
+          .from('wedding_rsvp_sub_events')
+          .select('*')
+          .eq('parent_event_id', data.id)
+          .order('sub_event_date', { ascending: true });
+
+        if (subEventsData && subEventsData.length > 0) {
+          setSubEvents(subEventsData);
+          // Initialiser les réponses pour chaque sous-événement
+          setSubEventResponses(
+            subEventsData.map(se => ({
+              sub_event_id: se.id,
+              attending: true,
+              number_of_adults: 1,
+              number_of_children: 0
+            }))
+          );
+        }
+      }
     } catch (error) {
       console.error('Erreur lors du chargement de l\'événement:', error);
       toast({
@@ -72,6 +114,14 @@ const RSVPPublicForm: React.FC = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const updateSubEventResponse = (subEventId: string, field: keyof SubEventResponse, value: boolean | number) => {
+    setSubEventResponses(prev =>
+      prev.map(ser =>
+        ser.sub_event_id === subEventId ? { ...ser, [field]: value } : ser
+      )
+    );
   };
 
   const validateForm = (): boolean => {
@@ -207,6 +257,27 @@ const RSVPPublicForm: React.FC = () => {
         if (guestsError) throw guestsError;
       }
 
+      // Insérer les réponses aux sous-événements
+      if (subEvents.length > 0 && attendanceStatus === 'oui') {
+        const subResponsesToInsert = subEventResponses
+          .filter(ser => ser.attending)
+          .map(ser => ({
+            response_id: responseData.id,
+            sub_event_id: ser.sub_event_id,
+            attending: ser.attending,
+            number_of_adults: ser.number_of_adults,
+            number_of_children: ser.number_of_children
+          }));
+
+        if (subResponsesToInsert.length > 0) {
+          const { error: subError } = await supabase
+            .from('wedding_rsvp_sub_responses')
+            .insert(subResponsesToInsert);
+
+          if (subError) console.error('Erreur sous-réponses:', subError);
+        }
+      }
+
       setSubmitted(true);
       toast({
         title: 'Réponse enregistrée !',
@@ -222,6 +293,16 @@ const RSVPPublicForm: React.FC = () => {
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const formatDate = (dateStr: string | null) => {
+    if (!dateStr) return '';
+    return new Date(dateStr).toLocaleDateString('fr-FR', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    });
   };
 
   if (loading) {
@@ -289,12 +370,7 @@ const RSVPPublicForm: React.FC = () => {
             <CardTitle className="text-4xl font-serif">{event.event_name}</CardTitle>
             {event.event_date && (
               <p className="text-lg text-muted-foreground">
-                {new Date(event.event_date).toLocaleDateString('fr-FR', {
-                  weekday: 'long',
-                  day: 'numeric',
-                  month: 'long',
-                  year: 'numeric',
-                })}
+                {formatDate(event.event_date)}
               </p>
             )}
             {event.event_location && (
@@ -413,40 +489,58 @@ const RSVPPublicForm: React.FC = () => {
                 </RadioGroup>
               </div>
 
-              {/* Nombre d'invités */}
+              {/* Nombre d'invités pour l'événement principal */}
               {attendanceStatus === 'oui' && (
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="number_of_adults">
-                      Nombre d'adultes *
-                    </Label>
-                    <Input
-                      id="number_of_adults"
-                      type="number"
-                      min="1"
-                      max={event.max_guests_per_invite}
-                      value={numberOfAdults}
-                      onChange={(e) => {
-                        const newCount = parseInt(e.target.value) || 1;
-                        setNumberOfAdults(newCount);
-                        // Ajuster le tableau adults
-                        const newAdults = Array(newCount).fill(null).map((_, i) => 
-                          adults[i] || { firstName: '', lastName: '' }
-                        );
-                        setAdults(newAdults);
-                      }}
-                      required
-                    />
-                    {errors.number_of_adults && (
-                      <p className="text-sm text-red-500">{errors.number_of_adults}</p>
+                <div className="space-y-4 p-4 bg-muted/30 rounded-lg">
+                  <h3 className="font-semibold flex items-center gap-2">
+                    <Calendar className="h-4 w-4" />
+                    {event.event_name}
+                    {event.event_date && (
+                      <span className="text-sm font-normal text-muted-foreground">
+                        - {formatDate(event.event_date)}
+                      </span>
                     )}
+                  </h3>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="number_of_adults">Nombre d'adultes *</Label>
+                      <Input
+                        id="number_of_adults"
+                        type="number"
+                        min="1"
+                        max={event.max_guests_per_invite}
+                        value={numberOfAdults}
+                        onChange={(e) => {
+                          const newCount = parseInt(e.target.value) || 1;
+                          setNumberOfAdults(newCount);
+                          const newAdults = Array(newCount).fill(null).map((_, i) => 
+                            adults[i] || { firstName: '', lastName: '' }
+                          );
+                          setAdults(newAdults);
+                        }}
+                        required
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="number_of_children">Nombre d'enfants</Label>
+                      <Input
+                        id="number_of_children"
+                        type="number"
+                        min="0"
+                        max={event.max_guests_per_invite}
+                        value={numberOfChildren}
+                        onChange={(e) => setNumberOfChildren(parseInt(e.target.value) || 0)}
+                      />
+                    </div>
                   </div>
 
                   {/* Noms des accompagnants adultes */}
                   {numberOfAdults > 1 && (
-                    <div className="space-y-4 border rounded-lg p-4 bg-muted/30">
+                    <div className="space-y-4 border-t pt-4">
                       <Label className="text-base font-medium">
-                        Noms et prénoms des adultes accompagnants *
+                        Noms des adultes accompagnants
                       </Label>
                       <p className="text-sm text-muted-foreground">
                         Personne 1 : {guestFirstName || '(Prénom)'} {guestLastName || '(Nom)'}
@@ -487,31 +581,83 @@ const RSVPPublicForm: React.FC = () => {
                       ))}
                     </div>
                   )}
+                </div>
+              )}
 
-                  <div className="space-y-2">
-                    <Label htmlFor="number_of_children">
-                      Nombre d'enfants
-                    </Label>
-                    <Input
-                      id="number_of_children"
-                      type="number"
-                      min="0"
-                      max={event.max_guests_per_invite}
-                      value={numberOfChildren}
-                      onChange={(e) => setNumberOfChildren(parseInt(e.target.value) || 0)}
-                    />
-                  </div>
+              {/* Sous-événements */}
+              {attendanceStatus === 'oui' && subEvents.length > 0 && (
+                <div className="space-y-4">
+                  <h3 className="font-semibold text-lg">Événements complémentaires</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Indiquez votre présence pour chaque événement
+                  </p>
+                  
+                  {subEvents.map((subEvent) => {
+                    const response = subEventResponses.find(r => r.sub_event_id === subEvent.id);
+                    
+                    return (
+                      <div key={subEvent.id} className="p-4 border rounded-lg space-y-4">
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2">
+                              <Checkbox
+                                id={`sub-${subEvent.id}`}
+                                checked={response?.attending || false}
+                                onCheckedChange={(checked) => 
+                                  updateSubEventResponse(subEvent.id, 'attending', checked as boolean)
+                                }
+                              />
+                              <Label htmlFor={`sub-${subEvent.id}`} className="font-semibold cursor-pointer">
+                                {subEvent.sub_event_name}
+                              </Label>
+                            </div>
+                            {(subEvent.sub_event_date || subEvent.sub_event_time) && (
+                              <p className="text-sm text-muted-foreground ml-6 flex items-center gap-1 mt-1">
+                                <Calendar className="h-3 w-3" />
+                                {subEvent.sub_event_date && formatDate(subEvent.sub_event_date)}
+                                {subEvent.sub_event_time && ` à ${subEvent.sub_event_time}`}
+                              </p>
+                            )}
+                            {subEvent.sub_event_location && (
+                              <p className="text-sm text-muted-foreground ml-6 flex items-center gap-1">
+                                <MapPin className="h-3 w-3" />
+                                {subEvent.sub_event_location}
+                              </p>
+                            )}
+                          </div>
+                        </div>
 
-                  {(numberOfAdults + numberOfChildren) > 0 && (
-                    <div className="text-sm text-muted-foreground bg-muted p-3 rounded-md">
-                      Total: <strong>{numberOfAdults + numberOfChildren} personne{(numberOfAdults + numberOfChildren) > 1 ? 's' : ''}</strong>
-                      {(numberOfAdults + numberOfChildren) > event.max_guests_per_invite && (
-                        <p className="text-red-500 mt-1">
-                          ⚠️ Maximum autorisé: {event.max_guests_per_invite} personnes
-                        </p>
-                      )}
-                    </div>
-                  )}
+                        {response?.attending && (
+                          <div className="grid grid-cols-2 gap-4 ml-6">
+                            <div className="space-y-2">
+                              <Label>Adultes</Label>
+                              <Input
+                                type="number"
+                                min="0"
+                                max={event.max_guests_per_invite}
+                                value={response.number_of_adults}
+                                onChange={(e) => 
+                                  updateSubEventResponse(subEvent.id, 'number_of_adults', parseInt(e.target.value) || 0)
+                                }
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label>Enfants</Label>
+                              <Input
+                                type="number"
+                                min="0"
+                                max={event.max_guests_per_invite}
+                                value={response.number_of_children}
+                                onChange={(e) => 
+                                  updateSubEventResponse(subEvent.id, 'number_of_children', parseInt(e.target.value) || 0)
+                                }
+                              />
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               )}
 

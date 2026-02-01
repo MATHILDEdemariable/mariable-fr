@@ -5,15 +5,23 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
-import { Plus, Loader2, Info } from 'lucide-react';
+import { Plus, Loader2, Info, Trash2 } from 'lucide-react';
 import RSVPEventCard from '@/components/dashboard/RSVPEventCard';
 import { useNavigate } from 'react-router-dom';
 import slugify from '@/utils/slugify';
 import { usePremiumAction } from '@/hooks/usePremiumAction';
 import PremiumModal from '@/components/premium/PremiumModal';
+
+interface SubEvent {
+  id?: string;
+  sub_event_name: string;
+  sub_event_date: string;
+  sub_event_time: string;
+  sub_event_location: string;
+}
 
 interface RSVPEvent {
   id: string;
@@ -26,6 +34,7 @@ interface RSVPEvent {
   require_dietary_restrictions: boolean;
   max_guests_per_invite: number;
   created_at: string;
+  sub_events?: SubEvent[];
 }
 
 const RSVPManagement: React.FC = () => {
@@ -54,6 +63,9 @@ const RSVPManagement: React.FC = () => {
   const [requireDietary, setRequireDietary] = useState(true);
   const [maxGuests, setMaxGuests] = useState(2);
   const [customSlug, setCustomSlug] = useState('');
+  
+  // Sub-events state
+  const [subEvents, setSubEvents] = useState<SubEvent[]>([]);
 
   useEffect(() => {
     loadEvents();
@@ -71,7 +83,22 @@ const RSVPManagement: React.FC = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setEvents(data || []);
+
+      // Charger les sous-événements pour chaque événement
+      if (data && data.length > 0) {
+        const eventsWithSubEvents = await Promise.all(
+          data.map(async (event) => {
+            const { data: subEventsData } = await supabase
+              .from('wedding_rsvp_sub_events')
+              .select('*')
+              .eq('parent_event_id', event.id);
+            return { ...event, sub_events: subEventsData || [] };
+          })
+        );
+        setEvents(eventsWithSubEvents);
+      } else {
+        setEvents([]);
+      }
     } catch (error) {
       console.error('Erreur lors du chargement des événements:', error);
       toast({
@@ -103,6 +130,25 @@ const RSVPManagement: React.FC = () => {
     }
   };
 
+  const addSubEvent = () => {
+    setSubEvents([...subEvents, {
+      sub_event_name: '',
+      sub_event_date: '',
+      sub_event_time: '',
+      sub_event_location: ''
+    }]);
+  };
+
+  const removeSubEvent = (index: number) => {
+    setSubEvents(subEvents.filter((_, i) => i !== index));
+  };
+
+  const updateSubEvent = (index: number, field: keyof SubEvent, value: string) => {
+    const updated = [...subEvents];
+    updated[index] = { ...updated[index], [field]: value };
+    setSubEvents(updated);
+  };
+
   const handleCreateEvent = () => {
     executeAction(async () => {
       if (!eventName.trim()) {
@@ -117,44 +163,63 @@ const RSVPManagement: React.FC = () => {
       setCreating(true);
 
       try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('Utilisateur non connecté');
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) throw new Error('Utilisateur non connecté');
 
-      const uniqueSlug = await generateUniqueSlug(eventName);
+        const uniqueSlug = await generateUniqueSlug(eventName);
 
-      const { data, error } = await supabase
-        .from('wedding_rsvp_events')
-        .insert({
-          user_id: user.id,
-          event_name: eventName,
-          event_date: eventDate || null,
-          event_location: eventLocation || null,
-          unique_link_slug: uniqueSlug,
-          welcome_message: welcomeMessage,
-          require_phone: requirePhone,
-          require_dietary_restrictions: requireDietary,
-          max_guests_per_invite: maxGuests,
-        })
-        .select()
-        .single();
+        const { data, error } = await supabase
+          .from('wedding_rsvp_events')
+          .insert({
+            user_id: user.id,
+            event_name: eventName,
+            event_date: eventDate || null,
+            event_location: eventLocation || null,
+            unique_link_slug: uniqueSlug,
+            welcome_message: welcomeMessage,
+            require_phone: requirePhone,
+            require_dietary_restrictions: requireDietary,
+            max_guests_per_invite: maxGuests,
+          })
+          .select()
+          .single();
 
-      if (error) throw error;
+        if (error) throw error;
 
-      toast({
-        title: 'Événement créé !',
-        description: `Le lien RSVP a été généré : /rsvp/${uniqueSlug}`,
-      });
+        // Créer les sous-événements
+        if (subEvents.length > 0 && data) {
+          const validSubEvents = subEvents.filter(se => se.sub_event_name.trim());
+          if (validSubEvents.length > 0) {
+            const { error: subError } = await supabase
+              .from('wedding_rsvp_sub_events')
+              .insert(
+                validSubEvents.map(se => ({
+                  parent_event_id: data.id,
+                  sub_event_name: se.sub_event_name,
+                  sub_event_date: se.sub_event_date || null,
+                  sub_event_time: se.sub_event_time || null,
+                  sub_event_location: se.sub_event_location || null,
+                }))
+              );
+            if (subError) console.error('Erreur création sous-événements:', subError);
+          }
+        }
 
-      setEvents([data, ...events]);
-      setIsDialogOpen(false);
-      resetForm();
-    } catch (error) {
-      console.error('Erreur lors de la création:', error);
-      toast({
-        title: 'Erreur',
-        description: 'Impossible de créer l\'événement RSVP',
-        variant: 'destructive',
-      });
+        toast({
+          title: 'Événement créé !',
+          description: `Le lien RSVP a été généré : /rsvp/${uniqueSlug}`,
+        });
+
+        setEvents([{ ...data, sub_events: subEvents }, ...events]);
+        setIsDialogOpen(false);
+        resetForm();
+      } catch (error) {
+        console.error('Erreur lors de la création:', error);
+        toast({
+          title: 'Erreur',
+          description: 'Impossible de créer l\'événement RSVP',
+          variant: 'destructive',
+        });
       } finally {
         setCreating(false);
       }
@@ -170,25 +235,26 @@ const RSVPManagement: React.FC = () => {
     setRequireDietary(true);
     setMaxGuests(2);
     setCustomSlug('');
+    setSubEvents([]);
   };
 
   const handleDelete = (eventId: string) => {
     executeAction(async () => {
       try {
-      const { error } = await supabase
-        .from('wedding_rsvp_events')
-        .delete()
-        .eq('id', eventId);
+        const { error } = await supabase
+          .from('wedding_rsvp_events')
+          .delete()
+          .eq('id', eventId);
 
-      if (error) throw error;
+        if (error) throw error;
 
-      setEvents(events.filter(e => e.id !== eventId));
-      toast({
-        title: 'Événement supprimé',
-        description: 'L\'événement RSVP a été supprimé avec succès',
-      });
-    } catch (error) {
-      console.error('Erreur lors de la suppression:', error);
+        setEvents(events.filter(e => e.id !== eventId));
+        toast({
+          title: 'Événement supprimé',
+          description: 'L\'événement RSVP a été supprimé avec succès',
+        });
+      } catch (error) {
+        console.error('Erreur lors de la suppression:', error);
         toast({
           title: 'Erreur',
           description: 'Impossible de supprimer l\'événement',
@@ -209,223 +275,306 @@ const RSVPManagement: React.FC = () => {
   return (
     <>
       <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground">RSVP Invités</h1>
-          <p className="text-muted-foreground mt-2">
-            Gérez vos confirmations de présence en ligne
-          </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-foreground">RSVP Invités</h1>
+            <p className="text-muted-foreground mt-2">
+              Gérez vos confirmations de présence en ligne
+            </p>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="outline">
+                  <Info className="h-4 w-4 mr-2" />
+                  Tuto
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Comment utiliser le RSVP ?</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div className="flex items-start gap-3">
+                    <div className="rounded-full bg-primary/10 p-2">
+                      <span className="font-bold text-primary">1</span>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold">Créer l'événement</h4>
+                      <p className="text-sm text-muted-foreground">
+                        Créez un formulaire RSVP avec vos informations (date, lieu, message personnalisé)
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="rounded-full bg-primary/10 p-2">
+                      <span className="font-bold text-primary">2</span>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold">Ajouter des sous-événements</h4>
+                      <p className="text-sm text-muted-foreground">
+                        Optionnellement, ajoutez un brunch lendemain ou autre événement secondaire
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="rounded-full bg-primary/10 p-2">
+                      <span className="font-bold text-primary">3</span>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold">Partager le lien ou QR code</h4>
+                      <p className="text-sm text-muted-foreground">
+                        Partagez le lien unique ou le QR code avec vos invités
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="rounded-full bg-primary/10 p-2">
+                      <span className="font-bold text-primary">4</span>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold">Gérer les réponses</h4>
+                      <p className="text-sm text-muted-foreground">
+                        Suivez en temps réel les confirmations pour chaque événement
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
+            
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogTrigger asChild>
+                <Button className="bg-primary hover:bg-primary/90">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Créer un formulaire RSVP
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>Créer un nouvel événement RSVP</DialogTitle>
+                </DialogHeader>
+
+                <div className="space-y-6 py-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="event_name">Nom de l'événement principal *</Label>
+                    <Input
+                      id="event_name"
+                      value={eventName}
+                      onChange={(e) => setEventName(e.target.value)}
+                      placeholder="Notre Mariage"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="event_date">Date de l'événement</Label>
+                      <Input
+                        id="event_date"
+                        type="date"
+                        value={eventDate}
+                        onChange={(e) => setEventDate(e.target.value)}
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="event_location">Lieu</Label>
+                      <Input
+                        id="event_location"
+                        value={eventLocation}
+                        onChange={(e) => setEventLocation(e.target.value)}
+                        placeholder="Château de Versailles"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="custom_slug">Lien personnalisé (optionnel)</Label>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-muted-foreground">/rsvp/</span>
+                      <Input
+                        id="custom_slug"
+                        value={customSlug}
+                        onChange={(e) => setCustomSlug(slugify(e.target.value))}
+                        placeholder="marie-et-pierre-2025"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="welcome_message">Message de bienvenue</Label>
+                    <Textarea
+                      id="welcome_message"
+                      value={welcomeMessage}
+                      onChange={(e) => setWelcomeMessage(e.target.value)}
+                      rows={4}
+                      placeholder="Message personnalisé pour vos invités..."
+                    />
+                  </div>
+
+                  {/* Section sous-événements */}
+                  <div className="border-t pt-6 space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <Label className="text-base font-semibold">Événements secondaires</Label>
+                        <p className="text-sm text-muted-foreground">
+                          Ajoutez un brunch lendemain, une soirée la veille, etc.
+                        </p>
+                      </div>
+                      <Button type="button" variant="outline" size="sm" onClick={addSubEvent}>
+                        <Plus className="h-4 w-4 mr-1" />
+                        Ajouter
+                      </Button>
+                    </div>
+
+                    {subEvents.map((subEvent, index) => (
+                      <Card key={index} className="border-dashed">
+                        <CardContent className="pt-4 space-y-4">
+                          <div className="flex items-center justify-between">
+                            <Label className="font-medium">Événement {index + 2}</Label>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => removeSubEvent(index)}
+                              className="text-destructive hover:text-destructive"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                          
+                          <div className="space-y-2">
+                            <Label>Nom de l'événement *</Label>
+                            <Input
+                              value={subEvent.sub_event_name}
+                              onChange={(e) => updateSubEvent(index, 'sub_event_name', e.target.value)}
+                              placeholder="Brunch du lendemain"
+                            />
+                          </div>
+                          
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                              <Label>Date</Label>
+                              <Input
+                                type="date"
+                                value={subEvent.sub_event_date}
+                                onChange={(e) => updateSubEvent(index, 'sub_event_date', e.target.value)}
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label>Horaire</Label>
+                              <Input
+                                value={subEvent.sub_event_time}
+                                onChange={(e) => updateSubEvent(index, 'sub_event_time', e.target.value)}
+                                placeholder="11h00"
+                              />
+                            </div>
+                          </div>
+                          
+                          <div className="space-y-2">
+                            <Label>Lieu (optionnel)</Label>
+                            <Input
+                              value={subEvent.sub_event_location}
+                              onChange={(e) => updateSubEvent(index, 'sub_event_location', e.target.value)}
+                              placeholder="Même lieu que le mariage"
+                            />
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+
+                  <div className="space-y-4 border-t pt-6">
+                    <Label>Options du formulaire</Label>
+                    
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="require_phone" className="font-normal cursor-pointer">
+                        Téléphone obligatoire
+                      </Label>
+                      <Switch
+                        id="require_phone"
+                        checked={requirePhone}
+                        onCheckedChange={setRequirePhone}
+                      />
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="require_dietary" className="font-normal cursor-pointer">
+                        Demander les restrictions alimentaires
+                      </Label>
+                      <Switch
+                        id="require_dietary"
+                        checked={requireDietary}
+                        onCheckedChange={setRequireDietary}
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="max_guests">Nombre maximum d'invités par formulaire</Label>
+                      <Input
+                        id="max_guests"
+                        type="number"
+                        min="1"
+                        max="10"
+                        value={maxGuests}
+                        onChange={(e) => setMaxGuests(parseInt(e.target.value) || 1)}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex gap-3 justify-end pt-4">
+                  <Button
+                    variant="outline"
+                    onClick={() => setIsDialogOpen(false)}
+                  >
+                    Annuler
+                  </Button>
+                  <Button
+                    onClick={handleCreateEvent}
+                    disabled={creating}
+                  >
+                    {creating ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        Création...
+                      </>
+                    ) : (
+                      'Créer l\'événement'
+                    )}
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
+          </div>
         </div>
 
-        <div className="flex items-center gap-3">
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button variant="outline">
-                <Info className="h-4 w-4 mr-2" />
-                Tuto
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Comment utiliser le RSVP ?</DialogTitle>
-              </DialogHeader>
-              <div className="space-y-4">
-                <div className="flex items-start gap-3">
-                  <div className="rounded-full bg-primary/10 p-2">
-                    <span className="font-bold text-primary">1</span>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold">Créer l'événement</h4>
-                    <p className="text-sm text-muted-foreground">
-                      Créez un formulaire RSVP avec vos informations (date, lieu, message personnalisé)
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="rounded-full bg-primary/10 p-2">
-                    <span className="font-bold text-primary">2</span>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold">Partager le lien ou QR code</h4>
-                    <p className="text-sm text-muted-foreground">
-                      Partagez le lien unique ou le QR code avec vos invités par email, WhatsApp, etc.
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="rounded-full bg-primary/10 p-2">
-                    <span className="font-bold text-primary">3</span>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold">Gérer les réponses</h4>
-                    <p className="text-sm text-muted-foreground">
-                      Suivez en temps réel les confirmations de présence et exportez la liste des invités
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </DialogContent>
-          </Dialog>
-          
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogTrigger asChild>
-              <Button className="bg-primary hover:bg-primary/90">
+        {events.length === 0 ? (
+          <Card>
+            <CardContent className="py-12 text-center">
+              <h3 className="text-lg font-semibold mb-2">Aucun événement RSVP</h3>
+              <p className="text-muted-foreground mb-6">
+                Créez votre premier formulaire de confirmation de présence
+              </p>
+              <Button onClick={() => setIsDialogOpen(true)}>
                 <Plus className="h-4 w-4 mr-2" />
                 Créer un formulaire RSVP
               </Button>
-            </DialogTrigger>
-          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>Créer un nouvel événement RSVP</DialogTitle>
-            </DialogHeader>
-
-            <div className="space-y-6 py-4">
-              <div className="space-y-2">
-                <Label htmlFor="event_name">Nom de l'événement *</Label>
-                <Input
-                  id="event_name"
-                  value={eventName}
-                  onChange={(e) => setEventName(e.target.value)}
-                  placeholder="Notre Mariage"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="event_date">Date de l'événement</Label>
-                  <Input
-                    id="event_date"
-                    type="date"
-                    value={eventDate}
-                    onChange={(e) => setEventDate(e.target.value)}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="event_location">Lieu</Label>
-                  <Input
-                    id="event_location"
-                    value={eventLocation}
-                    onChange={(e) => setEventLocation(e.target.value)}
-                    placeholder="Château de Versailles"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="custom_slug">Lien personnalisé (optionnel)</Label>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-muted-foreground">/rsvp/</span>
-                  <Input
-                    id="custom_slug"
-                    value={customSlug}
-                    onChange={(e) => setCustomSlug(slugify(e.target.value))}
-                    placeholder="marie-et-pierre-2025"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="welcome_message">Message de bienvenue</Label>
-                <Textarea
-                  id="welcome_message"
-                  value={welcomeMessage}
-                  onChange={(e) => setWelcomeMessage(e.target.value)}
-                  rows={4}
-                  placeholder="Message personnalisé pour vos invités..."
-                />
-              </div>
-
-              <div className="space-y-4">
-                <Label>Options du formulaire</Label>
-                
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="require_phone" className="font-normal cursor-pointer">
-                    Téléphone obligatoire
-                  </Label>
-                  <Switch
-                    id="require_phone"
-                    checked={requirePhone}
-                    onCheckedChange={setRequirePhone}
-                  />
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="require_dietary" className="font-normal cursor-pointer">
-                    Demander les restrictions alimentaires
-                  </Label>
-                  <Switch
-                    id="require_dietary"
-                    checked={requireDietary}
-                    onCheckedChange={setRequireDietary}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="max_guests">Nombre maximum d'invités par formulaire</Label>
-                  <Input
-                    id="max_guests"
-                    type="number"
-                    min="1"
-                    max="10"
-                    value={maxGuests}
-                    onChange={(e) => setMaxGuests(parseInt(e.target.value) || 1)}
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="flex gap-3 justify-end pt-4">
-              <Button
-                variant="outline"
-                onClick={() => setIsDialogOpen(false)}
-              >
-                Annuler
-              </Button>
-              <Button
-                onClick={handleCreateEvent}
-                disabled={creating}
-              >
-                {creating ? (
-                  <>
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Création...
-                  </>
-                ) : (
-                  'Créer l\'événement'
-                )}
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
-      </div>
-    </div>
-
-      {events.length === 0 ? (
-        <Card>
-          <CardContent className="py-12 text-center">
-            <h3 className="text-lg font-semibold mb-2">Aucun événement RSVP</h3>
-            <p className="text-muted-foreground mb-6">
-              Créez votre premier formulaire de confirmation de présence
-            </p>
-            <Button onClick={() => setIsDialogOpen(true)}>
-              <Plus className="h-4 w-4 mr-2" />
-              Créer un formulaire RSVP
-            </Button>
-          </CardContent>
-        </Card>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {events.map((event) => (
-            <RSVPEventCard
-              key={event.id}
-              event={event}
-              onDelete={handleDelete}
-              onViewResponses={() => navigate(`/dashboard/rsvp/${event.id}/responses`)}
-            />
-          ))}
-        </div>
-      )}
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {events.map((event) => (
+              <RSVPEventCard
+                key={event.id}
+                event={event}
+                onDelete={handleDelete}
+                onViewResponses={() => navigate(`/dashboard/rsvp/${event.id}/responses`)}
+              />
+            ))}
+          </div>
+        )}
       </div>
       
       <PremiumModal
