@@ -355,6 +355,17 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
           {isReaderMode && <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>}
         </Link>
 
+        {/* Moodboard */}
+        <Link to={isReaderMode ? '#' : '/dashboard/moodboard'} onClick={e => {
+        if (isReaderMode) {
+          e.preventDefault();
+        }
+      }} className={cn("flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors", isActive('/dashboard/moodboard') ? 'bg-wedding-olive text-white shadow-sm' : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive', isReaderMode ? 'pointer-events-none opacity-70' : '')}>
+          <Palette className="h-4 w-4" />
+          <span className="ml-2 sm:ml-3 leading-tight">Moodboard</span>
+          {isReaderMode && <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>}
+        </Link>
+
         {/* Cérémonie Laïque */}
         <Link to={isReaderMode ? '#' : '/dashboard/ceremonie'} onClick={e => {
         if (isReaderMode) {
