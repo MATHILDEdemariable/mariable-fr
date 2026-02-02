@@ -1,68 +1,79 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { Menu, X, MapPin, Clock, Calendar, Heart, Home, Mail, Phone, ExternalLink } from 'lucide-react';
+import { Menu, X, MapPin, Clock, Calendar, Heart, Home, Mail, Phone, ExternalLink, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
+import RSVPInlineForm from '@/components/rsvp/RSVPInlineForm';
+import heroImage from '@/assets/severine-olivier-hero.jpeg';
 
-// Données du mariage
+// Palette de couleurs corail/orange
+const colors = {
+  coral: '#E8736E',
+  orange: '#E89557',
+  pink: '#F5B5A8',
+  green: '#6B8E4E',
+  cream: '#FEFBF5',
+  darkGreen: '#4A6741',
+};
+
+// Données du mariage - MISES À JOUR
 const weddingData = {
   couple: "Séverine & Olivier",
-  date: "30 juin 2026",
+  date: "5 septembre 2026",
   rsvpSlug: "severine-olivier",
-  rsvpDeadline: "15 mai 2026",
+  rsvpDeadline: "15 juillet 2026",
   schedule: [
-    { time: "14h30", event: "Cérémonie civile", location: "Mairie de Libourne", icon: "🏛️" },
-    { time: "16h00", event: "Cérémonie religieuse", location: "Église Saint-Jean-Baptiste", icon: "⛪" },
-    { time: "17h30", event: "Vin d'honneur", location: "Domaine de Badine", icon: "🥂" },
-    { time: "20h00", event: "Dîner", location: "Domaine de Badine", icon: "🍽️" },
-    { time: "23h00", event: "Soirée dansante", location: "Domaine de Badine", icon: "💃" },
-    { time: "11h00 (+1)", event: "Brunch du lendemain", location: "Domaine de Badine", icon: "☕" },
+    { time: "15h00", event: "Cérémonie laïque", location: "Château de Saint Clair", icon: "💒" },
+    { time: "17h00", event: "Vin d'honneur", location: "Jardins du Château", icon: "🥂" },
+    { time: "20h00", event: "Dîner", location: "Château de Saint Clair", icon: "🍽️" },
+    { time: "23h00", event: "Soirée dansante", location: "Château de Saint Clair", icon: "💃" },
+    { time: "11h00 (+1)", event: "Brunch du lendemain", location: "Terrasse du Château", icon: "☕" },
+  ],
+  // Programme VIP (visible uniquement avec code)
+  vipSchedule: [
+    { time: "15h00", event: "Cérémonie civile", location: "Mairie", icon: "🏛️", date: "4 septembre" },
+    { time: "20h00", event: "Dîner intime", location: "Restaurant Le Jardin", icon: "🌙", date: "4 septembre" },
   ],
   accommodations: [
     { 
       name: "Hôtel & Spa de Pavie", 
-      address: "Route de Bergerac, 33330 Saint-Émilion", 
-      link: "https://hoteldesaintpavie.com", 
-      distance: "8 km du domaine",
-      note: "Vue sur les vignobles, spa"
+      mapsLink: "https://maps.google.com/?q=Hotel+Spa+de+Pavie+Saint-Emilion",
+      distance: "8 km"
     },
     { 
       name: "Hôtel Mercure Libourne", 
-      address: "3 Quai Souchet, 33500 Libourne", 
-      link: "https://all.accor.com/hotel/1162/index.fr.shtml", 
-      distance: "12 km du domaine",
-      note: "Centre-ville, parking gratuit"
+      mapsLink: "https://maps.google.com/?q=Hotel+Mercure+Libourne+France",
+      distance: "12 km"
     },
     { 
-      name: "Chambres d'hôtes - Le Clos des Vignes", 
-      address: "Lieu-dit Les Vignes, 33330 Saint-Émilion", 
-      link: "#", 
-      distance: "5 km du domaine",
-      note: "Charme authentique, petit-déjeuner inclus"
+      name: "Le Clos des Vignes", 
+      mapsLink: "https://maps.google.com/?q=Le+Clos+des+Vignes+Saint-Emilion",
+      distance: "5 km"
     },
     { 
-      name: "Airbnb recommandés", 
-      link: "https://airbnb.fr", 
-      note: "Sélection de gîtes et maisons d'hôtes dans la région",
+      name: "Airbnb - Saint-Émilion", 
+      mapsLink: "https://www.airbnb.fr/s/Saint-Emilion--France/homes",
       distance: "Variable"
     },
   ],
   contact: {
-    email: "severineetolivier2026@gmail.com",
+    name: "Mathilde",
+    role: "Wedding Planner",
+    email: "contact@mariable.fr",
     phone: "06 XX XX XX XX",
-    witness: "Mathilde (témoin de la mariée)",
   },
   venue: {
-    name: "Domaine de Badine",
-    address: "Lieu-dit Badine, 33330 Saint-Émilion",
-    mapLink: "https://maps.google.com/?q=Domaine+de+Badine+Saint-Emilion"
+    name: "Château de Saint Clair",
+    address: "Saint-Émilion, Nouvelle-Aquitaine",
+    mapLink: "https://maps.google.com/?q=Chateau+Saint+Clair+Saint-Emilion"
   }
 };
 
-// Calcul du compte à rebours
+// Calcul du compte à rebours - DATE MISE À JOUR
 const calculateCountdown = () => {
-  const weddingDate = new Date('2026-06-30T14:30:00');
+  const weddingDate = new Date('2026-09-05T15:00:00');
   const now = new Date();
   const diff = weddingDate.getTime() - now.getTime();
   
@@ -76,9 +87,14 @@ const calculateCountdown = () => {
 };
 
 const WeddingSeverineOlivier: React.FC = () => {
+  const [searchParams] = useSearchParams();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [countdown, setCountdown] = useState(calculateCountdown());
   const [activeSection, setActiveSection] = useState('accueil');
+  const [isRsvpModalOpen, setIsRsvpModalOpen] = useState(false);
+
+  // Vérifier l'accès VIP via le code URL
+  const hasVipAccess = searchParams.get('code') === 'vip2026';
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -125,8 +141,8 @@ const WeddingSeverineOlivier: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Mariage de Séverine & Olivier - 30 juin 2026</title>
-        <meta name="description" content="Nous avons le plaisir de vous convier à notre mariage le 30 juin 2026. Retrouvez toutes les informations pratiques sur cette page." />
+        <title>Mariage de Séverine & Olivier - 5 septembre 2026</title>
+        <meta name="description" content="Nous avons le plaisir de vous convier à notre mariage le 5 septembre 2026 au Château de Saint Clair. Retrouvez toutes les informations pratiques sur cette page." />
       </Helmet>
 
       {/* Header Sticky */}
@@ -134,7 +150,8 @@ const WeddingSeverineOlivier: React.FC = () => {
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
           <button 
             onClick={() => scrollToSection('accueil')}
-            className="font-serif text-xl text-gray-800"
+            className="font-serif text-xl"
+            style={{ color: colors.coral }}
           >
             S & O
           </button>
@@ -148,9 +165,10 @@ const WeddingSeverineOlivier: React.FC = () => {
                 className={cn(
                   "text-sm font-medium transition-colors",
                   activeSection === item.id 
-                    ? "text-wedding-olive" 
-                    : "text-gray-600 hover:text-wedding-olive"
+                    ? "" 
+                    : "text-gray-600 hover:opacity-80"
                 )}
+                style={activeSection === item.id ? { color: colors.coral } : {}}
               >
                 {item.label}
               </button>
@@ -178,9 +196,10 @@ const WeddingSeverineOlivier: React.FC = () => {
                   className={cn(
                     "px-6 py-3 text-left text-sm font-medium transition-colors",
                     activeSection === item.id 
-                      ? "text-wedding-olive bg-wedding-olive/5" 
+                      ? "bg-opacity-10" 
                       : "text-gray-600 hover:bg-gray-50"
                   )}
+                  style={activeSection === item.id ? { color: colors.coral, backgroundColor: `${colors.coral}10` } : {}}
                 >
                   {item.label}
                 </button>
@@ -190,72 +209,136 @@ const WeddingSeverineOlivier: React.FC = () => {
         )}
       </header>
 
-      <main className="pt-16">
-        {/* Hero Section */}
-        <section id="accueil" className="min-h-[90vh] flex flex-col items-center justify-center bg-gradient-to-b from-wedding-olive/5 to-white px-4 text-center">
-          <div className="max-w-2xl mx-auto space-y-8">
-            <p className="text-wedding-olive font-medium tracking-widest uppercase text-sm">
+      <main className="pt-16" style={{ backgroundColor: colors.cream }}>
+        {/* Hero Section avec Image */}
+        <section id="accueil" className="min-h-[90vh] flex flex-col items-center justify-center relative px-4 text-center overflow-hidden">
+          {/* Background Image avec overlay */}
+          <div 
+            className="absolute inset-0 bg-cover bg-center"
+            style={{ backgroundImage: `url(${heroImage})` }}
+          >
+            <div className="absolute inset-0 bg-white/70" />
+          </div>
+          
+          <div className="max-w-2xl mx-auto space-y-8 relative z-10">
+            <p 
+              className="font-medium tracking-widest uppercase text-sm"
+              style={{ color: colors.coral }}
+            >
               Nous nous marions
             </p>
-            <h1 className="font-serif text-5xl md:text-7xl text-gray-800">
+            <h1 
+              className="font-serif text-5xl md:text-7xl"
+              style={{ color: colors.darkGreen }}
+            >
               {weddingData.couple}
             </h1>
-            <div className="flex items-center justify-center gap-4 text-gray-600">
+            <div className="flex items-center justify-center gap-4" style={{ color: colors.green }}>
               <Calendar className="h-5 w-5" />
               <span className="text-xl">{weddingData.date}</span>
             </div>
+            <p className="text-gray-600">
+              {weddingData.venue.name}
+            </p>
             
             {/* Countdown */}
             <div className="flex justify-center gap-6 md:gap-10 pt-8">
               <div className="text-center">
-                <div className="text-4xl md:text-5xl font-serif text-wedding-olive">{countdown.days}</div>
+                <div className="text-4xl md:text-5xl font-serif" style={{ color: colors.coral }}>{countdown.days}</div>
                 <div className="text-sm text-gray-500 mt-1">jours</div>
               </div>
               <div className="text-center">
-                <div className="text-4xl md:text-5xl font-serif text-wedding-olive">{countdown.hours}</div>
+                <div className="text-4xl md:text-5xl font-serif" style={{ color: colors.coral }}>{countdown.hours}</div>
                 <div className="text-sm text-gray-500 mt-1">heures</div>
               </div>
               <div className="text-center">
-                <div className="text-4xl md:text-5xl font-serif text-wedding-olive">{countdown.minutes}</div>
+                <div className="text-4xl md:text-5xl font-serif" style={{ color: colors.coral }}>{countdown.minutes}</div>
                 <div className="text-sm text-gray-500 mt-1">minutes</div>
               </div>
             </div>
 
             <Button 
               size="lg" 
-              className="mt-8 rounded-none px-8"
-              onClick={() => scrollToSection('rsvp')}
+              className="mt-8 rounded-full px-10 py-6 text-white shadow-lg hover:shadow-xl transition-all"
+              style={{ backgroundColor: colors.coral }}
+              onClick={() => setIsRsvpModalOpen(true)}
             >
               Confirmer ma présence
             </Button>
           </div>
         </section>
 
+        {/* Section VIP (visible uniquement avec code) */}
+        {hasVipAccess && (
+          <section className="py-12 px-4" style={{ backgroundColor: `${colors.pink}30` }}>
+            <div className="max-w-3xl mx-auto">
+              <div className="flex items-center justify-center gap-2 mb-6">
+                <Lock className="h-5 w-5" style={{ color: colors.coral }} />
+                <h2 className="font-serif text-2xl text-center" style={{ color: colors.darkGreen }}>
+                  Programme VIP - Veille du mariage
+                </h2>
+              </div>
+              <p className="text-center text-gray-600 mb-8 text-sm">
+                Ces informations sont réservées aux invités du 4 septembre
+              </p>
+              
+              <div className="space-y-4">
+                {weddingData.vipSchedule.map((item, index) => (
+                  <div 
+                    key={index} 
+                    className="flex items-center gap-4 p-4 bg-white rounded-lg shadow-sm"
+                  >
+                    <div className="text-2xl">{item.icon}</div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <span className="font-semibold" style={{ color: colors.coral }}>{item.date}</span>
+                        <span className="text-gray-400">•</span>
+                        <span className="text-gray-600">{item.time}</span>
+                      </div>
+                      <h3 className="font-serif text-lg" style={{ color: colors.darkGreen }}>{item.event}</h3>
+                      <p className="text-gray-500 text-sm flex items-center gap-1">
+                        <MapPin className="h-3 w-3" />
+                        {item.location}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
         {/* Programme Section */}
         <section id="programme" className="py-20 px-4 bg-white">
           <div className="max-w-3xl mx-auto">
-            <h2 className="font-serif text-4xl text-center text-gray-800 mb-4">Programme</h2>
-            <p className="text-center text-gray-500 mb-12">Le déroulé de notre journée</p>
+            <h2 className="font-serif text-4xl text-center mb-4" style={{ color: colors.darkGreen }}>Programme</h2>
+            <p className="text-center text-gray-500 mb-12">Le déroulé de notre journée - {weddingData.date}</p>
             
             <div className="space-y-0">
               {weddingData.schedule.map((item, index) => (
                 <div key={index} className="flex gap-4 md:gap-8">
                   {/* Timeline */}
                   <div className="flex flex-col items-center">
-                    <div className="w-12 h-12 rounded-full bg-wedding-olive/10 flex items-center justify-center text-2xl">
+                    <div 
+                      className="w-12 h-12 rounded-full flex items-center justify-center text-2xl"
+                      style={{ backgroundColor: `${colors.pink}40` }}
+                    >
                       {item.icon}
                     </div>
                     {index < weddingData.schedule.length - 1 && (
-                      <div className="w-px h-full min-h-[60px] bg-wedding-olive/20" />
+                      <div 
+                        className="w-px h-full min-h-[60px]"
+                        style={{ backgroundColor: `${colors.coral}30` }}
+                      />
                     )}
                   </div>
                   
                   {/* Content */}
                   <div className="pb-8 flex-1">
                     <div className="flex items-center gap-3 mb-1">
-                      <span className="text-wedding-olive font-semibold">{item.time}</span>
+                      <span className="font-semibold" style={{ color: colors.coral }}>{item.time}</span>
                     </div>
-                    <h3 className="font-serif text-xl text-gray-800">{item.event}</h3>
+                    <h3 className="font-serif text-xl" style={{ color: colors.darkGreen }}>{item.event}</h3>
                     {item.location && (
                       <p className="text-gray-500 flex items-center gap-1 mt-1">
                         <MapPin className="h-4 w-4" />
@@ -268,8 +351,11 @@ const WeddingSeverineOlivier: React.FC = () => {
             </div>
 
             {/* Lieu principal */}
-            <div className="mt-12 p-6 bg-wedding-olive/5 rounded-lg">
-              <h3 className="font-serif text-xl text-gray-800 mb-2">{weddingData.venue.name}</h3>
+            <div 
+              className="mt-12 p-6 rounded-lg"
+              style={{ backgroundColor: `${colors.pink}20` }}
+            >
+              <h3 className="font-serif text-xl mb-2" style={{ color: colors.darkGreen }}>{weddingData.venue.name}</h3>
               <p className="text-gray-600 flex items-center gap-2">
                 <MapPin className="h-4 w-4" />
                 {weddingData.venue.address}
@@ -278,7 +364,8 @@ const WeddingSeverineOlivier: React.FC = () => {
                 href={weddingData.venue.mapLink} 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 mt-3 text-wedding-olive hover:underline"
+                className="inline-flex items-center gap-2 mt-3 hover:underline"
+                style={{ color: colors.coral }}
               >
                 Voir sur Google Maps
                 <ExternalLink className="h-4 w-4" />
@@ -288,20 +375,23 @@ const WeddingSeverineOlivier: React.FC = () => {
         </section>
 
         {/* RSVP Section */}
-        <section id="rsvp" className="py-20 px-4 bg-wedding-olive/5">
+        <section id="rsvp" className="py-20 px-4" style={{ backgroundColor: `${colors.pink}20` }}>
           <div className="max-w-2xl mx-auto text-center">
-            <Heart className="h-12 w-12 text-wedding-olive mx-auto mb-6" />
-            <h2 className="font-serif text-4xl text-gray-800 mb-4">Confirmez votre présence</h2>
+            <Heart className="h-12 w-12 mx-auto mb-6" style={{ color: colors.coral }} />
+            <h2 className="font-serif text-4xl mb-4" style={{ color: colors.darkGreen }}>Confirmez votre présence</h2>
             <p className="text-gray-600 mb-8 max-w-lg mx-auto">
               Nous serions ravis de vous compter parmi nous pour célébrer notre union. 
               Merci de nous confirmer votre présence avant le <strong>{weddingData.rsvpDeadline}</strong>.
             </p>
             
-            <Link to={`/rsvp/${weddingData.rsvpSlug}`}>
-              <Button size="lg" className="rounded-none px-10 py-6 text-lg">
-                Répondre au formulaire RSVP
-              </Button>
-            </Link>
+            <Button 
+              size="lg" 
+              className="rounded-full px-10 py-6 text-lg text-white shadow-lg hover:shadow-xl transition-all"
+              style={{ backgroundColor: colors.coral }}
+              onClick={() => setIsRsvpModalOpen(true)}
+            >
+              Répondre au formulaire RSVP
+            </Button>
 
             <p className="text-sm text-gray-500 mt-6">
               Le formulaire vous permet d'indiquer le nombre d'adultes et d'enfants, 
@@ -313,41 +403,32 @@ const WeddingSeverineOlivier: React.FC = () => {
         {/* Logements Section */}
         <section id="logements" className="py-20 px-4 bg-white">
           <div className="max-w-4xl mx-auto">
-            <Home className="h-12 w-12 text-wedding-olive mx-auto mb-6" />
-            <h2 className="font-serif text-4xl text-center text-gray-800 mb-4">Hébergements</h2>
+            <Home className="h-12 w-12 mx-auto mb-6" style={{ color: colors.coral }} />
+            <h2 className="font-serif text-4xl text-center mb-4" style={{ color: colors.darkGreen }}>Hébergements</h2>
             <p className="text-center text-gray-600 mb-12 max-w-lg mx-auto">
-              Voici une sélection d'hébergements à proximité du lieu de réception. 
-              Nous vous conseillons de réserver rapidement.
+              Voici une sélection d'hébergements à proximité du lieu de réception.
             </p>
 
             <div className="grid md:grid-cols-2 gap-6">
               {weddingData.accommodations.map((accommodation, index) => (
                 <div 
                   key={index} 
-                  className="p-6 border border-gray-200 rounded-lg hover:border-wedding-olive/50 hover:shadow-md transition-all"
+                  className="p-6 border border-gray-200 rounded-lg hover:shadow-md transition-all flex flex-col justify-between"
                 >
-                  <h3 className="font-serif text-xl text-gray-800 mb-2">{accommodation.name}</h3>
-                  {accommodation.address && (
-                    <p className="text-gray-500 text-sm mb-2 flex items-start gap-2">
-                      <MapPin className="h-4 w-4 mt-0.5 shrink-0" />
-                      {accommodation.address}
-                    </p>
-                  )}
-                  <p className="text-wedding-olive text-sm mb-3">{accommodation.distance}</p>
-                  {accommodation.note && (
-                    <p className="text-gray-600 text-sm mb-4">{accommodation.note}</p>
-                  )}
-                  {accommodation.link && accommodation.link !== '#' && (
-                    <a 
-                      href={accommodation.link} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 text-sm text-wedding-olive hover:underline"
-                    >
-                      Réserver
-                      <ExternalLink className="h-4 w-4" />
-                    </a>
-                  )}
+                  <div>
+                    <h3 className="font-serif text-xl mb-2" style={{ color: colors.darkGreen }}>{accommodation.name}</h3>
+                    <p className="text-sm mb-4" style={{ color: colors.coral }}>{accommodation.distance}</p>
+                  </div>
+                  <a 
+                    href={accommodation.mapsLink} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-sm text-white px-4 py-2 rounded-full transition-all hover:opacity-90"
+                    style={{ backgroundColor: colors.green }}
+                  >
+                    <MapPin className="h-4 w-4" />
+                    Voir sur Google Maps
+                  </a>
                 </div>
               ))}
             </div>
@@ -355,42 +436,66 @@ const WeddingSeverineOlivier: React.FC = () => {
         </section>
 
         {/* Contact Section */}
-        <section id="contact" className="py-20 px-4 bg-wedding-olive/5">
+        <section id="contact" className="py-20 px-4" style={{ backgroundColor: `${colors.pink}20` }}>
           <div className="max-w-2xl mx-auto text-center">
-            <h2 className="font-serif text-4xl text-gray-800 mb-4">Contact</h2>
+            <h2 className="font-serif text-4xl mb-4" style={{ color: colors.darkGreen }}>Contact</h2>
             <p className="text-gray-600 mb-8">
               Pour toute question, n'hésitez pas à nous contacter
             </p>
 
             <div className="space-y-4">
+              <div className="flex items-center justify-center gap-3 p-4 bg-white rounded-lg">
+                <span className="font-medium" style={{ color: colors.darkGreen }}>
+                  {weddingData.contact.name}
+                </span>
+                <span className="text-gray-400">•</span>
+                <span style={{ color: colors.coral }}>{weddingData.contact.role}</span>
+              </div>
+              
               <a 
                 href={`mailto:${weddingData.contact.email}`}
                 className="flex items-center justify-center gap-3 p-4 bg-white rounded-lg hover:shadow-md transition-shadow"
               >
-                <Mail className="h-5 w-5 text-wedding-olive" />
+                <Mail className="h-5 w-5" style={{ color: colors.coral }} />
                 <span className="text-gray-800">{weddingData.contact.email}</span>
               </a>
 
               <div className="flex items-center justify-center gap-3 p-4 bg-white rounded-lg">
-                <Phone className="h-5 w-5 text-wedding-olive" />
-                <span className="text-gray-800">{weddingData.contact.witness} : {weddingData.contact.phone}</span>
+                <Phone className="h-5 w-5" style={{ color: colors.coral }} />
+                <span className="text-gray-800">{weddingData.contact.phone}</span>
               </div>
             </div>
           </div>
         </section>
 
         {/* Footer */}
-        <footer className="py-12 px-4 bg-gray-900 text-white text-center">
+        <footer className="py-12 px-4 text-white text-center" style={{ backgroundColor: colors.darkGreen }}>
           <p className="font-serif text-2xl mb-2">{weddingData.couple}</p>
-          <p className="text-gray-400 mb-6">{weddingData.date}</p>
-          <p className="text-gray-500 text-sm">
-            Réalisé avec <Heart className="h-3 w-3 inline text-red-400" /> via{' '}
-            <a href="https://mariable.fr" className="text-wedding-olive hover:underline">
+          <p className="text-white/70 mb-6">{weddingData.date} • {weddingData.venue.name}</p>
+          <p className="text-white/50 text-sm">
+            Réalisé avec <Heart className="h-3 w-3 inline" style={{ color: colors.coral }} /> via{' '}
+            <a href="https://mariable.fr" className="hover:underline" style={{ color: colors.coral }}>
               Mariable.fr
             </a>
           </p>
         </footer>
       </main>
+
+      {/* Modal RSVP */}
+      <Dialog open={isRsvpModalOpen} onOpenChange={setIsRsvpModalOpen}>
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="sr-only">Formulaire RSVP</DialogTitle>
+          </DialogHeader>
+          <RSVPInlineForm 
+            eventSlug={weddingData.rsvpSlug}
+            onSuccess={() => {
+              setTimeout(() => setIsRsvpModalOpen(false), 3000);
+            }}
+            primaryColor={colors.coral}
+          />
+        </DialogContent>
+      </Dialog>
     </>
   );
 };
