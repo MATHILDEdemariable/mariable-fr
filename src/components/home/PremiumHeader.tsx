@@ -54,7 +54,7 @@ const PremiumHeader = () => {
               to="/partenariat"
               className="text-xs tracking-widest uppercase text-editorial-noir/80 hover:text-editorial-noir transition-colors font-sans"
             >
-              Partenariat
+              Je suis un professionnel
             </Link>
             <Link 
               to="/contact"
@@ -105,7 +105,7 @@ const PremiumHeader = () => {
                   onClick={() => setMobileOpen(false)}
                   className="text-sm tracking-widest uppercase text-editorial-noir/80 hover:text-editorial-noir"
                 >
-                  Partenariat
+                  Je suis un professionnel
                 </Link>
                 <Link 
                   to="/contact"

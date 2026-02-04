@@ -8,7 +8,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { supabase } from '@/integrations/supabase/client';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { Heart, Building, Briefcase, User, MessageSquare, Loader2, Bug, HelpCircle, UserX, Lightbulb, MoreHorizontal } from 'lucide-react';
+import { Heart, Building, Briefcase, User, MessageSquare, Loader2, Bug, HelpCircle, UserX, Lightbulb, MoreHorizontal, Mail } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface ContactRequest {
   id: string;
@@ -317,6 +318,21 @@ const ContactRequests = () => {
                   <div className="bg-gray-50 p-4 rounded-lg whitespace-pre-wrap text-sm max-h-[300px] overflow-y-auto">
                     {selectedRequest.message}
                   </div>
+                </div>
+                
+                {/* Bouton répondre par email */}
+                <div className="flex gap-3 pt-4 border-t">
+                  <Button
+                    onClick={() => {
+                      const subject = encodeURIComponent(`Re: Votre demande du ${format(new Date(selectedRequest.created_at), 'dd/MM/yyyy', { locale: fr })}`);
+                      const body = encodeURIComponent(`Bonjour,\n\nSuite à votre message :\n\n"${selectedRequest.message.substring(0, 200)}${selectedRequest.message.length > 200 ? '...' : ''}"\n\nCordialement,\nL'équipe Mariable`);
+                      window.location.href = `mailto:${selectedRequest.email}?subject=${subject}&body=${body}`;
+                    }}
+                    className="flex-1 bg-wedding-olive hover:bg-wedding-olive/90 text-white"
+                  >
+                    <Mail className="w-4 h-4 mr-2" />
+                    Répondre par email
+                  </Button>
                 </div>
               </div>
             )}

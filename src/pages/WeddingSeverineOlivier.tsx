@@ -25,10 +25,9 @@ const weddingData = {
   rsvpSlug: "severine-olivier",
   rsvpDeadline: "15 juillet 2026",
   schedule: [
-    { time: "15h00", event: "Cérémonie laïque", location: "Château de Saint Clair", icon: "💒" },
-    { time: "17h00", event: "Vin d'honneur", location: "Jardins du Château", icon: "🥂" },
-    { time: "20h00", event: "Dîner", location: "Château de Saint Clair", icon: "🍽️" },
-    { time: "23h00", event: "Soirée dansante", location: "Château de Saint Clair", icon: "💃" },
+    { time: "16h30", event: "Cérémonie laïque", location: "Château de Saint Clair", icon: "💒" },
+    { time: "18h00", event: "Vin d'honneur", location: "Jardins du Château", icon: "🥂" },
+    { time: "20h00", event: "Cocktail dînatoire et festivités", location: "Château de Saint Clair", icon: "🍽️" },
     { time: "11h00 (+1)", event: "Brunch du lendemain", location: "Terrasse du Château", icon: "☕" },
   ],
   // Programme VIP (visible uniquement avec code)
@@ -36,28 +35,7 @@ const weddingData = {
     { time: "15h00", event: "Cérémonie civile", location: "Mairie", icon: "🏛️", date: "4 septembre" },
     { time: "20h00", event: "Dîner intime", location: "Restaurant Le Jardin", icon: "🌙", date: "4 septembre" },
   ],
-  accommodations: [
-    { 
-      name: "Hôtel & Spa de Pavie", 
-      mapsLink: "https://maps.google.com/?q=Hotel+Spa+de+Pavie+Saint-Emilion",
-      distance: "8 km"
-    },
-    { 
-      name: "Hôtel Mercure Libourne", 
-      mapsLink: "https://maps.google.com/?q=Hotel+Mercure+Libourne+France",
-      distance: "12 km"
-    },
-    { 
-      name: "Le Clos des Vignes", 
-      mapsLink: "https://maps.google.com/?q=Le+Clos+des+Vignes+Saint-Emilion",
-      distance: "5 km"
-    },
-    { 
-      name: "Airbnb - Saint-Émilion", 
-      mapsLink: "https://www.airbnb.fr/s/Saint-Emilion--France/homes",
-      distance: "Variable"
-    },
-  ],
+  accommodationLink: "https://www.google.com/maps/search/Hotels+Saint-Emilion",
   contact: {
     name: "Mathilde",
     role: "Wedding Planner",
@@ -216,9 +194,7 @@ const WeddingSeverineOlivier: React.FC = () => {
           <div 
             className="absolute inset-0 bg-cover bg-center"
             style={{ backgroundImage: `url(${heroImage})` }}
-          >
-            <div className="absolute inset-0 bg-white/70" />
-          </div>
+          />
           
           <div className="max-w-2xl mx-auto space-y-8 relative z-10">
             <p 
@@ -400,38 +376,25 @@ const WeddingSeverineOlivier: React.FC = () => {
           </div>
         </section>
 
-        {/* Logements Section */}
+        {/* Logements Section - Simplifié */}
         <section id="logements" className="py-20 px-4 bg-white">
-          <div className="max-w-4xl mx-auto">
+          <div className="max-w-4xl mx-auto text-center">
             <Home className="h-12 w-12 mx-auto mb-6" style={{ color: colors.coral }} />
-            <h2 className="font-serif text-4xl text-center mb-4" style={{ color: colors.darkGreen }}>Hébergements</h2>
-            <p className="text-center text-gray-600 mb-12 max-w-lg mx-auto">
-              Voici une sélection d'hébergements à proximité du lieu de réception.
+            <h2 className="font-serif text-4xl mb-4" style={{ color: colors.darkGreen }}>Hébergements</h2>
+            <p className="text-gray-600 mb-8 max-w-lg mx-auto">
+              Retrouvez notre sélection d'hébergements à proximité du lieu de réception.
             </p>
-
-            <div className="grid md:grid-cols-2 gap-6">
-              {weddingData.accommodations.map((accommodation, index) => (
-                <div 
-                  key={index} 
-                  className="p-6 border border-gray-200 rounded-lg hover:shadow-md transition-all flex flex-col justify-between"
-                >
-                  <div>
-                    <h3 className="font-serif text-xl mb-2" style={{ color: colors.darkGreen }}>{accommodation.name}</h3>
-                    <p className="text-sm mb-4" style={{ color: colors.coral }}>{accommodation.distance}</p>
-                  </div>
-                  <a 
-                    href={accommodation.mapsLink} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 text-sm text-white px-4 py-2 rounded-full transition-all hover:opacity-90"
-                    style={{ backgroundColor: colors.green }}
-                  >
-                    <MapPin className="h-4 w-4" />
-                    Voir sur Google Maps
-                  </a>
-                </div>
-              ))}
-            </div>
+            <a 
+              href={weddingData.accommodationLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-white px-8 py-4 rounded-full shadow-lg hover:shadow-xl transition-all"
+              style={{ backgroundColor: colors.coral }}
+            >
+              <MapPin className="h-5 w-5" />
+              Sélection de logements à côté
+              <ExternalLink className="h-4 w-4" />
+            </a>
           </div>
         </section>
 
