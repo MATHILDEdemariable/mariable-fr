@@ -199,7 +199,7 @@ const RSVPInlineForm: React.FC<RSVPInlineFormProps> = ({ eventSlug, onSuccess, p
           dietary_restrictions: dietaryRestrictions.trim() || null,
           message: message.trim() || null,
         })
-        .select()
+        .select('id')
         .single();
 
       if (responseError) throw responseError;

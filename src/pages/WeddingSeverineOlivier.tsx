@@ -195,41 +195,43 @@ const WeddingSeverineOlivier: React.FC = () => {
             className="absolute inset-0 bg-cover bg-center"
             style={{ backgroundImage: `url(${heroImage})` }}
           />
-          
+          {/* Dark overlay for text visibility */}
+          <div className="absolute inset-0 bg-black/30" />
+
           <div className="max-w-2xl mx-auto space-y-8 relative z-10">
             <p 
-              className="font-medium tracking-widest uppercase text-sm"
-              style={{ color: colors.coral }}
+              className="font-medium tracking-widest uppercase text-sm text-white"
+              style={{ textShadow: '0 2px 8px rgba(0,0,0,0.5)' }}
             >
               Nous nous marions
             </p>
             <h1 
-              className="font-serif text-5xl md:text-7xl"
-              style={{ color: colors.darkGreen }}
+              className="font-serif text-5xl md:text-7xl text-white"
+              style={{ textShadow: '0 2px 12px rgba(0,0,0,0.6)' }}
             >
               {weddingData.couple}
             </h1>
-            <div className="flex items-center justify-center gap-4" style={{ color: colors.green }}>
+            <div className="flex items-center justify-center gap-4 text-white" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.5)' }}>
               <Calendar className="h-5 w-5" />
               <span className="text-xl">{weddingData.date}</span>
             </div>
-            <p className="text-gray-600">
+            <p className="text-white/90" style={{ textShadow: '0 2px 6px rgba(0,0,0,0.5)' }}>
               {weddingData.venue.name}
             </p>
             
             {/* Countdown */}
             <div className="flex justify-center gap-6 md:gap-10 pt-8">
               <div className="text-center">
-                <div className="text-4xl md:text-5xl font-serif" style={{ color: colors.coral }}>{countdown.days}</div>
-                <div className="text-sm text-gray-500 mt-1">jours</div>
+                <div className="text-4xl md:text-5xl font-serif text-white" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.5)' }}>{countdown.days}</div>
+                <div className="text-sm text-white/80 mt-1" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.5)' }}>jours</div>
               </div>
               <div className="text-center">
-                <div className="text-4xl md:text-5xl font-serif" style={{ color: colors.coral }}>{countdown.hours}</div>
-                <div className="text-sm text-gray-500 mt-1">heures</div>
+                <div className="text-4xl md:text-5xl font-serif text-white" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.5)' }}>{countdown.hours}</div>
+                <div className="text-sm text-white/80 mt-1" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.5)' }}>heures</div>
               </div>
               <div className="text-center">
-                <div className="text-4xl md:text-5xl font-serif" style={{ color: colors.coral }}>{countdown.minutes}</div>
-                <div className="text-sm text-gray-500 mt-1">minutes</div>
+                <div className="text-4xl md:text-5xl font-serif text-white" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.5)' }}>{countdown.minutes}</div>
+                <div className="text-sm text-white/80 mt-1" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.5)' }}>minutes</div>
               </div>
             </div>
 
