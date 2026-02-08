@@ -14,7 +14,7 @@ const VendorTrackingPage: React.FC = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('vendors_tracking')
-        .select('*')
+        .select('id, vendor_name, category, status, contact_date, response_date, notes, updated_at')
         .order('updated_at', { ascending: false });
 
       if (error) throw error;

@@ -58,7 +58,7 @@ const SeatingPlan = () => {
       // Charger ou créer le plan de table
       let { data: plans } = await supabase
         .from('seating_plans')
-        .select('*')
+        .select('id, user_id, name, event_date, venue_name, notes, created_at, updated_at')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
         .limit(1);
@@ -80,7 +80,7 @@ const SeatingPlan = () => {
       // Charger les tables
       const { data: tablesData } = await supabase
         .from('seating_tables')
-        .select('*')
+        .select('id, seating_plan_id, table_name, table_number, capacity, shape, position_x, position_y, color, created_at')
         .eq('seating_plan_id', planId)
         .order('table_number');
       setTables((tablesData || []) as SeatingTable[]);
@@ -88,7 +88,7 @@ const SeatingPlan = () => {
       // Charger tous les invités filtrés par seating_plan_id
       const { data: guestsData } = await supabase
         .from('seating_assignments')
-        .select('*')
+        .select('id, seating_plan_id, table_id, guest_name, rsvp_response_id, guest_type, dietary_restrictions, seat_number, notes, created_at')
         .eq('seating_plan_id', planId);
       setGuests((guestsData || []) as SeatingAssignment[]);
     } catch (error) {

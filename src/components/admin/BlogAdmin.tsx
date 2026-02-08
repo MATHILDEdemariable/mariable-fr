@@ -77,7 +77,7 @@ const BlogAdmin = () => {
       setIsLoading(true);
       const { data, error } = await supabase
         .from('blog_posts')
-        .select('*')
+        .select('id, title, subtitle, content, category, status, featured, created_at, published_at, order_index, slug, tags')
         .order('order_index', { ascending: false });
 
       if (error) {

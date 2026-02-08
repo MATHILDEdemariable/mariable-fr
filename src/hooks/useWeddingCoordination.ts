@@ -36,7 +36,7 @@ export const useWeddingCoordination = () => {
       // Vérifier si une coordination existe déjà - prendre la plus récente
       const { data: existingCoordinations, error: fetchError } = await supabase
         .from('wedding_coordination')
-        .select('*')
+        .select('id, title, description, wedding_date, wedding_location, user_id, created_at, updated_at')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
         .limit(1);
@@ -95,7 +95,7 @@ export const useWeddingCoordination = () => {
       setIsLoading(true);
       const { data, error } = await supabase
         .from('wedding_coordination')
-        .select('*')
+        .select('id, title, description, wedding_date, wedding_location, user_id, created_at, updated_at')
         .eq('id', coordination.id)
         .single();
 
