@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useCallback, useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
 
 export type ServiceLevel = 'economique' | 'abordable' | 'premium' | 'luxe';
 
@@ -88,10 +89,10 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [items, setItems] = useState<CartItem[]>([]);
-  const [userId, setUserId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isInitialLoadDone, setIsInitialLoadDone] = useState(false);
   const mountedRef = useRef(true);
+  const { user } = useAuth();
 
   // Fonction pour charger le panier d'un utilisateur
   const loadCartForUser = useCallback(async (uid: string) => {
@@ -121,54 +122,29 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, []);
 
-  // Initialisation : setup auth listener PUIS getSession
+  // Utiliser user du contexte Auth au lieu de gérer l'auth localement
   useEffect(() => {
     mountedRef.current = true;
-
-    // 1. D'abord enregistrer le listener (callback 100% synchrone)
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      // Ne PAS faire d'appels async ici !
-      if (session?.user) {
-        setUserId(session.user.id);
-      } else {
-        setUserId(null);
-        setItems([]);
-      }
-    });
-
-    // 2. Ensuite récupérer la session actuelle
-    const initSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (!mountedRef.current) return;
-      
-      if (session?.user) {
-        setUserId(session.user.id);
-      }
-      setIsLoading(false);
-      setIsInitialLoadDone(true);
-    };
-
-    initSession();
+    
+    if (user) {
+      loadCartForUser(user.id);
+    } else {
+      setItems([]);
+    }
+    
+    setIsLoading(false);
+    setIsInitialLoadDone(true);
 
     return () => {
       mountedRef.current = false;
-      subscription.unsubscribe();
     };
-  }, []);
-
-  // Charger le panier quand userId change (après init)
-  useEffect(() => {
-    if (isInitialLoadDone && userId) {
-      loadCartForUser(userId);
-    }
-  }, [userId, isInitialLoadDone, loadCartForUser]);
+  }, [user, loadCartForUser]);
 
   // Synchroniser avec Supabase (debounced)
   const syncTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   
   const syncToSupabase = useCallback(async (newItems: CartItem[]) => {
-    if (!userId || !isInitialLoadDone) return;
+    if (!user || !isInitialLoadDone) return;
 
     // Debounce pour éviter les appels multiples
     if (syncTimeoutRef.current) {
@@ -181,13 +157,13 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         await supabase
           .from('user_cart_items')
           .delete()
-          .eq('user_id', userId);
+          .eq('user_id', user.id);
 
         if (newItems.length > 0) {
           await supabase
             .from('user_cart_items')
             .insert(newItems.map(item => ({
-              user_id: userId,
+              user_id: user.id,
               vendor_id: item.vendorId,
               vendor_name: item.vendorName,
               category: item.category,
@@ -201,7 +177,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         console.error('❌ CartProvider: Failed to sync cart', error);
       }
     }, 300);
-  }, [userId, isInitialLoadDone]);
+  }, [user, isInitialLoadDone]);
 
   const addItem = useCallback((item: CartItem) => {
     setItems(prev => {

@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface UserProfile {
   id: string;
@@ -22,11 +23,11 @@ export const useUserProfile = () => {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
+  const { user } = useAuth();
 
   const fetchProfile = async () => {
     try {
       console.log('🔄 Fetching user profile...');
-      const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         console.log('❌ No user found');
         setLoading(false);
@@ -86,7 +87,6 @@ export const useUserProfile = () => {
 
   const updateProfile = async (updates: Partial<UserProfile>) => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
       const { data, error } = await supabase
@@ -115,41 +115,34 @@ export const useUserProfile = () => {
   };
 
   useEffect(() => {
-    fetchProfile();
+    if (user) {
+      fetchProfile();
+      
+      // Écouter les changements sur la table profiles pour ce user
+      const channel = supabase
+        .channel('profile-changes')
+        .on(
+          'postgres_changes',
+          {
+            event: 'UPDATE',
+            schema: 'public',
+            table: 'profiles',
+            filter: `id=eq.${user.id}`,
+          },
+          (payload) => {
+            console.log('🔔 Profile updated via realtime:', payload.new);
+            setProfile(payload.new as UserProfile);
+          }
+        )
+        .subscribe();
 
-    // Écouter les changements sur la table profiles pour ce user
-    const setupRealtimeSubscription = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        const channel = supabase
-          .channel('profile-changes')
-          .on(
-            'postgres_changes',
-            {
-              event: 'UPDATE',
-              schema: 'public',
-              table: 'profiles',
-              filter: `id=eq.${user.id}`,
-            },
-            (payload) => {
-              console.log('🔔 Profile updated via realtime:', payload.new);
-              setProfile(payload.new as UserProfile);
-            }
-          )
-          .subscribe();
-
-        return channel;
-      }
-    };
-
-    setupRealtimeSubscription().then((channel) => {
-      if (channel) {
-        return () => {
-          supabase.removeChannel(channel);
-        };
-      }
-    });
-  }, []);
+      return () => {
+        supabase.removeChannel(channel);
+      };
+    } else {
+      setLoading(false);
+    }
+  }, [user]);
 
   // Toutes les fonctionnalités sont désormais gratuites
   const isPremium = true;

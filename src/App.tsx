@@ -9,6 +9,7 @@ import { HelmetProvider } from 'react-helmet-async';
 import { ReaderModeProvider } from '@/contexts/ReaderModeContext';
 import PaymentSuccessHandler from '@/components/premium/PaymentSuccessHandler';
 import { CartProvider } from '@/components/cart/CartProvider';
+import { AuthProvider } from '@/contexts/AuthContext';
 // Direct imports for SEO-critical pages (no lazy loading)
 import LandingCouple from "./pages/LandingCouple";
 import LandingGenerale from "./pages/LandingGenerale";
@@ -147,15 +148,26 @@ const PageLoader = () => (
   </div>
 );
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000,         // 5 minutes - évite les refetch inutiles
+      gcTime: 10 * 60 * 1000,           // 10 minutes - garde en cache plus longtemps
+      refetchOnWindowFocus: false,      // Éviter refetch à chaque focus de fenêtre
+      refetchOnReconnect: false,        // Éviter refetch à chaque reconnexion
+      retry: 1,                          // Max 1 retry au lieu de 3 par défaut
+    },
+  },
+});
 
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <HelmetProvider>
-        <ReaderModeProvider>
-          <CartProvider>
-            <TooltipProvider>
+        <AuthProvider>
+          <ReaderModeProvider>
+            <CartProvider>
+              <TooltipProvider>
               <Toaster />
               <Sonner />
               <BrowserRouter>
@@ -340,8 +352,9 @@ function App() {
           </TooltipProvider>
         </CartProvider>
       </ReaderModeProvider>
-    </HelmetProvider>
-  </QueryClientProvider>
+    </AuthProvider>
+  </HelmetProvider>
+</QueryClientProvider>
 );
 }
 

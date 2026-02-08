@@ -3,7 +3,6 @@ import { useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Database } from '@/integrations/supabase/types';
-import { Session } from "@supabase/supabase-js";
 import Header from '@/components/Header';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -16,11 +15,10 @@ import { MapPin, Users, Star, Award, CalendarCheck, Euro, MessageSquare } from '
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { toast } from '@/components/ui/use-toast';
 import { Loader2 } from 'lucide-react';
-import { se } from 'date-fns/locale';
+import { useAuth } from '@/contexts/AuthContext';
 
 type Prestataire = Database['public']['Tables']['prestataires']['Row'];
 type PrestatairePhoto = Database['public']['Tables']['prestataires_photos']['Row'];
-type VendorsTrackingPreprod = Database['public']['Tables']['vendors_tracking_preprod']['Row']; 
 
 interface Package {
   name: string;
@@ -42,18 +40,7 @@ const Demo = () => {
   const [guests, setGuests] = useState<number>(100);
   const [packages, setPackages] = useState<Package[]>(DEFAULT_PACKAGES);
   const [selectedPackage, setSelectedPackage] = useState<Package>(DEFAULT_PACKAGES[0]);
-
-  //check if user is connected
-  const [session, setSession] = useState<Session | null>(null);
-  useEffect(() => {
-    const subscription = supabase.auth.onAuthStateChange((_event, newSession) => {
-      setSession(newSession);
-    });
-
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-    });
-  }, []);
+  const { user, session } = useAuth();
   
   const disabledDates = [
     new Date(2025, 5, 15),
@@ -180,11 +167,11 @@ const Demo = () => {
   const prices = calculateTotal();
 
   const checkCurrentRDV = async () => {
-    if (session) {
+    if (user) {
       const { data, error } = await supabase
         .from('vendors_tracking_preprod')
         .select('*')
-        .eq('user_id', session.user.id)
+        .eq('user_id', user.id)
         .eq('prestataire_id', vendorId)
         .single();
 
@@ -201,7 +188,7 @@ const Demo = () => {
     const newPackage = selectedPackage;
 
     const currentRDV = await checkCurrentRDV();
-    if(session) {
+    if(user) {
       if(currentRDV) {
         toast({
           description: "Vous avez déjà une réservation en attente pour ce prestataire.",
@@ -215,7 +202,7 @@ const Demo = () => {
           .insert([
             {
               contact_date: new Date().toISOString(),
-              user_id: session.user.id,
+              user_id: user.id,
               prestataire_id: vendorId,
               category: vendor?.categorie || "Non spécifié",
               vendor_name: vendor?.nom || "Non spécifié",

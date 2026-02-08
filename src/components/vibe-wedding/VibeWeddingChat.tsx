@@ -3,12 +3,12 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Send, Sparkles, Info } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { supabase } from '@/integrations/supabase/client';
 import AuthRequiredModal from './AuthRequiredModal';
 import VendorCardInChat from './VendorCardInChat';
 import RegionSelector from './RegionSelector';
 import { Link } from 'react-router-dom';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface Vendor {
   id: string;
@@ -52,25 +52,10 @@ const VibeWeddingChat: React.FC<VibeWeddingChatProps> = ({
   setShowAuthModal
 }) => {
   const [input, setInput] = useState('');
-  const [user, setUser] = useState<any>(null);
   const [organizationMode, setOrganizationMode] = useState(true);
   const scrollRef = useRef<HTMLDivElement>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
-
-  // Vérifier l'authentification
-  useEffect(() => {
-    const checkUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      setUser(user);
-    };
-    checkUser();
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
+  const { user } = useAuth();
 
   // Auto-scroll vers le bas à chaque nouveau message
   useEffect(() => {

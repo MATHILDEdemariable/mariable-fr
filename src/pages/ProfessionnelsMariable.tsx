@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -7,7 +7,6 @@ import { Input } from '@/components/ui/input';
 import VendorCard from '@/components/vendors/VendorCard';
 import { useOptimizedVendors } from '@/hooks/useOptimizedVendors';
 import { useDebounce } from 'use-debounce';
-import { supabase } from '@/integrations/supabase/client';
 import { Loader2, Search, X, ChevronLeft, ChevronRight, Camera, Utensils, Building2, Music, Flower2, Sparkles, Star, Palette, Gift, Car, Users, Calendar, Plus, MessageCircle, CalendarCheck, ArrowRight, LayoutDashboard, HelpCircle } from 'lucide-react';
 import PremiumHeader from '@/components/home/PremiumHeader';
 import Footer from '@/components/Footer';
@@ -17,6 +16,8 @@ import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import CartIcon from '@/components/cart/CartIcon';
 import CarnetAdressesModal from '@/components/home/CarnetAdressesModal';
 import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
 type PrestataireCategorie = Database['public']['Enums']['prestataire_categorie'];
 const CATEGORY_CONFIG: {
   value: PrestataireCategorie | 'Tous';
@@ -211,6 +212,8 @@ const CategoryPills = ({
       <ScrollBar orientation="horizontal" className="invisible" />
     </ScrollArea>;
 };
+
+
 const ProfessionnelsMariable = () => {
   const navigate = useNavigate();
   const resultsRef = useRef<HTMLDivElement>(null);
@@ -219,29 +222,8 @@ const ProfessionnelsMariable = () => {
   const [region, setRegion] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [debouncedSearch] = useDebounce(search, 500);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showCarnetModal, setShowCarnetModal] = useState(false);
-
-  // Check auth status
-  useEffect(() => {
-    const checkAuth = async () => {
-      const {
-        data: {
-          session
-        }
-      } = await supabase.auth.getSession();
-      setIsLoggedIn(!!session);
-    };
-    checkAuth();
-    const {
-      data: {
-        subscription
-      }
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setIsLoggedIn(!!session);
-    });
-    return () => subscription.unsubscribe();
-  }, []);
+  const { isAuthenticated } = useAuth();
 
   // Fetch category counts to hide empty categories
   const {
@@ -307,7 +289,7 @@ const ProfessionnelsMariable = () => {
       
       <main className="min-h-screen bg-[#efeee9] pt-16 md:pt-20">
         {/* Hero */}
-        <HeroSection onScrollToResults={scrollToResults} isLoggedIn={isLoggedIn} />
+        <HeroSection onScrollToResults={scrollToResults} isLoggedIn={isAuthenticated} />
 
         {/* How It Works */}
         <HowItWorksSection />

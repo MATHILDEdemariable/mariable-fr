@@ -9,46 +9,32 @@ import { Loader2, Mail, Lock } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import PremiumHeader from '@/components/home/PremiumHeader';
 import { supabase } from '@/integrations/supabase/client';
-import { Session } from '@supabase/supabase-js';
 import SEO from '@/components/SEO';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isResetLoading, setIsResetLoading] = useState(false);
-  const [session, setSession] = useState<Session | null>(null);
   const [showResetForm, setShowResetForm] = useState(false);
   const [resetEmail, setResetEmail] = useState('');
   const [resetSent, setResetSent] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useAuth();
   
   // Récupérer l'URL de redirection si elle existe
   const redirectPath = location.state?.redirectAfterLogin || '/professionnelsmariable';
   
+  // Rediriger si déjà connecté
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setSession(session);
-        if (session) {
-          // Rediriger vers la page d'origine ou le dashboard par défaut
-          navigate(redirectPath);
-        }
-      }
-    );
-
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      if (session) {
-        navigate(redirectPath);
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, [navigate, redirectPath]);
+    if (user) {
+      navigate(redirectPath);
+    }
+  }, [user, navigate, redirectPath]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
