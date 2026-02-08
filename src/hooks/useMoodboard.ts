@@ -93,7 +93,9 @@ export const useMoodboard = () => {
       });
 
       if (error) {
-        throw new Error(error.message);
+        console.error('❌ analyzeColors edge function error:', error);
+        const errorMessage = error.message || "Erreur lors de l'analyse des couleurs";
+        throw new Error(errorMessage);
       }
 
       if (data.colors && Array.isArray(data.colors)) {
