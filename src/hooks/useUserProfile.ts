@@ -144,11 +144,24 @@ export const useUserProfile = () => {
     }
   }, [user]);
 
-  // Toutes les fonctionnalités sont désormais gratuites
-  const isPremium = true;
+  // Vérifier si l'utilisateur a un abonnement premium actif
+  const isPremium = (() => {
+    if (!profile) return false;
+    
+    // Vérifier le type d'abonnement
+    if (profile.subscription_type !== 'premium') return false;
+    
+    // Vérifier l'expiration (null = accès permanent)
+    if (profile.subscription_expires_at === null) return true;
+    
+    // Vérifier si l'abonnement n'est pas expiré
+    const expiresAt = new Date(profile.subscription_expires_at);
+    return expiresAt > new Date();
+  })();
 
   console.log('🔍 Current profile status:', { 
     subscription_type: profile?.subscription_type, 
+    subscription_expires_at: profile?.subscription_expires_at,
     isPremium,
     loading,
     updated_at: profile?.updated_at

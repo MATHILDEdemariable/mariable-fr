@@ -29,7 +29,8 @@ import {
   Flower2,
   Camera,
   PartyPopper,
-  Share2
+  Share2,
+  Lock
 } from 'lucide-react';
 import {
   Accordion,
@@ -39,8 +40,21 @@ import {
 } from "@/components/ui/accordion";
 import jsPDF from 'jspdf';
 import { toast } from 'sonner';
+import { usePremiumAction } from '@/hooks/usePremiumAction';
+import PremiumModal from '@/components/premium/PremiumModal';
 
 const CeremoniePage: React.FC = () => {
+  const { executeAction: executeActionLaique, showPremiumModal: showModalLaique, closePremiumModal: closeModalLaique, isPremium, feature: featureLaique, description: descriptionLaique } = usePremiumAction({
+    feature: 'Checklist Cérémonie Laïque PDF',
+    description: 'Téléchargez la checklist complète pour votre cérémonie laïque.'
+  });
+
+  const { executeAction: executeActionCatholique, showPremiumModal: showModalCatholique, closePremiumModal: closeModalCatholique, feature: featureCatholique, description: descriptionCatholique } = usePremiumAction({
+    feature: 'Checklist Mariage Catholique PDF',
+    description: 'Téléchargez la checklist complète pour votre mariage catholique.'
+  });
+
+  // ========== DONNÉES CÉRÉMONIE LAÏQUE ==========
   // ========== DONNÉES CÉRÉMONIE LAÏQUE ==========
   const fondamentaux = [
     { icon: Clock, label: "Durée optimale", value: "45 à 60 minutes" },
@@ -194,6 +208,7 @@ const CeremoniePage: React.FC = () => {
 
   // ========== FONCTION EXPORT PDF LAÏQUE ==========
   const handleExportPDFLaique = () => {
+    executeActionLaique(() => {
     const pdf = new jsPDF();
     
     // Header avec design Mariable
@@ -271,10 +286,12 @@ const CeremoniePage: React.FC = () => {
     
     pdf.save("checklist-ceremonie-laique.pdf");
     toast.success("Checklist ceremonie laique telechargee !");
+    });
   };
 
   // ========== FONCTION EXPORT PDF CATHOLIQUE ==========
   const handleExportPDFCatholique = () => {
+    executeActionCatholique(() => {
     const pdf = new jsPDF();
     
     // Header avec design Mariable
@@ -355,6 +372,7 @@ const CeremoniePage: React.FC = () => {
     
     pdf.save("checklist-mariage-catholique.pdf");
     toast.success("Checklist mariage catholique telechargee !");
+    });
   };
 
   return (
@@ -406,8 +424,9 @@ const CeremoniePage: React.FC = () => {
               </Button>
               <Button 
                 onClick={handleExportPDFLaique}
-                className="bg-black hover:bg-black/90 text-white gap-2"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground gap-2"
               >
+                {!isPremium && <Lock className="h-4 w-4" />}
                 <Download className="h-4 w-4" />
                 Telecharger la checklist
               </Button>
@@ -792,8 +811,9 @@ const CeremoniePage: React.FC = () => {
               </Button>
               <Button 
                 onClick={handleExportPDFCatholique}
-                className="bg-black hover:bg-black/90 text-white gap-2"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground gap-2"
               >
+                {!isPremium && <Lock className="h-4 w-4" />}
                 <Download className="h-4 w-4" />
                 Telecharger la checklist
               </Button>
@@ -1183,6 +1203,20 @@ const CeremoniePage: React.FC = () => {
           </TabsContent>
         </Tabs>
       </div>
+
+      <PremiumModal
+        isOpen={showModalLaique}
+        onClose={closeModalLaique}
+        feature={featureLaique}
+        description={descriptionLaique}
+      />
+
+      <PremiumModal
+        isOpen={showModalCatholique}
+        onClose={closeModalCatholique}
+        feature={featureCatholique}
+        description={descriptionCatholique}
+      />
     </>
   );
 };

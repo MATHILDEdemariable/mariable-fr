@@ -1,9 +1,8 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Sparkles, Calendar, Clock, Users, Trash2, CheckSquare, Square, Save, HelpCircle, X } from 'lucide-react';
+import { Plus, Sparkles, Calendar, Clock, Users, Trash2, CheckSquare, Square, Save, HelpCircle, X, Heart } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { supabase } from '@/integrations/supabase/client';
@@ -14,6 +13,7 @@ import EnhancedDragDropTimeline from './MonJourMTimeline';
 import { PlanningEvent } from '../wedding-day/types/planningTypes';
 import { useMonJourMCoordination } from '@/hooks/useMonJourMCoordination';
 import MonJourMOnboardingModal from './MonJourMOnboardingModal';
+import MathildeExampleModal from './MathildeExampleModal';
 
 interface MonJourMPlanningContentProps {
   coordinationId: string;
@@ -36,6 +36,7 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
   const [selectedEvents, setSelectedEvents] = useState<string[]>([]);
   const [isSaving, setIsSaving] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [showMathildeModal, setShowMathildeModal] = useState(false);
   const { toast } = useToast();
   
   const { coordination } = useMonJourMCoordination();
@@ -477,12 +478,23 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
 
       {/* Actions principales */}
       <div className="flex flex-col sm:flex-row gap-4 items-start">
+        {/* Bouton exemple Mathilde */}
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setShowMathildeModal(true)}
+          className="shrink-0 text-muted-foreground hover:text-primary"
+        >
+          <Heart className="h-4 w-4 mr-2" />
+          Exemple mariage de Mathilde
+        </Button>
+        
         {/* Bouton d'aide pour relancer l'onboarding */}
         <Button
           variant="outline"
           size="sm"
           onClick={handleShowOnboarding}
-          className="sm:ml-auto shrink-0 text-gray-600 hover:text-wedding-olive"
+          className="sm:ml-auto shrink-0 text-muted-foreground hover:text-primary"
         >
           <HelpCircle className="h-4 w-4 mr-2" />
           Guide d'utilisation
@@ -606,6 +618,12 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
         isOpen={showOnboarding}
         onOpenChange={setShowOnboarding}
         hasExistingEvents={events.length > 0}
+      />
+
+      {/* Modal exemple Mathilde */}
+      <MathildeExampleModal
+        isOpen={showMathildeModal}
+        onClose={() => setShowMathildeModal(false)}
       />
     </div>
   );

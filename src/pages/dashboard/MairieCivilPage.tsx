@@ -20,7 +20,8 @@ import {
   Globe,
   UserCheck,
   ExternalLink,
-  Share2
+  Share2,
+  Lock
 } from 'lucide-react';
 import {
   Accordion,
@@ -30,8 +31,15 @@ import {
 } from "@/components/ui/accordion";
 import jsPDF from 'jspdf';
 import { toast } from 'sonner';
+import { usePremiumAction } from '@/hooks/usePremiumAction';
+import PremiumModal from '@/components/premium/PremiumModal';
 
 const MairieCivilPage: React.FC = () => {
+  const { executeAction, showPremiumModal, closePremiumModal, isPremium, feature, description } = usePremiumAction({
+    feature: 'Checklist Mariage Civil PDF',
+    description: 'Téléchargez la checklist complète des documents pour votre mariage civil.'
+  });
+
   const conditions = [
     { icon: Calendar, text: "Être âgé(e) d'au moins 18 ans révolus" },
     { icon: Heart, text: "Mariage autorisé entre personnes de même sexe ou de sexe différent (loi du 17 mai 2013)" },
@@ -166,6 +174,7 @@ const MairieCivilPage: React.FC = () => {
   ];
 
   const handleExportPDF = () => {
+    executeAction(() => {
     const pdf = new jsPDF();
     
     // Header avec design Mariable
@@ -288,6 +297,7 @@ const MairieCivilPage: React.FC = () => {
     
     pdf.save("checklist-mariage-civil.pdf");
     toast.success("Checklist PDF telechargee !");
+    });
   };
 
   return (
@@ -323,8 +333,9 @@ const MairieCivilPage: React.FC = () => {
             </Button>
             <Button 
               onClick={handleExportPDF}
-              className="bg-black hover:bg-black/90 text-white gap-2"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground gap-2"
             >
+              {!isPremium && <Lock className="h-4 w-4" />}
               <Download className="h-4 w-4" />
               Télécharger la checklist PDF
             </Button>
@@ -585,6 +596,13 @@ const MairieCivilPage: React.FC = () => {
           </Button>
         </div>
       </div>
+
+      <PremiumModal
+        isOpen={showPremiumModal}
+        onClose={closePremiumModal}
+        feature={feature}
+        description={description}
+      />
     </>
   );
 };
