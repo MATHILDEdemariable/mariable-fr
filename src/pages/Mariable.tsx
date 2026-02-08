@@ -155,7 +155,10 @@ const FAQSection = () => {
     answer: "Notre calculateur de budget vous aide à estimer et répartir votre enveloppe. Il prend en compte le nombre d'invités, la région, la saison et vos prestataires. Vous obtenez une estimation réaliste par poste (lieu, traiteur, photo, DJ, etc.) et pouvez suivre vos dépenses en temps réel. L'outil est 100% gratuit."
   }, {
     question: "Mariable est-il vraiment gratuit ?",
-    answer: "Oui, Mariable est entièrement gratuit ! Tous les outils de planification sont accessibles sans frais : tableau de bord, checklist, calculateur de budget, gestion des invités, plan de table, coordination jour J. La recherche de prestataires est également gratuite."
+    answer: "Oui, de nombreuses fonctionnalités sont 100% gratuites : tableau de bord, checklist, calculateur de budget, gestion des invités, plan de table, et coordination jour J. La recherche de prestataires est également gratuite. Mariable propose également des fonctionnalités premium à découvrir pour aller plus loin dans l'organisation de votre mariage."
+  }, {
+    question: "Que comprend le Premium et quel est le prix ?",
+    answer: "Le compte Premium Mariable est disponible à 29€ (paiement unique, accès à vie). Il comprend : export illimité de vos PDF personnalisés, accès complet aux checklists et guides, utilisation IA sans limite, stockage illimité de documents, et plus de 3 lignes par catégorie de budget."
   }];
   return <section className="py-12 md:py-20 bg-white">
       <div className="container mx-auto px-4">

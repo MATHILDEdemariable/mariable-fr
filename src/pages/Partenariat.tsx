@@ -623,6 +623,115 @@ const Partenariat = () => {
             </div>
           </div>
         </section>
+
+        {/* Section Que se passe-t-il après votre candidature */}
+        <section className="py-16 px-4 bg-editorial-beige/30">
+          <div className="container mx-auto max-w-4xl">
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-2xl md:text-3xl font-serif text-editorial-noir text-center mb-10"
+            >
+              Que se passe-t-il après votre candidature ?
+            </motion.h2>
+
+            <div className="grid md:grid-cols-3 gap-6">
+              {/* Étape 1 */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.1 }}
+                className="bg-white p-6 relative"
+              >
+                <span className="inline-block px-3 py-1 bg-premium-sage/10 text-premium-sage text-xs font-medium mb-4">
+                  📋 48-72h
+                </span>
+                <h3 className="font-medium text-editorial-noir mb-3">
+                  Étape 1 : Validation de votre profil
+                </h3>
+                <p className="text-sm text-editorial-noir/70 mb-4">
+                  Notre équipe examine votre candidature selon nos critères :
+                </p>
+                <ul className="space-y-2 text-sm">
+                  {[
+                    "SIRET actif et en règle",
+                    "Assurance professionnelle valide (RC Pro)",
+                    "Cohérence avec la ligne éditoriale Mariable",
+                    "Avis Google récents et positifs (min 4/5 ⭐)",
+                  ].map((item, index) => (
+                    <li key={index} className="flex items-start gap-2">
+                      <CheckCircle className="w-4 h-4 text-premium-sage shrink-0 mt-0.5" />
+                      <span className="text-editorial-noir/70">{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </motion.div>
+
+              {/* Étape 2 */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.2 }}
+                className="bg-white p-6 relative"
+              >
+                <span className="inline-block px-3 py-1 bg-premium-sage/10 text-premium-sage text-xs font-medium mb-4">
+                  💳 Après validation
+                </span>
+                <h3 className="font-medium text-editorial-noir mb-3">
+                  Étape 2 : Activation de votre partenariat
+                </h3>
+                <p className="text-sm text-editorial-noir/70 mb-4">
+                  Si votre profil correspond à nos standards :
+                </p>
+                <ul className="space-y-2 text-sm">
+                  {[
+                    "Vous recevez un lien de paiement sécurisé",
+                    "Vous accédez aux guidelines partenaires (specs photos, infos à fournir, bonnes pratiques)",
+                  ].map((item, index) => (
+                    <li key={index} className="flex items-start gap-2">
+                      <CheckCircle className="w-4 h-4 text-premium-sage shrink-0 mt-0.5" />
+                      <span className="text-editorial-noir/70">{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </motion.div>
+
+              {/* Étape 3 */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.3 }}
+                className="bg-white p-6 relative"
+              >
+                <span className="inline-block px-3 py-1 bg-premium-sage/10 text-premium-sage text-xs font-medium mb-4">
+                  🚀 Sous 10 jours
+                </span>
+                <h3 className="font-medium text-editorial-noir mb-3">
+                  Étape 3 : Mise en ligne
+                </h3>
+                <p className="text-sm text-editorial-noir/70 mb-4">
+                  Dès réception de votre paiement :
+                </p>
+                <ul className="space-y-2 text-sm">
+                  {[
+                    "📱 Publication de votre fiche prestataire complète sur Mariable",
+                    "📸 Post Instagram dédié pour booster votre visibilité",
+                    "📖 Guide digital partenaire avec toutes les clés pour maximiser votre référencement",
+                  ].map((item, index) => (
+                    <li key={index} className="flex items-start gap-2">
+                      <CheckCircle className="w-4 h-4 text-premium-sage shrink-0 mt-0.5" />
+                      <span className="text-editorial-noir/70">{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </motion.div>
+            </div>
+          </div>
+        </section>
       </main>
       <Footer />
     </>

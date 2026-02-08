@@ -21,7 +21,11 @@ const faqItems = [
   },
   {
     question: "Mariable est-il vraiment gratuit ?",
-    answer: "Oui, Mariable est entièrement gratuit ! Tous les outils de planification sont accessibles sans frais : tableau de bord, checklist, calculateur de budget, gestion des invités, plan de table, et coordination jour J. La recherche de prestataires est également gratuite. Nous proposons optionnellement un service de sélection personnalisée premium (69€) pour ceux qui souhaitent un accompagnement plus poussé avec vérification des disponibilités et comparatif détaillé."
+    answer: "Oui, de nombreuses fonctionnalités sont 100% gratuites : tableau de bord, checklist, calculateur de budget, gestion des invités, plan de table, et coordination jour J. La recherche de prestataires est également gratuite. Mariable propose également des fonctionnalités premium à découvrir pour aller plus loin dans l'organisation de votre mariage."
+  },
+  {
+    question: "Que comprend le Premium et quel est le prix ?",
+    answer: "Le compte Premium Mariable est disponible à 29€ (paiement unique, accès à vie). Il comprend : export illimité de vos PDF personnalisés (budget, plan de table, checklist cérémonies, moodboard, suivi prestataires), accès complet aux checklists et guides, utilisation IA sans limite pour les checklist, rétroplanning et moodboard, stockage illimité de documents, et plus de 3 lignes par catégorie de budget. Sans Premium, vous bénéficiez d'1 génération IA par outil et de 2 documents stockables."
   },
   {
     question: "Qu'est-ce que Mariable ?",

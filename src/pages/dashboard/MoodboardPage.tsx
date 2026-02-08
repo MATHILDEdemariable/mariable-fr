@@ -65,10 +65,12 @@ const MoodboardPage: React.FC = () => {
     loadProfile();
   }, []);
 
+  const [showPremiumLimitModal, setShowPremiumLimitModal] = useState(false);
+
   const handleGenerate = async () => {
     // Vérifier si l'utilisateur peut utiliser la fonctionnalité IA
     if (!canUseFeature('moodboard')) {
-      executeAction(() => {});
+      setShowPremiumLimitModal(true);
       return;
     }
 
@@ -274,6 +276,13 @@ const MoodboardPage: React.FC = () => {
         onClose={closePremiumModal}
         feature={feature}
         description={description}
+      />
+
+      <PremiumModal
+        isOpen={showPremiumLimitModal}
+        onClose={() => setShowPremiumLimitModal(false)}
+        feature="Génération Moodboard IA"
+        description="Vous avez déjà utilisé votre génération gratuite. Passez au Premium pour des générations illimitées."
       />
     </>
   );

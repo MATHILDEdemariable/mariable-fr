@@ -100,7 +100,7 @@ const DocumentsPage = () => {
           </p>
         </div>
 
-        <DocumentUploader onUploadComplete={refetch} />
+        <DocumentUploader onUploadComplete={refetch} documentCount={documents?.length || 0} />
 
         <Tabs defaultValue="tous" className="w-full">
           <TabsList className="grid grid-cols-5 w-full max-w-2xl">
