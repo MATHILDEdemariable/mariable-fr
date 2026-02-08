@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
-import { Plus, Trash2, Save, Download, ShoppingCart } from 'lucide-react';
+import { Plus, Trash2, Save, Download, ShoppingCart, Lock } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { exportBudgetToPDF } from '@/services/budgetExportService';
@@ -393,8 +393,13 @@ const DetailedBudget: React.FC = () => {
     }
   });
 
-  // Export budget to PDF
+  // Export budget to PDF (Premium only)
   const handleExportPDF = async () => {
+    if (!isPremium) {
+      executeAction(() => {});
+      return;
+    }
+
     if (!categories.length) {
       toast({
         title: "Erreur",
@@ -444,8 +449,13 @@ const DetailedBudget: React.FC = () => {
     }
   };
 
-  // Export budget to CSV
+  // Export budget to CSV (Premium only)
   const handleExportCSV = () => {
+    if (!isPremium) {
+      executeAction(() => {});
+      return;
+    }
+
     if (!categories.length) {
       toast({
         title: "Erreur",
@@ -513,8 +523,16 @@ const DetailedBudget: React.FC = () => {
     }
   };
 
-  // Add a new item to a category
+  // Add a new item to a category (limited to 3 for free users)
   const handleAddItem = (categoryIndex: number) => {
+    const category = categories[categoryIndex];
+    
+    // Vérifier la limite de 3 items pour les utilisateurs non-premium
+    if (!isPremium && category.items.length >= 3) {
+      executeAction(() => {}); // Affiche le modal premium
+      return;
+    }
+
     const newCategories = [...categories];
     const newItem: BudgetItem = {
       id: `item_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -729,6 +747,7 @@ const DetailedBudget: React.FC = () => {
               </span>
             ) : (
               <span className="flex items-center">
+                {!isPremium && <Lock className="h-4 w-4 mr-1" />}
                 <Download className="h-4 w-4 sm:mr-2" />
                 <span className="hidden sm:inline">PDF</span>
               </span>
@@ -742,6 +761,7 @@ const DetailedBudget: React.FC = () => {
             className="bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs sm:text-sm"
           >
             <span className="flex items-center">
+              {!isPremium && <Lock className="h-4 w-4 mr-1" />}
               <Download className="h-4 w-4 sm:mr-2" />
               <span className="hidden sm:inline">CSV</span>
             </span>
@@ -785,12 +805,16 @@ const DetailedBudget: React.FC = () => {
                       <Button 
                         variant="ghost" 
                         size="sm"
-                        onClick={() => executeAction(() => handleAddItem(categoryIndex))}
+                        onClick={() => handleAddItem(categoryIndex)}
                         className="h-8 text-wedding-olive hover:text-wedding-olive/70"
                       >
+                        {!isPremium && category.items.length >= 3 && <Lock className="h-3 w-3 mr-1" />}
                         <Plus className="h-4 w-4 mr-1" />
                         <span>Ajouter</span>
                       </Button>
+                      {!isPremium && category.items.length >= 3 && (
+                        <p className="text-xs text-muted-foreground mt-1">Limite atteinte</p>
+                      )}
                     </td>
                   </tr>
                   

@@ -8,11 +8,12 @@ import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { Lightbulb, Plus, Check, Loader2, Sparkles, Download, RotateCcw } from 'lucide-react';
+import { Lightbulb, Plus, Check, Loader2, Sparkles, Download, RotateCcw, Lock } from 'lucide-react';
 import { toast } from 'sonner';
 import { AvantJourJShareButton } from '@/components/avant-jour-j/AvantJourJShareButton';
 import { exportAvantJourJToPDF } from '@/services/avantJourJExportService';
 import { usePremiumAction } from '@/hooks/usePremiumAction';
+import { useAiUsageLimit } from '@/hooks/useAiUsageLimit';
 import PremiumModal from '@/components/premium/PremiumModal';
 
 interface Task {
@@ -45,10 +46,11 @@ interface DatabaseChecklist {
 
 const ChecklistIntelligente: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
-  const { executeAction, showPremiumModal, closePremiumModal, feature, description } = usePremiumAction({
+  const { executeAction, showPremiumModal, closePremiumModal, feature, description, isPremium } = usePremiumAction({
     feature: "génération de checklist avant le jour-J",
     description: "Générez votre checklist personnalisée avant le jour-J avec l'IA"
   });
+  const { canUseFeature, hasUsedFeature, recordUsage } = useAiUsageLimit();
   const [inputText, setInputText] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [checklist, setChecklist] = useState<ChecklistData | null>(null);
@@ -107,6 +109,13 @@ const ChecklistIntelligente: React.FC = () => {
       return;
     }
 
+    // Vérifier si l'utilisateur peut utiliser la fonctionnalité IA
+    if (!canUseFeature('checklist')) {
+      // Afficher le modal premium via executeAction
+      executeAction(() => {});
+      return;
+    }
+
     setIsGenerating(true);
 
     try {
@@ -119,6 +128,10 @@ const ChecklistIntelligente: React.FC = () => {
       if (data?.checklist) {
         setChecklist(data.checklist);
         setInputText('');
+        // Enregistrer l'utilisation pour les utilisateurs non-premium
+        if (!isPremium) {
+          await recordUsage('checklist');
+        }
         toast.success('Checklist générée avec succès !');
       }
     } catch (error) {
@@ -332,7 +345,7 @@ const ChecklistIntelligente: React.FC = () => {
               />
             </div>
             <Button 
-              onClick={() => executeAction(generateChecklist)}
+              onClick={generateChecklist}
               disabled={isGenerating || !inputText.trim()}
               className="w-full"
             >
@@ -343,8 +356,10 @@ const ChecklistIntelligente: React.FC = () => {
                 </>
               ) : (
                 <>
+                  {!canUseFeature('checklist') && <Lock className="h-4 w-4 mr-2" />}
                   <Sparkles className="h-4 w-4 mr-2" />
                   Générer ma checklist
+                  {!canUseFeature('checklist') && <span className="ml-1 text-xs">(Premium)</span>}
                 </>
               )}
             </Button>

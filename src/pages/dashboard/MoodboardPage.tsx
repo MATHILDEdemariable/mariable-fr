@@ -11,6 +11,7 @@ import { generateMoodboardPdf } from '@/services/moodboardPdfService';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 import { usePremiumAction } from '@/hooks/usePremiumAction';
+import { useAiUsageLimit } from '@/hooks/useAiUsageLimit';
 import PremiumModal from '@/components/premium/PremiumModal';
 
 const MoodboardPage: React.FC = () => {
@@ -23,6 +24,8 @@ const MoodboardPage: React.FC = () => {
     feature: 'Export PDF Moodboard',
     description: 'Téléchargez votre moodboard en PDF haute qualité.'
   });
+
+  const { canUseFeature, hasUsedFeature, recordUsage } = useAiUsageLimit();
 
   const {
     images,
@@ -63,8 +66,18 @@ const MoodboardPage: React.FC = () => {
   }, []);
 
   const handleGenerate = async () => {
+    // Vérifier si l'utilisateur peut utiliser la fonctionnalité IA
+    if (!canUseFeature('moodboard')) {
+      executeAction(() => {});
+      return;
+    }
+
     const success = await analyzeColors();
     if (success) {
+      // Enregistrer l'utilisation pour les utilisateurs non-premium
+      if (!isPremium) {
+        await recordUsage('moodboard');
+      }
       // Scroll to canvas
       setTimeout(() => {
         document.getElementById('moodboard-result')?.scrollIntoView({ behavior: 'smooth' });
@@ -191,8 +204,10 @@ const MoodboardPage: React.FC = () => {
                 </>
               ) : (
                 <>
+                  {!canUseFeature('moodboard') && <Lock className="w-4 h-4 mr-2" />}
                   <Sparkles className="w-4 h-4 mr-2" />
                   Générer mon moodboard
+                  {!canUseFeature('moodboard') && <span className="ml-1 text-xs">(Premium)</span>}
                 </>
               )}
             </Button>

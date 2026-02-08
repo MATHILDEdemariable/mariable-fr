@@ -2,7 +2,7 @@
 import React from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Crown, Lock, Sparkles } from 'lucide-react';
+import { Crown, Sparkles, FileText, CheckSquare, Bot } from 'lucide-react';
 import StripeButton from './StripeButton';
 
 interface PremiumModalProps {
@@ -29,27 +29,33 @@ const PremiumModal: React.FC<PremiumModalProps> = ({
           </div>
           
           <DialogTitle className="text-center flex items-center justify-center gap-2">
-            <Lock className="h-5 w-5" />
-            Fonctionnalité Premium
+            <Sparkles className="h-5 w-5 text-primary" />
+            Envie d'aller plus loin ?
           </DialogTitle>
           
           <DialogDescription className="text-center">
-            {description || `Pour accéder à ${feature}, vous devez être abonné à notre version premium.`}
+            {description || `Débloquez ${feature} avec le compte Premium.`}
           </DialogDescription>
         </DialogHeader>
         
         <div className="space-y-4">
           <div className="bg-gradient-to-r from-primary/5 to-primary/10 p-4 rounded-lg">
-            <h4 className="font-medium mb-2 flex items-center gap-2">
-              <Sparkles className="h-4 w-4 text-primary" />
-              Avec Premium, débloquez :
+            <h4 className="font-medium mb-3 text-center">
+              Le compte Premium à 29€ débloque :
             </h4>
-            <ul className="text-sm text-muted-foreground space-y-1">
-              <li>• Toutes les fonctionnalités débloquées dont celles avec IA</li>
-              <li>• Notre appli spéciale jour j pour créer facilement votre déroulé planning et votre équipe (proches, prestataires impliqués)</li>
-              <li>• Support client whatsapp illimité</li>
-              <li>• Guide PDF inclus</li>
-              <li>• Code promo à saisir dans l'étape suivante</li>
+            <ul className="text-sm text-muted-foreground space-y-2">
+              <li className="flex items-start gap-2">
+                <FileText className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                <span>Export illimité de vos PDF personnalisés</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <CheckSquare className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                <span>Accès complet aux checklists et guides</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <Bot className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                <span>Utilisation IA sans limite pour les checklist, retroplanning, moodboard</span>
+              </li>
             </ul>
           </div>
           
@@ -60,7 +66,7 @@ const PremiumModal: React.FC<PremiumModalProps> = ({
         
         <DialogFooter className="flex-col gap-2">
           <p className="text-xs text-muted-foreground text-center">
-            Paiement sécurisé via Stripe • Déblocage immédiat
+            Paiement sécurisé via Stripe • Accès immédiat et permanent
           </p>
           <Button variant="outline" onClick={onClose} className="w-full">
             Fermer

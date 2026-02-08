@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Calendar as CalendarIcon, Loader2, Save, Download, Sparkles, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Calendar as CalendarIcon, Loader2, Save, Download, Sparkles, ChevronLeft, ChevronRight, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Calendar } from '@/components/ui/calendar';
@@ -12,6 +12,7 @@ import { format, differenceInMonths, differenceInWeeks, differenceInDays } from 
 import { fr } from 'date-fns/locale';
 import { useNavigate } from 'react-router-dom';
 import { usePremiumAction } from '@/hooks/usePremiumAction';
+import { useAiUsageLimit } from '@/hooks/useAiUsageLimit';
 import PremiumModal from '@/components/premium/PremiumModal';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import jsPDF from 'jspdf';
@@ -68,10 +69,11 @@ const WeddingRetroplanningEmbed = () => {
   const [autoSaveStatus, setAutoSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
   const { toast } = useToast();
   const navigate = useNavigate();
-  const { executeAction, showPremiumModal, closePremiumModal } = usePremiumAction({
+  const { executeAction, showPremiumModal, closePremiumModal, isPremium } = usePremiumAction({
     feature: "Rétroplanning Personnalisé",
     description: "Créez votre rétroplanning de mariage intelligent avec l'IA"
   });
+  const { canUseFeature, recordUsage } = useAiUsageLimit();
 
   // Sauvegarde automatique des tâches cochées
   useEffect(() => {
@@ -262,35 +264,45 @@ const WeddingRetroplanningEmbed = () => {
       return;
     }
 
-    executeAction(async () => {
-      setIsGenerating(true);
-      try {
-        const { data, error } = await supabase.functions.invoke('generate-wedding-retroplanning', {
-          body: { weddingDate: format(weddingDate, 'yyyy-MM-dd') }
-        });
+    // Vérifier si l'utilisateur peut utiliser la fonctionnalité IA
+    if (!canUseFeature('retroplanning')) {
+      executeAction(() => {});
+      return;
+    }
 
-        if (error) throw error;
+    setIsGenerating(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-wedding-retroplanning', {
+        body: { weddingDate: format(weddingDate, 'yyyy-MM-dd') }
+      });
 
-        if (!data.success) {
-          throw new Error(data.error || 'Erreur lors de la génération');
-        }
+      if (error) throw error;
 
-        setRetroplanning(data.data);
-        toast({
-          title: "✨ Rétroplanning généré",
-          description: "Votre rétroplanning personnalisé est prêt"
-        });
-      } catch (error: any) {
-        console.error('Erreur génération:', error);
-        toast({
-          title: "Erreur",
-          description: error.message || "Impossible de générer le rétroplanning",
-          variant: "destructive"
-        });
-      } finally {
-        setIsGenerating(false);
+      if (!data.success) {
+        throw new Error(data.error || 'Erreur lors de la génération');
       }
-    });
+
+      setRetroplanning(data.data);
+      
+      // Enregistrer l'utilisation pour les utilisateurs non-premium
+      if (!isPremium) {
+        await recordUsage('retroplanning');
+      }
+      
+      toast({
+        title: "✨ Rétroplanning généré",
+        description: "Votre rétroplanning personnalisé est prêt"
+      });
+    } catch (error: any) {
+      console.error('Erreur génération:', error);
+      toast({
+        title: "Erreur",
+        description: error.message || "Impossible de générer le rétroplanning",
+        variant: "destructive"
+      });
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   const handleSave = async () => {
@@ -525,8 +537,10 @@ const WeddingRetroplanningEmbed = () => {
               </>
             ) : (
               <>
+                {!canUseFeature('retroplanning') && <Lock className="mr-2 h-4 w-4" />}
                 <Sparkles className="mr-2 h-4 w-4" />
                 Générer le rétroplanning
+                {!canUseFeature('retroplanning') && <span className="ml-1 text-xs">(Premium)</span>}
               </>
             )}
           </Button>

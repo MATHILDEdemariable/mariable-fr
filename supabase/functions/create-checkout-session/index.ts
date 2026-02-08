@@ -44,22 +44,16 @@ serve(async (req) => {
       apiVersion: "2023-10-16",
     });
 
-    // Create checkout session for subscription (9,9€/mois)
+    // Create checkout session for one-time payment (29€)
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
-      mode: 'subscription',
+      mode: 'payment',
       customer_email: user.email,
       line_items: [{
-        price: 'price_1SNGa5KHghqBzkgjhnsKDqtU',
+        price: 'price_1SyYn8KHghqBzkgj249P8325',
         quantity: 1,
       }],
       allow_promotion_codes: true,
-      subscription_data: {
-        metadata: {
-          userId: user.id,
-          userEmail: user.email
-        }
-      },
       success_url: `https://www.mariable.fr/dashboard?payment=success&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `https://www.mariable.fr/dashboard?payment=cancelled`,
       metadata: {
