@@ -27,7 +27,7 @@ export const useAccommodations = () => {
     queryFn: async () => {
       const { data: accommodations, error } = await supabase
         .from('wedding_accommodations')
-        .select('*')
+        .select('id, user_id, nom_logement, type_logement, nombre_chambres, capacite_totale, statut, prix_par_nuit, date_arrivee, date_depart, adresse, contact, commentaires, created_at, updated_at')
         .order('created_at', { ascending: false });
 
       if (error) throw error;

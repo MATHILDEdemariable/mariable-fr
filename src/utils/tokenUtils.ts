@@ -73,7 +73,7 @@ export const getPublicCoordinationData = async (coordinationId: string) => {
     // Récupérer les données de coordination avec maybeSingle()
     const { data: coordination, error: coordError } = await publicSupabase
       .from('wedding_coordination')
-      .select('*')
+      .select('id, title, description, wedding_date, wedding_location, user_id, created_at, updated_at')
       .eq('id', coordinationId)
       .maybeSingle();
 
@@ -92,7 +92,7 @@ export const getPublicCoordinationData = async (coordinationId: string) => {
     // Récupérer les tâches
     const { data: tasks, error: tasksError } = await publicSupabase
       .from('coordination_planning')
-      .select('*')
+      .select('id, title, description, category, start_time, end_time, duration, position, priority, assigned_to, parallel_group')
       .eq('coordination_id', coordinationId)
       .order('position');
 
@@ -103,7 +103,7 @@ export const getPublicCoordinationData = async (coordinationId: string) => {
     // Récupérer l'équipe
     const { data: teamMembers, error: teamError } = await publicSupabase
       .from('coordination_team')
-      .select('*')
+      .select('id, name, role, type, email, phone, notes, prestataire_id')
       .eq('coordination_id', coordinationId)
       .order('created_at');
 
@@ -125,7 +125,7 @@ export const getPublicCoordinationData = async (coordinationId: string) => {
     // Récupérer les liens Pinterest
     const { data: pinterestLinks, error: pinterestError } = await publicSupabase
       .from('coordination_pinterest')
-      .select('*')
+      .select('id, title, pinterest_url, description')
       .eq('coordination_id', coordinationId)
       .order('created_at', { ascending: false });
 
