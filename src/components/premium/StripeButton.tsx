@@ -56,9 +56,9 @@ const StripeButton: React.FC = () => {
   return (
     <div className="space-y-3">
       <div className="text-center space-y-2">
-        <p className="text-2xl font-bold text-wedding-olive">9,9€/mois</p>
+        <p className="text-2xl font-bold text-wedding-olive">29€</p>
         <p className="text-sm text-gray-600">
-          Sans engagement • Annulation en 2 clics
+          Paiement unique • Accès permanent
         </p>
       </div>
       
@@ -74,7 +74,7 @@ const StripeButton: React.FC = () => {
             Préparation...
           </span>
         ) : (
-          "S'abonner maintenant"
+          "Accéder au Premium"
         )}
       </Button>
       
@@ -82,10 +82,6 @@ const StripeButton: React.FC = () => {
         <div className="flex items-center justify-center gap-2">
           <Tag className="h-4 w-4" />
           <span>Code promo disponible à l'étape suivante</span>
-        </div>
-        <div className="bg-blue-50 border border-blue-200 rounded-md p-2 text-center">
-          <p>✉️ Nous vous enverrons un email pour annuler automatiquement votre abonnement à la date de votre mariage</p>
-          <p className="mt-1">🔓 Vous pouvez annuler à tout moment depuis vos paramètres</p>
         </div>
       </div>
     </div>
