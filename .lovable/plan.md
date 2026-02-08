@@ -1,196 +1,174 @@
 
-## Plan de correction des 3 problemes identifies
 
-### Resume des problemes
+## Plan d'optimisation Supabase - Reduction de l'Egress
 
-| Probleme | Fichier/Table | Cause identifiee | Priorite |
-|----------|---------------|------------------|----------|
-| 1. Texte hero /severineetolivier pas lisible | WeddingSeverineOlivier.tsx | Couleurs sombres sur image sombre | Haute |
-| 2. Formulaire RSVP erreur "Impossible d'enregistrer" | wedding_rsvp_responses (RLS) | Policy SELECT bloque le RETURNING | Critique |
-| 3. PDF Moodboard deforme sans palette | MoodboardCanvas.tsx + service | Images pas chargees + aspect ratio | Moyenne |
+### Diagnostic resume
+
+L'analyse du code revele plusieurs sources majeures de consommation excessive :
+
+| Probleme identifie | Impact estime | Fichiers concernes |
+|-------------------|---------------|-------------------|
+| Appels `getUser()` repetes | 45% Auth Egress | 95 fichiers avec 620+ occurrences |
+| SELECT * au lieu de colonnes specifiques | 30% PostgREST Egress | 96 fichiers avec 770+ occurrences |
+| Absence de cache global React Query | 15% repetitions | App.tsx + hooks |
+| `onAuthStateChange` en double | 10% Auth Egress | 16 fichiers avec 85 occurrences |
+| LazyVendorCard checkTrackingStatus | 5% par carte visible | LazyVendorCard.tsx |
 
 ---
 
-### 1. Hero /severineetolivier - Texte en blanc
+### Phase 1 : Centralisation Auth (Impact : -45% Auth Egress)
 
-**Probleme** : Les textes du hero utilisent `colors.coral`, `colors.darkGreen` et `colors.green` qui ne ressortent pas sur l'image de fond fleurie.
+**Probleme principal** : Chaque composant appelle `supabase.auth.getUser()` ou `getSession()` independamment, generant des requetes reseau a chaque montage.
 
-**Solution** : Modifier les couleurs du texte pour utiliser du blanc avec ombre pour la lisibilite.
+**Solution** : Creer un `AuthProvider` centralise avec React Context.
 
-**Fichier** : `src/pages/WeddingSeverineOlivier.tsx`
+**Fichier a creer** : `src/contexts/AuthContext.tsx`
 
-**Modifications (lignes 199-234)** :
-- Ajouter une couche de fond semi-transparente sombre derriere le texte
-- Changer tous les textes en blanc (`text-white`)
-- Ajouter `text-shadow` pour la lisibilite
-- Garder le bouton en corail (deja visible)
+Le provider :
+- Appelle `getSession()` une seule fois au demarrage
+- Ecoute `onAuthStateChange` une seule fois
+- Expose `user`, `session`, `loading` via Context
+- Tous les composants utilisent le hook `useAuth()` au lieu de `supabase.auth.getUser()`
+
+**Fichiers a modifier** (liste non exhaustive des plus impactants) :
+- `src/hooks/useUserProfile.ts`
+- `src/components/home/PremiumHeader.tsx`
+- `src/components/vendors/LazyVendorCard.tsx`
+- `src/pages/dashboard/MoodboardPage.tsx`
+- Et environ 90 autres fichiers
+
+---
+
+### Phase 2 : Configuration React Query optimale (Impact : -15% requetes)
+
+**Probleme** : Le QueryClient utilise les valeurs par defaut sans cache global optimise.
+
+**Fichier a modifier** : `src/App.tsx`
 
 ```text
-Code a modifier (ligne 199-234):
-- "Nous nous marions" : blanc au lieu de coral
-- Titre couple : blanc au lieu de darkGreen  
-- Date : blanc au lieu de green
-- Venue : blanc au lieu de gray-600
-- Countdown : blanc au lieu de coral
-- Labels countdown : blanc au lieu de gray-500
+Configuration actuelle :
+  const queryClient = new QueryClient();
+
+Configuration optimisee :
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: 5 * 60 * 1000,         // 5 minutes
+        gcTime: 10 * 60 * 1000,           // 10 minutes
+        refetchOnWindowFocus: false,      // Eviter refetch a chaque focus
+        refetchOnReconnect: false,        // Eviter refetch a chaque reconnexion
+        retry: 1,                          // Max 1 retry au lieu de 3
+      },
+    },
+  });
 ```
 
 ---
 
-### 2. BUG CRITIQUE - Formulaire RSVP echoue a l'enregistrement
+### Phase 3 : Selection specifique des colonnes (Impact : -30% PostgREST Egress)
 
-**Cause racine identifiee** :
+**Probleme** : 770+ occurrences de `select('*')` chargent toutes les colonnes meme quand 2-3 suffisent.
 
-Les logs PostgreSQL montrent :
-```
-"new row violates row-level security policy for table wedding_rsvp_responses"
-```
+**Exemples de corrections prioritaires** :
 
-Le probleme vient de la combinaison INSERT + `.select().single()` dans le code :
-
-```typescript
-const { data: responseData, error: responseError } = await supabase
-  .from('wedding_rsvp_responses')
-  .insert({...})
-  .select()  // <-- Necessite une policy SELECT
-  .single();
-```
-
-La politique SELECT actuelle ne permet que les proprietaires authentifies de voir les reponses :
-```sql
-CREATE POLICY "Event owners can view responses" 
-ON wedding_rsvp_responses FOR SELECT 
-USING (EXISTS (SELECT 1 FROM wedding_rsvp_events WHERE ...user_id = auth.uid()...));
-```
-
-Quand un visiteur anonyme soumet le formulaire, l'INSERT reussit mais le `RETURNING *` (genere par `.select()`) echoue car il ne peut pas lire la ligne inseree.
-
-**Solution** : Ajouter une politique SELECT temporaire permettant a l'inserant de lire sa propre reponse fraichement inseree.
-
-**Migration SQL** :
-```sql
--- Permettre aux visiteurs de lire les reponses qu'ils viennent d'inserer
--- Cela corrige le bug du RETURNING apres INSERT
-CREATE POLICY "Public can read own inserted response" 
-ON public.wedding_rsvp_responses 
-FOR SELECT 
-USING (
-  -- L'utilisateur peut lire une reponse si elle vient d'etre inseree (moins de 5 secondes)
-  submitted_at > now() - interval '5 seconds'
-);
-```
-
-**Alternative plus simple** : Modifier le code pour ne pas utiliser `.select()` apres l'insert.
-
-**Fichiers a modifier** :
-- `src/components/rsvp/RSVPInlineForm.tsx` (lignes 188-203)
-- `src/pages/rsvp/RSVPPublicForm.tsx` (lignes 196-212)
-
-**Changement de code** :
-```typescript
-// AVANT (problematique)
-const { data: responseData, error: responseError } = await supabase
-  .from('wedding_rsvp_responses')
-  .insert({...})
-  .select()
-  .single();
-
-// APRES (solution simple)
-const { data: responseData, error: responseError } = await supabase
-  .from('wedding_rsvp_responses')
-  .insert({...})
-  .select('id')  // Seulement l'ID pour les sous-reponses
-  .single();
-```
-
-**Recommandation** : Appliquer les DEUX corrections (migration SQL + modification du code) pour robustesse.
+| Fichier | Avant | Apres |
+|---------|-------|-------|
+| useUserProfile.ts | `.select('*')` | `.select('id, first_name, last_name, subscription_type, subscription_expires_at')` |
+| LazyVendorCard.tsx | `.select('id')` checkTrackingStatus | Supprimer cet appel, utiliser un batch |
+| GuestListManager.tsx | `.select('*')` | `.select('id, name, email, status')` |
+| vendors_tracking_preprod | `.select('id')` par carte | Charger la liste complete une fois |
 
 ---
 
-### 3. PDF Moodboard deforme et incomplet
+### Phase 4 : Optimisation LazyVendorCard (Impact : -5% par page de resultats)
 
-**Probleme observe** : Le PDF exporte montre les images mais PAS la palette de couleurs, et le ratio semble incorrect.
+**Probleme critique** : Chaque carte visible fait 2 appels :
+1. `supabase.auth.getUser()` pour verifier la connexion
+2. `vendors_tracking_preprod` pour verifier le statut de suivi
 
-**Causes identifiees** :
-
-1. **Images pas completement chargees** : `html2canvas` capture l'element avant que toutes les images soient chargees en memoire
-2. **Palette de couleurs coupee** : L'element `#moodboard-canvas` a un `aspectRatio: 210/297` mais le contenu deborde si les images sont grandes
-3. **Cross-origin images** : Les images blob:// locales peuvent poser probleme avec `useCORS`
+Pour 12 cartes par page = 24 appels supplementaires.
 
 **Solution** :
-
-**Fichier** : `src/services/moodboardPdfService.ts`
-
-**Modifications** :
-1. Attendre que toutes les images soient chargees avant la capture
-2. Utiliser `scrollWidth/scrollHeight` pour capturer tout le contenu
-3. Ajouter des options pour mieux gerer les images
-
-```typescript
-export const generateMoodboardPdf = async (data: MoodboardPdfData): Promise<void> => {
-  const { coupleName } = data;
-  
-  const element = document.getElementById('moodboard-canvas');
-  if (!element) {
-    throw new Error('Moodboard canvas not found');
-  }
-
-  // Attendre que toutes les images soient chargees
-  const images = element.querySelectorAll('img');
-  await Promise.all(
-    Array.from(images).map(img => {
-      if (img.complete) return Promise.resolve();
-      return new Promise<void>((resolve) => {
-        img.onload = () => resolve();
-        img.onerror = () => resolve();
-      });
-    })
-  );
-
-  // Forcer un reflow pour s'assurer que le layout est correct
-  element.style.width = '800px';
-  await new Promise(resolve => setTimeout(resolve, 100));
-
-  const canvas = await html2canvas(element, {
-    scale: 2,
-    useCORS: true,
-    logging: false,
-    backgroundColor: '#ffffff',
-    allowTaint: true,
-    width: element.scrollWidth,
-    height: element.scrollHeight,
-    windowWidth: 1200,
-  });
-
-  // Restaurer le style
-  element.style.width = '';
-
-  // ... reste du code PDF
-};
-```
-
-**Fichier** : `src/components/moodboard/MoodboardCanvas.tsx`
-
-**Modification** : S'assurer que le conteneur a une hauteur fixe calculee pour eviter le debordement.
+1. Utiliser le hook `useAuth()` centralise (Phase 1)
+2. Creer un hook `useVendorTrackingStatus` qui charge TOUS les suivis de l'utilisateur en une requete
+3. Passer la liste des suivis en prop depuis le parent
 
 ---
 
-### Resume des fichiers a modifier
+### Phase 5 : Nettoyage des listeners onAuthStateChange
 
-| Fichier | Modification |
-|---------|--------------|
-| `src/pages/WeddingSeverineOlivier.tsx` | Hero texte blanc + ombre |
-| `src/components/rsvp/RSVPInlineForm.tsx` | Retirer `.select()` ou limiter a `id` |
-| `src/pages/rsvp/RSVPPublicForm.tsx` | Retirer `.select()` ou limiter a `id` |
-| `src/services/moodboardPdfService.ts` | Attendre images + fixer dimensions |
-| Migration SQL | Ajouter politique SELECT temporaire |
+**Probleme** : 16 fichiers creent leurs propres listeners, causant des appels multiples.
+
+**Solution** : Supprimer tous les `onAuthStateChange` locaux et utiliser l'AuthProvider.
+
+**Fichiers a nettoyer** :
+- `src/pages/auth/Register.tsx`
+- `src/pages/auth/Login.tsx`
+- `src/components/Header.tsx`
+- `src/components/auth/ProtectedRoute.tsx`
+- `src/pages/ProfessionnelsMariable.tsx`
+- `src/components/vibe-wedding/VibeWeddingResultsImproved.tsx`
+- `src/pages/dashboard/CoordinationPage.tsx`
+- `src/pages/LandingPage.tsx`
+- `src/components/home/GuidesSection.tsx`
+- `src/components/cart/CartProvider.tsx`
+- `src/pages/Demo.tsx`
+- `src/pages/CoordinationJourJ.tsx`
+- `src/components/home/PremiumHeader.tsx`
+- `src/components/vibe-wedding/VibeWeddingChat.tsx`
+- `src/pages/prestataire/slug.tsx`
+- `src/pages/Preview.tsx`
+
+---
+
+### Resume des fichiers a creer/modifier
+
+| Action | Fichier |
+|--------|---------|
+| Creer | `src/contexts/AuthContext.tsx` |
+| Modifier | `src/App.tsx` (QueryClient config + AuthProvider) |
+| Modifier | `src/hooks/useUserProfile.ts` |
+| Modifier | `src/components/vendors/LazyVendorCard.tsx` |
+| Creer | `src/hooks/useVendorTrackingList.ts` |
+| Modifier | 16 fichiers avec onAuthStateChange |
+| Modifier | ~50 fichiers prioritaires avec SELECT * |
+
+---
+
+### Ordre d'implementation recommande
+
+1. **AuthContext** - Impact immediat sur 45% du probleme
+2. **QueryClient optimise** - Changement simple, impact rapide
+3. **LazyVendorCard** - Reduction significative sur les pages de recherche
+4. **SELECT specifiques** - A faire progressivement, fichier par fichier
+
+---
+
+### Resultat attendu
+
+| Metrique | Avant | Apres | Reduction |
+|----------|-------|-------|-----------|
+| Auth Egress | 45.5 MB | ~10 MB | -78% |
+| PostgREST Egress | 46.9 MB | ~15 MB | -68% |
+| Total Egress | ~103 MB | ~30 MB | -70% |
 
 ---
 
 ### Details techniques
 
-**Probleme RSVP explique simplement** :
-Quand un invite remplit le formulaire et clique "Confirmer", le systeme essaie d'enregistrer sa reponse ET de recuperer les informations enregistrees. Mais les regles de securite ne permettent pas a un visiteur anonyme de lire les donnees - meme les siennes. La solution est de soit changer ces regles, soit ne pas demander a recuperer les donnees apres l'enregistrement.
+**AuthContext - Fonctionnement** :
 
-**Probleme PDF explique simplement** :
-L'outil qui "photographie" la page pour creer le PDF prend la photo avant que toutes les images soient completement affichees, et il ne capture pas tout le contenu car il depasse de la zone visible. La solution est d'attendre que tout soit charge et de forcer la capture de l'integralite du contenu.
+Le provider centralise :
+1. Un seul `getSession()` au demarrage de l'app
+2. Un seul listener `onAuthStateChange`
+3. Stockage de `user` et `session` dans le state React
+4. Tous les composants accedent via `useAuth()` sans appel reseau
+
+**Batch des suivis prestataires** :
+
+Au lieu de verifier chaque carte individuellement :
+1. Charger `vendors_tracking_preprod` une seule fois pour l'utilisateur
+2. Creer un Set d'IDs de prestataires suivis
+3. Passer ce Set aux cartes via Context ou props
+4. Chaque carte fait une simple verification locale `isTracked = trackedIds.has(vendorId)`
+
