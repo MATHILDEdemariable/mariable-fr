@@ -1,34 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/Logo';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Menu, ChevronDown } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
 
 const PremiumHeader = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const { isAuthenticated } = useAuth();
 
   const isEmbedded = searchParams.get('embedded') === 'true';
   if (isEmbedded) {
     return null;
   }
-
-  useEffect(() => {
-    const checkUser = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      setIsLoggedIn(!!session);
-    };
-    checkUser();
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      setIsLoggedIn(!!session);
-    });
-    return () => subscription.unsubscribe();
-  }, []);
 
   const handleGetStarted = () => {
     navigate('/register');
@@ -62,7 +50,7 @@ const PremiumHeader = () => {
             >
               Contact
             </Link>
-            {isLoggedIn ? (
+            {isAuthenticated ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button className="bg-editorial-noir hover:bg-editorial-noir/80 text-white rounded-none px-6 text-xs tracking-widest uppercase font-sans">
@@ -115,7 +103,7 @@ const PremiumHeader = () => {
                   Contact
                 </Link>
                 <hr className="border-editorial-noir/10" />
-                {isLoggedIn ? (
+                {isAuthenticated ? (
                   <>
                     <Button 
                       onClick={() => { navigate('/dashboard'); setMobileOpen(false); }} 

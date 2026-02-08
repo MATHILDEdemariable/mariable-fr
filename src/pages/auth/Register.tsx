@@ -11,10 +11,10 @@ import { Loader2, Mail, Lock, User } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import PremiumHeader from '@/components/home/PremiumHeader';
 import { supabase } from '@/integrations/supabase/client';
-import { Session } from '@supabase/supabase-js';
 import SEO from '@/components/SEO';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { trackUserRegistration, trackMetaRegistration } from '@/utils/analytics';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Register = () => {
   const [email, setEmail] = useState('');
@@ -26,30 +26,17 @@ const Register = () => {
   const [registrationPurpose, setRegistrationPurpose] = useState('');
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [session, setSession] = useState<Session | null>(null);
   const [showEmailAlert, setShowEmailAlert] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { user } = useAuth();
   
+  // Rediriger si déjà connecté
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setSession(session);
-        if (session) {
-          navigate('/dashboard');
-        }
-      }
-    );
-
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      if (session) {
-        navigate('/dashboard');
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, [navigate]);
+    if (user) {
+      navigate('/dashboard');
+    }
+  }, [user, navigate]);
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();

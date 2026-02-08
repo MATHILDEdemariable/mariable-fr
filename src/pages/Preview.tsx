@@ -3,7 +3,6 @@ import { useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Database } from "@/integrations/supabase/types";
-import { Session } from "@supabase/supabase-js";
 import Header from "@/components/Header";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -28,12 +27,11 @@ import {
 } from "@/components/ui/popover";
 import { toast } from "@/components/ui/use-toast";
 import { Loader2 } from "lucide-react";
-import { se } from "date-fns/locale";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 
 type Prestataire = Database["public"]["Tables"]["prestataires_rows"]["Row"];
 type PrestatairePhoto = Database["public"]["Tables"]["prestataires_photos_preprod"]["Row"];
-type VendorsTrackingPreprod =  Database["public"]["Tables"]["vendors_tracking_preprod"]["Row"];
 type SupabaseAdminUser = Database["public"]["Tables"]["admin_users"]["Row"];
 
 interface Package {
@@ -61,34 +59,17 @@ const Preview = () => {
   const [packages, setPackages] = useState<Package[]>([]);
   const [selectedPackage, setSelectedPackage] = useState<Package | null>(null);
 
-  //check if user is connected
-  const [session, setSession] = useState<Session | null>(null);
   const navigate = useNavigate();
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
+  const { user, session } = useAuth();
 
   useEffect(() => {
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, newSession) => {
-      setSession(newSession);
-      if (newSession?.user?.id) {
-        checkIfAdmin(newSession.user.id);
-      } else {
-        setIsAdmin(false);
-      }
-    });
-
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      if (session?.user?.id) {
-        checkIfAdmin(session.user.id);
-      } else {
-        setIsAdmin(false);
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, [navigate]);
+    if (user?.id) {
+      checkIfAdmin(user.id);
+    } else {
+      setIsAdmin(false);
+    }
+  }, [user]);
 
   const checkIfAdmin = async (userId: string) => {
     const { data, error } = await supabase

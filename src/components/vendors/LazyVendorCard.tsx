@@ -10,6 +10,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/components/ui/use-toast";
 import { useVendorPhotos } from "@/hooks/useOptimizedVendors";
 import AuthRequiredModal from "@/components/auth/AuthRequiredModal";
+import { useAuth } from "@/contexts/AuthContext";
+import { useVendorTrackingList } from "@/hooks/useVendorTrackingList";
 
 type Prestataire = Database["public"]["Tables"]["prestataires_rows"]["Row"];
 
@@ -28,8 +30,11 @@ const LazyVendorCard: React.FC<LazyVendorCardProps> = ({
   const [isVisible, setIsVisible] = useState(false);
   const [isAddingToTracking, setIsAddingToTracking] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
-  const [isInTracking, setIsInTracking] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
+  
+  const { user } = useAuth();
+  const { isTracked, refetch: refetchTracking } = useVendorTrackingList();
+  const isInTracking = isTracked(vendor.nom);
 
   // Intersection Observer pour détecter la visibilité
   useEffect(() => {
@@ -53,33 +58,9 @@ const LazyVendorCard: React.FC<LazyVendorCardProps> = ({
   // Charger les photos seulement quand la carte devient visible
   const { data: photos, isLoading: photosLoading } = useVendorPhotos(vendor.id, isVisible);
 
-  // Vérifier si l'utilisateur est connecté et si le prestataire est dans son suivi
-  useEffect(() => {
-    const checkTrackingStatus = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        const { data, error } = await supabase
-          .from('vendors_tracking_preprod')
-          .select('id')
-          .eq('user_id', user.id)
-          .eq('vendor_name', vendor.nom)
-          .single();
-        
-        if (!error && data) {
-          setIsInTracking(true);
-        }
-      }
-    };
-
-    if (isVisible) {
-      checkTrackingStatus();
-    }
-  }, [vendor.id, isVisible]);
-
   const handleTrackingClick = async (e: React.MouseEvent) => {
     e.stopPropagation();
     
-    const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
       setShowAuthModal(true);
       return;
@@ -96,7 +77,7 @@ const LazyVendorCard: React.FC<LazyVendorCardProps> = ({
           .eq('vendor_name', vendor.nom);
 
         if (error) throw error;
-        setIsInTracking(false);
+        refetchTracking();
         toast({ title: "Retiré du suivi" });
       } else {
         const { error } = await supabase
@@ -111,7 +92,7 @@ const LazyVendorCard: React.FC<LazyVendorCardProps> = ({
           });
 
         if (error) throw error;
-        setIsInTracking(true);
+        refetchTracking();
         toast({ title: "Ajouté au suivi" });
         onWishlistAdd?.(vendor);
       }

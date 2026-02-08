@@ -14,8 +14,8 @@ import {
 } from "@/components/ui/accordion";
 import { Card, CardContent } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { supabase } from '@/integrations/supabase/client';
 import SEO from '@/components/SEO';
+import { useAuth } from '@/contexts/AuthContext';
 
 // Composant pour l'effet machine à écrire du titre principal
 const TypewriterEffect = ({ text }: { text: string }) => {
@@ -85,32 +85,15 @@ const LandingPage = () => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const [showAnimation, setShowAnimation] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     window.scrollTo(0, 0);
     setShowAnimation(true);
-
-    // Check authentication status
-    const checkAuth = async () => {
-      const { data } = await supabase.auth.getSession();
-      setIsLoggedIn(!!data.session);
-    };
-    
-    checkAuth();
-    
-    // Listen for auth changes
-    const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
-      setIsLoggedIn(!!session);
-    });
-
-    return () => {
-      authListener.subscription.unsubscribe();
-    };
   }, []);
 
   const handleCTAClick = () => {
-    if (isLoggedIn) {
+    if (isAuthenticated) {
       navigate('/dashboard');
     } else {
       navigate('/register');
@@ -398,7 +381,7 @@ const LandingPage = () => {
               size={isMobile ? "default" : "lg"}
               onClick={handleCTAClick}
             >
-              {isLoggedIn ? "Accéder à mon tableau de bord" : "Créez un compte dès maintenant"}
+              {isAuthenticated ? "Accéder à mon tableau de bord" : "Créez un compte dès maintenant"}
             </Button>
           </div>
         </section>
