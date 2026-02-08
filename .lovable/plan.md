@@ -1,174 +1,233 @@
 
 
-## Plan d'optimisation Supabase - Reduction de l'Egress
-
-### Diagnostic resume
-
-L'analyse du code revele plusieurs sources majeures de consommation excessive :
-
-| Probleme identifie | Impact estime | Fichiers concernes |
-|-------------------|---------------|-------------------|
-| Appels `getUser()` repetes | 45% Auth Egress | 95 fichiers avec 620+ occurrences |
-| SELECT * au lieu de colonnes specifiques | 30% PostgREST Egress | 96 fichiers avec 770+ occurrences |
-| Absence de cache global React Query | 15% repetitions | App.tsx + hooks |
-| `onAuthStateChange` en double | 10% Auth Egress | 16 fichiers avec 85 occurrences |
-| LazyVendorCard checkTrackingStatus | 5% par carte visible | LazyVendorCard.tsx |
+## Plan d'implementation - Freemium & Optimisations
 
 ---
 
-### Phase 1 : Centralisation Auth (Impact : -45% Auth Egress)
+## 1. Systeme de limitations Freemium
 
-**Probleme principal** : Chaque composant appelle `supabase.auth.getUser()` ou `getSession()` independamment, generant des requetes reseau a chaque montage.
+### 1.1 Limitation Budget (3 lignes par categorie)
 
-**Solution** : Creer un `AuthProvider` centralise avec React Context.
+**Fichier a modifier : `src/components/dashboard/DetailedBudget.tsx`**
 
-**Fichier a creer** : `src/contexts/AuthContext.tsx`
+Ajouter une limite de 3 items par categorie pour les utilisateurs non-premium :
 
-Le provider :
-- Appelle `getSession()` une seule fois au demarrage
-- Ecoute `onAuthStateChange` une seule fois
-- Expose `user`, `session`, `loading` via Context
-- Tous les composants utilisent le hook `useAuth()` au lieu de `supabase.auth.getUser()`
+- Modifier `handleAddItem` pour verifier le nombre d'items existants
+- Si `category.items.length >= 3` et `!isPremium` : afficher le modal Premium au lieu d'ajouter
+- Afficher un bandeau "Debloquez l'ajout illimite avec Premium" sous les categories limitees
 
-**Fichiers a modifier** (liste non exhaustive des plus impactants) :
-- `src/hooks/useUserProfile.ts`
-- `src/components/home/PremiumHeader.tsx`
-- `src/components/vendors/LazyVendorCard.tsx`
-- `src/pages/dashboard/MoodboardPage.tsx`
-- Et environ 90 autres fichiers
+### 1.2 Limitation requetes IA (1x max par fonctionnalite)
+
+**Table existante : `ai_usage_tracking`**
+
+Structure disponible :
+- `user_id` : UUID de l'utilisateur
+- `prompts_used_today` : Nombre de prompts utilises
+- `total_prompts` : Total cumule
+
+**Nouveau hook a creer : `src/hooks/useAiUsageLimit.ts`**
+
+Fonctionnement :
+- Verifier si l'utilisateur a deja utilise l'IA pour cette fonctionnalite specifique
+- Si oui et non-premium : bloquer et afficher modal Premium
+- Si premium : autoriser sans limite
+
+**Fonctionnalites concernees :**
+
+| Fonctionnalite | Fichier | Limite Free |
+|----------------|---------|-------------|
+| Checklist IA | `ChecklistIntelligente.tsx` | 1 generation max |
+| Moodboard | `MoodboardPage.tsx` | 1 generation max |
+| Retroplanning | `WeddingRetroplanningEmbed.tsx` | 1 generation max |
+
+**Modifications par fichier :**
+
+1. `src/components/dashboard/ChecklistIntelligente.tsx`
+   - Importer `useAiUsageLimit`
+   - Avant `generateChecklist()` : verifier si deja genere
+   - Si `hasUsedAi('checklist')` et `!isPremium` : modal Premium
+
+2. `src/pages/dashboard/MoodboardPage.tsx`
+   - Meme logique avant `analyzeColors()`
+   - Verifier `hasUsedAi('moodboard')`
+
+3. `src/pages/dashboard/WeddingRetroplanningEmbed.tsx`
+   - Avant `handleGenerate()`
+   - Verifier `hasUsedAi('retroplanning')`
+
+### 1.3 Export PDF payant (Seating Plan, Budget, Suivi)
+
+**Fichiers a modifier :**
+
+1. `src/components/seating-plan/ExportPDFButton.tsx`
+   - Ajouter `usePremiumAction` hook
+   - Encapsuler `handleExport` dans `executeAction()`
+   - Ajouter icone Lock si non-premium
+
+2. `src/components/dashboard/DetailedBudget.tsx`
+   - Encapsuler `handleExportPDF` et `handleExportCSV` dans `executeAction()`
+   - Ajouter icones Lock
+
+3. `src/pages/dashboard/VendorTrackingPage.tsx`
+   - Ajouter bouton "Exporter PDF" protege par `usePremiumAction`
 
 ---
 
-### Phase 2 : Configuration React Query optimale (Impact : -15% requetes)
+## 2. Modification Stripe : 29€ paiement unique
 
-**Probleme** : Le QueryClient utilise les valeurs par defaut sans cache global optimise.
+### 2.1 Edge Function create-checkout-session
 
-**Fichier a modifier** : `src/App.tsx`
+**Fichier : `supabase/functions/create-checkout-session/index.ts`**
+
+Modifications :
+- Remplacer `mode: 'subscription'` par `mode: 'payment'`
+- Remplacer `price: 'price_1SNGa5KHghqBzkgjhnsKDqtU'` par `price: 'price_1SyYn8KHghqBzkgj249P8325'`
+- Supprimer `subscription_data` (non applicable en mode payment)
 
 ```text
-Configuration actuelle :
-  const queryClient = new QueryClient();
+Avant :
+  mode: 'subscription',
+  price: 'price_1SNGa5KHghqBzkgjhnsKDqtU',
+  subscription_data: { ... }
 
-Configuration optimisee :
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        staleTime: 5 * 60 * 1000,         // 5 minutes
-        gcTime: 10 * 60 * 1000,           // 10 minutes
-        refetchOnWindowFocus: false,      // Eviter refetch a chaque focus
-        refetchOnReconnect: false,        // Eviter refetch a chaque reconnexion
-        retry: 1,                          // Max 1 retry au lieu de 3
-      },
-    },
-  });
+Apres :
+  mode: 'payment',
+  price: 'price_1SyYn8KHghqBzkgj249P8325',
+```
+
+### 2.2 Webhook Stripe
+
+**Fichier : `supabase/functions/stripe-webhook/index.ts`**
+
+Le webhook est deja configure pour gerer `checkout.session.completed` correctement.
+Verification necessaire :
+- Le handler met a jour `subscription_type: 'premium'` sans date d'expiration (`subscription_expires_at: null`)
+- Compatible avec paiement unique car la logique est sur le statut `payment_status: 'paid'`
+
+Aucune modification requise si le prix Stripe `price_1SyYn8KHghqBzkgj249P8325` est bien configure.
+
+### 2.3 Composant StripeButton
+
+**Fichier : `src/components/premium/StripeButton.tsx`**
+
+Modifications du texte affiche :
+- Remplacer "9,9€/mois" par "29€ une seule fois"
+- Remplacer "S'abonner maintenant" par "Acceder au Premium"
+- Supprimer le texte sur l'annulation (non applicable)
+
+### 2.4 Modal Premium
+
+**Fichier : `src/components/premium/PremiumModal.tsx`**
+
+Nouveau contenu du modal :
+
+```text
+Titre : Envie d'aller plus loin ?
+
+Le compte Premium a 29€ debloque :
+
+- Export illimite de vos PDF personnalises
+- Acces complet aux checklists et guides
+- Utilisation IA sans limite pour les checklist, retroplanning, moodboard
 ```
 
 ---
 
-### Phase 3 : Selection specifique des colonnes (Impact : -30% PostgREST Egress)
+## 3. Amelioration PDF Plan de Table
 
-**Probleme** : 770+ occurrences de `select('*')` chargent toutes les colonnes meme quand 2-3 suffisent.
+### 3.1 Refonte du service d'export
 
-**Exemples de corrections prioritaires** :
+**Fichier a refactoriser : `src/components/seating-plan/ExportPDFButton.tsx`**
 
-| Fichier | Avant | Apres |
-|---------|-------|-------|
-| useUserProfile.ts | `.select('*')` | `.select('id, first_name, last_name, subscription_type, subscription_expires_at')` |
-| LazyVendorCard.tsx | `.select('id')` checkTrackingStatus | Supprimer cet appel, utiliser un batch |
-| GuestListManager.tsx | `.select('*')` | `.select('id, name, email, status')` |
-| vendors_tracking_preprod | `.select('id')` par carte | Charger la liste complete une fois |
+Structure actuelle : jsPDF texte simple
+Objectif : Style similaire aux autres PDFs (budget, ceremonie) avec branding Mariable
 
----
+**Nouveau design :**
 
-### Phase 4 : Optimisation LazyVendorCard (Impact : -5% par page de resultats)
+Page 1 - Vue d'ensemble :
+- Header avec logo Mariable et couleur `#7F9474`
+- Titre "Plan de Table" en police serif
+- Date et lieu de l'evenement
+- Encadre avec statistiques (nombre d'invites, tables, taux de remplissage)
+- Ligne de separation
 
-**Probleme critique** : Chaque carte visible fait 2 appels :
-1. `supabase.auth.getUser()` pour verifier la connexion
-2. `vendors_tracking_preprod` pour verifier le statut de suivi
+Pages suivantes - Detail par table :
+- Chaque table sur une section
+- Nom de table en gras avec badge couleur
+- Liste des invites avec indicateurs (VIP, restrictions alimentaires)
+- Notes eventuelles
 
-Pour 12 cartes par page = 24 appels supplementaires.
+### 3.2 Export visuel de la disposition
 
-**Solution** :
-1. Utiliser le hook `useAuth()` centralise (Phase 1)
-2. Creer un hook `useVendorTrackingStatus` qui charge TOUS les suivis de l'utilisateur en une requete
-3. Passer la liste des suivis en prop depuis le parent
+**Nouveau composant optionnel : `src/components/seating-plan/ExportVisualPDFButton.tsx`**
 
----
+Utiliser `html2canvas` pour capturer le `SeatingPlanVisual` et l'exporter en PDF.
 
-### Phase 5 : Nettoyage des listeners onAuthStateChange
-
-**Probleme** : 16 fichiers creent leurs propres listeners, causant des appels multiples.
-
-**Solution** : Supprimer tous les `onAuthStateChange` locaux et utiliser l'AuthProvider.
-
-**Fichiers a nettoyer** :
-- `src/pages/auth/Register.tsx`
-- `src/pages/auth/Login.tsx`
-- `src/components/Header.tsx`
-- `src/components/auth/ProtectedRoute.tsx`
-- `src/pages/ProfessionnelsMariable.tsx`
-- `src/components/vibe-wedding/VibeWeddingResultsImproved.tsx`
-- `src/pages/dashboard/CoordinationPage.tsx`
-- `src/pages/LandingPage.tsx`
-- `src/components/home/GuidesSection.tsx`
-- `src/components/cart/CartProvider.tsx`
-- `src/pages/Demo.tsx`
-- `src/pages/CoordinationJourJ.tsx`
-- `src/components/home/PremiumHeader.tsx`
-- `src/components/vibe-wedding/VibeWeddingChat.tsx`
-- `src/pages/prestataire/slug.tsx`
-- `src/pages/Preview.tsx`
+**Implementation :**
+- Capture du canvas visual avec `html2canvas`
+- Export en PDF A4 paysage pour meilleure lisibilite
+- Ajout du header Mariable et footer
 
 ---
 
-### Resume des fichiers a creer/modifier
+## Resume des fichiers
 
-| Action | Fichier |
-|--------|---------|
-| Creer | `src/contexts/AuthContext.tsx` |
-| Modifier | `src/App.tsx` (QueryClient config + AuthProvider) |
-| Modifier | `src/hooks/useUserProfile.ts` |
-| Modifier | `src/components/vendors/LazyVendorCard.tsx` |
-| Creer | `src/hooks/useVendorTrackingList.ts` |
-| Modifier | 16 fichiers avec onAuthStateChange |
-| Modifier | ~50 fichiers prioritaires avec SELECT * |
+### A creer (2 fichiers)
 
----
+| Fichier | Description |
+|---------|-------------|
+| `src/hooks/useAiUsageLimit.ts` | Hook pour tracker et limiter l'usage IA par fonctionnalite |
+| `src/components/seating-plan/ExportVisualPDFButton.tsx` | Export visuel du plan de table |
 
-### Ordre d'implementation recommande
+### A modifier (11 fichiers)
 
-1. **AuthContext** - Impact immediat sur 45% du probleme
-2. **QueryClient optimise** - Changement simple, impact rapide
-3. **LazyVendorCard** - Reduction significative sur les pages de recherche
-4. **SELECT specifiques** - A faire progressivement, fichier par fichier
-
----
-
-### Resultat attendu
-
-| Metrique | Avant | Apres | Reduction |
-|----------|-------|-------|-----------|
-| Auth Egress | 45.5 MB | ~10 MB | -78% |
-| PostgREST Egress | 46.9 MB | ~15 MB | -68% |
-| Total Egress | ~103 MB | ~30 MB | -70% |
+| Fichier | Modifications |
+|---------|---------------|
+| `supabase/functions/create-checkout-session/index.ts` | Mode payment + nouveau price ID |
+| `src/components/premium/StripeButton.tsx` | Texte 29€ + nouveau libelle |
+| `src/components/premium/PremiumModal.tsx` | Nouveau contenu marketing |
+| `src/components/dashboard/DetailedBudget.tsx` | Limite 3 items + export payant |
+| `src/components/dashboard/ChecklistIntelligente.tsx` | Limite 1 generation IA |
+| `src/pages/dashboard/MoodboardPage.tsx` | Limite 1 generation IA |
+| `src/pages/dashboard/WeddingRetroplanningEmbed.tsx` | Limite 1 generation IA |
+| `src/components/seating-plan/ExportPDFButton.tsx` | Redesign + paywall |
+| `src/pages/dashboard/VendorTrackingPage.tsx` | Ajout export PDF payant |
+| `src/pages/SeatingPlan.tsx` | Ajout bouton export visuel |
 
 ---
 
-### Details techniques
+## Ordre d'implementation recommande
 
-**AuthContext - Fonctionnement** :
+1. **Stripe 29€** - Changement critique, impact business direct
+2. **Modal Premium** - Mise a jour du message marketing
+3. **Limitations IA** - Hook + integration dans les 3 composants
+4. **Limitation Budget** - Logique simple a ajouter
+5. **PDF Plan de table** - Ameliorations visuelles
 
-Le provider centralise :
-1. Un seul `getSession()` au demarrage de l'app
-2. Un seul listener `onAuthStateChange`
-3. Stockage de `user` et `session` dans le state React
-4. Tous les composants accedent via `useAuth()` sans appel reseau
+---
 
-**Batch des suivis prestataires** :
+## Details techniques
 
-Au lieu de verifier chaque carte individuellement :
-1. Charger `vendors_tracking_preprod` une seule fois pour l'utilisateur
-2. Creer un Set d'IDs de prestataires suivis
-3. Passer ce Set aux cartes via Context ou props
-4. Chaque carte fait une simple verification locale `isTracked = trackedIds.has(vendorId)`
+### Hook useAiUsageLimit
+
+```text
+Fonctions exposees :
+- hasUsedFeature(featureName: string): boolean
+- recordUsage(featureName: string): Promise<void>
+- canUseFeature(featureName: string): boolean (combine isPremium + hasUsed)
+
+Stockage :
+- Table ai_usage_tracking existante
+- Ajout colonne feature_name si necessaire
+- OU utilisation d'un JSON dans la colonne existante
+```
+
+### Logique de verification Premium
+
+Le hook `useUserProfile` retourne deja `isPremium: boolean`.
+La verification est basee sur :
+- `subscription_type === 'premium'`
+- `subscription_expires_at` null ou dans le futur
+
+Avec le changement vers paiement unique, `subscription_expires_at` restera null (acces permanent).
 
