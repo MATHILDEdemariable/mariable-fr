@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Palette, Download, RotateCcw, Sparkles, Loader2 } from 'lucide-react';
+import { Palette, Download, RotateCcw, Sparkles, Loader2, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -10,12 +10,19 @@ import MoodboardCanvas from '@/components/moodboard/MoodboardCanvas';
 import { generateMoodboardPdf } from '@/services/moodboardPdfService';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
+import { usePremiumAction } from '@/hooks/usePremiumAction';
+import PremiumModal from '@/components/premium/PremiumModal';
 
 const MoodboardPage: React.FC = () => {
   const { toast } = useToast();
   const [coupleName, setCoupleName] = useState('');
   const [weddingDate, setWeddingDate] = useState('');
   const [isExporting, setIsExporting] = useState(false);
+
+  const { executeAction, showPremiumModal, closePremiumModal, isPremium, feature, description } = usePremiumAction({
+    feature: 'Export PDF Moodboard',
+    description: 'Téléchargez votre moodboard en PDF haute qualité.'
+  });
 
   const {
     images,
@@ -66,29 +73,31 @@ const MoodboardPage: React.FC = () => {
   };
 
   const handleExportPdf = async () => {
-    setIsExporting(true);
-    try {
-      await generateMoodboardPdf({
-        coupleName,
-        weddingDate,
-        images,
-        colors,
-        ambiance,
-      });
-      toast({
-        title: "PDF téléchargé !",
-        description: "Votre moodboard a été exporté avec succès.",
-      });
-    } catch (error) {
-      console.error('PDF export error:', error);
-      toast({
-        title: "Erreur d'export",
-        description: "Impossible de générer le PDF.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsExporting(false);
-    }
+    executeAction(async () => {
+      setIsExporting(true);
+      try {
+        await generateMoodboardPdf({
+          coupleName,
+          weddingDate,
+          images,
+          colors,
+          ambiance,
+        });
+        toast({
+          title: "PDF téléchargé !",
+          description: "Votre moodboard a été exporté avec succès.",
+        });
+      } catch (error) {
+        console.error('PDF export error:', error);
+        toast({
+          title: "Erreur d'export",
+          description: "Impossible de générer le PDF.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsExporting(false);
+      }
+    });
   };
 
   const handleReset = () => {
@@ -216,7 +225,7 @@ const MoodboardPage: React.FC = () => {
                 <Button
                   onClick={handleExportPdf}
                   disabled={isExporting}
-                  className="rounded-none bg-wedding-olive hover:bg-wedding-olive/90"
+                  className="rounded-none bg-primary hover:bg-primary/90"
                 >
                   {isExporting ? (
                     <>
@@ -225,6 +234,7 @@ const MoodboardPage: React.FC = () => {
                     </>
                   ) : (
                     <>
+                      {!isPremium && <Lock className="w-4 h-4 mr-2" />}
                       <Download className="w-4 h-4 mr-2" />
                       Télécharger PDF
                     </>
@@ -243,6 +253,13 @@ const MoodboardPage: React.FC = () => {
           </div>
         )}
       </div>
+
+      <PremiumModal
+        isOpen={showPremiumModal}
+        onClose={closePremiumModal}
+        feature={feature}
+        description={description}
+      />
     </>
   );
 };

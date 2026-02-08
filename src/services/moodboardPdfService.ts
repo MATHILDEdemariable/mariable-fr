@@ -40,6 +40,43 @@ const waitForImages = async (element: HTMLElement): Promise<void> => {
   );
 };
 
+// Create a clone with fixed A4 dimensions for PDF capture
+const createPdfCaptureCopy = (element: HTMLElement): HTMLElement => {
+  const clone = element.cloneNode(true) as HTMLElement;
+  
+  // Fixed A4 dimensions at 96 DPI (794 x 1123 pixels)
+  const A4_WIDTH = 794;
+  const A4_HEIGHT = 1123;
+  
+  clone.style.cssText = `
+    width: ${A4_WIDTH}px !important;
+    height: ${A4_HEIGHT}px !important;
+    max-width: ${A4_WIDTH}px !important;
+    max-height: ${A4_HEIGHT}px !important;
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    background: white;
+    overflow: hidden;
+  `;
+  
+  // Ensure all images preserve aspect ratio with object-fit: cover
+  const images = clone.querySelectorAll('img');
+  images.forEach(img => {
+    img.style.objectFit = 'cover';
+    img.style.width = '100%';
+    img.style.height = '100%';
+  });
+  
+  // Ensure grid cells have proper overflow
+  const gridCells = clone.querySelectorAll('[class*="overflow-hidden"]');
+  gridCells.forEach(cell => {
+    (cell as HTMLElement).style.overflow = 'hidden';
+  });
+  
+  return clone;
+};
+
 export const generateMoodboardPdf = async (data: MoodboardPdfData): Promise<void> => {
   const { coupleName } = data;
   
@@ -51,63 +88,48 @@ export const generateMoodboardPdf = async (data: MoodboardPdfData): Promise<void
   // Wait for all images to be loaded
   await waitForImages(element);
 
-  // Store original styles
-  const originalWidth = element.style.width;
-  const originalMaxWidth = element.style.maxWidth;
-
-  // Force fixed dimensions for consistent capture
-  element.style.width = '800px';
-  element.style.maxWidth = '800px';
+  // Create a fixed-size clone for capture
+  const pdfClone = createPdfCaptureCopy(element);
+  document.body.appendChild(pdfClone);
 
   // Wait for layout to stabilize
-  await new Promise(resolve => setTimeout(resolve, 200));
+  await new Promise(resolve => setTimeout(resolve, 300));
 
-  // Capture with html2canvas
-  const canvas = await html2canvas(element, {
-    scale: 2,
-    useCORS: true,
-    logging: false,
-    backgroundColor: '#ffffff',
-    allowTaint: true,
-    width: element.scrollWidth,
-    height: element.scrollHeight,
-    windowWidth: 1200,
-  });
+  // Wait for images in clone to load
+  await waitForImages(pdfClone);
 
-  // Restore original styles
-  element.style.width = originalWidth;
-  element.style.maxWidth = originalMaxWidth;
+  try {
+    // Capture the clone with html2canvas
+    const canvas = await html2canvas(pdfClone, {
+      scale: 2,
+      useCORS: true,
+      logging: false,
+      backgroundColor: '#ffffff',
+      allowTaint: true,
+      width: 794,
+      height: 1123,
+      windowWidth: 794,
+      windowHeight: 1123,
+    });
 
-  // Create PDF A4
-  const pdf = new jsPDF({
-    orientation: 'portrait',
-    unit: 'mm',
-    format: 'a4',
-  });
+    // Create PDF A4
+    const pdf = new jsPDF({
+      orientation: 'portrait',
+      unit: 'mm',
+      format: 'a4',
+    });
 
-  const pageWidth = 210;
-  const pageHeight = 297;
-  const margin = 10;
-  const contentWidth = pageWidth - 2 * margin;
-  
-  const imgWidth = contentWidth;
-  const imgHeight = (canvas.height * imgWidth) / canvas.width;
+    const pageWidth = 210;
+    const pageHeight = 297;
+    
+    // The canvas matches A4 ratio, so we can use full page
+    const imgData = canvas.toDataURL('image/png', 1.0);
+    pdf.addImage(imgData, 'PNG', 0, 0, pageWidth, pageHeight);
 
-  let finalWidth = imgWidth;
-  let finalHeight = imgHeight;
-  const maxHeight = pageHeight - 2 * margin;
-  
-  if (finalHeight > maxHeight) {
-    finalHeight = maxHeight;
-    finalWidth = (canvas.width * finalHeight) / canvas.height;
+    const fileName = `moodboard-${(coupleName || 'mariage').toLowerCase().replace(/[^a-z0-9]/g, '-')}.pdf`;
+    pdf.save(fileName);
+  } finally {
+    // Always remove the clone
+    document.body.removeChild(pdfClone);
   }
-
-  const xPos = (pageWidth - finalWidth) / 2;
-  const yPos = margin;
-
-  const imgData = canvas.toDataURL('image/png', 1.0);
-  pdf.addImage(imgData, 'PNG', xPos, yPos, finalWidth, finalHeight);
-
-  const fileName = `moodboard-${(coupleName || 'mariage').toLowerCase().replace(/[^a-z0-9]/g, '-')}.pdf`;
-  pdf.save(fileName);
 };

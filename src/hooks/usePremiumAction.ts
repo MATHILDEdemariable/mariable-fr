@@ -1,20 +1,35 @@
+import { useState, useCallback } from 'react';
+import { useUserProfile } from './useUserProfile';
+
 interface UsePremiumActionOptions {
   feature: string;
   description?: string;
 }
 
-// Toutes les fonctionnalités sont désormais gratuites - on exécute toujours l'action
 export const usePremiumAction = ({ feature, description }: UsePremiumActionOptions) => {
-  const executeAction = (action: () => void) => {
-    action();
-  };
+  const { isPremium, loading } = useUserProfile();
+  const [showPremiumModal, setShowPremiumModal] = useState(false);
+
+  const executeAction = useCallback((action: () => void) => {
+    if (isPremium) {
+      // User is premium, execute action directly
+      action();
+    } else {
+      // User is not premium, show premium modal
+      setShowPremiumModal(true);
+    }
+  }, [isPremium]);
+
+  const closePremiumModal = useCallback(() => {
+    setShowPremiumModal(false);
+  }, []);
 
   return {
     executeAction,
-    showPremiumModal: false,
-    closePremiumModal: () => {},
-    isPremium: true,
-    loading: false,
+    showPremiumModal,
+    closePremiumModal,
+    isPremium,
+    loading,
     feature,
     description
   };
