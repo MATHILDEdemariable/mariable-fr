@@ -1,233 +1,236 @@
 
-
-## Plan d'implementation - Freemium & Optimisations
-
----
-
-## 1. Systeme de limitations Freemium
-
-### 1.1 Limitation Budget (3 lignes par categorie)
-
-**Fichier a modifier : `src/components/dashboard/DetailedBudget.tsx`**
-
-Ajouter une limite de 3 items par categorie pour les utilisateurs non-premium :
-
-- Modifier `handleAddItem` pour verifier le nombre d'items existants
-- Si `category.items.length >= 3` et `!isPremium` : afficher le modal Premium au lieu d'ajouter
-- Afficher un bandeau "Debloquez l'ajout illimite avec Premium" sous les categories limitees
-
-### 1.2 Limitation requetes IA (1x max par fonctionnalite)
-
-**Table existante : `ai_usage_tracking`**
-
-Structure disponible :
-- `user_id` : UUID de l'utilisateur
-- `prompts_used_today` : Nombre de prompts utilises
-- `total_prompts` : Total cumule
-
-**Nouveau hook a creer : `src/hooks/useAiUsageLimit.ts`**
-
-Fonctionnement :
-- Verifier si l'utilisateur a deja utilise l'IA pour cette fonctionnalite specifique
-- Si oui et non-premium : bloquer et afficher modal Premium
-- Si premium : autoriser sans limite
-
-**Fonctionnalites concernees :**
-
-| Fonctionnalite | Fichier | Limite Free |
-|----------------|---------|-------------|
-| Checklist IA | `ChecklistIntelligente.tsx` | 1 generation max |
-| Moodboard | `MoodboardPage.tsx` | 1 generation max |
-| Retroplanning | `WeddingRetroplanningEmbed.tsx` | 1 generation max |
-
-**Modifications par fichier :**
-
-1. `src/components/dashboard/ChecklistIntelligente.tsx`
-   - Importer `useAiUsageLimit`
-   - Avant `generateChecklist()` : verifier si deja genere
-   - Si `hasUsedAi('checklist')` et `!isPremium` : modal Premium
-
-2. `src/pages/dashboard/MoodboardPage.tsx`
-   - Meme logique avant `analyzeColors()`
-   - Verifier `hasUsedAi('moodboard')`
-
-3. `src/pages/dashboard/WeddingRetroplanningEmbed.tsx`
-   - Avant `handleGenerate()`
-   - Verifier `hasUsedAi('retroplanning')`
-
-### 1.3 Export PDF payant (Seating Plan, Budget, Suivi)
-
-**Fichiers a modifier :**
-
-1. `src/components/seating-plan/ExportPDFButton.tsx`
-   - Ajouter `usePremiumAction` hook
-   - Encapsuler `handleExport` dans `executeAction()`
-   - Ajouter icone Lock si non-premium
-
-2. `src/components/dashboard/DetailedBudget.tsx`
-   - Encapsuler `handleExportPDF` et `handleExportCSV` dans `executeAction()`
-   - Ajouter icones Lock
-
-3. `src/pages/dashboard/VendorTrackingPage.tsx`
-   - Ajouter bouton "Exporter PDF" protege par `usePremiumAction`
+## Plan d'implementation - 4 corrections
 
 ---
 
-## 2. Modification Stripe : 29€ paiement unique
+## 1. Limitation du stockage de documents (2 max pour free)
 
-### 2.1 Edge Function create-checkout-session
+### Fichiers a modifier
 
-**Fichier : `supabase/functions/create-checkout-session/index.ts`**
+**`src/components/documents/DocumentUploader.tsx`**
 
-Modifications :
-- Remplacer `mode: 'subscription'` par `mode: 'payment'`
-- Remplacer `price: 'price_1SNGa5KHghqBzkgjhnsKDqtU'` par `price: 'price_1SyYn8KHghqBzkgj249P8325'`
-- Supprimer `subscription_data` (non applicable en mode payment)
+Ajouter une verification avant l'upload :
+- Importer `useUserProfile` pour verifier `isPremium`
+- Compter les documents existants via query React Query
+- Si `documentsCount >= 2` et `!isPremium` : afficher le modal Premium au lieu d'uploader
+- Afficher un bandeau informatif indiquant la limite
+
+**Modifications :**
+
+```text
+1. Importer usePremiumAction et PremiumModal
+2. Ajouter une query pour compter les documents existants
+3. Dans handleUpload() : verifier la limite avant upload
+4. Si limite atteinte et non-premium : afficher le modal
+5. Ajouter un indicateur visuel de la limite (ex: "2/2 documents")
+```
+
+**`src/pages/dashboard/DocumentsPage.tsx`**
+
+Ajouter un bandeau premium si limite atteinte :
+- Afficher le nombre de documents / limite
+- Message "Passez au premium pour un stockage illimite"
+
+---
+
+## 2. Correction du Moodboard (Edge Function error)
+
+### Diagnostic
+
+L'edge function fonctionne correctement (test reussi avec statut 200). L'erreur que l'utilisateur voit est due a un probleme de logique dans `MoodboardPage.tsx` :
+
+**Probleme identifie :**
+
+Dans le fichier, quand `canUseFeature('moodboard')` retourne `false`, le code appelle `executeAction(() => {})` avec une fonction vide, ce qui affiche le modal mais ne fait rien d'autre. Cependant, l'erreur "Edge Function returned a non-2xx status code" indique que l'edge function est quand meme appelee malgre la verification.
+
+Le probleme reel est une **erreur temporaire de l'API gateway** (503/502) comme visible dans les logs fournis. La fonction a deja une gestion de ces erreurs (ajoutee precedemment), mais le message d'erreur n'est pas remonte correctement au frontend.
+
+### Solution
+
+**`src/hooks/useMoodboard.ts`** - Ligne 95-97
+
+Ameliorer la gestion d'erreur pour afficher le message exact de l'edge function :
 
 ```text
 Avant :
-  mode: 'subscription',
-  price: 'price_1SNGa5KHghqBzkgjhnsKDqtU',
-  subscription_data: { ... }
+  if (error) {
+    throw new Error(error.message);
+  }
 
 Apres :
-  mode: 'payment',
-  price: 'price_1SyYn8KHghqBzkgj249P8325',
+  if (error) {
+    // Si c'est une erreur JSON avec un message personnalise
+    const errorMessage = error.message || "Erreur lors de l'analyse";
+    throw new Error(errorMessage);
+  }
 ```
 
-### 2.2 Webhook Stripe
+**`src/pages/dashboard/MoodboardPage.tsx`** - Ligne 68-73
 
-**Fichier : `supabase/functions/stripe-webhook/index.ts`**
-
-Le webhook est deja configure pour gerer `checkout.session.completed` correctement.
-Verification necessaire :
-- Le handler met a jour `subscription_type: 'premium'` sans date d'expiration (`subscription_expires_at: null`)
-- Compatible avec paiement unique car la logique est sur le statut `payment_status: 'paid'`
-
-Aucune modification requise si le prix Stripe `price_1SyYn8KHghqBzkgj249P8325` est bien configure.
-
-### 2.3 Composant StripeButton
-
-**Fichier : `src/components/premium/StripeButton.tsx`**
-
-Modifications du texte affiche :
-- Remplacer "9,9€/mois" par "29€ une seule fois"
-- Remplacer "S'abonner maintenant" par "Acceder au Premium"
-- Supprimer le texte sur l'annulation (non applicable)
-
-### 2.4 Modal Premium
-
-**Fichier : `src/components/premium/PremiumModal.tsx`**
-
-Nouveau contenu du modal :
+Corriger la logique de verification pour eviter d'appeler une fonction vide :
 
 ```text
-Titre : Envie d'aller plus loin ?
+Avant :
+  if (!canUseFeature('moodboard')) {
+    executeAction(() => {});
+    return;
+  }
 
-Le compte Premium a 29€ debloque :
-
-- Export illimite de vos PDF personnalises
-- Acces complet aux checklists et guides
-- Utilisation IA sans limite pour les checklist, retroplanning, moodboard
+Apres :
+  if (!canUseFeature('moodboard')) {
+    // Afficher directement le modal Premium sans passer par executeAction
+    // qui attend une action a executer
+    setShowPremiumDirectly(true);
+    return;
+  }
 ```
+
+Ou plus simple, utiliser directement le state du modal premium.
 
 ---
 
-## 3. Amelioration PDF Plan de Table
+## 3. Modification FAQ Accueil
 
-### 3.1 Refonte du service d'export
+### 3.1 Modifier la question existante
 
-**Fichier a refactoriser : `src/components/seating-plan/ExportPDFButton.tsx`**
+**Fichiers a modifier :**
+- `src/pages/contact/FAQ.tsx` - Ligne 23-25
+- `src/pages/Mariable.tsx` - Ligne 157-159
 
-Structure actuelle : jsPDF texte simple
-Objectif : Style similaire aux autres PDFs (budget, ceremonie) avec branding Mariable
+**Nouveau texte pour "Mariable est-il vraiment gratuit ?"**
 
-**Nouveau design :**
+```text
+"Oui, de nombreuses fonctionnalites sont 100% gratuites : tableau de bord, 
+checklist, calculateur de budget, gestion des invites, plan de table, et 
+coordination jour J. Mariable propose egalement des fonctionnalites premium 
+a decouvrir pour aller plus loin dans l'organisation de votre mariage."
+```
 
-Page 1 - Vue d'ensemble :
-- Header avec logo Mariable et couleur `#7F9474`
-- Titre "Plan de Table" en police serif
-- Date et lieu de l'evenement
-- Encadre avec statistiques (nombre d'invites, tables, taux de remplissage)
-- Ligne de separation
+### 3.2 Ajouter une nouvelle question
 
-Pages suivantes - Detail par table :
-- Chaque table sur une section
-- Nom de table en gras avec badge couleur
-- Liste des invites avec indicateurs (VIP, restrictions alimentaires)
-- Notes eventuelles
+**Nouvelle question :** "Que comprend le premium et quel est le prix ?"
 
-### 3.2 Export visuel de la disposition
+**Reponse :**
 
-**Nouveau composant optionnel : `src/components/seating-plan/ExportVisualPDFButton.tsx`**
+```text
+"Le compte Premium Mariable est disponible a 29€ (paiement unique, acces a vie). 
+Il comprend :
+- Export illimite de vos PDF personnalises (budget, plan de table, 
+  checklist ceremonies, moodboard, suivi prestataires)
+- Acces complet aux checklists et guides 
+- Utilisation IA sans limite pour les checklist, retroplanning et moodboard
+- Stockage illimite de documents
+- Plus de 3 lignes par categorie de budget
 
-Utiliser `html2canvas` pour capturer le `SeatingPlanVisual` et l'exporter en PDF.
+Sans Premium, vous beneficiez d'1 generation IA par outil et de 2 documents 
+stockables."
+```
 
-**Implementation :**
-- Capture du canvas visual avec `html2canvas`
-- Export en PDF A4 paysage pour meilleure lisibilite
-- Ajout du header Mariable et footer
+### Fichiers a modifier
+
+| Fichier | Lignes | Action |
+|---------|--------|--------|
+| `src/pages/contact/FAQ.tsx` | 22-25 | Modifier reponse + ajouter nouvelle question apres |
+| `src/pages/Mariable.tsx` | 156-159 | Modifier reponse + ajouter nouvelle question apres |
+
+---
+
+## 4. Section "Que se passe-t-il apres votre candidature ?" sur /partenariat
+
+### Emplacement
+
+Ajouter cette section **apres** le formulaire (section `#formulaire-inscription`), donc entre les lignes 625 et 626.
+
+### Contenu de la section
+
+**Structure en 3 etapes avec icones et badges colores :**
+
+```text
+Etape 1 : Validation de votre profil (48-72h)
+- SIRET actif et en regle
+- Assurance professionnelle valide (RC Pro)
+- Coherence avec la ligne editoriale Mariable
+- Avis Google recents et positifs (min 4/5 etoiles)
+
+Etape 2 : Activation de votre partenariat
+- Lien de paiement securise
+- Acces aux guidelines partenaires
+
+Etape 3 : Mise en ligne (sous 10 jours max)
+- Publication de votre fiche complete
+- Post Instagram dedie
+- Guide digital partenaire
+```
+
+### Implementation
+
+**`src/pages/Partenariat.tsx`** - Ajouter apres ligne 624 (apres la fermeture de `</div>` du formulaire)
+
+```text
+<section className="py-16 px-4 bg-editorial-beige/30">
+  <div className="container mx-auto max-w-4xl">
+    <h2>Que se passe-t-il apres votre candidature ?</h2>
+    
+    <div className="grid md:grid-cols-3 gap-6">
+      <!-- Etape 1 -->
+      <div className="bg-white p-6">
+        <span className="badge">48-72h</span>
+        <h3>Validation de votre profil</h3>
+        <ul>
+          <li>SIRET actif et en regle</li>
+          <li>Assurance professionnelle valide (RC Pro)</li>
+          <li>Coherence avec la ligne editoriale Mariable</li>
+          <li>Avis Google recents et positifs (min 4/5)</li>
+        </ul>
+      </div>
+      
+      <!-- Etape 2 -->
+      <div className="bg-white p-6">
+        <span className="badge">Apres validation</span>
+        <h3>Activation de votre partenariat</h3>
+        <ul>
+          <li>Lien de paiement securise</li>
+          <li>Acces aux guidelines partenaires</li>
+        </ul>
+      </div>
+      
+      <!-- Etape 3 -->
+      <div className="bg-white p-6">
+        <span className="badge">Sous 10 jours</span>
+        <h3>Mise en ligne</h3>
+        <ul>
+          <li>Publication de votre fiche complete</li>
+          <li>Post Instagram dedie</li>
+          <li>Guide digital partenaire</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+```
 
 ---
 
 ## Resume des fichiers
 
-### A creer (2 fichiers)
-
-| Fichier | Description |
-|---------|-------------|
-| `src/hooks/useAiUsageLimit.ts` | Hook pour tracker et limiter l'usage IA par fonctionnalite |
-| `src/components/seating-plan/ExportVisualPDFButton.tsx` | Export visuel du plan de table |
-
-### A modifier (11 fichiers)
+### A modifier (6 fichiers)
 
 | Fichier | Modifications |
 |---------|---------------|
-| `supabase/functions/create-checkout-session/index.ts` | Mode payment + nouveau price ID |
-| `src/components/premium/StripeButton.tsx` | Texte 29€ + nouveau libelle |
-| `src/components/premium/PremiumModal.tsx` | Nouveau contenu marketing |
-| `src/components/dashboard/DetailedBudget.tsx` | Limite 3 items + export payant |
-| `src/components/dashboard/ChecklistIntelligente.tsx` | Limite 1 generation IA |
-| `src/pages/dashboard/MoodboardPage.tsx` | Limite 1 generation IA |
-| `src/pages/dashboard/WeddingRetroplanningEmbed.tsx` | Limite 1 generation IA |
-| `src/components/seating-plan/ExportPDFButton.tsx` | Redesign + paywall |
-| `src/pages/dashboard/VendorTrackingPage.tsx` | Ajout export PDF payant |
-| `src/pages/SeatingPlan.tsx` | Ajout bouton export visuel |
+| `src/components/documents/DocumentUploader.tsx` | Ajouter limite 2 documents + modal premium |
+| `src/pages/dashboard/DocumentsPage.tsx` | Afficher indicateur de limite |
+| `src/hooks/useMoodboard.ts` | Ameliorer gestion erreur edge function |
+| `src/pages/dashboard/MoodboardPage.tsx` | Corriger logique canUseFeature |
+| `src/pages/contact/FAQ.tsx` | Modifier FAQ + ajouter question premium |
+| `src/pages/Mariable.tsx` | Modifier FAQ + ajouter question premium |
+| `src/pages/Partenariat.tsx` | Ajouter section etapes apres candidature |
 
 ---
 
 ## Ordre d'implementation recommande
 
-1. **Stripe 29€** - Changement critique, impact business direct
-2. **Modal Premium** - Mise a jour du message marketing
-3. **Limitations IA** - Hook + integration dans les 3 composants
-4. **Limitation Budget** - Logique simple a ajouter
-5. **PDF Plan de table** - Ameliorations visuelles
-
----
-
-## Details techniques
-
-### Hook useAiUsageLimit
-
-```text
-Fonctions exposees :
-- hasUsedFeature(featureName: string): boolean
-- recordUsage(featureName: string): Promise<void>
-- canUseFeature(featureName: string): boolean (combine isPremium + hasUsed)
-
-Stockage :
-- Table ai_usage_tracking existante
-- Ajout colonne feature_name si necessaire
-- OU utilisation d'un JSON dans la colonne existante
-```
-
-### Logique de verification Premium
-
-Le hook `useUserProfile` retourne deja `isPremium: boolean`.
-La verification est basee sur :
-- `subscription_type === 'premium'`
-- `subscription_expires_at` null ou dans le futur
-
-Avec le changement vers paiement unique, `subscription_expires_at` restera null (acces permanent).
+1. **Moodboard** - Correction critique, fonctionnalite cassee
+2. **FAQ** - Modifications textuelles simples
+3. **Documents** - Limite de stockage
+4. **Partenariat** - Nouvelle section
 
