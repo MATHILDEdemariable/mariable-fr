@@ -51,12 +51,12 @@ const HeroSection = () => <section className="relative min-h-[100svh] flex items
 
         {/* Title */}
         <h1 className="font-serif text-3xl sm:text-4xl md:text-6xl text-white mb-4 md:mb-6 leading-tight px-2 lg:text-6xl">
-          Vivez un jour-J exceptionnel
+          Tout pour organiser un mariage parfait
         </h1>
 
         {/* Subtitle */}
         <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/80 mb-8 md:mb-10 font-sans px-4">
-          Les plus beaux lieux, les meilleurs professionnels & les bons outils d'organisation au même endroit
+          Les meilleurs outils d'organisation & prestataires mariage au même endroit
         </p>
 
         {/* Single CTA - Navigate to register - Style flag like Club badge */}
@@ -72,7 +72,7 @@ const HeroSection = () => <section className="relative min-h-[100svh] flex items
       }} className="flex justify-center px-4">
           <Link to="/register" className="w-full sm:w-auto">
             <Button size="lg" className="backdrop-blur-sm border border-white/30 px-6 md:px-10 py-5 md:py-6 text-base md:text-lg transition-all w-full sm:w-auto rounded-none bg-editorial-beige text-primary">
-              Créer votre mariage
+              Créer mon compte gratuit
             </Button>
           </Link>
         </motion.div>
