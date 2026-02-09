@@ -12,8 +12,6 @@ import { Plus, Loader2, Info, Trash2 } from 'lucide-react';
 import RSVPEventCard from '@/components/dashboard/RSVPEventCard';
 import { useNavigate } from 'react-router-dom';
 import slugify from '@/utils/slugify';
-import { usePremiumAction } from '@/hooks/usePremiumAction';
-import PremiumModal from '@/components/premium/PremiumModal';
 
 interface SubEvent {
   id?: string;
@@ -45,14 +43,6 @@ const RSVPManagement: React.FC = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   
-  const { 
-    executeAction, 
-    showPremiumModal, 
-    closePremiumModal 
-  } = usePremiumAction({
-    feature: "RSVP Invités",
-    description: "Gérez vos confirmations de présence en ligne avec des formulaires personnalisés et un suivi en temps réel"
-  });
 
   // Form state
   const [eventName, setEventName] = useState('Notre Mariage');
@@ -149,8 +139,8 @@ const RSVPManagement: React.FC = () => {
     setSubEvents(updated);
   };
 
-  const handleCreateEvent = () => {
-    executeAction(async () => {
+  const handleCreateEvent = async () => {
+    {
       if (!eventName.trim()) {
         toast({
           title: 'Erreur',
@@ -221,9 +211,9 @@ const RSVPManagement: React.FC = () => {
           variant: 'destructive',
         });
       } finally {
-        setCreating(false);
+      setCreating(false);
       }
-    });
+    }
   };
 
   const resetForm = () => {
@@ -238,8 +228,8 @@ const RSVPManagement: React.FC = () => {
     setSubEvents([]);
   };
 
-  const handleDelete = (eventId: string) => {
-    executeAction(async () => {
+  const handleDelete = async (eventId: string) => {
+    {
       try {
         const { error } = await supabase
           .from('wedding_rsvp_events')
@@ -261,7 +251,7 @@ const RSVPManagement: React.FC = () => {
           variant: 'destructive',
         });
       }
-    });
+    }
   };
 
   if (loading) {
@@ -577,12 +567,6 @@ const RSVPManagement: React.FC = () => {
         )}
       </div>
       
-      <PremiumModal
-        isOpen={showPremiumModal}
-        onClose={closePremiumModal}
-        feature="RSVP Invités"
-        description="Gérez vos confirmations de présence en ligne avec des formulaires personnalisés et un suivi en temps réel"
-      />
     </>
   );
 };
