@@ -262,7 +262,7 @@ function App() {
                   <Route path="/ceremonie-laique" element={<CeremoniePublic />} />
                   <Route path="/mariage-civil" element={<MairieCivilPublic />} />
                   <Route path="/ceremonie-catholique" element={<CeremonieCatholiquePublic />} />
-                  <Route path="/severineetolivier" element={<WeddingSeverineOlivier />} />
+                  <Route path="/severine-et-olivier" element={<WeddingSeverineOlivier />} />
                   
                   {/* Dashboard Professionnel Mockup */}
                   <Route path="/pro/dashboard" element={<ProDashboardMockup />} />
