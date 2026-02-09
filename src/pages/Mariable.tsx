@@ -51,7 +51,7 @@ const HeroSection = () => <section className="relative min-h-[100svh] flex items
 
         {/* Title */}
         <h1 className="font-serif text-3xl sm:text-4xl md:text-6xl text-white mb-4 md:mb-6 leading-tight px-2 lg:text-6xl">
-          Tout pour organiser un mariage parfait
+          Tout pour un mariage parfait
         </h1>
 
         {/* Subtitle */}
@@ -257,16 +257,20 @@ const Mariable = () => {
       const type = hashParams.get('type');
       const accessToken = hashParams.get('access_token');
       const code = hashParams.get('code');
-      
+
       // Rediriger si erreur OU si c'est un flux de recovery/auth avec tokens
       if (errorParam || errorCode || type === 'recovery' || accessToken || code) {
-        console.log('[Mariable] Redirecting auth hash to callback:', { type, hasError: !!errorParam });
-        navigate(`/auth/callback${window.location.hash}`, { replace: true });
+        console.log('[Mariable] Redirecting auth hash to callback:', {
+          type,
+          hasError: !!errorParam
+        });
+        navigate(`/auth/callback${window.location.hash}`, {
+          replace: true
+        });
         return;
       }
     }
   }, [navigate]);
-
   return <>
       <SEO title="Mariable - Le Club Privé des Futurs Mariés | Professionnels & Prix Préférentiels" description="Rejoignez le Club Mariable : accès gratuit aux meilleurs professionnels et marques du mariage avec des prix préférentiels. Outils de planification, coordination Jour-J et accompagnement personnalisé." canonical="/" keywords="mariage, wedding planner digital, professionnels mariage, club mariable, organisation mariage, coordination jour-j, prestataires mariage" />
 
