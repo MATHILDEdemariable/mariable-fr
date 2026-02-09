@@ -1,73 +1,72 @@
 
 
-## Plan d'implementation
+## Plan d'implementation - 4 modifications
 
 ---
 
-## 1. Passer les comptes en Premium (base de donnees)
+## 1. Settings : remplacer "Statut d'abonnement" par "Compte Premium"
 
-Mise a jour directe des deux profils dans la table `profiles` :
+**Fichier : `src/components/dashboard/UserProfile.tsx`**
 
-| Email | User ID | Action |
-|-------|---------|--------|
-| s.o.2026@yopmail.com | d27b6f39-b7b5-4c54-87b0-b55c76f5d874 | subscription_type = 'premium', subscription_expires_at = null |
-| mathildelambert.contact@gmail.com | 083e523c-dfd4-41de-bdfe-025ba5e3bf1a | subscription_type = 'premium', subscription_expires_at = null |
+Le profil affiche actuellement "Statut d'abonnement" avec un bouton "Annuler l'abonnement" et un texte sur le renouvellement. Comme le modele est maintenant un achat unique a 29 euros (pas un abonnement), il faut :
 
-Requete SQL a executer via l'admin Supabase (non modifiable par code, sera fait manuellement ou via un appel direct).
-
-**Note importante** : Cette action ne peut pas etre faite via le code frontend. Il faudra executer la requete SQL suivante dans le Cloud View > Run SQL :
-
-```text
-UPDATE profiles 
-SET subscription_type = 'premium', subscription_expires_at = NULL, updated_at = NOW() 
-WHERE id IN (
-  'd27b6f39-b7b5-4c54-87b0-b55c76f5d874',
-  '083e523c-dfd4-41de-bdfe-025ba5e3bf1a'
-);
-```
+- Ligne 190 : Remplacer "Statut d'abonnement" par "Statut du compte"
+- Lignes 194-198 : Supprimer le bloc "Prochain renouvellement" (plus pertinent avec achat unique)
+- Lignes 201-215 : Supprimer le bloc "Annuler l'abonnement" (impossible d'annuler un achat unique)
+- Remplacer par un simple message : "Compte Premium actif - Acces a vie" si premium, ou un bouton "Passer au Premium - 29 euros" si gratuit
+- Supprimer la fonction `handleCancelSubscription` (lignes 110-135) car plus necessaire
 
 ---
 
-## 2. Modifier la page du mini-site mariage
+## 2. RSVP : retirer le paywall sur la creation de formulaire
 
-### 2.1 Changement de route
+**Fichier : `src/pages/dashboard/RSVPManagement.tsx`**
 
-**Fichier : `src/App.tsx`**
+Actuellement, `handleCreateEvent` et `handleDelete` sont encapsules dans `executeAction()` du hook `usePremiumAction`, ce qui bloque les utilisateurs gratuits.
 
-- Remplacer `path="/severineetolivier"` par `path="/severine-et-olivier"`
+Modifications :
+- Ligne 152-153 : Remplacer `executeAction(async () => {` par un appel direct `async` sans wrapper premium
+- Ligne 241-242 : Meme chose pour `handleDelete`
+- Supprimer l'import et l'usage de `usePremiumAction` et `PremiumModal` (lignes 15-16, 48-55, 578-585)
 
-### 2.2 Mise a jour du slug RSVP
+---
 
-**Fichier : `src/pages/WeddingSeverineOlivier.tsx`**
+## 3. Page /comparatif : aligner le style avec la homepage
 
-- Changer `rsvpSlug: "severine-olivier"` par `rsvpSlug: "mariageseverineolivier-1"` pour correspondre au formulaire public existant
+**Fichier : `src/pages/Comparatif.tsx`**
 
-### 2.3 Mise a jour des contacts
+Actuellement la page utilise des classes `premium-*` (ancien design). Il faut passer au style editorial :
 
-Remplacer la section contact unique par 3 contacts :
+- Ligne 21 : Remplacer `bg-gradient-to-br from-premium-light via-white to-premium-cream` par `bg-white`
+- Ligne 28 : Remplacer `text-premium-black font-bold` par `font-serif text-editorial-noir font-normal`
+- Ligne 31 : Remplacer `text-premium-charcoal` par `text-editorial-noir/70`
+- Lignes 41-53 : Refaire le CTA avec le style editorial (fond `bg-editorial-beige`, texte noir, bouton `rounded-none`)
 
-```text
-Olivier : 06 07 98 00 58
-Severine : 06 15 46 28 41
-Mathilde Wedding planner : mathilde@mariable.fr
-```
+**Fichier : `src/components/comparatif/ComparatifTable.tsx`**
 
-**Modifications dans `weddingData.contact`** : transformer en tableau de contacts au lieu d'un seul objet, puis adapter la section Contact du JSX pour afficher les 3 contacts.
+- Ligne 25 : Mettre a jour le prix Mariable de "Gratuit" a "Gratuit + Premium 29 euros"
+- Ajuster les descriptions pour mentionner le modele freemium
+
+---
+
+## 4. Homepage : optimiser la conversion
+
+**Fichier : `src/pages/Mariable.tsx`**
+
+Modifications du Hero (lignes 53-76) :
+- Ligne 53-55 : Remplacer le titre par "Tout pour organiser un mariage parfait"
+- Ligne 58-60 : Remplacer le sous-titre par "Les meilleurs outils d'organisation et prestataires mariage au meme endroit"
+- Ligne 75 : Changer le CTA "Creer votre mariage" en "Creer mon compte gratuit"
 
 ---
 
 ## Resume des fichiers
 
-### A modifier (2 fichiers)
-
 | Fichier | Modifications |
 |---------|---------------|
-| `src/App.tsx` | Route `/severineetolivier` vers `/severine-et-olivier` |
-| `src/pages/WeddingSeverineOlivier.tsx` | Slug RSVP + 3 contacts |
-
-### Action manuelle (1)
-
-| Action | Details |
-|--------|---------|
-| SQL dans Run SQL | Passer les 2 comptes en premium |
+| `src/components/dashboard/UserProfile.tsx` | Remplacer "abonnement" par "compte premium", supprimer annulation |
+| `src/pages/dashboard/RSVPManagement.tsx` | Retirer le paywall sur creation/suppression RSVP |
+| `src/pages/Comparatif.tsx` | Style editorial + prix 29 euros |
+| `src/components/comparatif/ComparatifTable.tsx` | Prix "Gratuit + Premium 29 euros" |
+| `src/pages/Mariable.tsx` | Nouvelle tagline + CTA optimise |
 
