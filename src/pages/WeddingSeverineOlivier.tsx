@@ -22,7 +22,7 @@ const colors = {
 const weddingData = {
   couple: "Séverine & Olivier",
   date: "5 septembre 2026",
-  rsvpSlug: "severine-olivier",
+  rsvpSlug: "mariageseverineolivier-1",
   rsvpDeadline: "15 juillet 2026",
   schedule: [
     { time: "16h30", event: "Cérémonie laïque", location: "Château de Saint Clair", icon: "💒" },
@@ -36,12 +36,11 @@ const weddingData = {
     { time: "20h00", event: "Dîner intime", location: "Restaurant Le Jardin", icon: "🌙", date: "4 septembre" },
   ],
   accommodationLink: "https://www.google.com/maps/search/Hotels+Saint-Emilion",
-  contact: {
-    name: "Mathilde",
-    role: "Wedding Planner",
-    email: "contact@mariable.fr",
-    phone: "06 XX XX XX XX",
-  },
+  contacts: [
+    { name: "Olivier", phone: "06 07 98 00 58" },
+    { name: "Séverine", phone: "06 15 46 28 41" },
+    { name: "Mathilde", role: "Wedding Planner", email: "mathilde@mariable.fr" },
+  ],
   venue: {
     name: "Château de Saint Clair",
     address: "Saint-Émilion, Nouvelle-Aquitaine",
@@ -409,26 +408,35 @@ const WeddingSeverineOlivier: React.FC = () => {
             </p>
 
             <div className="space-y-4">
-              <div className="flex items-center justify-center gap-3 p-4 bg-white rounded-lg">
-                <span className="font-medium" style={{ color: colors.darkGreen }}>
-                  {weddingData.contact.name}
-                </span>
-                <span className="text-gray-400">•</span>
-                <span style={{ color: colors.coral }}>{weddingData.contact.role}</span>
-              </div>
-              
-              <a 
-                href={`mailto:${weddingData.contact.email}`}
-                className="flex items-center justify-center gap-3 p-4 bg-white rounded-lg hover:shadow-md transition-shadow"
-              >
-                <Mail className="h-5 w-5" style={{ color: colors.coral }} />
-                <span className="text-gray-800">{weddingData.contact.email}</span>
-              </a>
-
-              <div className="flex items-center justify-center gap-3 p-4 bg-white rounded-lg">
-                <Phone className="h-5 w-5" style={{ color: colors.coral }} />
-                <span className="text-gray-800">{weddingData.contact.phone}</span>
-              </div>
+              {weddingData.contacts.map((contact, index) => (
+                <div key={index} className="flex items-center justify-center gap-3 p-4 bg-white rounded-lg">
+                  <span className="font-medium" style={{ color: colors.darkGreen }}>
+                    {contact.name}
+                  </span>
+                  {contact.role && (
+                    <>
+                      <span className="text-gray-400">•</span>
+                      <span style={{ color: colors.coral }}>{contact.role}</span>
+                    </>
+                  )}
+                  {contact.phone && (
+                    <>
+                      <span className="text-gray-400">•</span>
+                      <Phone className="h-4 w-4" style={{ color: colors.coral }} />
+                      <span className="text-gray-800">{contact.phone}</span>
+                    </>
+                  )}
+                  {contact.email && (
+                    <>
+                      <span className="text-gray-400">•</span>
+                      <Mail className="h-4 w-4" style={{ color: colors.coral }} />
+                      <a href={`mailto:${contact.email}`} className="text-gray-800 hover:underline">
+                        {contact.email}
+                      </a>
+                    </>
+                  )}
+                </div>
+              ))}
             </div>
           </div>
         </section>
