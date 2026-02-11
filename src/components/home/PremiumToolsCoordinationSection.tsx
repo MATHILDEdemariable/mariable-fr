@@ -44,14 +44,14 @@ const PremiumToolsCoordinationSection = () => {
     <section id="premium-tools-section" className="py-16 md:py-24 bg-white">
       <div className="container mx-auto px-4">
         {/* Titre éditorial */}
-        <div className="text-center mb-12 md:mb-16">
+        <header className="text-center mb-12 md:mb-16">
           <h2 className="font-serif text-3xl md:text-5xl text-editorial-noir mb-4">
-            Vos outils de planification
+            Outils de planification mariage
           </h2>
           <p className="text-editorial-gray text-base md:text-lg max-w-2xl mx-auto px-2">
-            Tout ce dont vous avez besoin pour organiser votre mariage sereinement
+            Checklist, budget, RSVP et coordination jour-J pour organiser votre mariage sereinement
           </p>
-        </div>
+        </header>
 
         <div className="flex flex-col lg:grid lg:grid-cols-2 gap-8 lg:gap-16 items-center max-w-6xl mx-auto">
           {/* Tools Grid */}
@@ -65,9 +65,9 @@ const PremiumToolsCoordinationSection = () => {
                   <div className="mb-3 sm:mb-4">
                     <tool.icon className="h-6 w-6 sm:h-8 sm:w-8 text-editorial-olive" strokeWidth={1.5} />
                   </div>
-                  <h4 className="font-serif text-base sm:text-lg text-editorial-noir mb-1 sm:mb-2">
+                  <h3 className="font-serif text-base sm:text-lg text-editorial-noir mb-1 sm:mb-2">
                     {tool.title}
-                  </h4>
+                  </h3>
                   <p className="text-editorial-noir/60 text-xs sm:text-sm">
                     {tool.description}
                   </p>
@@ -101,8 +101,8 @@ const PremiumToolsCoordinationSection = () => {
                   
                   {/* App header */}
                   <div className="bg-editorial-olive text-white p-3 sm:p-4">
-                    <h4 className="font-serif text-sm sm:text-lg">Coordination Jour J</h4>
-                    <p className="text-white/80 text-xs sm:text-sm">Votre mariage</p>
+                    <span className="font-serif text-sm sm:text-lg block" aria-hidden="true">Coordination Jour J</span>
+                    <span className="text-white/80 text-xs sm:text-sm block" aria-hidden="true">Votre mariage</span>
                   </div>
                   
                   {/* Timeline */}

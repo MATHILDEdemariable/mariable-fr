@@ -25,7 +25,7 @@ const BlogSection = () => {
     <section className="py-16 md:py-24 px-4 md:px-10 bg-white">
       <div className="container max-w-6xl mx-auto">
         {/* Titre centré */}
-        <motion.div
+        <motion.header
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -33,9 +33,9 @@ const BlogSection = () => {
           className="text-center mb-12 md:mb-16"
         >
           <h2 className="font-serif text-3xl md:text-5xl text-editorial-noir">
-            Magazine & inspirations
+            Conseils & inspirations mariage
           </h2>
-        </motion.div>
+        </motion.header>
 
         {/* Grid 3 colonnes */}
         {isLoading ? (
