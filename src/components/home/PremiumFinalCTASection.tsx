@@ -7,7 +7,7 @@ const PremiumFinalCTASection = () => {
   return (
     <section className="py-24 bg-editorial-olive relative overflow-hidden">
       <div className="container mx-auto px-4 relative z-10">
-        <div className="text-center max-w-3xl mx-auto">
+        <header className="text-center max-w-3xl mx-auto mb-12">
           {/* Heading éditorial */}
           <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-white mb-6 font-normal leading-tight">
             Prêt à vivre votre
@@ -16,9 +16,11 @@ const PremiumFinalCTASection = () => {
           </h2>
 
           {/* Description sobre */}
-          <p className="text-xl text-white/80 mb-12 font-light leading-relaxed">
+          <p className="text-xl text-white/80 font-light leading-relaxed">
             Rejoignez des centaines de couples qui ont fait confiance à Mariable
           </p>
+        </header>
+        <div className="text-center max-w-3xl mx-auto">
 
           {/* CTA unique blanc */}
           <Link to="/register">

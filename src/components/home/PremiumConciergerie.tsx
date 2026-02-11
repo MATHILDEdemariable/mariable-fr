@@ -47,14 +47,14 @@ const PremiumConciergerie = () => {
     <section className="py-24 bg-editorial-beige">
       <div className="container mx-auto px-4">
         {/* Titre éditorial */}
-        <div className="text-center mb-16">
+        <header className="text-center mb-16">
           <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl text-editorial-noir mb-4 font-normal">
             Nos outils de planification <em>gratuits</em>
           </h2>
           <p className="text-editorial-noir/70 text-lg max-w-2xl mx-auto">
             Tout ce dont vous avez besoin pour organiser votre mariage sereinement
           </p>
-        </div>
+        </header>
 
         {/* Carrousel horizontal style éditorial */}
         <div className="flex gap-6 overflow-x-auto pb-8 -mx-4 px-4 snap-x snap-mandatory scrollbar-hide">

@@ -32,14 +32,14 @@ const PremiumTestimonialsSection = () => {
     <section className="py-24 bg-editorial-beige">
       <div className="container mx-auto px-4">
         {/* Titre éditorial */}
-        <div className="text-center mb-16">
+        <header className="text-center mb-16">
           <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl text-editorial-noir mb-4 font-normal">
             Ils ont vécu <em>l'expérience Mariable</em>
           </h2>
           <p className="text-editorial-noir/70 text-lg max-w-2xl mx-auto">
             Découvrez les témoignages de couples qui ont fait confiance à notre plateforme
           </p>
-        </div>
+        </header>
 
         {/* Grille de témoignages style magazine */}
         <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">

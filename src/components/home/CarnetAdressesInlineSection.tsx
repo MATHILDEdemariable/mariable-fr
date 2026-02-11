@@ -137,7 +137,7 @@ const CarnetAdressesInlineSection = () => {
       <div className="container mx-auto px-4">
         <div className="max-w-5xl mx-auto">
           {/* Header éditorial */}
-          <div className="text-center mb-12">
+          <header className="text-center mb-12">
             <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl text-editorial-noir mb-4 font-normal">
               Recevez votre <em>sélection de prestataires</em>
             </h2>
@@ -150,7 +150,7 @@ const CarnetAdressesInlineSection = () => {
             <p className="text-sm text-editorial-noir/60">
               Déjà 400 couples ont reçu leur sélection
             </p>
-          </div>
+          </header>
 
           {/* Formulaire inline */}
             <Card className="border border-editorial-noir/10 shadow-lg rounded-none bg-white">
@@ -172,7 +172,7 @@ const CarnetAdressesInlineSection = () => {
                         </div>
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-2">
-                            <h4 className="font-bold text-premium-black text-lg">Sélection gratuite</h4>
+                            <h3 className="font-bold text-premium-black text-lg">Sélection gratuite</h3>
                             <Badge className="bg-green-500 text-white text-xs">GRATUIT</Badge>
                           </div>
                           <ul className="space-y-1 text-sm text-premium-charcoal">
@@ -197,7 +197,7 @@ const CarnetAdressesInlineSection = () => {
                         </div>
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-2">
-                            <h4 className="font-bold text-premium-black text-lg">Sélection premium</h4>
+                            <h3 className="font-bold text-premium-black text-lg">Sélection premium</h3>
                             <Badge className="bg-premium-sage text-white text-xs">69€</Badge>
                           </div>
                           <ul className="space-y-1 text-sm text-premium-charcoal">

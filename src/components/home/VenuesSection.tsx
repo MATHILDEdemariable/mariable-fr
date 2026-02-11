@@ -76,7 +76,7 @@ const VenuesSection = () => {
   return <section className="py-12 md:py-24 px-4 md:px-10 bg-white overflow-hidden">
       <div className="container max-w-7xl mx-auto">
         {/* Titre éditorial */}
-        <motion.div initial={{
+        <motion.header initial={{
         opacity: 0,
         y: 20
       }} whileInView={{
@@ -88,12 +88,12 @@ const VenuesSection = () => {
         duration: 0.6
       }} className="text-center mb-8 md:mb-16 px-2">
           <h2 className="font-serif text-3xl md:text-5xl text-editorial-noir mb-4">
-            Lieux & prestataires
+            Lieux de mariage & prestataires
           </h2>
           <p className="text-base text-editorial-gray font-sans max-w-2xl mx-auto">
             Explorez notre sélection de lieux d'exception et de professionnels vérifiés pour votre mariage
           </p>
-        </motion.div>
+        </motion.header>
 
         {/* CTA Sélection personnalisée centré */}
         <div className="flex justify-center mb-8">

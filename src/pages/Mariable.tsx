@@ -51,7 +51,7 @@ const HeroSection = () => <section className="relative min-h-[100svh] flex items
 
         {/* Title */}
         <h1 className="font-serif text-3xl sm:text-4xl md:text-6xl text-white mb-4 md:mb-6 leading-tight px-2 lg:text-6xl">
-          Tout pour un mariage parfait
+          Tout pour organiser un mariage parfait
         </h1>
 
         {/* Subtitle */}
@@ -97,7 +97,7 @@ const TestimonialsSection = () => {
   }];
   return <section className="py-12 md:py-20 bg-white">
       <div className="container mx-auto px-4">
-        <motion.div initial={{
+        <motion.header initial={{
         opacity: 0,
         y: 20
       }} whileInView={{
@@ -111,7 +111,7 @@ const TestimonialsSection = () => {
           <h2 className="font-serif text-3xl md:text-5xl text-editorial-noir mb-4">
             Ils ont organisé leur mariage avec Mariable
           </h2>
-        </motion.div>
+        </motion.header>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 max-w-5xl mx-auto">
           {testimonials.map((testimonial, index) => <motion.div key={index} initial={{
@@ -162,7 +162,7 @@ const FAQSection = () => {
   }];
   return <section className="py-12 md:py-20 bg-white">
       <div className="container mx-auto px-4">
-        <motion.h2 initial={{
+        <motion.header initial={{
         opacity: 0,
         y: 20
       }} whileInView={{
@@ -170,9 +170,11 @@ const FAQSection = () => {
         y: 0
       }} viewport={{
         once: true
-      }} className="font-serif text-3xl md:text-5xl text-center text-editorial-noir mb-8 md:mb-16 px-2">
-          Vos questions
-        </motion.h2>
+      }} className="text-center mb-8 md:mb-16 px-2">
+          <h2 className="font-serif text-3xl md:text-5xl text-editorial-noir">
+            Questions fréquentes sur l'organisation de mariage
+          </h2>
+        </motion.header>
 
         <div className="max-w-2xl mx-auto">
           <Accordion type="single" collapsible className="space-y-3 md:space-y-4">
@@ -205,7 +207,7 @@ const FAQSection = () => {
 // Final CTA Section
 const FinalCTASection = () => <section className="py-12 md:py-20 bg-editorial-beige">
     <div className="container mx-auto px-4">
-      <motion.div initial={{
+      <motion.header initial={{
       opacity: 0,
       y: 20
     }} whileInView={{
@@ -215,10 +217,12 @@ const FinalCTASection = () => <section className="py-12 md:py-20 bg-editorial-be
       once: true
     }} transition={{
       duration: 0.6
-    }} className="text-center max-w-3xl mx-auto">
-        <h2 className="font-serif text-2xl sm:text-3xl md:text-5xl mb-6 md:mb-8 px-2 text-editorial-noir">
+    }} className="text-center max-w-3xl mx-auto mb-6 md:mb-8">
+        <h2 className="font-serif text-2xl sm:text-3xl md:text-5xl px-2 text-editorial-noir">
           Rejoignez le club Mariable
         </h2>
+      </motion.header>
+      <div className="text-center max-w-3xl mx-auto">
 
         <div className="flex flex-col gap-3 md:gap-4 justify-center px-2">
           <Link to="/register" className="w-full sm:w-auto sm:mx-auto">
@@ -240,7 +244,7 @@ const FinalCTASection = () => <section className="py-12 md:py-20 bg-editorial-be
             </Link>
           </div>
         </div>
-      </motion.div>
+      </div>
     </div>
   </section>;
 
@@ -272,7 +276,7 @@ const Mariable = () => {
     }
   }, [navigate]);
   return <>
-      <SEO title="Mariable - Le Club Privé des Futurs Mariés | Professionnels & Prix Préférentiels" description="Rejoignez le Club Mariable : accès gratuit aux meilleurs professionnels et marques du mariage avec des prix préférentiels. Outils de planification, coordination Jour-J et accompagnement personnalisé." canonical="/" keywords="mariage, wedding planner digital, professionnels mariage, club mariable, organisation mariage, coordination jour-j, prestataires mariage" />
+      <SEO title="Organiser son mariage facilement | Mariable" description="Outils gratuits pour organiser votre mariage : checklist, budget, RSVP, coordination jour-J et sélection de prestataires vérifiés partout en France." canonical="/" keywords="organiser mariage, wedding planner digital, professionnels mariage, organisation mariage, coordination jour-j, prestataires mariage, checklist mariage, budget mariage" />
 
       <div className="min-h-screen bg-editorial-beige">
         <PremiumHeader />
