@@ -1,134 +1,74 @@
 
 
-## Plan d'optimisation GEO + Refonte page /prix
+## Plan de modifications
 
 ---
 
-## PARTIE 1 : Optimisation GEO (Generative Engine Optimization)
+## 1. Page /prix : Simplification du tableau de fonctionnalites
 
-### Contexte
+La logique actuelle liste individuellement chaque fonctionnalite avec gratuit/premium. L'utilisateur veut une approche inverse plus simple : **tout est inclus gratuitement sauf 4 limitations**.
 
-Les moteurs IA (ChatGPT, Claude, Perplexity) extraient les informations principalement via :
-1. Les donnees structurees Schema.org (JSON-LD)
-2. Les contenus clairs et factuels (listes, definitions, chiffres)
-3. Les balises semantiques (FAQ, HowTo, Product)
-4. Les meta-descriptions concises et informatives
-5. La coherence entre meta-donnees et contenu visible
+**Fichier : `src/pages/Prix.tsx`**
 
-### Diagnostic actuel
+Remplacer le tableau de 18 features par une structure en 2 blocs :
 
-| Element | Statut | Probleme |
-|---------|--------|----------|
-| Schema Organization/LocalBusiness | Present (SEO.tsx) | Manque `priceRange`, `foundingDate`, `@type: SoftwareApplication` |
-| Schema FAQPage | Present (homepage, FAQ.tsx) | OK mais page /prix n'en a pas |
-| Schema Product/Offer | Absent | Les IA ne peuvent pas extraire les prix de Mariable |
-| About page / mentions | Non verifiees | Les IA cherchent des pages "a propos" pour valider la legitimite |
-| Contenu factuel structure | Partiel | Les sections de la homepage sont bien structurees mais /prix manque de donnees structurees |
+**Bloc Gratuit (0 euros)** :
+- "Toutes les fonctionnalites incluses" (checklist, budget, RSVP, prestataires, plan de table, coordination jour-J, etc.)
+- Avec 3 limitations clairement listees :
+  - Export PDF des modules : non inclus
+  - Guides mariage PDF : non inclus
+  - Utilisation IA : 1 generation par outil
+  - Gestion budget : 3 lignes par categorie
 
-### Actions GEO a implementer
+**Bloc Premium (29 euros, achat unique)** :
+- "Tout le Gratuit + sans aucune limitation" :
+  - Exports PDF/CSV illimites
+  - Guides mariage PDF inclus
+  - Utilisation IA illimitee
+  - Gestion budget illimitee (lignes par categorie)
+  - Stockage documents illimite
+  - Support prioritaire
 
-**1. Ajouter un schema `SoftwareApplication` + `Offer` sur la homepage (SEO.tsx)**
+Le tableau desktop gardera le format 3 colonnes (label + Gratuit + Premium) mais avec beaucoup moins de lignes (6-8 au lieu de 18). Les cards mobile seront egalement simplifiees.
 
-Les IA comme Perplexity cherchent specifiquement les schemas Product/SoftwareApplication pour repondre aux questions de type "combien coute Mariable" ou "quel outil pour organiser un mariage".
+La FAQ et le CTA final restent inchanges.
 
-```text
-Schema a ajouter :
-- @type: SoftwareApplication
-- name: "Mariable"
-- applicationCategory: "LifestyleApplication"
-- operatingSystem: "Web"
-- offers: [
-    { @type: Offer, price: "0", priceCurrency: "EUR", name: "Gratuit" },
-    { @type: Offer, price: "29", priceCurrency: "EUR", name: "Premium" }
-  ]
-- aggregateRating: { ratingValue: "4.8", reviewCount: "150" }
-```
+**Fichier : `src/components/dashboard/PricingContent.tsx`**
 
-**2. Ajouter un schema `FAQPage` sur la page /prix**
-
-La page /prix contient deja une FAQ mais sans JSON-LD. Les IA privilegient les pages avec FAQPage schema pour repondre aux questions prix.
-
-**3. Ajouter un schema `Product` avec `priceRange` sur /prix**
-
-Pour que les IA puissent citer les prix de Mariable quand on demande "combien coute un wedding planner en ligne".
-
-**4. Enrichir les meta-descriptions avec des donnees factuelles**
-
-Les IA extraient les meta-descriptions comme source primaire. Ajouter des chiffres concrets :
-- Page /prix : "Mariable est gratuit. Le compte Premium coute 29 euros (achat unique, acces a vie). Outils de planification mariage, checklist IA, budget, coordination jour-J."
-
-**5. Ajouter `speakable` schema sur la homepage**
-
-Permet aux assistants vocaux et IA de savoir quelles parties du contenu sont "citables".
+Meme simplification pour le composant utilise dans le dashboard.
 
 ---
 
-## PARTIE 2 : Refonte page /prix
+## 2. Header : Navigation par sections + restructuration des boutons
 
-### Problemes actuels
+**Fichier : `src/components/home/PremiumHeader.tsx`**
 
-1. **Couleurs** : Utilise `bg-wedding-olive`, `bg-gray-50`, `text-black` au lieu du design system editorial (`bg-editorial-beige`, `text-editorial-noir`, `rounded-none`)
-2. **Prix obsolete** : Affiche "9,9 euros/mois" au lieu de "29 euros (achat unique)"
-3. **3 colonnes** : Inclut "Coordinateur.rice Renfort" a 1000 euros et services a la carte (a supprimer)
-4. **Section services a la carte** : "Wedding Content Creator" 800 euros et "Accompagnement complet" 1800 euros a supprimer
-5. **CTA final** : Fond `bg-wedding-olive` au lieu de `bg-editorial-beige`
+Inspire de l'image de reference (French Wedding Style), le header sera reorganise en 2 niveaux :
 
-### Structure cible de la page /prix
+**Niveau 1 (barre superieure)** : Logo centre + 2 boutons a droite
+- A droite : "Connexion / Creer un compte" (lien vers /login ou /register) et "Je suis un professionnel" (lien vers /partenariat)
+- Si authentifie : "Mon compte" (dropdown existant) remplace "Connexion"
 
-```text
-Section 1 : Hero titre
-- Fond : bg-editorial-beige
-- H1 : "Nos tarifs" (font-serif, text-editorial-noir)
-- Sous-titre factuel pour le GEO
+**Niveau 2 (barre de navigation)** : Liens vers les sections/pages du site
+- "Prestataires" (vers /professionnelsmariable)
+- "Outils" (vers /outils-planning-mariage ou ancre vers la section outils)
+- "Conseils" (vers /conseilsmariage)
+- "Temoignages" (ancre #temoignages ou scroll)
+- "Prix" (vers /prix)
+- Style : fond `bg-editorial-beige`, texte `text-editorial-noir`, tracking wide, uppercase, font-sans
 
-Section 2 : Comparatif Gratuit vs Premium (2 colonnes seulement)
-- Fond : bg-white
-- Colonne 1 : Gratuit (0 euros) avec features incluses
-- Colonne 2 : Premium (29 euros, achat unique, acces a vie) -- RECOMMANDE
-- Style : rounded-none, border-editorial-noir/10, CTA bg-editorial-noir text-white
+**Suppressions** :
+- Lien "Contact" supprime du header (desktop et mobile)
 
-Section 3 : FAQ avec schema FAQPage
-- Fond : bg-white
-- Memes questions + nouvelles adaptees au freemium
-
-Section 4 : CTA final
-- Fond : bg-editorial-beige
-- "Commencez gratuitement" + "Decouvrir le Premium"
-```
-
-### Modifications detaillees
-
-**Fichier : `src/pages/Prix.tsx`** (refonte complete)
-
-- Remplacer le `<Helmet>` par le composant `<SEO>` avec schemas FAQPage + Product
-- Supprimer la 3e colonne "Coordinateur.rice Renfort"
-- Supprimer toute la section 2 "Services d'accompagnement a la carte" (lignes 332-435)
-- Changer le prix de "9,9 euros/mois" a "29 euros" avec mention "Achat unique - Acces a vie"
-- Remplacer toutes les classes `bg-wedding-olive` par `bg-editorial-noir` ou `bg-editorial-beige`
-- Remplacer `bg-gray-50` par `bg-editorial-beige`
-- Ajouter `rounded-none` sur tous les boutons et cards
-- Remplacer le CTA final (fond olive) par fond beige editorial
-- Adapter les features : retirer les colonnes `coordinateur` du tableau, garder uniquement `gratuit` et `premium`
-- Mettre a jour la FAQ pour reflechir le modele freemium (prix unique 29 euros)
-- Corriger la meta description : "Mariable est gratuit. Le Premium coute 29 euros..."
-- Ajouter le RSVP digital comme feature gratuite (coherent avec le changement precedent)
-
-**Fichier : `src/components/dashboard/PricingContent.tsx`** (composant dashboard)
-
-- Meme mise a jour : 2 colonnes au lieu de 3, prix 29 euros, supprimer coordinateur
-- Adapter les couleurs (supprimer `premium-sage`)
-
-**Fichier : `src/components/SEO.tsx`**
-
-- Ajouter le schema `SoftwareApplication` avec les offres Gratuit et Premium dans le JSON-LD existant
+**Mobile** : Le menu hamburger contiendra les memes liens de navigation + les 2 boutons.
 
 ---
 
-## Resume des fichiers a modifier
+## Resume technique
 
-| Fichier | Modifications | Priorite |
-|---------|---------------|----------|
-| `src/pages/Prix.tsx` | Refonte complete : 2 colonnes, 29 euros, couleurs editorial, supprimer services a la carte, schemas GEO | Critique |
-| `src/components/dashboard/PricingContent.tsx` | 2 colonnes, prix 29 euros, supprimer coordinateur | Haute |
-| `src/components/SEO.tsx` | Ajouter schema SoftwareApplication + Offer pour le GEO | Haute |
+| Fichier | Modification |
+|---------|-------------|
+| `src/pages/Prix.tsx` | Simplifier features : tout gratuit sauf 4 limitations, 29 euros premium |
+| `src/components/dashboard/PricingContent.tsx` | Meme simplification |
+| `src/components/home/PremiumHeader.tsx` | 2 niveaux (logo+boutons / nav sections), supprimer Contact |
 
