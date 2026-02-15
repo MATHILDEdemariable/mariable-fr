@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Calendar, CheckSquare, Calculator, Store, Heart, Settings, LogOut, Wine, MessageCircleQuestion, MessageSquare, Users, Lightbulb, ChevronDown, Coins, ListChecks, UserCheck, Home, QrCode, FileText, Table, AlertCircle, Gift, Sparkles, ShoppingCart, Building2, Smartphone, Palette } from 'lucide-react';
+import { LayoutDashboard, Calendar, CheckSquare, Calculator, Store, Heart, Settings, LogOut, Wine, MessageCircleQuestion, MessageSquare, Users, Lightbulb, ChevronDown, Coins, ListChecks, UserCheck, Home, QrCode, FileText, Table, AlertCircle, Gift, Sparkles, ShoppingCart, Building2, Smartphone, Palette, Globe } from 'lucide-react';
 import { CallScheduleModal } from './CallScheduleModal';
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
@@ -8,6 +8,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { WhatsAppButton } from '@/components/support/WhatsAppButton';
 import { ProblemModal } from '@/components/support/ProblemModal';
 import ClubMariableModal from './ClubMariableModal';
+import SiteInternetModal from './SiteInternetModal';
 interface DashboardSidebarProps {
   isReaderMode?: boolean;
 }
@@ -18,6 +19,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
   const [showProblemModal, setShowProblemModal] = useState(false);
   const [showCallModal, setShowCallModal] = useState(false);
   const [showClubMariableModal, setShowClubMariableModal] = useState(false);
+  const [showSiteInternetModal, setShowSiteInternetModal] = useState(false);
 
   // Menu déroulant Tableau de bord
   const dashboardItems = [{
@@ -366,6 +368,19 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
           {isReaderMode && <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>}
         </Link>
 
+        {/* Site Internet */}
+        <button
+          onClick={() => !isReaderMode && setShowSiteInternetModal(true)}
+          className={cn(
+            "flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors w-full text-left",
+            'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive',
+            isReaderMode ? 'pointer-events-none opacity-70' : ''
+          )}
+        >
+          <Globe className="h-4 w-4" />
+          <span className="ml-2 sm:ml-3 leading-tight">Site Internet</span>
+        </button>
+
         {/* Cérémonie Laïque */}
         <Link to={isReaderMode ? '#' : '/dashboard/ceremonie'} onClick={e => {
         if (isReaderMode) {
@@ -524,6 +539,9 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
       
       {/* Modal Club Mariable */}
       <ClubMariableModal isOpen={showClubMariableModal} onClose={() => setShowClubMariableModal(false)} />
+      
+      {/* Modal Site Internet */}
+      <SiteInternetModal open={showSiteInternetModal} onOpenChange={setShowSiteInternetModal} />
     </div>;
 };
 export default DashboardSidebar;

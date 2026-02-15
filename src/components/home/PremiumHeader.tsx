@@ -119,37 +119,38 @@ const PremiumHeader = () => {
           </Sheet>
         </div>
 
-        {/* Niveau 2 : Navigation sections (desktop only, homepage only) */}
-        {isHomepage && (
-          <nav className="hidden md:flex items-center justify-center space-x-8 h-10 bg-editorial-beige -mx-4 px-4 border-t border-editorial-noir/5">
-            {navLinks.map((link) => {
-              if (link.href.startsWith('/#')) {
-                return (
-                  <button
-                    key={link.href}
-                    onClick={() => {
-                      const id = link.href.replace('/#', '');
-                      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
-                    }}
-                    className="text-[11px] tracking-[0.15em] uppercase text-editorial-noir/70 hover:text-editorial-noir transition-colors font-sans bg-transparent border-none cursor-pointer"
-                  >
-                    {link.label}
-                  </button>
-                );
-              }
+      </div>
+
+      {/* Niveau 2 : Navigation sections (desktop only, homepage only) - full width */}
+      {isHomepage && (
+        <nav className="hidden md:flex items-center justify-center space-x-8 h-10 bg-editorial-beige border-t border-editorial-noir/5">
+          {navLinks.map((link) => {
+            if (link.href.startsWith('/#')) {
               return (
-                <Link
+                <button
                   key={link.href}
-                  to={link.href}
-                  className="text-[11px] tracking-[0.15em] uppercase text-editorial-noir/70 hover:text-editorial-noir transition-colors font-sans"
+                  onClick={() => {
+                    const id = link.href.replace('/#', '');
+                    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  className="text-[11px] tracking-[0.15em] uppercase text-editorial-noir/70 hover:text-editorial-noir transition-colors font-sans bg-transparent border-none cursor-pointer"
                 >
                   {link.label}
-                </Link>
+                </button>
               );
-            })}
-          </nav>
-        )}
-      </div>
+            }
+            return (
+              <Link
+                key={link.href}
+                to={link.href}
+                className="text-[11px] tracking-[0.15em] uppercase text-editorial-noir/70 hover:text-editorial-noir transition-colors font-sans"
+              >
+                {link.label}
+              </Link>
+            );
+          })}
+        </nav>
+      )}
     </header>
   );
 };
