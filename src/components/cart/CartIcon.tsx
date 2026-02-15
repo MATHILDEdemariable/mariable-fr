@@ -98,7 +98,7 @@ const CartIcon = () => {
       <Button 
         variant="outline" 
         size="icon" 
-        className="fixed top-24 right-3 md:right-6 z-50 bg-white shadow-xl border-2 border-editorial-noir hover:bg-editorial-beige h-11 w-11 md:h-14 md:w-14 rounded-none transition-all duration-300"
+        className="fixed top-32 right-3 md:right-6 z-50 bg-white shadow-xl border-2 border-editorial-noir hover:bg-editorial-beige h-11 w-11 md:h-14 md:w-14 rounded-none transition-all duration-300"
         aria-label="Voir le panier"
       >
         <ShoppingCart className="h-5 w-5 md:h-6 md:w-6 text-editorial-noir" />

@@ -68,7 +68,7 @@ const SiteInternetModal: React.FC<SiteInternetModalProps> = ({ open, onOpenChang
             Votre site de mariage personnalisé
           </DialogTitle>
           <DialogDescription className="text-editorial-noir/60">
-            Un site internet élégant et sur-mesure pour partager les détails de votre mariage avec vos invités.
+            Un site internet élégant et sur-mesure pour partager les détails de votre mariage avec vos invités. Après votre demande, nous vous recontacterons par email puis par WhatsApp pour valider ensemble les images et textes de votre site.
           </DialogDescription>
         </DialogHeader>
 
@@ -100,7 +100,7 @@ const SiteInternetModal: React.FC<SiteInternetModalProps> = ({ open, onOpenChang
         <Button
           variant="outline"
           className="w-full rounded-none border-editorial-noir/20 text-editorial-noir"
-          onClick={() => window.open('/severine-et-olivier', '_blank')}
+          onClick={() => window.open('/exemplesite', '_blank')}
         >
           <ExternalLink className="h-4 w-4 mr-2" />
           Voir un exemple de site
@@ -111,7 +111,7 @@ const SiteInternetModal: React.FC<SiteInternetModalProps> = ({ open, onOpenChang
           <div className="text-center py-4">
             <Check className="h-10 w-10 text-wedding-olive mx-auto mb-2" />
             <p className="font-medium text-editorial-noir">Demande envoyée !</p>
-            <p className="text-sm text-editorial-noir/60 mt-1">Nous vous recontacterons sous 24h.</p>
+            <p className="text-sm text-editorial-noir/60 mt-1">Nous vous recontacterons par email puis WhatsApp sous 24h pour créer votre site ensemble.</p>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-3">
