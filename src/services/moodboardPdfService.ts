@@ -10,21 +10,6 @@ interface MoodboardPdfData {
   ambiance: string;
 }
 
-// Format date in French
-const formatDateFr = (dateStr: string): string => {
-  if (!dateStr) return '';
-  try {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString('fr-FR', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-    });
-  } catch {
-    return dateStr;
-  }
-};
-
 // Wait for all images to load
 const waitForImages = async (element: HTMLElement): Promise<void> => {
   const images = element.querySelectorAll('img');
@@ -40,43 +25,6 @@ const waitForImages = async (element: HTMLElement): Promise<void> => {
   );
 };
 
-// Create a clone with fixed A4 dimensions for PDF capture
-const createPdfCaptureCopy = (element: HTMLElement): HTMLElement => {
-  const clone = element.cloneNode(true) as HTMLElement;
-  
-  // Fixed A4 dimensions at 96 DPI (794 x 1123 pixels)
-  const A4_WIDTH = 794;
-  const A4_HEIGHT = 1123;
-  
-  clone.style.cssText = `
-    width: ${A4_WIDTH}px !important;
-    height: ${A4_HEIGHT}px !important;
-    max-width: ${A4_WIDTH}px !important;
-    max-height: ${A4_HEIGHT}px !important;
-    position: absolute;
-    left: -9999px;
-    top: 0;
-    background: white;
-    overflow: hidden;
-  `;
-  
-  // Ensure all images preserve aspect ratio with object-fit: cover
-  const images = clone.querySelectorAll('img');
-  images.forEach(img => {
-    img.style.objectFit = 'cover';
-    img.style.width = '100%';
-    img.style.height = '100%';
-  });
-  
-  // Ensure grid cells have proper overflow
-  const gridCells = clone.querySelectorAll('[class*="overflow-hidden"]');
-  gridCells.forEach(cell => {
-    (cell as HTMLElement).style.overflow = 'hidden';
-  });
-  
-  return clone;
-};
-
 export const generateMoodboardPdf = async (data: MoodboardPdfData): Promise<void> => {
   const { coupleName } = data;
   
@@ -85,32 +33,22 @@ export const generateMoodboardPdf = async (data: MoodboardPdfData): Promise<void
     throw new Error('Moodboard canvas not found');
   }
 
+  console.log('🚀 generateMoodboardPdf started');
+
   // Wait for all images to be loaded
   await waitForImages(element);
 
-  // Create a fixed-size clone for capture
-  const pdfClone = createPdfCaptureCopy(element);
-  document.body.appendChild(pdfClone);
-
-  // Wait for layout to stabilize
-  await new Promise(resolve => setTimeout(resolve, 300));
-
-  // Wait for images in clone to load
-  await waitForImages(pdfClone);
-
   try {
-    // Capture the clone with html2canvas
-    const canvas = await html2canvas(pdfClone, {
+    // Capture the element directly as displayed (no cloning)
+    const canvas = await html2canvas(element, {
       scale: 2,
       useCORS: true,
       logging: false,
       backgroundColor: '#ffffff',
       allowTaint: true,
-      width: 794,
-      height: 1123,
-      windowWidth: 794,
-      windowHeight: 1123,
     });
+
+    console.log('✅ html2canvas capture done:', canvas.width, 'x', canvas.height);
 
     // Create PDF A4
     const pdf = new jsPDF({
@@ -121,15 +59,39 @@ export const generateMoodboardPdf = async (data: MoodboardPdfData): Promise<void
 
     const pageWidth = 210;
     const pageHeight = 297;
-    
-    // The canvas matches A4 ratio, so we can use full page
+    const margin = 5;
+    const maxWidth = pageWidth - margin * 2;
+    const maxHeight = pageHeight - margin * 2;
+
+    // Calculate aspect ratio to fit A4 without distortion
+    const canvasRatio = canvas.width / canvas.height;
+    const pageRatio = maxWidth / maxHeight;
+
+    let imgWidth: number;
+    let imgHeight: number;
+
+    if (canvasRatio > pageRatio) {
+      // Canvas is wider than A4 ratio → fit by width
+      imgWidth = maxWidth;
+      imgHeight = maxWidth / canvasRatio;
+    } else {
+      // Canvas is taller than A4 ratio → fit by height
+      imgHeight = maxHeight;
+      imgWidth = maxHeight * canvasRatio;
+    }
+
+    // Center on page
+    const xOffset = (pageWidth - imgWidth) / 2;
+    const yOffset = (pageHeight - imgHeight) / 2;
+
     const imgData = canvas.toDataURL('image/png', 1.0);
-    pdf.addImage(imgData, 'PNG', 0, 0, pageWidth, pageHeight);
+    pdf.addImage(imgData, 'PNG', xOffset, yOffset, imgWidth, imgHeight);
 
     const fileName = `moodboard-${(coupleName || 'mariage').toLowerCase().replace(/[^a-z0-9]/g, '-')}.pdf`;
     pdf.save(fileName);
-  } finally {
-    // Always remove the clone
-    document.body.removeChild(pdfClone);
+    console.log('✅ generateMoodboardPdf completed successfully');
+  } catch (error) {
+    console.error('❌ generateMoodboardPdf failed:', error);
+    throw error;
   }
 };
