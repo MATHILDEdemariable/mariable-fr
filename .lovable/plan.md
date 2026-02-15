@@ -1,59 +1,61 @@
 
 
-## Plan de modifications
+## Plan de modifications (3 correctifs + 1 nouvelle fonctionnalite)
 
 ---
 
-### 1. Header : Barre beige uniquement sur la page d'accueil
+### 1. Header : Bandeau beige pleine largeur
+
+**Probleme** : Le bandeau beige est contenu dans `container mx-auto px-4`, ce qui le limite a la largeur du container au lieu de toute la largeur de l'ecran.
 
 **Fichier : `src/components/home/PremiumHeader.tsx`**
 
-- Importer `useLocation` de `react-router-dom` pour detecter la route active
-- Supprimer "Conseils" et "Temoignages" du tableau `navLinks` (garder Prestataires, Outils, Prix)
-- Conditionner l'affichage de la barre de navigation beige (niveau 2) : visible uniquement si `pathname === "/"` ou `pathname === "/accueil"`
-- Le lien "Outils" renverra vers `/#outils-planification` (ancre vers la section outils de la homepage) au lieu de `/outils-planning-mariage`
-- Sur les autres pages, seul le bandeau blanc (logo + boutons) sera affiche
-- Mettre a jour le menu mobile pour refleter les memes liens (sans Conseils ni Temoignages)
+- Sortir la `<nav>` du bandeau beige en dehors du `<div className="container mx-auto px-4">` pour qu'elle occupe 100% de la largeur de l'ecran
+- Garder un `container mx-auto` interieur uniquement pour centrer les liens
+- Supprimer le `-mx-4 px-4` actuel qui tente de compenser sans succes
 
 ---
 
-### 2. Page /prix : Ajouter les guides dans le Premium
+### 2. Moodboard PDF : Correction de la deformation
 
-**Fichier : `src/pages/Prix.tsx`**
+**Probleme** : Le clone utilise `cloneNode(true)` qui copie les elements HTML mais perd les styles CSS computes (Tailwind classes ne sont pas resolues dans le clone hors-ecran). Les images se deforment car la grille CSS ne s'applique pas correctement au clone de 794x1123px.
 
-- Remplacer la ligne "Guides mariage PDF : non inclus / Inclus" par une description plus riche :
-  - Gratuit : "Non inclus"
-  - Premium : "+ 10 guides mariage & checklists PDF"
-- Ajouter une sous-liste ou un texte descriptif dans la card Premium mentionnant les guides specifiques : Guide jour-J, Organisation debutant, Guide prestataires, Checklist marie(e)s & proches, Checklist mairie & ceremonie
-- Le bouton "Passer au Premium" verifiera si l'utilisateur est authentifie :
-  - Si oui : appeler la logique Stripe existante (`create-checkout-session` via `supabase.functions.invoke`)
-  - Si non : rediriger vers `/login` avec un message ou un parametre `?redirect=premium`
-- Meme logique pour le CTA final et les boutons mobile
+**Fichier : `src/services/moodboardPdfService.ts`**
 
-**Fichier : `src/components/dashboard/PricingContent.tsx`**
+- Au lieu de cloner l'element et le repositionner hors-ecran, capturer directement l'element visible avec `html2canvas` en utilisant ses dimensions actuelles
+- Calculer le ratio pour mapper le canvas sur une page A4 sans deformation
+- Supprimer la logique `createPdfCaptureCopy` qui cause les problemes
+- Utiliser `html2canvas` directement sur l'element original `#moodboard-canvas` avec `scale: 2` pour la qualite
+- Calculer les dimensions proportionnelles pour que l'image tienne dans la page A4 en conservant le ratio d'origine
 
-- Meme mise a jour du contenu guides (10 guides & checklists)
-- Meme logique de bouton Premium (login requis)
-
----
-
-### 3. Bouton Premium dans le tableau de bord
-
-**Fichier : `src/components/dashboard/gaming/HeroStats.tsx`**
-
-- Ajouter un bouton "Premium" a cote de la card "% d'organisation completee"
-- Le bouton sera visible uniquement si l'utilisateur n'est PAS deja premium (utiliser `useUserProfile` + `isPremium`)
-- Au clic : ouvrir la page de paiement Stripe (meme logique que `StripeButton.tsx` : appel a `create-checkout-session`)
-- Si deja premium : afficher un badge "Premium" a la place du bouton
-- Style : `bg-editorial-noir text-white rounded-none` coherent avec le design system
+```text
+Approche :
+1. Capturer l'element tel qu'il est affiche (pas de clone)
+2. Obtenir le ratio largeur/hauteur du canvas
+3. Centrer l'image sur la page A4 en respectant le ratio
+```
 
 ---
 
-### 4. Section Outils de la homepage : ajouter une ancre
+### 3. Nouvelle fonctionnalite : "Site Internet" dans le dashboard
 
-**Fichier : `src/components/home/PremiumToolsCoordinationSection.tsx`**
+**Fichier : `src/components/dashboard/DashboardSidebar.tsx`**
 
-- Ajouter un `id="outils-planification"` sur la `<section>` pour que le lien `/#outils-planification` du header puisse y ancrer
+- Ajouter un lien "Site Internet" dans la sidebar (icone `Globe` de lucide-react), place apres "Moodboard"
+- Ce lien ouvrira un modal (pas une navigation)
+- Utiliser un state `showSiteInternetModal` et un composant `SiteInternetModal`
+
+**Nouveau fichier : `src/components/dashboard/SiteInternetModal.tsx`**
+
+- Modal (utilisant `DashboardModal` ou `Sheet`) avec :
+  - Titre : "Votre site de mariage personnalise"
+  - Description : "Creez un site internet elegant et personnalise pour votre mariage, partage avec vos invites. Design editorial sur-mesure."
+  - Tarif : "50 euros - Site cle en main" (mise en avant)
+  - Exemple visuel : lien vers `/severine-et-olivier` avec un apercu textuel des fonctionnalites (countdown, programme, RSVP, hebergements, etc.)
+  - Bouton "Voir l'exemple" qui ouvre `/severine-et-olivier` dans un nouvel onglet
+  - Formulaire de contact simple : Nom, Email, Message/details du mariage
+  - Bouton "Demander mon site" qui envoie le formulaire (via `supabase.functions.invoke('send-contact-email')` ou insertion dans une table `site_requests`)
+- Style coherent : `rounded-none`, `bg-editorial-beige`, `text-editorial-noir`
 
 ---
 
@@ -61,8 +63,8 @@
 
 | Fichier | Modification |
 |---------|-------------|
-| `src/components/home/PremiumHeader.tsx` | Supprimer Conseils/Temoignages, barre beige homepage-only, lien Outils vers ancre |
-| `src/pages/Prix.tsx` | Enrichir guides (10 PDF), bouton Premium conditionne a l'auth |
-| `src/components/dashboard/PricingContent.tsx` | Meme enrichissement guides + bouton conditionne |
-| `src/components/dashboard/gaming/HeroStats.tsx` | Bouton Premium a cote du % completion |
-| `src/components/home/PremiumToolsCoordinationSection.tsx` | Ajouter id="outils-planification" |
+| `src/components/home/PremiumHeader.tsx` | Sortir le bandeau beige du container pour pleine largeur |
+| `src/services/moodboardPdfService.ts` | Capturer l'element original sans clone, conserver le ratio |
+| `src/components/dashboard/DashboardSidebar.tsx` | Ajouter lien "Site Internet" avec icone Globe |
+| `src/components/dashboard/SiteInternetModal.tsx` | Nouveau : modal avec description, prix 50 euros, exemple /severine-et-olivier, formulaire de contact |
+
