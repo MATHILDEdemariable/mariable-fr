@@ -4,71 +4,65 @@
 
 ---
 
-## 1. Page /prix : Simplification du tableau de fonctionnalites
-
-La logique actuelle liste individuellement chaque fonctionnalite avec gratuit/premium. L'utilisateur veut une approche inverse plus simple : **tout est inclus gratuitement sauf 4 limitations**.
-
-**Fichier : `src/pages/Prix.tsx`**
-
-Remplacer le tableau de 18 features par une structure en 2 blocs :
-
-**Bloc Gratuit (0 euros)** :
-- "Toutes les fonctionnalites incluses" (checklist, budget, RSVP, prestataires, plan de table, coordination jour-J, etc.)
-- Avec 3 limitations clairement listees :
-  - Export PDF des modules : non inclus
-  - Guides mariage PDF : non inclus
-  - Utilisation IA : 1 generation par outil
-  - Gestion budget : 3 lignes par categorie
-
-**Bloc Premium (29 euros, achat unique)** :
-- "Tout le Gratuit + sans aucune limitation" :
-  - Exports PDF/CSV illimites
-  - Guides mariage PDF inclus
-  - Utilisation IA illimitee
-  - Gestion budget illimitee (lignes par categorie)
-  - Stockage documents illimite
-  - Support prioritaire
-
-Le tableau desktop gardera le format 3 colonnes (label + Gratuit + Premium) mais avec beaucoup moins de lignes (6-8 au lieu de 18). Les cards mobile seront egalement simplifiees.
-
-La FAQ et le CTA final restent inchanges.
-
-**Fichier : `src/components/dashboard/PricingContent.tsx`**
-
-Meme simplification pour le composant utilise dans le dashboard.
-
----
-
-## 2. Header : Navigation par sections + restructuration des boutons
+### 1. Header : Barre beige uniquement sur la page d'accueil
 
 **Fichier : `src/components/home/PremiumHeader.tsx`**
 
-Inspire de l'image de reference (French Wedding Style), le header sera reorganise en 2 niveaux :
-
-**Niveau 1 (barre superieure)** : Logo centre + 2 boutons a droite
-- A droite : "Connexion / Creer un compte" (lien vers /login ou /register) et "Je suis un professionnel" (lien vers /partenariat)
-- Si authentifie : "Mon compte" (dropdown existant) remplace "Connexion"
-
-**Niveau 2 (barre de navigation)** : Liens vers les sections/pages du site
-- "Prestataires" (vers /professionnelsmariable)
-- "Outils" (vers /outils-planning-mariage ou ancre vers la section outils)
-- "Conseils" (vers /conseilsmariage)
-- "Temoignages" (ancre #temoignages ou scroll)
-- "Prix" (vers /prix)
-- Style : fond `bg-editorial-beige`, texte `text-editorial-noir`, tracking wide, uppercase, font-sans
-
-**Suppressions** :
-- Lien "Contact" supprime du header (desktop et mobile)
-
-**Mobile** : Le menu hamburger contiendra les memes liens de navigation + les 2 boutons.
+- Importer `useLocation` de `react-router-dom` pour detecter la route active
+- Supprimer "Conseils" et "Temoignages" du tableau `navLinks` (garder Prestataires, Outils, Prix)
+- Conditionner l'affichage de la barre de navigation beige (niveau 2) : visible uniquement si `pathname === "/"` ou `pathname === "/accueil"`
+- Le lien "Outils" renverra vers `/#outils-planification` (ancre vers la section outils de la homepage) au lieu de `/outils-planning-mariage`
+- Sur les autres pages, seul le bandeau blanc (logo + boutons) sera affiche
+- Mettre a jour le menu mobile pour refleter les memes liens (sans Conseils ni Temoignages)
 
 ---
 
-## Resume technique
+### 2. Page /prix : Ajouter les guides dans le Premium
+
+**Fichier : `src/pages/Prix.tsx`**
+
+- Remplacer la ligne "Guides mariage PDF : non inclus / Inclus" par une description plus riche :
+  - Gratuit : "Non inclus"
+  - Premium : "+ 10 guides mariage & checklists PDF"
+- Ajouter une sous-liste ou un texte descriptif dans la card Premium mentionnant les guides specifiques : Guide jour-J, Organisation debutant, Guide prestataires, Checklist marie(e)s & proches, Checklist mairie & ceremonie
+- Le bouton "Passer au Premium" verifiera si l'utilisateur est authentifie :
+  - Si oui : appeler la logique Stripe existante (`create-checkout-session` via `supabase.functions.invoke`)
+  - Si non : rediriger vers `/login` avec un message ou un parametre `?redirect=premium`
+- Meme logique pour le CTA final et les boutons mobile
+
+**Fichier : `src/components/dashboard/PricingContent.tsx`**
+
+- Meme mise a jour du contenu guides (10 guides & checklists)
+- Meme logique de bouton Premium (login requis)
+
+---
+
+### 3. Bouton Premium dans le tableau de bord
+
+**Fichier : `src/components/dashboard/gaming/HeroStats.tsx`**
+
+- Ajouter un bouton "Premium" a cote de la card "% d'organisation completee"
+- Le bouton sera visible uniquement si l'utilisateur n'est PAS deja premium (utiliser `useUserProfile` + `isPremium`)
+- Au clic : ouvrir la page de paiement Stripe (meme logique que `StripeButton.tsx` : appel a `create-checkout-session`)
+- Si deja premium : afficher un badge "Premium" a la place du bouton
+- Style : `bg-editorial-noir text-white rounded-none` coherent avec le design system
+
+---
+
+### 4. Section Outils de la homepage : ajouter une ancre
+
+**Fichier : `src/components/home/PremiumToolsCoordinationSection.tsx`**
+
+- Ajouter un `id="outils-planification"` sur la `<section>` pour que le lien `/#outils-planification` du header puisse y ancrer
+
+---
+
+### Resume technique
 
 | Fichier | Modification |
 |---------|-------------|
-| `src/pages/Prix.tsx` | Simplifier features : tout gratuit sauf 4 limitations, 29 euros premium |
-| `src/components/dashboard/PricingContent.tsx` | Meme simplification |
-| `src/components/home/PremiumHeader.tsx` | 2 niveaux (logo+boutons / nav sections), supprimer Contact |
-
+| `src/components/home/PremiumHeader.tsx` | Supprimer Conseils/Temoignages, barre beige homepage-only, lien Outils vers ancre |
+| `src/pages/Prix.tsx` | Enrichir guides (10 PDF), bouton Premium conditionne a l'auth |
+| `src/components/dashboard/PricingContent.tsx` | Meme enrichissement guides + bouton conditionne |
+| `src/components/dashboard/gaming/HeroStats.tsx` | Bouton Premium a cote du % completion |
+| `src/components/home/PremiumToolsCoordinationSection.tsx` | Ajouter id="outils-planification" |
