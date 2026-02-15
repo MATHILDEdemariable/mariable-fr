@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/Logo';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { Menu, ChevronDown } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
@@ -9,9 +9,7 @@ import { useAuth } from '@/contexts/AuthContext';
 
 const navLinks = [
   { label: "Prestataires", href: "/professionnelsmariable" },
-  { label: "Outils", href: "/outils-planning-mariage" },
-  { label: "Conseils", href: "/conseilsmariage" },
-  { label: "Témoignages", href: "/temoignages" },
+  { label: "Outils", href: "/#outils-planification" },
   { label: "Prix", href: "/prix" },
 ];
 
@@ -19,7 +17,9 @@ const PremiumHeader = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const location = useLocation();
   const { isAuthenticated } = useAuth();
+  const isHomepage = location.pathname === '/' || location.pathname === '/accueil';
 
   const isEmbedded = searchParams.get('embedded') === 'true';
   if (isEmbedded) {
@@ -119,18 +119,20 @@ const PremiumHeader = () => {
           </Sheet>
         </div>
 
-        {/* Niveau 2 : Navigation sections (desktop only) */}
-        <nav className="hidden md:flex items-center justify-center space-x-8 h-10 bg-editorial-beige -mx-4 px-4 border-t border-editorial-noir/5">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              to={link.href}
-              className="text-[11px] tracking-[0.15em] uppercase text-editorial-noir/70 hover:text-editorial-noir transition-colors font-sans"
-            >
-              {link.label}
-            </Link>
-          ))}
-        </nav>
+        {/* Niveau 2 : Navigation sections (desktop only, homepage only) */}
+        {isHomepage && (
+          <nav className="hidden md:flex items-center justify-center space-x-8 h-10 bg-editorial-beige -mx-4 px-4 border-t border-editorial-noir/5">
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                to={link.href}
+                className="text-[11px] tracking-[0.15em] uppercase text-editorial-noir/70 hover:text-editorial-noir transition-colors font-sans"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </nav>
+        )}
       </div>
     </header>
   );

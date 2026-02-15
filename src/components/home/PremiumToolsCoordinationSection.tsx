@@ -41,7 +41,7 @@ const PremiumToolsCoordinationSection = () => {
   ];
 
   return (
-    <section id="premium-tools-section" className="py-16 md:py-24 bg-white">
+    <section id="outils-planification" className="py-16 md:py-24 bg-white">
       <div className="container mx-auto px-4">
         {/* Titre éditorial */}
         <header className="text-center mb-12 md:mb-16">
