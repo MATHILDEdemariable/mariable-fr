@@ -83,10 +83,10 @@ const REGIONS = ['France entière', 'Auvergne-Rhône-Alpes', 'Bourgogne-Franche-
 const HeroSection = ({
   onScrollToResults,
   isLoggedIn
-}: {
-  onScrollToResults: () => void;
-  isLoggedIn: boolean;
-}) => <section className="relative min-h-[40vh] md:min-h-[50vh] flex items-center justify-center overflow-hidden">
+
+
+
+}: {onScrollToResults: () => void;isLoggedIn: boolean;}) => <section className="relative min-h-[40vh] md:min-h-[50vh] flex items-center justify-center overflow-hidden">
     {/* Background Image */}
     <div className="absolute inset-0 bg-cover bg-center" style={{
     backgroundImage: "url('https://bgidfcqktsttzlwlumtz.supabase.co/storage/v1/object/public/visuels/mariablestore.png')"
@@ -131,18 +131,18 @@ const HeroSection = ({
           <ArrowRight className="ml-2 w-5 h-5" />
         </Button>
         
-        <Button 
-          size="lg" 
-          variant="outline" 
-          onClick={() => {
-            if (isLoggedIn) {
-              window.location.href = '/dashboard';
-            } else {
-              window.location.href = '/register?redirect=/dashboard';
-            }
-          }}
-          className="border-white/70 bg-white/10 text-white hover:bg-white/20 px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg rounded-none backdrop-blur-sm w-full sm:w-auto"
-        >
+        <Button
+        size="lg"
+        variant="outline"
+        onClick={() => {
+          if (isLoggedIn) {
+            window.location.href = '/dashboard';
+          } else {
+            window.location.href = '/register?redirect=/dashboard';
+          }
+        }}
+        className="border-white/70 bg-white/10 text-white hover:bg-white/20 px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg rounded-none backdrop-blur-sm w-full sm:w-auto">
+
           <LayoutDashboard className="mr-2 w-5 h-5" />
           Mes outils
         </Button>
@@ -191,16 +191,16 @@ const CategoryPills = ({
   selected,
   onSelect,
   categoryCounts
-}: {
-  selected: PrestataireCategorie | 'Tous';
-  onSelect: (cat: PrestataireCategorie | 'Tous') => void;
-  categoryCounts: Record<string, number> | undefined;
-}) => {
+
+
+
+
+}: {selected: PrestataireCategorie | 'Tous';onSelect: (cat: PrestataireCategorie | 'Tous') => void;categoryCounts: Record<string, number> | undefined;}) => {
   // Filter categories to only show those with vendors (or "Tous")
-  const visibleCategories = CATEGORY_CONFIG.filter(cat => cat.value === 'Tous' || categoryCounts && (categoryCounts[cat.value] ?? 0) > 0);
+  const visibleCategories = CATEGORY_CONFIG.filter((cat) => cat.value === 'Tous' || categoryCounts && (categoryCounts[cat.value] ?? 0) > 0);
   return <ScrollArea className="w-full whitespace-nowrap">
       <div className="flex gap-2 pb-4">
-        {visibleCategories.map(cat => <button key={cat.value} onClick={() => onSelect(cat.value)} className={`
+        {visibleCategories.map((cat) => <button key={cat.value} onClick={() => onSelect(cat.value)} className={`
               inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium
               transition-all duration-200 whitespace-nowrap flex-shrink-0
               ${selected === cat.value ? 'bg-editorial-noir text-white shadow-md' : 'bg-white border border-border text-muted-foreground hover:border-editorial-noir/50 hover:text-editorial-noir'}
@@ -235,7 +235,7 @@ const ProfessionnelsMariable = () => {
         data
       } = await supabase.from('prestataires_rows').select('categorie').eq('visible', true).not('categorie', 'is', null);
       const counts: Record<string, number> = {};
-      data?.forEach(p => {
+      data?.forEach((p) => {
         if (p.categorie) {
           counts[p.categorie] = (counts[p.categorie] || 0) + 1;
         }
@@ -292,7 +292,7 @@ const ProfessionnelsMariable = () => {
         <HeroSection onScrollToResults={scrollToResults} isLoggedIn={isAuthenticated} />
 
         {/* How It Works */}
-        <HowItWorksSection />
+        
 
         {/* Results Section */}
         <div ref={resultsRef} className="scroll-mt-20 py-12">
@@ -309,7 +309,7 @@ const ProfessionnelsMariable = () => {
           }} className="max-w-2xl mx-auto mb-8">
               <div className="relative">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                <Input type="text" placeholder="Rechercher une marque ou un prestataire..." value={search} onChange={e => setSearch(e.target.value)} className="pl-12 pr-12 py-6 text-lg border-2 border-border focus:border-editorial-noir bg-white shadow-sm" />
+                <Input type="text" placeholder="Rechercher une marque ou un prestataire..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-12 pr-12 py-6 text-lg border-2 border-border focus:border-editorial-noir bg-white shadow-sm" />
                 {search && <button onClick={() => setSearch('')} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
                     <X className="h-5 w-5" />
                   </button>}
@@ -324,9 +324,9 @@ const ProfessionnelsMariable = () => {
             {/* Region Filter (optional - compact) */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
               <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                <select value={region || 'all'} onChange={e => setRegion(e.target.value === 'all' ? null : e.target.value)} className="w-full sm:w-auto px-4 py-2 border border-border bg-white text-sm focus:outline-none focus:ring-2 focus:ring-editorial-noir/20">
+                <select value={region || 'all'} onChange={(e) => setRegion(e.target.value === 'all' ? null : e.target.value)} className="w-full sm:w-auto px-4 py-2 border border-border bg-white text-sm focus:outline-none focus:ring-2 focus:ring-editorial-noir/20">
                   <option value="all">Toutes les régions</option>
-                  {REGIONS.map(reg => <option key={reg} value={reg}>{reg}</option>)}
+                  {REGIONS.map((reg) => <option key={reg} value={reg}>{reg}</option>)}
                 </select>
 
                 {hasActiveFilters && <Button variant="ghost" size="sm" onClick={handleReset} className="text-muted-foreground hover:text-foreground w-full sm:w-auto">
@@ -384,14 +384,14 @@ const ProfessionnelsMariable = () => {
 
                 {/* Pagination */}
                 {totalPages > 1 && <div className="flex justify-center items-center gap-2">
-                    <Button variant="outline" size="sm" onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1}>
+                    <Button variant="outline" size="sm" onClick={() => setCurrentPage((p) => Math.max(1, p - 1))} disabled={currentPage === 1}>
                       <ChevronLeft className="h-4 w-4" />
                     </Button>
 
                     <div className="flex gap-1">
                       {Array.from({
                   length: totalPages
-                }, (_, i) => i + 1).map(page => {
+                }, (_, i) => i + 1).map((page) => {
                   if (page === 1 || page === totalPages || page >= currentPage - 1 && page <= currentPage + 1) {
                     return <Button key={page} variant={currentPage === page ? "default" : "outline"} size="sm" className={`min-w-[40px] ${currentPage === page ? "bg-editorial-noir hover:bg-editorial-noir/80" : ""}`} onClick={() => setCurrentPage(page)}>
                               {page}
@@ -403,7 +403,7 @@ const ProfessionnelsMariable = () => {
                 })}
                     </div>
 
-                    <Button variant="outline" size="sm" onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}>
+                    <Button variant="outline" size="sm" onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}>
                       <ChevronRight className="h-4 w-4" />
                     </Button>
                   </div>}
