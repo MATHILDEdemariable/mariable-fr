@@ -132,6 +132,39 @@ const SEO: React.FC<SEOProps> = ({
             }
           }
         `}</script>
+        <script type="application/ld+json">{`
+          {
+            "@context": "https://schema.org",
+            "@type": "SoftwareApplication",
+            "name": "Mariable",
+            "url": "${siteUrl}",
+            "applicationCategory": "LifestyleApplication",
+            "operatingSystem": "Web",
+            "description": "Plateforme gratuite d'organisation de mariage : checklist IA, budget, plan de table, coordination jour-J. Premium à 29 € (achat unique, accès à vie).",
+            "offers": [
+              {
+                "@type": "Offer",
+                "name": "Gratuit",
+                "price": "0",
+                "priceCurrency": "EUR",
+                "description": "Accès aux outils essentiels : dashboard, checklist, budget, guide prestataires, RSVP digital"
+              },
+              {
+                "@type": "Offer",
+                "name": "Premium",
+                "price": "29",
+                "priceCurrency": "EUR",
+                "description": "Achat unique, accès à vie. Exports illimités, IA illimitée, plan de table, coordination jour-J, stockage illimité"
+              }
+            ],
+            "aggregateRating": {
+              "@type": "AggregateRating",
+              "ratingValue": "4.8",
+              "reviewCount": "150",
+              "bestRating": "5"
+            }
+          }
+        `}</script>
         {children}
       </Helmet>
       
