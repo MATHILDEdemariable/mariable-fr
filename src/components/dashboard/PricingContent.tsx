@@ -1,14 +1,42 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Check, Lock } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 const PricingContent = () => {
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
+
+  const handlePremiumClick = async () => {
+    if (!isAuthenticated) {
+      navigate('/login?redirect=premium');
+      return;
+    }
+    try {
+      setCheckoutLoading(true);
+      const { data, error } = await supabase.functions.invoke('create-checkout-session');
+      if (error || !data?.url) {
+        toast({ title: "Erreur", description: "Impossible de créer la session de paiement.", variant: "destructive" });
+        return;
+      }
+      window.location.href = data.url;
+    } catch {
+      toast({ title: "Erreur", description: "Une erreur est survenue.", variant: "destructive" });
+    } finally {
+      setCheckoutLoading(false);
+    }
+  };
+
   const faqItems = [
     { question: "Mariable est-il vraiment gratuit ?", answer: "Oui, toutes les fonctionnalités sont accessibles gratuitement. Seuls les exports PDF, les guides, l'IA illimitée et le budget illimité nécessitent le Premium." },
-    { question: "Que contient le Premium à 29 € ?", answer: "Un achat unique qui lève toutes les limitations : exports PDF/CSV illimités, IA illimitée, budget sans limite, guides mariage, stockage illimité et support prioritaire." },
+    { question: "Que contient le Premium à 29 € ?", answer: "Un achat unique qui lève toutes les limitations : exports PDF/CSV illimités, IA illimitée, budget sans limite, + 10 guides mariage & checklists PDF, stockage illimité et support prioritaire." },
     { question: "Est-ce un abonnement ?", answer: "Non, c'est un paiement unique de 29 €. Pas de renouvellement automatique." },
     { question: "Puis-je utiliser l'app avec ma famille ?", answer: "Oui, l'application est collaborative. Chacun peut accéder au planning et aux informations importantes." },
   ];
@@ -87,8 +115,8 @@ const PricingContent = () => {
                 <span className="text-xs text-foreground">Exports PDF/CSV illimités</span>
               </div>
               <div className="flex items-start gap-2">
-                <Check className="w-4 h-4 text-foreground mt-0.5 flex-shrink-0" />
-                <span className="text-xs text-foreground">Guides mariage PDF</span>
+              <span className="text-xs text-foreground">+ 10 guides mariage & checklists PDF</span>
+              <p className="text-[10px] text-muted-foreground mt-0.5">Guide jour-J · Organisation débutant · Guide prestataires · Checklist marié(e)s & proches · Checklist mairie & cérémonie</p>
               </div>
               <div className="flex items-start gap-2">
                 <Check className="w-4 h-4 text-foreground mt-0.5 flex-shrink-0" />
@@ -107,8 +135,13 @@ const PricingContent = () => {
                 <span className="text-xs text-foreground">Support prioritaire</span>
               </div>
             </div>
-            <Button asChild size="sm" className="w-full bg-foreground hover:bg-foreground/90 rounded-none">
-              <Link to="/register">Passer au Premium</Link>
+            <Button 
+              onClick={handlePremiumClick}
+              disabled={checkoutLoading}
+              size="sm" 
+              className="w-full bg-foreground hover:bg-foreground/90 rounded-none"
+            >
+              {checkoutLoading ? "Chargement..." : "Passer au Premium"}
             </Button>
           </CardContent>
         </Card>

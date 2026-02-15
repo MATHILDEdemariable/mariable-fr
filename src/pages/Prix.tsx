@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import SEO from '@/components/SEO';
 import PremiumHeader from '@/components/home/PremiumHeader';
 import Footer from '@/components/Footer';
@@ -7,18 +7,46 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Check, X, Lock } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 const Prix = () => {
   const isMobile = useIsMobile();
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
+  const handlePremiumClick = async () => {
+    if (!isAuthenticated) {
+      navigate('/login?redirect=premium');
+      return;
+    }
+    try {
+      setCheckoutLoading(true);
+      const { data, error } = await supabase.functions.invoke('create-checkout-session');
+      if (error || !data?.url) {
+        toast({ title: "Erreur", description: "Impossible de créer la session de paiement.", variant: "destructive" });
+        return;
+      }
+      window.location.href = data.url;
+    } catch {
+      toast({ title: "Erreur", description: "Une erreur est survenue.", variant: "destructive" });
+    } finally {
+      setCheckoutLoading(false);
+    }
+  };
+
   const comparisonRows = [
     { name: "Toutes les fonctionnalités (checklist, RSVP, plan de table, coordination jour-J…)", gratuit: "✓", premium: "✓" },
     { name: "Exports PDF/CSV des modules", gratuit: "Non inclus", premium: "Illimités" },
-    { name: "Guides mariage PDF", gratuit: "Non inclus", premium: "Inclus" },
+    { name: "Guides mariage & checklists PDF (10 guides)", gratuit: "Non inclus", premium: "+ 10 guides inclus" },
     { name: "Utilisation IA (checklist, rétroplanning, moodboard)", gratuit: "1 génération par outil", premium: "Illimitée" },
     { name: "Gestion budget (lignes par catégorie)", gratuit: "3 lignes max", premium: "Illimitée" },
     { name: "Stockage documents", gratuit: "2 documents", premium: "Illimité" },
@@ -149,7 +177,10 @@ const Prix = () => {
                         </div>
                         <div className="flex items-start gap-2">
                           <Check className="w-4 h-4 text-editorial-noir mt-1 flex-shrink-0" />
-                          <span className="text-sm text-editorial-noir">Guides mariage PDF inclus</span>
+                          <div>
+                            <span className="text-sm text-editorial-noir">+ 10 guides mariage & checklists PDF</span>
+                            <p className="text-xs text-editorial-noir/50 mt-1">Guide jour-J · Organisation débutant · Guide prestataires · Checklist marié(e)s & proches · Checklist mairie & cérémonie</p>
+                          </div>
                         </div>
                         <div className="flex items-start gap-2">
                           <Check className="w-4 h-4 text-editorial-noir mt-1 flex-shrink-0" />
@@ -168,8 +199,12 @@ const Prix = () => {
                           <span className="text-sm text-editorial-noir">Support prioritaire</span>
                         </div>
                       </div>
-                      <Button asChild className="w-full mt-6 bg-editorial-noir text-white hover:bg-editorial-noir/90 rounded-none">
-                        <Link to="/register">Passer au Premium</Link>
+                      <Button 
+                        onClick={handlePremiumClick}
+                        disabled={checkoutLoading}
+                        className="w-full mt-6 bg-editorial-noir text-white hover:bg-editorial-noir/90 rounded-none"
+                      >
+                        {checkoutLoading ? "Chargement..." : "Passer au Premium"}
                       </Button>
                     </CardContent>
                   </Card>
@@ -231,8 +266,12 @@ const Prix = () => {
                     <Button asChild className="bg-editorial-noir text-white hover:bg-editorial-noir/90 rounded-none">
                       <Link to="/register">S'inscrire gratuitement</Link>
                     </Button>
-                    <Button asChild className="bg-editorial-noir text-white hover:bg-editorial-noir/90 rounded-none">
-                      <Link to="/register">Passer au Premium</Link>
+                    <Button 
+                      onClick={handlePremiumClick}
+                      disabled={checkoutLoading}
+                      className="bg-editorial-noir text-white hover:bg-editorial-noir/90 rounded-none"
+                    >
+                      {checkoutLoading ? "Chargement..." : "Passer au Premium"}
                     </Button>
                   </div>
                 </>
@@ -277,8 +316,13 @@ const Prix = () => {
               <Button asChild size="lg" className="bg-editorial-noir text-white hover:bg-editorial-noir/90 rounded-none">
                 <Link to="/register">Commencer gratuitement</Link>
               </Button>
-              <Button asChild size="lg" className="border border-editorial-noir text-editorial-noir bg-transparent hover:bg-editorial-noir hover:text-white rounded-none">
-                <Link to="/register">Découvrir le Premium — 29 €</Link>
+              <Button 
+                onClick={handlePremiumClick}
+                disabled={checkoutLoading}
+                size="lg" 
+                className="border border-editorial-noir text-editorial-noir bg-transparent hover:bg-editorial-noir hover:text-white rounded-none"
+              >
+                {checkoutLoading ? "Chargement..." : "Découvrir le Premium — 29 €"}
               </Button>
             </div>
           </div>

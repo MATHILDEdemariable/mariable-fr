@@ -1,11 +1,14 @@
-import React from 'react';
-import { Calendar, Users, CheckCircle2, Trophy } from 'lucide-react';
+import React, { useState } from 'react';
+import { Calendar, Users, CheckCircle2, Trophy, Crown } from 'lucide-react';
 import { format, differenceInDays } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { useUserProfile } from '@/hooks/useUserProfile';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 interface HeroStatsProps {
   firstName?: string | null;
@@ -26,6 +29,25 @@ const HeroStats: React.FC<HeroStatsProps> = ({
 }) => {
   const today = new Date();
   const daysUntilWedding = weddingDate ? differenceInDays(weddingDate, today) : null;
+  const { isPremium } = useUserProfile();
+  const { toast } = useToast();
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
+
+  const handlePremiumClick = async () => {
+    try {
+      setCheckoutLoading(true);
+      const { data, error } = await supabase.functions.invoke('create-checkout-session');
+      if (error || !data?.url) {
+        toast({ title: "Erreur", description: "Impossible de créer la session de paiement.", variant: "destructive" });
+        return;
+      }
+      window.location.href = data.url;
+    } catch {
+      toast({ title: "Erreur", description: "Une erreur est survenue.", variant: "destructive" });
+    } finally {
+      setCheckoutLoading(false);
+    }
+  };
 
   const greeting = firstName ? `Bienvenue, ${firstName} !` : "Bienvenue dans l'univers Mariable !";
 
@@ -137,7 +159,24 @@ const HeroStats: React.FC<HeroStatsProps> = ({
             <div className="p-2 rounded-lg bg-[#7F9474]/10">
               <CheckCircle2 className="w-5 h-5 text-[#7F9474]" />
             </div>
-            <Trophy className="w-4 h-4 text-[#d4af37]" />
+            <div className="flex items-center gap-2">
+              {isPremium ? (
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-[#d4af37]/10 text-[#d4af37] text-xs font-semibold rounded">
+                  <Crown className="w-3 h-3" /> Premium
+                </span>
+              ) : (
+                <Button
+                  onClick={handlePremiumClick}
+                  disabled={checkoutLoading}
+                  size="sm"
+                  className="bg-editorial-noir hover:bg-editorial-noir/80 text-white rounded-none text-xs px-3 py-1 h-auto"
+                >
+                  <Crown className="w-3 h-3 mr-1" />
+                  {checkoutLoading ? "..." : "Premium"}
+                </Button>
+              )}
+              <Trophy className="w-4 h-4 text-[#d4af37]" />
+            </div>
           </div>
           
           <div className="space-y-1">
