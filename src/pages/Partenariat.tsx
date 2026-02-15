@@ -316,7 +316,7 @@ const Partenariat = () => {
                 <ul className="space-y-3 mb-8">
                   {[
                     "Fiche éditorialisée sur le site",
-                    "Guide d'accueil digitalisé personnalisé inclus (modèle Mariable)",
+                    "Guide d'accueil digitalisé personnalisé inclus (modèle Mariable voir ci-dessous)",
                     "Votre URL dédiée mariable.fr/votrenom",
                     "Mise en avant Instagram : posts & stories réguliers et à la demande (max 10/an)",
                     "Article dans la newsletter futurs mariés (+1000 contacts) à la demande",
