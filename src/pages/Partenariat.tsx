@@ -354,6 +354,7 @@ const Partenariat = () => {
                     "Guide d'accueil à la demande (modèle personnalisé)",
                     "Création ou refonte de site internet",
                     "Conseil en communication digitale / community management",
+                    "Création de contenu : interview spécifique, court réel",
                   ].map((item, index) => (
                     <li key={index} className="flex items-start gap-2 text-sm">
                       <CheckCircle className="w-4 h-4 text-premium-sage shrink-0 mt-0.5" />
