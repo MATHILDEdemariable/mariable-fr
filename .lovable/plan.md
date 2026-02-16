@@ -4,69 +4,82 @@
 
 ---
 
-### 1. Correction erreur envoi contact_requests (Site Internet)
+### 1. Partenariat : ajouter une section "Exemple de posts / stories"
 
-**Cause** : La table `contact_requests` a une contrainte CHECK sur la colonne `type` qui n'accepte que : `couple, lieu, marque, prestataire, bug, feature, account, suggestion, other`. Le modal envoie `type: 'site_internet'` qui est rejete par la base de donnees.
+**Fichier : `src/pages/Partenariat.tsx`**
 
-**Solution** : Migration SQL pour ajouter `'site_internet'` a la liste des types autorises.
+Ajouter une nouvelle section entre "En resume" et le formulaire, avec le titre "Exemple de posts / stories" et une liste de types de publications :
 
-**Migration SQL** :
-```sql
-ALTER TABLE contact_requests DROP CONSTRAINT contact_requests_type_check;
-ALTER TABLE contact_requests ADD CONSTRAINT contact_requests_type_check 
-  CHECK (type = ANY (ARRAY['couple','lieu','marque','prestataire','bug','feature','account','suggestion','other','site_internet']));
-```
+- Actualites
+- Date restante ou offre promotionnelle
+- Publication d'un mariage
+- Un texte : "Nous vous mettrons en avant regulierement et a vous de nous solliciter"
 
----
-
-### 2. Panier coupe par le sticky header sur l'accueil
-
-**Cause** : Le bouton panier (`CartIcon.tsx`) est positionne en `fixed top-24` (96px). Sur la homepage, le header a 2 niveaux (h-16 + h-10 = ~104px), donc le panier est partiellement cache derriere le bandeau beige.
-
-**Fichier : `src/components/cart/CartIcon.tsx`**
-
-- Changer `top-24` en `top-28` ou `top-32` pour pousser le panier sous les 2 niveaux du header sur la homepage
-- Alternative plus robuste : utiliser `top-20` par defaut et ajouter une marge supplementaire uniquement sur la homepage via une prop ou un calcul dynamique. Toutefois pour rester simple, `top-32` (128px) devrait fonctionner partout.
+Style : meme esthetique editoriale que le reste de la page (beige, noir, Playfair Display, sans arrondis).
 
 ---
 
-### 3. Creer la page /exemplesite (duplicata de /severine-et-olivier)
+### 2. Admin Contact : repondre par email via Resend (mathilde@mariable.fr)
 
-**Nouveau fichier : `src/pages/ExempleSite.tsx`**
+**Situation actuelle** : Le bouton "Repondre par email" ouvre `mailto:` dans le client mail local. L'utilisateur veut envoyer directement depuis l'interface via Resend avec l'adresse `mathilde@mariable.fr`.
 
-- Copie de `WeddingSeverineOlivier.tsx` avec les modifications suivantes :
-  - Couple : noms generiques (ex: "Marie & Thomas")
-  - Lieu : "Domaine de l'Amour" au lieu de "Chateau de Saint Clair"
-  - Adresse : "Provence, Sud de la France"
-  - Supprimer tous les numeros de telephone des contacts
-  - Garder les emails generiques (ex: contact@exemple.fr)
-  - Supprimer le RSVP slug reel (utiliser un slug factice ou desactiver le formulaire)
-  - Garder la meme structure et les memes couleurs
-  - Mettre a jour le Helmet (titre, meta)
+**Nouveau fichier : `supabase/functions/reply-contact-request/index.ts`**
 
-**Fichier : `src/App.tsx`**
+Edge function qui :
+- Recoit `to` (email destinataire), `subject`, `body`, `requestId`
+- Envoie l'email via Resend avec `from: "Mariable <mathilde@mariable.fr>"` (le secret RESEND existe deja)
+- Retourne le succes/erreur
 
-- Ajouter la route `/exemplesite` avec lazy import de `ExempleSite`
+**Fichier : `src/pages/admin/ContactRequests.tsx`**
+
+Modifier le dialog de detail :
+- Remplacer le bouton `mailto:` par un formulaire inline avec :
+  - Champ sujet (pre-rempli avec "Re: Votre demande du DD/MM/YYYY")
+  - Zone de texte pour la reponse (pre-remplie avec le template actuel)
+  - Bouton "Envoyer via Resend" qui appelle l'edge function
+- Afficher un toast de confirmation ou d'erreur apres l'envoi
+- Ajouter un etat de chargement pendant l'envoi
 
 ---
 
-### 4. Mettre a jour le modal Site Internet
+### 3. Page /comparatif : design editorial (beige/noir, sans arrondis)
 
-**Fichier : `src/components/dashboard/SiteInternetModal.tsx`**
+**Fichier : `src/pages/Comparatif.tsx`**
 
-- Changer le lien "Voir un exemple" de `/severine-et-olivier` vers `/exemplesite`
-- Ajouter un texte explicatif apres le formulaire ou dans la description : "Apres votre demande, nous vous recontacterons par email puis par WhatsApp pour valider ensemble les images et textes de votre site."
-- Mettre a jour le message de confirmation : "Nous vous recontacterons par email puis WhatsApp sous 24h pour creer votre site ensemble."
+- Changer `bg-white` en `bg-editorial-beige` pour le hero
+- Garder le fond blanc general mais harmoniser avec la page /prix
+
+**Fichier : `src/components/comparatif/ComparatifTable.tsx`**
+
+Remplacer les couleurs et arrondis pour correspondre au design de /prix :
+- Supprimer toutes les classes `rounded-*` (utiliser `rounded-none`)
+- Remplacer `wedding-olive` par `editorial-noir` (textes, bordures, badges)
+- Remplacer `bg-wedding-olive` par `bg-editorial-noir` pour le header "Recommande"
+- Remplacer `bg-wedding-olive/10` par `bg-editorial-beige`
+- Les status "best" utilisent `text-editorial-noir` au lieu de `text-wedding-olive`
+- Supprimer le jaune (`amber`) : remplacer par du gris ou noir/70
+- Cards mobiles : bordures `border-editorial-noir/10`, pas d'arrondis
+
+---
+
+### 4. Dashboard : message mobile-first pour les modules d'organisation
+
+**Fichier : `src/components/dashboard/DashboardLayout.tsx`**
+
+Ajouter un bandeau informatif visible uniquement sur mobile (`isMobile`) en haut du contenu principal :
+- Fond `bg-editorial-beige` avec bordure
+- Icone info + texte : "Pour une meilleure experience, utilisez un ordinateur ou une tablette pour les modules d'organisation. Seul le module Jour-J est optimise pour mobile."
+- Bouton de fermeture (stockage en `localStorage` pour ne pas re-afficher)
 
 ---
 
 ### Resume technique
 
-| Fichier | Modification |
-|---------|-------------|
-| Migration SQL | Ajouter `site_internet` a la contrainte CHECK de `contact_requests.type` |
-| `src/components/cart/CartIcon.tsx` | Ajuster `top-24` en `top-32` pour eviter le chevauchement header |
-| `src/pages/ExempleSite.tsx` | Nouveau : duplicata anonymise (faux lieu, pas de telephone) |
-| `src/App.tsx` | Ajouter route `/exemplesite` |
-| `src/components/dashboard/SiteInternetModal.tsx` | Lien vers `/exemplesite`, texte recontact email+WhatsApp |
+| Element | Fichier(s) | Type |
+|---------|-----------|------|
+| Section posts/stories | `src/pages/Partenariat.tsx` | Modification |
+| Reponse email Resend | `supabase/functions/reply-contact-request/index.ts` | Nouveau |
+| Reponse email UI | `src/pages/admin/ContactRequests.tsx` | Modification |
+| Design comparatif | `src/pages/Comparatif.tsx`, `src/components/comparatif/ComparatifTable.tsx` | Modification |
+| Message mobile dashboard | `src/components/dashboard/DashboardLayout.tsx` | Modification |
 
