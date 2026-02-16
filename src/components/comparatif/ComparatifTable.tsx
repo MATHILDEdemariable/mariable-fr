@@ -1,6 +1,5 @@
 import { Check, X, Crown, Users, Clock, Heart, Shield, Sparkles } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface ComparisonOption {
   value: string;
@@ -71,13 +70,13 @@ const comparisons: Comparison[] = [
 const getStatusIcon = (status: string) => {
   switch (status) {
     case "best":
-      return <Check className="w-5 h-5 text-wedding-olive" />;
+      return <Check className="w-5 h-5 text-editorial-noir" />;
     case "ok":
-      return <Check className="w-5 h-5 text-gray-500" />;
+      return <Check className="w-5 h-5 text-editorial-noir/50" />;
     case "warning":
-      return <X className="w-5 h-5 text-amber-600" />;
+      return <X className="w-5 h-5 text-editorial-noir/40" />;
     case "bad":
-      return <X className="w-5 h-5 text-gray-600" />;
+      return <X className="w-5 h-5 text-editorial-noir/60" />;
     default:
       return null;
   }
@@ -86,93 +85,93 @@ const getStatusIcon = (status: string) => {
 const getStatusColor = (status: string) => {
   switch (status) {
     case "best":
-      return "border-wedding-olive/30 bg-wedding-olive/5";
+      return "border-editorial-noir/20 bg-editorial-beige";
     case "ok":
-      return "border-gray-300 bg-gray-50";
+      return "border-editorial-noir/10 bg-gray-50";
     case "warning":
-      return "border-amber-300 bg-amber-50";
+      return "border-editorial-noir/10 bg-gray-50";
     case "bad":
-      return "border-gray-400 bg-gray-100";
+      return "border-editorial-noir/10 bg-gray-100";
     default:
-      return "border-gray-200 bg-gray-50";
+      return "border-editorial-noir/10 bg-gray-50";
   }
 };
 
 const MobileComparatifView = () => (
   <div className="space-y-6">
     {/* Card Organiser seul */}
-    <Card className="border-2 border-gray-300">
-      <CardHeader className="bg-gray-50">
-        <CardTitle className="text-center text-lg">Organiser seul</CardTitle>
-        <p className="text-sm text-muted-foreground text-center">Autonomie totale</p>
-      </CardHeader>
-      <CardContent className="pt-4 space-y-3">
+    <div className="border border-editorial-noir/10">
+      <div className="bg-gray-50 p-4">
+        <h3 className="text-center text-lg font-serif text-editorial-noir">Organiser seul</h3>
+        <p className="text-sm text-editorial-noir/60 text-center">Autonomie totale</p>
+      </div>
+      <div className="p-4 space-y-3">
         {comparisons.map((comp) => (
-          <div key={comp.category} className={`p-3 rounded-lg border-2 ${getStatusColor(comp.seul.status)}`}>
+          <div key={comp.category} className={`p-3 border ${getStatusColor(comp.seul.status)}`}>
             <div className="flex items-center justify-between mb-1">
               <div className="flex items-center gap-2">
                 {comp.icon}
-                <span className="font-medium text-sm">{comp.category}</span>
+                <span className="font-medium text-sm text-editorial-noir">{comp.category}</span>
               </div>
               {getStatusIcon(comp.seul.status)}
             </div>
-            <p className="font-semibold text-sm">{comp.seul.value}</p>
-            <p className="text-xs text-muted-foreground">{comp.seul.description}</p>
+            <p className="font-semibold text-sm text-editorial-noir">{comp.seul.value}</p>
+            <p className="text-xs text-editorial-noir/60">{comp.seul.description}</p>
           </div>
         ))}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
 
     {/* Card Wedding Planner */}
-    <Card className="border-2 border-gray-300">
-      <CardHeader className="bg-gray-50">
-        <CardTitle className="text-center text-lg">Wedding Planner</CardTitle>
-        <p className="text-sm text-muted-foreground text-center">Service traditionnel</p>
-      </CardHeader>
-      <CardContent className="pt-4 space-y-3">
+    <div className="border border-editorial-noir/10">
+      <div className="bg-gray-50 p-4">
+        <h3 className="text-center text-lg font-serif text-editorial-noir">Wedding Planner</h3>
+        <p className="text-sm text-editorial-noir/60 text-center">Service traditionnel</p>
+      </div>
+      <div className="p-4 space-y-3">
         {comparisons.map((comp) => (
-          <div key={comp.category} className={`p-3 rounded-lg border-2 ${getStatusColor(comp.weddingPlanner.status)}`}>
+          <div key={comp.category} className={`p-3 border ${getStatusColor(comp.weddingPlanner.status)}`}>
             <div className="flex items-center justify-between mb-1">
               <div className="flex items-center gap-2">
                 {comp.icon}
-                <span className="font-medium text-sm">{comp.category}</span>
+                <span className="font-medium text-sm text-editorial-noir">{comp.category}</span>
               </div>
               {getStatusIcon(comp.weddingPlanner.status)}
             </div>
-            <p className="font-semibold text-sm">{comp.weddingPlanner.value}</p>
-            <p className="text-xs text-muted-foreground">{comp.weddingPlanner.description}</p>
+            <p className="font-semibold text-sm text-editorial-noir">{comp.weddingPlanner.value}</p>
+            <p className="text-xs text-editorial-noir/60">{comp.weddingPlanner.description}</p>
           </div>
         ))}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
 
     {/* Card Mariable - Recommandée */}
-    <Card className="border-2 border-wedding-olive shadow-lg relative">
+    <div className="border-2 border-editorial-noir shadow-lg relative">
       <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-10">
-        <span className="bg-wedding-olive text-white px-4 py-1 rounded-full text-sm font-medium">
+        <span className="bg-editorial-noir text-white px-4 py-1 text-sm font-medium">
           Recommandé
         </span>
       </div>
-      <CardHeader className="bg-gradient-to-br from-wedding-olive/10 to-wedding-olive/5">
-        <CardTitle className="text-center text-lg text-wedding-olive">Mariable</CardTitle>
-        <p className="text-sm text-muted-foreground text-center">Solution moderne</p>
-      </CardHeader>
-      <CardContent className="pt-4 space-y-3">
+      <div className="bg-editorial-beige p-4">
+        <h3 className="text-center text-lg font-serif text-editorial-noir">Mariable</h3>
+        <p className="text-sm text-editorial-noir/60 text-center">Solution moderne</p>
+      </div>
+      <div className="p-4 space-y-3">
         {comparisons.map((comp) => (
-          <div key={comp.category} className={`p-3 rounded-lg border-2 ${getStatusColor(comp.mariable.status)}`}>
+          <div key={comp.category} className={`p-3 border ${getStatusColor(comp.mariable.status)}`}>
             <div className="flex items-center justify-between mb-1">
               <div className="flex items-center gap-2">
                 {comp.icon}
-                <span className="font-medium text-sm">{comp.category}</span>
+                <span className="font-medium text-sm text-editorial-noir">{comp.category}</span>
               </div>
               {getStatusIcon(comp.mariable.status)}
             </div>
-            <p className="font-semibold text-sm">{comp.mariable.value}</p>
-            <p className="text-xs text-muted-foreground">{comp.mariable.description}</p>
+            <p className="font-semibold text-sm text-editorial-noir">{comp.mariable.value}</p>
+            <p className="text-xs text-editorial-noir/60">{comp.mariable.description}</p>
           </div>
         ))}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   </div>
 );
 
@@ -181,22 +180,22 @@ const DesktopComparatifView = () => (
     {/* Headers */}
     <div className="grid grid-cols-4 gap-4 mb-8">
       <div></div>
-      <div className="text-center p-6 bg-card rounded-2xl shadow-sm border">
-        <h3 className="text-lg font-semibold mb-2">Organiser seul</h3>
-        <p className="text-sm text-muted-foreground">Autonomie totale</p>
+      <div className="text-center p-6 bg-white border border-editorial-noir/10">
+        <h3 className="text-lg font-serif text-editorial-noir mb-2">Organiser seul</h3>
+        <p className="text-sm text-editorial-noir/60">Autonomie totale</p>
       </div>
-      <div className="text-center p-6 bg-card rounded-2xl shadow-sm border">
-        <h3 className="text-lg font-semibold mb-2">Wedding Planner</h3>
-        <p className="text-sm text-muted-foreground">Service traditionnel</p>
+      <div className="text-center p-6 bg-white border border-editorial-noir/10">
+        <h3 className="text-lg font-serif text-editorial-noir mb-2">Wedding Planner</h3>
+        <p className="text-sm text-editorial-noir/60">Service traditionnel</p>
       </div>
-      <div className="text-center p-6 bg-gradient-to-br from-wedding-olive to-wedding-olive/80 rounded-2xl shadow-lg border border-wedding-olive/20 relative">
+      <div className="text-center p-6 bg-editorial-noir border border-editorial-noir relative">
         <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-          <span className="bg-wedding-olive text-white px-4 py-1 rounded-full text-sm font-medium">
+          <span className="bg-editorial-noir text-white px-4 py-1 text-sm font-medium">
             Recommandé
           </span>
         </div>
-        <h3 className="text-lg font-semibold text-white mb-2">Mariable</h3>
-        <p className="text-sm text-white/90">Solution moderne</p>
+        <h3 className="text-lg font-serif text-white mb-2">Mariable</h3>
+        <p className="text-sm text-white/80">Solution moderne</p>
       </div>
     </div>
 
@@ -205,40 +204,40 @@ const DesktopComparatifView = () => (
       {comparisons.map((comparison, index) => (
         <div key={index} className="grid grid-cols-4 gap-4">
           {/* Category */}
-          <div className="flex items-center p-4 bg-card rounded-2xl shadow-sm border">
+          <div className="flex items-center p-4 bg-white border border-editorial-noir/10">
             <div className="flex items-center space-x-3">
-              <div className="p-2 bg-wedding-olive/10 rounded-lg text-wedding-olive">
+              <div className="p-2 bg-editorial-beige text-editorial-noir">
                 {comparison.icon}
               </div>
-              <span className="font-medium">{comparison.category}</span>
+              <span className="font-medium text-editorial-noir">{comparison.category}</span>
             </div>
           </div>
 
           {/* Seul */}
-          <div className={`p-4 rounded-2xl shadow-sm border-2 ${getStatusColor(comparison.seul.status)}`}>
+          <div className={`p-4 border ${getStatusColor(comparison.seul.status)}`}>
             <div className="flex items-start justify-between mb-2">
-              <span className="font-semibold">{comparison.seul.value}</span>
+              <span className="font-semibold text-editorial-noir">{comparison.seul.value}</span>
               {getStatusIcon(comparison.seul.status)}
             </div>
-            <p className="text-sm text-muted-foreground">{comparison.seul.description}</p>
+            <p className="text-sm text-editorial-noir/60">{comparison.seul.description}</p>
           </div>
 
           {/* Wedding Planner */}
-          <div className={`p-4 rounded-2xl shadow-sm border-2 ${getStatusColor(comparison.weddingPlanner.status)}`}>
+          <div className={`p-4 border ${getStatusColor(comparison.weddingPlanner.status)}`}>
             <div className="flex items-start justify-between mb-2">
-              <span className="font-semibold">{comparison.weddingPlanner.value}</span>
+              <span className="font-semibold text-editorial-noir">{comparison.weddingPlanner.value}</span>
               {getStatusIcon(comparison.weddingPlanner.status)}
             </div>
-            <p className="text-sm text-muted-foreground">{comparison.weddingPlanner.description}</p>
+            <p className="text-sm text-editorial-noir/60">{comparison.weddingPlanner.description}</p>
           </div>
 
           {/* Mariable */}
-          <div className={`p-4 rounded-2xl shadow-lg border-2 ${getStatusColor(comparison.mariable.status)}`}>
+          <div className={`p-4 shadow-sm border ${getStatusColor(comparison.mariable.status)}`}>
             <div className="flex items-start justify-between mb-2">
-              <span className="font-semibold">{comparison.mariable.value}</span>
+              <span className="font-semibold text-editorial-noir">{comparison.mariable.value}</span>
               {getStatusIcon(comparison.mariable.status)}
             </div>
-            <p className="text-sm text-muted-foreground">{comparison.mariable.description}</p>
+            <p className="text-sm text-editorial-noir/60">{comparison.mariable.description}</p>
           </div>
         </div>
       ))}

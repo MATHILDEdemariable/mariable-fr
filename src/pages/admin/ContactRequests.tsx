@@ -8,8 +8,12 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { supabase } from '@/integrations/supabase/client';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { Heart, Building, Briefcase, User, MessageSquare, Loader2, Bug, HelpCircle, UserX, Lightbulb, MoreHorizontal, Mail } from 'lucide-react';
+import { Heart, Building, Briefcase, User, MessageSquare, Loader2, Bug, HelpCircle, UserX, Lightbulb, MoreHorizontal, Mail, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { toast } from '@/hooks/use-toast';
 
 interface ContactRequest {
   id: string;
@@ -26,6 +30,10 @@ const ContactRequests = () => {
   const [loading, setLoading] = useState(true);
   const [typeFilter, setTypeFilter] = useState<string>('all');
   const [selectedRequest, setSelectedRequest] = useState<ContactRequest | null>(null);
+  const [replyMode, setReplyMode] = useState(false);
+  const [replySubject, setReplySubject] = useState('');
+  const [replyBody, setReplyBody] = useState('');
+  const [sendingReply, setSendingReply] = useState(false);
 
   useEffect(() => {
     loadRequests();
@@ -44,6 +52,48 @@ const ContactRequests = () => {
       console.error('Error loading contact requests:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const openReplyMode = (request: ContactRequest) => {
+    const dateFormatted = format(new Date(request.created_at), 'dd/MM/yyyy', { locale: fr });
+    setReplySubject(`Re: Votre demande du ${dateFormatted}`);
+    setReplyBody(`Bonjour,\n\nSuite à votre message :\n\n"${request.message.substring(0, 200)}${request.message.length > 200 ? '...' : ''}"\n\nCordialement,\nL'équipe Mariable`);
+    setReplyMode(true);
+  };
+
+  const handleSendReply = async () => {
+    if (!selectedRequest || !replySubject.trim() || !replyBody.trim()) return;
+
+    setSendingReply(true);
+    try {
+      console.log('🚀 Sending reply to:', selectedRequest.email);
+      const { data, error } = await supabase.functions.invoke('reply-contact-request', {
+        body: {
+          to: selectedRequest.email,
+          subject: replySubject,
+          body: replyBody,
+        },
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: 'Email envoyé',
+        description: `Réponse envoyée à ${selectedRequest.email}`,
+      });
+      setReplyMode(false);
+      setSelectedRequest(null);
+      console.log('✅ Reply sent successfully');
+    } catch (error) {
+      console.error('❌ Failed to send reply:', error);
+      toast({
+        title: 'Erreur',
+        description: "Impossible d'envoyer l'email. Vérifiez la configuration Resend.",
+        variant: 'destructive',
+      });
+    } finally {
+      setSendingReply(false);
     }
   };
 
@@ -255,7 +305,7 @@ const ContactRequests = () => {
                       </TableCell>
                       <TableCell className="max-w-md">
                         <button 
-                          onClick={() => setSelectedRequest(request)}
+                          onClick={() => { setSelectedRequest(request); setReplyMode(false); }}
                           className="text-left hover:text-wedding-olive transition-colors"
                         >
                           <p className="truncate max-w-[300px]" title="Cliquer pour voir le message complet">
@@ -272,7 +322,7 @@ const ContactRequests = () => {
         </Card>
 
         {/* Dialog pour voir le message complet */}
-        <Dialog open={!!selectedRequest} onOpenChange={() => setSelectedRequest(null)}>
+        <Dialog open={!!selectedRequest} onOpenChange={() => { setSelectedRequest(null); setReplyMode(false); }}>
           <DialogContent className="max-w-lg">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
@@ -298,9 +348,7 @@ const ContactRequests = () => {
                   </div>
                   <div>
                     <p className="text-gray-500 mb-1">Email</p>
-                    <a href={`mailto:${selectedRequest.email}`} className="text-wedding-olive hover:underline font-medium">
-                      {selectedRequest.email}
-                    </a>
+                    <p className="text-wedding-olive font-medium">{selectedRequest.email}</p>
                   </div>
                   <div>
                     <p className="text-gray-500 mb-1">Téléphone</p>
@@ -320,20 +368,55 @@ const ContactRequests = () => {
                   </div>
                 </div>
                 
-                {/* Bouton répondre par email */}
-                <div className="flex gap-3 pt-4 border-t">
-                  <Button
-                    onClick={() => {
-                      const subject = encodeURIComponent(`Re: Votre demande du ${format(new Date(selectedRequest.created_at), 'dd/MM/yyyy', { locale: fr })}`);
-                      const body = encodeURIComponent(`Bonjour,\n\nSuite à votre message :\n\n"${selectedRequest.message.substring(0, 200)}${selectedRequest.message.length > 200 ? '...' : ''}"\n\nCordialement,\nL'équipe Mariable`);
-                      window.location.href = `mailto:${selectedRequest.email}?subject=${subject}&body=${body}`;
-                    }}
-                    className="flex-1 bg-wedding-olive hover:bg-wedding-olive/90 text-white"
-                  >
-                    <Mail className="w-4 h-4 mr-2" />
-                    Répondre par email
-                  </Button>
-                </div>
+                {!replyMode ? (
+                  <div className="flex gap-3 pt-4 border-t">
+                    <Button
+                      onClick={() => openReplyMode(selectedRequest)}
+                      className="flex-1 bg-wedding-olive hover:bg-wedding-olive/90 text-white"
+                    >
+                      <Mail className="w-4 h-4 mr-2" />
+                      Répondre par email
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="space-y-3 pt-4 border-t">
+                    <p className="text-xs text-gray-500">Envoi depuis mathilde@mariable.fr via Resend</p>
+                    <div>
+                      <Label htmlFor="reply-subject">Sujet</Label>
+                      <Input
+                        id="reply-subject"
+                        value={replySubject}
+                        onChange={(e) => setReplySubject(e.target.value)}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="reply-body">Message</Label>
+                      <Textarea
+                        id="reply-body"
+                        value={replyBody}
+                        onChange={(e) => setReplyBody(e.target.value)}
+                        rows={8}
+                      />
+                    </div>
+                    <div className="flex gap-2">
+                      <Button
+                        onClick={handleSendReply}
+                        disabled={sendingReply}
+                        className="flex-1 bg-wedding-olive hover:bg-wedding-olive/90 text-white"
+                      >
+                        {sendingReply ? (
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        ) : (
+                          <Send className="w-4 h-4 mr-2" />
+                        )}
+                        {sendingReply ? 'Envoi...' : 'Envoyer via Resend'}
+                      </Button>
+                      <Button variant="outline" onClick={() => setReplyMode(false)} disabled={sendingReply}>
+                        Annuler
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </DialogContent>
