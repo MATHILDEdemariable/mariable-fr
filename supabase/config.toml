@@ -48,3 +48,6 @@ verify_jwt = false
 
 [functions.send-welcome-couple-email]
 verify_jwt = false
+
+[functions.reply-contact-request]
+verify_jwt = false

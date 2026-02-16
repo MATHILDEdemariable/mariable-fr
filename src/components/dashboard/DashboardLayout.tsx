@@ -4,7 +4,7 @@ import DashboardSidebar from './DashboardSidebar';
 import MobileBottomNav from './MobileBottomNav';
 import { useIsMobile } from '@/hooks/use-mobile';
 import PremiumHeader from '@/components/home/PremiumHeader';
-import { Home, Users } from 'lucide-react';
+import { Home, Users, Info, X } from 'lucide-react';
 import { useReaderMode } from '@/contexts/ReaderModeContext';
 import SatisfactionModal from './SatisfactionModal';
 import { supabase } from '@/integrations/supabase/client';
@@ -24,6 +24,9 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   const {
     isReaderMode
   } = useReaderMode();
+  const [showMobileBanner, setShowMobileBanner] = useState(() => {
+    return !localStorage.getItem('dashboard_mobile_banner_dismissed');
+  });
 
   // Vérifier si l'utilisateur doit voir la modal de satisfaction
   useEffect(() => {
@@ -103,6 +106,23 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         {/* Main content area - with bottom padding for mobile nav */}
         <div className="flex-1 flex justify-start items-start transition-all duration-300">
           <main className={`w-full px-2 sm:px-3 lg:px-4 pt-44 ${isMobile ? 'pb-24' : 'pb-6'}`} data-page-root>
+            {isMobile && showMobileBanner && (
+              <div className="mb-4 p-3 bg-editorial-beige border border-editorial-noir/10 flex items-start gap-3">
+                <Info className="h-5 w-5 text-editorial-noir shrink-0 mt-0.5" />
+                <p className="text-sm text-editorial-noir/80 flex-1">
+                  Pour une meilleure expérience, utilisez un ordinateur ou une tablette pour les modules d'organisation. Seul le module Jour-J est optimisé pour mobile.
+                </p>
+                <button
+                  onClick={() => {
+                    setShowMobileBanner(false);
+                    localStorage.setItem('dashboard_mobile_banner_dismissed', 'true');
+                  }}
+                  className="shrink-0"
+                >
+                  <X className="h-4 w-4 text-editorial-noir/50" />
+                </button>
+              </div>
+            )}
             {children || <Outlet />}
           </main>
         </div>

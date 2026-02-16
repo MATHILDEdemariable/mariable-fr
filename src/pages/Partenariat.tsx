@@ -17,6 +17,7 @@ import {
   Users,
   Award,
   Target,
+  Clock,
 } from "lucide-react";
 import PremiumHeader from "@/components/home/PremiumHeader";
 import Footer from "@/components/Footer";
@@ -548,6 +549,50 @@ const Partenariat = () => {
                 "Ce n'est pas une plateforme de volume. C'est une plateforme d'expérience."
               </p>
             </motion.div>
+          </div>
+        </section>
+
+        {/* Section Exemple de posts / stories */}
+        <section className="py-16 px-4 bg-white">
+          <div className="container mx-auto max-w-4xl">
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-2xl md:text-3xl font-serif text-editorial-noir text-center mb-10"
+            >
+              Exemple de posts / stories
+            </motion.h2>
+            <div className="grid sm:grid-cols-2 gap-4 mb-8">
+              {[
+                { icon: Sparkles, title: "Actualités", description: "Nouveautés, événements et tendances autour de votre activité" },
+                { icon: Clock, title: "Date restante ou offre promotionnelle", description: "Compte à rebours, offres spéciales et disponibilités" },
+                { icon: Heart, title: "Publication d'un mariage", description: "Mise en avant d'une réalisation avec vos couples" },
+              ].map((item, index) => (
+                <motion.div
+                  key={item.title}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1 }}
+                  className="flex items-start gap-3 p-5 bg-editorial-beige/50"
+                >
+                  <item.icon className="h-5 w-5 text-premium-sage shrink-0 mt-0.5" />
+                  <div>
+                    <h4 className="font-medium text-editorial-noir mb-1">{item.title}</h4>
+                    <p className="text-sm text-editorial-noir/70">{item.description}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+            <motion.p
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-center text-editorial-noir/70 italic text-lg"
+            >
+              Nous vous mettrons en avant régulièrement & à vous de nous solliciter
+            </motion.p>
           </div>
         </section>
 
