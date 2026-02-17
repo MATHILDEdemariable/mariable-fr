@@ -68,6 +68,13 @@ const CoordinationJourJ: React.FC = () => {
     location: "Mariage en Bretagne"
   }];
 
+  // FAQ data for JSON-LD
+  const faqQuestions = [
+    { question: "Comment coordonner son mariage le jour J ?", answer: "Avec Mariable, créez un planning heure par heure, assignez des tâches à votre équipe (témoins, famille, prestataires) et partagez le tout via un simple lien. Chacun sait exactement quoi faire et quand." },
+    { question: "Faut-il un wedding planner pour le jour J ?", answer: "Non, l'application Mon Jour J de Mariable remplace un coordinateur jour-J à moindre coût. Elle permet de gérer le planning, l'équipe et les documents depuis votre téléphone." },
+    { question: "Combien coûte la coordination jour J Mariable ?", answer: "L'outil de coordination jour-J est inclus dans le compte Premium Mariable à 29 € (achat unique, accès à vie). C'est jusqu'à 50x moins cher qu'un coordinateur professionnel." },
+  ];
+
   // Schema.org structured data
   const serviceSchema = {
     "@context": "https://schema.org",
@@ -104,6 +111,19 @@ const CoordinationJourJ: React.FC = () => {
       }))
     }
   };
+
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": faqQuestions.map(q => ({
+      "@type": "Question",
+      "name": q.question,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": q.answer
+      }
+    }))
+  };
   const organizationSchema = {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
@@ -133,6 +153,9 @@ const CoordinationJourJ: React.FC = () => {
         </script>
         <script type="application/ld+json">
           {JSON.stringify(organizationSchema)}
+        </script>
+        <script type="application/ld+json">
+          {JSON.stringify(faqSchema)}
         </script>
       </Helmet>
 

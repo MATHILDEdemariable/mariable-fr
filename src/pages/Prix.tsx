@@ -76,10 +76,10 @@ const Prix = () => {
     },
   ];
 
-  const faqSchemas = faqData.map(item => ({
+  const faqSchemas = [{
     type: 'FAQ' as const,
-    data: { question: item.question, answer: item.answer }
-  }));
+    data: { questions: faqData }
+  }];
 
   return (
     <div className="min-h-screen flex flex-col bg-white">

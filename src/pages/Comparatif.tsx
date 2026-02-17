@@ -4,6 +4,14 @@ import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { ComparatifTable } from '@/components/comparatif/ComparatifTable';
+import SEOSchemaEnhanced from '@/components/SEOSchemaEnhanced';
+
+const comparatifFaqData = [
+  { question: "Quelle est la différence entre Mariable et un wedding planner ?", answer: "Mariable est un outil digital de planification qui vous donne l'autonomie d'un wedding planner à une fraction du prix. Un wedding planner coûte entre 2 000 € et 8 000 €, Mariable est gratuit (ou 29 € en Premium)." },
+  { question: "Puis-je organiser mon mariage seul(e) sans wedding planner ?", answer: "Oui, c'est exactement ce que Mariable permet. L'application vous guide étape par étape avec checklist, budget, coordination jour-J et sélection de prestataires vérifiés." },
+  { question: "Mariable remplace-t-il complètement un wedding planner ?", answer: "Mariable couvre 90 % des besoins d'organisation : planning, budget, prestataires, coordination jour-J. Pour les mariages très complexes (200+ invités, destination wedding), un wedding planner peut être complémentaire." },
+  { question: "Combien coûte l'organisation d'un mariage en France ?", answer: "En moyenne, un mariage en France coûte entre 15 000 € et 30 000 € pour 100 invités. Mariable vous aide à optimiser chaque poste de dépense grâce à son calculateur de budget intelligent." },
+];
 
 const Comparatif = () => {
   return (
@@ -17,6 +25,11 @@ const Comparatif = () => {
         <meta name="keywords" content="comparatif mariage, wedding planner, organisation mariage, mariable, prix wedding planner" />
         <link rel="canonical" href="https://mariable.fr/comparatif" />
       </Helmet>
+
+      <SEOSchemaEnhanced schemas={[{
+        type: 'FAQ',
+        data: { questions: comparatifFaqData }
+      }]} />
 
       <div className="min-h-screen bg-white">
         <PremiumHeader />
