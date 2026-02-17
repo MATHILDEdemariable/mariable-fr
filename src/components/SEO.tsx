@@ -9,7 +9,7 @@ interface SEOProps {
   keywords?: string;
   image?: string;
   canonical?: string;
-  schemas?: Array<{ type: 'Organization' | 'BlogPosting' | 'FAQ' | 'Course' | 'Review' | 'Event'; data: any }>;
+  schemas?: Array<{ type: 'Organization' | 'BlogPosting' | 'FAQ' | 'Course' | 'Review' | 'Event' | 'HowTo'; data: any }>;
   children?: React.ReactNode;
 }
 
@@ -28,6 +28,81 @@ const SEO: React.FC<SEOProps> = ({
   
   // Ensure image is always absolute URL
   const absoluteImage = image.startsWith('http') ? image : `${siteUrl}${image}`;
+
+  // BreadcrumbList generation
+  const breadcrumbMapping: Record<string, string> = {
+    'prix': 'Tarifs',
+    'comparatif': 'Comparatif',
+    'fonctionnalites': 'Fonctionnalités',
+    'checklist-mariage': 'Checklist Mariage',
+    'coordination-jour-j': 'Coordination Jour J',
+    'conseilsmariage': 'Conseils Mariage',
+    'retroplanning': 'Rétroplanning',
+    'partenariat': 'Partenariat',
+    'professionnelsmariable': 'Professionnels',
+    'selection': 'Sélection Prestataires',
+    'guide-jour-j': 'Guide Jour J',
+    'guide-debutant': 'Guide Débutant',
+    'ceremonie-laique': 'Cérémonie Laïque',
+    'mariage-civil': 'Mariage Civil',
+    'ceremonie-catholique': 'Cérémonie Catholique',
+    'mariage-provence': 'Mariage Provence',
+    'mariage-paris': 'Mariage Paris',
+    'mariage-bretagne': 'Mariage Bretagne',
+    'mariage-normandie': 'Mariage Normandie',
+    'mariage-occitanie': 'Mariage Occitanie',
+    'mariage-auvergne-rhone-alpes': 'Mariage Auvergne-Rhône-Alpes',
+    'mariage-nouvelle-aquitaine': 'Mariage Nouvelle-Aquitaine',
+    'mariage-pays-de-la-loire': 'Mariage Pays de la Loire',
+    'mariage-centre-val-de-loire': 'Mariage Centre-Val de Loire',
+    'mariage-hauts-de-france': 'Mariage Hauts-de-France',
+    'mariage-bourgogne-franche-comte': 'Mariage Bourgogne-Franche-Comté',
+    'mariage-grand-est': 'Mariage Grand Est',
+    'mariage-corse': 'Mariage Corse',
+    'about/histoire': 'Notre Histoire',
+    'about/charte': 'Notre Charte',
+    'about/approche': 'Notre Approche',
+    'about/temoignages': 'Témoignages',
+    'contact': 'Contact',
+    'contact/faq': 'FAQ',
+    'jeunes-maries': 'Jeunes Mariés',
+    'accompagnement': 'Accompagnement',
+    'salon-du-mariage-2025': 'Salon du Mariage 2025',
+  };
+
+  const regionPages = ['mariage-provence', 'mariage-paris', 'mariage-bretagne', 'mariage-normandie', 'mariage-occitanie', 'mariage-auvergne-rhone-alpes', 'mariage-nouvelle-aquitaine', 'mariage-pays-de-la-loire', 'mariage-centre-val-de-loire', 'mariage-hauts-de-france', 'mariage-bourgogne-franche-comte', 'mariage-grand-est', 'mariage-corse'];
+
+  const generateBreadcrumbSchema = () => {
+    if (!canonical || canonical === '/') return null;
+    const path = canonical.replace(/^\//, '');
+    const pageName = breadcrumbMapping[path];
+    if (!pageName) return null;
+
+    const items: Array<{ name: string; url: string }> = [
+      { name: 'Accueil', url: siteUrl }
+    ];
+
+    if (regionPages.includes(path)) {
+      items.push({ name: 'Mariage en Région', url: `${siteUrl}/selection` });
+    } else if (path.startsWith('about/')) {
+      items.push({ name: 'À Propos', url: `${siteUrl}/about/histoire` });
+    }
+
+    items.push({ name: pageName, url: `${siteUrl}${canonical}` });
+
+    return {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": items.map((item, i) => ({
+        "@type": "ListItem",
+        "position": i + 1,
+        "name": item.name,
+        "item": item.url
+      }))
+    };
+  };
+
+  const breadcrumbSchema = generateBreadcrumbSchema();
 
   const metaKeywords = keywords || "mariage france, organisation mariage, planificateur mariage france, prestataires mariage, checklist mariage, budget mariage, planning mariage, coordinateur mariage, témoignages mariage, outils planning mariage personnalisé";
 
@@ -165,6 +240,9 @@ const SEO: React.FC<SEOProps> = ({
             }
           }
         `}</script>
+        {breadcrumbSchema && (
+          <script type="application/ld+json">{JSON.stringify(breadcrumbSchema)}</script>
+        )}
         {children}
       </Helmet>
       

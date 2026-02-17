@@ -8,7 +8,6 @@ Disallow: /login
 Disallow: /register
 Disallow: /auth/
 Disallow: /paiement
-Disallow: /accompagnement
 Disallow: /import-airtable
 Disallow: /test-formulaire
 Disallow: /test-assistant-virtuel

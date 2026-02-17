@@ -2,7 +2,7 @@ import React from 'react';
 import { Helmet } from 'react-helmet-async';
 
 interface SchemaData {
-  type: 'Organization' | 'BlogPosting' | 'FAQ' | 'Course' | 'Review' | 'Event';
+  type: 'Organization' | 'BlogPosting' | 'FAQ' | 'Course' | 'Review' | 'Event' | 'HowTo';
   data: any;
 }
 
@@ -104,6 +104,19 @@ const SEOSchemaEnhanced: React.FC<SEOSchemaEnhancedProps> = ({ schemas }) => {
             name: "Mariable"
           },
           ...schema.data
+        };
+
+      case 'HowTo':
+        return {
+          ...baseContext,
+          "@type": "HowTo",
+          ...schema.data,
+          step: schema.data.steps?.map((s: any, i: number) => ({
+            "@type": "HowToStep",
+            position: i + 1,
+            name: s.name,
+            text: s.text
+          })) || []
         };
 
       default:
