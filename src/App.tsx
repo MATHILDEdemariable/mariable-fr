@@ -66,9 +66,7 @@ const WeddingRetroplanning = lazy(() => import("./pages/WeddingRetroplanning"));
 const Professionnels = lazy(() => import("./pages/Professionnels"));
 const Partenariat = lazy(() => import("./pages/Partenariat"));
 const CGV = lazy(() => import("./pages/CGV"));
-const SalonDuMariage2025 = lazy(() => import("./pages/SalonDuMariage2025"));
 const SalonJeuConcours = lazy(() => import("./pages/SalonJeuConcours"));
-const SalonMicroTrottoir = lazy(() => import("./pages/SalonMicroTrottoir"));
 const Approche = lazy(() => import("./pages/about/Approche"));
 const Histoire = lazy(() => import("./pages/about/Histoire"));
 const Charte = lazy(() => import("./pages/about/Charte"));
@@ -78,7 +76,7 @@ const FAQ = lazy(() => import("./pages/contact/FAQ"));
 const ChecklistPublic = lazy(() => import("./pages/ChecklistPublic"));
 const ToDoListMariage = lazy(() => import("./pages/ToDoListMariage"));
 const ListePreparatifMariage = lazy(() => import("./pages/ListePreparatifMariage"));
-const Accompagnement = lazy(() => import("./pages/Accompagnement"));
+
 const LivreBlanc = lazy(() => import("./pages/LivreBlanc"));
 const CoordinateursMarriage = lazy(() => import("./pages/CoordinateursMarriage"));
 const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
@@ -186,7 +184,7 @@ function App() {
                   <Route path="/domainedelabadine" element={<DomaineDeBadine />} />
                   <Route path="/mariable.ambassadeur" element={<MariableAmbassadeur />} />
                   <Route path="/mariable.partenaire" element={<MariablePartenaire />} />
-                   <Route path="/moteur-recherche" element={<MoteurRecherche />} />
+                   
           <Route path="/selection" element={<ProtectedRoute><VibeWedding /></ProtectedRoute>} />
           <Route path="/mariage/:region" element={<MoteurRecherche />} />
           <Route path="/coordinateurs-mariage" element={<CoordinateursMarriage />} />
@@ -274,7 +272,7 @@ function App() {
                    <Route path="/checklist-public/:userId" element={<ChecklistPublic />} />
                    <Route path="/to-do-list-mariage" element={<ToDoListMariage />} />
                   <Route path="/liste-preparatif-mariage" element={<ListePreparatifMariage />} />
-                   <Route path="/accompagnement" element={<Accompagnement />} />
+                   
                    <Route path="/guidecoordinationjour-j" element={<LivreBlanc />} />
                    <Route path="/guide-jour-j" element={<GuideDuJourJ />} />
                    <Route path="/guide-debutant" element={<GuideDebutant />} />
@@ -329,9 +327,7 @@ function App() {
                    <Route path="/services/budget" element={<Budget />} />
                    
                    {/* Salon du Mariage 2025 routes */}
-                   <Route path="/salon-du-mariage-2025" element={<SalonDuMariage2025 />} />
                    <Route path="/salon-du-mariage-2025/jeu-concours" element={<SalonJeuConcours />} />
-                   <Route path="/salon-du-mariage-2025/autorisation-micro-trottoir" element={<SalonMicroTrottoir />} />
                    
                    {/* Content Creator Mariage route */}
                    <Route path="/content-creator-mariage" element={<ContentCreatorMariage />} />
