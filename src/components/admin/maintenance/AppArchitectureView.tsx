@@ -68,7 +68,7 @@ const PAGES_INVENTORY: PageInfo[] = [
   // Prestataires
   { name: "Prestataires", route: "/prestataires", tables: ["prestataires_rows", "prestataires_photos_preprod"], status: "active", category: "Prestataires" },
   { name: "Prestataire", route: "/prestataire/:slug", tables: ["prestataires_rows", "prestataires_photos_preprod", "prestataires_brochures_preprod"], status: "active", category: "Prestataires" },
-  { name: "MoteurRecherche", route: "/moteur-recherche", tables: ["prestataires_rows"], status: "active", category: "Prestataires" },
+  { name: "MoteurRecherche", route: "/mariage/:region", tables: ["prestataires_rows"], status: "active", category: "Prestataires" },
   { name: "Professionnels", route: "/professionnels", tables: [], status: "active", category: "Prestataires" },
   { name: "Demo", route: "/demo", tables: [], status: "to-merge", category: "Prestataires" },
   { name: "Preview", route: "/preview", tables: [], status: "to-merge", category: "Prestataires" },
@@ -106,9 +106,7 @@ const PAGES_INVENTORY: PageInfo[] = [
   { name: "ProtectionDonnees", route: "/protection-donnees", tables: [], status: "active", category: "Legal" },
   
   // Events
-  { name: "SalonDuMariage2025", route: "/salon-du-mariage-2025", tables: [], status: "active", category: "Events" },
   { name: "SalonJeuConcours", route: "/salon-jeu-concours", tables: [], status: "obsolete", category: "Events" },
-  { name: "SalonMicroTrottoir", route: "/salon-micro-trottoir", tables: [], status: "obsolete", category: "Events" },
   
   // Admin
   { name: "AdminDashboard", route: "/admin", tables: ["profiles", "blog_posts", "prestataires_rows"], status: "active", category: "Admin" },

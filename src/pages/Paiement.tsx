@@ -117,7 +117,7 @@ const Paiement = () => {
       // En production, ceci devrait être géré par Stripe avec des webhooks
       setTimeout(() => {
         setIsLoading(false);
-        window.location.href = '/accompagnement';
+        window.location.href = '/dashboard';
       }, 1500);
 
     } catch (error) {

@@ -69,7 +69,7 @@ const SitemapPage = () => {
         { url: '/mariage-civil', lastmod: '2026-02-16', priority: 0.7, changefreq: 'monthly' },
         { url: '/ceremonie-catholique', lastmod: '2026-02-16', priority: 0.7, changefreq: 'monthly' },
         { url: '/content-creator-mariage', lastmod: '2026-02-16', priority: 0.6, changefreq: 'monthly' },
-        { url: '/salon-du-mariage-2025', lastmod: '2026-02-16', priority: 0.7, changefreq: 'monthly' },
+        
         // Pages régionales
         { url: '/mariage-provence', lastmod: '2026-02-16', priority: 0.8, changefreq: 'monthly' },
         { url: '/mariage-paris', lastmod: '2026-02-16', priority: 0.8, changefreq: 'monthly' },
@@ -97,7 +97,7 @@ const SitemapPage = () => {
         { url: '/outils-planning-mariage', lastmod: '2026-02-16', priority: 0.7, changefreq: 'monthly' },
         { url: '/to-do-list-mariage', lastmod: '2026-02-16', priority: 0.6, changefreq: 'monthly' },
         { url: '/liste-preparatif-mariage', lastmod: '2026-02-16', priority: 0.6, changefreq: 'monthly' },
-        { url: '/accompagnement', lastmod: '2026-02-16', priority: 0.6, changefreq: 'monthly' },
+        
         { url: '/landing-generale', lastmod: '2026-02-16', priority: 0.6, changefreq: 'monthly' },
         { url: '/installer-app', lastmod: '2026-02-16', priority: 0.5, changefreq: 'yearly' },
         { url: '/cgv', lastmod: '2026-02-16', priority: 0.5, changefreq: 'yearly' },
