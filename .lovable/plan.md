@@ -1,150 +1,69 @@
 
-# Plan d'optimisation SEO + GEO pour Mariable
 
-## Partie A : Optimisations techniques dans Lovable
-
-### 1. Sitemap : ajouter toutes les pages manquantes
-
-**Fichier : `src/pages/Sitemap.tsx`**
-
-Le sitemap actuel ne contient que 30 pages statiques. Il manque de nombreuses routes publiques. Ajouter :
-
-| URL manquante | Priorite | Changefreq |
-|---|---|---|
-| `/prix` | 0.9 | monthly |
-| `/comparatif` | 0.8 | monthly |
-| `/retroplanning` | 0.8 | monthly |
-| `/partenariat` | 0.7 | monthly |
-| `/professionnelsmariable` | 0.9 | weekly |
-| `/guide-jour-j` | 0.7 | monthly |
-| `/guide-debutant` | 0.7 | monthly |
-| `/ceremonie-laique` | 0.7 | monthly |
-| `/mariage-civil` | 0.7 | monthly |
-| `/ceremonie-catholique` | 0.7 | monthly |
-| `/content-creator-mariage` | 0.6 | monthly |
-| `/salon-du-mariage-2025` | 0.7 | monthly |
-| `/mariage-bretagne` | 0.8 | monthly |
-| `/mariage-normandie` | 0.8 | monthly |
-| `/mariage-occitanie` | 0.8 | monthly |
-| `/mariage-pays-de-la-loire` | 0.8 | monthly |
-| `/mariage-centre-val-de-loire` | 0.8 | monthly |
-| `/mariage-hauts-de-france` | 0.8 | monthly |
-| `/mariage-bourgogne-franche-comte` | 0.8 | monthly |
-| `/mariage-grand-est` | 0.8 | monthly |
-| `/mariage-corse` | 0.8 | monthly |
-| `/vibewedding` | 0.7 | monthly |
-| `/installer-app` | 0.5 | yearly |
-| `/cgv-couples` | 0.4 | yearly |
-| `/landing-generale` | 0.6 | monthly |
-
-Mettre a jour les `lastmod` de toutes les pages existantes a `2026-02-16`.
+# Plan : Suppression de pages et redesign /outils-planning-mariage
 
 ---
 
-### 2. BreadcrumbList JSON-LD sur toutes les pages cles
+## 1. Suppression de 4 routes
 
-**Fichier : `src/components/SEO.tsx`**
+### Fichiers de pages a supprimer
+- `src/pages/Accompagnement.tsx`
+- `src/pages/SalonMicroTrottoir.tsx`
+- `src/pages/SalonDuMariage2025.tsx`
 
-Ajouter un schema `BreadcrumbList` automatique base sur le `canonical` prop. Exemple : pour `/mariage-provence`, generer :
+Note : `src/pages/MoteurRecherche.tsx` ne sera PAS supprime car il est reutilise par la route `/mariage/:region`. Seule la route `/moteur-recherche` sera retiree.
 
-```text
-Accueil > Mariage en region > Mariage Provence
-```
+### Modifications dans `src/App.tsx`
+- Retirer l'import et la route `/accompagnement`
+- Retirer les imports et les 3 routes `/salon-du-mariage-2025`, `/salon-du-mariage-2025/jeu-concours`, `/salon-du-mariage-2025/autorisation-micro-trottoir`
+- Retirer les imports `SalonDuMariage2025`, `SalonJeuConcours`, `SalonMicroTrottoir`, `Accompagnement`
+- Retirer la route `/moteur-recherche` (garder `/mariage/:region` qui utilise le meme composant)
 
-Logique : parser le canonical pour construire le fil d'Ariane automatiquement avec un mapping de noms lisibles.
+### Modifications dans `src/pages/Sitemap.tsx`
+- Retirer `/accompagnement`, `/salon-du-mariage-2025` du sitemap
 
----
+### Modifications dans `src/pages/Paiement.tsx`
+- Changer la redirection `window.location.href = '/accompagnement'` vers `/dashboard` ou `/` (la page n'existera plus)
 
-### 3. Ajouter le type `HowTo` dans SEOSchemaEnhanced
+### Modifications dans `src/components/admin/maintenance/AppArchitectureView.tsx`
+- Marquer les entrees SalonDuMariage2025, SalonMicroTrottoir, MoteurRecherche comme "obsolete" ou les retirer
 
-**Fichier : `src/components/SEOSchemaEnhanced.tsx`**
-
-Ajouter le support du type `'HowTo'` dans le switch pour pouvoir l'utiliser via le prop `schemas` du composant SEO (actuellement seul ChecklistMariage l'utilise en dur). Cela permettra de l'ajouter facilement sur d'autres pages guides.
-
----
-
-### 4. Ajouter des FAQ JSON-LD sur les pages strategiques
-
-**Pages concernees** (ajouter le schema FAQ via le prop `schemas` du composant SEO) :
-
-- `/prix` : questions sur les tarifs, gratuit vs premium
-- `/comparatif` : questions sur les differences avec les concurrents
-- `/fonctionnalites` : questions sur les outils disponibles
-- `/checklist-mariage` : questions sur l'organisation
-- `/coordination-jour-j` : questions sur le jour J
-
-Pour chaque page, ajouter 3 a 5 questions/reponses pertinentes qui ciblent les requetes conversationnelles des moteurs IA.
+### Modifications dans `src/pages/OutilsPlanningMariage.tsx`
+- Changer le lien `/moteur-recherche` vers `/prestataires` dans la liste des outils
 
 ---
 
-### 5. robots.txt : retirer /accompagnement du Disallow
+## 2. Redesign /outils-planning-mariage (style editorial beige/noir)
 
-**Fichier : `public/robots.txt`**
+### Fichier : `src/pages/OutilsPlanningMariage.tsx`
 
-La page `/accompagnement` est une page publique SEO mais elle est actuellement bloquee dans robots.txt (`Disallow: /accompagnement`). La retirer.
+Remplacer toutes les couleurs vertes et arrondis par le style editorial :
 
----
-
-## Partie B : Strategie GEO (Generative Engine Optimization)
-
-### Elements deja en place
-- JSON-LD `SoftwareApplication` avec prix 0 EUR et 29 EUR (lisible par ChatGPT/Perplexity)
-- JSON-LD `LocalBusiness` avec `areaServed: France`
-- `FAQPage` schema via SEOSchemaEnhanced (composant pret, peu utilise)
-- `HowTo` schema sur la checklist
-- `BreadcrumbList` sur les temoignages
-- 13 pages regionales avec meta geo-tags
-- Balises Open Graph et Twitter Card completes
-
-### Ce qui manque pour rivaliser avec les concurrents cites par ChatGPT
-
-Les sites que ChatGPT recommande (Se-Marier.fr, Bridebook, MariageDeAaZ) ont en commun :
-1. Du contenu editorial riche et indexe (articles de blog frequents)
-2. Des pages "outil" avec descriptions longues et structurees
-3. Des backlinks depuis des sites d'autorite mariage
+- **Fond principal** : `bg-editorial-beige` au lieu de `bg-gradient-to-b from-white to-wedding-cream/20`
+- **Bouton hero** : `bg-editorial-noir hover:bg-editorial-noir/90 text-white rounded-none` au lieu de `bg-wedding-olive`
+- **Bouton retour** : `border-editorial-noir/30 text-editorial-noir rounded-none`
+- **Icones etapes** : fond `bg-editorial-beige` avec texte `text-editorial-noir` au lieu de `bg-wedding-olive/10` et `text-wedding-olive`
+- **Pastilles numerotees** : `bg-editorial-noir` au lieu de `bg-wedding-olive`
+- **Section process** : fond `bg-white` reste blanc
+- **Cards outils** : `rounded-none`, bordure `border-editorial-noir/10`, fond `bg-white`, suppression des couleurs `wedding-olive` et `wedding-cream`
+- **Icones dans les cards** : `text-editorial-noir` au lieu de `text-wedding-olive`
+- **Features dans les cards** : `text-editorial-noir/70` au lieu de `text-wedding-olive`
+- **Boutons cards** : `border-editorial-noir text-editorial-noir hover:bg-editorial-noir hover:text-white rounded-none`
+- **Section CTA finale** : `bg-editorial-beige` au lieu de `bg-wedding-olive/5`, boutons en noir
+- **Polices** : Playfair Display (deja en place via `font-serif`), pas de gras excessif
 
 ---
 
-## Partie C : Actions hors Lovable (a faire manuellement)
+## Resume des fichiers modifies
 
-### Google Search Console
-1. Soumettre le sitemap : `https://www.mariable.fr/sitemap.xml`
-2. Inspecter manuellement chaque URL strategique (surtout les nouvelles pages regionales)
-3. Demander l'indexation des pages non encore indexees
-
-### Bing Webmaster Tools
-1. Creer un compte et soumettre le site (Bing alimente les resultats de Copilot et ChatGPT Search)
-2. Soumettre le meme sitemap
-
-### Google Business Profile
-1. Creer/optimiser la fiche Google Business pour "Mariable" en categorie "Service de planification de mariage"
-2. Ajouter des photos, horaires, lien vers le site
-
-### Strategie de backlinks
-1. Contacter les blogs mariage FR pour des articles invites ou mentions
-2. S'inscrire sur les annuaires mariage (Mariages.net, Zankyou, etc.)
-3. Proposer des partenariats croisees avec les prestataires deja references
-
-### Contenu blog (GEO)
-1. Publier 1 a 2 articles/semaine sur `/conseilsmariage` avec des titres conversationnels :
-   - "Comment organiser son mariage en 2025 ?"
-   - "Quel budget prevoir pour un mariage en Provence ?"
-   - "Les 10 erreurs a eviter pour son mariage"
-2. Chaque article doit contenir un schema `BlogPosting` (deja supporte) et un `FAQPage`
-3. Cibler les questions que les gens posent a ChatGPT/Perplexity
-
-### Reseaux sociaux (signal indirect)
-1. Partager chaque article blog sur Instagram/Pinterest (signaux sociaux)
-2. Encourager les avis Google (alimente le AggregateRating)
-
----
-
-## Resume des modifications techniques
-
-| Fichier | Modification |
+| Fichier | Action |
 |---|---|
-| `src/pages/Sitemap.tsx` | Ajouter 25+ pages manquantes au sitemap |
-| `src/components/SEO.tsx` | Ajouter BreadcrumbList JSON-LD automatique |
-| `src/components/SEOSchemaEnhanced.tsx` | Ajouter type `HowTo` dans le switch |
-| `public/robots.txt` | Retirer `/accompagnement` du Disallow |
-| Pages strategiques (prix, comparatif, fonctionnalites, checklist, coordination) | Ajouter schemas FAQ via prop `schemas` |
+| `src/pages/Accompagnement.tsx` | Supprime |
+| `src/pages/SalonMicroTrottoir.tsx` | Supprime |
+| `src/pages/SalonDuMariage2025.tsx` | Supprime |
+| `src/App.tsx` | Retirer 5 routes et 4 imports |
+| `src/pages/Sitemap.tsx` | Retirer 2 entrees |
+| `src/pages/Paiement.tsx` | Changer redirection |
+| `src/pages/OutilsPlanningMariage.tsx` | Redesign editorial complet + changer lien moteur-recherche |
+| `src/components/admin/maintenance/AppArchitectureView.tsx` | Nettoyer entrees obsoletes |
+
