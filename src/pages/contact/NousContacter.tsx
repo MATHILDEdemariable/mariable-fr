@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Helmet } from 'react-helmet-async';
 import PremiumHeader from '@/components/home/PremiumHeader';
 import Footer from '@/components/Footer';
 import { Mail, Phone, Send, User, Building, Briefcase, Heart } from 'lucide-react';
@@ -71,6 +72,12 @@ const NousContacter = () => {
   };
 
   return (
+    <>
+      <Helmet>
+        <title>Contactez Mariable | Couples, Lieux & Prestataires</title>
+        <meta name="description" content="Contactez l'équipe Mariable pour toute question sur l'organisation de votre mariage, un partenariat ou un référencement. Réponse rapide garantie." />
+        <link rel="canonical" href="https://www.mariable.fr/contact" />
+      </Helmet>
     <div className="min-h-screen flex flex-col bg-[#efeee9]">
       <PremiumHeader />
       
@@ -197,6 +204,7 @@ const NousContacter = () => {
       
       <Footer />
     </div>
+    </>
   );
 };
 

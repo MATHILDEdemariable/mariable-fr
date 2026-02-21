@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { Calendar as CalendarIcon, Loader2, Save, Download, Sparkles, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -431,6 +432,11 @@ const WeddingRetroplanning = () => {
 
   return (
     <>
+      <Helmet>
+        <title>Rétroplanning Mariage IA | Mariable - Planning Personnalisé</title>
+        <meta name="description" content="Générez votre rétroplanning de mariage personnalisé grâce à l'IA. Planning dynamique de 12 mois à J-J, suivi des tâches et export PDF gratuit." />
+        <link rel="canonical" href="https://www.mariable.fr/retroplanning" />
+      </Helmet>
       <PremiumHeader />
       <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 pb-12 page-content">
         <div className="container max-w-6xl mx-auto px-4">

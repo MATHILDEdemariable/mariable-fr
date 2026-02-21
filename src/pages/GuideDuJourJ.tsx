@@ -26,6 +26,7 @@ const GuideDuJourJ = () => {
           name="description" 
           content="Téléchargez gratuitement le Guide Ultime Jour-J de Mariable. Conseils et checklists pour une coordination parfaite de votre mariage." 
         />
+        <link rel="canonical" href="https://www.mariable.fr/guide-jour-j" />
       </Helmet>
 
       <div className="min-h-screen flex flex-col bg-premium-warm">

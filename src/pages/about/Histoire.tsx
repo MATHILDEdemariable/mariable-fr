@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { Helmet } from 'react-helmet-async';
 import ServiceTemplate from '../ServiceTemplate';
 
 const HistoireContent = () => (
@@ -76,7 +77,13 @@ const Histoire = () => {
       title="Notre histoire"
       description="L'histoire d'une jeune mariée qui a décidé de tout changer"
       content={<HistoireContent />}
-    />
+    >
+      <Helmet>
+        <title>Notre Histoire | Mariable - Fondée par Mathilde</title>
+        <meta name="description" content="L'histoire de Mariable commence avec Mathilde, jeune mariée et diplômée d'école de commerce, qui révolutionne l'organisation des mariages en France." />
+        <link rel="canonical" href="https://www.mariable.fr/about/histoire" />
+      </Helmet>
+    </ServiceTemplate>
   );
 };
 

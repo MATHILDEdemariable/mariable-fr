@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { Helmet } from 'react-helmet-async';
 import ServiceTemplate from '../ServiceTemplate';
 
 const ApprocheContent = () => (
@@ -39,7 +40,13 @@ const Approche = () => {
       title="Notre approche"
       description="Comment nous vous aidons à créer le mariage de vos rêves"
       content={<ApprocheContent />}
-    />
+    >
+      <Helmet>
+        <title>Notre Approche | Mariable - Organisation Mariage</title>
+        <meta name="description" content="Découvrez l'approche Mariable : intelligence artificielle, personnalisation et transparence pour organiser votre mariage simplement et sans stress." />
+        <link rel="canonical" href="https://www.mariable.fr/about/approche" />
+      </Helmet>
+    </ServiceTemplate>
   );
 };
 

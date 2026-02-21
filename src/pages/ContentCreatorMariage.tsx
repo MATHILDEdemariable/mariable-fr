@@ -168,6 +168,7 @@ const ContentCreatorMariage = () => {
         <title>Content Creator Mariage - Captation Photo, Vidéo & Reels dès 490€ | Mariable</title>
         <meta name="description" content="Un content creator dédié à votre mariage pour des stories, reels et aftermovies mémorables. Packs à partir de 490€. Livraison rapide et service clé en main." />
         <meta name="keywords" content="content creator mariage, vidéo mariage, stories mariage, reels mariage, aftermovie, photographe mariage moderne" />
+        <link rel="canonical" href="https://www.mariable.fr/content-creator-mariage" />
       </Helmet>
 
       <PremiumHeader />

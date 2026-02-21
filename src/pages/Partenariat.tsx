@@ -164,6 +164,7 @@ const Partenariat = () => {
           name="description"
           content="Rejoignez le Club Mariable, la référence des professionnels premium du mariage. Bénéficiez d'une visibilité ciblée et de leads qualifiés."
         />
+        <link rel="canonical" href="https://www.mariable.fr/partenariat" />
       </Helmet>
       <PremiumHeader />
       <main className="min-h-screen">

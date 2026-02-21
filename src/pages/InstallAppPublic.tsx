@@ -170,6 +170,7 @@ const InstallAppPublic = () => {
       <Helmet>
         <title>Installer l'application Mariable | Accès rapide à vos outils mariage</title>
         <meta name="description" content="Installez Mariable sur votre téléphone pour un accès rapide à vos outils de planification de mariage. Guide d'installation pour iPhone et Android." />
+        <link rel="canonical" href="https://www.mariable.fr/installer-app" />
       </Helmet>
 
       {/* Header simple */}

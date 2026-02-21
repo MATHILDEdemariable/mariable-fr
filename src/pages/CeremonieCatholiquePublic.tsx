@@ -81,6 +81,7 @@ const CeremonieCatholiquePublic: React.FC = () => {
       <Helmet>
         <title>Guide Cérémonie Catholique de Mariage | Mariable</title>
         <meta name="description" content="Guide complet pour votre mariage catholique : dossier de catholicité, 4 piliers, déroulement de la cérémonie, musique sacrée et conseils pratiques." />
+        <link rel="canonical" href="https://www.mariable.fr/ceremonie-catholique" />
       </Helmet>
 
       <PremiumHeader />

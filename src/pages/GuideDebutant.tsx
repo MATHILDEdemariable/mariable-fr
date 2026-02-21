@@ -26,6 +26,7 @@ const GuideDebutant = () => {
           name="description" 
           content="Téléchargez gratuitement le Guide Organisation Mariage pour Débutants de Mariable. Conseils et étapes essentielles pour commencer l'organisation de votre mariage." 
         />
+        <link rel="canonical" href="https://www.mariable.fr/guide-debutant" />
       </Helmet>
 
       <div className="min-h-screen flex flex-col bg-premium-warm">
