@@ -165,6 +165,7 @@ const MairieCivilPublic: React.FC = () => {
       <Helmet>
         <title>Guide Mariage Civil - Documents et Démarches | Mariable</title>
         <meta name="description" content="Guide complet pour votre mariage civil : documents indispensables, conditions, délais et étapes à suivre pour vous marier à la mairie." />
+        <link rel="canonical" href="https://www.mariable.fr/mariage-civil" />
       </Helmet>
 
       <PremiumHeader />

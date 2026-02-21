@@ -10,28 +10,30 @@ import { ReaderModeProvider } from '@/contexts/ReaderModeContext';
 import PaymentSuccessHandler from '@/components/premium/PaymentSuccessHandler';
 import { CartProvider } from '@/components/cart/CartProvider';
 import { AuthProvider } from '@/contexts/AuthContext';
-// Direct imports for SEO-critical pages (no lazy loading)
+// Direct imports for SEO-critical pages (homepage only)
 import LandingCouple from "./pages/LandingCouple";
 import LandingGenerale from "./pages/LandingGenerale";
-import Prestataires from "./pages/services/Prestataires";
-import Prestataire from "./pages/prestataire/slug";
-import Blog from "./pages/Blog";
-import BlogPost from "./pages/BlogArticle";
-import MariageProvence from "./pages/MariageProvence";
-import MariageParis from "./pages/MariageParis";
-import MariageAuvergneRhoneAlpes from "./pages/MariageAuvergneRhoneAlpes";
-import MariageNouvelleAquitaine from "./pages/MariageNouvelleAquitaine";
-import MariageBretagne from "./pages/MariageBretagne";
-import MariageNormandie from "./pages/MariageNormandie";
-import MariageOccitanie from "./pages/MariageOccitanie";
-import MariagePaysLoire from "./pages/MariagePaysLoire";
-import MariageCentreValLoire from "./pages/MariageCentreValLoire";
-import MariageHautsFrance from "./pages/MariageHautsFrance";
-import MariageBourgogne from "./pages/MariageBourgogne";
-import MariageGrandEst from "./pages/MariageGrandEst";
-import MariageCorse from "./pages/MariageCorse";
-import ChecklistMariage from "./pages/ChecklistMariage";
-import CoordinationJourJ from "./pages/CoordinationJourJ";
+
+// Lazy load all other pages including regional & SEO pages (still SSR-friendly with Helmet)
+const Prestataires = lazy(() => import("./pages/services/Prestataires"));
+const Prestataire = lazy(() => import("./pages/prestataire/slug"));
+const Blog = lazy(() => import("./pages/Blog"));
+const BlogPost = lazy(() => import("./pages/BlogArticle"));
+const MariageProvence = lazy(() => import("./pages/MariageProvence"));
+const MariageParis = lazy(() => import("./pages/MariageParis"));
+const MariageAuvergneRhoneAlpes = lazy(() => import("./pages/MariageAuvergneRhoneAlpes"));
+const MariageNouvelleAquitaine = lazy(() => import("./pages/MariageNouvelleAquitaine"));
+const MariageBretagne = lazy(() => import("./pages/MariageBretagne"));
+const MariageNormandie = lazy(() => import("./pages/MariageNormandie"));
+const MariageOccitanie = lazy(() => import("./pages/MariageOccitanie"));
+const MariagePaysLoire = lazy(() => import("./pages/MariagePaysLoire"));
+const MariageCentreValLoire = lazy(() => import("./pages/MariageCentreValLoire"));
+const MariageHautsFrance = lazy(() => import("./pages/MariageHautsFrance"));
+const MariageBourgogne = lazy(() => import("./pages/MariageBourgogne"));
+const MariageGrandEst = lazy(() => import("./pages/MariageGrandEst"));
+const MariageCorse = lazy(() => import("./pages/MariageCorse"));
+const ChecklistMariage = lazy(() => import("./pages/ChecklistMariage"));
+const CoordinationJourJ = lazy(() => import("./pages/CoordinationJourJ"));
 
 const Callback = lazy(() => import("./pages/auth/Callback"));
 

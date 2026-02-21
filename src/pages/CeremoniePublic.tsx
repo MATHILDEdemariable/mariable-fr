@@ -131,6 +131,7 @@ const CeremoniePublic: React.FC = () => {
       <Helmet>
         <title>Guide Cérémonie Laïque de Mariage | Mariable</title>
         <meta name="description" content="Guide complet pour votre cérémonie laïque de mariage : rituels, vœux, musique, déroulement et conseils pour une célébration unique et personnalisée." />
+        <link rel="canonical" href="https://www.mariable.fr/ceremonie-laique" />
       </Helmet>
 
       <PremiumHeader />

@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { Helmet } from 'react-helmet-async';
 import ServiceTemplate from '../ServiceTemplate';
 import { Card } from '@/components/ui/card';
 import { Star } from 'lucide-react';
@@ -77,7 +78,13 @@ const Temoignages = () => {
       title="Témoignages"
       description="Ce que nos clients disent de nous"
       content={<TemoignagesContent />}
-    />
+    >
+      <Helmet>
+        <title>Témoignages Couples | Mariable - Avis Clients</title>
+        <meta name="description" content="Découvrez les témoignages de couples qui ont organisé leur mariage avec Mariable. Avis authentiques et retours d'expérience sur nos outils et services." />
+        <link rel="canonical" href="https://www.mariable.fr/about/temoignages" />
+      </Helmet>
+    </ServiceTemplate>
   );
 };
 
