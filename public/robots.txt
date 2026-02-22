@@ -12,4 +12,4 @@ Disallow: /import-airtable
 Disallow: /test-formulaire
 Disallow: /test-assistant-virtuel
 
-Sitemap: https://www.mariable.fr/sitemap.xml
+Sitemap: https://bgidfcqktsttzlwlumtz.supabase.co/functions/v1/generate-sitemap
