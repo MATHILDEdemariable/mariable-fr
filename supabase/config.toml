@@ -54,3 +54,6 @@ verify_jwt = false
 
 [functions.generate-sitemap]
 verify_jwt = false
+
+[functions.notify-vendor-message]
+verify_jwt = false
