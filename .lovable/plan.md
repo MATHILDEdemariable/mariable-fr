@@ -1,49 +1,49 @@
 
+# Plan : Sitemap statique + Nettoyage des doublons + Fix meta description
 
-# Plan : Corriger le sitemap pour Google
+## Ce qui va etre fait
 
-## Probleme
+### 1. Creer `public/sitemap.xml` (fichier statique)
 
-Le fichier `vercel.json` contient un rewrite pour `/sitemap.xml`, mais ce rewrite ne fonctionne pas car le site est heberge sur **Lovable**, pas sur Vercel. Google recoit donc la page HTML React au lieu du XML.
+Un fichier XML statique contenant les 52 pages statiques du site. Ce fichier sera directement accessible a `https://www.mariable.fr/sitemap.xml` et soumissible dans Google Search Console.
 
-## Solution
+Les pages dynamiques (prestataires, blog) ne seront pas dans ce fichier statique -- elles restent dans l'edge function pour la decouverte automatique via robots.txt.
 
-Puisque le rewrite Vercel ne peut pas fonctionner sur l'hebergement Lovable, la solution la plus simple est :
+### 2. Mettre a jour `public/robots.txt`
 
-1. **Mettre a jour `robots.txt`** pour pointer directement vers l'edge function Supabase
-2. **Nettoyer `vercel.json`** en retirant le rewrite sitemap inutile
-
-Google decouvre automatiquement les sitemaps declares dans `robots.txt`, meme s'ils sont sur un autre domaine. Pas besoin de soumettre manuellement dans Search Console.
-
-## Modifications
-
-### 1. Mettre a jour `public/robots.txt`
-
-Changer la ligne Sitemap :
+Declarer les deux sitemaps :
 ```
+Sitemap: https://www.mariable.fr/sitemap.xml
 Sitemap: https://bgidfcqktsttzlwlumtz.supabase.co/functions/v1/generate-sitemap
 ```
 
-### 2. Nettoyer `vercel.json`
+Le premier est soumissible dans Google Search Console. Le second permet a Google de decouvrir automatiquement les pages dynamiques.
 
-Retirer le rewrite `/sitemap.xml` qui ne fonctionne pas :
-```json
-{
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/" }
-  ]
-}
+### 3. Supprimer la meta description en dur de `index.html`
+
+Retirer la ligne 8 de `index.html` :
 ```
+<meta name="description" content="Mariable : la plateforme française..." />
+```
+
+Chaque page definit deja sa propre description via le composant SEO/Helmet. Cela corrige l'erreur Bing "plusieurs balises description".
+
+### 4. Conserver l'edge function `generate-sitemap`
+
+L'edge function n'est **pas supprimee** car elle reste utile : elle genere dynamiquement les URLs des prestataires et articles de blog depuis la base de donnees. Le sitemap statique ne couvre que les pages fixes. Les deux sont complementaires, pas en doublon.
+
+### 5. Nettoyer `vercel.json`
+
+Le fichier reste tel quel (le rewrite sitemap a deja ete retire precedemment).
 
 ## Apres publication
 
-- Google decouvrira automatiquement le sitemap via `robots.txt`
-- Vous pouvez aussi tester en ouvrant directement ce lien dans votre navigateur :
-  `https://bgidfcqktsttzlwlumtz.supabase.co/functions/v1/generate-sitemap`
-- Dans Google Search Console, si vous souhaitez forcer la decouverte, vous pouvez aller dans "Inspection de l'URL" et inspecter votre page d'accueil (`https://www.mariable.fr/`) -- Google lira le `robots.txt` et trouvera le sitemap
+1. Soumettre `https://www.mariable.fr/sitemap.xml` dans Google Search Console
+2. Les erreurs Bing de meta description dupliquee seront corrigees
 
 | Fichier | Action |
 |---|---|
-| `public/robots.txt` | Changer l'URL du sitemap vers l'edge function Supabase |
-| `vercel.json` | Retirer le rewrite `/sitemap.xml` inutile |
-
+| `public/sitemap.xml` | Creer -- sitemap XML statique avec les 52 pages fixes |
+| `public/robots.txt` | Ajouter `https://www.mariable.fr/sitemap.xml` en plus de l'edge function |
+| `index.html` | Supprimer la meta description en dur (ligne 8) |
+| `supabase/functions/generate-sitemap/` | Conserver -- couvre les pages dynamiques |
