@@ -59,7 +59,8 @@ const VendorMessageModal: React.FC<VendorMessageModalProps> = ({
           user_id: user.id,
           vendor_id: vendorId,
           vendor_name: vendorName,
-          message: message.trim()
+          message: message.trim(),
+          user_email: user.email || null
         });
 
       if (error) throw error;

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PrestatairesAdmin from "@/components/admin/FormPrestataires";
 import VendorContactsAdmin from "@/components/admin/VendorContactsAdmin";
+import VendorMessagesAdmin from "@/components/admin/VendorMessagesAdmin";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -44,9 +45,10 @@ const AdminPrestataires = () => {
         </div>
         
         <Tabs defaultValue="prestataires" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="prestataires">Gestion Prestataires</TabsTrigger>
             <TabsTrigger value="contacts">Demandes de Contact</TabsTrigger>
+            <TabsTrigger value="messages">Messages Utilisateurs</TabsTrigger>
           </TabsList>
           
           <TabsContent value="prestataires" className="mt-6">
@@ -55,6 +57,10 @@ const AdminPrestataires = () => {
           
           <TabsContent value="contacts" className="mt-6">
             <VendorContactsAdmin />
+          </TabsContent>
+
+          <TabsContent value="messages" className="mt-6">
+            <VendorMessagesAdmin />
           </TabsContent>
         </Tabs>
         

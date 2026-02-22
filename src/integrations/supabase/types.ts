@@ -2837,6 +2837,7 @@ export type Database = {
           id: string
           message: string
           read_at: string | null
+          user_email: string | null
           user_id: string
           vendor_id: string
           vendor_name: string
@@ -2846,6 +2847,7 @@ export type Database = {
           id?: string
           message: string
           read_at?: string | null
+          user_email?: string | null
           user_id: string
           vendor_id: string
           vendor_name: string
@@ -2855,6 +2857,7 @@ export type Database = {
           id?: string
           message?: string
           read_at?: string | null
+          user_email?: string | null
           user_id?: string
           vendor_id?: string
           vendor_name?: string
