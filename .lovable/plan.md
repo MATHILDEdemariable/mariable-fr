@@ -1,57 +1,49 @@
 
 
-# Plan : Corriger l'acces au sitemap et a BingSiteAuth
+# Plan : Corriger le sitemap pour Google
 
-## Probleme 1 : Google Search Console
+## Probleme
 
-Google refuse l'URL `https://bgidfcqktsttzlwlumtz.supabase.co/functions/v1/generate-sitemap` car elle n'appartient pas au domaine `mariable.fr`. Google n'accepte que des URLs du meme domaine que la propriete.
+Le fichier `vercel.json` contient un rewrite pour `/sitemap.xml`, mais ce rewrite ne fonctionne pas car le site est heberge sur **Lovable**, pas sur Vercel. Google recoit donc la page HTML React au lieu du XML.
 
-**Solution** : Ajouter un rewrite dans `vercel.json` pour que `https://www.mariable.fr/sitemap.xml` soit redirige (proxy) vers l'edge function Supabase. Ainsi, Google verra une URL sur votre domaine.
+## Solution
 
-## Probleme 2 : Bing Webmaster Tools
+Puisque le rewrite Vercel ne peut pas fonctionner sur l'hebergement Lovable, la solution la plus simple est :
 
-Le fichier `BingSiteAuth.xml` contient bien la bonne cle (`C47911E8F77BCBFBBCD7CE63971AE5EE`), mais il est peut-etre servi avec un Content-Type incorrect. Apres publication des modifications ci-dessous, re-tentez la verification sur Bing.
+1. **Mettre a jour `robots.txt`** pour pointer directement vers l'edge function Supabase
+2. **Nettoyer `vercel.json`** en retirant le rewrite sitemap inutile
+
+Google decouvre automatiquement les sitemaps declares dans `robots.txt`, meme s'ils sont sur un autre domaine. Pas besoin de soumettre manuellement dans Search Console.
 
 ## Modifications
 
-### 1. Mettre a jour `vercel.json`
+### 1. Mettre a jour `public/robots.txt`
 
-Ajouter un rewrite **avant** le catch-all existant pour proxifier `/sitemap.xml` vers l'edge function :
-
-```text
-Avant :
-  /(.*) -> /
-
-Apres :
-  /sitemap.xml -> https://bgidfcqktsttzlwlumtz.supabase.co/functions/v1/generate-sitemap
-  /(.*) -> /
+Changer la ligne Sitemap :
+```
+Sitemap: https://bgidfcqktsttzlwlumtz.supabase.co/functions/v1/generate-sitemap
 ```
 
-### 2. Mettre a jour `public/robots.txt`
+### 2. Nettoyer `vercel.json`
 
-Changer la ligne Sitemap pour utiliser le domaine mariable.fr :
-
-```text
-Sitemap: https://www.mariable.fr/sitemap.xml
+Retirer le rewrite `/sitemap.xml` qui ne fonctionne pas :
+```json
+{
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/" }
+  ]
+}
 ```
 
-Au lieu de l'URL Supabase actuelle.
+## Apres publication
 
-### 3. Instructions apres publication
-
-Dans Google Search Console :
-- Aller dans "Sitemaps"
-- Soumettre : `https://www.mariable.fr/sitemap.xml`
-
-Pour Bing :
-- Re-tenter la verification avec le fichier XML (deja en place)
-
----
-
-## Resume technique
+- Google decouvrira automatiquement le sitemap via `robots.txt`
+- Vous pouvez aussi tester en ouvrant directement ce lien dans votre navigateur :
+  `https://bgidfcqktsttzlwlumtz.supabase.co/functions/v1/generate-sitemap`
+- Dans Google Search Console, si vous souhaitez forcer la decouverte, vous pouvez aller dans "Inspection de l'URL" et inspecter votre page d'accueil (`https://www.mariable.fr/`) -- Google lira le `robots.txt` et trouvera le sitemap
 
 | Fichier | Action |
 |---|---|
-| `vercel.json` | Ajouter rewrite `/sitemap.xml` vers l'edge function (avant le catch-all) |
-| `public/robots.txt` | Mettre l'URL du sitemap sur `mariable.fr/sitemap.xml` |
+| `public/robots.txt` | Changer l'URL du sitemap vers l'edge function Supabase |
+| `vercel.json` | Retirer le rewrite `/sitemap.xml` inutile |
 
