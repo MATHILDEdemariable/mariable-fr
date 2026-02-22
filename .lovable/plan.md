@@ -1,89 +1,87 @@
 
 
-# Plan : Fichier Bing + Liste des URLs a indexer
+# Plan : Corriger le sitemap.xml pour Google
 
-## 1. Copier le fichier BingSiteAuth.xml
+## Probleme
 
-Copier le fichier `BingSiteAuth.xml` vers `public/BingSiteAuth.xml` pour qu'il soit accessible a la racine du site (`https://www.mariable.fr/BingSiteAuth.xml`).
+Google Search Console essaie d'acceder a `https://mariable.fr/sitemap.xml` et recoit une erreur 404.
 
-**Fichier** : `public/BingSiteAuth.xml` (creation)
+**Cause** : Le sitemap actuel est une page React (`/sitemap`) qui genere du XML visuellement, mais le navigateur sert du HTML (avec React, JavaScript, etc.). Google attend un fichier XML pur avec `Content-Type: application/xml`.
 
----
+## Solution
 
-## 2. Liste complete des URLs a indexer dans Google Search Console
+Creer une **edge function Supabase** `generate-sitemap` qui :
+- Interroge la base de donnees (prestataires + blog posts)
+- Genere le XML du sitemap avec toutes les URLs statiques et dynamiques
+- Retourne le contenu avec `Content-Type: application/xml`
 
-Voici toutes les URLs statiques du sitemap a soumettre une par une dans Google Search Console via "Inspection de l'URL" > "Demander l'indexation" :
+Puis mettre a jour `robots.txt` pour pointer vers l'URL de l'edge function.
 
-### Pages principales (priorite haute)
-1. `https://www.mariable.fr/`
-2. `https://www.mariable.fr/selection`
-3. `https://www.mariable.fr/services/prestataires`
-4. `https://www.mariable.fr/prix`
-5. `https://www.mariable.fr/checklist-mariage`
-6. `https://www.mariable.fr/conseilsmariage`
-7. `https://www.mariable.fr/professionnelsmariable`
-8. `https://www.mariable.fr/services/budget`
-9. `https://www.mariable.fr/detail-coordination-jourm`
-10. `https://www.mariable.fr/comparatif`
+## Modifications
 
-### Pages outils et guides
-11. `https://www.mariable.fr/retroplanning`
-12. `https://www.mariable.fr/coordination-jour-j`
-13. `https://www.mariable.fr/outils-planning-mariage`
-14. `https://www.mariable.fr/planning-personnalise`
-15. `https://www.mariable.fr/vibewedding`
-16. `https://www.mariable.fr/fonctionnalites`
-17. `https://www.mariable.fr/guide-jour-j`
-18. `https://www.mariable.fr/guide-debutant`
-19. `https://www.mariable.fr/guidecoordinationjour-j`
-20. `https://www.mariable.fr/ceremonie-laique`
-21. `https://www.mariable.fr/mariage-civil`
-22. `https://www.mariable.fr/ceremonie-catholique`
-23. `https://www.mariable.fr/content-creator-mariage`
-24. `https://www.mariable.fr/to-do-list-mariage`
-25. `https://www.mariable.fr/liste-preparatif-mariage`
-26. `https://www.mariable.fr/coordinateurs-mariage`
-27. `https://www.mariable.fr/jeunes-maries`
+### 1. Creer l'edge function `generate-sitemap`
 
-### Pages regionales (13 pages)
-28. `https://www.mariable.fr/mariage-provence`
-29. `https://www.mariable.fr/mariage-paris`
-30. `https://www.mariable.fr/mariage-auvergne-rhone-alpes`
-31. `https://www.mariable.fr/mariage-nouvelle-aquitaine`
-32. `https://www.mariable.fr/mariage-bretagne`
-33. `https://www.mariable.fr/mariage-normandie`
-34. `https://www.mariable.fr/mariage-occitanie`
-35. `https://www.mariable.fr/mariage-pays-de-la-loire`
-36. `https://www.mariable.fr/mariage-centre-val-de-loire`
-37. `https://www.mariable.fr/mariage-hauts-de-france`
-38. `https://www.mariable.fr/mariage-bourgogne-franche-comte`
-39. `https://www.mariable.fr/mariage-grand-est`
-40. `https://www.mariable.fr/mariage-corse`
+**Fichier** : `supabase/functions/generate-sitemap/index.ts`
 
-### Pages about et partenaires
-41. `https://www.mariable.fr/about/histoire`
-42. `https://www.mariable.fr/about/charte`
-43. `https://www.mariable.fr/about/approche`
-44. `https://www.mariable.fr/about/temoignages`
-45. `https://www.mariable.fr/partenariat`
-46. `https://www.mariable.fr/contact`
-47. `https://www.mariable.fr/contact/faq`
+- Reprendre exactement la meme logique que `Sitemap.tsx` (pages statiques + prestataires + blog posts)
+- Utiliser le client Supabase cote serveur pour requeter `prestataires_rows` et `blog_posts`
+- Retourner le XML avec les headers `Content-Type: application/xml; charset=utf-8`
+- Gerer les erreurs avec un sitemap de fallback (pages statiques uniquement)
 
-### Pages secondaires
-48. `https://www.mariable.fr/landing-generale`
-49. `https://www.mariable.fr/installer-app`
-50. `https://www.mariable.fr/cgv`
-51. `https://www.mariable.fr/cgv-couples`
-52. `https://www.mariable.fr/sitemap`
+### 2. Mettre a jour `robots.txt`
 
-### Pages dynamiques (blog + prestataires)
-Les articles de blog (`/conseilsmariage/[slug]`) et les fiches prestataires (`/prestataire/[slug]`) seront indexes automatiquement par Google via le sitemap XML. Pas besoin de les soumettre un par un.
+**Fichier** : `public/robots.txt`
+
+Changer la ligne :
+```
+Sitemap: https://www.mariable.fr/sitemap.xml
+```
+en :
+```
+Sitemap: https://bgidfcqktsttzlwlumtz.supabase.co/functions/v1/generate-sitemap
+```
+
+### 3. Conserver la page React `/sitemap`
+
+La page React `Sitemap.tsx` reste en place pour les visiteurs humains qui consultent `/sitemap`. Aucune modification necessaire.
 
 ---
 
-## Modification technique
+## Details techniques
+
+### Edge function `generate-sitemap`
+
+```text
+Requete GET
+  -> Query Supabase: prestataires_rows (slug, updated_at, visible=true)
+  -> Query Supabase: blog_posts (slug, updated_at, status=published)
+  -> Generer XML avec 52 pages statiques + pages dynamiques
+  -> Response: Content-Type: application/xml
+```
+
+### Ce que Google verra
+
+Au lieu d'une page HTML React, Google recevra un vrai fichier XML bien forme :
+```text
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://www.mariable.fr/</loc>
+    <lastmod>2026-02-16</lastmod>
+    ...
+  </url>
+  ...
+</urlset>
+```
+
+### Instructions pour Google Search Console
+
+Apres publication, vous devrez soumettre la nouvelle URL du sitemap dans Google Search Console :
+- Section "Sitemaps" > Ajouter : l'URL de l'edge function
+- Ou re-soumettre `https://www.mariable.fr/sitemap.xml` si vous preferez ajouter un rewrite dans vercel.json (option alternative)
 
 | Fichier | Action |
 |---|---|
-| `public/BingSiteAuth.xml` | Copier le fichier uploade vers la racine public |
+| `supabase/functions/generate-sitemap/index.ts` | Creer - edge function qui genere le XML |
+| `public/robots.txt` | Mettre a jour l'URL du sitemap |
 
